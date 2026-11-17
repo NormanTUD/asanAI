@@ -828,6 +828,8 @@
 
   let stationBuild = function () { return { labels: [], update: function () {} }; };
   let buildTitle, buildPoint, buildPath, buildHomotopy, buildComposite, buildTorus;
+  let buildTypeSpace, buildIdentity, buildSet, buildJ, buildFiber, buildProps, buildLogic;
+  let buildLevels, buildUniverse, buildEquiv, buildUnivalence, buildInterval, buildCircle, buildFinale;
 
   buildTitle = function (g) {
     const labels = [];
@@ -1062,6 +1064,613 @@
     };
   };
 
+  buildTypeSpace = function (g) {
+    const labels = [];
+    const blob = makeIrid(new THREE.SphereGeometry(2.2, 56, 36), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.5, wobble: 0.085 });
+    g.add(blob.obj);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(2.26, 2)),
+      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.075, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    g.add(wire);
+    const pts = [
+      V(-0.95, -0.45, 0.55), V(0.18, 0.78, 0.5), V(0.92, -0.55, 0.7),
+      V(-0.25, -0.95, 0.6), V(0.65, 0.15, 0.95), V(-0.78, 0.6, 0.6),
+      V(0.05, -0.1, 1.05), V(0.95, 0.75, 0.35)
+    ];
+    const dots = makeDots(pts.map((p, k) => ({
+      p, size: 0.55 + (k === 0 ? 0.2 : 0), color: k === 0 ? C.gold : (k % 2 ? C.ice : C.violet), seed: rand(), glow: 0.9
+    })), { opacity: 1 });
+    g.add(dots.obj);
+    labels.push({ text: "A", p: V(2.05, 1.1, 0), dx: 0, dy: -18, kind: "big" });
+    labels.push({ text: "x", p: pts[0], dx: 12, dy: -20, kind: "sym" });
+    labels.push({ text: "y", p: pts[3], dx: -10, dy: 18, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        blob.setOpacity(a * 0.55);
+        dots.setOpacity(a);
+        wire.rotation.y += ctx.dt * 0.035;
+        wire.rotation.x += ctx.dt * 0.012;
+      }
+    };
+  };
+
+  function buildIdentityScene(g, kind) {
+    const labels = [];
+    const isSet = kind === "set";
+    const blob = makeIrid(new THREE.SphereGeometry(1.9, 48, 32), { a: C.violet, b: C.cyan, rim: C.gold, opacity: 0.3, wobble: 0.05 });
+    blob.obj.position.set(0, -0.15, -0.55);
+    g.add(blob.obj);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1.95, 2)),
+      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    wire.position.copy(blob.obj.position);
+    g.add(wire);
+    const aP = V(-0.98, 0.0, 0.78);
+    const bP = V(0.98, 0.2, 0.78);
+    const paths = [];
+    const ribbons = [];
+    const count = isSet ? 1 : 7;
+    for (let k = 0; k < count; k++) {
+      const midY = count === 1 ? 0.05 : lerp(-1.18, 1.18, k / (count - 1));
+      const pts = [
+        aP,
+        V(-0.5, midY * 0.55 - 0.05, 1.22),
+        V(0, midY, 1.55 - 0.1 * Math.abs(midY)),
+        V(0.5, midY * 0.55 + 0.08, 1.22),
+        bP
+      ];
+      const c = curveOf(pts, false);
+      paths.push(c);
+      const col = k === 3 || count === 1 ? C.gold : (k === 5 ? C.violet : C.ice);
+      const rib = makeRibbon(c, { a: col, b: k === 3 || count === 1 ? C.white : C.cyan, rad: count === 1 ? 0.024 : 0.013, opacity: 0.8, seg: 130, pulse: k * 0.11 });
+      g.add(rib.core, rib.glow);
+      ribbons.push({ rib, k });
+    }
+    let sheet = null;
+    if (!isSet) {
+      sheet = makeSheet(40, 14, (s, t) => {
+        const p1 = paths[0].getPoint(s), p2 = paths[paths.length - 1].getPoint(s);
+        const q = p1.clone().lerp(p2, t);
+        q.z += Math.sin(Math.PI * t) * 0.1;
+        return q;
+      }, { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.42 });
+      g.add(sheet.obj);
+    }
+    const dots = makeDots([
+      { p: aP, size: 0.72, color: C.ice },
+      { p: bP, size: 0.72, color: C.rose }
+    ], { opacity: 1 });
+    g.add(dots.obj);
+    const markers = [];
+    for (let k = 0; k < (isSet ? 1 : 2); k++) {
+      const m = makeMarker(k === 0 ? C.white : C.gold, 1.1);
+      g.add(m.obj);
+      markers.push(m);
+    }
+    labels.push({ text: "a", p: aP, dx: -4, dy: -26, kind: "sym" });
+    labels.push({ text: "b", p: bP, dx: 6, dy: -26, kind: "sym" });
+    labels.push({ text: "A", p: V(1.55, 1.35, -0.1), dx: 0, dy: -14, kind: "big" });
+    if (isSet) labels.push({ text: "&le;1", p: V(0.0, 1.65, 0.9), dx: 0, dy: -18, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const prog = smoothstep(0.1, 0.88, ctx.r);
+        blob.setOpacity(a * 0.36);
+        wire.rotation.y += ctx.dt * 0.02;
+        dots.setOpacity(a);
+        for (const R of ribbons) {
+          R.rib.setProgress(prog);
+          const base = isSet ? (R.k === 0 ? 0.95 : 0.06) : (R.k === 3 ? 0.95 : (R.k === 5 ? 0.76 : 0.5));
+          R.rib.setOpacity(a * base);
+        }
+        if (sheet) {
+          sheet.setOpacity(a * 0.5);
+          sheet.setBand(0.5 + 0.43 * Math.sin(ctx.t * 0.5));
+        }
+        for (let k = 0; k < markers.length; k++) {
+          markers[k].setOpacity(a * (isSet ? 0.95 : 0.85));
+          markers[k].set(paths[isSet ? 0 : (k === 0 ? 3 : 5)].getPoint(fract(ctx.t * 0.1 + k * 0.35)));
+        }
+      }
+    };
+  }
+
+  buildIdentity = function (g) { return buildIdentityScene(g, "identity"); };
+  buildSet = function (g) { return buildIdentityScene(g, "set"); };
+
+  buildJ = function (g) {
+    const labels = [];
+    const aP = V(-2.4, 0.0, 0.0);
+    const bP = V(2.4, 0.15, 0.0);
+    const paths = [];
+    const ribbons = [];
+    const markers = [];
+    for (let k = 0; k < 7; k++) {
+      const midY = lerp(-1.25, 1.25, k / 6);
+      const c = curveOf([aP, V(-1.2, midY * 0.6, 0.25), V(0, midY, 0.36), V(1.2, midY * 0.6 + 0.1, 0.25), bP], false);
+      paths.push(c);
+      const rib = makeRibbon(c, { a: k === 3 ? C.gold : C.cyan, b: C.violet, rad: 0.011, opacity: 0.7, seg: 120, pulse: k * 0.14 });
+      g.add(rib.core, rib.glow);
+      ribbons.push(rib);
+      const m = makeMarker(k === 3 ? C.gold : C.white, 0.55);
+      g.add(m.obj);
+      markers.push(m);
+    }
+    const refl = makeRing(0.3, 0.012, C.gold, 0.95);
+    refl.obj.position.copy(aP).add(V(0, 0, 0.3));
+    g.add(refl.obj);
+    const pulse = makeRing(0.34, 0.005, C.ice, 0.4);
+    pulse.obj.position.copy(refl.obj.position);
+    g.add(pulse.obj);
+    const seed = makeDots([{ p: aP, size: 0.8, color: C.white }], { opacity: 1 });
+    g.add(seed.obj);
+    labels.push({ text: "a", p: aP, dx: -4, dy: -26, kind: "sym" });
+    labels.push({ text: "b", p: bP, dx: 6, dy: -26, kind: "sym" });
+    labels.push({ text: "refl", p: aP.clone().add(V(0, 0.42, 0.3)), dx: -10, dy: 10, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const prog = smoothstep(0.1, 0.9, ctx.r);
+        seed.setOpacity(a);
+        refl.setOpacity(a * 0.95);
+        const ph = fract(ctx.t * 0.18);
+        pulse.obj.scale.setScalar(1 + ph * 3.2);
+        pulse.setOpacity(a * 0.5 * (1 - ph));
+        for (let k = 0; k < ribbons.length; k++) {
+          ribbons[k].setProgress(prog);
+          ribbons[k].setOpacity(a * (k === 3 ? 0.9 : 0.55));
+          markers[k].setOpacity(a * 0.75);
+          markers[k].set(paths[k].getPoint(fract(ctx.t * 0.13 + k * 0.06)));
+        }
+      }
+    };
+  };
+
+  buildFiber = function (g, mode) {
+    const labels = [];
+    const basePts = [V(-3.6, -2.1, 0), V(-1.8, -2.32, 0), V(0, -2.42, 0), V(1.8, -2.32, 0), V(3.6, -2.1, 0)];
+    const baseCurve = curveOf(basePts, false);
+    const baseRib = makeRibbon(baseCurve, { a: C.cyan, b: C.violet, rad: 0.014, opacity: 0.5, seg: 130 });
+    g.add(baseRib.core, baseRib.glow);
+    const NF = 9;
+    const counts = [2, 3, 1, 4, 2, 3, 1, 4, 2];
+    const fibers = [];
+    const stems = [];
+    const dotList = [];
+    for (let k = 0; k < NF; k++) {
+      const s = k / (NF - 1);
+      const bp = baseCurve.getPoint(s);
+      const cnt = counts[k];
+      const dots = [];
+      for (let j = 0; j < cnt; j++) {
+        const p = V(bp.x + (j % 2 ? 0.065 : -0.045), bp.y + 0.55 + j * 0.6, bp.z + (j % 2 ? 0.03 : -0.02));
+        dots.push(p);
+        dotList.push({ p, size: 0.5, color: j === cnt - 1 ? C.ice : C.violet, seed: rand(), glow: 0.85 });
+      }
+      stems.push([bp.clone(), dots[dots.length - 1].clone()]);
+      fibers.push({ bp, dots });
+    }
+    const stemsObj = makeLines(stems, { color: C.ice, opacity: 0.24 });
+    g.add(stemsObj.obj);
+    const dotsObj = makeDots(dotList, { opacity: 0.95 });
+    g.add(dotsObj.obj);
+    const chosen = fibers.map((f) => f.dots[f.dots.length - 1].clone());
+    const chosenObj = makeDots(chosen.map((p) => ({ p, size: 0.72, color: C.mint, glow: 1.1 })), { opacity: 1 });
+    g.add(chosenObj.obj);
+    const sectionCurve = curveOf(chosen, false);
+    const section = makeRibbon(sectionCurve, { a: C.mint, b: C.cyan, rad: 0.018, opacity: 1, seg: 150, pulse: 0.3 });
+    g.add(section.core, section.glow);
+    const basePathCurve = subCurve(baseCurve, 0.12, 0.88);
+    const basePath = makeRibbon(basePathCurve, { a: C.gold, b: C.rose, rad: 0.02, opacity: 1, seg: 130, pulse: 0.1 });
+    g.add(basePath.core, basePath.glow);
+    const liftCurve = curveOf(chosen.slice(1, 8), false);
+    const lift = makeRibbon(liftCurve, { a: C.gold, b: C.white, rad: 0.019, opacity: 1, seg: 150, pulse: 0.55 });
+    g.add(lift.core, lift.glow);
+    const conn = makeLine2(C.gold, 0.7);
+    g.add(conn.obj);
+    const spark = makeMarker(C.gold, 1.15);
+    const baseSpark = makeMarker(C.rose, 0.85);
+    g.add(spark.obj, baseSpark.obj);
+    const hlDots = makeDots(fibers[4].dots.map((p) => ({ p, size: 0.72, color: C.gold, glow: 1.2 })), { opacity: 1 });
+    g.add(hlDots.obj);
+    const web = [];
+    for (let k = 0; k < NF - 1; k++) {
+      const A = fibers[k].dots, B = fibers[k + 1].dots;
+      const m = Math.min(A.length, B.length);
+      for (let j = 0; j < m; j++) web.push([A[j], B[j]]);
+    }
+    const webObj = makeLines(web, { color: C.gold, opacity: 0.2 });
+    g.add(webObj.obj);
+    const env = makeIrid(new THREE.SphereGeometry(1, 32, 20), { a: C.violet, b: C.gold, rim: C.gold, opacity: 0.16, wobble: 0 });
+    env.obj.scale.set(4.25, 2.25, 1.35);
+    env.obj.position.set(0, -0.8, 0);
+    g.add(env.obj);
+    const arrows = [];
+    for (const k of [1, 3, 5, 7]) {
+      const bp = fibers[k].bp;
+      arrows.push(makeArrow(g, bp.clone().add(V(0, -0.05, 0)), bp.clone().add(V(0, -0.42, 0)), C.violet, 0.6));
+    }
+    const O = { base: 0.5, stems: 0.22, dots: 0.9, web: 0, section: 0, chosen: 0, basePath: 0, lift: 0, hl: 0, env: 0, arrow: 0, spark: 0, conn: 0 };
+    if (mode === "fibration") { O.base = 0.95; O.stems = 0.36; O.dots = 0.95; O.hl = 0.95; O.arrow = 0.65; }
+    if (mode === "transport") { O.base = 0.45; O.stems = 0.18; O.dots = 0.7; O.basePath = 0.95; O.lift = 0.9; O.spark = 1; O.conn = 0.8; }
+    if (mode === "pi") { O.base = 0.4; O.stems = 0.16; O.dots = 0.6; O.section = 0.95; O.chosen = 0.95; }
+    if (mode === "sigma") { O.base = 0.4; O.stems = 0.2; O.dots = 0.9; O.web = 0.35; O.env = 0.5; }
+    if (mode === "family") {
+      labels.push({ text: "x", p: basePts[3], dx: 6, dy: 22, kind: "sym" });
+      labels.push({ text: "B(x)", p: fibers[6].dots[fibers[6].dots.length - 1], dx: 10, dy: -22, kind: "sym" });
+    }
+    if (mode === "fibration") labels.push({ text: "p", p: V(0.0, -2.85, 0), dx: 0, dy: 18, kind: "sym" });
+    if (mode === "transport") labels.push({ text: "&gamma;", p: baseCurve.getPoint(0.2), dx: -6, dy: 24, kind: "sym" });
+    if (mode === "pi") labels.push({ text: "s", p: chosen[4], dx: 10, dy: -20, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const prog = smoothstep(0.08, 0.9, ctx.r);
+        baseRib.setOpacity(a * O.base);
+        stemsObj.setOpacity(a * O.stems);
+        dotsObj.setOpacity(a * O.dots);
+        hlDots.setOpacity(a * O.hl);
+        section.setProgress(prog); section.setOpacity(a * O.section);
+        chosenObj.setOpacity(a * O.chosen);
+        basePath.setProgress(prog); basePath.setOpacity(a * O.basePath);
+        lift.setProgress(prog); lift.setOpacity(a * O.lift);
+        webObj.setOpacity(a * O.web);
+        env.setOpacity(a * O.env);
+        for (const ar of arrows) ar.setOpacity(a * O.arrow);
+        const u = fract(ctx.t * 0.083);
+        const lp = liftCurve.getPoint(u);
+        const bp = basePathCurve.getPoint(u);
+        spark.set(lp); baseSpark.set(bp); conn.set(bp, lp);
+        spark.setOpacity(a * O.spark);
+        baseSpark.setOpacity(a * O.spark * 0.8);
+        conn.setOpacity(a * O.conn);
+      }
+    };
+  };
+
+  buildProps = function (g) {
+    const labels = [];
+    const lx = -1.75, rx = 1.75, cy = 0.15, rad = 1.16;
+    const ringL = makeRing(rad, 0.007, C.mint, 0.6); ringL.obj.position.set(lx, cy, 0); g.add(ringL.obj);
+    const ringR = makeRing(rad, 0.007, C.red, 0.35); ringR.obj.position.set(rx, cy, 0); g.add(ringR.obj);
+    const fillL = makeIrid(new THREE.SphereGeometry(rad * 0.97, 36, 24), { a: C.mint, b: C.cyan, rim: C.white, opacity: 0.18, wobble: 0.02 });
+    fillL.obj.position.set(lx, cy, 0); g.add(fillL.obj);
+    const fillR = makeIrid(new THREE.SphereGeometry(rad * 0.97, 36, 24), { a: C.red, b: C.violet, rim: C.red, opacity: 0.06, wobble: 0.02 });
+    fillR.obj.position.set(rx, cy, 0); g.add(fillR.obj);
+    const proof = makeDots([{ p: V(lx, cy, 0), size: 1.25, color: C.mint }], { opacity: 1 });
+    g.add(proof.obj);
+    const ghost = makeMarker(C.mint, 0.75);
+    g.add(ghost.obj);
+    labels.push({ text: "proof", p: V(lx, cy - rad - 0.18, 0), dx: 0, dy: 22, kind: "word" });
+    labels.push({ text: "none", p: V(rx, cy - rad - 0.18, 0), dx: 0, dy: 22, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        ringL.setOpacity(a * (0.4 + 0.25 * (0.5 + 0.5 * Math.sin(ctx.t * 1.2))));
+        ringR.setOpacity(a * 0.3);
+        fillL.setOpacity(a * 0.2);
+        fillR.setOpacity(a * 0.05);
+        proof.setOpacity(a);
+        const ph = fract(ctx.t * 0.16);
+        const dist = 0.58 * (1 - ph);
+        ghost.set(V(lx + Math.cos(ph * TAU) * dist, cy + Math.sin(ph * TAU) * dist * 0.7, 0.12));
+        ghost.setOpacity(a * 0.55 * Math.sin(ph * Math.PI));
+      }
+    };
+  };
+
+  buildLogic = function (g) {
+    const labels = [];
+    const dotsList = [];
+    const ribbons = [];
+    const addDot = (p, size, color) => dotsList.push({ p, size, color, seed: rand(), glow: 1 });
+    addDot(V(-2.4, 1.05, 0), 0.62, C.ice);
+    addDot(V(-1.6, 1.05, 0), 0.62, C.ice);
+    addDot(V(-2.0, 1.05, 0.18), 0.6, C.gold);
+    const andRib = makeRibbon(curveOf([V(-2.38, 1.05, 0), V(-2.0, 1.18, 0.14), V(-1.62, 1.05, 0)], false), { a: C.ice, b: C.gold, rad: 0.016, opacity: 0.9, seg: 80 });
+    g.add(andRib.core, andRib.glow); ribbons.push(andRib);
+    addDot(V(1.55, 1.18, 0), 0.62, C.violet);
+    addDot(V(2.45, 1.18, 0), 0.62, C.violet);
+    const forkA = makeRibbon(curveOf([V(2.0, 0.22, 0), V(1.75, 0.7, 0.18), V(1.55, 1.12, 0)], false), { a: C.violet, b: C.cyan, rad: 0.013, opacity: 0.8, seg: 70 });
+    const forkB = makeRibbon(curveOf([V(2.0, 0.22, 0), V(2.25, 0.7, 0.18), V(2.45, 1.12, 0)], false), { a: C.violet, b: C.cyan, rad: 0.013, opacity: 0.8, seg: 70 });
+    g.add(forkA.core, forkA.glow, forkB.core, forkB.glow); ribbons.push(forkA, forkB);
+    addDot(V(-2.5, -1.15, 0), 0.6, C.gold);
+    addDot(V(-1.5, -1.15, 0), 0.6, C.ice);
+    makeArrow(g, V(-2.4, -1.15, 0), V(-1.55, -1.15, 0), C.gold, 0.75);
+    addDot(V(1.35, -1.15, 0), 0.55, C.ice);
+    const bottom = makeRing(0.36, 0.009, C.red, 0.55); bottom.obj.position.set(2.12, -1.15, 0); g.add(bottom.obj);
+    makeArrow(g, V(1.42, -1.15, 0), V(1.72, -1.15, 0), C.red, 0.7);
+    const dots = makeDots(dotsList, { opacity: 1 });
+    g.add(dots.obj);
+    const spark = makeMarker(C.white, 0.8);
+    g.add(spark.obj);
+    labels.push({ text: "&and;", p: V(-2.0, 1.75, 0), dx: 0, dy: -12, kind: "big" });
+    labels.push({ text: "&or;", p: V(2.0, 1.75, 0), dx: 0, dy: -12, kind: "big" });
+    labels.push({ text: "&rarr;", p: V(-2.0, -0.55, 0), dx: 0, dy: -12, kind: "big" });
+    labels.push({ text: "&perp;", p: V(2.12, -0.55, 0), dx: 0, dy: -12, kind: "big" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        dots.setOpacity(a);
+        for (const r of ribbons) r.setOpacity(a * 0.85);
+        bottom.setOpacity(a * 0.55);
+        spark.setOpacity(a * 0.8);
+        spark.set(forkB.core.geometry ? V(2.0, 0.22, 0).lerp(V(2.45, 1.18, 0), fract(ctx.t * 0.2)) : V(0, 0, 0));
+      }
+    };
+  };
+
+  buildLevels = function (g) {
+    const labels = [];
+    const ys = [-2.6, -1.25, 0.1, 1.55, 3.05];
+    const x = 0.35;
+    const spine = makeLine2(C.ice, 0.16);
+    spine.set(V(x - 1.55, ys[0], 0), V(x - 1.55, ys[4], 0));
+    g.add(spine.obj);
+    const r1 = makeRing(0.44, 0.008, C.ice, 0.6); r1.obj.position.set(x, ys[0], 0); g.add(r1.obj);
+    const d1 = makeDots([{ p: V(x, ys[0], 0), size: 0.75, color: C.ice }], { opacity: 1 }); g.add(d1.obj);
+    const d2 = makeDots([{ p: V(x - 0.45, ys[1], 0), size: 0.7, color: C.mint }], { opacity: 1 }); g.add(d2.obj);
+    const empty = makeRing(0.22, 0.007, C.red, 0.4); empty.obj.position.set(x + 0.55, ys[1], 0); g.add(empty.obj);
+    const d3 = makeDots([{ p: V(x - 0.75, ys[2], 0), size: 0.66, color: C.cyan }, { p: V(x + 0.85, ys[2], 0), size: 0.66, color: C.cyan }], { opacity: 1 }); g.add(d3.obj);
+    const p3 = makeRibbon(curveOf([V(x - 0.75, ys[2], 0), V(x + 0.05, ys[2] + 0.08, 0.12), V(x + 0.85, ys[2], 0)], false), { a: C.cyan, b: C.ice, rad: 0.012, opacity: 0.8, seg: 70 }); g.add(p3.core, p3.glow);
+    const tA = V(x - 0.8, ys[3] - 0.32, 0), tB = V(x + 0.2, ys[3] + 0.42, 0.05), tC = V(x + 1.05, ys[3] - 0.26, 0);
+    const d4 = makeDots([{ p: tA, size: 0.62, color: C.violet }, { p: tB, size: 0.62, color: C.violet }, { p: tC, size: 0.62, color: C.violet }], { opacity: 1 }); g.add(d4.obj);
+    const e1 = makeRibbon(curveOf([tA, tA.clone().lerp(tB, 0.5).add(V(0, 0.05, 0.06)), tB], false), { a: C.violet, b: C.rose, rad: 0.01, opacity: 0.8, seg: 60 });
+    const e2 = makeRibbon(curveOf([tB, tB.clone().lerp(tC, 0.5).add(V(0.05, 0.04, 0.06)), tC], false), { a: C.violet, b: C.rose, rad: 0.01, opacity: 0.8, seg: 60 });
+    const e3 = makeRibbon(curveOf([tC, tC.clone().lerp(tA, 0.5).add(V(0, -0.05, 0.06)), tA], false), { a: C.violet, b: C.rose, rad: 0.01, opacity: 0.8, seg: 60 });
+    g.add(e1.core, e1.glow, e2.core, e2.glow, e3.core, e3.glow);
+    const tri = makeTri(g, tA, tB, tC, C.violet, 0.22);
+    const ringInf = makeRing(0.52, 0.008, C.gold, 0.7); ringInf.obj.position.set(x + 0.15, ys[4], 0); g.add(ringInf.obj);
+    const d5 = makeDots([{ p: V(x - 0.37, ys[4], 0), size: 0.45, color: C.gold }, { p: V(x + 0.67, ys[4], 0), size: 0.45, color: C.gold }, { p: V(x + 0.15, ys[4] + 0.52, 0), size: 0.45, color: C.gold }], { opacity: 1 }); g.add(d5.obj);
+    labels.push({ text: "&minus;2", p: V(x - 1.75, ys[0], 0), dx: -8, dy: 4, kind: "word" });
+    labels.push({ text: "&minus;1", p: V(x - 1.75, ys[1], 0), dx: -8, dy: 4, kind: "word" });
+    labels.push({ text: "0", p: V(x - 1.75, ys[2], 0), dx: -8, dy: 4, kind: "word" });
+    labels.push({ text: "1", p: V(x - 1.75, ys[3], 0), dx: -8, dy: 4, kind: "word" });
+    labels.push({ text: "&infin;", p: V(x - 1.75, ys[4], 0), dx: -8, dy: 4, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const ph = 0.5 + 0.5 * Math.sin(ctx.t * 0.9);
+        r1.obj.scale.setScalar(1 + 0.55 * ph);
+        r1.setOpacity(a * 0.6 * (1 - 0.4 * ph));
+        d1.setOpacity(a); d2.setOpacity(a); d3.setOpacity(a);
+        empty.setOpacity(a * 0.38);
+        p3.setOpacity(a * 0.85);
+        d4.setOpacity(a);
+        e1.setOpacity(a * 0.7); e2.setOpacity(a * 0.7); e3.setOpacity(a * 0.7);
+        tri.setOpacity(a * 0.2);
+        ringInf.setOpacity(a * (0.45 + 0.3 * ph));
+        ringInf.obj.rotation.z += ctx.dt * 0.15;
+        d5.setOpacity(a * 0.9);
+      }
+    };
+  };
+
+  buildUniverse = function (g) {
+    const labels = [];
+    const shells = [
+      { r: 1.25, col: C.ice, op: 0.5, fill: 0.06 },
+      { r: 2.3, col: C.cyan, op: 0.38, fill: 0.05 },
+      { r: 3.35, col: C.violet, op: 0.28, fill: 0.04 }
+    ];
+    const wires = [];
+    const fills = [];
+    for (let k = 0; k < shells.length; k++) {
+      const s = shells[k];
+      const w = new THREE.LineSegments(
+        new THREE.WireframeGeometry(new THREE.SphereGeometry(s.r, 20, 13)),
+        new THREE.LineBasicMaterial({ color: s.col, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      g.add(w);
+      wires.push({ w, base: s.op * 0.22 });
+      const f = makeIrid(new THREE.SphereGeometry(s.r, 40, 24), { a: s.col, b: C.violet, rim: C.gold, opacity: 0.06, wobble: 0 });
+      g.add(f.obj);
+      fills.push({ f, base: s.fill });
+    }
+    const types = makeDots([
+      { p: V(-0.5, 0.2, 0.25), size: 0.55, color: C.gold },
+      { p: V(0.35, -0.4, 0.2), size: 0.5, color: C.mint },
+      { p: V(0.15, 0.45, -0.2), size: 0.5, color: C.rose }
+    ], { opacity: 1 });
+    g.add(types.obj);
+    const spark = makeMarker(C.gold, 0.9);
+    g.add(spark.obj);
+    labels.push({ text: "U<sub>0</sub>", p: V(0.95, 1.0, 0), dx: 14, dy: -6, kind: "sym" });
+    labels.push({ text: "U<sub>1</sub>", p: V(1.75, 1.9, 0), dx: 14, dy: -6, kind: "sym" });
+    labels.push({ text: "U<sub>2</sub>", p: V(2.55, 2.8, 0), dx: 14, dy: -6, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        for (let k = 0; k < wires.length; k++) {
+          wires[k].w.rotation.y += ctx.dt * (0.06 - k * 0.014);
+          wires[k].w.rotation.x += ctx.dt * (0.015 + k * 0.008);
+          wires[k].w.material.opacity = a * wires[k].base;
+        }
+        for (const F of fills) F.f.setOpacity(a * F.base * 3);
+        types.setOpacity(a * 0.95);
+        const u = fract(ctx.t * 0.1);
+        spark.set(V(0.3 + u * 2.9, 0.1 * Math.sin(u * 6.0), 0.2));
+        spark.setOpacity(a * 0.9 * Math.sin(u * Math.PI));
+      }
+    };
+  };
+
+  buildEquiv = function (g) {
+    const labels = [];
+    const A = V(-2.0, 0.2, 0), B = V(2.0, 0.2, 0);
+    const blobA = makeIrid(new THREE.SphereGeometry(1.35, 44, 30), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.42, wobble: 0.05 });
+    blobA.obj.position.copy(A); g.add(blobA.obj);
+    const blobB = makeIrid(new THREE.SphereGeometry(1.35, 44, 30), { a: C.violet, b: C.rose, rim: C.gold, opacity: 0.42, wobble: 0.05 });
+    blobB.obj.position.copy(B); g.add(blobB.obj);
+    const rel = [V(-0.55, -0.35, 0.45), V(0.45, -0.45, 0.5), V(0.0, 0.55, 0.42), V(0.62, 0.15, 0.35), V(-0.45, 0.4, 0.5)];
+    const ptsA = rel.map((r) => A.clone().add(r));
+    const ptsB = rel.map((r) => B.clone().add(r));
+    const threads = makeLines(ptsA.map((p, k) => [p, ptsB[k]]), { color: C.gold, opacity: 0.3 });
+    g.add(threads.obj);
+    const dotsA = makeDots(ptsA.map((p) => ({ p, size: 0.55, color: C.ice, glow: 0.9 })), { opacity: 1 });
+    const dotsB = makeDots(ptsB.map((p) => ({ p, size: 0.55, color: C.rose, glow: 0.9 })), { opacity: 1 });
+    g.add(dotsA.obj, dotsB.obj);
+    const loopA = makeRibbon(curveOf([ptsA[0], ptsA[1].clone().add(V(0, 0.25, 0.2)), ptsA[2]], false), { a: C.ice, b: C.gold, rad: 0.009, opacity: 0.7, seg: 60 });
+    const loopB = makeRibbon(curveOf([ptsB[0], ptsB[1].clone().add(V(0, 0.25, 0.2)), ptsB[2]], false), { a: C.rose, b: C.gold, rad: 0.009, opacity: 0.7, seg: 60 });
+    g.add(loopA.core, loopA.glow, loopB.core, loopB.glow);
+    const markers = [];
+    for (let k = 0; k < 5; k++) { const m = makeMarker(k % 2 ? C.gold : C.white, 0.6); g.add(m.obj); markers.push(m); }
+    labels.push({ text: "A", p: A.clone().add(V(0, 1.55, 0)), dx: 0, dy: -14, kind: "big" });
+    labels.push({ text: "B", p: B.clone().add(V(0, 1.55, 0)), dx: 0, dy: -14, kind: "big" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const br = 1 + 0.045 * Math.sin(ctx.t * 0.7);
+        blobA.obj.scale.set(br, 1, br); blobB.obj.scale.set(br, 1, br);
+        blobA.setOpacity(a * 0.45); blobB.setOpacity(a * 0.45);
+        threads.setOpacity(a * 0.3);
+        dotsA.setOpacity(a); dotsB.setOpacity(a);
+        loopA.setOpacity(a * 0.65); loopB.setOpacity(a * 0.65);
+        for (let k = 0; k < markers.length; k++) {
+          const u = fract(ctx.t * 0.12 + k * 0.2);
+          const uu = 0.5 - 0.5 * Math.cos(u * Math.PI * 2);
+          markers[k].set(ptsA[k].clone().lerp(ptsB[k], uu));
+          markers[k].setOpacity(a * 0.8 * Math.sin(u * Math.PI));
+        }
+      }
+    };
+  };
+
+  buildUnivalence = function (g) {
+    const labels = [];
+    const A = V(-1.95, 0.8, 0), B = V(1.95, 0.8, 0);
+    const blobA = makeIrid(new THREE.SphereGeometry(1.12, 40, 28), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.45, wobble: 0.05 });
+    blobA.obj.position.copy(A); g.add(blobA.obj);
+    const blobB = makeIrid(new THREE.SphereGeometry(1.12, 40, 28), { a: C.violet, b: C.rose, rim: C.gold, opacity: 0.45, wobble: 0.05 });
+    blobB.obj.position.copy(B); g.add(blobB.obj);
+    const rel = [V(-0.4, -0.25, 0.4), V(0.42, -0.3, 0.38), V(0.0, 0.42, 0.42)];
+    const ptsA = rel.map((r) => A.clone().add(r));
+    const ptsB = rel.map((r) => B.clone().add(r));
+    const threads = makeLines(ptsA.map((p, k) => [p, ptsB[k]]), { color: C.gold, opacity: 0.18 });
+    g.add(threads.obj);
+    const dotsA = makeDots(ptsA.map((p) => ({ p, size: 0.5, color: C.ice, glow: 0.9 })), { opacity: 1 });
+    const dotsB = makeDots(ptsB.map((p) => ({ p, size: 0.5, color: C.rose, glow: 0.9 })), { opacity: 1 });
+    g.add(dotsA.obj, dotsB.obj);
+    const arc = curveOf([
+      A.clone().add(V(0, -0.55, 0)), V(-1.0, -1.5, 0.2), V(0, -2.12, 0.25),
+      V(1.0, -1.5, 0.2), B.clone().add(V(0, -0.55, 0))
+    ], false);
+    const path = makeRibbon(arc, { a: C.gold, b: C.white, rad: 0.024, opacity: 1, seg: 170, pulse: 0.2 });
+    g.add(path.core, path.glow);
+    const spark = makeMarker(C.white, 1.25);
+    g.add(spark.obj);
+    labels.push({ text: "A", p: A.clone().add(V(0, 1.3, 0)), dx: 0, dy: -14, kind: "big" });
+    labels.push({ text: "B", p: B.clone().add(V(0, 1.3, 0)), dx: 0, dy: -14, kind: "big" });
+    labels.push({ text: "U", p: V(0, -2.55, 0), dx: 0, dy: 18, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const br = 1 + 0.06 * Math.sin(ctx.t * 0.8);
+        blobA.obj.scale.set(br, 1 / br, br); blobB.obj.scale.set(br, 1 / br, br);
+        blobA.setOpacity(a * 0.48); blobB.setOpacity(a * 0.48);
+        dotsA.setOpacity(a * 0.95); dotsB.setOpacity(a * 0.95);
+        threads.setOpacity(a * 0.18);
+        const prog = smoothstep(0.1, 0.88, ctx.r);
+        path.setProgress(prog); path.setOpacity(a);
+        spark.set(arc.getPoint(fract(ctx.t * 0.09)));
+        spark.setOpacity(a * 0.95);
+      }
+    };
+  };
+
+  buildInterval = function (g) {
+    const labels = [];
+    const a = V(-2.3, 0, 0), b = V(2.3, 0, 0);
+    const lineC = curveOf([a, V(-0.8, 0.02, 0), V(0, 0.04, 0), V(0.8, 0.02, 0), b], false);
+    const bar = makeRibbon(lineC, { a: C.gold, b: C.white, rad: 0.038, opacity: 1, seg: 130, pulse: 0.2 });
+    g.add(bar.core, bar.glow);
+    const ea = makeRing(0.23, 0.008, C.gold, 0.7); ea.obj.position.copy(a); g.add(ea.obj);
+    const eb = makeRing(0.23, 0.008, C.gold, 0.7); eb.obj.position.copy(b); g.add(eb.obj);
+    const dots = makeDots([{ p: a, size: 0.8, color: C.gold }, { p: b, size: 0.8, color: C.gold }], { opacity: 1 });
+    g.add(dots.obj);
+    const spark = makeMarker(C.white, 1.15);
+    g.add(spark.obj);
+    labels.push({ text: "0", p: a, dx: 2, dy: 26, kind: "sym" });
+    labels.push({ text: "1", p: b, dx: 2, dy: 26, kind: "sym" });
+    labels.push({ text: "seg", p: V(0, -0.42, 0), dx: 0, dy: 20, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a1 = ctx.a * ctx.r;
+        const prog = smoothstep(0.1, 0.9, ctx.r);
+        bar.setProgress(prog); bar.setOpacity(a1);
+        ea.setOpacity(a1 * 0.65); eb.setOpacity(a1 * 0.65);
+        dots.setOpacity(a1);
+        spark.set(lineC.getPoint(fract(ctx.t * 0.13)));
+        spark.setOpacity(a1);
+      }
+    };
+  };
+
+  buildCircle = function (g) {
+    const labels = [];
+    const rad = 1.9;
+    const ring = makeRing(rad, 0.026, C.ice, 0.9);
+    g.add(ring.obj);
+    const glow = makeRing(rad, 0.13, C.cyan, 0.14);
+    g.add(glow.obj);
+    const base = V(0, -rad, 0);
+    const baseDot = makeDots([{ p: base, size: 0.95, color: C.gold }], { opacity: 1 });
+    g.add(baseDot.obj);
+    const spark = makeMarker(C.white, 1.3);
+    g.add(spark.obj);
+    const spark2 = makeMarker(C.violet, 0.75);
+    g.add(spark2.obj);
+    labels.push({ text: "base", p: base, dx: 10, dy: 24, kind: "word" });
+    labels.push({ text: "loop", p: V(rad * 0.72, rad * 0.72, 0), dx: 12, dy: -18, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        ring.setOpacity(a * 0.85);
+        glow.setOpacity(a * 0.13);
+        baseDot.setOpacity(a);
+        const u = ctx.t * 0.35;
+        const ang = -Math.PI / 2 + u;
+        spark.set(V(Math.cos(ang) * rad, Math.sin(ang) * rad, 0));
+        spark.setOpacity(a);
+        const ang2 = -Math.PI / 2 - u * 0.7;
+        spark2.set(V(Math.cos(ang2) * rad, Math.sin(ang2) * rad, 0));
+        spark2.setOpacity(a * 0.75);
+      }
+    };
+  };
+
+  buildFinale = function (g) {
+    const labels = [];
+    const halo = makeRing(1.6, 0.008, C.gold, 0.4);
+    g.add(halo.obj);
+    const dot = makeDots([{ p: V(0, 0, 0), size: 1.5, color: C.gold }], { opacity: 1 });
+    g.add(dot.obj);
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        halo.setOpacity(a * 0.3);
+        halo.obj.rotation.z += ctx.dt * 0.05;
+        dot.setOpacity(a * 0.8);
+      }
+    };
+  };
+
   const stations = [];
   function buildAllStations() {
     for (let i = 0; i < N; i++) {
@@ -1076,6 +1685,20 @@
       else if (kind === "homotopy") built = buildHomotopy(group);
       else if (kind === "composite") built = buildComposite(group);
       else if (kind === "torus") built = buildTorus(group);
+      else if (kind === "typespace") built = buildTypeSpace(group);
+      else if (kind === "identity") built = buildIdentity(group);
+      else if (kind === "j") built = buildJ(group);
+      else if (kind === "fiber") built = buildFiber(group, BEATS[i].mode);
+      else if (kind === "props") built = buildProps(group);
+      else if (kind === "logic") built = buildLogic(group);
+      else if (kind === "set") built = buildSet(group);
+      else if (kind === "levels") built = buildLevels(group);
+      else if (kind === "universe") built = buildUniverse(group);
+      else if (kind === "equiv") built = buildEquiv(group);
+      else if (kind === "univalence") built = buildUnivalence(group);
+      else if (kind === "interval") built = buildInterval(group);
+      else if (kind === "circle") built = buildCircle(group);
+      else if (kind === "finale") built = buildFinale(group);
       else {
         const dot = makeDots([{ p: V(0, 0, 0), size: 0.9, color: ACT_COLOR(BEATS[i].act) }], { opacity: 1 });
         group.add(dot.obj);
@@ -1731,11 +2354,11 @@
 
     if (journey) {
       journey.setProgress(clamp((beatFloat + 0.55) / (N - 1), 0.001, 1));
-      journey.setOpacity(lerp(0.42, 0.95, ov));
+      journey.setOpacity(lerp(0.16, 0.95, ov));
     }
     if (beacons) {
-      beacons.setOpacity(lerp(0.55, 1, ov));
-      beacons.setScale(lerp(0.55, 5.4, ov));
+      beacons.setOpacity(lerp(0.32, 1, ov));
+      beacons.setScale(lerp(0.5, 5.4, ov));
       for (let i = 0; i < N; i++) {
         const visited = i <= beatFloat + 0.02;
         const cur = Math.abs(beatFloat - i) < 0.5;
