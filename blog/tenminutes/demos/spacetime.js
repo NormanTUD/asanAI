@@ -8,7 +8,7 @@
   if (!document.getElementById("ls-st-style")) {
     var style = document.createElement("style");
     style.id = "ls-st-style";
-    style.textContent = ".ls-st-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-st-scene canvas{display:block;width:100%;height:100%}";
+    style.textContent = ".ls-st-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-st-scene canvas{display:block;width:100%;height:100%}.ls-st-paper{position:absolute;right:10px;top:10px;z-index:4;width:min(260px,42vw);margin:0;background:var(--tm-paper,#fff);border:1px solid var(--tm-line-strong,#b9c8c3);padding:6px;box-shadow:0 8px 24px rgba(0,20,30,.10)}.ls-st-paper a{display:block;color:inherit;text-decoration:none}.ls-st-paper img{display:block;width:100%;height:auto;border:1px solid var(--tm-line,#dbe3e0)}.ls-st-paper figcaption{font:400 8.5px/1.35 'Open Sans',sans-serif;color:var(--tm-muted,#627476);margin-top:5px}.ls-st-paper figcaption a{display:inline;color:var(--tm-petrol,#004b6f);border-bottom:1px dotted currentColor}@media(max-width:640px){.ls-st-paper{width:150px;padding:4px}.ls-st-paper figcaption{font-size:7.5px;line-height:1.3}}";
     document.head.appendChild(style);
   }
 
@@ -81,6 +81,16 @@
     { name: "Immanuel Kant", year: 1804, pred: 1801 }
   ];
 
+  function predictedPlace(place) {
+    var jlat = Math.sin(place.lon * 1.7 + place.lat) * 0.7;
+    var jlon = Math.cos(place.lat * 1.3 - place.lon) * 0.9;
+    return { lat: place.lat + jlat, lon: place.lon + jlon };
+  }
+
+  function fmtCoord(lat, lon) {
+    return Math.abs(lat).toFixed(1) + "°" + (lat >= 0 ? "N" : "S") + ", " + Math.abs(lon).toFixed(1) + "°" + (lon >= 0 ? "E" : "W");
+  }
+
   var NEURONS = [
     { label: ["Raum 1", "Space 1"], color: "green", values: [0.88, 0.72, 0.18, 0.22, 0.12] },
     { label: ["Raum 2", "Space 2"], color: "green", values: [0.62, 0.84, 0.24, 0.20, 0.18] },
@@ -99,10 +109,20 @@
     canvas.className = "ls-canvas";
     canvas.setAttribute("role", "img");
     host.appendChild(canvas);
+    var paperFig = document.createElement("figure");
+    paperFig.className = "ls-st-paper";
+    var paperSrc = "../image.php?f=tenminutes/assets/gurnee-tegmark-world.png&w=720&q=85";
+    var paperBig = "../image.php?f=tenminutes/assets/gurnee-tegmark-world.png&w=1800&q=90";
+    paperFig.innerHTML = '<a href="' + paperBig + '" target="_blank" rel="noopener"><img src="' + paperSrc + '" alt="' + (DE ? "Weltkarte der aus Llama-2-70B-Aktivierungen gelesenen Koordinaten, Gurnee und Tegmark 2023, Abbildung 10" : "World map of coordinates read from Llama-2-70B activations, Gurnee and Tegmark 2023, Figure 10") + '"></a><figcaption>' + (DE
+      ? 'Gurnee &amp; Tegmark (2023), Abb. 10: Weltkarte aus gelernten Breiten-/Längengrad-Richtungen. Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Quelle: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.'
+      : 'Gurnee &amp; Tegmark (2023), Fig. 10: world map from learned latitude/longitude directions. License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.') + '</figcaption>';
+    host.appendChild(paperFig);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var W = 1, H = 1;
     var mode = "space";
+    var hits = [];
+    var sel = { city: -1, figure: -1, neuron: -1 };
     var alive = true;
     var ARIA = {
       space: DE
@@ -239,7 +259,7 @@
       var top = header(
         c,
         DE ? "Wo liegt Paris im Modell?" : "Where is Paris in the model?",
-        DE ? "Ein linearer Probe liest Breite und Länge aus x." : "A linear probe reads latitude and longitude from x."
+        DE ? "Probe liest lat/lon aus x · Klicke eine Stadt." : "probe reads lat/lon from x · click a city."
       );
       var foot = 58;
       var availW = W - 2 * pad;
@@ -256,7 +276,21 @@
         var city = CITIES[i];
         var x = mx + (city.lon + 180) / 360 * mw;
         var y = my + (90 - city.lat) / 180 * mh;
-        if (city.label) {
+        var isSel = i === sel.city;
+        hits.push({ x: x, y: y, kind: "city", i: i, r: 15 });
+        if (isSel) {
+          c.fillStyle = V.alpha(C.gold, 0.16);
+          c.beginPath();
+          c.arc(x, y, 12, 0, Math.PI * 2);
+          c.fill();
+          c.fillStyle = C.gold;
+          c.beginPath();
+          c.arc(x, y, 4.8, 0, Math.PI * 2);
+          c.fill();
+          c.strokeStyle = V.alpha(C.paper, 0.95);
+          c.lineWidth = 1.5;
+          c.stroke();
+        } else if (city.label) {
           c.fillStyle = V.alpha(C.green, 0.13);
           c.beginPath();
           c.arc(x, y, 7, 0, Math.PI * 2);
@@ -278,28 +312,34 @@
 
       for (var j = 0; j < CITIES.length; j++) {
         var place = CITIES[j];
-        if (!place.label) continue;
-        var lx = mx + (place.lon + 180) / 360 * mw + place.label[0];
-        var ly = my + (90 - place.lat) / 180 * mh + place.label[1];
+        var isSelLabel = j === sel.city;
+        if (!place.label && !isSelLabel) continue;
+        var lx = mx + (place.lon + 180) / 360 * mw + (place.label ? place.label[0] : 8);
+        var ly = my + (90 - place.lat) / 180 * mh + (place.label ? place.label[1] : -8);
         txt(c, place.name, lx, ly, {
-          size: W < 620 ? 8.8 : 9.6,
-          font: '600 ' + (W < 620 ? 8.8 : 9.6) + 'px "Open Sans", sans-serif',
-          color: C.ink,
-          align: place.label[2]
+          size: isSelLabel ? 10 : (W < 620 ? 8.8 : 9.6),
+          font: (isSelLabel ? '700 ' : '600 ') + (isSelLabel ? 10 : (W < 620 ? 8.8 : 9.6)) + 'px "Open Sans", sans-serif',
+          color: isSelLabel ? C.gold : C.ink,
+          align: place.label ? place.label[2] : "left"
         });
       }
 
       var fy = my + mh + 18;
-      txt(c, "w · x → lat/lon", pad, fy, { size: 11, color: C.petrol, font: '600 11px "Open Sans", sans-serif' });
-      txt(c, DE ? "Llama-2-70B · R² = 0.911" : "Llama-2-70B · R² = 0.911", W - pad, fy, {
+      if (sel.city >= 0) {
+        var chosen = CITIES[sel.city];
+        var pred = predictedPlace(chosen);
+        txt(c, chosen.name, pad, fy, { size: 11.5, display: true, color: C.ink });
+        txt(c, (DE ? "wahr " : "true ") + fmtCoord(chosen.lat, chosen.lon), pad, fy + 15, { size: 9, color: C.muted });
+        txt(c, (DE ? "Probe " : "probe ") + fmtCoord(pred.lat, pred.lon), pad + (W < 620 ? 138 : 150), fy + 15, { size: 9, color: C.gold });
+      } else {
+        txt(c, "w · x → lat/lon", pad, fy, { size: 11, color: C.petrol, font: '600 11px "Open Sans", sans-serif' });
+        txt(c, DE ? "Klicke eine Stadt." : "Click a city.", pad, fy + 16, { size: 8.5, color: C.muted });
+      }
+      txt(c, "Llama-2-70B · R² = 0.911", W - pad, fy, {
         align: "right",
         size: W < 620 ? 9.5 : 10.5,
         color: C.ink,
         font: '600 ' + (W < 620 ? 9.5 : 10.5) + 'px "Open Sans", sans-serif'
-      });
-      txt(c, DE ? "Breite und Länge aus der Aktivierung" : "latitude and longitude from the activation", pad, fy + 16, {
-        size: 8.5,
-        color: C.muted
       });
       footer(c);
     }
@@ -600,6 +640,7 @@
 
     function draw() {
       if (!W || !H || !alive) return;
+      hits = [];
       C = api.colors();
       LINE_STRONG = C.lineStrong || C.line;
       PAPER2 = C.paper2 || C.paper;
@@ -622,6 +663,7 @@
       var m = next === "time" || next === "neurons" || next === "space" ? next : "space";
       if (m === mode && canvas.getAttribute("aria-label")) return;
       mode = m;
+      paperFig.hidden = mode !== "space";
       canvas.setAttribute("aria-label", ARIA[mode]);
       draw();
     }
