@@ -163,8 +163,8 @@
       c.fillStyle = v === 1 ? C.ink : C.paper;
       c.fill();
       c.shadowColor = "transparent";
-      c.strokeStyle = v === 1 ? V.alpha(C.ink, .95) : C.sky;
-      c.lineWidth = v === 1 ? Math.max(1, r * .10) : Math.max(1.3, r * .18);
+      c.strokeStyle = v === 1 ? C.ink : V.alpha(C.lineStrong, .95);
+      c.lineWidth = Math.max(1, r * .10);
       c.stroke();
       c.restore();
     }
@@ -198,11 +198,7 @@
           var sIdx = v === 0 ? 0 : v === 1 ? 1 : 2;
           addHit(x + col * cell, y + r * cell, cell, cell,
             (DE ? "Feld " : "square ") + squareLabel(r * 8 + col) + ": " + stateName(sIdx));
-          if (v === 0) {
-            c.fillStyle = V.mix(C.paper, C.muted, (r + col) % 2 ? .06 : .10);
-            c.fillRect(x + col * cell + 0.5, y + r * cell + 0.5, cell - 1, cell - 1);
-            continue;
-          }
+          if (v === 0) continue;
           var scale = 1;
           if (opt.pulse) {
             for (var p = 0; p < opt.pulse.length; p++) {
@@ -260,8 +256,8 @@
 
     function drawRangeLine(c, x, y, w, h, probs, opts) {
       var o = opts || {};
-      var labels = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
-      var colors = [V.alpha(C.muted, .35), C.ink, C.sky];
+      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+      var colors = [V.alpha(C.line, .42), C.ink, C.paper];
       var seg = w / 3;
       var win = winIndex(probs);
       for (var i = 0; i < 3; i++) {
@@ -274,7 +270,7 @@
         txt(c, labels[i], x + i * seg + seg / 2, y - 15, {
           align: "center",
           size: o.small ? 9 : 11,
-          color: i === win ? C.gold : C.soft
+          color: i === win ? C.gold : i === 2 ? C.ink : C.muted
         });
         txt(c, V.fmt(probs[i], 2), x + i * seg + seg / 2, y + h + (o.small ? 18 : 24), {
           align: "center",
@@ -355,9 +351,13 @@
       }
       var cy = by + boardS + 22;
       txt(c, DE ? "8 × 8 · schematisch" : "8 × 8 · schematic", bx + boardS / 2, cy, { align: "center", size: 10, color: C.muted });
-      drawStateLegend(c, bx + boardS / 2 - 117, cy + 18, C);
+      txt(c, DE ? "leer · Spieler 1 · Spieler 2" : "empty · player 1 · player 2", bx + boardS / 2, cy + 18, {
+        align: "center",
+        size: 11,
+        color: C.ink
+      });
       var gy = Math.min(cy + 58, H - 20);
-      txt(c, DE ? "Ein Brett, das niemand dem Modell zeigt." : "A board the model is never shown.", pad, gy, { size: 11, color: C.soft });
+      txt(c, DE ? "Ein Brett, das niemand dem Modell zeigt." : "A board the model is never shown.", pad, gy, { size: 11, color: o8 === 1 ? C.gold : o8 === 2 ? C.ink : C.muted });
       if (narrow) {
         var seenN = Math.min(idx, DATA.moves.length);
         var tail = DATA.moves.slice(Math.max(0, seenN - 4), seenN).join(" · ");
@@ -378,29 +378,7 @@
     }
 
     function stateName(idx) {
-      return DE ? ["leer", "schwarz", "weiß"][idx] : ["empty", "black", "white"][idx];
-    }
-
-    function stateColor(idx, C) {
-      return idx === 0 ? C.muted : idx === 1 ? C.ink : C.sky;
-    }
-
-    function drawStateLegend(c, x, y, C) {
-      var items = [
-        { col: V.mix(C.paper, C.muted, .22), label: DE ? "leer" : "empty" },
-        { col: C.ink, label: DE ? "schwarz" : "black" },
-        { col: C.sky, label: DE ? "weiß" : "white" }
-      ];
-      var xx = x;
-      items.forEach(function (item) {
-        c.fillStyle = item.col;
-        c.fillRect(xx, y - 7, 9, 9);
-        c.strokeStyle = V.alpha(C.muted, .45);
-        c.lineWidth = 0.8;
-        c.strokeRect(xx + 0.5, y - 6.5, 8, 8);
-        txt(c, item.label, xx + 13, y - 2, { size: 8.6, color: C.soft });
-        xx += 78;
-      });
+      return DE ? ["leer", "Spieler 1", "Spieler 2"][idx] : ["empty", "player 1", "player 2"][idx];
     }
 
     function probeDir(sq, stateIdx, d) {
@@ -457,7 +435,9 @@
         for (var o = 0; o < 3; o++) {
           var v = SCORES[s][o];
           var t = Math.max(0, Math.min(1, (v + 6) / 12));
-          var col = mixRgb(C.paper2, stateColor(o, C), .08 + .55 * t);
+          var col = o === 0 ? mixRgb(C.paper2, C.blue, .10 + .50 * t)
+            : o === 1 ? mixRgb(C.paper2, C.gold, .10 + .55 * t)
+              : mixRgb(C.paper2, C.ink, .08 + .55 * t);
           c.fillStyle = "rgb(" + col.join(",") + ")";
           c.fillRect(x + o * cw, y + s * ch, cw, ch + .4);
         }
@@ -483,7 +463,7 @@
       for (var r = 0; r < 8; r++) {
         for (var col = 0; col < 8; col++) {
           var p = PROBS[r * 8 + col][stateIdx];
-          var tint = stateColor(stateIdx, C);
+          var tint = stateIdx === 0 ? C.blue : stateIdx === 1 ? C.gold : C.ink;
           c.fillStyle = V.mix(C.paper2, tint, Math.min(1, p * 1.05));
           c.fillRect(x + col * cell, y + r * cell, cell, cell);
           c.strokeStyle = V.alpha(C.line, .18);
@@ -544,7 +524,7 @@
     }
 
     function drawResultTile(c, x, y, size, stateIdx) {
-      c.fillStyle = stateIdx === 0 ? V.mix(C.paper, C.muted, .10) : C.paper;
+      c.fillStyle = C.paper;
       c.fillRect(x, y, size, size);
       c.strokeStyle = V.alpha(C.lineStrong, .75);
       c.lineWidth = 1;
@@ -577,20 +557,19 @@
         ["Was macht der Probe pro Feld?", "Für jedes Feld und jeden Zustand eine eigene Richtung."],
         ["Wie entsteht ein Score?", "Skalarprodukt: Zahl für Zahl multiplizieren und summieren."],
         ["Warum Softmax?", "Drei Scores werden zu drei Wahrscheinlichkeiten; Argmax wählt."],
-        ["Wie wird daraus ein Feld?", "Der Argmax für E4 ergibt den Zustand dieses Feldes."],
+        ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten pro Feld. Argmax wählt die größte."],
         ["Und das ganze Brett?", "Dasselbe für alle 64 Felder; das Ergebnis ist das Brett."]
       ] : [
         ["What is the activation?", "The state after layer 6: 512 numbers per token."],
         ["What does the probe do per square?", "For every square and state it learns a different direction."],
         ["How does a score arise?", "Dot product: multiply number by number, then sum."],
         ["Why softmax?", "Three scores become three probabilities; argmax picks one."],
-        ["How does that become a square?", "The argmax for E4 gives the state of that square."],
+        ["How does that become a square?", "Three probabilities per square. Argmax picks the largest."],
         ["And the whole board?", "The same for all 64 squares; the result is the board."]
       ];
       head(c, DE ? "Vom Zug zum Brett" : "From move to board", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
       txt(c, questions[phase][0], pad, 60, { size: narrow ? 13 : 15, font: '700 ' + (narrow ? 13 : 15) + 'px "Barlow", "Open Sans", sans-serif', color: C.ink });
       txt(c, questions[phase][1], pad, 78, { size: 10.2, color: C.muted });
-      if (!narrow) drawStateLegend(c, W - pad - 234, 32, C);
       if (phase === 0) {
         var bx = pad, by = 100;
         c.fillStyle = C.petrol;
@@ -712,11 +691,14 @@
         var stateIdx = e4State;
         if (narrow) {
           drawResultTile(c, pad, 110, 150, stateIdx);
+          txt(c, DE ? "Argmax wählt die größte." : "Argmax picks the largest.", pad, 272, { size: 9.2, color: C.soft });
           var bs7 = 190, bx7 = (W - bs7) / 2, by7 = 300;
           drawBoard(c, TRUTH, bx7, by7, bs7, { highlight: [4, 4] });
           txt(c, "E4 = " + stateName(stateIdx), bx7 + bs7 / 2, by7 - 12, { align: "center", size: 10, color: C.ink });
         } else {
           drawResultTile(c, pad, 120, 180, stateIdx);
+          drawRangeLine(c, pad, 330, W * .45, 18, probs, { small: true });
+          txt(c, DE ? "Argmax: Die größte der drei Wahrscheinlichkeiten wird der Zustand von E4." : "Argmax: the largest of the three probabilities becomes the state of E4.", pad, 382, { size: 9.2, color: C.soft });
           var bs8 = 220, bx8 = W - pad - bs8, by8 = 110;
           drawBoard(c, TRUTH, bx8, by8, bs8, { highlight: [4, 4] });
           txt(c, "E4 = " + stateName(stateIdx), bx8 + bs8 / 2, by8 - 12, { align: "center", size: 10, color: C.ink });
@@ -726,9 +708,9 @@
         if (narrow) {
           drawLogitsColumn(c, pad, 110, 44, 160, e4);
           var hs = 80, gap = 8;
-          var labels = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
+          var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
           for (var o8 = 0; o8 < 3; o8++) {
-            txt(c, labels[o8], pad + 60 + o8 * (hs + gap) + hs / 2, 100, { align: "center", size: 8.5, color: C.soft });
+            txt(c, labels[o8], pad + 60 + o8 * (hs + gap) + hs / 2, 100, { align: "center", size: 8.5, color: o8 === 1 ? C.gold : o8 === 2 ? C.ink : C.muted });
             drawProbGrid(c, pad + 60 + o8 * (hs + gap), 110, hs, o8, e4);
           }
           var bs9 = 160, bx9 = (W - bs9) / 2, by9 = 300;
@@ -737,9 +719,9 @@
         } else {
           drawLogitsColumn(c, pad, 110, 54, 200, e4);
           var hs2 = 90, gap2 = 10;
-          var labels2 = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
+          var labels2 = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
           for (var o9 = 0; o9 < 3; o9++) {
-            txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: C.soft });
+            txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted });
             drawProbGrid(c, pad + 80 + o9 * (hs2 + gap2), 110, hs2, o9, e4);
           }
           var bs10 = 220, bx10 = W - pad - bs10, by10 = 110;
@@ -783,12 +765,12 @@
 
     function drawLineNode(c, cx, cy, w) {
       var seg = w / 3;
-      var labels = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
-      var colors = [V.alpha(C.muted, .35), C.ink, C.sky];
+      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+      var colors = [V.alpha(C.line, .45), C.ink, C.paper];
       for (var i = 0; i < 3; i++) {
         c.fillStyle = colors[i];
         c.fillRect(cx - w / 2 + i * seg, cy - 8, seg, 16);
-        c.strokeStyle = i === 0 ? V.alpha(C.lineStrong, .75) : i === 1 ? C.ink : C.sky;
+        c.strokeStyle = i === 1 ? C.gold : V.alpha(C.lineStrong, .75);
         c.lineWidth = 1;
         c.strokeRect(cx - w / 2 + i * seg + .5, cy - 7.5, seg - 1, 15);
         txt(c, labels[i], cx - w / 2 + i * seg + seg / 2, cy - 19, { align: "center", size: 8.5, color: i === 1 ? C.gold : i === 2 ? C.ink : C.muted });
