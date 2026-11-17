@@ -583,6 +583,16 @@
         c.restore();
       }
 
+      for (i = 0; i < 4; i++) {
+        var qv = Math.round(i * 113 / 4);
+        var qa = base + i * Math.PI / 2;
+        txt(c, String(qv), cx + Math.cos(qa) * r * 0.78, cy + Math.sin(qa) * r * 0.78, {
+          align: "center",
+          size: small ? 7.2 : 7.8,
+          color: C.muted
+        });
+      }
+
       c.save();
       c.strokeStyle = V.alpha(C.gold, 0.8);
       c.lineWidth = 2.2;
@@ -615,9 +625,9 @@
           color: color
         });
       }
-      tipLabel("a", aa, C.green);
-      tipLabel("b", ab, C.sky);
-      tipLabel(t < 0.999 ? "a + b·t" : "c", ar, C.gold);
+      tipLabel("a=" + a, aa, C.green);
+      tipLabel("b=" + b, ab, C.sky);
+      tipLabel(t < 0.999 ? "a+b·t" : "c=" + Math.round(cval), ar, C.gold);
 
       if (t < 0.999) {
         var mid = (aa + ar) / 2;

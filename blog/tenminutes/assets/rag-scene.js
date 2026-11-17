@@ -6,6 +6,12 @@
     var el = document.createElement("div");
     el.className = "ls-rag-scene";
     el.innerHTML = '<div class="ls-rag-query"><span>' + (DE ? "Frage" : "Query") + '</span><b>' + (DE ? "Warum ist der Himmel blau?" : "Why is the sky blue?") + '</b></div>' +
+      '<div class="ls-rag-pipeline" role="list" aria-label="' + (DE ? "RAG-Schritte" : "RAG steps") + '">' +
+        '<div class="ls-rag-step" role="listitem"><b>1</b>' + (DE ? "Suchen" : "Search") + '</div>' +
+        '<div class="ls-rag-step" role="listitem"><b>2</b>' + (DE ? "Ranken" : "Rank") + '</div>' +
+        '<div class="ls-rag-step" role="listitem"><b>3</b>' + (DE ? "Einsetzen" : "Insert") + '</div>' +
+        '<div class="ls-rag-step" role="listitem"><b>4</b>' + (DE ? "Antworten" : "Answer") + '</div>' +
+      '</div>' +
       '<div class="ls-rag-space"><canvas class="ls-rag-canvas" role="img"></canvas></div>' +
       '<div class="ls-rag-chunks"></div>' +
       '<div class="ls-rag-context" aria-live="polite"></div>' +
@@ -30,6 +36,7 @@
     var canvas = el.querySelector(".ls-rag-canvas");
     var spaceSize = null;
     var chunksEl = el.querySelector(".ls-rag-chunks");
+    var pipelineEl = el.querySelector(".ls-rag-pipeline");
     var contextEl = el.querySelector(".ls-rag-context");
     var answerEl = el.querySelector(".ls-rag-answer");
     var prevBtn = el.querySelector(".ls-rag-prev");
@@ -86,9 +93,24 @@
       chunksEl.querySelectorAll("[data-chunk]").forEach(function (b) {
         b.addEventListener("click", function () { selected[b.getAttribute("data-chunk")] = !selected[b.getAttribute("data-chunk")]; render(); });
       });
+      var pipelineSteps = pipelineEl ? pipelineEl.querySelectorAll(".ls-rag-step") : [];
+      for (var ps = 0; ps < pipelineSteps.length; ps++) pipelineSteps[ps].classList.toggle("is-on", ps === step);
       var picked = chunks.filter(function (c) { return selected[c.id]; });
-      contextEl.innerHTML = step >= 2 ? '<div class="ls-rag-context-head">' + (DE ? "Eingefügter Kontext" : "Inserted context") + '</div>' + picked.map(function (c, i) { return '<p><b>[' + (i + 1) + ']</b> ' + api.esc(c.text) + '</p>'; }).join("") : '<div class="ls-rag-context-head">' + (DE ? "Noch nichts eingefügt" : "Nothing inserted yet") + '</div><p>' + (DE ? "Die Suche findet Chunks; erst danach landen sie im Kontext." : "Retrieval finds chunks; only then do they enter the context.") + '</p>';
-      answerEl.innerHTML = step >= 3 ? '<div class="ls-rag-answer-head">' + (DE ? "Antwort mit Quellen" : "Answer with sources") + '</div><p>' + (DE ? "Der Himmel ist blau, weil Luftmoleküle kurzwelliges blaues Licht stärker streuen als rotes. [1] Die Rayleigh-Streuung beschreibt diesen Effekt. [2]" : "The sky is blue because air molecules scatter short-wavelength blue light more strongly than red. [1] Rayleigh scattering describes this effect. [2]") + '</p><div class="ls-rag-agent">' + (DE ? "Agent: suchen → lesen → einsetzen → antworten" : "Agent: search → read → insert → answer") + '</div>' : "";
+      var citeById = {};
+      picked.forEach(function (c, i) { citeById[c.id] = i + 1; });
+      function cite(id) {
+        if (!citeById[id]) return "";
+        return '<button type="button" class="ls-rag-cite" data-cite="' + id + '">[' + citeById[id] + ']</button>';
+      }
+      contextEl.innerHTML = step >= 2 ? '<div class="ls-rag-context-head">' + (DE ? "Eingefügter Kontext" : "Inserted context") + '</div>' + picked.map(function (c, i) { return '<p data-cite="' + c.id + '"><b>[' + (i + 1) + ']</b> ' + api.esc(c.text) + '</p>'; }).join("") : '<div class="ls-rag-context-head">' + (DE ? "Noch nichts eingefügt" : "Nothing inserted yet") + '</div><p>' + (DE ? "Die Suche findet Chunks; erst danach landen sie im Kontext." : "Retrieval finds chunks; only then do they enter the context.") + '</p>';
+      answerEl.innerHTML = step >= 3 ? '<div class="ls-rag-answer-head">' + (DE ? "Antwort mit Quellen" : "Answer with sources") + '</div><p>' + (DE ? "Der Himmel ist blau, weil Luftmoleküle kurzwelliges blaues Licht stärker streuen als rotes. " : "The sky is blue because air molecules scatter short-wavelength blue light more strongly than red. ") + cite("a") + (DE ? " Die Rayleigh-Streuung beschreibt diesen Effekt. " : " Rayleigh scattering describes this effect. ") + cite("b") + '</p><div class="ls-rag-agent">' + (DE ? "Klicke [1] oder [2], um die Quelle zu sehen." : "Click [1] or [2] to see the source.") + '</div>' : "";
+      answerEl.querySelectorAll("[data-cite]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-cite");
+          chunksEl.querySelectorAll("[data-chunk]").forEach(function (b) { b.classList.toggle("is-cited", b.getAttribute("data-chunk") === id); });
+          contextEl.querySelectorAll("[data-cite]").forEach(function (p) { p.classList.toggle("is-cited", p.getAttribute("data-cite") === id); });
+        });
+      });
       progress.textContent = (step + 1) + " / 4";
       prevBtn.disabled = step === 0;
       nextBtn.textContent = step === 3 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");

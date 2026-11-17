@@ -159,10 +159,19 @@
         ]
       }
     ];
+    var STRANDS = [
+      { label: DE ? "Zählen" : "Counting", color: "#5c9baf" },
+      { label: DE ? "Logik" : "Logic", color: "#9f9700" },
+      { label: DE ? "Maschinen" : "Machines", color: "#1275ac" },
+      { label: DE ? "Lernen" : "Learning", color: "#63a44b" },
+      { label: DE ? "Hardware" : "Hardware", color: "#9185be" }
+    ];
+    var TAB_STRAND = [0, 0, 1, 2, 3, 3, 3, 4, 2, 3];
     var index = 0;
     var el = document.createElement("div");
     el.className = "ls-history-scene";
     el.innerHTML = '<div class="ls-history-head"><span class="ls-history-kicker">' + (DE ? "Geschichte in zehn Schritten" : "History in ten steps") + '</span><span class="ls-history-hint">' + (DE ? "Tab wählen" : "Choose a tab") + '</span></div>' +
+      '<div class="ls-history-legend" aria-hidden="true">' + STRANDS.map(function (st) { return '<span><i style="background:' + st.color + '"></i>' + st.label + '</span>'; }).join("") + '</div>' +
       '<div class="ls-history-tabs" role="tablist" aria-label="' + (DE ? "Geschichte" : "History") + '"></div>' +
       '<div class="ls-history-panel" role="tabpanel" aria-live="polite"></div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-history-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-history-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-history-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
@@ -218,7 +227,8 @@
     function render() {
       index = Math.max(0, Math.min(tabs.length - 1, index));
       track.innerHTML = tabs.map(function (t, i) {
-        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" role="tab" aria-selected="' + (i === index ? 'true' : 'false') + '" data-history="' + i + '"><b>' + api.esc(t.year) + '</b><span>' + api.esc(t.label) + '</span></button>';
+        var st = STRANDS[TAB_STRAND[i] || 0];
+        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" role="tab" aria-selected="' + (i === index ? 'true' : 'false') + '" data-history="' + i + '" style="--strand-color:' + st.color + '"><b>' + api.esc(t.year) + '</b><span>' + api.esc(t.label) + '</span></button>';
       }).join("");
       track.querySelectorAll("[data-history]").forEach(function (b) {
         b.addEventListener("click", function () { setIndex(parseInt(b.getAttribute("data-history"), 10)); });

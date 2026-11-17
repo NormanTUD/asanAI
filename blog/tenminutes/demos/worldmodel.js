@@ -312,6 +312,50 @@
         pulse: f.move ? f.move.flips : null,
         local: (state.t / 3.0) % 1
       });
+      if (!narrow) {
+        var listX = pad;
+        var listY = 106;
+        var listW = Math.max(110, bx - pad - 26);
+        var seen = Math.min(idx, DATA.moves.length);
+        var show = Math.min(7, seen);
+        txt(c, DE ? "Was das Modell sieht: nur Züge" : "What the model sees: moves only", listX, listY - 8, {
+          size: 9.4,
+          color: C.muted
+        });
+        if (!show) {
+          txt(c, DE ? "noch keine Züge" : "no moves yet", listX, listY + 14, { size: 9, color: C.muted });
+        }
+        for (var mi = 0; mi < show; mi++) {
+          var moveIdx = seen - show + mi;
+          var my = listY + 8 + mi * 22;
+          var isLast = moveIdx === seen - 1;
+          c.fillStyle = isLast ? V.alpha(C.gold, .16) : V.alpha(C.paper, .72);
+          c.fillRect(listX, my, listW, 18);
+          c.strokeStyle = isLast ? C.gold : V.alpha(C.lineStrong, .85);
+          c.lineWidth = isLast ? 1.6 : 1;
+          c.strokeRect(listX + .5, my + .5, listW - 1, 17);
+          txt(c, DATA.moves[moveIdx], listX + 8, my + 9, {
+            size: 9.4,
+            font: '700 9.4px "Barlow", "Open Sans", sans-serif',
+            color: isLast ? C.ink : C.soft
+          });
+          if (isLast) {
+            txt(c, DE ? "aktuell" : "current", listX + listW - 7, my + 9, {
+              align: "right",
+              size: 7.4,
+              color: C.petrol
+            });
+          }
+        }
+        if (show) {
+          var arrowY = listY + 8 + show * 11;
+          V.arrow(c, listX + listW + 4, arrowY, bx - 8, arrowY, V.alpha(C.petrol, .62), 1.2, 5);
+          txt(c, DE ? "Zugfolge" : "move stream", listX + listW + 6, arrowY - 8, {
+            size: 7.6,
+            color: C.petrol
+          });
+        }
+      }
       var cy = by + boardS + 22;
       txt(c, DE ? "8 × 8 · schematisch" : "8 × 8 · schematic", bx + boardS / 2, cy, { align: "center", size: 10, color: C.muted });
       txt(c, DE ? "leer · Spieler 1 · Spieler 2" : "empty · player 1 · player 2", bx + boardS / 2, cy + 18, {
@@ -321,6 +365,14 @@
       });
       var gy = Math.min(cy + 58, H - 20);
       txt(c, DE ? "Ein Brett, das niemand dem Modell zeigt." : "A board the model is never shown.", pad, gy, { size: 11, color: C.soft });
+      if (narrow) {
+        var seenN = Math.min(idx, DATA.moves.length);
+        var tail = DATA.moves.slice(Math.max(0, seenN - 4), seenN).join(" · ");
+        txt(c, (DE ? "gesehen: " : "seen: ") + (tail || "–"), pad, Math.min(gy + 20, H - 6), {
+          size: 8.6,
+          color: C.petrol
+        });
+      }
     }
 
     function mixRgb(a, b, t) {
@@ -431,13 +483,44 @@
 
     function drawStageDots(c, phase) {
       var n = 6;
-      var total = n * 9 + (n - 1) * 4;
-      var x = W / 2 - total / 2;
+      var labels = DE ? ["x", "Probe", "Σ", "Softmax", "Feld", "Brett"] : ["x", "probe", "Σ", "softmax", "square", "board"];
+      var small = W < 620;
+      var railW = Math.min(W - 2 * (small ? 22 : 48), 620);
+      var x0 = W / 2 - railW / 2;
+      var y = H - 24;
+      c.save();
+      c.strokeStyle = V.alpha(C.lineStrong, .7);
+      c.lineWidth = 1.2;
+      c.beginPath();
+      c.moveTo(x0, y);
+      c.lineTo(x0 + railW, y);
+      c.stroke();
+      c.restore();
       for (var i = 0; i < n; i++) {
-        c.fillStyle = i < phase ? V.alpha(C.blue, .60) : i === phase ? C.gold : V.alpha(C.line, .50);
-        c.fillRect(x + i * 13, H - 14, 9, 9);
+        var nx = x0 + railW * i / (n - 1);
+        var done = i < phase;
+        var active = i === phase;
+        c.save();
+        c.fillStyle = active ? C.gold : done ? C.petrol : C.paper;
+        c.strokeStyle = active ? C.gold : done ? C.petrol : V.alpha(C.lineStrong, .9);
+        c.lineWidth = active ? 2 : 1;
+        c.beginPath();
+        c.arc(nx, y, active ? 5 : 4, 0, Math.PI * 2);
+        c.fill();
+        c.stroke();
+        c.restore();
+        txt(c, labels[i], nx, y - 15, {
+          align: "center",
+          size: small ? 6.8 : 7.8,
+          color: active ? C.ink : done ? C.petrol : C.muted,
+          font: (active ? '700 ' : '600 ') + (small ? 6.8 : 7.8) + 'px "Open Sans", sans-serif'
+        });
       }
-      txt(c, phase >= 5 ? (DE ? "Fertig" : "done") : (DE ? "Schritt " + (phase + 1) + " / 6" : "step " + (phase + 1) + " / 6"), W / 2, H - 27, { align: "center", size: 9, color: C.muted });
+      txt(c, phase >= 5 ? (DE ? "fertig" : "done") : (DE ? "Schritt " + (phase + 1) + " / 6" : "step " + (phase + 1) + " / 6"), W - (small ? 22 : 48), y + 14, {
+        align: "right",
+        size: 8,
+        color: C.muted
+      });
     }
 
     function drawResultTile(c, x, y, size, stateIdx) {

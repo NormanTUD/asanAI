@@ -90,6 +90,11 @@
     el.className = "ls-con-notes";
     el.innerHTML =
       '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Fünf Theorien, eine offene Frage" : "Five theories, one open question") + '</b><p class="ls-con-sub">' + (DE ? "Klicke eine Theorie oder drücke →. Jede erklärt etwas anderes; keine erklärt Qualia." : "Click a theory or press →. Each explains something different; none explains qualia.") + '</p></div>' +
+      '<div class="ls-con-map" aria-label="' + (DE ? "Zugang ist funktional erklärbar, Erleben bleibt offen" : "Access is functionally explainable, experience remains open") + '">' +
+        '<div class="ls-con-map-box"><b>' + (DE ? "Zugang" : "Access") + '</b><span>' + (DE ? "Bericht · Kontrolle · Aufmerksamkeit" : "report · control · attention") + '</span><em>' + (DE ? "funktional erklärbar" : "functionally explainable") + '</em></div>' +
+        '<div class="ls-con-map-gap" aria-hidden="true">?</div>' +
+        '<div class="ls-con-map-box is-open"><b>' + (DE ? "Erleben" : "Experience") + '</b><span>' + (DE ? "Qualia · „wie es sich anfühlt“" : "qualia · “what it feels like”") + '</span><em>' + (DE ? "offen" : "open") + '</em></div>' +
+      '</div>' +
       '<div class="ls-con-body"><div class="ls-con-list" role="tablist" aria-label="' + (DE ? "Bewusstseinstheorien" : "Theories of consciousness") + '"></div><article class="ls-con-detail" aria-live="polite"></article></div>' +
       '<section class="ls-con-open"><div class="ls-con-open-head"><span>' + (DE ? "Offen" : "Open") + '</span><b>' + (DE ? "Was wir nicht wissen" : "What we do not know") + '</b><p>' + esc(OPEN.lead) + '</p></div><div class="ls-con-open-grid">' +
         OPEN.items.map(function (item) { return '<div><b>' + esc(item[0]) + '</b><p>' + esc(item[1]) + '</p></div>'; }).join("") +

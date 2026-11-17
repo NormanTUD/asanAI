@@ -201,6 +201,49 @@
       });
     }
 
+    function drawProjectionHistogram(c, map) {
+      var axisY = map.sy(0);
+      var x0 = map.sx(-2.2), x1 = map.sx(2.2);
+      var bins = 18;
+      var bw = (x1 - x0) / bins;
+      var neg = [], pos = [], i;
+      for (i = 0; i < bins; i++) { neg.push(0); pos.push(0); }
+      function add(arr, v) {
+        var k = Math.floor((clamp(v, -2.2, 2.2) + 2.2) / 4.4 * bins);
+        k = Math.max(0, Math.min(bins - 1, k));
+        arr[k]++;
+      }
+      for (i = 0; i < NEG.length; i++) add(neg, NEG[i].x);
+      for (i = 0; i < POS.length; i++) add(pos, POS[i].x);
+      var max = 1;
+      for (i = 0; i < bins; i++) max = Math.max(max, neg[i], pos[i]);
+      var hMax = Math.min(46, Math.max(24, H * 0.075));
+      c.save();
+      for (i = 0; i < bins; i++) {
+        var x = x0 + i * bw;
+        if (pos[i]) {
+          var hp = pos[i] / max * hMax;
+          c.fillStyle = rgba(C.green, 0.22);
+          c.fillRect(x + 0.5, axisY - hp, Math.max(1, bw - 1), hp);
+        }
+        if (neg[i]) {
+          var hn = neg[i] / max * hMax;
+          c.fillStyle = rgba(C.lilac, 0.22);
+          c.fillRect(x + 0.5, axisY + 1, Math.max(1, bw - 1), hn);
+        }
+      }
+      c.restore();
+      drawText(c, DE ? "Projektionen auf w" : "projections onto w", x0, axisY - hMax - 9, {
+        size: 8.8,
+        color: C.muted
+      });
+      drawText(c, DE ? "positiv" : "positive", x1, axisY - hMax - 9, {
+        align: "right",
+        size: 8.8,
+        color: C.green
+      });
+    }
+
     function drawClouds(c, map) {
       var neg = [], pos = [];
       for (var i = 0; i < NEG.length; i++) {
@@ -245,6 +288,7 @@
         color: C.gold
       });
       drawAxis(c, map);
+      drawProjectionHistogram(c, map);
       drawClouds(c, map);
 
       var ax = clamp(alpha, -1.2, 1.2);

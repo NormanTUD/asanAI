@@ -2479,3 +2479,71 @@ h1,h2,h3,h4{
 #ls-demo[data-scene="rag"] .ls-rag-chunk.is-on{border-color:var(--ls-petrol);background:rgba(0,75,111,.055)}
 #ls-demo[data-scene="rag"] .ls-rag-bar{background:linear-gradient(90deg,var(--ls-petrol),var(--ls-green))}
 #ls-demo[data-scene="consciousness"] .ls-con-detail{box-shadow:0 10px 26px rgba(0,30,40,.055)}
+
+/* RAG: the four-step pipeline is the visual spine of the scene. */
+.ls-rag-pipeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--ls-line);background:#fff}
+.ls-rag-step{display:flex;align-items:center;gap:6px;padding:7px 8px;border-right:1px solid var(--ls-line);font:700 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-muted);min-width:0}
+.ls-rag-step:last-child{border-right:0}
+.ls-rag-step b{display:grid;place-items:center;flex:0 0 auto;width:17px;height:17px;background:var(--ls-line);color:var(--ls-soft);font:700 9px/1 "Open Sans",sans-serif}
+.ls-rag-step.is-on{background:rgba(0,75,111,.065);color:var(--ls-petrol)}
+.ls-rag-step.is-on b{background:var(--ls-petrol);color:#fff}
+@media(max-width:640px){.ls-rag-step{padding:6px 5px;font-size:calc(var(--ls-fs-micro) * .92);gap:4px}.ls-rag-step b{width:15px;height:15px}}
+
+/* History: the tab strip reads as a timeline when it has a rail and dots. */
+@media(min-width:760px){
+  #ls-demo[data-scene="history"] .ls-history-tabs{position:relative;padding-top:10px}
+  #ls-demo[data-scene="history"] .ls-history-tabs::before{content:"";position:absolute;left:0;right:0;top:4px;height:2px;background:linear-gradient(90deg,rgba(0,75,111,.18),rgba(0,75,111,.55),rgba(92,155,175,.45),rgba(0,75,111,.18));pointer-events:none}
+  #ls-demo[data-scene="history"] .ls-history-node{position:relative}
+  #ls-demo[data-scene="history"] .ls-history-node::before{content:"";position:absolute;left:50%;top:-8px;width:7px;height:7px;background:var(--ls-paper);border:1px solid var(--ls-petrol);transform:translateX(-50%);z-index:2}
+  #ls-demo[data-scene="history"] .ls-history-node.is-on::before{background:var(--ls-petrol);box-shadow:0 0 0 3px rgba(0,75,111,.14)}
+}
+
+/* Chinese Room: a compact outside/inside schematic above the interactive table. */
+.ls-cr-diagram{margin:0 0 6px;border:1px solid rgba(0,75,111,.12);background:rgba(255,255,255,.72);padding:5px 7px}
+.ls-cr-diagram svg{display:block;width:100%;height:auto;max-height:104px}
+.ls-cr-diagram-caption{display:flex;justify-content:space-between;gap:8px;margin-top:2px;font:600 8px/1.25 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-cr-diagram-caption span:last-child{text-align:right;color:var(--ls-petrol)}
+
+/* Risk register: make the 2x2 axes explicit. */
+.ls-rm-axes{display:flex;justify-content:space-between;gap:8px;padding:3px 2px;border-top:1px solid var(--ls-line);border-bottom:1px solid var(--ls-line);font:600 8px/1.3 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-rm-axes span:last-child{text-align:right}
+
+/* Consciousness: the easy/hard-problem split as a small map. */
+.ls-con-map{display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);border:1px solid var(--ls-line);background:#fff;box-shadow:0 8px 22px rgba(0,30,40,.045)}
+.ls-con-map-box{display:grid;gap:2px;padding:9px 11px;min-width:0}
+.ls-con-map-box b{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-con-map-box span{font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-con-map-box em{font:700 8px/1.2 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-green);font-style:normal}
+.ls-con-map-box.is-open{background:rgba(0,75,111,.045)}
+.ls-con-map-box.is-open b{color:var(--ls-ink)}
+.ls-con-map-box.is-open em{color:var(--ls-lilac)}
+.ls-con-map-gap{display:grid;place-items:center;border-left:1px dashed var(--ls-line-strong);border-right:1px dashed var(--ls-line-strong);font:700 18px/1 "Barlow",sans-serif;color:var(--ls-petrol)}
+@media(max-width:640px){.ls-con-map{grid-template-columns:1fr}.ls-con-map-gap{height:24px;border-left:0;border-right:0;border-top:1px dashed var(--ls-line-strong);border-bottom:1px dashed var(--ls-line-strong)}}
+
+/* RAG: answer citations point back to the inserted chunk. */
+.ls-rag-cite{display:inline;border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-petrol);padding:0 3px;margin:0 1px;font:700 9px/1.5 "Open Sans",sans-serif;cursor:pointer;border-radius:0}
+.ls-rag-cite:hover{border-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
+.ls-rag-chunk.is-cited{border-color:var(--ls-petrol);box-shadow:inset 0 0 0 1px var(--ls-petrol)}
+.ls-rag-context p.is-cited{background:rgba(0,75,111,.06);box-shadow:inset 3px 0 0 var(--ls-petrol);padding-left:6px}
+
+/* History: colour the timeline dots by strand and name the strands. */
+.ls-history-legend{display:flex;flex-wrap:wrap;gap:5px 10px;font:600 8px/1.2 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-history-legend span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.ls-history-legend i{display:block;width:6px;height:6px}
+#ls-demo[data-scene="history"] .ls-history-node::before{background:var(--strand-color,var(--ls-paper));border-color:var(--strand-color,var(--ls-petrol))}
+#ls-demo[data-scene="history"] .ls-history-node.is-on::before{background:var(--strand-color,var(--ls-petrol));box-shadow:0 0 0 3px rgba(0,75,111,.14)}
+
+/* Chinese Room: highlight the system boundary and reveal the systems reply. */
+.ls-cr-system-btn{align-self:start;margin-top:4px;border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-petrol);padding:3px 7px;font:600 8px/1.2 "Open Sans",sans-serif;cursor:pointer;border-radius:0}
+.ls-cr-system-btn:hover{border-color:var(--ls-petrol);background:rgba(0,75,111,.05)}
+.ls-cr-system-note{display:none;margin-top:5px;padding:6px 8px;border-left:3px solid var(--ls-petrol);background:rgba(0,75,111,.055);font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-cr-diagram.is-system svg rect[data-room]{stroke-width:2.4;stroke-dasharray:none;fill:rgba(0,75,111,.045)}
+.ls-cr-diagram.is-system .ls-cr-system-note{display:block}
+
+/* Risk register: a faint crosshair turns the card grid into a 2x2 map. */
+#ls-demo[data-scene="riskmap"] .ls-rm-grid--risks{position:relative}
+#ls-demo[data-scene="riskmap"] .ls-rm-grid--risks::before,
+#ls-demo[data-scene="riskmap"] .ls-rm-grid--risks::after{content:"";position:absolute;background:rgba(0,75,111,.16);pointer-events:none;z-index:0}
+#ls-demo[data-scene="riskmap"] .ls-rm-grid--risks::before{left:50%;top:0;bottom:0;width:1px}
+#ls-demo[data-scene="riskmap"] .ls-rm-grid--risks::after{top:50%;left:0;right:0;height:1px}
+#ls-demo[data-scene="riskmap"] .ls-rm-grid--risks .ls-rm-card{position:relative;z-index:1}

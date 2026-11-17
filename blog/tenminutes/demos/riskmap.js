@@ -133,7 +133,8 @@
         '<div class="ls-rm-fix"><b>' + (DE ? "So wird man sie los" : "How to get rid of it") + ':</b> ' + esc(item.countermeasure) + '</div>' +
         '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite) + '</span>' +
       '</div>';
-      el.innerHTML = header(d) + '<div class="ls-rm-grid ls-rm-grid--risks">' + cards + '</div>' + detail;
+      var axes = '<div class="ls-rm-axes"><span>' + (DE ? "links Absicht · rechts Unfall" : "left intent · right accident") + '</span><span>' + (DE ? "oben Heute · unten Zukunft" : "top today · bottom future") + '</span></div>';
+      el.innerHTML = header(d) + axes + '<div class="ls-rm-grid ls-rm-grid--risks">' + cards + '</div>' + detail;
     }
     function render() {
       var d = modeData();
