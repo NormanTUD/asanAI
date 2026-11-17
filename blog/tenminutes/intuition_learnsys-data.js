@@ -936,40 +936,6 @@
 
   var stackSteps = [];
 
-  var trajectorySteps = DE ? [
-    {
-      kicker: "GPT-2",
-      title: "Token-Trajektorien durch GPT-2",
-      body: "Echte Hidden States aus GPT-2 small für „The capital of France is“. Jede Linie folgt einem Token durch das Embedding und 12 Blöcke. Jeder Zustand hat 768 Dimensionen, zu viele für ein Bild, deshalb ist das nicht die echte Bewegung: PCA behält die drei Richtungen, in denen sich die Zustände am stärksten ändern, und flacht alles darauf ab. Die 3D-Punkte sind ein Schatten. Die Top-Vorhersage ist „ the“ (Leerzeichen plus the), aber „Paris“ liegt schon in der Nähe, obwohl es erst nach dem Leerzeichen käme. Das sind echte Messungen aus GPT-2 small, keine erfundenen Punkte.",
-      watch: "Bewege den Layer-Regler. Ab wann wird „Paris“ die Top-Wahl?",
-      demoState: { scene: "trajectories" },
-      context: "Die Winkelansicht ist der Standard. Das ist eine andere Metrik als der gewohnte euklidische Abstand: Das Modell vergleicht am Ende Richtungen, nicht Längen, deshalb ist der Großkreis hier relevant. „Plausibel“ heißt: Die Fortsetzung ist im Trainingstext häufig, nicht dass sie wahr ist.",
-      deep: "Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Eine flach aussehende Biegung kann eine große Bewegung verbergen. Die Kandidaten erscheinen erst in der letzten Schicht.",
-      boxes: [
-        box("traj-1", "Technik", "Was ist PCA?", "PCA projiziert die 768-dimensionalen Zustände auf die drei Richtungen mit der größten Varianz. Das ist eine lesbare Projektion, keine vollständige Rekonstruktion."),
-        box("traj-2", "Grenze", "Was zeigt die Linie nicht?", "Sie zeigt nicht den echten Weg im 768-dimensionalen Raum. Sie zeigt einen Schatten, der die größten Änderungen sichtbar macht."),
-        box("traj-3", "Metrik", "Warum Winkel statt Euklid?", "Am Ende zählt die Richtung des Zustands im Vektorraum, nicht seine Länge. Die Winkelansicht projiziert die Punkte auf die Einheitskugel und misst den Großkreis. Das ist eine andere Metrik als der gewohnte euklidische Abstand.")
-      ],
-      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }]
-    }
-  ] : [
-    {
-      kicker: "GPT-2",
-      title: "Token trajectories through GPT-2",
-      body: "Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow. The top prediction is “ the” (space plus the), but “Paris” is already nearby, even though it would only come after the space. These are real measurements from GPT-2 small, not invented points.",
-      watch: "Move the layer slider. When does “Paris” become the top choice?",
-      demoState: { scene: "trajectories" },
-      context: "The angular view is the default. This is a different metric from the usual Euclidean distance: at the end the model compares directions, not lengths, so the great circle is relevant here. “Plausible” means the continuation is frequent in the training text, not that it is true.",
-      deep: "Lines that cross on screen need not touch in the full space. A flat-looking bend can hide a large move. The candidates appear only at the final layer.",
-      boxes: [
-        box("traj-1", "Technique", "What is PCA?", "PCA projects the 768-dimensional states onto the three directions with the most variance. It is a readable projection, not a complete reconstruction."),
-        box("traj-2", "Limit", "What does the line not show?", "It does not show the real path in the 768-dimensional space. It shows a shadow that makes the largest changes visible."),
-        box("traj-3", "Metric", "Why angles instead of Euclid?", "At the end, the direction of the state in the vector space matters, not its length. The angle view projects the points onto the unit sphere and measures the great circle. That is a different metric from the usual Euclidean distance.")
-      ],
-      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }]
-    }
-  ];
-
   var wholeSteps = [];
 
   var activationSteps = DE ? [
@@ -2617,7 +2583,7 @@
     substeps: [spacetimeSpace, spacetimeTime, spacetimeNeurons]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, sentimentStep, grokkingStep, spacetimeStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, sentimentStep, grokkingStep, spacetimeStep];
 
   var day = {
     id: "intuition",
@@ -2643,7 +2609,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-17-worldmodel-merged-5",
+    overlayRevision: "2026-11-17-no-trajectories-6",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.
