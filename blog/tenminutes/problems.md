@@ -1,27 +1,42 @@
 # Prüfbericht: faktische und technische Probleme
 
-Stand: 17. November 2026  
-Geprüfte Fassung: deutsche Laufzeitfassung von `intuition_learnsys.php`  
-Volltext-Dump: `/tmp/opencode/deck_de.md` (1.453 Zeilen)  
-Methode: Laufzeitstrings, Quelltexte der Demos und Primärliteratur, wo verfügbar. Die englische Fassung und die Bildrechte wurden nicht gesondert geprüft.
+- Stand: 17. November 2026
+- Geprüfte Fassung: deutsche Laufzeitfassung von `intuition_learnsys.php`
+- Volltext-Dump: `/tmp/opencode/deck_de.md` (1.453 Zeilen)
+- Methode: Laufzeitstrings, Quelltexte der Demos und Primärliteratur, wo verfügbar. Die englische Fassung und die Bildrechte wurden nicht gesondert geprüft.
 
 **Wichtig:** Es wurden keine Inhalte geändert. Diese Datei ist nur der Prüfbericht.
 
 ## Legende
 
-- **Blocker:** Formel wird nicht gesetzt, Rohtext oder sichtbares TODO.
+- **Blocker:** Rohtext, sichtbares TODO oder eine nicht gerenderte Formel.
 - **Faktisch falsch:** widerspricht einer Primärquelle oder einer mathematischen Tatsache.
 - **Überzogen:** Die Quelle stützt eine schwächere Aussage.
 - **Quelle fehlt/falsch:** Die Behauptung ist nicht durch die angegebene Quelle gedeckt.
 - **Sprache/Redundanz:** Grammatik, Kopierfehler oder doppelter Inhalt.
 
+## Nachtrag: Formelreparatur
+
+Die kaputten Formeln sind behoben. Geändert wurden nur Backslashes in Mathematik-Strings und die Display-Math-Behandlung in `proseBlock`; der Inhalt der Folien wurde nicht umgeschrieben.
+
+- 40 Mathematik-Spans in `intuition_learnsys-data.js` korrigiert, 74 zusätzliche Backslashes, in Deutsch und Englisch.
+- 18.1 rendert beide `$$`-Formeln jetzt als Display-Mathematik. `proseBlock` erkennt reine `$$…$$`-Blöcke und gibt sie an `mathBlock` weiter.
+- Statische Prüfung: 380 Mathematik-Spans, 0 verbliebene einfache Backslashes.
+- Browser-Prüfung: 215 `[data-tex]`-Elemente pro Sprache, 0 ungerendert, 0 rohe `$$`, 0 sichtbare kaputte Formeln, 0 schwere Konsolenfehler.
+- `node --check` für `intuition_learnsys-data.js` und `learnsys.js`: bestanden.
+- `tenminutes_pages_test.py --pages intuition_learnsys.php --langs en,de`: 30/30 Checks bestanden.
+- `tenminutes_height_test.py` für Desktop und Mobil: 24 Interaktionen, 0 Höhenänderungen.
+- `js_validator.py`: 0 Fehler, 66 Warnungen, alle bereits vorhanden.
+
+**Offen bleibt:** das sichtbare TODO in 14.1 und die inhaltlichen Befunde unten. Die Formelreparatur ändert keine Aussage.
+
 ## Kurzfassung
 
 Die schwersten Probleme sind:
 
-1. **Mehrere Formeln sind durch fehlende Backslashes zerstört**: 10.3, 10.6, 13.1, 14.1 und 22.1 zeigen `sum`, `alpha`, `hat`, `cdot`, `rac`, `propto`, `exp` und `to` (mit Tab vor `o`) als Text.
-2. **Sichtbares TODO** in Folie 14.1, Box „Automatisches Ableiten“.
-3. **Rohe `$$`-Formeln** in Folie 18.1, die der Box-Renderer nicht als Display-Mathematik verarbeitet.
+1. **Behoben: kaputte Formeln** in 10.3, 10.6, 13.1, 14.1 und 22.1. Sie zeigten `sum`, `alpha`, `hat`, `cdot`, `rac`, `propto`, `exp` und `to` (mit Tab vor `o`) als Text.
+2. **Offen: sichtbares TODO** in Folie 14.1, Box „Automatisches Ableiten“.
+3. **Behoben: rohe `$$`-Formeln** in Folie 18.1. Beide Formeln werden jetzt als Display-Mathematik gerendert.
 4. **Causal Mask fehlt**: 10.2 und 10.5 behaupten, jedes Token könne auf jedes andere schauen. Das gilt für einen GPT-Decoder nicht.
 5. **Positionskodierung falsch erklärt**: 8.1 behauptet, die Vektoren lägen auf der Einheitskugel und Attention messe Großkreise. Sinusförmige Positionskodierungen sind nicht normiert, und Attention rechnet mit Skalarprodukten.
 6. **GELU ist nicht umkehrbar**: 15.1 sagt, glatte Aktivierungen blieben umkehrbar. GELU ist glatt, aber nicht monoton und damit nicht injektiv.
@@ -141,15 +156,15 @@ Zusätzlich: Der Haupttext sagt „Die Position wird Teil des Tokens“, die Box
 
 ### 10.3 Attention als Mischung der Value-Vektoren
 
-**Befund:** `$r_i = sum_j alpha_{ij} v_j$`, `$alpha$`, `$ge 0$`, `$sum alpha = 1$` und `$r_i = sum_j alpha_{ij} v_j$` erscheinen als Text. Außerdem: „Deshalb liegt $r_i$ immer im Dreieck, das die drei Value-Vektoren aufspannen.“
+**Befund:** `$r_i = sum_j alpha_{ij} v_j$`, `$alpha$`, `$ge 0$`, `$sum alpha = 1$` und `$r_i = sum_j alpha_{ij} v_j$` erschienen als Text. Außerdem: „Deshalb liegt $r_i$ immer im Dreieck, das die drei Value-Vektoren aufspannen.“
 
-**Problem:** Die Backslashes fehlen im Laufzeitstring; die Formeln werden nicht als Mathematik gesetzt. Das ist ein Blocker.
+**Problem:** Die Backslashes fehlten im Laufzeitstring; die Formeln wurden nicht als Mathematik gesetzt. Das war ein Blocker. **Status:** behoben; der inhaltliche Dreieckssatz bleibt offen.
 
 Der Dreieckssatz gilt nur, wenn `r_i` wirklich nur die drei ausgewählten Values mischt. Der Context-Text sagt aber, der echte Mischungsvektor nutze **alle** Values. Dann liegt `r_i` in der konvexen Hülle aller `n` Values, nicht in dem gezeigten Dreieck. Die Aussage „immer im Dreieck“ ist also falsch, sobald mehr als drei Values beitragen.
 
 **Quelle:** Vaswani et al. (2017), §3.2; Elhage et al. (2021), *A Mathematical Framework for Transformer Circuits*.
 
-**Schweregrad:** Blocker und faktisch falsch.
+**Schweregrad:** War ein Blocker; inhaltlich weiterhin falsch.
 
 ### 10.5 Head 2 als Graph
 
@@ -161,11 +176,11 @@ Der Dreieckssatz gilt nur, wenn `r_i` wirklich nur die drei ausgewählten Values
 
 ### 10.6 Head 2 als Value-Mischung
 
-**Befund:** Dieselben kaputten Formeln wie 10.3, außerdem `$ge 0$`, `$sum alpha = 1$` und der Satz „Das Dreieck bleibt die Grenze für $r_i$“.
+**Befund:** Dieselben Formeln wie 10.3 waren kaputt, außerdem `$ge 0$`, `$sum alpha = 1$` und der Satz „Das Dreieck bleibt die Grenze für $r_i$“.
 
-**Problem:** Die Formeln werden nicht gesetzt. Der Satz ist nur für die drei ausgewählten Values richtig; der echte Mischungsvektor nutzt alle Values. Die Box „Was ist ein Simplex?“ ist außerdem sprachlich und mathematisch verunglückt: „eine Landkarte, die es erlaubt, alle mathematisch gültigen Wege zu zeigen, zu 100% zu kommen“. Das erklärt keinen Simplex.
+**Problem:** Die Formeln wurden nicht gesetzt; das ist behoben. Der Satz ist nur für die drei ausgewählten Values richtig; der echte Mischungsvektor nutzt alle Values. Die Box „Was ist ein Simplex?“ ist außerdem sprachlich und mathematisch verunglückt: „eine Landkarte, die es erlaubt, alle mathematisch gültigen Wege zu zeigen, zu 100% zu kommen“. Das erklärt keinen Simplex.
 
-**Schweregrad:** Blocker und faktisch falsch.
+**Schweregrad:** War ein Blocker; inhaltlich weiterhin falsch.
 
 ### 11.1 Attention hilft, Rauschen zu ignorieren
 
@@ -203,23 +218,23 @@ Der Dreieckssatz gilt nur, wenn `r_i` wirklich nur die drei ausgewählten Values
 
 ### 13.1 Was sind neuronale Netze?
 
-**Befund:** `$hat y = wcdot x + b$` und `$a = operatorname{activation}(z)$` erscheinen als Text.
+**Befund:** `$hat y = wcdot x + b$` und `$a = operatorname{activation}(z)$` erschienen als Text.
 
-**Problem:** Die Backslashes fehlen; die Formeln werden nicht gesetzt. Das ist ein Blocker. Die gemeinten Formeln sind `\hat y = w\cdot x + b` und `a = \operatorname{activation}(z)`.
+**Problem:** Die Backslashes fehlten; die Formeln wurden nicht gesetzt. Das war ein Blocker. **Status:** behoben. Die gemeinten Formeln sind `\hat y = w\cdot x + b` und `a = \operatorname{activation}(z)`.
 
-**Schweregrad:** Blocker.
+**Schweregrad:** War ein Blocker; behoben.
 
 ### 14.1 Wie findet man gute Punkte?
 
-**Befund:** Die Loss-Formel enthält einen Wagenrücklauf vor `ac`, die Schrittformel enthält Tabs und einen Zeilenumbruch. Beide erscheinen als Text. Außerdem steht in der Box „Automatisches Ableiten“ ein sichtbares `<b>TODO:</b>`.
+**Befund:** Die Loss-Formel enthielt einen Wagenrücklauf vor `ac`, die Schrittformel enthielt Tabs und einen Zeilenumbruch. Beide erschienen als Text. Außerdem steht in der Box „Automatisches Ableiten“ ein sichtbares `<b>TODO:</b>`.
 
-**Problem:** Die Formeln sind durch fehlende Backslashes und literale Tabs/Zeilenumbrüche zerstört. Das TODO ist ein unfertiger Inhalt auf einer Folie. Beides ist ein Blocker.
+**Problem:** Die Formeln waren durch fehlende Backslashes und literale Tabs/Zeilenumbrüche zerstört; das ist behoben. Das TODO ist weiterhin ein unfertiger Inhalt auf einer Folie und bleibt ein Blocker.
 
 Zusätzlich: „Es gibt fast immer eine Richtung, in der der Loss wieder fällt“ ist zu stark. Sattelpunkte sind in hohen Dimensionen häufig, aber lokale Minima existieren; „fast immer“ ist keine garantierte Eigenschaft jedes kritischen Punktes.
 
 **Quelle:** Dauphin et al. (2014), arXiv:1406.2572.
 
-**Schweregrad:** Blocker und überzogen.
+**Schweregrad:** War ein Blocker; das TODO und die Überzogenheit bleiben offen.
 
 ### 15.1 Was sind neuronale Netze?
 
@@ -243,19 +258,19 @@ Zusätzlich: „Es gibt fast immer eine Richtung, in der der Loss wieder fällt�
 
 ### 18.1 Die Rolle von neuronalen Netzen im Transformer
 
-**Befund:** „Jedes Token wird nach jedem Attention durch das gleiche Neuronale Netz getan, dass dann die kontextualisierten Tokens unabhängig voneinander verschiebt.“ Außerdem enthält die Box „Wie sind FFN mathematisch aufgebaut?“ rohe `$$…$$`-Blöcke.
+**Befund:** „Jedes Token wird nach jedem Attention durch das gleiche Neuronale Netz getan, dass dann die kontextualisierten Tokens unabhängig voneinander verschiebt.“ Außerdem enthielt die Box „Wie sind FFN mathematisch aufgebaut?“ rohe `$$…$$`-Blöcke.
 
-**Problem:** „dass“ muss „das“ heißen. Die rohen `$$`-Blöcke werden vom Box-Renderer nicht als Display-Mathematik verarbeitet; `proseBlock` in `learnsys.js` erkennt nur `$…$`, nicht `$$…$$`. Die Formeln erscheinen dadurch als Rohtext oder werden falsch zerlegt.
+**Problem:** „dass“ muss „das“ heißen. Die rohen `$$`-Blöcke wurden vom Box-Renderer nicht als Display-Mathematik verarbeitet; `proseBlock` in `learnsys.js` erkannte nur `$…$`, nicht `$$…$$`. **Status:** behoben; `proseBlock` behandelt reine `$$…$$`-Blöcke jetzt als Display-Mathematik.
 
-**Schweregrad:** Sprache und Blocker.
+**Schweregrad:** Sprache offen; der Display-Math-Blocker ist behoben.
 
 ### 22.1 Ein Wort nach dem anderen
 
-**Befund:** `$p_i propto exp(z_i/T)$` und `$T` mit einem Tab vor `o 0$` erscheinen als Text.
+**Befund:** `$p_i propto exp(z_i/T)$` und `$T` mit einem Tab vor `o 0$` erschienen als Text.
 
-**Problem:** Die Backslashes fehlen; die Formeln werden nicht gesetzt. Gemeint sind `p_i \propto \exp(z_i/T)` und `T \to 0`.
+**Problem:** Die Backslashes fehlten; die Formeln wurden nicht gesetzt. **Status:** behoben. Gemeint sind `p_i \propto \exp(z_i/T)` und `T \to 0`.
 
-**Schweregrad:** Blocker.
+**Schweregrad:** War ein Blocker; behoben.
 
 ### 23.1 Die Karte der Wörter
 
@@ -457,18 +472,18 @@ Bei 3.2 bis 3.5 wiederholt sich die MSE-/Gauß-Formulierung aus 3.1; sie ist dor
 
 ## Technische Ursache der Formelprobleme
 
-Die Laufzeitstrings in `intuition_learnsys-data.js` enthalten an mehreren Stellen einfache Backslashes statt doppelter Backslashes. JavaScript interpretiert `\c`, `\s`, `\a`, `\h`, `\p`, `\e`, `\t` und `\n` als Escape-Sequenzen oder entfernt den Backslash. Dadurch kommen `cdot`, `sum`, `alpha`, `hat`, `rac`, `propto`, `exp`, `theta`, `eta`, `nabla` und `to` (mit Tab vor `o`) als Text an. Die betroffenen Stellen sind:
+Die Laufzeitstrings in `intuition_learnsys-data.js` enthielten an mehreren Stellen einfache Backslashes statt doppelter Backslashes. JavaScript interpretiert `\c`, `\s`, `\a`, `\h`, `\p`, `\e`, `\t` und `\n` als Escape-Sequenzen oder entfernt den Backslash. Dadurch kamen `cdot`, `sum`, `alpha`, `hat`, `rac`, `propto`, `exp`, `theta`, `eta`, `nabla` und `to` (mit Tab vor `o`) als Text an. Die betroffenen Stellen waren:
 
 - 10.3 und 10.6: `sum`, `alpha`, `ge`, `sum alpha = 1`
 - 13.1: `hat y`, `wcdot`, `operatorname`
 - 14.1: `hat y`, `wcdot`, `rac`, `sum`, `theta`, `eta`, `nabla`
 - 22.1: `propto`, `exp`, `to` (mit Tab vor `o`)
 
-Die englischen Gegenstücke in derselben Datei enthalten teilweise dieselben Fehler; eine vollständige Prüfung der englischen Fassung steht noch aus. Eine Prüfung nur der deutschen Fassung reicht daher nicht; die Quellstrings müssen in beiden Sprachen korrigiert werden.
+Die englischen Gegenstücke in derselben Datei enthielten teilweise dieselben Fehler; die Korrektur erfolgte in beiden Sprachen. Eine vollständige inhaltliche Prüfung der englischen Fassung steht weiterhin aus.
 
 ## Empfohlene Priorität
 
-1. **Blocker zuerst:** 10.3, 10.6, 13.1, 14.1, 18.1, 22.1.
+1. **Offener Blocker:** 14.1 TODO. Die Formeln sind behoben.
 2. **Zentrale Faktenfehler:** 7.1, 8.1, 10.2, 10.5, 12.1, 12.3, 15.1, 23.1, 24.2, 25.1, 25.2, 33.3.
 3. **Überzogene Aussagen:** 2.1, 3.1, 4.1, 5.1, 11.1, 17.1, 26.1, 28.1, 30.1, 31.2, 31.3, 32.1.
 4. **Quellen und Sprache:** 2.2, 6.4, 9.1, 29.1, 34.1.
