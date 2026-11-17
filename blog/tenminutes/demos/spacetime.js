@@ -72,8 +72,8 @@
         ? "Abbildung 10 aus Gurnee und Tegmark 2023: Weltkarte aus gelernten Breiten- und Längengrad-Richtungen in Llama-2-70B."
         : "Figure 10 from Gurnee and Tegmark 2023: world map from learned latitude and longitude directions in Llama-2-70B.",
       time: DE
-        ? "Streudiagramm wahrer Jahre gegen die Vorhersage aus x mit Diagonale"
-        : "Scatter plot of true years against predictions from x with a diagonal",
+        ? "Streudiagramm wahrer Todesjahre gegen die Vorhersage aus x mit Diagonale"
+        : "Scatter plot of true death years against predictions from x with a diagonal",
       neurons: DE
         ? "Schematische Heatmap von Raum- und Zeit-Neuronen und ihre Ausrichtung zur Probe-Richtung"
         : "Schematic heatmap of space and time neurons and their alignment with the probe direction"
@@ -141,8 +141,8 @@
       var pad = padFor();
       var top = header(
         c,
-        DE ? "Welches Jahr steckt in x?" : "Which year is in x?",
-        DE ? "Wahres Jahr vs. x · Klicke eine Person." : "true year vs. x · click a person."
+        DE ? "Welches Todesjahr steckt in x?" : "Which death year is in x?",
+        DE ? "Wahres Todesjahr vs. x · Klicke eine Person." : "true death year vs. x · click a person."
       );
       var MINY = 1500, MAXY = 2020;
       var availW = W - 2 * pad;
@@ -222,7 +222,7 @@
         txt(c, String(t), plotL - 7, y, { align: "right", size: 8, color: C.muted });
       }
 
-      txt(c, DE ? "wahres Jahr" : "true year", (plotL + plotR) / 2, plotB + 28, {
+      txt(c, DE ? "wahres Todesjahr" : "true death year", (plotL + plotR) / 2, plotB + 28, {
         align: "center",
         size: 9.5,
         color: C.muted
@@ -230,7 +230,7 @@
       c.save();
       c.translate(x0 + 13, (plotT + plotB) / 2);
       c.rotate(-Math.PI / 2);
-      txt(c, DE ? "Jahr aus x" : "year from x", 0, 0, { align: "center", size: 9.5, color: C.muted });
+      txt(c, DE ? "Todesjahr aus x" : "death year from x", 0, 0, { align: "center", size: 9.5, color: C.muted });
       c.restore();
 
       for (var i = 0; i < FIGURES.length; i++) {
@@ -305,7 +305,7 @@
         c.lineWidth = 1;
         c.strokeRect(cardX + 0.5, cardY + 0.5, cardW - 1, cardH - 1);
         head(c, "Llama-2-70B", cardX + 14, cardY + 25, { size: 16 });
-        txt(c, DE ? "historische Personen" : "historical figures", cardX + 14, cardY + 44, { size: 9.5, color: C.muted });
+        txt(c, DE ? "Todesjahr historischer Personen" : "death year of historical figures", cardX + 14, cardY + 44, { size: 9.5, color: C.muted });
         accent(c, cardX + 14, cardY + 58, 28);
         head(c, "R² = 0.835", cardX + 14, cardY + 88, { size: 27, color: C.petrol });
         txt(c, DE ? "linearer Ridge-Probe, out-of-sample" : "linear ridge probe, out-of-sample", cardX + 14, cardY + 108, { size: 9, color: C.muted });
@@ -336,7 +336,7 @@
         if (sel.figure >= 0) {
           var chosenFig = FIGURES[sel.figure];
           txt(c, chosenFig.name, cardX + 14, cardY + 188, { size: 9.5, color: C.ink, font: '600 9.5px "Open Sans", sans-serif' });
-          txt(c, (DE ? "wahr " : "true ") + chosenFig.year + " · " + (DE ? "Probe " : "probe ") + chosenFig.pred, cardX + 14, cardY + 202, { size: 8.5, color: C.muted });
+          txt(c, (DE ? "Todesjahr " : "death year ") + chosenFig.year + " · " + (DE ? "Probe " : "probe ") + chosenFig.pred, cardX + 14, cardY + 202, { size: 8.5, color: C.muted });
           txt(c, "Δ " + Math.abs(chosenFig.year - chosenFig.pred) + " " + (DE ? "Jahre" : "years"), cardX + 14, cardY + 216, { size: 8.5, color: C.petrol });
         } else {
           txt(c, "Gurnee & Tegmark (2023)", cardX + 14, cardY + 188, { size: 8.2, color: C.muted });
@@ -344,7 +344,7 @@
           txt(c, DE ? "schematische Punkte" : "schematic points", cardX + 14, cardY + 216, { size: 8, color: C.muted });
         }
       } else {
-        txt(c, DE ? "Llama-2-70B · R² = 0.835 · historische Personen" : "Llama-2-70B · R² = 0.835 · historical figures", W / 2, H - 28, {
+        txt(c, DE ? "Llama-2-70B · R² = 0.835 · Todesjahr" : "Llama-2-70B · R² = 0.835 · death year", W / 2, H - 28, {
           align: "center",
           size: W < 620 ? 9.4 : 10.2,
           color: C.ink,
