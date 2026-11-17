@@ -261,34 +261,7 @@
 
 
     function drawStage(c) {
-      c.clearRect(0, 0, W, H);
-      c.fillStyle = C.paper;
-      c.fillRect(0, 0, W, H);
-      var g = c.createRadialGradient(W * 0.18, H * 0.08, 0, W * 0.18, H * 0.08, Math.max(W, H) * 0.95);
-      g.addColorStop(0, V.alpha(C.petrol, 0.17));
-      g.addColorStop(0.42, V.alpha(C.sky, 0.065));
-      g.addColorStop(1, V.alpha(C.paper, 0));
-      c.fillStyle = g;
-      c.fillRect(0, 0, W, H);
-      var g2 = c.createRadialGradient(W * 0.92, H * 0.94, 0, W * 0.92, H * 0.94, Math.max(W, H) * 0.8);
-      g2.addColorStop(0, V.alpha(C.green, 0.045));
-      g2.addColorStop(1, V.alpha(C.paper, 0));
-      c.fillStyle = g2;
-      c.fillRect(0, 0, W, H);
-      var vig = c.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.24, W * 0.5, H * 0.5, Math.max(W, H) * 0.74);
-      vig.addColorStop(0, V.alpha(C.petrol, 0));
-      vig.addColorStop(1, V.alpha(C.petrol, 0.09));
-      c.fillStyle = vig;
-      c.fillRect(0, 0, W, H);
-      c.save();
-      c.fillStyle = V.alpha(C.petrol, 0.055);
-      for (var gx = 24; gx < W; gx += 30) {
-        for (var gy = 24; gy < H; gy += 30) c.fillRect(gx, gy, 1, 1);
-      }
-      c.restore();
-      c.strokeStyle = V.alpha(C.line, 0.78);
-      c.lineWidth = 1;
-      c.strokeRect(0.5, 0.5, W - 1, H - 1);
+      V.aurora(c, W, H, C, { vignette: 0.10 });
     }
 
     function wrapText(c, text, x, y, maxW, lineH, opt) {

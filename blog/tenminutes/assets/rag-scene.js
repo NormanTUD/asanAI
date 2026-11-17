@@ -47,17 +47,7 @@
       spaceSize = api.fit(canvas, space);
       var ctx = spaceSize.ctx, w = spaceSize.w, h = spaceSize.h;
       var C = api.colors();
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.18, h * 0.1, 0, w * 0.18, h * 0.1, Math.max(w, h) * 0.95);
-      bg.addColorStop(0, V.alpha(C.petrol, 0.16));
-      bg.addColorStop(0.44, V.alpha(C.sky, 0.06));
-      bg.addColorStop(1, V.alpha(C.paper, 0));
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
-      var bg2 = ctx.createRadialGradient(w * 0.9, h * 0.9, 0, w * 0.9, h * 0.9, Math.max(w, h) * 0.7);
-      bg2.addColorStop(0, V.alpha(C.green, 0.05));
-      bg2.addColorStop(1, V.alpha(C.paper, 0));
-      ctx.fillStyle = bg2; ctx.fillRect(0, 0, w, h);
+      V.aurora(ctx, w, h, C, { vignette: 0.07 });
       ctx.strokeStyle = C.line; ctx.globalAlpha = 0.55; ctx.lineWidth = 1;
       var cx = w * 0.5, cy = h * 0.55, s = Math.min(w, h) * 0.33;
       for (var g = -1; g <= 1; g += 0.25) {

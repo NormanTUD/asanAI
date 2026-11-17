@@ -2,6 +2,8 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
+  var V = window.LearnSysVisuals;
+  if (!V) return;
 
   function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
 
@@ -732,24 +734,7 @@
     function draw() {
       if (!ctx || !W || !H) return;
       C = api.colors();
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = C.paper2 || C.paper;
-      ctx.fillRect(0, 0, W, H);
-      var g = ctx.createRadialGradient(W * 0.16, H * 0.06, 0, W * 0.16, H * 0.06, Math.max(W, H) * 0.95);
-      g.addColorStop(0, rgba(C.petrol, 0.16));
-      g.addColorStop(0.44, rgba(C.sky, 0.06));
-      g.addColorStop(1, rgba(C.paper, 0));
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      var g2 = ctx.createRadialGradient(W * 0.9, H * 0.9, 0, W * 0.9, H * 0.9, Math.max(W, H) * 0.7);
-      g2.addColorStop(0, rgba(C.gold, 0.04));
-      g2.addColorStop(1, rgba(C.paper, 0));
-      ctx.fillStyle = g2;
-      ctx.fillRect(0, 0, W, H);
-      drawDots(ctx);
-      ctx.strokeStyle = rgba(C.line, 0.9);
-      ctx.lineWidth = 1;
-      ctx.strokeRect(0.5, 0.5, W - 1, H - 1);
+      V.aurora(ctx, W, H, C, { vignette: 0.08, gold: 0.055 });
       if (mode === "steer") drawSteer(ctx);
       else if (mode === "iti") drawIti(ctx);
       else drawDirection(ctx);

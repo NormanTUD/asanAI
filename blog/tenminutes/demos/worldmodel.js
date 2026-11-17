@@ -888,23 +888,7 @@
 
     function draw() {
       if (!W || !H) return;
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = C.paper2;
-      ctx.fillRect(0, 0, W, H);
-      var g = ctx.createRadialGradient(W * .16, H * .06, 0, W * .16, H * .06, Math.max(W, H) * .95);
-      g.addColorStop(0, V.alpha(C.petrol, .16));
-      g.addColorStop(.42, V.alpha(C.sky, .065));
-      g.addColorStop(1, V.alpha(C.paper2, 0));
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      var g2 = ctx.createRadialGradient(W * .92, H * .92, 0, W * .92, H * .92, Math.max(W, H) * .7);
-      g2.addColorStop(0, V.alpha(C.green, .05));
-      g2.addColorStop(1, V.alpha(C.paper2, 0));
-      ctx.fillStyle = g2;
-      ctx.fillRect(0, 0, W, H);
-      ctx.strokeStyle = V.alpha(C.line, .75);
-      ctx.lineWidth = 1;
-      ctx.strokeRect(.5, .5, W - 1, H - 1);
+      V.aurora(ctx, W, H, C, { vignette: 0.08 });
       if (state.step === 0) drawStep0(ctx);
       else if (state.step === 1) drawStep1(ctx);
       else drawStep3(ctx);

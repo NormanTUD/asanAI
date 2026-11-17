@@ -109,6 +109,70 @@
     });
   };
 
+  V.aurora = function (ctx, w, h, C, opt) {
+    var o = opt || {};
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = C.paper;
+    ctx.fillRect(0, 0, w, h);
+    function glow(x, y, r, color, alpha) {
+      var g = ctx.createRadialGradient(x * w, y * h, 0, x * w, y * h, Math.max(w, h) * r);
+      g.addColorStop(0, V.alpha(color, alpha));
+      g.addColorStop(0.5, V.alpha(color, alpha * 0.42));
+      g.addColorStop(1, V.alpha(color, 0));
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+    }
+    glow(0.12, 0.05, 0.98, C.petrol, o.petrol == null ? 0.18 : o.petrol);
+    glow(0.90, 0.16, 0.72, C.sky, o.sky == null ? 0.12 : o.sky);
+    glow(0.82, 0.92, 0.66, C.green, o.green == null ? 0.055 : o.green);
+    glow(0.06, 0.88, 0.52, C.gold, o.gold == null ? 0.04 : o.gold);
+    var hg = ctx.createLinearGradient(0, h * 0.56, 0, h * 0.82);
+    hg.addColorStop(0, V.alpha(C.petrol, 0));
+    hg.addColorStop(0.48, V.alpha(C.petrol, 0.05));
+    hg.addColorStop(1, V.alpha(C.petrol, 0));
+    ctx.fillStyle = hg;
+    ctx.fillRect(0, h * 0.56, w, h * 0.26);
+    var beam = ctx.createLinearGradient(0, 0, w * 0.78, h);
+    beam.addColorStop(0, V.alpha(C.paper, 0));
+    beam.addColorStop(0.33, V.alpha(C.sky, 0.045));
+    beam.addColorStop(0.46, V.alpha(C.paper, 0));
+    beam.addColorStop(1, V.alpha(C.paper, 0));
+    ctx.fillStyle = beam;
+    ctx.fillRect(0, 0, w, h);
+    var seed = 19;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    for (var i = 0; i < 30; i++) {
+      var mx = rnd() * w, my = rnd() * h, mr = 0.6 + rnd() * 1.5;
+      ctx.fillStyle = V.alpha(i % 4 === 0 ? C.sky : C.paper, 0.10 + rnd() * 0.16);
+      ctx.beginPath();
+      ctx.arc(mx, my, mr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.save();
+    ctx.fillStyle = V.alpha(C.petrol, 0.05);
+    for (var gx = 24; gx < w; gx += 30) {
+      for (var gy = 24; gy < h; gy += 30) ctx.fillRect(gx, gy, 1, 1);
+    }
+    ctx.restore();
+    var vg = ctx.createRadialGradient(w * 0.5, h * 0.5, Math.min(w, h) * 0.24, w * 0.5, h * 0.5, Math.max(w, h) * 0.78);
+    vg.addColorStop(0, V.alpha(C.petrol, 0));
+    vg.addColorStop(1, V.alpha(C.petrol, o.vignette == null ? 0.09 : o.vignette));
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, w, h);
+    var sheen = ctx.createLinearGradient(0, 0, w * 0.62, h * 0.28);
+    sheen.addColorStop(0, V.alpha(C.paper, 0.42));
+    sheen.addColorStop(0.35, V.alpha(C.sky, 0.07));
+    sheen.addColorStop(1, V.alpha(C.paper, 0));
+    ctx.fillStyle = sheen;
+    ctx.fillRect(0, 0, w, h * 0.32);
+    ctx.strokeStyle = V.alpha(C.petrol, 0.18);
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, w - 2, h - 2);
+    ctx.strokeStyle = V.alpha(C.paper, 0.74);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(3.5, 3.5, w - 7, h - 7);
+  };
+
   V.grid = function (ctx, w, h, C, step, alpha) {
     var s = step || 28;
     ctx.save();

@@ -231,34 +231,7 @@
     }
 
     function drawBackground(c) {
-      c.clearRect(0, 0, W, H);
-      c.fillStyle = C.paper;
-      c.fillRect(0, 0, W, H);
-      var g = c.createRadialGradient(W * 0.18, H * 0.06, 0, W * 0.18, H * 0.06, Math.max(W, H) * 0.95);
-      g.addColorStop(0, V.alpha(C.petrol, 0.16));
-      g.addColorStop(0.44, V.alpha(C.sky, 0.06));
-      g.addColorStop(1, V.alpha(C.paper, 0));
-      c.fillStyle = g;
-      c.fillRect(0, 0, W, H);
-      var g2 = c.createRadialGradient(W * 0.9, H * 0.9, 0, W * 0.9, H * 0.9, Math.max(W, H) * 0.7);
-      g2.addColorStop(0, V.alpha(C.green, 0.045));
-      g2.addColorStop(1, V.alpha(C.paper, 0));
-      c.fillStyle = g2;
-      c.fillRect(0, 0, W, H);
-      var vig = c.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.24, W * 0.5, H * 0.5, Math.max(W, H) * 0.74);
-      vig.addColorStop(0, V.alpha(C.petrol, 0));
-      vig.addColorStop(1, V.alpha(C.petrol, 0.09));
-      c.fillStyle = vig;
-      c.fillRect(0, 0, W, H);
-      c.save();
-      c.fillStyle = V.alpha(C.petrol, 0.05);
-      for (var gx = 24; gx < W; gx += 30) {
-        for (var gy = 24; gy < H; gy += 30) c.fillRect(gx, gy, 1, 1);
-      }
-      c.restore();
-      c.strokeStyle = V.alpha(C.line, 0.8);
-      c.lineWidth = 1;
-      c.strokeRect(0.5, 0.5, W - 1, H - 1);
+      V.aurora(c, W, H, C, { vignette: 0.09 });
     }
 
     function drawPhaseBands(c, phases, x0, x1, y0, y1) {
@@ -551,7 +524,18 @@
       var i;
 
       c.save();
-      c.fillStyle = V.alpha(C.paper, 0.62);
+      var halo = c.createRadialGradient(cx, cy, r * 0.18, cx, cy, r * 1.75);
+      halo.addColorStop(0, V.alpha(C.petrol, 0.12));
+      halo.addColorStop(0.48, V.alpha(C.sky, 0.07));
+      halo.addColorStop(1, V.alpha(C.paper, 0));
+      c.fillStyle = halo;
+      c.beginPath();
+      c.arc(cx, cy, r * 1.75, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
+
+      c.save();
+      c.fillStyle = V.alpha(C.paper, 0.72);
       c.beginPath();
       c.arc(cx, cy, r + 12, 0, Math.PI * 2);
       c.fill();
