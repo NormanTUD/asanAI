@@ -2009,14 +2009,14 @@
       box("hct-2", "Quelle", "Erfundene Quellen", "Eine DOI, ein Autor oder ein Paper klingt echt, existiert aber nicht. Gegenmittel: Link prüfen, nur bereitgestellte Quellen zitieren."),
       box("hct-3", "Quelle", "Intrinsic vs. extrinsic", "Intrinsic widerspricht der Quelle; extrinsic ergänzt Unbelegtes. Gegenmittel: Faithfulness-Check und Attribution."),
       box("hct-4", "Kontext", "Konflikt und Zeit", "Die Antwort ignoriert den gegebenen Kontext oder nutzt veraltetes Wissen. Gegenmittel: Kontext zitieren, Datum prüfen, Retrieval."),
-      box("hct-5", "Sprache", "Entität und Negation", "Namen oder Zahlen werden vertauscht; „nicht glücklich“ rutscht Richtung „traurig“. Gegenmittel: Entitäten und logische Schritte separat prüfen."),
+      box("hct-5", "Sprache", "Entität und Negation", "Namen oder Zahlen werden vertauscht; „nicht traurig“ ist nicht automatisch „glücklich“, weil Attention nicht exakt auf das Antonym verschiebt. Gegenmittel: Entitäten und logische Schritte separat prüfen."),
       box("hct-6", "Decoding", "Sampling", "Zufall wählt einen plausiblen, aber falschen Pfad. Gegenmittel: Temperatur senken, mehrere Antworten vergleichen, Selbstkonsistenz.")
     ] : [
       box("hct-1", "Data", "False facts", "The model repeats a false statement in a calm voice. Countermeasure: check the source, use RAG, require a citation."),
       box("hct-2", "Source", "Fabricated citations", "A DOI, author, or paper sounds real but does not exist. Countermeasure: check the link, cite only provided sources."),
       box("hct-3", "Source", "Intrinsic vs. extrinsic", "Intrinsic contradicts the source; extrinsic adds unsupported content. Countermeasure: faithfulness check and attribution."),
       box("hct-4", "Context", "Conflict and time", "The answer ignores the given context or uses outdated knowledge. Countermeasure: quote the context, check the date, use retrieval."),
-      box("hct-5", "Language", "Entity and negation", "Names or numbers get swapped; “not happy” drifts toward “sad”. Countermeasure: check entities and logical steps separately."),
+      box("hct-5", "Language", "Entity and negation", "Names or numbers get swapped; “not sad” is not automatically “happy”, because attention does not shift exactly onto the antonym. Countermeasure: check entities and logical steps separately."),
       box("hct-6", "Decoding", "Sampling", "Randomness picks a plausible but false path. Countermeasure: lower temperature, compare several answers, use self-consistency.")
     ],
     sources: [
@@ -2167,8 +2167,8 @@
     kicker: DE ? "Bewusstsein" : "Consciousness",
     title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
     body: DE
-      ? "Bewusstsein hat ein leichtes und ein schweres Problem: Zugang, Bericht und Kontrolle lassen sich funktional erklären; warum irgendetwas sich von innen anfühlt, ist Chalmers' hard problem. Schon das leichte Problem ist schwer, aber wir haben Ideen, wie man es angehen kann; für das schwere Problem gibt es nicht einmal die Richtung eines Hauchs einer Antwort. Qualia sind diese gefühlten Eigenschaften; was Bewusstsein und Qualia eigentlich sind, weiß niemand, und ob ein KI-System empfindet, ist offen; auch du kennst nur deinen eigenen Zugang. Global Workspace, IIT/Phi, Predictive Processing und Kastrups analytischer Idealismus beschreiben oder deuten Bewusstsein, sind sich aber uneinig, was als Beweis zählt. Ein LLM kann Aufmerksamkeit, Bericht und einen lesbaren Arbeitsraum haben; das zeigt Zugang, nicht Erleben, und New Mysterianism sagt, dass Menschen hier an eine kognitive Grenze stoßen können, so wie Ratten einfache Gleichungen für ein Labyrinth lernen, an einem Punkt aber scheitern; Qualia könnte so ein Punkt sein (mehr in [The Unfinishable Map](https://unfinishablemap.org))."
-      : "Consciousness has an easy and a hard problem: access, report, and control can be explained functionally; why anything feels like something from the inside is Chalmers's hard problem. Even the easy problem is hard, but we at least have ideas for how to approach it; for the hard problem there is not even the direction of a breath of an answer. Qualia are those felt properties; no one knows what consciousness and qualia actually are, and whether an AI system feels anything is open; you too know only your own access. Global workspace, IIT/Phi, predictive processing, and Kastrup's analytic idealism describe or interpret consciousness, but disagree about what counts as evidence. An LLM can have attention, report, and a readable workspace; that shows access, not experience, and new mysterianism says humans may hit a cognitive limit here, as rats can learn simple equations to navigate a maze but fail at some point; qualia could be such a point (more in [The Unfinishable Map](https://unfinishablemap.org)).",
+      ? "Bewusstsein hat ein leichtes und ein schweres Problem. Zugang, Bericht und Kontrolle lassen sich funktional erklären. Warum sich irgendetwas von innen anfühlt, bleibt Chalmers' hard problem: Selbst für das leichte Problem fehlen vollständige Antworten; für das schwere Problem fehlt sogar die Richtung.\n\nQualia sind diese gefühlten Eigenschaften. Was Bewusstsein und Qualia eigentlich sind, weiß niemand. Ob ein KI-System empfindet, ist offen; auch du kennst nur deinen eigenen Zugang.\n\nGlobal Workspace, IIT/Phi, Predictive Processing und Kastrups analytischer Idealismus beschreiben oder deuten Bewusstsein, sind sich aber uneinig, was als Beweis zählt. Ein LLM kann Aufmerksamkeit, Bericht und einen lesbaren Arbeitsraum haben; das zeigt Zugang, nicht Erleben. New Mysterianism sagt, dass Menschen hier an eine kognitive Grenze stoßen könnten, so wie Ratten einfache Gleichungen für ein Labyrinth lernen, an einem Punkt aber scheitern. Qualia könnte so ein Punkt sein (mehr in [The Unfinishable Map](https://unfinishablemap.org))."
+      : "Consciousness has an easy and a hard problem. Access, report, and control can be explained functionally. Why anything feels like something from the inside remains Chalmers's hard problem: even the easy problem lacks complete answers; for the hard problem, even the direction is missing.\n\nQualia are those felt properties. No one knows what consciousness and qualia actually are. Whether an AI system feels anything is open; you too know only your own access.\n\nGlobal workspace, IIT/Phi, predictive processing, and Kastrup's analytic idealism describe or interpret consciousness, but disagree about what counts as evidence. An LLM can have attention, report, and a readable workspace; that shows access, not experience. New mysterianism says humans may hit a cognitive limit here, as rats can learn simple equations to navigate a maze but fail at some point. Qualia could be such a point (more in [The Unfinishable Map](https://unfinishablemap.org)).",
     watch: "",
     demoState: { scene: "consciousness" },
     sources: [
@@ -2430,7 +2430,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-16-ffn-math",
+    overlayRevision: "2026-11-16-polish-pass",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

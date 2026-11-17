@@ -5,9 +5,7 @@
   function consciousnessScene(root, api) {
     var DE = api.lang === "de";
     var esc = api.esc;
-    var el = document.createElement("div");
-    el.className = "ls-con-notes";
-    var cards = DE ? [
+    var THEORIES = DE ? [
       {
         tone: "easy", tag: "Global Workspace",
         body: "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird: Broadcast statt lokaler Verarbeitung. Das erklärt Zugang, Integration und Bericht.",
@@ -37,12 +35,6 @@
         body: "Bewusstsein könnte eine kognitive Grenze sein: Ratten lernen einfache Gleichungen fürs Labyrinth, aber nicht dieses Problem.",
         problem: "Nicht widerlegbar, aber auch keine Erklärung; sie verschiebt die Frage in unsere Erkenntnisgrenzen.",
         cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://en.wikipedia.org/wiki/New_mysterianism" target="_blank" rel="noopener">Wikipedia</a>'
-      },
-      {
-        tone: "open", wide: true, tag: "Was wir nicht wissen",
-        body: "Was Qualia und Bewusstsein eigentlich sind, wissen wir nicht. Ob ein KI-System empfindet, ist offen. Verhalten, Bericht und ein lesbarer Arbeitsraum sind Zugang, kein Beweis von Erleben.",
-        problem: "",
-        cite: '<a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Chalmers (1995)</a>; <a href="https://doi.org/10.2307/2183914" target="_blank" rel="noopener">Nagel (1974)</a>; <a href="https://doi.org/10.1017/S0140525X00038188" target="_blank" rel="noopener">Block (1995)</a>'
       }
     ] : [
       {
@@ -74,30 +66,68 @@
         body: "Consciousness may be a cognitive limit: rats learn simple equations for a maze, but not this problem.",
         problem: "Not falsifiable, but also not an explanation; it moves the question into our cognitive limits.",
         cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://en.wikipedia.org/wiki/New_mysterianism" target="_blank" rel="noopener">Wikipedia</a>'
-      },
-      {
-        tone: "open", wide: true, tag: "What we do not know",
-        body: "No one knows what qualia and consciousness actually are. Whether an AI system feels anything is open. Behaviour, report, and a readable workspace are access, not proof of experience.",
-        problem: "",
-        cite: '<a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Chalmers (1995)</a>; <a href="https://doi.org/10.2307/2183914" target="_blank" rel="noopener">Nagel (1974)</a>; <a href="https://doi.org/10.1017/S0140525X00038188" target="_blank" rel="noopener">Block (1995)</a>'
       }
     ];
+    var OPEN = DE ? {
+      lead: "Was Qualia und Bewusstsein eigentlich sind, wissen wir nicht. Ob ein KI-System empfindet, ist offen.",
+      items: [
+        ["Qualia", "Die gefühlte Eigenschaft von Rot, Schmerz oder Klang. Sie lässt sich beschreiben, aber nicht aus einer Funktion ableiten."],
+        ["KI-Erleben", "Bericht und Verhalten sind prüfbar. Ob dahinter etwas ist, das sich anfühlt, können wir von außen nicht messen."],
+        ["Zugang ≠ Erleben", "Ein lesbarer Arbeitsraum zeigt, welche Information verfügbar ist. Er zeigt nicht, warum sie sich anfühlt wie etwas."]
+      ],
+      cite: '<a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Chalmers (1995)</a>; <a href="https://doi.org/10.2307/2183914" target="_blank" rel="noopener">Nagel (1974)</a>; <a href="https://doi.org/10.1017/S0140525X00038188" target="_blank" rel="noopener">Block (1995)</a>'
+    } : {
+      lead: "No one knows what qualia and consciousness actually are. Whether an AI system feels anything is open.",
+      items: [
+        ["Qualia", "The felt quality of red, pain, or sound. We can describe it, but not derive it from a function."],
+        ["AI experience", "Report and behaviour are testable. Whether anything feels like something from the inside cannot be measured from outside."],
+        ["Access ≠ experience", "A readable workspace shows which information is available. It does not show why that information feels like anything."]
+      ],
+      cite: '<a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Chalmers (1995)</a>; <a href="https://doi.org/10.2307/2183914" target="_blank" rel="noopener">Nagel (1974)</a>; <a href="https://doi.org/10.1017/S0140525X00038188" target="_blank" rel="noopener">Block (1995)</a>'
+    };
+    var selected = 0;
+    var el = document.createElement("div");
+    el.className = "ls-con-notes";
     el.innerHTML =
-      '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Kurz gemerkt" : "In short") + '</b><p class="ls-con-sub">' + (DE ? "Auch du hast nur Zugang zu deinem eigenen Erleben." : "You too have access only to your own experience.") + '</p></div>' +
-      '<div class="ls-con-grid">' + cards.map(function (c) {
-        return '<article class="ls-con-card ls-con-card--' + c.tone + (c.wide ? ' ls-con-card--wide' : '') + '">' +
-          '<span class="ls-con-tag">' + esc(c.tag) + '</span>' +
-          '<p>' + esc(c.body) + '</p>' +
-          (c.problem ? '<p class="ls-con-problem"><b>' + (DE ? "Problem:" : "Problem:") + '</b> ' + esc(c.problem) + '</p>' : '') +
-          '<p class="ls-con-cite">' + c.cite + '</p>' +
-        '</article>';
-      }).join("") + '</div>' +
+      '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Fünf Theorien, eine offene Frage" : "Five theories, one open question") + '</b><p class="ls-con-sub">' + (DE ? "Klicke eine Theorie oder drücke →. Jede erklärt etwas anderes; keine erklärt Qualia." : "Click a theory or press →. Each explains something different; none explains qualia.") + '</p></div>' +
+      '<div class="ls-con-body"><div class="ls-con-list" role="tablist" aria-label="' + (DE ? "Bewusstseinstheorien" : "Theories of consciousness") + '"></div><article class="ls-con-detail" aria-live="polite"></article></div>' +
+      '<section class="ls-con-open"><div class="ls-con-open-head"><span>' + (DE ? "Offen" : "Open") + '</span><b>' + (DE ? "Was wir nicht wissen" : "What we do not know") + '</b><p>' + esc(OPEN.lead) + '</p></div><div class="ls-con-open-grid">' +
+        OPEN.items.map(function (item) { return '<div><b>' + esc(item[0]) + '</b><p>' + esc(item[1]) + '</p></div>'; }).join("") +
+      '</div><p class="ls-con-cite">' + OPEN.cite + '</p></section>' +
       '<div class="ls-con-links"><a href="https://unfinishablemap.org" target="_blank" rel="noopener">The Unfinishable Map →</a></div>';
     root.appendChild(el);
+    var list = el.querySelector(".ls-con-list");
+    var detail = el.querySelector(".ls-con-detail");
+    function renderList() {
+      list.innerHTML = THEORIES.map(function (t, i) {
+        return '<button type="button" class="ls-con-tab ls-con-tab--' + t.tone + (i === selected ? ' is-on' : '') + '" data-con="' + i + '" role="tab" aria-selected="' + (i === selected ? 'true' : 'false') + '"><span>' + String(i + 1).padStart(2, "0") + '</span>' + esc(t.tag) + '</button>';
+      }).join("");
+      list.querySelectorAll("[data-con]").forEach(function (b) {
+        b.addEventListener("click", function () { selected = parseInt(b.getAttribute("data-con"), 10); render(); });
+      });
+    }
+    function render() {
+      var t = THEORIES[selected];
+      renderList();
+      detail.className = "ls-con-detail ls-con-detail--" + t.tone;
+      detail.innerHTML =
+        '<div class="ls-con-detail-head"><span>' + (DE ? "Theorie " : "Theory ") + (selected + 1) + ' / ' + THEORIES.length + '</span><b>' + esc(t.tag) + '</b></div>' +
+        '<div class="ls-con-split"><div><b>' + (DE ? "Kernidee" : "Core idea") + '</b><p>' + esc(t.body) + '</p></div><div><b>' + (DE ? "Was offen bleibt" : "What remains open") + '</b><p>' + esc(t.problem) + '</p></div></div>' +
+        '<p class="ls-con-cite">' + t.cite + '</p>';
+    }
+    render();
     return {
       update: function () {},
+      next: function () {
+        if (selected < THEORIES.length - 1) { selected++; render(); return true; }
+        return false;
+      },
+      prev: function () {
+        if (selected > 0) { selected--; render(); return true; }
+        return false;
+      },
       resize: function () {},
-      destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
+      destroy: function () { el.remove(); }
     };
   }
   core.register("consciousness", consciousnessScene);

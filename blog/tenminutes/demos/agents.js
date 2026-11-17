@@ -5,15 +5,15 @@
   function agentsScene(root, api) {
     var DE = api.lang === "de";
     var STEPS = DE ? [
-      { kind: "user", who: "Du", text: "Öffne example.com und finde den Preis. Schreibe ihn in price.txt." },
-      { kind: "tool", who: "Modell", text: "Ich brauche die Seite. Ich rufe den Browser auf.", tool: "browser.goto(\"example.com\")" },
+      { kind: "user", who: "Du", text: "Öffne example.com/shop und finde den Preis. Schreibe ihn in price.txt." },
+      { kind: "tool", who: "Modell", text: "Ich brauche die Seite. Ich rufe den Browser auf.", tool: "browser.goto(\"example.com/shop\")" },
       { kind: "shot", who: "Runtime", text: "Screenshot der Seite", tool: "screenshot()", result: "Seite geladen · 1280 × 800" },
       { kind: "tool", who: "Modell", text: "Der Preis ist 42 €. Ich schreibe ihn in die Datei.", tool: "write_file(\"price.txt\", \"42 €\")" },
       { kind: "tool", who: "Runtime", text: "Datei geschrieben", tool: "", result: "ok · 4 Bytes" },
       { kind: "final", who: "Modell", text: "Fertig. Der Preis steht in price.txt." }
     ] : [
-      { kind: "user", who: "You", text: "Open example.com and find the price. Write it to price.txt." },
-      { kind: "tool", who: "Model", text: "I need the page. I will call the browser.", tool: "browser.goto(\"example.com\")" },
+      { kind: "user", who: "You", text: "Open example.com/shop and find the price. Write it to price.txt." },
+      { kind: "tool", who: "Model", text: "I need the page. I will call the browser.", tool: "browser.goto(\"example.com/shop\")" },
       { kind: "shot", who: "Runtime", text: "Screenshot of the page", tool: "screenshot()", result: "page loaded · 1280 × 800" },
       { kind: "tool", who: "Model", text: "The price is 42 €. I will write it to the file.", tool: "write_file(\"price.txt\", \"42 €\")" },
       { kind: "tool", who: "Runtime", text: "File written", tool: "", result: "ok · 4 bytes" },
@@ -45,8 +45,11 @@
           '<div class="ls-code-monitor"><div class="ls-code-frame"><div class="ls-code-screen"><div class="ls-code-desktop" style="background-image:url(\'opera.jpg\')">' +
             '<div class="ls-code-window ls-agents-browser">' +
               '<div class="ls-code-bar"><i></i><i></i><i></i><span>Browser</span></div>' +
-              '<div class="ls-agents-address">example.com</div>' +
-              '<div class="ls-agents-web"><b>' + (DE ? "Beispiel-Shop" : "Example Shop") + '</b><div class="ls-agents-product"><span>' + (DE ? "Kaffeemaschine" : "coffee machine") + '</span><strong>42 €</strong></div><span class="ls-agents-buy">' + (DE ? "Kaufen" : "Buy") + '</span></div>' +
+              '<div class="ls-agents-address"><span class="ls-agents-lock">https</span>example.com/shop</div>' +
+              '<div class="ls-agents-web"><div class="ls-agents-site-head"><b>' + (DE ? "Beispiel-Shop" : "Example Shop") + '</b><span>' + (DE ? "Start · Kaffee · Hilfe" : "Home · Coffee · Help") + '</span></div>' +
+                '<div class="ls-agents-product"><div class="ls-agents-thumb" aria-hidden="true"></div><div class="ls-agents-product-info"><span class="ls-agents-product-name">' + (DE ? "Kaffeemaschine" : "Coffee machine") + '</span><span class="ls-agents-rating">★★★★☆ 4,6</span></div><strong>42 €</strong></div>' +
+                '<div class="ls-agents-actions"><span class="ls-agents-buy">' + (DE ? "In den Warenkorb" : "Add to cart") + '</span><span class="ls-agents-ship">' + (DE ? "Lieferung morgen" : "Delivery tomorrow") + '</span></div>' +
+              '</div>' +
             '</div>' +
             '<div class="ls-code-taskbar"><span class="ls-code-start" aria-hidden="true">▦</span><span class="ls-code-task is-on" style="--task:#5c9baf" aria-hidden="true"></span><span class="ls-agents-taskname">Browser</span><span class="ls-code-clock">14:32</span></div>' +
           '</div></div></div></div>' +
@@ -84,8 +87,10 @@
       });
       contextEl.innerHTML = contextHtml;
       terminalEl.innerHTML = terminal.join("");
-      shotEl.hidden = step < 2;
+      shotEl.hidden = false;
+      shotEl.classList.toggle("is-waiting", step < 2);
       shotEl.classList.toggle("is-pulsing", step === 2);
+      shotEl.setAttribute("data-wait", DE ? "Screenshot folgt" : "Screenshot follows");
       progressEl.textContent = (step + 1) + " / " + STEPS.length;
       readoutEl.textContent = READ[step];
       prevBtn.disabled = step === 0;

@@ -70,11 +70,11 @@
       },
       {
         id: "negation", label: "Negation", color: "blue",
-        question: "Was bedeutet „nicht glücklich“?",
-        answer: "Traurig.",
-        why: "Negation ist keine saubere Umkehrung. Im gelernten Raum bleibt „nicht glücklich“ oft näher an „glücklich“ als an „traurig“.",
-        check: "Wird die Verneinung logisch sauber behandelt?",
-        fix: "Logische Schritte separat prüfen; nicht raten lassen.",
+        question: "Was bedeutet „nicht traurig“?",
+        answer: "Nicht automatisch „glücklich“.",
+        why: "Negation ist keine exakte Umkehrung. Attention verschiebt „traurig“ in eine andere Richtung, aber nicht punktgenau auf „glücklich“. Dazwischen bleiben Abstufungen, Gleichgültigkeit oder etwas anderes.",
+        check: "Wird die Verneinung als eigene Bedeutung behandelt oder als exakte Umkehrung?",
+        fix: "Logische Schritte separat prüfen; Negation und Antonym nicht gleichsetzen.",
         source: "Ji et al. (2023)"
       },
       {
@@ -152,11 +152,11 @@
       },
       {
         id: "negation", label: "Negation", color: "blue",
-        question: "What does “not happy” mean?",
-        answer: "Sad.",
-        why: "Negation is not a clean reversal. In the learned space, “not happy” often stays closer to “happy” than to “sad”.",
-        check: "Is the negation handled logically?",
-        fix: "Check logical steps separately; do not let the model guess.",
+        question: "What does “not sad” mean?",
+        answer: "Not automatically “happy”.",
+        why: "Negation is not an exact reversal. Attention shifts “sad” in another direction, but not precisely onto “happy”. Degrees, indifference, or something else remain in between.",
+        check: "Is the negation treated as its own meaning or as an exact reversal?",
+        fix: "Check logical steps separately; do not equate negation with an antonym.",
         source: "Ji et al. (2023)"
       },
       {
@@ -174,7 +174,7 @@
     el.className = "ls-htl-scene";
     el.innerHTML = '<div class="ls-htl-chips" role="tablist"></div>' +
       '<div class="ls-htl-grid">' +
-        '<article class="ls-htl-card"><div class="ls-htl-kicker"></div><h4 class="ls-htl-title"></h4><div class="ls-htl-example"></div><p class="ls-htl-why"></p></article>' +
+        '<article class="ls-htl-card"><div class="ls-htl-kicker"></div><h4 class="ls-htl-title"></h4><div class="ls-htl-example"></div><div class="ls-htl-viz" hidden></div><p class="ls-htl-why"></p></article>' +
         '<aside class="ls-htl-side"><div><b>' + (DE ? "Woran erkennen?" : "How to spot it") + '</b><p class="ls-htl-check"></p></div><div><b>' + (DE ? "Gegenmittel" : "Countermeasure") + '</b><p class="ls-htl-fix"></p></div><div><b>' + (DE ? "Quelle" : "Source") + '</b><p class="ls-htl-src"></p></div></aside>' +
       '</div>';
     root.appendChild(el);
@@ -183,6 +183,7 @@
     var kicker = el.querySelector(".ls-htl-kicker");
     var title = el.querySelector(".ls-htl-title");
     var example = el.querySelector(".ls-htl-example");
+    var viz = el.querySelector(".ls-htl-viz");
     var why = el.querySelector(".ls-htl-why");
     var check = el.querySelector(".ls-htl-check");
     var fix = el.querySelector(".ls-htl-fix");
@@ -195,12 +196,37 @@
         b.addEventListener("click", function () { selected = parseInt(b.getAttribute("data-htl"), 10); render(); });
       });
     }
+    function negationViz() {
+      var sad = DE ? "traurig" : "sad";
+      var notSad = DE ? "nicht traurig" : "not sad";
+      var happy = DE ? "glücklich" : "happy";
+      var neg = DE ? "Negation" : "negation";
+      var attn = "Attention";
+      var aria = DE
+        ? "nicht traurig liegt nicht auf glücklich; Attention verschiebt die Repräsentation nur teilweise."
+        : "not sad does not land on happy; attention shifts the representation only part of the way.";
+      return '<svg viewBox="0 0 320 124" role="img" aria-label="' + api.esc(aria) + '">' +
+        '<defs><marker id="htl-neg-gold" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--ls-gold)"/></marker><marker id="htl-neg-lilac" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--ls-lilac)"/></marker></defs>' +
+        '<path d="M18,102 L302,102 M20,102 L20,16" class="ls-htl-neg-axis"/>' +
+        '<circle cx="62" cy="84" r="6" class="ls-htl-neg-dot is-sad"/><text x="62" y="104">' + api.esc(sad) + '</text>' +
+        '<circle cx="252" cy="30" r="6" class="ls-htl-neg-dot is-happy"/><text x="252" y="18">' + api.esc(happy) + '</text>' +
+        '<circle cx="174" cy="70" r="6" class="ls-htl-neg-dot is-not"/><text x="174" y="90">' + api.esc(notSad) + '</text>' +
+        '<path d="M68,82 Q118,70 168,70" class="ls-htl-neg-arrow is-neg" marker-end="url(#htl-neg-gold)"/>' +
+        '<text x="100" y="62" class="ls-htl-neg-label">' + neg + '</text>' +
+        '<path d="M181,66 Q203,53 220,45" class="ls-htl-neg-arrow is-att" marker-end="url(#htl-neg-lilac)"/>' +
+        '<text x="204" y="36" class="ls-htl-neg-label is-att">' + attn + '</text>' +
+        '<text x="238" y="62" class="ls-htl-neg-gap">' + (DE ? "nicht deckungsgleich" : "not the same point") + '</text>' +
+      '</svg>' +
+      '<p class="ls-htl-neg-eq">' + api.esc(notSad) + ' <b>≠</b> ' + api.esc(happy) + '</p>';
+    }
     function render() {
       var t = TYPES[selected];
       card.className = "ls-htl-card is-" + t.color;
       kicker.textContent = DE ? "Typ " + (selected + 1) + " / " + TYPES.length : "Type " + (selected + 1) + " / " + TYPES.length;
       title.textContent = t.label;
       example.innerHTML = '<span class="ls-htl-q">' + (DE ? "Frage" : "Question") + '</span><p>' + api.esc(t.question) + '</p><span class="ls-htl-a">' + (DE ? "Antwort" : "Answer") + '</span><p>' + api.esc(t.answer) + '</p>';
+      if (t.id === "negation") { viz.hidden = false; viz.innerHTML = negationViz(); }
+      else { viz.hidden = true; viz.innerHTML = ""; }
       why.textContent = t.why;
       check.textContent = t.check;
       fix.textContent = t.fix;
