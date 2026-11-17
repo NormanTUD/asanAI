@@ -1134,9 +1134,6 @@ h1,h2,h3,h4{
 .ls-cr-trans td{padding:4px 6px;border-top:1px solid rgba(0,75,111,.08);vertical-align:top}
 .ls-cr-trans-gloss{color:var(--ls-petrol)}
 .ls-cr-note{margin:0;font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-cr-systems{font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-cr-systems summary{cursor:pointer;color:var(--ls-petrol)}
-.ls-cr-systems p{margin:4px 0 0}
 .ls-cr-restart{justify-self:start}
 @media (max-width:640px){
   .ls-lang-bar{grid-template-columns:78px minmax(0,1fr) 34px}
@@ -1154,11 +1151,11 @@ h1,h2,h3,h4{
 .ls-fps{position:fixed;right:10px;bottom:10px;z-index:9999;padding:3px 7px;background:rgba(0,0,0,.72);color:#fff;font:600 11px/1 "Open Sans",sans-serif;letter-spacing:.04em;pointer-events:none}
 
 /* Chinese Room: larger, readable glyphs */
-.ls-cr-input{font-size:clamp(28px,3.2vw,40px)}
+.ls-cr-input{font-size:clamp(34px,4vw,52px)}
 .ls-cr-rules{font-size:calc(var(--ls-fs-ui-sm) * 1.15)}
 .ls-cr-choice{font-size:calc(var(--ls-fs-ui-sm) * 1.12)}
 @media (max-width:640px){
-  .ls-cr-input{font-size:28px}
+  .ls-cr-input{font-size:34px}
 }
 
 /* Building-blocks step-through */
