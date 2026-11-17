@@ -463,7 +463,7 @@
         ay = top + Math.max(0, (availH - ah) / 2);
         cx = ax + aw / 2;
         cy = ay + ah * 0.40;
-        R = Math.min(aw * 0.34, ah * 0.34, 92);
+        R = Math.max(0, Math.min(aw * 0.34, ah * 0.34, 92));
       } else {
         ax = pad;
         aw = availW;
@@ -471,7 +471,12 @@
         ah = Math.max(96, H - 64 - ay);
         cx = ax + aw / 2;
         cy = ay + ah * 0.34;
-        R = Math.min(aw * 0.24, ah * 0.34, 76);
+        R = Math.max(0, Math.min(aw * 0.24, ah * 0.34, 76));
+      }
+
+      if (!isFinite(R) || R < 2) {
+        footer(c);
+        return;
       }
 
       var ox = cx - R * 0.62;
