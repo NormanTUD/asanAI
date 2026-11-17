@@ -1247,16 +1247,16 @@
     {
       kicker: "Unembedding",
       title: "Ähnliche Worte finden",
-      body: "Wörter sind Richtungen, keine Punkte: $W_U$ hat eine Zeile $w_i \\in \\mathbb{R}^{512}$ pro Token. Der letzte Vektor $h$ ist der Zustand des aktuellen Tokens. Das Unembedding bildet $z = W_U h$; der Logit eines Tokens ist $z_i = w_i \\cdot h$. Das Skalarprodukt misst, wie ähnlich die Richtungen zeigen; die Länge zählt nicht. Wähle ein Wort und sieh die nächsten Richtungen; die Winkel sind Ähnlichkeiten, keine Wahrscheinlichkeiten.\n\n$W_U$ ist gelernt. Wörter, die in ähnlichen Kontexten vorkommen, bekommen ähnliche Richtungen. Die 2D-Darstellung ist eine Projektion der gelernten Richtungen, keine vollständige Geometrie. Zwei Punkte auf derselben Richtung können weit auseinanderliegen und haben trotzdem Winkel 0°.",
-      watch: "Wähle ein Wort. Klicke Weiter für Winkel, Länge und Unembedding.",
+      body: "Wörter sind Richtungen, keine Punkte. Auf der Kugel siehst du die gelernten Richtungen als Punkte; der grüne Vektor ist dein Wort. Der Winkel zwischen zwei Richtungen ist die Ähnlichkeit. Die Länge ändert daran nichts: Ein kurzer und ein langer grüner Vektor in dieselbe Richtung haben 0°, ein Punkt daneben hat einen größeren Winkel. $W_U$ hat eine Zeile $w_i \\in \\mathbb{R}^{512}$ pro Token; der letzte Vektor $h$ ist der Zustand des aktuellen Tokens. Wähle ein Wort und sieh die nächsten Richtungen. Die Winkel sind Ähnlichkeiten, keine Wahrscheinlichkeiten.\n\n$W_U$ ist gelernt. Wörter in ähnlichen Kontexten bekommen ähnliche Richtungen. Die Kugel ist eine 3D-Projektion der gelernten Richtungen, keine vollständige Geometrie.",
+      watch: "Wähle ein Wort. Ziehe die Kugel, um sie zu drehen. Die Winkel stehen an den Punkten.",
       demoState: { scene: "unembed", mode: "directions" },
-      context: "Die Karte ist eine Projektion der gelernten Richtungen. Die Winkel sind Kosinus-Ähnlichkeiten; erst Softmax macht daraus eine Verteilung. Ähnliche Wörter liegen in ähnlichen Richtungen, weil das Training sie in ähnlichen Kontexten sieht.",
-      deep: "$W_U$ ist gelernt. Wörter in ähnlichen Kontexten bekommen ähnliche Richtungen; das Skalarprodukt misst die Nähe. Die Länge eines Vektors ändert den Winkel nicht; deshalb ist der Winkel oft das robustere Signal. Die Karte ist eine Projektion, keine vollständige Geometrie.",
+      context: "Die Kugel ist eine 3D-Projektion der gelernten Richtungen. Die Winkel sind Kosinus-Ähnlichkeiten; erst Softmax macht daraus eine Verteilung. Ähnliche Wörter liegen in ähnlichen Richtungen, weil das Training sie in ähnlichen Kontexten sieht.",
+      deep: "$W_U$ ist gelernt. Wörter in ähnlichen Kontexten bekommen ähnliche Richtungen; das Skalarprodukt misst die Nähe. Die Länge eines Vektors ändert den Winkel nicht; deshalb ist der Winkel oft das robustere Signal. Die Kugel ist eine Projektion, keine vollständige Geometrie.",
       boxes: [
         box("un-1", "Mathematik", "Die Matrix $W_U$", "Jede Zeile von $W_U$ ist die gelernte Richtung eines Tokens. Das Skalarprodukt mit $h$ ergibt einen Logit. Ähnliche Richtungen ergeben hohe Werte; Softmax macht daraus eine Verteilung.", "\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Richtung mal Vektor}}"),
-        box("un-2", "Metrik", "Winkel statt Abstand", "Der Cosinus misst den Winkel und ignoriert die Länge. Zwei Vektoren können weit auseinanderliegen und trotzdem in dieselbe Richtung zeigen. Das ist der Punkt: Wörter sind Richtungen, keine Punkte.", "\\underbrace{\\cos\\theta}_{\\text{Ähnlichkeit}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{nur Richtung}}"),
-        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Karte zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Winkel sind keine Wahrscheinlichkeiten."),
-        box("un-4", "Metrik", "Skaleninvarianz", "Eine positive Skalierung ändert den Winkel nicht. Der Cosinus bleibt gleich; die Länge fällt heraus. Ob die Richtung semantisch dasselbe bedeutet, ist eine Eigenschaft des gelernten Raums, keine Folge des Cosinus."),
+        box("un-2", "Metrik", "Winkel statt Abstand", "Der Cosinus misst den Winkel und ignoriert die Länge. Ein kurzer und ein langer Vektor in dieselbe Richtung haben 0°; die Spitzen liegen weit auseinander, die Ähnlichkeit bleibt gleich. Wörter sind Richtungen, keine Punkte.", "\\underbrace{\\cos\\theta}_{\\text{Ähnlichkeit}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{nur Richtung}}"),
+        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Kugel zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Winkel sind keine Wahrscheinlichkeiten."),
+        box("un-4", "Unembedding", "Von $n$ Vektoren zu Prozenten", "Jede Zeile von $W_U$ ist ein gelernter Token-Vektor. $z = W_U h$ rechnet ein Skalarprodukt pro Token, also $n$ Werte. Der Winkel steckt im Skalarprodukt; Softmax macht aus den $n$ Logits eine Verteilung.", "\\underbrace{\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Dot-Produkt}} = \\underbrace{\\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i}_{\\text{Winkel}} \\qquad \\underbrace{p_i}_{\\text{Prozent}} = \\underbrace{\\operatorname{softmax}(z)_i}_{\\text{Verteilung}}}_{\\text{von der Richtung zur Wahrscheinlichkeit}}"),
         box("un-5", "Begriff", "Was ist $h$?", "$h$ ist der letzte Vektor aus den Transformer-Blöcken. In ihn haben Attention und FFN den gesamten Kontext über viele Schichten und Heads eingemischt. Aus diesem $h$ sagt $W_U$ das nächste Token voraus.")
       ],
       sources: [
@@ -1269,16 +1269,16 @@
     {
       kicker: "Unembedding",
       title: "Finding similar words",
-      body: "Words are directions, not points: $W_U$ has one row $w_i \\in \\mathbb{R}^{512}$ per token. The final vector $h$ is the state of the current token. Unembedding computes $z = W_U h$; the logit of a token is $z_i = w_i \\cdot h$. The dot product measures how similarly the directions point; length does not matter. Choose a word and see the nearest directions; the angles are similarities, not probabilities.\n\n$W_U$ is learned. Words that occur in similar contexts get similar directions. The 2D view is a projection of the learned directions, not the full geometry. Two points on the same direction can be far apart and still have angle 0°.",
-      watch: "Choose a word. Click Next for angle, length, and unembedding.",
+      body: "Words are directions, not points. On the sphere you see the learned directions as points; the green vector is your word. The angle between two directions is the similarity. Length does not change it: a short and a long green vector in the same direction have 0°, while a point off the line has a larger angle. $W_U$ has one row $w_i \\in \\mathbb{R}^{512}$ per token; the final vector $h$ is the state of the current token. Choose a word and see the nearest directions. The angles are similarities, not probabilities.\n\n$W_U$ is learned. Words that occur in similar contexts get similar directions. The sphere is a 3D projection of the learned directions, not the full geometry.",
+      watch: "Choose a word. Drag the sphere to rotate it. The angles are shown on the points.",
       demoState: { scene: "unembed", mode: "directions" },
-      context: "The map is a projection of the learned directions. The angles are cosine similarities; only softmax turns them into a distribution. Similar words lie in similar directions because training sees them in similar contexts.",
-      deep: "$W_U$ is learned. Words in similar contexts get similar directions; the dot product measures closeness. A vector's length does not change the angle; that is why the angle is often the more robust signal. The map is a projection, not the full geometry.",
+      context: "The sphere is a 3D projection of the learned directions. The angles are cosine similarities; only softmax turns them into a distribution. Similar words lie in similar directions because training sees them in similar contexts.",
+      deep: "$W_U$ is learned. Words in similar contexts get similar directions; the dot product measures closeness. A vector's length does not change the angle; that is why the angle is often the more robust signal. The sphere is a projection, not the full geometry.",
       boxes: [
         box("un-1", "Mathematics", "The matrix $W_U$", "Every row of $W_U$ is the learned direction of a token. The dot product with $h$ gives a logit. Similar directions give high values; softmax turns them into a distribution.", "\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{direction times vector}}"),
-        box("un-2", "Metric", "Angle instead of distance", "The cosine measures the angle and ignores length. Two vectors can be far apart and still point in the same direction. That is the point: words are directions, not points.", "\\underbrace{\\cos\\theta}_{\\text{similarity}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{direction only}}"),
-        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The map shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the angles are not probabilities."),
-        box("un-4", "Metric", "Scale invariance", "A positive scaling does not change the angle. The cosine stays the same; length drops out. Whether that direction means the same thing is a property of the learned space, not a consequence of cosine."),
+        box("un-2", "Metric", "Angle instead of distance", "The cosine measures the angle and ignores length. A short and a long vector in the same direction have 0°; the tips are far apart, the similarity stays the same. Words are directions, not points.", "\\underbrace{\\cos\\theta}_{\\text{similarity}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{direction only}}"),
+        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The sphere shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the angles are not probabilities."),
+        box("un-4", "Unembedding", "From $n$ vectors to percentages", "Every row of $W_U$ is a learned token vector. $z = W_U h$ computes one dot product per token, so $n$ values. The angle sits inside the dot product; softmax turns the $n$ logits into a distribution.", "\\underbrace{\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{dot product}} = \\underbrace{\\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i}_{\\text{angle}} \\qquad \\underbrace{p_i}_{\\text{percent}} = \\underbrace{\\operatorname{softmax}(z)_i}_{\\text{distribution}}}_{\\text{from direction to probability}}"),
         box("un-5", "Term", "What is $h$?", "$h$ is the final vector from the transformer blocks. Attention and the FFN have mixed the entire context into it through many layers and heads. From this $h$, $W_U$ predicts the next token.")
       ],
       sources: [
@@ -1289,38 +1289,15 @@
     }
   ];
 
-  var unembedAngleStep = Object.assign({}, unembedSteps[0], {
-    kicker: DE ? "Winkel" : "Angle",
-    title: DE ? "Winkel statt Abstand" : "Angle instead of distance",
-    body: DE
-      ? "Jetzt zählt nur die Richtung. Der Winkel zwischen $h$ und einer Token-Richtung wird zum Cosinus: $\\cos\\theta = \\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}$. Die Länge fällt heraus. Ziehe die beiden Vektoren und sieh, wann der Winkel klein wird. Kleiner Winkel heißt ähnliche Richtung."
-      : "Now only the direction counts. The angle between $h$ and a token direction becomes the cosine: $\\cos\\theta = \\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}$. Length drops out. Drag the two vectors and see when the angle gets small. A small angle means a similar direction.",
-    watch: DE ? "Ziehe A und B. Wann ist der Winkel klein, wann groß?" : "Drag A and B. When is the angle small, when large?",
-    context: DE ? "Der Cosinus misst den Winkel zwischen zwei Richtungen; die Länge kürzt sich heraus. Ein kleiner Winkel bedeutet eine ähnliche Richtung." : "The cosine measures the angle between two directions; length cancels out. A small angle means a similar direction.",
-    demoState: { scene: "unembed", mode: "angle" },
-    boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-angle" }); })
-  });
-
-  var unembedScaleStep = Object.assign({}, unembedSteps[0], {
-    kicker: DE ? "Skaleninvarianz" : "Scale invariance",
-    title: DE ? "Länge vs. Richtung" : "Length vs. direction",
-    body: DE
-      ? "A und B zeigen in dieselbe Richtung, aber B ist länger. Die Spitzen liegen weit auseinander, der Winkel bleibt 0°. Der Cosinus bleibt 1. Ziehe die Länge von B: Die Ähnlichkeit ändert sich nicht. Das ist der Unterschied zwischen Richtung und Punkt."
-      : "A and B point in the same direction, but B is longer. The tips are far apart, while the angle stays 0°. The cosine stays 1. Drag the length of B: the similarity does not change. That is the difference between a direction and a point.",
-    watch: DE ? "Ziehe die Länge von B. Was bleibt gleich, was ändert sich?" : "Drag the length of B. What stays the same, what changes?",
-    context: DE ? "Eine positive Skalierung ändert die Richtung nicht. Der Cosinus bleibt gleich; die Länge fällt heraus. Der Abstand der Spitzen wächst, der Winkel bleibt 0°." : "A positive scaling does not change the direction. The cosine stays the same; length drops out. The distance between the tips grows, the angle stays 0°.",
-    demoState: { scene: "unembed", mode: "scale" },
-    boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-scale" }); })
-  });
-
   var unembedUnembedStep = Object.assign({}, unembedSteps[0], {
     kicker: DE ? "Unembedding" : "Unembedding",
     title: DE ? "Vom Vektor zur Verteilung" : "From vector to distribution",
     body: DE
-      ? "$h$ ist der Zustand des aktuellen Tokens nach allen Transformer-Blöcken; der gesamte Kontext ist über viele Heads und Schichten hineingemischt. Das Unembedding bildet $z = W_U h$; jede Zeile von $W_U$ ist eine Token-Richtung. Der kleinste Winkel ergibt den höchsten Logit. Softmax macht aus allen Logits eine Verteilung. Klicke einen Vorschlag oder nutze „Nächster Winkel“."
-      : "$h$ is the state of the current token after all transformer blocks; the entire context has been mixed into it through many heads and layers. Unembedding computes $z = W_U h$; every row of $W_U$ is a token direction. The smallest angle gives the highest logit. Softmax turns all logits into a distribution. Click a suggestion or use “Next angle”.",
+      ? "$h$ ist der Zustand des aktuellen Tokens nach allen Transformer-Blöcken. $W_U$ hat eine gelernte Zeile $w_i$ pro Vokabular-Token, also $n$ Vektoren. $z = W_U h$ rechnet $n$ Skalarprodukte, eines pro Token; jedes ist $w_i \\cdot h = \\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i$. Der Winkel misst die Ähnlichkeit, die Länge skaliert den Logit. Softmax macht aus den $n$ Logits Prozente. Klicke einen Vorschlag oder nutze „Nächster Winkel“."
+      : "$h$ is the state of the current token after all transformer blocks. $W_U$ has one learned row $w_i$ per vocabulary token, so $n$ vectors. $z = W_U h$ computes $n$ dot products, one per token; each is $w_i \\cdot h = \\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i$. The angle measures similarity; the length scales the logit. Softmax turns the $n$ logits into percentages. Click a suggestion or use “Next angle”.",
     watch: DE ? "Klicke die Vorschläge. Welcher Winkel wird zur höchsten Wahrscheinlichkeit?" : "Click the suggestions. Which angle becomes the highest probability?",
-    context: DE ? "$h$ ist kein einzelnes Wort, sondern der Zustand nach allen Schichten: Attention hat Kontext zwischen den Tokens verschoben, das FFN hat ihn pro Token geformt. Der Logit ist das Skalarprodukt aus $h$ und einer Token-Zeile; Softmax macht aus allen Logits eine Verteilung." : "$h$ is not a single word but the state after all layers: attention moved context between tokens, and the FFN shaped it per token. The logit is the dot product of $h$ and a token row; softmax turns all logits into a distribution.",
+    context: DE ? "Der Logit ist das Skalarprodukt aus $h$ und einer Token-Zeile; der Winkel bestimmt die Ähnlichkeit, die Länge kann den Wert skalieren. Softmax normalisiert alle $n$ Logits zu Prozenten." : "The logit is the dot product of $h$ and a token row; the angle determines similarity, and the length can scale the value. Softmax normalises all $n$ logits into percentages.",
+    deep: DE ? "Ja: $W_U h$ ist eine Matrix-Vektor-Multiplikation. Jede der $n$ Zeilen wird mit $h$ multipliziert und summiert. Bei ähnlichen Längen entspricht die Reihenfolge der Logits dem Winkel; unterschiedliche Längen können die Reihenfolge verschieben. Softmax macht daraus eine Verteilung." : "Yes: $W_U h$ is a matrix-vector multiplication. Each of the $n$ rows is multiplied by $h$ and summed. When the lengths are similar, the order of the logits follows the angle; different lengths can shift the order. Softmax turns it into a distribution.",
     demoState: { scene: "unembed", mode: "unembed" },
     boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-unembed" }); })
   });
@@ -1328,7 +1305,7 @@
   var unembedStep = {
     title: DE ? "Ähnliche Worte finden" : "Finding similar words",
     kicker: "Unembedding",
-    substeps: [unembedSteps[0], unembedAngleStep, unembedScaleStep, unembedUnembedStep]
+    substeps: [unembedSteps[0], unembedUnembedStep]
   };
 
   var highdimSteps = DE ? [

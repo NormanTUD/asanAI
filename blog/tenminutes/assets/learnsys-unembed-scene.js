@@ -9,20 +9,11 @@
     el.innerHTML =
       '<div class="ls-sim-tabs" role="tablist">' +
         '<button type="button" class="ls-sim-tab is-on" data-mode="directions" role="tab" aria-selected="true">' + (DE ? "Richtungen" : "Directions") + '</button>' +
-        '<button type="button" class="ls-sim-tab" data-mode="angle" role="tab" aria-selected="false">' + (DE ? "Winkel" : "Angle") + '</button>' +
-        '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">' + (DE ? "Skaleninvarianz" : "Scale invariance") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="unembed" role="tab" aria-selected="false">Unembedding</button>' +
       '</div>' +
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
       '<div class="ls-sim-controls ls-sim-map-controls">' +
         '<label class="ls-sim-pick">' + (DE ? "Wort" : "Word") + ' <select class="ls-sim-select"></select></label>' +
-      '</div>' +
-      '<div class="ls-sim-controls ls-sim-angle-controls" hidden>' +
-        '<label class="ls-range">' + (DE ? "Vektor A" : "Vector A") + ' <input type="range" class="ls-sim-angle-a" min="0" max="360" step="1" value="360"><output>360°</output></label>' +
-        '<label class="ls-range">' + (DE ? "Vektor B" : "Vector B") + ' <input type="range" class="ls-sim-angle-b" min="0" max="360" step="1" value="90"><output>90°</output></label>' +
-      '</div>' +
-      '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
-        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.3" max="3" step="0.05" value="1.6"><output>1.60×</output></label>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
@@ -57,7 +48,9 @@
     var caption = el.querySelector(".ls-sim-caption");
     var size = null;
     var selected = 0;
-    var mode = "map";
+    var mode = "directions";
+    var yaw = -0.55, pitch = 0.33;
+    var dragging = false, dragMoved = false, lastPX = 0, lastPY = 0;
     var angleA = 360, angleB = 90, scaleMag = 1.6;
     var hits = [];
     var C = api.colors();
@@ -125,110 +118,163 @@
       var dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
       return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
+    function unit3(v) {
+      var n = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) || 1;
+      return [v[0] / n, v[1] / n, v[2] / n];
+    }
+    function dot3(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+    function proj3(p, cx, cy, R) { return V.project(p, yaw, pitch, R, cx, cy); }
+    function slerp3(a, b, t) {
+      var d = Math.acos(clamp(dot3(a, b), -1, 1));
+      if (d < 1e-5) return a.slice();
+      var sd = Math.sin(d);
+      var wa = Math.sin((1 - t) * d) / sd;
+      var wb = Math.sin(t * d) / sd;
+      return [a[0] * wa + b[0] * wb, a[1] * wa + b[1] * wb, a[2] * wa + b[2] * wb];
+    }
+    function sphereWire(ctx, cx, cy, R, color) {
+      var lat, lon, pts, p, i;
+      for (lat = -60; lat <= 60; lat += 30) {
+        pts = [];
+        for (lon = 0; lon <= 360; lon += 12) {
+          var la = lat * Math.PI / 180, lo = lon * Math.PI / 180;
+          pts.push([Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)]);
+        }
+        ctx.beginPath();
+        for (i = 0; i < pts.length; i++) {
+          p = proj3(pts[i], cx, cy, R);
+          if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = V.alpha(color, lat === 0 ? 0.26 : 0.13);
+        ctx.lineWidth = lat === 0 ? 1.1 : 0.8;
+        ctx.stroke();
+      }
+      for (lon = 0; lon < 180; lon += 30) {
+        pts = [];
+        for (lat = -90; lat <= 90; lat += 12) {
+          var la2 = lat * Math.PI / 180, lo2 = lon * Math.PI / 180;
+          pts.push([Math.cos(la2) * Math.cos(lo2), Math.cos(la2) * Math.sin(lo2), Math.sin(la2)]);
+        }
+        ctx.beginPath();
+        for (i = 0; i < pts.length; i++) {
+          p = proj3(pts[i], cx, cy, R);
+          if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = V.alpha(color, 0.12);
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
     function drawDirections() {
       if (!size) return;
       C = api.colors();
       var ctx = size.ctx, w = size.w, h = size.h;
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = C.paper;
-      ctx.fillRect(0, 0, w, h);
-      var cx = w * .32, cy = h * .52, r = Math.min(w * .27, h * .38);
-      ctx.strokeStyle = C.line;
-      ctx.globalAlpha = .55;
-      ctx.lineWidth = 1;
-      for (var k = 1; k <= 3; k++) {
-        ctx.beginPath();
-        ctx.arc(cx, cy, r * k / 3, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.beginPath();
-      ctx.moveTo(cx - r * 1.1, cy);
-      ctx.lineTo(cx + r * 1.1, cy);
-      ctx.moveTo(cx, cy - r * 1.1);
-      ctx.lineTo(cx, cy + r * 1.1);
-      ctx.stroke();
-      ctx.globalAlpha = 1;
+      V.aurora(ctx, w, h, C, { vignette: 0.06 });
+      var cx = w * 0.33, cy = h * 0.53, R = Math.min(w * 0.235, h * 0.33);
+      if (R < 30) return;
       var q = WORDS[selected];
-      var qa = Math.atan2(q.y, q.x);
+      var qv = unit3(vec(q));
       var rows = [];
       WORDS.forEach(function (ww, i) {
         if (i === selected) return;
-        var a = Math.atan2(ww.y, ww.x);
-        var diff = a - qa;
-        while (diff > Math.PI) diff -= Math.PI * 2;
-        while (diff < -Math.PI) diff += Math.PI * 2;
-        var ad = Math.abs(diff);
-        rows.push({ i: i, w: ww, a: a, diff: diff, ad: ad, cos: Math.cos(diff), deg: ad * 180 / Math.PI });
+        var wv = unit3(vec(ww));
+        var cos = clamp(dot3(qv, wv), -1, 1);
+        var ad = Math.acos(cos);
+        rows.push({ i: i, w: ww, v: wv, cos: cos, ad: ad, deg: ad * 180 / Math.PI });
       });
       rows.sort(function (a, b) { return a.ad - b.ad; });
       var top = rows.slice(0, 5);
+      var topIds = top.map(function (t) { return t.i; });
+
+      var halo = ctx.createRadialGradient(cx - R * 0.32, cy - R * 0.36, R * 0.08, cx, cy, R * 1.18);
+      halo.addColorStop(0, V.alpha(C.paper, 0.92));
+      halo.addColorStop(0.55, V.alpha(C.paper2, 0.42));
+      halo.addColorStop(1, V.alpha(C.paper, 0));
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 1.18, 0, Math.PI * 2);
+      ctx.fill();
+      sphereWire(ctx, cx, cy, R, C.petrol);
+
+      var pts = WORDS.map(function (ww, i) {
+        var p = proj3(unit3(vec(ww)), cx, cy, R);
+        return { i: i, w: ww, x: p.x, y: p.y, z: p.z };
+      }).sort(function (a, b) { return a.z - b.z; });
+
       hits = [];
-      WORDS.forEach(function (ww, i) {
-        var a = Math.atan2(ww.y, ww.x);
-        var x = cx + Math.cos(a) * r, y = cy - Math.sin(a) * r;
-        var isSel = i === selected;
-        var isTop = top.some(function (t) { return t.i === i; });
-        ctx.strokeStyle = isSel ? C.green : isTop ? C.gold : C.line;
-        ctx.globalAlpha = isSel ? 1 : isTop ? .75 : .35;
-        ctx.lineWidth = isSel ? 2.4 : isTop ? 1.4 : 1;
+      pts.forEach(function (pt) {
+        var isSel = pt.i === selected;
+        var isTop = topIds.indexOf(pt.i) >= 0;
+        ctx.save();
+        ctx.globalAlpha = isSel ? 0.95 : isTop ? 0.72 : 0.34;
+        ctx.strokeStyle = isSel ? C.green : isTop ? C.gold : C.lineStrong;
+        ctx.lineWidth = isSel ? 2.2 : isTop ? 1.3 : 0.8;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
-        ctx.lineTo(x, y);
+        ctx.lineTo(pt.x, pt.y);
         ctx.stroke();
-        ctx.globalAlpha = 1;
+        ctx.restore();
         ctx.beginPath();
-        ctx.arc(x, y, isSel ? 4.2 : isTop ? 3 : 2.2, 0, Math.PI * 2);
+        ctx.arc(pt.x, pt.y, isSel ? 4.4 : isTop ? 3.1 : 2.1, 0, Math.PI * 2);
         ctx.fillStyle = isSel ? C.green : isTop ? C.gold : C.muted;
         ctx.fill();
-        hits.push({ x: x, y: y, i: i });
-        if (isSel || isTop) drawRayLabel(word(ww), x, y, cx, cy, w, h, isSel, w * .63);
+        if (isSel || isTop) {
+          ctx.strokeStyle = C.paper;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        }
+        hits.push({ x: pt.x, y: pt.y, i: pt.i });
+        if (isSel || isTop) drawRayLabel(word(pt.w), pt.x, pt.y, cx, cy, w, h, isSel, w * 0.63);
       });
-      var qx = cx + Math.cos(qa) * r, qy = cy - Math.sin(qa) * r;
-      var ox = cx + Math.cos(qa) * r * 1.45, oy = cy - Math.sin(qa) * r * 1.45;
+
+      // A short and a long green vector in the same direction: the angle stays 0°.
+      var longP = proj3(qv, cx, cy, R);
+      var shortP = proj3([qv[0] * 0.56, qv[1] * 0.56, qv[2] * 0.56], cx, cy, R);
+      V.arrow(ctx, cx, cy, shortP.x, shortP.y, C.green, 3.2, 7);
       ctx.save();
       ctx.setLineDash([5, 4]);
-      ctx.strokeStyle = V.alpha(C.green, .7);
+      ctx.strokeStyle = V.alpha(C.green, 0.55);
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.moveTo(qx, qy);
-      ctx.lineTo(ox, oy);
+      ctx.moveTo(shortP.x, shortP.y);
+      ctx.lineTo(longP.x, longP.y);
       ctx.stroke();
       ctx.restore();
-      ctx.beginPath();
-      ctx.arc(ox, oy, 3.4, 0, Math.PI * 2);
+      V.arrow(ctx, cx, cy, longP.x, longP.y, V.alpha(C.green, 0.72), 1.8, 6);
       ctx.fillStyle = C.green;
-      ctx.fill();
-      ctx.fillStyle = C.green;
-      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      ctx.fillText(DE ? "gleiche Richtung, anderer Abstand" : "same direction, different distance", Math.min(ox + 8, w * .62 - 80), oy + 2);
-      if (top.length) {
-        var t = top[0];
-        var aa = qa, bb = t.a, d = t.diff;
+      ctx.fillText(DE ? "gleiche Richtung · 0° · Länge egal" : "same direction · 0° · length does not matter", Math.min(shortP.x + 8, w * 0.62 - 150), shortP.y + 12);
+
+      top.slice(0, 3).forEach(function (t, k) {
+        var ptsArc = [];
+        for (var i = 1; i < 10; i++) {
+          var p = proj3(slerp3(qv, t.v, i / 10), cx, cy, R);
+          ptsArc.push(p);
+        }
         ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, r * .42, -aa, -bb, d < 0);
-        ctx.closePath();
-        ctx.fillStyle = V.alpha(C.gold, .16);
-        ctx.fill();
-        ctx.strokeStyle = C.gold;
-        ctx.lineWidth = 1.2;
+        ptsArc.forEach(function (p, i) { if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y); });
+        ctx.strokeStyle = V.alpha(C.gold, k === 0 ? 0.78 : 0.45);
+        ctx.lineWidth = k === 0 ? 1.8 : 1.1;
         ctx.stroke();
+        var mid = proj3(slerp3(qv, t.v, 0.5), cx, cy, R);
         ctx.fillStyle = C.gold;
-        ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
+        ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(Math.round(t.deg) + "°", cx + Math.cos((aa + bb) / 2) * r * .52, cy - Math.sin((aa + bb) / 2) * r * .52);
-      }
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
+        ctx.fillText(Math.round(t.deg) + "°", mid.x, mid.y - 7);
+      });
+
       ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + Math.max(12, api.font("canvas") * .9) + 'px "Barlow", sans-serif';
-      ctx.fillText(DE ? "Wörter sind Richtungen" : "Words are directions", 18, 28);
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(DE ? "3D-Kugel der Richtungen" : "3D sphere of directions", 18, 28);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "Winkel = Ähnlichkeit · Länge zählt nicht" : "angle = similarity · length does not count", 18, 45);
+      ctx.fillText(DE ? "Winkel = Ähnlichkeit · Länge zählt nicht · ziehen zum Drehen" : "angle = similarity · length does not count · drag to rotate", 18, 45);
+
       var bx = w * .64, by = 64, bw = w - bx - 18;
       ctx.textAlign = "left";
       ctx.fillStyle = C.petrol;
@@ -261,7 +307,8 @@
       });
       var topRow = top[0];
       readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span><span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
-      caption.textContent = DE ? "Wörter sind Richtungen, keine Punkte. Der Winkel ist die Ähnlichkeit; die Länge spielt keine Rolle. Zwei Punkte auf derselben Richtung können weit auseinanderliegen und haben trotzdem Winkel 0°." : "Words are directions, not points. The angle is the similarity; length does not matter. Two points on the same direction can be far apart and still have angle 0°.";
+      caption.textContent = DE ? "Die Kugel ist eine 3D-Projektion der gelernten Richtungen. Der Winkel ist die Ähnlichkeit; ein kurzer und ein langer Vektor in dieselbe Richtung haben 0°, ein Punkt daneben hat einen größeren Winkel." : "The sphere is a 3D projection of the learned directions. The angle is the similarity; a short and a long vector in the same direction have 0°, while a point off the line has a larger angle.";
+      canvas.setAttribute("aria-label", DE ? "3D-Kugel der gelernten Wortrichtungen; der grüne Vektor ist das gewählte Wort, die Winkel zu den nächsten Richtungen stehen daneben." : "3D sphere of learned word directions; the green vector is the chosen word, with angles to the nearest directions.");
     }
 
     function circleScene() {
@@ -492,7 +539,7 @@
       } catch (e) {}
     }
     function setMode(next) {
-      var order = { directions: 0, angle: 1, scale: 2, unembed: 3 };
+      var order = { directions: 0, unembed: 1 };
       var modeChanged = next !== mode;
       var dir = order[next] < order[mode] ? -1 : 1;
       mode = next;
@@ -547,7 +594,31 @@
     if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°";
     if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
     select.addEventListener("change", function () { choose(parseInt(select.value, 10)); });
+    canvas.addEventListener("pointerdown", function (e) {
+      if (mode !== "directions") return;
+      dragging = true;
+      dragMoved = false;
+      lastPX = e.clientX;
+      lastPY = e.clientY;
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      var dx = e.clientX - lastPX, dy = e.clientY - lastPY;
+      if (Math.abs(dx) + Math.abs(dy) > 2) dragMoved = true;
+      yaw += dx * 0.008;
+      pitch = clamp(pitch + dy * 0.008, -1.2, 1.2);
+      lastPX = e.clientX;
+      lastPY = e.clientY;
+      drawDirections();
+      if (e.cancelable) e.preventDefault();
+    });
+    canvas.addEventListener("pointercancel", function () { dragging = false; });
     canvas.addEventListener("pointerup", function (e) {
+      if (dragging) {
+        dragging = false;
+        if (dragMoved) { dragMoved = false; return; }
+      }
       var r = canvas.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
       var best = null, bestD = 1e9;
