@@ -430,6 +430,9 @@
   }
   function proseBlock(text) {
     return String(text == null ? "" : text).split(/\n{2,}/).map(function (block) {
+      if (block.length > 4 && block.slice(0, 2) === "$$" && block.slice(-2) === "$$") {
+        return mathBlock(block.slice(2, -2), true);
+      }
       return '<p>' + block.split(/(\$[^$]+\$)/g).map(function (part) {
         if (part.length > 1 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
           return inlineMath(part.slice(1, -1));
