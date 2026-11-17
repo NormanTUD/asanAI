@@ -23,74 +23,85 @@ Working checklist. Keep this file in sync with the opencode todo list.
 
 ### A. Formula audit
 
-- [ ] Find every displayed formula/expression in `intuition_learnsys-data.js` that is plain text.
-- [ ] Convert inline math to `$...$` and display math to `$$...$$` inside `.md`/body/watch.
-- [ ] Check `W_U`, `h`, `z_i`, `p_i`, `cos`, `softmax`, `Σ`, `α`, `R²`.
-- [ ] Keep box `tex` fields; they already use TeX.
-- [ ] Verify `data-tex` renders in both languages.
+- [x] Find the plain-text formulas in the touched slides.
+- [x] Convert the clear inline math to `$...$` (incl. `W_U`, `h`, `z_i`, `p_i`, `ŷ`, `L(w,b)`, `θ`, `η`, `∇L`, `α`, `σ`, `R²`).
+- [x] Keep box `tex` fields for display math.
+- [x] Verify `data-tex` renders in both languages via the page test.
+- [x] Optional final sweep: older slides still contain names/architecture arrows, not equations.
 
 ### B. Redesign unembedding (“Ähnliche Worte finden”)
 
-- [ ] Remove the Euclidean metric toggle and the point-map representation.
-- [ ] Show tokens as directions/rays, not points.
-- [ ] Show that two points far apart on the same ray have the same angle.
-- [ ] Explain unembedding precisely: `z = W_U h`, or `z_i = w_i · h`; then softmax.
-- [ ] Replace map mode with a direction/compass view.
-- [ ] Keep angle / scale-invariance / unembed steps, but make them visual and minimal.
-- [ ] Rewrite DE/EN text with `$...$` math.
-- [ ] Make the scene gorgeous: axis, arrows, projection, steering, no clutter.
+- [x] Remove the Euclidean metric toggle and the point-map representation.
+- [x] Show tokens as directions/rays, not points.
+- [x] Show that two points far apart on the same ray have the same angle.
+- [x] Explain unembedding precisely: `z = W_U h`, or `z_i = w_i · h`; then softmax.
+- [x] Replace map mode with a direction/compass view.
+- [x] Keep angle / scale-invariance / unembed steps, visual and minimal.
+- [x] Rewrite DE/EN text with `$...$` math.
+- [x] Make the scene gorgeous: axis, arrows, projection, no clutter.
 
 ### C. Remove “Von Logits zu einer Verteilung”
 
-- [ ] Remove `softmaxSteps[0]` from the `steps` array.
-- [ ] Ensure softmax remains explained in unembedding and sampling.
-- [ ] Update deck slide count in the page test.
+- [x] Remove `softmaxSteps[0]` from the `steps` array.
+- [x] Softmax remains explained in unembedding and sampling.
+- [x] Deck slide count updated to 36 in the page test.
 
 ### D. New end slides
 
 #### D1. Sentiment directions / ITI
 
-- [ ] New step + demo scene `sentiment`.
-- [ ] Visual: one axis, positive/negative clouds, projection, steering slider.
-- [ ] Visual: selected heads nudged by `+ α w` for ITI.
-- [ ] Minimal labels: “Richtung”, “Projektion”, “Steering”, “Wahrheit”.
-- [ ] Sources: Tigges et al. 2023; Li et al. 2023.
-- [ ] DE/EN text, boxes, questions.
+- [x] New step + demo scene `sentiment`.
+- [x] Visual: one axis, positive/negative clouds, projection, steering slider.
+- [x] Visual: selected heads nudged by `+ α w` for ITI.
+- [x] Minimal labels: “Richtung”, “Projektion”, “Steering”, “Wahrheit”.
+- [x] Sources: Tigges et al. 2023; Li et al. 2023.
+- [x] DE/EN text, boxes, questions.
 
 #### D2. Induction heads
 
-- [ ] New step + demo scene `induction`.
-- [ ] Visual: `A B … A → B` with attention arc.
-- [ ] Visual: previous-token head + induction head two-layer circuit.
-- [ ] Visual: next-token bar and a tiny phase-change sparkline.
-- [ ] Source: Olsson et al. 2022.
-- [ ] DE/EN text with minimal words.
+- [x] New step + demo scene `induction`.
+- [x] Visual: `A B … A → B` with attention arc.
+- [x] Visual: previous-token head + induction head two-layer circuit.
+- [x] Visual: next-token bar and a tiny phase-change sparkline.
+- [x] Source: Olsson et al. 2022.
+- [x] DE/EN text with minimal words.
 
 #### D3. Grokking progress measures
 
-- [ ] New step + demo scene `grokking`.
-- [ ] Visual: train/test loss, three phases, delayed generalization.
-- [ ] Visual: restricted/excluded loss progress measures.
-- [ ] Visual: Fourier spectrum + angle-addition circle.
-- [ ] Source: Nanda et al. 2023.
-- [ ] DE/EN text with questions/answers.
+- [x] New step + demo scene `grokking`.
+- [x] Visual: train/test loss, three phases, delayed generalization.
+- [x] Visual: restricted/excluded loss progress measures.
+- [x] Visual: Fourier spectrum + angle-addition circle.
+- [x] Source: Nanda et al. 2023.
+- [x] DE/EN text with questions/answers.
 
 #### D4. Space and time
 
-- [ ] New step + demo scene `spacetime`.
-- [ ] Load `../atlas_data/world.json` for a faint world map; fallback to grid.
-- [ ] Visual: map with predicted coordinates and R².
-- [ ] Visual: predicted year vs. true year diagonal.
-- [ ] Visual: space/time neurons heatmap.
-- [ ] Source: Gurnee & Tegmark 2023.
-- [ ] DE/EN text with minimal words.
+- [x] New step + demo scene `spacetime`.
+- [x] Load `../atlas_data/world.json` for a faint world map; fallback to grid.
+- [x] Visual: map with predicted coordinates and R².
+- [x] Visual: predicted year vs. true year diagonal.
+- [x] Visual: space/time neurons heatmap.
+- [x] Source: Gurnee & Tegmark 2023.
+- [x] DE/EN text with minimal words.
 
 ### E. Integration & validation
 
-- [ ] Add new steps to `steps` at the end.
-- [ ] Update slide count in `blog/tests/tenminutes_pages_test.py`.
-- [ ] Ensure all new demos register and mount.
-- [ ] Check no horizontal overflow, no console errors, math rendered.
-- [ ] Desktop + mobile screenshots/OCR.
-- [ ] `tenminutes_pages_test.py`, `tenminutes_height_test.py`, `check_all.py --fast`.
-- [ ] `node --check` new JS files, `php -l`, `git diff --check`.
+- [x] Add new steps to `steps` at the end.
+- [x] Update slide count in `blog/tests/tenminutes_pages_test.py` to 36.
+- [x] Ensure all new demos register and mount.
+- [x] No console errors and math rendered (page test passes).
+- [x] Mobile horizontal-overflow audit (0 px on all new slides).
+- [x] Desktop screenshots/OCR for the new slides.
+- [x] Mobile screenshots/OCR for the new slides.
+- [x] `tenminutes_pages_test.py` 32/32 and `tenminutes_height_test.py` 0 jumps.
+- [x] `check_all.py --fast` after final edits.
+- [x] `node --check` for all changed/new JS.
+- [x] `php -l` and `git diff --check`.
+
+## Final pass
+
+- [x] Re-read the five research briefs and check every number/claim on the new slides.
+- [x] Remove remaining overclaims; the sentiment phrase now says “carries a large part of the concept”.
+- [x] Verified English/German parity for the new canvas labels and data text.
+- [x] Full validation and mobile visual audit done.

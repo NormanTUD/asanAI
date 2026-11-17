@@ -125,113 +125,143 @@
       var dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
       return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
-    function ranked() {
-      var q = vec(WORDS[selected]);
-      var maxD = 0;
-      WORDS.forEach(function (w, i) {
-        if (i === selected) return;
-        maxD = Math.max(maxD, distance(q, vec(w)));
-      });
-      var rows = [];
-      WORDS.forEach(function (w, i) {
-        if (i === selected) return;
-        var d = distance(q, vec(w));
-        var score = metric === "angle" ? Math.max(0, Math.min(1, cosine(q, vec(w)))) : Math.max(0, Math.min(1, 1 - d / (maxD || 1)));
-        rows.push({ i: i, pct: Math.round(score * 100), score: score });
-      });
-      rows.sort(function (a, b) { return b.score - a.score; });
-      return rows;
-    }
-    function map(w, h, x, y) {
-      var pad = 24;
-      return {
-        x: pad + ((x + 1) / 2) * (w - pad * 2),
-        y: h - pad - ((y + 1) / 2) * (h - pad * 2)
-      };
-    }
-    function drawMap() {
+    function drawDirections() {
       if (!size) return;
       C = api.colors();
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = C.paper;
       ctx.fillRect(0, 0, w, h);
+      var cx = w * .32, cy = h * .52, r = Math.min(w * .27, h * .38);
       ctx.strokeStyle = C.line;
+      ctx.globalAlpha = .55;
       ctx.lineWidth = 1;
-      ctx.globalAlpha = 0.24;
-      for (var gx = 0; gx <= 8; gx++) {
-        var xx = 8 + (w - 16) * gx / 8;
-        ctx.beginPath(); ctx.moveTo(xx, 8); ctx.lineTo(xx, h - 8); ctx.stroke();
-      }
-      for (var gy = 0; gy <= 6; gy++) {
-        var yy = 8 + (h - 16) * gy / 6;
-        ctx.beginPath(); ctx.moveTo(8, yy); ctx.lineTo(w - 8, yy); ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-      var rows = ranked();
-      var top = rows.slice(0, 5);
-      var q = WORDS[selected];
-      var qp = map(w, h, q.x, q.y);
-      hits = [];
-      top.forEach(function (r) {
-        var ww = WORDS[r.i], p = map(w, h, ww.x, ww.y);
-        ctx.strokeStyle = C.gold;
-        ctx.globalAlpha = 0.12 + r.score * 0.48;
-        ctx.lineWidth = 0.8 + r.score * 2.1;
-        ctx.beginPath(); ctx.moveTo(qp.x, qp.y); ctx.lineTo(p.x, p.y); ctx.stroke();
-      });
-      ctx.globalAlpha = 1;
-      WORDS.forEach(function (ww, i) {
-        var p = map(w, h, ww.x, ww.y);
-        var isSel = i === selected;
-        var isTop = top.some(function (r) { return r.i === i; });
-        var label = word(ww);
-        hits.push({ x: p.x, y: p.y, i: i });
+      for (var k = 1; k <= 3; k++) {
         ctx.beginPath();
-        ctx.arc(p.x, p.y, isSel ? 5.2 : isTop ? 3.8 : 2.7, 0, Math.PI * 2);
+        ctx.arc(cx, cy, r * k / 3, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 1.1, cy);
+      ctx.lineTo(cx + r * 1.1, cy);
+      ctx.moveTo(cx, cy - r * 1.1);
+      ctx.lineTo(cx, cy + r * 1.1);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      var q = WORDS[selected];
+      var qa = Math.atan2(q.y, q.x);
+      var rows = [];
+      WORDS.forEach(function (ww, i) {
+        if (i === selected) return;
+        var a = Math.atan2(ww.y, ww.x);
+        var diff = a - qa;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        var ad = Math.abs(diff);
+        rows.push({ i: i, w: ww, a: a, diff: diff, ad: ad, cos: Math.cos(diff), deg: ad * 180 / Math.PI });
+      });
+      rows.sort(function (a, b) { return a.ad - b.ad; });
+      var top = rows.slice(0, 5);
+      hits = [];
+      WORDS.forEach(function (ww, i) {
+        var a = Math.atan2(ww.y, ww.x);
+        var x = cx + Math.cos(a) * r, y = cy - Math.sin(a) * r;
+        var isSel = i === selected;
+        var isTop = top.some(function (t) { return t.i === i; });
+        ctx.strokeStyle = isSel ? C.green : isTop ? C.gold : C.line;
+        ctx.globalAlpha = isSel ? 1 : isTop ? .75 : .35;
+        ctx.lineWidth = isSel ? 2.4 : isTop ? 1.4 : 1;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.arc(x, y, isSel ? 4.2 : isTop ? 3 : 2.2, 0, Math.PI * 2);
         ctx.fillStyle = isSel ? C.green : isTop ? C.gold : C.muted;
         ctx.fill();
-        if (isSel) {
-          ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
-          ctx.strokeStyle = C.green; ctx.globalAlpha = 0.45; ctx.lineWidth = 1.5; ctx.stroke(); ctx.globalAlpha = 1;
-        }
-        if (!isSel && !isTop) return;
-        var fs = isSel ? Math.max(12, api.font("canvas-sm") + 2) : Math.max(10, api.font("canvas-sm"));
-        ctx.font = (isSel ? "700 " : "600 ") + fs + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        if (isSel) {
-          ctx.textBaseline = "bottom";
-          ctx.fillStyle = C.green;
-          ctx.fillText(label, p.x, p.y - 9);
-        } else {
-          ctx.textBaseline = "top";
-          ctx.fillStyle = C.ink;
-          ctx.fillText(label, p.x, p.y + 10);
-          var r = top.filter(function (x) { return x.i === i; })[0];
-          ctx.font = "700 " + Math.max(8, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
-          ctx.fillStyle = C.gold;
-          ctx.fillText(r.pct + "%", p.x, p.y + 23);
-        }
+        hits.push({ x: x, y: y, i: i });
+        if (isSel || isTop) drawRayLabel(word(ww), x, y, cx, cy, w, h, isSel, w * .63);
       });
-      ctx.fillStyle = C.petrol;
-      ctx.font = '700 ' + Math.max(12, api.font("canvas") * 0.9) + 'px "Barlow", sans-serif';
+      var qx = cx + Math.cos(qa) * r, qy = cy - Math.sin(qa) * r;
+      var ox = cx + Math.cos(qa) * r * 1.45, oy = cy - Math.sin(qa) * r * 1.45;
+      ctx.save();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = V.alpha(C.green, .7);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(qx, qy);
+      ctx.lineTo(ox, oy);
+      ctx.stroke();
+      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(ox, oy, 3.4, 0, Math.PI * 2);
+      ctx.fillStyle = C.green;
+      ctx.fill();
+      ctx.fillStyle = C.green;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(DE ? "gleiche Richtung, anderer Abstand" : "same direction, different distance", Math.min(ox + 8, w * .62 - 80), oy + 2);
+      if (top.length) {
+        var t = top[0];
+        var aa = qa, bb = t.a, d = t.diff;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r * .42, -aa, -bb, d < 0);
+        ctx.closePath();
+        ctx.fillStyle = V.alpha(C.gold, .16);
+        ctx.fill();
+        ctx.strokeStyle = C.gold;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        ctx.fillStyle = C.gold;
+        ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(Math.round(t.deg) + "°", cx + Math.cos((aa + bb) / 2) * r * .52, cy - Math.sin((aa + bb) / 2) * r * .52);
+      }
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
-      ctx.fillText(DE ? "Ähnliche Worte finden" : "Finding similar words", 18, 28);
+      ctx.fillStyle = C.petrol;
+      ctx.font = '700 ' + Math.max(12, api.font("canvas") * .9) + 'px "Barlow", sans-serif';
+      ctx.fillText(DE ? "Wörter sind Richtungen" : "Words are directions", 18, 28);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "2D-Projektion · Zahl = Ähnlichkeit, keine Wahrscheinlichkeit" : "2D projection · number = similarity, not probability", 18, 45);
-      var head = metric === "angle" ? (DE ? "Winkel" : "angle") : (DE ? "Euklidisch" : "Euclidean");
-      ctx.textAlign = "right";
-      ctx.fillStyle = C.green;
-      ctx.font = '700 ' + Math.max(10, api.font("canvas-sm") + 1) + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "Metrik: " + head : "metric: " + head, w - 18, 28);
+      ctx.fillText(DE ? "Winkel = Ähnlichkeit · Länge zählt nicht" : "angle = similarity · length does not count", 18, 45);
+      var bx = w * .64, by = 64, bw = w - bx - 18;
       ctx.textAlign = "left";
-      var list = top.map(function (r) { return word(WORDS[r.i]) + " " + r.pct + "%"; }).join(" · ");
-      readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "Metrik" : "metric") + ' <b>' + head + '</b></span><span>' + (DE ? "Top 5" : "top 5") + ' <b>' + list + '</b></span>';
-      caption.textContent = DE
-        ? "W_U hat eine Zeile pro Token. Das Skalarprodukt misst, wie ähnlich die Richtungen sind: Winkel ignorieren die Länge, der euklidische Abstand nicht. Klicke ein Wort oder wähle es unten."
-        : "W_U has one row per token. The dot product measures how similar the directions are: angles ignore length, Euclidean distance does not. Click a word or choose one below.";
+      ctx.fillStyle = C.petrol;
+      ctx.font = '700 ' + Math.max(10, api.font("canvas-sm")) + 'px "Barlow", sans-serif';
+      ctx.fillText(DE ? "nächste Richtungen" : "nearest directions", bx, 28);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.fillText(DE ? "kleinster Winkel zuerst" : "smallest angle first", bx, 44);
+      top.forEach(function (t, i) {
+        var y = by + i * Math.min(28, (h - by - 20) / top.length);
+        ctx.fillStyle = i === 0 ? C.green : C.ink;
+        ctx.font = '600 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(word(t.w), bx, y);
+        ctx.fillStyle = C.gold;
+        ctx.textAlign = "right";
+        ctx.fillText(Math.round(t.deg) + "°", bx + bw, y);
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
+        ctx.fillText("cos " + t.cos.toFixed(2), bx + bw, y + 13);
+        if (i < 4) {
+          ctx.strokeStyle = C.line;
+          ctx.globalAlpha = .5;
+          ctx.beginPath();
+          ctx.moveTo(bx, y + 19);
+          ctx.lineTo(bx + bw, y + 19);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      });
+      var topRow = top[0];
+      readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span><span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
+      caption.textContent = DE ? "Wörter sind Richtungen, keine Punkte. Der Winkel ist die Ähnlichkeit; die Länge spielt keine Rolle. Zwei Punkte auf derselben Richtung können weit auseinanderliegen und haben trotzdem Winkel 0°." : "Words are directions, not points. The angle is the similarity; length does not matter. Two points on the same direction can be far apart and still have angle 0°.";
     }
 
     function circleScene() {
@@ -270,32 +300,46 @@
     }
     function drawScale() {
       var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
-      var a = 35 * Math.PI / 180, b = 105 * Math.PI / 180;
-      var magA = 0.56, magB = 0.56 * scaleMag;
+      var a = 35 * Math.PI / 180;
+      var magA = 0.55, magB = 0.55 * scaleMag;
       var lenA = r * magA, lenB = r * magB;
       var ax = cx + Math.cos(a) * lenA, ay = cy - Math.sin(a) * lenA;
-      var bx = cx + Math.cos(b) * lenB, by = cy - Math.sin(b) * lenB;
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.30, -a, -b, true); ctx.closePath();
-      ctx.fillStyle = V.alpha(C.gold, 0.16); ctx.fill();
-      ctx.strokeStyle = C.gold; ctx.lineWidth = 1.3; ctx.stroke();
-      var mid = (a + b) / 2;
-      ctx.fillStyle = C.gold; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText("70°", cx + Math.cos(mid) * r * 0.37, cy - Math.sin(mid) * r * 0.37);
-      ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = V.alpha(C.lilac, 0.75); ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.restore();
+      var bx = cx + Math.cos(a) * lenB, by = cy - Math.sin(a) * lenB;
+      ctx.save();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = V.alpha(C.lilac, .8);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+      ctx.restore();
       V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
       V.arrow(ctx, cx, cy, bx, by, C.green, 3);
-      ctx.fillStyle = C.blue; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("A", ax + 6, ay - 3);
-      ctx.fillStyle = C.green; ctx.fillText("B", bx + 6, by - 3);
+      ctx.fillStyle = C.blue;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("A", ax + 7, ay - 3);
+      ctx.fillStyle = C.green;
+      ctx.fillText("B", bx + 7, by - 3);
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-      ctx.fillStyle = C.blue; ctx.fillText("|A| = " + magA.toFixed(2), ax + 6, ay + 14);
-      ctx.fillStyle = C.green; ctx.fillText("|B| = " + magB.toFixed(2), bx + 6, by + 14);
-      ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("Scale Invariance", 18, 28);
-      var cosv = Math.cos(b - a);
-      var euc = Math.hypot(magA * Math.cos(a) - magB * Math.cos(b), magA * Math.sin(a) - magB * Math.sin(b));
-      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>70.0°</b></span><span>Cos <b>' + cosv.toFixed(3) + '</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
-      caption.textContent = DE ? "A und B starten am selben Punkt, zeigen aber in verschiedene Richtungen. Der Cosinus hängt nur vom Winkel ab und bleibt beim Skalieren von B gleich. Der euklidische Abstand zwischen den Spitzen ändert sich mit der Länge." : "A and B start at the same point but point in different directions. The cosine depends only on the angle and stays the same when B is scaled. The Euclidean distance between the tips changes with length.";
+      ctx.fillStyle = C.blue;
+      ctx.fillText("|A| = " + magA.toFixed(2), ax + 7, ay + 14);
+      ctx.fillStyle = C.green;
+      ctx.fillText("|B| = " + magB.toFixed(2), bx + 7, by + 14);
+      ctx.fillStyle = C.gold;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("0°", cx + Math.cos(a) * r * .45 + 18, cy - Math.sin(a) * r * .45 - 10);
+      ctx.fillStyle = C.petrol;
+      ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(DE ? "Länge vs. Richtung" : "Length vs. direction", 18, 28);
+      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>0.0°</b></span><span>Cos <b>1.000</b></span>';
+      caption.textContent = DE ? "A und B zeigen in dieselbe Richtung. B ist länger, die Spitzen liegen weit auseinander, aber der Winkel ist 0° und der Cosinus 1. Die Länge ändert die Ähnlichkeit nicht." : "A and B point in the same direction. B is longer, the tips are far apart, but the angle is 0° and the cosine is 1. Length does not change the similarity.";
     }
     function unembedData() {
       return UN_TOKENS.map(function (tok) {
@@ -354,7 +398,7 @@
       else lx = Math.max(lx, 8);
       ly = Math.max(14, Math.min(h - 14, ly));
       var bx = align === "left" ? lx : lx - tw;
-      c.fillStyle = "rgba(255,255,255,.92)";
+      c.fillStyle = V.alpha(C.paper, .92);
       c.fillRect(bx - 2, ly - 7, tw + 4, 14);
       c.fillStyle = active ? C.green : C.soft;
       c.textAlign = align;
@@ -516,7 +560,7 @@
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", draw);
     choose(0);
-    setMode("map");
+    setMode("directions");
     resize();
     return {
       update: function (s) { if (s && s.mode) setMode(s.mode); },

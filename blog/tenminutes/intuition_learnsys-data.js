@@ -42,7 +42,7 @@
       context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
       deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad. Jedes neue Token läuft wieder durch alle Blöcke. Der KV-Cache spart nur die Neuberechnung der Keys und Values, nicht die Schleife.",
       boxes: [
-        box("in-5", "Mathematik", "Was macht Temperatur?", "Temperatur teilt die Logits vor dem Softmax: p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Bei T → 0 wird daraus Greedy; exakt null wird als Top-Token behandelt."),
+        box("in-5", "Mathematik", "Was macht Temperatur?", "Temperatur teilt die Logits vor dem Softmax: $p_i \propto \exp(z_i/T)$. $T < 1$ schärft, $T > 1$ flacht ab. Bei $T \to 0$ wird daraus Greedy; exakt null wird als Top-Token behandelt."),
         box("in-6", "Technik", "Warum nicht immer Greedy?", "Greedy ist deterministisch und kann in Schleifen laufen. Sampling ist vielfältiger, aber auch inkohärenter. Top-p behält die kleinste Menge, deren kumulierte Wahrscheinlichkeit p erreicht.")
       ]
     },
@@ -94,7 +94,7 @@
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
       deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path. Every new token runs through all blocks again. The KV cache only saves recomputing keys and values, not the loop.",
       boxes: [
-        box("in-5", "Mathematics", "What does temperature do?", "Temperature divides the logits before softmax: p_i ∝ exp(z_i / T). T < 1 sharpens, T > 1 flattens. At T → 0 it becomes greedy; exact zero is handled as the top token."),
+        box("in-5", "Mathematics", "What does temperature do?", "Temperature divides the logits before softmax: $p_i \propto \exp(z_i/T)$. $T < 1$ sharpens, $T > 1$ flattens. At $T \to 0$ it becomes greedy; exact zero is handled as the top token."),
         box("in-6", "Technique", "Why not always greedy?", "Greedy is deterministic and can loop. Sampling is more varied, but also less coherent. Top-p keeps the smallest set whose cumulative probability reaches p.")
       ]
     },
@@ -672,8 +672,8 @@
       context: "Softmax erzeugt nicht die Reihenfolge; die Skalarprodukte tun das. Es macht aus Scores eine Verteilung, die zu eins summiert.",
       deep: "Warum exp und nicht Logit durch Summe? Logits können negativ sein. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Wahrscheinlichkeiten. Der absolute Offset ist willkürlich; Softmax hängt nur von Unterschieden ab.",
       boxes: [
-        box("sm-1", "Mathematik", "Die Formel", "p_i = exp(z_i) / Σ_j exp(z_j). Vorher wird oft das Maximum abgezogen, damit die Exponentialfunktion stabil bleibt."),
-        box("sm-2", "Temperatur", "Was macht T?", "p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich."),
+        box("sm-1", "Mathematik", "Die Formel", "$p_i = \exp(z_i) / \sum_j \exp(z_j)$. Vorher wird oft das Maximum abgezogen, damit die Exponentialfunktion stabil bleibt."),
+        box("sm-2", "Temperatur", "Was macht T?", "$p_i \propto \exp(z_i/T)$. $T < 1$ schärft, $T > 1$ flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich."),
         box("sm-mis", "Grenze", "Erzeugt Softmax das Ranking?", "Nein. Die Reihenfolge kommt aus den Logits. Softmax macht aus Scores eine positive Verteilung, die zu 1 summiert; Temperatur ändert die Schärfe, nicht die Reihenfolge.")
       ],
       sources: [{ label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Softmax, Logits und Temperatur.", en: "Softmax, logits, and temperature." } }]
@@ -688,8 +688,8 @@
       context: "Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one.",
       deep: "Why exp and not logit divided by the sum? Logits can be negative. The exponential makes every value positive and preserves the order; dividing by the sum gives probabilities. The absolute offset is arbitrary; softmax depends only on differences.",
       boxes: [
-        box("sm-1", "Mathematics", "The formula", "p_i = exp(z_i) / Σ_j exp(z_j). The maximum is often subtracted first so the exponential stays stable."),
-        box("sm-2", "Temperature", "What does T do?", "p_i ∝ exp(z_i / T). T < 1 sharpens, T > 1 flattens. The ranking stays, the mass shifts."),
+        box("sm-1", "Mathematics", "The formula", "$p_i = \exp(z_i) / \sum_j \exp(z_j)$. The maximum is often subtracted first so the exponential stays stable."),
+        box("sm-2", "Temperature", "What does T do?", "$p_i \propto \exp(z_i/T)$. $T < 1$ sharpens, $T > 1$ flattens. The ranking stays, the mass shifts."),
         box("sm-mis", "Limit", "Does softmax create the ranking?", "No. The order comes from the logits. Softmax turns scores into a positive distribution that sums to 1; temperature changes the sharpness, not the order.")
       ],
       sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/", why: { de: "Interaktive Quelle für die GPT-2-Logits und Softmax-Demo.", en: "Interactive source for the GPT-2 logits and softmax demo." } }]
@@ -701,14 +701,14 @@
     {
       kicker: "1 Neuron",
       title: "Was sind neuronale Netze?",
-      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w·x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
+      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: $\hat y = w\cdot x + b$. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
       watch: "Starte das Training. Wie reagiert die Gerade? Warum bleiben die Fehler groß?",
       demoState: { scene: "model", phase: "linear" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
       deep: "Ein Neuron rechnet z = w x + b. Die Gerade hat nur zwei Parameter. Sie kann eine nichtlineare Funktion nicht approximieren, egal wie lange sie trainiert. Erst Aktivierungen und mehrere Schichten erzeugen Knicke und Kurven.",
       boxes: [
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
-        box("mod-layer", "Mathematik", "Das Neuron", "Ein Input, ein Neuron: z = w x + b; a = activation(z); Ausgabe = v a + c. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
+        box("mod-layer", "Mathematik", "Das Neuron", "Ein Input, ein Neuron: $z = w x + b$; $a = \operatorname{activation}(z)$; Ausgabe $= v a + c$. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
         box("mod-line", "Grenze", "Warum reicht eine Gerade nicht?", "Ein einzelnes Neuron ist eine lineare Funktion. Es kann den Sinus nur grob annähern, egal wie lange es trainiert. Erst die Aktivierung zwischen mehreren Schichten erzeugt Knicke und Kurven."),
         box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
         box("mod-train", "Technik", "Wie wird trainiert?", "Der Gradient zeigt, wie der Loss auf jede Parameteränderung reagiert. Ein Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite."),
@@ -729,7 +729,7 @@
       deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
       boxes: [
         box("mod-1", "Technik", "Die fünf Ebenen", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Positional Embedding: Position → Vektor. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
-        box("mod-dense", "Optional", "Dense = alle mit allen", "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix W steht W_ij für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.", "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}"),
+        box("mod-dense", "Optional", "Dense = alle mit allen", "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix $W$ steht $W_{ij}$ für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.", "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}"),
         box("mod-norm", "Technik", "LayerNorm und andere Blöcke", "Ein echter Transformer-Block enthält zusätzlich LayerNorm, Residualverbindungen und mehrere Attention-Heads. Es gibt auch andere Architekturen und Details wie Mixture-of-Experts, Multi-Query-Attention und verschiedene Positionsverfahren. Wir lassen sie hier weg, um bei der Intuition zu bleiben."),
         box("mod-angle", "Mathematik", "Warum Winkel?", "Am Ende werden Richtungen verglichen, nicht Längen. Der Winkel zwischen zwei Vektoren ändert sich in hohen Dimensionen weniger stark als ihre Länge. Deshalb ist die Großkreis-Metrik hier nützlich; für den Einstieg reicht die Intuition."),
         box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat."),
@@ -741,14 +741,14 @@
     {
       kicker: "1 neuron",
       title: "What are neural networks?",
-      body: "A neural network is first a parameterised function. The smallest example is one neuron: ŷ = w·x + b. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape.",
+      body: "A neural network is first a parameterised function. The smallest example is one neuron: $\hat y = w\cdot x + b$. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape.",
       watch: "Start training. How does the line react? Why do the errors stay large?",
       demoState: { scene: "model", phase: "linear" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
       deep: "One neuron computes z = w x + b. The line has only two parameters. It cannot approximate a nonlinear function, no matter how long it trains. Only activations and several layers create bends and curves.",
       boxes: [
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
-        box("mod-layer", "Mathematics", "The neuron", "One input, one neuron: z = w x + b; a = activation(z); output = v a + c. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
+        box("mod-layer", "Mathematics", "The neuron", "One input, one neuron: $z = w x + b$; $a = \operatorname{activation}(z)$; output $= v a + c$. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
         box("mod-line", "Limit", "Why is a line not enough?", "A single neuron is a linear function. It can only approximate the sine, no matter how long it trains. Only the activation between several layers creates bends and curves."),
         box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
         box("mod-train", "Technique", "How is it trained?", "The gradient shows how the loss reacts to every parameter change. An optimiser moves in the opposite direction. The learning rate sets the step size."),
@@ -769,7 +769,7 @@
       deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
       boxes: [
         box("mod-1", "Technique", "The five levels", "Tokenizer: text → tokens. Embedding: tokens → vectors. Positional embedding: position → vector. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
-        box("mod-dense", "Optional", "Dense = all to all", "A dense layer connects every input to every output. The weights are the edges of a complete weighted graph. In the matrix W, W_ij is the edge from input j to output i. That is where the usual network diagrams come from.", "\\underbrace{y_i}_{\\text{output }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{all inputs}}"),
+        box("mod-dense", "Optional", "Dense = all to all", "A dense layer connects every input to every output. The weights are the edges of a complete weighted graph. In the matrix $W$, $W_{ij}$ is the edge from input j to output i. That is where the usual network diagrams come from.", "\\underbrace{y_i}_{\\text{output }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{all inputs}}"),
         box("mod-norm", "Technique", "LayerNorm and other blocks", "A real transformer block also contains LayerNorm, residual connections, and several attention heads. There are further architectures and details such as mixture-of-experts, multi-query attention, and different positional schemes. We leave them out here to keep the intuition in focus."),
         box("mod-angle", "Mathematics", "Why angles?", "At the end, directions are compared, not lengths. The angle between two vectors changes less in high dimensions than their length. That is why the great-circle metric is useful here; for a first pass the intuition is enough."),
         box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth."),
@@ -1066,15 +1066,15 @@
     {
       kicker: "Loss-Landschaft",
       title: "Was sind neuronale Netze?",
-      body: "Jetzt wird der Fehler zur Landschaft. Die Gerade ist ŷ = w x + b; für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet nicht von selbst: Drücke „Weiter“ oder den Startknopf. Mit Pause hältst du es an; „Weiter“ stoppt das Training und geht zur nächsten Folie. SGD, Adam und Momentum laufen nacheinander. Der Loss ist der mittlere quadratische Fehler (MSE), die Zahl, an der das Modell gemessen wird. Die Formel darunter setzt die aktuellen Werte ein.",
+      body: "Jetzt wird der Fehler zur Landschaft. Die Gerade ist $\hat y = w x + b$; für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet nicht von selbst: Drücke „Weiter“ oder den Startknopf. Mit Pause hältst du es an; „Weiter“ stoppt das Training und geht zur nächsten Folie. SGD, Adam und Momentum laufen nacheinander. Der Loss ist der mittlere quadratische Fehler (MSE), die Zahl, an der das Modell gemessen wird. Die Formel darunter setzt die aktuellen Werte ein.",
       watch: "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
       demoState: { scene: "gradient" },
       context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes dieser 18 Beispiele (x, y) erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
       deep: "Der Gradient zeigt, wie der Loss auf eine Änderung von w und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
       boxes: [
-        box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: ŷ = w·x + b. w ist die Steigung, b der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}"),
-        box("grad-2", "Mathematik", "Die Loss-Fläche (MSE)", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². Die beiden Achsen sind w und b, nicht zwei beliebige Richtungen.", "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
-        box("grad-3", "Technik", "Der Schritt", "θ ← θ − η ∇L. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
+        box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: $\hat y = w\cdot x + b$. $w$ ist die Steigung, $b$ der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}"),
+        box("grad-2", "Mathematik", "Die Loss-Fläche (MSE)", "$L(w,b) = \frac{1}{n}\sum_i (w\cdot x_i + b - y_i)^2$. Die beiden Achsen sind $w$ und $b$, nicht zwei beliebige Richtungen.", "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
+        box("grad-3", "Technik", "Der Schritt", "$\theta \leftarrow \theta - \eta \nabla L$. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
         box("grad-todo", "TODO", "Automatisches Ableiten", "<b>TODO:</b> Details zu automatischem Ableiten (Autograd, Berechnung der Gradienten) hier ergänzen."),
         box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft."),
         box("grad-loss", "Optional", "Andere Loss-Funktionen", "MSE passt zu Regression. Für Klassen und Tokens nimmt man Cross-Entropy; für robuste Regression MAE oder Huber. Die Loss-Funktion sagt, was das Modell optimiert, nicht ob es die Aufgabe versteht."),
@@ -1095,15 +1095,15 @@
     {
       kicker: "Loss landscape",
       title: "What are neural networks?",
-      body: "Now the error becomes a landscape. The line is ŷ = w x + b; the one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training does not start by itself: press “Next” or the Start button. Pause stops it; “Next” stops training and moves to the next slide. SGD, Adam, and Momentum run one after another. The loss is the mean squared error (MSE), the number by which the model is judged. The formula below substitutes the current values.",
+      body: "Now the error becomes a landscape. The line is $\hat y = w x + b$; the one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training does not start by itself: press “Next” or the Start button. Pause stops it; “Next” stops training and moves to the next slide. SGD, Adam, and Momentum run one after another. The loss is the mean squared error (MSE), the number by which the model is judged. The formula below substitutes the current values.",
       watch: "Watch the training. How do w and b change, and where in the valley does the point end?",
       demoState: { scene: "gradient" },
       context: "This surface is not a slice through hundreds of dimensions: w and b are the two real parameters. Each of these 18 examples (x, y) produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
       deep: "The gradient shows how the loss reacts to a change in w and b. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
       boxes: [
-        box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: ŷ = w·x + b. w is the slope, b is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{w x + b}_{\\text{two parameters}}"),
-        box("grad-2", "Mathematics", "The loss surface (MSE)", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². The two axes are w and b, not two arbitrary directions.", "\\underbrace{L(w,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mean error}}"),
-        box("grad-3", "Technique", "The step", "θ ← θ − η ∇L. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
+        box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: $\hat y = w\cdot x + b$. $w$ is the slope, $b$ is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{w x + b}_{\\text{two parameters}}"),
+        box("grad-2", "Mathematics", "The loss surface (MSE)", "$L(w,b) = \frac{1}{n}\sum_i (w\cdot x_i + b - y_i)^2$. The two axes are $w$ and $b$, not two arbitrary directions.", "\\underbrace{L(w,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mean error}}"),
+        box("grad-3", "Technique", "The step", "$\theta \leftarrow \theta - \eta \nabla L$. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
         box("grad-todo", "TODO", "Automatic differentiation", "<b>TODO:</b> add the details on automatic differentiation (autograd, how gradients are computed) here."),
         box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape."),
         box("grad-loss", "Optional", "Other loss functions", "MSE fits regression. Classes and tokens use cross-entropy; robust regression uses MAE or Huber. The loss says what the model optimises, not whether it understands the task."),
@@ -1247,17 +1247,17 @@
     {
       kicker: "Unembedding",
       title: "Ähnliche Worte finden",
-      body: "Welches Wort liegt neben „König“? W_U hat eine Zeile pro Token. Jede Zeile ist eine gelernte Richtung. h ist der letzte Vektor aus den Transformer-Blöcken: der Zustand des aktuellen Tokens, in den der gesamte Kontext über viele Heads und Schichten eingemischt wurde. Am Ende vergleicht das Modell diesen Vektor h mit den Token-Richtungen: Das Skalarprodukt misst, wie ähnlich sie zeigen. Das ist die Umkehrung des Embeddings: aus einem Vektor werden wieder Wörter. Wähle ein Wort und sieh die nächsten Nachbarn. Schalte zwischen Winkel und euklidischem Abstand um: Der Winkel ignoriert die Länge, der Abstand nicht. Drücke Weiter oder → für Winkel, Skaleninvarianz und Unembedding. Die Prozentwerte sind Ähnlichkeiten, keine Wahrscheinlichkeiten.",
-      watch: "Wähle ein Wort. Drücke Weiter oder →: Winkel, Skaleninvarianz, Unembedding.",
-      demoState: { scene: "unembed" },
-      context: "Die 2D-Karte ist eine Projektion der gelernten Richtungen. Die Prozentwerte vergleichen Richtungen; erst Softmax macht daraus eine Verteilung. Ähnliche Wörter liegen nahe beieinander, weil das Training sie in ähnlichen Kontexten sieht.",
-      deep: "W_U ist gelernt. Wörter, die in ähnlichen Kontexten vorkommen, bekommen ähnliche Richtungen; das Skalarprodukt misst die Nähe. In hohen Dimensionen verliert der euklidische Abstand an Kontrast, deshalb ist der Winkel oft informativer. Die Karte ist eine Projektion, keine vollständige Geometrie.",
+      body: "Wörter sind Richtungen, keine Punkte: $W_U$ hat eine Zeile $w_i \\in \\mathbb{R}^{512}$ pro Token. Der letzte Vektor $h$ ist der Zustand des aktuellen Tokens. Das Unembedding bildet $z = W_U h$; der Logit eines Tokens ist $z_i = w_i \\cdot h$. Das Skalarprodukt misst, wie ähnlich die Richtungen zeigen; die Länge zählt nicht. Wähle ein Wort und sieh die nächsten Richtungen; die Winkel sind Ähnlichkeiten, keine Wahrscheinlichkeiten.\n\n$W_U$ ist gelernt. Wörter, die in ähnlichen Kontexten vorkommen, bekommen ähnliche Richtungen. Die 2D-Darstellung ist eine Projektion der gelernten Richtungen, keine vollständige Geometrie. Zwei Punkte auf derselben Richtung können weit auseinanderliegen und haben trotzdem Winkel 0°.",
+      watch: "Wähle ein Wort. Klicke Weiter für Winkel, Länge und Unembedding.",
+      demoState: { scene: "unembed", mode: "directions" },
+      context: "Die Karte ist eine Projektion der gelernten Richtungen. Die Winkel sind Kosinus-Ähnlichkeiten; erst Softmax macht daraus eine Verteilung. Ähnliche Wörter liegen in ähnlichen Richtungen, weil das Training sie in ähnlichen Kontexten sieht.",
+      deep: "$W_U$ ist gelernt. Wörter in ähnlichen Kontexten bekommen ähnliche Richtungen; das Skalarprodukt misst die Nähe. Die Länge eines Vektors ändert den Winkel nicht; deshalb ist der Winkel oft das robustere Signal. Die Karte ist eine Projektion, keine vollständige Geometrie.",
       boxes: [
-        box("un-1", "Mathematik", "Die Matrix W_U", "Jede Zeile von W_U ist die gelernte Richtung eines Tokens. Das Skalarprodukt mit h ergibt einen Logit. Ähnliche Richtungen ergeben hohe Werte; Softmax macht daraus eine Verteilung.", "\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Richtung mal Vektor}}"),
-        box("un-2", "Metrik", "Winkel oder Abstand?", "Der Cosinus ignoriert die Länge und misst nur die Richtung. Der euklidische Abstand zählt die Länge mit. In hohen Dimensionen liegen fast alle Punkte ähnlich weit auseinander; der Winkel bleibt informativer. Deshalb vergleicht das Unembedding Richtungen.", "\\underbrace{\\cos\\theta}_{\\text{Ähnlichkeit}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{nur Richtung}}"),
-        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Karte zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Prozentwerte sind keine Wahrscheinlichkeiten."),
-        box("un-4", "Metrik", "Skaleninvarianz: Oft zählt die Richtung", "Die Länge eines Vektors ändert den euklidischen Abstand, aber nicht den Cosinus. Deshalb kann das Netz Längen ignorieren und hat mehr Freiheit bei der Richtung. Ob die Richtung semantisch dasselbe bedeutet, ist eine Eigenschaft des gelernten Raums, keine Folge des Cosinus."),
-        box("un-5", "Begriff", "Was ist h?", "h ist der letzte Vektor aus den Transformer-Blöcken. In ihn haben Attention und FFN den gesamten Kontext über viele Schichten und Heads wieder und wieder eingemischt. Aus diesem h sagt W_U das nächste Token voraus.")
+        box("un-1", "Mathematik", "Die Matrix $W_U$", "Jede Zeile von $W_U$ ist die gelernte Richtung eines Tokens. Das Skalarprodukt mit $h$ ergibt einen Logit. Ähnliche Richtungen ergeben hohe Werte; Softmax macht daraus eine Verteilung.", "\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Richtung mal Vektor}}"),
+        box("un-2", "Metrik", "Winkel statt Abstand", "Der Cosinus misst den Winkel und ignoriert die Länge. Zwei Vektoren können weit auseinanderliegen und trotzdem in dieselbe Richtung zeigen. Das ist der Punkt: Wörter sind Richtungen, keine Punkte.", "\\underbrace{\\cos\\theta}_{\\text{Ähnlichkeit}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{nur Richtung}}"),
+        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Karte zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Winkel sind keine Wahrscheinlichkeiten."),
+        box("un-4", "Metrik", "Skaleninvarianz", "Eine positive Skalierung ändert den Winkel nicht. Der Cosinus bleibt gleich; die Länge fällt heraus. Ob die Richtung semantisch dasselbe bedeutet, ist eine Eigenschaft des gelernten Raums, keine Folge des Cosinus."),
+        box("un-5", "Begriff", "Was ist $h$?", "$h$ ist der letzte Vektor aus den Transformer-Blöcken. In ihn haben Attention und FFN den gesamten Kontext über viele Schichten und Heads eingemischt. Aus diesem $h$ sagt $W_U$ das nächste Token voraus.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },
@@ -1269,17 +1269,17 @@
     {
       kicker: "Unembedding",
       title: "Finding similar words",
-      body: "Which word lies next to “king”? W_U has one row per token. Every row is a learned direction. h is the final vector from the transformer blocks: the state of the current token, into which the entire context has been mixed through many heads and layers. At the end the model compares this vector h with the token directions: the dot product measures how similarly they point. This is the reverse of embedding: a vector becomes words again. Choose a word and see its nearest neighbours. Switch between angle and Euclidean distance: the angle ignores length, the distance does not. Press Next or → for angle, scale invariance, and unembedding. The percentages are similarities, not probabilities.",
-      watch: "Choose a word. Press Next or →: angle, scale invariance, unembedding.",
-      demoState: { scene: "unembed" },
-      context: "The 2D map is a projection of the learned directions. The percentages compare directions; only softmax turns them into a distribution. Similar words lie close together because training sees them in similar contexts.",
-      deep: "W_U is learned. Words that occur in similar contexts get similar directions; the dot product measures the closeness. In high dimensions Euclidean distance loses contrast, so the angle is often more informative. The map is a projection, not the full geometry.",
+      body: "Words are directions, not points: $W_U$ has one row $w_i \\in \\mathbb{R}^{512}$ per token. The final vector $h$ is the state of the current token. Unembedding computes $z = W_U h$; the logit of a token is $z_i = w_i \\cdot h$. The dot product measures how similarly the directions point; length does not matter. Choose a word and see the nearest directions; the angles are similarities, not probabilities.\n\n$W_U$ is learned. Words that occur in similar contexts get similar directions. The 2D view is a projection of the learned directions, not the full geometry. Two points on the same direction can be far apart and still have angle 0°.",
+      watch: "Choose a word. Click Next for angle, length, and unembedding.",
+      demoState: { scene: "unembed", mode: "directions" },
+      context: "The map is a projection of the learned directions. The angles are cosine similarities; only softmax turns them into a distribution. Similar words lie in similar directions because training sees them in similar contexts.",
+      deep: "$W_U$ is learned. Words in similar contexts get similar directions; the dot product measures closeness. A vector's length does not change the angle; that is why the angle is often the more robust signal. The map is a projection, not the full geometry.",
       boxes: [
-        box("un-1", "Mathematics", "The matrix W_U", "Every row of W_U is the learned direction of a token. The dot product with h gives a logit. Similar directions give high values; softmax turns them into a distribution.", "\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{direction times vector}}"),
-        box("un-2", "Metric", "Angle or distance?", "The cosine ignores length and measures only direction. Euclidean distance includes length. In high dimensions almost all points are similarly far apart; the angle stays more informative. That is why the unembedding compares directions.", "\\underbrace{\\cos\\theta}_{\\text{similarity}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{direction only}}"),
-        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The map shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the percentages are not probabilities."),
-        box("un-4", "Metric", "Scale Invariance: Direction Is Often the Useful Signal", "A vector's length changes Euclidean distance but not cosine. That is why the network can ignore lengths and has more freedom in direction. Whether that direction means the same thing is a property of the learned space, not a consequence of cosine."),
-        box("un-5", "Term", "What is h?", "h is the final vector from the transformer blocks. Attention and the FFN have mixed the entire context into it through many layers and heads. From this h, W_U predicts the next token.")
+        box("un-1", "Mathematics", "The matrix $W_U$", "Every row of $W_U$ is the learned direction of a token. The dot product with $h$ gives a logit. Similar directions give high values; softmax turns them into a distribution.", "\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{direction times vector}}"),
+        box("un-2", "Metric", "Angle instead of distance", "The cosine measures the angle and ignores length. Two vectors can be far apart and still point in the same direction. That is the point: words are directions, not points.", "\\underbrace{\\cos\\theta}_{\\text{similarity}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{direction only}}"),
+        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The map shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the angles are not probabilities."),
+        box("un-4", "Metric", "Scale invariance", "A positive scaling does not change the angle. The cosine stays the same; length drops out. Whether that direction means the same thing is a property of the learned space, not a consequence of cosine."),
+        box("un-5", "Term", "What is $h$?", "$h$ is the final vector from the transformer blocks. Attention and the FFN have mixed the entire context into it through many layers and heads. From this $h$, $W_U$ predicts the next token.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },
@@ -1289,28 +1289,26 @@
     }
   ];
 
-  unembedSteps[0].demoState = { scene: "unembed", mode: "map" };
-
   var unembedAngleStep = Object.assign({}, unembedSteps[0], {
     kicker: DE ? "Winkel" : "Angle",
     title: DE ? "Winkel statt Abstand" : "Angle instead of distance",
     body: DE
-      ? "Jetzt zählt nur die Richtung. Der Winkel zwischen h und einer Token-Richtung wird zum Cosinus; die Länge fällt heraus. Ziehe die beiden Vektoren und sieh, wann der Winkel klein wird. Kleiner Winkel heißt ähnliche Richtung."
-      : "Now only the direction counts. The angle between h and a token direction becomes the cosine; the length drops out. Drag the two vectors and see when the angle gets small. A small angle means a similar direction.",
+      ? "Jetzt zählt nur die Richtung. Der Winkel zwischen $h$ und einer Token-Richtung wird zum Cosinus: $\\cos\\theta = \\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}$. Die Länge fällt heraus. Ziehe die beiden Vektoren und sieh, wann der Winkel klein wird. Kleiner Winkel heißt ähnliche Richtung."
+      : "Now only the direction counts. The angle between $h$ and a token direction becomes the cosine: $\\cos\\theta = \\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}$. Length drops out. Drag the two vectors and see when the angle gets small. A small angle means a similar direction.",
     watch: DE ? "Ziehe A und B. Wann ist der Winkel klein, wann groß?" : "Drag A and B. When is the angle small, when large?",
-    context: DE ? "Der Cosinus misst den Winkel zwischen zwei Richtungen; die Länge kürzt sich heraus. Ein kleiner Winkel bedeutet eine ähnliche Richtung." : "The cosine measures the angle between two directions; the length cancels out. A small angle means a similar direction.",
+    context: DE ? "Der Cosinus misst den Winkel zwischen zwei Richtungen; die Länge kürzt sich heraus. Ein kleiner Winkel bedeutet eine ähnliche Richtung." : "The cosine measures the angle between two directions; length cancels out. A small angle means a similar direction.",
     demoState: { scene: "unembed", mode: "angle" },
     boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-angle" }); })
   });
 
   var unembedScaleStep = Object.assign({}, unembedSteps[0], {
     kicker: DE ? "Skaleninvarianz" : "Scale invariance",
-    title: DE ? "Länge vs. Winkel" : "Length vs. angle",
+    title: DE ? "Länge vs. Richtung" : "Length vs. direction",
     body: DE
-      ? "A und B starten am selben Punkt, zeigen aber in verschiedene Richtungen. Ziehe die Länge von B: Der Winkel und der Cosinus bleiben gleich, der euklidische Abstand zwischen den Spitzen ändert sich. So siehst du, was die Länge für Cosinus und euklidischen Abstand bedeutet."
-      : "A and B start at the same point but point in different directions. Drag the length of B: the angle and the cosine stay the same, while the Euclidean distance between the tips changes. That is what length does to cosine and Euclidean distance.",
-    watch: DE ? "Ziehe die Länge von B. Was bleibt gleich (Winkel, Cos), was ändert sich (Euclidean)?" : "Drag the length of B. What stays the same (angle, cosine), what changes (Euclidean)?",
-    context: DE ? "Skaleninvarianz heißt: Eine positive Skalierung ändert die Richtung nicht. Der Cosinus bleibt gleich; der euklidische Abstand zählt die Länge mit." : "Scale invariance means a positive scaling does not change the direction. The cosine stays the same; Euclidean distance includes the length.",
+      ? "A und B zeigen in dieselbe Richtung, aber B ist länger. Die Spitzen liegen weit auseinander, der Winkel bleibt 0°. Der Cosinus bleibt 1. Ziehe die Länge von B: Die Ähnlichkeit ändert sich nicht. Das ist der Unterschied zwischen Richtung und Punkt."
+      : "A and B point in the same direction, but B is longer. The tips are far apart, while the angle stays 0°. The cosine stays 1. Drag the length of B: the similarity does not change. That is the difference between a direction and a point.",
+    watch: DE ? "Ziehe die Länge von B. Was bleibt gleich, was ändert sich?" : "Drag the length of B. What stays the same, what changes?",
+    context: DE ? "Eine positive Skalierung ändert die Richtung nicht. Der Cosinus bleibt gleich; die Länge fällt heraus. Der Abstand der Spitzen wächst, der Winkel bleibt 0°." : "A positive scaling does not change the direction. The cosine stays the same; length drops out. The distance between the tips grows, the angle stays 0°.",
     demoState: { scene: "unembed", mode: "scale" },
     boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-scale" }); })
   });
@@ -1319,10 +1317,10 @@
     kicker: DE ? "Unembedding" : "Unembedding",
     title: DE ? "Vom Vektor zur Verteilung" : "From vector to distribution",
     body: DE
-      ? "h ist der Zustand des aktuellen Tokens nach allen Transformer-Blöcken; der gesamte Kontext ist über viele Heads und Schichten hineingemischt. Dieser letzte Vektor h wird mit jeder Zeile von W_U verglichen. Der kleinste Winkel ergibt den höchsten Logit; Softmax macht aus allen Logits eine Verteilung. Klicke einen Vorschlag oder nutze „Nächster Winkel“: Der Winkel wird hervorgehoben."
-      : "h is the state of the current token after all transformer blocks; the entire context has been mixed into it through many heads and layers. This final vector h is compared with every row of W_U. The smallest angle gives the highest logit; softmax turns all logits into a distribution. Click a suggestion or use “Next angle”: the angle is highlighted.",
+      ? "$h$ ist der Zustand des aktuellen Tokens nach allen Transformer-Blöcken; der gesamte Kontext ist über viele Heads und Schichten hineingemischt. Das Unembedding bildet $z = W_U h$; jede Zeile von $W_U$ ist eine Token-Richtung. Der kleinste Winkel ergibt den höchsten Logit. Softmax macht aus allen Logits eine Verteilung. Klicke einen Vorschlag oder nutze „Nächster Winkel“."
+      : "$h$ is the state of the current token after all transformer blocks; the entire context has been mixed into it through many heads and layers. Unembedding computes $z = W_U h$; every row of $W_U$ is a token direction. The smallest angle gives the highest logit. Softmax turns all logits into a distribution. Click a suggestion or use “Next angle”.",
     watch: DE ? "Klicke die Vorschläge. Welcher Winkel wird zur höchsten Wahrscheinlichkeit?" : "Click the suggestions. Which angle becomes the highest probability?",
-    context: DE ? "h ist kein einzelnes Wort, sondern der Zustand nach allen Schichten: Attention hat Kontext zwischen den Tokens verschoben, das FFN hat ihn pro Token geformt. Der Logit ist das Skalarprodukt aus h und einer Token-Zeile; Softmax macht aus allen Logits eine Verteilung." : "h is not a single word but the state after all layers: attention moved context between tokens, and the FFN shaped it per token. The logit is the dot product of h and a token row; softmax turns all logits into a distribution.",
+    context: DE ? "$h$ ist kein einzelnes Wort, sondern der Zustand nach allen Schichten: Attention hat Kontext zwischen den Tokens verschoben, das FFN hat ihn pro Token geformt. Der Logit ist das Skalarprodukt aus $h$ und einer Token-Zeile; Softmax macht aus allen Logits eine Verteilung." : "$h$ is not a single word but the state after all layers: attention moved context between tokens, and the FFN shaped it per token. The logit is the dot product of $h$ and a token row; softmax turns all logits into a distribution.",
     demoState: { scene: "unembed", mode: "unembed" },
     boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-unembed" }); })
   });
@@ -1953,16 +1951,16 @@
     kicker: DE ? "Loss" : "Loss",
     title: DE ? "Der Loss: Was das Modell optimiert" : "The loss: what the model optimises",
     body: DE
-      ? "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: −log(0.30) ≈ 1.20. Der Gradient p − y sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner. Drücke Weiter oder →: Die Demo macht für jedes der vier Zielwörter mehrere Trainingsschritte, wechselt dabei den Satz und geht dann zum nächsten."
-      : "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: −log(0.30) ≈ 1.20. The gradient p − y then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller. Press Next or →: the demo makes several training steps for each of the four target words, switches the sentence, then moves to the next.",
+      ? "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: $-\log(0.30) \approx 1.20$. Der Gradient $p-y$ sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner. Drücke Weiter oder →: Die Demo macht für jedes der vier Zielwörter mehrere Trainingsschritte, wechselt dabei den Satz und geht dann zum nächsten."
+      : "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: $-\log(0.30) \approx 1.20$. The gradient $p-y$ then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller. Press Next or →: the demo makes several training steps for each of the four target words, switches the sentence, then moves to the next.",
     watch: DE ? "Drücke Weiter oder →: Paris, London, Berlin, Rom. Jedes Zielwort bekommt mehrere Trainingsschritte; beobachte, wie der Loss fällt und p steigt. Du kannst die Balken auch selbst ziehen: Der Loss aktualisiert sich live, die übrigen Wahrscheinlichkeiten gleichen sich aus, sodass die Summe 1 bleibt." : "Press Next or →: Paris, London, Berlin, Rome. Each target gets several training steps; watch the loss fall and p rise. You can also drag the bars yourself: the loss updates live, and the other probabilities adjust so the sum stays 1.",
     demoState: { scene: "crossentropy" },
     context: DE ? "y ist ein One-Hot-Vektor: 1 für Paris, 0 sonst. p ist die Softmax-Verteilung. Der Loss ist die negative Log-Likelihood des Ziels." : "y is a one-hot vector: 1 for Paris, 0 elsewhere. p is the softmax distribution. The loss is the negative log-likelihood of the target.",
-    deep: DE ? "Der Gradient p−y ist der Grund, warum Softmax und Cross-Entropy zusammen so sauber funktionieren. Ein Schritt lautet z ← z − η(p−y): Das Ziel-Logit steigt, alle anderen fallen." : "The gradient p−y is why softmax and cross-entropy work together so cleanly. A step is z ← z − η(p−y): the target logit rises, all others fall.",
+    deep: DE ? "Der Gradient $p-y$ ist der Grund, warum Softmax und Cross-Entropy zusammen so sauber funktionieren. Ein Schritt lautet $z \leftarrow z - \eta(p-y)$: Das Ziel-Logit steigt, alle anderen fallen." : "The gradient $p-y$ is why softmax and cross-entropy work together so cleanly. A step is z ← z − η(p−y): the target logit rises, all others fall.",
     boxes: [
       box("ce-1", DE ? "Beispiel" : "Example", DE ? "Was ist das Ziel?" : "What is the target?", DE ? "Richtig ist Paris. Das Modell gibt Paris 30 %, London 50 %. Der Loss bestraft nur die 30 % des richtigen Tokens." : "The target is Paris. The model gives Paris 30%, London 50%. The loss punishes only the 30% of the correct token."),
-      box("ce-2", DE ? "Mathematik" : "Mathematics", DE ? "Warum −log?" : "Why −log?", DE ? "−log(0.30) ≈ 1.20. Bei p = 1 wäre der Loss 0; je kleiner die Wahrscheinlichkeit des Ziels, desto größer der Loss." : "−log(0.30) ≈ 1.20. At p = 1 the loss would be 0; the smaller the target probability, the larger the loss."),
-      box("ce-3", DE ? "Training" : "Training", DE ? "Was macht der Gradient?" : "What does the gradient do?", DE ? "p−y: Paris bekommt einen negativen Gradienten (Logit steigt), London einen positiven (Logit fällt). Der Trainingsschritt folgt genau diesem Signal." : "p−y: Paris gets a negative gradient (its logit rises), London a positive one (its logit falls). The training step follows exactly this signal."),
+      box("ce-2", DE ? "Mathematik" : "Mathematics", DE ? "Warum −log?" : "Why −log?", DE ? "$-\log(0.30) \approx 1.20$. Bei p = 1 wäre der Loss 0; je kleiner die Wahrscheinlichkeit des Ziels, desto größer der Loss." : "$-\log(0.30) \approx 1.20$. At p = 1 the loss would be 0; the smaller the target probability, the larger the loss."),
+      box("ce-3", DE ? "Training" : "Training", DE ? "Was macht der Gradient?" : "What does the gradient do?", DE ? "$p-y$: Paris bekommt einen negativen Gradienten (Logit steigt), London einen positiven (Logit fällt). Der Trainingsschritt folgt genau diesem Signal." : "$p-y$: Paris gets a negative gradient (its logit rises), London a positive one (its logit falls). The training step follows exactly this signal."),
       box("ce-4", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Cross-Entropy für ein Token und ihr Gradient nach den Logits." : "Cross-entropy for one token and its gradient with respect to the logits.", DE ? "\\underbrace{-\\log \\underbrace{p_\\theta(y\\mid x)}_{\\substack{\\text{Wahrscheinlichkeit}\\\\ \\text{des Ziels}}}}_{\\text{Loss des richtigen Tokens}} \\qquad \\underbrace{\\frac{\\partial L}{\\partial z_i} = \\underbrace{p_i - y_i}_{\\text{Gradient pro Logit}}}_{\\text{was der Trainingsschritt benutzt}}" : "\\underbrace{-\\log \\underbrace{p_\\theta(y\\mid x)}_{\\substack{\\text{probability}\\\\ \\text{of the target}}}}_{\\text{loss of the correct token}} \\qquad \\underbrace{\\frac{\\partial L}{\\partial z_i} = \\underbrace{p_i - y_i}_{\\text{gradient per logit}}}_{\\text{what the training step uses}}")
     ],
     sources: [
@@ -1979,7 +1977,7 @@
       : "Every token produces three vectors: query, key, and value. The query asks, the key answers, and the value carries the information. Attention compares query and key, turns the scores into weights with softmax, and mixes the values. Multiple heads do this in parallel with their own weights: one head can ask for the subject, another for the location.",
     watch: DE ? "Wechsle die Heads: Head 1 zeigt auf „Tier“ (Subjekt), Head 2 auf „Straße“ (Ort)." : "Switch the heads: head 1 points to “animal” (the subject), head 2 to “street” (the location).",
     demoState: { scene: "qkv", head: 0, view: "arcs" },
-    context: DE ? "Die Scores werden durch sqrt(d_k) geteilt, damit sie in hohen Dimensionen nicht zu groß werden. Jede Query-Zeile summiert nach Softmax zu 1." : "The scores are divided by sqrt(d_k) so they do not grow too large in high dimensions. Each query row sums to 1 after softmax.",
+    context: DE ? "Die Scores werden durch $\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden. Jede Query-Zeile summiert nach Softmax zu 1." : "The scores are divided by $\sqrt{d_k}$ so they do not grow too large in high dimensions. Each query row sums to 1 after softmax.",
     deep: DE ? "Die Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort." : "The heads are not hand-programmed; they specialise during training. The two patterns in the demo are didactic: head 1 asks for the subject, head 2 for the location.",
     boxes: [
       box("qkv-1", DE ? "Technik" : "Technique", "Q, K, V", DE ? "Query: wonach fragt das Token? Key: was bietet es an? Value: welche Information wird weitergegeben?" : "Query: what does the token ask for? Key: what does it offer? Value: which information is passed on?"),
@@ -2174,7 +2172,7 @@
     body: DE
       ? "Attention gibt nicht einfach ein Wort zurück. Die drei Ecken sind keine Tokens und auch nicht „die übrigen Tokens“: Es sind die gelernten Value-Vektoren $v_j = W_V x_j$ von drei ausgewählten Tokens, Tier, Straße und es. Die übrigen Tokens sind in dieser 2D-Darstellung ausgeblendet. Der Mischungsvektor $r_i = \sum_j \alpha_{ij} v_j$ ist eine gewichtete Mischung dieser Values: Jedes Gewicht ist nicht negativ, und alle summieren zu 1. Vaswani et al. (2017, §3.2) nennen das „a weighted sum of the values“. Deshalb liegt $r_i$ immer im Dreieck, das die drei Value-Vektoren aufspannen. Die Head-Ausgabe ist $y_i = W_O r_i$; $W_O$ ist eine weitere gelernte Projektion und kann den Punkt aus dem Dreieck herausbewegen. Die drei Gewichte $\alpha$ im Simplex (zwei Freiheitsgrade wegen $\sum \alpha = 1$) sind die Variablen, nicht die Tokens. Wechsle den Head: Die Gewichte verschieben sich, der Mischungspunkt $r_i$ wandert, aber nie aus dem Dreieck. Die Anzeige rechnet die Rohgewichte auf Prozent um."
       : "Attention does not simply return a word. The three corners are not tokens, and they are not “the other tokens”: they are the learned value vectors $v_j = W_V x_j$ of three selected tokens, animal, street, and it. The other tokens are hidden in this 2D view. The mixture vector $r_i = \sum_j \alpha_{ij} v_j$ is a weighted mixture of these values: every weight is non-negative, and all sum to 1. Vaswani et al. (2017, §3.2) call this “a weighted sum of the values”. Therefore $r_i$ always lies in the triangle those three value vectors span. The head output is $y_i = W_O r_i$; $W_O$ is another learned projection and can move the point outside the triangle. The three weights $\alpha$ in the simplex (two degrees of freedom because $\sum \alpha = 1$) are the variables, not the tokens. Switch the head: the weights shift, the mixture point $r_i$ moves, but never outside the triangle. The display converts the raw weights into percentages.",
-    watch: DE ? "Wechsle die Heads oder ziehe den Punkt im Dreieck. Die α-Werte unten ändern sich live; ihre Summe bleibt 1." : "Switch the heads or drag the point inside the triangle. The α values below update live; their sum stays 1.",
+    watch: DE ? "Wechsle die Heads oder ziehe den Punkt im Dreieck. Die $\alpha$-Werte unten ändern sich live; ihre Summe bleibt 1." : "Switch the heads or drag the point inside the triangle. The $\alpha$ values below update live; their sum stays 1.",
     demoState: { scene: "qkv", head: 0, view: "simplex" },
     context: DE ? "Vaswani et al. (2017, §3.2) sagen es direkt: „The output is computed as a weighted sum of the values“. Die Ecken sind $v_j = W_V x_j$, also gelernte Value-Vektoren, keine Token-IDs. Die Gewichte $\alpha_{ij}$ sind die baryzentrischen Koordinaten; sie sind $\ge 0$ und summieren zu $1$. Bei drei Values ist die konvexe Hülle ein 2-Simplex; bei $n$ Tokens ist der Gewichts-Simplex $(n-1)$-dimensional, bei 12 Tokens also ein 11-Simplex. Die Ecken sind nicht die übrigen Tokens, sondern die Value-Vektoren der drei ausgewählten Tokens; die übrigen Tokens sind ausgeblendet. Der echte Mischungsvektor $r_i = \sum_j \alpha_{ij} v_j$ nutzt alle Values und liegt in deren konvexer Hülle; die Head-Ausgabe ist $y_i = W_O r_i$." : "Vaswani et al. (2017, §3.2) put it directly: “The output is computed as a weighted sum of the values.” The corners are $v_j = W_V x_j$, learned value vectors, not token IDs. The weights $\alpha_{ij}$ are barycentric coordinates; they are $\ge 0$ and sum to $1$. With three values the convex hull is a 2-simplex; with $n$ tokens the weight simplex is $(n-1)$-dimensional, so 12 tokens give an 11-simplex. The corners are not the other tokens; they are the value vectors of the three selected tokens, and the other tokens are hidden. The real mixture vector $r_i = \sum_j \alpha_{ij} v_j$ uses all values and lies in their convex hull; the head output is $y_i = W_O r_i$.",
     deep: DE ? "Die Ecken sind input-abhängig: Gelernt ist $W_V$, nicht ein fester Simplex. Bei drei Values ist die Hülle ein Dreieck (2-Simplex). Allgemein ist die konvexe Hülle von $n$ Value-Vektoren höchstens ein $(n-1)$-Simplex, und genau dann ein $(n-1)$-Simplex, wenn die $n$ Vektoren affin unabhängig sind; sonst ist sie ein niederdimensionaleres Polytop. In hohen Dimensionen ist sie in den Value-Raum eingebettet. Der Simplex ist keine eigene gelernte Größe, sondern die konvexe Hülle der Value-Vektoren. $n$ ist die Kontextlänge, nicht 3; gelernt wird $W_V$, nicht ein fester 3-Simplex. Die Aussage gilt für jeden Head; die Gewichte unterscheiden sich, die Konvexität bleibt." : "The corners depend on the input: $W_V$ is learned, not a fixed simplex. With three values the hull is a triangle (2-simplex). In general the convex hull of $n$ value vectors is at most an $(n-1)$-simplex, and exactly an $(n-1)$-simplex when the $n$ vectors are affinely independent; otherwise it is a lower-dimensional polytope. In high dimensions it is embedded in the value space. The simplex is not a separate learned object; it is the convex hull of the value vectors. $n$ is the context length, not 3; $W_V$ is learned, not a fixed 3-simplex. The statement holds for every head; the weights differ, the convexity stays.",
@@ -2333,7 +2331,7 @@
     boxes: [
       box("wm-machine-legal", DE ? "Grenze" : "Limit", DE ? "Legal ist nicht gut" : "Legal is not good", DE ? "Das Training belohnt nur die richtige Fortsetzung, nicht den Sieg. Othello-GPT sagt legale Züge voraus, nicht notwendig starke. Das Weltmodell entsteht als Nebenprodukt der Vorhersage." : "Training rewards the correct continuation, not a win. Othello-GPT predicts legal moves, not necessarily strong ones. The world model emerges as a by-product of prediction."),
       box("wm-probe-train", DE ? "Optional" : "Optional", DE ? "Wie trainiert man einen Probe?" : "How is a probe trained?", DE ? "Man sammelt Paare aus Aktivierung x und wahrem Brett. Für jedes der 64 Felder und jeden der 3 Zustände trainiert man einen linearen Klassifikator, meist logistische Regression. Sein 512-dimensionaler Gewichtsvektor ist die Probe-Richtung. Danach friert man den Probe ein. Die Gewichte des Modells werden nie verändert; der Probe liest nur." : "Collect pairs of activation x and the true board. For each of the 64 squares and each of the 3 states, train a linear classifier, usually logistic regression. Its 512-dimensional weight vector is the probe direction. Then freeze the probe. The model weights are never changed; the probe only reads."),
-      box("wm-probe-math", DE ? "Mathematik" : "Mathematics", DE ? "Die Projektion" : "The projection", DE ? "Für jedes Feld s und jeden Zustand o ist der Logit das Skalarprodukt aus x und der Probe-Zeile W[s,o]. 64 × 3 = 192 Dot-Products. Danach Softmax über die 3 Zustände und Argmax pro Feld." : "For every square s and state o, the logit is the dot product of x and the probe row W[s,o]. 64 × 3 = 192 dot products. Then softmax over the 3 states and argmax per square.", "\\underbrace{\\underbrace{\\operatorname{logit}[s,o]}_{\\text{Probe-Logit}} = \\underbrace{\\sum_{d=0}^{511} W[s,o,d]\\,x[d]}_{192\\ \\text{Dot-Products}}}_{\\text{board readout}}")
+      box("wm-probe-math", DE ? "Mathematik" : "Mathematics", DE ? "Die Projektion" : "The projection", DE ? "Für jedes Feld $s$ und jeden Zustand $o$ ist der Logit das Skalarprodukt aus $x$ und der Probe-Zeile $W[s,o]$. $64 \times 3 = 192$ Dot-Products. Danach Softmax über die 3 Zustände und Argmax pro Feld." : "For every square $s$ and state $o$, the logit is the dot product of $x$ and the probe row $W[s,o]$. $64 \times 3 = 192$ dot products. Then softmax over the 3 states and argmax per square.", "\\underbrace{\\underbrace{\\operatorname{logit}[s,o]}_{\\text{Probe-Logit}} = \\underbrace{\\sum_{d=0}^{511} W[s,o,d]\\,x[d]}_{192\\ \\text{Dot-Products}}}_{\\text{board readout}}")
     ]
   };
 
@@ -2349,7 +2347,7 @@
     context: DE ? "Die lineare Probe ist ein Readout. Die Brettrichtungen leben im 512-dim Residualstrom. Bei Schach kommen pro Feld 13 Zustände dazu; bei realen Modellen überlagern sich viele solcher Richtungen." : "The linear probe is a readout. The board directions live in the 512-dim residual stream. In chess, 13 states per square are added; in real models many such directions overlap.",
     deep: DE ? "Die Linear Representation Hypothesis beschreibt Features als Richtungen. Superposition packt mehr Features in den Raum als Dimensionen. Engels et al. finden mehrdimensionale Features, etwa Kreise für Wochentage und Monate. Karvonen zeigt für Schach 13 Zustände pro Feld. Deshalb ist die Weltmodell-Debatte kein Entweder-oder: Manche Zustände sind Richtungen, andere brauchen einen Unterraum." : "The linear representation hypothesis describes features as directions. Superposition packs more features into the space than there are dimensions. Engels et al. find multi-dimensional features, such as circles for weekdays and months. Karvonen shows 13 states per square for chess. So the world-model debate is not either-or: some states are directions, others need a subspace.",
     boxes: [
-      box("wm-geo-line", DE ? "Geometrie" : "Geometry", DE ? "Eine Richtung" : "One direction", DE ? "Der Unterschied zwischen Spieler 1 und Spieler 2 ist eine Achse: w_player1 − w_player2. Der Logit ist die Projektion auf diese Achse. Ein fester Nullpunkt ist nicht nötig; Softmax vergleicht die drei Logits." : "The difference between player 1 and player 2 is one axis: w_player1 − w_player2. The logit is the projection onto this axis. A fixed zero point is not needed; softmax compares the three logits."),
+      box("wm-geo-line", DE ? "Geometrie" : "Geometry", DE ? "Eine Richtung" : "One direction", DE ? "Der Unterschied zwischen Spieler 1 und Spieler 2 ist eine Achse: $w_{\text{Spieler 1}} - w_{\text{Spieler 2}}$. Der Logit ist die Projektion auf diese Achse. Ein fester Nullpunkt ist nicht nötig; Softmax vergleicht die drei Logits." : "The difference between player 1 and player 2 is one axis: $w_{\text{player 1}} - w_{\text{player 2}}$. The logit is the projection onto this axis. A fixed zero point is not needed; softmax compares the three logits."),
       box("wm-geo-sub", DE ? "Schach" : "Chess", DE ? "13 Zustände pro Feld" : "13 states per square", DE ? "Ein Feld ist leer oder trägt eine von zwölf Figuren. Der Probe hat 13 Ausgänge; die zugehörigen Richtungen bilden einen Unterraum. Ein einzelner Skalar reicht nicht." : "A square is empty or holds one of twelve pieces. The probe has 13 outputs; the corresponding directions form a subspace. A single scalar is not enough."),
       box("wm-geo-real", DE ? "Grenze" : "Limit", DE ? "Reale Modelle" : "Real models", DE ? "In echten Modellen überlagern sich viele Features. Eine Richtung kann mehrere Bedeutungen tragen; manche Features liegen auf Kreisen oder höherdimensionalen Mannigfaltigkeiten. Das Othello-Brett ist ein klarer Spezialfall." : "In real models many features overlap. One direction can carry several meanings; some features lie on circles or higher-dimensional manifolds. The Othello board is a clear special case."),
       box("wm-geo-gurnee", DE ? "Realer Raum" : "Real space", DE ? "Was zeigen Gurnee & Tegmark?" : "What do Gurnee & Tegmark show?", DE ? "In Llama-2 liegen Orte und Jahre auf linearen Richtungen; einzelne Neuronen kodieren Koordinaten. Auch reale Weltzustände sind also lesbar, aber nicht mit einer einzigen Achse pro Feld." : "In Llama-2, places and years lie on linear directions; individual neurons encode coordinates. Real-world states are readable too, but not with a single axis per square.")
@@ -2367,7 +2365,202 @@
   };
 
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], wmBoard, trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, worldModelStep];
+
+  var sentimentDirection = {
+    kicker: DE ? "Sentiment" : "Sentiment",
+    title: DE ? "Bedeutung ist eine Richtung" : "Meaning is a direction",
+    teaser: DE
+      ? "Wo liegt „gut“ im Modell? Nicht an einem Punkt, sondern auf einer Richtung. Tigges et al. (2023) finden im Residualstrom eine Sentiment-Achse: Positive und negative Aktivierungen liegen auf verschiedenen Seiten. Die Projektion $\\mathbf{w}\\cdot\\mathbf{x}$ liest das Sentiment. Das Entfernen der Richtung kostet Pythia-2.8B 76 % seiner über dem Zufall liegenden SST-Genauigkeit. Eine Richtung trägt hier einen großen Teil des Konzepts.\n\nDie Achse ist gelernt, nicht handcodiert. Tigges et al. finden sie mit mehreren Methoden (Mittelwertdifferenz, 2-Means, logistischer Probe, DAS, PCA); die Richtungen sind sich sehr ähnlich. Ablation und Patchen zeigen, dass das Modell die Richtung kausal benutzt. Die Ergebnisse stammen aus kleinen Modellen und Toy-Daten: Die Richtung ist eine Approximation, nicht das ganze Konzept."
+      : "Where does “good” live in the model? Not at a point, but on a direction. Tigges et al. (2023) find a sentiment axis in the residual stream: positive and negative activations lie on opposite sides. The projection $\\mathbf{w}\\cdot\\mathbf{x}$ reads the sentiment. Removing the direction costs Pythia-2.8B 76% of its above-chance SST accuracy. One direction carries a large part of the concept here.\n\nThe axis is learned, not hand-coded. Tigges et al. find it with several methods (mean difference, 2-means, logistic probe, DAS, PCA); the directions are very similar. Ablation and patching show that the model uses the direction causally. The results come from small models and toy data: the direction is an approximation, not the whole concept.",
+    watch: DE ? "Klicke Weiter. Sieh, wie die Projektion das Sentiment liest." : "Click Next. Watch the projection read the sentiment.",
+    demoState: { scene: "sentiment", mode: "direction" },
+    context: DE ? "Die Achse ist gelernt. Positive und negative Beispiele liegen auf verschiedenen Seiten; die Projektion ist ein linearer Readout." : "The axis is learned. Positive and negative examples lie on opposite sides; the projection is a linear readout.",
+    deep: DE ? "Eine lineare Probe ist ein Readout, kein Beweis für eine menschenähnliche Bedeutung. Die Autoren fragen selbst, ob es eine universelle Richtung oder die erste Hauptkomponente mehrerer Sentiment-Richtungen ist. Für die Folie zählt der Mechanismus: Projektion liest, Addition verschiebt." : "A linear probe is a readout, not proof of human-like meaning. The authors ask whether it is one universal direction or the first principal component of several sentiment directions. For this slide the mechanism matters: projection reads, addition steers.",
+    boxes: [
+      box("sen-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Readout" : "The readout", DE ? "Die Aktivierung $\\mathbf{x}$ wird auf die gelernte Richtung $\\mathbf{w}$ projiziert. Das Vorzeichen sagt negativ oder positiv; der Betrag sagt, wie stark." : "The activation $\\mathbf{x}$ is projected onto the learned direction $\\mathbf{w}$. The sign says negative or positive; the magnitude says how strong.", "\\underbrace{\\operatorname{score}(\\mathbf{x})}_{\\text{Sentiment-Readout}} = \\underbrace{\\mathbf{w}\\cdot\\mathbf{x}}_{\\text{Projektion auf die Richtung}}"),
+      box("sen-2", DE ? "Grenze" : "Limit", DE ? "Eine Richtung, ein Konzept?" : "One direction, one concept?", DE ? "Die Richtung ist eine gute Approximation, aber Konzepte können mehrdimensional sein. Superposition und mehrere Sentiment-Richtungen sind möglich; die lineare Achse ist der erste, einfache Readout." : "The direction is a good approximation, but concepts can be multi-dimensional. Superposition and several sentiment directions are possible; the linear axis is the first, simple readout.")
+    ],
+    sources: [
+      { label: "Tigges et al. (2023), Linear Representations of Sentiment in Large Language Models", url: "https://arxiv.org/abs/2310.15154", why: { de: "Sentiment als lineare Richtung; Projektion, Ablation und Steering.", en: "Sentiment as a linear direction; projection, ablation, and steering." } },
+      { label: "Li et al. (2023), Inference-Time Intervention", url: "https://arxiv.org/abs/2306.03341", why: { de: "Wahrheitsrichtungen in Attention-Heads; ITI.", en: "Truthfulness directions in attention heads; ITI." } }
+    ]
+  };
+
+  var sentimentSteer = Object.assign({}, sentimentDirection, {
+    kicker: DE ? "Steering" : "Steering",
+    title: DE ? "Addiere die Richtung" : "Add the direction",
+    teaser: DE
+      ? "Wenn Sentiment eine Richtung ist, kann man sie verschieben. Man addiert ein Vielfaches der Richtung zur Aktivierung: $\\mathbf{x}' = \\mathbf{x} + \\alpha\\mathbf{w}$. Bei negativem $\\alpha$ kippt die Fortsetzung ins Negative, bei positivem ins Positive. Das Modell bleibt dasselbe; nur der Zustand wandert. So wird aus einem Readout ein Eingriff.\n\nDer Eingriff ist eine Interpretation der gelernten Richtung, kein Wahrheitsbeweis. Ein zu großes $\\alpha$ schiebt die Aktivierung aus der Verteilung; die Texte können kippen oder unnatürlich werden."
+      : "If sentiment is a direction, you can shift it. Add a multiple of the direction to the activation: $\\mathbf{x}' = \\mathbf{x} + \\alpha\\mathbf{w}$. With negative $\\alpha$ the continuation flips negative, with positive $\\alpha$ positive. The model stays the same; only the state moves. A readout becomes an intervention.\n\nThe intervention is an interpretation of the learned direction, not a proof of truth. Too large an $\\alpha$ pushes the activation out of distribution; the text can flip or become unnatural.",
+    watch: DE ? "Ziehe $\\alpha$ oder klicke $-\\mathbf{w}$ / $+\\mathbf{w}$. Was passiert mit der Fortsetzung?" : "Drag $\\alpha$ or click $-\\mathbf{w}$ / $+\\mathbf{w}$. What happens to the continuation?",
+    demoState: { scene: "sentiment", mode: "steer" },
+    boxes: [],
+    sources: sentimentDirection.sources
+  });
+
+  var sentimentIti = Object.assign({}, sentimentDirection, {
+    kicker: DE ? "ITI" : "ITI",
+    title: DE ? "Wahrheit als Richtung" : "Truth as a direction",
+    teaser: DE
+      ? "Li et al. (2023) suchen Wahrheitsrichtungen in Attention-Heads. Sie trainieren einen linearen Probe pro Head und wählen die Heads, die Wahrheit am besten trennen. Zur Inferenzzeit addieren sie $\\alpha\\sigma\\mathbf{w}$ an diesen Heads. Alpaca steigt auf TruthfulQA von 32,5 % auf 65,1 % (true*informative). Der Eingriff ist billig, aber der Wahrheitsbegriff ist eng und der Nutzen kostet Hilfsbereitschaft.\n\nITI erklärt nicht, was der Eingriff intern tut. Die Richtung wird gewählt, weil sie funktioniert; eine korrelierte, aber nicht kausale Richtung ist möglich. Die Zahlen gelten für LLaMA-7B, Alpaca und Vicuna, nicht für Frontier-Modelle."
+      : "Li et al. (2023) look for truthfulness directions in attention heads. They train a linear probe per head and select the heads that separate truth best. At inference time they add $\\alpha\\sigma\\mathbf{w}$ at those heads. Alpaca rises on TruthfulQA from 32.5% to 65.1% (true*informative). The intervention is cheap, but the notion of truth is narrow and helpfulness pays the bill.\n\nITI does not explain what the intervention does internally. The direction is chosen because it works; a correlated but non-causal direction is possible. The numbers are for LLaMA-7B, Alpaca, and Vicuna, not frontier models.",
+    watch: DE ? "Klicke $+\\alpha\\sigma\\mathbf{w}$. Sieh, wie die Wahrheitsrichtung die Aktivierung verschiebt." : "Click $+\\alpha\\sigma\\mathbf{w}$. Watch the truth direction shift the activation.",
+    demoState: { scene: "sentiment", mode: "iti" },
+    boxes: [
+      box("iti-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Eingriff" : "The intervention", DE ? "An ausgewählten Heads wird $\\alpha\\sigma\\mathbf{w}$ addiert. $\\mathbf{w}$ ist die gelernte Wahrheitsrichtung, $\\sigma$ die Streuung entlang dieser Richtung, $\\alpha$ die Stärke." : "At selected heads, $\\alpha\\sigma\\mathbf{w}$ is added. $\\mathbf{w}$ is the learned truth direction, $\\sigma$ the spread along it, $\\alpha$ the strength.", "\\underbrace{\\mathbf{x}'}_{\\text{neue Aktivierung}} = \\underbrace{\\mathbf{x}}_{\\text{Original}} + \\underbrace{\\alpha\\sigma\\mathbf{w}}_{\\text{ITI-Nudge}}"),
+      box("iti-2", DE ? "Grenze" : "Limit", DE ? "TruthfulQA ist schmal" : "TruthfulQA is narrow", DE ? "Die Benchmarks fragen nach verbreiteten Missverständnissen, nicht nach allgemeiner Verlässlichkeit. Der Effekt ist auf TruthfulQA groß und außerhalb der Verteilung klein. Mehr $\\alpha$ kauft Wahrheit mit Absagen und Verteilungsverschiebung." : "The benchmarks ask about common misconceptions, not general reliability. The effect is large on TruthfulQA and small out of distribution. More $\\alpha$ buys truth with refusals and distribution shift.")
+    ],
+    sources: sentimentDirection.sources
+  });
+
+  var sentimentStep = {
+    kicker: DE ? "Gefühle" : "Sentiment",
+    title: DE ? "Bedeutung als Richtung" : "Meaning as a direction",
+    substeps: [sentimentDirection, sentimentSteer, sentimentIti]
+  };
+
+  var inductionSequence = {
+    kicker: DE ? "Induction" : "Induction",
+    title: DE ? "A B … A → B" : "A B … A → B",
+    teaser: DE
+      ? "Ein Induktionskopf löst eine einfache Aufgabe: Wenn ein Token $A$ wieder auftaucht, schaut er auf das Token $B$, das beim letzten Mal nach $A$ kam, und kopiert es. Aus A B … A wird also B. Das funktioniert mit beliebigen Tokens; der Kopf lernt eine Regel, keine Tabelle. Ein einzelner Kopf kann das nicht allein: Er braucht einen Previous-Token-Head in einer früheren Schicht.\n\nDer Kopf attendiert auf frühere Tokens, die vom aktuellen Token gefolgt wurden. Das ist mehr als ein Bigramm: Die Regel ist relativ zur aktuellen Position und funktioniert auch bei neuen Token-Kombinationen."
+      : "An induction head solves a simple task: when token $A$ appears again, it looks at the token $B$ that followed $A$ last time and copies it. So `A B … A` becomes `B`. This works for arbitrary tokens; the head learns a rule, not a table. A single head cannot do it alone: it needs a previous-token head in an earlier layer.\n\nThe head attends to earlier tokens that were followed by the current token. That is more than a bigram: the rule is relative to the current position and works for new token combinations.",
+    watch: DE ? "Klicke Weiter. Sieh, wohin der Kopf schaut und was er kopiert." : "Click Next. See where the head looks and what it copies.",
+    demoState: { scene: "induction", mode: "sequence" },
+    context: DE ? "Induktionsköpfe sind ein Beispiel für einen gelernten Algorithmus im Transformer. Der Kopf liest nicht die Bedeutung, sondern ein Muster aus Wiederholung." : "Induction heads are an example of a learned algorithm in a transformer. The head does not read meaning; it reads a pattern of repetition.",
+    deep: DE ? "Die Definition ist empirisch: Prefix-Matching und Copying. Der Kopf erfüllt sie nicht perfekt; die Autoren wählen eine klare Teilmenge, die deutlich über dem Zufall liegt. In großen Modellen ist der Zusammenhang mit In-Context Learning suggestiv, nicht bewiesen." : "The definition is empirical: prefix matching and copying. The head does not satisfy it perfectly; the authors choose a clear subset well above chance. In large models the link to in-context learning is suggestive, not proven.",
+    boxes: [
+      box("ind-1", DE ? "Regel" : "Rule", DE ? "Was wird kopiert?" : "What is copied?", DE ? "Nicht das aktuelle $A$, sondern das $B$, das beim vorherigen $A$ folgte. Der Kopf sucht die Stelle über den Key und kopiert über die OV-Matrix." : "Not the current $A$, but the $B$ that followed the previous $A$. The head finds the position through the key and copies through the OV matrix.")
+    ],
+    sources: [{ label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Induktionsköpfe, Zwei-Head-Schaltkreis und Phase Change.", en: "Induction heads, the two-head circuit, and the phase change." } }]
+  };
+
+  var inductionCircuit = Object.assign({}, inductionSequence, {
+    kicker: DE ? "Schaltkreis" : "Circuit",
+    title: DE ? "Zwei Heads, ein Algorithmus" : "Two heads, one algorithm",
+    teaser: DE
+      ? "Der Previous-Token-Head schreibt das vorherige Token in die nächste Position. Der Induktionskopf fragt mit $A$ und findet die Stelle, deren vorheriges Token $A$ war. Er attendiert auf $B$ und kopiert es über die OV-Matrix. Das ist K-Composition: Der Key hängt vom vorherigen Token ab. Deshalb braucht der Schaltkreis mindestens zwei Schichten.\n\nEin einzelner Head kann nur das aktuelle Token als Query und Key benutzen. Erst der vorgeschaltete Head macht den Key zu einer Funktion von Token und Vorgänger."
+      : "The previous-token head writes the previous token into the next position. The induction head queries with $A$ and finds the position whose previous token was $A$. It attends to $B$ and copies it through the OV matrix. That is K-composition: the key depends on the previous token. That is why the circuit needs at least two layers.\n\nA single head can only use the current token as query and key. The earlier head turns the key into a function of the token and its predecessor.",
+    watch: DE ? "Klicke Weiter. Verfolge den Weg vom Previous-Token-Head zum Induktionskopf." : "Click Next. Follow the path from the previous-token head to the induction head.",
+    demoState: { scene: "induction", mode: "circuit" },
+    boxes: [],
+    sources: inductionSequence.sources
+  });
+
+  var inductionEmergence = Object.assign({}, inductionSequence, {
+    kicker: DE ? "Emergenz" : "Emergence",
+    title: DE ? "Der Phase Change" : "The phase change",
+    teaser: DE
+      ? "Induktionsköpfe entstehen nicht von Anfang an. In kleinen Modellen bilden sie sich in einem schmalen Trainingsfenster, etwa zwischen 2,5 und 5 Milliarden Tokens. Im selben Fenster springt der In-Context-Learning-Score von unter 0,15 auf etwa 0,4 Nats. Die Loss-Kurve bekommt dort einen kleinen Buckel. Ein einlagiges Modell ohne Induktionsköpfe zeigt keinen solchen Sprung.\n\nDas ist Evidenz für einen Zusammenhang, nicht für einen Beweis. Andere Mechanismen könnten im selben Fenster entstehen; die Ablationen betreffen kleine Modelle. Für die Folie reicht: Ein gelerntes Muster und eine messbare Fähigkeit tauchen zusammen auf."
+      : "Induction heads do not exist from the start. In small models they form in a narrow training window, roughly between 2.5 and 5 billion tokens. In the same window the in-context-learning score jumps from below 0.15 to about 0.4 nats. The loss curve gets a small bump there. A one-layer model without induction heads shows no such jump.\n\nThis is evidence for a connection, not a proof. Other mechanisms could form in the same window; the ablations concern small models. For this slide the point is enough: a learned pattern and a measurable ability appear together.",
+    watch: DE ? "Klicke Weiter. Sieh, wie die Kurven im selben Fenster springen." : "Click Next. Watch the curves jump in the same window.",
+    demoState: { scene: "induction", mode: "emergence" },
+    boxes: [],
+    sources: inductionSequence.sources
+  });
+
+  var inductionStep = {
+    kicker: DE ? "In-Context" : "In-context",
+    title: DE ? "Induktionsköpfe" : "Induction heads",
+    substeps: [inductionSequence, inductionCircuit, inductionEmergence]
+  };
+
+  var grokkingLoss = {
+    kicker: DE ? "Grokking" : "Grokking",
+    title: DE ? "Erst memoriert, dann verstanden" : "First memorized, then understood",
+    teaser: DE
+      ? "Ein Transformer lernt $a + b \\bmod 113 = c$ auf 30 % der möglichen Paare. Die Trainingsloss fällt sofort, die Testloss bleibt lange hoch. Erst nach Tausenden Epochen fällt sie plötzlich: Das Modell hat generalisiert. Dieses verzögerte Generalisieren heißt Grokking. Der generalisierende Schaltkreis ist schon vorher da; sichtbar wird er erst beim Aufräumen.\n\nDer Hauptlauf nutzt $P = 113$, eine einschichtige ReLU-Transformer mit $d = 128$, vier Heads und 512 MLP-Einheiten; die Phasen liegen bei etwa 1,4k, 9,4k und 14k Epochen. Die Kurven in der Demo sind schematisch, die Grenzen und Frequenzen stammen aus dem Papier."
+      : "A transformer learns $a + b \\bmod 113 = c$ on 30% of the possible pairs. Training loss falls immediately, test loss stays high for a long time. Only after thousands of epochs does it suddenly drop: the model has generalized. This delayed generalization is called grokking. The generalizing circuit is already there; it becomes visible during cleanup.\n\nThe mainline run uses $P = 113$, a one-layer ReLU transformer with $d = 128$, four heads, and 512 MLP units; the phases are around 1.4k, 9.4k, and 14k epochs. The curves in the demo are schematic; the boundaries and frequencies come from the paper.",
+    watch: DE ? "Klicke Weiter. Verfolge, wann die Testloss fällt." : "Click Next. Follow when the test loss drops.",
+    demoState: { scene: "grokking", mode: "loss" },
+    context: DE ? "Grokking ist kein plötzliches Lernen aus dem Nichts. Der Schaltkreis entsteht vorher; die Testloss zeigt es nur später." : "Grokking is not learning from nothing. The circuit forms earlier; the test loss only shows it later.",
+    deep: DE ? "Perfekte Genauigkeit heißt nicht Loss null. Die Kreuzentropie fällt weiter, während die Logits schärfer werden. Die Phasengrenzen hängen vom Seed ab; die Reihenfolge ist stabil." : "Perfect accuracy does not mean zero loss. Cross-entropy keeps falling while the logits sharpen. The phase boundaries depend on the seed; the order is stable.",
+    boxes: [
+      box("gro-1", DE ? "Aufgabe" : "Task", DE ? "Was wird gelernt?" : "What is learned?", DE ? "Addition modulo 113. Die Eingabe ist ein Paar $(a,b)$, die Ausgabe $c = (a+b) \\bmod 113$. Nur 30 % aller Paare sind Trainingsdaten." : "Addition modulo 113. The input is a pair $(a,b)$, the output $c = (a+b) \\bmod 113$. Only 30% of all pairs are training data.")
+    ],
+    sources: [{ label: "Nanda et al. (2023), Progress Measures for Grokking via Mechanistic Interpretability", url: "https://arxiv.org/abs/2301.05217", why: { de: "Grokking, Fourier-Schaltkreis und Fortschrittsmaße.", en: "Grokking, the Fourier circuit, and progress measures." } }]
+  };
+
+  var grokkingFourier = Object.assign({}, grokkingLoss, {
+    kicker: DE ? "Fourier" : "Fourier",
+    title: DE ? "Addition als Drehung" : "Addition as rotation",
+    teaser: DE
+      ? "Das Modell rechnet nicht mit den Zahlen selbst, sondern mit Winkeln. Es lernt fünf Fourier-Frequenzen ($k = 14, 35, 41, 42, 52$). Jede Zahl wird zu $\\sin$ und $\\cos$; die Addition wird zur Winkeladdition. Die fünf Frequenzen tragen 95 % der Logit-Varianz. Aus Addition wird Rotation auf einem Kreis.\n\nDie Frequenzen sind keine Handregel: Sie entstehen aus dem Training mit Weight Decay. Die Winkeladdition ist die Identität $\\sin(a+b) = \\sin a\\cos b + \\cos a\\sin b$."
+      : "The model does not compute with the numbers themselves, but with angles. It learns five Fourier frequencies ($k = 14, 35, 41, 42, 52$). Each number becomes $\\sin$ and $\\cos$; addition becomes angle addition. The five frequencies carry 95% of the logit variance. Addition becomes rotation on a circle.\n\nThe frequencies are not a hand rule: they emerge from training with weight decay. Angle addition is the identity $\\sin(a+b) = \\sin a\\cos b + \\cos a\\sin b$.",
+    watch: DE ? "Klicke Weiter. Sieh, wie die fünf Frequenzen den Kreis tragen." : "Click Next. See how the five frequencies carry the circle.",
+    demoState: { scene: "grokking", mode: "fourier" },
+    boxes: [
+      box("gro-2", DE ? "Mathematik" : "Mathematics", DE ? "Die Identität" : "The identity", DE ? "Das Modell kombiniert Sinus und Kosinus derselben Frequenz. Die Addition der Eingaben wird zur Addition ihrer Winkel." : "The model combines sine and cosine of the same frequency. Adding the inputs becomes adding their angles.", "\\underbrace{\\sin(a+b)}_{\\text{Summe}} = \\underbrace{\\sin a\\cos b + \\cos a\\sin b}_{\\text{Winkeladdition}}")
+    ],
+    sources: grokkingLoss.sources
+  });
+
+  var grokkingMeasures = Object.assign({}, grokkingLoss, {
+    kicker: DE ? "Fortschritt" : "Progress",
+    title: DE ? "Was sieht den Sprung vorher?" : "What sees the jump coming?",
+    teaser: DE
+      ? "Die Testloss verrät lange nicht, dass etwas passiert. Die Fortschrittsmaße schon: Die Restricted Loss fällt früher, die Excluded Loss steigt während der Schaltkreisbildung. Später kippen Gewichtsnorm und Gini beim Aufräumen. So zerfällt Grokking in drei Phasen: Memorieren, Schaltkreis bilden, Aufräumen. Das Generalisieren ist der letzte Schritt, nicht der erste.\n\nDie Fortschrittsmaße sind task-spezifisch. Sie zeigen, wann der Schaltkreis entsteht, aber nicht allgemein, wann Grokking passiert. Das Papier ist ein Fallbeispiel, kein universeller Timer."
+      : "Test loss does not reveal for a long time that something is happening. The progress measures do: restricted loss falls earlier, excluded loss rises during circuit formation. Later, weight norm and Gini flip during cleanup. Grokking splits into three phases: memorization, circuit formation, cleanup. Generalization is the last step, not the first.\n\nThe progress measures are task-specific. They show when the circuit forms, but not in general when grokking happens. The paper is a case study, not a universal timer.",
+    watch: DE ? "Klicke Weiter. Vergleiche die drei Fortschrittsmaße." : "Click Next. Compare the three progress measures.",
+    demoState: { scene: "grokking", mode: "measures" },
+    boxes: [],
+    sources: grokkingLoss.sources
+  });
+
+  var grokkingStep = {
+    kicker: DE ? "Grokking" : "Grokking",
+    title: DE ? "Warum plötzlich generalisieren?" : "Why generalize suddenly?",
+    substeps: [grokkingLoss, grokkingFourier, grokkingMeasures]
+  };
+
+  var spacetimeSpace = {
+    kicker: DE ? "Raum" : "Space",
+    title: DE ? "Wo liegt Paris?" : "Where is Paris?",
+    teaser: DE
+      ? "Gurnee & Tegmark (2023) fragen, ob Llama-2 einen echten Raum im Modell hat. Eine lineare Ridge-Probe liest Breiten- und Längengrade aus mittleren Aktivierungen. Bei Llama-2-70B erreicht sie $R^2 = 0{,}911$ auf Welt-Orten. Die Karte ist relativ, nicht absolut: Ausgehaltene Länder landen an der richtigen relativen Stelle, aber nicht am richtigen absoluten Ort. Das Modell trägt also eine Karte, aber die Probe liefert die Koordinatenabbildung.\n\nDer Probe ist ein Readout. Ein erfolgreicher Probe beweist nicht, dass das Modell die Richtung kausal benutzt; er zeigt, dass die Information linear lesbar ist. Die Autoren prüfen das mit PCA und einzelnen Neuronen."
+      : "Gurnee & Tegmark (2023) ask whether Llama-2 has a real space inside the model. A linear ridge probe reads latitude and longitude from mid-layer activations. On Llama-2-70B it reaches $R^2 = 0.911$ on world places. The map is relative, not absolute: held-out countries land in the right relative position, but not at the right absolute place. The model carries a map, but the probe supplies the coordinate mapping.\n\nThe probe is a readout. A successful probe does not prove that the model uses the direction causally; it shows that the information is linearly readable. The authors check this with PCA and individual neurons.",
+    watch: DE ? "Klicke Weiter. Sieh, wie die Probe die Karte liest." : "Click Next. Watch the probe read the map.",
+    demoState: { scene: "spacetime", mode: "space" },
+    context: DE ? "Die Aktivierung wird auf eine gelernte Richtung pro Koordinate projiziert. Die Karte ist eine Projektion der gelernten Richtungen, keine gespeicherte Landkarte." : "The activation is projected onto a learned direction per coordinate. The map is a projection of learned directions, not a stored atlas.",
+    deep: DE ? "Llama-2 7B, 13B und 70B; lineare Ridge-Probe und ein MLP-Probe als Kontrolle. Der MLP-Probe verbessert $R^2$ kaum, was für lineare Lesbarkeit spricht. Absolute Koordinaten sind schwächer als relative Geometrie; NYC ist der schwächste Datensatz." : "Llama-2 7B, 13B, and 70B; linear ridge probe and an MLP probe as control. The MLP probe barely improves $R^2$, which supports linear readability. Absolute coordinates are weaker than relative geometry; NYC is the weakest dataset.",
+    boxes: [
+      box("st-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Readout" : "The readout", DE ? "Eine lineare Probe bildet die Aktivierung $\\mathbf{x}$ auf Breite und Länge ab. Die Gewichte sind die gelernte Raumrichtung." : "A linear probe maps activation $\\mathbf{x}$ to latitude and longitude. The weights are the learned space direction.", "\\underbrace{(\\hat{\\phi},\\hat{\\lambda})}_{\\text{vorhergesagte Koordinaten}} = \\underbrace{W\\mathbf{x} + \\mathbf{b}}_{\\text{lineare Probe}}"),
+      box("st-2", DE ? "Grenze" : "Limit", DE ? "Lesbar, nicht bewiesen" : "Readable, not proven", DE ? "Der Probe könnte eine Kombination einfacherer Features lesen. Einzelne Neuronen zeigen in dieselbe Richtung, sind aber nur eine untere Schranke. Die Karte ist relativ; absolute Koordinaten sind schwächer." : "The probe could read a combination of simpler features. Individual neurons point in the same direction but are only a lower bound. The map is relative; absolute coordinates are weaker.")
+    ],
+    sources: [{ label: "Gurnee & Tegmark (2023), Language Models Represent Space and Time", url: "https://arxiv.org/abs/2310.02207", why: { de: "Lineare Karten von Raum und Zeit in Llama-2; space/time neurons.", en: "Linear maps of space and time in Llama-2; space/time neurons." } }]
+  };
+
+  var spacetimeTime = Object.assign({}, spacetimeSpace, {
+    kicker: DE ? "Zeit" : "Time",
+    title: DE ? "Wann lebte Turing?" : "When did Turing live?",
+    teaser: DE
+      ? "Dieselbe lineare Probe liest Jahreszahlen aus Aktivierungen. Bei historischen Personen erreicht Llama-2-70B $R^2 = 0{,}835$. Auf der Diagonalen liegen vorhergesagtes und wahres Jahr nah beieinander. Zeit ist also ebenfalls eine lesbare Richtung. Die Probe ist ein Readout; ob das Modell die Richtung kausal benutzt, ist eine separate Frage.\n\nDie Zeitachse ist über Entitätstypen hinweg lesbar: Personen, Kunstwerke und Schlagzeilen. Die Auflösung ist grob; die Probe liest relative Ordnung besser als absolute Jahreszahlen."
+      : "The same linear probe reads years from activations. On historical figures, Llama-2-70B reaches $R^2 = 0.835$. Predicted and true year lie close to the diagonal. Time is also a readable direction. The probe is a readout; whether the model uses the direction causally is a separate question.\n\nThe time axis is readable across entity types: people, artworks, and headlines. The resolution is coarse; the probe reads relative order better than absolute years.",
+    watch: DE ? "Klicke Weiter. Sieh, wie nah die Punkte an der Diagonale liegen." : "Click Next. See how close the points lie to the diagonal.",
+    demoState: { scene: "spacetime", mode: "time" },
+    boxes: [],
+    sources: spacetimeSpace.sources
+  });
+
+  var spacetimeNeurons = Object.assign({}, spacetimeSpace, {
+    kicker: DE ? "Neuronen" : "Neurons",
+    title: DE ? "Einzelne Raum- und Zeitneuronen" : "Individual space and time neurons",
+    teaser: DE
+      ? "Einzelne Neuronen, deren Gewichte in dieselbe Richtung zeigen, kodieren Koordinaten. Sie reagieren über verschiedene Entitätstypen hinweg. Weil Features in Superposition liegen, sind einzelne Neuronen nur eine untere Schranke. Der überwachte Probe ist die obere Schranke. Zusammen zeigen sie: Raum und Zeit sind linear lesbar, nicht nur als Oberflächenstatistik.\n\nDie Neuronendaten sind korrelativ. Sie zeigen, dass die Richtung auch ohne supervised Probe in einzelnen Einheiten auftaucht; sie beweisen keine kausale Karte."
+      : "Individual neurons whose weights point in the same direction encode coordinates. They respond across different entity types. Because features live in superposition, individual neurons are only a lower bound. The supervised probe is the upper bound. Together they show that space and time are linearly readable, not just surface statistics.\n\nThe neuron data are correlational. They show that the direction also appears in individual units without a supervised probe; they do not prove a causal map.",
+    watch: DE ? "Klicke Weiter. Sieh, welche Neuronen auf Raum und Zeit zeigen." : "Click Next. See which neurons point at space and time.",
+    demoState: { scene: "spacetime", mode: "neurons" },
+    boxes: [],
+    sources: spacetimeSpace.sources
+  });
+
+  var spacetimeStep = {
+    kicker: DE ? "Weltkarte" : "World map",
+    title: DE ? "Raum und Zeit im Modell" : "Space and time in the model",
+    substeps: [spacetimeSpace, spacetimeTime, spacetimeNeurons]
+  };
+
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], wmBoard, trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, worldModelStep, sentimentStep, inductionStep, grokkingStep, spacetimeStep];
 
   var day = {
     id: "intuition",

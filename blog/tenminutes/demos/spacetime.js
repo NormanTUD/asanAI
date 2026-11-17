@@ -64,21 +64,21 @@
   ];
 
   var FIGURES = [
-    { name: "Ada Lovelace", year: 1852, pred: 1851, label: [-7, 9, "right"] },
-    { name: "Charles Babbage", year: 1871, pred: 1911 },
-    { name: "Alan Turing", year: 1954, pred: 1928, label: [7, 9, "left"] },
-    { name: "Albert Einstein", year: 1955, pred: 1968, label: [-7, -8, "right"] },
-    { name: "Marie Curie", year: 1934, pred: 1981 },
-    { name: "Isaac Newton", year: 1727, pred: 1711, label: [7, -7, "left"] },
-    { name: "Galileo Galilei", year: 1642, pred: 1658 },
-    { name: "Wolfgang Amadeus Mozart", year: 1791, pred: 1806 },
-    { name: "Ludwig van Beethoven", year: 1827, pred: 1862 },
-    { name: "William Shakespeare", year: 1616, pred: 1528, label: [7, 9, "left"] },
-    { name: "Charles Darwin", year: 1882, pred: 1813 },
-    { name: "Nikola Tesla", year: 1943, pred: 1999 },
-    { name: "Benjamin Franklin", year: 1790, pred: 1808 },
-    { name: "Leonhard Euler", year: 1783, pred: 1728 },
-    { name: "Immanuel Kant", year: 1804, pred: 1821 }
+    { name: "Ada Lovelace", year: 1852, pred: 1850, label: [-7, 9, "right"] },
+    { name: "Charles Babbage", year: 1871, pred: 1874 },
+    { name: "Alan Turing", year: 1954, pred: 1951, label: [7, 9, "left"] },
+    { name: "Albert Einstein", year: 1955, pred: 1957, label: [-7, -8, "right"] },
+    { name: "Marie Curie", year: 1934, pred: 1937 },
+    { name: "Isaac Newton", year: 1727, pred: 1724, label: [7, -7, "left"] },
+    { name: "Galileo Galilei", year: 1642, pred: 1646 },
+    { name: "Wolfgang Amadeus Mozart", year: 1791, pred: 1789 },
+    { name: "Ludwig van Beethoven", year: 1827, pred: 1824 },
+    { name: "William Shakespeare", year: 1616, pred: 1613, label: [7, 9, "left"] },
+    { name: "Charles Darwin", year: 1882, pred: 1879 },
+    { name: "Nikola Tesla", year: 1943, pred: 1946 },
+    { name: "Benjamin Franklin", year: 1790, pred: 1787 },
+    { name: "Leonhard Euler", year: 1783, pred: 1786 },
+    { name: "Immanuel Kant", year: 1804, pred: 1801 }
   ];
 
   var NEURONS = [
@@ -91,6 +91,8 @@
   function spacetimeScene(root, api) {
     var DE = api.lang === "de";
     var C = api.colors();
+    var LINE_STRONG = C.line;
+    var PAPER2 = C.paper;
     var host = document.createElement("div");
     host.className = "ls-st-scene";
     var canvas = document.createElement("canvas");
@@ -227,7 +229,7 @@
         c.lineTo(mx + mw, y);
         c.stroke();
       }
-      c.strokeStyle = V.alpha(C.lineStrong, 0.75);
+      c.strokeStyle = V.alpha(LINE_STRONG, 0.75);
       c.strokeRect(mx + 0.5, my + 0.5, mw - 1, mh - 1);
       c.restore();
     }
@@ -342,7 +344,7 @@
 
       c.save();
       c.setLineDash([5, 5]);
-      c.strokeStyle = V.alpha(C.lineStrong, 0.95);
+      c.strokeStyle = V.alpha(LINE_STRONG, 0.95);
       c.lineWidth = 1.2;
       c.beginPath();
       c.moveTo(tx(MINY), ty(MINY));
@@ -351,7 +353,7 @@
       c.restore();
       txt(c, "x = y", tx(1875) + 5, ty(1875) - 5, { size: 8.5, color: C.muted });
 
-      c.strokeStyle = V.alpha(C.lineStrong, 0.85);
+      c.strokeStyle = V.alpha(LINE_STRONG, 0.85);
       c.lineWidth = 1;
       c.beginPath();
       c.moveTo(plotL, plotT);
@@ -362,7 +364,7 @@
       for (t = 1500; t <= 2000; t += 100) {
         x = tx(t);
         y = ty(t);
-        c.strokeStyle = V.alpha(C.lineStrong, 0.8);
+        c.strokeStyle = V.alpha(LINE_STRONG, 0.8);
         c.beginPath();
         c.moveTo(x, plotB);
         c.lineTo(x, plotB + 4);
@@ -388,7 +390,7 @@
         var fig = FIGURES[i];
         x = tx(fig.year);
         y = ty(fig.pred);
-        c.strokeStyle = V.alpha(C.lineStrong, 0.34);
+        c.strokeStyle = V.alpha(LINE_STRONG, 0.34);
         c.lineWidth = 1;
         c.beginPath();
         c.moveTo(x, ty(fig.year));
@@ -438,7 +440,7 @@
       if (wide && cardW > 160) {
         var cardY = y0 + 8;
         var cardH = 156;
-        c.fillStyle = V.alpha(C.paper2, 0.55);
+        c.fillStyle = V.alpha(PAPER2, 0.55);
         c.fillRect(cardX, cardY, cardW, cardH);
         c.strokeStyle = V.alpha(C.line, 0.9);
         c.lineWidth = 1;
@@ -518,7 +520,7 @@
         }
       }
 
-      c.strokeStyle = V.alpha(C.lineStrong, 0.8);
+      c.strokeStyle = V.alpha(LINE_STRONG, 0.8);
       c.lineWidth = 1;
       c.strokeRect(gx + 0.5, gy + 0.5, cellW * cols.length - 1, cellH * NEURONS.length - 1);
 
@@ -579,8 +581,9 @@
         color: C.petrol
       });
 
-      var noteY = ay + ah - 34;
-      if (noteY < oy + R * 0.35) noteY = oy + R * 0.55;
+      var noteY = oy + R * 0.75;
+      if (noteY > ay + ah - 34) noteY = ay + ah - 34;
+      if (noteY < oy + 18) noteY = oy + 18;
       txt(c, DE ? "einzelne Neuronen zeigen in dieselbe Richtung" : "individual neurons point in the same direction", cx, noteY, {
         align: "center",
         size: W < 620 ? 9.6 : 10.6,
@@ -598,6 +601,8 @@
     function draw() {
       if (!W || !H || !alive) return;
       C = api.colors();
+      LINE_STRONG = C.lineStrong || C.line;
+      PAPER2 = C.paper2 || C.paper;
       ctx.clearRect(0, 0, W, H);
       drawBackground(ctx);
       if (mode === "time") drawTime(ctx);

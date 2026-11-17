@@ -525,7 +525,7 @@
       var rightX = padX + leftW + (narrow ? 10 : 24);
       var rightW = Math.max(80, W - padX - rightX);
       var scatter = { x: padX, y: top, w: leftW, h: contentBottom - top };
-      var cell = Math.min(rightW / 8, (contentBottom - top) / 12);
+      var cell = Math.max(6, Math.min(rightW / 8, (contentBottom - top) / 17));
       var gridW = cell * 8;
       var gridH = cell * 6;
       var gridY = top + 14;
@@ -535,11 +535,12 @@
       drawHeadGrid(c, rightX, gridY, gridW, gridH);
       drawText(c, DE ? "5 ausgewählt" : "5 selected", rightX, gridY + gridH + 10, { size: 8.5, color: C.muted });
 
+      var nudgeY = gridY + gridH + 18;
       var nudgeRect = {
         x: rightX,
-        y: gridY + gridH + 18,
+        y: nudgeY,
         w: rightW,
-        h: Math.max(52, Math.min(104, contentBottom - (gridY + gridH + 18)))
+        h: Math.max(24, Math.min(104, contentBottom - nudgeY))
       };
       drawNudge(c, nudgeRect);
 
@@ -606,7 +607,7 @@
         controls.appendChild(makeButton(DE ? "Zurücksetzen" : "Reset", function () { setAlpha(0.8); }));
       } else if (mode === "iti") {
         var btn = makeButton(
-          nudge ? (DE ? "Nudge zurücknehmen" : "Undo nudge") : (DE ? "+ασw anwenden" : "Apply +ασw"),
+          nudge ? (DE ? "Verschiebung zurücknehmen" : "Undo nudge") : (DE ? "+ασw anwenden" : "Apply +ασw"),
           function () {
             nudge = !nudge;
             buildControls();
@@ -656,7 +657,7 @@
       }
       if (mode === "steer") {
         return DE
-          ? "Steering-Demo: Eine Aktivierung wandert entlang der Sentiment-Achse; α steuert die Verschiebung."
+          ? "Steuerungs-Demo: Eine Aktivierung wandert entlang der Sentiment-Achse; α steuert die Verschiebung."
           : "Steering demo: an activation moves along the sentiment axis; α controls the shift.";
       }
       return DE
@@ -699,7 +700,7 @@
       if (next !== "direction" && next !== "steer" && next !== "iti") next = "direction";
       var changed = next !== mode;
       mode = next;
-      if (typeof st.alpha === "number") alpha = clamp(st.alpha, -1.5, 1.5);
+      if (typeof st.alpha === "number" && isFinite(st.alpha)) alpha = clamp(st.alpha, -1.5, 1.5);
       if (typeof st.nudge === "boolean") nudge = st.nudge;
       if (changed || (mode === "iti" && typeof st.nudge === "boolean")) buildControls();
       else if (sliderEl) sliderEl.value = String(alpha);
@@ -709,6 +710,7 @@
 
     function onTheme() {
       C = api.colors();
+      buildControls();
       resize();
     }
 
