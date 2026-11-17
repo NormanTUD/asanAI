@@ -31,28 +31,6 @@
       '<div class="ls-cr-body">' +
         '<div class="ls-cr-room">' +
           '<div class="ls-cr-top"><span class="ls-cr-progress"></span><span class="ls-cr-score"></span></div>' +
-          '<div class="ls-cr-diagram" role="img" aria-label="' + (DE ? "Schematisches Chinesisches Zimmer: Eingabe, Person, Regelbuch, Antwort" : "Schematic Chinese Room: input, person, rulebook, answer") + '">' +
-            '<svg viewBox="0 0 460 104">' +
-              '<defs><marker id="cr-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1275ac"/></marker></defs>' +
-              '<rect data-room="1" x="6" y="8" width="448" height="88" fill="none" stroke="#004b6f" stroke-width="1.2" stroke-dasharray="6 4"/>' +
-              '<text x="14" y="21" font-size="8" fill="#627476">' + (DE ? "Zimmer" : "room") + '</text>' +
-              '<rect x="18" y="40" width="78" height="30" fill="#fff" stroke="#b9c8c3"/>' +
-              '<text x="57" y="58" text-anchor="middle" font-size="9" fill="#2c464d">' + (DE ? "Eingabe" : "input") + '</text>' +
-              '<line x1="98" y1="55" x2="132" y2="55" stroke="#1275ac" stroke-width="1.3" marker-end="url(#cr-arrow)"/>' +
-              '<circle cx="158" cy="39" r="10" fill="none" stroke="#004b6f" stroke-width="1.5"/>' +
-              '<path d="M158 49 L158 78 M144 60 L172 60 M158 60 L146 72 M158 60 L170 72" fill="none" stroke="#004b6f" stroke-width="1.3"/>' +
-              '<text x="158" y="94" text-anchor="middle" font-size="8" fill="#627476">' + (DE ? "du" : "you") + '</text>' +
-              '<line x1="178" y1="55" x2="212" y2="55" stroke="#1275ac" stroke-width="1.3" marker-end="url(#cr-arrow)"/>' +
-              '<rect x="216" y="34" width="86" height="42" fill="#fff" stroke="#b9c8c3"/>' +
-              '<text x="259" y="58" text-anchor="middle" font-size="9" fill="#2c464d">' + (DE ? "Regelbuch" : "rulebook") + '</text>' +
-              '<line x1="304" y1="55" x2="340" y2="55" stroke="#1275ac" stroke-width="1.3" marker-end="url(#cr-arrow)"/>' +
-              '<rect x="344" y="40" width="88" height="30" fill="#fff" stroke="#b9c8c3"/>' +
-              '<text x="388" y="58" text-anchor="middle" font-size="9" fill="#2c464d">' + (DE ? "Antwort" : "answer") + '</text>' +
-            '</svg>' +
-            '<div class="ls-cr-diagram-caption"><span>' + (DE ? "von außen: sieht wie Verstehen aus" : "from outside: looks like understanding") + '</span><span>' + (DE ? "innen: Zeichen nach Regeln" : "inside: symbols by rules") + '</span></div>' +
-            '<button type="button" class="ls-cr-system-btn">' + (DE ? "Systemgrenze zeigen" : "Show system boundary") + '</button>' +
-            '<div class="ls-cr-system-note">' + (DE ? "System Reply: Vielleicht versteht nicht die Person, sondern das ganze System aus Person, Regelbuch und Zimmer. Searle hält das für eine Verschiebung des Problems." : "Systems reply: perhaps not the person but the whole system of person, rulebook, and room understands. Searle treats that as moving the problem.") + '</div>' +
-          '</div>' +
           '<div class="ls-cr-incoming"><span class="ls-cr-label">' + (DE ? "Eingabe" : "Input") + '</span><p class="ls-cr-input" lang="zh"></p><p class="ls-cr-sub">' + (DE ? "Du liest die Zeichen nicht." : "You cannot read the characters.") + '</p></div>' +
           '<div class="ls-cr-book"><div class="ls-cr-book-head">' + (DE ? "Regelbuch" : "Rulebook") + '</div><table class="ls-cr-rules" lang="zh"><tbody></tbody></table></div>' +
           '<div class="ls-cr-options" role="group" lang="zh" aria-label="' + (DE ? "Antwort wählen" : "Choose an answer") + '"></div>' +
@@ -142,16 +120,6 @@
       idx = 0; score = 0; done = false;
       render();
     });
-    var diagram = el.querySelector(".ls-cr-diagram");
-    var systemBtn = el.querySelector(".ls-cr-system-btn");
-    if (systemBtn) {
-      systemBtn.addEventListener("click", function () {
-        var on = diagram.classList.toggle("is-system");
-        systemBtn.textContent = on
-          ? (DE ? "Systemgrenze ausblenden" : "Hide system boundary")
-          : (DE ? "Systemgrenze zeigen" : "Show system boundary");
-      });
-    }
     render();
     return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
   }

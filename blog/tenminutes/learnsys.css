@@ -2439,7 +2439,6 @@ h1,h2,h3,h4{
    the demo area gets the blue atmosphere, while content cards stay white. */
 #ls-demo[data-scene="rag"],
 #ls-demo[data-scene="history"],
-#ls-demo[data-scene="chineseroom"],
 #ls-demo[data-scene="riskmap"],
 #ls-demo[data-scene="consciousness"],
 #ls-demo[data-scene="worldmodel"],
@@ -2454,8 +2453,6 @@ h1,h2,h3,h4{
 }
 #ls-demo[data-scene="history"] .ls-history-panel,
 #ls-demo[data-scene="history"] .ls-history-figure,
-#ls-demo[data-scene="chineseroom"] .ls-cr-room,
-#ls-demo[data-scene="chineseroom"] .ls-cr-reveal,
 #ls-demo[data-scene="rag"] .ls-rag-space,
 #ls-demo[data-scene="rag"] .ls-rag-context,
 #ls-demo[data-scene="rag"] .ls-rag-answer{
@@ -2474,8 +2471,6 @@ h1,h2,h3,h4{
 #ls-demo[data-scene="riskmap"] .ls-rm-detail{border-left:3px solid var(--ls-petrol)}
 #ls-demo[data-scene="riskmap"] .ls-rm-fix{border-left-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
 #ls-demo[data-scene="riskmap"] .ls-rm-fix b{color:var(--ls-petrol)}
-#ls-demo[data-scene="chineseroom"] .ls-cr-room{border-left:3px solid var(--ls-petrol);background:linear-gradient(180deg,rgba(255,255,255,.76),rgba(255,255,255,.94))}
-#ls-demo[data-scene="chineseroom"] .ls-cr-choice:hover{border-color:var(--ls-petrol);color:var(--ls-petrol)}
 #ls-demo[data-scene="rag"] .ls-rag-query{border-left-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
 #ls-demo[data-scene="rag"] .ls-rag-chunk{border-radius:0}
 #ls-demo[data-scene="rag"] .ls-rag-chunk:hover{border-color:var(--ls-sky)}
@@ -2500,12 +2495,6 @@ h1,h2,h3,h4{
   #ls-demo[data-scene="history"] .ls-history-node::before{content:"";position:absolute;left:50%;top:-8px;width:7px;height:7px;background:var(--ls-paper);border:1px solid var(--ls-petrol);transform:translateX(-50%);z-index:2}
   #ls-demo[data-scene="history"] .ls-history-node.is-on::before{background:var(--ls-petrol);box-shadow:0 0 0 3px rgba(0,75,111,.14)}
 }
-
-/* Chinese Room: a compact outside/inside schematic above the interactive table. */
-.ls-cr-diagram{margin:0 0 6px;border:1px solid rgba(0,75,111,.12);background:rgba(255,255,255,.72);padding:5px 7px}
-.ls-cr-diagram svg{display:block;width:100%;height:auto;max-height:104px}
-.ls-cr-diagram-caption{display:flex;justify-content:space-between;gap:8px;margin-top:2px;font:600 8px/1.25 "Open Sans",sans-serif;color:var(--ls-muted)}
-.ls-cr-diagram-caption span:last-child{text-align:right;color:var(--ls-petrol)}
 
 /* Risk register: make the 2x2 axes explicit. */
 .ls-rm-axes{display:flex;justify-content:space-between;gap:8px;padding:3px 2px;border-top:1px solid var(--ls-line);border-bottom:1px solid var(--ls-line);font:600 8px/1.3 "Open Sans",sans-serif;color:var(--ls-muted)}
@@ -2536,13 +2525,6 @@ h1,h2,h3,h4{
 #ls-demo[data-scene="history"] .ls-history-node::before{background:var(--strand-color,var(--ls-paper));border-color:var(--strand-color,var(--ls-petrol))}
 #ls-demo[data-scene="history"] .ls-history-node.is-on::before{background:var(--strand-color,var(--ls-petrol));box-shadow:0 0 0 3px rgba(0,75,111,.14)}
 
-/* Chinese Room: highlight the system boundary and reveal the systems reply. */
-.ls-cr-system-btn{align-self:start;margin-top:4px;border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-petrol);padding:3px 7px;font:600 8px/1.2 "Open Sans",sans-serif;cursor:pointer;border-radius:0}
-.ls-cr-system-btn:hover{border-color:var(--ls-petrol);background:rgba(0,75,111,.05)}
-.ls-cr-system-note{display:none;margin-top:5px;padding:6px 8px;border-left:3px solid var(--ls-petrol);background:rgba(0,75,111,.055);font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-cr-diagram.is-system svg rect[data-room]{stroke-width:2.4;stroke-dasharray:none;fill:rgba(0,75,111,.045)}
-.ls-cr-diagram.is-system .ls-cr-system-note{display:block}
-
 /* Risk register: a faint crosshair turns the card grid into a 2x2 map. */
 #ls-demo[data-scene="riskmap"] .ls-rm-grid--risks{position:relative}
 #ls-demo[data-scene="riskmap"] .ls-rm-grid--risks::before,
@@ -2568,7 +2550,6 @@ h1,h2,h3,h4{
 }
 #ls-demo[data-scene="rag"],
 #ls-demo[data-scene="history"],
-#ls-demo[data-scene="chineseroom"],
 #ls-demo[data-scene="riskmap"],
 #ls-demo[data-scene="consciousness"]{
   position:relative;
@@ -2577,7 +2558,6 @@ h1,h2,h3,h4{
 }
 #ls-demo[data-scene="rag"]::before,
 #ls-demo[data-scene="history"]::before,
-#ls-demo[data-scene="chineseroom"]::before,
 #ls-demo[data-scene="riskmap"]::before,
 #ls-demo[data-scene="consciousness"]::before{
   content:"";
@@ -2595,7 +2575,6 @@ h1,h2,h3,h4{
 }
 #ls-demo[data-scene="rag"]::after,
 #ls-demo[data-scene="history"]::after,
-#ls-demo[data-scene="chineseroom"]::after,
 #ls-demo[data-scene="riskmap"]::after,
 #ls-demo[data-scene="consciousness"]::after{
   content:"";
@@ -2611,7 +2590,6 @@ h1,h2,h3,h4{
 }
 #ls-demo[data-scene="rag"] > *,
 #ls-demo[data-scene="history"] > *,
-#ls-demo[data-scene="chineseroom"] > *,
 #ls-demo[data-scene="riskmap"] > *,
 #ls-demo[data-scene="consciousness"] > *{
   position:relative;
@@ -2622,8 +2600,6 @@ h1,h2,h3,h4{
 #ls-demo[data-scene="rag"] .ls-rag-answer,
 #ls-demo[data-scene="history"] .ls-history-panel,
 #ls-demo[data-scene="history"] .ls-history-figure,
-#ls-demo[data-scene="chineseroom"] .ls-cr-room,
-#ls-demo[data-scene="chineseroom"] .ls-cr-reveal,
 #ls-demo[data-scene="riskmap"] .ls-rm-card,
 #ls-demo[data-scene="riskmap"] .ls-rm-detail,
 #ls-demo[data-scene="consciousness"] .ls-con-detail,
@@ -2647,7 +2623,6 @@ h1,h2,h3,h4{
 /* Inner vignette and a hairline of light make the demo feel like a lit stage. */
 #ls-demo[data-scene="rag"],
 #ls-demo[data-scene="history"],
-#ls-demo[data-scene="chineseroom"],
 #ls-demo[data-scene="riskmap"],
 #ls-demo[data-scene="consciousness"],
 #ls-demo[data-scene="worldmodel"],
