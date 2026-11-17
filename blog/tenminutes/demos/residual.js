@@ -653,6 +653,21 @@
       layerRow.innerHTML = "";
       if (phase === "notebook") {
         var colors = noteColors(C);
+        var startChip = document.createElement("button");
+        startChip.type = "button";
+        startChip.className = "ls-chip" + (layer === 0 ? " is-on" : "");
+        startChip.textContent = DE ? "Tokens" : "Tokens";
+        startChip.style.borderLeft = "3px solid " + C.muted;
+        startChip.setAttribute("aria-pressed", layer === 0 ? "true" : "false");
+        startChip.addEventListener("click", function () {
+          phase = "notebook";
+          layer = 0;
+          noteProgress = 1;
+          noteStart = 0;
+          sync();
+          draw();
+        });
+        layerRow.appendChild(startChip);
         NOTE_LAYERS.forEach(function (l, i) {
           var b = document.createElement("button");
           b.type = "button";
