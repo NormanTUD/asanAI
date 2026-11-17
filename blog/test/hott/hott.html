@@ -1254,6 +1254,7 @@
     renderer.setRenderTarget(p.sceneRT);
     renderer.clear(true, true, true);
     renderer.render(scene, camera);
+    if (DEBUG) sceneInfo = { calls: renderer.info.render.calls, tris: renderer.info.render.triangles, points: renderer.info.render.points };
     drawFS(p.brightMat, p.bA);
     p.blurMat.uniforms.tDiffuse.value = p.bA.texture;
     p.blurMat.uniforms.uDir.value.set(1, 0);
@@ -1697,6 +1698,7 @@
     canvas.addEventListener("dblclick", () => { userYaw = 0; userPitch = 0; userZoomT = 1; lastInteract = time; });
   }
 
+  let sceneInfo = { calls: 0, tris: 0, points: 0 };
   let frameCount = 0;
   function frame() {
     requestAnimationFrame(frame);
@@ -1756,12 +1758,15 @@
     if (renderer && post) renderFrame();
 
     frameCount++;
-    if (DEBUG && frameCount % 30 === 0) {
+    if (DEBUG && (frameCount === 4 || frameCount % 30 === 0)) {
+      const p0 = stationPos(Math.round(beatFloat)).clone().project(camera);
       document.documentElement.dataset.stats = JSON.stringify({
         beat, beatFloat: +beatFloat.toFixed(3),
         draws: renderer ? renderer.info.render.calls : 0,
         tris: renderer ? renderer.info.render.triangles : 0,
         points: renderer ? renderer.info.render.points : 0,
+        cam: [camera.position.x, camera.position.y, camera.position.z].map(v => +v.toFixed(2)),
+        ndc: [+p0.x.toFixed(2), +p0.y.toFixed(2), +p0.z.toFixed(2)],
         fps: +(1 / Math.max(0.001, dt)).toFixed(1)
       });
     }
@@ -1800,6 +1805,26 @@
     updateOverview();
     updatePlay();
     a11y.textContent = BEATS[beat].caption;
+
+    if (QS.has("beat") || DEBUG) beatFloat = beat;
+    if (renderer && post) {
+      for (let k = 0; k < 140; k++) updateCamera(1 / 60);
+      scene.updateMatrixWorld(true);
+      for (let i = 0; i < stations.length; i++) {
+        const a = activityOf(i);
+        if (a > 0.002) stations[i].update({ a, r: clamp(1 - Math.abs(beatFloat - i), 0, 1), t: 0.4, dt: 0.016, ov: ovBlend, i });
+      }
+      renderFrame();
+      if (DEBUG) {
+        const p0 = stationPos(Math.round(beatFloat)).clone().project(camera);
+        document.documentElement.dataset.stats = JSON.stringify({
+          beat, beatFloat: +beatFloat.toFixed(3),
+          draws: sceneInfo.calls, tris: sceneInfo.tris, points: sceneInfo.points,
+          cam: [camera.position.x, camera.position.y, camera.position.z].map(v => +v.toFixed(2)),
+          ndc: [+p0.x.toFixed(2), +p0.y.toFixed(2), +p0.z.toFixed(2)]
+        });
+      }
+    }
 
     requestAnimationFrame(() => {
       loader.classList.add("hide");
