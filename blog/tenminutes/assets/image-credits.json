@@ -163,7 +163,7 @@
 			"source": "assets/img/tokenization.svg"
 		},
 		{
-			"src": "assets/gurnee-tegmark-world.png",
+			"src": "../gurnee-tegmark-world.png",
 			"title": "Llama-2-70B world model: held-out world places projected onto learned latitude/longitude directions",
 			"author": "Wes Gurnee, Max Tegmark",
 			"license": "CC BY 4.0",

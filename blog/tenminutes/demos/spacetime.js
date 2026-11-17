@@ -111,8 +111,8 @@
     host.appendChild(canvas);
     var paperFig = document.createElement("figure");
     paperFig.className = "ls-st-paper";
-    var paperSrc = "../image.php?f=tenminutes/assets/gurnee-tegmark-world.png&w=720&q=85";
-    var paperBig = "../image.php?f=tenminutes/assets/gurnee-tegmark-world.png&w=1800&q=90";
+    var paperSrc = "../image.php?f=gurnee-tegmark-world.png&w=720&q=85&fmt=jpg";
+    var paperBig = "../image.php?f=gurnee-tegmark-world.png&w=1800&q=90&fmt=jpg";
     paperFig.innerHTML = '<a href="' + paperBig + '" target="_blank" rel="noopener"><img src="' + paperSrc + '" alt="' + (DE ? "Weltkarte der aus Llama-2-70B-Aktivierungen gelesenen Koordinaten, Gurnee und Tegmark 2023, Abbildung 10" : "World map of coordinates read from Llama-2-70B activations, Gurnee and Tegmark 2023, Figure 10") + '"></a><figcaption>' + (DE
       ? 'Gurnee &amp; Tegmark (2023), Abb. 10: Weltkarte aus gelernten Breiten-/Längengrad-Richtungen. Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Quelle: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.'
       : 'Gurnee &amp; Tegmark (2023), Fig. 10: world map from learned latitude/longitude directions. License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.') + '</figcaption>';
