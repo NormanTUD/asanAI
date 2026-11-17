@@ -3,6 +3,7 @@
   var core = window.LearnSysDemoCore;
   if (!core) return;
   var V = window.LearnSysVisuals;
+  var lastPhase = 0;
   var DATA = {
     moves: ["c4", "c5", "d6", "c7", "b5", "a5", "e6", "c3", "b8", "f7", "b6", "d8", "c6", "f4", "g3", "g4", "e3", "h2", "g8", "f6", "f5", "g5", "g6", "f3", "d7", "h6", "f2", "e8", "c2", "b4"],
     acc: [0.909, 0.948, 0.972, 0.983, 0.990, 0.994, 0.996, 0.995]
@@ -95,6 +96,7 @@
     nextBtn.addEventListener("click", function () {
       if (state.phase >= 5) { api.goNext(); return; }
       state.phase++;
+      lastPhase = state.phase;
       updateBtn();
       draw();
     });
@@ -866,7 +868,7 @@
         var next = (s && typeof s.step === "number") ? s.step : 0;
         if (next !== state.step) {
           state.step = next;
-          if (next === 1) state.phase = 0;
+          if (next === 1) state.phase = lastPhase;
           state.t = reduced
             ? (next === 0 ? 3.0 * (FRAMES.length - 1) : next === 1 ? 0 : .5)
             : 0;
@@ -884,6 +886,7 @@
         if (e.key === "ArrowRight") {
           if (state.phase >= 5) return false;
           state.phase++;
+          lastPhase = state.phase;
           updateBtn();
           draw();
           return true;
@@ -891,6 +894,7 @@
         if (e.key === "ArrowLeft") {
           if (state.phase <= 0) return false;
           state.phase--;
+          lastPhase = state.phase;
           updateBtn();
           draw();
           return true;

@@ -113,6 +113,7 @@
   var root = null;
   var cfg = null;
   var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0, substep: 0, edit: false };
+  var stepMemory = {};
   var MAX_TEASER_SENTENCES = 5;
   var LOREM = {
     de: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
@@ -2330,6 +2331,18 @@
     });
   }
 
+  function stepKey(day, step) {
+    return (day && day.id ? day.id : "day") + ":" + step;
+  }
+  function rememberSubstep() {
+    var day = activeDay();
+    if (day) stepMemory[stepKey(day, state.step)] = state.substep;
+  }
+  function rememberedSubstep(day, step) {
+    var key = stepKey(day, step);
+    return typeof stepMemory[key] === "number" ? stepMemory[key] : null;
+  }
+
   function renderAll() {
     hideTip();
     var day = activeDay();
@@ -2629,11 +2642,16 @@
     ghost.removeAttribute("id");
     ghost.querySelectorAll("[id]").forEach(function (node) { node.removeAttribute("id"); });
     ghost.querySelectorAll("[aria-live]").forEach(function (node) { node.removeAttribute("aria-live"); });
+    var ghostNav = ghost.querySelector("#ls-navbar");
+    var ghostTop = els.kicker ? els.kicker.offsetTop : (ghostNav ? ghostNav.offsetTop + ghostNav.offsetHeight : 0);
+    if (ghostNav) ghostNav.remove();
     ghost.classList.add("ls-text-ghost");
     ghost.setAttribute("aria-hidden", "true");
     try { ghost.inert = true; } catch (e) {}
     ghost.style.width = els.textScroll.offsetWidth + "px";
-    ghost.style.height = els.textScroll.offsetHeight + "px";
+    ghost.style.top = Math.max(0, ghostTop) + "px";
+    ghost.style.height = Math.max(0, els.textScroll.clientHeight - ghostTop) + "px";
+    ghost.style.paddingTop = "0px";
     ghost.scrollTop = els.textScroll.scrollTop;
     els.textScroll.parentNode.appendChild(ghost);
     activeTextGhost = ghost;
@@ -2704,12 +2722,16 @@
     var dayChanged = oldDay !== state.day;
     var demoChanged = oldDemo !== d.demo;
     var stepChanged = oldStep !== state.step;
-    if (dayChanged || stepChanged) state.substep = 0;
+    if (dayChanged || stepChanged) {
+      var remembered = rememberedSubstep(d, state.step);
+      state.substep = remembered == null ? 0 : remembered;
+    }
     if (typeof substep === "number" && isFinite(substep)) {
       var viewBase = stepAt(d, state.step);
       var viewMax = viewBase && viewBase.substeps ? viewBase.substeps.length - 1 : 0;
       state.substep = clamp(substep, 0, viewMax);
     }
+    rememberSubstep();
     var changed = dayChanged || demoChanged || stepChanged;
     var substepChanged = !changed && oldSub !== state.substep;
     var substepDir = state.substep > oldSub ? 1 : -1;
@@ -2745,6 +2767,7 @@
     var base = activeStep();
     if (base && base.substeps && state.substep < base.substeps.length - 1) {
       state.substep++;
+      rememberSubstep();
       cueSuppressUntil = performance.now() + 500;
       renderSubstep(1);
       writeHash();
@@ -2767,6 +2790,7 @@
     var base = activeStep();
     if (base && base.substeps && state.substep > 0) {
       state.substep--;
+      rememberSubstep();
       cueSuppressUntil = performance.now() + 500;
       renderSubstep(-1);
       writeHash();
@@ -2774,14 +2798,16 @@
     }
     if (state.step > 0) {
       var prevStep = state.step - 1;
-      go(state.day, prevStep, lastSubstepFor(d, prevStep));
+      var rememberedPrev = rememberedSubstep(d, prevStep);
+      go(state.day, prevStep, rememberedPrev == null ? lastSubstepFor(d, prevStep) : rememberedPrev);
     } else {
       var list = cfg.days;
       var pos = list.indexOf(d);
       if (pos > 0) {
         var p = list[pos - 1];
         var lastStep = visibleCount(p) - 1;
-        go(pos - 1, lastStep, lastSubstepFor(p, lastStep));
+        var rememberedDay = rememberedSubstep(p, lastStep);
+        go(pos - 1, lastStep, rememberedDay == null ? lastSubstepFor(p, lastStep) : rememberedDay);
       }
     }
   }
@@ -5347,6 +5373,7 @@
     bind();
     renderAll();
     if (!applyHash()) writeHash();
+    rememberSubstep();
     booted = true;
     if (!hashBound) {
       hashBound = true;

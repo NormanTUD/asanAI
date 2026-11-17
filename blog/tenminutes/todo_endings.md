@@ -105,3 +105,10 @@ Working checklist. Keep this file in sync with the opencode todo list.
 - [x] Remove remaining overclaims; the sentiment phrase now says “carries a large part of the concept”.
 - [x] Verified English/German parity for the new canvas labels and data text.
 - [x] Full validation and mobile visual audit done.
+
+## Navigation polish
+
+- [x] Fix `ls-navbar` flicker on substep changes: the text ghost no longer clones the navbar and starts below it.
+- [x] Remember the last substep per slide; Next/Prev, the step rail and step dots restore it.
+- [x] Verified with Selenium: unembed 18.2 → 19 → 18 restores “Länge vs. Richtung”; sentiment 32.2 survives Next/Prev.
+- [x] The merged worldmodel slide also remembers its internal phase when you leave and return.
