@@ -13,7 +13,7 @@
   if (!document.getElementById("ls-wm-style")) {
     var st = document.createElement("style");
     st.id = "ls-wm-style";
-    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:var(--tm-paper-2,#f7f9f8)}.ls-wm-scene canvas{display:block;width:100%;height:100%}";
+    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:var(--tm-paper-2,#f7f9f8)}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:240px;padding:6px 8px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 11px/1.35 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none}.ls-wm-tip[hidden]{display:none}";
     document.head.appendChild(st);
   }
 
@@ -89,18 +89,10 @@
     host.className = "ls-wm-scene";
     var canvas = document.createElement("canvas");
     host.appendChild(canvas);
-    var nextBtn = document.createElement("button");
-    nextBtn.type = "button";
-    nextBtn.setAttribute("data-no-height-test", "1");
-    nextBtn.style.cssText = "position:absolute;top:10px;right:10px;z-index:5;border:0;padding:7px 11px;background:var(--tm-green,#63a44b);color:#fff;font:600 11px/1 'Open Sans',sans-serif;cursor:pointer;";
-    nextBtn.addEventListener("click", function () {
-      if (state.phase >= 5) { api.goNext(); return; }
-      state.phase++;
-      lastPhase = state.phase;
-      updateBtn();
-      draw();
-    });
-    host.appendChild(nextBtn);
+    var tip = document.createElement("div");
+    tip.className = "ls-wm-tip";
+    tip.hidden = true;
+    host.appendChild(tip);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var ARIA = DE ? [
@@ -116,6 +108,10 @@
     canvas.setAttribute("aria-label", ARIA[0]);
     var W = 1, H = 1;
     var state = { step: 0, phase: 0, t: 0, running: false, raf: 0, last: 0 };
+    var hoverHits = [];
+    function addHit(x, y, w, h, text) {
+      if (w > 0 && h > 0) hoverHits.push({ x: x, y: y, w: w, h: h, text: text });
+    }
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var FRAMES = buildFrames();
     var TRUTH = FRAMES[FRAMES.length - 1].board;
@@ -167,8 +163,8 @@
       c.fillStyle = v === 1 ? C.ink : C.paper;
       c.fill();
       c.shadowColor = "transparent";
-      c.strokeStyle = v === 1 ? C.ink : V.alpha(C.lineStrong, .95);
-      c.lineWidth = Math.max(1, r * .10);
+      c.strokeStyle = v === 1 ? V.alpha(C.ink, .95) : C.sky;
+      c.lineWidth = v === 1 ? Math.max(1, r * .10) : Math.max(1.3, r * .18);
       c.stroke();
       c.restore();
     }
@@ -199,7 +195,14 @@
         for (var col = 0; col < 8; col++) {
           var v = b[r][col];
           if (typeof opt.reveal === "number" && r * 8 + col > opt.reveal) continue;
-          if (v === 0) continue;
+          var sIdx = v === 0 ? 0 : v === 1 ? 1 : 2;
+          addHit(x + col * cell, y + r * cell, cell, cell,
+            (DE ? "Feld " : "square ") + squareLabel(r * 8 + col) + ": " + stateName(sIdx));
+          if (v === 0) {
+            c.fillStyle = V.mix(C.paper, C.muted, (r + col) % 2 ? .06 : .10);
+            c.fillRect(x + col * cell + 0.5, y + r * cell + 0.5, cell - 1, cell - 1);
+            continue;
+          }
           var scale = 1;
           if (opt.pulse) {
             for (var p = 0; p < opt.pulse.length; p++) {
@@ -257,8 +260,8 @@
 
     function drawRangeLine(c, x, y, w, h, probs, opts) {
       var o = opts || {};
-      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
-      var colors = [V.alpha(C.line, .42), C.ink, C.paper];
+      var labels = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
+      var colors = [V.alpha(C.muted, .35), C.ink, C.sky];
       var seg = w / 3;
       var win = winIndex(probs);
       for (var i = 0; i < 3; i++) {
@@ -267,10 +270,11 @@
         c.strokeStyle = i === win ? C.gold : V.alpha(C.lineStrong, .75);
         c.lineWidth = i === win ? 2 : 1;
         c.strokeRect(x + i * seg + .5, y + .5, seg - 1, h - 1);
+        addHit(x + i * seg, y, seg, h, (DE ? "Zustand " : "state ") + labels[i] + ": " + Math.round(probs[i] * 100) + "%");
         txt(c, labels[i], x + i * seg + seg / 2, y - 15, {
           align: "center",
           size: o.small ? 9 : 11,
-          color: i === win ? C.gold : i === 2 ? C.ink : C.muted
+          color: i === win ? C.gold : C.soft
         });
         txt(c, V.fmt(probs[i], 2), x + i * seg + seg / 2, y + h + (o.small ? 18 : 24), {
           align: "center",
@@ -287,14 +291,6 @@
       c.lineTo(mx + 6, y - 13);
       c.closePath();
       c.fill();
-    }
-
-    function updateBtn() {
-      if (!nextBtn) return;
-      var last = state.phase >= 5;
-      nextBtn.textContent = DE ? (last ? "Weiter" : "Nächster Schritt") : (last ? "Next" : "Next step");
-      nextBtn.setAttribute("aria-label", nextBtn.textContent);
-      nextBtn.style.display = state.step === 1 ? "block" : "none";
     }
 
     function drawStep0(c) {
@@ -334,6 +330,7 @@
           c.strokeStyle = isLast ? C.gold : V.alpha(C.lineStrong, .85);
           c.lineWidth = isLast ? 1.6 : 1;
           c.strokeRect(listX + .5, my + .5, listW - 1, 17);
+          addHit(listX, my, listW, 18, (DE ? "Zug " : "move ") + DATA.moves[moveIdx]);
           txt(c, DATA.moves[moveIdx], listX + 8, my + 9, {
             size: 9.4,
             font: '700 9.4px "Barlow", "Open Sans", sans-serif',
@@ -358,11 +355,7 @@
       }
       var cy = by + boardS + 22;
       txt(c, DE ? "8 × 8 · schematisch" : "8 × 8 · schematic", bx + boardS / 2, cy, { align: "center", size: 10, color: C.muted });
-      txt(c, DE ? "leer · Spieler 1 · Spieler 2" : "empty · player 1 · player 2", bx + boardS / 2, cy + 18, {
-        align: "center",
-        size: 11,
-        color: C.ink
-      });
+      drawStateLegend(c, bx + boardS / 2 - 117, cy + 18, C);
       var gy = Math.min(cy + 58, H - 20);
       txt(c, DE ? "Ein Brett, das niemand dem Modell zeigt." : "A board the model is never shown.", pad, gy, { size: 11, color: C.soft });
       if (narrow) {
@@ -385,7 +378,29 @@
     }
 
     function stateName(idx) {
-      return DE ? ["leer", "Spieler 1", "Spieler 2"][idx] : ["empty", "player 1", "player 2"][idx];
+      return DE ? ["leer", "schwarz", "weiß"][idx] : ["empty", "black", "white"][idx];
+    }
+
+    function stateColor(idx, C) {
+      return idx === 0 ? C.muted : idx === 1 ? C.ink : C.sky;
+    }
+
+    function drawStateLegend(c, x, y, C) {
+      var items = [
+        { col: V.mix(C.paper, C.muted, .22), label: DE ? "leer" : "empty" },
+        { col: C.ink, label: DE ? "schwarz" : "black" },
+        { col: C.sky, label: DE ? "weiß" : "white" }
+      ];
+      var xx = x;
+      items.forEach(function (item) {
+        c.fillStyle = item.col;
+        c.fillRect(xx, y - 7, 9, 9);
+        c.strokeStyle = V.alpha(C.muted, .45);
+        c.lineWidth = 0.8;
+        c.strokeRect(xx + 0.5, y - 6.5, 8, 8);
+        txt(c, item.label, xx + 13, y - 2, { size: 8.6, color: C.soft });
+        xx += 78;
+      });
     }
 
     function probeDir(sq, stateIdx, d) {
@@ -395,7 +410,7 @@
       return base * .55 + band * .95;
     }
 
-    function drawStrip(c, values, x, y, w, h, pos, neg) {
+    function drawStrip(c, values, x, y, w, h, pos, neg, tip) {
       var n = values.length;
       var max = 0;
       for (var i = 0; i < n; i++) max = Math.max(max, Math.abs(values[i]));
@@ -409,11 +424,13 @@
       c.strokeStyle = V.alpha(C.lineStrong, .5);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
+      if (tip) addHit(x, y, w, h, tip);
     }
 
     function drawActivationStrip(c, x, y, w, h, label) {
       txt(c, label || "x · 512", x, y - 10, { size: 9.5, color: C.muted });
       drawStrip(c, X, x, y, w, h, C.blue, C.green);
+      addHit(x, y, w, h, (DE ? "Aktivierung " : "activation ") + (label || "x") + (DE ? ": 512 Werte pro Token" : ": 512 values per token"));
     }
 
     function drawActivationGrid(c, x, y, w, h) {
@@ -430,6 +447,7 @@
       c.strokeStyle = V.alpha(C.lineStrong, .55);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
+      addHit(x, y, w, h, DE ? "512 Aktivierungen als 32×16-Gitter" : "512 activations as a 32×16 grid");
     }
 
     function drawLogitsColumn(c, x, y, w, h, row) {
@@ -439,9 +457,7 @@
         for (var o = 0; o < 3; o++) {
           var v = SCORES[s][o];
           var t = Math.max(0, Math.min(1, (v + 6) / 12));
-          var col = o === 0 ? mixRgb(C.paper2, C.blue, .10 + .50 * t)
-            : o === 1 ? mixRgb(C.paper2, C.gold, .10 + .55 * t)
-              : mixRgb(C.paper2, C.ink, .08 + .55 * t);
+          var col = mixRgb(C.paper2, stateColor(o, C), .08 + .55 * t);
           c.fillStyle = "rgb(" + col.join(",") + ")";
           c.fillRect(x + o * cw, y + s * ch, cw, ch + .4);
         }
@@ -449,6 +465,9 @@
       c.strokeStyle = V.alpha(C.lineStrong, .55);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
+      for (var so = 0; so < 3; so++) {
+        addHit(x + so * cw, y, cw, h, (DE ? "Logits: " : "logits: ") + stateName(so) + (DE ? " für alle 64 Felder" : " for all 64 squares"));
+      }
       var ry = y + (row + .5) * ch;
       c.strokeStyle = C.gold;
       c.lineWidth = 1.5;
@@ -464,7 +483,7 @@
       for (var r = 0; r < 8; r++) {
         for (var col = 0; col < 8; col++) {
           var p = PROBS[r * 8 + col][stateIdx];
-          var tint = stateIdx === 0 ? C.blue : stateIdx === 1 ? C.gold : C.ink;
+          var tint = stateColor(stateIdx, C);
           c.fillStyle = V.mix(C.paper2, tint, Math.min(1, p * 1.05));
           c.fillRect(x + col * cell, y + r * cell, cell, cell);
           c.strokeStyle = V.alpha(C.line, .18);
@@ -474,6 +493,7 @@
       c.strokeStyle = V.alpha(C.lineStrong, .65);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, size - 1, size - 1);
+      addHit(x, y, size, size, (DE ? "Wahrscheinlichkeit: " : "probability: ") + stateName(stateIdx));
       if (typeof row === "number") {
         c.strokeStyle = C.gold;
         c.lineWidth = 1.8;
@@ -524,7 +544,7 @@
     }
 
     function drawResultTile(c, x, y, size, stateIdx) {
-      c.fillStyle = C.paper;
+      c.fillStyle = stateIdx === 0 ? V.mix(C.paper, C.muted, .10) : C.paper;
       c.fillRect(x, y, size, size);
       c.strokeStyle = V.alpha(C.lineStrong, .75);
       c.lineWidth = 1;
@@ -541,6 +561,7 @@
         drawDisc(c, x + size / 2, y + size / 2, size * .30, stateIdx === 1 ? 1 : -1, 1);
       }
       txt(c, stateName(stateIdx), x + size / 2, y + size + 17, { align: "center", size: 11, color: C.ink });
+      addHit(x, y, size, size + 22, (DE ? "Ergebnis: " : "result: ") + stateName(stateIdx));
     }
 
     function drawStep1(c) {
@@ -569,6 +590,7 @@
       head(c, DE ? "Vom Zug zum Brett" : "From move to board", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
       txt(c, questions[phase][0], pad, 60, { size: narrow ? 13 : 15, font: '700 ' + (narrow ? 13 : 15) + 'px "Barlow", "Open Sans", sans-serif', color: C.ink });
       txt(c, questions[phase][1], pad, 78, { size: 10.2, color: C.muted });
+      if (!narrow) drawStateLegend(c, W - pad - 234, 32, C);
       if (phase === 0) {
         var bx = pad, by = 100;
         c.fillStyle = C.petrol;
@@ -591,7 +613,7 @@
         if (narrow) {
           for (var o2 = 0; o2 < 3; o2++) {
             txt(c, stateName(o2), pad, 132 + o2 * 52, { size: 9, color: o2 === 1 ? C.gold : o2 === 2 ? C.ink : C.muted });
-            drawStrip(c, dirs[o2], pad, 140 + o2 * 52, W - 2 * pad, 14, C.blue, C.gold);
+            drawStrip(c, dirs[o2], pad, 140 + o2 * 52, W - 2 * pad, 14, C.blue, C.gold, (DE ? "Probe-Richtung für " : "probe direction for ") + stateName(o2) + (DE ? ": 512 gelernte Gewichte" : ": 512 learned weights"));
           }
           var bs = 150, bx2 = (W - bs) / 2, by2 = 320;
           drawBoard(c, TRUTH, bx2, by2, bs, { highlight: [4, 4] });
@@ -599,7 +621,7 @@
         } else {
           for (var o3 = 0; o3 < 3; o3++) {
             txt(c, stateName(o3), pad, 148 + o3 * 42, { size: 9, color: o3 === 1 ? C.gold : o3 === 2 ? C.ink : C.muted });
-            drawStrip(c, dirs[o3], pad + 80, 140 + o3 * 42, W * .48, 16, C.blue, C.gold);
+            drawStrip(c, dirs[o3], pad + 80, 140 + o3 * 42, W * .48, 16, C.blue, C.gold, (DE ? "Probe-Richtung für " : "probe direction for ") + stateName(o3) + (DE ? ": 512 gelernte Gewichte" : ": 512 learned weights"));
           }
           var bs2 = 180, bx3 = W - pad - bs2, by3 = 140;
           drawBoard(c, TRUTH, bx3, by3, bs2, { highlight: [4, 4] });
@@ -619,8 +641,8 @@
             }
             txt(c, stateName(o4), pad, gy, { size: 9, color: o4 === 1 ? C.gold : o4 === 2 ? C.ink : C.muted });
             txt(c, "Σ = " + V.fmt(scores[o4], 1), W - pad, gy, { align: "right", size: 12, font: '700 12px "Barlow", "Open Sans", sans-serif', color: o4 === 1 ? C.gold : o4 === 2 ? C.ink : C.muted });
-            drawStrip(c, dir4, pad, gy + 10, W - 2 * pad, 12, C.blue, C.gold);
-            drawStrip(c, prod4, pad, gy + 26, W - 2 * pad, 12, C.blue, C.green);
+            drawStrip(c, dir4, pad, gy + 10, W - 2 * pad, 12, C.blue, C.gold, (DE ? "Probe-Richtung W[E4, " : "probe row W[E4, ") + stateName(o4) + "]: 512 Werte");
+            drawStrip(c, prod4, pad, gy + 26, W - 2 * pad, 12, C.blue, C.green, DE ? "Produkt x · W[E4, " + stateName(o4) + "]: Beitrag zum Logit" : "product x · W[E4, " + stateName(o4) + "]: contribution to the logit");
           }
           var bsP = 140, bxP = (W - bsP) / 2, byP = 330;
           drawBoard(c, TRUTH, bxP, byP, bsP, { highlight: [4, 4] });
@@ -635,8 +657,8 @@
               prod5.push(X[d5] * v5);
             }
             txt(c, stateName(o5), pad, gy2 + 16, { size: 9, color: o5 === 1 ? C.gold : o5 === 2 ? C.ink : C.muted });
-            drawStrip(c, dir5, pad + 80, gy2, W * .42, 14, C.blue, C.gold);
-            drawStrip(c, prod5, pad + 80, gy2 + 18, W * .42, 14, C.blue, C.green);
+            drawStrip(c, dir5, pad + 80, gy2, W * .42, 14, C.blue, C.gold, (DE ? "Probe-Richtung W[E4, " : "probe row W[E4, ") + stateName(o5) + "]: 512 Werte");
+            drawStrip(c, prod5, pad + 80, gy2 + 18, W * .42, 14, C.blue, C.green, DE ? "Produkt x · W[E4, " + stateName(o5) + "]: Beitrag zum Logit" : "product x · W[E4, " + stateName(o5) + "]: contribution to the logit");
             txt(c, "Σ = " + V.fmt(scores[o5], 1), pad + 80 + W * .42 + 12, gy2 + 16, { size: 12, font: '700 12px "Barlow", "Open Sans", sans-serif', color: o5 === 1 ? C.gold : o5 === 2 ? C.ink : C.muted });
           }
           var bs4 = 170, bx4 = W - pad - bs4, by4 = 140;
@@ -704,9 +726,9 @@
         if (narrow) {
           drawLogitsColumn(c, pad, 110, 44, 160, e4);
           var hs = 80, gap = 8;
-          var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+          var labels = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
           for (var o8 = 0; o8 < 3; o8++) {
-            txt(c, labels[o8], pad + 60 + o8 * (hs + gap) + hs / 2, 100, { align: "center", size: 8.5, color: o8 === 1 ? C.gold : o8 === 2 ? C.ink : C.muted });
+            txt(c, labels[o8], pad + 60 + o8 * (hs + gap) + hs / 2, 100, { align: "center", size: 8.5, color: C.soft });
             drawProbGrid(c, pad + 60 + o8 * (hs + gap), 110, hs, o8, e4);
           }
           var bs9 = 160, bx9 = (W - bs9) / 2, by9 = 300;
@@ -715,9 +737,9 @@
         } else {
           drawLogitsColumn(c, pad, 110, 54, 200, e4);
           var hs2 = 90, gap2 = 10;
-          var labels2 = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+          var labels2 = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
           for (var o9 = 0; o9 < 3; o9++) {
-            txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted });
+            txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: C.soft });
             drawProbGrid(c, pad + 80 + o9 * (hs2 + gap2), 110, hs2, o9, e4);
           }
           var bs10 = 220, bx10 = W - pad - bs10, by10 = 110;
@@ -761,12 +783,12 @@
 
     function drawLineNode(c, cx, cy, w) {
       var seg = w / 3;
-      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
-      var colors = [V.alpha(C.line, .45), C.ink, C.paper];
+      var labels = DE ? ["leer", "schwarz", "weiß"] : ["empty", "black", "white"];
+      var colors = [V.alpha(C.muted, .35), C.ink, C.sky];
       for (var i = 0; i < 3; i++) {
         c.fillStyle = colors[i];
         c.fillRect(cx - w / 2 + i * seg, cy - 8, seg, 16);
-        c.strokeStyle = i === 1 ? C.gold : V.alpha(C.lineStrong, .75);
+        c.strokeStyle = i === 0 ? V.alpha(C.lineStrong, .75) : i === 1 ? C.ink : C.sky;
         c.lineWidth = 1;
         c.strokeRect(cx - w / 2 + i * seg + .5, cy - 7.5, seg - 1, 15);
         txt(c, labels[i], cx - w / 2 + i * seg + seg / 2, cy - 19, { align: "center", size: 8.5, color: i === 1 ? C.gold : i === 2 ? C.ink : C.muted });
@@ -864,6 +886,9 @@
         txt(c, DE ? "Reale Modelle" : "Real models", cx, y3 + 78, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
         txt(c, DE ? "viele Unterräume · überlagert" : "many subspaces · overlapping", cx, y3 + 96, { align: "center", size: 9.5, color: C.muted });
         txt(c, DE ? "z. B. Gurnee & Tegmark (2023)" : "e.g. Gurnee & Tegmark (2023)", cx, y3 + 112, { align: "center", size: 8, color: C.muted });
+        addHit(cx - 120, y1 - 50, 240, 170, DE ? "Othello: eine Richtung pro Feld reicht (leer, schwarz, weiß)" : "Othello: one direction per square is enough (empty, black, white)");
+        addHit(cx - 90, y2 - 90, 180, 220, DE ? "Schach: 13 Zustände pro Feld, also ein Unterraum" : "chess: 13 states per square, a subspace");
+        addHit(cx - 90, y3 - 90, 180, 220, DE ? "Reale Modelle: viele überlagerte Unterräume" : "real models: many overlapping subspaces");
       } else {
         var cy = H * .52;
         var n1 = W * .18, n2 = W * .50, n3 = W * .82;
@@ -882,12 +907,16 @@
         txt(c, DE ? "Reale Modelle" : "Real models", n3, cy + 82, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
         txt(c, DE ? "viele Unterräume · überlagert" : "many subspaces · overlapping", n3, cy + 101, { align: "center", size: 10, color: C.muted });
         txt(c, DE ? "z. B. Gurnee & Tegmark (2023)" : "e.g. Gurnee & Tegmark (2023)", n3, cy + 117, { align: "center", size: 8, color: C.muted });
+        addHit(n1 - 105, cy - 100, 210, 200, DE ? "Othello: eine Richtung pro Feld reicht (leer, schwarz, weiß)" : "Othello: one direction per square is enough (empty, black, white)");
+        addHit(n2 - 105, cy - 100, 210, 230, DE ? "Schach: 13 Zustände pro Feld, also ein Unterraum" : "chess: 13 states per square, a subspace");
+        addHit(n3 - 105, cy - 100, 210, 230, DE ? "Reale Modelle: viele überlagerte Unterräume" : "real models: many overlapping subspaces");
       }
       txt(c, DE ? "Eine Richtung → ein Unterraum → viele Unterräume." : "One direction → one subspace → many subspaces.", W / 2, H - 18, { align: "center", size: 10, color: C.ink });
     }
 
     function draw() {
       if (!W || !H) return;
+      hoverHits = [];
       V.aurora(ctx, W, H, C, { vignette: 0.08 });
       if (state.step === 0) drawStep0(ctx);
       else if (state.step === 1) drawStep1(ctx);
@@ -929,8 +958,32 @@
       ro.observe(host);
     }
     window.addEventListener("resize", fit);
+
+    function hideTip() {
+      tip.hidden = true;
+      canvas.style.cursor = "";
+    }
+    canvas.addEventListener("pointermove", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var hit = null;
+      for (var i = 0; i < hoverHits.length; i++) {
+        var h = hoverHits[i];
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) { hit = h; break; }
+      }
+      if (!hit) { hideTip(); return; }
+      tip.textContent = hit.text;
+      tip.hidden = false;
+      var tw = tip.offsetWidth || 180, th = tip.offsetHeight || 30;
+      var tx = x + 14, ty = y + 14;
+      if (tx + tw > W - 6) tx = x - tw - 14;
+      if (ty + th > H - 6) ty = y - th - 14;
+      tip.style.left = Math.max(4, tx) + "px";
+      tip.style.top = Math.max(4, ty) + "px";
+      canvas.style.cursor = "help";
+    });
+    canvas.addEventListener("pointerleave", hideTip);
     fit();
-    updateBtn();
     if (reduced) {
       state.t = 3.0 * (FRAMES.length - 1);
       draw();
@@ -949,8 +1002,21 @@
           if (next === 1) stop();
           draw();
         }
-        updateBtn();
         start();
+      },
+      next: function () {
+        if (state.step !== 1 || state.phase >= 5) return false;
+        state.phase++;
+        lastPhase = state.phase;
+        draw();
+        return true;
+      },
+      prev: function () {
+        if (state.step !== 1 || state.phase <= 0) return false;
+        state.phase--;
+        lastPhase = state.phase;
+        draw();
+        return true;
       },
       onKey: function (e) {
         if (state.step !== 1) return false;
@@ -959,7 +1025,6 @@
           if (state.phase >= 5) return false;
           state.phase++;
           lastPhase = state.phase;
-          updateBtn();
           draw();
           return true;
         }
@@ -967,7 +1032,6 @@
           if (state.phase <= 0) return false;
           state.phase--;
           lastPhase = state.phase;
-          updateBtn();
           draw();
           return true;
         }
@@ -980,7 +1044,6 @@
         stop();
         window.removeEventListener("resize", fit);
         if (window.ResizeObserver && ro) ro.disconnect();
-        if (nextBtn) nextBtn.remove();
         host.remove();
       }
     };
