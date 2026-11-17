@@ -2285,7 +2285,7 @@
 
   var wmBoard = {
     kicker: DE ? "Das Brett" : "The board",
-    title: DE ? "Othello, auch Reversi" : "Othello, also called Reversi",
+    title: DE ? "Das Weltmodell eines LLM" : "An LLM's world model",
     teaser: wmBoardText,
     body: wmBoardText,
     watch: DE ? "Drücke Weiter. Sieh, wie das Brett aus den Zügen entsteht." : "Press Next. Watch the board emerge from the moves.",
@@ -2337,8 +2337,8 @@
 
   var worldModelStep = {
     kicker: DE ? "Weltmodelle" : "World models",
-    title: DE ? "Wie ein LLM sein Weltmodell aufbaut" : "How an LLM builds its world model",
-    substeps: [wmMachine, wmGeometry]
+    title: DE ? "Das Weltmodell eines LLM" : "An LLM's world model",
+    substeps: [wmBoard, wmMachine, wmGeometry]
   };
 
 
@@ -2606,7 +2606,7 @@
     substeps: [spacetimeSpace, spacetimeTime, spacetimeNeurons]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], wmBoard, trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, worldModelStep, sentimentStep, grokkingStep, spacetimeStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, sentimentStep, grokkingStep, spacetimeStep];
 
   var day = {
     id: "intuition",
@@ -2632,7 +2632,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-17-induction-after-attention-4",
+    overlayRevision: "2026-11-17-worldmodel-merged-5",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

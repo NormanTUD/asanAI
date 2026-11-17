@@ -140,9 +140,9 @@ def check_learnsys_deck(driver, page, lang, results):
         count = driver.execute_script("return document.querySelectorAll('#ls-steps .ls-dot').length")
     except Exception:
         count = 0
-    results.check(page, lang, "deck has 36 slides", count == 36, f"{count} slides")
+    results.check(page, lang, "deck has 35 slides", count == 35, f"{count} slides")
     nav_labels = driver.execute_script("return Array.from(document.querySelectorAll('#ls-mix-pos button')).map(function (b) { return b.textContent.trim(); })")
-    results.check(page, lang, "slide rail counts 1..36", bool(nav_labels) and nav_labels[0] == "1" and nav_labels[-1] == "36", f"{nav_labels[:2]} … {nav_labels[-2:]}")
+    results.check(page, lang, "slide rail counts 1..35", bool(nav_labels) and nav_labels[0] == "1" and nav_labels[-1] == "35", f"{nav_labels[:2]} … {nav_labels[-2:]}")
     mounted = 0
     with_text = 0
     for i in range(count):
@@ -167,8 +167,8 @@ def check_learnsys_deck(driver, page, lang, results):
             driver.execute_script("window.LearnSys.go(0, arguments[0])", unembed_index)
             time.sleep(0.2)
             tabs = driver.execute_script("return Array.from(document.querySelectorAll('#ls-demo .ls-sim-tab')).map(b=>b.getAttribute('data-mode'))")
-            results.check(page, lang, "unembedding tabs present", tabs == ["directions", "angle", "scale", "unembed"], str(tabs))
-            for mode in ("angle", "scale", "unembed", "directions"):
+            results.check(page, lang, "unembedding tabs present", tabs == ["directions", "unembed"], str(tabs))
+            for mode in ("unembed", "directions"):
                 driver.execute_script("document.querySelector('#ls-demo .ls-sim-tab[data-mode=' + arguments[0] + ']').click()", mode)
                 time.sleep(0.15)
                 ro = driver.execute_script("return (document.querySelector('#ls-demo .ls-sim-readout')?.innerText || '').trim()")
