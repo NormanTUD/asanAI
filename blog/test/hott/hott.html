@@ -48,9 +48,15 @@
     text-shadow:0 0 12px rgba(80,200,255,.25),0 2px 8px rgba(0,0,0,.6)}
   .mn-label.big{font-style:italic;font-size:26px}
   .mn-label sub{font-size:.62em;transform:translateY(.18em)}
+  .mn-label .sub{display:inline-block;margin-left:.55em;font-family:ui-sans-serif,system-ui,sans-serif;
+    font-size:9px;font-style:normal;letter-spacing:.22em;text-transform:uppercase;
+    color:rgba(190,228,255,.55);text-shadow:none;vertical-align:.28em}
 
   #captions{position:fixed;left:clamp(22px,5.4vw,72px);bottom:clamp(104px,15vh,156px);
-    z-index:12;pointer-events:none;max-width:min(56ch,62vw);min-height:150px}
+    z-index:12;pointer-events:none;max-width:min(48ch,54vw);min-height:150px}
+  #captions::before{content:"";position:absolute;inset:-46px -70px -30px -40px;z-index:-1;
+    background:radial-gradient(70% 80% at 26% 64%,rgba(2,4,12,.78),rgba(2,4,12,.42) 52%,transparent 78%);
+    filter:blur(10px);pointer-events:none}
   .cap{position:absolute;left:0;bottom:0;width:100%;opacity:0;visibility:hidden;will-change:transform,opacity,filter}
   .cap-rule{width:52px;height:1px;margin-bottom:18px;
     background:linear-gradient(90deg,var(--cyan),rgba(180,135,255,.35) 60%,transparent)}
@@ -60,6 +66,7 @@
   .line{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",serif;
     font-size:clamp(28px,3.25vw,50px);line-height:1.06;letter-spacing:-.015em;
     color:#f2fcff;text-shadow:0 0 46px rgba(80,190,255,.14)}
+  .line .k{color:var(--gold);text-shadow:0 0 26px rgba(255,208,120,.38)}
   .line .w{display:inline-block;opacity:0;transform:translateY(.42em);
     transition:opacity .62s cubic-bezier(.22,1,.36,1),transform .72s cubic-bezier(.22,1,.36,1)}
   .cap.in .line .w{opacity:1;transform:none}
@@ -67,7 +74,7 @@
     color:rgba(212,243,255,.82);min-height:1.4em;
     opacity:0;transform:translateY(6px);transition:opacity .8s ease .18s,transform .8s ease .18s}
   .cap.in .mathline{opacity:1;transform:none}
-  .mathline math{font-size:1.02em}
+  .mathline math{font-size:1.02em;color:inherit}
   @media (max-width:760px){
     #captions{left:18px;right:18px;bottom:112px;max-width:none;min-height:120px}
     .line{font-size:clamp(24px,7.4vw,34px);line-height:1.1}
@@ -157,6 +164,9 @@
   .ov-row.on{background:rgba(90,190,255,.10);color:#f4fdff}
   .ov-row .n{font-size:9.5px;font-variant-numeric:tabular-nums;color:rgba(130,200,255,.55);
     width:20px;flex:0 0 auto;letter-spacing:.06em}
+  .ov-row .dot{width:4px;height:4px;border-radius:50%;flex:0 0 auto;align-self:center;
+    background:var(--ice);box-shadow:0 0 8px rgba(140,230,255,.7);opacity:.55;margin-right:-3px}
+  .ov-row.on .dot{opacity:1;box-shadow:0 0 10px rgba(150,240,255,.95)}
   .ov-row.on .n{color:rgba(150,236,255,.95)}
   .ov-row .t{font-family:ui-serif,Georgia,serif;font-size:12.5px;line-height:1.35;letter-spacing:.005em}
   @media (max-width:760px){
@@ -210,6 +220,15 @@
   @keyframes breathe{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.05)}}
 
   #a11y{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .cap.finale-cap{position:fixed;left:clamp(22px,5.4vw,72px);top:clamp(52px,8vh,104px);
+    bottom:auto;width:min(48ch,54vw);min-height:0}
+  .cap.finale-cap::before{content:"";position:absolute;inset:-40px -80px -60px -50px;z-index:-1;
+    background:radial-gradient(70% 90% at 26% 42%,rgba(2,4,12,.82),rgba(2,4,12,.42) 55%,transparent 82%);
+    filter:blur(10px);pointer-events:none}
+  @media (max-width:760px){
+    .cap.finale-cap{left:18px;right:18px;top:16px;width:auto}
+  }
+  body.finale #captions::before{opacity:0}
   body.overview-open #captions,body.help-open #captions,body.overview-open #hint{opacity:0}
   body.overview-open #labels,body.help-open #labels{opacity:0}
   #fatal{position:fixed;inset:0;z-index:70;display:none;place-items:center;padding:30px;
@@ -274,7 +293,7 @@
       <span><kbd>Esc</kbd></span><span>close</span>
       <span><kbd>drag</kbd> <kbd>scroll</kbd></span><span>look around, zoom</span>
     </div>
-    <div class="help-foot">Each arrow crosses one idea. The space between is part of it.</div>
+    <div class="help-foot">Each arrow crosses one idea. The space between is part of it.<br>After the HoTT book, Univalent Foundations (2013).</div>
   </div>
 </div>
 
@@ -356,30 +375,30 @@
   ];
 
   const BEATS = [
-    { act: 0, kind: "title",     caption: "Everything is a space.", d: 16, cy: 4.4, ly: 0.0 },
-    { act: 0, kind: "point",     caption: "A point is a place.", d: 13, cy: 3.2 },
-    { act: 0, kind: "path",      caption: "Two points, one path.", d: 12, cy: 2.8 },
-    { act: 0, kind: "homotopy",  caption: "A path can bend into another.", d: 12.6, cy: 2.6 },
-    { act: 0, kind: "composite", caption: "Paths compose; every path reverses.", d: 12.6, cy: 2.6 },
-    { act: 0, kind: "torus",     caption: "A loop can remember a hole.", d: 12.4, cy: 3.0 },
-    { act: 1, kind: "typespace", caption: "A type is a space.", d: 12.4, cy: 2.8 },
-    { act: 1, kind: "identity",  caption: "Identity is a space of paths.", math: "a =_{A} b", d: 12.2, cy: 2.6 },
-    { act: 1, kind: "j",         caption: "One reflexivity path generates them all.", d: 12.6, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "family",    caption: "A family: one type above each point.", d: 12.6, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "fibration", caption: "A fibration: fibers over every point.", d: 12.6, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "transport", caption: "Transport carries structure along the path.", d: 12.6, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "pi",        caption: "Pi chooses one point in every fiber.", math: "\\Pi_{x:A}\\,B(x)", d: 12.6, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "sigma",     caption: "Sigma is the whole bundle.", math: "\\Sigma_{x:A}\\,B(x)", d: 12.6, cy: 2.4 },
-    { act: 3, kind: "props",     caption: "A proposition: at most one proof.", d: 12.2, cy: 2.4 },
-    { act: 3, kind: "logic",     caption: "Logic is built from types.", d: 12.4, cy: 2.4 },
-    { act: 3, kind: "set",       caption: "A set: at most one path.", d: 12.2, cy: 2.6 },
-    { act: 3, kind: "levels",    caption: "Higher levels remember higher paths.", d: 13.2, cy: 2.6 },
-    { act: 4, kind: "universe",  caption: "Types of types: the universe.", d: 12.0, cy: 2.6 },
-    { act: 4, kind: "equiv",     caption: "An equivalence matches points and paths.", d: 12.8, cy: 2.6 },
-    { act: 4, kind: "univalence",caption: "Univalence: equivalence is equality.", math: "(A \\simeq B) \\simeq (A = B)", d: 12.4, cy: 2.6 },
-    { act: 4, kind: "interval",  caption: "Two points and a path: the interval.", d: 12.4, cy: 2.6 },
-    { act: 4, kind: "circle",    caption: "One point and a loop: the circle.", d: 12.0, cy: 2.8 },
-    { act: 5, kind: "finale",    caption: "One long path through the universe.", d: 12, cy: 3 }
+    { act: 0, kind: "title",     caption: "Everything is a space.", key: "space", kicker: "Homotopy Type Theory", d: 16, cy: 4.4, ly: 0.0 },
+    { act: 0, kind: "point",     caption: "A point is a place.", key: "point", d: 13, cy: 3.2 },
+    { act: 0, kind: "path",      caption: "Two points, one path.", key: "path", d: 12, cy: 2.8 },
+    { act: 0, kind: "homotopy",  caption: "A path can bend into another.", key: "bend", d: 12.6, cy: 2.6 },
+    { act: 0, kind: "composite", caption: "Paths compose; every path reverses.", key: "reverses", d: 12.6, cy: 2.6 },
+    { act: 0, kind: "torus",     caption: "A loop can remember a hole.", key: "hole", d: 12.4, cy: 3.0 },
+    { act: 1, kind: "typespace", caption: "A type is a space.", key: "space", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "identity",  caption: "Identity is a space of paths.", key: "paths", math: "a =_{A} b", d: 12.2, cy: 2.6 },
+    { act: 1, kind: "j",         caption: "One reflexivity path generates them all.", key: "reflexivity", d: 12.6, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "family",    caption: "A family of sets above every point.", key: "sets", d: 10.7, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "fibration", caption: "A fibration: fibers over every point.", key: "fibers", d: 10.7, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "transport", caption: "Transport carries structure along the path.", key: "Transport", d: 10.7, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "pi",        caption: "Pi chooses one point in every fiber.", key: "one", math: "\\Pi_{x:A}\\,B(x)", d: 10.7, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "sigma",     caption: "Sigma is the whole bundle.", key: "bundle", math: "\\Sigma_{x:A}\\,B(x)", d: 10.7, cy: 2.4 },
+    { act: 3, kind: "props",     caption: "A proposition: at most one proof.", key: "one", d: 11.5, cy: 2.4 },
+    { act: 3, kind: "logic",     caption: "Logic is built from types.", key: "types", d: 11.1, cy: 2.4 },
+    { act: 3, kind: "set",       caption: "A set: at most one path.", key: "path", d: 12.2, cy: 2.6 },
+    { act: 3, kind: "levels",    caption: "Higher levels remember higher paths.", key: "paths", d: 11.9, cy: 2.6 },
+    { act: 4, kind: "universe",  caption: "Types of types: the universe.", key: "universe", d: 12.0, cy: 2.6 },
+    { act: 4, kind: "equiv",     caption: "An equivalence matches points and paths.", key: "equivalence", d: 12.8, cy: 2.6 },
+    { act: 4, kind: "univalence",caption: "Univalence: equivalence is equality.", key: "equality", math: "(A \\simeq B) \\simeq (A = B)", d: 12.4, cy: 2.6 },
+    { act: 4, kind: "interval",  caption: "Two points and a path: the interval.", key: "interval", d: 12.4, cy: 2.6 },
+    { act: 4, kind: "circle",    caption: "One point and a loop: the circle.", key: "circle", d: 12.0, cy: 2.8 },
+    { act: 5, kind: "finale",    caption: "One long path through the universe.", key: "path", kicker: "Coda &middot; The Whole Path", d: 12, cy: 3 }
   ];
   const N = BEATS.length;
 
@@ -393,8 +412,8 @@
   );
   const outwardOf = (i) => new THREE.Vector3(Math.sin(thetaOf(i)), 0, Math.cos(thetaOf(i)));
 
-  const overviewPos = new THREE.Vector3(0, 35, 129);
-  const overviewLook = new THREE.Vector3(0, 0, 7);
+  const overviewPos = new THREE.Vector3(0, 21, 102);
+  const overviewLook = new THREE.Vector3(0, -5.4, 12);
 
   let webglOK = true;
   let renderer = null;
@@ -826,10 +845,85 @@
 
   function V(x, y, z) { return new THREE.Vector3(x, y, z); }
 
-  let stationBuild = function () { return { labels: [], update: function () {} }; };
   let buildTitle, buildPoint, buildPath, buildHomotopy, buildComposite, buildTorus;
   let buildTypeSpace, buildIdentity, buildSet, buildJ, buildFiber, buildProps, buildLogic;
   let buildLevels, buildUniverse, buildEquiv, buildUnivalence, buildInterval, buildCircle, buildFinale;
+
+  function makeBackdrop(color) {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uA: { value: new THREE.Color(color) },
+        uB: { value: new THREE.Color(C.violet) },
+        uOpacity: { value: 0.55 },
+        uTime: { value: 0 }
+      },
+      vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
+      fragmentShader: [
+        "uniform vec3 uA,uB; uniform float uOpacity,uTime;",
+        "varying vec2 vUv;",
+        "void main(){",
+        "  vec2 q=vUv-0.5;",
+        "  float r=length(q)*2.0;",
+        "  float g=pow(max(0.0,1.0-r),3.3);",
+        "  float ang=atan(q.y,q.x);",
+        "  float sw=0.82+0.18*sin(ang*3.0+uTime*0.13);",
+        "  float beam=exp(-pow(q.x*7.0,2.0))*0.5;",
+        "  vec3 col=mix(uA,uB,0.5+0.5*sin(ang*2.0+uTime*0.09));",
+        "  float a=g*(0.075+0.075*sw)+g*beam*0.10;",
+        "  gl_FragColor=vec4(col*(0.75+0.55*g),a*uOpacity);",
+        "}"
+      ].join("\n"),
+      transparent: true, depthWrite: false, depthTest: true,
+      side: THREE.DoubleSide, blending: THREE.AdditiveBlending
+    });
+    reg(mat);
+    const obj = new THREE.Mesh(new THREE.PlaneGeometry(26, 26), mat);
+    obj.position.set(0, 0.15, -3.9);
+    obj.frustumCulled = false;
+    return { obj, mat, setOpacity(v) { mat.uniforms.uOpacity.value = v; } };
+  }
+
+  function makeFloor(color) {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { uA: { value: new THREE.Color(color) }, uB: { value: new THREE.Color(C.violet) }, uOpacity: { value: 0.22 }, uTime: { value: 0 } },
+      vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
+      fragmentShader: [
+        "uniform vec3 uA,uB; uniform float uOpacity,uTime;",
+        "varying vec2 vUv;",
+        "void main(){",
+        "  vec2 q=vUv-0.5; q.y*=2.4;",
+        "  float r=length(q)*2.0;",
+        "  float g=pow(max(0.0,1.0-r),2.6);",
+        "  float w=0.85+0.15*sin(q.x*9.0+uTime*0.2);",
+        "  float a=g*uOpacity*w;",
+        "  gl_FragColor=vec4(mix(uA,uB,0.35+q.x*0.5),a);",
+        "}"
+      ].join("\n"),
+      transparent: true, depthWrite: false, depthTest: true,
+      side: THREE.DoubleSide, blending: THREE.AdditiveBlending
+    });
+    reg(mat);
+    const obj = new THREE.Mesh(new THREE.PlaneGeometry(11.5, 6.4), mat);
+    obj.rotation.x = -Math.PI / 2;
+    obj.position.set(0, -2.95, -0.6);
+    obj.frustumCulled = false;
+    return { obj, mat, setOpacity(v) { mat.uniforms.uOpacity.value = v; } };
+  }
+
+  function makeStationDust() {
+    const list = [];
+    for (let k = 0; k < 110; k++) {
+      const rr = 2.2 + Math.pow(rand(), 0.7) * 5.6;
+      const th = rand() * TAU, ph = Math.acos(2 * rand() - 1);
+      list.push({
+        p: V(rr * Math.sin(ph) * Math.cos(th), rr * Math.cos(ph) * 0.72, rr * Math.sin(ph) * Math.sin(th) * 0.5 - 0.5),
+        size: 0.16 + rand() * 0.34,
+        color: rand() < 0.55 ? C.ice : C.violet,
+        seed: rand(), glow: 0.25 + rand() * 0.35
+      });
+    }
+    return makeDots(list, { opacity: 0.4, drift: 0.7 });
+  }
 
   buildTitle = function (g) {
     const labels = [];
@@ -840,7 +934,9 @@
       new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.09, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     g.add(wire);
-    const core = makeDots([{ p: V(0, 0, 0), size: 2.6, color: C.white }], { opacity: 1 });
+    const inner = makeIrid(new THREE.SphereGeometry(1.25, 36, 24), { a: C.violet, b: C.ice, rim: C.gold, opacity: 0.38, wobble: 0.05 });
+    g.add(inner.obj);
+    const core = makeDots([{ p: V(0, 0, 0), size: 3.4, color: C.white }], { opacity: 1 });
     g.add(core.obj);
     const list = [];
     for (let k = 0; k < 760; k++) {
@@ -863,6 +959,7 @@
       update(ctx) {
         const a = ctx.a * ctx.r;
         sphere.setOpacity(a * 0.55);
+        inner.setOpacity(a * 0.42);
         core.setOpacity(a);
         dust.setOpacity(a * 0.72);
         sphere.obj.rotation.y += ctx.dt * 0.06;
@@ -922,6 +1019,7 @@
     g.add(marker.obj);
     labels.push({ text: "a", p: a, dx: -4, dy: -26, kind: "sym" });
     labels.push({ text: "b", p: b, dx: 6, dy: -26, kind: "sym" });
+    labels.push({ text: "p", p: p.getPoint(0.55), dx: 12, dy: -16, kind: "sym" });
     return {
       labels,
       update(ctx) {
@@ -960,6 +1058,7 @@
     g.add(bandMarker.obj);
     labels.push({ text: "p", p: V(-1.2, -1.5, 0.3), dx: -8, dy: 20, kind: "sym" });
     labels.push({ text: "q", p: V(-1.2, 1.25, 0.3), dx: -8, dy: -22, kind: "sym" });
+    labels.push({ text: "H", p: V(0.35, 0.0, 1.35), dx: 10, dy: -10, kind: "sym" });
     return {
       labels,
       update(ctx) {
@@ -1048,6 +1147,8 @@
     const m1 = makeMarker(C.white, 1.15), m2 = makeMarker(C.gold, 0.95);
     tg.add(m1.obj, m2.obj);
     labels.push({ text: "loop", p: tp(Math.PI * 0.5, Math.PI / 2), dx: 10, dy: -22, kind: "word", node: tg });
+    labels.push({ text: "hole", p: V(0, 0, 0), dx: 0, dy: 6, kind: "word", node: tg });
+    labels.push({ text: "&gamma;", p: tp(Math.PI, Math.PI / 2), dx: 8, dy: 18, kind: "sym", node: tg });
     return {
       labels,
       update(ctx) {
@@ -1070,7 +1171,7 @@
     g.add(blob.obj);
     const wire = new THREE.LineSegments(
       new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(2.26, 2)),
-      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.075, blending: THREE.AdditiveBlending, depthWrite: false })
+      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     g.add(wire);
     const pts = [
@@ -1115,7 +1216,7 @@
     const ribbons = [];
     const count = isSet ? 1 : 7;
     for (let k = 0; k < count; k++) {
-      const midY = count === 1 ? 0.05 : lerp(-1.18, 1.18, k / (count - 1));
+      const midY = count === 1 ? 0.05 : lerp(-1.62, 1.62, k / (count - 1));
       const pts = [
         aP,
         V(-0.5, midY * 0.55 - 0.05, 1.22),
@@ -1126,7 +1227,7 @@
       const c = curveOf(pts, false);
       paths.push(c);
       const col = k === 3 || count === 1 ? C.gold : (k === 5 ? C.violet : C.ice);
-      const rib = makeRibbon(c, { a: col, b: k === 3 || count === 1 ? C.white : C.cyan, rad: count === 1 ? 0.024 : 0.013, opacity: 0.8, seg: 130, pulse: k * 0.11 });
+      const rib = makeRibbon(c, { a: col, b: k === 3 || count === 1 ? C.white : C.cyan, rad: count === 1 ? 0.028 : 0.015, opacity: 0.8, seg: 130, pulse: k * 0.11 });
       g.add(rib.core, rib.glow);
       ribbons.push({ rib, k });
     }
@@ -1141,8 +1242,8 @@
       g.add(sheet.obj);
     }
     const dots = makeDots([
-      { p: aP, size: 0.72, color: C.ice },
-      { p: bP, size: 0.72, color: C.rose }
+      { p: aP, size: 0.95, color: C.ice },
+      { p: bP, size: 0.95, color: C.rose }
     ], { opacity: 1 });
     g.add(dots.obj);
     const markers = [];
@@ -1154,22 +1255,26 @@
     labels.push({ text: "a", p: aP, dx: -4, dy: -26, kind: "sym" });
     labels.push({ text: "b", p: bP, dx: 6, dy: -26, kind: "sym" });
     labels.push({ text: "A", p: V(1.55, 1.35, -0.1), dx: 0, dy: -14, kind: "big" });
+    if (!isSet) {
+      labels.push({ text: "p", p: paths[3].getPoint(0.55), dx: 14, dy: -10, kind: "sym" });
+      labels.push({ text: "q", p: paths[5].getPoint(0.55), dx: 12, dy: -14, kind: "sym" });
+    }
     if (isSet) labels.push({ text: "&le;1", p: V(0.0, 1.65, 0.9), dx: 0, dy: -18, kind: "sym" });
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
         const prog = smoothstep(0.1, 0.88, ctx.r);
-        blob.setOpacity(a * 0.36);
+        blob.setOpacity(a * 0.5);
         wire.rotation.y += ctx.dt * 0.02;
         dots.setOpacity(a);
         for (const R of ribbons) {
           R.rib.setProgress(prog);
-          const base = isSet ? (R.k === 0 ? 0.95 : 0.06) : (R.k === 3 ? 0.95 : (R.k === 5 ? 0.76 : 0.5));
+          const base = isSet ? (R.k === 0 ? 1 : 0.06) : (R.k === 3 ? 1 : (R.k === 5 ? 0.72 : 0.34));
           R.rib.setOpacity(a * base);
         }
         if (sheet) {
-          sheet.setOpacity(a * 0.5);
+          sheet.setOpacity(a * 0.27);
           sheet.setBand(0.5 + 0.43 * Math.sin(ctx.t * 0.5));
         }
         for (let k = 0; k < markers.length; k++) {
@@ -1194,24 +1299,25 @@
       const midY = lerp(-1.25, 1.25, k / 6);
       const c = curveOf([aP, V(-1.2, midY * 0.6, 0.25), V(0, midY, 0.36), V(1.2, midY * 0.6 + 0.1, 0.25), bP], false);
       paths.push(c);
-      const rib = makeRibbon(c, { a: k === 3 ? C.gold : C.cyan, b: C.violet, rad: 0.011, opacity: 0.7, seg: 120, pulse: k * 0.14 });
+      const rib = makeRibbon(c, { a: k === 3 ? C.gold : C.cyan, b: C.violet, rad: 0.016, opacity: 0.8, seg: 120, pulse: k * 0.14 });
       g.add(rib.core, rib.glow);
       ribbons.push(rib);
-      const m = makeMarker(k === 3 ? C.gold : C.white, 0.55);
+      const m = makeMarker(k === 3 ? C.gold : C.white, 0.78);
       g.add(m.obj);
       markers.push(m);
     }
-    const refl = makeRing(0.3, 0.012, C.gold, 0.95);
+    const refl = makeRing(0.3, 0.016, C.gold, 1);
     refl.obj.position.copy(aP).add(V(0, 0, 0.3));
     g.add(refl.obj);
     const pulse = makeRing(0.34, 0.005, C.ice, 0.4);
     pulse.obj.position.copy(refl.obj.position);
     g.add(pulse.obj);
-    const seed = makeDots([{ p: aP, size: 0.8, color: C.white }], { opacity: 1 });
+    const seed = makeDots([{ p: aP, size: 1.15, color: C.white }], { opacity: 1 });
     g.add(seed.obj);
     labels.push({ text: "a", p: aP, dx: -4, dy: -26, kind: "sym" });
     labels.push({ text: "b", p: bP, dx: 6, dy: -26, kind: "sym" });
     labels.push({ text: "refl", p: aP.clone().add(V(0, 0.42, 0.3)), dx: -10, dy: 10, kind: "word" });
+    labels.push({ text: "J", p: V(0.0, 1.88, 0.45), dx: 4, dy: -8, kind: "sym" });
     return {
       labels,
       update(ctx) {
@@ -1224,8 +1330,8 @@
         pulse.setOpacity(a * 0.5 * (1 - ph));
         for (let k = 0; k < ribbons.length; k++) {
           ribbons[k].setProgress(prog);
-          ribbons[k].setOpacity(a * (k === 3 ? 0.9 : 0.55));
-          markers[k].setOpacity(a * 0.75);
+          ribbons[k].setOpacity(a * (k === 3 ? 1 : 0.7));
+          markers[k].setOpacity(a * 0.9);
           markers[k].set(paths[k].getPoint(fract(ctx.t * 0.13 + k * 0.06)));
         }
       }
@@ -1234,9 +1340,11 @@
 
   buildFiber = function (g, mode) {
     const labels = [];
+    g.scale.setScalar(1.08);
+    g.position.y += 0.25;
     const basePts = [V(-3.6, -2.1, 0), V(-1.8, -2.32, 0), V(0, -2.42, 0), V(1.8, -2.32, 0), V(3.6, -2.1, 0)];
     const baseCurve = curveOf(basePts, false);
-    const baseRib = makeRibbon(baseCurve, { a: C.cyan, b: C.violet, rad: 0.014, opacity: 0.5, seg: 130 });
+    const baseRib = makeRibbon(baseCurve, { a: C.cyan, b: C.violet, rad: 0.03, opacity: 1, seg: 130 });
     g.add(baseRib.core, baseRib.glow);
     const NF = 9;
     const counts = [2, 3, 1, 4, 2, 3, 1, 4, 2];
@@ -1251,33 +1359,47 @@
       for (let j = 0; j < cnt; j++) {
         const p = V(bp.x + (j % 2 ? 0.065 : -0.045), bp.y + 0.55 + j * 0.6, bp.z + (j % 2 ? 0.03 : -0.02));
         dots.push(p);
-        dotList.push({ p, size: 0.5, color: j === cnt - 1 ? C.ice : C.violet, seed: rand(), glow: 0.85 });
+        dotList.push({ p, size: 1.7, color: j === cnt - 1 ? C.white : C.ice, seed: rand(), glow: 1.2 });
       }
       stems.push([bp.clone(), dots[dots.length - 1].clone()]);
       fibers.push({ bp, dots });
     }
-    const stemsObj = makeLines(stems, { color: C.ice, opacity: 0.24 });
+    const stemsObj = makeLines(stems, { color: C.cyan, opacity: 0.8 });
     g.add(stemsObj.obj);
-    const dotsObj = makeDots(dotList, { opacity: 0.95 });
+    const beadList = [];
+    for (let k = 0; k < NF; k++) {
+      const bp = fibers[k].bp, top = fibers[k].dots[fibers[k].dots.length - 1];
+      for (let j = 1; j <= 6; j++) {
+        const p = bp.clone().lerp(top, j / 7);
+        beadList.push({ p, size: 0.52, color: C.cyan, seed: rand(), glow: 0.75 });
+      }
+    }
+    for (let k = 0; k < 30; k++) {
+      const p = baseCurve.getPoint(k / 29);
+      beadList.push({ p, size: 0.36, color: C.violet, seed: rand(), glow: 0.6 });
+    }
+    const beadsObj = makeDots(beadList, { opacity: 0.9 });
+    g.add(beadsObj.obj);
+    const dotsObj = makeDots(dotList, { opacity: 1 });
     g.add(dotsObj.obj);
     const chosen = fibers.map((f) => f.dots[f.dots.length - 1].clone());
-    const chosenObj = makeDots(chosen.map((p) => ({ p, size: 0.72, color: C.mint, glow: 1.1 })), { opacity: 1 });
+    const chosenObj = makeDots(chosen.map((p) => ({ p, size: 1.18, color: C.mint, glow: 1.25 })), { opacity: 1 });
     g.add(chosenObj.obj);
     const sectionCurve = curveOf(chosen, false);
-    const section = makeRibbon(sectionCurve, { a: C.mint, b: C.cyan, rad: 0.018, opacity: 1, seg: 150, pulse: 0.3 });
+    const section = makeRibbon(sectionCurve, { a: C.mint, b: C.cyan, rad: 0.026, opacity: 1, seg: 150, pulse: 0.3 });
     g.add(section.core, section.glow);
     const basePathCurve = subCurve(baseCurve, 0.12, 0.88);
-    const basePath = makeRibbon(basePathCurve, { a: C.gold, b: C.rose, rad: 0.02, opacity: 1, seg: 130, pulse: 0.1 });
+    const basePath = makeRibbon(basePathCurve, { a: C.gold, b: C.rose, rad: 0.028, opacity: 1, seg: 130, pulse: 0.1 });
     g.add(basePath.core, basePath.glow);
     const liftCurve = curveOf(chosen.slice(1, 8), false);
-    const lift = makeRibbon(liftCurve, { a: C.gold, b: C.white, rad: 0.019, opacity: 1, seg: 150, pulse: 0.55 });
+    const lift = makeRibbon(liftCurve, { a: C.gold, b: C.white, rad: 0.028, opacity: 1, seg: 150, pulse: 0.55 });
     g.add(lift.core, lift.glow);
     const conn = makeLine2(C.gold, 0.7);
     g.add(conn.obj);
     const spark = makeMarker(C.gold, 1.15);
     const baseSpark = makeMarker(C.rose, 0.85);
     g.add(spark.obj, baseSpark.obj);
-    const hlDots = makeDots(fibers[4].dots.map((p) => ({ p, size: 0.72, color: C.gold, glow: 1.2 })), { opacity: 1 });
+    const hlDots = makeDots(fibers[4].dots.map((p) => ({ p, size: 1.22, color: C.gold, glow: 1.3 })), { opacity: 1 });
     g.add(hlDots.obj);
     const web = [];
     for (let k = 0; k < NF - 1; k++) {
@@ -1285,29 +1407,43 @@
       const m = Math.min(A.length, B.length);
       for (let j = 0; j < m; j++) web.push([A[j], B[j]]);
     }
-    const webObj = makeLines(web, { color: C.gold, opacity: 0.2 });
+    const webObj = makeLines(web, { color: C.gold, opacity: 0.32 });
     g.add(webObj.obj);
-    const env = makeIrid(new THREE.SphereGeometry(1, 32, 20), { a: C.violet, b: C.gold, rim: C.gold, opacity: 0.16, wobble: 0 });
+    const env = makeIrid(new THREE.SphereGeometry(1, 32, 20), { a: C.violet, b: C.gold, rim: C.gold, opacity: 0.07, wobble: 0 });
     env.obj.scale.set(4.25, 2.25, 1.35);
     env.obj.position.set(0, -0.8, 0);
     g.add(env.obj);
+    const envWire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.SphereGeometry(1, 18, 12)),
+      new THREE.LineBasicMaterial({ color: C.gold, transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    envWire.scale.copy(env.obj.scale);
+    envWire.position.copy(env.obj.position);
+    g.add(envWire);
     const arrows = [];
     for (const k of [1, 3, 5, 7]) {
       const bp = fibers[k].bp;
       arrows.push(makeArrow(g, bp.clone().add(V(0, -0.05, 0)), bp.clone().add(V(0, -0.42, 0)), C.violet, 0.6));
     }
-    const O = { base: 0.5, stems: 0.22, dots: 0.9, web: 0, section: 0, chosen: 0, basePath: 0, lift: 0, hl: 0, env: 0, arrow: 0, spark: 0, conn: 0 };
-    if (mode === "fibration") { O.base = 0.95; O.stems = 0.36; O.dots = 0.95; O.hl = 0.95; O.arrow = 0.65; }
-    if (mode === "transport") { O.base = 0.45; O.stems = 0.18; O.dots = 0.7; O.basePath = 0.95; O.lift = 0.9; O.spark = 1; O.conn = 0.8; }
-    if (mode === "pi") { O.base = 0.4; O.stems = 0.16; O.dots = 0.6; O.section = 0.95; O.chosen = 0.95; }
-    if (mode === "sigma") { O.base = 0.4; O.stems = 0.2; O.dots = 0.9; O.web = 0.35; O.env = 0.5; }
+    const O = { base: 1, stems: 0.8, dots: 1, beads: 1, web: 0, section: 0, chosen: 0, basePath: 0, lift: 0, hl: 0, env: 0, arrow: 0, spark: 0, conn: 0 };
+    if (mode === "fibration") { O.base = 1; O.stems = 0.72; O.dots = 1; O.beads = 0.5; O.hl = 1; O.arrow = 0.9; }
+    if (mode === "transport") { O.base = 0.6; O.stems = 0.3; O.dots = 0.8; O.beads = 0.3; O.basePath = 0.52; O.lift = 0.6; O.spark = 0.9; O.conn = 0.55; }
+    if (mode === "pi") { O.base = 0.7; O.stems = 0.26; O.dots = 0.65; O.beads = 0.25; O.section = 0.82; O.chosen = 0.88; }
+    if (mode === "sigma") { O.base = 0.7; O.stems = 0.3; O.dots = 0.9; O.beads = 0.4; O.web = 0.34; O.env = 0.4; }
     if (mode === "family") {
-      labels.push({ text: "x", p: basePts[3], dx: 6, dy: 22, kind: "sym" });
+      labels.push({ text: "A", p: V(-3.9, -2.62, 0), dx: -8, dy: 6, kind: "word" });
+      labels.push({ text: "x", p: fibers[6].bp, dx: 6, dy: 24, kind: "sym" });
       labels.push({ text: "B(x)", p: fibers[6].dots[fibers[6].dots.length - 1], dx: 10, dy: -22, kind: "sym" });
     }
-    if (mode === "fibration") labels.push({ text: "p", p: V(0.0, -2.85, 0), dx: 0, dy: 18, kind: "sym" });
+    if (mode === "fibration") {
+      const bigArrow = makeArrow(g, V(4.2, 0.55, 0), V(4.2, -2.45, 0), C.gold, 0.9);
+      arrows.push(bigArrow);
+      labels.push({ text: "p", p: V(4.32, -1.0, 0), dx: 12, dy: 4, kind: "sym" });
+      labels.push({ text: "A", p: V(-3.9, -2.62, 0), dx: -8, dy: 6, kind: "word" });
+    }
     if (mode === "transport") labels.push({ text: "&gamma;", p: baseCurve.getPoint(0.2), dx: -6, dy: 24, kind: "sym" });
     if (mode === "pi") labels.push({ text: "s", p: chosen[4], dx: 10, dy: -20, kind: "sym" });
+    if (mode === "sigma") labels.push({ text: "total space", p: V(0, 1.95, 0), dx: 0, dy: -20, kind: "word" });
     return {
       labels,
       update(ctx) {
@@ -1315,6 +1451,7 @@
         const prog = smoothstep(0.08, 0.9, ctx.r);
         baseRib.setOpacity(a * O.base);
         stemsObj.setOpacity(a * O.stems);
+        beadsObj.setOpacity(a * O.beads);
         dotsObj.setOpacity(a * O.dots);
         hlDots.setOpacity(a * O.hl);
         section.setProgress(prog); section.setOpacity(a * O.section);
@@ -1322,7 +1459,8 @@
         basePath.setProgress(prog); basePath.setOpacity(a * O.basePath);
         lift.setProgress(prog); lift.setOpacity(a * O.lift);
         webObj.setOpacity(a * O.web);
-        env.setOpacity(a * O.env);
+        env.setOpacity(a * O.env * 0.16);
+        envWire.material.opacity = a * O.env * 0.32;
         for (const ar of arrows) ar.setOpacity(a * O.arrow);
         const u = fract(ctx.t * 0.083);
         const lp = liftCurve.getPoint(u);
@@ -1338,26 +1476,28 @@
   buildProps = function (g) {
     const labels = [];
     const lx = -1.75, rx = 1.75, cy = 0.15, rad = 1.16;
-    const ringL = makeRing(rad, 0.007, C.mint, 0.6); ringL.obj.position.set(lx, cy, 0); g.add(ringL.obj);
-    const ringR = makeRing(rad, 0.007, C.red, 0.35); ringR.obj.position.set(rx, cy, 0); g.add(ringR.obj);
+    const ringL = makeRing(rad, 0.016, C.mint, 1); ringL.obj.position.set(lx, cy, 0); g.add(ringL.obj);
+    const ringR = makeRing(rad, 0.017, C.red, 1); ringR.obj.position.set(rx, cy, 0); g.add(ringR.obj);
     const fillL = makeIrid(new THREE.SphereGeometry(rad * 0.97, 36, 24), { a: C.mint, b: C.cyan, rim: C.white, opacity: 0.18, wobble: 0.02 });
     fillL.obj.position.set(lx, cy, 0); g.add(fillL.obj);
-    const fillR = makeIrid(new THREE.SphereGeometry(rad * 0.97, 36, 24), { a: C.red, b: C.violet, rim: C.red, opacity: 0.06, wobble: 0.02 });
+    const fillR = makeIrid(new THREE.SphereGeometry(rad * 0.97, 36, 24), { a: C.red, b: C.violet, rim: C.red, opacity: 0.2, wobble: 0.02 });
     fillR.obj.position.set(rx, cy, 0); g.add(fillR.obj);
-    const proof = makeDots([{ p: V(lx, cy, 0), size: 1.25, color: C.mint }], { opacity: 1 });
+    const proof = makeDots([{ p: V(lx, cy, 0), size: 1.9, color: C.mint }], { opacity: 1 });
     g.add(proof.obj);
-    const ghost = makeMarker(C.mint, 0.75);
+    const ghost = makeMarker(C.mint, 1.2);
     g.add(ghost.obj);
+    const emptyInner = makeRing(0.55, 0.006, C.red, 0.35); emptyInner.obj.position.set(rx, cy, 0); g.add(emptyInner.obj);
     labels.push({ text: "proof", p: V(lx, cy - rad - 0.18, 0), dx: 0, dy: 22, kind: "word" });
     labels.push({ text: "none", p: V(rx, cy - rad - 0.18, 0), dx: 0, dy: 22, kind: "word" });
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        ringL.setOpacity(a * (0.4 + 0.25 * (0.5 + 0.5 * Math.sin(ctx.t * 1.2))));
-        ringR.setOpacity(a * 0.3);
-        fillL.setOpacity(a * 0.2);
-        fillR.setOpacity(a * 0.05);
+        ringL.setOpacity(a * (0.6 + 0.3 * (0.5 + 0.5 * Math.sin(ctx.t * 1.2))));
+        ringR.setOpacity(a * 0.9);
+        emptyInner.setOpacity(a * 0.6);
+        fillL.setOpacity(a * 0.32);
+        fillR.setOpacity(a * 0.12);
         proof.setOpacity(a);
         const ph = fract(ctx.t * 0.16);
         const dist = 0.58 * (1 - ph);
@@ -1369,68 +1509,99 @@
 
   buildLogic = function (g) {
     const labels = [];
+    g.scale.setScalar(1.16);
     const dotsList = [];
-    const ribbons = [];
     const addDot = (p, size, color) => dotsList.push({ p, size, color, seed: rand(), glow: 1 });
-    addDot(V(-2.4, 1.05, 0), 0.62, C.ice);
-    addDot(V(-1.6, 1.05, 0), 0.62, C.ice);
-    addDot(V(-2.0, 1.05, 0.18), 0.6, C.gold);
-    const andRib = makeRibbon(curveOf([V(-2.38, 1.05, 0), V(-2.0, 1.18, 0.14), V(-1.62, 1.05, 0)], false), { a: C.ice, b: C.gold, rad: 0.016, opacity: 0.9, seg: 80 });
-    g.add(andRib.core, andRib.glow); ribbons.push(andRib);
-    addDot(V(1.55, 1.18, 0), 0.62, C.violet);
-    addDot(V(2.45, 1.18, 0), 0.62, C.violet);
-    const forkA = makeRibbon(curveOf([V(2.0, 0.22, 0), V(1.75, 0.7, 0.18), V(1.55, 1.12, 0)], false), { a: C.violet, b: C.cyan, rad: 0.013, opacity: 0.8, seg: 70 });
-    const forkB = makeRibbon(curveOf([V(2.0, 0.22, 0), V(2.25, 0.7, 0.18), V(2.45, 1.12, 0)], false), { a: C.violet, b: C.cyan, rad: 0.013, opacity: 0.8, seg: 70 });
-    g.add(forkA.core, forkA.glow, forkB.core, forkB.glow); ribbons.push(forkA, forkB);
-    addDot(V(-2.5, -1.15, 0), 0.6, C.gold);
-    addDot(V(-1.5, -1.15, 0), 0.6, C.ice);
-    makeArrow(g, V(-2.4, -1.15, 0), V(-1.55, -1.15, 0), C.gold, 0.75);
-    addDot(V(1.35, -1.15, 0), 0.55, C.ice);
-    const bottom = makeRing(0.36, 0.009, C.red, 0.55); bottom.obj.position.set(2.12, -1.15, 0); g.add(bottom.obj);
-    makeArrow(g, V(1.42, -1.15, 0), V(1.72, -1.15, 0), C.red, 0.7);
+    const plate = (cx, cy, r) => { const q = makeRing(r, 0.006, C.violet, 0.18); q.obj.position.set(cx, cy, -0.1); g.add(q.obj); return q; };
+    plate(-2.2, 1.0, 0.98);
+    plate(2.2, 1.0, 0.98);
+    plate(-2.2, -1.12, 0.98);
+    plate(2.2, -1.12, 0.98);
+
+    const andA = makeRing(0.5, 0.011, C.ice, 0.85); andA.obj.position.set(-2.55, 1.0, 0); g.add(andA.obj);
+    const andB = makeRing(0.5, 0.011, C.ice, 0.85); andB.obj.position.set(-1.85, 1.0, 0); g.add(andB.obj);
+    addDot(V(-2.55, 1.0, 0), 0.7, C.ice);
+    addDot(V(-1.85, 1.0, 0), 0.7, C.ice);
+    addDot(V(-2.2, 1.0, 0.22), 0.85, C.gold);
+    const andLink = makeRibbon(curveOf([V(-2.55, 1.0, 0), V(-2.2, 1.18, 0.2), V(-1.85, 1.0, 0)], false), { a: C.ice, b: C.gold, rad: 0.018, opacity: 0.95, seg: 70 });
+    g.add(andLink.core, andLink.glow);
+
+    const orA = makeRing(0.36, 0.012, C.violet, 0.9); orA.obj.position.set(1.7, 1.08, 0); g.add(orA.obj);
+    const orB = makeRing(0.36, 0.012, C.rose, 0.9); orB.obj.position.set(2.7, 1.08, 0); g.add(orB.obj);
+    addDot(V(1.7, 1.08, 0), 0.7, C.violet);
+    addDot(V(2.7, 1.08, 0), 0.7, C.rose);
+    const orRoot = V(2.2, 0.28, 0);
+    addDot(orRoot, 0.55, C.gold);
+    const forkA = makeRibbon(curveOf([orRoot, V(1.95, 0.7, 0.16), V(1.72, 1.02, 0)], false), { a: C.gold, b: C.violet, rad: 0.016, opacity: 0.9, seg: 60 });
+    const forkB = makeRibbon(curveOf([orRoot, V(2.45, 0.7, 0.16), V(2.68, 1.02, 0)], false), { a: C.gold, b: C.rose, rad: 0.016, opacity: 0.9, seg: 60 });
+    g.add(forkA.core, forkA.glow, forkB.core, forkB.glow);
+
+    const imA = makeRing(0.38, 0.012, C.gold, 0.9); imA.obj.position.set(-2.65, -1.12, 0); g.add(imA.obj);
+    const imB = makeRing(0.38, 0.012, C.ice, 0.9); imB.obj.position.set(-1.45, -1.12, 0); g.add(imB.obj);
+    addDot(V(-2.65, -1.12, 0), 0.7, C.gold);
+    addDot(V(-1.45, -1.12, 0), 0.7, C.ice);
+    makeArrow(g, V(-2.38, -1.12, 0), V(-1.7, -1.12, 0), C.gold, 1);
+
+    const no = makeRing(0.46, 0.014, C.red, 0.95); no.obj.position.set(2.2, -1.12, 0); g.add(no.obj);
+    const no2 = makeRing(0.3, 0.007, C.red, 0.55); no2.obj.position.set(2.2, -1.12, 0); g.add(no2.obj);
+    addDot(V(1.35, -1.12, 0), 0.62, C.ice);
+    makeArrow(g, V(1.46, -1.12, 0), V(1.82, -1.12, 0), C.red, 0.95);
+
     const dots = makeDots(dotsList, { opacity: 1 });
     g.add(dots.obj);
-    const spark = makeMarker(C.white, 0.8);
+    const spark = makeMarker(C.white, 0.95);
     g.add(spark.obj);
-    labels.push({ text: "&and;", p: V(-2.0, 1.75, 0), dx: 0, dy: -12, kind: "big" });
-    labels.push({ text: "&or;", p: V(2.0, 1.75, 0), dx: 0, dy: -12, kind: "big" });
-    labels.push({ text: "&rarr;", p: V(-2.0, -0.55, 0), dx: 0, dy: -12, kind: "big" });
-    labels.push({ text: "&perp;", p: V(2.12, -0.55, 0), dx: 0, dy: -12, kind: "big" });
+    const orPath = curveOf([orRoot, V(2.2, 0.7, 0.16), V(2.68, 1.02, 0)], false);
+    labels.push({ text: "&and;<span class='sub'>pair</span>", p: V(-2.2, 1.58, 0), dx: 0, dy: -6, kind: "big" });
+    labels.push({ text: "&or;<span class='sub'>sum</span>", p: V(2.2, 1.58, 0), dx: 0, dy: -6, kind: "big" });
+    labels.push({ text: "&rarr;<span class='sub'>function</span>", p: V(-2.2, -0.42, 0), dx: 0, dy: -12, kind: "big" });
+    labels.push({ text: "&perp;<span class='sub'>empty</span>", p: V(2.2, -0.42, 0), dx: 0, dy: -12, kind: "big" });
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
         dots.setOpacity(a);
-        for (const r of ribbons) r.setOpacity(a * 0.85);
-        bottom.setOpacity(a * 0.55);
-        spark.setOpacity(a * 0.8);
-        spark.set(forkB.core.geometry ? V(2.0, 0.22, 0).lerp(V(2.45, 1.18, 0), fract(ctx.t * 0.2)) : V(0, 0, 0));
+        andLink.setOpacity(a * 0.95);
+        forkA.setOpacity(a * 0.9); forkB.setOpacity(a * 0.9);
+        andA.setOpacity(a * 0.85); andB.setOpacity(a * 0.85);
+        orA.setOpacity(a * 0.9); orB.setOpacity(a * 0.9);
+        imA.setOpacity(a * 0.9); imB.setOpacity(a * 0.9);
+        no.setOpacity(a * 0.95); no2.setOpacity(a * 0.55);
+        spark.setOpacity(a * 0.85);
+        spark.set(orPath.getPoint(fract(ctx.t * 0.22)));
       }
     };
   };
 
   buildLevels = function (g) {
     const labels = [];
+    g.scale.setScalar(1.02);
+    g.position.x += 1.7;
+    g.position.y -= 0.55;
     const ys = [-2.6, -1.25, 0.1, 1.55, 3.05];
     const x = 0.35;
-    const spine = makeLine2(C.ice, 0.16);
+    const spine = makeLine2(C.ice, 0.38);
     spine.set(V(x - 1.55, ys[0], 0), V(x - 1.55, ys[4], 0));
     g.add(spine.obj);
-    const r1 = makeRing(0.44, 0.008, C.ice, 0.6); r1.obj.position.set(x, ys[0], 0); g.add(r1.obj);
-    const d1 = makeDots([{ p: V(x, ys[0], 0), size: 0.75, color: C.ice }], { opacity: 1 }); g.add(d1.obj);
-    const d2 = makeDots([{ p: V(x - 0.45, ys[1], 0), size: 0.7, color: C.mint }], { opacity: 1 }); g.add(d2.obj);
-    const empty = makeRing(0.22, 0.007, C.red, 0.4); empty.obj.position.set(x + 0.55, ys[1], 0); g.add(empty.obj);
-    const d3 = makeDots([{ p: V(x - 0.75, ys[2], 0), size: 0.66, color: C.cyan }, { p: V(x + 0.85, ys[2], 0), size: 0.66, color: C.cyan }], { opacity: 1 }); g.add(d3.obj);
+    const rungPairs = [];
+    for (const yy of ys) rungPairs.push([V(x - 1.55, yy, 0), V(x + 1.55, yy, 0)]);
+    const rungLines = makeLines(rungPairs, { color: C.ice, opacity: 0.2 });
+    g.add(rungLines.obj);
+    const r1 = makeRing(0.44, 0.013, C.ice, 0.95); r1.obj.position.set(x, ys[0], 0); g.add(r1.obj);
+    const d1 = makeDots([{ p: V(x, ys[0], 0), size: 1.05, color: C.white }], { opacity: 1 }); g.add(d1.obj);
+    const d2 = makeDots([{ p: V(x - 0.45, ys[1], 0), size: 0.95, color: C.mint }], { opacity: 1 }); g.add(d2.obj);
+    const empty = makeRing(0.22, 0.012, C.red, 0.8); empty.obj.position.set(x + 0.55, ys[1], 0); g.add(empty.obj);
+    const d3 = makeDots([{ p: V(x - 0.75, ys[2], 0), size: 0.92, color: C.cyan }, { p: V(x + 0.85, ys[2], 0), size: 0.92, color: C.cyan }], { opacity: 1 }); g.add(d3.obj);
     const p3 = makeRibbon(curveOf([V(x - 0.75, ys[2], 0), V(x + 0.05, ys[2] + 0.08, 0.12), V(x + 0.85, ys[2], 0)], false), { a: C.cyan, b: C.ice, rad: 0.012, opacity: 0.8, seg: 70 }); g.add(p3.core, p3.glow);
     const tA = V(x - 0.8, ys[3] - 0.32, 0), tB = V(x + 0.2, ys[3] + 0.42, 0.05), tC = V(x + 1.05, ys[3] - 0.26, 0);
-    const d4 = makeDots([{ p: tA, size: 0.62, color: C.violet }, { p: tB, size: 0.62, color: C.violet }, { p: tC, size: 0.62, color: C.violet }], { opacity: 1 }); g.add(d4.obj);
+    const d4 = makeDots([{ p: tA, size: 0.88, color: C.violet }, { p: tB, size: 0.88, color: C.violet }, { p: tC, size: 0.88, color: C.violet }], { opacity: 1 }); g.add(d4.obj);
     const e1 = makeRibbon(curveOf([tA, tA.clone().lerp(tB, 0.5).add(V(0, 0.05, 0.06)), tB], false), { a: C.violet, b: C.rose, rad: 0.01, opacity: 0.8, seg: 60 });
     const e2 = makeRibbon(curveOf([tB, tB.clone().lerp(tC, 0.5).add(V(0.05, 0.04, 0.06)), tC], false), { a: C.violet, b: C.rose, rad: 0.01, opacity: 0.8, seg: 60 });
     const e3 = makeRibbon(curveOf([tC, tC.clone().lerp(tA, 0.5).add(V(0, -0.05, 0.06)), tA], false), { a: C.violet, b: C.rose, rad: 0.01, opacity: 0.8, seg: 60 });
     g.add(e1.core, e1.glow, e2.core, e2.glow, e3.core, e3.glow);
     const tri = makeTri(g, tA, tB, tC, C.violet, 0.22);
-    const ringInf = makeRing(0.52, 0.008, C.gold, 0.7); ringInf.obj.position.set(x + 0.15, ys[4], 0); g.add(ringInf.obj);
-    const d5 = makeDots([{ p: V(x - 0.37, ys[4], 0), size: 0.45, color: C.gold }, { p: V(x + 0.67, ys[4], 0), size: 0.45, color: C.gold }, { p: V(x + 0.15, ys[4] + 0.52, 0), size: 0.45, color: C.gold }], { opacity: 1 }); g.add(d5.obj);
+    const ringInf = makeRing(0.52, 0.013, C.gold, 0.95); ringInf.obj.position.set(x + 0.15, ys[4], 0); g.add(ringInf.obj);
+    const d5 = makeDots([{ p: V(x - 0.37, ys[4], 0), size: 0.7, color: C.gold }, { p: V(x + 0.67, ys[4], 0), size: 0.7, color: C.gold }, { p: V(x + 0.15, ys[4] + 0.52, 0), size: 0.7, color: C.gold }], { opacity: 1 }); g.add(d5.obj);
     labels.push({ text: "&minus;2", p: V(x - 1.75, ys[0], 0), dx: -8, dy: 4, kind: "word" });
     labels.push({ text: "&minus;1", p: V(x - 1.75, ys[1], 0), dx: -8, dy: 4, kind: "word" });
     labels.push({ text: "0", p: V(x - 1.75, ys[2], 0), dx: -8, dy: 4, kind: "word" });
@@ -1441,6 +1612,7 @@
       update(ctx) {
         const a = ctx.a * ctx.r;
         const ph = 0.5 + 0.5 * Math.sin(ctx.t * 0.9);
+        rungLines.setOpacity(a * 0.2);
         r1.obj.scale.setScalar(1 + 0.55 * ph);
         r1.setOpacity(a * 0.6 * (1 - 0.4 * ph));
         d1.setOpacity(a); d2.setOpacity(a); d3.setOpacity(a);
@@ -1448,7 +1620,7 @@
         p3.setOpacity(a * 0.85);
         d4.setOpacity(a);
         e1.setOpacity(a * 0.7); e2.setOpacity(a * 0.7); e3.setOpacity(a * 0.7);
-        tri.setOpacity(a * 0.2);
+        tri.setOpacity(a * 0.32);
         ringInf.setOpacity(a * (0.45 + 0.3 * ph));
         ringInf.obj.rotation.z += ctx.dt * 0.15;
         d5.setOpacity(a * 0.9);
@@ -1485,9 +1657,9 @@
     g.add(types.obj);
     const spark = makeMarker(C.gold, 0.9);
     g.add(spark.obj);
-    labels.push({ text: "U<sub>0</sub>", p: V(0.95, 1.0, 0), dx: 14, dy: -6, kind: "sym" });
-    labels.push({ text: "U<sub>1</sub>", p: V(1.75, 1.9, 0), dx: 14, dy: -6, kind: "sym" });
-    labels.push({ text: "U<sub>2</sub>", p: V(2.55, 2.8, 0), dx: 14, dy: -6, kind: "sym" });
+    labels.push({ text: "U<sub>0</sub>", p: V(0.95, 0.88, 0), dx: 14, dy: -6, kind: "sym" });
+    labels.push({ text: "U<sub>1</sub>", p: V(1.75, 1.62, 0), dx: 14, dy: -6, kind: "sym" });
+    labels.push({ text: "U<sub>2</sub>", p: V(2.55, 2.3, 0), dx: 14, dy: -6, kind: "sym" });
     return {
       labels,
       update(ctx) {
@@ -1528,6 +1700,8 @@
     for (let k = 0; k < 5; k++) { const m = makeMarker(k % 2 ? C.gold : C.white, 0.6); g.add(m.obj); markers.push(m); }
     labels.push({ text: "A", p: A.clone().add(V(0, 1.55, 0)), dx: 0, dy: -14, kind: "big" });
     labels.push({ text: "B", p: B.clone().add(V(0, 1.55, 0)), dx: 0, dy: -14, kind: "big" });
+    labels.push({ text: "&simeq;", p: V(0, 0.2, 0), dx: 0, dy: 4, kind: "big" });
+    labels.push({ text: "f", p: ptsA[2].clone().lerp(ptsB[2], 0.5), dx: 0, dy: -18, kind: "sym" });
     return {
       labels,
       update(ctx) {
@@ -1574,6 +1748,7 @@
     labels.push({ text: "A", p: A.clone().add(V(0, 1.3, 0)), dx: 0, dy: -14, kind: "big" });
     labels.push({ text: "B", p: B.clone().add(V(0, 1.3, 0)), dx: 0, dy: -14, kind: "big" });
     labels.push({ text: "U", p: V(0, -2.55, 0), dx: 0, dy: 18, kind: "word" });
+    labels.push({ text: "ua", p: V(-0.9, -1.62, 0.15), dx: -4, dy: 22, kind: "sym" });
     return {
       labels,
       update(ctx) {
@@ -1593,9 +1768,9 @@
 
   buildInterval = function (g) {
     const labels = [];
-    const a = V(-2.3, 0, 0), b = V(2.3, 0, 0);
+    const a = V(-2.05, 0, 0), b = V(2.05, 0, 0);
     const lineC = curveOf([a, V(-0.8, 0.02, 0), V(0, 0.04, 0), V(0.8, 0.02, 0), b], false);
-    const bar = makeRibbon(lineC, { a: C.gold, b: C.white, rad: 0.038, opacity: 1, seg: 130, pulse: 0.2 });
+    const bar = makeRibbon(lineC, { a: C.gold, b: C.white, rad: 0.024, opacity: 0.9, seg: 130, pulse: 0.2 });
     g.add(bar.core, bar.glow);
     const ea = makeRing(0.23, 0.008, C.gold, 0.7); ea.obj.position.copy(a); g.add(ea.obj);
     const eb = makeRing(0.23, 0.008, C.gold, 0.7); eb.obj.position.copy(b); g.add(eb.obj);
@@ -1636,6 +1811,7 @@
     g.add(spark2.obj);
     labels.push({ text: "base", p: base, dx: 10, dy: 24, kind: "word" });
     labels.push({ text: "loop", p: V(rad * 0.72, rad * 0.72, 0), dx: 12, dy: -18, kind: "word" });
+    labels.push({ text: "S&sup1;", p: V(0, 0, 0), dx: 0, dy: 4, kind: "big" });
     return {
       labels,
       update(ctx) {
@@ -1713,6 +1889,20 @@
           }
         };
       }
+      const back = makeBackdrop(ACT_COLOR(BEATS[i].act));
+      group.add(back.obj);
+      const floor = makeFloor(ACT_COLOR(BEATS[i].act));
+      group.add(floor.obj);
+      const sd = makeStationDust();
+      group.add(sd.obj);
+      const baseUpdate = built.update;
+      built.update = function (ctx) {
+        back.setOpacity(ctx.a * 0.13);
+        floor.setOpacity(ctx.a * 0.05);
+        sd.setOpacity(ctx.a * 0.32);
+        sd.obj.rotation.y += ctx.dt * 0.008;
+        baseUpdate(ctx);
+      };
       group.visible = false;
       scene.add(group);
       stations.push({ group, update: built.update, labels: built.labels, pos: stationPos(i), out: outwardOf(i) });
@@ -1726,7 +1916,6 @@
   let journey = null;
   let beacons = null;
   let beaconGlow = null;
-  let beaconIdx = [];
 
   function buildWorld() {
     const bgU = { uTime: { value: 0 } };
@@ -1772,14 +1961,38 @@
     const dust = makeDots(dustList, { opacity: 0.5, scale: 1.1, drift: 0.35 });
     scene.add(dust.obj);
 
+    const auroraGroup = new THREE.Group();
+    scene.add(auroraGroup);
+    const auroras = [];
+    const auroraSpecs = [
+      { r: 27, y: 20, colA: C.violet, colB: C.cyan, rad: 1.5, op: 0.055, ph: 0.0 },
+      { r: 33, y: 25, colA: C.ice, colB: C.violet, rad: 1.1, op: 0.045, ph: 1.7 },
+      { r: 39, y: 30, colA: C.gold, colB: C.rose, rad: 0.8, op: 0.038, ph: 3.1 }
+    ];
+    for (const sp of auroraSpecs) {
+      const pts = [];
+      for (let k = 0; k <= 40; k++) {
+        const th = -1.35 + (k / 40) * 2.7;
+        pts.push(V(
+          sp.r * Math.sin(th),
+          sp.y + 2.4 * Math.sin(th * 2.1 + sp.ph) + 0.7 * Math.sin(th * 5.0 + sp.ph * 2.0),
+          sp.r * Math.cos(th)
+        ));
+      }
+      const c = curveOf(pts, false);
+      const rib = makeRibbon(c, { a: sp.colA, b: sp.colB, rad: sp.rad, opacity: sp.op, seg: 200, pulse: sp.ph });
+      auroraGroup.add(rib.core, rib.glow);
+      auroras.push(rib);
+    }
+
     const roadPts = [];
     for (let i = 0; i < N; i++) {
-      const p = stationPos(i).clone().add(outwardOf(i).multiplyScalar(-1.1));
-      p.y -= 3.7;
+      const p = stationPos(i).clone().add(outwardOf(i).multiplyScalar(-1.7));
+      p.y -= 5.15;
       roadPts.push(p);
     }
     const road = curveOf(roadPts, false);
-    const rib = makeRibbon(road, { a: C.cyan, b: C.gold, rad: 0.032, opacity: 0.55, seg: 260, pulse: 0.2 });
+    const rib = makeRibbon(road, { a: C.cyan, b: C.gold, rad: 0.045, opacity: 0.55, seg: 260, pulse: 0.2 });
     scene.add(rib.core, rib.glow);
     const beaconList = [];
     for (let i = 0; i < N; i++) {
@@ -1792,15 +2005,51 @@
     }
     const bp = makeDots(beaconList, { opacity: 0.9, scale: 0.5 });
     scene.add(bp.obj);
+    const comet = makeMarker(C.white, 2.2);
+    scene.add(comet.obj);
     journey = rib;
     beacons = bp;
-    beaconIdx = beaconList;
     return {
-      bgMat, dust, road, bp
+      bgMat, dust, road, bp, roadPts, comet, auroraGroup
     };
   }
 
   let world = null;
+  let constellation = null;
+
+  function buildConstellation() {
+    const group = new THREE.Group();
+    scene.add(group);
+    const pillarPairs = [];
+    for (let i = 0; i < N; i++) {
+      const gp = world.roadPts[i];
+      const top = stations[i].pos.clone().add(V(0, 0.4, 0));
+      pillarPairs.push([gp.clone(), top]);
+    }
+    const pillars = makeLines(pillarPairs, { color: C.ice, opacity: 0.0 });
+    group.add(pillars.obj);
+    const links = [
+      [0, 3], [2, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 13],
+      [9, 12], [12, 13], [13, 14], [14, 15], [16, 17], [17, 18],
+      [18, 20], [20, 21], [21, 22], [22, 23], [6, 20], [3, 17], [0, 23]
+    ];
+    const arcs = [];
+    for (const [i, j] of links) {
+      const a = world.roadPts[i].clone();
+      const b = world.roadPts[j].clone();
+      const mid = a.clone().add(b).multiplyScalar(0.5);
+      const lift = 4.5 + a.distanceTo(b) * 0.16;
+      mid.y += lift;
+      mid.multiplyScalar(1.015);
+      const c = curveOf([a, mid, b], false);
+      const rib = makeRibbon(c, { a: C.ice, b: C.gold, rad: 0.012, opacity: 0.0, seg: 90, pulse: (i + j) * 0.05 });
+      group.add(rib.core, rib.glow);
+      arcs.push(rib);
+    }
+    const halo = makeRing(52, 0.02, C.violet, 0.0);
+    group.add(halo.obj);
+    constellation = { group, pillars, arcs, halo };
+  }
 
   let post = null;
   function initPost() {
@@ -1827,8 +2076,8 @@
       "void main(){ vec3 c=texture2D(tDiffuse,vUv).rgb; float l=dot(c,vec3(0.2126,0.7152,0.0722)); float k=smoothstep(uThreshold,uThreshold+0.4,l); gl_FragColor=vec4(c*k,1.0); }"
     ].join("\n");
     const BLUR = [
-      "uniform sampler2D tDiffuse; uniform vec2 uDir; uniform vec2 uTexel; varying vec2 vUv;",
-      "void main(){ vec3 s=vec3(0.0); float ws=0.0; for(int i=-4;i<=4;i++){ float fi=float(i); float w=exp(-fi*fi/8.5); s+=texture2D(tDiffuse,vUv+uDir*uTexel*fi).rgb*w; ws+=w; } gl_FragColor=vec4(s/ws,1.0); }"
+      "uniform sampler2D tDiffuse; uniform vec2 uDir; uniform vec2 uTexel; uniform float uSpread; varying vec2 vUv;",
+      "void main(){ vec3 s=vec3(0.0); float ws=0.0; for(int i=-4;i<=4;i++){ float fi=float(i); float w=exp(-fi*fi/8.5); s+=texture2D(tDiffuse,vUv+uDir*uTexel*fi*uSpread).rgb*w; ws+=w; } gl_FragColor=vec4(s/ws,1.0); }"
     ].join("\n");
     const COMP = [
       "uniform sampler2D tScene,tBloomA,tBloomB; uniform float uTime,uExposure; varying vec2 vUv;",
@@ -1839,10 +2088,15 @@
       "  col.r=texture2D(tScene,uv+d*0.0022*r2).r;",
       "  col.g=texture2D(tScene,uv).g;",
       "  col.b=texture2D(tScene,uv-d*0.0022*r2).b;",
-      "  vec3 bloom=texture2D(tBloomA,uv).rgb*0.95+texture2D(tBloomB,uv).rgb*1.55;",
+      "  vec3 bloom=texture2D(tBloomA,uv).rgb*1.05+texture2D(tBloomB,uv).rgb*1.75;",
       "  col+=bloom; col*=uExposure; col=aces(col);",
       "  float vig=smoothstep(0.98,0.24,length(d)*1.18);",
       "  col*=0.46+0.54*vig;",
+      "  col=mix(col,col*vec3(0.92,1.02,1.10),0.22);",
+      "  float lum=dot(col,vec3(0.299,0.587,0.114));",
+      "  col=mix(vec3(lum),col,1.12);",
+      "  float grain=(fract(sin(dot(uv*vec2(1234.5,987.6)+uTime,vec2(12.9898,78.233)))*43758.5453)-0.5)*0.012;",
+      "  col+=grain;",
       "  col=pow(max(col,0.0),vec3(1.0/2.2));",
       "  gl_FragColor=vec4(col,1.0);",
       "}"
@@ -1850,14 +2104,14 @@
     const mkFS = (frag, uniforms) => new THREE.ShaderMaterial({
       uniforms, vertexShader: FS_VERT, fragmentShader: frag, depthTest: false, depthWrite: false
     });
-    const brightMat = mkFS(BRIGHT, { tDiffuse: { value: sceneRT.texture }, uThreshold: { value: 0.5 } });
-    const blurMat = mkFS(BLUR, { tDiffuse: { value: null }, uDir: { value: new THREE.Vector2(1, 0) }, uTexel: { value: new THREE.Vector2(1 / 100, 1 / 100) } });
+    const brightMat = mkFS(BRIGHT, { tDiffuse: { value: sceneRT.texture }, uThreshold: { value: 0.46 } });
+    const blurMat = mkFS(BLUR, { tDiffuse: { value: null }, uDir: { value: new THREE.Vector2(1, 0) }, uTexel: { value: new THREE.Vector2(1 / 100, 1 / 100) }, uSpread: { value: 1 } });
     const compMat = mkFS(COMP, {
       tScene: { value: sceneRT.texture },
       tBloomA: { value: bA.texture },
-      tBloomB: { value: bC.texture },
+      tBloomB: { value: bD.texture },
       uTime: { value: 0 },
-      uExposure: { value: 1.18 }
+      uExposure: { value: 1.26 }
     });
     post = { sceneRT, bA, bB, bC, bD, fsCam, quad, brightMat, blurMat, compMat };
   }
@@ -1879,6 +2133,7 @@
     renderer.render(scene, camera);
     if (DEBUG) sceneInfo = { calls: renderer.info.render.calls, tris: renderer.info.render.triangles, points: renderer.info.render.points };
     drawFS(p.brightMat, p.bA);
+    p.blurMat.uniforms.uSpread.value = 1;
     p.blurMat.uniforms.tDiffuse.value = p.bA.texture;
     p.blurMat.uniforms.uDir.value.set(1, 0);
     p.blurMat.uniforms.uTexel.value.set(1 / p.bA.width, 1 / p.bA.height);
@@ -1897,6 +2152,12 @@
     p.blurMat.uniforms.uDir.value.set(1, 0);
     p.blurMat.uniforms.uTexel.value.set(1 / p.bC.width, 1 / p.bC.height);
     drawFS(p.blurMat, p.bC);
+    p.blurMat.uniforms.tDiffuse.value = p.bC.texture;
+    p.blurMat.uniforms.uDir.value.set(1, 0);
+    p.blurMat.uniforms.uSpread.value = 3.4;
+    p.blurMat.uniforms.uTexel.value.set(1 / p.bC.width, 1 / p.bC.height);
+    drawFS(p.blurMat, p.bD);
+    p.blurMat.uniforms.uSpread.value = 1;
     drawFS(p.compMat, null);
   }
 
@@ -1920,13 +2181,14 @@
 
   const camPoses = BEATS.map((b, i) => {
     if (b.kind === "finale") return { pos: overviewPos.clone(), look: overviewLook.clone() };
-    const d = b.d || 12;
+    const d = (b.d || 12) * 0.92;
     const cy = b.cy || 3.0;
     const ly = b.ly === undefined ? 0.2 : b.ly;
     const base = stationPos(i);
+    const tan = V(Math.cos(thetaOf(i)), 0, -Math.sin(thetaOf(i)));
     return {
       pos: base.clone().add(outwardOf(i).multiplyScalar(d)).add(V(0, cy, 0)),
-      look: base.clone().add(V(0, ly, 0))
+      look: base.clone().add(tan.multiplyScalar(-1.4)).add(V(0, ly - 1.15, 0))
     };
   });
 
@@ -1939,7 +2201,6 @@
   let autoT = 0;
   const DWELL = 5.2;
   let time = 0;
-  let last = performance.now();
   let scrubbing = false;
   let wasPlaying = false;
   let hintTimer = 0;
@@ -1955,6 +2216,10 @@
   let pinchZoom = 1;
   let dragDist = 0;
   let dragStart = 0;
+  let camSpeed = 0;
+  let nearestShown = -1;
+  let capReady = false;
+  const prevCam = new THREE.Vector3().copy(camera.position);
 
   const clock = new THREE.Clock();
 
@@ -1985,7 +2250,8 @@
     }
     userZoom = damp(userZoom, userZoomT, 6, dt);
     const off = desiredPos.clone().sub(desiredLook);
-    let r = off.length() * userZoom;
+    const aspectFit = camera.aspect < 0.95 ? clamp(0.95 / camera.aspect, 1, 1.9) : 1;
+    let r = off.length() * userZoom * aspectFit;
     let th = Math.atan2(off.x, off.z) + userYaw;
     let ph = Math.acos(clamp(off.y / Math.max(0.001, off.length()), -1, 1)) + userPitch;
     ph = clamp(ph, 0.16, 2.55);
@@ -1998,6 +2264,14 @@
     camera.position.lerp(targetPos, k);
     camLook.lerp(desiredLook, 1 - Math.exp(-5.2 * dt));
     camera.lookAt(camLook);
+    const v = camera.position.distanceTo(prevCam) / Math.max(0.001, dt);
+    prevCam.copy(camera.position);
+    camSpeed = damp(camSpeed, v, 4, dt);
+    const fovT = 40 + clamp(camSpeed * 0.5, 0, 3);
+    if (Math.abs(camera.fov - fovT) > 0.005) {
+      camera.fov = damp(camera.fov, fovT, 3, dt);
+      camera.updateProjectionMatrix();
+    }
   }
 
   const caps = [];
@@ -2006,12 +2280,16 @@
       const b = BEATS[i];
       const el = document.createElement("div");
       el.className = "cap";
-      const words = b.caption.split(" ").map((w, k) =>
-        '<span class="w" style="transition-delay:' + (k * 45) + 'ms">' + w + "</span>"
-      ).join(" ");
+      const kw = (b.key || "").toLowerCase();
+      const words = b.caption.split(" ").map((w, k) => {
+        const clean = w.toLowerCase().replace(/[^a-z]/g, "");
+        const hit = kw && clean.indexOf(kw) >= 0;
+        return '<span class="w' + (hit ? " k" : "") + '" style="transition-delay:' + (k * 45) + 'ms">' + w + "</span>";
+      }).join(" ");
+      if (i === N - 1) el.classList.add("finale-cap");
       el.innerHTML =
         '<div class="cap-rule"></div>' +
-        '<div class="kicker">' + ACTS[b.act].roman + " &middot; " + ACTS[b.act].label +
+        '<div class="kicker">' + (b.kicker || (ACTS[b.act].roman + " &middot; " + ACTS[b.act].label)) +
         ' &nbsp;&middot;&nbsp; <b>' + String(i + 1).padStart(2, "0") + " / " + N + "</b></div>" +
         '<div class="line">' + words + "</div>" +
         '<div class="mathline"></div>';
@@ -2081,9 +2359,10 @@
       const x = (tmpV.x * 0.5 + 0.5) * w + (e.L.dx || 0);
       const y = (-tmpV.y * 0.5 + 0.5) * h + (e.L.dy || 0);
       if (x < -80 || x > w + 80 || y < -60 || y > h + 60) { e.el.style.opacity = "0"; continue; }
-      const a = (1 - smoothstep(0.4, 0.95, d)) * (1 - smoothstep(0.0, 1.0, 0));
-      e.el.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
-      e.el.style.opacity = (a * activityOf(e.beat)).toFixed(3);
+      const a = (1 - smoothstep(0.4, 0.95, d)) * activityOf(e.beat);
+      const lift = (1 - a) * 7;
+      e.el.style.transform = "translate3d(" + x.toFixed(1) + "px," + (y + lift).toFixed(1) + "px,0)";
+      e.el.style.opacity = a.toFixed(3);
     }
   }
 
@@ -2114,25 +2393,25 @@
       const row = document.createElement("button");
       row.className = "ov-row";
       row.dataset.beat = String(i);
-      row.innerHTML = '<span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="t">' + b.caption + "</span>";
+      const dotCol = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ffd27d", "#ff8fdc"][b.act] || "#9df0ff";
+      row.innerHTML = '<span class="dot" style="background:' + dotCol + '"></span><span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="t">' + b.caption + "</span>";
       row.addEventListener("click", () => { closeOverview(); goTo(i, true); });
       ovList.appendChild(row);
     }
   }
 
   function updateOverview() {
+    const b = Math.round(beat);
     for (const row of ovList.querySelectorAll(".ov-row")) {
-      row.classList.toggle("on", Number(row.dataset.beat) === beat);
+      row.classList.toggle("on", Number(row.dataset.beat) === b);
     }
   }
 
   function goTo(i, instant) {
+    if (overview) closeOverview();
     beat = clamp(Math.round(i), 0, N - 1);
     target = beat;
     autoT = 0;
-    playing = false;
-    updatePlay();
-    setCapIn(beat);
     updateOverview();
     a11y.textContent = BEATS[beat].caption;
     if (instant) {
@@ -2140,8 +2419,19 @@
     }
   }
 
-  function next() { if (beat < N - 1) goTo(beat + 1, false); }
-  function prev() { if (beat > 0) goTo(beat - 1, false); }
+  let lastNav = 0;
+  function next() {
+    const now = performance.now();
+    if (now - lastNav < 150) return;
+    lastNav = now;
+    if (beat < N - 1) goTo(beat + 1, false);
+  }
+  function prev() {
+    const now = performance.now();
+    if (now - lastNav < 150) return;
+    lastNav = now;
+    if (beat > 0) goTo(beat - 1, false);
+  }
 
   function updatePlay() {
     const btn = $("play");
@@ -2221,13 +2511,13 @@
       scrubbing = true; wasPlaying = playing; playing = false; updatePlay();
     });
     scrub.addEventListener("input", () => {
+      if (overview) closeOverview();
       const v = clamp(parseFloat(scrub.value) || 0, 0, N - 1);
       beatFloat = v;
       beat = Math.round(v);
-      setCapIn(beat);
       const b = BEATS[Math.round(v)];
       tip.innerHTML = "<b>" + String(Math.round(v) + 1).padStart(2, "0") + "</b>" + b.caption;
-      tip.style.left = (v / (N - 1) * 100) + "%";
+      tip.style.left = clamp(v / (N - 1) * 100, 9, 91) + "%";
       tip.classList.add("show");
       a11y.textContent = b.caption;
     });
@@ -2242,6 +2532,10 @@
 
     window.addEventListener("keydown", (e) => {
       if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+      if (document.body.classList.contains("help-open")) {
+        if (e.code === "Escape" || e.code === "KeyH" || e.key === "?") { e.preventDefault(); closeHelp(); }
+        return;
+      }
       if (e.code === "Escape") { closeHelp(); closeOverview(); return; }
       if (e.code === "ArrowRight" || e.code === "ArrowDown" || e.code === "PageDown") {
         e.preventDefault(); closeOverview(); next(); wake(); return;
@@ -2336,7 +2630,7 @@
         if (autoT > DWELL) { autoT = 0; goTo(beat + 1, false); }
       }
     }
-    if (!scrubbing) beatFloat = damp(beatFloat, beat, 3.4, dt);
+    if (!scrubbing) beatFloat = damp(beatFloat, beat, 3.0, dt);
     if (Math.abs(beatFloat - beat) < 0.0008) beatFloat = beat;
     ovBlend = damp(ovBlend, overview ? 1 : 0, 2.6, dt);
 
@@ -2344,9 +2638,10 @@
     scene.updateMatrixWorld(true);
 
     const ov = ovBlend;
+    const ovVisual = Math.max(ovBlend, smoothstep(N - 2.2, N - 1.05, beatFloat));
     for (let i = 0; i < stations.length; i++) {
       const st = stations[i];
-      const a = activityOf(i);
+      const a = activityOf(i) * (1 - 0.92 * ov);
       st.group.visible = a > 0.002;
       if (!st.group.visible) continue;
       st.update({ a, r: clamp(1 - Math.abs(beatFloat - i), 0, 1), t: time, dt, ov, i });
@@ -2354,11 +2649,11 @@
 
     if (journey) {
       journey.setProgress(clamp((beatFloat + 0.55) / (N - 1), 0.001, 1));
-      journey.setOpacity(lerp(0.16, 0.95, ov));
+      journey.setOpacity(lerp(0.045, 0.92, ovVisual));
     }
     if (beacons) {
-      beacons.setOpacity(lerp(0.32, 1, ov));
-      beacons.setScale(lerp(0.5, 5.4, ov));
+      beacons.setOpacity(lerp(0.2, 1, ovVisual));
+      beacons.setScale(lerp(0.5, 7.2, ovVisual));
       for (let i = 0; i < N; i++) {
         const visited = i <= beatFloat + 0.02;
         const cur = Math.abs(beatFloat - i) < 0.5;
@@ -2366,14 +2661,35 @@
       }
     }
 
+    if (constellation) {
+      constellation.pillars.setOpacity(0.3 * ovVisual);
+      constellation.halo.setOpacity(0.26 * ovVisual);
+      constellation.halo.obj.rotation.z += dt * 0.01;
+      for (const r of constellation.arcs) r.setOpacity(0.42 * ovVisual);
+      if (world && world.auroraGroup) world.auroraGroup.rotation.y = Math.sin(time * 0.012) * 0.03;
+    if (world && world.comet) {
+        world.comet.setOpacity(0.9 * ovVisual);
+        world.comet.set(world.road.getPoint(fract(time * 0.035)));
+      }
+    }
     for (const m of matRecords) {
       if (m.uniforms && m.uniforms.uTime) m.uniforms.uTime.value = time;
     }
-    if (post) post.compMat.uniforms.uTime.value = time;
+    if (post) {
+      post.compMat.uniforms.uTime.value = time;
+      post.compMat.uniforms.uExposure.value = 1.32 + 0.16 * ovVisual;
+    }
+
+    const near = Math.round(beatFloat);
+    if (capReady && near !== nearestShown) {
+      nearestShown = near;
+      setCapIn(near);
+      document.body.classList.toggle("finale", near === N - 1);
+      updateOverview();
+    }
 
     updateCaptions();
     updateLabels();
-    updateOverview();
 
     fill.style.width = (clamp(beatFloat / (N - 1), 0, 1) * 100).toFixed(2) + "%";
     if (!scrubbing) scrub.value = String(beatFloat);
@@ -2384,10 +2700,8 @@
     if (DEBUG && (frameCount === 4 || frameCount % 30 === 0)) {
       const p0 = stationPos(Math.round(beatFloat)).clone().project(camera);
       document.documentElement.dataset.stats = JSON.stringify({
-        beat, beatFloat: +beatFloat.toFixed(3),
-        draws: renderer ? renderer.info.render.calls : 0,
-        tris: renderer ? renderer.info.render.triangles : 0,
-        points: renderer ? renderer.info.render.points : 0,
+        beat, beatFloat: +beatFloat.toFixed(3), playing,
+        draws: sceneInfo.calls, tris: sceneInfo.tris, points: sceneInfo.points,
         cam: [camera.position.x, camera.position.y, camera.position.z].map(v => +v.toFixed(2)),
         ndc: [+p0.x.toFixed(2), +p0.y.toFixed(2), +p0.z.toFixed(2)],
         fps: +(1 / Math.max(0.001, dt)).toFixed(1)
@@ -2404,6 +2718,7 @@
       initPost();
       world = buildWorld();
       buildAllStations();
+      buildConstellation();
       buildLabels();
       bindPointer();
       window.addEventListener("resize", resize);
@@ -2413,21 +2728,25 @@
       buildLabels();
     }
     bindUI();
-    setCapIn(0);
+    setCapIn(-1);
 
     if (QS.has("beat")) {
-      const b = clamp(parseInt(QS.get("beat"), 10) || 0, 0, N - 1);
+      const b = clamp(parseFloat(QS.get("beat")) || 0, 0, N - 1);
       beat = b; beatFloat = b; target = b;
+    }
+    if (QS.get("bare") === "1") {
+      for (const id of ["captions", "controls", "labels", "hint", "tip"]) { const el = $(id); if (el) el.style.display = "none"; }
     }
     if (QS.get("overview") === "1") { overview = true; ovBlend = 1; document.body.classList.add("overview-open"); overviewEl.setAttribute("aria-hidden", "false"); }
     if (QS.get("pause") !== "1") {
       const p = QS.get("play");
       if (p === "1") { playing = true; }
     }
-    setCapIn(beat);
+    const bshow = Math.round(beat);
+    document.body.classList.toggle("finale", bshow === N - 1);
     updateOverview();
     updatePlay();
-    a11y.textContent = BEATS[beat].caption;
+    a11y.textContent = BEATS[bshow].caption;
 
     if (QS.has("beat") || DEBUG) beatFloat = beat;
     if (renderer && post) {
@@ -2435,13 +2754,17 @@
       scene.updateMatrixWorld(true);
       for (let i = 0; i < stations.length; i++) {
         const a = activityOf(i);
+        stations[i].group.visible = a > 0.002;
         if (a > 0.002) stations[i].update({ a, r: clamp(1 - Math.abs(beatFloat - i), 0, 1), t: 0.4, dt: 0.016, ov: ovBlend, i });
       }
       renderFrame();
+      updateCaptions();
+      updateLabels();
+      updateOverview();
       if (DEBUG) {
         const p0 = stationPos(Math.round(beatFloat)).clone().project(camera);
         document.documentElement.dataset.stats = JSON.stringify({
-          beat, beatFloat: +beatFloat.toFixed(3),
+          beat, beatFloat: +beatFloat.toFixed(3), playing,
           draws: sceneInfo.calls, tris: sceneInfo.tris, points: sceneInfo.points,
           cam: [camera.position.x, camera.position.y, camera.position.z].map(v => +v.toFixed(2)),
           ndc: [+p0.x.toFixed(2), +p0.y.toFixed(2), +p0.z.toFixed(2)]
@@ -2454,6 +2777,8 @@
       setTimeout(() => { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 1300);
       hint.classList.add("on");
       setTimeout(() => hint.classList.remove("on"), 9000);
+      document.body.classList.add("ready");
+      setTimeout(() => { capReady = true; nearestShown = Math.round(beatFloat); setCapIn(nearestShown); }, 620);
       frame();
     });
 
@@ -2462,10 +2787,8 @@
       setBeat(v) { goTo(v, true); },
       info() {
         return {
-          beat, beatFloat, overview, webgl: webglOK,
-          draws: renderer ? renderer.info.render.calls : 0,
-          tris: renderer ? renderer.info.render.triangles : 0,
-          points: renderer ? renderer.info.render.points : 0,
+          beat, beatFloat, overview, playing, webgl: webglOK,
+          draws: sceneInfo.calls, tris: sceneInfo.tris, points: sceneInfo.points,
           stations: stations.length,
           labels: labelEntries.length
         };
