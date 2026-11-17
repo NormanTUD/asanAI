@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>HoTT — A Visual Path</title>
+<link rel="stylesheet" href="../../Temml-Local.min.css">
+<style>
+  :root{
+    color-scheme: dark;
+    --ice:#9df0ff;
+    --cyan:#5bdcff;
+    --violet:#b691ff;
+    --gold:#ffd27d;
+    --mint:#8dffc6;
+    --rose:#ff8fdc;
+    --bg:#03040c;
+    --text:#eefaff;
+    --muted:rgba(198,230,255,.58);
+    --line:rgba(150,196,255,.16);
+    --glass:linear-gradient(180deg,rgba(13,20,42,.55),rgba(5,8,20,.46));
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{position:fixed;inset:0}
+  #stage{position:fixed;inset:0;z-index:1}
+  canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+  #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(1,2,7,.55) 100%)}
+  body.no-webgl #stage{background:
+    radial-gradient(50% 40% at 50% 40%,rgba(80,190,255,.10),transparent 70%),
+    radial-gradient(60% 50% at 70% 70%,rgba(180,135,255,.08),transparent 70%),
+    #03040c}
+
+  #labels{position:fixed;inset:0;z-index:8;pointer-events:none;overflow:hidden}
+  .mn-label{position:absolute;left:0;top:0;white-space:nowrap;opacity:0;
+    font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    color:rgba(214,244,255,.9);
+    text-shadow:0 0 14px rgba(80,200,255,.38),0 2px 8px rgba(0,0,0,.65);
+    will-change:transform,opacity;transition:none;pointer-events:none}
+  .mn-label.sym{font-style:italic;font-size:17px;letter-spacing:.01em}
+  .mn-label.word{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;
+    letter-spacing:.20em;text-transform:uppercase;color:rgba(190,228,255,.66);
+    text-shadow:0 0 12px rgba(80,200,255,.25),0 2px 8px rgba(0,0,0,.6)}
+  .mn-label.big{font-style:italic;font-size:26px}
+  .mn-label sub{font-size:.62em;transform:translateY(.18em)}
+
+  #captions{position:fixed;left:clamp(22px,5.4vw,72px);bottom:clamp(104px,15vh,156px);
+    z-index:12;pointer-events:none;max-width:min(56ch,62vw);min-height:150px}
+  .cap{position:absolute;left:0;bottom:0;width:100%;opacity:0;visibility:hidden;will-change:transform,opacity,filter}
+  .cap-rule{width:52px;height:1px;margin-bottom:18px;
+    background:linear-gradient(90deg,var(--cyan),rgba(180,135,255,.35) 60%,transparent)}
+  .kicker{font-size:9.5px;letter-spacing:.30em;text-transform:uppercase;
+    color:rgba(150,226,255,.72);font-weight:600;margin-bottom:14px}
+  .kicker b{font-weight:600;color:rgba(210,244,255,.92)}
+  .line{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    font-size:clamp(28px,3.25vw,50px);line-height:1.06;letter-spacing:-.015em;
+    color:#f2fcff;text-shadow:0 0 46px rgba(80,190,255,.14)}
+  .line .w{display:inline-block;opacity:0;transform:translateY(.42em);
+    transition:opacity .62s cubic-bezier(.22,1,.36,1),transform .72s cubic-bezier(.22,1,.36,1)}
+  .cap.in .line .w{opacity:1;transform:none}
+  .mathline{margin-top:14px;font-size:clamp(14px,1.35vw,18px);
+    color:rgba(212,243,255,.82);min-height:1.4em;
+    opacity:0;transform:translateY(6px);transition:opacity .8s ease .18s,transform .8s ease .18s}
+  .cap.in .mathline{opacity:1;transform:none}
+  .mathline math{font-size:1.02em}
+  @media (max-width:760px){
+    #captions{left:18px;right:18px;bottom:112px;max-width:none;min-height:120px}
+    .line{font-size:clamp(24px,7.4vw,34px);line-height:1.1}
+    .kicker{font-size:8.5px;letter-spacing:.24em;margin-bottom:11px}
+    .cap-rule{width:38px;margin-bottom:13px}
+  }
+
+  #controls{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));
+    transform:translateX(-50%);z-index:22;display:flex;align-items:center;gap:8px;
+    padding:9px 11px;border-radius:20px;border:1px solid var(--line);
+    background:var(--glass);box-shadow:0 18px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
+    width:min(700px,calc(100vw - 24px));opacity:.82;transition:opacity .5s ease}
+  #controls:hover,#controls.visible{opacity:1}
+  .icon{flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+    border:1px solid rgba(150,195,255,.13);background:rgba(120,170,255,.045);
+    color:#cfeaff;display:grid;place-items:center;cursor:pointer;padding:0;
+    transition:background .25s,border-color .25s,box-shadow .25s,transform .2s,color .25s;
+    -webkit-tap-highlight-color:transparent}
+  .icon:hover{background:rgba(120,190,255,.12);border-color:rgba(150,220,255,.32);
+    box-shadow:0 0 18px rgba(80,190,255,.2)}
+  .icon:active{transform:scale(.93)}
+  .icon.on{color:#eaffff;background:rgba(80,200,255,.15);border-color:rgba(120,230,255,.4);
+    box-shadow:0 0 22px rgba(80,200,255,.22)}
+  .icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.55;
+    stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+  .scrubwrap{position:relative;flex:1;height:34px;min-width:60px}
+  .track{position:absolute;left:0;right:0;top:50%;height:2px;transform:translateY(-50%);
+    border-radius:2px;background:rgba(145,185,255,.13);overflow:hidden}
+  .fill{height:100%;width:0;border-radius:2px;
+    background:linear-gradient(90deg,#3fd0ff,#7fc8ff 45%,#b691ff 78%,#ffd27d);
+    box-shadow:0 0 12px rgba(67,207,255,.45)}
+  .ticks{position:absolute;left:0;right:0;top:50%;height:10px;transform:translateY(-50%);pointer-events:none}
+  .ticks i{position:absolute;top:50%;width:2px;height:2px;border-radius:50%;
+    background:rgba(190,220,255,.30);transform:translate(-50%,-50%)}
+  .ticks i.act{width:2px;height:6px;border-radius:1px;background:rgba(210,238,255,.52)}
+  input[type=range]{-webkit-appearance:none;appearance:none;position:absolute;inset:0;
+    width:100%;height:100%;margin:0;background:transparent;cursor:pointer;z-index:3}
+  input[type=range]:focus{outline:none}
+  input[type=range]::-webkit-slider-runnable-track{height:34px;background:transparent;border:0}
+  input[type=range]::-moz-range-track{height:34px;background:transparent;border:0}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:13px;height:13px;border-radius:50%;
+    background:radial-gradient(circle at 38% 32%,#fff 0%,#d6f8ff 38%,#79dcff 70%,#5aaeff 100%);
+    border:1px solid rgba(230,255,255,.85);
+    box-shadow:0 0 9px rgba(140,240,255,.95),0 0 26px rgba(80,190,255,.5)}
+  input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;border:1px solid rgba(230,255,255,.85);
+    background:radial-gradient(circle at 38% 32%,#fff 0%,#d6f8ff 38%,#79dcff 70%,#5aaeff 100%);
+    box-shadow:0 0 9px rgba(140,240,255,.95),0 0 26px rgba(80,190,255,.5)}
+  .sep{width:1px;height:20px;background:rgba(150,190,255,.12);flex:0 0 auto}
+  #tip{position:absolute;bottom:38px;transform:translateX(-50%) translateY(6px);
+    padding:7px 11px;border-radius:11px;border:1px solid rgba(150,200,255,.18);
+    background:rgba(6,11,26,.82);backdrop-filter:blur(12px);
+    font-size:10.5px;letter-spacing:.08em;white-space:nowrap;color:rgba(220,245,255,.86);
+    opacity:0;pointer-events:none;transition:opacity .18s,transform .18s}
+  #tip.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #tip b{color:rgba(140,235,255,.95);font-weight:600;margin-right:7px}
+  @media (max-width:760px){
+    #controls{gap:6px;padding:8px 9px;border-radius:18px;opacity:.9}
+    .icon{width:31px;height:31px}
+    .icon.opt{display:none}
+  }
+
+  #overview{position:fixed;right:max(16px,3.2vw);top:50%;z-index:30;
+    width:min(372px,40vw);max-height:min(74vh,720px);display:flex;flex-direction:column;
+    padding:18px 18px 14px;border-radius:20px;border:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(9,14,32,.82),rgba(4,7,18,.72));
+    box-shadow:0 30px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(22px) saturate(1.35);-webkit-backdrop-filter:blur(22px) saturate(1.35);
+    opacity:0;pointer-events:none;transform:translateY(-50%) translateX(26px);
+    transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+  body.overview-open #overview{opacity:1;pointer-events:auto;transform:translateY(-50%) translateX(0)}
+  .ov-head{display:flex;align-items:baseline;justify-content:space-between;
+    padding:0 4px 12px;border-bottom:1px solid rgba(150,195,255,.10)}
+  .ov-head span{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(150,226,255,.68);font-weight:600}
+  .ov-head button{background:none;border:0;color:rgba(200,230,255,.5);font-size:18px;cursor:pointer;line-height:1;padding:2px 4px}
+  .ov-head button:hover{color:#eaffff}
+  #ovList{overflow:auto;overscroll-behavior:contain;padding:6px 2px 2px;scrollbar-width:thin}
+  #ovList::-webkit-scrollbar{width:5px}
+  #ovList::-webkit-scrollbar-thumb{background:rgba(130,190,255,.18);border-radius:3px}
+  .ov-act{margin:14px 6px 6px;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;
+    color:rgba(160,210,255,.42);font-weight:600}
+  .ov-row{display:flex;gap:11px;align-items:baseline;width:100%;text-align:left;
+    background:none;border:0;border-radius:10px;padding:7px 8px;cursor:pointer;
+    color:rgba(210,238,255,.66);transition:background .2s,color .2s}
+  .ov-row:hover{background:rgba(90,170,255,.08);color:#eafaff}
+  .ov-row.on{background:rgba(90,190,255,.10);color:#f4fdff}
+  .ov-row .n{font-size:9.5px;font-variant-numeric:tabular-nums;color:rgba(130,200,255,.55);
+    width:20px;flex:0 0 auto;letter-spacing:.06em}
+  .ov-row.on .n{color:rgba(150,236,255,.95)}
+  .ov-row .t{font-family:ui-serif,Georgia,serif;font-size:12.5px;line-height:1.35;letter-spacing:.005em}
+  @media (max-width:760px){
+    #overview{left:14px;right:14px;width:auto;top:auto;bottom:88px;max-height:62vh;transform:translateY(20px)}
+    body.overview-open #overview{transform:translateY(0)}
+  }
+
+  #help{position:fixed;inset:0;z-index:45;display:grid;place-items:center;
+    background:rgba(2,3,8,.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+    opacity:0;pointer-events:none;transition:opacity .35s ease}
+  body.help-open #help{opacity:1;pointer-events:auto}
+  .help-card{width:min(440px,calc(100vw - 36px));padding:26px 28px 22px;border-radius:20px;
+    border:1px solid rgba(150,200,255,.16);background:linear-gradient(180deg,rgba(11,17,38,.94),rgba(4,7,18,.9));
+    box-shadow:0 40px 120px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
+  .help-title{font-family:ui-serif,Georgia,serif;font-size:24px;letter-spacing:-.01em;margin-bottom:6px}
+  .help-sub{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(150,226,255,.55);margin-bottom:18px}
+  .help-grid{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;font-size:12.5px;color:rgba(216,240,255,.74)}
+  .help-grid kbd{display:inline-block;min-width:24px;padding:3px 7px;border-radius:6px;
+    border:1px solid rgba(150,200,255,.18);background:rgba(120,170,255,.07);
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;color:#dff6ff;text-align:center}
+  .help-foot{margin-top:18px;padding-top:14px;border-top:1px solid rgba(150,195,255,.10);
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(150,200,255,.42)}
+
+  #hint{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:15;
+    font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;
+    color:rgba(190,225,255,.42);opacity:0;transition:opacity 1.2s ease;pointer-events:none;
+    white-space:nowrap}
+  #hint.on{opacity:1}
+
+  #loader{position:fixed;inset:0;z-index:60;display:grid;place-items:center;
+    background:radial-gradient(circle at 50% 45%,#070b1b 0%,#02030a 55%,#010207 100%);
+    transition:opacity 1.1s cubic-bezier(.4,0,.2,1)}
+  #loader.hide{opacity:0;pointer-events:none}
+  #loader .halo{position:absolute;width:min(70vmin,560px);aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle,rgba(70,150,255,.16),rgba(120,80,255,.05) 42%,transparent 70%);
+    filter:blur(18px);animation:breathe 3.6s ease-in-out infinite}
+  #loader .ring{position:relative;width:58px;height:58px;border-radius:50%;
+    border:1px solid rgba(130,210,255,.12);border-top-color:rgba(150,235,255,.95);
+    border-right-color:rgba(180,135,255,.55);
+    box-shadow:0 0 26px rgba(80,180,255,.4),inset 0 0 14px rgba(80,180,255,.18);
+    animation:spin 1.35s linear infinite}
+  #loader .ring::after{content:"";position:absolute;inset:9px;border-radius:50%;
+    border:1px solid rgba(150,220,255,.08);border-bottom-color:rgba(180,135,255,.5);
+    animation:spin 2.2s linear infinite reverse}
+  #loader .brand{position:absolute;top:calc(50% + 58px);left:50%;transform:translateX(-50%);
+    font-family:ui-serif,Georgia,serif;font-size:15px;letter-spacing:.42em;color:rgba(206,240,255,.62);
+    text-transform:uppercase;white-space:nowrap}
+  #loader .sub{position:absolute;top:calc(50% + 88px);left:50%;transform:translateX(-50%);
+    font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:rgba(150,220,255,.34);white-space:nowrap}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes breathe{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.05)}}
+
+  #a11y{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  body.overview-open #captions,body.help-open #captions,body.overview-open #hint{opacity:0}
+  body.overview-open #labels,body.help-open #labels{opacity:0}
+  #fatal{position:fixed;inset:0;z-index:70;display:none;place-items:center;padding:30px;
+    background:#03040c;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#ffb4c0}
+  #fatal.show{display:grid}
+  @media (prefers-reduced-motion:reduce){
+    #loader .ring,#loader .ring::after,#loader .halo{animation:none}
+    .line .w{transition:none}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c"></canvas></div>
+<div id="labels" aria-hidden="true"></div>
+<div id="captions"></div>
+<div id="tip"></div>
+<div id="hint">arrow keys travel</div>
+
+<div id="controls" role="group" aria-label="Presentation controls">
+  <button id="play" class="icon" aria-label="Play">
+    <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/></svg>
+  </button>
+  <div class="scrubwrap">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="ticks" id="ticks"></div>
+    <input id="scrub" type="range" min="0" max="1" step="0.0001" value="0" aria-label="Timeline">
+  </div>
+  <div class="sep"></div>
+  <button id="overviewBtn" class="icon opt" aria-label="Overview">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/></svg>
+  </button>
+  <button id="orbit" class="icon on opt" aria-label="Orbit">
+    <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.2" ry="3.6"/><path d="M12 3.8v16.4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>
+  </button>
+  <button id="restart" class="icon" aria-label="Restart">
+    <svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4 4.5v4h4"/></svg>
+  </button>
+  <button id="full" class="icon" aria-label="Fullscreen">
+    <svg viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg>
+  </button>
+  <button id="helpBtn" class="icon opt" aria-label="Help">
+    <svg viewBox="0 0 24 24"><path d="M9.6 9.2a2.6 2.6 0 1 1 3.6 2.4c-.9.4-1.2 1-1.2 2"/><circle cx="12" cy="17.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+  </button>
+</div>
+
+<aside id="overview" aria-hidden="true">
+  <div class="ov-head"><span>Path of ideas</span><button id="ovClose" aria-label="Close">&times;</button></div>
+  <div id="ovList"></div>
+</aside>
+
+<div id="help" role="dialog" aria-modal="true" aria-label="Keyboard help">
+  <div class="help-card">
+    <div class="help-title">Travel the path</div>
+    <div class="help-sub">Keyboard</div>
+    <div class="help-grid">
+      <span><kbd>&larr;</kbd> <kbd>&rarr;</kbd></span><span>previous / next idea</span>
+      <span><kbd>space</kbd></span><span>auto-play the film</span>
+      <span><kbd>G</kbd></span><span>overview of all ideas</span>
+      <span><kbd>R</kbd></span><span>return to the beginning</span>
+      <span><kbd>F</kbd></span><span>fullscreen</span>
+      <span><kbd>O</kbd></span><span>stop / start orbit</span>
+      <span><kbd>Esc</kbd></span><span>close</span>
+      <span><kbd>drag</kbd> <kbd>scroll</kbd></span><span>look around, zoom</span>
+    </div>
+    <div class="help-foot">Each arrow crosses one idea. The space between is part of it.</div>
+  </div>
+</div>
+
+<div id="loader">
+  <div class="halo"></div>
+  <div class="ring"></div>
+  <div class="brand">HoTT</div>
+  <div class="sub">homotopy type theory</div>
+</div>
+
+<div id="a11y" aria-live="polite"></div>
+<div id="fatal"></div>
+
+<script src="../../../libs/three.min.js"></script>
+<script src="../../temml.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("c");
+  const stage = $("stage");
+  const loader = $("loader");
+  const controls = $("controls");
+  const scrub = $("scrub");
+  const fill = $("fill");
+  const ticksEl = $("ticks");
+  const tip = $("tip");
+  const hint = $("hint");
+  const captionsEl = $("captions");
+  const labelsEl = $("labels");
+  const a11y = $("a11y");
+  const overviewEl = $("overview");
+  const ovList = $("ovList");
+  const helpEl = $("help");
+  const fatalEl = $("fatal");
+
+  const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const QS = new URLSearchParams(location.search);
+  const DEBUG = QS.has("debug");
+  const DPR = Math.min(window.devicePixelRatio || 1, window.innerWidth < 820 ? 1.3 : 1.5);
+  const TAU = Math.PI * 2;
+
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smoothstep = (a, b, x) => {
+    const t = clamp((x - a) / (b - a), 0, 1);
+    return t * t * (3 - 2 * t);
+  };
+  const damp = (a, b, lambda, dt) => lerp(a, b, 1 - Math.exp(-lambda * dt));
+  const fract = (x) => x - Math.floor(x);
+
+  let seedState = 0x9e3779b9;
+  function rand() {
+    seedState ^= seedState << 13;
+    seedState ^= seedState >>> 17;
+    seedState ^= seedState << 5;
+    return (seedState >>> 0) / 4294967296;
+  }
+
+  const C = {
+    ice: 0x9df0ff,
+    cyan: 0x5bdcff,
+    violet: 0xb691ff,
+    gold: 0xffd27d,
+    mint: 0x8dffc6,
+    rose: 0xff8fdc,
+    red: 0xff6b7d,
+    white: 0xf2fdff
+  };
+
+  const ACTS = [
+    { roman: "I", label: "Space" },
+    { roman: "II", label: "Identity" },
+    { roman: "III", label: "Fibers" },
+    { roman: "IV", label: "Structure" },
+    { roman: "V", label: "Higher" },
+    { roman: "VI", label: "Universe" }
+  ];
+
+  const BEATS = [
+    { act: 0, kind: "title",     caption: "Everything is a space.", d: 16, cy: 4.4, ly: 0.0 },
+    { act: 0, kind: "point",     caption: "A point is a place.", d: 13, cy: 3.2 },
+    { act: 0, kind: "path",      caption: "Two points, one path.", d: 12, cy: 2.8 },
+    { act: 0, kind: "homotopy",  caption: "A path can bend into another.", d: 12.6, cy: 2.6 },
+    { act: 0, kind: "composite", caption: "Paths compose; every path reverses.", d: 12.6, cy: 2.6 },
+    { act: 0, kind: "torus",     caption: "A loop can remember a hole.", d: 12.4, cy: 3.0 },
+    { act: 1, kind: "typespace", caption: "A type is a space.", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "identity",  caption: "Identity is a space of paths.", math: "a =_{A} b", d: 12.2, cy: 2.6 },
+    { act: 1, kind: "j",         caption: "One reflexivity path generates them all.", d: 12.6, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "family",    caption: "A family: one type above each point.", d: 12.6, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "fibration", caption: "A fibration: fibers over every point.", d: 12.6, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "transport", caption: "Transport carries structure along the path.", d: 12.6, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "pi",        caption: "Pi chooses one point in every fiber.", math: "\\Pi_{x:A}\\,B(x)", d: 12.6, cy: 2.4 },
+    { act: 2, kind: "fiber", mode: "sigma",     caption: "Sigma is the whole bundle.", math: "\\Sigma_{x:A}\\,B(x)", d: 12.6, cy: 2.4 },
+    { act: 3, kind: "props",     caption: "A proposition: at most one proof.", d: 12.2, cy: 2.4 },
+    { act: 3, kind: "logic",     caption: "Logic is built from types.", d: 12.4, cy: 2.4 },
+    { act: 3, kind: "set",       caption: "A set: at most one path.", d: 12.2, cy: 2.6 },
+    { act: 3, kind: "levels",    caption: "Higher levels remember higher paths.", d: 13.2, cy: 2.6 },
+    { act: 4, kind: "universe",  caption: "Types of types: the universe.", d: 12.0, cy: 2.6 },
+    { act: 4, kind: "equiv",     caption: "An equivalence matches points and paths.", d: 12.8, cy: 2.6 },
+    { act: 4, kind: "univalence",caption: "Univalence: equivalence is equality.", math: "(A \\simeq B) \\simeq (A = B)", d: 12.4, cy: 2.6 },
+    { act: 4, kind: "interval",  caption: "Two points and a path: the interval.", d: 12.4, cy: 2.6 },
+    { act: 4, kind: "circle",    caption: "One point and a loop: the circle.", d: 12.0, cy: 2.8 },
+    { act: 5, kind: "finale",    caption: "One long path through the universe.", d: 12, cy: 3 }
+  ];
+  const N = BEATS.length;
+
+  const R_ARC = 42;
+  const SPAN = 2.05;
+  const thetaOf = (i) => -SPAN / 2 + (i / (N - 1)) * SPAN;
+  const stationPos = (i) => new THREE.Vector3(
+    R_ARC * Math.sin(thetaOf(i)),
+    2.3 * Math.sin(i * 0.57) + 0.7 * Math.sin(i * 0.21 + 1.1),
+    R_ARC * Math.cos(thetaOf(i))
+  );
+  const outwardOf = (i) => new THREE.Vector3(Math.sin(thetaOf(i)), 0, Math.cos(thetaOf(i)));
+
+  const overviewPos = new THREE.Vector3(0, 35, 129);
+  const overviewLook = new THREE.Vector3(0, 0, 7);
+
+  let webglOK = true;
+  let renderer = null;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.08, 900);
+  const camLook = new THREE.Vector3();
+  camera.position.copy(overviewPos);
+  camLook.copy(overviewLook);
+  camera.lookAt(camLook);
+
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+    renderer.setPixelRatio(DPR);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.autoClear = false;
+    renderer.toneMapping = THREE.NoToneMapping;
+    renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+    renderer.setClearColor(0x03040c, 1);
+  } catch (e) {
+    webglOK = false;
+    document.body.classList.add("no-webgl");
+  }
+
+  function fatal(err) {
+    loader.classList.add("hide");
+    fatalEl.classList.add("show");
+    fatalEl.textContent = "HoTT: " + (err && err.message ? err.message : String(err));
+    document.documentElement.dataset.error = String(err && err.stack || err);
+  }
+  window.addEventListener("error", (e) => { if (!document.documentElement.dataset.error) fatal(e.error || e.message); });
+
+  const matRecords = [];
+  function reg(mat) { matRecords.push(mat); return mat; }
+
+  function makeDots(list, opt) {
+    opt = opt || {};
+    const n = list.length;
+    const pos = new Float32Array(Math.max(1, n) * 3);
+    const col = new Float32Array(Math.max(1, n) * 3);
+    const siz = new Float32Array(Math.max(1, n));
+    const sed = new Float32Array(Math.max(1, n));
+    const glo = new Float32Array(Math.max(1, n));
+    const c = new THREE.Color();
+    for (let i = 0; i < n; i++) {
+      const d = list[i];
+      pos[i * 3] = d.p.x; pos[i * 3 + 1] = d.p.y; pos[i * 3 + 2] = d.p.z;
+      c.set(d.color !== undefined ? d.color : (opt.color !== undefined ? opt.color : C.ice));
+      c.toArray(col, i * 3);
+      siz[i] = d.size !== undefined ? d.size : (opt.size !== undefined ? opt.size : 1);
+      sed[i] = d.seed !== undefined ? d.seed : rand();
+      glo[i] = d.glow !== undefined ? d.glow : 1;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute("aColor", new THREE.BufferAttribute(col, 3));
+    geo.setAttribute("aSize", new THREE.BufferAttribute(siz, 1));
+    geo.setAttribute("aSeed", new THREE.BufferAttribute(sed, 1));
+    geo.setAttribute("aGlow", new THREE.BufferAttribute(glo, 1));
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uOpacity: { value: opt.opacity !== undefined ? opt.opacity : 1 },
+        uScale: { value: opt.scale !== undefined ? opt.scale : 1 },
+        uDPR: { value: DPR },
+        uDrift: { value: opt.drift !== undefined ? opt.drift : 1 }
+      },
+      vertexShader: [
+        "attribute float aSize;",
+        "attribute float aSeed;",
+        "attribute vec3 aColor;",
+        "attribute float aGlow;",
+        "uniform float uTime,uOpacity,uScale,uDPR,uDrift;",
+        "varying vec3 vColor;",
+        "varying float vA;",
+        "void main(){",
+        "  vec3 p=position;",
+        "  float t=uTime;",
+        "  p.x+=uDrift*0.045*sin(t*0.31+aSeed*19.0);",
+        "  p.y+=uDrift*0.045*cos(t*0.27+aSeed*13.0);",
+        "  p.z+=uDrift*0.045*sin(t*0.23+aSeed*7.0);",
+        "  vec4 mv=modelViewMatrix*vec4(p,1.0);",
+        "  gl_Position=projectionMatrix*mv;",
+        "  float sz=aSize*uScale*uDPR*(85.0/max(0.7,-mv.z));",
+        "  gl_PointSize=clamp(sz,1.0,52.0);",
+        "  vColor=aColor;",
+        "  float tw=0.72+0.28*sin(t*(0.9+aSeed*1.6)+aSeed*40.0);",
+        "  vA=uOpacity*aGlow*(0.55+0.45*tw);",
+        "}"
+      ].join("\n"),
+      fragmentShader: [
+        "varying vec3 vColor;",
+        "varying float vA;",
+        "void main(){",
+        "  vec2 q=gl_PointCoord*2.0-1.0;",
+        "  float d=length(q);",
+        "  if(d>1.0) discard;",
+        "  float core=smoothstep(1.0,0.0,d);",
+        "  float halo=pow(max(0.0,1.0-d),2.5);",
+        "  gl_FragColor=vec4(vColor*(0.75+1.7*core),(core*0.85+halo*0.4)*vA);",
+        "}"
+      ].join("\n"),
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      blending: THREE.AdditiveBlending
+    });
+    reg(mat);
+    const obj = new THREE.Points(geo, mat);
+    obj.frustumCulled = false;
+    return {
+      obj, mat, geo,
+      setOpacity(v) { mat.uniforms.uOpacity.value = v; },
+      setScale(v) { mat.uniforms.uScale.value = v; },
+      setGlow(i, v) { glo[i] = v; geo.attributes.aGlow.needsUpdate = true; }
+    };
+  }
+
+  function makeLines(pairs, opt) {
+    opt = opt || {};
+    const pos = new Float32Array(Math.max(2, pairs.length * 2) * 3);
+    for (let i = 0; i < pairs.length; i++) {
+      const a = pairs[i][0], b = pairs[i][1];
+      pos[i * 6] = a.x; pos[i * 6 + 1] = a.y; pos[i * 6 + 2] = a.z;
+      pos[i * 6 + 3] = b.x; pos[i * 6 + 4] = b.y; pos[i * 6 + 5] = b.z;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    const mat = new THREE.LineBasicMaterial({
+      color: opt.color !== undefined ? opt.color : C.ice,
+      transparent: true,
+      opacity: opt.opacity !== undefined ? opt.opacity : 0.3,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      depthTest: true
+    });
+    const obj = new THREE.LineSegments(geo, mat);
+    obj.frustumCulled = false;
+    return { obj, mat, geo, setOpacity(v) { mat.opacity = v; } };
+  }
+
+  function makeLine2(color, opacity) {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(6), 3));
+    const mat = new THREE.LineBasicMaterial({
+      color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    const obj = new THREE.Line(geo, mat);
+    obj.frustumCulled = false;
+    return {
+      obj, mat,
+      set(a, b) {
+        const p = geo.attributes.position;
+        p.setXYZ(0, a.x, a.y, a.z);
+        p.setXYZ(1, b.x, b.y, b.z);
+        p.needsUpdate = true;
+      },
+      setOpacity(v) { mat.opacity = v; }
+    };
+  }
+
+  function ribbonMaterial(a, b, opacity, progress, soft, pulse) {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uA: { value: new THREE.Color(a) },
+        uB: { value: new THREE.Color(b) },
+        uOpacity: { value: opacity },
+        uProgress: { value: progress },
+        uSoft: { value: soft },
+        uPulse: { value: pulse || 0 },
+        uTime: { value: 0 }
+      },
+      vertexShader: [
+        "varying vec2 vUv;",
+        "void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }"
+      ].join("\n"),
+      fragmentShader: [
+        "uniform vec3 uA,uB;",
+        "uniform float uOpacity,uProgress,uSoft,uPulse,uTime;",
+        "varying vec2 vUv;",
+        "void main(){",
+        "  float x=vUv.x;",
+        "  float on=1.0-smoothstep(uProgress-0.035,uProgress+0.02,x);",
+        "  if(on<=0.0005) discard;",
+        "  vec3 col=mix(uA,uB,smoothstep(0.0,1.0,x));",
+        "  float head=exp(-pow((x-uProgress)/0.035,2.0));",
+        "  float beat=exp(-pow((fract(x-fract(uTime*0.13+uPulse)))/0.05,2.0));",
+        "  col+=head*0.7+beat*0.5;",
+        "  float a=uOpacity*on*(uSoft>0.5?(0.11):(0.78));",
+        "  gl_FragColor=vec4(col,a);",
+        "}"
+      ].join("\n"),
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending
+    });
+    reg(mat);
+    return mat;
+  }
+
+  function makeRibbon(curve, opt) {
+    opt = opt || {};
+    const seg = opt.seg || 120;
+    const rad = opt.rad || 0.02;
+    const closed = !!opt.closed;
+    const a = opt.a !== undefined ? opt.a : C.ice;
+    const b = opt.b !== undefined ? opt.b : C.violet;
+    const opacity = opt.opacity !== undefined ? opt.opacity : 1;
+    const progress = opt.progress !== undefined ? opt.progress : 1;
+    const pulse = opt.pulse !== undefined ? opt.pulse : 0;
+    const coreMat = ribbonMaterial(a, b, opacity, progress, 0, pulse);
+    const glowMat = ribbonMaterial(a, b, opacity * 0.22, progress, 1, pulse);
+    const core = new THREE.Mesh(new THREE.TubeGeometry(curve, seg, rad, 6, closed), coreMat);
+    const glow = new THREE.Mesh(new THREE.TubeGeometry(curve, seg, rad * 5.5, 8, closed), glowMat);
+    core.frustumCulled = false;
+    glow.frustumCulled = false;
+    return {
+      core, glow,
+      setOpacity(v) { coreMat.uniforms.uOpacity.value = v; glowMat.uniforms.uOpacity.value = v * 0.22; },
+      setProgress(v) { coreMat.uniforms.uProgress.value = v; glowMat.uniforms.uProgress.value = v; }
+    };
+  }
+
+  function makeSheet(ss, tt, fn, opt) {
+    opt = opt || {};
+    const nv = (ss + 1) * (tt + 1);
+    const pos = new Float32Array(nv * 3);
+    const uv = new Float32Array(nv * 2);
+    for (let j = 0; j <= tt; j++) {
+      for (let i = 0; i <= ss; i++) {
+        const s = i / ss, t = j / tt;
+        const p = fn(s, t);
+        const k = j * (ss + 1) + i;
+        pos[k * 3] = p.x; pos[k * 3 + 1] = p.y; pos[k * 3 + 2] = p.z;
+        uv[k * 2] = s; uv[k * 2 + 1] = t;
+      }
+    }
+    const idx = [];
+    for (let j = 0; j < tt; j++) {
+      for (let i = 0; i < ss; i++) {
+        const a = j * (ss + 1) + i, b = a + 1, c = a + ss + 1, d = c + 1;
+        idx.push(a, c, b, b, c, d);
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uA: { value: new THREE.Color(opt.a !== undefined ? opt.a : C.cyan) },
+        uB: { value: new THREE.Color(opt.b !== undefined ? opt.b : C.violet) },
+        uRim: { value: new THREE.Color(opt.rim !== undefined ? opt.rim : C.gold) },
+        uOpacity: { value: opt.opacity !== undefined ? opt.opacity : 0.3 },
+        uBand: { value: 0.5 },
+        uTime: { value: 0 }
+      },
+      vertexShader: [
+        "varying vec2 vUv;",
+        "varying vec3 vN;",
+        "varying vec3 vV;",
+        "void main(){",
+        "  vUv=uv;",
+        "  vec4 mv=modelViewMatrix*vec4(position,1.0);",
+        "  vN=normalize(normalMatrix*normal);",
+        "  vV=normalize(-mv.xyz);",
+        "  gl_Position=projectionMatrix*mv;",
+        "}"
+      ].join("\n"),
+      fragmentShader: [
+        "uniform vec3 uA,uB,uRim;",
+        "uniform float uOpacity,uBand,uTime;",
+        "varying vec2 vUv;",
+        "varying vec3 vN;",
+        "varying vec3 vV;",
+        "void main(){",
+        "  float fres=pow(1.0-abs(dot(normalize(vN),normalize(vV))),1.8);",
+        "  float band=exp(-pow((vUv.y-uBand)/0.075,2.0));",
+        "  float irid=0.5+0.5*cos(6.2831*(vUv.x*0.7+vUv.y*0.35+uTime*0.03));",
+        "  vec3 col=mix(uA,uB,irid)*(0.38+0.62*fres)+uRim*(0.18+0.82*band);",
+        "  float a=uOpacity*(0.05+0.62*band+0.10*fres);",
+        "  gl_FragColor=vec4(col*(0.72+0.85*band),a);",
+        "}"
+      ].join("\n"),
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending
+    });
+    reg(mat);
+    const obj = new THREE.Mesh(geo, mat);
+    obj.frustumCulled = false;
+    return {
+      obj, mat,
+      setOpacity(v) { mat.uniforms.uOpacity.value = v; },
+      setBand(v) { mat.uniforms.uBand.value = v; }
+    };
+  }
+
+  function makeIrid(geo, opt) {
+    opt = opt || {};
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uA: { value: new THREE.Color(opt.a !== undefined ? opt.a : C.cyan) },
+        uB: { value: new THREE.Color(opt.b !== undefined ? opt.b : C.violet) },
+        uRim: { value: new THREE.Color(opt.rim !== undefined ? opt.rim : C.gold) },
+        uOpacity: { value: opt.opacity !== undefined ? opt.opacity : 0.5 },
+        uWobble: { value: opt.wobble !== undefined ? opt.wobble : 0.05 },
+        uSeed: { value: opt.seed !== undefined ? opt.seed : rand() * 10 },
+        uTime: { value: 0 }
+      },
+      vertexShader: [
+        "uniform float uTime,uWobble,uSeed;",
+        "varying vec3 vN;",
+        "varying vec3 vV;",
+        "varying vec3 vP;",
+        "void main(){",
+        "  vec3 p=position;",
+        "  float w=sin(p.x*1.7+uTime*0.35+uSeed)+sin(p.y*2.1-uTime*0.27+uSeed*1.3)+sin(p.z*1.9+uTime*0.31+uSeed*0.7);",
+        "  p+=normal*(uWobble*w);",
+        "  vec4 mv=modelViewMatrix*vec4(p,1.0);",
+        "  vN=normalize(normalMatrix*normal);",
+        "  vV=normalize(-mv.xyz);",
+        "  vP=p;",
+        "  gl_Position=projectionMatrix*mv;",
+        "}"
+      ].join("\n"),
+      fragmentShader: [
+        "uniform vec3 uA,uB,uRim;",
+        "uniform float uOpacity,uTime;",
+        "varying vec3 vN;",
+        "varying vec3 vV;",
+        "varying vec3 vP;",
+        "void main(){",
+        "  vec3 N=normalize(vN);",
+        "  vec3 V=normalize(vV);",
+        "  float fres=pow(1.0-abs(dot(N,V)),1.9);",
+        "  float lam=0.5+0.5*dot(N,normalize(vec3(0.4,0.85,0.55)));",
+        "  float band=0.5+0.5*sin(vP.x*1.6+vP.y*2.2+vP.z*1.8+uTime*0.18);",
+        "  vec3 irid=0.5+0.5*cos(6.2831*(vec3(0.0,0.33,0.67)+dot(N,V)*0.6+vP.x*0.08));",
+        "  vec3 col=mix(uA,uB,band)*(0.34+0.66*lam)+uRim*fres*0.85+irid*fres*0.12;",
+        "  float a=uOpacity*(0.10+0.32*fres+0.05*lam);",
+        "  gl_FragColor=vec4(col*(0.85+0.5*fres),a);",
+        "}"
+      ].join("\n"),
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending
+    });
+    reg(mat);
+    const obj = new THREE.Mesh(geo, mat);
+    obj.frustumCulled = false;
+    return { obj, mat, setOpacity(v) { mat.uniforms.uOpacity.value = v; } };
+  }
+
+  function makeMarker(color, size) {
+    const d = makeDots([{ p: new THREE.Vector3(0, 0, 0), size: size || 1, color: color, glow: 1.2 }], { opacity: 1 });
+    return {
+      obj: d.obj,
+      set(p) {
+        const a = d.geo.attributes.position;
+        a.setXYZ(0, p.x, p.y, p.z);
+        a.needsUpdate = true;
+      },
+      setOpacity(v) { d.setOpacity(v); }
+    };
+  }
+
+  function makeRing(radius, tube, color, opacity) {
+    const geo = new THREE.TorusGeometry(radius, tube, 8, 120);
+    const mat = new THREE.MeshBasicMaterial({
+      color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: true
+    });
+    const obj = new THREE.Mesh(geo, mat);
+    return { obj, mat, setOpacity(v) { mat.opacity = v; } };
+  }
+
+  function makeArrow(parent, a, b, color, opacity) {
+    const dir = b.clone().sub(a);
+    const len = dir.length();
+    const mesh = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.011, 0.011, Math.max(0.001, len), 6),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    mesh.position.copy(a).add(b).multiplyScalar(0.5);
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+    const head = new THREE.Mesh(
+      new THREE.ConeGeometry(0.06, Math.max(0.06, len * 0.16), 10),
+      mesh.material
+    );
+    head.position.copy(b).add(dir.clone().normalize().multiplyScalar(-Math.max(0.03, len * 0.08)));
+    head.quaternion.copy(mesh.quaternion);
+    parent.add(mesh, head);
+    return {
+      mat: mesh.material,
+      setOpacity(v) { mesh.material.opacity = v; }
+    };
+  }
+
+  function makeTri(parent, a, b, c, color, opacity) {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array([
+      a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z
+    ]), 3));
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshBasicMaterial({
+      color, transparent: true, opacity, blending: THREE.AdditiveBlending,
+      depthWrite: false, side: THREE.DoubleSide
+    });
+    const obj = new THREE.Mesh(geo, mat);
+    parent.add(obj);
+    return { obj, mat, setOpacity(v) { mat.opacity = v; } };
+  }
+
+  function curveOf(pts, closed) {
+    return new THREE.CatmullRomCurve3(pts, !!closed, "catmullrom", 0.5);
+  }
+
+  function subCurve(c, a, b) {
+    const pts = [];
+    for (let k = 0; k <= 24; k++) pts.push(c.getPoint(lerp(a, b, k / 24)));
+    return curveOf(pts, false);
+  }
+
+  function V(x, y, z) { return new THREE.Vector3(x, y, z); }
+
+  let stationBuild = function () { return { labels: [], update: function () {} }; };
+  let buildTitle, buildPoint, buildPath, buildHomotopy, buildComposite, buildTorus;
+
+  buildTitle = function (g) {
+    const labels = [];
+    const sphere = makeIrid(new THREE.SphereGeometry(2.15, 48, 32), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.52, wobble: 0.07 });
+    g.add(sphere.obj);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(2.22, 2)),
+      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.09, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    g.add(wire);
+    const core = makeDots([{ p: V(0, 0, 0), size: 2.6, color: C.white }], { opacity: 1 });
+    g.add(core.obj);
+    const list = [];
+    for (let k = 0; k < 760; k++) {
+      const rr = 2.5 + Math.pow(rand(), 0.6) * 4.4;
+      const th = rand() * TAU;
+      const ph = Math.acos(2 * rand() - 1);
+      list.push({
+        p: V(rr * Math.sin(ph) * Math.cos(th), rr * Math.cos(ph) * 0.55, rr * Math.sin(ph) * Math.sin(th)),
+        size: 0.22 + rand() * 0.55,
+        color: rand() < 0.5 ? C.ice : C.violet,
+        seed: rand(), glow: 0.4 + rand() * 0.7
+      });
+    }
+    const dust = makeDots(list, { opacity: 0.7, drift: 1.2 });
+    g.add(dust.obj);
+    const r1 = makeRing(3.4, 0.008, C.ice, 0.26); r1.obj.rotation.x = 1.12; r1.obj.rotation.z = 0.42; g.add(r1.obj);
+    const r2 = makeRing(4.5, 0.006, C.violet, 0.18); r2.obj.rotation.x = -0.72; r2.obj.rotation.y = 0.5; g.add(r2.obj);
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        sphere.setOpacity(a * 0.55);
+        core.setOpacity(a);
+        dust.setOpacity(a * 0.72);
+        sphere.obj.rotation.y += ctx.dt * 0.06;
+        wire.rotation.y -= ctx.dt * 0.03;
+        wire.rotation.x += ctx.dt * 0.012;
+        dust.obj.rotation.y += ctx.dt * 0.02;
+        r1.setOpacity(a * 0.3); r2.setOpacity(a * 0.2);
+      }
+    };
+  };
+
+  buildPoint = function (g) {
+    const labels = [];
+    const dot = makeDots([{ p: V(0, 0, 0), size: 2.7, color: C.white }], { opacity: 1 });
+    g.add(dot.obj);
+    const ring = makeRing(0.58, 0.008, C.ice, 0.5);
+    g.add(ring.obj);
+    const ring2 = makeRing(0.95, 0.004, C.violet, 0.2);
+    g.add(ring2.obj);
+    const list = [];
+    for (let k = 0; k < 320; k++) {
+      const rr = 1.4 + Math.pow(rand(), 0.7) * 5.2;
+      const th = rand() * TAU, ph = Math.acos(2 * rand() - 1);
+      list.push({ p: V(rr * Math.sin(ph) * Math.cos(th), rr * Math.cos(ph) * 0.7, rr * Math.sin(ph) * Math.sin(th)), size: 0.14 + rand() * 0.3, color: rand() < 0.6 ? C.ice : C.violet, seed: rand(), glow: 0.35 });
+    }
+    const dust = makeDots(list, { opacity: 0.6, drift: 0.8 });
+    g.add(dust.obj);
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        dot.setOpacity(a);
+        const pulse = 0.5 + 0.5 * Math.sin(ctx.t * 1.4);
+        ring.setOpacity(a * (0.32 + 0.3 * pulse));
+        ring.obj.scale.setScalar(1 + 0.06 * pulse);
+        ring2.setOpacity(a * 0.18);
+        ring2.obj.rotation.z += ctx.dt * 0.12;
+        dust.setOpacity(a * 0.55);
+        dust.obj.rotation.y += ctx.dt * 0.012;
+      }
+    };
+  };
+
+  buildPath = function (g) {
+    const labels = [];
+    const a = V(-2.8, -0.5, 0);
+    const b = V(2.8, 0.45, 0);
+    const p = curveOf([a, V(-1.5, 0.6, 0.28), V(0, -0.1, 0.42), V(1.5, 0.62, 0.28), b], false);
+    const rib = makeRibbon(p, { a: C.cyan, b: C.violet, rad: 0.022, opacity: 1, seg: 150, pulse: 0.2 });
+    g.add(rib.core, rib.glow);
+    const dots = makeDots([
+      { p: a, size: 0.75, color: C.ice },
+      { p: b, size: 0.75, color: C.rose }
+    ], { opacity: 1 });
+    g.add(dots.obj);
+    const marker = makeMarker(C.white, 1.35);
+    g.add(marker.obj);
+    labels.push({ text: "a", p: a, dx: -4, dy: -26, kind: "sym" });
+    labels.push({ text: "b", p: b, dx: 6, dy: -26, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a1 = ctx.a * ctx.r;
+        const prog = smoothstep(0.12, 0.92, ctx.r);
+        rib.setProgress(prog);
+        rib.setOpacity(a1);
+        dots.setOpacity(a1);
+        marker.setOpacity(a1 * 0.95);
+        marker.set(p.getPoint(fract(ctx.t * 0.11)));
+      }
+    };
+  };
+
+  buildHomotopy = function (g) {
+    const labels = [];
+    const a = V(-2.8, -0.6, 0);
+    const b = V(2.8, 0.35, 0);
+    const low = curveOf([a, V(-1.55, -1.35, 0.25), V(0, -1.6, 0.42), V(1.55, -1.25, 0.25), b], false);
+    const high = curveOf([a, V(-1.55, 0.85, 0.25), V(0, 1.5, 0.42), V(1.55, 1.0, 0.25), b], false);
+    const pl = makeRibbon(low, { a: C.cyan, b: C.ice, rad: 0.018, opacity: 0.9, seg: 140, pulse: 0.1 });
+    const ph = makeRibbon(high, { a: C.violet, b: C.rose, rad: 0.018, opacity: 0.9, seg: 140, pulse: 0.5 });
+    g.add(pl.core, pl.glow, ph.core, ph.glow);
+    const sheet = makeSheet(46, 20, (s, t) => {
+      const p1 = low.getPoint(s), p2 = high.getPoint(s);
+      const q = p1.clone().lerp(p2, t);
+      q.z += Math.sin(Math.PI * t) * 0.18;
+      return q;
+    }, { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.55 });
+    g.add(sheet.obj);
+    const dots = makeDots([{ p: a, size: 0.75, color: C.ice }, { p: b, size: 0.75, color: C.rose }], { opacity: 1 });
+    g.add(dots.obj);
+    const marker = makeMarker(C.white, 1.2);
+    g.add(marker.obj);
+    const bandMarker = makeMarker(C.gold, 1.1);
+    g.add(bandMarker.obj);
+    labels.push({ text: "p", p: V(-1.2, -1.5, 0.3), dx: -8, dy: 20, kind: "sym" });
+    labels.push({ text: "q", p: V(-1.2, 1.25, 0.3), dx: -8, dy: -22, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a1 = ctx.a * ctx.r;
+        const prog = smoothstep(0.14, 0.9, ctx.r);
+        pl.setProgress(prog); ph.setProgress(prog);
+        pl.setOpacity(a1 * 0.85); ph.setOpacity(a1 * 0.7);
+        sheet.setOpacity(a1 * 0.6);
+        const band = 0.5 + 0.42 * Math.sin(ctx.t * 0.42);
+        sheet.setBand(band);
+        dots.setOpacity(a1);
+        marker.setOpacity(a1 * 0.8);
+        marker.set(low.getPoint(fract(ctx.t * 0.09)));
+        bandMarker.setOpacity(a1 * 0.9);
+        const bt = clamp(band, 0, 1);
+        const p1 = low.getPoint(fract(ctx.t * 0.07 + 0.15)), p2 = high.getPoint(fract(ctx.t * 0.07 + 0.15));
+        bandMarker.set(p1.lerp(p2, bt));
+      }
+    };
+  };
+
+  buildComposite = function (g) {
+    const labels = [];
+    const a = V(-3.2, -0.75, 0);
+    const b = V(0, 0.62, 0);
+    const c = V(3.2, -0.45, 0);
+    const p = curveOf([a, V(-2.2, 0.5, 0.25), V(-1.1, 0.72, 0.3), b], false);
+    const q = curveOf([b, V(1.1, -0.35, 0.3), V(2.2, -0.62, 0.25), c], false);
+    const pr = makeRibbon(p, { a: C.cyan, b: C.ice, rad: 0.016, opacity: 0.6, seg: 110, pulse: 0.1 });
+    const qr = makeRibbon(q, { a: C.violet, b: C.ice, rad: 0.016, opacity: 0.6, seg: 110, pulse: 0.5 });
+    g.add(pr.core, pr.glow, qr.core, qr.glow);
+    const path = new THREE.CurvePath();
+    path.add(p); path.add(q);
+    const comp = makeRibbon(path, { a: C.gold, b: C.white, rad: 0.014, opacity: 0.95, seg: 170, pulse: 0.25 });
+    g.add(comp.core, comp.glow);
+    const dots = makeDots([
+      { p: a, size: 0.7, color: C.ice },
+      { p: b, size: 0.7, color: C.ice },
+      { p: c, size: 0.7, color: C.rose }
+    ], { opacity: 1 });
+    g.add(dots.obj);
+    const fwd = makeMarker(C.white, 1.3);
+    const back = makeMarker(C.gold, 1.1);
+    g.add(fwd.obj, back.obj);
+    labels.push({ text: "a", p: a, dx: -4, dy: -26, kind: "sym" });
+    labels.push({ text: "b", p: b, dx: 4, dy: -28, kind: "sym" });
+    labels.push({ text: "c", p: c, dx: 6, dy: -26, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a1 = ctx.a * ctx.r;
+        const prog = smoothstep(0.12, 0.9, ctx.r);
+        pr.setProgress(prog); qr.setProgress(prog); comp.setProgress(prog);
+        pr.setOpacity(a1 * 0.5); qr.setOpacity(a1 * 0.5); comp.setOpacity(a1 * 0.95);
+        dots.setOpacity(a1);
+        const u = fract(ctx.t * 0.1);
+        fwd.setOpacity(a1 * 0.95); back.setOpacity(a1 * 0.8);
+        fwd.set(path.getPoint(u));
+        back.set(path.getPoint(1 - u));
+      }
+    };
+  };
+
+  buildTorus = function (g) {
+    const labels = [];
+    const tg = new THREE.Group();
+    tg.rotation.x = 1.12;
+    tg.rotation.y = -0.18;
+    g.add(tg);
+    const R = 1.9, r = 0.62;
+    const tor = makeIrid(new THREE.TorusGeometry(R, r, 28, 130), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.42, wobble: 0.012 });
+    tg.add(tor.obj);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.TorusGeometry(R, r, 12, 46)),
+      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.055, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    tg.add(wire);
+    const tp = (u, v) => V((R + r * Math.cos(v)) * Math.cos(u), (R + r * Math.cos(v)) * Math.sin(u), r * Math.sin(v));
+    const bigPts = [], smallPts = [];
+    for (let k = 0; k < 96; k++) bigPts.push(tp(k / 96 * TAU, Math.PI / 2));
+    for (let k = 0; k < 64; k++) smallPts.push(tp(0.0, k / 64 * TAU));
+    const big = makeRibbon(curveOf(bigPts, true), { a: C.gold, b: C.rose, rad: 0.024, opacity: 1, seg: 170, closed: true, pulse: 0.15 });
+    const small = makeRibbon(curveOf(smallPts, true), { a: C.mint, b: C.cyan, rad: 0.02, opacity: 0.9, seg: 130, closed: true, pulse: 0.6 });
+    tg.add(big.core, big.glow, small.core, small.glow);
+    const bigCurve = curveOf(bigPts, true), smallCurve = curveOf(smallPts, true);
+    const m1 = makeMarker(C.white, 1.15), m2 = makeMarker(C.gold, 0.95);
+    tg.add(m1.obj, m2.obj);
+    labels.push({ text: "loop", p: tp(Math.PI * 0.5, Math.PI / 2), dx: 10, dy: -22, kind: "word", node: tg });
+    return {
+      labels,
+      update(ctx) {
+        const a1 = ctx.a * ctx.r;
+        tor.setOpacity(a1 * 0.5);
+        tor.obj.rotation.z += ctx.dt * 0.02;
+        wire.rotation.z -= ctx.dt * 0.01;
+        big.setOpacity(a1 * 0.95); small.setOpacity(a1 * 0.75);
+        m1.setOpacity(a1); m2.setOpacity(a1 * 0.8);
+        m1.set(bigCurve.getPoint(fract(ctx.t * 0.06)));
+        m2.set(smallCurve.getPoint(fract(ctx.t * 0.11 + 0.3)));
+        g.rotation.y = Math.sin(ctx.t * 0.08) * 0.08;
+      }
+    };
+  };
+
+  const stations = [];
+  function buildAllStations() {
+    for (let i = 0; i < N; i++) {
+      const group = new THREE.Group();
+      group.position.copy(stationPos(i));
+      group.rotation.y = thetaOf(i);
+      let built;
+      const kind = BEATS[i].kind;
+      if (kind === "title") built = buildTitle(group);
+      else if (kind === "point") built = buildPoint(group);
+      else if (kind === "path") built = buildPath(group);
+      else if (kind === "homotopy") built = buildHomotopy(group);
+      else if (kind === "composite") built = buildComposite(group);
+      else if (kind === "torus") built = buildTorus(group);
+      else {
+        const dot = makeDots([{ p: V(0, 0, 0), size: 0.9, color: ACT_COLOR(BEATS[i].act) }], { opacity: 1 });
+        group.add(dot.obj);
+        const ring = makeRing(0.7, 0.006, ACT_COLOR(BEATS[i].act), 0.3);
+        group.add(ring.obj);
+        built = {
+          labels: [],
+          update(ctx) {
+            const a = ctx.a * ctx.r;
+            dot.setOpacity(a);
+            ring.setOpacity(a * 0.3);
+          }
+        };
+      }
+      group.visible = false;
+      scene.add(group);
+      stations.push({ group, update: built.update, labels: built.labels, pos: stationPos(i), out: outwardOf(i) });
+    }
+  }
+
+  function ACT_COLOR(a) {
+    return [C.ice, C.cyan, C.violet, C.mint, C.gold, C.rose][a] || C.ice;
+  }
+
+  let journey = null;
+  let beacons = null;
+  let beaconGlow = null;
+  let beaconIdx = [];
+
+  function buildWorld() {
+    const bgU = { uTime: { value: 0 } };
+    const bgMat = new THREE.ShaderMaterial({
+      uniforms: bgU,
+      side: THREE.BackSide,
+      depthWrite: false,
+      depthTest: false,
+      vertexShader: [
+        "varying vec3 vDir;",
+        "void main(){ vDir=position; vec4 mv=modelViewMatrix*vec4(position,1.0); gl_Position=projectionMatrix*mv; }"
+      ].join("\n"),
+      fragmentShader: [
+        "uniform float uTime;",
+        "varying vec3 vDir;",
+        "void main(){",
+        "  vec3 d=normalize(vDir);",
+        "  float band=pow(max(0.0,1.0-abs(d.y*1.32+0.22*sin(d.x*2.1+d.z*1.7+uTime*0.008))),9.0);",
+        "  float glow=pow(max(0.0,dot(d,normalize(vec3(0.18,0.46,0.68)))),9.0);",
+        "  vec3 col=mix(vec3(0.0007,0.0011,0.0034),vec3(0.0022,0.0052,0.0145),band);",
+        "  col+=vec3(0.0016,0.0038,0.0100)*glow*0.6;",
+        "  gl_FragColor=vec4(col,1.0);",
+        "}"
+      ].join("\n")
+    });
+    const bg = new THREE.Mesh(new THREE.SphereGeometry(400, 40, 24), bgMat);
+    bg.frustumCulled = false;
+    bg.renderOrder = -100;
+    scene.add(bg);
+    reg(bgMat);
+
+    const dustList = [];
+    for (let k = 0; k < 4200; k++) {
+      const rr = 8 + Math.pow(rand(), 0.65) * 105;
+      const th = rand() * TAU, ph = Math.acos(2 * rand() - 1);
+      dustList.push({
+        p: V(rr * Math.sin(ph) * Math.cos(th), rr * Math.cos(ph), rr * Math.sin(ph) * Math.sin(th)),
+        size: 0.18 + rand() * 0.55,
+        color: rand() < 0.55 ? C.ice : (rand() < 0.6 ? C.violet : C.gold),
+        seed: rand(), glow: 0.25 + rand() * 0.5
+      });
+    }
+    const dust = makeDots(dustList, { opacity: 0.5, scale: 1.1, drift: 0.35 });
+    scene.add(dust.obj);
+
+    const roadPts = [];
+    for (let i = 0; i < N; i++) {
+      const p = stationPos(i).clone().add(outwardOf(i).multiplyScalar(-1.1));
+      p.y -= 3.7;
+      roadPts.push(p);
+    }
+    const road = curveOf(roadPts, false);
+    const rib = makeRibbon(road, { a: C.cyan, b: C.gold, rad: 0.032, opacity: 0.55, seg: 260, pulse: 0.2 });
+    scene.add(rib.core, rib.glow);
+    const beaconList = [];
+    for (let i = 0; i < N; i++) {
+      beaconList.push({
+        p: roadPts[i].clone(),
+        size: 2.5,
+        color: ACT_COLOR(BEATS[i].act),
+        seed: rand(), glow: 0.3
+      });
+    }
+    const bp = makeDots(beaconList, { opacity: 0.9, scale: 0.5 });
+    scene.add(bp.obj);
+    journey = rib;
+    beacons = bp;
+    beaconIdx = beaconList;
+    return {
+      bgMat, dust, road, bp
+    };
+  }
+
+  let world = null;
+
+  let post = null;
+  function initPost() {
+    const w = Math.floor(window.innerWidth * DPR);
+    const h = Math.floor(window.innerHeight * DPR);
+    const type = renderer.capabilities.isWebGL2 ? THREE.HalfFloatType : THREE.UnsignedByteType;
+    const makeRT = (ww, hh, depth) => new THREE.WebGLRenderTarget(Math.max(1, ww), Math.max(1, hh), {
+      minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat, type, depthBuffer: !!depth, stencilBuffer: false
+    });
+    const sceneRT = makeRT(w, h, true);
+    const bA = makeRT(Math.floor(w / 4), Math.floor(h / 4), false);
+    const bB = makeRT(Math.floor(w / 4), Math.floor(h / 4), false);
+    const bC = makeRT(Math.floor(w / 8), Math.floor(h / 8), false);
+    const bD = makeRT(Math.floor(w / 8), Math.floor(h / 8), false);
+    const fsCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), null);
+    quad.frustumCulled = false;
+    quad.visible = false;
+    scene.add(quad);
+    const FS_VERT = "varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }";
+    const BRIGHT = [
+      "uniform sampler2D tDiffuse; uniform float uThreshold; varying vec2 vUv;",
+      "void main(){ vec3 c=texture2D(tDiffuse,vUv).rgb; float l=dot(c,vec3(0.2126,0.7152,0.0722)); float k=smoothstep(uThreshold,uThreshold+0.4,l); gl_FragColor=vec4(c*k,1.0); }"
+    ].join("\n");
+    const BLUR = [
+      "uniform sampler2D tDiffuse; uniform vec2 uDir; uniform vec2 uTexel; varying vec2 vUv;",
+      "void main(){ vec3 s=vec3(0.0); float ws=0.0; for(int i=-4;i<=4;i++){ float fi=float(i); float w=exp(-fi*fi/8.5); s+=texture2D(tDiffuse,vUv+uDir*uTexel*fi).rgb*w; ws+=w; } gl_FragColor=vec4(s/ws,1.0); }"
+    ].join("\n");
+    const COMP = [
+      "uniform sampler2D tScene,tBloomA,tBloomB; uniform float uTime,uExposure; varying vec2 vUv;",
+      "vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0); }",
+      "void main(){",
+      "  vec2 uv=vUv; vec2 d=uv-0.5; float r2=dot(d,d);",
+      "  vec3 col;",
+      "  col.r=texture2D(tScene,uv+d*0.0022*r2).r;",
+      "  col.g=texture2D(tScene,uv).g;",
+      "  col.b=texture2D(tScene,uv-d*0.0022*r2).b;",
+      "  vec3 bloom=texture2D(tBloomA,uv).rgb*0.95+texture2D(tBloomB,uv).rgb*1.55;",
+      "  col+=bloom; col*=uExposure; col=aces(col);",
+      "  float vig=smoothstep(0.98,0.24,length(d)*1.18);",
+      "  col*=0.46+0.54*vig;",
+      "  col=pow(max(col,0.0),vec3(1.0/2.2));",
+      "  gl_FragColor=vec4(col,1.0);",
+      "}"
+    ].join("\n");
+    const mkFS = (frag, uniforms) => new THREE.ShaderMaterial({
+      uniforms, vertexShader: FS_VERT, fragmentShader: frag, depthTest: false, depthWrite: false
+    });
+    const brightMat = mkFS(BRIGHT, { tDiffuse: { value: sceneRT.texture }, uThreshold: { value: 0.5 } });
+    const blurMat = mkFS(BLUR, { tDiffuse: { value: null }, uDir: { value: new THREE.Vector2(1, 0) }, uTexel: { value: new THREE.Vector2(1 / 100, 1 / 100) } });
+    const compMat = mkFS(COMP, {
+      tScene: { value: sceneRT.texture },
+      tBloomA: { value: bA.texture },
+      tBloomB: { value: bC.texture },
+      uTime: { value: 0 },
+      uExposure: { value: 1.18 }
+    });
+    post = { sceneRT, bA, bB, bC, bD, fsCam, quad, brightMat, blurMat, compMat };
+  }
+
+  function drawFS(material, target) {
+    const p = post;
+    p.quad.material = material;
+    p.quad.visible = true;
+    renderer.setRenderTarget(target);
+    renderer.clear();
+    renderer.render(p.quad, p.fsCam);
+    p.quad.visible = false;
+  }
+
+  function renderFrame() {
+    const p = post;
+    renderer.setRenderTarget(p.sceneRT);
+    renderer.clear(true, true, true);
+    renderer.render(scene, camera);
+    drawFS(p.brightMat, p.bA);
+    p.blurMat.uniforms.tDiffuse.value = p.bA.texture;
+    p.blurMat.uniforms.uDir.value.set(1, 0);
+    p.blurMat.uniforms.uTexel.value.set(1 / p.bA.width, 1 / p.bA.height);
+    drawFS(p.blurMat, p.bB);
+    p.blurMat.uniforms.tDiffuse.value = p.bB.texture;
+    p.blurMat.uniforms.uDir.value.set(0, 1);
+    drawFS(p.blurMat, p.bA);
+    p.blurMat.uniforms.tDiffuse.value = p.bA.texture;
+    p.blurMat.uniforms.uDir.value.set(1, 0);
+    p.blurMat.uniforms.uTexel.value.set(1 / p.bA.width, 1 / p.bA.height);
+    drawFS(p.blurMat, p.bC);
+    p.blurMat.uniforms.tDiffuse.value = p.bC.texture;
+    p.blurMat.uniforms.uDir.value.set(0, 1);
+    drawFS(p.blurMat, p.bD);
+    p.blurMat.uniforms.tDiffuse.value = p.bD.texture;
+    p.blurMat.uniforms.uDir.value.set(1, 0);
+    p.blurMat.uniforms.uTexel.value.set(1 / p.bC.width, 1 / p.bC.height);
+    drawFS(p.blurMat, p.bC);
+    drawFS(p.compMat, null);
+  }
+
+  function resize() {
+    const w = window.innerWidth, h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    if (!renderer) return;
+    renderer.setPixelRatio(DPR);
+    renderer.setSize(w, h);
+    if (post) {
+      const W = Math.floor(w * DPR), H = Math.floor(h * DPR);
+      post.sceneRT.setSize(W, H);
+      post.bA.setSize(Math.floor(W / 4), Math.floor(H / 4));
+      post.bB.setSize(Math.floor(W / 4), Math.floor(H / 4));
+      post.bC.setSize(Math.floor(W / 8), Math.floor(H / 8));
+      post.bD.setSize(Math.floor(W / 8), Math.floor(H / 8));
+    }
+  }
+  window.addEventListener("resize", resize);
+
+  const camPoses = BEATS.map((b, i) => {
+    if (b.kind === "finale") return { pos: overviewPos.clone(), look: overviewLook.clone() };
+    const d = b.d || 12;
+    const cy = b.cy || 3.0;
+    const ly = b.ly === undefined ? 0.2 : b.ly;
+    const base = stationPos(i);
+    return {
+      pos: base.clone().add(outwardOf(i).multiplyScalar(d)).add(V(0, cy, 0)),
+      look: base.clone().add(V(0, ly, 0))
+    };
+  });
+
+  let beat = 0;
+  let beatFloat = 0;
+  let target = 0;
+  let overview = false;
+  let ovBlend = 0;
+  let playing = false;
+  let autoT = 0;
+  const DWELL = 5.2;
+  let time = 0;
+  let last = performance.now();
+  let scrubbing = false;
+  let wasPlaying = false;
+  let hintTimer = 0;
+  let userYaw = 0;
+  let userPitch = 0;
+  let userZoom = 1;
+  let userZoomT = 1;
+  let lastInteract = -10;
+  let orbitOn = !RM;
+  let pointerDown = false;
+  let pointers = new Map();
+  let pinchStart = 0;
+  let pinchZoom = 1;
+  let dragDist = 0;
+  let dragStart = 0;
+
+  const clock = new THREE.Clock();
+
+  function activityOf(i) {
+    const d = Math.abs(beatFloat - i);
+    return 1 - smoothstep(0.08, 1.0, d);
+  }
+
+  function updateCamera(dt) {
+    const f = clamp(beatFloat, 0, N - 1);
+    const i0 = Math.floor(f);
+    const i1 = Math.min(N - 1, i0 + 1);
+    const u = smoothstep(0, 1, f - i0);
+    const A = camPoses[i0], B = camPoses[i1];
+    const desiredPos = A.pos.clone().lerp(B.pos, u);
+    const desiredLook = A.look.clone().lerp(B.look, u);
+    if (ovBlend > 0.0001) {
+      desiredPos.lerp(overviewPos, ovBlend);
+      desiredLook.lerp(overviewLook, ovBlend);
+    }
+    if (!RM) {
+      if (orbitOn) userYaw += dt * (overview ? 0.008 : 0.016);
+      if (time - lastInteract > 5 && !overview) {
+        userYaw = damp(userYaw, 0, 1.1, dt);
+        userPitch = damp(userPitch, 0, 1.1, dt);
+        userZoomT = damp(userZoomT, 1, 1.1, dt);
+      }
+    }
+    userZoom = damp(userZoom, userZoomT, 6, dt);
+    const off = desiredPos.clone().sub(desiredLook);
+    let r = off.length() * userZoom;
+    let th = Math.atan2(off.x, off.z) + userYaw;
+    let ph = Math.acos(clamp(off.y / Math.max(0.001, off.length()), -1, 1)) + userPitch;
+    ph = clamp(ph, 0.16, 2.55);
+    const targetPos = desiredLook.clone().add(V(
+      r * Math.sin(ph) * Math.sin(th),
+      r * Math.cos(ph),
+      r * Math.sin(ph) * Math.cos(th)
+    ));
+    const k = 1 - Math.exp(-4.3 * dt);
+    camera.position.lerp(targetPos, k);
+    camLook.lerp(desiredLook, 1 - Math.exp(-5.2 * dt));
+    camera.lookAt(camLook);
+  }
+
+  const caps = [];
+  function buildCaptions() {
+    for (let i = 0; i < N; i++) {
+      const b = BEATS[i];
+      const el = document.createElement("div");
+      el.className = "cap";
+      const words = b.caption.split(" ").map((w, k) =>
+        '<span class="w" style="transition-delay:' + (k * 45) + 'ms">' + w + "</span>"
+      ).join(" ");
+      el.innerHTML =
+        '<div class="cap-rule"></div>' +
+        '<div class="kicker">' + ACTS[b.act].roman + " &middot; " + ACTS[b.act].label +
+        ' &nbsp;&middot;&nbsp; <b>' + String(i + 1).padStart(2, "0") + " / " + N + "</b></div>" +
+        '<div class="line">' + words + "</div>" +
+        '<div class="mathline"></div>';
+      captionsEl.appendChild(el);
+      const mathEl = el.querySelector(".mathline");
+      if (b.math) {
+        try {
+          mathEl.innerHTML = temml.renderToString(b.math, { displayMode: false, throwOnError: false });
+        } catch (e) {
+          mathEl.textContent = b.math;
+        }
+      }
+      caps.push(el);
+    }
+  }
+
+  function setCapIn(idx) {
+    for (let i = 0; i < caps.length; i++) caps[i].classList.toggle("in", i === idx);
+  }
+
+  function updateCaptions() {
+    for (let i = 0; i < N; i++) {
+      const d = Math.abs(beatFloat - i);
+      const op = overview || document.body.classList.contains("help-open") ? 0 : 1 - smoothstep(0.04, 0.92, d);
+      const el = caps[i];
+      if (op < 0.004) {
+        el.style.visibility = "hidden";
+        el.style.opacity = "0";
+        continue;
+      }
+      el.style.visibility = "visible";
+      el.style.opacity = op.toFixed(3);
+      el.style.transform = "translateY(" + clamp((beatFloat - i) * 16, -22, 22).toFixed(1) + "px)";
+      el.style.filter = "blur(" + (d * 2.4).toFixed(2) + "px)";
+    }
+  }
+
+  const labelEntries = [];
+  function buildLabels() {
+    for (let i = 0; i < stations.length; i++) {
+      const st = stations[i];
+      for (const L of st.labels) {
+        const el = document.createElement("div");
+        el.className = "mn-label " + (L.kind || "sym") + (L.big ? " big" : "");
+        el.innerHTML = L.text;
+        labelsEl.appendChild(el);
+        labelEntries.push({ beat: i, L, el });
+      }
+    }
+  }
+
+  const tmpV = new THREE.Vector3();
+  function updateLabels() {
+    const w = window.innerWidth, h = window.innerHeight;
+    for (const e of labelEntries) {
+      const d = Math.abs(beatFloat - e.beat);
+      if (d > 0.92 || overview || document.body.classList.contains("help-open")) {
+        e.el.style.opacity = "0";
+        continue;
+      }
+      const st = stations[e.beat];
+      const node = e.L.node || st.group;
+      tmpV.copy(e.L.p);
+      node.localToWorld(tmpV);
+      tmpV.project(camera);
+      if (tmpV.z > 1 || tmpV.z < -1) { e.el.style.opacity = "0"; continue; }
+      const x = (tmpV.x * 0.5 + 0.5) * w + (e.L.dx || 0);
+      const y = (-tmpV.y * 0.5 + 0.5) * h + (e.L.dy || 0);
+      if (x < -80 || x > w + 80 || y < -60 || y > h + 60) { e.el.style.opacity = "0"; continue; }
+      const a = (1 - smoothstep(0.4, 0.95, d)) * (1 - smoothstep(0.0, 1.0, 0));
+      e.el.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+      e.el.style.opacity = (a * activityOf(e.beat)).toFixed(3);
+    }
+  }
+
+  function buildControls() {
+    for (let i = 0; i < N; i++) {
+      const t = document.createElement("i");
+      t.style.left = (i / (N - 1) * 100) + "%";
+      if (BEATS[i].act !== BEATS[Math.max(0, i - 1)].act) t.className = "act";
+      ticksEl.appendChild(t);
+    }
+    scrub.min = "0";
+    scrub.max = String(N - 1);
+    scrub.step = "0.001";
+    scrub.value = "0";
+  }
+
+  function buildOverview() {
+    let lastAct = -1;
+    for (let i = 0; i < N; i++) {
+      const b = BEATS[i];
+      if (b.act !== lastAct) {
+        const h = document.createElement("div");
+        h.className = "ov-act";
+        h.textContent = ACTS[b.act].roman + " · " + ACTS[b.act].label;
+        ovList.appendChild(h);
+        lastAct = b.act;
+      }
+      const row = document.createElement("button");
+      row.className = "ov-row";
+      row.dataset.beat = String(i);
+      row.innerHTML = '<span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="t">' + b.caption + "</span>";
+      row.addEventListener("click", () => { closeOverview(); goTo(i, true); });
+      ovList.appendChild(row);
+    }
+  }
+
+  function updateOverview() {
+    for (const row of ovList.querySelectorAll(".ov-row")) {
+      row.classList.toggle("on", Number(row.dataset.beat) === beat);
+    }
+  }
+
+  function goTo(i, instant) {
+    beat = clamp(Math.round(i), 0, N - 1);
+    target = beat;
+    autoT = 0;
+    playing = false;
+    updatePlay();
+    setCapIn(beat);
+    updateOverview();
+    a11y.textContent = BEATS[beat].caption;
+    if (instant) {
+      beatFloat = beat;
+    }
+  }
+
+  function next() { if (beat < N - 1) goTo(beat + 1, false); }
+  function prev() { if (beat > 0) goTo(beat - 1, false); }
+
+  function updatePlay() {
+    const btn = $("play");
+    if (playing) {
+      btn.classList.add("on");
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5.5h3v13H8zM13 5.5h3v13h-3z" fill="currentColor" stroke="none"/></svg>';
+      btn.setAttribute("aria-label", "Pause");
+    } else {
+      btn.classList.remove("on");
+      btn.innerHTML = beat >= N - 1
+        ? '<svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4 4.5v4h4"/></svg>'
+        : '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/></svg>';
+      btn.setAttribute("aria-label", beat >= N - 1 ? "Replay" : "Play");
+    }
+  }
+
+  function openOverview() {
+    if (overview) return;
+    overview = true;
+    playing = false;
+    updatePlay();
+    document.body.classList.add("overview-open");
+    overviewEl.setAttribute("aria-hidden", "false");
+    updateOverview();
+  }
+  function closeOverview() {
+    overview = false;
+    document.body.classList.remove("overview-open");
+    overviewEl.setAttribute("aria-hidden", "true");
+  }
+  function toggleOverview() { overview ? closeOverview() : openOverview(); }
+
+  function openHelp() {
+    playing = false; updatePlay();
+    document.body.classList.add("help-open");
+    helpEl.setAttribute("aria-hidden", "false");
+  }
+  function closeHelp() {
+    document.body.classList.remove("help-open");
+    helpEl.setAttribute("aria-hidden", "true");
+  }
+
+  function wake() {
+    controls.classList.add("visible");
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(() => controls.classList.remove("visible"), 2600);
+  }
+
+  function bindUI() {
+    $("play").addEventListener("click", () => {
+      if (beat >= N - 1 && !playing) { beat = 0; beatFloat = 0; setCapIn(0); }
+      playing = !playing;
+      autoT = 0;
+      updatePlay();
+      wake();
+    });
+    $("restart").addEventListener("click", () => {
+      closeOverview(); goTo(0, true); wake();
+    });
+    $("overviewBtn").addEventListener("click", () => { toggleOverview(); wake(); });
+    $("ovClose").addEventListener("click", closeOverview);
+    $("orbit").addEventListener("click", () => {
+      orbitOn = !orbitOn;
+      $("orbit").classList.toggle("on", orbitOn);
+      wake();
+    });
+    $("full").addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+      } else if (document.exitFullscreen) document.exitFullscreen();
+      wake();
+    });
+    $("helpBtn").addEventListener("click", openHelp);
+    helpEl.addEventListener("click", (e) => { if (e.target === helpEl) closeHelp(); });
+
+    scrub.addEventListener("pointerdown", () => {
+      scrubbing = true; wasPlaying = playing; playing = false; updatePlay();
+    });
+    scrub.addEventListener("input", () => {
+      const v = clamp(parseFloat(scrub.value) || 0, 0, N - 1);
+      beatFloat = v;
+      beat = Math.round(v);
+      setCapIn(beat);
+      const b = BEATS[Math.round(v)];
+      tip.innerHTML = "<b>" + String(Math.round(v) + 1).padStart(2, "0") + "</b>" + b.caption;
+      tip.style.left = (v / (N - 1) * 100) + "%";
+      tip.classList.add("show");
+      a11y.textContent = b.caption;
+    });
+    window.addEventListener("pointerup", () => {
+      if (scrubbing) {
+        scrubbing = false;
+        tip.classList.remove("show");
+        if (wasPlaying) { playing = true; updatePlay(); }
+        wasPlaying = false;
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+      if (e.code === "Escape") { closeHelp(); closeOverview(); return; }
+      if (e.code === "ArrowRight" || e.code === "ArrowDown" || e.code === "PageDown") {
+        e.preventDefault(); closeOverview(); next(); wake(); return;
+      }
+      if (e.code === "ArrowLeft" || e.code === "ArrowUp" || e.code === "PageUp") {
+        e.preventDefault(); closeOverview(); prev(); wake(); return;
+      }
+      if (e.code === "Home") { e.preventDefault(); closeOverview(); goTo(0, false); wake(); return; }
+      if (e.code === "End") { e.preventDefault(); closeOverview(); goTo(N - 1, false); wake(); return; }
+      if (e.code === "Space" || e.code === "Enter") {
+        e.preventDefault();
+        if (!e.repeat) { $("play").click(); }
+        return;
+      }
+      if (e.code === "KeyG") { e.preventDefault(); toggleOverview(); wake(); return; }
+      if (e.code === "KeyR") { closeOverview(); goTo(0, true); wake(); return; }
+      if (e.code === "KeyF") { $("full").click(); wake(); return; }
+      if (e.code === "KeyO") { $("orbit").click(); wake(); return; }
+      if (e.code === "KeyH" || e.key === "?") { e.preventDefault(); openHelp(); wake(); return; }
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { if (playing) { playing = false; updatePlay(); } }
+    });
+  }
+
+  function bindPointer() {
+    canvas.addEventListener("pointerdown", (e) => {
+      canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size === 1) {
+        pointerDown = true; dragDist = 0; dragStart = performance.now();
+        canvas.classList.add("dragging");
+      }
+      if (pointers.size === 2) {
+        const arr = [...pointers.values()];
+        pinchStart = Math.hypot(arr[0].x - arr[1].x, arr[0].y - arr[1].y);
+        pinchZoom = userZoomT;
+      }
+      lastInteract = time;
+      wake();
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      if (!pointers.has(e.pointerId)) return;
+      const prev = pointers.get(e.pointerId);
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+      dragDist += Math.abs(dx) + Math.abs(dy);
+      if (pointers.size === 1 && pointerDown) {
+        userYaw -= dx * 0.0048;
+        userPitch = clamp(userPitch - dy * 0.0036, -0.55, 0.7);
+      } else if (pointers.size === 2 && pinchStart > 0) {
+        const arr = [...pointers.values()];
+        const dist = Math.hypot(arr[0].x - arr[1].x, arr[0].y - arr[1].y);
+        userZoomT = clamp(pinchZoom * (pinchStart / Math.max(1, dist)), 0.66, 1.9);
+      }
+      lastInteract = time;
+    });
+    function up(e) {
+      const had = pointers.has(e.pointerId);
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0) {
+        canvas.classList.remove("dragging");
+        const dt = performance.now() - dragStart;
+        if (had && pointerDown && dragDist < 6 && dt < 500) next();
+        pointerDown = false;
+      }
+      if (pointers.size < 2) pinchStart = 0;
+    }
+    canvas.addEventListener("pointerup", up);
+    canvas.addEventListener("pointercancel", up);
+    canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      userZoomT = clamp(userZoomT * Math.exp(e.deltaY * 0.0008), 0.66, 1.9);
+      lastInteract = time;
+      wake();
+    }, { passive: false });
+    canvas.addEventListener("dblclick", () => { userYaw = 0; userPitch = 0; userZoomT = 1; lastInteract = time; });
+  }
+
+  let frameCount = 0;
+  function frame() {
+    requestAnimationFrame(frame);
+    const dt = Math.min(clock.getDelta(), 0.05);
+    time += dt * (RM ? 0.4 : 1);
+
+    if (playing) {
+      if (beat >= N - 1) {
+        playing = false; updatePlay();
+      } else {
+        autoT += dt;
+        if (autoT > DWELL) { autoT = 0; goTo(beat + 1, false); }
+      }
+    }
+    if (!scrubbing) beatFloat = damp(beatFloat, beat, 3.4, dt);
+    if (Math.abs(beatFloat - beat) < 0.0008) beatFloat = beat;
+    ovBlend = damp(ovBlend, overview ? 1 : 0, 2.6, dt);
+
+    updateCamera(dt);
+    scene.updateMatrixWorld(true);
+
+    const ov = ovBlend;
+    for (let i = 0; i < stations.length; i++) {
+      const st = stations[i];
+      const a = activityOf(i);
+      st.group.visible = a > 0.002;
+      if (!st.group.visible) continue;
+      st.update({ a, r: clamp(1 - Math.abs(beatFloat - i), 0, 1), t: time, dt, ov, i });
+    }
+
+    if (journey) {
+      journey.setProgress(clamp((beatFloat + 0.55) / (N - 1), 0.001, 1));
+      journey.setOpacity(lerp(0.42, 0.95, ov));
+    }
+    if (beacons) {
+      beacons.setOpacity(lerp(0.55, 1, ov));
+      beacons.setScale(lerp(0.55, 5.4, ov));
+      for (let i = 0; i < N; i++) {
+        const visited = i <= beatFloat + 0.02;
+        const cur = Math.abs(beatFloat - i) < 0.5;
+        beacons.setGlow(i, visited ? (cur ? 1.6 : 0.85) : 0.18);
+      }
+    }
+
+    for (const m of matRecords) {
+      if (m.uniforms && m.uniforms.uTime) m.uniforms.uTime.value = time;
+    }
+    if (post) post.compMat.uniforms.uTime.value = time;
+
+    updateCaptions();
+    updateLabels();
+    updateOverview();
+
+    fill.style.width = (clamp(beatFloat / (N - 1), 0, 1) * 100).toFixed(2) + "%";
+    if (!scrubbing) scrub.value = String(beatFloat);
+
+    if (renderer && post) renderFrame();
+
+    frameCount++;
+    if (DEBUG && frameCount % 30 === 0) {
+      document.documentElement.dataset.stats = JSON.stringify({
+        beat, beatFloat: +beatFloat.toFixed(3),
+        draws: renderer ? renderer.info.render.calls : 0,
+        tris: renderer ? renderer.info.render.triangles : 0,
+        points: renderer ? renderer.info.render.points : 0,
+        fps: +(1 / Math.max(0.001, dt)).toFixed(1)
+      });
+    }
+  }
+
+  function boot() {
+    buildCaptions();
+    buildControls();
+    buildOverview();
+
+    if (webglOK && renderer) {
+      initPost();
+      world = buildWorld();
+      buildAllStations();
+      buildLabels();
+      bindPointer();
+      window.addEventListener("resize", resize);
+      resize();
+    } else {
+      document.body.classList.add("no-webgl");
+      buildLabels();
+    }
+    bindUI();
+    setCapIn(0);
+
+    if (QS.has("beat")) {
+      const b = clamp(parseInt(QS.get("beat"), 10) || 0, 0, N - 1);
+      beat = b; beatFloat = b; target = b;
+    }
+    if (QS.get("overview") === "1") { overview = true; ovBlend = 1; document.body.classList.add("overview-open"); overviewEl.setAttribute("aria-hidden", "false"); }
+    if (QS.get("pause") !== "1") {
+      const p = QS.get("play");
+      if (p === "1") { playing = true; }
+    }
+    setCapIn(beat);
+    updateOverview();
+    updatePlay();
+    a11y.textContent = BEATS[beat].caption;
+
+    requestAnimationFrame(() => {
+      loader.classList.add("hide");
+      setTimeout(() => { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 1300);
+      hint.classList.add("on");
+      setTimeout(() => hint.classList.remove("on"), 9000);
+      frame();
+    });
+
+    window.__hott = {
+      go: goTo,
+      setBeat(v) { goTo(v, true); },
+      info() {
+        return {
+          beat, beatFloat, overview, webgl: webglOK,
+          draws: renderer ? renderer.info.render.calls : 0,
+          tris: renderer ? renderer.info.render.triangles : 0,
+          points: renderer ? renderer.info.render.points : 0,
+          stations: stations.length,
+          labels: labelEntries.length
+        };
+      }
+    };
+    document.documentElement.dataset.hott = "ready";
+  }
+
+  try {
+    boot();
+  } catch (e) {
+    fatal(e);
+  }
+})();
+</script>
+</body>
+</html>
