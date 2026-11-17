@@ -2434,3 +2434,48 @@ h1,h2,h3,h4{
 .ls-highdim-token{display:block;overflow:hidden;text-overflow:ellipsis}
 .ls-highdim-scroll tbody th small{display:block;font:600 8px/1.1 "Open Sans",sans-serif;color:var(--ls-muted);letter-spacing:.04em}
 .ls-highdim-scroll td.ls-highdim-ellipsis,.ls-highdim-scroll th.ls-highdim-ellipsis{text-align:center;color:var(--ls-muted)}
+
+/* Deep-blue instrument stage for the final ten lessons. The page stays paper;
+   the demo area gets the blue atmosphere, while content cards stay white. */
+#ls-demo[data-scene="rag"],
+#ls-demo[data-scene="history"],
+#ls-demo[data-scene="chineseroom"],
+#ls-demo[data-scene="riskmap"],
+#ls-demo[data-scene="consciousness"],
+#ls-demo[data-scene="worldmodel"],
+#ls-demo[data-scene="sentiment"],
+#ls-demo[data-scene="induction"],
+#ls-demo[data-scene="grokking"],
+#ls-demo[data-scene="spacetime"]{
+  background:
+    radial-gradient(120% 92% at 12% 0%, rgba(0,75,111,.16), transparent 58%),
+    radial-gradient(86% 78% at 92% 6%, rgba(92,155,175,.12), transparent 62%),
+    radial-gradient(72% 66% at 88% 96%, rgba(99,164,75,.06), transparent 66%);
+}
+#ls-demo[data-scene="history"] .ls-history-panel,
+#ls-demo[data-scene="history"] .ls-history-figure,
+#ls-demo[data-scene="chineseroom"] .ls-cr-room,
+#ls-demo[data-scene="chineseroom"] .ls-cr-reveal,
+#ls-demo[data-scene="rag"] .ls-rag-space,
+#ls-demo[data-scene="rag"] .ls-rag-context,
+#ls-demo[data-scene="rag"] .ls-rag-answer{
+  box-shadow:0 10px 26px rgba(0,30,40,.055);
+}
+#ls-demo[data-scene="history"] .ls-history-panel{border-top:3px solid var(--ls-petrol)}
+#ls-demo[data-scene="history"] .ls-history-node.is-on,
+#ls-demo[data-scene="riskmap"] .ls-rm-card.is-active{
+  border-color:var(--ls-petrol);
+  background:rgba(0,75,111,.055);
+  box-shadow:inset 0 3px 0 var(--ls-petrol),0 8px 20px rgba(0,40,60,.06);
+}
+#ls-demo[data-scene="riskmap"] .ls-rm-detail{border-left:3px solid var(--ls-petrol)}
+#ls-demo[data-scene="riskmap"] .ls-rm-fix{border-left-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
+#ls-demo[data-scene="riskmap"] .ls-rm-fix b{color:var(--ls-petrol)}
+#ls-demo[data-scene="chineseroom"] .ls-cr-room{border-left:3px solid var(--ls-petrol);background:linear-gradient(180deg,rgba(255,255,255,.76),rgba(255,255,255,.94))}
+#ls-demo[data-scene="chineseroom"] .ls-cr-choice:hover{border-color:var(--ls-petrol);color:var(--ls-petrol)}
+#ls-demo[data-scene="rag"] .ls-rag-query{border-left-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
+#ls-demo[data-scene="rag"] .ls-rag-chunk{border-radius:0}
+#ls-demo[data-scene="rag"] .ls-rag-chunk:hover{border-color:var(--ls-sky)}
+#ls-demo[data-scene="rag"] .ls-rag-chunk.is-on{border-color:var(--ls-petrol);background:rgba(0,75,111,.055)}
+#ls-demo[data-scene="rag"] .ls-rag-bar{background:linear-gradient(90deg,var(--ls-petrol),var(--ls-green))}
+#ls-demo[data-scene="consciousness"] .ls-con-detail{box-shadow:0 10px 26px rgba(0,30,40,.055)}

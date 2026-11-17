@@ -7,7 +7,7 @@
   if (!document.getElementById("ls-grokking-style")) {
     var st = document.createElement("style");
     st.id = "ls-grokking-style";
-    st.textContent = ".ls-grokking-scene{position:relative;width:100%;height:100%;min-height:460px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-grokking-scene canvas{display:block;width:100%;height:100%;min-height:460px}";
+    st.textContent = ".ls-grokking-scene{position:relative;width:100%;height:100%;min-height:460px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-grokking-scene canvas{display:block;width:100%;height:100%;min-height:460px}.ls-grokking-controls{position:absolute;left:14px;right:14px;bottom:12px;z-index:5;display:none;align-items:center;gap:10px;flex-wrap:wrap;padding:7px 9px;background:rgba(255,255,255,.95);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 8px 24px rgba(0,20,30,.10);font:600 10px/1.2 'Open Sans',sans-serif;color:var(--tm-ink-soft,#2c464d)}.ls-grokking-controls.is-on{display:flex}.ls-grokking-controls label{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.ls-grokking-controls input[type=range]{width:min(118px,22vw);accent-color:var(--tm-petrol,#004b6f)}.ls-grokking-controls output{min-width:2.2em;font:700 10px/1 'Barlow','Open Sans',sans-serif;color:var(--tm-petrol,#004b6f);font-variant-numeric:tabular-nums}.ls-grokking-controls button{border:1px solid var(--tm-petrol,#004b6f);background:var(--tm-petrol,#004b6f);color:#fff;padding:5px 9px;font:700 10px/1 'Open Sans',sans-serif;cursor:pointer;border-radius:0}.ls-grokking-controls button:hover{background:#003a56}@media(max-width:640px){.ls-grokking-controls{left:8px;right:8px;bottom:8px;gap:6px}.ls-grokking-controls input[type=range]{width:82px}}";
     document.head.appendChild(st);
   }
 
@@ -19,6 +19,14 @@
     var canvas = document.createElement("canvas");
     canvas.setAttribute("role", "img");
     host.appendChild(canvas);
+    var controls = document.createElement("div");
+    controls.className = "ls-grokking-controls";
+    controls.innerHTML =
+      '<label>a <input type="range" min="0" max="112" step="1" value="41" data-grok="a"><output data-grok-out="a">41</output></label>' +
+      '<label>b <input type="range" min="0" max="112" step="1" value="52" data-grok="b"><output data-grok-out="b">52</output></label>' +
+      '<button type="button" data-grok="rotate">' + (DE ? "Drehen" : "Rotate") + '</button>' +
+      '<span data-grok-result>41 + 52 ≡ 93 (mod 113)</span>';
+    host.appendChild(controls);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var W = 1, H = 1;
@@ -27,6 +35,66 @@
     var scrubEpoch = 10800;
     var scrubbing = false;
     var MAX_LOSS = 3.1;
+    var fourierA = 41;
+    var fourierB = 52;
+    var rotT = 1;
+    var rotating = false;
+    var rotRaf = 0;
+    var controlsBound = false;
+
+    function bindControls() {
+      if (controlsBound) return;
+      controlsBound = true;
+      var rangeA = controls.querySelector('[data-grok="a"]');
+      var rangeB = controls.querySelector('[data-grok="b"]');
+      var outA = controls.querySelector('[data-grok-out="a"]');
+      var outB = controls.querySelector('[data-grok-out="b"]');
+      var result = controls.querySelector('[data-grok-result]');
+      function sync() {
+        fourierA = parseInt(rangeA.value, 10) || 0;
+        fourierB = parseInt(rangeB.value, 10) || 0;
+        outA.textContent = String(fourierA);
+        outB.textContent = String(fourierB);
+        var cval = (fourierA + fourierB) % 113;
+        result.textContent = fourierA + " + " + fourierB + " ≡ " + cval + " (mod 113)";
+        rotT = 1;
+        stopRotate();
+        draw();
+      }
+      rangeA.addEventListener("input", sync);
+      rangeB.addEventListener("input", sync);
+      controls.querySelector('[data-grok="rotate"]').addEventListener("click", function () {
+        if (rotating) { stopRotate(); rotT = 1; draw(); return; }
+        startRotate();
+      });
+    }
+
+    function setControls(on) {
+      controls.classList.toggle("is-on", !!on);
+      if (on) bindControls();
+      else stopRotate();
+    }
+
+    function startRotate() {
+      if (!window.requestAnimationFrame) { rotT = 1; draw(); return; }
+      rotating = true;
+      rotT = 0;
+      var start = performance.now();
+      function step(now) {
+        if (!rotating) return;
+        rotT = Math.min(1, (now - start) / 900);
+        draw();
+        if (rotT < 1) rotRaf = requestAnimationFrame(step);
+        else { rotating = false; rotT = 1; draw(); }
+      }
+      rotRaf = requestAnimationFrame(step);
+    }
+
+    function stopRotate() {
+      rotating = false;
+      if (rotRaf) cancelAnimationFrame(rotRaf);
+      rotRaf = 0;
+    }
     var ARIA = {
       loss: DE
         ? "Schematische Loss-Kurven: der Trainings-Loss fällt früh, der Test-Loss bleibt lange flach und fällt erst beim Grokking spät ab."
@@ -166,12 +234,28 @@
       c.clearRect(0, 0, W, H);
       c.fillStyle = C.paper;
       c.fillRect(0, 0, W, H);
-      var g = c.createRadialGradient(W * 0.78, H * 0.14, 0, W * 0.78, H * 0.14, Math.max(W, H) * 0.92);
-      g.addColorStop(0, V.alpha(C.green, 0.045));
-      g.addColorStop(0.48, V.alpha(C.sky, 0.022));
+      var g = c.createRadialGradient(W * 0.18, H * 0.06, 0, W * 0.18, H * 0.06, Math.max(W, H) * 0.95);
+      g.addColorStop(0, V.alpha(C.petrol, 0.16));
+      g.addColorStop(0.44, V.alpha(C.sky, 0.06));
       g.addColorStop(1, V.alpha(C.paper, 0));
       c.fillStyle = g;
       c.fillRect(0, 0, W, H);
+      var g2 = c.createRadialGradient(W * 0.9, H * 0.9, 0, W * 0.9, H * 0.9, Math.max(W, H) * 0.7);
+      g2.addColorStop(0, V.alpha(C.green, 0.045));
+      g2.addColorStop(1, V.alpha(C.paper, 0));
+      c.fillStyle = g2;
+      c.fillRect(0, 0, W, H);
+      var vig = c.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.24, W * 0.5, H * 0.5, Math.max(W, H) * 0.74);
+      vig.addColorStop(0, V.alpha(C.petrol, 0));
+      vig.addColorStop(1, V.alpha(C.petrol, 0.09));
+      c.fillStyle = vig;
+      c.fillRect(0, 0, W, H);
+      c.save();
+      c.fillStyle = V.alpha(C.petrol, 0.05);
+      for (var gx = 24; gx < W; gx += 30) {
+        for (var gy = 24; gy < H; gy += 30) c.fillRect(gx, gy, 1, 1);
+      }
+      c.restore();
       c.strokeStyle = V.alpha(C.line, 0.8);
       c.lineWidth = 1;
       c.strokeRect(0.5, 0.5, W - 1, H - 1);
@@ -454,18 +538,29 @@
       txt(c, "k = 14 · 35 · 41 · 42 · 52", x0, y1 + 31, { size: small ? 7.8 : 8.4, color: C.soft });
     }
 
-    function drawAngleCircle(c, cx, cy, r, small) {
-      var a = 41, b = 52, mod = 113, cval = (a + b) % mod;
+    function drawAngleCircle(c, cx, cy, r, small, a, b, rot) {
+      var mod = 113;
+      var t = typeof rot === "number" ? rot : 1;
+      var bEff = b * t;
+      var cval = (a + bEff) % mod;
       var base = -Math.PI / 2;
-
-      function ang(v) {
-        return base + (v / mod) * Math.PI * 2;
-      }
-
+      function ang(v) { return base + (v / mod) * Math.PI * 2; }
       var aa = ang(a);
       var ab = ang(b);
-      var ac = ang(cval);
-      var i, t;
+      var ar = ang(cval);
+      var i;
+
+      c.save();
+      c.fillStyle = V.alpha(C.paper, 0.62);
+      c.beginPath();
+      c.arc(cx, cy, r + 12, 0, Math.PI * 2);
+      c.fill();
+      c.strokeStyle = V.alpha(C.petrol, 0.18);
+      c.lineWidth = 1;
+      c.beginPath();
+      c.arc(cx, cy, r + 12, 0, Math.PI * 2);
+      c.stroke();
+      c.restore();
 
       c.save();
       c.strokeStyle = V.alpha(C.lineStrong, 0.8);
@@ -475,41 +570,43 @@
       c.stroke();
       c.restore();
 
-      for (i = 0; i < 12; i++) {
-        t = base + (i / 12) * Math.PI * 2;
+      for (i = 0; i < 24; i++) {
+        var tickA = base + (i / 24) * Math.PI * 2;
+        var major = i % 2 === 0;
         c.save();
-        c.strokeStyle = V.alpha(C.lineStrong, 0.45);
-        c.lineWidth = 1;
+        c.strokeStyle = V.alpha(major ? C.petrol : C.lineStrong, major ? 0.38 : 0.28);
+        c.lineWidth = major ? 1.1 : 0.8;
         c.beginPath();
-        c.moveTo(cx + Math.cos(t) * r * 0.94, cy + Math.sin(t) * r * 0.94);
-        c.lineTo(cx + Math.cos(t) * r, cy + Math.sin(t) * r);
+        c.moveTo(cx + Math.cos(tickA) * r * (major ? 0.90 : 0.94), cy + Math.sin(tickA) * r * (major ? 0.90 : 0.94));
+        c.lineTo(cx + Math.cos(tickA) * r, cy + Math.sin(tickA) * r);
         c.stroke();
         c.restore();
       }
 
       c.save();
-      c.strokeStyle = V.alpha(C.gold, 0.75);
-      c.lineWidth = 2;
+      c.strokeStyle = V.alpha(C.gold, 0.8);
+      c.lineWidth = 2.2;
       c.lineCap = "round";
       c.beginPath();
-      c.arc(cx, cy, r * 0.55, aa, ac);
+      c.arc(cx, cy, r * 0.56, aa, ar);
       c.stroke();
       c.restore();
 
-      V.arrow(c, cx, cy, cx + Math.cos(aa) * r * 0.82, cy + Math.sin(aa) * r * 0.82, C.green, 2, 6);
-      V.arrow(c, cx, cy, cx + Math.cos(ab) * r * 0.82, cy + Math.sin(ab) * r * 0.82, C.sky, 2, 6);
-      V.arrow(c, cx, cy, cx + Math.cos(ac) * r * 0.82, cy + Math.sin(ac) * r * 0.82, C.gold, 2.4, 7);
+      // Ghost: where a was before the rotation.
+      V.arrow(c, cx, cy, cx + Math.cos(aa) * r * 0.82, cy + Math.sin(aa) * r * 0.82, V.alpha(C.green, 0.32), 1.6, 5);
+      V.arrow(c, cx, cy, cx + Math.cos(ab) * r * 0.82, cy + Math.sin(ab) * r * 0.82, V.alpha(C.sky, 0.45), 1.6, 5);
+      V.arrow(c, cx, cy, cx + Math.cos(ar) * r * 0.82, cy + Math.sin(ar) * r * 0.82, C.gold, 2.6, 7);
 
       c.save();
-      c.fillStyle = C.ink;
+      c.fillStyle = C.petrol;
       c.beginPath();
-      c.arc(cx, cy, 2.2, 0, Math.PI * 2);
+      c.arc(cx, cy, 2.6, 0, Math.PI * 2);
       c.fill();
       c.restore();
 
       function tipLabel(text, angVal, color) {
-        var tx = cx + Math.cos(angVal) * (r + 12);
-        var ty = cy + Math.sin(angVal) * (r + 12);
+        var tx = cx + Math.cos(angVal) * (r + 14);
+        var ty = cy + Math.sin(angVal) * (r + 14);
         var align = Math.cos(angVal) > 0.25 ? "left" : Math.cos(angVal) < -0.25 ? "right" : "center";
         txt(c, text, tx, ty, {
           align: align,
@@ -518,19 +615,20 @@
           color: color
         });
       }
-
       tipLabel("a", aa, C.green);
       tipLabel("b", ab, C.sky);
-      tipLabel("c", ac, C.gold);
+      tipLabel(t < 0.999 ? "a + b·t" : "c", ar, C.gold);
 
-      var mid = (aa + ac) / 2;
-      txt(c, "b", cx + Math.cos(mid) * r * 0.68, cy + Math.sin(mid) * r * 0.68, {
-        align: "center",
-        size: small ? 8.5 : 9.5,
-        color: C.gold
-      });
+      if (t < 0.999) {
+        var mid = (aa + ar) / 2;
+        txt(c, "dreht", cx + Math.cos(mid) * r * 0.7, cy + Math.sin(mid) * r * 0.7, {
+          align: "center",
+          size: small ? 8.2 : 9.2,
+          color: C.gold
+        });
+      }
 
-      txt(c, DE ? "Winkeladdition" : "angle addition", cx, cy - r - (small ? 13 : 17), {
+      txt(c, DE ? "Zahl → Winkel" : "number → angle", cx, cy - r - (small ? 13 : 17), {
         align: "center",
         size: 8.6,
         color: C.muted
@@ -541,19 +639,64 @@
         font: '700 ' + (small ? 10 : 11) + 'px "Barlow", "Open Sans", sans-serif',
         color: C.ink
       });
-      txt(c, a + " + " + b + " ≡ " + cval + " (mod 113)", cx, cy + r + (small ? 34 : 40), {
+      txt(c, a + " + " + Math.round(bEff) + " ≡ " + Math.round(cval) + " (mod 113)", cx, cy + r + (small ? 34 : 40), {
         align: "center",
         size: small ? 8.5 : 9.2,
         color: C.muted
       });
     }
 
+    function drawFrequencyBank(c, x, y, w, h, small, a, b, rot) {
+      var ks = [14, 35, 41, 42, 52];
+      var cols = [C.green, C.sky, C.gold, C.lilac, C.lime];
+      var gap = small ? 8 : 12;
+      var r = Math.max(10, Math.min(18, (w - gap * 4) / 12));
+      var cx0 = x + r + 6;
+      var cy = y + h / 2 + 2;
+      txt(c, DE ? "Fünf Frequenzen, fünf Uhren" : "Five frequencies, five clocks", x, y + 9, {
+        size: small ? 7.8 : 8.8,
+        color: C.muted
+      });
+      for (var i = 0; i < ks.length; i++) {
+        var k = ks[i];
+        var cx = cx0 + i * (2 * r + gap);
+        c.save();
+        c.strokeStyle = V.alpha(cols[i], 0.34);
+        c.lineWidth = 1;
+        c.beginPath();
+        c.arc(cx, cy, r, 0, Math.PI * 2);
+        c.stroke();
+        c.restore();
+        var angleA = -Math.PI / 2 + (k * a / 113) * Math.PI * 2;
+        var angleC = -Math.PI / 2 + (k * (a + b * rot) / 113) * Math.PI * 2;
+        c.save();
+        c.strokeStyle = V.alpha(cols[i], 0.35);
+        c.lineWidth = 1;
+        c.beginPath();
+        c.moveTo(cx, cy);
+        c.lineTo(cx + Math.cos(angleA) * r * 0.78, cy + Math.sin(angleA) * r * 0.78);
+        c.stroke();
+        c.restore();
+        c.fillStyle = cols[i];
+        c.beginPath();
+        c.arc(cx + Math.cos(angleC) * r * 0.78, cy + Math.sin(angleC) * r * 0.78, Math.max(2.4, r * 0.16), 0, Math.PI * 2);
+        c.fill();
+        txt(c, "k=" + k, cx, cy + r + 10, {
+          align: "center",
+          size: small ? 7.2 : 7.8,
+          color: cols[i],
+          font: '700 ' + (small ? 7.2 : 7.8) + 'px "Open Sans", sans-serif'
+        });
+      }
+    }
+
     function drawFourier(c) {
       var pad = Math.max(18, Math.min(30, W * 0.04));
       var small = W < 620;
-      head(c, DE ? "Fourier-Basis" : "Fourier basis", pad, 30, { size: small ? 22 : 26 });
-      txt(c, DE ? "5 Frequenzen tragen die Addition" : "5 frequencies carry the addition", pad, 52, {
-        size: small ? 10.5 : 12,
+      var foot = 58;
+      head(c, DE ? "Addition als Drehung" : "Addition as rotation", pad, 30, { size: small ? 20 : 25 });
+      txt(c, DE ? "Fünf Frequenzen tragen die Addition auf dem Kreis." : "Five frequencies carry the addition on a circle.", pad, 52, {
+        size: small ? 10.2 : 11.6,
         color: C.muted
       });
       accent(c, pad, 66, 40);
@@ -562,37 +705,62 @@
         size: 8.5,
         color: C.muted
       });
+      txt(c, "e^(iθa) · e^(iθb) = e^(i(θa+θb))", W - pad, 48, {
+        align: "right",
+        size: small ? 8.4 : 9.2,
+        color: C.petrol,
+        font: '700 ' + (small ? 8.4 : 9.2) + 'px "Open Sans", sans-serif'
+      });
 
-      var top = 104;
-      var split = small ? W : W * 0.52;
+      var stepsY = 80;
+      var steps = DE
+        ? ["1  Zahl → Winkel", "2  addieren → drehen", "3  Winkel → Zahl"]
+        : ["1  number → angle", "2  add → rotate", "3  angle → number"];
+      var stepW = small ? W - 2 * pad : Math.min((W - 2 * pad) / 3, 190);
+      for (var si = 0; si < 3; si++) {
+        var sx = pad + si * (small ? 0 : stepW + 8);
+        var sy = stepsY + (small ? si * 14 : 0);
+        txt(c, steps[si], sx, sy, {
+          size: small ? 8.2 : 9.2,
+          color: si === 0 ? C.green : si === 1 ? C.gold : C.sky,
+          font: '700 ' + (small ? 8.2 : 9.2) + 'px "Open Sans", sans-serif'
+        });
+      }
+
+      var top = small ? 138 : 112;
+      var split = small ? W : W * 0.50;
       var sx0 = pad + 6;
       var sx1 = small ? W - pad - 6 : split - 24;
-      var sy0 = small ? top + 16 : top + 18;
-      var sy1 = small ? top + 102 : H - 126;
-      if (sy1 - sy0 < 40) sy1 = sy0 + 40;
+      var sy0 = small ? top : top + 18;
+      var sy1 = small ? top + 94 : H - foot - 142;
+      if (sy1 - sy0 < 44) sy1 = sy0 + 44;
       drawSpectrum(c, sx0, sx1, sy0, sy1, small);
 
       var cx, cy, r;
       if (small) {
-        var cTop = sy1 + 58;
-        var cBottom = H - 96;
+        var cTop = sy1 + 36;
+        var cBottom = H - foot - 42;
         cx = W / 2;
         cy = (cTop + cBottom) / 2;
-        r = Math.max(32, Math.min((W - pad) / 2 - 42, (cBottom - cTop) / 2 - 6));
+        r = Math.max(38, Math.min((W - pad) / 2 - 34, (cBottom - cTop) / 2 - 4));
       } else {
         var wTop = top;
-        var wBottom = H - 108;
+        var wBottom = H - foot - 118;
         cx = split + (W - pad - split) / 2;
         cy = (wTop + wBottom) / 2;
-        r = Math.max(44, Math.min((W - pad - split) / 2 - 36, (wBottom - wTop) / 2 - 26));
+        r = Math.max(52, Math.min((W - pad - split) / 2 - 34, (wBottom - wTop) / 2 - 18));
       }
-      drawAngleCircle(c, cx, cy, r, small);
+      drawAngleCircle(c, cx, cy, r, small, fourierA, fourierB, rotT);
+
+      if (!small) {
+        drawFrequencyBank(c, split + 8, H - foot - 108, W - pad - split - 8, 94, small, fourierA, fourierB, rotT);
+      }
 
       txt(c, DE
         ? "c = a + b mod 113 · fünf Frequenzen · 95 % der Logit-Varianz"
         : "c = a + b mod 113 · five frequencies · 95% of logit variance",
-        pad, H - 32, { size: 8.4, color: C.muted });
-      txt(c, "Nanda et al. (2023) · arXiv:2301.05217", pad, H - 14, { size: 8.2, color: C.muted });
+        pad, H - foot - 24, { size: 8.4, color: C.muted });
+      txt(c, "Nanda et al. (2023) · arXiv:2301.05217", pad, H - foot - 10, { size: 8.2, color: C.muted });
     }
 
     function drawMeasures(c) {
@@ -740,6 +908,7 @@
       if (next !== "loss" && next !== "fourier" && next !== "measures") return;
       if (next === mode) return;
       mode = next;
+      setControls(mode === "fourier");
       canvas.setAttribute("aria-label", ARIA[mode] || ARIA.loss);
       draw();
     }
@@ -777,15 +946,18 @@
     canvas.addEventListener("pointerup", endScrub);
     canvas.addEventListener("pointercancel", endScrub);
     fit();
+    setControls(mode === "fourier");
 
     return {
       update: function (s) {
         if (s && s.mode) setMode(s.mode);
+        setControls(mode === "fourier");
       },
       resize: fit,
       destroy: function () {
         window.removeEventListener("tm:theme", onTheme);
         window.removeEventListener("resize", fit);
+        stopRotate();
         if (ro) ro.disconnect();
         host.remove();
       }

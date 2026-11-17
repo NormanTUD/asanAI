@@ -691,10 +691,16 @@
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = C.paper2 || C.paper;
       ctx.fillRect(0, 0, W, H);
-      var g = ctx.createRadialGradient(W * 0.78, H * 0.18, 0, W * 0.78, H * 0.18, Math.max(W, H) * 0.8);
-      g.addColorStop(0, rgba(C.gold, 0.035));
+      var g = ctx.createRadialGradient(W * 0.16, H * 0.06, 0, W * 0.16, H * 0.06, Math.max(W, H) * 0.95);
+      g.addColorStop(0, rgba(C.petrol, 0.16));
+      g.addColorStop(0.44, rgba(C.sky, 0.06));
       g.addColorStop(1, rgba(C.paper, 0));
       ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      var g2 = ctx.createRadialGradient(W * 0.9, H * 0.9, 0, W * 0.9, H * 0.9, Math.max(W, H) * 0.7);
+      g2.addColorStop(0, rgba(C.gold, 0.04));
+      g2.addColorStop(1, rgba(C.paper, 0));
+      ctx.fillStyle = g2;
       ctx.fillRect(0, 0, W, H);
       drawDots(ctx);
       ctx.strokeStyle = rgba(C.line, 0.9);

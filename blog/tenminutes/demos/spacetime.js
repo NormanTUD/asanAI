@@ -8,60 +8,9 @@
   if (!document.getElementById("ls-st-style")) {
     var style = document.createElement("style");
     style.id = "ls-st-style";
-    style.textContent = ".ls-st-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-st-scene canvas{display:block;width:100%;height:100%}.ls-st-paper{position:absolute;right:10px;top:10px;z-index:4;width:min(260px,42vw);margin:0;background:var(--tm-paper,#fff);border:1px solid var(--tm-line-strong,#b9c8c3);padding:6px;box-shadow:0 8px 24px rgba(0,20,30,.10)}.ls-st-paper a{display:block;color:inherit;text-decoration:none}.ls-st-paper img{display:block;width:100%;height:auto;border:1px solid var(--tm-line,#dbe3e0)}.ls-st-paper figcaption{font:400 8.5px/1.35 'Open Sans',sans-serif;color:var(--tm-muted,#627476);margin-top:5px}.ls-st-paper figcaption a{display:inline;color:var(--tm-petrol,#004b6f);border-bottom:1px dotted currentColor}@media(max-width:640px){.ls-st-paper{width:150px;padding:4px}.ls-st-paper figcaption{font-size:7.5px;line-height:1.3}}";
+    style.textContent = ".ls-st-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-st-scene canvas{display:block;width:100%;height:100%}.ls-st-hero{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;gap:8px;padding:12px 14px;margin:0;background:transparent}.ls-st-hero[hidden]{display:none}.ls-st-hero-img{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--tm-line-strong,#b9c8c3);overflow:hidden;box-shadow:0 10px 30px rgba(0,20,30,.10)}.ls-st-hero-img img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.ls-st-hero figcaption{flex:0 0 auto;font:400 9px/1.4 'Open Sans',sans-serif;color:var(--tm-muted,#627476);padding:0 2px}.ls-st-hero figcaption a{color:var(--tm-petrol,#004b6f);border-bottom:1px dotted currentColor;text-decoration:none}.ls-st-callouts{position:absolute;inset:0;pointer-events:none}.ls-st-callout{position:absolute;pointer-events:auto;border:1px solid var(--tm-line-strong,#b9c8c3);background:rgba(255,255,255,.94);color:var(--tm-ink,#000);padding:6px 9px;font:600 9.5px/1.2 'Open Sans',sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,20,30,.12);border-radius:0}.ls-st-callout.is-on{background:var(--tm-petrol,#004b6f);border-color:var(--tm-petrol,#004b6f);color:#fff}.ls-st-callout--probe{left:3%;top:6%}.ls-st-callout--relative{right:3%;top:9%}.ls-st-callout--limit{right:5%;bottom:8%}.ls-st-note{position:absolute;left:3%;bottom:3%;max-width:48%;background:rgba(255,255,255,.95);border-left:3px solid var(--tm-petrol,#004b6f);padding:7px 9px;font:400 9.2px/1.4 'Open Sans',sans-serif;color:var(--tm-ink-soft,#2c464d);pointer-events:auto}.ls-st-note b{display:block;font:700 8px/1.2 'Open Sans',sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--tm-petrol,#004b6f);margin-bottom:3px}@media(max-width:640px){.ls-st-hero{padding:8px}.ls-st-callout{font-size:8px;padding:4px 6px}.ls-st-note{max-width:64%;font-size:8.2px;padding:5px 7px}.ls-st-hero figcaption{font-size:8px}}";
     document.head.appendChild(style);
   }
-
-  var WORLD = { status: "idle", land: null, waiters: [] };
-
-  function loadWorld(cb) {
-    if (WORLD.status === "ready" || WORLD.status === "failed") { cb(); return; }
-    WORLD.waiters.push(cb);
-    if (WORLD.status === "loading") return;
-    WORLD.status = "loading";
-    function done(land) {
-      WORLD.land = land;
-      WORLD.status = land ? "ready" : "failed";
-      var waiters = WORLD.waiters.slice();
-      WORLD.waiters.length = 0;
-      for (var i = 0; i < waiters.length; i++) {
-        try { waiters[i](); } catch (e) {}
-      }
-    }
-    if (!window.fetch) { done(null); return; }
-    window.fetch("../atlas_data/world.json", { credentials: "same-origin" })
-      .then(function (res) {
-        if (!res.ok) throw new Error("http");
-        return res.json();
-      })
-      .then(function (json) {
-        done(json && json.land && json.land.length ? json.land : null);
-      })
-      .catch(function () { done(null); });
-  }
-
-  var CITIES = [
-    { name: "Paris", lat: 48.8566, lon: 2.3522, label: [7, -8, "left"] },
-    { name: "Berlin", lat: 52.5200, lon: 13.4050 },
-    { name: "London", lat: 51.5074, lon: -0.1278 },
-    { name: "Rome", lat: 41.9028, lon: 12.4964 },
-    { name: "Madrid", lat: 40.4168, lon: -3.7038 },
-    { name: "Vienna", lat: 48.2082, lon: 16.3738 },
-    { name: "New York", lat: 40.7128, lon: -74.0060, label: [-7, -8, "right"] },
-    { name: "Tokyo", lat: 35.6762, lon: 139.6503, label: [-7, -8, "right"] },
-    { name: "Sydney", lat: -33.8688, lon: 151.2093, label: [-7, 9, "right"] },
-    { name: "Cairo", lat: 30.0444, lon: 31.2357 },
-    { name: "Cape Town", lat: -33.9249, lon: 18.4241, label: [7, 9, "left"] },
-    { name: "Buenos Aires", lat: -34.6037, lon: -58.3816 },
-    { name: "Moscow", lat: 55.7558, lon: 37.6173 },
-    { name: "Mumbai", lat: 19.0760, lon: 72.8777 },
-    { name: "Beijing", lat: 39.9042, lon: 116.4074 },
-    { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
-    { name: "Mexico City", lat: 19.4326, lon: -99.1332 },
-    { name: "Toronto", lat: 43.6532, lon: -79.3832 },
-    { name: "Singapore", lat: 1.3521, lon: 103.8198 },
-    { name: "Nairobi", lat: -1.2921, lon: 36.8219 }
-  ];
 
   var FIGURES = [
     { name: "Ada Lovelace", year: 1852, pred: 1850, label: [-7, 9, "right"] },
@@ -81,16 +30,6 @@
     { name: "Immanuel Kant", year: 1804, pred: 1801 }
   ];
 
-  function predictedPlace(place) {
-    var jlat = Math.sin(place.lon * 1.7 + place.lat) * 0.7;
-    var jlon = Math.cos(place.lat * 1.3 - place.lon) * 0.9;
-    return { lat: place.lat + jlat, lon: place.lon + jlon };
-  }
-
-  function fmtCoord(lat, lon) {
-    return Math.abs(lat).toFixed(1) + "°" + (lat >= 0 ? "N" : "S") + ", " + Math.abs(lon).toFixed(1) + "°" + (lon >= 0 ? "E" : "W");
-  }
-
   var NEURONS = [
     { label: ["Raum 1", "Space 1"], color: "green", values: [0.88, 0.72, 0.18, 0.22, 0.12] },
     { label: ["Raum 2", "Space 2"], color: "green", values: [0.62, 0.84, 0.24, 0.20, 0.18] },
@@ -109,25 +48,48 @@
     canvas.className = "ls-canvas";
     canvas.setAttribute("role", "img");
     host.appendChild(canvas);
-    var paperFig = document.createElement("figure");
-    paperFig.className = "ls-st-paper";
-    var paperSrc = "../image.php?f=gurnee-tegmark-world.png&w=720&q=85&fmt=jpg";
-    var paperBig = "../image.php?f=gurnee-tegmark-world.png&w=1800&q=90&fmt=jpg";
-    paperFig.innerHTML = '<a href="' + paperBig + '" target="_blank" rel="noopener"><img src="' + paperSrc + '" alt="' + (DE ? "Weltkarte der aus Llama-2-70B-Aktivierungen gelesenen Koordinaten, Gurnee und Tegmark 2023, Abbildung 10" : "World map of coordinates read from Llama-2-70B activations, Gurnee and Tegmark 2023, Figure 10") + '"></a><figcaption>' + (DE
-      ? 'Gurnee &amp; Tegmark (2023), Abb. 10: Weltkarte aus gelernten Breiten-/Längengrad-Richtungen. Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Quelle: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.'
-      : 'Gurnee &amp; Tegmark (2023), Fig. 10: world map from learned latitude/longitude directions. License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.') + '</figcaption>';
-    host.appendChild(paperFig);
+    var hero = document.createElement("figure");
+    hero.className = "ls-st-hero";
+    var paperSrc = "../image.php?f=gurnee-tegmark-world.png&w=1800&q=90&fmt=jpg";
+    var paperBig = "../image.php?f=gurnee-tegmark-world.png&w=2200&q=92&fmt=jpg";
+    var notes = {
+      probe: DE ? "Zwei gelernte Richtungen werden aus der Aktivierung gelesen; die Karte ist ihre Projektion." : "Two learned directions are read from the activation; the map is their projection.",
+      relative: DE ? "Nachbarschaft stimmt eher als der exakte Ort. R² = 0,911 heißt: 91,1 % der Streuung sind linear erklärt." : "The neighbourhood is more accurate than the exact place. R² = 0.911 means 91.1% of the variance is linearly explained.",
+      limit: DE ? "Die Probe ist ein Readout. Ob das Modell die Richtung kausal benutzt, ist eine separate Frage." : "The probe is a readout. Whether the model uses the direction causally is a separate question."
+    };
+    hero.innerHTML =
+      '<div class="ls-st-hero-img">' +
+        '<a href="' + paperBig + '" target="_blank" rel="noopener"><img src="' + paperSrc + '" alt="' + (DE ? "Weltkarte der aus Llama-2-70B-Aktivierungen gelesenen Koordinaten, Gurnee und Tegmark 2023, Abbildung 10" : "World map of coordinates read from Llama-2-70B activations, Gurnee and Tegmark 2023, Figure 10") + '"></a>' +
+        '<div class="ls-st-callouts">' +
+          '<button type="button" class="ls-st-callout ls-st-callout--probe is-on" data-callout="probe">' + (DE ? "lineare Probe" : "linear probe") + '</button>' +
+          '<button type="button" class="ls-st-callout ls-st-callout--relative" data-callout="relative">' + (DE ? "relative Karte" : "relative map") + '</button>' +
+          '<button type="button" class="ls-st-callout ls-st-callout--limit" data-callout="limit">' + (DE ? "absolute Koordinaten" : "absolute coordinates") + '</button>' +
+          '<div class="ls-st-note" aria-live="polite"><b>' + (DE ? "Was du siehst" : "What to see") + '</b><span data-st-note>' + notes.probe + '</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<figcaption>' + (DE
+        ? 'Gurnee &amp; Tegmark (2023), Abb. 10: Weltkarte aus gelernten Breiten-/Längengrad-Richtungen. Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Quelle: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.'
+        : 'Gurnee &amp; Tegmark (2023), Fig. 10: world map from learned latitude/longitude directions. License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.') + '</figcaption>';
+    host.appendChild(hero);
+    var noteEl = hero.querySelector("[data-st-note]");
+    hero.querySelectorAll("[data-callout]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-callout");
+        hero.querySelectorAll("[data-callout]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+        if (noteEl) noteEl.textContent = notes[key] || notes.probe;
+      });
+    });
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var W = 1, H = 1;
     var mode = "space";
     var hits = [];
-    var sel = { city: -1, figure: -1, neuron: -1 };
+    var sel = { figure: -1, neuron: -1 };
     var alive = true;
     var ARIA = {
       space: DE
-        ? "Schematische Weltkarte mit Städten und einem linearen Probe für Koordinaten"
-        : "Schematic world map with cities and a linear probe for coordinates",
+        ? "Abbildung 10 aus Gurnee und Tegmark 2023: Weltkarte aus gelernten Breiten- und Längengrad-Richtungen in Llama-2-70B."
+        : "Figure 10 from Gurnee and Tegmark 2023: world map from learned latitude and longitude directions in Llama-2-70B.",
       time: DE
         ? "Streudiagramm wahrer Jahre gegen die Vorhersage aus x mit Diagonale"
         : "Scatter plot of true years against predictions from x with a diagonal",
@@ -193,155 +155,31 @@
     function drawBackground(c) {
       c.fillStyle = C.paper;
       c.fillRect(0, 0, W, H);
-      var g = c.createRadialGradient(W * 0.82, H * 0.12, 0, W * 0.82, H * 0.12, Math.max(W, H) * 0.9);
-      g.addColorStop(0, V.alpha(C.green, 0.045));
-      g.addColorStop(0.45, V.alpha(C.sky, 0.025));
+      var g = c.createRadialGradient(W * 0.18, H * 0.06, 0, W * 0.18, H * 0.06, Math.max(W, H) * 0.95);
+      g.addColorStop(0, V.alpha(C.petrol, 0.16));
+      g.addColorStop(0.44, V.alpha(C.sky, 0.06));
       g.addColorStop(1, V.alpha(C.paper, 0));
       c.fillStyle = g;
       c.fillRect(0, 0, W, H);
+      var g2 = c.createRadialGradient(W * 0.9, H * 0.9, 0, W * 0.9, H * 0.9, Math.max(W, H) * 0.7);
+      g2.addColorStop(0, V.alpha(C.green, 0.045));
+      g2.addColorStop(1, V.alpha(C.paper, 0));
+      c.fillStyle = g2;
+      c.fillRect(0, 0, W, H);
+      var vig = c.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.24, W * 0.5, H * 0.5, Math.max(W, H) * 0.74);
+      vig.addColorStop(0, V.alpha(C.petrol, 0));
+      vig.addColorStop(1, V.alpha(C.petrol, 0.09));
+      c.fillStyle = vig;
+      c.fillRect(0, 0, W, H);
+      c.save();
+      c.fillStyle = V.alpha(C.petrol, 0.05);
+      for (var gx = 24; gx < W; gx += 30) {
+        for (var gy = 24; gy < H; gy += 30) c.fillRect(gx, gy, 1, 1);
+      }
+      c.restore();
       c.strokeStyle = V.alpha(C.line, 0.75);
       c.lineWidth = 1;
       c.strokeRect(0.5, 0.5, W - 1, H - 1);
-    }
-
-    function drawLand(c, mx, my, mw, mh) {
-      var land = WORLD.land;
-      if (!land || !land.length) return;
-      c.save();
-      c.beginPath();
-      for (var i = 0; i < land.length; i++) {
-        var poly = land[i];
-        for (var r = 0; r < poly.length; r++) {
-          var ring = poly[r];
-          if (!ring || !ring.length) continue;
-          c.moveTo(mx + (ring[0][0] + 180) / 360 * mw, my + (90 - ring[0][1]) / 180 * mh);
-          for (var k = 1; k < ring.length; k++) {
-            c.lineTo(mx + (ring[k][0] + 180) / 360 * mw, my + (90 - ring[k][1]) / 180 * mh);
-          }
-          c.closePath();
-        }
-      }
-      c.fillStyle = V.alpha(C.petrol, 0.055);
-      c.fill("evenodd");
-      c.strokeStyle = V.alpha(C.petrol, 0.20);
-      c.lineWidth = 0.6;
-      c.stroke();
-      c.restore();
-    }
-
-    function drawGraticule(c, mx, my, mw, mh) {
-      var lon, lat, x, y;
-      c.save();
-      c.lineWidth = 1;
-      for (lon = -180; lon <= 180; lon += 30) {
-        x = mx + (lon + 180) / 360 * mw;
-        c.strokeStyle = V.alpha(C.line, lon === 0 ? 0.85 : 0.42);
-        c.beginPath();
-        c.moveTo(x, my);
-        c.lineTo(x, my + mh);
-        c.stroke();
-      }
-      for (lat = -90; lat <= 90; lat += 30) {
-        y = my + (90 - lat) / 180 * mh;
-        c.strokeStyle = V.alpha(C.line, lat === 0 ? 0.85 : 0.42);
-        c.beginPath();
-        c.moveTo(mx, y);
-        c.lineTo(mx + mw, y);
-        c.stroke();
-      }
-      c.strokeStyle = V.alpha(LINE_STRONG, 0.75);
-      c.strokeRect(mx + 0.5, my + 0.5, mw - 1, mh - 1);
-      c.restore();
-    }
-
-    function drawSpace(c) {
-      var pad = padFor();
-      var top = header(
-        c,
-        DE ? "Wo liegt Paris im Modell?" : "Where is Paris in the model?",
-        DE ? "Probe liest lat/lon aus x · Klicke eine Stadt." : "probe reads lat/lon from x · click a city."
-      );
-      var foot = 58;
-      var availW = W - 2 * pad;
-      var availH = H - top - foot;
-      var mw = Math.min(availW, availH * 2);
-      var mh = mw / 2;
-      var mx = (W - mw) / 2;
-      var my = top + Math.max(0, (availH - mh) / 2);
-
-      drawGraticule(c, mx, my, mw, mh);
-      drawLand(c, mx, my, mw, mh);
-
-      for (var i = 0; i < CITIES.length; i++) {
-        var city = CITIES[i];
-        var x = mx + (city.lon + 180) / 360 * mw;
-        var y = my + (90 - city.lat) / 180 * mh;
-        var isSel = i === sel.city;
-        hits.push({ x: x, y: y, kind: "city", i: i, r: 15 });
-        if (isSel) {
-          c.fillStyle = V.alpha(C.gold, 0.16);
-          c.beginPath();
-          c.arc(x, y, 12, 0, Math.PI * 2);
-          c.fill();
-          c.fillStyle = C.gold;
-          c.beginPath();
-          c.arc(x, y, 4.8, 0, Math.PI * 2);
-          c.fill();
-          c.strokeStyle = V.alpha(C.paper, 0.95);
-          c.lineWidth = 1.5;
-          c.stroke();
-        } else if (city.label) {
-          c.fillStyle = V.alpha(C.green, 0.13);
-          c.beginPath();
-          c.arc(x, y, 7, 0, Math.PI * 2);
-          c.fill();
-          c.fillStyle = C.green;
-          c.beginPath();
-          c.arc(x, y, 3.4, 0, Math.PI * 2);
-          c.fill();
-          c.strokeStyle = V.alpha(C.paper, 0.95);
-          c.lineWidth = 1.4;
-          c.stroke();
-        } else {
-          c.fillStyle = V.alpha(C.petrol, 0.58);
-          c.beginPath();
-          c.arc(x, y, 2.1, 0, Math.PI * 2);
-          c.fill();
-        }
-      }
-
-      for (var j = 0; j < CITIES.length; j++) {
-        var place = CITIES[j];
-        var isSelLabel = j === sel.city;
-        if (!place.label && !isSelLabel) continue;
-        var lx = mx + (place.lon + 180) / 360 * mw + (place.label ? place.label[0] : 8);
-        var ly = my + (90 - place.lat) / 180 * mh + (place.label ? place.label[1] : -8);
-        txt(c, place.name, lx, ly, {
-          size: isSelLabel ? 10 : (W < 620 ? 8.8 : 9.6),
-          font: (isSelLabel ? '700 ' : '600 ') + (isSelLabel ? 10 : (W < 620 ? 8.8 : 9.6)) + 'px "Open Sans", sans-serif',
-          color: isSelLabel ? C.gold : C.ink,
-          align: place.label ? place.label[2] : "left"
-        });
-      }
-
-      var fy = my + mh + 18;
-      if (sel.city >= 0) {
-        var chosen = CITIES[sel.city];
-        var pred = predictedPlace(chosen);
-        txt(c, chosen.name, pad, fy, { size: 11.5, display: true, color: C.ink });
-        txt(c, (DE ? "wahr " : "true ") + fmtCoord(chosen.lat, chosen.lon), pad, fy + 15, { size: 9, color: C.muted });
-        txt(c, (DE ? "Probe " : "probe ") + fmtCoord(pred.lat, pred.lon), pad + (W < 620 ? 138 : 150), fy + 15, { size: 9, color: C.gold });
-      } else {
-        txt(c, "w · x → lat/lon", pad, fy, { size: 11, color: C.petrol, font: '600 11px "Open Sans", sans-serif' });
-        txt(c, DE ? "Klicke eine Stadt." : "Click a city.", pad, fy + 16, { size: 8.5, color: C.muted });
-      }
-      txt(c, "Llama-2-70B · R² = 0.911", W - pad, fy, {
-        align: "right",
-        size: W < 620 ? 9.5 : 10.5,
-        color: C.ink,
-        font: '600 ' + (W < 620 ? 9.5 : 10.5) + 'px "Open Sans", sans-serif'
-      });
-      footer(c);
     }
 
     function drawTime(c) {
@@ -392,6 +230,20 @@
       c.stroke();
       c.restore();
       txt(c, "x = y", tx(1875) + 5, ty(1875) - 5, { size: 8.5, color: C.muted });
+
+      var meanYear = 0;
+      for (var mi = 0; mi < FIGURES.length; mi++) meanYear += FIGURES[mi].year;
+      meanYear /= FIGURES.length;
+      c.save();
+      c.setLineDash([2, 4]);
+      c.strokeStyle = V.alpha(C.petrol, 0.52);
+      c.lineWidth = 1.1;
+      c.beginPath();
+      c.moveTo(plotL, ty(meanYear));
+      c.lineTo(plotR, ty(meanYear));
+      c.stroke();
+      c.restore();
+      txt(c, DE ? "Mittelwert" : "mean", plotL + 4, ty(meanYear) - 6, { size: 7.8, color: C.petrol });
 
       c.strokeStyle = V.alpha(LINE_STRONG, 0.85);
       c.lineWidth = 1;
@@ -488,30 +340,53 @@
       txt(c, DE ? "Personen" : "figures", plotR, plotT + 6, { align: "right", size: 8.5, color: C.muted });
 
       var cardX = x0 + side + Math.max(20, pad);
-      var cardW = Math.min(250, W - pad - cardX);
+      var cardW = Math.min(260, W - pad - cardX);
       if (wide && cardW > 160) {
         var cardY = y0 + 8;
-        var cardH = 188;
-        c.fillStyle = V.alpha(PAPER2, 0.55);
+        var cardH = 224;
+        c.fillStyle = V.alpha(PAPER2, 0.72);
         c.fillRect(cardX, cardY, cardW, cardH);
-        c.strokeStyle = V.alpha(C.line, 0.9);
+        c.strokeStyle = V.alpha(C.petrol, 0.24);
         c.lineWidth = 1;
         c.strokeRect(cardX + 0.5, cardY + 0.5, cardW - 1, cardH - 1);
         head(c, "Llama-2-70B", cardX + 14, cardY + 25, { size: 16 });
         txt(c, DE ? "historische Personen" : "historical figures", cardX + 14, cardY + 44, { size: 9.5, color: C.muted });
         accent(c, cardX + 14, cardY + 58, 28);
         head(c, "R² = 0.835", cardX + 14, cardY + 88, { size: 27, color: C.petrol });
-        txt(c, DE ? "linearer Ridge-Probe" : "linear ridge probe", cardX + 14, cardY + 108, { size: 9, color: C.muted });
+        txt(c, DE ? "linearer Ridge-Probe, out-of-sample" : "linear ridge probe, out-of-sample", cardX + 14, cardY + 108, { size: 9, color: C.muted });
+        var gaugeX = cardX + 14, gaugeY = cardY + 124, gaugeW = cardW - 28;
+        c.fillStyle = V.alpha(C.line, 0.7);
+        c.fillRect(gaugeX, gaugeY, gaugeW, 8);
+        var gg = c.createLinearGradient(gaugeX, 0, gaugeX + gaugeW, 0);
+        gg.addColorStop(0, C.petrol);
+        gg.addColorStop(0.62, C.sky);
+        gg.addColorStop(1, C.gold);
+        c.fillStyle = gg;
+        c.fillRect(gaugeX, gaugeY, gaugeW * 0.835, 8);
+        c.fillStyle = C.petrol;
+        c.beginPath();
+        c.arc(gaugeX + gaugeW * 0.835, gaugeY + 4, 5, 0, Math.PI * 2);
+        c.fill();
+        c.strokeStyle = C.paper;
+        c.lineWidth = 1.4;
+        c.stroke();
+        txt(c, "0", gaugeX, gaugeY + 20, { size: 7.6, color: C.muted });
+        txt(c, "1", gaugeX + gaugeW, gaugeY + 20, { align: "right", size: 7.6, color: C.muted });
+        txt(c, DE ? "83,5 % der Streuung erklärt" : "83.5% of variance explained", gaugeX, gaugeY + 34, {
+          size: 9,
+          color: C.ink,
+          font: '600 9px "Open Sans", sans-serif'
+        });
+        txt(c, "R² = 1 − SS_res / SS_tot", gaugeX, gaugeY + 48, { size: 7.8, color: C.muted });
         if (sel.figure >= 0) {
           var chosenFig = FIGURES[sel.figure];
-          txt(c, chosenFig.name, cardX + 14, cardY + 128, { size: 9.5, color: C.ink, font: '600 9.5px "Open Sans", sans-serif' });
-          txt(c, (DE ? "wahr " : "true ") + chosenFig.year + " · " + (DE ? "Probe " : "probe ") + chosenFig.pred, cardX + 14, cardY + 144, { size: 8.5, color: C.muted });
-          txt(c, "Δ " + Math.abs(chosenFig.year - chosenFig.pred) + " " + (DE ? "Jahre" : "years"), cardX + 14, cardY + 158, { size: 8.5, color: C.gold });
-          txt(c, "Gurnee & Tegmark (2023)", cardX + 14, cardY + 175, { size: 8.2, color: C.muted });
+          txt(c, chosenFig.name, cardX + 14, cardY + 188, { size: 9.5, color: C.ink, font: '600 9.5px "Open Sans", sans-serif' });
+          txt(c, (DE ? "wahr " : "true ") + chosenFig.year + " · " + (DE ? "Probe " : "probe ") + chosenFig.pred, cardX + 14, cardY + 202, { size: 8.5, color: C.muted });
+          txt(c, "Δ " + Math.abs(chosenFig.year - chosenFig.pred) + " " + (DE ? "Jahre" : "years"), cardX + 14, cardY + 216, { size: 8.5, color: C.petrol });
         } else {
-          txt(c, "Gurnee & Tegmark (2023)", cardX + 14, cardY + 128, { size: 8.2, color: C.muted });
-          txt(c, DE ? "Klicke eine Person." : "Click a person.", cardX + 14, cardY + 144, { size: 8, color: C.muted });
-          txt(c, DE ? "schematisch" : "schematic", cardX + 14, cardY + 160, { size: 8, color: C.muted });
+          txt(c, "Gurnee & Tegmark (2023)", cardX + 14, cardY + 188, { size: 8.2, color: C.muted });
+          txt(c, DE ? "Klicke eine Person." : "Click a person.", cardX + 14, cardY + 202, { size: 8, color: C.muted });
+          txt(c, DE ? "schematische Punkte" : "schematic points", cardX + 14, cardY + 216, { size: 8, color: C.muted });
         }
       } else {
         txt(c, DE ? "Llama-2-70B · R² = 0.835 · historische Personen" : "Llama-2-70B · R² = 0.835 · historical figures", W / 2, H - 28, {
@@ -528,6 +403,12 @@
         } else {
           txt(c, DE ? "Klicke eine Person." : "Click a person.", W / 2, H - 44, { align: "center", size: 9, color: C.muted });
         }
+        var ngx = pad, ngw = W - 2 * pad, ngy = H - 70;
+        c.fillStyle = V.alpha(C.line, 0.7);
+        c.fillRect(ngx, ngy, ngw, 6);
+        c.fillStyle = C.petrol;
+        c.fillRect(ngx, ngy, ngw * 0.835, 6);
+        txt(c, DE ? "R²: 0 = Mittelwert, 1 = perfekt" : "R²: 0 = mean, 1 = perfect", ngx, ngy - 8, { size: 7.8, color: C.muted });
       }
       footer(c);
     }
@@ -675,7 +556,7 @@
     }
 
     function draw() {
-      if (!W || !H || !alive) return;
+      if (!W || !H || !alive || mode === "space") return;
       hits = [];
       C = api.colors();
       LINE_STRONG = C.lineStrong || C.line;
@@ -683,8 +564,7 @@
       ctx.clearRect(0, 0, W, H);
       drawBackground(ctx);
       if (mode === "time") drawTime(ctx);
-      else if (mode === "neurons") drawNeurons(ctx);
-      else drawSpace(ctx);
+      else drawNeurons(ctx);
     }
 
     function fit() {
@@ -699,9 +579,11 @@
       var m = next === "time" || next === "neurons" || next === "space" ? next : "space";
       if (m === mode && canvas.getAttribute("aria-label")) return;
       mode = m;
-      paperFig.hidden = mode !== "space";
-      canvas.setAttribute("aria-label", ARIA[mode]);
-      draw();
+      hero.hidden = mode !== "space";
+      canvas.style.display = mode === "space" ? "none" : "block";
+      canvas.setAttribute("aria-label", ARIA[mode] || ARIA.space);
+      if (mode === "space") return;
+      fit();
     }
 
     function onTheme() { draw(); }
@@ -743,8 +625,10 @@
       canvas.style.cursor = hitAt(e.clientX - r.left, e.clientY - r.top) ? "pointer" : "";
     });
 
+    canvas.style.display = "none";
+    hero.hidden = false;
+    canvas.setAttribute("aria-label", ARIA.space);
     fit();
-    loadWorld(function () { if (alive) draw(); });
 
     return {
       update: function (state) {

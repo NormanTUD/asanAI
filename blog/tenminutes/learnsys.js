@@ -2044,6 +2044,7 @@
     lastDemoStep = state.step;
     lastDemoSub = state.substep;
     var nextScene = s && s.demoState && s.demoState.scene ? s.demoState.scene : null;
+    if (els.demo) els.demo.setAttribute("data-scene", nextScene || "");
     if (!nextScene) {
       els.app.classList.add("is-text-only");
       els.app.classList.remove("is-demo-focus");
