@@ -9,11 +9,15 @@
     el.innerHTML =
       '<div class="ls-sim-tabs" role="tablist">' +
         '<button type="button" class="ls-sim-tab is-on" data-mode="directions" role="tab" aria-selected="true">' + (DE ? "Richtungen" : "Directions") + '</button>' +
+        '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">' + (DE ? "Skaleninvarianz" : "Scale invariance") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="unembed" role="tab" aria-selected="false">Unembedding</button>' +
       '</div>' +
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
       '<div class="ls-sim-controls ls-sim-map-controls">' +
         '<label class="ls-sim-pick">' + (DE ? "Wort" : "Word") + ' <select class="ls-sim-select"></select></label>' +
+      '</div>' +
+      '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
+        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.3" max="3" step="0.05" value="1.6"><output>1.60×</output></label>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
@@ -347,20 +351,22 @@
     }
     function drawScale() {
       var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
-      var a = 35 * Math.PI / 180;
-      var magA = 0.55, magB = 0.55 * scaleMag;
+      var aA = 25 * Math.PI / 180;
+      var aB = 75 * Math.PI / 180;
+      var magA = 0.62, magB = Math.min(1.55, 0.62 * scaleMag);
       var lenA = r * magA, lenB = r * magB;
-      var ax = cx + Math.cos(a) * lenA, ay = cy - Math.sin(a) * lenA;
-      var bx = cx + Math.cos(a) * lenB, by = cy - Math.sin(a) * lenB;
-      ctx.save();
-      ctx.setLineDash([5, 4]);
-      ctx.strokeStyle = V.alpha(C.lilac, .8);
-      ctx.lineWidth = 1.4;
+      var ax = cx + Math.cos(aA) * lenA, ay = cy - Math.sin(aA) * lenA;
+      var bx = cx + Math.cos(aB) * lenB, by = cy - Math.sin(aB) * lenB;
+      var angleDeg = (aB - aA) * 180 / Math.PI;
       ctx.beginPath();
-      ctx.moveTo(ax, ay);
-      ctx.lineTo(bx, by);
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r * 0.42, -aA, -aB, true);
+      ctx.closePath();
+      ctx.fillStyle = V.alpha(C.gold, 0.16);
+      ctx.fill();
+      ctx.strokeStyle = C.gold;
+      ctx.lineWidth = 1.2;
       ctx.stroke();
-      ctx.restore();
       V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
       V.arrow(ctx, cx, cy, bx, by, C.green, 3);
       ctx.fillStyle = C.blue;
@@ -379,14 +385,15 @@
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("0°", cx + Math.cos(a) * r * .45 + 18, cy - Math.sin(a) * r * .45 - 10);
+      var mid = (aA + aB) / 2;
+      ctx.fillText(Math.round(angleDeg) + "°", cx + Math.cos(mid) * r * 0.52, cy - Math.sin(mid) * r * 0.52);
       ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
       ctx.fillText(DE ? "Länge vs. Richtung" : "Length vs. direction", 18, 28);
-      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>0.0°</b></span><span>Cos <b>1.000</b></span>';
-      caption.textContent = DE ? "A und B zeigen in dieselbe Richtung. B ist länger, die Spitzen liegen weit auseinander, aber der Winkel ist 0° und der Cosinus 1. Die Länge ändert die Ähnlichkeit nicht." : "A and B point in the same direction. B is longer, the tips are far apart, but the angle is 0° and the cosine is 1. Length does not change the similarity.";
+      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + Math.round(angleDeg) + '.0°</b></span><span>Cos <b>' + Math.cos(aB - aA).toFixed(3) + '</b></span>';
+      caption.textContent = DE ? "A und B zeigen in verschiedene Richtungen. B ist länger; der Winkel zwischen ihnen bleibt gleich, wenn du B skalierst. Die Länge ändert die Ähnlichkeit nicht, nur die Richtungen zählen." : "A and B point in different directions. B is longer; the angle between them stays the same when you scale B. Length does not change the similarity; only the directions count.";
     }
     function unembedData() {
       return UN_TOKENS.map(function (tok) {
@@ -539,7 +546,7 @@
       } catch (e) {}
     }
     function setMode(next) {
-      var order = { directions: 0, unembed: 1 };
+      var order = { directions: 0, scale: 1, unembed: 2 };
       var modeChanged = next !== mode;
       var dir = order[next] < order[mode] ? -1 : 1;
       mode = next;

@@ -167,8 +167,8 @@ def check_learnsys_deck(driver, page, lang, results):
             driver.execute_script("window.LearnSys.go(0, arguments[0])", unembed_index)
             time.sleep(0.2)
             tabs = driver.execute_script("return Array.from(document.querySelectorAll('#ls-demo .ls-sim-tab')).map(b=>b.getAttribute('data-mode'))")
-            results.check(page, lang, "unembedding tabs present", tabs == ["directions", "unembed"], str(tabs))
-            for mode in ("unembed", "directions"):
+            results.check(page, lang, "unembedding tabs present", tabs == ["directions", "scale", "unembed"], str(tabs))
+            for mode in ("scale", "unembed", "directions"):
                 driver.execute_script("document.querySelector('#ls-demo .ls-sim-tab[data-mode=' + arguments[0] + ']').click()", mode)
                 time.sleep(0.15)
                 ro = driver.execute_script("return (document.querySelector('#ls-demo .ls-sim-readout')?.innerText || '').trim()")
