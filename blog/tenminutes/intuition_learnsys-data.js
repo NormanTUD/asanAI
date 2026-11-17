@@ -2087,29 +2087,6 @@
     ]
   };
 
-  var aiSafetySub = {
-    kicker: DE ? "Sicherheit" : "Safety",
-    title: DE ? "Sicherheit ist ein Stapel, kein Schalter" : "Safety is a stack, not a switch",
-    body: DE
-      ? "Sicherheit ist ein Stapel, kein Schalter. Auf Modellebene helfen Datenfilter, RLHF (Ouyang et al., 2022) und Constitutional AI (Bai et al., 2022). Auf Systemebene begrenzen Guardrails, Tool-Rechte, Sandboxing und Monitoring den Schaden; Red-Teaming und Evals (Perez et al., 2022) suchen vor dem Deployment nach Umgehungen. Auf Institutionenebene sollen Audits, Haftung und Regeln wie der EU AI Act und das NIST AI RMF greifen. Keine Ebene ist vollständig: Evals sind Stichproben, Guardrails sind umgehbar, und Regeln hinken der Technik hinterher."
-      : "Safety is a stack, not a switch. At the model level, data filters, RLHF (Ouyang et al., 2022), and Constitutional AI (Bai et al., 2022) help. At the system level, guardrails, tool permissions, sandboxing, and monitoring limit damage; red-teaming and evals (Perez et al., 2022) look for bypasses before deployment. At the institutional level, audits, liability, and rules such as the EU AI Act and the NIST AI RMF are meant to bite. No layer is complete: evals are samples, guardrails can be bypassed, and rules lag behind the technology.",
-    watch: DE ? "Klicke die Ebenen. Wo endet die Kontrolle?" : "Click the layers. Where does control end?",
-    demoState: { scene: "riskmap", mode: "safety" },
-    context: DE ? "Sicherheit entsteht aus vielen Schichten. Eine perfekte Schicht gibt es nicht; jede hat Fehler und Umgehungen." : "Safety comes from many layers. There is no perfect layer; each has errors and bypasses.",
-    deep: DE ? "Defense in depth heißt: Ein Fehler auf einer Ebene soll nicht sofort zum Schaden führen. Deshalb braucht es technische, organisatorische und politische Gegenmittel gleichzeitig." : "Defense in depth means one failure on one layer should not immediately cause harm. That is why technical, organisational, and political countermeasures are needed at the same time.",
-    boxes: [
-      box("safe-red", DE ? "Technik" : "Technique", DE ? "Was ist Red-Teaming?" : "What is red-teaming?", DE ? "Ein Team greift das System absichtlich an, bevor es Nutzer tun. Es findet Fehler, beweist aber keine Sicherheit." : "A team attacks the system on purpose before users do. It finds failures but does not prove safety."),
-      box("safe-eval", DE ? "Grenze" : "Limit", DE ? "Warum reichen Evals nicht?" : "Why are evals not enough?", DE ? "Evals testen eine Stichprobe von Fähigkeiten und Angriffen. Ein Modell kann außerhalb der Testverteilung anders handeln; fehlende Evidenz ist kein Beweis von Sicherheit." : "Evals test a sample of capabilities and attacks. A model can behave differently outside the test distribution; absence of evidence is not proof of safety.")
-    ],
-    sources: [
-      { label: "Ouyang et al. (2022), Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155", why: { de: "RLHF: menschliche Präferenzen als Trainingssignal.", en: "RLHF: human preferences as a training signal." } },
-      { label: "Bai et al. (2022), Constitutional AI", url: "https://arxiv.org/abs/2212.08073", why: { de: "Regeln und Selbstkritik statt nur menschlicher Labels.", en: "Rules and self-critique instead of only human labels." } },
-      { label: "Perez et al. (2022), Red Teaming Language Models with Language Models", url: "https://arxiv.org/abs/2202.03286", why: { de: "Automatisiertes Red-Teaming für Sprachmodelle.", en: "Automated red-teaming for language models." } },
-      { label: "NIST AI Risk Management Framework (2023)", url: "https://www.nist.gov/itl/ai-risk-management-framework", why: { de: "Risikomanagement-Standard für KI-Systeme.", en: "Risk-management standard for AI systems." } },
-      { label: "EU AI Act (2024)", url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj", why: { de: "Europäische Regeln nach Risikoklassen.", en: "European rules by risk class." } }
-    ]
-  };
-
   var aiLimitsSub = {
     kicker: DE ? "Grenzen" : "Limits",
     title: DE ? "Was ein LLM strukturell nicht kann" : "What an LLM structurally cannot do",
@@ -2160,7 +2137,7 @@
   var aiSocietyStep = {
     kicker: DE ? "KI und Gesellschaft" : "AI and society",
     title: DE ? "Was KI mit uns macht" : "What AI does to us",
-    substeps: [aiRiskSub, aiSafetySub, aiLimitsSub, aiSocietySub]
+    substeps: [aiRiskSub, aiLimitsSub, aiSocietySub]
   };
 
   var consciousnessStep = {
@@ -2386,11 +2363,11 @@
   var worldModelStep = {
     kicker: DE ? "Weltmodelle" : "World models",
     title: DE ? "Wie ein LLM sein Weltmodell aufbaut" : "How an LLM builds its world model",
-    substeps: [wmBoard, wmMachine, wmGeometry]
+    substeps: [wmMachine, wmGeometry]
   };
 
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, worldModelStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], wmBoard, trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, worldModelStep];
 
   var day = {
     id: "intuition",
