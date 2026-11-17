@@ -367,43 +367,59 @@
 
   const ACTS = [
     { roman: "I", label: "Space" },
-    { roman: "II", label: "Identity" },
-    { roman: "III", label: "Fibers" },
-    { roman: "IV", label: "Structure" },
-    { roman: "V", label: "Higher" },
-    { roman: "VI", label: "Universe" }
+    { roman: "II", label: "Types" },
+    { roman: "III", label: "Identity" },
+    { roman: "IV", label: "Fibers" },
+    { roman: "V", label: "Logic" },
+    { roman: "VI", label: "Higher" },
+    { roman: "VII", label: "Coda" }
   ];
 
   const BEATS = [
-    { act: 0, kind: "title",     caption: "Everything is a space.", key: "space", kicker: "Homotopy Type Theory", d: 16, cy: 4.4, ly: 0.0 },
-    { act: 0, kind: "point",     caption: "A point is a place.", key: "point", d: 13, cy: 3.2 },
-    { act: 0, kind: "path",      caption: "Two points, one path.", key: "path", d: 12, cy: 2.8 },
-    { act: 0, kind: "homotopy",  caption: "A path can bend into another.", key: "bend", d: 12.6, cy: 2.6 },
-    { act: 0, kind: "composite", caption: "Paths compose; every path reverses.", key: "reverses", d: 12.6, cy: 2.6 },
-    { act: 0, kind: "torus",     caption: "A loop can remember a hole.", key: "hole", d: 12.4, cy: 3.0 },
-    { act: 1, kind: "typespace", caption: "A type is a space.", key: "space", d: 12.4, cy: 2.8 },
-    { act: 1, kind: "identity",  caption: "Identity is a space of paths.", key: "paths", math: "a =_{A} b", d: 12.2, cy: 2.6 },
-    { act: 1, kind: "j",         caption: "One reflexivity path generates them all.", key: "reflexivity", d: 12.6, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "family",    caption: "A family of sets above every point.", key: "sets", d: 10.7, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "fibration", caption: "A fibration: fibers over every point.", key: "fibers", d: 10.7, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "transport", caption: "Transport carries structure along the path.", key: "Transport", d: 10.7, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "pi",        caption: "Pi chooses one point in every fiber.", key: "one", math: "\\Pi_{x:A}\\,B(x)", d: 10.7, cy: 2.4 },
-    { act: 2, kind: "fiber", mode: "sigma",     caption: "Sigma is the whole bundle.", key: "bundle", math: "\\Sigma_{x:A}\\,B(x)", d: 10.7, cy: 2.4 },
-    { act: 3, kind: "props",     caption: "A proposition: at most one proof.", key: "one", d: 11.5, cy: 2.4 },
-    { act: 3, kind: "logic",     caption: "Logic is built from types.", key: "types", d: 11.1, cy: 2.4 },
-    { act: 3, kind: "set",       caption: "A set: at most one path.", key: "path", d: 12.2, cy: 2.6 },
-    { act: 3, kind: "levels",    caption: "Higher levels remember higher paths.", key: "paths", d: 11.9, cy: 2.6 },
-    { act: 4, kind: "universe",  caption: "Types of types: the universe.", key: "universe", d: 12.0, cy: 2.6 },
-    { act: 4, kind: "equiv",     caption: "An equivalence matches points and paths.", key: "equivalence", d: 12.8, cy: 2.6 },
-    { act: 4, kind: "univalence",caption: "Univalence: equivalence is equality.", key: "equality", math: "(A \\simeq B) \\simeq (A = B)", d: 12.4, cy: 2.6 },
-    { act: 4, kind: "interval",  caption: "Two points and a path: the interval.", key: "interval", d: 12.4, cy: 2.6 },
-    { act: 4, kind: "circle",    caption: "One point and a loop: the circle.", key: "circle", d: 12.0, cy: 2.8 },
-    { act: 5, kind: "finale",    caption: "One long path through the universe.", key: "path", kicker: "Coda &middot; The Whole Path", d: 12, cy: 3 }
+    { act: 0, kind: "title",       caption: "Everything is a space.", key: "space", kicker: "Homotopy Type Theory", d: 16, cy: 4.4, ly: 0.0 },
+    { act: 0, kind: "point",       caption: "A point is a place.", key: "point", d: 13, cy: 3.2 },
+    { act: 0, kind: "path",        caption: "Two points, one path.", key: "path", d: 12, cy: 2.8 },
+    { act: 0, kind: "homotopy",    caption: "A path can bend into another.", key: "bend", d: 12.6, cy: 2.6 },
+    { act: 0, kind: "composite",   caption: "Paths compose; every path reverses.", key: "reverses", d: 12.6, cy: 2.6 },
+    { act: 0, kind: "torus",       caption: "A loop can remember a hole.", key: "hole", d: 12.4, cy: 3.0 },
+    { act: 0, kind: "contractible",caption: "One point, and every path collapses.", key: "collapses", d: 11.4, cy: 2.6 },
+
+    { act: 1, kind: "typespace",   caption: "A type is a space.", key: "space", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "funtype",     caption: "A function sends points to points.", key: "sends", d: 12.2, cy: 2.6 },
+    { act: 1, kind: "product",     caption: "A pair: one point from each type.", key: "pair", d: 10.4, cy: 2.4 },
+    { act: 1, kind: "sum",         caption: "A value sits on one side.", key: "side", d: 11.9, cy: 2.6 },
+    { act: 1, kind: "unitempty",   caption: "One point; or nothing.", key: "nothing", d: 10.7, cy: 2.5 },
+
+    { act: 2, kind: "identity",    caption: "Identity is a space of paths.", key: "paths", math: "a =_{A} b", d: 12.2, cy: 2.6 },
+    { act: 2, kind: "j",           caption: "One reflexivity path generates them all.", key: "reflexivity", d: 12.6, cy: 2.4 },
+    { act: 2, kind: "funext",      caption: "Pointwise equal, equal as functions.", key: "equal", d: 12.4, cy: 2.4 },
+
+    { act: 3, kind: "fiber", mode: "family",    caption: "A family of sets above every point.", key: "sets", d: 10.7, cy: 2.4 },
+    { act: 3, kind: "fiber", mode: "fibration", caption: "A fibration: fibers over every point.", key: "fibers", d: 10.7, cy: 2.4 },
+    { act: 3, kind: "fiber", mode: "transport", caption: "Transport carries structure along the path.", key: "Transport", d: 10.7, cy: 2.4 },
+    { act: 3, kind: "fibermap",    caption: "All points that map here.", key: "map", d: 12.2, cy: 2.5 },
+    { act: 3, kind: "fiber", mode: "pi",        caption: "Pi chooses one point in every fiber.", key: "one", math: "\\Pi_{x:A}\\,B(x)", d: 10.7, cy: 2.4 },
+    { act: 3, kind: "fiber", mode: "sigma",     caption: "Sigma is the whole bundle.", key: "bundle", math: "\\Sigma_{x:A}\\,B(x)", d: 10.7, cy: 2.4 },
+
+    { act: 4, kind: "props",       caption: "A proposition: at most one proof.", key: "one", d: 11.5, cy: 2.4 },
+    { act: 4, kind: "logic",       caption: "Logic is built from types.", key: "types", d: 11.1, cy: 2.4 },
+    { act: 4, kind: "truncation",  caption: "Forget which proof; keep existence.", key: "Forget", d: 9.7, cy: 2.5 },
+    { act: 4, kind: "set",         caption: "A set: at most one path.", key: "path", d: 12.2, cy: 2.6 },
+    { act: 4, kind: "levels",      caption: "Higher levels remember higher paths.", key: "paths", d: 11.9, cy: 2.6 },
+
+    { act: 5, kind: "universe",    caption: "Types of types: the universe.", key: "universe", d: 12.0, cy: 2.6 },
+    { act: 5, kind: "equiv",       caption: "An equivalence matches points and paths.", key: "equivalence", d: 12.8, cy: 2.6 },
+    { act: 5, kind: "univalence",  caption: "Univalence: equivalence is equality.", key: "equality", math: "(A \\simeq B) \\simeq (A = B)", d: 12.4, cy: 2.6 },
+    { act: 5, kind: "inductive",   caption: "Constructors build the type.", key: "Constructors", d: 11.6, cy: 2.4 },
+    { act: 5, kind: "interval",    caption: "Two points and a path: the interval.", key: "interval", d: 12.4, cy: 2.6 },
+    { act: 5, kind: "circle",      caption: "One point and a loop: the circle.", key: "circle", d: 12.0, cy: 2.8 },
+
+    { act: 6, kind: "finale",      caption: "One long path through the universe.", key: "path", kicker: "Coda &middot; The Whole Path", d: 12, cy: 3 }
   ];
   const N = BEATS.length;
 
-  const R_ARC = 42;
-  const SPAN = 2.05;
+  const R_ARC = 45;
+  const SPAN = 2.55;
   const thetaOf = (i) => -SPAN / 2 + (i / (N - 1)) * SPAN;
   const stationPos = (i) => new THREE.Vector3(
     R_ARC * Math.sin(thetaOf(i)),
@@ -412,8 +428,8 @@
   );
   const outwardOf = (i) => new THREE.Vector3(Math.sin(thetaOf(i)), 0, Math.cos(thetaOf(i)));
 
-  const overviewPos = new THREE.Vector3(0, 21, 102);
-  const overviewLook = new THREE.Vector3(0, -5.4, 12);
+  const overviewPos = new THREE.Vector3(0, 22, 112);
+  const overviewLook = new THREE.Vector3(0, -5.2, 10);
 
   let webglOK = true;
   let renderer = null;
@@ -848,6 +864,7 @@
   let buildTitle, buildPoint, buildPath, buildHomotopy, buildComposite, buildTorus;
   let buildTypeSpace, buildIdentity, buildSet, buildJ, buildFiber, buildProps, buildLogic;
   let buildLevels, buildUniverse, buildEquiv, buildUnivalence, buildInterval, buildCircle, buildFinale;
+  let buildContractible, buildFunType, buildProduct, buildSum, buildUnitEmpty, buildFunext, buildFiberMap, buildTruncation, buildInductive;
 
   function makeBackdrop(color) {
     const mat = new THREE.ShaderMaterial({
@@ -1847,6 +1864,436 @@
     };
   };
 
+  function makeSoftPanel(w, h, colA, colB, op) {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { uA: { value: new THREE.Color(colA) }, uB: { value: new THREE.Color(colB) }, uOpacity: { value: op }, uTime: { value: 0 } },
+      vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
+      fragmentShader: [
+        "uniform vec3 uA,uB; uniform float uOpacity,uTime;",
+        "varying vec2 vUv;",
+        "void main(){",
+        "  vec2 q=vUv-0.5;",
+        "  float r=length(q*vec2(1.0,1.35))*2.0;",
+        "  float g=pow(max(0.0,1.0-r),2.1);",
+        "  vec3 col=mix(uA,uB,0.5+0.5*sin(vUv.x*4.0+uTime*0.12));",
+        "  gl_FragColor=vec4(col,g*uOpacity);",
+        "}"
+      ].join("\n"),
+      transparent: true, depthWrite: false, depthTest: true,
+      side: THREE.DoubleSide, blending: THREE.AdditiveBlending
+    });
+    reg(mat);
+    const obj = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
+    obj.position.set(0, 0.1, -0.38);
+    obj.frustumCulled = false;
+    return { obj, mat, setOpacity(v) { mat.uniforms.uOpacity.value = v; } };
+  }
+
+  function addTypeSpace(parent, center, radius, colA, colB, op) {
+    const blob = makeIrid(new THREE.SphereGeometry(radius, 44, 30), { a: colA, b: colB, rim: C.gold, opacity: op, wobble: 0.045 });
+    blob.obj.position.copy(center);
+    parent.add(blob.obj);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(radius * 1.02, 2)),
+      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.06, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    wire.position.copy(center);
+    parent.add(wire);
+    return { blob, wire };
+  }
+
+  buildContractible = function (g) {
+    const labels = [];
+    const sphere = makeIrid(new THREE.SphereGeometry(1.35, 44, 30), { a: C.ice, b: C.violet, rim: C.gold, opacity: 0.42, wobble: 0.08 });
+    g.add(sphere.obj);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1.38, 2)),
+      new THREE.LineBasicMaterial({ color: C.ice, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    g.add(wire);
+    const core = makeDots([{ p: V(0, 0, 0), size: 2.4, color: C.white }], { opacity: 1 });
+    g.add(core.obj);
+    const loops = [];
+    const rot = [[0, 0, 0], [1.15, 0.35, 0], [-0.85, 1.0, 0.3], [0.6, -1.15, 0.5]];
+    for (const r of rot) {
+      const ring = makeRing(0.98, 0.011, C.ice, 0.8);
+      ring.obj.rotation.set(r[0], r[1], r[2]);
+      g.add(ring.obj);
+      loops.push(ring);
+    }
+    const radials = [];
+    for (let k = 0; k < 8; k++) {
+      const th = k / 8 * TAU;
+      const ph = Math.acos(Math.sin(k * 1.7 + 0.6));
+      const end = V(1.55 * Math.sin(ph) * Math.cos(th), 1.55 * Math.cos(ph), 1.55 * Math.sin(ph) * Math.sin(th));
+      const c = curveOf([V(0, 0, 0), end.clone().multiplyScalar(0.55).add(V(0, 0.12 * Math.sin(k), 0)), end], false);
+      const rib = makeRibbon(c, { a: C.ice, b: C.violet, rad: 0.006, opacity: 0.3, seg: 60 });
+      g.add(rib.core, rib.glow);
+      radials.push(rib);
+    }
+    labels.push({ text: "A &simeq; 1", p: V(0, 2.0, 0), dx: 0, dy: -8, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const breath = 0.5 - 0.5 * Math.cos(ctx.t * 0.82);
+        const sc = 1 - 0.72 * breath;
+        sphere.obj.scale.setScalar(sc);
+        sphere.setOpacity(a * (0.24 + 0.28 * breath));
+        wire.scale.setScalar(sc);
+        wire.material.opacity = a * 0.075;
+        sphere.obj.rotation.y += ctx.dt * 0.05;
+        wire.rotation.y -= ctx.dt * 0.03;
+        for (let k = 0; k < loops.length; k++) {
+          loops[k].obj.scale.setScalar(sc);
+          loops[k].setOpacity(a * (0.35 + 0.35 * breath));
+          loops[k].obj.rotation.z += ctx.dt * (0.08 + k * 0.02);
+        }
+        for (const r of radials) r.setOpacity(a * 0.28);
+        core.setOpacity(a);
+      }
+    };
+  };
+
+  buildFunType = function (g) {
+    const labels = [];
+    const A = addTypeSpace(g, V(-2.2, 0, 0), 1.15, C.cyan, C.violet, 0.4);
+    const B = addTypeSpace(g, V(2.2, 0.1, 0), 1.05, C.violet, C.rose, 0.4);
+    const ca = V(-2.2, 0, 0), cb = V(2.2, 0.1, 0);
+    const relA = [V(-0.4, -0.3, 0.62), V(0.45, -0.35, 0.55), V(0.1, 0.5, 0.6), V(-0.55, 0.3, 0.55)];
+    const relB = [V(-0.35, -0.25, 0.55), V(0.4, -0.3, 0.52), V(0, 0.45, 0.55), V(0.5, 0.2, 0.5)];
+    const aPts = relA.map((r) => ca.clone().add(r));
+    const bPts = relB.map((r) => cb.clone().add(r));
+    const mapIdx = [1, 0, 3, 2];
+    const threads = [];
+    for (let k = 0; k < 4; k++) {
+      const mid = aPts[k].clone().lerp(bPts[mapIdx[k]], 0.5).add(V(0, 0.5 + 0.15 * k, 0.45));
+      const c = curveOf([aPts[k], mid, bPts[mapIdx[k]]], false);
+      const hot = k === 2;
+      const rib = makeRibbon(c, { a: hot ? C.gold : C.ice, b: hot ? C.white : C.violet, rad: hot ? 0.019 : 0.009, opacity: hot ? 1 : 0.45, seg: 90, pulse: k * 0.2 });
+      g.add(rib.core, rib.glow);
+      threads.push({ rib, c, hot });
+    }
+    const dots = makeDots(
+      aPts.map((p) => ({ p, size: 0.56, color: C.ice, glow: 0.9 }))
+        .concat(bPts.map((p) => ({ p, size: 0.56, color: C.rose, glow: 0.9 })))
+        .concat([{ p: bPts[3], size: 0.8, color: C.gold, glow: 1.2 }]),
+      { opacity: 1 }
+    );
+    g.add(dots.obj);
+    const marker = makeMarker(C.white, 0.9);
+    g.add(marker.obj);
+    labels.push({ text: "A", p: V(-3.1, 1.35, 0), dx: 0, dy: -10, kind: "big" });
+    labels.push({ text: "B", p: V(3.05, 1.4, 0), dx: 0, dy: -10, kind: "big" });
+    labels.push({ text: "f : A &rarr; B", p: V(0, 2.05, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "a", p: aPts[2], dx: -4, dy: -20, kind: "sym" });
+    labels.push({ text: "f(a)", p: bPts[3], dx: 12, dy: -18, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        A.blob.setOpacity(a * 0.44); B.blob.setOpacity(a * 0.44);
+        A.wire.material.opacity = a * 0.06; B.wire.material.opacity = a * 0.06;
+        A.blob.obj.rotation.y += ctx.dt * 0.02; B.blob.obj.rotation.y -= ctx.dt * 0.02;
+        dots.setOpacity(a);
+        for (const t of threads) t.rib.setOpacity(a * (t.hot ? 1 : 0.4));
+        marker.setOpacity(a * 0.95);
+        marker.set(threads[2].c.getPoint(fract(ctx.t * 0.11)));
+      }
+    };
+  };
+
+  buildProduct = function (g) {
+    const labels = [];
+    const soft = makeSoftPanel(6.6, 4.8, C.cyan, C.violet, 0.26);
+    g.add(soft.obj);
+    const xs = [], ys = [];
+    for (let i = 0; i < 7; i++) { xs.push(-2.4 + i * 0.8); ys.push(-1.6 + i * 0.53); }
+    const pts = [];
+    for (let i = 0; i < 7; i++) {
+      for (let j = 0; j < 7; j++) {
+        pts.push({ p: V(xs[i], ys[j], 0), size: 0.42, color: (i + j) % 2 ? C.ice : C.violet, glow: 0.7, seed: rand() });
+      }
+    }
+    const px = xs[5], py = ys[4];
+    const pair = { p: V(px, py, 0.16), size: 2.0, color: C.gold, glow: 1.4 };
+    pts.push(pair);
+    const dots = makeDots(pts, { opacity: 1 });
+    g.add(dots.obj);
+    const gridPairs = [];
+    for (let j = 0; j < 7; j++) gridPairs.push([V(xs[0], ys[j], 0), V(xs[6], ys[j], 0)]);
+    for (let i = 0; i < 7; i++) gridPairs.push([V(xs[i], ys[0], 0), V(xs[i], ys[6], 0)]);
+    const grid = makeLines(gridPairs, { color: C.ice, opacity: 0.28 });
+    g.add(grid.obj);
+    const hAxis = makeLine2(C.ice, 0.9); hAxis.set(V(-3.35, -2.02, 0), V(3.35, -2.02, 0)); g.add(hAxis.obj);
+    const vAxis = makeLine2(C.violet, 0.9); vAxis.set(V(-2.9, -2.02, 0), V(-2.9, 2.3, 0)); g.add(vAxis.obj);
+    const hp = makeLine2(C.gold, 0.95); hp.set(V(px, -2.02, 0), V(px, py, 0)); g.add(hp.obj);
+    const vp = makeLine2(C.gold, 0.95); vp.set(V(-2.9, py, 0), V(px, py, 0)); g.add(vp.obj);
+    labels.push({ text: "A &times; B", p: V(0, 2.5, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "A", p: V(3.52, -2.02, 0), dx: 0, dy: 6, kind: "sym" });
+    labels.push({ text: "B", p: V(-2.9, 2.42, 0), dx: -4, dy: -8, kind: "sym" });
+    labels.push({ text: "(a,b)", p: V(px, py, 0.16), dx: 16, dy: -20, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        soft.setOpacity(a * 0.26);
+        dots.setOpacity(a);
+        grid.setOpacity(a * 0.28);
+        hAxis.setOpacity(a * 0.9); vAxis.setOpacity(a * 0.9);
+        hp.setOpacity(a * 0.8); vp.setOpacity(a * 0.8);
+      }
+    };
+  };
+
+  buildSum = function (g) {
+    const labels = [];
+    const A = addTypeSpace(g, V(-2.2, 0, 0), 1.1, C.cyan, C.violet, 0.4);
+    const B = addTypeSpace(g, V(2.2, 0, 0), 1.1, C.violet, C.rose, 0.4);
+    const aPos = V(-2.2 + 0.32, -0.12, 1.0);
+    const bPos = V(2.2 + 0.32, -0.12, 1.0);
+    const root = V(0, -1.9, 0);
+    const forkA = makeRibbon(curveOf([root, V(-1.1, -0.9, 0.25), aPos], false), { a: C.violet, b: C.gold, rad: 0.016, opacity: 0.9, seg: 80, pulse: 0.2 });
+    const forkB = makeRibbon(curveOf([root, V(1.1, -0.9, 0.25), bPos], false), { a: C.rose, b: C.violet, rad: 0.012, opacity: 0.35, seg: 80, pulse: 0.5 });
+    g.add(forkA.core, forkA.glow, forkB.core, forkB.glow);
+    const dots = makeDots([
+      { p: aPos, size: 1.1, color: C.gold, glow: 1.2 },
+      { p: bPos, size: 0.55, color: C.rose, glow: 0.4 },
+      { p: root, size: 0.5, color: C.ice, glow: 0.7 }
+    ], { opacity: 1 });
+    g.add(dots.obj);
+    labels.push({ text: "A", p: V(-3.2, 1.35, 0), dx: 0, dy: -10, kind: "big" });
+    labels.push({ text: "B", p: V(3.2, 1.35, 0), dx: 0, dy: -10, kind: "big" });
+    labels.push({ text: "A + B", p: V(0, 1.9, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "inl a", p: aPos, dx: 12, dy: -18, kind: "sym" });
+    labels.push({ text: "inr b", p: bPos, dx: 12, dy: -18, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        A.blob.setOpacity(a * 0.44); B.blob.setOpacity(a * 0.44);
+        A.wire.material.opacity = a * 0.06; B.wire.material.opacity = a * 0.06;
+        A.blob.obj.rotation.y += ctx.dt * 0.02; B.blob.obj.rotation.y -= ctx.dt * 0.02;
+        dots.setOpacity(a);
+        forkA.setOpacity(a * 0.85);
+        forkB.setOpacity(a * (0.25 + 0.15 * (0.5 + 0.5 * Math.sin(ctx.t * 1.1))));
+      }
+    };
+  };
+
+  buildUnitEmpty = function (g) {
+    const labels = [];
+    const ringL = makeRing(1.0, 0.03, C.ice, 1); ringL.obj.position.set(-1.7, 0, 0); g.add(ringL.obj);
+    const dot = makeDots([{ p: V(-1.7, 0, 0), size: 2.6, color: C.white }], { opacity: 1 });
+    g.add(dot.obj);
+    const unitFill = makeIrid(new THREE.SphereGeometry(0.92, 32, 22), { a: C.ice, b: C.violet, rim: C.gold, opacity: 0.22, wobble: 0.04 });
+    unitFill.obj.position.set(-1.7, 0, 0); g.add(unitFill.obj);
+    const ringR = makeRing(1.0, 0.03, C.red, 1); ringR.obj.position.set(1.7, 0, 0); g.add(ringR.obj);
+    const ringR2 = makeRing(0.58, 0.009, C.red, 0.55); ringR2.obj.position.set(1.7, 0, 0); g.add(ringR2.obj);
+    const voidFill = makeIrid(new THREE.SphereGeometry(0.92, 32, 22), { a: C.red, b: C.violet, rim: C.red, opacity: 0.2, wobble: 0.03 });
+    voidFill.obj.position.set(1.7, 0, 0); g.add(voidFill.obj);
+    labels.push({ text: "1", p: V(-1.7, 1.42, 0), dx: 0, dy: -8, kind: "big" });
+    labels.push({ text: "0", p: V(1.7, 1.42, 0), dx: 0, dy: -8, kind: "big" });
+    labels.push({ text: "unit", p: V(-1.7, -1.4, 0), dx: 0, dy: 12, kind: "word" });
+    labels.push({ text: "empty", p: V(1.7, -1.4, 0), dx: 0, dy: 12, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        ringL.setOpacity(a * (0.7 + 0.3 * (0.5 + 0.5 * Math.sin(ctx.t * 1.1))));
+        dot.setOpacity(a);
+        unitFill.setOpacity(a * 0.22);
+        ringR.setOpacity(a * 0.8);
+        ringR2.setOpacity(a * 0.35);
+        voidFill.setOpacity(a * 0.18);
+      }
+    };
+  };
+
+  buildFunext = function (g) {
+    const labels = [];
+    const base = curveOf([V(-2.6, -1.5, 0), V(-1.3, -1.36, 0), V(0, -1.42, 0), V(1.3, -1.36, 0), V(2.6, -1.5, 0)], false);
+    const baseRib = makeRibbon(base, { a: C.ice, b: C.violet, rad: 0.014, opacity: 0.6, seg: 110 });
+    g.add(baseRib.core, baseRib.glow);
+    const fPts = [V(-2.6, -0.7, 0), V(-1.3, 0.15, 0.15), V(0, 0.55, 0.2), V(1.3, 0.15, 0.15), V(2.6, -0.5, 0)];
+    const gPts = [V(-2.6, -1.1, 0), V(-1.3, -0.25, 0.15), V(0, 0.05, 0.2), V(1.3, -0.35, 0.15), V(2.6, -0.95, 0)];
+    const f = curveOf(fPts, false), gg = curveOf(gPts, false);
+    const fRib = makeRibbon(f, { a: C.cyan, b: C.ice, rad: 0.017, opacity: 0.95, seg: 120, pulse: 0.15 });
+    const gRib = makeRibbon(gg, { a: C.violet, b: C.rose, rad: 0.017, opacity: 0.9, seg: 120, pulse: 0.55 });
+    g.add(fRib.core, fRib.glow, gRib.core, gRib.glow);
+    const connectors = [];
+    const pairs = [];
+    for (let k = 0; k < 5; k++) {
+      const s = k / 4;
+      const a = f.getPoint(s), b = gg.getPoint(s);
+      pairs.push([a, b]);
+      connectors.push([a, b]);
+    }
+    const conn = makeLines(pairs, { color: C.gold, opacity: 0.5 });
+    g.add(conn.obj);
+    const sheet = makeSheet(44, 10, (s, t) => {
+      const p1 = f.getPoint(s), p2 = gg.getPoint(s);
+      const q = p1.clone().lerp(p2, t);
+      q.z += Math.sin(Math.PI * t) * 0.09;
+      return q;
+    }, { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.42 });
+    g.add(sheet.obj);
+    const dots = makeDots(
+      fPts.map((p) => ({ p, size: 0.45, color: C.ice, glow: 0.8 }))
+        .concat(gPts.map((p) => ({ p, size: 0.45, color: C.rose, glow: 0.8 }))
+          .concat([0, 0.25, 0.5, 0.75, 1].map((s) => ({ p: base.getPoint(s), size: 0.42, color: C.violet, glow: 0.7 })))),
+      { opacity: 1 }
+    );
+    g.add(dots.obj);
+    labels.push({ text: "A", p: V(-2.6, -1.9, 0), dx: -4, dy: 8, kind: "sym" });
+    labels.push({ text: "f", p: f.getPoint(0.72), dx: 10, dy: -18, kind: "sym" });
+    labels.push({ text: "g", p: gg.getPoint(0.72), dx: 10, dy: 18, kind: "sym" });
+    labels.push({ text: "H", p: f.getPoint(0.5).clone().lerp(gg.getPoint(0.5), 0.5), dx: 14, dy: 4, kind: "sym" });
+    labels.push({ text: "f &sim; g", p: V(0.95, 1.42, 0), dx: 0, dy: -8, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const prog = smoothstep(0.1, 0.9, ctx.r);
+        baseRib.setOpacity(a * 0.55);
+        fRib.setProgress(prog); gRib.setProgress(prog);
+        fRib.setOpacity(a * 0.95); gRib.setOpacity(a * 0.9);
+        conn.setOpacity(a * 0.5);
+        sheet.setOpacity(a * 0.4);
+        sheet.setBand(0.5 + 0.42 * Math.sin(ctx.t * 0.45));
+        dots.setOpacity(a * 0.9);
+      }
+    };
+  };
+
+  buildFiberMap = function (g) {
+    const labels = [];
+    const A = addTypeSpace(g, V(-2.3, 0, 0), 1.4, C.cyan, C.violet, 0.35);
+    const B = addTypeSpace(g, V(2.1, 0.35, 0), 0.95, C.violet, C.rose, 0.42);
+    const ca = V(-2.3, 0, 0), cb = V(2.1, 0.35, 0);
+    const relA = [V(-0.55, -0.4, 0.7), V(0.5, -0.35, 0.65), V(0.55, 0.35, 0.6), V(-0.45, 0.45, 0.65), V(0.05, 0.1, 0.95)];
+    const relB = [V(-0.3, -0.2, 0.55), V(0.35, -0.25, 0.5), V(0.05, 0.4, 0.5)];
+    const aPts = relA.map((r) => ca.clone().add(r));
+    const bPts = relB.map((r) => cb.clone().add(r));
+    const mapIdx = [0, 1, 0, 2, 1];
+    const target = 0;
+    const threads = [];
+    for (let k = 0; k < 5; k++) {
+      const hot = mapIdx[k] === target;
+      const mid = aPts[k].clone().lerp(bPts[mapIdx[k]], 0.5).add(V(0, 0.35 + 0.1 * k, 0.4));
+      const c = curveOf([aPts[k], mid, bPts[mapIdx[k]]], false);
+      const rib = makeRibbon(c, { a: hot ? C.gold : C.ice, b: hot ? C.white : C.violet, rad: hot ? 0.018 : 0.008, opacity: hot ? 1 : 0.32, seg: 90, pulse: k * 0.15 });
+      g.add(rib.core, rib.glow);
+      threads.push({ rib, hot });
+    }
+    const dots = makeDots(
+      aPts.map((p, k) => ({ p, size: mapIdx[k] === target ? 0.9 : 0.5, color: mapIdx[k] === target ? C.gold : C.ice, glow: mapIdx[k] === target ? 1.2 : 0.8 }))
+        .concat(bPts.map((p, k) => ({ p, size: k === target ? 1.05 : 0.5, color: k === target ? C.white : C.rose, glow: k === target ? 1.3 : 0.8 }))),
+      { opacity: 1 }
+    );
+    g.add(dots.obj);
+    const fibCenter = aPts[0].clone().lerp(aPts[2], 0.5);
+    const fibRing = makeRing(0.8, 0.008, C.gold, 0.6);
+    fibRing.obj.position.copy(fibCenter).add(V(0, 0, 0.08));
+    g.add(fibRing.obj);
+    labels.push({ text: "A", p: V(-3.5, 1.6, 0), dx: 0, dy: -10, kind: "big" });
+    labels.push({ text: "B", p: V(2.95, 1.45, 0), dx: 0, dy: -10, kind: "big" });
+    labels.push({ text: "b", p: bPts[0], dx: 12, dy: -18, kind: "sym" });
+    labels.push({ text: "f", p: V(0, 0.95, 0), dx: 0, dy: -10, kind: "sym" });
+    labels.push({ text: "fib<sub>f</sub>(b)", p: fibCenter, dx: -10, dy: -26, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        A.blob.setOpacity(a * 0.4); B.blob.setOpacity(a * 0.45);
+        A.wire.material.opacity = a * 0.06; B.wire.material.opacity = a * 0.06;
+        dots.setOpacity(a);
+        for (const t of threads) t.rib.setOpacity(a * (t.hot ? 0.95 : 0.28));
+        fibRing.setOpacity(a * (0.35 + 0.25 * (0.5 + 0.5 * Math.sin(ctx.t * 1.1))));
+      }
+    };
+  };
+
+  buildTruncation = function (g) {
+    const labels = [];
+    const proofBase = [];
+    const NPROOF = 7;
+    for (let k = 0; k < NPROOF; k++) {
+      const th = k / NPROOF * TAU + 0.3;
+      proofBase.push(V(Math.cos(th) * 1.08, Math.sin(th) * 1.08, 0.18 * Math.sin(k * 1.7)));
+    }
+    const proofList = proofBase.map((p) => ({ p: p.clone(), size: 1.0, color: C.ice, seed: rand(), glow: 1.1 }));
+    const proofs = makeDots(proofList, { opacity: 1 });
+    g.add(proofs.obj);
+    const center = makeDots([{ p: V(0, 0, 0.12), size: 2.9, color: C.white }], { opacity: 1 });
+    g.add(center.obj);
+    const pairs = proofBase.map((p) => [V(0, 0, 0.12), p.clone()]);
+    const links = makeLines(pairs, { color: C.ice, opacity: 0.22 });
+    g.add(links.obj);
+    const ring = makeRing(1.48, 0.02, C.violet, 0.9);
+    g.add(ring.obj);
+    const veil = makeIrid(new THREE.SphereGeometry(1.42, 40, 28), { a: C.ice, b: C.violet, rim: C.gold, opacity: 0.25, wobble: 0.02 });
+    veil.obj.scale.z = 0.45;
+    g.add(veil.obj);
+    const proofGeo = proofs.geo;
+    const linkGeo = links.geo;
+    labels.push({ text: "&Vert;A&Vert;", p: V(0, 1.75, 0), dx: 0, dy: -8, kind: "big" });
+    labels.push({ text: "A", p: proofBase[0], dx: 10, dy: -16, kind: "sym" });
+    labels.push({ text: "proofs", p: V(0, -1.5, 0), dx: 0, dy: 14, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const k = 0.42 + 0.58 * (0.5 + 0.5 * Math.cos(ctx.t * 0.62));
+        const pa = proofGeo.attributes.position, la = linkGeo.attributes.position;
+        for (let i = 0; i < proofBase.length; i++) {
+          pa.setXYZ(i, proofBase[i].x * k, proofBase[i].y * k, proofBase[i].z);
+          la.setXYZ(i * 2 + 1, proofBase[i].x * k, proofBase[i].y * k, proofBase[i].z);
+        }
+        pa.needsUpdate = true; la.needsUpdate = true;
+        proofs.setOpacity(a * (0.3 + 0.7 * k));
+        center.setOpacity(a);
+        links.setOpacity(a * (0.14 + 0.38 * k));
+        ring.setOpacity(a * 0.5);
+        ring.obj.rotation.z += ctx.dt * 0.06;
+        veil.setOpacity(a * (0.08 + 0.08 * (1 - k)));
+      }
+    };
+  };
+
+  buildInductive = function (g) {
+    const labels = [];
+    const pts = [];
+    const dotList = [];
+    for (let k = 0; k < 9; k++) {
+      const p = V(-2.9 + k * 0.72, -1.35 + k * 0.33, -k * 0.32);
+      pts.push(p);
+      dotList.push({ p, size: 0.72 + k * 0.14, color: k === 0 ? C.gold : C.ice, glow: 0.9 + k * 0.04, seed: k * 0.1 });
+    }
+    const chain = curveOf(pts.map((p) => p.clone().add(V(0, 0.02 * Math.sin(p.x * 2.0), 0))), false);
+    const rib = makeRibbon(chain, { a: C.cyan, b: C.gold, rad: 0.024, opacity: 0.92, seg: 160, pulse: 0.2 });
+    g.add(rib.core, rib.glow);
+    const dots = makeDots(dotList, { opacity: 1 });
+    g.add(dots.obj);
+    const marker = makeMarker(C.white, 0.85);
+    g.add(marker.obj);
+    makeArrow(g, pts[1].clone(), pts[2].clone(), C.gold, 0.8);
+    makeArrow(g, pts[4].clone(), pts[5].clone(), C.gold, 0.65);
+    labels.push({ text: "N", p: V(0, 2.05, 0), dx: 0, dy: -8, kind: "big" });
+    labels.push({ text: "0", p: pts[0], dx: -6, dy: 22, kind: "sym" });
+    labels.push({ text: "succ", p: pts[1].clone().lerp(pts[2], 0.5), dx: 8, dy: -20, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        dots.setOpacity(a);
+        rib.setOpacity(a * 0.9);
+        marker.setOpacity(a * 0.9);
+        marker.set(chain.getPoint(fract(ctx.t * 0.08)));
+      }
+    };
+  };
+
   const stations = [];
   function buildAllStations() {
     for (let i = 0; i < N; i++) {
@@ -1861,6 +2308,15 @@
       else if (kind === "homotopy") built = buildHomotopy(group);
       else if (kind === "composite") built = buildComposite(group);
       else if (kind === "torus") built = buildTorus(group);
+      else if (kind === "contractible") built = buildContractible(group);
+      else if (kind === "funtype") built = buildFunType(group);
+      else if (kind === "product") built = buildProduct(group);
+      else if (kind === "sum") built = buildSum(group);
+      else if (kind === "unitempty") built = buildUnitEmpty(group);
+      else if (kind === "funext") built = buildFunext(group);
+      else if (kind === "fibermap") built = buildFiberMap(group);
+      else if (kind === "truncation") built = buildTruncation(group);
+      else if (kind === "inductive") built = buildInductive(group);
       else if (kind === "typespace") built = buildTypeSpace(group);
       else if (kind === "identity") built = buildIdentity(group);
       else if (kind === "j") built = buildJ(group);
@@ -1910,7 +2366,7 @@
   }
 
   function ACT_COLOR(a) {
-    return [C.ice, C.cyan, C.violet, C.mint, C.gold, C.rose][a] || C.ice;
+    return [C.ice, C.cyan, C.violet, C.mint, C.rose, C.gold, C.white][a] || C.ice;
   }
 
   let journey = null;
@@ -2029,9 +2485,11 @@
     const pillars = makeLines(pillarPairs, { color: C.ice, opacity: 0.0 });
     group.add(pillars.obj);
     const links = [
-      [0, 3], [2, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 13],
-      [9, 12], [12, 13], [13, 14], [14, 15], [16, 17], [17, 18],
-      [18, 20], [20, 21], [21, 22], [22, 23], [6, 20], [3, 17], [0, 23]
+      [1, 2], [2, 3], [2, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9],
+      [9, 10], [10, 11], [7, 12], [12, 13], [13, 14], [12, 15], [15, 16],
+      [16, 17], [16, 18], [18, 19], [19, 20], [21, 22], [22, 23], [23, 24],
+      [24, 25], [25, 26], [26, 27], [27, 28], [28, 29], [29, 30], [30, 31],
+      [31, 32], [5, 31], [13, 28], [20, 23], [9, 29], [0, 32]
     ];
     const arcs = [];
     for (const [i, j] of links) {
@@ -2393,7 +2851,7 @@
       const row = document.createElement("button");
       row.className = "ov-row";
       row.dataset.beat = String(i);
-      const dotCol = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ffd27d", "#ff8fdc"][b.act] || "#9df0ff";
+      const dotCol = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ff8fdc", "#ffd27d", "#f2fdff"][b.act] || "#9df0ff";
       row.innerHTML = '<span class="dot" style="background:' + dotCol + '"></span><span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="t">' + b.caption + "</span>";
       row.addEventListener("click", () => { closeOverview(); goTo(i, true); });
       ovList.appendChild(row);
