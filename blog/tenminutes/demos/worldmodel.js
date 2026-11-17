@@ -3,13 +3,82 @@
   var core = window.LearnSysDemoCore;
   if (!core) return;
   var V = window.LearnSysVisuals;
-  var DATA = {"moves":["c4","c5","d6","c7","b5","a5","e6","c3","b8","f7","b6","d8","c6","f4","g3","g4","e3","h2","g8","f6","f5","g5","g6","f3","d7","h6","f2","e8","c2","b4"],"att6":[[0.9083,0.0156,0.0001,0.0032,0.0,0.0012,0.0,0.001,0.0,0.0007,0.0,0.0009,0.0,0.0013,0.0,0.002,0.0,0.0056,0.0,0.0055,0.0,0.0052,0.0,0.0161,0.0,0.008,0.0001,0.0127,0.0002,0.0121],[0.4324,0.0039,0.0,0.0007,0.0,0.0002,0.0,0.0001,0.0,0.0006,0.0,0.0009,0.0,0.0017,0.0,0.0023,0.0,0.003,0.0,0.0143,0.0,0.0333,0.0,0.0125,0.0002,0.1013,0.0,0.3689,0.0003,0.0234],[0.7841,0.0034,0.0034,0.0001,0.0014,0.0,0.0018,0.0,0.0012,0.0,0.0014,0.0,0.0033,0.0,0.0043,0.0,0.0125,0.0,0.0085,0.0001,0.0259,0.0001,0.0239,0.0002,0.0128,0.0001,0.0474,0.0,0.0639,0.0001],[0.4514,0.0007,0.0,0.0002,0.0,0.0001,0.0,0.0002,0.0,0.0002,0.0,0.0004,0.0,0.0009,0.0,0.0027,0.0,0.0102,0.0,0.0091,0.0,0.0254,0.0001,0.0526,0.0001,0.1339,0.0001,0.2484,0.0001,0.063],[0.5156,0.0005,0.0,0.0001,0.0,0.0002,0.0,0.0002,0.0,0.0005,0.0,0.0003,0.0,0.0009,0.0,0.0034,0.0,0.002,0.0,0.0195,0.0,0.0437,0.0001,0.1484,0.0003,0.0832,0.0004,0.0672,0.0009,0.1127],[0.1344,0.0221,0.0209,0.0001,0.0061,0.0,0.0052,0.0,0.0025,0.0,0.0032,0.0,0.005,0.0001,0.0118,0.0001,0.0112,0.0001,0.0215,0.0002,0.0609,0.0002,0.0596,0.0003,0.1368,0.0005,0.0913,0.0012,0.4042,0.0004],[0.2663,0.01,0.0002,0.0022,0.0,0.0013,0.0,0.0007,0.0,0.0018,0.0,0.005,0.0,0.0051,0.0001,0.01,0.0,0.0101,0.0001,0.2011,0.0001,0.0204,0.0001,0.0166,0.0008,0.0686,0.0001,0.2212,0.0016,0.1565],[0.9467,0.0007,0.0,0.0003,0.0,0.0005,0.0,0.0003,0.0,0.0004,0.0,0.0008,0.0,0.0012,0.0,0.001,0.0,0.002,0.0,0.0066,0.0,0.0146,0.0,0.0018,0.0,0.0024,0.0,0.0034,0.0,0.017]],"acc":[0.828,0.844,0.953,0.969,1.0,1.0,1.0,0.906],"truth":[0,1,0,-1,-1,0,1,0,0,0,1,-1,0,-1,0,0,0,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],"boards":[[0,0,0,-1,-1,0,1,0,0,0,-1,-1,0,-1,0,0,0,1,-1,-1,1,1,1,-1,-1,-1,-1,1,-1,-1,0,0,0,-1,-1,-1,-1,-1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],[0,0,0,-1,-1,0,0,0,0,0,-1,-1,0,-1,0,0,0,1,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,-1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],[0,0,0,-1,-1,0,1,0,0,0,-1,-1,0,-1,0,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],[0,1,0,-1,-1,0,1,0,0,0,-1,-1,0,-1,0,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],[0,1,0,-1,-1,0,1,0,0,0,1,-1,0,-1,0,0,0,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],[0,1,0,-1,-1,0,1,0,0,0,1,-1,0,-1,0,0,0,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],[0,1,0,-1,-1,0,1,0,0,0,1,-1,0,-1,0,0,0,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,1,-1,0,0,0,1,0,1,1,-1,0,0,0,1,0,0,1,0,-1,0,0,0,0,0,0,0,0],[-1,1,0,-1,-1,0,1,0,0,0,1,-1,0,-1,0,0,0,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,-1,0,0,-1,-1,-1,-1,1,-1,0,0,0,1,0,1,1,-1,0,1,1,1,0,0,1,1,-1,-1,0,-1,0,0,0,0,0]],"e4":[-20.441,4.204,-2.592],"x":[12,-13,21,17,42,84,-51,-38,45,-9,-15,-53,29,-11,2,43,16,-25,-85,52,21,21,21,37,-15,41,15,-40,49,9,83,51,15,75,4,-84,-20,48,-57,15,-7,-21,28,14,-107,76,86,-3,-54,6,15,33,-49,1,14,-17,55,-15,-7,-32,33,9,86,35,-6,70,-80,17,-19,18,101,-58,-41,-12,-49,-61,-51,-34,-20,14,-45,16,-23,38,-11,-10,-9,-30,-1,6,-79,-63,-11,64,-52,20,3,-26,-29,-5,-81,35,38,-53,-9,14,-39,34,5,21,-7,55,50,2,0,-14,-21,68,76,-84,-39,-106,-46,-3,35,-62,-27,15,51,-59,-8,7,0,-45,-1,1,16,-34,-36,18,1,15,24,-20,5,36,48,23,-35,0,-4,-2,-1,45,-20,-15,21,37,32,3,19,-23,33,-4,-79,24,-61,-1,2,29,27,-29,28,-4,2,-46,-36,18,49,22,-51,46,38,-40,13,-10,-5,-127,17,-13,-29,37,-8,-5,-27,-32,-1,3,-11,19,39,44,-31,-32,37,41,-14,-13,1,37,-21,-32,19,44,22,51,-16,-71,-32,0,37,-3,29,45,27,-29,9,-61,70,-66,84,-27,-31,18,10,14,14,13,-49,27,2,31,1,52,-70,25,-15,20,-50,-62,10,28,-52,-48,-20,41,-39,0,24,-11,40,6,-24,-21,14,108,14,30,34,-98,-55,-14,-27,-7,-9,9,30,44,21,39,1,14,11,-3,-21,-20,0,36,15,12,26,-6,1,11,-60,16,12,-2,10,13,0,-50,-12,-22,-12,1,1,70,-26,-50,13,-5,-37,-8,23,-59,-58,-38,2,31,32,-4,-69,-46,12,-57,11,-5,-77,-22,-22,15,-11,40,39,-11,46,-93,-13,68,-33,-46,91,0,-9,-16,-13,-84,56,-53,-3,33,64,-80,-17,25,-33,19,40,7,-61,-5,10,6,70,2,-21,-59,15,9,-34,9,8,-61,-22,-33,7,20,-35,15,42,-24,-20,-29,6,38,31,27,15,7,50,28,13,48,-16,-52,28,-4,-63,-22,71,23,54,-22,-8,-75,21,84,-46,55,-4,-45,-21,-26,-37,98,-57,-22,-14,4,-58,-33,-43,-5,-37,84,-2,-49,-51,-9,93,-1,40,-10,105,-24,-3,-14,65,1,50,15,32,-19,-18,93,-5,-8,1,20,-64,-7,46,46,-26,8,-7,-17,-64,18,126,1,34,-57,-3,14,24,-15,-7,16,-38,33,59,-12,-13,-7,-40,-17,19,42,40,-48,-8,30,30,-16,-36,22,34,20,13,-17,65,51,-2,-9,-77,-1,-28,58,6,-7,-9,10,-33,-27,99,6,-57,-18,-13,7],"logits":[[[4.362,-1.432,-3.416],[-5.176,-2.593,4.711],[27.884,-4.021,-10.112],[-8.829,4.414,-0.295],[-17.833,7.853,-0.619],[22.243,-8.479,-6.241],[-9.908,-0.888,7.29],[10.519,-5.839,-8.364]],[[16.625,-8.197,-15.236],[12.646,-2.68,-4.252],[-20.052,0.469,4.764],[-17.295,7.136,-1.968],[24.99,-4.173,-6.879],[-23.133,6.708,-0.499],[30.815,-4.736,-7.779],[22.223,-10.689,-10.046]],[[25.505,-2.843,-12.059],[-9.046,7.263,-0.916],[-20.615,-1.432,6.786],[-9.898,4.799,-2.377],[-19.848,4.331,-1.719],[-19.411,6.077,-0.785],[-8.063,4.776,-3.625],[-8.323,6.069,-1.767]],[[-15.21,8.86,-1.411],[-10.661,4.125,-2.42],[-26.501,5.95,-0.932],[-20.609,3.784,-2.408],[-19.474,5.64,-1.549],[-19.298,-2.045,4.23],[-7.424,4.108,-2.53],[25.64,-6.31,-8.521]],[[26.332,-4.463,-8.223],[-12.77,4.956,-2.025],[-21.981,5.992,0.218],[-21.247,2.069,-3.1],[-20.441,4.204,-2.592],[-11.624,-0.223,4.588],[-5.221,3.943,-2.688],[19.498,-4.574,-7.246]],[[8.243,-4.529,-1.532],[33.078,-5.538,-4.88],[-11.928,-2.485,3.74],[26.849,-2.367,-3.731],[-13.936,-1.622,3.852],[-15.629,0.191,6.98],[-8.39,3.474,-2.882],[19.012,-7.21,-7.722]],[[4.632,-4.17,-1.851],[9.694,-3.158,0.288],[-9.155,-1.911,3.394],[9.307,-2.581,-0.578],[7.776,-3.932,-2.519],[-7.539,-2.634,4.007],[5.388,-4.56,-1.164],[-2.528,3.665,-1.594]],[[3.051,-1.643,-4.719],[7.807,-0.06,-5.257],[3.048,-1.334,-2.758],[7.579,-0.989,-2.794],[9.004,-2.82,-3.934],[7.4,-3.52,-0.744],[4.587,-3.599,-5.646],[5.223,-4.282,-2.239]]]};
+  var DATA = {
+    moves: ["c4", "c5", "d6", "c7", "b5", "a5", "e6", "c3", "b8", "f7", "b6", "d8", "c6", "f4", "g3", "g4", "e3", "h2", "g8", "f6", "f5", "g5", "g6", "f3", "d7", "h6", "f2", "e8", "c2", "b4"],
+    acc: [0.909, 0.948, 0.972, 0.983, 0.990, 0.994, 0.996, 0.995]
+  };
+  var DIRS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
 
   if (!document.getElementById("ls-wm-style")) {
     var st = document.createElement("style");
     st.id = "ls-wm-style";
-    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;border-radius:14px;overflow:hidden;background:var(--tm-paper-2,#f7f9f8)}.ls-wm-scene canvas{display:block;width:100%;height:100%}";
+    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:var(--tm-paper-2,#f7f9f8)}.ls-wm-scene canvas{display:block;width:100%;height:100%}";
     document.head.appendChild(st);
+  }
+
+  function hash(a, b, c) {
+    var n = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453;
+    return n - Math.floor(n);
+  }
+
+  function copyBoard(b) {
+    return b.map(function (row) { return row.slice(); });
+  }
+
+  function legal(b, player) {
+    var out = [];
+    for (var r = 0; r < 8; r++) {
+      for (var col = 0; col < 8; col++) {
+        if (b[r][col] !== 0) continue;
+        var flips = [];
+        for (var d = 0; d < DIRS.length; d++) {
+          var dr = DIRS[d][0], dc = DIRS[d][1];
+          var rr = r + dr, cc = col + dc, buf = [];
+          while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr][cc] === -player) {
+            buf.push([rr, cc]);
+            rr += dr;
+            cc += dc;
+          }
+          if (buf.length && rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr][cc] === player) {
+            flips = flips.concat(buf);
+          }
+        }
+        if (flips.length) out.push({ r: r, c: col, flips: flips, label: String.fromCharCode(65 + col) + (8 - r) });
+      }
+    }
+    return out;
+  }
+
+  function apply(b, move, player) {
+    b[move.r][move.c] = player;
+    for (var i = 0; i < move.flips.length; i++) {
+      var f = move.flips[i];
+      b[f[0]][f[1]] = player;
+    }
+  }
+
+  function buildFrames() {
+    var b = [], i;
+    for (i = 0; i < 8; i++) b.push([0, 0, 0, 0, 0, 0, 0, 0]);
+    b[3][3] = 1; b[3][4] = -1; b[4][3] = -1; b[4][4] = 1;
+    var player = 1;
+    var frames = [{ board: copyBoard(b), move: null, next: 1 }];
+    DATA.moves.forEach(function (m) {
+      var r = 8 - parseInt(m[1], 10), c = m.toUpperCase().charCodeAt(0) - 65;
+      var moves = legal(b, player);
+      var mv = null;
+      for (var k = 0; k < moves.length; k++) {
+        if (moves[k].r === r && moves[k].c === c) mv = moves[k];
+      }
+      if (mv) {
+        apply(b, mv, player);
+        frames.push({ board: copyBoard(b), move: mv, next: -player });
+        player = -player;
+      } else {
+        player = -player;
+      }
+    });
+    return frames;
   }
 
   function worldModelScene(root, api) {
@@ -22,393 +91,738 @@
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var ARIA = DE ? [
-      "Othello-Brett mit Zugfolge und umgedrehten Scheiben",
-      "Acht Schichten mit Attention, MLP und Probe-Readout",
-      "Linearer Probe projiziert eine 512-dimensionale Aktivierung auf ein Brett",
-      "Eine Richtung für mein/dein und ein Kreis für Wochentage"
+      "Schematisches Othello-Brett mit schwarzen und weißen Scheiben",
+      "Ein Weg von Zug-Tokens über acht Schichten und einen Residualstrom zu einem Brett, das ein linearer Probe ausliest",
+      "Eine Aktivierung, ein linearer Probe und eine Linie mit den drei Bereichen leer, Spieler 1 und Spieler 2",
+      "Eine Linie für Othello, ein Unterraum für Schach und viele überlagerte Unterräume für reale Modelle"
     ] : [
-      "Othello board with move history and flipped discs",
-      "Eight layers with attention, MLP and probe readout",
-      "Linear probe projects a 512-dimensional activation onto a board",
-      "One direction for mine/yours and a circle for weekdays"
+      "Schematic Othello board with black and white discs",
+      "A path from move tokens through eight layers and a residual stream to a board read by a linear probe",
+      "One activation, one linear probe and a line with the three ranges empty, player 1 and player 2",
+      "One line for Othello, a subspace for chess and many overlapping subspaces for real models"
     ];
     canvas.setAttribute("role", "img");
     canvas.setAttribute("aria-label", ARIA[0]);
     var W = 1, H = 1;
     var state = { step: 0, t: 0, running: false, raf: 0, last: 0 };
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var DIRS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-    var INIT = (function () {
-      var b = [];
-      for (var r = 0; r < 8; r++) { b.push([0, 0, 0, 0, 0, 0, 0, 0]); }
-      b[3][3] = 1; b[3][4] = -1; b[4][3] = -1; b[4][4] = 1;
-      return b;
-    })();
     var FRAMES = buildFrames();
+    var TRUTH = FRAMES[FRAMES.length - 1].board;
+    var X = [];
+    for (var xi = 0; xi < 512; xi++) X.push(hash(xi, 7, 3) * 2 - 1);
+    var FOCUS = [0, 1, 3, 36];
 
-    function rr(c, x, y, w, h, r) {
-      r = Math.min(r, w / 2, h / 2);
+    function txt(c, s, x, y, o) {
+      var opt = o || {};
+      var size = typeof opt.size === "number" ? opt.size : 11;
+      V.label(c, s, x, y, Object.assign({}, opt, {
+        size: size,
+        font: opt.font || '400 ' + size + 'px "Open Sans", "Segoe UI", sans-serif',
+        color: opt.color || C.soft,
+        bg: opt.bg === undefined ? false : opt.bg
+      }));
+    }
+
+    function head(c, s, x, y, o) {
+      var opt = o || {};
+      var size = typeof opt.size === "number" ? opt.size : 24;
+      txt(c, s, x, y, Object.assign({}, opt, {
+        size: size,
+        font: '700 ' + size + 'px "Barlow", "Open Sans", sans-serif',
+        color: opt.color || C.ink
+      }));
+    }
+
+    function accent(c, x, y, w) {
+      c.strokeStyle = C.gold;
+      c.lineWidth = 2;
       c.beginPath();
-      c.moveTo(x + r, y);
-      c.arcTo(x + w, y, x + w, y + h, r);
-      c.arcTo(x + w, y + h, x, y + h, r);
-      c.arcTo(x, y + h, x, y, r);
-      c.arcTo(x, y, x + w, y, r);
-      c.closePath();
-    }
-    function T(c, text, x, y, o) {
-      V.label(c, text, x, y, Object.assign({
-        font: '600 12px "Open Sans", "Segoe UI", sans-serif',
-        color: C.soft,
-        bg: false,
-        size: 12
-      }, o || {}));
-    }
-    function chip(c, text, x, y, w, h, on) {
-      rr(c, x, y, w, h, 5);
-      c.fillStyle = on ? V.alpha(C.gold, .18) : V.alpha(C.paper, .74);
-      c.fill();
-      c.strokeStyle = on ? C.gold : C.line;
-      c.lineWidth = 1;
+      c.moveTo(x, y);
+      c.lineTo(x + w, y);
       c.stroke();
-      T(c, text, x + w / 2, y + h / 2 + .5, { align: "center", size: 10, color: on ? C.ink : C.muted, bg: false });
     }
-    function copyBoard(b) { return b.map(function (row) { return row.slice(); }); }
-    function legal(b, player) {
-      var out = [];
-      for (var r = 0; r < 8; r++) {
-        for (var col = 0; col < 8; col++) {
-          if (b[r][col] !== 0) continue;
-          var flips = [];
-          for (var d = 0; d < DIRS.length; d++) {
-            var dr = DIRS[d][0], dc = DIRS[d][1];
-            var rr2 = r + dr, cc = col + dc, buf = [];
-            while (rr2 >= 0 && rr2 < 8 && cc >= 0 && cc < 8 && b[rr2][cc] === -player) {
-              buf.push([rr2, cc]); rr2 += dr; cc += dc;
-            }
-            if (buf.length && rr2 >= 0 && rr2 < 8 && cc >= 0 && cc < 8 && b[rr2][cc] === player) {
-              flips = flips.concat(buf);
-            }
-          }
-          if (flips.length) out.push({ r: r, c: col, flips: flips, label: String.fromCharCode(65 + col) + (8 - r) });
-        }
-      }
-      return out;
-    }
-    function apply(b, move, player) {
-      b[move.r][move.c] = player;
-      for (var i = 0; i < move.flips.length; i++) {
-        var f = move.flips[i]; b[f[0]][f[1]] = player;
-      }
-    }
-    function buildFrames() {
-      var b = copyBoard(INIT), player = 1, frames = [{ board: copyBoard(b), move: null, player: player, next: 1 }];
-      DATA.moves.forEach(function (m) {
-        var r = 8 - parseInt(m[1], 10), c = m.toUpperCase().charCodeAt(0) - 65;
-        var moves = legal(b, player);
-        var mv = null;
-        for (var i = 0; i < moves.length; i++) if (moves[i].r === r && moves[i].c === c) mv = moves[i];
-        if (!mv) { player = -player; return; }
-        apply(b, mv, player);
-        frames.push({ board: copyBoard(b), move: mv, player: player, next: -player });
-        player = -player;
-      });
-      return frames;
-    }
-    function disc(c, x, y, rad, v, scaleX) {
-      var sx = typeof scaleX === "number" ? scaleX : 1;
-      if (rad < .5) return;
+
+    function drawDisc(c, x, y, r, v, scale) {
+      if (r < .5) return;
+      var s = typeof scale === "number" ? scale : 1;
       c.save();
       c.translate(x, y);
-      c.scale(sx, 1);
+      c.scale(s, 1);
+      c.shadowColor = V.alpha(C.ink, .16);
+      c.shadowBlur = Math.max(1, r * .45);
+      c.shadowOffsetY = Math.max(.5, r * .12);
       c.beginPath();
-      c.arc(0, 0, rad, 0, Math.PI * 2);
+      c.arc(0, 0, r, 0, Math.PI * 2);
       c.fillStyle = v === 1 ? C.ink : C.paper;
       c.fill();
-      c.strokeStyle = v === 1 ? C.teal : C.gold;
-      c.lineWidth = Math.max(1, rad * .09);
+      c.shadowColor = "transparent";
+      c.strokeStyle = v === 1 ? C.ink : V.alpha(C.lineStrong, .95);
+      c.lineWidth = Math.max(1, r * .10);
       c.stroke();
-      c.beginPath();
-      c.arc(-rad * .24, -rad * .24, rad * .38, 0, Math.PI * 2);
-      c.fillStyle = v === 1 ? V.alpha(C.paper, .12) : V.alpha(C.paper, .75);
-      c.fill();
       c.restore();
     }
-    function board(c, b, x, y, S, opt) {
-      var o = opt || {};
+
+    function drawBoard(c, b, x, y, S, o) {
+      var opt = o || {};
       var cell = S / 8;
-      rr(c, x - 5, y - 5, S + 10, S + 10, 8);
-      c.fillStyle = C.petrol;
-      c.fill();
-      c.strokeStyle = V.alpha(C.paper, .18);
+      c.save();
+      c.shadowColor = V.alpha(C.ink, .09);
+      c.shadowBlur = Math.max(6, S * .055);
+      c.shadowOffsetY = Math.max(2, S * .018);
+      c.fillStyle = C.paper;
+      c.fillRect(x, y, S, S);
+      c.restore();
+      c.strokeStyle = V.alpha(C.lineStrong, .85);
       c.lineWidth = 1;
-      c.stroke();
-      for (var r = 0; r < 8; r++) {
-        for (var col = 0; col < 8; col++) {
-          if ((r + col) % 2 === 0) {
-            c.fillStyle = V.alpha(C.paper, .035);
-            c.fillRect(x + col * cell, y + r * cell, cell, cell);
-          }
-          c.strokeStyle = V.alpha(C.paper, .16);
-          c.strokeRect(x + col * cell, y + r * cell, cell, cell);
-        }
-      }
-      for (var i = 0; i < 8; i++) {
-        T(c, String.fromCharCode(65 + i), x + i * cell + cell / 2, y - 13, { align: "center", size: 9, color: V.alpha(C.paper, .62) });
-        T(c, String(8 - i), x - 13, y + i * cell + cell / 2, { align: "right", size: 9, color: V.alpha(C.paper, .62) });
-      }
-      for (var r2 = 0; r2 < 8; r2++) {
-        for (var c2 = 0; c2 < 8; c2++) {
-          var v = b[r2][c2];
-          if (v === 0) continue;
-          var scale = 1;
-          if (o.pulse && o.pulse.some(function (f) { return f[0] === r2 && f[1] === c2; })) {
-            scale = .10 + .90 * Math.abs(Math.cos((o.local || 0) * Math.PI));
-          }
-          disc(c, x + c2 * cell + cell / 2, y + r2 * cell + cell / 2, cell * .34, v, scale);
-        }
-      }
-      if (o.legal) {
-        for (var k = 0; k < o.legal.length; k++) {
-          var mv = o.legal[k];
-          var lx = x + mv.c * cell + cell / 2, ly = y + mv.r * cell + cell / 2;
-          c.strokeStyle = C.lime;
-          c.lineWidth = 1.3;
-          c.beginPath();
-          c.arc(lx, ly, cell * .13, 0, Math.PI * 2);
-          c.stroke();
-        }
-      }
-      if (o.last) {
-        var lrx = x + o.last.c * cell + cell / 2, lry = y + o.last.r * cell + cell / 2;
-        c.strokeStyle = C.gold;
-        c.lineWidth = 2;
+      c.strokeRect(x + .5, y + .5, S - 1, S - 1);
+      for (var i = 1; i < 8; i++) {
+        c.strokeStyle = V.alpha(C.line, .65);
         c.beginPath();
-        c.arc(lrx, lry, cell * .44, 0, Math.PI * 2);
+        c.moveTo(x + i * cell, y);
+        c.lineTo(x + i * cell, y + S);
+        c.moveTo(x, y + i * cell);
+        c.lineTo(x + S, y + i * cell);
         c.stroke();
       }
-      if (o.wrong) {
-        for (var j = 0; j < o.wrong.length; j++) {
-          var wr = o.wrong[j][0], wc = o.wrong[j][1];
-          c.fillStyle = V.alpha(C.lilac, .36);
-          c.fillRect(x + wc * cell + 1.5, y + wr * cell + 1.5, cell - 3, cell - 3);
-          c.strokeStyle = V.alpha(C.lilac, .9);
-          c.lineWidth = 1;
-          c.beginPath();
-          c.moveTo(x + wc * cell + cell * .3, y + wr * cell + cell * .3);
-          c.lineTo(x + wc * cell + cell * .7, y + wr * cell + cell * .7);
-          c.moveTo(x + wc * cell + cell * .7, y + wr * cell + cell * .3);
-          c.lineTo(x + wc * cell + cell * .3, y + wr * cell + cell * .7);
-          c.stroke();
+      for (var r = 0; r < 8; r++) {
+        for (var col = 0; col < 8; col++) {
+          var v = b[r][col];
+          if (v === 0) continue;
+          var scale = 1;
+          if (opt.pulse) {
+            for (var p = 0; p < opt.pulse.length; p++) {
+              if (opt.pulse[p][0] === r && opt.pulse[p][1] === col) {
+                scale = .88 + .12 * Math.abs(Math.cos((opt.local || 0) * Math.PI));
+              }
+            }
+          }
+          drawDisc(c, x + col * cell + cell / 2, y + r * cell + cell / 2, cell * .33, v, scale);
         }
       }
-      if (o.highlight) {
+      if (opt.highlight) {
+        c.fillStyle = V.alpha(C.gold, .10);
+        c.fillRect(x + opt.highlight[1] * cell + 1, y + opt.highlight[0] * cell + 1, cell - 2, cell - 2);
         c.strokeStyle = C.gold;
         c.lineWidth = 2;
-        c.strokeRect(x + o.highlight[1] * cell + 1, y + o.highlight[0] * cell + 1, cell - 2, cell - 2);
+        c.strokeRect(x + opt.highlight[1] * cell + 1, y + opt.highlight[0] * cell + 1, cell - 2, cell - 2);
+      }
+      c.restore();
+    }
+
+    function squareLabel(i) {
+      return String.fromCharCode(65 + (i % 8)) + (8 - Math.floor(i / 8));
+    }
+
+    function scoresFor(i) {
+      var r = Math.floor(i / 8), c = i % 8;
+      var v = TRUTH[r][c];
+      var idx = v === 0 ? 0 : v === -1 ? 1 : 2;
+      var s = [0, 0, 0];
+      for (var k = 0; k < 3; k++) s[k] = -1.4 + 2.8 * hash(i + 11, k + 1, 5);
+      s[idx] = 2.9 + 2.0 * hash(i + 3, idx + 7, 11);
+      return s;
+    }
+
+    var SCORES = [], PROBS = [];
+    for (var si = 0; si < 64; si++) {
+      var sc = scoresFor(si);
+      SCORES.push(sc);
+      PROBS.push(V.softmax(sc));
+    }
+    var probeCanvas = null;
+
+    function winIndex(values) {
+      var best = 0;
+      for (var i = 1; i < values.length; i++) if (values[i] > values[best]) best = i;
+      return best;
+    }
+
+    function drawActivation(c, x, y, w, h) {
+      txt(c, DE ? "Aktivierung x · 512" : "activation x · 512", x, y - 12, { size: 10, color: C.muted });
+      var n = 64;
+      var cw = w / n;
+      var mid = y + h / 2;
+      c.strokeStyle = V.alpha(C.line, .55);
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(x, mid);
+      c.lineTo(x + w, mid);
+      c.stroke();
+      for (var i = 0; i < n; i++) {
+        var v = X[i * 8];
+        var bh = Math.abs(v) * (h / 2) * .92;
+        var bx = x + i * cw + cw * .18;
+        var bw = Math.max(1, cw * .64);
+        c.fillStyle = v >= 0 ? V.mix(C.paper, C.blue, .52) : V.mix(C.paper, C.green, .42);
+        if (v >= 0) c.fillRect(bx, mid - bh, bw, bh);
+        else c.fillRect(bx, mid, bw, bh);
       }
     }
-    function wrongCells(b, truth) {
-      var out = [];
-      for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) if (b[r][c] !== truth[r][c]) out.push([r, c]);
-      return out;
+
+    function drawRangeLine(c, x, y, w, h, probs, opts) {
+      var o = opts || {};
+      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+      var colors = [V.alpha(C.line, .42), C.ink, C.paper];
+      var seg = w / 3;
+      var win = winIndex(probs);
+      for (var i = 0; i < 3; i++) {
+        c.fillStyle = colors[i];
+        c.fillRect(x + i * seg, y, seg, h);
+        c.strokeStyle = i === win ? C.gold : V.alpha(C.lineStrong, .75);
+        c.lineWidth = i === win ? 2 : 1;
+        c.strokeRect(x + i * seg + .5, y + .5, seg - 1, h - 1);
+        txt(c, labels[i], x + i * seg + seg / 2, y - 15, {
+          align: "center",
+          size: o.small ? 9 : 11,
+          color: i === win ? C.gold : i === 2 ? C.ink : C.muted
+        });
+        txt(c, V.fmt(probs[i], 2), x + i * seg + seg / 2, y + h + (o.small ? 18 : 24), {
+          align: "center",
+          size: o.small ? 12 : 18,
+          font: '700 ' + (o.small ? 12 : 18) + 'px "Barlow", "Open Sans", sans-serif',
+          color: i === win ? C.gold : C.ink
+        });
+      }
+      var mx = x + win * seg + seg / 2;
+      c.fillStyle = C.gold;
+      c.beginPath();
+      c.moveTo(mx, y - 2);
+      c.lineTo(mx - 6, y - 13);
+      c.lineTo(mx + 6, y - 13);
+      c.closePath();
+      c.fill();
+    }
+
+    function drawCurve(c, x, y, w, h, layer) {
+      txt(c, DE ? "lineare Probe · Spieler 1/2" : "linear probe · player 1/2", x, y - 24, { size: 10, color: C.muted });
+      txt(c, "Nanda et al. (2023)", x, y - 10, { size: 9, color: C.muted });
+      var min = .88, max = 1;
+      var pts = [];
+      for (var i = 0; i < DATA.acc.length; i++) {
+        pts.push({
+          x: x + (i / (DATA.acc.length - 1)) * w,
+          y: y + h - ((DATA.acc[i] - min) / (max - min)) * h
+        });
+      }
+      var grad = c.createLinearGradient(0, y, 0, y + h);
+      grad.addColorStop(0, V.alpha(C.blue, .13));
+      grad.addColorStop(1, V.alpha(C.blue, 0));
+      c.beginPath();
+      c.moveTo(pts[0].x, y + h);
+      pts.forEach(function (p) { c.lineTo(p.x, p.y); });
+      c.lineTo(pts[pts.length - 1].x, y + h);
+      c.closePath();
+      c.fillStyle = grad;
+      c.fill();
+      c.strokeStyle = V.alpha(C.line, .55);
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(x, y + h);
+      c.lineTo(x + w, y + h);
+      c.stroke();
+      c.strokeStyle = C.blue;
+      c.lineWidth = 1.8;
+      c.beginPath();
+      pts.forEach(function (p, i) { if (i === 0) c.moveTo(p.x, p.y); else c.lineTo(p.x, p.y); });
+      c.stroke();
+      pts.forEach(function (p, i) {
+        c.beginPath();
+        c.arc(p.x, p.y, i === layer ? 4 : 2.4, 0, Math.PI * 2);
+        c.fillStyle = i === layer ? C.gold : C.blue;
+        c.fill();
+      });
+      txt(c, "L1", x, y + h + 13, { size: 8.5, color: C.muted });
+      txt(c, "L8", x + w, y + h + 13, { align: "right", size: 8.5, color: C.muted });
     }
 
     function drawStep0(c) {
-      var S = Math.min(W * .62, H * .68);
-      var bx = W * .5 - S / 2, by = H * .54 - S / 2;
-      T(c, "Othello / Reversi", 18, 22, { size: 15, color: C.ink, font: '700 15px "Barlow", sans-serif' });
-      T(c, DE ? "Die Welt ist das Brett" : "The world is the board", 18, 40, { size: 11, color: C.muted });
-      var idx = Math.floor(state.t / 1.5) % FRAMES.length;
+      var pad = Math.max(18, Math.min(28, W * .035));
+      var narrow = W < 620;
+      head(c, "Othello", pad, 34, { size: Math.min(30, Math.max(24, W * .04)) });
+      txt(c, DE ? "Das Modell sieht nur Züge, nie das Brett." : "The model only sees moves, never the board.", pad, 60, { size: 12, color: C.muted });
+      accent(c, pad, 74, 42);
+      var boardS = Math.min(narrow ? W * .72 : W * .54, H * .66);
+      var bx = narrow ? (W - boardS) / 2 : W * .56 - boardS / 2;
+      var by = narrow ? Math.max(105, (H - boardS) / 2 + 18) : Math.max(96, (H - boardS) / 2 + 8);
+      var idx = Math.floor(state.t / 3.0) % FRAMES.length;
       var f = FRAMES[idx];
-      var local = (state.t / 1.5) % 1;
-      var legalMoves = legal(f.board, f.next);
-      board(c, f.board, bx, by, S, {
-        legal: legalMoves,
-        last: f.move,
+      drawBoard(c, f.board, bx, by, boardS, {
         pulse: f.move ? f.move.flips : null,
-        local: local
+        local: (state.t / 3.0) % 1
       });
-      var label = f.move ? f.move.label : (DE ? "Start" : "start");
-      T(c, (DE ? "Zug " : "move ") + idx + " · " + label, W * .5, by + S + 24, { align: "center", size: 12, color: C.ink, bg: C.paper, bgAlpha: .9 });
-      T(c, DE ? "64 Felder: leer, schwarz, weiß" : "64 squares: empty, black, white", W * .5, by + S + 42, { align: "center", size: 10, color: C.muted });
-      var start = Math.max(0, idx - 5);
-      for (var i = start; i <= idx; i++) {
-        var mv = FRAMES[i].move;
-        chip(c, mv ? mv.label : "·", 18 + (i - start) * 38, H - 30, 32, 18, i === idx);
-      }
+      var cy = by + boardS + 22;
+      txt(c, DE ? "8 × 8 · schematisch" : "8 × 8 · schematic", bx + boardS / 2, cy, { align: "center", size: 10, color: C.muted });
+      txt(c, DE ? "leer · Spieler 1 · Spieler 2" : "empty · player 1 · player 2", bx + boardS / 2, cy + 18, {
+        align: "center",
+        size: 11,
+        color: C.ink
+      });
+      var gy = Math.min(cy + 58, H - 20);
+      txt(c, DE ? "Ein Brett, das niemand dem Modell zeigt." : "A board the model is never shown.", pad, gy, { size: 11, color: C.soft });
     }
 
     function drawStep1(c) {
-      T(c, DE ? "8 Schichten · 8 Heads" : "8 layers · 8 heads", 18, 22, { size: 15, color: C.ink, font: '700 15px "Barlow", sans-serif' });
-      T(c, DE ? "Zug-Tokens hinein, Brett-Zustand heraus" : "move tokens in, board state out", 18, 40, { size: 11, color: C.muted });
-      var tokens = DATA.moves.slice(-8);
-      for (var i = 0; i < tokens.length; i++) chip(c, tokens[i], 18 + i * 34, 54, 29, 17, i === tokens.length - 1);
-      T(c, DE ? "letzte 8 von 30 Tokens" : "last 8 of 30 tokens", 18, 78, { size: 9, color: C.muted });
-      var layer = Math.floor(state.t / 1.4) % 8;
-      var leftX = 18, leftY = 100, leftW = W * .36, rowH = Math.min(34, (H - leftY - 28) / 8);
-      for (var l = 0; l < 8; l++) {
-        var y = leftY + l * rowH;
-        var on = l === layer;
-        rr(c, leftX, y, leftW, rowH - 4, 5);
-        c.fillStyle = on ? V.alpha(C.gold, .16) : V.alpha(C.paper, .55);
-        c.fill();
-        c.strokeStyle = on ? C.gold : C.line;
-        c.lineWidth = 1;
-        c.stroke();
-        T(c, "L" + (l + 1), leftX + 7, y + rowH / 2 - 2, { size: 9, color: on ? C.ink : C.muted });
-        for (var hI = 0; hI < 8; hI++) {
-          var hx = leftX + 30 + hI * 8;
+      var pad = Math.max(18, Math.min(28, W * .035));
+      var narrow = W < 620;
+      head(c, DE ? "Der Weg zum Brett" : "The path to the board", pad, 34, { size: Math.min(28, Math.max(22, W * .038)) });
+      txt(c, DE ? "Züge, Schichten, ein Residualstrom, ein Readout." : "Moves, layers, a residual stream, one readout.", pad, 60, { size: 12, color: C.muted });
+      accent(c, pad, 74, 42);
+      var layer = Math.floor(state.t / 1.5) % 8;
+      if (narrow) {
+        var rowH = Math.min(36, (H - 300) / 8);
+        var layerY = 116;
+        var layerX = pad;
+        var layerW = W - 2 * pad;
+        var bandX = layerX + layerW * .52;
+        txt(c, DE ? "Züge" : "moves", layerX, 94, { size: 10, color: C.muted });
+        for (var t = 0; t < 8; t++) {
           c.beginPath();
-          c.arc(hx, y + rowH / 2 - 2, 1.8, 0, Math.PI * 2);
-          c.fillStyle = on ? C.teal : V.alpha(C.teal, .35);
+          c.arc(layerX + 6 + t * 15, 94, t === 7 ? 3.2 : 2, 0, Math.PI * 2);
+          c.fillStyle = t === 7 ? C.gold : V.alpha(C.blue, .35);
           c.fill();
         }
-        rr(c, leftX + leftW - 48, y + 7, 40, Math.max(8, rowH - 18), 3);
-        c.fillStyle = V.alpha(C.blue, on ? .16 : .07);
-        c.fill();
-        T(c, "MLP", leftX + leftW - 28, y + rowH / 2 - 2, { align: "center", size: 7.5, color: on ? C.blue : C.muted });
+        V.arrow(c, layerX + 6, 104, bandX + 4.5, layerY + 2, V.alpha(C.blue, .35), 1.1, 5);
+        drawResidual(c, layerX, layerY, layerW, rowH, bandX, layer);
+        var boardS = Math.min(W * .40, 170);
+        var bx = W - pad - boardS;
+        var by = H - 46 - boardS;
+        drawBoard(c, TRUTH, bx, by, boardS, {});
+        txt(c, DE ? "Probe liest das Brett" : "probe reads the board", bx + boardS / 2, by - 16, { align: "center", size: 10, color: C.ink });
+        txt(c, "L" + (layer + 1) + " · " + (DATA.acc[layer] * 100).toFixed(1) + "%", bx + boardS / 2, by + boardS + 18, {
+          align: "center",
+          size: 11,
+          color: DATA.acc[layer] >= .99 ? C.green : C.gold
+        });
+        drawProbeBeam(c, bandX + 5, layerY + layer * rowH + rowH * .5, bx, by + boardS * .5, layer);
+        drawCurve(c, layerX, H - 122, Math.max(120, layerW - boardS - 34), 74, layer);
+      } else {
+        var lx = pad;
+        var lw = W * .46;
+        var ly = 108;
+        var rh = Math.min(36, (H - 260) / 8);
+        var band = lx + lw * .54;
+        txt(c, DE ? "Züge" : "moves", lx, 86, { size: 10, color: C.muted });
+        for (var m = 0; m < 8; m++) {
+          c.beginPath();
+          c.arc(lx + 6, 104 + m * 15, m === 7 ? 3.2 : 2, 0, Math.PI * 2);
+          c.fillStyle = m === 7 ? C.gold : V.alpha(C.blue, .35);
+          c.fill();
+        }
+        V.arrow(c, lx + 6, 118, band + 4.5, ly + 2, V.alpha(C.blue, .35), 1.1, 5);
+        drawResidual(c, lx, ly, lw, rh, band, layer);
+        var bs = Math.min(W * .27, H * .38);
+        var bx2 = W - pad - bs;
+        var by2 = ly + Math.max(0, (8 * rh - bs) / 2);
+        drawBoard(c, TRUTH, bx2, by2, bs, {});
+        txt(c, DE ? "Probe liest das Brett" : "probe reads the board", bx2 + bs / 2, by2 - 16, { align: "center", size: 10, color: C.ink });
+        txt(c, "L" + (layer + 1) + " · " + (DATA.acc[layer] * 100).toFixed(1) + "%", bx2 + bs / 2, by2 + bs + 18, {
+          align: "center",
+          size: 11,
+          color: DATA.acc[layer] >= .99 ? C.green : C.gold
+        });
+        drawProbeBeam(c, band + 5, ly + layer * rh + rh * .5, bx2, by2 + bs * .5, layer);
+        drawCurve(c, lx, H - 122, lw * .78, 74, layer);
       }
-      T(c, DE ? "Residualstrom 512" : "residual stream 512", leftX, leftY + 8 * rowH + 6, { size: 9, color: C.muted });
-      var S = Math.min(W * .28, H * .38);
-      var bx = W * .58, by = H * .38;
-      var truth = [];
-      for (var r = 0; r < 8; r++) truth.push(DATA.truth.slice(r * 8, r * 8 + 8));
-      var b = [];
-      for (var r2 = 0; r2 < 8; r2++) b.push(DATA.boards[layer].slice(r2 * 8, r2 * 8 + 8));
-      var wrong = wrongCells(b, truth);
-      board(c, b, bx, by, S, { wrong: wrong, highlight: [4, 4] });
-      T(c, "L" + (layer + 1) + " · " + (DATA.acc[layer] * 100).toFixed(1) + "%", bx + S / 2, by + S + 18, { align: "center", size: 11, color: DATA.acc[layer] >= .95 ? C.green : C.gold, bg: C.paper, bgAlpha: .9 });
-      T(c, DE ? "Probe-Readout (L6 transferiert)" : "probe readout (L6 transferred)", bx + S / 2, by + S + 35, { align: "center", size: 9, color: C.muted });
-      var aw = W * .36, ah = Math.min(H * .20, 110), ax = W * .58, ay = 68;
-      T(c, DE ? "Attention L6 (echt)" : "attention L6 (real)", ax, ay - 10, { size: 10, color: C.ink });
-      for (var hr = 0; hr < 8; hr++) {
-        var maxRow = Math.max.apply(null, DATA.att6[hr]);
-        for (var hc = 0; hc < DATA.att6[hr].length; hc++) {
-          var v = Math.pow(DATA.att6[hr][hc] / maxRow, .55);
-          c.fillStyle = V.mix(C.paper2, C.teal, v);
-          c.fillRect(ax + hc * (aw / 30), ay + hr * (ah / 8), aw / 30 - 1, ah / 8 - 1);
+    }
+
+    function drawResidual(c, x, y, w, rowH, bandX, layer) {
+      var bandW = 9;
+      var grad = c.createLinearGradient(bandX, y, bandX, y + 8 * rowH);
+      grad.addColorStop(0, V.alpha(C.sky, .28));
+      grad.addColorStop(.55, V.alpha(C.blue, .22));
+      grad.addColorStop(1, V.alpha(C.green, .28));
+      c.fillStyle = grad;
+      c.fillRect(bandX, y, bandW, 8 * rowH);
+      txt(c, "x", bandX + bandW / 2, y - 10, { align: "center", size: 10, color: C.muted });
+      for (var l = 0; l < 8; l++) {
+        var yy = y + l * rowH + rowH * .5;
+        var on = l === layer;
+        c.strokeStyle = on ? C.gold : V.alpha(C.line, .85);
+        c.lineWidth = on ? 1.6 : 1;
+        c.beginPath();
+        c.moveTo(x + 26, yy);
+        c.lineTo(x + w, yy);
+        c.stroke();
+        txt(c, "L" + (l + 1), x + 10, yy, { size: 9.5, color: on ? C.ink : C.muted });
+        c.beginPath();
+        c.arc(bandX + bandW / 2, yy, on ? 3.4 : 1.9, 0, Math.PI * 2);
+        c.fillStyle = on ? C.gold : V.alpha(C.blue, .38);
+        c.fill();
+      }
+      txt(c, DE ? "Residualstrom · 512" : "residual stream · 512", bandX + bandW + 12, y + 8 * rowH + 14, { size: 9, color: C.muted });
+    }
+
+    function drawProbeBeam(c, x1, y1, x2, y2, layer) {
+      c.save();
+      c.strokeStyle = V.alpha(C.gold, .38);
+      c.lineWidth = 1.2;
+      c.setLineDash([3, 5]);
+      c.beginPath();
+      c.moveTo(x1, y1);
+      c.quadraticCurveTo((x1 + x2) / 2, y1 - 26, x2, y2);
+      c.stroke();
+      c.restore();
+      txt(c, DE ? "Probe" : "probe", (x1 + x2) / 2, (y1 + y2) / 2 - 22, { align: "center", size: 9, color: C.gold });
+    }
+
+    function mixRgb(a, b, t) {
+      var A = V.rgb(a), B = V.rgb(b), u = Math.max(0, Math.min(1, t));
+      return [
+        Math.round(A[0] + (B[0] - A[0]) * u),
+        Math.round(A[1] + (B[1] - A[1]) * u),
+        Math.round(A[2] + (B[2] - A[2]) * u)
+      ];
+    }
+
+    function probeWeight(s, d) {
+      var base = hash(s + 3, d + 7, 13) * 2 - 1;
+      var band = Math.exp(-Math.pow((d - (s * 8 + 60)) / 38, 2));
+      return base * .55 + band * .95;
+    }
+
+    function makeProbeCanvas() {
+      var cv = document.createElement("canvas");
+      cv.width = 512;
+      cv.height = 64;
+      var g = cv.getContext("2d");
+      var img = g.createImageData(512, 64);
+      for (var s = 0; s < 64; s++) {
+        for (var d = 0; d < 512; d++) {
+          var w = probeWeight(s, d);
+          var t = Math.min(1, Math.abs(w));
+          var col = w >= 0
+            ? mixRgb(C.paper2, C.blue, .14 + .62 * t)
+            : mixRgb(C.paper2, C.gold, .10 + .55 * t);
+          var i = (s * 512 + d) * 4;
+          img.data[i] = col[0];
+          img.data[i + 1] = col[1];
+          img.data[i + 2] = col[2];
+          img.data[i + 3] = 255;
         }
       }
-      T(c, DE ? "Head 1–8 · Zug 1–30" : "head 1–8 · move 1–30", ax, ay + ah + 12, { size: 8, color: C.muted });
+      g.putImageData(img, 0, 0);
+      return cv;
+    }
+
+    function drawActivationStrip(c, x, y, w, h) {
+      txt(c, "x · 512", x, y - 10, { size: 9.5, color: C.muted });
+      var n = 512;
+      var bw = w / n;
+      for (var i = 0; i < n; i++) {
+        var v = X[i];
+        var t = Math.abs(v);
+        c.fillStyle = v >= 0
+          ? "rgb(" + mixRgb(C.paper2, C.blue, .10 + .55 * t).join(",") + ")"
+          : "rgb(" + mixRgb(C.paper2, C.green, .10 + .45 * t).join(",") + ")";
+        c.fillRect(x + i * bw, y, bw + .45, h);
+      }
+      c.strokeStyle = V.alpha(C.lineStrong, .55);
+      c.lineWidth = 1;
+      c.strokeRect(x + .5, y + .5, w - 1, h - 1);
+    }
+
+    function drawProbeMatrix(c, x, y, w, h, row) {
+      if (!probeCanvas) probeCanvas = makeProbeCanvas();
+      c.save();
+      c.imageSmoothingEnabled = false;
+      c.drawImage(probeCanvas, x, y, w, h);
+      c.restore();
+      c.strokeStyle = V.alpha(C.lineStrong, .55);
+      c.lineWidth = 1;
+      c.strokeRect(x + .5, y + .5, w - 1, h - 1);
+      var rh = h / 64;
+      var ry = y + (row + .5) * rh;
+      c.strokeStyle = C.gold;
+      c.lineWidth = 1.5;
+      c.beginPath();
+      c.moveTo(x, ry);
+      c.lineTo(x + w, ry);
+      c.stroke();
+      txt(c, (DE ? "Feld " : "square ") + squareLabel(row), x, y - 10, { size: 10, color: C.gold });
+      if (W >= 620) txt(c, "W · 64 × 512", x + w / 2, y + h + 16, { align: "center", size: 9.5, color: C.muted });
+    }
+
+    function drawLogitsColumn(c, x, y, w, h, row) {
+      var ch = h / 64;
+      var cw = w / 3;
+      for (var s = 0; s < 64; s++) {
+        for (var o = 0; o < 3; o++) {
+          var v = SCORES[s][o];
+          var t = Math.max(0, Math.min(1, (v + 6) / 12));
+          var col = o === 0 ? mixRgb(C.paper2, C.blue, .10 + .50 * t)
+            : o === 1 ? mixRgb(C.paper2, C.gold, .10 + .55 * t)
+              : mixRgb(C.paper2, C.ink, .08 + .55 * t);
+          c.fillStyle = "rgb(" + col.join(",") + ")";
+          c.fillRect(x + o * cw, y + s * ch, cw, ch + .4);
+        }
+      }
+      c.strokeStyle = V.alpha(C.lineStrong, .55);
+      c.lineWidth = 1;
+      c.strokeRect(x + .5, y + .5, w - 1, h - 1);
+      var ry = y + (row + .5) * ch;
+      c.strokeStyle = C.gold;
+      c.lineWidth = 1.5;
+      c.beginPath();
+      c.moveTo(x, ry);
+      c.lineTo(x + w, ry);
+      c.stroke();
+      txt(c, "64 × 3", x + w / 2, y - 10, { align: "center", size: 9.5, color: C.muted });
+    }
+
+    function drawProbGrid(c, x, y, size, state, row) {
+      var cell = size / 8;
+      for (var r = 0; r < 8; r++) {
+        for (var col = 0; col < 8; col++) {
+          var p = PROBS[r * 8 + col][state];
+          var tint = state === 0 ? C.blue : state === 1 ? C.gold : C.ink;
+          c.fillStyle = V.mix(C.paper2, tint, Math.min(1, p * 1.05));
+          c.fillRect(x + col * cell, y + r * cell, cell, cell);
+          c.strokeStyle = V.alpha(C.line, .18);
+          c.strokeRect(x + col * cell + .5, y + r * cell + .5, cell - 1, cell - 1);
+        }
+      }
+      c.strokeStyle = V.alpha(C.lineStrong, .65);
+      c.lineWidth = 1;
+      c.strokeRect(x + .5, y + .5, size - 1, size - 1);
+      if (typeof row === "number") {
+        c.strokeStyle = C.gold;
+        c.lineWidth = 1.8;
+        c.strokeRect(x + (row % 8) * cell + .5, y + Math.floor(row / 8) * cell + .5, cell - 1, cell - 1);
+      }
     }
 
     function drawStep2(c) {
-      T(c, DE ? "64 × 3 Logits werden ein Brett" : "64 × 3 logits become a board", 18, 22, { size: 15, color: C.ink, font: '700 15px "Barlow", sans-serif' });
-      T(c, DE ? "Der Probe liest die 512-dim Aktivierung" : "the probe reads the 512-dim activation", 18, 40, { size: 11, color: C.muted });
-      var xw = W * .38, xh = Math.min(76, H * .16), xx = 18, xy = 56;
-      T(c, DE ? "x: 512 Dimensionen" : "x: 512 dimensions", xx, xy - 10, { size: 9, color: C.muted });
-      for (var i = 0; i < 512; i++) {
-        var v = DATA.x[i] / 127;
-        var col = v >= 0 ? V.mix(C.paper2, C.blue, v) : V.mix(C.paper2, C.green, -v);
-        var gx = xx + (i % 32) * (xw / 32);
-        var gy = xy + Math.floor(i / 32) * (xh / 16);
-        c.fillStyle = col;
-        c.fillRect(gx, gy, xw / 32 - .8, xh / 16 - .8);
+      var pad = Math.max(18, Math.min(26, W * .035));
+      var narrow = W < 620;
+      head(c, DE ? "64 × 3 Zahlen werden ein Brett" : "64 × 3 numbers become a board", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
+      txt(c, DE ? "Ein Dot-Product pro Feld und Zustand. Dann Softmax und Argmax." : "One dot product per square and state. Then softmax and argmax.", pad, 58, { size: 11.5, color: C.muted });
+      accent(c, pad, 72, 42);
+      var focusAt = Math.floor(state.t / 2.8) % FOCUS.length;
+      var sq = FOCUS[focusAt];
+      var r = Math.floor(sq / 8), col = sq % 8;
+      var probs = PROBS[sq];
+      if (narrow) {
+        var top = 96;
+        var matW = W * .54;
+        var matH = 162;
+        drawActivationStrip(c, pad, top, W - 2 * pad, 13);
+        drawProbeMatrix(c, pad, top + 22, matW, matH, sq);
+        drawLogitsColumn(c, pad + matW + 12, top + 22, 48, matH, sq);
+        var hs = 82, gap = 10;
+        var hx = pad, hy = 306;
+        var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+        for (var o = 0; o < 3; o++) {
+          txt(c, labels[o], hx + o * (hs + gap) + hs / 2, hy - 9, { align: "center", size: 9, color: o === 1 ? C.gold : o === 2 ? C.ink : C.muted });
+          drawProbGrid(c, hx + o * (hs + gap), hy, hs, o, sq);
+        }
+        drawRangeLine(c, pad, 426, W - 2 * pad, 16, probs, { small: true });
+        var bs = Math.min(W * .40, 150);
+        var bx = (W - bs) / 2;
+        var by = 490;
+        drawBoard(c, TRUTH, bx, by, bs, { highlight: [r, col] });
+        txt(c, DE ? "Argmax → Brett" : "argmax → board", bx + bs / 2, by - 12, { align: "center", size: 10, color: C.ink });
+        txt(c, "logit[s, o] = Σ W[s, o, d] · x[d]", pad, H - 34, { size: 10, color: C.ink });
+        txt(c, DE ? "192 Dot-Products · Softmax · Argmax" : "192 dot products · softmax · argmax", pad, H - 17, { size: 8.5, color: C.gold });
+      } else {
+        var topW = 96;
+        var mw = W * .34;
+        var mh = 190;
+        drawActivationStrip(c, pad, topW, mw, 14);
+        drawProbeMatrix(c, pad, topW + 22, mw, mh, sq);
+        var lx = pad + mw + 18;
+        drawLogitsColumn(c, lx, topW + 22, 54, mh, sq);
+        var hsize = 80, hgap = 12;
+        var hx2 = lx + 54 + 28;
+        var hy2 = topW + 22;
+        var labels2 = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+        for (var o2 = 0; o2 < 3; o2++) {
+          txt(c, labels2[o2], hx2 + o2 * (hsize + hgap) + hsize / 2, hy2 - 10, { align: "center", size: 9, color: o2 === 1 ? C.gold : o2 === 2 ? C.ink : C.muted });
+          drawProbGrid(c, hx2 + o2 * (hsize + hgap), hy2, hsize, o2, sq);
+        }
+        txt(c, DE ? "Softmax · 8 × 8 × 3" : "softmax · 8 × 8 × 3", hx2 + (3 * hsize + 2 * hgap) / 2, hy2 + hsize + 17, { align: "center", size: 9, color: C.muted });
+        var bs2 = Math.min(W * .22, 170);
+        var bx2 = hx2 + (3 * hsize + 2 * hgap) / 2 - bs2 / 2;
+        var by2 = hy2 + hsize + 46;
+        drawBoard(c, TRUTH, bx2, by2, bs2, { highlight: [r, col] });
+        txt(c, DE ? "Argmax → Brett" : "argmax → board", bx2 + bs2 / 2, by2 - 12, { align: "center", size: 10, color: C.ink });
+        drawRangeLine(c, pad, topW + 22 + mh + 54, mw, 18, probs, {});
+        V.arrow(c, lx + 54 + 4, hy2 + mh * .5, hx2 - 8, hy2 + hsize * .5, V.alpha(C.gold, .35), 1.1, 5);
+        txt(c, "logit[s, o] = Σ W[s, o, d] · x[d]", pad, H - 44, { size: 10.5, color: C.ink });
+        txt(c, DE ? "192 Dot-Products · Softmax · Argmax" : "192 dot products · softmax · argmax", pad, H - 24, { size: 9, color: C.gold });
       }
-      var tx = 18, ty = H * .30, tw = W * .34, th = 84;
-      T(c, DE ? "Probe: 64 × 3 × 512" : "probe: 64 × 3 × 512", tx, ty - 10, { size: 9, color: C.muted });
-      for (var z = 2; z >= 0; z--) {
-        rr(c, tx + z * 4, ty + z * 4, tw, th, 6);
-        c.fillStyle = V.alpha(C.paper, .72);
-        c.fill();
-        c.strokeStyle = z === 0 ? C.gold : C.line;
+      txt(c, DE ? "schematisch · Struktur des Readouts" : "schematic · structure of the readout", W - pad, 58, { align: "right", size: 8.5, color: C.muted });
+    }
+
+    function drawFlow(c, x1, y1, x2, y2) {
+      var g = c.createLinearGradient(x1, y1, x2, y2);
+      g.addColorStop(0, V.alpha(C.blue, .45));
+      g.addColorStop(.5, V.alpha(C.lilac, .45));
+      g.addColorStop(1, V.alpha(C.gold, .45));
+      c.strokeStyle = g;
+      c.lineWidth = 1.4;
+      c.beginPath();
+      c.moveTo(x1, y1);
+      c.lineTo(x2, y2);
+      c.stroke();
+    }
+
+    function drawChevron(c, x, y, dir) {
+      c.strokeStyle = V.alpha(C.petrol, .45);
+      c.lineWidth = 1.2;
+      c.beginPath();
+      if (dir === "h") {
+        c.moveTo(x - 4, y - 4);
+        c.lineTo(x, y);
+        c.lineTo(x - 4, y + 4);
+      } else {
+        c.moveTo(x - 4, y - 4);
+        c.lineTo(x, y);
+        c.lineTo(x + 4, y - 4);
+      }
+      c.stroke();
+    }
+
+    function drawLineNode(c, cx, cy, w) {
+      var seg = w / 3;
+      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+      var colors = [V.alpha(C.line, .45), C.ink, C.paper];
+      for (var i = 0; i < 3; i++) {
+        c.fillStyle = colors[i];
+        c.fillRect(cx - w / 2 + i * seg, cy - 8, seg, 16);
+        c.strokeStyle = i === 1 ? C.gold : V.alpha(C.lineStrong, .75);
         c.lineWidth = 1;
+        c.strokeRect(cx - w / 2 + i * seg + .5, cy - 7.5, seg - 1, 15);
+        txt(c, labels[i], cx - w / 2 + i * seg + seg / 2, cy - 19, { align: "center", size: 8.5, color: i === 1 ? C.gold : i === 2 ? C.ink : C.muted });
+      }
+    }
+
+    function drawChessNode(c, cx, cy, radius) {
+      var ang = [];
+      for (var i = 0; i < 13; i++) ang.push(-Math.PI / 2 + i * Math.PI * 2 / 13);
+      c.save();
+      c.translate(cx, cy);
+      c.rotate(-.18);
+      c.beginPath();
+      c.ellipse(0, 0, radius * 1.05, radius * .62, 0, 0, Math.PI * 2);
+      c.fillStyle = V.alpha(C.lilac, .09);
+      c.fill();
+      c.strokeStyle = V.alpha(C.lilac, .55);
+      c.lineWidth = 1;
+      c.stroke();
+      c.restore();
+      for (var k = 0; k < 13; k++) {
+        var a = ang[k] + state.t * .03;
+        var rr = radius * (.55 + .30 * hash(k, 3, 5));
+        var px = cx + Math.cos(a) * rr * 1.05;
+        var py = cy + Math.sin(a) * rr * .62;
+        c.beginPath();
+        c.arc(px, py, k === 0 ? 3.4 : 2.1, 0, Math.PI * 2);
+        c.fillStyle = k === 0 ? C.gold : V.alpha(C.lilac, .88);
+        c.fill();
+      }
+      for (var q = 0; q < 7; q++) {
+        var a1 = ang[q * 2 % 13] + state.t * .03;
+        var a2 = ang[(q * 2 + 3) % 13] + state.t * .03;
+        var r1 = radius * .70, r2 = radius * .70;
+        c.strokeStyle = V.alpha(C.lilac, .20);
+        c.lineWidth = .8;
+        c.beginPath();
+        c.moveTo(cx + Math.cos(a1) * r1 * 1.05, cy + Math.sin(a1) * r1 * .62);
+        c.lineTo(cx + Math.cos(a2) * r2 * 1.05, cy + Math.sin(a2) * r2 * .62);
         c.stroke();
       }
-      T(c, "W[s, o, d]", tx + tw / 2, ty + th / 2, { align: "center", size: 13, color: C.ink });
-      T(c, DE ? "für jedes Feld s, Zustand o" : "for every square s, state o", tx + tw / 2, ty + th / 2 + 18, { align: "center", size: 9, color: C.muted });
-      var lx = W * .58, ly = H * .30, lw = W * .35, lh = Math.min(H * .34, 200);
-      T(c, DE ? "64 × 3 Softmax" : "64 × 3 softmax", lx, ly - 10, { size: 9, color: C.muted });
-      if (lw > 210) T(c, DE ? "Farbe = Softmax; Argmax = Brett" : "color = softmax; argmax = board", lx + lw, ly - 10, { align: "right", size: 8, color: C.muted });
-      var cell = Math.min(lw / 8, lh / 8);
-      for (var r = 0; r < 8; r++) {
-        for (var col = 0; col < 8; col++) {
-          var p = V.softmax(DATA.logits[r][col]);
-          var maxP = Math.max(p[0], p[1], p[2], 1e-6);
-          for (var o = 0; o < 3; o++) {
-            var v2 = p[o] / maxP;
-            var colr = o === 0 ? C.blue : o === 1 ? C.gold : C.ink;
-            c.fillStyle = V.mix(C.paper2, colr, Math.min(1, v2));
-            c.fillRect(lx + col * cell + o * (cell / 3), ly + r * cell, cell / 3 - .8, cell - .8);
-          }
-          if (r === 4 && col === 4) {
-            c.strokeStyle = C.gold;
-            c.lineWidth = 1.6;
-            c.strokeRect(lx + col * cell - 1, ly + r * cell - 1, cell + 2, cell + 2);
-          }
-        }
+    }
+
+    function drawRealNode(c, cx, cy, radius) {
+      var t = state.t * .12;
+      var planes = [
+        { rx: radius * 1.10, ry: radius * .38, a: t, color: C.lilac },
+        { rx: radius * .90, ry: radius * .58, a: t + 1.1, color: C.sky },
+        { rx: radius * 1.22, ry: radius * .28, a: t + 2.2, color: C.green }
+      ];
+      planes.forEach(function (pl) {
+        c.save();
+        c.translate(cx, cy);
+        c.rotate(pl.a);
+        c.beginPath();
+        c.ellipse(0, 0, pl.rx, pl.ry, 0, 0, Math.PI * 2);
+        c.fillStyle = V.alpha(pl.color, .075);
+        c.fill();
+        c.strokeStyle = V.alpha(pl.color, .55);
+        c.lineWidth = 1;
+        c.stroke();
+        c.restore();
+      });
+      for (var i = 0; i < 30; i++) {
+        var a = hash(i, 3, 1) * Math.PI * 2;
+        var rr = hash(i, 5, 2) * radius * .95;
+        c.beginPath();
+        c.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * .52, 1.15, 0, Math.PI * 2);
+        c.fillStyle = V.alpha(i % 3 === 0 ? C.gold : C.petrol, .42);
+        c.fill();
       }
-      T(c, DE ? "leer · weiß · schwarz" : "empty · white · black", lx, ly + lh + 12, { size: 8, color: C.muted });
-      var S = Math.min(W * .24, H * .30);
-      var bx = W * .58, by = H * .76 - S / 2;
-      var truth = [];
-      for (var r2 = 0; r2 < 8; r2++) truth.push(DATA.truth.slice(r2 * 8, r2 * 8 + 8));
-      board(c, truth, bx, by, S, { highlight: [4, 4] });
-      T(c, "E4: −20.4 / +4.2 / −2.6 → " + (DE ? "weiß" : "white"), bx + S / 2, by + S + 16, { align: "center", size: 9.5, color: C.ink, bg: C.paper, bgAlpha: .9 });
-      T(c, "logit[s,o] = Σ W[s,o,d] · x[d]", 18, H - 18, { size: 10, color: C.ink });
-      T(c, DE ? "192 Dot-Products, 64 Argmaxes" : "192 dot products, 64 argmaxes", W * .58, H - 18, { size: 10, color: C.gold });
     }
 
     function drawStep3(c) {
-      T(c, DE ? "Richtungen reichen hier, aber nicht immer" : "directions suffice here, but not always", 18, 22, { size: 15, color: C.ink, font: '700 15px "Barlow", sans-serif' });
-      T(c, DE ? "eine Linie für mein/dein; ein Kreis für Wochentage" : "one line for mine/yours; a circle for weekdays", 18, 40, { size: 11, color: C.muted });
-      var ax = 24, ay = H * .34, aw = W * .40;
-      T(c, DE ? "eine Richtung: w_black − w_white" : "one direction: w_black − w_white", ax, ay - 28, { size: 9, color: C.ink });
-      c.strokeStyle = C.lineStrong;
-      c.lineWidth = 1;
-      c.beginPath(); c.moveTo(ax, ay); c.lineTo(ax + aw, ay); c.stroke();
-      T(c, DE ? "dein" : "yours", ax, ay + 16, { size: 9, color: C.lilac });
-      T(c, DE ? "mein" : "mine", ax + aw, ay + 16, { align: "right", size: 9, color: C.green });
-      var proj = DATA.e4[2] - DATA.e4[1];
-      var px = ax + aw * .5 + (proj / 10) * aw * .45;
-      c.strokeStyle = C.gold;
-      c.lineWidth = 4;
-      c.beginPath(); c.moveTo(ax + aw * .5, ay); c.lineTo(px, ay); c.stroke();
-      c.beginPath(); c.arc(px, ay, 6, 0, Math.PI * 2); c.fillStyle = C.gold; c.fill();
-      T(c, "E4", px, ay - 14, { align: "center", size: 9, color: C.ink, bg: C.paper, bgAlpha: .9 });
-      var cx = W * .72, cy = H * .34, R = Math.min(W * .16, H * .22);
-      T(c, DE ? "ein Kreis: Wochentage" : "a circle: weekdays", cx, cy - R - 20, { align: "center", size: 9, color: C.ink });
-      c.strokeStyle = C.line;
-      c.lineWidth = 1;
-      c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
-      var days = DE ? ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"] : ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-      for (var i = 0; i < 7; i++) {
-        var a = -Math.PI / 2 + i * Math.PI * 2 / 7;
-        var dx = cx + Math.cos(a) * R, dy = cy + Math.sin(a) * R;
-        c.beginPath(); c.arc(dx, dy, 3, 0, Math.PI * 2); c.fillStyle = C.lilac; c.fill();
-        T(c, days[i], cx + Math.cos(a) * (R + 14), cy + Math.sin(a) * (R + 14), { align: "center", size: 8, color: C.soft });
+      var pad = Math.max(18, Math.min(26, W * .035));
+      var narrow = W < 620;
+      head(c, DE ? "Vom Feld zur realen Welt" : "From one square to the real world", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
+      txt(c, DE ? "Drei Zustände pro Feld. Dreizehn. Dann die ganze Welt." : "Three states per square. Thirteen. Then the whole world.", pad, 58, { size: 11.5, color: C.muted });
+      accent(c, pad, 72, 42);
+      if (narrow) {
+        var cx = W * .5;
+        var y1 = H * .24, y2 = H * .50, y3 = H * .76;
+        drawFlow(c, cx, y1 - 40, cx, y3 + 40);
+        drawChevron(c, cx, (y1 + y2) / 2, "v");
+        drawChevron(c, cx, (y2 + y3) / 2, "v");
+        drawLineNode(c, cx, y1, 220);
+        txt(c, "Othello", cx, y1 + 56, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
+        txt(c, DE ? "3 Zustände · eine Linie" : "3 states · one line", cx, y1 + 74, { align: "center", size: 9.5, color: C.muted });
+        drawChessNode(c, cx, y2, 72);
+        txt(c, DE ? "Schach" : "Chess", cx, y2 + 78, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
+        txt(c, DE ? "13 Zustände · ein Unterraum" : "13 states · a subspace", cx, y2 + 96, { align: "center", size: 9.5, color: C.muted });
+        drawRealNode(c, cx, y3, 72);
+        txt(c, DE ? "Reale Modelle" : "Real models", cx, y3 + 78, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
+        txt(c, DE ? "viele Features · viele Unterräume" : "many features · many subspaces", cx, y3 + 96, { align: "center", size: 9.5, color: C.muted });
+      } else {
+        var cy = H * .52;
+        var n1 = W * .18, n2 = W * .50, n3 = W * .82;
+        drawFlow(c, pad + 40, cy, W - pad - 40, cy);
+        drawChevron(c, (n1 + n2) / 2, cy + .5, "h");
+        drawChevron(c, (n2 + n3) / 2, cy + .5, "h");
+        drawLineNode(c, n1, cy, 180);
+        txt(c, "Othello", n1, cy + 56, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
+        txt(c, DE ? "3 Zustände · eine Linie" : "3 states · one line", n1, cy + 75, { align: "center", size: 10, color: C.muted });
+        drawChessNode(c, n2, cy, 90);
+        txt(c, DE ? "Schach" : "Chess", n2, cy + 82, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
+        txt(c, DE ? "13 Zustände · ein Unterraum" : "13 states · a subspace", n2, cy + 101, { align: "center", size: 10, color: C.muted });
+        drawRealNode(c, n3, cy, 90);
+        txt(c, DE ? "Reale Modelle" : "Real models", n3, cy + 82, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
+        txt(c, DE ? "viele Features · viele Unterräume" : "many features · many subspaces", n3, cy + 101, { align: "center", size: 10, color: C.muted });
       }
-      var ptr = state.t * .35;
-      c.strokeStyle = C.gold;
-      c.lineWidth = 2;
-      c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.cos(ptr) * R, cy + Math.sin(ptr) * R); c.stroke();
-      var by = H * .70, bw = W * .38;
-      T(c, DE ? "128 von 512 Dimensionen" : "128 of 512 dimensions", ax, by - 10, { size: 9, color: C.ink });
-      c.fillStyle = V.alpha(C.line, .6); c.fillRect(ax, by, bw, 10);
-      c.fillStyle = C.green; c.fillRect(ax, by, bw * .25, 10);
-      T(c, "25%", ax + bw * .25 + 6, by + 5, { size: 8, color: C.green });
-      T(c, DE ? "40% der Varianz dieser Aktivierung" : "40% of this activation's variance", ax, by + 32, { size: 9, color: C.ink });
-      c.fillStyle = V.alpha(C.line, .6); c.fillRect(ax, by + 42, bw, 10);
-      c.fillStyle = C.gold; c.fillRect(ax, by + 42, bw * .40, 10);
-      T(c, "40%", ax + bw * .40 + 6, by + 47, { size: 8, color: C.gold });
-      T(c, DE ? "Nicht jede Richtung reicht: manche Features brauchen einen ganzen Unterraum." : "Not every direction is enough: some features need a whole subspace.", ax, H - 22, { size: 10, color: C.ink });
+      txt(c, DE ? "Das Othello-Brett ist der klare kleine Fall. Die reale Welt ist größer." : "The Othello board is the clear small case. The real world is larger.", W / 2, H - 18, { align: "center", size: 10, color: C.ink });
     }
 
     function draw() {
       if (!W || !H) return;
       ctx.clearRect(0, 0, W, H);
-      rr(ctx, 0, 0, W, H, 14);
       ctx.fillStyle = C.paper2;
-      ctx.fill();
-      ctx.strokeStyle = C.line;
+      ctx.fillRect(0, 0, W, H);
+      var g = ctx.createRadialGradient(W * .78, H * .16, 0, W * .78, H * .16, Math.max(W, H) * .85);
+      g.addColorStop(0, V.alpha(C.green, .065));
+      g.addColorStop(.45, V.alpha(C.sky, .032));
+      g.addColorStop(1, V.alpha(C.paper2, 0));
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = V.alpha(C.line, .75);
       ctx.lineWidth = 1;
-      ctx.stroke();
+      ctx.strokeRect(.5, .5, W - 1, H - 1);
       if (state.step === 0) drawStep0(ctx);
       else if (state.step === 1) drawStep1(ctx);
       else if (state.step === 2) drawStep2(ctx);
       else drawStep3(ctx);
     }
+
     function frame(now) {
       if (!state.running) return;
       if (!state.last) state.last = now;
@@ -417,35 +831,47 @@
       draw();
       state.raf = requestAnimationFrame(frame);
     }
+
     function start() {
       if (reduced || state.running) return;
       state.running = true;
       state.last = 0;
       state.raf = requestAnimationFrame(frame);
     }
+
     function stop() {
       state.running = false;
       if (state.raf) cancelAnimationFrame(state.raf);
       state.raf = 0;
     }
+
     function fit() {
       var r = api.fit(canvas, host);
-      W = r.w; H = r.h; ctx = r.ctx;
+      W = r.w;
+      H = r.h;
+      ctx = r.ctx;
+      probeCanvas = null;
       draw();
     }
+
     if (window.ResizeObserver) {
       var ro = new ResizeObserver(function () { fit(); });
       ro.observe(host);
     }
     window.addEventListener("resize", fit);
     fit();
-    if (reduced) { state.t = 2.2; draw(); }
+    if (reduced) {
+      state.t = 3.0 * (FRAMES.length - 1);
+      draw();
+    }
     return {
       update: function (s) {
         var next = (s && typeof s.step === "number") ? s.step : 0;
         if (next !== state.step) {
           state.step = next;
-          state.t = reduced ? (next === 0 ? 2.2 : next === 1 ? .5 : 0) : 0;
+          state.t = reduced
+            ? (next === 0 ? 3.0 * (FRAMES.length - 1) : next === 1 ? 1.5 * 6 : next === 2 ? 2.6 : .5)
+            : 0;
           state.last = 0;
           canvas.setAttribute("aria-label", ARIA[Math.max(0, Math.min(3, next))]);
           draw();
