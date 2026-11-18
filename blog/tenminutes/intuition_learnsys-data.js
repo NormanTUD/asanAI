@@ -120,9 +120,9 @@
     {
       kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei 15. Addiert man 45, landet man bei 60, also bei Warm: 15 + 45 = 60.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
+      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei 15, Lauwarm bei 45. Addiert man den Wert von Lauwarm, landet man bei 60, also bei Warm: 15 + 45 = 60.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
       inherit: false,
       questionGroups: [
         {
@@ -202,9 +202,9 @@
     {
       kicker: "The line",
       title: "Meaning becomes a number",
-      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. The word cold sits at 15. Add 45 and you land at 60, which is warm: 15 + 45 = 60.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
+      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. The word cold sits at 15, lukewarm at 45. Add the value of lukewarm and you land at 60, which is warm: 15 + 45 = 60.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
       inherit: false,
       questionGroups: [
         {

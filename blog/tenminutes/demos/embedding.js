@@ -35,7 +35,7 @@
     var viewPreset = 0, camTarget = null;
     var st = {
       mode: "space", dim: 1, selected: "king", arithmetic: "King - Man + Woman",
-      pair: ["cold", "warm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false
+      pair: ["cold", "lukewarm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false
     };
 
     function color(name) { return C[name] || C.ink; }
@@ -850,7 +850,7 @@
           var p0 = tempById(pair[0]), p1 = tempById(pair[1]);
           var hi = p1.value > p0.value ? p1 : p0;
           var lo = p1.value > p0.value ? p0 : p1;
-          var label = text(lo.label) + " + " + (hi.value - lo.value);
+          var label = text(lo.label) + " + " + text(hi.label);
           row2.appendChild(makeChip(label, st.pair[0] === pair[0] && st.pair[1] === pair[1], function () {
             st.pair = pair.slice(); syncControls(); draw();
           }));
@@ -1085,15 +1085,14 @@
         st.dim = state.dim;
         st.selected = state.selected;
         st.arithmetic = state.arithmetic;
-        st.pair = state.pair || ["cold", "warm"];
+        st.pair = state.pair || ["cold", "lukewarm"];
         st.group = state.group || null;
         renderControls();
         updateReadout();
         maxControls = Math.max(maxControls, controls.scrollHeight);
         maxFormula = Math.max(maxFormula, formula.scrollHeight);
       }
-      measure({ mode: "temperature", dim: 0, selected: null, arithmetic: null, pair: ["cold", "warm"] });
-      measure({ mode: "temperature", dim: 0, selected: null, arithmetic: null, pair: ["freezing", "hot"] });
+      measure({ mode: "temperature", dim: 0, selected: null, arithmetic: null, pair: ["cold", "lukewarm"] });
       measure({ mode: "space", dim: 0, selected: "king", arithmetic: null });
       measure({ mode: "space", dim: 0, selected: "male", arithmetic: null, group: ["male", "female"] });
       measure({ mode: "space", dim: 1, selected: "king", arithmetic: null });
