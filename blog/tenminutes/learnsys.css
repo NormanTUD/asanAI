@@ -2680,3 +2680,5 @@ h1,h2,h3,h4{
 
 /* Hidden controls must stay hidden even when their class sets display. */
 .ls-position-right .ls-range[hidden]{display:none}
+
+.ls-range[hidden]{display:none !important}
