@@ -4205,7 +4205,8 @@
     const U = makeOpenPatch(xp, xn, 0.45, C.ice, 0.9);
     const Vp = makeOpenPatch(yp, yn, 0.45, C.gold, 0.9);
     g.add(U.mesh, Vp.mesh);
-    const map = makeRibbon(curveOf([xp, V(0, 0.6, 0.6), yp], false), { a: C.gold, b: C.white, rad: 0.02, opacity: 0.9, seg: 100, pulse: 0.2 });
+    const mapCurve = curveOf([xp, V(0, 0.6, 0.6), yp], false);
+    const map = makeRibbon(mapCurve, { a: C.gold, b: C.white, rad: 0.02, opacity: 0.9, seg: 100, pulse: 0.2 });
     g.add(map.core, map.glow);
     const spark = makeMarker(C.white, 1.0);
     g.add(spark.obj);
@@ -4218,13 +4219,12 @@
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        X.blob.setOpacity(a * 0.36); Y.blob.setOpacity(a * 0.36);
-        X.wire.material.opacity = a * 0.05; Y.wire.material.opacity = a * 0.05;
-        X.blob.obj.rotation.y += ctx.dt * 0.02; Y.blob.obj.rotation.y -= ctx.dt * 0.02;
+        X.setOpacity(a * 0.36); Y.setOpacity(a * 0.36);
+        X.obj.rotation.y += ctx.dt * 0.02; Y.obj.rotation.y -= ctx.dt * 0.02;
         U.setOpacity(a); Vp.setOpacity(a);
         map.setOpacity(a);
         spark.setOpacity(a);
-        spark.set(map.core && false ? V(0, 0, 0) : curveOf([xp, V(0, 0.6, 0.6), yp], false).getPoint(fract(ctx.t * 0.1)));
+        spark.set(mapCurve.getPoint(fract(ctx.t * 0.1)));
       }
     };
   };
