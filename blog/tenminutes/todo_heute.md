@@ -2,4 +2,4 @@ arbeite diese punkte hier nacheinander ab. jeden einzelnen sorgfältig. am ende,
 
 folie "daten":
 
-die texte rechts "vortraining", "großer datensatz", "Mehr oder weniger das ganze Internet..." usw. sind zu klein. mach die größer. die beiden blöcke außerdem vertikal zentriert.
+die texte rechts "vortraining", "großer datensatz", "Mehr oder weniger das ganze Internet..." usw. sind zu klein. mach die größer. die beiden blöcke außerdem vertikal zentriert. mach die "Sage mir was die Hauptstadt von Frankreich ist" und den Antwort block etwas hübscher und etwas weiter auseinander. 
