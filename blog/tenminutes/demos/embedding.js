@@ -118,6 +118,14 @@
       for (var i = 0; i < TEMP.length; i++) if (TEMP[i].id === id) return TEMP[i];
       return TEMP[0];
     }
+    function tempByValue(value) {
+      var best = TEMP[0], bd = Infinity;
+      TEMP.forEach(function (t) {
+        var d = Math.abs(t.value - value);
+        if (d < bd) { bd = d; best = t; }
+      });
+      return best;
+    }
     function nearestWord(v) {
       var best = null, bd = Infinity;
       wordIdsForDim(v.length > 2).forEach(function (id) {
@@ -345,12 +353,8 @@
       hits = [];
       drawGrid1D();
       var a = tempById(st.pair[0]), b = tempById(st.pair[1]);
-      var lo = a.value <= b.value ? a : b;
-      var hi = a.value <= b.value ? b : a;
-      var step = hi.value - lo.value;
-      var stepMeta = TEMP.filter(function (t) { return t.value === step; })[0];
-      var stepLabel = stepMeta ? text(stepMeta.label) : "";
-      var ax = tempX(lo.value), bx = tempX(hi.value);
+      var target = tempByValue(a.value + b.value);
+      var ax = tempX(a.value), bx = tempX(target.value);
       var my = size.h * 0.58;
       ctx.strokeStyle = C.petrol;
       ctx.lineWidth = 2;
@@ -358,7 +362,7 @@
       ctx.moveTo(ax, my);
       ctx.lineTo(bx, my);
       ctx.stroke();
-      var mx = tempX(hi.value);
+      var mx = tempX(target.value);
       ctx.beginPath();
       ctx.moveTo(mx, my - 7);
       ctx.lineTo(mx + 7, my);
@@ -392,15 +396,14 @@
         }
         var above = i % 2 === 0;
         drawLabel(text(t.label), x, above ? my - 18 : my + 26, on ? C.ink : C.muted, "center", 10);
-        drawLabel(String(t.value), x, above ? my - 32 : my + 40, C.muted, "center", 9);
         hits.push({ id: t.id, x: x, y: my, r: 16, kind: "temp" });
       });
       drawLabel(DE ? "TEMPERATUR" : "TEMPERATURE", 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Klicke zwei Punkte" : "Click two points", size.w - 24, 26, C.muted, "right", 9);
-      drawLabel(text(lo.label) + " + " + (stepLabel || step) + " = " + text(hi.label), size.w / 2, size.h - 22, C.soft, "center", 11);
+      drawLabel(text(a.label) + " + " + text(b.label) + " = " + text(target.label), size.w / 2, size.h - 22, C.soft, "center", 11);
       canvas.setAttribute("aria-label", DE
-        ? "Temperaturlinie. Addiere " + (stepLabel || step) + " zu " + text(lo.label) + ": " + text(lo.label) + " + " + (stepLabel || step) + " = " + text(hi.label) + "."
-        : "Temperature line. Add " + (stepLabel || step) + " to " + text(lo.label) + ": " + text(lo.label) + " + " + (stepLabel || step) + " = " + text(hi.label) + ".");
+        ? "Temperaturlinie. " + text(a.label) + " plus " + text(b.label) + " ergibt " + text(target.label) + "."
+        : "Temperature line. " + text(a.label) + " plus " + text(b.label) + " equals " + text(target.label) + ".");
       updateReadout();
     }
     function drawLine3D(a, b, alpha) {
@@ -702,16 +705,12 @@
     function updateReadout() {
       if (st.mode === "temperature") {
         var a = tempById(st.pair[0]), b = tempById(st.pair[1]);
-        var lo = a.value <= b.value ? a : b;
-        var hi = a.value <= b.value ? b : a;
-        var step = hi.value - lo.value;
-        var loLabel = text(lo.label);
-        var hiLabel = text(hi.label);
-        var stepMeta = TEMP.filter(function (t) { return t.value === step; })[0];
-        var stepLabel = stepMeta ? text(stepMeta.label) : "";
-        var stepWord = stepLabel || String(step);
-        readout.innerHTML = '<b>' + esc(loLabel) + '</b> + <b>' + esc(stepWord) + '</b> = <b>' + esc(hiLabel) + '</b>';
-        setTex("\\underbrace{\\underbrace{\\text{" + loLabel + "}}_{\\text{" + (DE ? "Start" : "start") + "}} + \\underbrace{\\text{" + stepWord + "}}_{\\text{" + (DE ? "Schritt" : "step") + "}}}_{\\text{" + (DE ? "Bedeutungen addieren" : "add meanings") + "}} = \\underbrace{\\text{" + hiLabel + "}}_{\\text{" + (DE ? "Ziel" : "target") + "}}");
+        var target = tempByValue(a.value + b.value);
+        var aLabel = text(a.label);
+        var bLabel = text(b.label);
+        var targetLabel = text(target.label);
+        readout.innerHTML = '<b>' + esc(aLabel) + '</b> + <b>' + esc(bLabel) + '</b> = <b>' + esc(targetLabel) + '</b>';
+        setTex("\\underbrace{\\underbrace{\\text{" + aLabel + "}}_{\\text{" + (DE ? "Start" : "start") + "}} + \\underbrace{\\text{" + bLabel + "}}_{\\text{" + (DE ? "Schritt" : "step") + "}}}_{\\text{" + (DE ? "Bedeutungen addieren" : "add meanings") + "}} = \\underbrace{\\text{" + targetLabel + "}}_{\\text{" + (DE ? "Ziel" : "target") + "}}");
         return;
       }
       var cr = currentResult();
@@ -848,9 +847,7 @@
       if (st.mode === "temperature") {
         PAIRS.forEach(function (pair) {
           var p0 = tempById(pair[0]), p1 = tempById(pair[1]);
-          var hi = p1.value > p0.value ? p1 : p0;
-          var lo = p1.value > p0.value ? p0 : p1;
-          var label = text(lo.label) + " + " + text(hi.label);
+          var label = text(p0.label) + " + " + text(p1.label);
           row2.appendChild(makeChip(label, st.pair[0] === pair[0] && st.pair[1] === pair[1], function () {
             st.pair = pair.slice(); syncControls(); draw();
           }));

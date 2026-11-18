@@ -423,14 +423,6 @@
       return richText(part);
     }).join("");
   }
-  function plainWatch(text) {
-    return String(text == null ? "" : text)
-      .replace(/\$\$[\s\S]*?\$\$/g, " ")
-      .replace(/\$[^$]+\$/g, " ")
-      .replace(/<[^>]+>/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
   function proseBlock(text) {
     return String(text == null ? "" : text).split(/\n{2,}/).map(function (block) {
       if (block.length > 4 && block.slice(0, 2) === "$$" && block.slice(-2) === "$$") {
@@ -940,7 +932,6 @@
     els.stageTitle = root.querySelector("#ls-stage-title");
     els.demo = root.querySelector("#ls-demo");
     els.demoLoader = root.querySelector("#ls-demo-loader");
-    els.stageHint = root.querySelector("#ls-stage-hint");
     els.credit = root.querySelector("#ls-credit");
     els.days = root.querySelector("#ls-days");
     els.dayNav = root.querySelectorAll("[data-day-nav]");
@@ -1971,7 +1962,6 @@
     var doc = state.edit && editorDoc ? editorDoc : currentTextDoc();
     els.stageKicker.textContent = doc.kicker || (base && base.substeps ? s.kicker : d.kicker);
     els.stageTitle.textContent = doc.title || s.title;
-    if (els.stageHint) els.stageHint.textContent = plainWatch(doc.watch || s.watch || "");
     els.credit.textContent = d.credit || "";
     mountDemo(d, s);
   }
@@ -2103,7 +2093,7 @@
       visual: window.LearnSysVisuals || null,
       kit: window.LearnSysSceneKit || null,
       reducedMotion: !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
-      onHint: function (text) { if (els.stageHint) els.stageHint.textContent = text; },
+      onHint: function () {},
       go: go,
       goStep: function (step) { go(state.day, step); },
       goNext: function () {
