@@ -866,7 +866,7 @@
     {
       kicker: "Mannigfaltigkeiten",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Hat man Punkte in diesem hochabstraktem Raum, deren Beziehung untereinander die Bedeutung enthält, wird Übersetzung zu einer Abbildung zwischen Punktwolken: Translation, Rotation, Skalierung und Scherung. Die lokale Struktur einer Punktwolke kann wie eine Mannigfaltigkeit aussehen; der Vietoris–Rips-Komplex macht ihre Nachbarschaften sichtbar.\n\nFindet man eine Abbildung, die eine Wolke auf die andere legt, ist das ein Modell für Übersetzung: Semantische Beziehungen liegen in beiden Sprachen ähnlich, auch wenn die konkreten Tokens andere sind.",
+      body: "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehung untereinander die Bedeutung enthält, wird Übersetzung zu einer Abbildung zwischen Punktwolken: Translation, Rotation, Skalierung und Scherung. Die lokale Struktur einer Punktwolke kann wie eine Mannigfaltigkeit aussehen; der Vietoris–Rips-Komplex macht ihre Nachbarschaften sichtbar.\n\nFindet man eine Abbildung, die eine Wolke auf die andere legt, ist das ein Modell für Übersetzung: Semantische Beziehungen liegen in beiden Sprachen ähnlich, auch wenn die konkreten Tokens andere sind.",
       watch: "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
       demoState: { scene: "manifold" },
       context: "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
@@ -1499,8 +1499,8 @@
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE), MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
-        teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE), MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
+        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE). MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
+        teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE). MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
         watch: "Drücke Weiter. Was passiert, wenn die Beobachtungen nicht mehr exakt sind?",
         demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
         context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt; minimiert wird der mittlere quadratische Fehler (MSE).",
@@ -1587,8 +1587,8 @@
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
-        body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE), MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
-        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE), MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
+        body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE). MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
+        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE). MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
         watch: "Press Next. What happens when the observations are no longer exact?",
         demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
         context: "The bell curve is narrow; the true orbit lies in the middle. The fit trusts no single measurement and chooses the curve closest to all of them at once; it minimises the mean squared error (MSE).",
