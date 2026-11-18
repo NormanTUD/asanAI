@@ -937,6 +937,7 @@
   let buildLoopSpace, buildHomotopyEquiv, buildCW, buildContext, buildRulesPi1, buildRulesPi2, buildRulesSigma, buildRulesId, buildDerivation, buildBetaReduce;
   let buildProjection, buildPathLift, buildHomotopyLift, buildTrivialBundle, buildMobius, buildHopf, buildPullback;
   let buildSpace, buildContinuity, buildHomeomorphism, buildManifold, buildSurfaces, buildEuler;
+  let buildHomology, buildVectorField, buildBoundary, buildCobordism, buildBordismGroup, buildBordismEx, buildBordismTable, buildHandles, buildPontryagin;
 
   function makeBackdrop(color) {
     const mat = new THREE.ShaderMaterial({
@@ -4365,6 +4366,369 @@
     };
   };
 
+  function makeMobiusGeometry(R, w) {
+    const us = 120, vs = 12;
+    const pos = [], uv = [], idx = [];
+    const fn = (u, v) => {
+      const uu = u * TAU;
+      const vv = lerp(-w, w, v);
+      const rad = R + vv * Math.cos(uu / 2);
+      return [rad * Math.cos(uu), vv * Math.sin(uu / 2), rad * Math.sin(uu)];
+    };
+    for (let i = 0; i <= us; i++) {
+      for (let j = 0; j <= vs; j++) {
+        const q = fn(i / us, j / vs);
+        pos.push(q[0], q[1], q[2]);
+        uv.push(i / us, j / vs);
+      }
+    }
+    for (let i = 0; i < us; i++) {
+      for (let j = 0; j < vs; j++) {
+        const a = i * (vs + 1) + j, b = a + 1, c = a + vs + 1, d = c + 1;
+        idx.push(a, c, b, b, c, d);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+
+  buildHomology = function (g) {
+    const labels = [];
+    const tor = makeIrid(new THREE.TorusGeometry(1.3, 0.45, 28, 100), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.34, wobble: 0.01 });
+    g.add(tor.obj);
+    const gold = makeRing(1.79, 0.02, C.gold, 0.95);
+    g.add(gold.obj);
+    const blue = makeRing(0.45, 0.014, C.ice, 0.95);
+    blue.obj.rotation.y = Math.PI / 2;
+    blue.obj.position.set(1.3, 0, 0);
+    g.add(blue.obj);
+    const disk = makeIrid(new THREE.CircleGeometry(0.45, 48), { a: C.ice, b: C.mint, rim: C.ice, opacity: 0.22, wobble: 0 });
+    disk.obj.rotation.y = Math.PI / 2;
+    disk.obj.position.set(1.31, 0, 0);
+    g.add(disk.obj);
+    const spark = makeMarker(C.white, 0.9);
+    g.add(spark.obj);
+    labels.push({ text: "H<sub>1</sub>(T&sup2;) = &#8484; &oplus; &#8484;", p: V(0, 1.95, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "b<sub>1</sub> = 2", p: V(0, -1.95, 0), dx: 0, dy: 12, kind: "sym", cls: "gold" });
+    labels.push({ text: "cycle", p: V(-1.8, 1.2, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "boundary", p: V(2.1, 0.9, 0), dx: 0, dy: 0, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        tor.setOpacity(a * 0.36);
+        tor.obj.rotation.y += ctx.dt * 0.03;
+        gold.setOpacity(a * 0.95);
+        blue.setOpacity(a * 0.95);
+        disk.setOpacity(a * 0.2);
+        spark.setOpacity(a);
+        const th = ctx.t * 0.5;
+        spark.set(V(1.79 * Math.cos(th), 1.79 * Math.sin(th), 0));
+      }
+    };
+  };
+
+  buildVectorField = function (g) {
+    const labels = [];
+    const sphere = makeIrid(new THREE.SphereGeometry(1.6, 60, 40), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.32, wobble: 0.01 });
+    g.add(sphere.obj);
+    const pairs = [];
+    for (let i = 1; i <= 8; i++) {
+      const ph = i / 9 * Math.PI;
+      for (let j = 0; j < 16; j++) {
+        const th = j / 16 * TAU;
+        const p = V(Math.sin(ph) * Math.cos(th), Math.cos(ph), Math.sin(ph) * Math.sin(th)).multiplyScalar(1.6);
+        let v = V(-p.y, p.x, 0);
+        v.sub(p.clone().multiplyScalar(v.dot(p.clone().normalize()) / 1.6));
+        if (v.length() < 0.08) continue;
+        v.normalize().multiplyScalar(0.42);
+        pairs.push([p.clone(), p.clone().add(v)]);
+      }
+    }
+    const arrows = makeLines(pairs, { color: C.ice, opacity: 0.75 });
+    g.add(arrows.obj);
+    const z1 = makeRing(0.22, 0.01, C.red, 0.7); z1.obj.rotation.x = Math.PI / 2; z1.obj.position.y = 1.6; g.add(z1.obj);
+    const z2 = makeRing(0.22, 0.01, C.red, 0.7); z2.obj.rotation.x = Math.PI / 2; z2.obj.position.y = -1.6; g.add(z2.obj);
+    labels.push({ text: "&chi;(S&sup2;) = 2", p: V(0, 1.95, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "zero", p: V(0, 1.6, 0), dx: 14, dy: -12, kind: "word" });
+    labels.push({ text: "index 1", p: V(0, -1.6, 0), dx: 14, dy: 14, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        sphere.setOpacity(a * 0.34);
+        sphere.obj.rotation.y += ctx.dt * 0.04;
+        arrows.setOpacity(a * 0.7);
+        arrows.obj.rotation.y = sphere.obj.rotation.y;
+        z1.setOpacity(a * 0.7); z2.setOpacity(a * 0.7);
+      }
+    };
+  };
+
+  buildBoundary = function (g) {
+    const labels = [];
+    const surf = makeIrid(makeAnnulusGeometry(1.45, 0.6), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.45, wobble: 0 });
+    g.add(surf.obj);
+    const outer = makeRing(1.45, 0.018, C.gold, 0.9);
+    const inner = makeRing(0.6, 0.018, C.ice, 0.9);
+    outer.obj.position.z = 0.25; inner.obj.position.z = 0.25;
+    g.add(outer.obj, inner.obj);
+    labels.push({ text: "W", p: V(0, 0, 0.4), dx: 0, dy: -8, kind: "big" });
+    labels.push({ text: "&part;W", p: V(1.8, 1.0, 0.3), dx: 0, dy: 0, kind: "sym", cls: "gold" });
+    labels.push({ text: "two circles", p: V(0, -1.9, 0.3), dx: 0, dy: 12, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        surf.setOpacity(a * 0.44);
+        surf.obj.rotation.z = Math.sin(ctx.t * 0.12) * 0.12;
+        outer.setOpacity(a * 0.9); inner.setOpacity(a * 0.9);
+        outer.obj.rotation.z = surf.obj.rotation.z; inner.obj.rotation.z = surf.obj.rotation.z;
+      }
+    };
+  };
+
+  buildCobordism = function (g) {
+    const labels = [];
+    const surf = makeIrid(makePantsGeometry(1.75, 0.45, 1.0), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.46, wobble: 0 });
+    g.add(surf.obj);
+    const outer = makeRing(1.75, 0.02, C.gold, 0.95);
+    const h1 = makeRing(0.45, 0.016, C.ice, 0.95); h1.obj.position.x = -1.0;
+    const h2 = makeRing(0.45, 0.016, C.ice, 0.95); h2.obj.position.x = 1.0;
+    outer.obj.position.z = 0.2; h1.obj.position.z = 0.2; h2.obj.position.z = 0.2;
+    g.add(outer.obj, h1.obj, h2.obj);
+    labels.push({ text: "M", p: V(0, 1.85, 0.2), dx: 0, dy: -8, kind: "sym", cls: "gold" });
+    labels.push({ text: "N", p: V(0, -1.85, 0.2), dx: 0, dy: 12, kind: "sym", cls: "ice" });
+    labels.push({ text: "W", p: V(0, 0, 0.45), dx: 0, dy: -8, kind: "big" });
+    labels.push({ text: "&part;W = M &sqcup; N", p: V(2.1, 0.0, 0.3), dx: 0, dy: 0, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        surf.setOpacity(a * 0.44);
+        surf.obj.rotation.z = Math.sin(ctx.t * 0.1) * 0.1;
+        outer.setOpacity(a); h1.setOpacity(a); h2.setOpacity(a);
+        outer.obj.rotation.z = surf.obj.rotation.z;
+        h1.obj.rotation.z = surf.obj.rotation.z;
+        h2.obj.rotation.z = surf.obj.rotation.z;
+      }
+    };
+  };
+
+  buildBordismGroup = function (g) {
+    const labels = [];
+    const cyl = makeIrid(new THREE.CylinderGeometry(0.36, 0.36, 1.3, 32, 1, true), { a: C.ice, b: C.cyan, rim: C.gold, opacity: 0.32, wobble: 0 });
+    cyl.obj.position.set(-2.3, 0.2, 0);
+    g.add(cyl.obj);
+    const cap1 = makeIrid(new THREE.CircleGeometry(0.45, 40), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.4, wobble: 0 });
+    cap1.obj.position.set(2.4, 0.55, 0); g.add(cap1.obj);
+    const cap2 = makeIrid(new THREE.CircleGeometry(0.45, 40), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.4, wobble: 0 });
+    cap2.obj.position.set(2.4, -0.55, 0); g.add(cap2.obj);
+    const ring1 = makeRing(0.5, 0.012, C.gold, 0.7); ring1.obj.position.set(-2.3, 0.9, 0); g.add(ring1.obj);
+    const ring2 = makeRing(0.5, 0.012, C.ice, 0.7); ring2.obj.position.set(-2.3, -0.5, 0); g.add(ring2.obj);
+    const flip = makeRing(0.6, 0.018, C.rose, 0.8); flip.obj.rotation.x = Math.PI / 2; flip.obj.position.set(0, -1.6, 0); g.add(flip.obj);
+    const conn1 = makeRibbon(curveOf([V(-2.0, 0.2, 0), V(-0.6, 0.5, 0.3), V(0, 0.4, 0.3)], false), { a: C.ice, b: C.gold, rad: 0.012, opacity: 0.6, seg: 60 });
+    const conn2 = makeRibbon(curveOf([V(2.0, 0.4, 0), V(0.8, 0.5, 0.3), V(0, 0.4, 0.3)], false), { a: C.gold, b: C.rose, rad: 0.012, opacity: 0.6, seg: 60 });
+    g.add(conn1.core, conn1.glow, conn2.core, conn2.glow);
+    labels.push({ text: "&Omega;<sub>n</sub>", p: V(0, 0.55, 0.3), dx: 0, dy: -8, kind: "big", cls: "gold" });
+    labels.push({ text: "[M] + [N]", p: V(0, -0.15, 0.3), dx: 0, dy: 0, kind: "sym" });
+    labels.push({ text: "identity", p: V(-2.3, 1.35, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "disjoint", p: V(2.4, 1.35, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "&minus;[M]", p: V(0, -2.1, 0), dx: 0, dy: 12, kind: "sym", cls: "rose" });
+    labels.push({ text: "0", p: V(-2.3, -0.9, 0), dx: 0, dy: 12, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        cyl.setOpacity(a * 0.3);
+        cap1.setOpacity(a * 0.36); cap2.setOpacity(a * 0.36);
+        ring1.setOpacity(a * 0.6); ring2.setOpacity(a * 0.6);
+        conn1.setOpacity(a * 0.55); conn2.setOpacity(a * 0.55);
+        flip.setOpacity(a * 0.7);
+        flip.obj.rotation.z += ctx.dt * 0.12;
+      }
+    };
+  };
+
+  buildBordismEx = function (g) {
+    const labels = [];
+    const cap = makeIrid(new THREE.CircleGeometry(0.95, 48), { a: C.gold, b: C.white, rim: C.gold, opacity: 0.34, wobble: 0 });
+    cap.obj.position.set(-2.4, 0.2, 0);
+    const capRing = makeRing(0.95, 0.02, C.gold, 0.9); capRing.obj.position.set(-2.4, 0.2, 0.02);
+    g.add(cap.obj, capRing.obj);
+    const solid = makeIrid(new THREE.TorusGeometry(0.62, 0.34, 24, 80), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.4, wobble: 0.01 });
+    solid.obj.position.set(0, 0.2, 0);
+    g.add(solid.obj);
+    const mob = makeIrid(makeMobiusGeometry(0.62, 0.3), { a: C.rose, b: C.violet, rim: C.gold, opacity: 0.4, wobble: 0 });
+    mob.obj.position.set(2.4, 0.2, 0);
+    g.add(mob.obj);
+    const disk = makeIrid(new THREE.CircleGeometry(0.3, 40), { a: C.red, b: C.rose, rim: C.red, opacity: 0.2, wobble: 0 });
+    disk.obj.position.set(2.4, 0.2, 0.35);
+    g.add(disk.obj);
+    const bad = makeRing(0.75, 0.012, C.red, 0.5); bad.obj.position.set(2.4, 0.2, 0.01); g.add(bad.obj);
+    labels.push({ text: "S&sup1; = &part;D&sup2;", p: V(-2.4, 1.15, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "T&sup2; = &part;(solid torus)", p: V(0, 1.15, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "RP&sup2;", p: V(2.4, 1.15, 0), dx: 0, dy: -8, kind: "sym", cls: "rose" });
+    labels.push({ text: "bounds", p: V(-2.4, -0.95, 0), dx: 0, dy: 12, kind: "word" });
+    labels.push({ text: "bounds", p: V(0, -0.95, 0), dx: 0, dy: 12, kind: "word" });
+    labels.push({ text: "not a boundary", p: V(2.4, -0.95, 0), dx: 0, dy: 12, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        cap.setOpacity(a * 0.32); capRing.setOpacity(a * 0.9);
+        solid.setOpacity(a * 0.4); solid.obj.rotation.y += ctx.dt * 0.04;
+        mob.setOpacity(a * 0.4); mob.obj.rotation.y += ctx.dt * 0.05;
+        disk.setOpacity(a * 0.2); bad.setOpacity(a * 0.5);
+      }
+    };
+  };
+
+  buildBordismTable = function (g) {
+    const labels = [];
+    const soft = makeSoftPanel(10.0, 5.8, C.ice, C.violet, 0.07);
+    soft.obj.position.set(0, 0.1, -0.7);
+    g.add(soft.obj);
+    const core = makeIrid(new THREE.SphereGeometry(0.42, 36, 24), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.7, wobble: 0.04 });
+    core.obj.position.set(0, 0, -0.3);
+    const coreRing = makeRing(0.62, 0.012, C.gold, 0.6);
+    coreRing.obj.position.set(0, 0, -0.3);
+    const coreDot = makeDots([{ p: V(0, 0, 0), size: 1.0, color: C.white, glow: 1.3 }], { opacity: 1 });
+    g.add(core.obj, coreRing.obj, coreDot.obj);
+    const rows = [
+      { n: "0", so: "&#8484;", un: "&#8484;/2", gen: "point" },
+      { n: "1", so: "0", un: "0", gen: "&mdash;" },
+      { n: "2", so: "0", un: "&#8484;/2", gen: "RP&sup2;" },
+      { n: "3", so: "0", un: "0", gen: "&mdash;" },
+      { n: "4", so: "&#8484;", un: "(&#8484;/2)&sup2;", gen: "CP&sup2;" },
+      { n: "5", so: "&#8484;/2", un: "&#8484;/2", gen: "&mdash;" }
+    ];
+    const xoff = 2.25;
+    const ys = [1.5, 0.25, -1.0];
+    const cards = [];
+    const positions = [];
+    for (let k = 0; k < rows.length; k++) {
+      const row = rows[k];
+      const x = k < 3 ? -xoff : xoff;
+      const y = ys[k % 3];
+      positions.push(V(x, y, 0.1));
+      const html = '<div class="dc" style="--i:' + k + '"><div class="dc-face" style="--tilt:' + (k < 3 ? 5 : -5) + 'deg">' +
+        '<span class="dc-ic" style="font-size:22px;font-family:ui-serif,Georgia,serif;color:var(--gold)">' + row.n + '</span>' +
+        '<div class="dc-main" style="font-size:14px;gap:8px"><span>&Omega;<sub>n</sub><sup>SO</sup> = ' + row.so + '</span></div>' +
+        '<div class="dc-proof"><span class="dc-k">O</span><span class="dc-p" style="font-size:12.5px">&Omega;<sub>n</sub><sup>O</sup> = ' + row.un + ' &middot; ' + row.gen + '</span></div></div></div>';
+      const L = { text: html, p: V(x, y, 0.1), dx: 0, dy: 0, kind: "dictcard", anchor: "center" };
+      labels.push(L);
+      cards.push(L);
+    }
+    const threadPairs = positions.map((p) => [V(0, 0, -0.2), p.clone()]);
+    const threads = makeLines(threadPairs, { color: C.gold, opacity: 0 });
+    g.add(threads.obj);
+    const sparks = positions.map((p, k) => {
+      const m = makeMarker(k % 2 ? C.ice : C.gold, 0.55);
+      g.add(m.obj);
+      return { m, p };
+    });
+    labels.push({ text: "low-dimensional bordism", p: V(0, 2.45, 0.1), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "&Omega;", p: V(0, 0, 0.1), dx: 0, dy: -6, kind: "big", cls: "gold" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const on = ctx.a > 0.4;
+        for (const L of cards) {
+          if (L.el) {
+            const d = L.el.querySelector(".dc");
+            if (d) d.classList.toggle("in", on);
+          }
+        }
+        soft.setOpacity(a * 0.07);
+        core.setOpacity(a * 0.7);
+        core.obj.rotation.y += ctx.dt * 0.12;
+        coreRing.setOpacity(a * (0.35 + 0.25 * (0.5 + 0.5 * Math.sin(ctx.t * 1.1))));
+        coreDot.setOpacity(a);
+        threads.setOpacity(a * 0.08);
+        for (let k = 0; k < sparks.length; k++) {
+          const u = fract(ctx.t * 0.12 + k * 0.13);
+          sparks[k].m.set(V(0, 0, -0.2).lerp(sparks[k].p, u));
+          sparks[k].m.setOpacity(a * 0.55 * Math.sin(Math.PI * u));
+        }
+      }
+    };
+  };
+
+  buildHandles = function (g) {
+    const labels = [];
+    const tor = makeIrid(new THREE.TorusGeometry(1.25, 0.46, 28, 100), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.34, wobble: 0.01 });
+    g.add(tor.obj);
+    const h0 = makeIrid(new THREE.CircleGeometry(0.46, 48), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.3, wobble: 0 });
+    h0.obj.rotation.x = -Math.PI / 2; h0.obj.position.set(1.25, -0.47, 0); g.add(h0.obj);
+    const h2 = makeIrid(new THREE.CircleGeometry(0.46, 48), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.3, wobble: 0 });
+    h2.obj.rotation.x = Math.PI / 2; h2.obj.position.set(1.25, 0.47, 0); g.add(h2.obj);
+    const bandA = makeRing(1.25, 0.03, C.ice, 0.55); g.add(bandA.obj);
+    const bandB = makeRing(1.71, 0.03, C.violet, 0.4); g.add(bandB.obj);
+    labels.push({ text: "0-handle", p: V(1.25, -0.95, 0), dx: 0, dy: 12, kind: "word" });
+    labels.push({ text: "1-handles", p: V(-1.9, 1.1, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "2-handle", p: V(1.25, 1.0, 0), dx: 0, dy: -8, kind: "word" });
+    labels.push({ text: "handle decomposition", p: V(0, 2.0, 0), dx: 0, dy: -8, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        tor.setOpacity(a * 0.34);
+        tor.obj.rotation.y += ctx.dt * 0.035;
+        h0.setOpacity(a * 0.32); h2.setOpacity(a * 0.32);
+        bandA.setOpacity(a * 0.5); bandB.setOpacity(a * 0.4);
+        bandA.obj.rotation.y = tor.obj.rotation.y;
+        bandB.obj.rotation.y = tor.obj.rotation.y;
+      }
+    };
+  };
+
+  buildPontryagin = function (g) {
+    const labels = [];
+    const target = makeRing(0.95, 0.022, C.gold, 0.9);
+    target.obj.rotation.x = Math.PI / 2;
+    target.obj.position.y = -1.2;
+    g.add(target.obj);
+    const source = makeRing(1.7, 0.018, C.ice, 0.65);
+    source.obj.rotation.x = Math.PI / 2;
+    source.obj.position.y = 0.1;
+    g.add(source.obj);
+    const y0 = V(0.95, -1.2, 0);
+    const yDot = makeDots([{ p: y0, size: 0.65, color: C.gold, glow: 1.3 }], { opacity: 1 });
+    g.add(yDot.obj);
+    const p1 = V(1.7, 0.1, 0), p2 = V(-1.7, 0.1, 0);
+    const pre = makeDots([{ p: p1, size: 0.8, color: C.white, glow: 1.4 }, { p: p2, size: 0.8, color: C.white, glow: 1.4 }], { opacity: 1 });
+    g.add(pre.obj);
+    const f1 = makeLine2(C.ice, 0.4); f1.set(y0, V(1.7, 0.1, 0)); g.add(f1.obj);
+    const f2 = makeLine2(C.ice, 0.4); f2.set(V(0, -1.2, 0), V(-1.7, 0.1, 0)); g.add(f2.obj);
+    const frame1 = makeLine2(C.gold, 0.6); frame1.set(p1, p1.clone().add(V(0, 0.25, 0.3))); g.add(frame1.obj);
+    const frame2 = makeLine2(C.gold, 0.6); frame2.set(p2, p2.clone().add(V(0, 0.25, 0.3))); g.add(frame2.obj);
+    labels.push({ text: "S&sup1;", p: V(0, 1.95, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "f", p: V(1.1, -0.55, 0), dx: 12, dy: 0, kind: "sym", cls: "ice" });
+    labels.push({ text: "y", p: y0, dx: 12, dy: 14, kind: "sym", cls: "gold" });
+    labels.push({ text: "f<sup>-1</sup>(y)", p: V(0, 0.05, 0), dx: 0, dy: -18, kind: "sym" });
+    labels.push({ text: "deg 2", p: V(0, -1.85, 0), dx: 0, dy: 14, kind: "sym", cls: "gold" });
+    labels.push({ text: "&Omega;<sub>*</sub><sup>O</sup> &cong; &pi;<sub>*</sub>(MO)", p: V(0, 2.35, 0), dx: 0, dy: -8, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        target.setOpacity(a * 0.85);
+        source.setOpacity(a * 0.6);
+        yDot.setOpacity(a);
+        pre.setOpacity(a);
+        f1.setOpacity(a * 0.4); f2.setOpacity(a * 0.4);
+        frame1.setOpacity(a * 0.6); frame2.setOpacity(a * 0.6);
+        source.obj.rotation.z += ctx.dt * 0.1;
+      }
+    };
+  };
+
   const stations = [];
   function buildAllStations() {
     for (let i = 0; i < N; i++) {
@@ -4375,6 +4739,15 @@
       const kind = BEATS[i].kind;
       if (kind === "title") built = buildTitle(group);
       else if (kind === "space") built = buildSpace(group);
+      else if (kind === "homology") built = buildHomology(group);
+      else if (kind === "vectorfield") built = buildVectorField(group);
+      else if (kind === "boundary") built = buildBoundary(group);
+      else if (kind === "cobordism") built = buildCobordism(group);
+      else if (kind === "bordismgroup") built = buildBordismGroup(group);
+      else if (kind === "bordismex") built = buildBordismEx(group);
+      else if (kind === "bordismtable") built = buildBordismTable(group);
+      else if (kind === "handles") built = buildHandles(group);
+      else if (kind === "pontryagin") built = buildPontryagin(group);
       else if (kind === "continuity") built = buildContinuity(group);
       else if (kind === "homeomorphism") built = buildHomeomorphism(group);
       else if (kind === "manifold") built = buildManifold(group);
