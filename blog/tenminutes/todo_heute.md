@@ -76,3 +76,9 @@ folie "Ähnliche Worte finden":
 zeige rechts bei "kleinster winkel zuerst" prozentual wie gut espasst mit einer bar zusätzlich zu den winkeln, so dass man sieht dass der geringste winkel am besten passt, mit ner progress bar.
 
 bei der skaleninvarianz folie: der B winkle geht aus dem screen heraus. der zeigt nicht die euklidische distanz darunter und dann wie viel die anders wird als der winkel. wenn ich weiter mache hat der die länge von B nicht geändert, der soll mit "weiter" oder pfeiltaste die länge von b variieren.
+
+folie: "Das Weltmodell eines LLM":
+
+lass den user die nächsten züge wählen, mach daraus ein spiel. schlage ihm durch ne visualisierung valide positionen vor, wo er klicken kann. benenne die achsen des spiels, so dass man A5 oder so sieht und klicken kann und der dann sieht wo man geklickt hat und da passende punkte hinmacht und den user so spielen lässt gegen den rechner.
+
+
