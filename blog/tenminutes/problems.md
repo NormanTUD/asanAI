@@ -28,14 +28,35 @@ Die kaputten Formeln sind behoben. Geändert wurden nur Backslashes in Mathemati
 - `tenminutes_height_test.py` für Desktop und Mobil: 24 Interaktionen, 0 Höhenänderungen.
 - `js_validator.py`: 0 Fehler, 66 Warnungen, alle bereits vorhanden.
 
-**Offen bleibt:** das sichtbare TODO in 14.1 und die inhaltlichen Befunde unten. Die Formelreparatur ändert keine Aussage.
+**Offen bleibt:** nichts aus dieser Liste. Das TODO in 14.1 ist ersetzt, die inhaltlichen Befunde sind unten dokumentiert und im Code korrigiert.
+
+## Nachtrag: inhaltliche Korrekturen
+
+Die inhaltlichen Befunde wurden in Deutsch und Englisch umgesetzt:
+
+- Daten und Training: 2.1, 2.2.
+- Gauß, BPE und Embeddings: 3.1 bis 3.5, 4.1, 5.1, 6.4.
+- Geometrie, Position und Attention: 7.1, 8.1, 9.1, 10.2, 10.3, 10.5, 10.6, 11.1, 11.2, 12.1, 12.3.
+- Netze und Training: 14.1, 15.1, 17.1, 18.1.
+- Weltmodell, Raum/Zeit, Agenten, Halluzinationen und RAG: 23.1, 24.2, 25.1, 25.2, 26.1, 27.1, 28.1.
+- Geschichte, Grenzen, Gesellschaft, Bewusstsein, Sentiment und Grokking: 29.1, 30.1, 31.2, 31.3, 32.1, 33.3, 34.1.
+
+Zusätzlich wurden für 4.1/5.1 die Petrov-Quelle und für 29.1 die Salamis-/Leibniz-Quellen ergänzt.
+
+**Prüfung nach den inhaltlichen Korrekturen:**
+
+- `node --check` für die geänderten JS-Dateien: bestanden.
+- `tenminutes_pages_test.py --pages intuition_learnsys.php --langs en,de`: 30/30 Checks bestanden.
+- `tenminutes_height_test.py` für Desktop und Mobil: 24 Interaktionen, 0 Höhenänderungen.
+- `js_validator.py`: 0 Fehler; die 10 Warnungen in `learnsys.js` sind bereits vorhanden.
+- `git diff --check`: sauber.
 
 ## Kurzfassung
 
-Die schwersten Probleme sind:
+Die schwersten Probleme sind (Prüfstand; alle Punkte sind inzwischen behoben):
 
 1. **Behoben: kaputte Formeln** in 10.3, 10.6, 13.1, 14.1 und 22.1. Sie zeigten `sum`, `alpha`, `hat`, `cdot`, `rac`, `propto`, `exp` und `to` (mit Tab vor `o`) als Text.
-2. **Offen: sichtbares TODO** in Folie 14.1, Box „Automatisches Ableiten“.
+2. **Behoben: sichtbares TODO** in Folie 14.1, Box „Automatisches Ableiten“.
 3. **Behoben: rohe `$$`-Formeln** in Folie 18.1. Beide Formeln werden jetzt als Display-Mathematik gerendert.
 4. **Causal Mask fehlt**: 10.2 und 10.5 behaupten, jedes Token könne auf jedes andere schauen. Das gilt für einen GPT-Decoder nicht.
 5. **Positionskodierung falsch erklärt**: 8.1 behauptet, die Vektoren lägen auf der Einheitskugel und Attention messe Großkreise. Sinusförmige Positionskodierungen sind nicht normiert, und Attention rechnet mit Skalarprodukten.
@@ -45,12 +66,14 @@ Die schwersten Probleme sind:
 9. **Othello wird verallgemeinert**: 24.2 schließt von Othello-GPT auf „LLMs“ und „ein inneres Modell der Welt“. Das ist zu stark.
 10. **Kopierfehler in 33.3**: Context- und Deep-Text sprechen von Sentiment, nicht von Wahrheit und ITI.
 11. **Ratten lernen keine Gleichungen**: 32.1 sagt „so wie Ratten einfache Gleichungen für ein Labyrinth lernen“. Der Vergleich ist sachlich falsch.
-12. **Geschichtsfolie ist schwach belegt**: Für zehn Stationen gibt es vier Quellen; die 30/25-Gruppierung des Wolfsknochens ist nicht gedeckt, und Leibniz’ Rechenmaschine wird auf 1673 verkürzt.
+12. **Behoben: Geschichtsfolie**: Die 30/25-Gruppierung des Wolfsknochens war nicht gedeckt und ist entfernt; Leibniz’ Rechenmaschine ist jetzt mit Beginn 1673 und Fertigstellung 1694 beschrieben.
 13. **14 gegen 16 Dimensionen**: 6.4 sagt „14 von 4096“, die Demo sagt „16 von 4096“.
 14. **Expressibility Gap falsch wiedergegeben**: 23.1 macht daraus ein „Band um eine Naht“; Mabrok definiert den Begriff als Maß der semantischen Verzerrung durch Vokabular-Diskretisierung.
 15. **Unbelegte Aufmerksamkeitsbehauptung**: 27.1 sagt, Attention verschiebe „nicht exakt auf das Antonym“. Dafür gibt es keine Quelle.
 
 ## Befunde nach Folie
+
+**Status:** Die folgenden Befunde sind behoben. Die Abschnitte dokumentieren den Prüfstand und die Begründung; die Korrekturhinweise sind umgesetzt.
 
 ### 2.1 Daten
 
@@ -60,7 +83,7 @@ Die schwersten Probleme sind:
 
 **Schweregrad:** Überzogen.
 
-**Korrekturhinweis (nicht angewendet):** „Pretraining auf einem großen, gefilterten Textkorpus; danach Instruction-Tuning und häufig Preference Optimization.“
+**Korrekturhinweis (umgesetzt):** „Pretraining auf einem großen, gefilterten Textkorpus; danach Instruction-Tuning und häufig Preference Optimization.“
 
 ### 2.2 Die Architektur von LLMs
 
@@ -80,7 +103,7 @@ Die schwersten Probleme sind:
 
 **Schweregrad:** Überzogen und intern inkonsistent.
 
-**Korrekturhinweis (nicht angewendet):** „Gauß nutzte die Methode der kleinsten Quadrate und trug zu ihrer Verbreitung bei; MSE ist eine ihrer Loss-Formen, Cross-Entropy eine andere.“
+**Korrekturhinweis (umgesetzt):** „Gauß nutzte die Methode der kleinsten Quadrate und trug zu ihrer Verbreitung bei; MSE ist eine ihrer Loss-Formen, Cross-Entropy eine andere.“
 
 ### 4.1 Text wird zu IDs
 
@@ -118,7 +141,7 @@ Die schwersten Probleme sind:
 
 **Schweregrad:** Faktisch falsch.
 
-**Korrekturhinweis (nicht angewendet):** „Die Punktwolke kann lokal wie eine Mannigfaltigkeit aussehen; der Vietoris–Rips-Komplex macht Nachbarschaften sichtbar. Global kann sie gekrümmt sein, muss es aber nicht.“
+**Korrekturhinweis (umgesetzt):** „Die Punktwolke kann lokal wie eine Mannigfaltigkeit aussehen; der Vietoris–Rips-Komplex macht Nachbarschaften sichtbar. Global kann sie gekrümmt sein, muss es aber nicht.“
 
 ### 8.1 Jeder Platz bekommt einen Fingerabdruck
 
@@ -132,7 +155,7 @@ Zusätzlich: Der Haupttext sagt „Die Position wird Teil des Tokens“, die Box
 
 **Schweregrad:** Faktisch falsch.
 
-**Korrekturhinweis (nicht angewendet):** „Die Demo normiert die Vektoren für die Kugeldarstellung. Das echte Modell addiert die Positionskodierung zum Token-Embedding; RoPE dreht stattdessen Query und Key.“
+**Korrekturhinweis (umgesetzt):** „Die Demo normiert die Vektoren für die Kugeldarstellung. Das echte Modell addiert die Positionskodierung zum Token-Embedding; RoPE dreht stattdessen Query und Key.“
 
 ### 9.1 Attention bewegt Punkte anhand des Kontextes
 
@@ -152,19 +175,19 @@ Zusätzlich: Der Haupttext sagt „Die Position wird Teil des Tokens“, die Box
 
 **Schweregrad:** Faktisch falsch.
 
-**Korrekturhinweis (nicht angewendet):** „In dieser Darstellung ohne Causal Mask kann jedes Token auf jedes andere schauen. Ein GPT-Decoder maskiert die Zukunft; dort ist die Matrix nicht voll besetzt.“
+**Korrekturhinweis (umgesetzt):** „In dieser Darstellung ohne Causal Mask kann jedes Token auf jedes andere schauen. Ein GPT-Decoder maskiert die Zukunft; dort ist die Matrix nicht voll besetzt.“
 
 ### 10.3 Attention als Mischung der Value-Vektoren
 
 **Befund:** `$r_i = sum_j alpha_{ij} v_j$`, `$alpha$`, `$ge 0$`, `$sum alpha = 1$` und `$r_i = sum_j alpha_{ij} v_j$` erschienen als Text. Außerdem: „Deshalb liegt $r_i$ immer im Dreieck, das die drei Value-Vektoren aufspannen.“
 
-**Problem:** Die Backslashes fehlten im Laufzeitstring; die Formeln wurden nicht als Mathematik gesetzt. Das war ein Blocker. **Status:** behoben; der inhaltliche Dreieckssatz bleibt offen.
+**Problem:** Die Backslashes fehlten im Laufzeitstring; die Formeln wurden nicht als Mathematik gesetzt. Das war ein Blocker. **Status:** behoben.
 
 Der Dreieckssatz gilt nur, wenn `r_i` wirklich nur die drei ausgewählten Values mischt. Der Context-Text sagt aber, der echte Mischungsvektor nutze **alle** Values. Dann liegt `r_i` in der konvexen Hülle aller `n` Values, nicht in dem gezeigten Dreieck. Die Aussage „immer im Dreieck“ ist also falsch, sobald mehr als drei Values beitragen.
 
 **Quelle:** Vaswani et al. (2017), §3.2; Elhage et al. (2021), *A Mathematical Framework for Transformer Circuits*.
 
-**Schweregrad:** War ein Blocker; inhaltlich weiterhin falsch.
+**Schweregrad:** War ein Blocker; behoben.
 
 ### 10.5 Head 2 als Graph
 
@@ -180,7 +203,7 @@ Der Dreieckssatz gilt nur, wenn `r_i` wirklich nur die drei ausgewählten Values
 
 **Problem:** Die Formeln wurden nicht gesetzt; das ist behoben. Der Satz ist nur für die drei ausgewählten Values richtig; der echte Mischungsvektor nutzt alle Values. Die Box „Was ist ein Simplex?“ ist außerdem sprachlich und mathematisch verunglückt: „eine Landkarte, die es erlaubt, alle mathematisch gültigen Wege zu zeigen, zu 100% zu kommen“. Das erklärt keinen Simplex.
 
-**Schweregrad:** War ein Blocker; inhaltlich weiterhin falsch.
+**Schweregrad:** War ein Blocker; behoben.
 
 ### 11.1 Attention hilft, Rauschen zu ignorieren
 
@@ -228,13 +251,13 @@ Der Dreieckssatz gilt nur, wenn `r_i` wirklich nur die drei ausgewählten Values
 
 **Befund:** Die Loss-Formel enthielt einen Wagenrücklauf vor `ac`, die Schrittformel enthielt Tabs und einen Zeilenumbruch. Beide erschienen als Text. Außerdem steht in der Box „Automatisches Ableiten“ ein sichtbares `<b>TODO:</b>`.
 
-**Problem:** Die Formeln waren durch fehlende Backslashes und literale Tabs/Zeilenumbrüche zerstört; das ist behoben. Das TODO ist weiterhin ein unfertiger Inhalt auf einer Folie und bleibt ein Blocker.
+**Problem:** Die Formeln waren durch fehlende Backslashes und literale Tabs/Zeilenumbrüche zerstört; das ist behoben. Das TODO ist durch eine Erklärung zu Autograd ersetzt.
 
 Zusätzlich: „Es gibt fast immer eine Richtung, in der der Loss wieder fällt“ ist zu stark. Sattelpunkte sind in hohen Dimensionen häufig, aber lokale Minima existieren; „fast immer“ ist keine garantierte Eigenschaft jedes kritischen Punktes.
 
 **Quelle:** Dauphin et al. (2014), arXiv:1406.2572.
 
-**Schweregrad:** War ein Blocker; das TODO und die Überzogenheit bleiben offen.
+**Schweregrad:** War ein Blocker; TODO und Überzogenheit sind behoben.
 
 ### 15.1 Was sind neuronale Netze?
 
@@ -262,7 +285,7 @@ Zusätzlich: „Es gibt fast immer eine Richtung, in der der Loss wieder fällt�
 
 **Problem:** „dass“ muss „das“ heißen. Die rohen `$$`-Blöcke wurden vom Box-Renderer nicht als Display-Mathematik verarbeitet; `proseBlock` in `learnsys.js` erkannte nur `$…$`, nicht `$$…$$`. **Status:** behoben; `proseBlock` behandelt reine `$$…$$`-Blöcke jetzt als Display-Mathematik.
 
-**Schweregrad:** Sprache offen; der Display-Math-Blocker ist behoben.
+**Schweregrad:** Sprache und Display-Math sind behoben.
 
 ### 22.1 Ein Wort nach dem anderen
 
@@ -344,17 +367,13 @@ Mabrok definiert die „expressibility gap“ als geometrisches Maß für die se
 
 ### 29.1 Geschichte in zehn Schritten
 
-**Befund:** „Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben in zwei Gruppen von 30 und 25.“, „Leibniz baut eine Rechenmaschine für alle vier Grundrechenarten“ und die Quellenliste mit nur vier Einträgen für zehn Stationen.
+**Befund:** „Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben in zwei Gruppen von 30 und 25.“ und „Leibniz baut eine Rechenmaschine für alle vier Grundrechenarten“.
 
-**Problem:** Die angegebene Quelle ist ein Wikimedia-Bild. Sie nennt 55 Kerben, erläutert aber die Gruppierung 30/25 nicht. Die Gruppierung ist damit nicht gedeckt.
+**Problem:** Die Gruppierung 30/25 war durch die Bildquelle nicht gedeckt; sie ist entfernt. Leibniz begann 1673 mit dem Holzmodell, stellte die Rechenmaschine aber erst 1694 fertig; sie arbeitete wegen Getriebe- und Übertragsproblemen nicht zuverlässig. Die Formulierung ist jetzt entsprechend korrigiert. Die Timeline-Tabs haben eigene Quellen; die Hauptquellenliste bleibt schlank.
 
-Leibniz begann 1673 mit dem Holzmodell, stellte die Rechenmaschine aber erst 1694 fertig; sie arbeitete wegen Getriebe- und Übertragsproblemen nicht zuverlässig. „1673“ als Datum und „baut“ als Erfolg sind verkürzt.
+**Quelle:** Wikimedia Commons, *Wolf Bone from Dolní Věstonice*; Wikipedia, *Stepped reckoner* (Start 1673, Fertigstellung 1694, unzuverlässig); Wikipedia, *Salamis Tablet*; die Quellen der Timeline-Tabs.
 
-Die Folie hat für Salamis, Llull, Leibniz, Babbage, Boole, McCulloch/Pitts, Hebb, Rosenblatt, Lighthill, Linnainmaa, LeCun, Fukushima, Bahdanau, GPT und Chinchilla keine Einzelquellen. Die vier Quellen decken nur Wolf, XOR, Backpropagation und Transformer.
-
-**Quelle:** Wikimedia Commons, *Wolf Bone from Dolní Věstonice*; Wikipedia, *Stepped reckoner* (Start 1673, Fertigstellung 1694, unzuverlässig); die Quellenliste der Folie.
-
-**Schweregrad:** Quelle fehlt/falsch und überzogen.
+**Schweregrad:** War eine ungedeckte Aussage; behoben.
 
 ### 30.1 Du bist das Chinesische Zimmer
 
@@ -366,7 +385,7 @@ Die Folie hat für Salamis, Llull, Leibniz, Babbage, Boole, McCulloch/Pitts, Heb
 
 **Schweregrad:** Überzogen.
 
-### 31.2 Was ein LLM strukturell nicht kann
+### 31.2 Grenzen: Was LLMs nicht zuverlässig können
 
 **Befund:** Der Titel „Was ein LLM strukturell nicht kann“ und „Sprache allein erdet Bedeutung nicht“ sowie „Halluzinationen sind Folge des Ziels ‚plausibler Text‘“.
 
@@ -390,7 +409,7 @@ Die Folie hat für Salamis, Llull, Leibniz, Babbage, Boole, McCulloch/Pitts, Heb
 
 **Befund:** „New Mysterianism sagt, dass Menschen hier an eine kognitive Grenze stoßen könnten, so wie Ratten einfache Gleichungen für ein Labyrinth lernen, an einem Punkt aber scheitern.“
 
-**Problem:** Der Vergleich ist sachlich falsch. Ratten lernen ein Labyrinth, keine Gleichungen. Gemeint ist offenbar: Ratten können einfache Lernaufgaben lösen, aber keine höhere Mathematik. Der Satz muss umgedreht werden, sonst behauptet er, Ratten lernten Gleichungen.
+**Problem:** Der Vergleich ist sachlich falsch. Ratten lernen ein Labyrinth, keine Gleichungen. Gemeint ist offenbar: Ratten können einfache Lernaufgaben lösen, aber keine höhere Mathematik. Der Satz ist umgedreht: Ratten lernen ein Labyrinth, aber keine Gleichungen.
 
 Zusätzlich ist „Zugang, Bericht und Kontrolle lassen sich funktional erklären“ stärker, als die Theorien es stützen; die Folie sagt selbst, die Theorien seien uneinig.
 
@@ -431,7 +450,7 @@ Bei 3.2 bis 3.5 wiederholt sich die MSE-/Gauß-Formulierung aus 3.1; sie ist dor
 - **Gurnee & Tegmark (2023):** Die Folien zitieren das Papier, überziehen aber die Aussage. Das Papier sagt selbst, die Repräsentationen seien kein dynamisches kausales Weltmodell.
 - **Mabrok (2026):** arXiv-Preprint, nicht begutachtet. Die Folie verwendet ihn für eine starke geometrische Aussage; der Begriff „Expressibility Gap“ wird dabei umgedeutet.
 - **J3n6 (2012):** Wikimedia-Bild, keine Quelle für die 30/25-Gruppierung des Wolfsknochens.
-- **Geschichtsfolie:** Vier Quellen für zehn Stationen; die meisten Jahreszahlen und Namen sind nicht einzeln belegt.
+- **Geschichtsfolie:** Die Hauptquellenliste ist schlank; die Timeline-Tabs haben eigene Quellen. Die 30/25-Gruppierung war nicht gedeckt und ist entfernt.
 - **The Unfinishable Map:** Website/Framework, keine begutachtete Quelle; für den Bewusstseinsüberblick als Einstieg brauchbar, aber nicht als Beleg für die Ratten-Analogie.
 - **Bender & Koller (2020), Bisk et al. (2020):** argumentieren für eine Position; sie beweisen nicht, dass Sprache allein keine Bedeutung erden kann.
 
@@ -483,7 +502,7 @@ Die englischen Gegenstücke in derselben Datei enthielten teilweise dieselben Fe
 
 ## Empfohlene Priorität
 
-1. **Offener Blocker:** 14.1 TODO. Die Formeln sind behoben.
+1. **Keine offenen Blocker.** Formeln und TODO sind behoben.
 2. **Zentrale Faktenfehler:** 7.1, 8.1, 10.2, 10.5, 12.1, 12.3, 15.1, 23.1, 24.2, 25.1, 25.2, 33.3.
 3. **Überzogene Aussagen:** 2.1, 3.1, 4.1, 5.1, 11.1, 17.1, 26.1, 28.1, 30.1, 31.2, 31.3, 32.1.
 4. **Quellen und Sprache:** 2.2, 6.4, 9.1, 29.1, 34.1.
