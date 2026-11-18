@@ -62,6 +62,12 @@
     letter-spacing:.20em;text-transform:uppercase;color:rgba(190,228,255,.66);
     text-shadow:0 0 12px rgba(80,200,255,.25),0 2px 8px rgba(0,0,0,.6)}
   .mn-label.big{font-style:italic;font-size:26px}
+  .mn-label.mid{font-style:italic;font-size:21px}
+  .mn-label.ice{color:rgba(175,240,255,.94)}
+  .mn-label.gold{color:rgba(255,220,150,.96)}
+  .mn-label.violet{color:rgba(208,184,255,.94)}
+  .mn-label.mint{color:rgba(170,255,214,.94)}
+  .mn-label.white{color:#f4fdff}
   .mn-label sub{font-size:.62em;transform:translateY(.18em)}
   .mn-label .sub{display:inline-block;margin-left:.55em;font-family:ui-sans-serif,system-ui,sans-serif;
     font-size:9px;font-style:normal;letter-spacing:.22em;text-transform:uppercase;
@@ -390,8 +396,9 @@
     { roman: "III", label: "Identity" },
     { roman: "IV", label: "Fibers" },
     { roman: "V", label: "Logic" },
-    { roman: "VI", label: "Higher" },
-    { roman: "VII", label: "Coda" }
+    { roman: "VI", label: "Proofs" },
+    { roman: "VII", label: "Higher" },
+    { roman: "VIII", label: "Coda" }
   ];
 
   const BEATS = [
@@ -429,21 +436,27 @@
     { act: 4, kind: "set",         caption: "A set: at most one path.", key: "path", d: 12.2, cy: 2.6 },
     { act: 4, kind: "levels",      caption: "Higher levels remember higher paths.", key: "paths", d: 11.9, cy: 2.6 },
 
-    { act: 5, kind: "universe",    caption: "Types of types: the universe.", key: "universe", d: 12.0, cy: 2.6 },
-    { act: 5, kind: "contractfib", caption: "An equivalence has one point per fiber.", key: "one", d: 12.4, cy: 2.6 },
-    { act: 5, kind: "equiv",       caption: "An equivalence matches points and paths.", key: "equivalence", d: 12.8, cy: 2.6 },
-    { act: 5, kind: "univalence",  caption: "Univalence: equivalence is equality.", key: "equality", math: "(A \\simeq B) \\simeq (A = B)", d: 12.4, cy: 2.6 },
-    { act: 5, kind: "inductive",   caption: "Constructors build the type.", key: "Constructors", d: 11.6, cy: 2.4 },
-    { act: 5, kind: "recursion",   caption: "Induction follows the constructors.", key: "follows", d: 12.2, cy: 2.5 },
-    { act: 5, kind: "interval",    caption: "Two points and a path: the interval.", key: "interval", d: 12.4, cy: 2.6 },
-    { act: 5, kind: "circle",      caption: "One point and a loop: the circle.", key: "circle", d: 12.0, cy: 2.8 },
+    { act: 5, kind: "dictionary",  caption: "Every connective becomes a type.", key: "type", d: 13.2, cy: 2.8 },
+    { act: 5, kind: "arithmetic",  caption: "A proof of 2 + 2 = 4.", key: "proof", d: 11.8, cy: 2.5 },
+    { act: 5, kind: "forall",      caption: "One proof for every n.", key: "every", d: 11.8, cy: 2.5 },
+    { act: 5, kind: "exists",      caption: "A witness: 2 and its proof.", key: "witness", d: 11.6, cy: 2.5 },
+    { act: 5, kind: "existsmere",  caption: "Existence, without the witness.", key: "without", d: 11.2, cy: 2.5 },
 
-    { act: 6, kind: "finale",      caption: "One long path through the universe.", key: "path", kicker: "Coda &middot; The Whole Path", d: 12, cy: 3 }
+    { act: 6, kind: "universe",    caption: "Types of types: the universe.", key: "universe", d: 12.0, cy: 2.6 },
+    { act: 6, kind: "contractfib", caption: "An equivalence has one point per fiber.", key: "one", d: 12.4, cy: 2.6 },
+    { act: 6, kind: "equiv",       caption: "An equivalence matches points and paths.", key: "equivalence", d: 12.8, cy: 2.6 },
+    { act: 6, kind: "univalence",  caption: "Univalence: equivalence is equality.", key: "equality", math: "(A \\simeq B) \\simeq (A = B)", d: 12.4, cy: 2.6 },
+    { act: 6, kind: "inductive",   caption: "Constructors build the type.", key: "Constructors", d: 11.6, cy: 2.4 },
+    { act: 6, kind: "recursion",   caption: "Induction follows the constructors.", key: "follows", d: 12.2, cy: 2.5 },
+    { act: 6, kind: "interval",    caption: "Two points and a path: the interval.", key: "interval", d: 12.4, cy: 2.6 },
+    { act: 6, kind: "circle",      caption: "One point and a loop: the circle.", key: "circle", d: 12.0, cy: 2.8 },
+
+    { act: 7, kind: "finale",      caption: "One long path through the universe.", key: "path", kicker: "Coda &middot; The Whole Path", d: 12, cy: 3 }
   ];
   const N = BEATS.length;
 
   const R_ARC = 45;
-  const SPAN = 2.8;
+  const SPAN = 3.0;
   const thetaOf = (i) => -SPAN / 2 + (i / (N - 1)) * SPAN;
   const stationPos = (i) => new THREE.Vector3(
     R_ARC * Math.sin(thetaOf(i)),
@@ -452,8 +465,8 @@
   );
   const outwardOf = (i) => new THREE.Vector3(Math.sin(thetaOf(i)), 0, Math.cos(thetaOf(i)));
 
-  const overviewPos = new THREE.Vector3(0, 23, 118);
-  const overviewLook = new THREE.Vector3(0, -5.2, 12);
+  const overviewPos = new THREE.Vector3(0, 24, 120);
+  const overviewLook = new THREE.Vector3(0, -5.2, 14);
 
   let webglOK = true;
   let renderer = null;
@@ -890,6 +903,7 @@
   let buildLevels, buildUniverse, buildEquiv, buildUnivalence, buildInterval, buildCircle, buildFinale;
   let buildContractible, buildFunType, buildProduct, buildSum, buildUnitEmpty, buildFunext, buildFiberMap, buildTruncation, buildInductive;
   let buildJudgment, buildDefEq, buildDependent, buildContractFib, buildRecursion;
+  let buildDictionary, buildArithmetic, buildForall, buildExists, buildExistsMere;
 
   function makeBackdrop(color) {
     const mat = new THREE.ShaderMaterial({
@@ -1531,6 +1545,7 @@
     const emptyInner = makeRing(0.55, 0.006, C.red, 0.35); emptyInner.obj.position.set(rx, cy, 0); g.add(emptyInner.obj);
     labels.push({ text: "proof", p: V(lx, cy - rad - 0.18, 0), dx: 0, dy: 22, kind: "word" });
     labels.push({ text: "none", p: V(rx, cy - rad - 0.18, 0), dx: 0, dy: 22, kind: "word" });
+    labels.push({ text: "isProp(P) : &Pi;<sub>x,y:P</sub> (x=y)", p: V(0, 2.0, 0), dx: 0, dy: -8, kind: "sym", cls: "violet" });
     return {
       labels,
       update(ctx) {
@@ -2546,6 +2561,233 @@
     };
   };
 
+  buildDictionary = function (g) {
+    const labels = [];
+    const rows = [
+      { l: "&top;", r: "1", p: "tt", mid: "big" },
+      { l: "&perp;", r: "0", p: "&mdash;", mid: "big" },
+      { l: "&and;", r: "&times;", p: "(a,b)", mid: "big" },
+      { l: "&or;", r: "+", p: "inl a", mid: "big" },
+      { l: "&rarr;", r: "&rarr;", p: "f", mid: "big" },
+      { l: "&not;", r: "&rarr;0", p: "f", mid: "big" },
+      { l: "&harr;", r: "(A&rarr;B)&times;(B&rarr;A)", p: "(f,g)", mid: "sym" },
+      { l: "&forall;", r: "&Pi;", p: "&lambda;n. f(n)", mid: "big" },
+      { l: "&exist;", r: "&Sigma;", p: "(n,p)", mid: "big" },
+      { l: "=", r: "=", p: "refl", mid: "big" }
+    ];
+    const leftX = -2.8, typeX = -0.15, proofX = 2.45;
+    const top = 2.02, step = 0.43;
+    const ribbons = [];
+    for (let k = 0; k < rows.length; k++) {
+      const y = top - k * step;
+      labels.push({ text: rows[k].l, p: V(leftX, y, 0), dx: 0, dy: 4, kind: "mid", cls: "ice" });
+      labels.push({ text: rows[k].r, p: V(typeX, y, 0), dx: 0, dy: 4, kind: rows[k].mid, cls: "gold" });
+      labels.push({ text: rows[k].p, p: V(proofX, y, 0), dx: 0, dy: 4, kind: "sym", cls: "violet" });
+      const c = curveOf([V(leftX + 0.45, y, 0), V(-1.5, y, 0.12), V(typeX - 0.6, y, 0)], false);
+      const rib = makeRibbon(c, { a: C.ice, b: C.gold, rad: 0.008, opacity: 0.55, seg: 60, pulse: k * 0.09 });
+      g.add(rib.core, rib.glow);
+      ribbons.push(rib);
+    }
+    labels.push({ text: "logic", p: V(leftX, 2.62, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "type", p: V(typeX, 2.62, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "proof", p: V(proofX, 2.62, 0), dx: 0, dy: 0, kind: "word" });
+    const sep = makeLine2(C.ice, 0.16);
+    sep.set(V(1.25, -2.35, 0), V(1.25, 2.35, 0));
+    g.add(sep.obj);
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        for (const r of ribbons) r.setOpacity(a * 0.52);
+        sep.setOpacity(a * 0.16);
+      }
+    };
+  };
+
+  buildArithmetic = function (g) {
+    const labels = [];
+    const leftBase = [V(-3.1, 0, 0), V(-2.65, 0, 0), V(-2.2, 0, 0), V(-1.75, 0, 0)];
+    const rightBase = [V(1.0, 0, 0), V(1.45, 0, 0), V(1.9, 0, 0), V(2.35, 0, 0)];
+    const leftDots = makeDots(leftBase.map((p, k) => ({ p, size: 0.62, color: k < 2 ? C.ice : C.violet, glow: 1, seed: k * 0.1 })), { opacity: 1 });
+    const rightDots = makeDots(rightBase.map((p, k) => ({ p, size: 0.62, color: C.gold, glow: 1, seed: 0.5 + k * 0.1 })), { opacity: 1 });
+    g.add(leftDots.obj, rightDots.obj);
+    const loop = makeRing(0.88, 0.012, C.gold, 0.7);
+    loop.obj.position.set(1.68, 0, 0);
+    g.add(loop.obj);
+    const flash = makeRing(1.15, 0.006, C.white, 0.0);
+    flash.obj.position.set(1.68, 0, 0);
+    g.add(flash.obj);
+    labels.push({ text: "2 + 2", p: V(-2.42, 1.2, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "4", p: V(1.68, 1.2, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "2+2 = 4", p: V(0, 2.0, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "refl", p: V(1.68, -1.25, 0), dx: 0, dy: 12, kind: "sym", cls: "gold" });
+    const geo = leftDots.geo;
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const u = 0.5 - 0.5 * Math.cos(ctx.t * 0.55);
+        const p = geo.attributes.position;
+        for (let i = 0; i < leftBase.length; i++) {
+          const q = leftBase[i].clone().lerp(rightBase[i], u);
+          p.setXYZ(i, q.x, q.y, q.z);
+        }
+        p.needsUpdate = true;
+        leftDots.setOpacity(a * (1 - 0.5 * u));
+        rightDots.setOpacity(a);
+        loop.setOpacity(a * 0.7 * smoothstep(0.22, 0.95, u));
+        loop.obj.scale.setScalar(0.82 + 0.18 * u);
+        flash.setOpacity(a * 0.35 * smoothstep(0.82, 1.0, u));
+        flash.obj.scale.setScalar(0.7 + 0.6 * u);
+      }
+    };
+  };
+
+  buildForall = function (g) {
+    const labels = [];
+    const xs = [-2.2, -1.1, 0, 1.1, 2.2];
+    const baseY = -0.9;
+    const basePts = xs.map((x) => V(x, baseY, 0));
+    const baseDots = makeDots(basePts.map((p, k) => ({ p, size: 0.62, color: C.ice, glow: 0.95, seed: k * 0.2 })), { opacity: 1 });
+    g.add(baseDots.obj);
+    const reflPts = basePts.map((p) => p.clone().add(V(0, 0.02, 0)));
+    const reflDots = makeDots(reflPts.map((p, k) => ({ p, size: 0.4, color: C.gold, glow: 1.1, seed: k * 0.3 })), { opacity: 1 });
+    g.add(reflDots.obj);
+    const section = makeRibbon(curveOf(reflPts, false), { a: C.mint, b: C.cyan, rad: 0.014, opacity: 0.95, seg: 100, pulse: 0.3 });
+    g.add(section.core, section.glow);
+    const loops = xs.map((x) => {
+      const r = makeRing(0.4, 0.01, C.violet, 0.7);
+      r.obj.position.set(x, -0.5, 0);
+      g.add(r.obj);
+      return r;
+    });
+    for (let k = 0; k < xs.length; k++) {
+      labels.push({ text: String(k), p: V(xs[k], -1.28, 0), dx: 0, dy: 8, kind: "sym" });
+    }
+    labels.push({ text: "N", p: V(-2.85, -1.28, 0), dx: -4, dy: 8, kind: "word" });
+    labels.push({ text: "n = n", p: V(0.55, 0.25, 0), dx: 0, dy: -6, kind: "sym" });
+    labels.push({ text: "&Pi; n:N. n = n", p: V(0, 1.95, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "&lambda;n. refl", p: V(1.35, -1.32, 0), dx: 0, dy: 14, kind: "sym", cls: "mint" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        baseDots.setOpacity(a);
+        reflDots.setOpacity(a);
+        section.setOpacity(a * 0.9);
+        const ph = 0.5 + 0.5 * Math.sin(ctx.t * 0.9);
+        for (const l of loops) l.setOpacity(a * (0.35 + 0.35 * ph));
+      }
+    };
+  };
+
+  buildExists = function (g) {
+    const labels = [];
+    const xs = [-2.7, -1.8, -0.9, 0, 0.9, 1.8, 2.7];
+    const baseY = -1.1, proofY = 0.55;
+    const basePts = xs.map((x) => V(x, baseY, 0));
+    const baseDots = makeDots(basePts.map((p, k) => ({ p, size: 0.55, color: (k % 2 === 0) ? C.ice : C.violet, glow: 0.85, seed: k * 0.2 })), { opacity: 1 });
+    g.add(baseDots.obj);
+    const proofDots = [];
+    const stems = [];
+    const empty = [];
+    for (let k = 0; k < xs.length; k++) {
+      if (k % 2 === 0) {
+        const p = V(xs[k], proofY, 0);
+        proofDots.push({ p, size: k === 2 ? 1.05 : 0.62, color: k === 2 ? C.gold : C.ice, glow: k === 2 ? 1.3 : 1.0, seed: k * 0.1 });
+        stems.push([basePts[k].clone(), p.clone()]);
+      } else {
+        const r = makeRing(0.17, 0.007, C.red, 0.35);
+        r.obj.position.set(xs[k], proofY, 0);
+        g.add(r.obj);
+        empty.push(r);
+      }
+    }
+    const proofObj = makeDots(proofDots, { opacity: 1 });
+    g.add(proofObj.obj);
+    const stemObj = makeLines(stems, { color: C.gold, opacity: 0.55 });
+    g.add(stemObj.obj);
+    const pairX = xs[2];
+    const bracket = makeLine2(C.gold, 0.7);
+    bracket.set(V(pairX + 0.42, baseY, 0), V(pairX + 0.42, proofY, 0));
+    g.add(bracket.obj);
+    const tickT = makeLine2(C.gold, 0.55); tickT.set(V(pairX + 0.42, proofY, 0), V(pairX + 0.15, proofY, 0)); g.add(tickT.obj);
+    const tickB = makeLine2(C.gold, 0.55); tickB.set(V(pairX + 0.42, baseY, 0), V(pairX + 0.15, baseY, 0)); g.add(tickB.obj);
+    for (let k = 0; k < xs.length; k++) {
+      labels.push({ text: String(k), p: V(xs[k], -1.42, 0), dx: 0, dy: 8, kind: "sym" });
+    }
+    labels.push({ text: "N", p: V(-2.95, -1.42, 0), dx: -6, dy: 8, kind: "word" });
+    labels.push({ text: "iseven : N &rarr; Type", p: V(0, 1.95, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "iseven(n)", p: V(xs[4], 0.98, 0), dx: 0, dy: -8, kind: "sym", cls: "mint" });
+    labels.push({ text: "even_0", p: V(xs[0], proofY, 0), dx: 12, dy: -12, kind: "sym", cls: "violet" });
+    labels.push({ text: "even_ss(even_0)", p: V(pairX, proofY, 0), dx: 12, dy: -12, kind: "sym", cls: "gold" });
+    labels.push({ text: "(2,p)", p: V(pairX + 0.7, -0.25, 0), dx: 12, dy: 0, kind: "sym" });
+    labels.push({ text: "&Sigma; n:N. iseven(n)", p: V(0, 1.5, 0), dx: 0, dy: -8, kind: "sym" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        baseDots.setOpacity(a);
+        proofObj.setOpacity(a);
+        stemObj.setOpacity(a * 0.5);
+        for (const r of empty) r.setOpacity(a * 0.32);
+        bracket.setOpacity(a * 0.65);
+        tickT.setOpacity(a * 0.55); tickB.setOpacity(a * 0.55);
+        const ph = 0.5 + 0.5 * Math.sin(ctx.t * 1.1);
+        for (const r of empty) r.obj.scale.setScalar(1 + 0.1 * ph);
+      }
+    };
+  };
+
+  buildExistsMere = function (g) {
+    const labels = [];
+    const xs = [-1.8, 0, 1.8];
+    const baseY = -0.85, proofY = 0.45;
+    const basePts = xs.map((x) => V(x, baseY, 0));
+    const proofPts = xs.map((x) => V(x, proofY, 0));
+    const baseDots = makeDots(basePts.map((p, k) => ({ p, size: 0.55, color: C.ice, glow: 0.9, seed: k * 0.2 })), { opacity: 1 });
+    const proofDots = makeDots(proofPts.map((p, k) => ({ p, size: 0.7, color: C.gold, glow: 1.1, seed: 0.5 + k * 0.2 })), { opacity: 1 });
+    g.add(baseDots.obj, proofDots.obj);
+    const stems = xs.map((x) => [V(x, baseY, 0), V(x, proofY, 0)]);
+    const stemObj = makeLines(stems, { color: C.gold, opacity: 0.5 });
+    g.add(stemObj.obj);
+    const core = makeDots([{ p: V(0, -0.2, 0.1), size: 1.65, color: C.white }], { opacity: 1 });
+    g.add(core.obj);
+    const ring = makeRing(0.62, 0.011, C.violet, 0.6);
+    ring.obj.position.set(0, -0.2, 0);
+    g.add(ring.obj);
+    const veil = makeSoftPanel(3.4, 2.7, C.ice, C.violet, 0.18);
+    veil.obj.position.set(0, -0.2, -0.35);
+    g.add(veil.obj);
+    labels.push({ text: "&Vert;&Sigma; n:N. iseven(n)&Vert;", p: V(0, 1.9, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "|(2,p)|", p: V(0, -1.5, 0), dx: 0, dy: 12, kind: "sym", cls: "gold" });
+    const baseGeo = baseDots.geo, proofGeo = proofDots.geo, stemGeo = stemObj.geo;
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const u = 0.5 - 0.5 * Math.cos(ctx.t * 0.6);
+        const bp = baseGeo.attributes.position, pp = proofGeo.attributes.position, sp = stemGeo.attributes.position;
+        for (let k = 0; k < 3; k++) {
+          const b = basePts[k].clone().lerp(V(0, -0.2, 0), u);
+          const p = proofPts[k].clone().lerp(V(0, -0.2, 0), u);
+          bp.setXYZ(k, b.x, b.y, b.z);
+          pp.setXYZ(k, p.x, p.y, p.z);
+          sp.setXYZ(k * 2, b.x, b.y, b.z);
+          sp.setXYZ(k * 2 + 1, p.x, p.y, p.z);
+        }
+        bp.needsUpdate = true; pp.needsUpdate = true; sp.needsUpdate = true;
+        baseDots.setOpacity(a * (0.9 - 0.5 * u));
+        proofDots.setOpacity(a * (0.9 - 0.45 * u));
+        stemObj.setOpacity(a * (0.5 - 0.35 * u));
+        core.setOpacity(a * (0.2 + 0.8 * u));
+        ring.setOpacity(a * (0.25 + 0.55 * u));
+        ring.obj.scale.setScalar(0.7 + 0.5 * u);
+        veil.setOpacity(a * 0.18);
+      }
+    };
+  };
+
   const stations = [];
   function buildAllStations() {
     for (let i = 0; i < N; i++) {
@@ -2561,6 +2803,11 @@
       else if (kind === "composite") built = buildComposite(group);
       else if (kind === "torus") built = buildTorus(group);
       else if (kind === "contractible") built = buildContractible(group);
+      else if (kind === "dictionary") built = buildDictionary(group);
+      else if (kind === "arithmetic") built = buildArithmetic(group);
+      else if (kind === "forall") built = buildForall(group);
+      else if (kind === "exists") built = buildExists(group);
+      else if (kind === "existsmere") built = buildExistsMere(group);
       else if (kind === "judgment") built = buildJudgment(group);
       else if (kind === "deffeq") built = buildDefEq(group);
       else if (kind === "dependent") built = buildDependent(group);
@@ -2623,7 +2870,7 @@
   }
 
   function ACT_COLOR(a) {
-    return [C.ice, C.cyan, C.violet, C.mint, C.rose, C.gold, C.white][a] || C.ice;
+    return [C.ice, C.cyan, C.violet, C.mint, C.rose, 0xffa86b, C.gold, C.white][a] || C.ice;
   }
 
   let journey = null;
@@ -2776,9 +3023,10 @@
       [1, 2], [2, 3], [2, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9],
       [9, 10], [10, 11], [11, 12], [7, 13], [13, 14], [14, 15], [15, 16],
       [13, 17], [17, 18], [18, 19], [19, 20], [20, 21], [21, 22], [22, 23],
-      [24, 25], [25, 26], [26, 27], [27, 28], [28, 29], [29, 30], [30, 31],
-      [31, 32], [32, 33], [33, 34], [34, 35], [35, 36], [36, 37],
-      [5, 36], [14, 32], [23, 26], [10, 33], [17, 19], [0, 37]
+      [24, 25], [25, 26], [26, 27], [27, 28], [29, 30], [29, 31], [29, 32],
+      [29, 33], [31, 22], [32, 23], [33, 26], [34, 35], [35, 36], [36, 37],
+      [37, 38], [38, 39], [39, 40], [40, 41], [41, 42],
+      [5, 41], [14, 37], [23, 26], [10, 38], [17, 19], [0, 42]
     ];
     const arcs = [];
     for (const [i, j] of links) {
@@ -2797,9 +3045,9 @@
     group.add(halo.obj);
     constellation = { group, pillars, arcs, halo };
 
-    const picks = [3, 9, 14, 20, 26, 33, 37];
-    const names = ["Space", "Types", "Identity", "Fibers", "Logic", "Higher", "Coda"];
-    const cols = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ff8fdc", "#ffd27d", "#f2fdff"];
+    const picks = [3, 9, 14, 20, 26, 31, 37, 42];
+    const names = ["Space", "Types", "Identity", "Fibers", "Logic", "Proofs", "Higher", "Coda"];
+    const cols = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ff8fdc", "#ffa86b", "#ffd27d", "#f2fdff"];
     constellation.actLabels = picks.map((idx, k) => {
       const el = document.createElement("div");
       el.className = "act-label";
@@ -3113,7 +3361,7 @@
       const st = stations[i];
       for (const L of st.labels) {
         const el = document.createElement("div");
-        el.className = "mn-label " + (L.kind || "sym") + (L.big ? " big" : "");
+        el.className = "mn-label " + (L.kind || "sym") + (L.big ? " big" : "") + (L.cls ? " " + L.cls : "");
         el.innerHTML = L.text;
         labelsEl.appendChild(el);
         labelEntries.push({ beat: i, L, el });
@@ -3173,7 +3421,7 @@
       const row = document.createElement("button");
       row.className = "ov-row";
       row.dataset.beat = String(i);
-      const dotCol = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ff8fdc", "#ffd27d", "#f2fdff"][b.act] || "#9df0ff";
+      const dotCol = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ff8fdc", "#ffa86b", "#ffd27d", "#f2fdff"][b.act] || "#9df0ff";
       row.innerHTML = '<span class="dot" style="background:' + dotCol + '"></span><span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="t">' + b.caption + "</span>";
       row.addEventListener("click", () => { closeOverview(); goTo(i, true); });
       ovList.appendChild(row);
