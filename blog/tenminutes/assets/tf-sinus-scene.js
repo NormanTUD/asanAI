@@ -57,7 +57,7 @@
     var points = [];
     var phase = "linear";
     var training = false, visible = true, timer = 0;
-    var drag = null, fitReady = false, userStarted = false;
+    var drag = null, hoverIndex = -1, fitReady = false, userStarted = false;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var TRAIN_START = 0.10, TRAIN_END = 0.70, X_MIN = -1.00, X_MAX = 1.00, Y_MIN = -0.45, Y_MAX = 1.15;
     var TARGET_EPOCHS = 180;

@@ -894,7 +894,7 @@
           '<section class="ls-stage" id="ls-stage" aria-label="' + esc(t("interactiveDemo")) + '">' +
             '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-text-toggle" id="ls-text-toggle" aria-expanded="false">' + (LANG === "de" ? "Text" : "Text") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">' + esc(t("demoLarge")) + '</button></div>' +
             '<div class="ls-demo-body"><div class="ls-demo" id="ls-demo"></div><div class="ls-demo-loader" id="ls-demo-loader" hidden role="status" aria-live="polite"><span class="ls-spinner" aria-hidden="true"></span><span class="ls-sr-only">' + (LANG === "de" ? "Demo lädt …" : "Loading demo …") + '</span></div></div>' +
-            '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
+            '<div class="ls-stage-foot"><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
         '<div class="ls-bottom-nav"><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-prev" data-no-height-test="1">' + esc(t("back")) + '</button><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + '</button></div>' +
@@ -1970,7 +1970,7 @@
     var doc = state.edit && editorDoc ? editorDoc : currentTextDoc();
     els.stageKicker.textContent = doc.kicker || (base && base.substeps ? s.kicker : d.kicker);
     els.stageTitle.textContent = doc.title || s.title;
-    els.stageHint.textContent = plainWatch(doc.watch || s.watch || "");
+    if (els.stageHint) els.stageHint.textContent = plainWatch(doc.watch || s.watch || "");
     els.credit.textContent = d.credit || "";
     mountDemo(d, s);
   }
@@ -2100,7 +2100,7 @@
       visual: window.LearnSysVisuals || null,
       kit: window.LearnSysSceneKit || null,
       reducedMotion: !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
-      onHint: function (text) { els.stageHint.textContent = text; },
+      onHint: function (text) { if (els.stageHint) els.stageHint.textContent = text; },
       go: go,
       goStep: function (step) { go(state.day, step); },
       goNext: function () {
