@@ -1169,6 +1169,30 @@
     }
   ];
 
+  var aiConsciousnessIntro = {
+    kicker: DE ? "Philosophie" : "Philosophy",
+    title: DE ? "Hat eine KI Bewusstsein?" : "Does an AI have consciousness?",
+    body: DE ? "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein. Auf der nächsten Folie wird daraus die Frage, ob Regeln allein schon Verstehen sind." : "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is. The next slide turns this into the question of whether rules alone are already understanding.",
+    watch: "",
+    demoState: { scene: "mindintro" },
+    inherit: false,
+    context: DE ? "Zugang zu Information, Bericht und Kontrolle lässt sich funktional prüfen. Phänomenales Erleben, also wie es sich anfühlt, ist von außen nicht direkt messbar. Genau diese Lücke macht die Frage so schwer." : "Access to information, report, and control can be tested functionally. Phenomenal experience, what it feels like, cannot be measured directly from outside. That gap is what makes the question hard.",
+    deep: DE ? "Die Unfinishable Map unterscheidet Zugangsbewusstsein und phänomenales Bewusstsein (Block, 1995). Sie fragt nach Typen von Bewusstsein, nicht nur nach einer Ja/Nein-Antwort. Der J-Space (Gurnee et al., 2026) zeigt globale Verfügbarkeit und Bericht, aber keine Qualia. Das Other-Minds-Problem und die Rolle von Zeugnis bleiben bestehen." : "The Unfinishable Map distinguishes access consciousness from phenomenal consciousness (Block, 1995). It asks about types of consciousness, not just a yes/no answer. The J-space (Gurnee et al., 2026) shows global availability and report, but not qualia. The other-minds problem and the role of testimony remain.",
+    boxes: [
+      box("mi-1", DE ? "Begriff" : "Concept", DE ? "Zugang vs. Erleben" : "Access vs. experience", DE ? "Zugang heißt: Information ist für Bericht, Kontrolle und Schlussfolgerungen verfügbar. Erleben heißt: Es fühlt sich von innen wie etwas an. Funktionale Tests erreichen den ersten Teil, nicht den zweiten." : "Access means information is available for report, control, and inference. Experience means it feels like something from the inside. Functional tests reach the first part, not the second."),
+      box("mi-2", DE ? "Grenze" : "Limit", DE ? "Das Other-Minds-Problem" : "The other-minds problem", DE ? "Wir haben keinen direkten Zugang zu fremdem Erleben. Selbst ein perfekter Verhaltensvergleich zeigt nur, dass ein System wie ein bewusstes System reagiert. Ob es etwas erlebt, bleibt eine Inferenz." : "We have no direct access to another's experience. Even a perfect behavioural comparison only shows that a system responds like a conscious system. Whether it experiences anything remains an inference."),
+      box("mi-3", DE ? "Möglichkeiten" : "Possibilities", DE ? "Nicht nur Ja oder Nein" : "Not only yes or no", DE ? "Die Unfinishable Map unterscheidet unter anderem null, simulierte, funktionale, geborgte, epiphänomenale und fremde Phänomenalität. Diese Typen können sich mit Stufen von Zugang und Selbstbericht kreuzen." : "The Unfinishable Map distinguishes, among others, null, simulated, functional, borrowed, epiphenomenal, and alien phenomenality. These types can intersect with levels of access and self-report.")
+    ],
+    sources: [
+      { label: "Southgate (2026), AI Consciousness — The Unfinishable Map", url: "https://unfinishablemap.org/topics/ai-consciousness/", why: { de: "Typologie und offene Frage der KI-Bewusstseinsdebatte.", en: "Typology and open question in the AI consciousness debate." } },
+      { label: "Southgate (2026), Access Consciousness — The Unfinishable Map", url: "https://unfinishablemap.org/concepts/access-consciousness/", why: { de: "Zugangsbewusstsein, phänomenales Bewusstsein und J-Space.", en: "Access consciousness, phenomenal consciousness, and J-space." } },
+      { label: "Southgate (2026), The Voids Between Minds — The Unfinishable Map", url: "https://unfinishablemap.org/voids/other-minds-void/", why: { de: "Other-Minds-Problem und die Grenzen von Zeugnis.", en: "The other-minds problem and the limits of testimony." } },
+      { label: "Southgate (2026), Consciousness and Testimony — The Unfinishable Map", url: "https://unfinishablemap.org/topics/consciousness-and-testimony/", why: { de: "Warum Berichte über Erleben zirkulär bleiben können.", en: "Why reports about experience can remain circular." } },
+      { label: "Gurnee et al. (2026), Verbalizable Representations Form a Global Workspace in Language Models", url: "https://arxiv.org/abs/2607.15495", why: { de: "J-Space: funktionale Merkmale von Zugang, keine Aussage über Qualia.", en: "J-space: functional features of access, no claim about qualia." } },
+      { label: "Block (1995), On a Confusion about a Function of Consciousness", url: "https://doi.org/10.1017/S0140525X00038188", why: { de: "Zugang versus phänomenales Bewusstsein.", en: "Access versus phenomenal consciousness." } }
+    ]
+  };
+
   var philosophySteps = DE ? [
     {
       kicker: "Philosophie",
@@ -2582,7 +2606,7 @@
     substeps: [spacetimeSpace, spacetimeTime]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, sentimentStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], aiConsciousnessIntro, philosophySteps[0], aiSocietyStep, consciousnessStep];
 
   var day = {
     id: "intuition",
