@@ -6,4 +6,31 @@ die texte rechts "vortraining", "großer datensatz", "Mehr oder weniger das ganz
 
 "Ein Token muss kein ganzes Wort sein" sagst du ohne das richtig einzuführen. sage eher sowas wie "Tokens können Wörter sein, aber müssen es nicht. Es können auch Wortbestandteile oder Satzzeichen, Leerzeichen usw. sein".
 
+"Jedes Token bekommt eine ID," statt ID nummer. erwähne, dass wenn dieses token erneut auftaucht im text, es zu seiner nummer wird. in der grafik darunter mit "Unzerbrechlich" entferne das "IDs" vor den IDs. 
 
+zeige darunter ein zweites wort, unglaublich im deutschen (gleicher anfang, un, gleiche token id für das un). suche im englischen ein bsp raus wo die id gleich ist. zeige es auf die gleiche weise wie das unzerbrechlich aber eben darunter. sage, dass diese eindeutigen nummern IDs sind.
+
+bei "Station 2 / 5 Embedding": entferne "| Richtung trägt Bedeutung | Tabelle wird gelernt". sage, dass das in tausenden Dimensionen passiert. "Ähnliche Kontexte landen in ähnlichen Richtungen" statt ähnliche Kontexte mach ähnliche Bedeutungen. Sage hier, dass Bedeutung sich aus dem Kontext ergibt, zitiere Firth. sage, dass sich die meisten auf der Oberfläche einer hochdimensionalen Kugel befinden.
+
+bei "Positional embedding": "Die Demo zeigt die Positionskodierung als Punkt auf einer Kugel", erwähne nicht die Demo, sage, dass die Positionskodierung auf einer hochdimensionalen Kugeloberfläche passiert. erwähne dass der token "Hund" in der Mitte ist, mach ihn außerdem zu Katze, und mach, dass die tokens bis 100.000 bereits da sind und man den Slider nicht sieht und auch das "Drehen" unten kann weg. "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Hund) an einer anderen Position." diese box darunter soll in den Text darüber. "gleiche Tokens, andere ReihenfolgePosition steckt im VektorKugel = alle Positionen" das kann weg.
+
+"Transformer-Blöcke": "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male. Die beiden Mini-Demos zeigen die Rollen von Attention und FFN." due rwähnst hier FFN ohne es zu erklären. Sage, dass das Feed-Forward-Netzwerk (FFN) "denkt", in dem es die Tokens in dem hochdimensionalen Bedeutungsraum verschiebt, und dass das dutzende bis hunderte Male passiert. entferne "Die beiden Mini-Demos zeigen die Rollen von Attention und FFN.". entferne "Attention: wer liest wen?FFN: erkennen, trennen, neu ordnen". sage beim FFN noch dazu, dass es das macht, indem es die durch Attention gemischten Punkte in noch höherdimensionale Räume projiziert, dort einfacher trennen kann, und dann zurückprojiziert, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesen Gesichtspunkten beinhaltet" -> "unter diesem Gesichtspunkt". 
+
+"Unembedding": "Der letzte Vektor h ist der Output-Vektor" das "h" sollte in $h$ stehen und gerendert werden inline. Außerdem formulier das neu, denn das kommt aus dem nichts. Sage, dass am Ende, nachdem zig male die Bedeutungen gemischt und sauberer getrennt worden sind, der Vektor des letzten Wortes die Gesamtbedeutung beinhaltet und man ihn benutzt, um das nächste Wort zu finden, indem man schaut, wie seine Winkel zu anderen Worten sind, denn er beinhaltet die Gesamtbedeutung des Kontextes.  Man vergleicht dann die Winkel zu allen anderen Worten von diesem letzten Token aus, und wählt eines derer mit dem geringsten Winkel. Winkel heißt hier: "Wie gut passt das Wort an dise Stelle?". Geringer Winkel heißt es passt gut. entferne "Richtung statt Längeein Token wird gezogen". entferne "der Winkel wird zum Logit, Softmax macht daraus eine Verteilung.".
+
+wenn ich von der "Ausblick Die nächsten Tage Die nächsten Tage werden wir diese Bausteine genauer anschauen. Ein Schritt nach dem anderen."  folie zurückgehe lande ich auf der architekturfolie, aber wieder beim tokenizer statt bei "Unembedding".
+
+die datenfolie:
+
+entferne "Ziehe den Slider oder klicke weiter und sieh, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig, teilweise richtig oder komplett falsch sein.".
+
+bei "Viele Sätze, eine Wahrheit": der grüne bereich sollte etwas größer sein und smoother, nicht so "gestrichelt" animiert. der rote bereich sollte alles sein was nicht grün ist in dem plot.
+
+folie "Text wird zu IDs":
+
+wenn ich von "BPE: Zeichen → Paare → Merges" zurückgehe ist wieder "Verständnis" markiert statt "Sprachmodell liest Text" (das letzte)
+
+bei "BPE: Zeichen → Paare → Merges": das "e s" ist bereits markiert wenn man direkt auf die folie geht, statt "Start: Jedes Wort besteht aus Zeichen." sage dass alles nach einzelne zeichen getrennt ist. "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Gezählt werden benachbarte Paare, gewichtet mit der Häufigkeit der Wörter. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Genau das ist der Kompressionsgedanke." mach das kürzer. 
+
+
+folie "Bedeutung wird eine Zahl":
