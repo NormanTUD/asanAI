@@ -68,16 +68,47 @@
   .mn-label.violet{color:rgba(208,184,255,.94)}
   .mn-label.mint{color:rgba(170,255,214,.94)}
   .mn-label.white{color:#f4fdff}
-  .mn-label.rule{white-space:normal;font-style:normal;font-family:ui-sans-serif,system-ui,sans-serif;
-    padding:13px 15px;border:1px solid rgba(150,200,255,.22);border-left:1px solid rgba(118,226,255,.62);
-    border-radius:14px;background:linear-gradient(180deg,rgba(12,20,44,.86),rgba(4,8,20,.76));
-    box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    color:rgba(238,250,255,.96);font-size:15px;line-height:1.4;text-align:center;
-    max-width:min(690px,54vw);text-shadow:none}
-  .mn-label.rule .rule-name{font-size:9px;letter-spacing:.24em;text-transform:uppercase;
-    color:rgba(150,226,255,.72);margin-bottom:8px;font-weight:600}
-  .mn-label.rule math{color:inherit;font-size:1.02em}
+  .mn-label.dictcard{padding:0;background:none;border:0;box-shadow:none;
+    font-style:normal;max-width:none;white-space:normal;font-family:ui-sans-serif,system-ui,sans-serif}
+  .dc{display:grid;grid-template-columns:38px 1fr;grid-template-rows:auto auto;
+    gap:2px 10px;width:min(380px,30vw);padding:8px 12px;
+    border:1px solid rgba(150,200,255,.22);border-left:1px solid rgba(118,226,255,.55);
+    border-radius:14px;background:linear-gradient(180deg,rgba(13,22,48,.87),rgba(4,8,20,.8));
+    box-shadow:0 14px 36px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    color:#eafaff;animation:dcGlow 7s ease-in-out infinite,dcFloat 6s ease-in-out infinite;
+    animation-delay:calc(var(--i,0) * .5s),calc(var(--i,0) * .31s)}
+  .dc-ic{grid-row:1/3;display:grid;place-items:center;color:var(--ice)}
+  .dc-ic svg{width:31px;height:31px}
+  .dc-main{display:flex;align-items:baseline;gap:10px;font-family:ui-serif,Georgia,serif;
+    font-style:italic;font-size:24px;color:#eafaff;white-space:nowrap}
+  .dc-l{color:var(--ice)}
+  .dc-r{color:var(--gold)}
+  .dc-ar{font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;font-style:normal;
+    color:rgba(190,225,255,.5)}
+  .dc-r.long{font-family:ui-sans-serif,system-ui,sans-serif;font-style:normal;font-size:12px;
+    letter-spacing:.02em;color:rgba(255,224,168,.92);white-space:normal;line-height:1.15}
+  .dc-proof{display:flex;align-items:baseline;gap:8px;font-size:14px;min-height:17px}
+  .dc-k{font-family:ui-sans-serif,system-ui,sans-serif;font-size:7.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:rgba(150,220,255,.42)}
+  .dc-p{font-family:ui-serif,Georgia,serif;font-style:italic;font-size:14.5px;
+    color:rgba(228,206,255,.96)}
+  @keyframes dcGlow{
+    0%,100%{border-color:rgba(150,200,255,.22);box-shadow:0 14px 36px rgba(0,0,0,.35)}
+    8%{border-color:rgba(120,230,255,.6);box-shadow:0 0 30px rgba(80,200,255,.2),0 14px 36px rgba(0,0,0,.38)}
+  }
+  @keyframes dcFloat{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-2px)}
+  }
+  @media (max-width:760px){
+    .dc{width:42vw;grid-template-columns:28px 1fr;gap:2px 7px;padding:6px 8px}
+    .dc-ic svg{width:24px;height:24px}
+    .dc-main{font-size:19px;gap:6px}
+    .dc-r.long{font-size:10px}
+    .dc-proof{font-size:11px}
+    .dc-p{font-size:11.5px}
+  }
   .mn-label.term{white-space:nowrap;font-style:normal;font-family:ui-serif,Georgia,serif;
     padding:10px 14px;border:1px solid rgba(150,200,255,.2);border-radius:13px;
     background:linear-gradient(180deg,rgba(12,20,44,.82),rgba(4,8,20,.72));
@@ -466,7 +497,7 @@
     { act: 4, kind: "set",         caption: "A set: at most one path.", key: "path", d: 12.2, cy: 2.6 },
     { act: 4, kind: "levels",      caption: "Higher levels remember higher paths.", key: "paths", d: 11.9, cy: 2.6 },
 
-    { act: 5, kind: "dictionary",  caption: "Every connective becomes a type.", key: "type", d: 12.2, cy: 2.8 },
+    { act: 5, kind: "dictionary",  caption: "Every connective becomes a type.", key: "type", d: 11.4, cy: 2.8 },
     { act: 5, kind: "arithmetic",  caption: "A proof of 2 + 2 = 4.", key: "proof", d: 9.9, cy: 2.5 },
     { act: 5, kind: "forall",      caption: "One proof for every n.", key: "every", d: 10.6, cy: 2.5 },
     { act: 5, kind: "exists",      caption: "A witness: 2 and its proof.", key: "witness", d: 10.6, cy: 2.5 },
@@ -2592,61 +2623,6 @@
     };
   };
 
-  buildDictionary = function (g) {
-    const labels = [];
-    const rows = [
-      { l: "&top;", r: "1", p: "tt", mid: "big" },
-      { l: "&perp;", r: "0", p: "&mdash;", mid: "big" },
-      { l: "&and;", r: "&times;", p: "(a,b)", mid: "big" },
-      { l: "&or;", r: "+", p: "inl a", mid: "big" },
-      { l: "&rarr;", r: "&rarr;", p: "f", mid: "big" },
-      { l: "&not;", r: "&rarr;0", p: "f", mid: "big" },
-      { l: "&harr;", r: "(A&rarr;B)&times;(B&rarr;A)", p: "(f,g)", mid: "sym" },
-      { l: "&forall;", r: "&Pi;", p: "&lambda;n. f(n)", mid: "big" },
-      { l: "&exist;", r: "&Sigma;", p: "(n,p)", mid: "big" },
-      { l: "=", r: "=", p: "refl", mid: "big" }
-    ];
-    const leftX = -2.8, typeX = -0.15, proofX = 2.45;
-    const top = 2.0, step = 0.47;
-    const soft = makeSoftPanel(7.6, 5.6, C.ice, C.violet, 0.045);
-    soft.obj.position.set(0, -0.1, -0.5);
-    g.add(soft.obj);
-    const ribbons = [];
-    for (let k = 0; k < rows.length; k++) {
-      const y = top - k * step;
-      labels.push({ text: rows[k].l, p: V(leftX, y, 0), dx: 0, dy: 4, kind: "mid", cls: "ice" });
-      labels.push({ text: rows[k].r, p: V(typeX, y, 0), dx: 0, dy: 4, kind: rows[k].mid, cls: "gold" });
-      labels.push({ text: rows[k].p, p: V(proofX, y, 0), dx: 0, dy: 4, kind: "sym", cls: "violet" });
-      const c = curveOf([V(leftX + 0.45, y, 0), V(-1.5, y, 0.12), V(typeX - 0.6, y, 0)], false);
-      const rib = makeRibbon(c, { a: C.ice, b: C.gold, rad: 0.012, opacity: 0.8, seg: 60, pulse: k * 0.09 });
-      g.add(rib.core, rib.glow);
-      ribbons.push(rib);
-    }
-    labels.push({ text: "logic", p: V(leftX, 2.62, 0), dx: 0, dy: 0, kind: "word" });
-    labels.push({ text: "type", p: V(typeX, 2.62, 0), dx: 0, dy: 0, kind: "word" });
-    labels.push({ text: "proof", p: V(proofX, 2.62, 0), dx: 0, dy: 0, kind: "word" });
-    const sep = makeLine2(C.ice, 0.16);
-    sep.set(V(1.25, -2.35, 0), V(1.25, 2.35, 0));
-    g.add(sep.obj);
-    const rowPairs = [];
-    for (let k = 0; k < rows.length; k++) {
-      const y = top - k * step - step * 0.5;
-      rowPairs.push([V(-3.25, y, 0), V(3.35, y, 0)]);
-    }
-    const rowLines = makeLines(rowPairs, { color: C.ice, opacity: 0.07 });
-    g.add(rowLines.obj);
-    return {
-      labels,
-      update(ctx) {
-        const a = ctx.a * ctx.r;
-        for (const r of ribbons) r.setOpacity(a * 0.78);
-        sep.setOpacity(a * 0.16);
-        rowLines.setOpacity(a * 0.07);
-        soft.setOpacity(a * 0.045);
-      }
-    };
-  };
-
   buildArithmetic = function (g) {
     const labels = [];
     const leftBase = [V(-3.1, 0, 0), V(-2.65, 0, 0), V(-2.2, 0, 0), V(-1.75, 0, 0)];
@@ -3057,60 +3033,298 @@
     };
   };
 
-  function buildRulePair(g, name1, tex1, name2, tex2) {
-    const labels = [];
-    const soft = makeSoftPanel(7.2, 5.4, C.ice, C.violet, 0.1);
-    soft.obj.position.set(0, 0, -0.6);
+  function buildMiniCurtain(g) {
+    const basePts = [V(-2.6, -1.2, 0), V(-1.3, -1.3, 0), V(0, -1.35, 0), V(1.3, -1.3, 0), V(2.6, -1.2, 0)];
+    const baseCurve = curveOf(basePts, false);
+    const soft = makeSoftPanel(7.2, 4.2, C.ice, C.violet, 0.07);
+    soft.obj.position.set(0, -0.2, -0.55);
     g.add(soft.obj);
-    const n1 = makeDots([{ p: V(0, 1.45, 0), size: 1.0, color: C.ice, glow: 1.1 }], { opacity: 1 });
-    const n2 = makeDots([{ p: V(0, -1.45, 0), size: 1.0, color: C.gold, glow: 1.1 }], { opacity: 1 });
-    const h1 = makeDots([{ p: V(0, 1.45, -0.5), size: 5.0, color: C.ice, glow: 0.35 }], { opacity: 0.5 });
-    const h2 = makeDots([{ p: V(0, -1.45, -0.5), size: 5.0, color: C.gold, glow: 0.35 }], { opacity: 0.5 });
-    g.add(n1.obj, n2.obj, h1.obj, h2.obj);
-    const conn = makeLine2(C.gold, 0.45);
-    conn.set(V(0, 0.95, 0), V(0, -0.95, 0));
-    g.add(conn.obj);
-    labels.push({ text: "<div class='rule-name'>" + name1 + "</div>" + mathHTML(tex1), p: V(0, 1.45, 0.1), dx: 0, dy: 0, kind: "rule", anchor: "center" });
-    labels.push({ text: "<div class='rule-name'>" + name2 + "</div>" + mathHTML(tex2), p: V(0, -1.45, 0.1), dx: 0, dy: 0, kind: "rule", anchor: "center" });
-    labels.push({ text: "&Pi;", p: V(1.75, 0.0, 0), dx: 0, dy: 0, kind: "big" });
+    const baseRib = makeRibbon(baseCurve, { a: C.ice, b: C.violet, rad: 0.028, opacity: 1, seg: 110 });
+    g.add(baseRib.core, baseRib.glow);
+    const counts = [2, 3, 2, 3, 2];
+    const fibers = [];
+    const stems = [];
+    const dotList = [];
+    for (let k = 0; k < 5; k++) {
+      const bp = baseCurve.getPoint(k / 4);
+      const dots = [];
+      for (let j = 0; j < counts[k]; j++) {
+        const p = V(bp.x + (j % 2 ? 0.05 : -0.04), bp.y + 0.55 + j * 0.52, 0);
+        dots.push(p);
+        dotList.push({ p, size: 0.82, color: j === counts[k] - 1 ? C.white : C.ice, glow: 1.15, seed: rand() });
+      }
+      stems.push([bp.clone(), dots[dots.length - 1].clone()]);
+      fibers.push({ bp, dots });
+    }
+    const stemsObj = makeLines(stems, { color: C.ice, opacity: 0.65 });
+    g.add(stemsObj.obj);
+    const dotsObj = makeDots(dotList, { opacity: 1 });
+    g.add(dotsObj.obj);
+    const chosen = fibers.map((f) => f.dots[f.dots.length - 1]);
+    const chosenObj = makeDots(chosen.map((p) => ({ p, size: 0.7, color: C.gold, glow: 1.3 })), { opacity: 0 });
+    g.add(chosenObj.obj);
+    const sectionCurve = curveOf(chosen, false);
+    const section = makeRibbon(sectionCurve, { a: C.mint, b: C.cyan, rad: 0.03, opacity: 0, seg: 110, pulse: 0.3 });
+    g.add(section.core, section.glow);
+    const baseLine = makeLine2(C.ice, 0.2);
+    baseLine.set(V(-2.9, -1.2, 0), V(2.9, -1.2, 0));
+    g.add(baseLine.obj);
+    return { soft, baseRib, stemsObj, dotsObj, chosenObj, section, sectionCurve, fibers, chosen, baseLine };
+  }
+
+  buildRulesPi1 = function (g) {
+    const labels = [];
+    const M = buildMiniCurtain(g);
+    const piNode = makeDots([{ p: V(0, 1.62, 0), size: 1.55, color: C.gold, glow: 1.4 }], { opacity: 1 });
+    const piRing = makeRing(0.5, 0.01, C.gold, 0.5);
+    piRing.obj.position.set(0, 1.62, 0);
+    g.add(piNode.obj, piRing.obj);
+    labels.push({ text: "A", p: V(-2.7, -0.7, 0), dx: -4, dy: 10, kind: "sym" });
+    labels.push({ text: "B(x)", p: M.chosen[4], dx: 12, dy: -16, kind: "sym" });
+    labels.push({ text: "&Pi;(x:A)B(x)", p: V(0, 2.15, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "&lambda;x.b", p: M.chosen[2].clone().add(V(0.35, 0.22, 0)), dx: 12, dy: -14, kind: "sym", cls: "mint" });
+    labels.push({ text: "formation", p: V(-2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "introduction", p: V(2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        soft.setOpacity(a * 0.1);
-        n1.setOpacity(a); n2.setOpacity(a);
-        h1.setOpacity(a * 0.45); h2.setOpacity(a * 0.45);
-        conn.setOpacity(a * 0.45);
+        const ph = fract(ctx.t * 0.085);
+        const form = smoothstep(0.05, 0.42, ph);
+        const intro = smoothstep(0.42, 0.82, ph);
+        M.soft.setOpacity(a * 0.07);
+        M.baseRib.setOpacity(a * (0.55 + 0.45 * form));
+        M.baseLine.setOpacity(a * (0.1 + 0.12 * form));
+        M.stemsObj.setOpacity(a * (0.35 + 0.4 * form));
+        M.dotsObj.setOpacity(a * (0.55 + 0.45 * form));
+        M.section.setProgress(0.3 + 0.7 * intro);
+        M.section.setOpacity(a * (0.25 + 0.75 * intro));
+        M.chosenObj.setOpacity(a * (0.2 + 0.8 * intro));
+        piNode.setOpacity(a * (0.35 + 0.65 * form));
+        piRing.setOpacity(a * (0.25 + 0.4 * form));
+        piRing.obj.scale.setScalar(0.8 + 0.35 * form);
       }
     };
-  }
-
-  buildRulesPi1 = function (g) {
-    return buildRulePair(g, "formation",
-      "\\frac{\\Gamma \\vdash A : \\mathcal{U} \\qquad \\Gamma, x:A \\vdash B : \\mathcal{U}}{\\Gamma \\vdash \\Pi_{x:A} B : \\mathcal{U}}",
-      "introduction",
-      "\\frac{\\Gamma, x:A \\vdash b : B}{\\Gamma \\vdash \\lambda x. b : \\Pi_{x:A} B}");
   };
 
   buildRulesPi2 = function (g) {
-    return buildRulePair(g, "elimination",
-      "\\frac{\\Gamma \\vdash f : \\Pi_{x:A} B \\qquad \\Gamma \\vdash a : A}{\\Gamma \\vdash f(a) : B[a/x]}",
-      "computation",
-      "\\frac{\\Gamma, x:A \\vdash b : B \\qquad \\Gamma \\vdash a : A}{\\Gamma \\vdash (\\lambda x. b)(a) \\equiv b[a/x] : B[a/x]}");
+    const labels = [];
+    const M = buildMiniCurtain(g);
+    const k = 2;
+    const bp = M.fibers[k].bp;
+    const fa = M.chosen[k];
+    const aDot = makeDots([{ p: bp, size: 0.95, color: C.ice, glow: 1.2 }], { opacity: 1 });
+    const outDot = makeDots([{ p: fa, size: 0.7, color: C.white, glow: 1.3 }], { opacity: 1 });
+    const outRing = makeRing(0.32, 0.013, C.gold, 0.7);
+    outRing.obj.position.copy(fa);
+    const betaRing = makeRing(0.55, 0.01, C.white, 0);
+    betaRing.obj.position.copy(fa);
+    const spark = makeMarker(C.white, 1.05);
+    const conn = makeLine2(C.gold, 0.75);
+    g.add(aDot.obj, outDot.obj, outRing.obj, betaRing.obj, spark.obj, conn.obj);
+    labels.push({ text: "A", p: V(-2.7, -0.7, 0), dx: -4, dy: 10, kind: "sym" });
+    labels.push({ text: "a", p: bp, dx: 10, dy: 24, kind: "sym" });
+    labels.push({ text: "f(a) &equiv; b(a)", p: fa, dx: 14, dy: -20, kind: "sym", cls: "gold" });
+    labels.push({ text: "f", p: M.chosen[4].clone().add(V(0.2, 0.25, 0)), dx: 12, dy: -12, kind: "sym", cls: "mint" });
+    labels.push({ text: "&beta;", p: V(1.55, 1.48, 0), dx: 0, dy: 0, kind: "big", cls: "gold" });
+    labels.push({ text: "elimination", p: V(-2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "computation", p: V(2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const ph = fract(ctx.t * 0.08);
+        const up = smoothstep(0.05, 0.38, ph);
+        const merge = smoothstep(0.42, 0.78, ph);
+        M.soft.setOpacity(a * 0.07);
+        M.baseRib.setOpacity(a * 0.85);
+        M.baseLine.setOpacity(a * 0.18);
+        M.stemsObj.setOpacity(a * 0.45);
+        M.dotsObj.setOpacity(a);
+        M.section.setProgress(1);
+        M.section.setOpacity(a * (1 - 0.72 * merge));
+        M.chosenObj.setOpacity(a * (1 - 0.5 * merge));
+        aDot.setOpacity(a);
+        const q = bp.clone().lerp(fa, up);
+        spark.set(q);
+        conn.set(bp, q);
+        conn.setOpacity(a * 0.65 * (1 - merge));
+        spark.setOpacity(a * 0.9 * (1 - 0.7 * merge));
+        outDot.setOpacity(a * (0.4 + 0.6 * merge));
+        outRing.setOpacity(a * (0.2 + 0.7 * merge));
+        outRing.obj.scale.setScalar(0.85 + 0.25 * merge);
+        const b = Math.sin(Math.PI * merge);
+        betaRing.setOpacity(a * 0.6 * b);
+        betaRing.obj.scale.setScalar(0.5 + 1.5 * merge);
+      }
+    };
   };
 
   buildRulesSigma = function (g) {
-    return buildRulePair(g, "formation",
-      "\\frac{\\Gamma \\vdash A : \\mathcal{U} \\qquad \\Gamma, x:A \\vdash B : \\mathcal{U}}{\\Gamma \\vdash \\Sigma_{x:A} B : \\mathcal{U}}",
-      "introduction",
-      "\\frac{\\Gamma \\vdash a : A \\qquad \\Gamma \\vdash b : B[a/x]}{\\Gamma \\vdash (a,b) : \\Sigma_{x:A} B}");
+    const labels = [];
+    const M = buildMiniCurtain(g);
+    const k = 2;
+    const bp = M.fibers[k].bp;
+    const b = M.fibers[k].dots[M.fibers[k].dots.length - 1];
+    const aDot = makeDots([{ p: bp, size: 0.85, color: C.ice, glow: 1.2 }], { opacity: 1 });
+    const bDot = makeDots([{ p: b, size: 1.1, color: C.gold, glow: 1.4 }], { opacity: 1 });
+    const link = makeLine2(C.gold, 1);
+    link.set(bp, b);
+    const pairRing = makeRing(0.46, 0.011, C.gold, 0.55);
+    pairRing.obj.position.copy(bp.clone().lerp(b, 0.5));
+    const webPairs = [];
+    for (let j = 0; j < 4; j++) {
+      const A = M.fibers[j].dots, B = M.fibers[j + 1].dots;
+      const m = Math.min(A.length, B.length);
+      for (let q = 0; q < m; q++) webPairs.push([A[q], B[q]]);
+    }
+    const web = makeLines(webPairs, { color: C.gold, opacity: 0.18 });
+    const env = makeIrid(new THREE.SphereGeometry(1, 32, 20), { a: C.violet, b: C.gold, rim: C.gold, opacity: 0.06, wobble: 0 });
+    env.obj.scale.set(4.1, 2.2, 1.3);
+    env.obj.position.set(0, -0.45, 0);
+    g.add(aDot.obj, bDot.obj, link.obj, pairRing.obj, web.obj, env.obj);
+    labels.push({ text: "A", p: V(-2.7, -0.7, 0), dx: -4, dy: 10, kind: "sym" });
+    labels.push({ text: "a", p: bp, dx: 12, dy: 22, kind: "sym" });
+    labels.push({ text: "b", p: b, dx: 12, dy: -16, kind: "sym", cls: "gold" });
+    labels.push({ text: "(a,b)", p: bp.clone().lerp(b, 0.5), dx: 16, dy: 0, kind: "sym", cls: "gold" });
+    labels.push({ text: "&Sigma;(x:A)B(x)", p: V(0, 2.15, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "formation", p: V(-2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "introduction", p: V(2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const ph = fract(ctx.t * 0.08);
+        const form = smoothstep(0.05, 0.45, ph);
+        const intro = smoothstep(0.4, 0.8, ph);
+        M.soft.setOpacity(a * 0.07);
+        M.baseRib.setOpacity(a * (0.55 + 0.45 * form));
+        M.baseLine.setOpacity(a * (0.1 + 0.12 * form));
+        M.stemsObj.setOpacity(a * (0.35 + 0.4 * form));
+        M.dotsObj.setOpacity(a * (0.55 + 0.45 * form));
+        M.section.setOpacity(0);
+        M.chosenObj.setOpacity(0);
+        web.setOpacity(a * (0.1 + 0.12 * form));
+        env.setOpacity(a * (0.04 + 0.04 * form));
+        link.setOpacity(a * (0.3 + 0.7 * intro));
+        aDot.setOpacity(a * (0.55 + 0.45 * intro));
+        bDot.setOpacity(a * (0.55 + 0.45 * intro));
+        pairRing.setOpacity(a * (0.3 + 0.4 * intro));
+        pairRing.obj.scale.setScalar(0.85 + 0.25 * intro);
+      }
+    };
   };
 
   buildRulesId = function (g) {
-    return buildRulePair(g, "formation",
-      "\\frac{\\Gamma \\vdash A : \\mathcal{U} \\qquad \\Gamma \\vdash a : A \\qquad \\Gamma \\vdash b : A}{\\Gamma \\vdash a =_{A} b : \\mathcal{U}}",
-      "introduction",
-      "\\frac{\\Gamma \\vdash a : A}{\\Gamma \\vdash \\mathsf{refl}_{a} : a =_{A} a}");
+    const labels = [];
+    const blob = makeIrid(new THREE.SphereGeometry(1.6, 48, 32), { a: C.violet, b: C.cyan, rim: C.gold, opacity: 0.3, wobble: 0.04 });
+    blob.obj.position.set(0, -0.2, -0.6);
+    g.add(blob.obj);
+    const aP = V(-0.92, 0.0, 0.72);
+    const bP = V(0.92, 0.12, 0.72);
+    const paths = [];
+    const ribs = [];
+    for (let k = 0; k < 5; k++) {
+      const my = lerp(-0.85, 0.85, k / 4);
+      const c = curveOf([aP, V(-0.45, my * 0.5, 1.25), V(0, my, 1.55), V(0.45, my * 0.5, 1.25), bP], false);
+      paths.push(c);
+      const rib = makeRibbon(c, { a: k === 2 ? C.gold : C.ice, b: C.violet, rad: 0.013, opacity: 0.75, seg: 90, pulse: k * 0.13 });
+      g.add(rib.core, rib.glow);
+      ribs.push(rib);
+    }
+    const sheet = makeSheet(36, 10, (s, t) => {
+      const p1 = paths[0].getPoint(s), p2 = paths[4].getPoint(s);
+      const q = p1.clone().lerp(p2, t);
+      q.z += Math.sin(Math.PI * t) * 0.08;
+      return q;
+    }, { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.3 });
+    g.add(sheet.obj);
+    const dots = makeDots([{ p: aP, size: 0.8, color: C.ice }, { p: bP, size: 0.8, color: C.rose }], { opacity: 1 });
+    g.add(dots.obj);
+    const refl = makeRing(0.3, 0.012, C.gold, 0.9);
+    refl.obj.position.copy(aP).add(V(0, 0, 0.3));
+    g.add(refl.obj);
+    labels.push({ text: "a", p: aP, dx: -6, dy: -22, kind: "sym" });
+    labels.push({ text: "b", p: bP, dx: 8, dy: -22, kind: "sym" });
+    labels.push({ text: "a =<sub>A</sub> b", p: V(0, 1.85, 0.6), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "refl<sub>a</sub>", p: aP.clone().add(V(0, 0.42, 0.3)), dx: -8, dy: 12, kind: "sym", cls: "gold" });
+    labels.push({ text: "formation", p: V(-2.0, 1.55, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "introduction", p: V(2.0, 1.55, 0), dx: 0, dy: 0, kind: "word" });
+    return {
+      labels,
+      update(ctx) {
+        const a = ctx.a * ctx.r;
+        const ph = fract(ctx.t * 0.085);
+        const form = smoothstep(0.05, 0.45, ph);
+        const intro = smoothstep(0.42, 0.82, ph);
+        blob.setOpacity(a * 0.32);
+        dots.setOpacity(a);
+        for (let k = 0; k < ribs.length; k++) {
+          ribs[k].setProgress(form);
+          ribs[k].setOpacity(a * (k === 2 ? 0.95 : 0.65));
+        }
+        sheet.setOpacity(a * (0.16 + 0.14 * form));
+        sheet.setBand(0.5 + 0.42 * Math.sin(ctx.t * 0.45));
+        refl.setOpacity(a * (0.2 + 0.7 * intro) * (0.65 + 0.3 * (0.5 + 0.5 * Math.sin(ctx.t * 1.3))));
+        refl.obj.scale.setScalar(0.85 + 0.2 * intro);
+      }
+    };
+  };
+
+  const dictIcons = {
+    top: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg>',
+    bot: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+    and: '<svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="5.4" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="15" cy="12" r="5.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+    or: '<svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="17" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+    imp: '<svg viewBox="0 0 24 24"><path d="M3 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
+    not: '<svg viewBox="0 0 24 24"><path d="M3 12h10m-4-4 4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="18" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+    iff: '<svg viewBox="0 0 24 24"><path d="M3 12h7m-3-3 3 3-3 3M21 12h-7m3-3-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+    forall: '<svg viewBox="0 0 24 24"><path d="M4 17h16" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="11" r="1.5" fill="currentColor"/><circle cx="12" cy="9" r="1.5" fill="currentColor"/><circle cx="16" cy="11" r="1.5" fill="currentColor"/></svg>',
+    exists: '<svg viewBox="0 0 24 24"><circle cx="9" cy="16" r="1.7" fill="currentColor"/><circle cx="15" cy="8" r="1.7" fill="currentColor"/><path d="M9 16 15 8" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+    eq: '<svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="1.6" fill="currentColor"/><circle cx="17" cy="12" r="1.6" fill="currentColor"/><path d="M7 12 Q12 5 17 12" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
+  };
+
+  buildDictionary = function (g) {
+    const labels = [];
+    const soft = makeSoftPanel(9.8, 5.6, C.ice, C.violet, 0.07);
+    soft.obj.position.set(0, 0.1, -0.6);
+    g.add(soft.obj);
+    const divider = makeLine2(C.ice, 0.1);
+    divider.set(V(0, -2.2, 0), V(0, 2.35, 0));
+    g.add(divider.obj);
+    const rows = [
+      { ic: "top", l: "&top;", r: "1", p: "tt" },
+      { ic: "bot", l: "&perp;", r: "0", p: "&mdash;" },
+      { ic: "and", l: "&and;", r: "&times;", p: "(a,b)" },
+      { ic: "or", l: "&or;", r: "+", p: "inl a" },
+      { ic: "imp", l: "&rarr;", r: "&rarr;", p: "f" },
+      { ic: "not", l: "&not;", r: "&rarr; 0", p: "f" },
+      { ic: "iff", l: "&harr;", r: "(A&rarr;B)&times;(B&rarr;A)", p: "(f,g)", long: true },
+      { ic: "forall", l: "&forall;", r: "&Pi;", p: "&lambda;n. f(n)" },
+      { ic: "exists", l: "&exist;", r: "&Sigma;", p: "(n,p)" },
+      { ic: "eq", l: "=", r: "=", p: "refl" }
+    ];
+    const narrow = window.innerWidth < 760;
+    const xoff = narrow ? 1.3 : 2.4;
+    const ys = [1.8, 0.9, 0, -0.9, -1.8];
+    labels.push({ text: "logic &nbsp;&rarr;&nbsp; type &nbsp;&middot;&nbsp; proof", p: V(0, 2.6, 0.1), dx: 0, dy: 0, kind: "word" });
+    for (let k = 0; k < rows.length; k++) {
+      const row = rows[k];
+      const html = '<div class="dc" style="--i:' + k + '">' +
+        '<span class="dc-ic">' + dictIcons[row.ic] + '</span>' +
+        '<div class="dc-main"><span class="dc-l">' + row.l + '</span>' +
+        '<span class="dc-ar">&rarr;</span>' +
+        '<span class="dc-r' + (row.long ? " long" : "") + '">' + row.r + '</span></div>' +
+        '<div class="dc-proof"><span class="dc-k">proof</span><span class="dc-p">' + row.p + '</span></div></div>';
+      labels.push({ text: html, p: V(k < 5 ? -xoff : xoff, ys[k % 5], 0.1), dx: 0, dy: 0, kind: "dictcard", anchor: "center" });
+    }
+    return {
+      labels,
+      update(ctx) {
+        soft.setOpacity(ctx.a * ctx.r * 0.07);
+        divider.setOpacity(ctx.a * ctx.r * 0.1);
+      }
+    };
   };
 
   buildDerivation = function (g) {
