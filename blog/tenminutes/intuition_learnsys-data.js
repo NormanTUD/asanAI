@@ -1088,46 +1088,6 @@
     }
   ];
 
-  var ragSteps = DE ? [
-    {
-      kicker: "RAG und Agents",
-      title: "Suchen, lesen, einsetzen",
-      body: "Ein Modell allein hat nur seine Gewichte. RAG erweitert den Kontext um abgerufene Quellen: Es zerlegt Quellen in Chunks, vergleicht ihre Vektoren mit der Frage und setzt die besten Chunks in den Kontext. Ein Agent kann diesen loop selbst auslösen, im Web suchen, lesen und die Antwort mit Quellen stützen.",
-      watch: "Klicke Chunks an und gehe die Schritte durch. Wann landen Quellen im Kontext?",
-      demoState: { scene: "rag", step: 0 },
-      context: "Ähnlichkeit ist ein Winkel zwischen Vektoren. Die Suche findet Chunks, das Modell liest sie im Kontext und kann sich mit Attention auf sie beziehen. Das senkt Halluzinationen, weil die Antwort eine Quelle hat.",
-      deep: "RAG ist keine Garantie: Der Retriever kann den falschen Chunk finden, der Chunk kann falsch sein, und das Modell kann ihn falsch lesen. Ein Agent macht daraus einen loop: suchen, lesen, prüfen, erneut suchen. Das gesamte Web wird so zu einem riesigen, durchsuchbaren Korpus.",
-      boxes: [
-        box("rag-1", "Technik", "Was ist ein Chunk?", "Ein kurzer Textabschnitt aus einer Quelle. Er wird zu einem Vektor; ähnliche Chunks liegen nah beieinander."),
-        box("rag-2", "Technik", "Was macht der Retriever?", "Er vergleicht die Frage mit vielen Chunk-Vektoren und gibt die besten zurück. Danach landen sie im Kontext des Modells."),
-        box("rag-3", "Agent", "Was macht ein Agent?", "Er kann den Retrieval-loop selbst steuern: suchen, lesen, entscheiden, erneut suchen. Werkzeuge wie eine Suchmaschine erweitern den Korpus auf das Internet.")
-      ],
-      sources: [
-        { label: "Lewis et al. (2020), Retrieval-Augmented Generation", url: "https://arxiv.org/abs/2005.11401", why: { de: "RAG verbindet Retrieval mit Generation.", en: "RAG combines retrieval with generation." } },
-        { label: "Karpukhin et al. (2020), Dense Passage Retrieval", url: "https://arxiv.org/abs/2004.04906", why: { de: "Dichte Vektoren für die Passagensuche.", en: "Dense vectors for passage retrieval." } }
-      ]
-    }
-  ] : [
-    {
-      kicker: "RAG and agents",
-      title: "Search, read, insert",
-      body: "A model on its own has only its weights. RAG extends the context with retrieved sources: split sources into chunks, compare their vectors with the question, and put the best chunks into the context. An agent can trigger this loop itself, search the web, read, and ground the answer in sources.",
-      watch: "Click chunks and walk through the steps. When do sources enter the context?",
-      demoState: { scene: "rag", step: 0 },
-      context: "Similarity is an angle between vectors. Retrieval finds chunks, the model reads them in context and can attend to them. That lowers hallucinations because the answer has a source.",
-      deep: "RAG is not a guarantee: the retriever may find the wrong chunk, the chunk may be wrong, and the model may misread it. An agent turns this into a loop: search, read, check, search again. The whole web becomes a huge searchable corpus.",
-      boxes: [
-        box("rag-1", "Technique", "What is a chunk?", "A short passage from a source. It becomes a vector; similar chunks sit close together."),
-        box("rag-2", "Technique", "What does the retriever do?", "It compares the question with many chunk vectors and returns the best. They then enter the model's context."),
-        box("rag-3", "Agent", "What does an agent do?", "It can steer the retrieval loop: search, read, decide, search again. Tools such as a search engine extend the corpus to the internet.")
-      ],
-      sources: [
-        { label: "Lewis et al. (2020), Retrieval-Augmented Generation", url: "https://arxiv.org/abs/2005.11401", why: { de: "RAG verbindet Retrieval mit Generation.", en: "RAG combines retrieval with generation." } },
-        { label: "Karpukhin et al. (2020), Dense Passage Retrieval", url: "https://arxiv.org/abs/2004.04906", why: { de: "Dichte Vektoren für die Passagensuche.", en: "Dense vectors for passage retrieval." } }
-      ]
-    }
-  ];
-
   var historySteps = DE ? [
 
 
@@ -2364,61 +2324,6 @@
 
 
 
-  var sentimentDirection = {
-    kicker: DE ? "Sentiment" : "Sentiment",
-    title: DE ? "Bedeutung ist eine Richtung" : "Meaning is a direction",
-    teaser: DE
-      ? "Wo liegt „gut“ im Modell? Nicht an einem Punkt, sondern auf einer Richtung. Tigges et al. (2023) finden im Residualstrom eine Sentiment-Achse: Positive und negative Aktivierungen liegen auf verschiedenen Seiten. Die Projektion $\\mathbf{w}\\cdot\\mathbf{x}$ liest das Sentiment. Das Entfernen der Richtung kostet Pythia-2.8B 76 % seiner über dem Zufall liegenden SST-Genauigkeit. Eine Richtung trägt hier einen großen Teil des Konzepts.\n\nDie Achse ist gelernt, nicht handcodiert. Tigges et al. finden sie mit mehreren Methoden (Mittelwertdifferenz, 2-Means, logistischer Probe, DAS, PCA); die Richtungen sind sich sehr ähnlich. Ablation und Patchen zeigen, dass das Modell die Richtung kausal benutzt. Die Ergebnisse stammen aus kleinen Modellen und Toy-Daten: Die Richtung ist eine Approximation, nicht das ganze Konzept."
-      : "Where does “good” live in the model? Not at a point, but on a direction. Tigges et al. (2023) find a sentiment axis in the residual stream: positive and negative activations lie on opposite sides. The projection $\\mathbf{w}\\cdot\\mathbf{x}$ reads the sentiment. Removing the direction costs Pythia-2.8B 76% of its above-chance SST accuracy. One direction carries a large part of the concept here.\n\nThe axis is learned, not hand-coded. Tigges et al. find it with several methods (mean difference, 2-means, logistic probe, DAS, PCA); the directions are very similar. Ablation and patching show that the model uses the direction causally. The results come from small models and toy data: the direction is an approximation, not the whole concept.",
-    watch: DE ? "Klicke Weiter. Sieh, wie die Projektion das Sentiment liest." : "Click Next. Watch the projection read the sentiment.",
-    demoState: { scene: "sentiment", mode: "direction" },
-    context: DE ? "Die Achse ist gelernt. Positive und negative Beispiele liegen auf verschiedenen Seiten; die Projektion ist ein linearer Readout." : "The axis is learned. Positive and negative examples lie on opposite sides; the projection is a linear readout.",
-    deep: DE ? "Eine lineare Probe ist ein Readout, kein Beweis für eine menschenähnliche Bedeutung. Die Autoren fragen selbst, ob es eine universelle Richtung oder die erste Hauptkomponente mehrerer Sentiment-Richtungen ist. Für die Folie zählt der Mechanismus: Projektion liest, Addition verschiebt." : "A linear probe is a readout, not proof of human-like meaning. The authors ask whether it is one universal direction or the first principal component of several sentiment directions. For this slide the mechanism matters: projection reads, addition steers.",
-    boxes: [
-      box("sen-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Readout" : "The readout", DE ? "Die Aktivierung $\\mathbf{x}$ wird auf die gelernte Richtung $\\mathbf{w}$ projiziert. Das Vorzeichen sagt negativ oder positiv; der Betrag sagt, wie stark." : "The activation $\\mathbf{x}$ is projected onto the learned direction $\\mathbf{w}$. The sign says negative or positive; the magnitude says how strong.", "\\underbrace{\\operatorname{score}(\\mathbf{x})}_{\\text{Sentiment-Readout}} = \\underbrace{\\mathbf{w}\\cdot\\mathbf{x}}_{\\text{Projektion auf die Richtung}}"),
-      box("sen-2", DE ? "Grenze" : "Limit", DE ? "Eine Richtung, ein Konzept?" : "One direction, one concept?", DE ? "Die Richtung ist eine gute Approximation, aber Konzepte können mehrdimensional sein. Superposition und mehrere Sentiment-Richtungen sind möglich; die lineare Achse ist der erste, einfache Readout." : "The direction is a good approximation, but concepts can be multi-dimensional. Superposition and several sentiment directions are possible; the linear axis is the first, simple readout.")
-    ],
-    sources: [
-      { label: "Tigges et al. (2023), Linear Representations of Sentiment in Large Language Models", url: "https://arxiv.org/abs/2310.15154", why: { de: "Sentiment als lineare Richtung; Projektion, Ablation und Steering.", en: "Sentiment as a linear direction; projection, ablation, and steering." } },
-      { label: "Li et al. (2023), Inference-Time Intervention", url: "https://arxiv.org/abs/2306.03341", why: { de: "Wahrheitsrichtungen in Attention-Heads; ITI.", en: "Truthfulness directions in attention heads; ITI." } }
-    ]
-  };
-
-  var sentimentSteer = Object.assign({}, sentimentDirection, {
-    kicker: DE ? "Steering" : "Steering",
-    title: DE ? "Addiere die Richtung" : "Add the direction",
-    teaser: DE
-      ? "Wenn Sentiment eine Richtung ist, kann man sie verschieben. Man addiert ein Vielfaches der Richtung zur Aktivierung: $\\mathbf{x}' = \\mathbf{x} + \\alpha\\mathbf{w}$. Bei negativem $\\alpha$ kippt die Fortsetzung ins Negative, bei positivem ins Positive. Das Modell bleibt dasselbe; nur der Zustand wandert. So wird aus einem Readout ein Eingriff.\n\nDer Eingriff ist eine Interpretation der gelernten Richtung, kein Wahrheitsbeweis. Ein zu großes $\\alpha$ schiebt die Aktivierung aus der Verteilung; die Texte können kippen oder unnatürlich werden."
-      : "If sentiment is a direction, you can shift it. Add a multiple of the direction to the activation: $\\mathbf{x}' = \\mathbf{x} + \\alpha\\mathbf{w}$. With negative $\\alpha$ the continuation flips negative, with positive $\\alpha$ positive. The model stays the same; only the state moves. A readout becomes an intervention.\n\nThe intervention is an interpretation of the learned direction, not a proof of truth. Too large an $\\alpha$ pushes the activation out of distribution; the text can flip or become unnatural.",
-    watch: DE ? "Ziehe $\\alpha$ oder klicke $-\\mathbf{w}$ / $+\\mathbf{w}$. Was passiert mit der Fortsetzung?" : "Drag $\\alpha$ or click $-\\mathbf{w}$ / $+\\mathbf{w}$. What happens to the continuation?",
-    demoState: { scene: "sentiment", mode: "steer" },
-    boxes: [],
-    sources: sentimentDirection.sources
-  });
-
-  var sentimentIti = Object.assign({}, sentimentDirection, {
-    kicker: DE ? "ITI" : "ITI",
-    title: DE ? "Wahrheit als Richtung" : "Truth as a direction",
-    teaser: DE
-      ? "Li et al. (2023) suchen Wahrheitsrichtungen in Attention-Heads. Sie trainieren einen linearen Probe pro Head und wählen die Heads, die Wahrheit am besten trennen. Zur Inferenzzeit addieren sie $\\alpha\\sigma\\mathbf{w}$ an diesen Heads. Alpaca steigt auf TruthfulQA von 32,5 % auf 65,1 % (true*informative). Der Eingriff ist billig, aber der Wahrheitsbegriff ist eng und der Nutzen kostet Hilfsbereitschaft.\n\nITI erklärt nicht, was der Eingriff intern tut. Die Richtung wird gewählt, weil sie funktioniert; eine korrelierte, aber nicht kausale Richtung ist möglich. Die Zahlen gelten für LLaMA-7B, Alpaca und Vicuna, nicht für Frontier-Modelle."
-      : "Li et al. (2023) look for truthfulness directions in attention heads. They train a linear probe per head and select the heads that separate truth best. At inference time they add $\\alpha\\sigma\\mathbf{w}$ at those heads. Alpaca rises on TruthfulQA from 32.5% to 65.1% (true*informative). The intervention is cheap, but the notion of truth is narrow and helpfulness pays the bill.\n\nITI does not explain what the intervention does internally. The direction is chosen because it works; a correlated but non-causal direction is possible. The numbers are for LLaMA-7B, Alpaca, and Vicuna, not frontier models.",
-    watch: DE ? "Klicke $+\\alpha\\sigma\\mathbf{w}$. Sieh, wie die Wahrheitsrichtung die Aktivierung verschiebt." : "Click $+\\alpha\\sigma\\mathbf{w}$. Watch the truth direction shift the activation.",
-    demoState: { scene: "sentiment", mode: "iti" },
-    context: DE ? "ITI sucht pro Head eine lineare Wahrheitsrichtung und addiert sie zur Aktivierung. Die Zahlen gelten für LLaMA-7B, Alpaca und Vicuna; TruthfulQA ist eine enge Messung." : "ITI looks for a linear truth direction per head and adds it to the activation. The numbers are for LLaMA-7B, Alpaca, and Vicuna; TruthfulQA is a narrow measurement.",
-    deep: DE ? "Die Richtung ist ein gelerntes Readout; ITI zeigt, dass sie wirkt, aber nicht, dass sie Wahrheit semantisch definiert. Die Schätzung hängt von den Heads und dem Probe-Set ab." : "The direction is a learned readout; ITI shows that it has an effect, but not that it defines truth semantically. The estimate depends on the heads and the probe set.",
-    boxes: [
-      box("iti-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Eingriff" : "The intervention", DE ? "An ausgewählten Heads wird $\\alpha\\sigma\\mathbf{w}$ addiert. $\\mathbf{w}$ ist die gelernte Wahrheitsrichtung, $\\sigma$ die Streuung entlang dieser Richtung, $\\alpha$ die Stärke." : "At selected heads, $\\alpha\\sigma\\mathbf{w}$ is added. $\\mathbf{w}$ is the learned truth direction, $\\sigma$ the spread along it, $\\alpha$ the strength.", "\\underbrace{\\mathbf{x}'}_{\\text{neue Aktivierung}} = \\underbrace{\\mathbf{x}}_{\\text{Original}} + \\underbrace{\\alpha\\sigma\\mathbf{w}}_{\\text{ITI-Nudge}}"),
-      box("iti-2", DE ? "Grenze" : "Limit", DE ? "TruthfulQA ist schmal" : "TruthfulQA is narrow", DE ? "Die Benchmarks fragen nach verbreiteten Missverständnissen, nicht nach allgemeiner Verlässlichkeit. Der Effekt ist auf TruthfulQA groß und außerhalb der Verteilung klein. Mehr $\\alpha$ kauft Wahrheit mit Absagen und Verteilungsverschiebung." : "The benchmarks ask about common misconceptions, not general reliability. The effect is large on TruthfulQA and small out of distribution. More $\\alpha$ buys truth with refusals and distribution shift.")
-    ],
-    sources: sentimentDirection.sources
-  });
-
-  var sentimentStep = {
-    kicker: DE ? "Gefühle" : "Sentiment",
-    title: DE ? "Bedeutung als Richtung" : "Meaning as a direction",
-    substeps: [sentimentDirection, sentimentSteer, sentimentIti]
-  };
-
   var inductionSequence = {
     kicker: DE ? "Induction" : "Induction",
     title: DE ? "A B … A → B" : "A B … A → B",
@@ -2519,59 +2424,6 @@
     kicker: DE ? "In-Context" : "In-context",
     title: DE ? "Induktionsköpfe" : "Induction heads",
     substeps: [inductionSequence, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence]
-  };
-
-  var grokkingLoss = {
-    kicker: DE ? "Grokking" : "Grokking",
-    title: DE ? "Erst memoriert, dann verstanden" : "First memorized, then understood",
-    teaser: DE
-      ? "Ein Transformer lernt $a + b \\bmod 113 = c$ auf 30 % der möglichen Paare. Die Trainingsloss fällt sofort, die Testloss bleibt lange hoch. Erst nach Tausenden Epochen fällt sie plötzlich: Das Modell hat generalisiert. Dieses verzögerte Generalisieren heißt Grokking. Der generalisierende Schaltkreis ist schon vorher da; sichtbar wird er erst beim Aufräumen.\n\nDer Hauptlauf nutzt $P = 113$, ein einschichtiger ReLU-Transformer mit $d = 128$, vier Heads und 512 MLP-Einheiten; die Phasen liegen bei etwa 1,4k, 9,4k und 14k Epochen. Die Kurven in der Demo sind schematisch, die Grenzen und Frequenzen stammen aus dem Papier."
-      : "A transformer learns $a + b \\bmod 113 = c$ on 30% of the possible pairs. Training loss falls immediately, test loss stays high for a long time. Only after thousands of epochs does it suddenly drop: the model has generalized. This delayed generalization is called grokking. The generalizing circuit is already there; it becomes visible during cleanup.\n\nThe mainline run uses $P = 113$, a one-layer ReLU transformer with $d = 128$, four heads, and 512 MLP units; the phases are around 1.4k, 9.4k, and 14k epochs. The curves in the demo are schematic; the boundaries and frequencies come from the paper.",
-    watch: DE ? "Klicke Weiter. Verfolge, wann die Testloss fällt." : "Click Next. Follow when the test loss drops.",
-    demoState: { scene: "grokking", mode: "loss" },
-    context: DE ? "Grokking ist kein plötzliches Lernen aus dem Nichts. Der Schaltkreis entsteht vorher; die Testloss zeigt es nur später." : "Grokking is not learning from nothing. The circuit forms earlier; the test loss only shows it later.",
-    deep: DE ? "Perfekte Genauigkeit heißt nicht Loss null. Die Kreuzentropie fällt weiter, während die Logits schärfer werden. Die Phasengrenzen hängen vom Seed ab; die Reihenfolge ist stabil." : "Perfect accuracy does not mean zero loss. Cross-entropy keeps falling while the logits sharpen. The phase boundaries depend on the seed; the order is stable.",
-    boxes: [
-      box("gro-1", DE ? "Aufgabe" : "Task", DE ? "Was wird gelernt?" : "What is learned?", DE ? "Addition modulo 113. Die Eingabe ist ein Paar $(a,b)$, die Ausgabe $c = (a+b) \\bmod 113$. Nur 30 % aller Paare sind Trainingsdaten." : "Addition modulo 113. The input is a pair $(a,b)$, the output $c = (a+b) \\bmod 113$. Only 30% of all pairs are training data.")
-    ],
-    sources: [{ label: "Nanda et al. (2023), Progress Measures for Grokking via Mechanistic Interpretability", url: "https://arxiv.org/abs/2301.05217", why: { de: "Grokking, Fourier-Schaltkreis und Fortschrittsmaße.", en: "Grokking, the Fourier circuit, and progress measures." } }]
-  };
-
-  var grokkingFourier = Object.assign({}, grokkingLoss, {
-    kicker: DE ? "Fourier" : "Fourier",
-    title: DE ? "Addition als Drehung" : "Addition as rotation",
-    teaser: DE
-      ? "Das Modell addiert nicht die Zahlen selbst. Es macht aus jeder Zahl einen Winkel: $\\theta_n = 2\\pi n/113$. Dann addiert es die Winkel, und Winkeladdition ist eine Drehung: $e^{i\\theta_a}e^{i\\theta_b}=e^{i(\\theta_a+\\theta_b)}$. Auf dem Kreis heißt das: Der Vektor für $a$ wird um den Winkel von $b$ gedreht, und die Spitze zeigt auf $c$. Das Modell lernt fünf Fourier-Frequenzen ($k = 14, 35, 41, 42, 52$); jede Frequenz ist ein eigener Kreis mit eigener Drehgeschwindigkeit. Zusammen tragen sie 95 % der Logit-Varianz. Der sichtbare Kreis ist eine Projektion; im Modell liegen die fünf Frequenzen nebeneinander.\n\nDie Frequenzen sind keine Handregel: Sie entstehen aus dem Training mit Weight Decay. Die Identität $\\sin(a+b)=\\sin a\\cos b+\\cos a\\sin b$ ist dieselbe Drehung in Real- und Imaginärteil. Ziehe die Regler: $a$ setzt den Start, $b$ bestimmt, wie weit gedreht wird."
-      : "The model does not add the numbers themselves. It turns each number into an angle: $\\theta_n = 2\\pi n/113$. Then it adds the angles, and adding angles is a rotation: $e^{i\\theta_a}e^{i\\theta_b}=e^{i(\\theta_a+\\theta_b)}$. On the circle this means: the vector for $a$ is rotated by the angle of $b$, and its tip points at $c$. The model learns five Fourier frequencies ($k = 14, 35, 41, 42, 52$); each frequency is its own circle with its own speed. Together they carry 95% of the logit variance. The visible circle is a projection; in the model the five frequencies sit side by side.\n\nThe frequencies are not a hand rule: they emerge from training with weight decay. The identity $\\sin(a+b)=\\sin a\\cos b+\\cos a\\sin b$ is the same rotation written in real and imaginary parts. Move the sliders: $a$ sets the start, $b$ sets how far the vector turns.",
-    watch: DE ? "Ziehe $a$ und $b$. Klicke Drehen und sieh, wie der Vektor um $b$ rotiert." : "Move $a$ and $b$. Click Rotate and watch the vector turn by $b$.",
-    demoState: { scene: "grokking", mode: "fourier" },
-    context: DE ? "Die Addition modulo 113 ist eine Addition auf einem Kreis: Nach 112 kommt wieder 0. Ein Winkel ist die natürliche Koordinate auf diesem Kreis; Drehen ist die natürliche Operation." : "Addition modulo 113 is addition on a circle: after 112 comes 0 again. An angle is the natural coordinate on that circle; rotation is the natural operation.",
-    deep: DE ? "Die fünf Frequenzen sind die stärksten Fourier-Komponenten des gelernten Schaltkreises, nicht die einzigen. Jede Frequenz $k$ bildet $n$ auf $e^{i2\\pi kn/113}$ ab. Addition wird dann zur Multiplikation der Phasen. Die 95 % beziehen sich auf die Logit-Varianz im analysierten Hauptlauf; andere Seeds können andere Frequenzen betonen." : "The five frequencies are the strongest Fourier components of the learned circuit, not the only ones. Each frequency $k$ maps $n$ to $e^{i2\\pi kn/113}$. Addition then becomes multiplication of phases. The 95% refers to the logit variance in the analysed main run; other seeds can emphasise other frequencies.",
-    boxes: [
-      box("gro-2", DE ? "Mathematik" : "Mathematics", DE ? "Die Identität" : "The identity", DE ? "Das Modell kombiniert Sinus und Kosinus derselben Frequenz. Die Addition der Eingaben wird zur Addition ihrer Winkel." : "The model combines sine and cosine of the same frequency. Adding the inputs becomes adding their angles.", "\\underbrace{\\sin(a+b)}_{\\text{Summe}} = \\underbrace{\\sin a\\cos b + \\cos a\\sin b}_{\\text{Winkeladdition}}"),
-      box("gro-3", DE ? "Schritt 1" : "Step 1", DE ? "Zahl wird Winkel" : "Number becomes angle", DE ? "Die Zahl $n$ liegt auf einem Kreis mit 113 Plätzen. Der Winkel $\\theta_n = 2\\pi n/113$ ist ihre Position. Der Sprung von 112 auf 0 ist kein Sprung, sondern eine volle Drehung." : "The number $n$ sits on a circle with 113 places. The angle $\\theta_n = 2\\pi n/113$ is its position. The jump from 112 to 0 is not a jump; it is a full turn.", "\\underbrace{\\underbrace{\\theta_n}_{\\text{Winkel}} = \\frac{2\\pi n}{113}}_{\\text{Position auf dem Kreis}}"),
-      box("gro-4", DE ? "Schritt 2" : "Step 2", DE ? "Addieren wird drehen" : "Adding becomes turning", DE ? "Addiere $b$, indem du den Vektor um den Winkel von $b$ drehst. Die Spitze landet auf $a+b$. Das ist die ganze Addition; die fünf Frequenzen machen sie robuster." : "Add $b$ by rotating the vector through the angle of $b$. The tip lands on $a+b$. That is the whole addition; the five frequencies make it more robust.", "\\underbrace{\\underbrace{e^{i\\theta_a}\\,e^{i\\theta_b}}_{\\text{Drehen}} = \\underbrace{e^{i(\\theta_a+\\theta_b)}}_{\\text{Summe}}}_{\\text{Winkeladdition}}"),
-      box("gro-5", DE ? "Grenze" : "Limit", DE ? "Fünf Uhren, nicht eine" : "Five clocks, not one", DE ? "Jede Frequenz ist ein eigener Kreis mit anderer Geschwindigkeit. Die fünf Frequenzen tragen zusammen 95 % der Logit-Varianz; die sichtbare Uhr ist nur eine Projektion. Andere Seeds können andere Frequenzen betonen." : "Each frequency is its own circle with a different speed. Together the five frequencies carry 95% of the logit variance; the visible clock is only one projection. Other seeds can emphasise other frequencies.")
-    ],
-    sources: grokkingLoss.sources
-  });
-
-  var grokkingMeasures = Object.assign({}, grokkingLoss, {
-    kicker: DE ? "Fortschritt" : "Progress",
-    title: DE ? "Was sieht den Sprung vorher?" : "What sees the jump coming?",
-    teaser: DE
-      ? "Die Testloss verrät lange nicht, dass etwas passiert. Die Fortschrittsmaße schon: Die Restricted Loss fällt früher, die Excluded Loss steigt während der Schaltkreisbildung. Später kippen Gewichtsnorm und Gini beim Aufräumen. So zerfällt Grokking in drei Phasen: Memorieren, Schaltkreis bilden, Aufräumen. Das Generalisieren ist der letzte Schritt, nicht der erste.\n\nDie Fortschrittsmaße sind task-spezifisch. Sie zeigen, wann der Schaltkreis entsteht, aber nicht allgemein, wann Grokking passiert. Das Papier ist ein Fallbeispiel, kein universeller Timer."
-      : "Test loss does not reveal for a long time that something is happening. The progress measures do: restricted loss falls earlier, excluded loss rises during circuit formation. Later, weight norm and Gini flip during cleanup. Grokking splits into three phases: memorization, circuit formation, cleanup. Generalization is the last step, not the first.\n\nThe progress measures are task-specific. They show when the circuit forms, but not in general when grokking happens. The paper is a case study, not a universal timer.",
-    watch: DE ? "Klicke Weiter. Vergleiche die drei Fortschrittsmaße." : "Click Next. Compare the three progress measures.",
-    demoState: { scene: "grokking", mode: "measures" },
-    boxes: [],
-    sources: grokkingLoss.sources
-  });
-
-  var grokkingStep = {
-    kicker: DE ? "Grokking" : "Grokking",
-    title: DE ? "Warum plötzlich generalisieren?" : "Why generalize suddenly?",
-    substeps: [grokkingLoss, grokkingFourier, grokkingMeasures]
   };
 
   var spacetimeSpace = {

@@ -137,6 +137,7 @@
   var lastDemoStep = null;
   var lastDemoSub = null;
   var lastMountedScene = null;
+  var visitedDemoPositions = {};
   var demoLoaderShownAt = 0;
   var demoLoaderTimer = 0;
   var els = {};
@@ -2028,11 +2029,14 @@
   function mountDemo(d, s) {
     if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
     var sameSlide = lastDemoDay === state.day && lastDemoStep === state.step;
-    var meta = { step: state.step, dir: 0, substep: state.substep, subDir: 0 };
+    var samePosition = sameSlide && lastDemoSub === state.substep;
+    var positionKey = state.day + "." + state.step + "." + state.substep;
+    var meta = { step: state.step, dir: 0, substep: state.substep, subDir: 0, revisit: !samePosition && !!visitedDemoPositions[positionKey] };
     if (lastDemoDay === state.day && lastDemoStep != null) {
       meta.dir = state.step - lastDemoStep;
       if (sameSlide && lastDemoSub != null) meta.subDir = state.substep - lastDemoSub;
     }
+    if (!samePosition) visitedDemoPositions[positionKey] = true;
     lastDemoDay = state.day;
     lastDemoStep = state.step;
     lastDemoSub = state.substep;
@@ -2058,7 +2062,9 @@
     var needsLoader = !demo || currentDemoDay !== d.id || (sceneChanged && !sameSlide);
     if (needsLoader) showDemoLoader();
     if (demo && currentDemoDay === d.id) {
-      try { if (demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
+      if (!meta.revisit) {
+        try { if (demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
+      }
       if (nextScene) lastMountedScene = nextScene;
       preloadNextScene(d);
       if (sceneChanged) hideDemoLoaderWhenReady();

@@ -24,7 +24,7 @@ $labels = [
 	'model' => 'Modell', 'blocks' => 'Bausteine', 'highdim' => 'Hochdimensional', 'mlp' => 'MLP',
 	'backprop' => 'Backprop', 'trajectories' => 'Trajektorien', 'stack' => 'Stack',
 	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'agents' => 'Agent',
-	'gradient' => 'Gradient', 'rag' => 'RAG', 'riskmap' => 'AI and society',
+	'gradient' => 'Gradient', 'riskmap' => 'AI and society',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room', 'codenoise' => 'Code-Rauschen',
 	'consciousness' => 'Bewusstsein',
 	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz',
@@ -75,7 +75,6 @@ function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUT
 	<script src="intuition_gpt2_data.js?v=<?php echo filemtime(__DIR__.'/intuition_gpt2_data.js'); ?>"></script>
 	<script src="assets/sinus-data.js?v=<?php echo filemtime(__DIR__.'/assets/sinus-data.js'); ?>"></script>
 	<script src="assets/loss-landscape-scene.js?v=<?php echo filemtime(__DIR__.'/assets/loss-landscape-scene.js'); ?>"></script>
-	<script src="assets/rag-scene.js?v=<?php echo filemtime(__DIR__.'/assets/rag-scene.js'); ?>"></script>
 	<script src="assets/tf.min.js"></script>
 	<script src="assets/tf-sinus-scene.js?v=<?php echo filemtime(__DIR__.'/assets/tf-sinus-scene.js'); ?>"></script>
 	<script src="assets/learnsys-unembed-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-unembed-scene.js'); ?>"></script>

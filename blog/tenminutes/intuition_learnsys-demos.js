@@ -7,7 +7,7 @@
     host.className = "ls-scene-host";
     root.appendChild(host);
     var scenes = {};
-    var scene = null, name = null, visited = {}, ro = null, roRaf = 0;
+    var scene = null, name = null, ro = null, roRaf = 0;
     if (window.ResizeObserver) {
       ro = new ResizeObserver(function () {
         if (roRaf) return;
@@ -29,12 +29,6 @@
     }
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     function mount(next, dir) {
-      if (visited[next] && scenes[next] && next !== "manifold") {
-        var old = scenes[next];
-        if (old.api && old.api.destroy) { try { old.api.destroy(); } catch (e) {} }
-        if (old.layer && old.layer.parentNode) old.layer.parentNode.removeChild(old.layer);
-        delete scenes[next];
-      }
       if (!scenes[next]) scenes[next] = makeLayer(next);
       var stepDir = dir < 0 ? "prev" : "next";
       Object.keys(scenes).forEach(function (key) {
@@ -72,7 +66,6 @@
       if (entry.api && entry.api.resize) entry.api.resize();
       name = next;
       scene = entry.api;
-      visited[next] = true;
       if (!scene) {
         entry.layer.innerHTML = '<div class="ls-empty">' + (api.lang === "de" ? "Demo folgt." : "Demo follows.") + '</div>';
       }

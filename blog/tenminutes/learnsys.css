@@ -1378,20 +1378,6 @@ h1,h2,h3,h4{
 .ls-book-page p.ls-book-drop::first-line{font-variant:small-caps;letter-spacing:.02em}
 @media (max-width:720px){.ls-book-scene{grid-template-columns:1fr;grid-template-rows:minmax(180px,38%) minmax(0,1fr)}.ls-book-art{min-height:180px}.ls-book-page{padding:14px}}
 
-.ls-rag-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;padding:2px;overflow-y:auto}
-.ls-rag-query{display:flex;gap:8px;align-items:baseline;border-left:3px solid var(--ls-green);background:rgba(99,164,75,.07);padding:7px 9px}
-.ls-rag-query span{font:700 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
-.ls-rag-query b{font:600 var(--ls-fs-ui) "Open Sans",sans-serif;color:var(--ls-ink)}
-.ls-rag-chunks{display:grid;gap:5px;min-height:0;overflow-y:auto}
-.ls-rag-chunk{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:7px;text-align:left;border:1px solid var(--ls-line);background:#fff;padding:7px 9px 9px;cursor:pointer;overflow:hidden;font:var(--ls-fs-ui-sm)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-rag-chunk.is-on{border-color:var(--ls-green);background:rgba(99,164,75,.06)}
-.ls-rag-score{font:700 var(--ls-fs-micro) "Barlow",sans-serif;color:var(--ls-petrol)}
-.ls-rag-bar{position:absolute;left:0;bottom:0;height:3px;background:var(--ls-green)}
-.ls-rag-context,.ls-rag-answer{border:1px solid var(--ls-line);background:#fff;padding:8px 10px;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-rag-context-head,.ls-rag-answer-head{font:700 var(--ls-fs-micro) "Barlow",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-petrol);margin-bottom:4px}
-.ls-rag-context p,.ls-rag-answer p{margin:0 0 4px}
-.ls-rag-agent{margin-top:6px;padding-top:5px;border-top:1px solid var(--ls-line);font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-green-deep)}
-
 .ls-compress-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 230px;grid-template-rows:minmax(220px,1fr) auto;gap:8px;padding:2px;overflow-y:auto}
 .ls-compress-stage{position:relative;min-height:220px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
 .ls-compress-stage canvas{position:absolute;inset:0;width:100%;height:100%}
@@ -1926,8 +1912,6 @@ h1,h2,h3,h4{
 .ls-lang-all-row b{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
 .ls-lang-all-row span{overflow-wrap:anywhere}
 
-.ls-rag-space{position:relative;min-height:150px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
-.ls-rag-space canvas{position:absolute;inset:0;width:100%;height:100%}
 
 .ls-code-msg[hidden]{display:none}
 .ls-code-window--agent{left:3%;top:3%;width:68%;height:66%}
@@ -2437,14 +2421,11 @@ h1,h2,h3,h4{
 
 /* Deep-blue instrument stage for the final ten lessons. The page stays paper;
    the demo area gets the blue atmosphere, while content cards stay white. */
-#ls-demo[data-scene="rag"],
 #ls-demo[data-scene="history"],
 #ls-demo[data-scene="riskmap"],
 #ls-demo[data-scene="consciousness"],
 #ls-demo[data-scene="worldmodel"],
-#ls-demo[data-scene="sentiment"],
 #ls-demo[data-scene="induction"],
-#ls-demo[data-scene="grokking"],
 #ls-demo[data-scene="spacetime"]{
   background:
     radial-gradient(120% 92% at 12% 0%, rgba(0,75,111,.16), transparent 58%),
@@ -2452,10 +2433,7 @@ h1,h2,h3,h4{
     radial-gradient(72% 66% at 88% 96%, rgba(99,164,75,.06), transparent 66%);
 }
 #ls-demo[data-scene="history"] .ls-history-panel,
-#ls-demo[data-scene="history"] .ls-history-figure,
-#ls-demo[data-scene="rag"] .ls-rag-space,
-#ls-demo[data-scene="rag"] .ls-rag-context,
-#ls-demo[data-scene="rag"] .ls-rag-answer{
+#ls-demo[data-scene="history"] .ls-history-figure{
   box-shadow:0 10px 26px rgba(0,30,40,.055);
 }
 #ls-demo[data-scene="history"] .ls-history-panel{border-top:3px solid var(--ls-petrol)}
@@ -2471,21 +2449,7 @@ h1,h2,h3,h4{
 #ls-demo[data-scene="riskmap"] .ls-rm-detail{border-left:3px solid var(--ls-petrol)}
 #ls-demo[data-scene="riskmap"] .ls-rm-fix{border-left-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
 #ls-demo[data-scene="riskmap"] .ls-rm-fix b{color:var(--ls-petrol)}
-#ls-demo[data-scene="rag"] .ls-rag-query{border-left-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
-#ls-demo[data-scene="rag"] .ls-rag-chunk{border-radius:0}
-#ls-demo[data-scene="rag"] .ls-rag-chunk:hover{border-color:var(--ls-sky)}
-#ls-demo[data-scene="rag"] .ls-rag-chunk.is-on{border-color:var(--ls-petrol);background:rgba(0,75,111,.055)}
-#ls-demo[data-scene="rag"] .ls-rag-bar{background:linear-gradient(90deg,var(--ls-petrol),var(--ls-green))}
 #ls-demo[data-scene="consciousness"] .ls-con-detail{box-shadow:0 10px 26px rgba(0,30,40,.055)}
-
-/* RAG: the four-step pipeline is the visual spine of the scene. */
-.ls-rag-pipeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--ls-line);background:#fff}
-.ls-rag-step{display:flex;align-items:center;gap:6px;padding:7px 8px;border-right:1px solid var(--ls-line);font:700 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-muted);min-width:0}
-.ls-rag-step:last-child{border-right:0}
-.ls-rag-step b{display:grid;place-items:center;flex:0 0 auto;width:17px;height:17px;background:var(--ls-line);color:var(--ls-soft);font:700 9px/1 "Open Sans",sans-serif}
-.ls-rag-step.is-on{background:linear-gradient(180deg,rgba(0,75,111,.13),rgba(0,146,153,.055));color:var(--ls-petrol)}
-.ls-rag-step.is-on b{background:var(--ls-petrol);color:#fff}
-@media(max-width:640px){.ls-rag-step{padding:6px 5px;font-size:calc(var(--ls-fs-micro) * .92);gap:4px}.ls-rag-step b{width:15px;height:15px}}
 
 /* History: the tab strip reads as a timeline when it has a rail and dots. */
 @media(min-width:760px){
@@ -2511,12 +2475,6 @@ h1,h2,h3,h4{
 .ls-con-map-box.is-open em{color:var(--ls-lilac)}
 .ls-con-map-gap{display:grid;place-items:center;border-left:1px dashed var(--ls-line-strong);border-right:1px dashed var(--ls-line-strong);font:700 18px/1 "Barlow",sans-serif;color:var(--ls-petrol)}
 @media(max-width:640px){.ls-con-map{grid-template-columns:1fr}.ls-con-map-gap{height:24px;border-left:0;border-right:0;border-top:1px dashed var(--ls-line-strong);border-bottom:1px dashed var(--ls-line-strong)}}
-
-/* RAG: answer citations point back to the inserted chunk. */
-.ls-rag-cite{display:inline;border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-petrol);padding:0 3px;margin:0 1px;font:700 9px/1.5 "Open Sans",sans-serif;cursor:pointer;border-radius:0}
-.ls-rag-cite:hover{border-color:var(--ls-petrol);background:rgba(0,75,111,.06)}
-.ls-rag-chunk.is-cited{border-color:var(--ls-petrol);box-shadow:inset 0 0 0 1px var(--ls-petrol)}
-.ls-rag-context p.is-cited{background:rgba(0,75,111,.06);box-shadow:inset 3px 0 0 var(--ls-petrol);padding-left:6px}
 
 /* History: colour the timeline dots by strand and name the strands. */
 .ls-history-legend{display:flex;flex-wrap:wrap;gap:5px 10px;font:600 8px/1.2 "Open Sans",sans-serif;color:var(--ls-muted)}
@@ -2548,7 +2506,6 @@ h1,h2,h3,h4{
   0%,100%{box-shadow:inset 0 3px 0 var(--ls-petrol),0 8px 22px rgba(0,40,60,.07)}
   50%{box-shadow:inset 0 3px 0 var(--ls-petrol),0 0 0 1px rgba(0,146,153,.30),0 14px 34px rgba(0,75,111,.13)}
 }
-#ls-demo[data-scene="rag"],
 #ls-demo[data-scene="history"],
 #ls-demo[data-scene="riskmap"],
 #ls-demo[data-scene="consciousness"]{
@@ -2556,7 +2513,6 @@ h1,h2,h3,h4{
   overflow:hidden;
   isolation:isolate;
 }
-#ls-demo[data-scene="rag"]::before,
 #ls-demo[data-scene="history"]::before,
 #ls-demo[data-scene="riskmap"]::before,
 #ls-demo[data-scene="consciousness"]::before{
@@ -2573,7 +2529,6 @@ h1,h2,h3,h4{
   animation:ls-demo-aurora 22s ease-in-out infinite alternate;
   will-change:transform;
 }
-#ls-demo[data-scene="rag"]::after,
 #ls-demo[data-scene="history"]::after,
 #ls-demo[data-scene="riskmap"]::after,
 #ls-demo[data-scene="consciousness"]::after{
@@ -2588,16 +2543,12 @@ h1,h2,h3,h4{
   mix-blend-mode:soft-light;
   opacity:.7;
 }
-#ls-demo[data-scene="rag"] > *,
 #ls-demo[data-scene="history"] > *,
 #ls-demo[data-scene="riskmap"] > *,
 #ls-demo[data-scene="consciousness"] > *{
   position:relative;
   z-index:1;
 }
-#ls-demo[data-scene="rag"] .ls-rag-chunk,
-#ls-demo[data-scene="rag"] .ls-rag-context,
-#ls-demo[data-scene="rag"] .ls-rag-answer,
 #ls-demo[data-scene="history"] .ls-history-panel,
 #ls-demo[data-scene="history"] .ls-history-figure,
 #ls-demo[data-scene="riskmap"] .ls-rm-card,
@@ -2621,14 +2572,11 @@ h1,h2,h3,h4{
 }
 
 /* Inner vignette and a hairline of light make the demo feel like a lit stage. */
-#ls-demo[data-scene="rag"],
 #ls-demo[data-scene="history"],
 #ls-demo[data-scene="riskmap"],
 #ls-demo[data-scene="consciousness"],
 #ls-demo[data-scene="worldmodel"],
-#ls-demo[data-scene="sentiment"],
 #ls-demo[data-scene="induction"],
-#ls-demo[data-scene="grokking"],
 #ls-demo[data-scene="spacetime"]{
   box-shadow:inset 0 0 90px rgba(0,40,60,.07),inset 0 1px 0 rgba(255,255,255,.7);
 }

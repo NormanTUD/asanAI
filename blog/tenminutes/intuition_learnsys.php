@@ -55,7 +55,6 @@ $hideExpandAll = is_file(__DIR__ . '/.hide-expand-all');
 	<script src="intuition_gpt2_data.js?v=<?php echo filemtime(__DIR__.'/intuition_gpt2_data.js'); ?>"></script>
 	<script src="assets/sinus-data.js?v=<?php echo filemtime(__DIR__.'/assets/sinus-data.js'); ?>"></script>
 	<script src="assets/loss-landscape-scene.js?v=<?php echo filemtime(__DIR__.'/assets/loss-landscape-scene.js'); ?>"></script>
-	<script src="assets/rag-scene.js?v=<?php echo filemtime(__DIR__.'/assets/rag-scene.js'); ?>"></script>
 	<script src="assets/tf.min.js"></script>
 	<script src="assets/tf-sinus-scene.js?v=<?php echo filemtime(__DIR__.'/assets/tf-sinus-scene.js'); ?>"></script>
 	<script src="assets/learnsys-unembed-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-unembed-scene.js'); ?>"></script>
