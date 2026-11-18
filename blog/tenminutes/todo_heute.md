@@ -53,4 +53,10 @@ folie "Wie wird kopiert?":
 
 die "A B" bei vorgänger merken/"Wie wird kopiert?", stlele finden und kopireen gehen ncah unten aus der box raus. sage klar, dass A und B platzhalter für beliebige worte sind. sage dass es viele verschiedene arten von attention heads gibt und wir hier nur ein paar durchgehen können.
 
+"Zwei Heads, ein Algorithmus" ist mir völlig unklar was es macht und wie es geht. mach die neu. sowohl den text als auch das bild.
+
+"Ein Successor-Head erhöht ein geordnetes Token (Montag → Dienstag) über eine gelernte Richtung" ja das ergibt sinn, aber zeige das vorher irgendwo noch, mach eine zwischenfolie zwischen 1d und 2d wo man sieht dass Montag, Dienstag, Mittwoch usw. auf einer Linie liegen, wie vorher die temperatur (belasse die aber auch da, eine zwischenfolie danach auf der folie wo auch die temperatur und die 2d und 3d sachen sind). entferne den teilsatz ", wie im IOI-Schaltkreis von GPT-2 small".
+
+folie "Wie findet man gute Punkte?": man sieht die loss landscape aus der falschen richtung, drehe das bild so dass man auf die fläche schaut wo der ball runtergeht. das momentum schießt so weit über die loss landscape renderung hinaus dass es nach rechtsraus geht, mach die loss landscape so groß dass das momentum da nicht über den plot overshootet.
+
 

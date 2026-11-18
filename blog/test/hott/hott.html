@@ -73,20 +73,20 @@
     border-radius:14px;background:linear-gradient(180deg,rgba(12,20,44,.86),rgba(4,8,20,.76));
     box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    color:rgba(222,243,255,.92);font-size:12px;line-height:1.35;text-align:center;
-    max-width:min(560px,48vw);text-shadow:none}
-  .mn-label.rule .rule-name{font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:rgba(238,250,255,.96);font-size:15px;line-height:1.4;text-align:center;
+    max-width:min(690px,54vw);text-shadow:none}
+  .mn-label.rule .rule-name{font-size:9px;letter-spacing:.24em;text-transform:uppercase;
     color:rgba(150,226,255,.72);margin-bottom:8px;font-weight:600}
   .mn-label.rule math{color:inherit;font-size:1.02em}
   .mn-label.term{white-space:nowrap;font-style:normal;font-family:ui-serif,Georgia,serif;
     padding:10px 14px;border:1px solid rgba(150,200,255,.2);border-radius:13px;
     background:linear-gradient(180deg,rgba(12,20,44,.82),rgba(4,8,20,.72));
     box-shadow:0 16px 44px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05);
-    backdrop-filter:blur(12px);color:rgba(228,246,255,.94);font-size:13.5px;text-shadow:none}
+    backdrop-filter:blur(12px);color:rgba(240,251,255,.96);font-size:16px;text-shadow:none}
   .mn-label.term math{color:inherit;font-size:1.05em}
   @media (max-width:760px){
-    .mn-label.rule{max-width:78vw;font-size:10.2px;padding:10px 11px}
-    .mn-label.term{font-size:11.5px;padding:8px 10px}
+    .mn-label.rule{max-width:80vw;font-size:11.4px;padding:10px 11px}
+    .mn-label.term{font-size:12.5px;padding:8px 10px}
   }
   .mn-label sub{font-size:.62em;transform:translateY(.18em)}
   .mn-label .sub{display:inline-block;margin-left:.55em;font-family:ui-sans-serif,system-ui,sans-serif;
@@ -439,7 +439,7 @@
     { act: 1, kind: "product",     caption: "A pair: one point from each type.", key: "pair", d: 10.4, cy: 2.4 },
     { act: 1, kind: "sum",         caption: "A value sits on one side.", key: "side", d: 11.9, cy: 2.6 },
     { act: 1, kind: "unitempty",   caption: "One point; or nothing.", key: "nothing", d: 10.7, cy: 2.5 },
-    { act: 1, kind: "context",     caption: "Assumptions form a context.", key: "context", d: 11.4, cy: 2.6 },
+    { act: 1, kind: "context",     caption: "Assumptions form a context.", key: "context", d: 10.6, cy: 2.6 },
     { act: 1, kind: "rulespi1",    caption: "Rules build the type.", key: "Rules", d: 12.4, cy: 2.8 },
     { act: 1, kind: "rulespi2",    caption: "Apply, then compute.", key: "compute", d: 12.4, cy: 2.8 },
     { act: 1, kind: "derivation",  caption: "A proof is a derivation tree.", key: "derivation", d: 11.6, cy: 2.6 },
@@ -3021,10 +3021,10 @@
     const names = ["x:A", "y:B", "z:C"];
     const dots = [];
     for (let k = 0; k < 3; k++) {
-      const r = makeRing(0.34, 0.011, cols[k], 0.65);
+      const r = makeRing(0.4, 0.014, cols[k], 0.85);
       r.obj.position.set(xs, ys[k], 0);
       g.add(r.obj);
-      dots.push({ p: V(xs, ys[k], 0), size: 0.5, color: cols[k], glow: 0.9, seed: k * 0.2 });
+      dots.push({ p: V(xs, ys[k], 0), size: 0.65, color: cols[k], glow: 1.0, seed: k * 0.2 });
       labels.push({ text: names[k], p: V(xs + 0.55, ys[k], 0), dx: 8, dy: 0, kind: "sym" });
     }
     const dotObj = makeDots(dots, { opacity: 1 });
@@ -3037,7 +3037,7 @@
     const brace = makeLines(bracePairs, { color: C.ice, opacity: 0.3 });
     g.add(brace.obj);
     const A = addTypeSpace(g, V(1.95, 0.1, 0), 1.0, C.cyan, C.violet, 0.42);
-    const term = makeDots([{ p: V(1.95, 0.1, 1.02), size: 1.1, color: C.gold, glow: 1.3 }], { opacity: 1 });
+    const term = makeDots([{ p: V(1.95, 0.1, 1.02), size: 1.4, color: C.gold, glow: 1.4 }], { opacity: 1 });
     g.add(term.obj);
     labels.push({ text: "&Gamma;", p: V(xs - 1.05, 1.65, 0), dx: 0, dy: -8, kind: "big" });
     labels.push({ text: "&vdash;", p: V(0.15, 0.1, 0), dx: 0, dy: 4, kind: "big" });
@@ -3443,16 +3443,31 @@
   function updateActLabels(ovVis) {
     if (!constellation || !constellation.actLabels) return;
     const w = window.innerWidth, h = window.innerHeight;
+    if (ovVis < 0.02) {
+      for (const a of constellation.actLabels) a.el.style.opacity = "0";
+      return;
+    }
+    const items = [];
     for (const a of constellation.actLabels) {
-      if (ovVis < 0.02) { a.el.style.opacity = "0"; continue; }
       tmpV.copy(a.p);
       tmpV.project(camera);
       if (tmpV.z > 1 || tmpV.z < -1) { a.el.style.opacity = "0"; continue; }
       const x = (tmpV.x * 0.5 + 0.5) * w;
       const y = (-tmpV.y * 0.5 + 0.5) * h;
       if (x < -80 || x > w + 80 || y < -40 || y > h + 40) { a.el.style.opacity = "0"; continue; }
-      a.el.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
       a.el.style.opacity = (ovVis * 0.85).toFixed(3);
+      items.push({ a, x, y });
+    }
+    items.sort((p, q) => p.x - q.x);
+    const placed = [];
+    for (const it of items) {
+      let yy = it.y;
+      for (const p of placed) {
+        if (Math.abs(p.x - it.x) < 128 && Math.abs(p.y - yy) < 24) yy = p.y + 26;
+      }
+      yy = Math.max(18, Math.min(h - 22, yy));
+      it.a.el.style.transform = "translate3d(" + it.x.toFixed(1) + "px," + yy.toFixed(1) + "px,0)";
+      placed.push({ x: it.x, y: yy });
     }
   }
 
