@@ -442,6 +442,8 @@
     { act: 1, kind: "context",     caption: "Assumptions form a context.", key: "context", d: 10.6, cy: 2.6 },
     { act: 1, kind: "rulespi1",    caption: "Rules build the type.", key: "Rules", d: 12.4, cy: 2.8 },
     { act: 1, kind: "rulespi2",    caption: "Apply, then compute.", key: "compute", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "rulessigma",  caption: "Sigma forms dependent pairs.", key: "pairs", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "rulesid",     caption: "Equality is a type with refl.", key: "refl", d: 12.4, cy: 2.8 },
     { act: 1, kind: "derivation",  caption: "A proof is a derivation tree.", key: "derivation", d: 11.6, cy: 2.6 },
     { act: 1, kind: "betareduce",  caption: "Computation is substitution.", key: "substitution", d: 11.6, cy: 2.6 },
 
@@ -932,7 +934,7 @@
   let buildContractible, buildFunType, buildProduct, buildSum, buildUnitEmpty, buildFunext, buildFiberMap, buildTruncation, buildInductive;
   let buildJudgment, buildDefEq, buildDependent, buildContractFib, buildRecursion;
   let buildDictionary, buildArithmetic, buildForall, buildExists, buildExistsMere;
-  let buildLoopSpace, buildHomotopyEquiv, buildCW, buildContext, buildRulesPi1, buildRulesPi2, buildDerivation, buildBetaReduce;
+  let buildLoopSpace, buildHomotopyEquiv, buildCW, buildContext, buildRulesPi1, buildRulesPi2, buildRulesSigma, buildRulesId, buildDerivation, buildBetaReduce;
 
   function makeBackdrop(color) {
     const mat = new THREE.ShaderMaterial({
@@ -3062,7 +3064,9 @@
     g.add(soft.obj);
     const n1 = makeDots([{ p: V(0, 1.45, 0), size: 1.0, color: C.ice, glow: 1.1 }], { opacity: 1 });
     const n2 = makeDots([{ p: V(0, -1.45, 0), size: 1.0, color: C.gold, glow: 1.1 }], { opacity: 1 });
-    g.add(n1.obj, n2.obj);
+    const h1 = makeDots([{ p: V(0, 1.45, -0.5), size: 5.0, color: C.ice, glow: 0.35 }], { opacity: 0.5 });
+    const h2 = makeDots([{ p: V(0, -1.45, -0.5), size: 5.0, color: C.gold, glow: 0.35 }], { opacity: 0.5 });
+    g.add(n1.obj, n2.obj, h1.obj, h2.obj);
     const conn = makeLine2(C.gold, 0.45);
     conn.set(V(0, 0.95, 0), V(0, -0.95, 0));
     g.add(conn.obj);
@@ -3075,6 +3079,7 @@
         const a = ctx.a * ctx.r;
         soft.setOpacity(a * 0.1);
         n1.setOpacity(a); n2.setOpacity(a);
+        h1.setOpacity(a * 0.45); h2.setOpacity(a * 0.45);
         conn.setOpacity(a * 0.45);
       }
     };
@@ -3092,6 +3097,20 @@
       "\\frac{\\Gamma \\vdash f : \\Pi_{x:A} B \\qquad \\Gamma \\vdash a : A}{\\Gamma \\vdash f(a) : B[a/x]}",
       "computation",
       "\\frac{\\Gamma, x:A \\vdash b : B \\qquad \\Gamma \\vdash a : A}{\\Gamma \\vdash (\\lambda x. b)(a) \\equiv b[a/x] : B[a/x]}");
+  };
+
+  buildRulesSigma = function (g) {
+    return buildRulePair(g, "formation",
+      "\\frac{\\Gamma \\vdash A : \\mathcal{U} \\qquad \\Gamma, x:A \\vdash B : \\mathcal{U}}{\\Gamma \\vdash \\Sigma_{x:A} B : \\mathcal{U}}",
+      "introduction",
+      "\\frac{\\Gamma \\vdash a : A \\qquad \\Gamma \\vdash b : B[a/x]}{\\Gamma \\vdash (a,b) : \\Sigma_{x:A} B}");
+  };
+
+  buildRulesId = function (g) {
+    return buildRulePair(g, "formation",
+      "\\frac{\\Gamma \\vdash A : \\mathcal{U} \\qquad \\Gamma \\vdash a : A \\qquad \\Gamma \\vdash b : A}{\\Gamma \\vdash a =_{A} b : \\mathcal{U}}",
+      "introduction",
+      "\\frac{\\Gamma \\vdash a : A}{\\Gamma \\vdash \\mathsf{refl}_{a} : a =_{A} a}");
   };
 
   buildDerivation = function (g) {
@@ -3181,6 +3200,8 @@
       else if (kind === "context") built = buildContext(group);
       else if (kind === "rulespi1") built = buildRulesPi1(group);
       else if (kind === "rulespi2") built = buildRulesPi2(group);
+      else if (kind === "rulessigma") built = buildRulesSigma(group);
+      else if (kind === "rulesid") built = buildRulesId(group);
       else if (kind === "derivation") built = buildDerivation(group);
       else if (kind === "betareduce") built = buildBetaReduce(group);
       else if (kind === "dictionary") built = buildDictionary(group);
@@ -3402,12 +3423,12 @@
     const links = [
       [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9],
       [10, 11], [11, 12], [12, 13], [13, 14], [14, 15], [15, 16], [16, 17],
-      [17, 18], [18, 19], [19, 20], [11, 21], [21, 22], [22, 23], [23, 24],
-      [21, 25], [25, 26], [26, 27], [27, 28], [28, 29], [29, 30], [30, 31],
-      [32, 33], [33, 34], [34, 35], [35, 36],
-      [37, 38], [38, 39], [39, 40], [40, 41],
-      [42, 43], [43, 44], [44, 45], [45, 46], [46, 47], [47, 48], [48, 49],
-      [6, 48], [9, 49], [22, 45], [31, 34], [13, 46], [25, 27], [0, 50]
+      [17, 18], [18, 19], [19, 20], [20, 21], [21, 22], [11, 23], [23, 24],
+      [24, 25], [25, 26], [23, 27], [27, 28], [28, 29], [29, 30], [30, 31],
+      [31, 32], [32, 33], [34, 35], [35, 36], [36, 37], [37, 38],
+      [39, 40], [40, 41], [41, 42], [42, 43],
+      [44, 45], [45, 46], [46, 47], [47, 48], [48, 49], [49, 50], [50, 51],
+      [6, 50], [9, 51], [24, 47], [32, 35], [13, 48], [27, 29], [0, 52]
     ];
     const arcs = [];
     for (const [i, j] of links) {
@@ -3426,7 +3447,7 @@
     group.add(halo.obj);
     constellation = { group, pillars, arcs, halo };
 
-    const picks = [5, 17, 22, 28, 34, 39, 45, 50];
+    const picks = [5, 19, 24, 30, 36, 41, 47, 52];
     const names = ["Space", "Types", "Identity", "Fibers", "Logic", "Proofs", "Higher", "Coda"];
     const cols = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ff8fdc", "#ffa86b", "#ffd27d", "#f2fdff"];
     constellation.actLabels = picks.map((idx, k) => {

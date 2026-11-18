@@ -59,4 +59,20 @@ die "A B" bei vorgänger merken/"Wie wird kopiert?", stlele finden und kopireen 
 
 folie "Wie findet man gute Punkte?": man sieht die loss landscape aus der falschen richtung, drehe das bild so dass man auf die fläche schaut wo der ball runtergeht. das momentum schießt so weit über die loss landscape renderung hinaus dass es nach rechtsraus geht, mach die loss landscape so groß dass das momentum da nicht über den plot overshootet.
 
+bei der folie mit relu, gelu, sigmoid und tanh soll er wenn ich weiter gehe die kurven smooth ineinander transformieren
 
+bei der folie mit 32x32x32 ist der graph gestreckt und man sieht das an den fonts. mach den nativ in der richtigen größe, passe den an wenn man die fenstergröße usw ändert.
+
+folie "Der Raum biegt sich":
+
+wenn ich einfach weiter mache geht er zu "schüssel" und das passt nicht aber ich kann trotzdem weiter. er soll alle presets durchgehen.
+
+beim plot bei "Die Rolle von neuronalen Netzen im Transformer": adde für jeden punkt mouseovers die passende tokens repräsentieren für den plot. entferne das "feine punktwolke, kanten = nachbarschaft" darunter.
+
+folie "Das gemeinsame Notizbuch wird zum Stream": der startet mit leeren dimensinen. der sollte aber mit irgendwelchen vordefinierten dimensionen starten. sage klar, dass das für jedes token einen eigenne stream hat (stimmt doch oder? checke das)
+
+folie "Ähnliche Worte finden": 
+
+zeige rechts bei "kleinster winkel zuerst" prozentual wie gut espasst mit einer bar zusätzlich zu den winkeln, so dass man sieht dass der geringste winkel am besten passt, mit ner progress bar.
+
+bei der skaleninvarianz folie: der B winkle geht aus dem screen heraus. der zeigt nicht die euklidische distanz darunter und dann wie viel die anders wird als der winkel. wenn ich weiter mache hat der die länge von B nicht geändert, der soll mit "weiter" oder pfeiltaste die länge von b variieren.
