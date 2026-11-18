@@ -68,15 +68,22 @@
   .mn-label.violet{color:rgba(208,184,255,.94)}
   .mn-label.mint{color:rgba(170,255,214,.94)}
   .mn-label.white{color:#f4fdff}
+  .mn-label.word.chip-on{color:rgba(220,250,255,.98);
+    text-shadow:0 0 18px rgba(100,225,255,.7),0 2px 8px rgba(0,0,0,.6)}
   .mn-label.dictcard{padding:0;background:none;border:0;box-shadow:none;
     font-style:normal;max-width:none;white-space:normal;font-family:ui-sans-serif,system-ui,sans-serif}
-  .dc{display:grid;grid-template-columns:38px 1fr;grid-template-rows:auto auto;
-    gap:2px 10px;width:min(380px,30vw);padding:8px 12px;
+  .dc{width:min(380px,30vw);opacity:0;transform:translateY(14px) scale(.97);
+    transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1);
+    transition-delay:calc(var(--i,0) * 45ms);will-change:opacity,transform}
+  .dc.in{opacity:1;transform:none}
+  .dc-face{display:grid;grid-template-columns:38px 1fr;grid-template-rows:auto auto;
+    gap:2px 10px;width:100%;padding:8px 12px;
     border:1px solid rgba(150,200,255,.22);border-left:1px solid rgba(118,226,255,.55);
-    border-radius:14px;background:linear-gradient(180deg,rgba(13,22,48,.87),rgba(4,8,20,.8));
+    border-radius:14px;background:linear-gradient(180deg,rgba(13,22,48,.88),rgba(4,8,20,.81));
     box-shadow:0 14px 36px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
-    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    color:#eafaff;animation:dcGlow 7s ease-in-out infinite,dcFloat 6s ease-in-out infinite;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#eafaff;
+    transform:perspective(760px) rotateY(var(--tilt,0deg));transform-origin:50% 50%;
+    animation:dcGlow 7s ease-in-out infinite,dcFloatFace 6s ease-in-out infinite;
     animation-delay:calc(var(--i,0) * .5s),calc(var(--i,0) * .31s)}
   .dc-ic{grid-row:1/3;display:grid;place-items:center;color:var(--ice)}
   .dc-ic svg{width:31px;height:31px}
@@ -95,14 +102,15 @@
     color:rgba(228,206,255,.96)}
   @keyframes dcGlow{
     0%,100%{border-color:rgba(150,200,255,.22);box-shadow:0 14px 36px rgba(0,0,0,.35)}
-    8%{border-color:rgba(120,230,255,.6);box-shadow:0 0 30px rgba(80,200,255,.2),0 14px 36px rgba(0,0,0,.38)}
+    8%{border-color:rgba(120,230,255,.62);box-shadow:0 0 32px rgba(80,200,255,.22),0 14px 36px rgba(0,0,0,.38)}
   }
-  @keyframes dcFloat{
-    0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-2px)}
+  @keyframes dcFloatFace{
+    0%,100%{transform:perspective(760px) rotateY(var(--tilt,0deg)) translateY(0)}
+    50%{transform:perspective(760px) rotateY(var(--tilt,0deg)) translateY(-2px)}
   }
   @media (max-width:760px){
-    .dc{width:42vw;grid-template-columns:28px 1fr;gap:2px 7px;padding:6px 8px}
+    .dc{width:42vw;transition-delay:calc(var(--i,0) * 35ms)}
+    .dc-face{grid-template-columns:28px 1fr;gap:2px 7px;padding:6px 8px}
     .dc-ic svg{width:24px;height:24px}
     .dc-main{font-size:19px;gap:6px}
     .dc-r.long{font-size:10px}
@@ -471,10 +479,10 @@
     { act: 1, kind: "sum",         caption: "A value sits on one side.", key: "side", d: 11.9, cy: 2.6 },
     { act: 1, kind: "unitempty",   caption: "One point; or nothing.", key: "nothing", d: 10.7, cy: 2.5 },
     { act: 1, kind: "context",     caption: "Assumptions form a context.", key: "context", d: 10.6, cy: 2.6 },
-    { act: 1, kind: "rulespi1",    caption: "Rules build the type.", key: "Rules", d: 12.4, cy: 2.8 },
-    { act: 1, kind: "rulespi2",    caption: "Apply, then compute.", key: "compute", d: 12.4, cy: 2.8 },
-    { act: 1, kind: "rulessigma",  caption: "Sigma forms dependent pairs.", key: "pairs", d: 12.4, cy: 2.8 },
-    { act: 1, kind: "rulesid",     caption: "Equality is a type with refl.", key: "refl", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "rulespi1",    caption: "Rules build the type.", key: "Rules", d: 11.6, cy: 2.8 },
+    { act: 1, kind: "rulespi2",    caption: "Apply, then compute.", key: "compute", d: 11.6, cy: 2.8 },
+    { act: 1, kind: "rulessigma",  caption: "Sigma forms dependent pairs.", key: "pairs", d: 11.6, cy: 2.8 },
+    { act: 1, kind: "rulesid",     caption: "Equality is a type with refl.", key: "refl", d: 11.6, cy: 2.8 },
     { act: 1, kind: "derivation",  caption: "A proof is a derivation tree.", key: "derivation", d: 11.6, cy: 2.6 },
     { act: 1, kind: "betareduce",  caption: "Computation is substitution.", key: "substitution", d: 11.6, cy: 2.6 },
 
@@ -3034,24 +3042,24 @@
   };
 
   function buildMiniCurtain(g) {
-    const basePts = [V(-2.6, -1.2, 0), V(-1.3, -1.3, 0), V(0, -1.35, 0), V(1.3, -1.3, 0), V(2.6, -1.2, 0)];
+    const basePts = [V(-2.9, -1.2, 0), V(-1.9, -1.3, 0), V(-0.95, -1.35, 0), V(0, -1.38, 0), V(0.95, -1.35, 0), V(1.9, -1.3, 0), V(2.9, -1.2, 0)];
     const baseCurve = curveOf(basePts, false);
-    const soft = makeSoftPanel(7.2, 4.2, C.ice, C.violet, 0.07);
-    soft.obj.position.set(0, -0.2, -0.55);
+    const soft = makeSoftPanel(8.0, 4.5, C.ice, C.violet, 0.07);
+    soft.obj.position.set(0, -0.2, -0.6);
     g.add(soft.obj);
-    const baseRib = makeRibbon(baseCurve, { a: C.ice, b: C.violet, rad: 0.028, opacity: 1, seg: 110 });
+    const baseRib = makeRibbon(baseCurve, { a: C.ice, b: C.violet, rad: 0.028, opacity: 1, seg: 130 });
     g.add(baseRib.core, baseRib.glow);
-    const counts = [2, 3, 2, 3, 2];
+    const counts = [2, 3, 1, 3, 2, 3, 2];
     const fibers = [];
     const stems = [];
     const dotList = [];
-    for (let k = 0; k < 5; k++) {
-      const bp = baseCurve.getPoint(k / 4);
+    for (let k = 0; k < 7; k++) {
+      const bp = baseCurve.getPoint(k / 6);
       const dots = [];
       for (let j = 0; j < counts[k]; j++) {
-        const p = V(bp.x + (j % 2 ? 0.05 : -0.04), bp.y + 0.55 + j * 0.52, 0);
+        const p = V(bp.x + (j % 2 ? 0.05 : -0.04), bp.y + 0.55 + j * 0.5, 0);
         dots.push(p);
-        dotList.push({ p, size: 0.82, color: j === counts[k] - 1 ? C.white : C.ice, glow: 1.15, seed: rand() });
+        dotList.push({ p, size: 0.78, color: j === counts[k] - 1 ? C.white : C.ice, glow: 1.15, seed: rand() });
       }
       stems.push([bp.clone(), dots[dots.length - 1].clone()]);
       fibers.push({ bp, dots });
@@ -3061,48 +3069,94 @@
     const dotsObj = makeDots(dotList, { opacity: 1 });
     g.add(dotsObj.obj);
     const chosen = fibers.map((f) => f.dots[f.dots.length - 1]);
-    const chosenObj = makeDots(chosen.map((p) => ({ p, size: 0.7, color: C.gold, glow: 1.3 })), { opacity: 0 });
+    const chosenObj = makeDots(chosen.map((p) => ({ p, size: 0.75, color: C.gold, glow: 1.35 })), { opacity: 0 });
     g.add(chosenObj.obj);
+    const ghosts = [];
+    for (let q = 0; q < 4; q++) {
+      const pts = fibers.map((f, k) => f.dots[(q + k) % f.dots.length]);
+      const c = curveOf(pts, false);
+      const rib = makeRibbon(c, { a: C.ice, b: C.violet, rad: 0.008, opacity: 0, seg: 90, pulse: q * 0.2 });
+      g.add(rib.core, rib.glow);
+      ghosts.push(rib);
+    }
     const sectionCurve = curveOf(chosen, false);
-    const section = makeRibbon(sectionCurve, { a: C.mint, b: C.cyan, rad: 0.03, opacity: 0, seg: 110, pulse: 0.3 });
+    const section = makeRibbon(sectionCurve, { a: C.mint, b: C.cyan, rad: 0.03, opacity: 0, seg: 130, pulse: 0.3 });
     g.add(section.core, section.glow);
+    const flowPhases = [];
+    const flowList = [];
+    for (let k = 0; k < 46; k++) {
+      const ph = rand();
+      flowPhases.push(ph);
+      const p = baseCurve.getPoint(ph);
+      flowList.push({ p, size: 0.2 + rand() * 0.22, color: rand() < 0.5 ? C.gold : C.ice, glow: 0.55, seed: rand() });
+    }
+    const flowObj = makeDots(flowList, { opacity: 0.0, drift: 0 });
+    g.add(flowObj.obj);
     const baseLine = makeLine2(C.ice, 0.2);
-    baseLine.set(V(-2.9, -1.2, 0), V(2.9, -1.2, 0));
+    baseLine.set(V(-3.15, -1.2, 0), V(3.15, -1.2, 0));
     g.add(baseLine.obj);
-    return { soft, baseRib, stemsObj, dotsObj, chosenObj, section, sectionCurve, fibers, chosen, baseLine };
+    return { soft, baseRib, stemsObj, dotsObj, chosenObj, section, sectionCurve, fibers, chosen, baseLine, ghosts, flowObj, flowGeo: flowObj.geo, flowPhases, baseCurve };
+  }
+
+  function updateMiniFlow(M, a, t) {
+    const p = M.flowGeo.attributes.position;
+    for (let k = 0; k < M.flowPhases.length; k++) {
+      const q = M.baseCurve.getPoint(fract(M.flowPhases[k] + t * 0.045));
+      p.setXYZ(k, q.x, q.y + 0.03 * Math.sin(t * 1.1 + k * 2.3), q.z + 0.03 * Math.cos(t * 0.9 + k * 1.7));
+    }
+    p.needsUpdate = true;
+    M.flowObj.setOpacity(a * 0.55);
   }
 
   buildRulesPi1 = function (g) {
     const labels = [];
     const M = buildMiniCurtain(g);
-    const piNode = makeDots([{ p: V(0, 1.62, 0), size: 1.55, color: C.gold, glow: 1.4 }], { opacity: 1 });
-    const piRing = makeRing(0.5, 0.01, C.gold, 0.5);
-    piRing.obj.position.set(0, 1.62, 0);
-    g.add(piNode.obj, piRing.obj);
-    labels.push({ text: "A", p: V(-2.7, -0.7, 0), dx: -4, dy: 10, kind: "sym" });
-    labels.push({ text: "B(x)", p: M.chosen[4], dx: 12, dy: -16, kind: "sym" });
-    labels.push({ text: "&Pi;(x:A)B(x)", p: V(0, 2.15, 0), dx: 0, dy: -8, kind: "sym" });
-    labels.push({ text: "&lambda;x.b", p: M.chosen[2].clone().add(V(0.35, 0.22, 0)), dx: 12, dy: -14, kind: "sym", cls: "mint" });
-    labels.push({ text: "formation", p: V(-2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
-    labels.push({ text: "introduction", p: V(2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    const piNode = makeDots([{ p: V(0, 1.56, 0), size: 1.6, color: C.gold, glow: 1.4 }], { opacity: 1 });
+    const piRing = makeRing(0.55, 0.01, C.gold, 0.5);
+    piRing.obj.position.set(0, 1.56, 0);
+    const shock = makeRing(0.2, 0.008, C.ice, 0);
+    shock.obj.position.set(0, 1.56, 0.1);
+    const comet = makeMarker(C.white, 1.0);
+    g.add(piNode.obj, piRing.obj, shock.obj, comet.obj);
+    const chipF = { text: "formation", p: V(-2.3, 1.98, 0), dx: 0, dy: 0, kind: "word" };
+    const chipI = { text: "introduction", p: V(2.3, 1.98, 0), dx: 0, dy: 0, kind: "word" };
+    labels.push({ text: "A", p: V(-2.75, -0.68, 0), dx: -4, dy: 10, kind: "sym" });
+    labels.push({ text: "B(x)", p: M.chosen[5], dx: 12, dy: -16, kind: "sym" });
+    labels.push({ text: "&Pi;", p: V(0, 1.56, 0), dx: 26, dy: -24, kind: "big", cls: "gold" });
+    labels.push({ text: "&Pi;(x:A)B(x)", p: V(0, 2.2, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "&lambda;x.b", p: M.chosen[3].clone().add(V(0.4, 0.25, 0)), dx: 12, dy: -14, kind: "sym", cls: "mint" });
+    labels.push(chipF, chipI);
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        const ph = fract(ctx.t * 0.085);
-        const form = smoothstep(0.05, 0.42, ph);
-        const intro = smoothstep(0.42, 0.82, ph);
+        const ph = fract(ctx.t * 0.1);
+        const form = smoothstep(0.02, 0.3, ph);
+        const ghostOn = smoothstep(0.12, 0.42, ph);
+        const intro = smoothstep(0.42, 0.68, ph);
+        const out = smoothstep(0.84, 0.99, ph);
+        const env = 1 - 0.35 * out;
         M.soft.setOpacity(a * 0.07);
         M.baseRib.setOpacity(a * (0.55 + 0.45 * form));
         M.baseLine.setOpacity(a * (0.1 + 0.12 * form));
         M.stemsObj.setOpacity(a * (0.35 + 0.4 * form));
-        M.dotsObj.setOpacity(a * (0.55 + 0.45 * form));
+        M.dotsObj.setOpacity(a * (0.55 + 0.45 * form) * env);
+        updateMiniFlow(M, a * (0.4 + 0.6 * form) * env, ctx.t);
+        for (let q = 0; q < M.ghosts.length; q++) M.ghosts[q].setOpacity(a * 0.13 * ghostOn * env);
         M.section.setProgress(0.3 + 0.7 * intro);
-        M.section.setOpacity(a * (0.25 + 0.75 * intro));
-        M.chosenObj.setOpacity(a * (0.2 + 0.8 * intro));
+        M.section.setOpacity(a * (0.25 + 0.75 * intro) * env);
+        M.chosenObj.setOpacity(a * (0.2 + 0.8 * intro) * env);
         piNode.setOpacity(a * (0.35 + 0.65 * form));
         piRing.setOpacity(a * (0.25 + 0.4 * form));
-        piRing.obj.scale.setScalar(0.8 + 0.35 * form);
+        piRing.obj.scale.setScalar(0.8 + 0.35 * form + 0.05 * Math.sin(ctx.t * 1.2));
+        const sw = smoothstep(0.38, 0.52, ph) * (1 - smoothstep(0.52, 0.72, ph));
+        shock.setOpacity(a * 0.55 * sw);
+        shock.obj.scale.setScalar(0.4 + 2.4 * smoothstep(0.38, 0.72, ph));
+        const cu = smoothstep(0.45, 0.72, ph);
+        comet.set(cu > 0.001 ? M.sectionCurve.getPoint(cu) : M.chosen[3]);
+        comet.setOpacity(a * 0.9 * (1 - smoothstep(0.74, 0.86, ph)));
+        if (chipF.el) chipF.el.classList.toggle("chip-on", form > 0.2);
+        if (chipI.el) chipI.el.classList.toggle("chip-on", intro > 0.05);
       }
     };
   };
@@ -3110,40 +3164,45 @@
   buildRulesPi2 = function (g) {
     const labels = [];
     const M = buildMiniCurtain(g);
-    const k = 2;
+    const k = 3;
     const bp = M.fibers[k].bp;
     const fa = M.chosen[k];
-    const aDot = makeDots([{ p: bp, size: 0.95, color: C.ice, glow: 1.2 }], { opacity: 1 });
-    const outDot = makeDots([{ p: fa, size: 0.7, color: C.white, glow: 1.3 }], { opacity: 1 });
-    const outRing = makeRing(0.32, 0.013, C.gold, 0.7);
+    const aDot = makeDots([{ p: bp, size: 1.0, color: C.ice, glow: 1.2 }], { opacity: 1 });
+    const outDot = makeDots([{ p: fa, size: 0.8, color: C.white, glow: 1.4 }], { opacity: 1 });
+    const outRing = makeRing(0.35, 0.014, C.gold, 0.7);
     outRing.obj.position.copy(fa);
-    const betaRing = makeRing(0.55, 0.01, C.white, 0);
+    const betaRing = makeRing(0.6, 0.012, C.white, 0);
     betaRing.obj.position.copy(fa);
-    const spark = makeMarker(C.white, 1.05);
-    const conn = makeLine2(C.gold, 0.75);
+    const spark = makeMarker(C.white, 1.15);
+    const conn = makeLine2(C.gold, 0.8);
     g.add(aDot.obj, outDot.obj, outRing.obj, betaRing.obj, spark.obj, conn.obj);
-    labels.push({ text: "A", p: V(-2.7, -0.7, 0), dx: -4, dy: 10, kind: "sym" });
+    const chipE = { text: "elimination", p: V(-2.3, 1.98, 0), dx: 0, dy: 0, kind: "word" };
+    const chipC = { text: "computation", p: V(2.3, 1.98, 0), dx: 0, dy: 0, kind: "word" };
+    labels.push({ text: "A", p: V(-2.75, -0.68, 0), dx: -4, dy: 10, kind: "sym" });
     labels.push({ text: "a", p: bp, dx: 10, dy: 24, kind: "sym" });
     labels.push({ text: "f(a) &equiv; b(a)", p: fa, dx: 14, dy: -20, kind: "sym", cls: "gold" });
-    labels.push({ text: "f", p: M.chosen[4].clone().add(V(0.2, 0.25, 0)), dx: 12, dy: -12, kind: "sym", cls: "mint" });
-    labels.push({ text: "&beta;", p: V(1.55, 1.48, 0), dx: 0, dy: 0, kind: "big", cls: "gold" });
-    labels.push({ text: "elimination", p: V(-2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
-    labels.push({ text: "computation", p: V(2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "f", p: M.chosen[6].clone().add(V(0.1, 0.28, 0)), dx: 12, dy: -12, kind: "sym", cls: "mint" });
+    labels.push({ text: "&beta;", p: V(1.65, 1.48, 0), dx: 0, dy: 0, kind: "big", cls: "gold" });
+    labels.push(chipE, chipC);
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        const ph = fract(ctx.t * 0.08);
-        const up = smoothstep(0.05, 0.38, ph);
-        const merge = smoothstep(0.42, 0.78, ph);
+        const ph = fract(ctx.t * 0.1);
+        const up = smoothstep(0.05, 0.34, ph);
+        const merge = smoothstep(0.4, 0.66, ph);
+        const out = smoothstep(0.84, 0.99, ph);
+        const env = 1 - 0.3 * out;
         M.soft.setOpacity(a * 0.07);
         M.baseRib.setOpacity(a * 0.85);
         M.baseLine.setOpacity(a * 0.18);
         M.stemsObj.setOpacity(a * 0.45);
-        M.dotsObj.setOpacity(a);
+        M.dotsObj.setOpacity(a * env);
+        updateMiniFlow(M, a * 0.55 * env, ctx.t);
+        for (const gh of M.ghosts) gh.setOpacity(a * 0.11 * env);
         M.section.setProgress(1);
-        M.section.setOpacity(a * (1 - 0.72 * merge));
-        M.chosenObj.setOpacity(a * (1 - 0.5 * merge));
+        M.section.setOpacity(a * (1 - 0.72 * merge) * env);
+        M.chosenObj.setOpacity(a * (1 - 0.5 * merge) * env);
         aDot.setOpacity(a);
         const q = bp.clone().lerp(fa, up);
         spark.set(q);
@@ -3154,8 +3213,10 @@
         outRing.setOpacity(a * (0.2 + 0.7 * merge));
         outRing.obj.scale.setScalar(0.85 + 0.25 * merge);
         const b = Math.sin(Math.PI * merge);
-        betaRing.setOpacity(a * 0.6 * b);
-        betaRing.obj.scale.setScalar(0.5 + 1.5 * merge);
+        betaRing.setOpacity(a * 0.7 * b);
+        betaRing.obj.scale.setScalar(0.5 + 1.7 * merge);
+        if (chipE.el) chipE.el.classList.toggle("chip-on", up > 0.1);
+        if (chipC.el) chipC.el.classList.toggle("chip-on", merge > 0.05);
       }
     };
   };
@@ -3163,110 +3224,148 @@
   buildRulesSigma = function (g) {
     const labels = [];
     const M = buildMiniCurtain(g);
-    const k = 2;
+    const k = 3;
     const bp = M.fibers[k].bp;
     const b = M.fibers[k].dots[M.fibers[k].dots.length - 1];
-    const aDot = makeDots([{ p: bp, size: 0.85, color: C.ice, glow: 1.2 }], { opacity: 1 });
-    const bDot = makeDots([{ p: b, size: 1.1, color: C.gold, glow: 1.4 }], { opacity: 1 });
+    const aDot = makeDots([{ p: bp, size: 0.9, color: C.ice, glow: 1.3 }], { opacity: 1 });
+    const bDot = makeDots([{ p: b, size: 1.2, color: C.gold, glow: 1.5 }], { opacity: 1 });
+    const mid = bp.clone().lerp(b, 0.5);
     const link = makeLine2(C.gold, 1);
     link.set(bp, b);
-    const pairRing = makeRing(0.46, 0.011, C.gold, 0.55);
-    pairRing.obj.position.copy(bp.clone().lerp(b, 0.5));
+    const pairDot = makeDots([{ p: mid, size: 1.35, color: C.white, glow: 1.6 }], { opacity: 0 });
+    const pairRing = makeRing(0.5, 0.012, C.gold, 0.55);
+    pairRing.obj.position.copy(mid);
+    const shock = makeRing(0.2, 0.01, C.gold, 0);
+    shock.obj.position.copy(mid);
+    const s1 = makeMarker(C.white, 0.9);
+    const s2 = makeMarker(C.white, 0.9);
+    g.add(aDot.obj, bDot.obj, link.obj, pairDot.obj, pairRing.obj, shock.obj, s1.obj, s2.obj);
+    const chipF = { text: "formation", p: V(-2.3, 1.98, 0), dx: 0, dy: 0, kind: "word" };
+    const chipI = { text: "introduction", p: V(2.3, 1.98, 0), dx: 0, dy: 0, kind: "word" };
+    labels.push({ text: "A", p: V(-2.75, -0.68, 0), dx: -4, dy: 10, kind: "sym" });
+    labels.push({ text: "a", p: bp, dx: 12, dy: 22, kind: "sym" });
+    labels.push({ text: "b", p: b, dx: 12, dy: -16, kind: "sym", cls: "gold" });
+    labels.push({ text: "(a,b)", p: mid, dx: 16, dy: 0, kind: "sym", cls: "gold" });
+    labels.push({ text: "&Sigma;", p: V(0, 1.56, 0), dx: 26, dy: -24, kind: "big", cls: "gold" });
+    labels.push({ text: "&Sigma;(x:A)B(x)", p: V(0, 2.2, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push(chipF, chipI);
     const webPairs = [];
-    for (let j = 0; j < 4; j++) {
+    for (let j = 0; j < 6; j++) {
       const A = M.fibers[j].dots, B = M.fibers[j + 1].dots;
       const m = Math.min(A.length, B.length);
       for (let q = 0; q < m; q++) webPairs.push([A[q], B[q]]);
     }
-    const web = makeLines(webPairs, { color: C.gold, opacity: 0.18 });
+    const web = makeLines(webPairs, { color: C.gold, opacity: 0 });
     const env = makeIrid(new THREE.SphereGeometry(1, 32, 20), { a: C.violet, b: C.gold, rim: C.gold, opacity: 0.06, wobble: 0 });
-    env.obj.scale.set(4.1, 2.2, 1.3);
+    env.obj.scale.set(4.5, 2.2, 1.3);
     env.obj.position.set(0, -0.45, 0);
-    g.add(aDot.obj, bDot.obj, link.obj, pairRing.obj, web.obj, env.obj);
-    labels.push({ text: "A", p: V(-2.7, -0.7, 0), dx: -4, dy: 10, kind: "sym" });
-    labels.push({ text: "a", p: bp, dx: 12, dy: 22, kind: "sym" });
-    labels.push({ text: "b", p: b, dx: 12, dy: -16, kind: "sym", cls: "gold" });
-    labels.push({ text: "(a,b)", p: bp.clone().lerp(b, 0.5), dx: 16, dy: 0, kind: "sym", cls: "gold" });
-    labels.push({ text: "&Sigma;(x:A)B(x)", p: V(0, 2.15, 0), dx: 0, dy: -8, kind: "sym" });
-    labels.push({ text: "formation", p: V(-2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
-    labels.push({ text: "introduction", p: V(2.25, 1.98, 0), dx: 0, dy: 0, kind: "word" });
+    g.add(web.obj, env.obj);
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        const ph = fract(ctx.t * 0.08);
-        const form = smoothstep(0.05, 0.45, ph);
-        const intro = smoothstep(0.4, 0.8, ph);
+        const ph = fract(ctx.t * 0.1);
+        const form = smoothstep(0.02, 0.3, ph);
+        const space = smoothstep(0.18, 0.46, ph);
+        const intro = smoothstep(0.46, 0.72, ph);
+        const out = smoothstep(0.86, 0.99, ph);
+        const envA = 1 - 0.3 * out;
         M.soft.setOpacity(a * 0.07);
         M.baseRib.setOpacity(a * (0.55 + 0.45 * form));
         M.baseLine.setOpacity(a * (0.1 + 0.12 * form));
         M.stemsObj.setOpacity(a * (0.35 + 0.4 * form));
-        M.dotsObj.setOpacity(a * (0.55 + 0.45 * form));
+        M.dotsObj.setOpacity(a * (0.55 + 0.45 * form) * envA);
+        updateMiniFlow(M, a * (0.35 + 0.65 * form) * envA, ctx.t);
+        for (const gh of M.ghosts) gh.setOpacity(0);
         M.section.setOpacity(0);
         M.chosenObj.setOpacity(0);
-        web.setOpacity(a * (0.1 + 0.12 * form));
-        env.setOpacity(a * (0.04 + 0.04 * form));
-        link.setOpacity(a * (0.3 + 0.7 * intro));
+        web.setOpacity(a * (0.1 + 0.12 * space) * envA);
+        env.setOpacity(a * (0.04 + 0.04 * space) * envA);
         aDot.setOpacity(a * (0.55 + 0.45 * intro));
         bDot.setOpacity(a * (0.55 + 0.45 * intro));
+        link.setOpacity(a * (0.3 + 0.7 * intro));
+        pairDot.setOpacity(a * intro);
         pairRing.setOpacity(a * (0.3 + 0.4 * intro));
         pairRing.obj.scale.setScalar(0.85 + 0.25 * intro);
+        const u = smoothstep(0.46, 0.72, ph);
+        s1.set(bp.clone().lerp(mid, u));
+        s2.set(b.clone().lerp(mid, u));
+        s1.setOpacity(a * 0.9 * (1 - intro));
+        s2.setOpacity(a * 0.9 * (1 - intro));
+        const sw = smoothstep(0.68, 0.8, ph) * (1 - smoothstep(0.8, 0.94, ph));
+        shock.setOpacity(a * 0.55 * sw);
+        shock.obj.scale.setScalar(0.5 + 2.2 * smoothstep(0.68, 0.94, ph));
+        if (chipF.el) chipF.el.classList.toggle("chip-on", form > 0.2);
+        if (chipI.el) chipI.el.classList.toggle("chip-on", intro > 0.05);
       }
     };
   };
 
   buildRulesId = function (g) {
     const labels = [];
-    const blob = makeIrid(new THREE.SphereGeometry(1.6, 48, 32), { a: C.violet, b: C.cyan, rim: C.gold, opacity: 0.3, wobble: 0.04 });
-    blob.obj.position.set(0, -0.2, -0.6);
+    const blob = makeIrid(new THREE.SphereGeometry(1.75, 48, 32), { a: C.violet, b: C.cyan, rim: C.gold, opacity: 0.3, wobble: 0.04 });
+    blob.obj.position.set(0, -0.2, -0.65);
     g.add(blob.obj);
-    const aP = V(-0.92, 0.0, 0.72);
-    const bP = V(0.92, 0.12, 0.72);
+    const aP = V(-1.0, 0.0, 0.78);
+    const bP = V(1.0, 0.12, 0.78);
     const paths = [];
     const ribs = [];
     for (let k = 0; k < 5; k++) {
-      const my = lerp(-0.85, 0.85, k / 4);
-      const c = curveOf([aP, V(-0.45, my * 0.5, 1.25), V(0, my, 1.55), V(0.45, my * 0.5, 1.25), bP], false);
+      const my = lerp(-0.95, 0.95, k / 4);
+      const c = curveOf([aP, V(-0.5, my * 0.5, 1.3), V(0, my, 1.62), V(0.5, my * 0.5, 1.3), bP], false);
       paths.push(c);
-      const rib = makeRibbon(c, { a: k === 2 ? C.gold : C.ice, b: C.violet, rad: 0.013, opacity: 0.75, seg: 90, pulse: k * 0.13 });
+      const rib = makeRibbon(c, { a: k === 2 ? C.gold : C.ice, b: C.violet, rad: 0.014, opacity: 0.7, seg: 100, pulse: k * 0.13 });
       g.add(rib.core, rib.glow);
       ribs.push(rib);
     }
-    const sheet = makeSheet(36, 10, (s, t) => {
+    const sheet = makeSheet(40, 10, (s, t) => {
       const p1 = paths[0].getPoint(s), p2 = paths[4].getPoint(s);
       const q = p1.clone().lerp(p2, t);
-      q.z += Math.sin(Math.PI * t) * 0.08;
+      q.z += Math.sin(Math.PI * t) * 0.09;
       return q;
     }, { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.3 });
     g.add(sheet.obj);
-    const dots = makeDots([{ p: aP, size: 0.8, color: C.ice }, { p: bP, size: 0.8, color: C.rose }], { opacity: 1 });
+    const dots = makeDots([{ p: aP, size: 0.9, color: C.ice }, { p: bP, size: 0.9, color: C.rose }], { opacity: 1 });
     g.add(dots.obj);
-    const refl = makeRing(0.3, 0.012, C.gold, 0.9);
-    refl.obj.position.copy(aP).add(V(0, 0, 0.3));
-    g.add(refl.obj);
+    const refl = makeRing(0.34, 0.014, C.gold, 0.9);
+    refl.obj.position.copy(aP).add(V(0, 0, 0.32));
+    const shock = makeRing(0.2, 0.01, C.gold, 0);
+    shock.obj.position.copy(aP).add(V(0, 0, 0.34));
+    const comet = makeMarker(C.white, 1.0);
+    g.add(refl.obj, shock.obj, comet.obj);
+    const chipF = { text: "formation", p: V(-2.1, 1.6, 0), dx: 0, dy: 0, kind: "word" };
+    const chipI = { text: "introduction", p: V(2.1, 1.6, 0), dx: 0, dy: 0, kind: "word" };
     labels.push({ text: "a", p: aP, dx: -6, dy: -22, kind: "sym" });
     labels.push({ text: "b", p: bP, dx: 8, dy: -22, kind: "sym" });
-    labels.push({ text: "a =<sub>A</sub> b", p: V(0, 1.85, 0.6), dx: 0, dy: -8, kind: "sym" });
-    labels.push({ text: "refl<sub>a</sub>", p: aP.clone().add(V(0, 0.42, 0.3)), dx: -8, dy: 12, kind: "sym", cls: "gold" });
-    labels.push({ text: "formation", p: V(-2.0, 1.55, 0), dx: 0, dy: 0, kind: "word" });
-    labels.push({ text: "introduction", p: V(2.0, 1.55, 0), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "=", p: V(0, 1.45, 0.8), dx: 24, dy: -20, kind: "big", cls: "gold" });
+    labels.push({ text: "a =<sub>A</sub> b", p: V(0, 1.95, 0.6), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "refl<sub>a</sub>", p: aP.clone().add(V(0, 0.46, 0.32)), dx: -8, dy: 12, kind: "sym", cls: "gold" });
+    labels.push(chipF, chipI);
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        const ph = fract(ctx.t * 0.085);
-        const form = smoothstep(0.05, 0.45, ph);
-        const intro = smoothstep(0.42, 0.82, ph);
+        const ph = fract(ctx.t * 0.1);
+        const form = smoothstep(0.02, 0.42, ph);
+        const intro = smoothstep(0.46, 0.72, ph);
+        const out = smoothstep(0.86, 0.99, ph);
         blob.setOpacity(a * 0.32);
         dots.setOpacity(a);
         for (let k = 0; k < ribs.length; k++) {
           ribs[k].setProgress(form);
-          ribs[k].setOpacity(a * (k === 2 ? 0.95 : 0.65));
+          ribs[k].setOpacity(a * (k === 2 ? 0.95 : 0.65) * (1 - 0.2 * out));
         }
         sheet.setOpacity(a * (0.16 + 0.14 * form));
         sheet.setBand(0.5 + 0.42 * Math.sin(ctx.t * 0.45));
-        refl.setOpacity(a * (0.2 + 0.7 * intro) * (0.65 + 0.3 * (0.5 + 0.5 * Math.sin(ctx.t * 1.3))));
+        refl.setOpacity(a * (0.2 + 0.7 * intro) * (0.65 + 0.3 * (0.5 + 0.5 * Math.sin(ctx.t * 1.3))) * (1 - 0.2 * out));
         refl.obj.scale.setScalar(0.85 + 0.2 * intro);
+        const sw = smoothstep(0.45, 0.58, ph) * (1 - smoothstep(0.58, 0.78, ph));
+        shock.setOpacity(a * 0.55 * sw);
+        shock.obj.scale.setScalar(0.4 + 2.0 * smoothstep(0.45, 0.78, ph));
+        comet.set(paths[2].getPoint(smoothstep(0.05, 0.42, ph)));
+        comet.setOpacity(a * 0.9 * (1 - smoothstep(0.44, 0.55, ph)));
+        if (chipF.el) chipF.el.classList.toggle("chip-on", form > 0.15);
+        if (chipI.el) chipI.el.classList.toggle("chip-on", intro > 0.05);
       }
     };
   };
@@ -3286,12 +3385,15 @@
 
   buildDictionary = function (g) {
     const labels = [];
-    const soft = makeSoftPanel(9.8, 5.6, C.ice, C.violet, 0.07);
-    soft.obj.position.set(0, 0.1, -0.6);
+    const soft = makeSoftPanel(10.2, 6.0, C.ice, C.violet, 0.07);
+    soft.obj.position.set(0, 0.1, -0.7);
     g.add(soft.obj);
-    const divider = makeLine2(C.ice, 0.1);
-    divider.set(V(0, -2.2, 0), V(0, 2.35, 0));
-    g.add(divider.obj);
+    const coreBlob = makeIrid(new THREE.SphereGeometry(0.5, 40, 28), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.72, wobble: 0.05 });
+    coreBlob.obj.position.set(0, 0, -0.25);
+    const coreRing = makeRing(0.76, 0.012, C.gold, 0.55);
+    coreRing.obj.position.set(0, 0, -0.25);
+    const coreDot = makeDots([{ p: V(0, 0, 0), size: 1.2, color: C.white, glow: 1.4 }], { opacity: 1 });
+    g.add(coreBlob.obj, coreRing.obj, coreDot.obj);
     const rows = [
       { ic: "top", l: "&top;", r: "1", p: "tt" },
       { ic: "bot", l: "&perp;", r: "0", p: "&mdash;" },
@@ -3305,24 +3407,60 @@
       { ic: "eq", l: "=", r: "=", p: "refl" }
     ];
     const narrow = window.innerWidth < 760;
-    const xoff = narrow ? 1.3 : 2.4;
+    const xoff = narrow ? 1.45 : 2.6;
     const ys = [1.8, 0.9, 0, -0.9, -1.8];
-    labels.push({ text: "logic &nbsp;&rarr;&nbsp; type &nbsp;&middot;&nbsp; proof", p: V(0, 2.6, 0.1), dx: 0, dy: 0, kind: "word" });
+    const cards = [];
+    const positions = [];
     for (let k = 0; k < rows.length; k++) {
       const row = rows[k];
-      const html = '<div class="dc" style="--i:' + k + '">' +
+      const x = k < 5 ? -xoff : xoff;
+      const y = ys[k % 5];
+      positions.push(V(x, y, 0.1));
+      const tilt = k < 5 ? 5 : -5;
+      const html = '<div class="dc" style="--i:' + k + '"><div class="dc-face" style="--tilt:' + tilt + 'deg">' +
         '<span class="dc-ic">' + dictIcons[row.ic] + '</span>' +
         '<div class="dc-main"><span class="dc-l">' + row.l + '</span>' +
         '<span class="dc-ar">&rarr;</span>' +
         '<span class="dc-r' + (row.long ? " long" : "") + '">' + row.r + '</span></div>' +
-        '<div class="dc-proof"><span class="dc-k">proof</span><span class="dc-p">' + row.p + '</span></div></div>';
-      labels.push({ text: html, p: V(k < 5 ? -xoff : xoff, ys[k % 5], 0.1), dx: 0, dy: 0, kind: "dictcard", anchor: "center" });
+        '<div class="dc-proof"><span class="dc-k">proof</span><span class="dc-p">' + row.p + '</span></div></div></div>';
+      const L = { text: html, p: V(x, y, 0.1), dx: 0, dy: 0, kind: "dictcard", anchor: "center" };
+      labels.push(L);
+      cards.push(L);
     }
+    const threadPairs = positions.map((p) => [V(0, 0, -0.2), p.clone()]);
+    const threads = makeLines(threadPairs, { color: C.gold, opacity: 0 });
+    g.add(threads.obj);
+    const sparks = positions.map((p, k) => {
+      const m = makeMarker(k < 5 ? C.ice : C.gold, 0.55);
+      g.add(m.obj);
+      return { m, p };
+    });
+    labels.push({ text: "logic &nbsp;&harr;&nbsp; types", p: V(0, 2.7, 0.1), dx: 0, dy: 0, kind: "word" });
+    labels.push({ text: "&harr;", p: V(0, 0, 0.1), dx: 0, dy: 0, kind: "big", cls: "gold" });
     return {
       labels,
       update(ctx) {
-        soft.setOpacity(ctx.a * ctx.r * 0.07);
-        divider.setOpacity(ctx.a * ctx.r * 0.1);
+        const a = ctx.a * ctx.r;
+        const on = ctx.a > 0.4;
+        for (const L of cards) {
+          if (L.el) {
+            const d = L.el.querySelector(".dc");
+            if (d) d.classList.toggle("in", on);
+          }
+        }
+        soft.setOpacity(a * 0.07);
+        coreBlob.setOpacity(a * 0.7);
+        coreBlob.obj.rotation.y += ctx.dt * 0.15;
+        coreRing.setOpacity(a * (0.35 + 0.2 * (0.5 + 0.5 * Math.sin(ctx.t * 1.2))));
+        coreRing.obj.scale.setScalar(0.9 + 0.1 * Math.sin(ctx.t * 1.2));
+        coreDot.setOpacity(a);
+        threads.setOpacity(a * 0.08);
+        for (let k = 0; k < sparks.length; k++) {
+          const u = fract(ctx.t * 0.12 + k * 0.13);
+          const s = sparks[k];
+          s.m.set(V(0, 0, -0.2).lerp(s.p, u));
+          s.m.setOpacity(a * 0.55 * Math.sin(Math.PI * u));
+        }
       }
     };
   };
@@ -3994,6 +4132,7 @@
         const el = document.createElement("div");
         el.className = "mn-label " + (L.kind || "sym") + (L.big ? " big" : "") + (L.cls ? " " + L.cls : "");
         el.innerHTML = L.text;
+        L.el = el;
         labelsEl.appendChild(el);
         labelEntries.push({ beat: i, L, el });
       }
