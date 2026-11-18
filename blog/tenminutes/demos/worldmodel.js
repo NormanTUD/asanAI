@@ -440,7 +440,7 @@
       txt(c, DE ? "Du: Schwarz · Computer: Weiß" : "You: black · computer: white", pad, 58, { size: 11, color: C.muted });
       var black = 0, white = 0;
       for (var sr = 0; sr < 8; sr++) for (var sc = 0; sc < 8; sc++) { if (game.board[sr][sc] === 1) black++; else if (game.board[sr][sc] === -1) white++; }
-      txt(c, DE ? "Du " + black + " · Computer " + white : "You " + black + " · Computer " + white, W - pad, 58, { align: "right", size: 12, color: C.ink, font: '700 12px "Barlow", "Open Sans", sans-serif' });
+      txt(c, DE ? "Du " + black + " · Computer " + white : "You " + black + " · Computer " + white, narrow ? pad : W - pad, narrow ? 84 : 58, { align: narrow ? "left" : "right", size: 12, color: C.ink, font: '700 12px "Barlow", "Open Sans", sans-serif' });
       accent(c, pad, 72, 40);
       var boardS = Math.min(narrow ? W * .70 : W * .54, H * .62);
       var bx = narrow ? (W - boardS) / 2 + 10 : W * .50 - boardS / 2;
