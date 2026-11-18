@@ -200,7 +200,13 @@
       if (!nextMoves.length) {
         var oppMoves = legal(game.board, -1);
         if (!oppMoves.length) gameEnd();
-        else { gameStatus.textContent = DE ? "Du hast keine Züge. Der Computer ist am Zug." : "You have no moves. The computer is playing."; }
+        else {
+          game.busy = true;
+          gameStatus.textContent = DE ? "Du hast keine Züge. Der Computer ist am Zug." : "You have no moves. The computer is playing.";
+          draw();
+          setTimeout(aiMove, 520);
+          return;
+        }
       } else {
         gameStatus.textContent = DE ? "Du bist am Zug. " + nextMoves.length + " gültige Züge." : "Your turn. " + nextMoves.length + " valid moves.";
       }
