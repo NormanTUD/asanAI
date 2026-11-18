@@ -1827,6 +1827,8 @@
   };
   var codeAttentionCodeSubstep = Object.assign({}, codeAttentionSubstep, {
     body: DE ? "Dasselbe Prinzip gilt für Code: Python, JavaScript, Java, Rust und Go schreiben dieselbe Funktion jeweils anders. Attention kann gelernte Repräsentationen so verschieben, dass ähnliche Rollen über Schreibweisen hinweg näher zusammenrücken. Eine ausdrückliche sprachunabhängige Ebene gibt es nicht; viele Heads achten parallel auf Syntax, Rollen und Positionen." : "The same principle holds for code: Python, JavaScript, Java, Rust, and Go each write the same function differently. Attention can shift learned representations so that similar roles move closer together across spellings. There is no explicit language-independent layer; many heads attend to syntax, roles, and positions in parallel.",
+    context: DE ? "Die linke Seite ist die Oberfläche: Python, JavaScript, Java, Rust und Go schreiben dieselbe Funktion anders. Die rechte Seite ist die gemeinsame Rolle: Funktionsdefinition, Schleife, Sortierung. Attention löscht den Code nicht; sie verschiebt die Repräsentation und lässt Oberflächenunterschiede fallen." : "The left side is the surface: Python, JavaScript, Java, Rust, and Go write the same function differently. The right side is the shared role: function definition, loop, sorting. Attention does not delete the code; it shifts the representation and lets surface differences drop.",
+    deep: DE ? "Ein Modell lernt ähnliche Richtungen für ähnliche Rollen, weil dieselben Kontexte in vielen Sprachen auftreten. Das ist eine gelernte Annäherung, keine Garantie; seltene Sprachen und exotische Syntax bleiben benachteiligt." : "A model learns similar directions for similar roles because the same contexts occur in many languages. That is a learned approximation, not a guarantee; low-resource languages and unusual syntax remain disadvantaged.",
     demoState: { scene: "codesemantic", kind: "code" }
   });
   var codeAttentionStep = {
@@ -2181,7 +2183,7 @@
 
   var qkvGraph = Object.assign({}, qkvArcs, {
     kicker: DE ? "Graph" : "Graph",
-    title: DE ? "Attention ist ein vollverbundener Graph" : "Attention is a fully connected graph",
+    title: DE ? "Attention als vollverbundener Graph (ohne Causal Mask)" : "Attention as a fully connected graph (without causal mask)",
     body: DE
       ? "In dieser Darstellung ohne Causal Mask kann jedes Token auf jedes andere schauen: Die Attention-Matrix hat keine fehlenden Einträge. In einem GPT-Decoder maskiert die Causal Mask die Zukunft; dort sieht ein Token nur die Vergangenheit. Im Kreis siehst du alle Token; die Kanten von der Query „es“ zu jedem anderen Token sind die Softmax-Gewichte. Dick und hell heißt viel, dünn und blass heißt wenig. Fahre mit der Maus über eine Kante oder ein Token: Die Demo zeigt die Verbindung und den Prozentwert. Gezeigt ist eine Query-Zeile; für jede Query gibt es eine eigene Verteilung."
       : "In this view without a causal mask, every token can attend to every other token: the attention matrix has no missing entries. In a GPT decoder the causal mask hides the future; there a token sees only the past. You see all tokens in a circle; the edges from the query “it” to every other token are the softmax weights. Thick and bright means a lot, thin and pale means little. Hover over an edge or a token: the demo shows the connection and the percentage. This is one query row; every query has its own distribution.",

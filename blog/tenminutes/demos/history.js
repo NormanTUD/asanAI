@@ -17,7 +17,7 @@
         year: "~300 v. Chr.", label: "Antike", title: "Tafeln und Zählbretter",
         text: "Die Salamis-Tafel gilt als eines der ältesten erhaltenen Zählbretter, etwa 300 v. Chr. Der Abakus macht Stellenwerte körperlich: Steine auf Linien, nicht Ziffern auf Papier. Rechnen wird ein Verfahren mit Regeln.",
         images: [{ src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, das älteste erhaltene Zählbrett", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
-        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }]
+        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
       },
       {
         year: "Antike–1305", label: "Logik", title: "Denken als Regelwerk",
@@ -29,7 +29,7 @@
         year: "1673–1854", label: "Maschinen", title: "Rechnen wird mechanisch",
         text: "Leibniz beginnt 1673 mit einer Rechenmaschine für alle vier Grundrechenarten; fertig wird sie 1694, arbeitet aber unzuverlässig. Er träumt von einer universalen Zeichensprache. Babbage entwirft die Analytical Engine. Boole schreibt Logik als Algebra. Mechanik und formale Regeln rücken zusammen.",
         images: [{ src: "../Leibnizrechenmaschine.jpg", alt: "Nachbau der Leibniz-Rechenmaschine", cap: "Leibniz-Rechenmaschine, Nachbau. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }],
-        sources: [{ label: "Eremeev (2016), Leibniz Rechenmaschine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }]
+        sources: [{ label: "Eremeev (2016), Leibniz Rechenmaschine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }, { label: "Wikipedia: Stepped reckoner", url: "https://en.wikipedia.org/wiki/Stepped_reckoner" }]
       },
       {
         year: "1943–1958", label: "Neuron", title: "Das Neuron als Recheneinheit",
@@ -93,7 +93,7 @@
         year: "~300 BCE", label: "Antiquity", title: "Tablets and counting boards",
         text: "The Salamis tablet is regarded as one of the oldest surviving counting boards, from about 300 BCE. The abacus makes place value physical: stones on lines, not digits on paper. Calculation becomes a procedure with rules.",
         images: [{ src: "../salamic_table.jpg", alt: "The Salamis tablet, the oldest surviving counting board", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
-        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }]
+        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
       },
       {
         year: "Antiquity–1305", label: "Logic", title: "Thought as a rulebook",
