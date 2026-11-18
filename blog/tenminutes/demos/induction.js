@@ -7,7 +7,7 @@
   if (!document.getElementById("ls-induction-style")) {
     var st = document.createElement("style");
     st.id = "ls-induction-style";
-    st.textContent = '.ls-ind-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-ind-scene .ls-ind-canvas{display:block;width:100%;height:100%;min-height:360px}.ls-ind-table-btn{position:absolute;right:10px;top:10px;z-index:4;font-size:10px!important;min-height:26px!important}.ls-ind-table{position:absolute;inset:0;z-index:5;display:none;overflow:auto;padding:12px 13px 16px;background:var(--ls-paper,#fff);color:var(--ls-soft,#2c464d)}.ls-ind-table.is-open{display:block}.ls-ind-table-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid var(--ls-line,#dbe3e0);padding-bottom:7px;margin-bottom:8px}.ls-ind-table-head b{display:block;font:700 16px/1.15 "Barlow","Open Sans",sans-serif;color:var(--ls-petrol,#004b6f)}.ls-ind-table-head span{display:block;font:10px/1.4 "Open Sans",sans-serif;color:var(--ls-muted,#627476);margin-top:2px}.ls-ind-table h4{margin:11px 0 4px;font:700 11px/1.2 "Barlow","Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--ls-petrol,#004b6f)}.ls-ind-table p{margin:4px 0 0;font:10px/1.45 "Open Sans",sans-serif;color:var(--ls-muted,#627476)}.ls-ind-table table{width:100%;border-collapse:collapse;font:10px/1.35 "Open Sans",sans-serif;font-variant-numeric:tabular-nums}.ls-ind-table th,.ls-ind-table td{border:1px solid var(--ls-line,#dbe3e0);padding:4px 5px;text-align:left;vertical-align:top}.ls-ind-table th{background:var(--ls-paper-2,#f7f9f8);font:700 9px/1.3 "Open Sans",sans-serif;color:var(--ls-petrol,#004b6f)}.ls-ind-table tr.is-copy td{background:rgba(159,151,0,.08)}.ls-ind-table .ls-ind-matrix-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.ls-ind-table .ls-ind-matrix-row table{font-size:9px}.ls-ind-table .ls-ind-note{border-left:3px solid var(--ls-green,#63a44b);background:rgba(99,164,75,.07);padding:6px 8px;margin-top:8px;color:var(--ls-soft,#2c464d)}@media(max-width:640px){.ls-ind-table{padding:9px}.ls-ind-table .ls-ind-matrix-row{grid-template-columns:1fr}.ls-ind-table th,.ls-ind-table td{padding:3px 4px;font-size:9px}}';
+    st.textContent = '.ls-ind-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-ind-scene .ls-ind-canvas{display:block;width:100%;height:100%;min-height:360px}';
     document.head.appendChild(st);
   }
 
@@ -20,17 +20,6 @@
     canvas.className = "ls-ind-canvas";
     canvas.setAttribute("role", "img");
     host.appendChild(canvas);
-    var tableBtn = document.createElement("button");
-    tableBtn.type = "button";
-    tableBtn.className = "ls-btn ls-btn--ghost ls-btn--tiny ls-ind-table-btn";
-    tableBtn.textContent = DE ? "Tabelle" : "Table";
-    tableBtn.setAttribute("aria-expanded", "false");
-    host.appendChild(tableBtn);
-    var tablePanel = document.createElement("div");
-    tablePanel.className = "ls-ind-table";
-    tablePanel.setAttribute("role", "region");
-    tablePanel.setAttribute("aria-label", DE ? "Induktionskopf als Tabelle" : "Induction head as a table");
-    host.appendChild(tablePanel);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var W = 1, H = 1;
@@ -878,69 +867,6 @@
         pad, y1 + 49, { size: 8, color: C.muted });
     }
 
-    function matrixTable(title, rows, numText) {
-      var body = rows.map(function (row) {
-        return "<tr>" + row.map(function (v) { return "<td>" + numText(v) + "</td>"; }).join("") + "</tr>";
-      }).join("");
-      return "<table><thead><tr><th colspan=\"3\">" + title + "</th></tr></thead><tbody>" + body + "</tbody></table>";
-    }
-    function renderTables() {
-      function numText(value) { return String(value).replace(/\./g, DE ? "," : "."); }
-      tableBtn.textContent = DE ? "Tabelle" : "Table";
-      var rows = [
-        [0, "A", "A", "31", "[0.2, −0.1, 0.4]", DE ? "erstes A" : "first A"],
-        [1, "B", "A", "47", "[−0.3, 0.5, 0.1]", DE ? "B nach A" : "B after A"],
-        [2, "C", "B", "52", "[0.1, 0.2, −0.2]", DE ? "Fülltoken" : "filler token"],
-        [3, "A", "C", "31", "[0.2, −0.1, 0.4]", DE ? "früheres A" : "earlier A"],
-        [4, "B", "A", "47", "[−0.3, 0.5, 0.1]", DE ? "kopiertes B" : "copied B"],
-        [5, "C", "B", "52", "[0.1, 0.2, −0.2]", DE ? "Fülltoken" : "filler token"],
-        [6, "A", "C", "31", "[0.2, −0.1, 0.4]", DE ? "aktuelles A" : "current A"]
-      ];
-      var attn = [
-        [0, "A", "0.1", "1 %"],
-        [1, "B", "1.4", "6 %"],
-        [2, "C", "0.2", "1 %"],
-        [3, "A", "0.7", "3 %"],
-        [4, "B", "3.9", "82 %"],
-        [5, "C", "0.2", "1 %"],
-        [6, "A", "1.1", "6 %"]
-      ];
-      var tokenRows = rows.map(function (r) {
-        var hot = r[0] === 4 || r[0] === 6;
-        return '<tr' + (hot ? ' class="is-copy"' : '') + '><td>' + r[0] + '</td><td><b>' + r[1] + '</b></td><td>' + r[2] + '</td><td>' + r[3] + '</td><td><code>' + numText(r[4]) + '</code></td><td>' + r[5] + '</td></tr>';
-      }).join("");
-      var attnRows = attn.map(function (r) {
-        var hot = r[0] === 4;
-        return '<tr' + (hot ? ' class="is-copy"' : '') + '><td>' + r[0] + '</td><td><b>' + r[1] + '</b></td><td>' + numText(r[2]) + '</td><td>' + numText(r[3]) + '</td><td>' + (hot ? (DE ? "OV kopiert B" : "OV copies B") : "") + '</td></tr>';
-      }).join("");
-      tablePanel.innerHTML =
-        '<div class="ls-ind-table-head"><div><b>' + (DE ? "Der Induktionskopf als Tabelle" : "The induction head as a table") + '</b><span>' + (DE ? "Zahlen sind illustrativ. Entscheidend ist der Mechanismus, nicht der exakte Wert." : "Numbers are illustrative. The mechanism matters, not the exact value.") + '</span></div><button type="button" class="ls-btn ls-btn--tiny ls-ind-table-close" aria-label="' + (DE ? "Schließen" : "Close") + '">×</button></div>' +
-        '<h4>' + (DE ? "1. Tokens, IDs und Embedding-Zeilen" : "1. Tokens, IDs, and embedding rows") + '</h4>' +
-        '<table><thead><tr><th>' + (DE ? "Position" : "Position") + '</th><th>' + (DE ? "Token" : "Token") + '</th><th>' + (DE ? "Vorgänger" : "Predecessor") + '</th><th>ID</th><th>' + (DE ? "Vektor (3 von d)" : "Vector (3 of d)") + '</th><th>' + (DE ? "Rolle" : "Role") + '</th></tr></thead><tbody>' + tokenRows + '</tbody></table>' +
-        '<p>' + (DE ? "Die ID ist ein Index in die gelernte Embedding-Tabelle. Das Modell referenziert kein Wort als String, sondern holt die Zeile E[ID]. Dieselbe ID an anderer Position bekommt zusätzlich eine Positionsinformation." : "The ID is an index into the learned embedding table. The model does not reference a word as a string; it fetches row E[ID]. The same ID at another position also gets positional information.") + '</p>' +
-        '<h4>' + (DE ? "2. Attention-Zeile für das aktuelle A" : "2. Attention row for the current A") + '</h4>' +
-        '<table><thead><tr><th>' + (DE ? "Position" : "Position") + '</th><th>' + (DE ? "Token" : "Token") + '</th><th>q·k</th><th>α</th><th>' + (DE ? "Rolle" : "Role") + '</th></tr></thead><tbody>' + attnRows + '</tbody></table>' +
-        '<p>' + (DE ? "QK wählt die Quelle, OV schreibt den Value. Die hohe α bei B heißt nicht „B ist wahr“, sondern „B ist die Stelle, die der gelernte Schaltkreis kopiert“." : "QK selects the source, OV writes the value. High α at B does not mean “B is true”; it means “B is the place the learned circuit copies”.") + '</p>' +
-        '<h4>' + (DE ? "3. Gelernte Matrizen (illustrativ)" : "3. Learned matrices (illustrative)") + '</h4>' +
-        '<div class="ls-ind-matrix-row">' + matrixTable("W_Q^T W_K", [[0.8, -0.2, 0.1], [0.3, 0.9, -0.4], [-0.1, 0.2, 0.7]], numText) + matrixTable("W_O W_V", [[0.6, 0.1, -0.2], [0.2, 0.7, 0.3], [-0.1, 0.2, 0.8]], numText) + '</div>' +
-        '<p>' + (DE ? "QK entscheidet, wohin geschaut wird; OV entscheidet, was ankommt. Die Matrizen sind gelernt; A und B sind nur Platzhalter für Tokens. Deshalb funktioniert dieselbe Regel auch mit anderen Wörtern." : "QK decides where to look; OV decides what arrives. The matrices are learned; A and B are only placeholders for tokens. That is why the same rule works with other words.") + '</p>' +
-        '<p class="ls-ind-note">' + (DE ? "Wörter sind keine „höheren Zahlen“ mit Bedeutung. Eine ID ist ein Index; die Bedeutung steckt in der gelernten Vektorzeile und im Kontext." : "Words are not “higher numbers” with meaning. An ID is an index; meaning lives in the learned vector row and in the context.") + '</p>';
-      tablePanel.querySelector(".ls-ind-table-close").addEventListener("click", toggleTable);
-    }
-    function closeTable() {
-      tablePanel.classList.remove("is-open");
-      tableBtn.setAttribute("aria-expanded", "false");
-      tableBtn.textContent = DE ? "Tabelle" : "Table";
-    }
-    function toggleTable() {
-      var open = !tablePanel.classList.contains("is-open");
-      if (open && !tablePanel.innerHTML) renderTables();
-      tablePanel.classList.toggle("is-open", open);
-      tableBtn.setAttribute("aria-expanded", open ? "true" : "false");
-      tableBtn.textContent = open ? (DE ? "Zurück" : "Back") : (DE ? "Tabelle" : "Table");
-    }
-    tableBtn.addEventListener("click", toggleTable);
-
     function draw() {
       if (!W || !H) return;
       drawStage(ctx);
@@ -1054,7 +980,6 @@
 
     return {
       update: function (s) {
-        if (s && s.mode && s.mode !== mode) closeTable();
         if (s && s.mode) setMode(s.mode);
       },
       resize: fit,

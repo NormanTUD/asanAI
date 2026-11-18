@@ -2284,6 +2284,24 @@
     { label: "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models", url: "https://arxiv.org/abs/2405.00208", why: { de: "Mechanismen von Previous-Token- und Induktionsköpfen.", en: "Mechanisms of previous-token and induction heads." } }
   ];
 
+  var inductionMatrix = {
+    kicker: DE ? "Attention-Matrix" : "Attention matrix",
+    title: DE ? "Attention-Gewichte: Wo liest A?" : "Attention weights: where does A read?",
+    body: DE
+      ? "Das aktuelle A soll das nächste Token vorhersagen. Woher weiß es, dass B kommt? Ein früheres A steht an Position 3. Direkt danach kam B. Der Induktionskopf sucht diese frühere Stelle und kopiert das B nach vorn.\n\nDie Tabelle zeigt, wie er das macht: Zeile 6 fragt mit A. Spalte 4 trägt den Vorgänger A. Deshalb landet die Aufmerksamkeit bei B an Position 4. Klicke eine Zeile, um die Perspektive zu wechseln."
+      : "The current A has to predict the next token. How does it know that B comes next? An earlier A sits at position 3. Right after it came B. The induction head finds that earlier place and copies B forward.\n\nThe table shows how: row 6 asks with A. Column 4 carries the predecessor A. That is why attention lands on B at position 4. Click a row to change the perspective.",
+    watch: "",
+    demoState: { scene: "inductionmatrix", row: 6 },
+    context: DE ? "Die Tabelle zeigt Attention-Gewichte: Zeile fragt, Spalte antwortet. Hohe Werte sind gelernte Gewichte, keine statistische Korrelation." : "The table shows attention weights: row asks, column answers. High values are learned weights, not statistical correlation.",
+    deep: DE ? "Der Previous-Token-Head schreibt den Vorgänger in den Key. QK vergleicht Query und Key; OV kopiert den Value der getroffenen Spalte. So wird aus einem Muster eine Vorhersage." : "The previous-token head writes the predecessor into the key. QK compares query and key; OV copies the value of the matched column. That is how a pattern becomes a prediction.",
+    boxes: [
+      box("ix-1", DE ? "Schritt 1" : "Step 1", DE ? "Vorgänger merken" : "Remember the predecessor", DE ? "Vor B an Position 4 stand A. Der Previous-Token-Head schreibt dieses A in den Key von Position 4." : "Before B at position 4 stood A. The previous-token head writes that A into the key at position 4."),
+      box("ix-2", DE ? "Schritt 2" : "Step 2", DE ? "Query trifft Key" : "Query meets key", DE ? "Das aktuelle A fragt mit A. Position 4 trägt A als Vorgänger. Deshalb trifft die Query dort." : "The current A asks with A. Position 4 carries A as its predecessor. That is why the query lands there."),
+      box("ix-3", DE ? "Schritt 3" : "Step 3", DE ? "B kopieren" : "Copy B", DE ? "Der OV-Schaltkreis kopiert den Value von B an die neue Stelle. B wird wahrscheinlicher. Die Prozentwerte sind illustrativ." : "The OV circuit copies B's value to the new position. B becomes more likely. The percentages are illustrative.")
+    ],
+    sources: inductionSequence.sources
+  };
+
   var inductionCopy = {
     kicker: DE ? "Mechanik" : "Mechanics",
     title: DE ? "Wie wird kopiert?" : "How is copying done?",
@@ -2356,7 +2374,7 @@
   var inductionStep = {
     kicker: DE ? "In-Context" : "In-context",
     title: DE ? "Induktionsköpfe" : "Induction heads",
-    substeps: [inductionSequence, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence]
+    substeps: [inductionSequence, inductionMatrix, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence]
   };
 
   var spacetimeSpace = {
