@@ -11,23 +11,22 @@ if (!in_array($scene, $scenes, true)) $scene = 'embedding';
 $lang = (isset($_GET['lang']) && $_GET['lang'] === 'de') ? 'de' : 'en';
 $deps = [
 	'media' => ['phone', 'code'],
-	'attentionlab' => ['attention', 'codenoise'],
 ];
 $load = array_values(array_unique(array_merge([$scene], $deps[$scene] ?? [])));
 $labels = [
 	'embedding' => 'Embedding', 'phone' => 'Telefon', 'code' => 'Code', 'media' => 'Medien',
-	'book' => 'Buch', 'compress' => 'Komprimierung', 'loop' => 'Schleife',
+	'loop' => 'Schleife',
 	'tokenize' => 'Tokenize', 'position' => 'Position', 'attention' => 'Attention',
-	'attentionlab' => 'Attention-Lab', 'codesemantic' => 'Code + Semantik', 'noise' => 'Rauschen',
+	'codesemantic' => 'Code + Semantik', 'noise' => 'Rauschen',
 	'ffn' => 'FFN', 'residual' => 'Residual', 'meadow' => 'Wiese', 'softmax' => 'Softmax',
 	'manifold' => 'Manifold', 'gauss' => 'Gauss', 'unembed' => 'Unembedding', 'animals' => 'Tiere',
 	'model' => 'Modell', 'blocks' => 'Bausteine', 'highdim' => 'Hochdimensional', 'mlp' => 'MLP',
-	'backprop' => 'Backprop', 'trajectories' => 'Trajektorien', 'stack' => 'Stack',
+	'stack' => 'Stack',
 	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'agents' => 'Agent',
 	'gradient' => 'Gradient', 'riskmap' => 'AI and society',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room', 'codenoise' => 'Code-Rauschen',
 	'consciousness' => 'Bewusstsein',
-	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz',
+	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz', 'takeaway' => 'Takeaway', 'weekday' => 'Wochentage', 'mindintro' => 'Bewusstseinsfrage', 'roadmap' => 'Roadmap', 'spacetime' => 'Raum und Zeit', 'worldmodel' => 'Weltmodell',
 ];
 function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 ?>

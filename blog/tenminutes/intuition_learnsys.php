@@ -25,7 +25,7 @@ $hideExpandAll = is_file(__DIR__ . '/.hide-expand-all');
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
+	<meta name="description" content="A 31-day interactive introduction to how large language models work: data, tokens, embeddings, attention, training, agents, society, and consciousness.">
 	<meta name="theme-color" content="#ffffff">
 	<link rel="preload" as="image" href="opera.jpg">
 	<title>One Word at a Time | Ten Minutes</title>

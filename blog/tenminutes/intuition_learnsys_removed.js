@@ -1,7 +1,8 @@
 /*
  * Slides removed from the visible LearnSys deck.
  * This file is not loaded by intuition_learnsys.php; it keeps the content
- * recoverable without showing the slides again.
+ * recoverable without showing the slides again. Its demo assets live in
+ * demos/archive/.
  */
 (function () {
   "use strict";

@@ -662,40 +662,6 @@
     }
   ];
 
-  var softmaxSteps = DE ? [
-    {
-      kicker: "Softmax",
-      title: "Von Logits zu einer Verteilung",
-      body: "Illustrative Scores für zwei Prompts. Links steht der rohe Logit, rechts das, was Softmax daraus macht. Wechsle den Kontext und beobachte, wie sich die ganze Verteilung verschiebt. Die Temperatur entscheidet, wie scharf der Gewinner bevorzugt wird.",
-      watch: "Drücke Weiter für den zweiten Prompt. Fahre über ein Token und ändere die Temperatur. Was ändert sich, was bleibt?",
-      demoState: { scene: "softmax" },
-      context: "Softmax erzeugt nicht die Reihenfolge; die Skalarprodukte tun das. Es macht aus Scores eine Verteilung, die zu eins summiert.",
-      deep: "Warum exp und nicht Logit durch Summe? Logits können negativ sein. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Wahrscheinlichkeiten. Der absolute Offset ist willkürlich; Softmax hängt nur von Unterschieden ab.",
-      boxes: [
-        box("sm-1", "Mathematik", "Die Formel", "$p_i = \\exp(z_i) / \\sum_j \\exp(z_j)$. Vorher wird oft das Maximum abgezogen, damit die Exponentialfunktion stabil bleibt."),
-        box("sm-2", "Temperatur", "Was macht T?", "$p_i \\propto \\exp(z_i/T)$. $T < 1$ schärft, $T > 1$ flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich."),
-        box("sm-mis", "Grenze", "Erzeugt Softmax das Ranking?", "Nein. Die Reihenfolge kommt aus den Logits. Softmax macht aus Scores eine positive Verteilung, die zu 1 summiert; Temperatur ändert die Schärfe, nicht die Reihenfolge.")
-      ],
-      sources: [{ label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Softmax, Logits und Temperatur.", en: "Softmax, logits, and temperature." } }]
-    }
-  ] : [
-    {
-      kicker: "Softmax",
-      title: "From logits to a distribution",
-      body: "Illustrative scores for two prompts. The left side is the raw logit, the right side is what softmax makes of it. Switch the context and watch the whole distribution shift. Temperature decides how sharply the winner is favoured.",
-      watch: "Press Next for the second prompt. Hover a token and change the temperature. What changes, what stays?",
-      demoState: { scene: "softmax" },
-      context: "Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one.",
-      deep: "Why exp and not logit divided by the sum? Logits can be negative. The exponential makes every value positive and preserves the order; dividing by the sum gives probabilities. The absolute offset is arbitrary; softmax depends only on differences.",
-      boxes: [
-        box("sm-1", "Mathematics", "The formula", "$p_i = \\exp(z_i) / \\sum_j \\exp(z_j)$. The maximum is often subtracted first so the exponential stays stable."),
-        box("sm-2", "Temperature", "What does T do?", "$p_i \\propto \\exp(z_i/T)$. $T < 1$ sharpens, $T > 1$ flattens. The ranking stays, the mass shifts."),
-        box("sm-mis", "Limit", "Does softmax create the ranking?", "No. The order comes from the logits. Softmax turns scores into a positive distribution that sums to 1; temperature changes the sharpness, not the order.")
-      ],
-      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/", why: { de: "Interaktive Quelle für die GPT-2-Logits und Softmax-Demo.", en: "Interactive source for the GPT-2 logits and softmax demo." } }]
-    }
-  ];
-
   var insideSteps = DE ? [
 
     {
@@ -943,7 +909,7 @@
       kicker: "Aktivierung",
       title: "Was sind neuronale Netze?",
       body: "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix.",
-      watch: "Klicke die Funktionen. Wo ist der Knick, wo ist die Kurve glatt?",
+      watch: "",
       demoState: { scene: "activation" },
       context: "Ohne Aktivierung ist ein tiefes Netz nur eine andere Matrix. Die Aktivierung nach jeder Schicht bricht die lineare Komposition.",
       deep: "ReLU ist nicht injektiv: Alle negativen Eingaben landen bei 0. Dieser Informationsverlust kann beim Entwirren helfen. Sigmoid und tanh sind für endliche Eingaben umkehrbar; GELU ist glatt, aber nicht monoton und daher nicht umkehrbar. Sättigung und niedrige Präzision können auch sie zu einer Treppe machen.",
@@ -961,7 +927,7 @@
       kicker: "Activation",
       title: "What are neural networks?",
       body: "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix.",
-      watch: "Click the functions. Where is the bend, where is the curve smooth?",
+      watch: "",
       demoState: { scene: "activation" },
       context: "Without an activation, a deep network is just another matrix. The activation after each layer breaks the linear composition.",
       deep: "ReLU is not injective: all negative inputs land at 0. That loss of information can help untangle. Sigmoid and tanh are invertible for finite inputs; GELU is smooth but not monotonic and therefore not invertible. Saturation and low precision can turn even a smooth activation into a staircase.",
@@ -973,58 +939,6 @@
         box("act-4", "Theorem", "Arbitrarily close?", "With enough neurons and a nonlinear activation, a network can approximate any continuous function on a bounded region arbitrarily closely. Depth helps because it uses the same number of neurons more efficiently.")
       ],
       sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }]
-    }
-  ];
-
-  var languageSteps = DE ? [
-    {
-      kicker: "Daten",
-      title: "Woher kommen die Daten?",
-      body: "Daten sind nicht exakt: Menschen beschreiben dieselbe Situation unterschiedlich, manchmal widersprüchlich. Über viele Beschreibungen hofft man, dass das reale Ergebnis durchscheint, wie bei Gauß. Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn, und davon enorm viel. Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen zum ersten Mal mehr als ein Zettabyte digitale Daten zur Verfügung, also 10²¹ Byte. Diesen Text kuratiert man im besten Fall: Wikipedia ist schon gut gepflegt, peer-reviewte wissenschaftliche Paper sind noch besser. Auch sie können falsch sein, nur seltener. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Die Idee ist, dass man über die Masse im Schnitt an die realen Daten herankommt: „Nil“ und „Ägypten“ liest man häufiger zusammen als „Nil“ und „Paraguay“, auch wenn im Internet jemand das Gegenteil behauptet. Im Plot unten liegen viele Beschreibungen um dieselbe Wahrheit; die meisten sind nah, ein falscher Satz ist weit weg. Klicke die Sprachen und vergleiche.",
-      watch: "Klicke die Sprachen. Was bleibt gleich, was ändert sich?",
-      demoState: { scene: "langdata" },
-      context: "Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie teurer machen (Petrov et al., 2023). Die Datenmischung von GPT-3 war 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia; die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2).",
-      deep: "Daten sind eine Designentscheidung. Filter, Dedupe und Decontamination entscheiden mit, was das Modell sieht (Lee et al., 2021). Seltene Sprachen und seltene Themen bleiben benachteiligt, auch wenn das Modell sie grundsätzlich verarbeiten kann. Die Menge hilft, aber sie garantiert keine Wahrheit: Ein häufiger Irrtum bleibt ein Irrtum. Im Schnitt nähert sich das Modell den realen Häufigkeiten an.",
-      boxes: [
-        box("lang-1", "Technik", "Warum mehrere Sprachen?", "Weil Text aus vielen Sprachen kommt. Ein multilinguales Modell teilt die Gewichte; gemeinsame Muster können zwischen Sprachen übertragen werden. Seltene Sprachen bleiben trotzdem benachteiligt, weil sie im Korpus seltener sind."),
-        box("lang-2", "Grenze", "Was verrät die Mischung nicht?", "Nicht, wie gut eine Sprache gelernt wird. Menge, Qualität und Tokenizer zählen zusammen. Eine große Menge schlechter Daten ist kein Vorteil."),
-        box("lang-3", "Daten", "Was wird gefiltert?", "Qualität, Duplikate und Benchmark-Leaks. Dedupe verhindert Auswendiglernen; Decontamination verhindert, dass Testfragen im Training landen."),
-        box("lang-4", "Daten", "Wie viel Daten?", "Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen mehr als ein Zettabyte digitale Daten zur Verfügung: 10²¹ Byte. Das ist die Größenordnung, aus der heutige Modelle schöpfen (Cisco, 2016)."),
-        box("lang-5", "Daten", "Kuration und Fehler", "Wikipedia ist gut gepflegt; peer-reviewte Paper sind oft besser geprüft, aber auch sie können falsch sein. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über die Masse nähert sich das Modell den realen Häufigkeiten an: Nil und Ägypten kommen häufiger zusammen vor als Nil und Paraguay."),
-        box("lang-7", "Daten", "Widersprüchliche Beschreibungen", "Menschen beschreiben dieselbe Situation oft anders, manchmal gegensätzlich. Ein einzelner Text kann irren; über viele Texte mitteln sich zufällige Fehler, und das reale Ergebnis scheint durch. Das ist dieselbe Hoffnung wie bei Gauß' verrauschten Beobachtungen."),
-        box("lang-6", "Daten", "Die Mischung von GPT-3", "GPT-3 nannte 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia; die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2).")
-      ],
-      sources: [
-        { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
-        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
-        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } },
-        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } }
-      ]
-    }
-  ] : [
-    {
-      kicker: "Data",
-      title: "Where does the data come from?",
-      body: "Data are not exact: people describe the same situation differently, sometimes contradictorily. Across many descriptions one hopes that the real result shines through, as with Gauss. A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense, and an enormous amount of it. Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available, that is 10²¹ bytes. In the best case this text is curated: Wikipedia is already well maintained, peer-reviewed scientific papers are even better. They can be wrong too, only less often. People make mistakes, measurements have errors, people lie. The idea is that through sheer mass the model approaches the real data on average: “Nile” and “Egypt” occur together more often than “Nile” and “Paraguay”, even if someone on the internet claims otherwise. In the plot below, many descriptions sit around the same truth; most are near, one false sentence is far away. Click the languages and compare.",
-      watch: "Click the languages. What stays the same, what changes?",
-      demoState: { scene: "langdata" },
-      context: "The script changes the tokens, not the task. Some languages need more tokens for the same content; the tokenizer can make them more expensive (Petrov et al., 2023). GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia; the values are rounded (Brown et al., 2020, Table 2.2).",
-      deep: "Data is a design decision. Filtering, deduplication, and decontamination decide what the model sees (Lee et al., 2021). Rare languages and rare topics stay disadvantaged even when the model can process them in principle. Quantity helps, but it does not guarantee truth: a frequent error remains an error. On average the model approaches the real frequencies.",
-      boxes: [
-        box("lang-1", "Technique", "Why several languages?", "Because text comes in many languages. A multilingual model shares its weights; shared patterns can transfer between languages. Rare languages still stay disadvantaged because they are rarer in the corpus."),
-        box("lang-2", "Limit", "What does the mix not tell you?", "Not how well a language is learned. Amount, quality, and tokenizer act together. A large amount of bad data is no advantage."),
-        box("lang-3", "Data", "What is filtered?", "Quality, duplicates, and benchmark leaks. Dedupe prevents memorisation; decontamination prevents test questions from entering the training data."),
-        box("lang-4", "Data", "How much data?", "Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available: 10²¹ bytes. That is the scale from which today's models draw (Cisco, 2016)."),
-        box("lang-5", "Data", "Curation and errors", "Wikipedia is well maintained; peer-reviewed papers are often checked better, but they can be wrong too. People make mistakes, measurements have errors, people lie. Through mass the model approaches the real frequencies: Nile and Egypt occur together more often than Nile and Paraguay."),
-        box("lang-7", "Data", "Contradictory descriptions", "People often describe the same situation differently, sometimes in opposite ways. A single text can be wrong; across many texts random errors average out and the real result shines through. It is the same hope as with Gauss's noisy observations."),
-        box("lang-6", "Data", "The GPT-3 mix", "GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia; the values are rounded (Brown et al., 2020, Table 2.2).")
-      ],
-      sources: [
-        { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
-        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
-        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } },
-        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } }
-      ]
     }
   ];
 
@@ -2120,10 +2034,29 @@
     ]
   };
 
+  var takeawayClosing = {
+    kicker: DE ? "Mitnehmen" : "Takeaway",
+    title: DE ? "Was du mitnimmst" : "What you take with you",
+    body: DE
+      ? "Von den Kerben im Wolfsknochen über Gauß' Ceres-Bahn bis zum Chatfenster: Jede Station macht eine Darstellung nutzbar, die Vorhersage trägt. Beim LLM sind das Tokens, gelernte Vektoren und Attention.\n\nDrei Bewegungen fassen das Deck zusammen: Aus Zeichen wird Bedeutung. Aus Bedeutung wird Kontext. Aus Kontext wird Wirkung. Der rote Faden bleibt derselbe: Das Modell optimiert eine Wahrscheinlichkeit, nicht die Wahrheit.\n\nOb es erlebt, bleibt offen. Was du daraus machst, bleibt deine Entscheidung."
+      : "From notches in a wolf bone through Gauss's Ceres orbit to a chat window: each station makes a representation usable that carries prediction. In an LLM those are tokens, learned vectors, and attention.\n\nThree moves sum up the deck: signs become meaning. Meaning becomes context. Context becomes impact. The through-line stays the same: the model optimises a probability, not the truth.\n\nWhether it experiences anything stays open. What you make of it stays your decision.",
+    watch: "",
+    demoState: { scene: "takeaway" },
+    context: DE ? "Die drei Karten sind keine neue Liste von Themen. Sie sind die eine Bewegung, die von Daten zu Bedeutung, von Bedeutung zu Kontext und von Kontext zu Wirkung führt." : "The three cards are not another topic list. They are the single movement from data to meaning, from meaning to context, and from context to impact.",
+    deep: DE ? "Die Prüffragen am Ende passen auf jede dieser Ebenen: Daten, Aufgabe, Evidenz, Verantwortung. Sie machen aus einem Eindruck eine Behauptung, die man prüfen oder verwerfen kann." : "The closing questions apply at every level: data, task, evidence, accountability. They turn an impression into a claim that can be tested or rejected.",
+    boxes: [],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Kette aus Attention und Vorhersage.", en: "The transformer as a chain of attention and prediction." } },
+      { label: "Bender et al. (2021), On the Dangers of Stochastic Parrots", url: "https://doi.org/10.1145/3442188.3445922", why: { de: "Sprachmodelle als Musterfortsetzung, nicht als Wahrheitsgarantie.", en: "Language models as pattern continuation, not a guarantee of truth." } },
+      { label: "Chalmers (1995), Facing Up to the Problem of Consciousness", url: "https://consc.net/papers/facing.pdf", why: { de: "Funktion erklärt nicht automatisch Erleben.", en: "Function does not automatically explain experience." } },
+      { label: "Southgate (2026), AI Consciousness — The Unfinishable Map", url: "https://unfinishablemap.org/topics/ai-consciousness/", why: { de: "Die offene Frage nach Typen von KI-Bewusstsein.", en: "The open question about types of AI consciousness." } }
+    ]
+  };
+
   var consciousnessStep = {
     kicker: DE ? "Bewusstsein" : "Consciousness",
     title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
-    substeps: [aiConsciousnessIntro, consciousnessMain]
+    substeps: [aiConsciousnessIntro, consciousnessMain, takeawayClosing]
   };
 
   var qkvSimplex = {
