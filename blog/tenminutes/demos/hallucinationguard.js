@@ -63,7 +63,6 @@
         htmlSteps += '<div class="ls-hg-step is-check"><b>✓</b><span>' + (rag ? (DE ? "Gegenprüfung: Steht 330 in S1? Ja. Antwort bleibt gedeckt." : "Check: does S1 say 330? Yes. The answer stays grounded.") : (DE ? "Gegenprüfung: Keine Quelle. Also keine Behauptung." : "Check: no source. So no claim.")) + '</span></div>';
       }
       stepsEl.innerHTML = htmlSteps;
-      stepsEl.hidden = !cot && !verify;
       answerEl.textContent = answer;
       citeEl.textContent = cite;
       riskVal.textContent = "";
@@ -92,6 +91,22 @@
     render();
     return {
       update: function () {},
+      next: function () {
+        if (!rag) rag = true;
+        else if (!cot) cot = true;
+        else if (!verify) verify = true;
+        else return false;
+        render();
+        return true;
+      },
+      prev: function () {
+        if (verify) verify = false;
+        else if (cot) cot = false;
+        else if (rag) rag = false;
+        else return false;
+        render();
+        return true;
+      },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

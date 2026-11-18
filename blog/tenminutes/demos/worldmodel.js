@@ -13,7 +13,7 @@
   if (!document.getElementById("ls-wm-style")) {
     var st = document.createElement("style");
     st.id = "ls-wm-style";
-    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:var(--tm-paper-2,#f7f9f8)}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:240px;padding:6px 8px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 11px/1.35 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none}.ls-wm-tip[hidden]{display:none}";
+    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:var(--tm-paper-2,#f7f9f8)}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:240px;padding:6px 8px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 11px/1.35 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none}.ls-wm-tip[hidden]{display:none}.ls-wm-play{position:absolute;right:12px;bottom:12px;z-index:9;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-green,#63a44b);color:#fff;padding:7px 11px;font:600 12px 'Open Sans',sans-serif;cursor:pointer}.ls-wm-play:hover{background:var(--tm-petrol,#004b6f)}.ls-wm-game-status{position:absolute;left:14px;bottom:14px;z-index:9;max-width:min(52%,420px);font:600 11px/1.4 'Open Sans',sans-serif;color:var(--tm-ink,#000);background:rgba(255,255,255,.92);border:1px solid var(--tm-line,#b9c8c3);padding:6px 8px}";
     document.head.appendChild(st);
   }
 
@@ -93,6 +93,19 @@
     tip.className = "ls-wm-tip";
     tip.hidden = true;
     host.appendChild(tip);
+    var playBtn = document.createElement("button");
+    playBtn.type = "button";
+    playBtn.className = "ls-wm-play";
+    playBtn.textContent = DE ? "Spielen" : "Play";
+    host.appendChild(playBtn);
+    var gameStatus = document.createElement("div");
+    gameStatus.className = "ls-wm-game-status";
+    gameStatus.hidden = true;
+    host.appendChild(gameStatus);
+    var wmFormula = document.createElement("div");
+    wmFormula.className = "ls-wm-formula";
+    wmFormula.hidden = true;
+    host.appendChild(wmFormula);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var ARIA = DE ? [
@@ -115,6 +128,101 @@
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var FRAMES = buildFrames();
     var TRUTH = FRAMES[FRAMES.length - 1].board;
+    var game = { active: false, board: null, player: 1, history: [], busy: false, winner: 0, last: null, rect: null, fire: [], fireStart: 0, raf: 0 };
+    function freshBoard() {
+      var b = [], i;
+      for (i = 0; i < 8; i++) b.push([0, 0, 0, 0, 0, 0, 0, 0]);
+      b[3][3] = 1; b[3][4] = -1; b[4][3] = -1; b[4][4] = 1;
+      return b;
+    }
+    function startGame() {
+      stop();
+      if (game.raf) cancelAnimationFrame(game.raf);
+      game.raf = 0;
+      game.active = true;
+      game.board = freshBoard();
+      game.player = 1;
+      game.history = [];
+      game.busy = false;
+      game.winner = 0;
+      game.last = null;
+      game.fire = [];
+      gameStatus.hidden = false;
+      gameStatus.textContent = DE ? "Du spielst Schwarz. Klicke auf ein gültiges Feld." : "You play black. Click a valid square.";
+      playBtn.textContent = DE ? "Neu starten" : "Restart";
+      draw();
+    }
+    function gameEnd() {
+      var p = 0, o = 0;
+      for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) { if (game.board[r][c] === 1) p++; else if (game.board[r][c] === -1) o++; }
+      game.winner = p > o ? 1 : p < o ? -1 : 0;
+      gameStatus.textContent = game.winner === 1
+        ? (DE ? "Du gewinnst " + p + " : " + o + "!" : "You win " + p + " : " + o + "!")
+        : game.winner === -1
+          ? (DE ? "Der Computer gewinnt " + o + " : " + p + "." : "The computer wins " + o + " : " + p + ".")
+          : (DE ? "Unentschieden " + p + " : " + o + "." : "Draw " + p + " : " + o + ".");
+      if (game.winner === 1) {
+        game.fire = Array.from({ length: 42 }, function (_, i) { return { x: hash(i, 1, 2), y: hash(i, 3, 4), vx: (hash(i, 5, 6) - 0.5) * 0.18, vy: -0.2 - hash(i, 7, 8) * 0.25, c: i % 3 }; });
+        game.fireStart = performance.now();
+        if (game.raf) cancelAnimationFrame(game.raf);
+        game.raf = requestAnimationFrame(fireFrame);
+      } else {
+        draw();
+      }
+    }
+    function fireFrame(now) {
+      if (now - game.fireStart > 1700) { game.raf = 0; game.fire = []; draw(); return; }
+      draw();
+      game.raf = requestAnimationFrame(fireFrame);
+    }
+    function aiMove() {
+      if (!game.active || game.winner) return;
+      var moves = legal(game.board, -1);
+      if (!moves.length) {
+        game.player = 1;
+        game.busy = false;
+        var own = legal(game.board, 1);
+        if (!own.length) gameEnd();
+        else {
+          gameStatus.textContent = DE ? "Der Computer hat keine Züge. Du bist wieder dran." : "The computer has no moves. It is your turn again.";
+          draw();
+        }
+        return;
+      }
+      moves.sort(function (a, b) { return b.flips.length - a.flips.length; });
+      var mv = moves[Math.floor(Math.random() * Math.min(2, moves.length))];
+      apply(game.board, mv, -1);
+      game.history.push(mv.label);
+      game.last = [mv.r, mv.c];
+      game.player = 1;
+      game.busy = false;
+      var nextMoves = legal(game.board, 1);
+      if (!nextMoves.length) {
+        var oppMoves = legal(game.board, -1);
+        if (!oppMoves.length) gameEnd();
+        else { gameStatus.textContent = DE ? "Du hast keine Züge. Der Computer ist am Zug." : "You have no moves. The computer is playing."; }
+      } else {
+        gameStatus.textContent = DE ? "Du bist am Zug. " + nextMoves.length + " gültige Züge." : "Your turn. " + nextMoves.length + " valid moves.";
+      }
+      draw();
+    }
+    function playAt(x, y) {
+      if (!game.active || game.busy || game.winner || game.player !== 1 || !game.rect) return;
+      var cell = game.rect.S / 8;
+      var c = Math.floor((x - game.rect.x) / cell), r = Math.floor((y - game.rect.y) / cell);
+      if (r < 0 || r > 7 || c < 0 || c > 7) return;
+      var moves = legal(game.board, 1), mv = null;
+      for (var i = 0; i < moves.length; i++) if (moves[i].r === r && moves[i].c === c) mv = moves[i];
+      if (!mv) return;
+      apply(game.board, mv, 1);
+      game.history.push(mv.label);
+      game.last = [r, c];
+      game.player = -1;
+      game.busy = true;
+      gameStatus.textContent = DE ? "Computer denkt …" : "Computer is thinking …";
+      draw();
+      setTimeout(aiMove, 520);
+    }
     var X = [];
     for (var xi = 0; xi < 512; xi++) X.push(hash(xi, 7, 3) * 2 - 1);
     var FOCUS = [0, 1, 3, 36];
@@ -130,6 +238,18 @@
       }));
     }
 
+    var lastWmFormula = "";
+    function setWmFormula(tex) {
+      if (tex === lastWmFormula) return;
+      lastWmFormula = tex;
+      if (!tex) { wmFormula.hidden = true; wmFormula.innerHTML = ""; return; }
+      var safe = String(tex).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+      wmFormula.hidden = false;
+      wmFormula.innerHTML = '<span class="ls-math" data-tex="' + safe + '" data-tex-display="true"><code class="ls-tex-source">' + safe + '</code></span>';
+      if (window.TM && typeof window.TM.typesetMath === "function") {
+        try { window.TM.typesetMath(wmFormula); } catch (e) {}
+      }
+    }
     function head(c, s, x, y, o) {
       var opt = o || {};
       var size = typeof opt.size === "number" ? opt.size : 24;
@@ -224,6 +344,24 @@
         c.lineWidth = 2;
         c.strokeRect(x + opt.highlight[1] * cell + 1, y + opt.highlight[0] * cell + 1, cell - 2, cell - 2);
       }
+      if (opt.last) {
+        c.strokeStyle = C.gold; c.lineWidth = 2;
+        c.strokeRect(x + opt.last[1] * cell + 1, y + opt.last[0] * cell + 1, cell - 2, cell - 2);
+      }
+      if (opt.legal) {
+        opt.legal.forEach(function (mv) {
+          c.beginPath(); c.arc(x + mv.c * cell + cell / 2, y + mv.r * cell + cell / 2, Math.max(2.5, cell * .12), 0, Math.PI * 2);
+          c.fillStyle = V.alpha(C.gold, .75); c.fill();
+          c.strokeStyle = C.paper; c.lineWidth = 1; c.stroke();
+        });
+      }
+      if (opt.labels) {
+        c.fillStyle = C.muted; c.font = '600 ' + Math.max(8, cell * .26) + 'px "Open Sans", sans-serif';
+        c.textAlign = "center"; c.textBaseline = "top";
+        for (var lc = 0; lc < 8; lc++) c.fillText(String.fromCharCode(65 + lc), x + lc * cell + cell / 2, y + S + 4);
+        c.textAlign = "right"; c.textBaseline = "middle";
+        for (var lr = 0; lr < 8; lr++) c.fillText(String(8 - lr), x - 5, y + lr * cell + cell / 2);
+      }
       c.restore();
     }
 
@@ -267,7 +405,7 @@
         c.lineWidth = i === win ? 2 : 1;
         c.strokeRect(x + i * seg + .5, y + .5, seg - 1, h - 1);
         addHit(x + i * seg, y, seg, h, (DE ? "Zustand " : "state ") + labels[i] + ": " + Math.round(probs[i] * 100) + "%");
-        txt(c, labels[i], x + i * seg + seg / 2, y - 15, {
+        txt(c, labels[i], x + i * seg + seg / 2, y - 19, {
           align: "center",
           size: o.small ? 9 : 11,
           color: i === win ? C.gold : i === 2 ? C.ink : C.muted
@@ -289,7 +427,48 @@
       c.fill();
     }
 
+    function drawGame(c) {
+      var pad = Math.max(18, Math.min(28, W * .035));
+      var narrow = W < 620;
+      head(c, DE ? "Othello spielen" : "Play Othello", pad, 34, { size: Math.min(28, Math.max(22, W * .038)) });
+      txt(c, DE ? "Du: Schwarz · Computer: Weiß" : "You: black · computer: white", pad, 58, { size: 11, color: C.muted });
+      accent(c, pad, 72, 40);
+      var boardS = Math.min(narrow ? W * .70 : W * .54, H * .62);
+      var bx = narrow ? (W - boardS) / 2 + 10 : W * .50 - boardS / 2;
+      var by = Math.max(100, (H - boardS) / 2 + 18);
+      game.rect = { x: bx, y: by, S: boardS };
+      var moves = game.player === 1 ? legal(game.board, 1) : [];
+      drawBoard(c, game.board, bx, by, boardS, { labels: true, legal: moves, last: game.last });
+      var hy = by + boardS + 24;
+      var label = game.winner === 1 ? (DE ? "Du gewinnst!" : "You win!") : game.winner === -1 ? (DE ? "Computer gewinnt" : "Computer wins") : (DE ? "Dein Zug" : "Your move");
+      txt(c, label, bx + boardS / 2, hy, { align: "center", size: 12, color: game.winner === 1 ? C.green : C.ink });
+      if (!narrow) {
+        var lx = Math.min(W - pad - 150, bx + boardS + 22);
+        var ly = by + 8;
+        txt(c, DE ? "Was das Modell sieht" : "What the model sees", lx, ly, { size: 9, color: C.muted });
+        var shown = game.history.slice(-10);
+        for (var i = 0; i < shown.length; i++) {
+          txt(c, (i % 2 === 0 ? "● " : "○ ") + shown[i], lx, ly + 20 + i * 18, { size: 10, color: i === shown.length - 1 ? C.petrol : C.soft });
+        }
+        if (!shown.length) txt(c, DE ? "noch keine Züge" : "no moves yet", lx, ly + 20, { size: 9, color: C.muted });
+      }
+      if (game.fire.length) {
+        var p = Math.min(1, (performance.now() - game.fireStart) / 1700);
+        game.fire.forEach(function (f) {
+          var fx = bx + boardS * (0.15 + f.x * 0.7) + f.vx * p * 300;
+          var fy = by + boardS * (0.15 + f.y * 0.5) + f.vy * p * 300 + 120 * p * p;
+          c.globalAlpha = 1 - p;
+          c.fillStyle = [C.gold, C.green, C.lilac][f.c];
+          c.beginPath(); c.arc(fx, fy, 2.5, 0, Math.PI * 2); c.fill();
+          c.globalAlpha = 1;
+        });
+        txt(c, DE ? "Gewonnen!" : "You win!", bx + boardS / 2, by + boardS * .45, { align: "center", size: 26, color: C.gold, font: '700 26px "Barlow", "Open Sans", sans-serif' });
+      }
+    }
+
     function drawStep0(c) {
+      setWmFormula("");
+      if (game.active) { drawGame(c); return; }
       var pad = Math.max(18, Math.min(28, W * .035));
       var narrow = W < 620;
       head(c, "Othello", pad, 34, { size: Math.min(30, Math.max(24, W * .04)) });
@@ -548,10 +727,14 @@
       var pad = Math.max(18, Math.min(26, W * .035));
       var narrow = W < 620;
       var phase = state.phase || 0;
+      if (phase < 2) setWmFormula("");
       var e4 = 36;
       var scores = SCORES[e4];
       var probs = PROBS[e4];
       var e4State = winIndex(scores);
+      var boardSize = narrow ? 150 : 210;
+      var boardX = narrow ? (W - boardSize) / 2 : W - pad - boardSize;
+      var boardY = narrow ? 330 : 110;
       var questions = DE ? [
         ["Was ist die Aktivierung?", "Der Zustand nach Schicht 6: 512 Zahlen pro Token."],
         ["Was macht der Probe pro Feld?", "Für jedes Feld und jeden Zustand eine eigene Richtung."],
@@ -574,6 +757,7 @@
         var bx = pad, by = 100;
         c.fillStyle = C.petrol;
         c.fillRect(bx, by, 34, 18);
+        addHit(bx, by, 34, 18, DE ? "L6: die Aktivierung nach Schicht 6; 512 Zahlen pro Token" : "L6: the activation after layer 6; 512 numbers per token");
         txt(c, "L6", bx + 17, by + 9, { align: "center", size: 10, color: "#fff" });
         drawActivationStrip(c, bx + 44, by, W - 2 * pad - 44, 16, "x · 512");
         var gw = Math.min(W - 2 * pad, narrow ? 340 : 400);
@@ -594,7 +778,7 @@
             txt(c, stateName(o2), pad, 132 + o2 * 52, { size: 9, color: o2 === 1 ? C.gold : o2 === 2 ? C.ink : C.muted });
             drawStrip(c, dirs[o2], pad, 140 + o2 * 52, W - 2 * pad, 14, C.blue, C.gold, (DE ? "Probe-Richtung für " : "probe direction for ") + stateName(o2) + (DE ? ": 512 gelernte Gewichte" : ": 512 learned weights"));
           }
-          var bs = 150, bx2 = (W - bs) / 2, by2 = 320;
+          var bs = boardSize, bx2 = boardX, by2 = boardY;
           drawBoard(c, TRUTH, bx2, by2, bs, { highlight: [4, 4] });
           txt(c, "Feld E4", bx2 + bs / 2, by2 - 12, { align: "center", size: 10, color: C.ink });
         } else {
@@ -602,7 +786,7 @@
             txt(c, stateName(o3), pad, 148 + o3 * 42, { size: 9, color: o3 === 1 ? C.gold : o3 === 2 ? C.ink : C.muted });
             drawStrip(c, dirs[o3], pad + 80, 140 + o3 * 42, W * .48, 16, C.blue, C.gold, (DE ? "Probe-Richtung für " : "probe direction for ") + stateName(o3) + (DE ? ": 512 gelernte Gewichte" : ": 512 learned weights"));
           }
-          var bs2 = 180, bx3 = W - pad - bs2, by3 = 140;
+          var bs2 = boardSize, bx3 = boardX, by3 = boardY;
           drawBoard(c, TRUTH, bx3, by3, bs2, { highlight: [4, 4] });
           txt(c, "Feld E4", bx3 + bs2 / 2, by3 - 12, { align: "center", size: 10, color: C.ink });
         }
@@ -623,7 +807,7 @@
             drawStrip(c, dir4, pad, gy + 10, W - 2 * pad, 12, C.blue, C.gold, (DE ? "Probe-Richtung W[E4, " : "probe row W[E4, ") + stateName(o4) + "]: 512 Werte");
             drawStrip(c, prod4, pad, gy + 26, W - 2 * pad, 12, C.blue, C.green, DE ? "Produkt x · W[E4, " + stateName(o4) + "]: Beitrag zum Logit" : "product x · W[E4, " + stateName(o4) + "]: contribution to the logit");
           }
-          var bsP = 140, bxP = (W - bsP) / 2, byP = 330;
+          var bsP = boardSize, bxP = boardX, byP = boardY;
           drawBoard(c, TRUTH, bxP, byP, bsP, { highlight: [4, 4] });
           txt(c, "Feld E4", bxP + bsP / 2, byP - 12, { align: "center", size: 10, color: C.ink });
         } else {
@@ -640,12 +824,11 @@
             drawStrip(c, prod5, pad + 80, gy2 + 18, W * .42, 14, C.blue, C.green, DE ? "Produkt x · W[E4, " + stateName(o5) + "]: Beitrag zum Logit" : "product x · W[E4, " + stateName(o5) + "]: contribution to the logit");
             txt(c, "Σ = " + V.fmt(scores[o5], 1), pad + 80 + W * .42 + 12, gy2 + 16, { size: 12, font: '700 12px "Barlow", "Open Sans", sans-serif', color: o5 === 1 ? C.gold : o5 === 2 ? C.ink : C.muted });
           }
-          var bs4 = 170, bx4 = W - pad - bs4, by4 = 140;
+          var bs4 = boardSize, bx4 = boardX, by4 = boardY;
           drawBoard(c, TRUTH, bx4, by4, bs4, { highlight: [4, 4] });
           txt(c, "Feld E4", bx4 + bs4 / 2, by4 - 12, { align: "center", size: 10, color: C.ink });
         }
-        txt(c, DE ? "oben: W[E4, z] · unten: x · W[E4, z]" : "top: W[E4, z] · bottom: x · W[E4, z]", pad, H - 66, { size: 9, color: C.muted });
-        txt(c, DE ? "logit[E4, z] = Σ_d W[E4, z, d] · x[d]" : "logit[E4, z] = Σ_d W[E4, z, d] · x[d]", pad, H - 48, { size: 10, color: C.ink });
+        setWmFormula("\\operatorname{logit}[E4,z] = \\sum_d W[E4,z,d]\\,x[d]");
       } else if (phase === 3) {
         if (narrow) {
           var colW = (W - 2 * pad) / 3;
@@ -663,7 +846,7 @@
             txt(c, (probs[o6] * 100).toFixed(0) + "%", cx + colW / 2, barY + 16, { align: "center", size: 10, color: tint });
           }
           drawRangeLine(c, pad, 400, W - 2 * pad, 16, probs, { small: true });
-          var bs5 = 140, bx5 = (W - bs5) / 2, by5 = 470;
+          var bs5 = boardSize, bx5 = boardX, by5 = boardY;
           drawBoard(c, TRUTH, bx5, by5, bs5, { highlight: [4, 4] });
           txt(c, "Feld E4", bx5 + bs5 / 2, by5 - 12, { align: "center", size: 10, color: C.ink });
         } else {
@@ -682,28 +865,29 @@
             txt(c, (probs[o7] * 100).toFixed(0) + "%", cx2 + colW2 / 2, barY2 + 16, { align: "center", size: 10, color: tint2 });
           }
           drawRangeLine(c, pad, 320, W * .45, 20, probs, {});
-          var bs6 = 180, bx6 = W - pad - bs6, by6 = 120;
+          var bs6 = boardSize, bx6 = boardX, by6 = boardY;
           drawBoard(c, TRUTH, bx6, by6, bs6, { highlight: [4, 4] });
           txt(c, "Feld E4", bx6 + bs6 / 2, by6 - 12, { align: "center", size: 10, color: C.ink });
         }
-        txt(c, "p[E4, z] = softmax(logit[E4, ·])", pad, H - 48, { size: 10.5, color: C.ink });
+        txt(c, DE ? "Softmax normiert die drei Scores. Argmax nimmt den größten Wert." : "Softmax normalises the three scores. Argmax takes the largest value.", pad, H - 64, { size: 9.2, color: C.soft });
+        setWmFormula("p[E4,z] = \\operatorname{softmax}(\\operatorname{logit}[E4,\\cdot])_z");
       } else if (phase === 4) {
         var stateIdx = e4State;
         if (narrow) {
           drawResultTile(c, pad, 110, 150, stateIdx);
           txt(c, DE ? "Argmax wählt die größte." : "Argmax picks the largest.", pad, 272, { size: 9.2, color: C.soft });
-          var bs7 = 190, bx7 = (W - bs7) / 2, by7 = 300;
+          var bs7 = boardSize, bx7 = boardX, by7 = boardY;
           drawBoard(c, TRUTH, bx7, by7, bs7, { highlight: [4, 4] });
           txt(c, "E4 = " + stateName(stateIdx), bx7 + bs7 / 2, by7 - 12, { align: "center", size: 10, color: C.ink });
         } else {
           drawResultTile(c, pad, 120, 180, stateIdx);
           drawRangeLine(c, pad, 330, W * .45, 18, probs, { small: true });
           txt(c, DE ? "Argmax: Die größte der drei Wahrscheinlichkeiten wird der Zustand von E4." : "Argmax: the largest of the three probabilities becomes the state of E4.", pad, 382, { size: 9.2, color: C.soft });
-          var bs8 = 220, bx8 = W - pad - bs8, by8 = 110;
+          var bs8 = boardSize, bx8 = boardX, by8 = boardY;
           drawBoard(c, TRUTH, bx8, by8, bs8, { highlight: [4, 4] });
           txt(c, "E4 = " + stateName(stateIdx), bx8 + bs8 / 2, by8 - 12, { align: "center", size: 10, color: C.ink });
         }
-        txt(c, "E4 = argmax_z p[E4, z]", pad, H - 48, { size: 10.5, color: C.ink });
+        setWmFormula("E4 = \\operatorname{argmax}_z\\,p[E4,z]");
       } else {
         if (narrow) {
           drawLogitsColumn(c, pad, 110, 44, 160, e4);
@@ -713,7 +897,7 @@
             txt(c, labels[o8], pad + 60 + o8 * (hs + gap) + hs / 2, 100, { align: "center", size: 8.5, color: o8 === 1 ? C.gold : o8 === 2 ? C.ink : C.muted });
             drawProbGrid(c, pad + 60 + o8 * (hs + gap), 110, hs, o8, e4);
           }
-          var bs9 = 160, bx9 = (W - bs9) / 2, by9 = 300;
+          var bs9 = boardSize, bx9 = boardX, by9 = boardY;
           drawBoard(c, TRUTH, bx9, by9, bs9, { highlight: [4, 4] });
           txt(c, "64 × 3 → Brett", bx9 + bs9 / 2, by9 - 12, { align: "center", size: 10, color: C.ink });
         } else {
@@ -724,11 +908,11 @@
             txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted });
             drawProbGrid(c, pad + 80 + o9 * (hs2 + gap2), 110, hs2, o9, e4);
           }
-          var bs10 = 220, bx10 = W - pad - bs10, by10 = 110;
+          var bs10 = boardSize, bx10 = boardX, by10 = boardY;
           drawBoard(c, TRUTH, bx10, by10, bs10, { highlight: [4, 4] });
           txt(c, "64 × 3 → Brett", bx10 + bs10 / 2, by10 - 12, { align: "center", size: 10, color: C.ink });
         }
-        txt(c, DE ? "Brett[s] = argmax_z p[s, z]" : "board[s] = argmax_z p[s, z]", pad, H - 48, { size: 10.5, color: C.ink });
+        setWmFormula("\\text{board}[s] = \\operatorname{argmax}_z\\,p[s,z]");
       }
       drawStageDots(c, phase);
       txt(c, DE ? "schematisch" : "schematic", pad, H - 14, { size: 8.5, color: C.muted });
@@ -845,10 +1029,11 @@
     }
 
     function drawStep3(c) {
+      setWmFormula("");
       var pad = Math.max(18, Math.min(26, W * .035));
       var narrow = W < 620;
       head(c, DE ? "Vom Feld zur realen Welt" : "From one square to the real world", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
-      txt(c, DE ? "Drei Zustände. Dreizehn. Dann die ganze Welt." : "Three states. Thirteen. Then the whole world.", pad, 58, { size: 11.5, color: C.muted });
+      txt(c, DE ? "Bei Othello hat jedes Feld 3 Zustände: leer, Spieler 1, Spieler 2. Bei Schach sind es pro Feld 13: ein ganzer Unterraum. In Modellen der realen Welt sind es viel mehr und viel komplexere Unterräume." : "In Othello each square has 3 states: empty, player 1, player 2. In chess there are 13 per square: a whole subspace. In real-world models there are many more and much more complex subspaces.", pad, 58, { size: 10.5, color: C.muted });
       accent(c, pad, 72, 42);
       if (narrow) {
         var cx = W * .5;
@@ -898,6 +1083,7 @@
 
     function draw() {
       if (!W || !H) return;
+      playBtn.hidden = state.step !== 0;
       hoverHits = [];
       V.aurora(ctx, W, H, C, { vignette: 0.08 });
       if (state.step === 0) drawStep0(ctx);
@@ -915,7 +1101,7 @@
     }
 
     function start() {
-      if (reduced || state.running || state.step === 1) return;
+      if (game.active || reduced || state.running || state.step === 1) return;
       state.running = true;
       state.last = 0;
       state.raf = requestAnimationFrame(frame);
@@ -964,6 +1150,12 @@
       tip.style.top = Math.max(4, ty) + "px";
       canvas.style.cursor = "help";
     });
+    canvas.addEventListener("pointerup", function (e) {
+      if (!game.active || state.step !== 0) return;
+      var r = canvas.getBoundingClientRect();
+      playAt(e.clientX - r.left, e.clientY - r.top);
+    });
+    playBtn.addEventListener("click", startGame);
     canvas.addEventListener("pointerleave", hideTip);
     fit();
     if (reduced) {
@@ -974,6 +1166,7 @@
       update: function (s) {
         var next = (s && typeof s.step === "number") ? s.step : 0;
         if (next !== state.step) {
+          if (next !== 0) { game.active = false; playBtn.textContent = DE ? "Spielen" : "Play"; gameStatus.hidden = true; }
           state.step = next;
           if (next === 1) state.phase = lastPhase;
           state.t = reduced
@@ -1024,6 +1217,7 @@
       pause: stop,
       destroy: function () {
         stop();
+        if (game.raf) cancelAnimationFrame(game.raf);
         window.removeEventListener("resize", fit);
         if (window.ResizeObserver && ro) ro.disconnect();
         host.remove();

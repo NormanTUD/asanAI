@@ -318,7 +318,6 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText("x′ = Σ w · v", 10, 16);
       vector.setAttribute("aria-label", DE
         ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
         : "2-D embeddings. Weighted sum of the value vectors for " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ").");

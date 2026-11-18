@@ -32,7 +32,7 @@
       },
       {
         tone: "myst", tag: "New Mysterianism",
-        body: "Bewusstsein könnte eine kognitive Grenze sein: Ratten lernen einfache Gleichungen fürs Labyrinth, aber nicht dieses Problem.",
+        body: "Bewusstsein könnte eine kognitive Grenze sein: Ratten lernen ein Labyrinth, aber keine Gleichungen; dieses Problem könnte außerhalb unserer kognitiven Reichweite liegen.",
         problem: "Nicht widerlegbar, aber auch keine Erklärung; sie verschiebt die Frage in unsere Erkenntnisgrenzen.",
         cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://en.wikipedia.org/wiki/New_mysterianism" target="_blank" rel="noopener">Wikipedia</a>'
       }
@@ -63,7 +63,7 @@
       },
       {
         tone: "myst", tag: "New mysterianism",
-        body: "Consciousness may be a cognitive limit: rats learn simple equations for a maze, but not this problem.",
+        body: "Consciousness may be a cognitive limit: rats can learn a maze but cannot solve equations; this problem may lie beyond our cognitive reach.",
         problem: "Not falsifiable, but also not an explanation; it moves the question into our cognitive limits.",
         cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://en.wikipedia.org/wiki/New_mysterianism" target="_blank" rel="noopener">Wikipedia</a>'
       }
@@ -89,7 +89,7 @@
     var el = document.createElement("div");
     el.className = "ls-con-notes";
     el.innerHTML =
-      '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Fünf Theorien, eine offene Frage" : "Five theories, one open question") + '</b><p class="ls-con-sub">' + (DE ? "Klicke eine Theorie oder drücke →. Jede erklärt etwas anderes; keine erklärt Qualia." : "Click a theory or press →. Each explains something different; none explains qualia.") + '</p></div>' +
+      '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Hat eine KI irgendeine Form von Qualia?" : "Does an AI have any form of qualia?") + '</b><p class="ls-con-sub">' + (DE ? "Diese Folie prüft verschiedene philosophische und wissenschaftliche Theorien des Bewusstseins. Klicke eine Theorie oder drücke →. Eine klare Antwort gibt es nicht." : "This slide examines different philosophical and scientific theories of consciousness. Click a theory or press →. There is no clear answer.") + '</p></div>' +
       '<div class="ls-con-map" aria-label="' + (DE ? "Zugang ist funktional erklärbar, Erleben bleibt offen" : "Access is functionally explainable, experience remains open") + '">' +
         '<div class="ls-con-map-box"><b>' + (DE ? "Zugang" : "Access") + '</b><span>' + (DE ? "Bericht · Kontrolle · Aufmerksamkeit" : "report · control · attention") + '</span><em>' + (DE ? "funktional erklärbar" : "functionally explainable") + '</em></div>' +
         '<div class="ls-con-map-gap" aria-hidden="true">?</div>' +

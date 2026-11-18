@@ -418,11 +418,11 @@
           color: C.soft
         });
         var miniX = W - pad - (small ? 96 : 132);
-        drawMiniTokens(c, row.mini || ["A", "B"], miniX, y + rowH - 20, row.color,
+        drawMiniTokens(c, row.mini || ["A", "B"], miniX, y + rowH - 30, row.color,
           typeof row.miniFrom === "number" ? row.miniFrom : (row.from === 4 ? 1 : 0),
           typeof row.miniTo === "number" ? row.miniTo : (row.to === 4 ? 1 : 0),
           "");
-        txt(c, row.matrix, W - pad - 4, y + rowH - 34, {
+        txt(c, row.matrix, W - pad - 4, y + rowH - 42, {
           align: "right",
           size: small ? 7.4 : 8.2,
           color: C.petrol,
@@ -544,8 +544,8 @@
     function drawCircuit(c) {
       var pad = Math.max(16, Math.min(28, W * 0.04));
       var small = W < 620;
-      head(c, DE ? "Induktions-Schaltkreis" : "Induction circuit", pad, 30, { size: small ? 17 : 21 });
-      txt(c, DE ? "Zwei Köpfe, zwei Schichten." : "Two heads, two layers.", pad, 50, { size: 10.5, color: C.muted });
+      head(c, DE ? "Zwei Schichten, ein Trick" : "Two layers, one trick", pad, 30, { size: small ? 17 : 21 });
+      txt(c, DE ? "A und B sind Platzhalter für beliebige Wörter." : "A and B are placeholders for arbitrary words.", pad, 50, { size: 10.5, color: C.muted });
       accent(c, pad, 64, 38);
       var y = H * 0.38;
       var x1 = W * (small ? 0.26 : 0.29);
@@ -573,8 +573,8 @@
         color: C.muted
       });
 
-      txt(c, DE ? "Schicht 1" : "Layer 1", x1, y - 66, { align: "center", size: 8.5, color: C.muted });
-      txt(c, DE ? "Schicht 2" : "Layer 2", x2, y - 66, { align: "center", size: 8.5, color: C.muted });
+      txt(c, DE ? "Schicht 1 · Vorgänger merken" : "Layer 1 · remember predecessor", x1, y - 66, { align: "center", size: 8.2, color: C.muted });
+      txt(c, DE ? "Schicht 2 · Stelle finden & kopieren" : "Layer 2 · find & copy", x2, y - 66, { align: "center", size: 8.2, color: C.muted });
       txt(c, "Previous-Token-Head", x1, y - 47, {
         align: "center",
         size: small ? 9.8 : 11.5,
@@ -676,10 +676,15 @@
       c.lineTo(kx, y + 34);
       c.stroke();
       c.restore();
-      txt(c, "K-Composition", kx, y + 46, {
+      txt(c, "K-Composition: der Key kennt den Vorgänger", kx, y + 46, {
         align: "center",
         size: 7.8,
         color: C.petrol
+      });
+      txt(c, DE ? "1 Vorgänger merken   2 frühere A-Stelle finden   3 B kopieren" : "1 remember predecessor   2 find earlier A   3 copy B", W / 2, H - 18, {
+        align: "center",
+        size: small ? 7.4 : 8.4,
+        color: C.muted
       });
     }
 

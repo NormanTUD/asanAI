@@ -184,7 +184,7 @@
     },
     {
       kicker: "Der Raum",
-      title: "Drei Dimensionen, ein Schatten",
+      title: "Drei Dimensionen",
       body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Zusätzlich erscheinen Punkte, die es in 2D noch nicht gab: auf einer unteren Ebene Tiere wie Rüde und Hündin, auf einer oberen Ebene Figuren aus Geschichten wie Zauberer und Zauberin. Sie liegen in denselben Verhältnissen; das Geschlecht ist überall dieselbe Richtung. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
       watch: "Drehe die Ansicht. Welche Richtung bleibt für alle Paare gleich? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
       demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "king-man-woman", tables: true },
@@ -572,11 +572,11 @@
     {
       kicker: "Residual",
       title: "Das gemeinsame Notizbuch wird zum Stream",
-      body: "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Stell dir den Residual Stream als Notizbuch vor: Die Tokens stehen schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich.",
+      body: "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Jedes Token hat einen eigenen Residual Stream. Stell dir jeden Stream als Notizbuch vor: Das Token steht schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich.",
       watch: "Drücke Weiter: erst schreibt die erste Schicht, dann wächst der Stream.",
       demoState: { scene: "residual" },
-      context: "Die Notizbuch-Analogie ist eine stark vereinfachte, vermenschlichte Sichtweise. Mathematisch ist der Stream ein Vektor pro Token; jede Schicht addiert ein Update: x ← x + Layer(x). Frühere Notizen bleiben lesbar, weil addiert und nicht überschrieben wird.",
-      deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben. Der Stream ist das gemeinsame Notizbuch; Attention und FFN schreiben Updates hinein; die Identität bleibt erhalten.",
+      context: "Die Notizbuch-Analogie ist eine stark vereinfachte, vermenschlichte Sichtweise. Mathematisch ist der Stream ein Vektor pro Token; die Streams werden getrennt geführt, und jede Schicht addiert pro Token ein Update: x ← x + Layer(x). Frühere Notizen bleiben lesbar, weil addiert und nicht überschrieben wird.",
+      deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben. Jedes Token hat seinen eigenen Stream; Attention mischt Information zwischen ihnen, und FFN schreibt Updates hinein; die Identität bleibt erhalten.",
       boxes: [
         box("res-nb", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
         box("res-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar."),
@@ -587,11 +587,11 @@
     {
       kicker: "Residual",
       title: "The shared notebook becomes the stream",
-      body: "This is a strongly simplified, humanised view. Think of the residual stream as a notebook: the tokens are already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same.",
+      body: "This is a strongly simplified, humanised view. Each token has its own residual stream. Think of each stream as a notebook: the token is already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same.",
       watch: "Press Next: first the first layer writes, then the stream grows.",
       demoState: { scene: "residual" },
-      context: "The notebook analogy is a strongly simplified, humanised view. Mathematically the stream is one vector per token; every layer adds an update: x ← x + Layer(x). Earlier notes stay readable because the layer adds instead of overwriting.",
-      deep: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information. The stream is the shared notebook; attention and the FFN write updates into it; the identity survives.",
+      context: "The notebook analogy is a strongly simplified, humanised view. Mathematically the stream is one vector per token; the streams are kept separately, and every layer adds an update per token: x ← x + Layer(x). Earlier notes stay readable because the layer adds instead of overwriting.",
+      deep: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information. Each token has its own stream; attention mixes information between them, and the FFN writes updates into them; the identity survives.",
       boxes: [
         box("res-nb", "Mathematics", "The notebook", "x₁ = x₀ + Layer(x₀). The identity stays; every layer adds only its change. Each layer reads the current state.", "\\underbrace{x_1}_{\\text{new}} = \\underbrace{x_0}_{\\text{old}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{layer's note}}"),
         box("res-1", "Mathematics", "Why addition?", "x ← x + f(x). The identity stays; the layer learns only the change. That makes deep stacks trainable."),
@@ -827,7 +827,7 @@
       ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste Token vorherzusagen."
       : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next token.",
     watch: "",
-    demoState: { scene: "blocks", resetKey: "architecture", start: 0 },
+    demoState: { scene: "blocks" },
     inherit: false,
     questionGroups: [
       {
@@ -1477,7 +1477,7 @@
         title: "Gauß, Ceres und die Daten",
         body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
         teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
-        watch: "Ziehe den Slider oder klicke weiter und sieh, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig, teilweise richtig oder komplett falsch sein.",
+        watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
         context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
         deep: "Ohne Ausgleich müsste man eine Bahn durch einen einzelnen Punkt legen. Gauß nutzte alle Beobachtungen zusammen.",
@@ -1677,10 +1677,22 @@
     ]
   });
 
+  var weekdayStep = {
+    kicker: DE ? "Wochentage" : "Weekdays",
+    title: DE ? "Wochentage auf einer Linie" : "Weekdays on a line",
+    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Ein Successor-Head kann diese gelernte Ordnung später wiederverwenden." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. A successor head can reuse this learned order later.",
+    watch: "",
+    demoState: { scene: "weekday" },
+    inherit: false,
+    context: DE ? "Die Ordnung ist gelernt, nicht im Kontext nachgeschlagen: Dieselbe Richtung verschiebt Montag zu Dienstag und Dienstag zu Mittwoch." : "The order is learned, not looked up in the context: the same direction moves Monday to Tuesday and Tuesday to Wednesday.",
+    deep: DE ? "Der Successor-Head ist ein Beispiel dafür, dass eine Beziehung als Richtung im Vektorraum liegen kann. Bei Zahlen, Monaten und Wochentagen funktioniert dieselbe Struktur." : "The successor head is an example of a relation living as a direction in vector space. The same structure works for numbers, months, and weekdays.",
+    sources: []
+  };
+
   var embeddingMergeStep = {
     title: DE ? "Bedeutung wird Geometrie" : "Meaning becomes geometry",
     kicker: DE ? "1D · 2D · 3D · Tabelle" : "1D · 2D · 3D · table",
-    substeps: [embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0]]
+    substeps: [embedSteps[0], weekdayStep, embedSteps[1], embedSteps[2], highdimSteps[0]]
   };
   var attentionMergedGroups = DE ? [
     {
@@ -1933,7 +1945,7 @@
     body: DE
       ? "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort."
       : "Every token produces three vectors: query, key, and value. The query asks, the key answers, and the value carries the information. Attention compares query and key, turns the scores into weights with softmax, and mixes the values. Multiple heads do this in parallel with their own weights: one head can ask for the subject, another for the location.",
-    watch: DE ? "Wechsle die Heads: Head 1 zeigt auf „Tier“ (Subjekt), Head 2 auf „Straße“ (Ort)." : "Switch the heads: head 1 points to “animal” (the subject), head 2 to “street” (the location).",
+    watch: "",
     demoState: { scene: "qkv", head: 0, view: "arcs" },
     context: DE ? "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden. Jede Query-Zeile summiert nach Softmax zu 1." : "The scores are divided by $\\sqrt{d_k}$ so they do not grow too large in high dimensions. Each query row sums to 1 after softmax.",
     deep: DE ? "Die Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort." : "The heads are not hand-programmed; they specialise during training. The two patterns in the demo are didactic: head 1 asks for the subject, head 2 for the location.",
@@ -2408,8 +2420,8 @@
     kicker: DE ? "Mechanik" : "Mechanics",
     title: DE ? "Wie wird kopiert?" : "How is copying done?",
     teaser: DE
-      ? "Jetzt die Mechanik in drei Schritten. Erst merkt sich ein Hilfskopf den Vorgänger: Nach dem früheren „Hund“ steht die Information „davor war Hund“. Dann sucht der Induktionskopf das frühere „Hund“ und schaut auf das Token danach: „bellt“. Zuletzt kopiert die OV-Matrix „bellt“ an die neue Stelle.\n\nQK entscheidet, wohin geschaut wird. OV entscheidet, was kopiert wird. Die OV-Matrix ist also der Kopierer, die Attention der Sucher. Kein Schritt liest eine Tabelle: Beide Teile sind gelernte Abbildungen auf Vektoren."
-      : "Now the mechanics in three steps. First a helper head remembers the predecessor: after the earlier “dog” it stores the information “the token before me was dog”. Then the induction head finds the earlier “dog” and looks at the token after it: “barks”. Finally the OV matrix copies “barks” to the new place.\n\nQK decides where to look. OV decides what is copied. So the OV matrix is the copier and attention is the searcher. No step reads a table: both parts are learned maps on vectors.",
+      ? "Jetzt die Mechanik in drei Schritten. A und B sind Platzhalter für beliebige Wörter. Erst merkt sich ein Hilfskopf den Vorgänger: Nach dem früheren „Hund“ steht die Information „davor war Hund“. Dann sucht der Induktionskopf das frühere „Hund“ und schaut auf das Token danach: „bellt“. Zuletzt kopiert die OV-Matrix „bellt“ an die neue Stelle. Es gibt viele verschiedene Arten von Attention Heads; wir sehen hier nur einige.\n\nQK entscheidet, wohin geschaut wird. OV entscheidet, was kopiert wird. Die OV-Matrix ist also der Kopierer, die Attention der Sucher. Kein Schritt liest eine Tabelle: Beide Teile sind gelernte Abbildungen auf Vektoren."
+      : "Now the mechanics in three steps. A and B are placeholders for arbitrary words. First a helper head remembers the predecessor: after the earlier “dog” it stores the information “the token before me was dog”. Then the induction head finds the earlier “dog” and looks at the token after it: “barks”. Finally the OV matrix copies “barks” to the new place. There are many different kinds of attention heads; we look at only a few here.\n\nQK decides where to look. OV decides what is copied. So the OV matrix is the copier and attention is the searcher. No step reads a table: both parts are learned maps on vectors.",
     watch: DE ? "Klicke die drei Schritte: Vorgänger merken, Stelle finden, kopieren." : "Click the three steps: remember the predecessor, find the place, copy.",
     demoState: { scene: "induction", mode: "copy" },
     context: DE ? "Der Hilfskopf ist ein eigener Kopf in einer früheren Schicht. Er merkt sich nur, welches Token vorher kam." : "The helper head is a separate head in an earlier layer. It only remembers which token came before.",
@@ -2426,8 +2438,8 @@
     kicker: DE ? "Familie" : "Family",
     title: DE ? "Vier Köpfe, vier Regeln" : "Four heads, four rules",
     teaser: DE
-      ? "Induktion ist ein Mitglied einer Familie von Copy-Heads. Ein Duplicate-Token-Head schaut auf ein früheres Vorkommen desselben Tokens und kopiert dessen Position. Ein Successor-Head erhöht ein geordnetes Token (Montag → Dienstag) über eine gelernte Richtung. Ein Name-Mover-Head kopiert einen Namen aus dem Kontext in die Antwort, wie im IOI-Schaltkreis von GPT-2 small. Alle teilen denselben Kern: Attention wählt eine Quelle, OV schreibt ihren Inhalt. Was sie unterscheidet, ist die Regel, die die Quelle wählt.\n\nDie vier Köpfe sind keine vier Etiketten für dieselbe Sache. Induktion und Duplicate arbeiten über Wiederholung im Kontext; Successor über eine gelernte Ordnung; Name-Mover über eine Aufgabe mit zwei Kandidaten. Klicke die Karten."
-      : "Induction is one member of a family of copy heads. A duplicate-token head attends to an earlier occurrence of the same token and copies its position. A successor head increments an ordered token (Monday → Tuesday) through a learned direction. A name-mover head copies a name from the context into the answer, as in the IOI circuit of GPT-2 small. They share the same core: attention selects a source, OV writes its content. What differs is the rule that selects the source.\n\nThe four heads are not four labels for the same thing. Induction and duplicate work through repetition in the context; successor through a learned order; name-mover through a task with two candidates. Click the cards.",
+      ? "Induktion ist ein Mitglied einer Familie von Copy-Heads. Ein Duplicate-Token-Head schaut auf ein früheres Vorkommen desselben Tokens und kopiert dessen Position. Ein Successor-Head erhöht ein geordnetes Token (Montag → Dienstag) über eine gelernte Richtung. Ein Name-Mover-Head kopiert einen Namen aus dem Kontext in die Antwort. Alle teilen denselben Kern: Attention wählt eine Quelle, OV schreibt ihren Inhalt. Was sie unterscheidet, ist die Regel, die die Quelle wählt.\n\nDie vier Köpfe sind keine vier Etiketten für dieselbe Sache. Induktion und Duplicate arbeiten über Wiederholung im Kontext; Successor über eine gelernte Ordnung; Name-Mover über eine Aufgabe mit zwei Kandidaten. Klicke die Karten."
+      : "Induction is one member of a family of copy heads. A duplicate-token head attends to an earlier occurrence of the same token and copies its position. A successor head increments an ordered token (Monday → Tuesday) through a learned direction. A name-mover head copies a name from the context into the answer. They share the same core: attention selects a source, OV writes its content. What differs is the rule that selects the source.\n\nThe four heads are not four labels for the same thing. Induction and duplicate work through repetition in the context; successor through a learned order; name-mover through a task with two candidates. Click the cards.",
     watch: DE ? "Klicke eine Karte. Vergleiche, welche Quelle die Attention wählt und was kopiert wird." : "Click a card. Compare which source attention selects and what is copied.",
     demoState: { scene: "induction", mode: "heads" },
     context: DE ? "Die vier Köpfe sind keine vier Namen für dieselbe Schaltung. Sie teilen die Aufmerksamkeits-/OV-Struktur, aber die Quelle wird nach unterschiedlichen Regeln gewählt." : "The four heads are not four names for the same circuit. They share the attention/OV structure, but the source is selected by different rules.",
@@ -2448,10 +2460,10 @@
 
   var inductionCircuit = Object.assign({}, inductionSequence, {
     kicker: DE ? "Schaltkreis" : "Circuit",
-    title: DE ? "Zwei Heads, ein Algorithmus" : "Two heads, one algorithm",
+    title: DE ? "Zwei Schichten, ein Trick" : "Two layers, one trick",
     teaser: DE
-      ? "Der Previous-Token-Head schreibt das vorherige Token in die nächste Position. Der Induktionskopf fragt mit $A$ und findet die Stelle, deren vorheriges Token $A$ war. Er schaut auf $B$ und kopiert es über die OV-Matrix. Das ist K-Composition: Der Key hängt vom vorherigen Token ab. Deshalb braucht der Schaltkreis mindestens zwei Schichten.\n\nEin einzelner Head kann nur das aktuelle Token als Query und Key benutzen. Erst der vorgeschaltete Head macht den Key zu einer Funktion von Token und Vorgänger."
-      : "The previous-token head writes the previous token into the next position. The induction head queries with $A$ and finds the position whose previous token was $A$. It attends to $B$ and copies it through the OV matrix. That is K-composition: the key depends on the previous token. That is why the circuit needs at least two layers.\n\nA single head can only use the current token as query and key. The earlier head turns the key into a function of the token and its predecessor.",
+      ? "Zwei Schichten, ein Trick. Der Previous-Token-Head in Schicht 1 merkt sich für jede Position, welches Token davor stand. Der Induktionskopf in Schicht 2 fragt mit dem aktuellen $A$. Sein Key enthält das vorherige Token; deshalb trifft er die frühere Stelle, an der vor $A$ ebenfalls $A$ stand. Von dort kopiert er $B$.\n\n$A$ und $B$ sind Platzhalter für beliebige Wörter. Das ist K-Composition: Der Key hängt vom vorherigen Token ab. Deshalb braucht der Schaltkreis mindestens zwei Schichten."
+      : "Two layers, one trick. The previous-token head in layer 1 remembers, for every position, which token came before it. The induction head in layer 2 queries with the current $A$. Its key contains the previous token; that is how it hits the earlier position where $A$ also stood before $A$. From there it copies $B$.\n\n$A$ and $B$ are placeholders for arbitrary words. This is K-composition: the key depends on the previous token. That is why the circuit needs at least two layers.",
     watch: DE ? "Klicke Weiter. Verfolge den Weg vom Previous-Token-Head zum Induktionskopf." : "Click Next. Follow the path from the previous-token head to the induction head.",
     demoState: { scene: "induction", mode: "circuit" },
     boxes: [
@@ -2570,7 +2582,7 @@
     substeps: [spacetimeSpace, spacetimeTime]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, sentimentStep, grokkingStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, sentimentStep, grokkingStep];
 
   var day = {
     id: "intuition",

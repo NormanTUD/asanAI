@@ -73,7 +73,7 @@
         '<div class="ls-lang-data-summary" hidden>' +
           '<div class="ls-lang-data-stage">' +
             '<div class="ls-lang-data-stage-head"><span class="ls-lang-data-num">1</span><b>' + (DE ? "Vortraining" : "Pretraining") + '</b><span>' + (DE ? "großer Datensatz" : "large dataset") + '</span></div>' +
-            '<p class="ls-lang-data-stage-data">' + (DE ? "Mehr oder weniger das ganze Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "More or less the entire internet: Wikipedia, Reddit, books, websites, source code.") + '</p>' +
+            '<p class="ls-lang-data-stage-data">' + (DE ? "Großer, gefilterter Textkorpus: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "A large, filtered text corpus: Wikipedia, Reddit, books, websites, source code.") + '</p>' +
             '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz lernt Muster, Sprache, Fakten und Code und setzt rohe Daten fort." : "The net learns patterns, language, facts, and code, and continues raw data.") + '</p>' +
             '<p class="ls-lang-data-stage-source">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p>' +
             '<pre class="ls-lang-data-code"><code>' + wikiHtml + '</code></pre>' +
@@ -83,7 +83,7 @@
             '<div class="ls-lang-data-stage-head"><span class="ls-lang-data-num">2</span><b>' + (DE ? "Fine-Tuning" : "Fine-tuning") + '</b><span>' + (DE ? "kleiner Datensatz" : "small dataset") + '</span></div>' +
             '<p class="ls-lang-data-stage-data">' + (DE ? "Menschenfragen, auch mit Tippfehlern und Unklarheiten, plus nützliche Antworten." : "Human questions, including typos and unclear wording, plus useful answers.") + '</p>' +
             '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz antwortet als Gesprächspartner und geht auf konkrete Fragen detaillierter ein." : "The net answers as a conversation partner and goes into more detail on concrete questions.") + '</p>' +
-            '<div class="ls-lang-data-chat"><div class="ls-lang-bubble ls-lang-bubble--user">' + (DE ? "Sage mir, was die Hauptstadt von Frankreich ist." : "Tell me what the capital of France is.") + '</div><div class="ls-lang-bubble ls-lang-bubble--agent">' + (DE ? "Die Hauptstadt von Frankreich ist Paris." : "The capital of France is Paris.") + '</div></div>' +
+            '<div class="ls-lang-data-chat"><div class="ls-lang-bubble ls-lang-bubble--user">' + (DE ? "Wie heißt die Hauptstadt von Frankreich?" : "What is the capital of France?") + '</div><div class="ls-lang-bubble ls-lang-bubble--agent">' + (DE ? "Die Hauptstadt von Frankreich ist Paris." : "The capital of France is Paris.") + '</div></div>' +
           '</div>' +
         '</div>' +
         '<div class="ls-lang-mix-detail">' +
@@ -219,23 +219,24 @@
       function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
       function truthCurve(x) { return 0.10 + 0.06 * Math.sin(x * Math.PI * 1.7); }
       function curveY(x) { return Y(truthCurve(x)); }
-      // Truth band: green on the line, fading through red at the edges.
-      var red = "#c62828";
-      var bandOuter = 32;
-      var bandStep = 2;
-      for (var bx = padL; bx <= w - padR; bx += bandStep) {
-        var bt = (bx - padL) / Math.max(1, w - padL - padR);
-        var by = curveY(bt);
-        var bg = ctx.createLinearGradient(0, by - bandOuter, 0, by + bandOuter);
-        bg.addColorStop(0, "rgba(198,40,40,0)");
-        bg.addColorStop(0.15, "rgba(198,40,40,0.03)");
-        bg.addColorStop(0.28, "rgba(99,164,75,0.16)");
-        bg.addColorStop(0.72, "rgba(99,164,75,0.16)");
-        bg.addColorStop(0.88, "rgba(198,40,40,0.06)");
-        bg.addColorStop(1, "rgba(198,40,40,0)");
-        ctx.fillStyle = bg;
-        ctx.fillRect(bx, by - bandOuter, bandStep + 1, bandOuter * 2);
+      // Red is everything outside the truth band; the green band is smooth and wide.
+      var bandOuter = 44;
+      ctx.fillStyle = "rgba(198,40,40,.085)";
+      ctx.fillRect(padL, padT, w - padL - padR, h - padT - padB);
+      ctx.beginPath();
+      for (var ub = 0; ub <= 100; ub++) {
+        var ux = padL + ub / 100 * (w - padL - padR);
+        var uy = curveY(ub / 100) - bandOuter;
+        if (ub === 0) ctx.moveTo(ux, uy); else ctx.lineTo(ux, uy);
       }
+      for (var lb = 100; lb >= 0; lb--) {
+        var lx = padL + lb / 100 * (w - padL - padR);
+        var ly = curveY(lb / 100) + bandOuter;
+        ctx.lineTo(lx, ly);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "rgba(99,164,75,.22)";
+      ctx.fill();
       ctx.strokeStyle = C.green; ctx.lineWidth = 2.6;
       ctx.beginPath();
       for (var ci3 = 0; ci3 <= 80; ci3++) {

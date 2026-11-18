@@ -248,7 +248,7 @@
     function project(x, y, z) {
       var yMix = smoothstep(0.18, 0.86, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
-      var planeTilt = 0.18 * yMix;
+      var planeTilt = 0.18 * yMix * zMix;
       var yaw = st.yaw * (planeTilt + (1 - planeTilt) * zMix);
       var pitch = st.pitch * (planeTilt + (1 - planeTilt) * zMix);
       var cy = Math.cos(yaw), sy = Math.sin(yaw);
@@ -348,6 +348,8 @@
       var lo = a.value <= b.value ? a : b;
       var hi = a.value <= b.value ? b : a;
       var step = hi.value - lo.value;
+      var stepMeta = TEMP.filter(function (t) { return t.value === step; })[0];
+      var stepLabel = stepMeta ? text(stepMeta.label) : "";
       var ax = tempX(lo.value), bx = tempX(hi.value);
       var my = size.h * 0.58;
       ctx.strokeStyle = C.petrol;
@@ -395,7 +397,7 @@
       });
       drawLabel(DE ? "TEMPERATUR" : "TEMPERATURE", 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Klicke zwei Punkte" : "Click two points", size.w - 24, 26, C.muted, "right", 9);
-      drawLabel(lo.value + " + " + step + " = " + hi.value + "  ·  " + text(hi.label), size.w / 2, size.h - 22, C.soft, "center", 11);
+      drawLabel(text(lo.label) + " + " + (stepLabel || step) + " = " + text(hi.label), size.w / 2, size.h - 22, C.soft, "center", 11);
       canvas.setAttribute("aria-label", DE
         ? "Temperaturlinie. Addiere " + step + " zu " + text(lo.label) + ": " + lo.value + " + " + step + " = " + hi.value + ", also " + text(hi.label) + "."
         : "Temperature line. Add " + step + " to " + text(lo.label) + ": " + lo.value + " + " + step + " = " + hi.value + ", which is " + text(hi.label) + ".");
@@ -492,7 +494,7 @@
       }
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
-      if (individualAlpha > 0.05 && dimMix > 0.5) {
+      if (individualAlpha > 0.05 && dimMix > 1.15) {
         ctx.save();
         ctx.strokeStyle = C.blue;
         ctx.lineWidth = 1;
@@ -551,7 +553,7 @@
       }
       var roomAlpha = smoothstep(1.5, 2, dimMix);
       var pathAlpha = smoothstep(0.55, 1, dimMix) * (1 - roomAlpha) * tokenAlpha;
-      if (pathAlpha > 0.01 && !dirMode) {
+      if (pathAlpha > 0.01 && !dirMode && dimMix > 1.5) {
         function freePath(fromId, toId) {
           var wa = WORDS[fromId], wb = WORDS[toId];
           var a = project((wa.v[0] - 12.5) / 15, wa.v[1] / 22, wa.z);
@@ -571,8 +573,6 @@
         ctx.fillStyle = C.green;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
-        ctx.fillText(DE ? "2D: freie Wege" : "2D: free paths", size.w / 2, size.h - 16);
-        ctx.globalAlpha = 1;
       }
 
       if (roomAlpha > 0.01) {
@@ -580,8 +580,6 @@
         ctx.fillStyle = C.green;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
-        ctx.fillText(DE ? "Jedes Wort ist eine Richtung vom Ursprung" : "Every word is a direction from the origin", size.w / 2, size.h - 34);
-        ctx.globalAlpha = 1;
       }
 
       if (threeDAlpha > 0.01) {
@@ -770,8 +768,11 @@
         var step = hi.value - lo.value;
         var loLabel = text(lo.label);
         var hiLabel = text(hi.label);
+        var stepMeta = TEMP.filter(function (t) { return t.value === step; })[0];
+        var stepLabel = stepMeta ? text(stepMeta.label) : "";
+        var stepTex = stepLabel ? "\\underbrace{" + step + "}_{\\text{" + stepLabel + "}}" : String(step);
         readout.innerHTML = '<b>' + esc(lo.value) + '</b> + <b>' + esc(step) + '</b> = <b>' + esc(hi.value) + '</b> · <b>' + esc(hiLabel) + '</b>';
-        setTex("\\underbrace{\\underbrace{" + lo.value + "}_{\\text{" + loLabel + "}} + \\underbrace{" + step + "}_{\\text{" + (DE ? "Erwärmung" : "warming") + "}}}_{\\text{" + (DE ? "Zahlen addieren" : "add the numbers") + "}} = \\underbrace{" + hi.value + "}_{\\text{" + hiLabel + "}}");
+        setTex("\\underbrace{\\underbrace{" + lo.value + "}_{\\text{" + loLabel + "}} + " + stepTex + "}_{\\text{" + (DE ? "Zahlen addieren" : "add the numbers") + "}} = \\underbrace{" + hi.value + "}_{\\text{" + hiLabel + "}}");
         return;
       }
       var cr = currentResult();

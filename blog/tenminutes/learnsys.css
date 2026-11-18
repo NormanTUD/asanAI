@@ -2117,11 +2117,14 @@ h1,h2,h3,h4{
 
 /* Q/K/V: attention arcs, weight bars and two heads */
 .ls-qkv-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto auto auto;gap:6px;padding:2px;overflow-y:auto}
-.ls-qkv-stage{position:relative;min-height:240px;border:1px solid var(--ls-line);background:var(--ls-paper-2);overflow:hidden}
+.ls-qkv-stage{position:relative;min-height:300px;border:1px solid var(--ls-line);background:var(--ls-paper-2);overflow:hidden}
 .ls-qkv-stage canvas{position:absolute;inset:0;width:100%;height:100%}
-.ls-qkv-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.ls-qkv-query{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
-.ls-qkv-view{display:flex;gap:4px;flex-wrap:wrap}
+.ls-qkv-controls{display:grid;grid-template-columns:1fr auto;grid-template-areas:"heads query" "views views";gap:6px;align-items:center}
+.ls-qkv-headrow{grid-area:heads;display:flex;gap:6px;flex-wrap:wrap}
+.ls-qkv-view{grid-area:views;display:flex;gap:4px;flex-wrap:wrap}
+.ls-qkv-query{grid-area:query;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
+.ls-qkv-tip{position:absolute;z-index:4;max-width:260px;padding:6px 8px;background:rgba(255,255,255,.97);border:1px solid var(--ls-line-strong);box-shadow:0 8px 20px rgba(0,20,30,.12);font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-ink);pointer-events:none}
+.ls-qkv-tip b{color:var(--ls-petrol)}
 .ls-qkv-percent{display:flex;gap:6px 12px;flex-wrap:wrap;align-items:baseline;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft);min-height:3.2em}
 .ls-qkv-percent-lead{font-weight:600;color:var(--ls-petrol)}
 .ls-qkv-percent b{font-weight:700;color:var(--ls-ink)}
@@ -2319,7 +2322,7 @@ h1,h2,h3,h4{
 .ls-hg-empty{padding:7px;border:1px dashed var(--ls-line-strong);font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-hg-answer{padding:9px 10px;font:600 var(--ls-fs-ui)/1.45 "Open Sans",sans-serif;color:var(--ls-ink)}
 .ls-hg-cite{padding:0 10px 8px;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-petrol)}
-.ls-hg-steps{display:flex;flex-direction:column;gap:4px;border:1px solid var(--ls-line);background:var(--ls-paper-2);padding:6px 8px}
+.ls-hg-steps{display:flex;flex-direction:column;gap:4px;border:1px solid var(--ls-line);background:var(--ls-paper-2);padding:6px 8px;min-height:112px}
 .ls-hg-step{display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px;align-items:baseline;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-hg-step b{display:grid;place-items:center;width:16px;height:16px;border:1px solid var(--ls-line-strong);background:#fff;font:700 8px "Open Sans",sans-serif;color:var(--ls-petrol)}
 .ls-hg-step.is-check b{border-color:var(--ls-green);color:var(--ls-green)}
@@ -2635,3 +2638,45 @@ h1,h2,h3,h4{
 /* Local-only authoring controls. The flag file is gitignored. */
 .ls-no-editor .ls-local-only{display:none!important}
 .ls-no-editor .ls-actions{display:none!important}
+
+/* Data slide: readable stage copy and calmer chat */
+.ls-lang-data-summary{height:100%;align-content:center;gap:10px}
+.ls-lang-data-stage{display:flex;flex-direction:column;justify-content:center;min-height:0;padding:8px 10px}
+.ls-lang-data-stage-head b{font-size:var(--ls-fs-ui)}
+.ls-lang-data-stage-head span:last-child{font-size:calc(var(--ls-fs-body) * .64)}
+.ls-lang-data-stage-data,.ls-lang-data-stage-do,.ls-lang-data-stage-source{font-size:var(--ls-fs-ui-sm);line-height:1.5}
+.ls-lang-data-stage-do{font-size:var(--ls-fs-ui-sm)}
+.ls-lang-data-chat{gap:10px;margin-top:8px;padding:2px 0}
+.ls-lang-bubble{max-width:82%;padding:9px 11px;font-size:var(--ls-fs-ui-sm);line-height:1.5}
+.ls-lang-bubble--user{align-self:flex-end;margin-left:0;margin-right:8%;max-width:82%;background:rgba(18,117,172,.10);border-color:rgba(18,117,172,.28);border-right:3px solid var(--ls-blue)}
+.ls-lang-bubble--agent{align-self:flex-start;margin-left:8%;max-width:82%;background:rgba(99,164,75,.12);border-left:3px solid var(--ls-green)}
+
+/* Agent runtime: HTML excerpt before the screenshot */
+.ls-agents-html{position:relative;flex:1 1 150px;min-height:150px;background:#fbfcfb;border-top:1px solid var(--ls-line);overflow:auto}
+.ls-agents-html[hidden]{display:none}
+.ls-agents-html-head{padding:5px 7px;border-bottom:1px solid var(--ls-line);font:600 8px/1.2 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
+.ls-agents-html-code{margin:0;padding:7px 8px;font:600 8.5px/1.45 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;color:var(--ls-soft);white-space:pre-wrap}
+.ls-agents-tag{color:var(--ls-petrol)}
+.ls-agents-ellipsis{color:var(--ls-gold)}
+
+/* Hallucination types: centred layout and visible source excerpts */
+.ls-htl-scene{justify-content:center}
+.ls-htl-source-text{border-left:3px solid var(--ls-gold);background:rgba(159,151,0,.06);padding:5px 7px;margin-bottom:4px}
+.ls-htl-source-text span{display:block;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
+.ls-htl-source-text p{margin:2px 0 0;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+
+/* World-model formulas rendered by Temml, not raw canvas text */
+.ls-wm-formula{position:absolute;left:16px;bottom:42px;z-index:7;max-width:min(78%,620px);padding:4px 7px;background:rgba(255,255,255,.94);border:1px solid var(--ls-line);color:var(--ls-ink);font-size:12px;overflow:auto}
+.ls-wm-formula[hidden]{display:none}
+
+/* Weekday interlude: a one-dimensional ordered line */
+.ls-weekday-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:8px}
+.ls-weekday-stage{position:relative;flex:1 1 240px;min-height:220px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
+.ls-weekday-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-weekday-note{margin:0;font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
+
+/* Large network: keep the plotting area at a stable, native aspect ratio */
+.ls-sinus-scene.is-net .ls-sinus-stage{aspect-ratio:16/10;flex:0 0 auto;min-height:0}
+
+/* Hidden controls must stay hidden even when their class sets display. */
+.ls-position-right .ls-range[hidden]{display:none}

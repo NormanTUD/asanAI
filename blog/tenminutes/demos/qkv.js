@@ -16,17 +16,18 @@
     var head = 0, view = "arcs", weights = W[0].slice(), prev = W[0].slice();
     var simplexGeom = null, simplexDrag = false, simplexCorner = -1, simplexVerts = null;
     var graphHover = -1, graphMouse = { x: 0, y: 0 };
+    var arcHits = [], arcHover = -1, pinnedToken = -1;
     var t = 1, start = 0, raf = 0, loopRaf = 0, running = true;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var el = document.createElement("div");
     el.className = "ls-qkv-scene";
     el.innerHTML =
-      '<div class="ls-qkv-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-qkv-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-qkv-tip" hidden></div></div>' +
       '<div class="ls-qkv-vectors" aria-hidden="true"></div>' +
       '<div class="ls-qkv-controls">' +
-        '<button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
-        '<button type="button" class="ls-chip" data-head="1">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button>' +
-        '<span class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="graph">' + (DE ? "Graph" : "Graph") + '</button><button type="button" class="ls-chip" data-view="simplex">Simplex</button></span>' +
+        '<div class="ls-qkv-headrow"><button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
+        '<button type="button" class="ls-chip" data-head="1">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button></div>' +
+        '<div class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="graph">' + (DE ? "Graph" : "Graph") + '</button><button type="button" class="ls-chip" data-view="simplex">Simplex</button></div>' +
         '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
       '</div>' +
       '<div class="ls-qkv-percent"></div>' +
@@ -35,6 +36,7 @@
     root.appendChild(el);
     var stage = el.querySelector(".ls-qkv-stage");
     var canvas = el.querySelector("canvas");
+    var tipEl = el.querySelector(".ls-qkv-tip");
     var readout = el.querySelector(".ls-qkv-readout");
     var percentEl = el.querySelector(".ls-qkv-percent");
     var formulaEl = el.querySelector(".ls-qkv-formula .ls-math");
@@ -56,6 +58,21 @@
       if (html === lastReadout) return;
       lastReadout = html;
       readout.innerHTML = html;
+    }
+    function hideTip() {
+      if (tipEl) tipEl.hidden = true;
+    }
+    function showTip(i, px, py) {
+      if (!tipEl || !size) return;
+      var tok = tokens[i] || "";
+      var text = i === query
+        ? (DE ? "Query „" + tok + "“ · verteilt 100% auf alle Tokens" : "query “" + tok + "” · distributes 100% over all tokens")
+        : (DE ? "„" + tokens[query] + "“ → „" + tok + "“ · " + (weights[i] * 100).toFixed(1) + "%" : "“" + tokens[query] + "” → “" + tok + "” · " + (weights[i] * 100).toFixed(1) + "%");
+      tipEl.innerHTML = '<b>' + api.esc(tok) + '</b><br>' + api.esc(text);
+      tipEl.hidden = false;
+      var tw = tipEl.offsetWidth || 180, th = tipEl.offsetHeight || 34;
+      tipEl.style.left = Math.max(4, Math.min(size.w - tw - 4, px + 12)) + "px";
+      tipEl.style.top = Math.max(4, Math.min(size.h - th - 4, py + 12)) + "px";
     }
     var vectorsEl = el.querySelector(".ls-qkv-vectors");
     var size = null, ctx = null;
@@ -104,6 +121,7 @@
     }
     function drawArcs() {
       if (!size) return;
+      arcHits = [];
       ctx = size.ctx;
       var L = layout();
       var w = L.w, h = L.h, pad = L.pad, gap = L.gap, bw = L.bw, bh = L.bh, y = L.y;
@@ -173,6 +191,7 @@
         ctx.font = (isQ ? '700 ' : '600 ') + Math.max(9, Math.min(12, bw * 0.28)) + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText(tok, x + bw / 2, y + bh / 2 + 0.5);
+        arcHits.push({ x: x, y: y, w: bw, h: bh, i: i });
       });
       // weight bars
       var base = h - 28;
@@ -564,6 +583,9 @@
         if (v !== "simplex") endSimplexDrag();
         view = v;
         graphHover = -1;
+        arcHover = -1;
+        pinnedToken = -1;
+        hideTip();
         el.querySelectorAll("[data-view]").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-view") === view); });
         draw();
       }
@@ -583,7 +605,19 @@
       b.addEventListener("click", function () { setView(b.getAttribute("data-view")); });
     });
     canvas.addEventListener("pointermove", function (e) {
-      if (view !== "graph" || !size) return;
+      if (!size) return;
+      if (view === "arcs") {
+        var ar = canvas.getBoundingClientRect();
+        var ax = e.clientX - ar.left, ay = e.clientY - ar.top;
+        var found = -1;
+        arcHits.forEach(function (h) { if (ax >= h.x && ax <= h.x + h.w && ay >= h.y && ay <= h.y + h.h) found = h.i; });
+        arcHover = found;
+        canvas.style.cursor = found >= 0 ? "pointer" : "default";
+        if (found >= 0) showTip(found, ax, ay);
+        else if (pinnedToken < 0) hideTip();
+        return;
+      }
+      if (view !== "graph") return;
       var r = canvas.getBoundingClientRect();
       graphMouse = { x: e.clientX - r.left, y: e.clientY - r.top };
       var nodes = graphLayout(size.w, size.h);
@@ -604,11 +638,25 @@
     });
     canvas.addEventListener("pointerleave", function () {
       graphHover = -1;
+      arcHover = -1;
+      if (pinnedToken < 0) hideTip();
       if (!simplexDrag) canvas.style.cursor = "default";
       draw();
     });
     canvas.addEventListener("pointerdown", function (e) {
-      if (view !== "simplex" || !size) return;
+      if (!size) return;
+      if (view === "arcs") {
+        var ar = canvas.getBoundingClientRect();
+        var ax = e.clientX - ar.left, ay = e.clientY - ar.top;
+        var found = -1;
+        arcHits.forEach(function (h) { if (ax >= h.x && ax <= h.x + h.w && ay >= h.y && ay <= h.y + h.h) found = h.i; });
+        if (found >= 0) {
+          pinnedToken = pinnedToken === found ? -1 : found;
+          if (pinnedToken >= 0) showTip(found, ax, ay); else hideTip();
+          return;
+        }
+      }
+      if (view !== "simplex") return;
       var r = canvas.getBoundingClientRect();
       var px = e.clientX - r.left, py = e.clientY - r.top;
       if (raf) { cancelAnimationFrame(raf); raf = 0; }

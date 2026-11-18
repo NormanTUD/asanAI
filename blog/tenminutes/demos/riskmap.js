@@ -207,6 +207,25 @@
           animateMode(dir);
         }
       },
+      next: function () {
+        var d = modeData();
+        if (state.active < d.items.length - 1) {
+          state.active++;
+          render();
+          animateDetail();
+          return true;
+        }
+        return false;
+      },
+      prev: function () {
+        if (state.active > 0) {
+          state.active--;
+          render();
+          animateDetail();
+          return true;
+        }
+        return false;
+      },
       resize: function () {},
       destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
     };

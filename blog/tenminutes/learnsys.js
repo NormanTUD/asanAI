@@ -580,19 +580,10 @@
     var paragraphTexts = String(text == null ? "" : text).split(/\n{2,}/).map(normSpace).filter(Boolean);
     var sentences = [];
     paragraphTexts.forEach(function (p) { sentences = sentences.concat(splitSentences(p)); });
-    var headParas = [], restParas = [], used = 0;
-    paragraphTexts.forEach(function (p) {
-      var parts = splitSentences(p);
-      if (used >= MAX_TEASER_SENTENCES) { restParas.push(p); return; }
-      var take = parts.slice(0, Math.max(0, MAX_TEASER_SENTENCES - used));
-      if (take.length) headParas.push(take.join(" "));
-      used += take.length;
-      if (take.length < parts.length) restParas.push(parts.slice(take.length).join(" "));
-    });
     return {
       sentences: sentences,
-      head: headParas.join("\n\n"),
-      rest: restParas.join("\n\n")
+      head: paragraphTexts.join("\n\n"),
+      rest: ""
     };
   }
   function substepLabel() {
@@ -730,7 +721,7 @@
     }
     var fallbackBody = cfg && cfg.textDraft ? draftBody() : (s.body || "");
     return {
-      body: s.teaser || fallbackBody,
+      body: s.body || s.teaser || fallbackBody,
       title: s.title || "",
       kicker: s.kicker || "",
       watch: s.watch || "",
@@ -740,13 +731,7 @@
   function composeText(doc) {
     var parts = teaserParts(doc.body);
     var groups = cloneData(doc.groups || []);
-    if (parts.rest) {
-      groups.unshift({
-        id: "g-continuation", title: t("continuation"),
-        questions: [makeQuestion("q-continuation", t("continuation"), parts.rest, "", "trivia")]
-      });
-    }
-    return { head: parts.head, rest: parts.rest, sentences: parts.sentences, groups: groups };
+    return { head: parts.head, rest: "", sentences: parts.sentences, groups: groups };
   }
   function syncOverlayRevision() {
     if (!cfg || !cfg.overlayRevision) return;

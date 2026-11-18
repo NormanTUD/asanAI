@@ -4,6 +4,7 @@
   if (!core) return;
   var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
+  var lastBlocksIndex = 0;
   function blocksScene(root, api) {
     var DE = api.lang === "de";
     var V = window.LearnSysVisuals;
@@ -11,86 +12,88 @@
       {
         id: "tokenizer", label: "Tokenizer", short: "Text → Tokens", icon: "T", color: "lime",
         title: "Tokenizer",
-        body: "Texte werden in Bestandteile getrennt, sogenannte Tokens. Ein Token muss kein ganzes Wort sein: Es kann ein Wortteil, ein einzelnes Zeichen oder ein Leerzeichen sein. Jedes Token bekommt eine ID, die auf seine Zeile in der Embedding-Tabelle zeigt.",
+        body: "Texte werden in Bestandteile getrennt, sogenannte Tokens. Tokens können Wörter sein, müssen es aber nicht: Es können auch Wortbestandteile, Satzzeichen, Leerzeichen oder einzelne Bytes sein. Jedes Token bekommt eine ID-Nummer. Wenn dasselbe Token im Text erneut auftaucht, wird es wieder dieselbe Nummer. Die Nummer zeigt auf seine Zeile in der Embedding-Tabelle.",
         points: [],
         mini: "tokenizer"
       },
       {
         id: "embedding", label: "Embedding", short: "Tokens → Vektoren", icon: "E", color: "sky",
         title: "Embedding",
-        body: "Jede ID wird zu einem Vektor. Ähnliche Kontexte landen in ähnlichen Richtungen.",
-        points: ["Richtung trägt Bedeutung", "Tabelle wird gelernt"],
+        body: "Jede ID wird zu einem Vektor in einem Raum mit tausenden Dimensionen. Ähnliche Bedeutungen landen in ähnlichen Richtungen. Die Bedeutung ergibt sich aus dem Kontext, wie Firth (1957) formulierte: „You shall know a word by the company it keeps.“ Die meisten gelernten Vektoren liegen auf der Oberfläche einer hochdimensionalen Kugel.",
+        points: [],
+        source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
         mini: "embedding"
       },
       {
         id: "position", label: "Positional Embedding", short: "Position → Vektor", icon: "P", color: "blue",
         title: "Positional Embedding",
-        body: "Ein Token allein weiß nicht, ob es an erster oder dritter Stelle steht. Deshalb wird seine Position als spezielle Kodierung in den Token-Vektor hineingegeben. Die Demo zeigt die Positionskodierung als Punkt auf einer Kugel: Jede Position ergibt eine andere Richtung. So kann das Modell „der Hund beißt den Mann“ und „der Mann beißt den Hund“ unterscheiden, obwohl beide dieselben Tokens enthalten.",
-        points: ["gleiche Tokens, andere Reihenfolge", "Position steckt im Vektor", "Kugel = alle Positionen"],
+        body: "Ein Token allein weiß nicht, ob es an erster oder dritter Stelle steht. Deshalb wird seine Position als spezielle Kodierung ergänzt. Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Katze) an einer anderen Position. Die Positionskodierung liegt auf der Oberfläche einer hochdimensionalen Kugel. Die Darstellung enthält Positionen bis 100.000.",
+        points: [],
         mini: "position",
         position: true
       },
       {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male. Die beiden Mini-Demos zeigen die Rollen von Attention und FFN.",
-        points: ["Attention: wer liest wen?", "FFN: erkennen, trennen, neu ordnen"],
+        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. Der Block läuft dutzende bis hunderte Male.",
+        points: [],
         mini: "transformer",
         sub: [
-          { title: "Attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesen Gesichtspunkten beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
-          { title: "Feed-Forward-Netzwerk (FFN)", text: "Das FFN erkennt Muster und trennt sie sauberer in einzelne Bestandteile; so werden Bedeutungen isoliert und im Kontext verschoben. Es kann „denken“, indem es trennt, aber auch wieder zusammenfügt und neu ordnet." }
+          { title: "Attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesem Gesichtspunkt beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
+          { title: "Feed-Forward-Netzwerk (FFN)", text: "Das FFN projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück. So isoliert es Bedeutungszusammenhänge kontextabhängig und kann auf einzelne Bedeutungen reagieren." }
         ]
       },
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "Der letzte Vektor h ist der Output-Vektor des LLM. Er kommt aus den Transformer-Blöcken; in ihm ist der gesamte Kontext über viele Schichten und Heads eingemischt. h wird mit den gelernten Richtungen aller Tokens verglichen; der Winkel wird zum Logit, Softmax macht daraus eine Verteilung.",
-        points: ["Richtung statt Länge", "ein Token wird gezogen"],
+        body: "Am Ende, nachdem die Bedeutungen viele Male gemischt und wieder getrennt worden sind, enthält der Vektor $h$ des letzten Tokens die Gesamtbedeutung des Kontexts. Man vergleicht $h$ mit den gelernten Richtungen aller Wörter und misst die Winkel. Ein kleiner Winkel heißt: Das Wort passt gut an diese Stelle. Das Wort mit dem kleinsten Winkel wird ausgewählt.",
+        points: [],
         mini: "unembed",
       }
     ] : [
       {
         id: "tokenizer", label: "Tokenizer", short: "text → tokens", icon: "T", color: "lime",
         title: "Tokenizer",
-        body: "Texts are split into pieces called tokens. A token does not have to be a whole word: it can be part of a word, a single character, or a space. Every token gets an ID that points to its row in the embedding table.",
+        body: "Texts are split into pieces called tokens. Tokens can be words, but they do not have to be: they can also be word pieces, punctuation, spaces, or individual bytes. Every token gets an ID number. When the same token appears again in the text, it gets the same number. The number points to its row in the embedding table.",
         points: [],
         mini: "tokenizer"
       },
       {
         id: "embedding", label: "Embedding", short: "tokens → vectors", icon: "E", color: "sky",
         title: "Embedding",
-        body: "Every ID becomes a vector. Similar contexts land in similar directions.",
-        points: ["direction carries meaning", "the table is learned"],
+        body: "Every ID becomes a vector in a space with thousands of dimensions. Similar meanings land in similar directions. Meaning comes from context, as Firth (1957) put it: “You shall know a word by the company it keeps.” Most learned vectors lie on the surface of a high-dimensional sphere.",
+        points: [],
+        source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
         mini: "embedding"
       },
       {
         id: "position", label: "Positional Embedding", short: "position → vector", icon: "P", color: "blue",
         title: "Positional Embedding",
-        body: "A token alone does not know whether it stands first or third. That is why its position is put into the token vector as a special encoding. The demo shows the position encoding as a point on a sphere: every position gives a different direction. That is how the model can distinguish “the dog bites the man” from “the man bites the dog”, even though both contain the same tokens.",
-        points: ["same tokens, different order", "position is inside the vector", "sphere = all positions"],
+        body: "A token alone does not know whether it stands first or third. That is why its position is added as a special encoding. Waves on circular orbits are added in different dimensions; each dimension has a different frequency, and together they form the fingerprint of the position. Every green point is the same word (cat) at a different position. The position encoding lies on the surface of a high-dimensional sphere. The view contains positions up to 100,000.",
+        points: [],
         mini: "position",
         position: true
       },
       {
         id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times. The two mini demos show the roles of attention and FFN.",
-        points: ["attention: who reads whom?", "FFN: recognise, separate, reorder"],
+        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. The block runs dozens to hundreds of times.",
+        points: [],
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context." },
-          { title: "Feed-forward network (FFN)", text: "The FFN recognises patterns and separates them more cleanly into individual components; that isolates meanings and shifts them in context. It can “think” by separating, but also by reassembling and reordering." }
+          { title: "Feed-forward network (FFN)", text: "The FFN projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back. That is how it isolates meaning relations depending on context and can react to individual meanings." }
         ]
       },
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "The final vector h is the output vector of the LLM. It comes out of the transformer blocks; the entire context has been mixed into it through many layers and heads. h is compared with the learned directions of all tokens; the angle becomes a logit, and softmax turns that into a distribution.",
-        points: ["direction, not length", "one token is drawn"],
+        body: "At the end, after meanings have been mixed and separated many times, the vector $h$ of the last token contains the overall meaning of the context. It is compared with the learned directions of all words, and the angles are measured. A small angle means the word fits this position well. The word with the smallest angle is selected.",
+        points: [],
         mini: "unembed",
       }
     ];
-    var index = 0;
+    var index = lastBlocksIndex;
     var resetKey = null;
     var positionDemo = null;
     var el = document.createElement("div");
@@ -154,35 +157,52 @@
       V.grid(ctx, w, h, C, 26, 0.16);
     }
     function miniTokenizer(ctx, w, h) {
-      var parts = DE ? ["un", "zer", "brech", "lich"] : ["un", "break", "able"];
-      var cols = [C.lime, C.sky, C.gold, C.green];
-      var wordSize = Math.max(18, api.font("canvas") * 1.15);
-      ctx.font = '700 ' + wordSize + 'px "Barlow", sans-serif';
-      var widths = parts.map(function (p) { return ctx.measureText(p).width; });
-      var total = widths.reduce(function (a, p) { return a + p; }, 0);
-      var x = (w - total) / 2, y = h * 0.38;
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
-      parts.forEach(function (part, i) {
+      var rows = DE
+        ? [
+            { word: "unzerbrechlich", parts: ["un", "zer", "brech", "lich"] },
+            { word: "unglaublich", parts: ["un", "glaub", "lich"] }
+          ]
+        : [
+            { word: "unbreakable", parts: ["un", "break", "able"] },
+            { word: "unbelievable", parts: ["un", "believ", "able"] }
+          ];
+      var ids = { un: 1200, zer: 1241, brech: 1282, lich: 1323, glaub: 1364, break: 1241, able: 1282, believ: 1323 };
+      var palette = { un: C.lime, zer: C.sky, brech: C.gold, lich: C.green, glaub: C.blue, break: C.sky, able: C.gold, believ: C.lime };
+      var wordSize = Math.max(14, api.font("canvas") * 1.02);
+      var rowYs = [h * 0.32, h * 0.67];
+      rows.forEach(function (row, rowIndex) {
         ctx.font = '700 ' + wordSize + 'px "Barlow", sans-serif';
-        ctx.fillStyle = C.ink;
-        ctx.fillText(part, x, y);
-        ctx.fillStyle = V.alpha(cols[i % cols.length], 0.22);
-        ctx.fillRect(x - 2, y + 6, widths[i] + 4, 7);
-        if (i > 0) {
-          ctx.strokeStyle = V.alpha(C.line, 0.9);
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(x, y - 8);
-          ctx.lineTo(x, y + 16);
-          ctx.stroke();
+        var widths = row.parts.map(function (part) { return ctx.measureText(part).width; });
+        var total = widths.reduce(function (a, p) { return a + p; }, 0);
+        var x = (w - total) / 2;
+        var y = rowYs[rowIndex];
+        ctx.textAlign = "left";
+        ctx.textBaseline = "alphabetic";
+        row.parts.forEach(function (part, i) {
+          ctx.font = '700 ' + wordSize + 'px "Barlow", sans-serif';
+          ctx.fillStyle = C.ink;
+          ctx.fillText(part, x, y);
+          ctx.fillStyle = V.alpha(palette[part] || C.blue, 0.22);
+          ctx.fillRect(x - 2, y + 5, widths[i] + 4, 6);
+          if (i > 0) {
+            ctx.strokeStyle = V.alpha(C.line, 0.9);
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x, y - 7);
+            ctx.lineTo(x, y + 14);
+            ctx.stroke();
+          }
+          x += widths[i];
+        });
+        ctx.textAlign = "center";
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.fillText(row.parts.map(function (part) { return ids[part] || 0; }).join(" · "), w / 2, y + 24);
+        if (rowIndex === 1) {
+          ctx.fillStyle = C.petrol;
+          ctx.fillText(DE ? "gleiche ID für „un“" : "same ID for “un”", w / 2, y + 40);
         }
-        x += widths[i];
       });
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-      ctx.fillText((DE ? "IDs " : "IDs ") + parts.map(function (_, i) { return 1200 + i * 41; }).join(" · "), w / 2, y + 56);
     }
     function miniData(ctx, w, h) {
       var docs = DE ? ["Berlin liegt an der Spree.", "Die Spree fließt durch Berlin.", "Berlin liegt an der Elbe."] : ["The Nile flows through Egypt.", "Egypt lies on the Nile.", "The Nile flows through Brazil."];
@@ -343,11 +363,17 @@
     function drawMinis() {
       detail.querySelectorAll("canvas[data-mini]").forEach(function (cv) { drawMini(cv, cv.getAttribute("data-mini")); });
     }
+    function inlineMathText(value) {
+      return api.esc(value).replace(/\$([^$]+)\$/g, function (_, tex) {
+        var safe = String(tex).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+        return '<span class="ls-math ls-math--inline" data-tex="' + safe + '" data-tex-display="false"><code class="ls-tex-source">' + safe + '</code></span>';
+      });
+    }
     function renderDetail() {
       var b = blocks[index];
       var html = '<div class="ls-bs-kicker">' + (DE ? "Station " : "Station ") + (index + 1) + ' / ' + blocks.length + '</div>' +
         '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
-        '<p class="ls-bs-body">' + esc(b.body) + '</p>' +
+        '<p class="ls-bs-body">' + inlineMathText(b.body) + '</p>' +
         '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
       if (b.id === "data") {
         html += '<div class="ls-bs-html">' +
@@ -387,6 +413,7 @@
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
       detail.innerHTML = html;
+      if (window.TM && typeof window.TM.typesetMath === "function") { try { window.TM.typesetMath(detail); } catch (e) {} }
       if (b.position) {
         var posHost = detail.querySelector("[data-position-host]");
         var posFactory = core.get("position");
@@ -441,7 +468,7 @@
       prev: prevInternal,
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
+      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
     };
   }
 

@@ -529,6 +529,17 @@
 	}
 
 	function next() {
+		if (cur === 7 || cur === 8) {
+			const preset = document.getElementById("ism-dense-preset");
+			if (preset) {
+				const idx = PRESET_ORDER.indexOf(preset.value);
+				if (idx < PRESET_ORDER.length - 1) {
+					preset.value = PRESET_ORDER[idx + 1];
+					preset.dispatchEvent(new Event("change"));
+					return;
+				}
+			}
+		}
 		if (cur === SCENES.length - 1) {
 			if (window.LearnSys && window.LearnSys.state && window.LearnSys.go) {
 				const st = window.LearnSys.state();

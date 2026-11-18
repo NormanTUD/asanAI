@@ -353,7 +353,7 @@
       var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
       var aA = 25 * Math.PI / 180;
       var aB = 75 * Math.PI / 180;
-      var magA = 0.62, magB = Math.min(1.55, 0.62 * scaleMag);
+      var magA = 0.62, magB = Math.min(1.05, 0.62 * scaleMag);
       var lenA = r * magA, lenB = r * magB;
       var ax = cx + Math.cos(aA) * lenA, ay = cy - Math.sin(aA) * lenA;
       var bx = cx + Math.cos(aB) * lenB, by = cy - Math.sin(aB) * lenB;
@@ -392,8 +392,11 @@
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
       ctx.fillText(DE ? "Länge vs. Richtung" : "Length vs. direction", 18, 28);
-      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + Math.round(angleDeg) + '.0°</b></span><span>Cos <b>' + Math.cos(aB - aA).toFixed(3) + '</b></span>';
-      caption.textContent = DE ? "A und B zeigen in verschiedene Richtungen. B ist länger; der Winkel zwischen ihnen bleibt gleich, wenn du B skalierst. Die Länge ändert die Ähnlichkeit nicht, nur die Richtungen zählen." : "A and B point in different directions. B is longer; the angle between them stays the same when you scale B. Length does not change the similarity; only the directions count.";
+      var dx = Math.cos(aB) * magB - Math.cos(aA) * magA;
+      var dy = Math.sin(aB) * magB - Math.sin(aA) * magA;
+      var dist = Math.hypot(dx, dy);
+      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + Math.round(angleDeg) + '.0°</b></span><span>|A−B| <b>' + dist.toFixed(3) + '</b></span><span>Cos <b>' + Math.cos(aB - aA).toFixed(3) + '</b></span>';
+      caption.textContent = DE ? "A und B zeigen in verschiedene Richtungen. Wenn du B länger machst, ändert sich die euklidische Distanz |A−B|, aber nicht der Winkel. Die Länge ändert die Ähnlichkeit nicht; nur die Richtungen zählen." : "A and B point in different directions. Making B longer changes the Euclidean distance |A−B|, but not the angle. Length does not change the similarity; only the directions count.";
     }
     function unembedData() {
       return UN_TOKENS.map(function (tok) {
@@ -642,8 +645,28 @@
     resize();
     return {
       update: function (s) { if (s && s.mode) setMode(s.mode); },
-      next: function () { return false; },
-      prev: function () { return false; },
+      next: function () {
+        if (mode !== "scale") return false;
+        var values = [0.7, 1.0, 1.3, 1.6, 2.0];
+        var idx = values.indexOf(parseFloat(scaleMag.toFixed(2)));
+        if (idx < 0) idx = 0;
+        scaleMag = values[(idx + 1) % values.length];
+        if (scaleInput) scaleInput.value = String(scaleMag);
+        if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
+        draw();
+        return true;
+      },
+      prev: function () {
+        if (mode !== "scale") return false;
+        var values = [0.7, 1.0, 1.3, 1.6, 2.0];
+        var idx = values.indexOf(parseFloat(scaleMag.toFixed(2)));
+        if (idx < 0) idx = 0;
+        scaleMag = values[(idx - 1 + values.length) % values.length];
+        if (scaleInput) scaleInput.value = String(scaleMag);
+        if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
+        draw();
+        return true;
+      },
       resize: resize,
       pause: function () {},
       resume: function () { draw(); },

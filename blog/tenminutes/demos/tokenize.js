@@ -4,6 +4,7 @@
   if (!core) return;
   var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
+  var lastSplitStep = 0;
   function tokenizeScene(root, api) {
     var DE = api.lang === "de";
     var C = api.colors();
@@ -54,13 +55,13 @@
         '<div class="ls-tokenize-stats"></div>' +
       '</div>' +
       '<div class="ls-bpe" hidden>' +
-        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: Zeichen" : "Start: characters") + '</span></div>' +
+        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: einzelne Zeichen" : "Start: individual characters") + '</span></div>' +
         '<div class="ls-bpe-equation" aria-live="polite"></div>' +
         '<div class="ls-bpe-corpus" aria-live="polite"></div>' +
         '<div class="ls-bpe-stage" aria-live="polite"></div>' +
         '<div class="ls-bpe-meters" aria-live="polite"></div>' +
         '<div class="ls-bpe-counts" aria-live="polite"></div>' +
-        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Gezählt werden benachbarte Paare, gewichtet mit der Häufigkeit der Wörter. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Genau das ist der Kompressionsgedanke." : "Each merge replaces a frequent pair with a new symbol. Adjacent pairs are counted and weighted by word frequency. The splits are learned from the training data: as much text as possible with as few tokens as possible. The word remains reconstructable from its symbols; the text is lossless. That is the compression idea.") + '</p>' +
+        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar." : "Each merge replaces a frequent pair with a new symbol. The splits are learned from the training data: as much text as possible with as few tokens as possible. The word remains reconstructable from its symbols; the text is lossless.") + '</p>' +
       '</div>' +
       '</div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
@@ -80,7 +81,7 @@
     var navProgress = el.querySelector(".ls-tokenize-progress");
     var sampleKeys = ["understanding", "unbreakable", "sentence"];
     var mode = "split";
-    var step = 0;
+    var step = lastSplitStep;
     var sampleIndex = 0;
 
     function cloneWords(words) {
@@ -176,7 +177,7 @@
       corpusEl.innerHTML = st.words.map(function (w) {
         var sign = "";
         var hi = [];
-        if (next && next.merge) {
+        if (next && next.merge && step > 0) {
           for (var i = 0; i < w.symbols.length - 1; i++) {
             if (w.symbols[i] === next.merge.a && w.symbols[i + 1] === next.merge.b) {
               hi[i] = true;
@@ -192,13 +193,13 @@
       }).join("");
       var mergeText = st.merge
         ? (DE ? "Stufe " + step + ": „" + st.merge.a + "“ + „" + st.merge.b + "“ → „" + st.merge.a + st.merge.b + "“ (" + st.merge.count + "×)" : "Stage " + step + ": “" + st.merge.a + "” + “" + st.merge.b + "” → “" + st.merge.a + st.merge.b + "” (" + st.merge.count + "×)")
-        : (DE ? "Start: Jedes Wort besteht aus Zeichen." : "Start: every word consists of characters.");
+        : (DE ? "Start: Alles ist in einzelne Zeichen getrennt." : "Start: everything is split into individual characters.");
       var nextText = next && next.merge
         ? (DE ? "Nächster Merge: „" + next.merge.a + "“ + „" + next.merge.b + "“ (" + next.merge.count + "×)" : "Next merge: “" + next.merge.a + "” + “" + next.merge.b + "” (" + next.merge.count + "×)")
         : (DE ? "Fertig: vier Merges." : "Done: four merges.");
       var eq = st.merge
         ? '<span class="ls-bpe-eq-part">' + api.esc(st.merge.a) + '</span><span class="ls-bpe-eq-op">+</span><span class="ls-bpe-eq-part">' + api.esc(st.merge.b) + '</span><span class="ls-bpe-eq-op">→</span><span class="ls-bpe-eq-part is-new">' + api.esc(st.merge.a + st.merge.b) + '</span><span class="ls-bpe-eq-count">' + st.merge.count + '×</span>'
-        : '<span class="ls-bpe-eq-note">' + (DE ? "Start: Jedes Wort besteht aus Zeichen." : "Start: every word consists of characters.") + '</span>';
+        : '<span class="ls-bpe-eq-note">' + (DE ? "Start: Alles ist in einzelne Zeichen getrennt." : "Start: everything is split into individual characters.") + '</span>';
       equationEl.innerHTML = eq;
       var tokensNow = totalSymbols(st.words);
       var tokensStart = totalSymbols(stages[0].words);
@@ -220,7 +221,7 @@
       var splitMode = mode === "split";
       splitEl.hidden = !splitMode;
       bpeEl.hidden = splitMode;
-      if (splitMode) renderSplit(); else renderBpe();
+      if (splitMode) { lastSplitStep = step; renderSplit(); } else renderBpe();
       var total = splitMode ? sampleKeys.length : stages.length;
       var pos = step;
       navProgress.textContent = (pos + 1) + ' / ' + total;
@@ -265,7 +266,7 @@
     render();
     return {
       update: function (s) {
-        if (s && s.mode && s.mode !== mode) { mode = s.mode === "split" ? "split" : "bpe"; step = 0; render(); }
+        if (s && s.mode && s.mode !== mode) { if (mode === "split") lastSplitStep = step; mode = s.mode === "split" ? "split" : "bpe"; step = mode === "split" ? lastSplitStep : 0; render(); }
       },
       next: nextInternal,
       prev: prevInternal,

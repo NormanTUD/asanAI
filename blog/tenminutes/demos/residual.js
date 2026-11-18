@@ -76,6 +76,7 @@
       DE ? "Attention + FFN 1" : "Attention + FFN 1",
       DE ? "Attention + FFN 2" : "Attention + FFN 2"
     ];
+    var START_BASE = [0.46, 0.24, 0.34, 0.18, 0.56, 0.30];
     var LAYER_UPDATES = [
       {
         attn: [0.50, 0.20, 0.15, 0.30, 0.04, 0.25],
@@ -107,9 +108,9 @@
     var separate = false;
     var noteStart = 0;
     var noteProgress = 1;
-    var baseShown = zeros(), attnShown = zeros(), ffnShown = zeros();
-    var baseFrom = zeros(), attnFrom = zeros(), ffnFrom = zeros();
-    var baseTarget = zeros(), attnTarget = zeros(), ffnTarget = zeros();
+    var baseShown = START_BASE.slice(), attnShown = zeros(), ffnShown = zeros();
+    var baseFrom = START_BASE.slice(), attnFrom = zeros(), ffnFrom = zeros();
+    var baseTarget = START_BASE.slice(), attnTarget = zeros(), ffnTarget = zeros();
     var streamStart = 0;
     var selectedDim = 0;
     var hoverDim = -1;
@@ -124,7 +125,7 @@
       return target;
     }
     function totalAt(n) {
-      var v = zeros();
+      var v = START_BASE.slice();
       for (var i = 0; i < n; i++) {
         addInto(v, LAYER_UPDATES[i].attn);
         addInto(v, LAYER_UPDATES[i].ffn);
@@ -132,7 +133,7 @@
       return v;
     }
     function partsAt(n) {
-      if (n <= 0) return { base: zeros(), attn: zeros(), ffn: zeros() };
+      if (n <= 0) return { base: START_BASE.slice(), attn: zeros(), ffn: zeros() };
       var base = totalAt(n - 1);
       var u = LAYER_UPDATES[n - 1];
       return { base: base, attn: u.attn.slice(), ffn: u.ffn.slice() };
@@ -555,7 +556,7 @@
       g.fillText(DE ? "Sechs Dimensionen" : "Six dimensions", panelX + 16, barY + 24);
       g.fillStyle = C.muted;
       g.font = '600 ' + Math.max(8, Math.min(10, panelW * 0.0125)) + 'px "Open Sans", sans-serif';
-      var layerText = streamLayer === 0 ? (DE ? "Start: alle Dimensionen auf 0" : "Start: all dimensions at 0") : (DE ? "Schicht " + streamLayer + " · getragen + Attention + FFN" : "Layer " + streamLayer + " · carried + attention + FFN");
+      var layerText = streamLayer === 0 ? (DE ? "Start: sechs gelernte Dimensionen" : "Start: six learned dimensions") : (DE ? "Schicht " + streamLayer + " · getragen + Attention + FFN" : "Layer " + streamLayer + " · carried + attention + FFN");
       g.fillText(layerText, panelX + 16, barY + 40);
       if (panelW > 430) drawLegend(g, panelX + panelW - 286, barY + 26, C, true);
       var plotX = panelX + 24;
@@ -779,9 +780,9 @@
       if (running && !reduced && (phase === "stream" || noteStart)) ensureLoop();
     }
     function resetStream() {
-      baseShown = zeros(); attnShown = zeros(); ffnShown = zeros();
-      baseFrom = zeros(); attnFrom = zeros(); ffnFrom = zeros();
-      baseTarget = zeros(); attnTarget = zeros(); ffnTarget = zeros();
+      baseShown = START_BASE.slice(); attnShown = zeros(); ffnShown = zeros();
+      baseFrom = START_BASE.slice(); attnFrom = zeros(); ffnFrom = zeros();
+      baseTarget = START_BASE.slice(); attnTarget = zeros(); ffnTarget = zeros();
       streamStart = 0;
     }
     function setPhase(next) {

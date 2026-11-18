@@ -21,6 +21,7 @@
     var chips = el.querySelector(".ls-act-chips");
     var readout = el.querySelector(".ls-act-readout");
     var ctx = null, size = null, active = window.__lsActLast || "relu", hits = [];
+    var fromId = active, morph = 1, morphStart = 0, morphRaf = 0;
     var C = api.colors();
     function f(id, x) {
       if (id === "relu") return Math.max(0, x);
@@ -48,14 +49,16 @@
       var front = fns.filter(function (fn) { return fn.id === active; })[0];
       if (front) {
         var fn = front;
+        var morphEase = ease(clamp(morph, 0, 1));
         ctx.beginPath();
         for (var i = 0; i <= 120; i++) {
           var x = -3 + 6 * i / 120;
-          var px = sx(x), py = sy(f(x ? fn.id : fn.id, x));
+          var value = morph < 1 ? lerp(f(fromId, x), f(fn.id, x), morphEase) : f(fn.id, x);
+          var px = sx(x), py = sy(value);
           if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
         }
         ctx.strokeStyle = C[fn.color];
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = morph < 1 ? 0.55 + 0.45 * morphEase : 1;
         ctx.lineWidth = 2.6;
         ctx.stroke();
         ctx.globalAlpha = 1;
@@ -67,9 +70,27 @@
         hits.push({ id: fn.id, x: sx(2.65) + 12, y: end, r: 18 });
       }
       var info = fns.filter(function (fn) { return fn.id === active; })[0];
-      readout.innerHTML = '<span><b>' + info.label + '</b> ' + info.desc + '</span><span>' + (DE ? "Schritt " : "Step ") + (fns.indexOf(info) + 1) + " / " + fns.length + '</span><span>' + (DE ? "ReLU ist nicht injektiv; glatte Aktivierungen bleiben für endliche Eingaben umkehrbar." : "ReLU is not injective; smooth activations stay invertible for finite inputs.") + '</span>';
+      readout.innerHTML = '<span><b>' + info.label + '</b> ' + info.desc + '</span><span>' + (DE ? "Schritt " : "Step ") + (fns.indexOf(info) + 1) + " / " + fns.length + '</span><span>' + (DE ? "Sigmoid und tanh sind umkehrbar; GELU ist glatt, aber nicht monoton." : "Sigmoid and tanh are invertible; GELU is smooth but not monotonic.") + '</span>';
       canvas.setAttribute("aria-label", DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh" : "Activation functions: ReLU, GELU, sigmoid, tanh");
     }
+    function morphFrame(now) {
+      morph = Math.min(1, (now - morphStart) / 420);
+      draw();
+      if (morph < 1) morphRaf = requestAnimationFrame(morphFrame);
+      else morphRaf = 0;
+    }
+    function setActive(id) {
+      if (id === active) return;
+      fromId = active;
+      active = id;
+      window.__lsActLast = active;
+      morph = reducedMotion ? 1 : 0;
+      morphStart = performance.now();
+      if (morphRaf) cancelAnimationFrame(morphRaf);
+      if (!reducedMotion) morphRaf = requestAnimationFrame(morphFrame);
+      draw();
+    }
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     function resize() { size = api.fit(canvas, stage); draw(); }
     fns.forEach(function (fn) {
       var b = document.createElement("button");
@@ -77,25 +98,21 @@
       b.className = "ls-chip" + (fn.id === active ? " is-on" : "");
       b.textContent = fn.label;
       b.addEventListener("click", function () {
-        active = fn.id;
-        window.__lsActLast = active;
+        setActive(fn.id);
         chips.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });
-        draw();
       });
       chips.appendChild(b);
     });
     canvas.addEventListener("pointerup", function (e) {
       var r = canvas.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
-      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) { active = h.id; chips.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.textContent === fns.filter(function (f2) { return f2.id === h.id; })[0].label); }); draw(); } });
+      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) { setActive(h.id); chips.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.textContent === fns.filter(function (f2) { return f2.id === h.id; })[0].label); }); } });
     });
     function stepFn(delta) {
       var idx = fns.map(function (fn) { return fn.id; }).indexOf(active) + delta;
       if (idx < 0 || idx >= fns.length) return false;
-      active = fns[idx].id;
-      window.__lsActLast = active;
+      setActive(fns[idx].id);
       chips.querySelectorAll(".ls-chip").forEach(function (x, i) { x.classList.toggle("is-on", i === idx); });
-      draw();
       return true;
     }
     window.addEventListener("resize", resize);
@@ -106,7 +123,7 @@
       prev: function () { return stepFn(-1); },
       onKey: function (e) { return api.util.arrowKey(e, function () { return stepFn(1); }, function () { return stepFn(-1); }); },
       resize: resize,
-      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () { if (morphRaf) cancelAnimationFrame(morphRaf); window.removeEventListener("resize", resize); el.remove(); }
     };
   }
 

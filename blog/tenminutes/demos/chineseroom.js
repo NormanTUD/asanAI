@@ -22,6 +22,14 @@
         rule: ["你叫什么名字？", "我叫小明。"],
         de: "Wie heißt du? → Ich heiße Xiaoming.",
         en: "What is your name? → My name is Xiaoming."
+      },
+      {
+        input: "现在几点？",
+        answer: "现在三点。",
+        options: ["现在三点。", "我喜欢猫。", "窗户是关着的。"],
+        rule: ["现在几点？", "现在三点。"],
+        de: "Wie spät ist es? → Es ist drei Uhr.",
+        en: "What time is it? → It is three o'clock."
       }
     ];
     var idx = 0, score = 0, done = false;
@@ -31,7 +39,7 @@
       '<div class="ls-cr-body">' +
         '<div class="ls-cr-room">' +
           '<div class="ls-cr-top"><span class="ls-cr-progress"></span><span class="ls-cr-score"></span></div>' +
-          '<div class="ls-cr-incoming"><span class="ls-cr-label">' + (DE ? "Eingabe" : "Input") + '</span><p class="ls-cr-input" lang="zh"></p><p class="ls-cr-sub">' + (DE ? "Du verstehst diese Zeichen nicht." : "You do not understand these characters.") + '</p></div>' +
+          '<div class="ls-cr-incoming"><span class="ls-cr-label">' + (DE ? "Eingabe" : "Input") + '</span><p class="ls-cr-input" lang="zh"></p><p class="ls-cr-sub">' + (DE ? "Du verstehst diese Zeichen nicht. Wenn du zufällig Chinesisch kannst, tue so, als könntest du es nicht." : "You do not understand these characters. If you happen to know Chinese, pretend you do not.") + '</p></div>' +
           '<div class="ls-cr-book"><div class="ls-cr-book-head">' + (DE ? "Regelbuch" : "Rulebook") + '</div><table class="ls-cr-rules" lang="zh"><tbody></tbody></table></div>' +
           '<div class="ls-cr-options" role="group" lang="zh" aria-label="' + (DE ? "Antwort wählen" : "Choose an answer") + '"></div>' +
           '<p class="ls-cr-feedback" aria-live="polite"></p>' +
@@ -68,7 +76,8 @@
       rulesBody.innerHTML = "<tr><td>" + api.esc(r.rule[0]) + "</td><td>" + api.esc(r.rule[1]) + "</td></tr>" +
         "<tr><td>" + api.esc(other.rule[0]) + "</td><td>" + api.esc(other.rule[1]) + "</td></tr>";
       optionsEl.innerHTML = "";
-      r.options.forEach(function (opt) {
+      var shuffled = r.options.slice().sort(function () { return Math.random() - 0.5; });
+      shuffled.forEach(function (opt) {
         var b = document.createElement("button");
         b.type = "button";
         b.className = "ls-cr-choice";
@@ -120,7 +129,21 @@
       render();
     });
     render();
-    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+    return {
+      update: function () {},
+      next: function () {
+        if (done) return false;
+        if (feedback.textContent) return true;
+        var r = rounds[idx];
+        var buttons = Array.prototype.slice.call(optionsEl.querySelectorAll("button"));
+        var correct = buttons.filter(function (b) { return b.textContent === r.answer; })[0];
+        if (!correct) return false;
+        choose(r.answer, correct);
+        return true;
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
   }
 
   core.register("chineseroom", chineseroomScene);

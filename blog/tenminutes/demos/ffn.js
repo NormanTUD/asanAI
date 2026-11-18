@@ -146,18 +146,22 @@
     }
     prevBtn.addEventListener("click", function () { stepContext(-1); });
     nextBtn.addEventListener("click", function () { stepContext(1); });
-    var ffnPoints = null, ffnEdges = null;
+    var ffnPoints = null, ffnEdges = null, bendProjected = [], ffnHover = -1;
     function buildFfnGraph() {
       if (ffnPoints) return;
       var seed = 17;
       function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      var pointLabels = [
+        labels.core.split(" · "),
+        labels.ring.split(" · ")
+      ];
       ffnPoints = [];
       for (var c = 0; c < 2; c++) {
         var n = c === 0 ? 90 : 150;
         for (var k = 0; k < n; k++) {
           var a = k * 2.399963229728653 + rnd() * 0.25;
           var r = c === 0 ? 0.32 * Math.sqrt((k + 0.5) / n) : 0.55 + 0.34 * Math.sqrt((k + 0.5) / n);
-          ffnPoints.push({ x: Math.cos(a) * r + (rnd() - 0.5) * 0.025, y: Math.sin(a) * r + (rnd() - 0.5) * 0.025, c: c });
+          ffnPoints.push({ x: Math.cos(a) * r + (rnd() - 0.5) * 0.025, y: Math.sin(a) * r + (rnd() - 0.5) * 0.025, c: c, label: pointLabels[c][k % pointLabels[c].length] });
         }
       }
       ffnEdges = [];
@@ -210,8 +214,9 @@
       var projected = ffnPoints.map(function (pt) {
         var wp = warp(pt.x, pt.y);
         var p = project(wp.x, wp.y, wp.z);
-        return { x: p.x, y: p.y, z: p.z, c: pt.c };
+        return { x: p.x, y: p.y, z: p.z, c: pt.c, label: pt.label };
       });
+      bendProjected = projected;
       ffnEdges.forEach(function (e) {
         var a = projected[e.a], b = projected[e.b];
         ctx.strokeStyle = a.c === 0 ? C.green : C.gold;
@@ -234,6 +239,19 @@
         ctx.stroke();
       });
       ctx.globalAlpha = 1;
+      if (ffnHover >= 0 && bendProjected[ffnHover]) {
+        var hp = bendProjected[ffnHover];
+        var label = hp.label + (DE ? " · Kontextmuster" : " · context pattern");
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        var tw = ctx.measureText(label).width;
+        var tx = Math.max(6, Math.min(w - tw - 6, hp.x + 8));
+        var ty = Math.max(16, Math.min(h - 8, hp.y - 10));
+        ctx.fillStyle = "rgba(255,255,255,.95)";
+        ctx.fillRect(tx - 3, ty - 9, tw + 6, 14);
+        ctx.fillStyle = hp.c === 0 ? C.green : C.gold;
+        ctx.textAlign = "left";
+        ctx.fillText(label, tx, ty + 2);
+      }
       var lineAlpha = Math.max(0, Math.min(1, (bend - 0.45) / 0.25));
       if (lineAlpha > 0.01) {
         var ly = cy - 0.62 * scale * 0.98;
@@ -255,8 +273,6 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(labels.bend + " " + bend.toFixed(2), 14, 18);
-      ctx.textAlign = "center";
-      ctx.fillText(DE ? "feine Punktwolke · Kanten = Nachbarschaft" : "fine point cloud · edges = neighbourhood", w / 2, h - 10);
       bendCanvas.setAttribute("aria-label", (DE ? "Feine Punktwolke des FFN-Raums. " : "Fine point cloud of the FFN space. ") + labels.hint + " " + (bend > 0.6 ? labels.separated : labels.notSeparated) + ".");
     }
     function updateBendReadout() {
@@ -317,6 +333,21 @@
       });
       dimsCanvas.setAttribute("aria-label", DE ? "Input d_model, verborgenes d_ff und Output d_model als Balken." : "Input d_model, hidden d_ff and output d_model as bars.");
     }
+    bendCanvas.addEventListener("pointermove", function (e) {
+      if (!size) return;
+      var r = bendCanvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var best = -1, bestD = 14 * 14;
+      bendProjected.forEach(function (p, i) {
+        var d = (p.x - x) * (p.x - x) + (p.y - y) * (p.y - y);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      if (best !== ffnHover) { ffnHover = best; drawBend(); }
+      bendCanvas.style.cursor = best >= 0 ? "help" : "default";
+    });
+    bendCanvas.addEventListener("pointerleave", function () {
+      if (ffnHover !== -1) { ffnHover = -1; drawBend(); }
+    });
     function resize() {
       size = api.fit(bendCanvas, bendStage);
       drawBend();

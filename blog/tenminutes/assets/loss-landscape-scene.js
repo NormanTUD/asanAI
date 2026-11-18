@@ -36,7 +36,7 @@
     var optOrder = ["sgd", "adam", "momentum"];
     var data = null, worker = null, workerFailed = false;
     var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
-    var yaw = -0.72, pitch = 0.86, zoom = 1, drag = null;
+    var yaw = -0.38, pitch = 1.02, zoom = 1, drag = null;
     var size = null, minL = 0, maxL = 1;
 
     function mix(a, b, t) {
@@ -134,6 +134,10 @@
         ctx.globalAlpha = 0.14; ctx.strokeStyle = C.paper; ctx.lineWidth = 0.6; ctx.stroke();
       });
       ctx.globalAlpha = 1;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(8, 30, w - 16, h - 58);
+      ctx.clip();
       optOrder.forEach(function (name) {
         if (name === optimizer) return;
         var tr = data.trajectories[name] || [];
@@ -155,6 +159,7 @@
         ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
         ctx.fillText(optimizer.toUpperCase() + " · L " + cur.loss.toFixed(4), bp.x + 12, bp.y - 10);
       }
+      ctx.restore();
       var o = project(data.range.a0, data.range.b0, minL), ea = project(data.range.a1, data.range.b0, minL), eb = project(data.range.a0, data.range.b1, minL);
       ctx.strokeStyle = C.petrol; ctx.globalAlpha = .7; ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(ea.x, ea.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(eb.x, eb.y); ctx.stroke();

@@ -2,6 +2,7 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
+  var lastSelected = 0;
   function hallucinationTypesScene(root, api) {
     var DE = api.lang === "de";
     var TYPES = DE ? [
@@ -25,7 +26,8 @@
       },
       {
         id: "intrinsic", label: "Intrinsic", color: "sky",
-        question: "Quelle: „Das Treffen war 2019.“ Fasse die Quelle zusammen.",
+        sourceText: "… Das Treffen der Arbeitsgruppe fand am 14. März 2019 in Leipzig statt. Die Ergebnisse wurden später veröffentlicht. …",
+        question: "Fasse die Quelle zusammen.",
         answer: "Das Treffen war 2021.",
         why: "Die Quelle sagt 2019. Die Antwort widerspricht der gegebenen Quelle direkt; die Zusammenfassung ist nicht faithful.",
         check: "Steht die Aussage so in der Quelle? Nein.",
@@ -34,7 +36,8 @@
       },
       {
         id: "extrinsic", label: "Extrinsic", color: "green",
-        question: "Quelle: „Das Team gewann 2022.“ Fasse die Quelle zusammen.",
+        sourceText: "… Das Team gewann 2022 das Finale. Weitere Details wurden in der Quelle nicht genannt. …",
+        question: "Fasse die Quelle zusammen.",
         answer: "Das Team gewann 2022 in Berlin mit 5:0.",
         why: "Die Quelle sagt nur, dass das Team 2022 gewann. Ort und Ergebnis sind ergänzt und nicht gedeckt.",
         check: "Welche Teile stehen wirklich in der Quelle? Nur das Jahr.",
@@ -43,7 +46,8 @@
       },
       {
         id: "context", label: "Kontext ignoriert", color: "blue",
-        question: "Lies den Kontext: Der Preis ist 42 €. Wie hoch ist der Preis?",
+        sourceText: "… Der Preis für die Kaffeemaschine beträgt 42 €. Die Lieferung erfolgt morgen. …",
+        question: "Wie hoch ist der Preis?",
         answer: "43 €.",
         why: "Der Kontext enthält die Antwort. Das Modell folgt stattdessen einem gelernten Muster oder einer alten Erinnerung.",
         check: "Die Zahl steht anders im Kontext. Das ist ein Input-Konflikt.",
@@ -72,7 +76,7 @@
         id: "negation", label: "Negation", color: "blue",
         question: "Was bedeutet „nicht traurig“?",
         answer: "Nicht automatisch „glücklich“.",
-        why: "Negation ist keine exakte Umkehrung. Attention verschiebt „traurig“ in eine andere Richtung, aber nicht punktgenau auf „glücklich“. Dazwischen bleiben Abstufungen, Gleichgültigkeit oder etwas anderes.",
+        why: "Negation ist keine exakte Umkehrung. Attention ist kein Antonym-Operator: „nicht traurig“ landet nicht punktgenau auf „glücklich“. Dazwischen bleiben Abstufungen, Gleichgültigkeit oder etwas anderes.",
         check: "Wird die Verneinung als eigene Bedeutung behandelt oder als exakte Umkehrung?",
         fix: "Logische Schritte separat prüfen; Negation und Antonym nicht gleichsetzen.",
         source: "Ji et al. (2023)"
@@ -107,7 +111,8 @@
       },
       {
         id: "intrinsic", label: "Intrinsic", color: "sky",
-        question: "Source: “The meeting was in 2019.” Summarise the source.",
+        sourceText: "… The working group met on 14 March 2019 in Leipzig. The results were published later. …",
+        question: "Summarise the source.",
         answer: "The meeting was in 2021.",
         why: "The source says 2019. The answer directly contradicts the given source; the summary is not faithful.",
         check: "Does the source actually say this? No.",
@@ -116,7 +121,8 @@
       },
       {
         id: "extrinsic", label: "Extrinsic", color: "green",
-        question: "Source: “The team won in 2022.” Summarise the source.",
+        sourceText: "… The team won the final in 2022. The source gives no further details. …",
+        question: "Summarise the source.",
         answer: "The team won in Berlin in 2022 with 5–0.",
         why: "The source only says the team won in 2022. Place and score are added and unsupported.",
         check: "Which parts are really in the source? Only the year.",
@@ -125,7 +131,8 @@
       },
       {
         id: "context", label: "Context ignored", color: "blue",
-        question: "Read the context: the price is €42. What is the price?",
+        sourceText: "… The coffee machine costs €42. Delivery is tomorrow. …",
+        question: "What is the price?",
         answer: "€43.",
         why: "The context contains the answer. The model follows a learned pattern or an old memory instead.",
         check: "The number differs from the context. That is an input conflict.",
@@ -154,7 +161,7 @@
         id: "negation", label: "Negation", color: "blue",
         question: "What does “not sad” mean?",
         answer: "Not automatically “happy”.",
-        why: "Negation is not an exact reversal. Attention shifts “sad” in another direction, but not precisely onto “happy”. Degrees, indifference, or something else remain in between.",
+        why: "Negation is not an exact reversal. Attention is not an antonym operator: “not sad” does not land precisely on “happy”. Degrees, indifference, or something else remain in between.",
         check: "Is the negation treated as its own meaning or as an exact reversal?",
         fix: "Check logical steps separately; do not equate negation with an antonym.",
         source: "Ji et al. (2023)"
@@ -169,7 +176,7 @@
         source: "Ji et al. (2023)"
       }
     ];
-    var selected = 0;
+    var selected = lastSelected;
     var el = document.createElement("div");
     el.className = "ls-htl-scene";
     el.innerHTML = '<div class="ls-htl-chips" role="tablist"></div>' +
@@ -220,11 +227,12 @@
       '<p class="ls-htl-neg-eq">' + api.esc(notSad) + ' <b>≠</b> ' + api.esc(happy) + '</p>';
     }
     function render() {
+      lastSelected = selected;
       var t = TYPES[selected];
       card.className = "ls-htl-card is-" + t.color;
       kicker.textContent = DE ? "Typ " + (selected + 1) + " / " + TYPES.length : "Type " + (selected + 1) + " / " + TYPES.length;
       title.textContent = t.label;
-      example.innerHTML = '<span class="ls-htl-q">' + (DE ? "Frage" : "Question") + '</span><p>' + api.esc(t.question) + '</p><span class="ls-htl-a">' + (DE ? "Antwort" : "Answer") + '</span><p>' + api.esc(t.answer) + '</p>';
+      example.innerHTML = (t.sourceText ? '<div class="ls-htl-source-text"><span>' + (DE ? "Quelle" : "Source") + '</span><p>' + api.esc(t.sourceText) + '</p></div>' : '') + '<span class="ls-htl-q">' + (DE ? "Frage" : "Question") + '</span><p>' + api.esc(t.question) + '</p><span class="ls-htl-a">' + (DE ? "Antwort" : "Answer") + '</span><p>' + api.esc(t.answer) + '</p>';
       if (t.id === "negation") { viz.hidden = false; viz.innerHTML = negationViz(); }
       else { viz.hidden = true; viz.innerHTML = ""; }
       why.textContent = t.why;
