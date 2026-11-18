@@ -391,8 +391,8 @@
   };
 
   const ACTS = [
-    { roman: "I", label: "Space" },
-    { roman: "II", label: "Types" },
+    { roman: "I", label: "Space & Homotopy" },
+    { roman: "II", label: "Types & Rules" },
     { roman: "III", label: "Identity" },
     { roman: "IV", label: "Fibers" },
     { roman: "V", label: "Logic" },
@@ -408,7 +408,10 @@
     { act: 0, kind: "homotopy",    caption: "A path can bend into another.", key: "bend", d: 12.6, cy: 2.6 },
     { act: 0, kind: "composite",   caption: "Paths compose; every path reverses.", key: "reverses", d: 12.6, cy: 2.6 },
     { act: 0, kind: "torus",       caption: "A loop can remember a hole.", key: "hole", d: 12.4, cy: 3.0 },
+    { act: 0, kind: "loopspace",   caption: "Loops remember how often they wind.", key: "wind", d: 11.8, cy: 2.8 },
     { act: 0, kind: "contractible",caption: "One point, and every path collapses.", key: "collapses", d: 11.4, cy: 2.6 },
+    { act: 0, kind: "homotopyequiv",caption: "Two spaces, one shape.", key: "shape", d: 12.4, cy: 2.6 },
+    { act: 0, kind: "cw",          caption: "Spaces built from cells.", key: "cells", d: 12.2, cy: 2.6 },
 
     { act: 1, kind: "typespace",   caption: "A type is a space.", key: "space", d: 12.4, cy: 2.8 },
     { act: 1, kind: "judgment",    caption: "A term inhabits a type.", key: "inhabits", d: 11.6, cy: 2.7 },
@@ -416,6 +419,11 @@
     { act: 1, kind: "product",     caption: "A pair: one point from each type.", key: "pair", d: 10.4, cy: 2.4 },
     { act: 1, kind: "sum",         caption: "A value sits on one side.", key: "side", d: 11.9, cy: 2.6 },
     { act: 1, kind: "unitempty",   caption: "One point; or nothing.", key: "nothing", d: 10.7, cy: 2.5 },
+    { act: 1, kind: "context",     caption: "Assumptions form a context.", key: "context", d: 11.4, cy: 2.6 },
+    { act: 1, kind: "rulespi1",    caption: "Rules build the type.", key: "Rules", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "rulespi2",    caption: "Apply, then compute.", key: "compute", d: 12.4, cy: 2.8 },
+    { act: 1, kind: "derivation",  caption: "A proof is a derivation tree.", key: "derivation", d: 11.6, cy: 2.6 },
+    { act: 1, kind: "betareduce",  caption: "Computation is substitution.", key: "substitution", d: 11.6, cy: 2.6 },
 
     { act: 2, kind: "identity",    caption: "Identity is a space of paths.", key: "paths", math: "a =_{A} b", d: 12.2, cy: 2.6 },
     { act: 2, kind: "deffeq",      caption: "Computation collapses; identity is a path.", key: "path", d: 11.2, cy: 2.4 },
@@ -455,7 +463,7 @@
   ];
   const N = BEATS.length;
 
-  const R_ARC = 45;
+  const R_ARC = 60;
   const SPAN = 3.0;
   const thetaOf = (i) => -SPAN / 2 + (i / (N - 1)) * SPAN;
   const stationPos = (i) => new THREE.Vector3(
@@ -465,8 +473,8 @@
   );
   const outwardOf = (i) => new THREE.Vector3(Math.sin(thetaOf(i)), 0, Math.cos(thetaOf(i)));
 
-  const overviewPos = new THREE.Vector3(0, 24, 120);
-  const overviewLook = new THREE.Vector3(0, -5.2, 14);
+  const overviewPos = new THREE.Vector3(0, 29, 151);
+  const overviewLook = new THREE.Vector3(0, -5.2, 18);
 
   let webglOK = true;
   let renderer = null;
@@ -3065,13 +3073,14 @@
     const pillars = makeLines(pillarPairs, { color: C.ice, opacity: 0.0 });
     group.add(pillars.obj);
     const links = [
-      [1, 2], [2, 3], [2, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9],
-      [9, 10], [10, 11], [11, 12], [7, 13], [13, 14], [14, 15], [15, 16],
-      [13, 17], [17, 18], [18, 19], [19, 20], [20, 21], [21, 22], [22, 23],
-      [24, 25], [25, 26], [26, 27], [27, 28], [29, 30], [29, 31], [29, 32],
-      [29, 33], [31, 22], [32, 23], [33, 26], [34, 35], [35, 36], [36, 37],
-      [37, 38], [38, 39], [39, 40], [40, 41], [41, 42],
-      [5, 41], [14, 37], [23, 26], [10, 38], [17, 19], [0, 42]
+      [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9],
+      [10, 11], [11, 12], [12, 13], [13, 14], [14, 15], [15, 16], [16, 17],
+      [17, 18], [18, 19], [19, 20], [11, 21], [21, 22], [22, 23], [23, 24],
+      [21, 25], [25, 26], [26, 27], [27, 28], [28, 29], [29, 30], [30, 31],
+      [32, 33], [33, 34], [34, 35], [35, 36],
+      [37, 38], [38, 39], [39, 40], [40, 41],
+      [42, 43], [43, 44], [44, 45], [45, 46], [46, 47], [47, 48], [48, 49],
+      [6, 48], [9, 49], [22, 45], [31, 34], [13, 46], [25, 27], [0, 50]
     ];
     const arcs = [];
     for (const [i, j] of links) {
@@ -3090,7 +3099,7 @@
     group.add(halo.obj);
     constellation = { group, pillars, arcs, halo };
 
-    const picks = [3, 9, 14, 20, 26, 31, 37, 42];
+    const picks = [5, 17, 22, 28, 34, 39, 45, 50];
     const names = ["Space", "Types", "Identity", "Fibers", "Logic", "Proofs", "Higher", "Coda"];
     const cols = ["#9df0ff", "#5bdcff", "#b691ff", "#8dffc6", "#ff8fdc", "#ffa86b", "#ffd27d", "#f2fdff"];
     constellation.actLabels = picks.map((idx, k) => {

@@ -41,4 +41,8 @@ folie "Bedeutung wird eine Zahl":
 
 "Drei Dimensionen, ein Schatten" benenne es um nach "Drei Dimensionen" ohne das schattenzeug. und da sind auch wieder zu viele linien. entferne auch hier dieses grüne "Jedes Wort ist eine Richtung vom Ursprung" darunter
 
+folie "Attention bewegt Punkte anhand des Kontextes": 
+
+entferne vom plot rechts oben das "x' = Sigma w mal v" und auch das "x′ x′ = Σ w · v" von unten
+
 
