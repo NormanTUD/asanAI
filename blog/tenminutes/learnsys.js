@@ -1179,6 +1179,11 @@
     els.extras.scrollIntoView({ behavior: "smooth", block: "start" });
     save();
   }
+  function expandEditorDetails() {
+    if (!LOCAL_EDITOR || !els.extras) return;
+    state.depth = "deep";
+    els.extras.querySelectorAll("details").forEach(function (d) { d.open = true; });
+  }
   function openNextClosedBox() {
     if (!els.extras) return false;
     var all = els.extras.querySelectorAll("details");
@@ -1320,6 +1325,7 @@
       var openBtn = els.extras.querySelector("[data-open-depth]");
       if (openBtn) openBtn.addEventListener("click", openDepth);
     }
+    expandEditorDetails();
     els.extras.hidden = !depth;
     var watchHTMLStr = doc.watch ? '<b>' + esc(t("watch")) + '</b> ' + watchHTML(doc.watch) : "";
     if (els.watch.innerHTML !== watchHTMLStr) {
@@ -5370,7 +5376,9 @@
     root.classList.toggle("ls-no-editor", !LOCAL_EDITOR);
     buildUI();
     bind();
+    if (LOCAL_EDITOR) state.depth = "deep";
     renderAll();
+    expandEditorDetails();
     if (!applyHash()) writeHash();
     rememberSubstep();
     booted = true;

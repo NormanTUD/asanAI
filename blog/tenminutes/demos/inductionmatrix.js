@@ -51,6 +51,7 @@
             '<div class="ls-ix-row-label">' + (DE ? "Zeile 6 · A (Position 6)" : "Row 6 · A (position 6)") + '</div>' +
             '<div class="ls-ix-strong">' + (DE ? "82 % von B (Position 4)" : "82% from B (position 4)") + '</div>' +
             '<p>' + (DE ? "Spalte 4 ist B. Ihr Vorgänger ist A. Das aktuelle A fragt mit A und trifft deshalb diese Spalte. Der OV-Schaltkreis kopiert den Value von B." : "Column 4 is B. Its predecessor is A. The current A asks with A and therefore hits this column. The OV circuit copies B's value.") + '</p>' +
+            '<p class="ls-ix-ov"><b>OV = Output × Value.</b> ' + (DE ? "V ist der Value-Vektor, O die Output-Projektion. QK wählt die Spalte; OV schreibt den Inhalt von B in den aktuellen Vektor." : "V is the value vector, O the output projection. QK selects the column; OV writes the content of B into the current vector.") + '</p>' +
             '<p class="ls-ix-note">' + (DE ? "Hohe Werte sind gelernte Attention-Gewichte, keine statistische Korrelation. Zahlen illustriert." : "High values are learned attention weights, not statistical correlation. Numbers illustrative.") + '</p>' +
           '</div>' +
         '</div>';

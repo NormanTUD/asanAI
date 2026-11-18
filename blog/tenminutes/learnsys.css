@@ -2689,3 +2689,6 @@ h1,h2,h3,h4{
 .ls-ix-steps p{margin:3px 0 0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-ix-table-wrap th.is-hot-col{background:rgba(159,151,0,.18);color:var(--ls-gold)}
 @media(max-width:760px){.ls-ix-steps{grid-template-columns:1fr}}
+
+.ls-ix-ov{margin:0;padding:6px 7px;border-left:3px solid var(--ls-green);background:rgba(99,164,75,.07);font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-ix-ov b{color:var(--ls-petrol)}
