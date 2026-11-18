@@ -45,4 +45,8 @@ folie "Attention bewegt Punkte anhand des Kontextes":
 
 entferne vom plot rechts oben das "x' = Sigma w mal v" und auch das "x′ x′ = Σ w · v" von unten
 
+folie "Wie Attention rechnet".
+
+lass mich mouseovern über jedes wort und da infos anzeigen aber lass mich auch worte anklicken im plot oben.mach die buttons "Bögen, graph, simplex" unter die head 1 und head 2 buttons, damit klar ist, dass das ne hierarchie ist. entferne "Wechsle die Heads: Head 1 zeigt auf „Tier“ (Subjekt), Head 2 auf „Straße“ (Ort)." von ganz unten. der simplex ist nicht so hoch wie graph und bögen daher springt der rest, das nervt, der simplex soll genauso hoch sein wie bögen und graph.
+
 
