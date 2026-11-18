@@ -265,6 +265,16 @@
         ctx.lineWidth = 1.6;
         ctx.stroke();
       });
+      if (hoverIndex >= 0 && points[hoverIndex]) {
+        var hp = points[hoverIndex];
+        ctx.beginPath(); ctx.arc(px(hp.x), py(hp.y), 7, 0, Math.PI * 2);
+        ctx.fillStyle = V.alpha(C.gold, .25); ctx.fill();
+        ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.stroke();
+        V.label(ctx, "x " + hp.x.toFixed(2) + " · y " + hp.y.toFixed(2), px(hp.x) + 9, py(hp.y) - 9, {
+          font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif',
+          color: C.ink, align: "left", bgAlpha: 0.9
+        });
+      }
       legend(size.w, size.h);
       V.heading(ctx, phase === "linear" ? "1 Neuron · ŷ = w x + b" : "1 → 32 → 32 → 32 → 1", size.w - 20, 18, C.petrol, 10, 1);
       if (phase === "linear") {
@@ -548,8 +558,17 @@
       }
     });
     canvas.addEventListener("pointermove", function (e) {
-      if (drag == null) return;
       var p = pointerPos(e);
+      if (drag == null) {
+        var best = -1, bd = 1e9;
+        points.forEach(function (pt, i) {
+          var d = Math.abs(px(pt.x) - p.x) + Math.abs(py(pt.y) - p.y);
+          if (d < bd) { bd = d; best = i; }
+        });
+        var next = best >= 0 && bd < 16 ? best : -1;
+        if (next !== hoverIndex) { hoverIndex = next; draw(); canvas.style.cursor = next >= 0 ? "help" : "default"; }
+        return;
+      }
       var y = Y_MIN + (size.h - 40 - p.y) / (size.h - 74) * (Y_MAX - Y_MIN);
       points[drag].y = V.clamp(y, Y_MIN, Y_MAX);
       if (window.TM_SINUS_DATA && window.TM_SINUS_DATA.points[drag]) window.TM_SINUS_DATA.points[drag].y = points[drag].y;
@@ -559,6 +578,7 @@
     });
     canvas.addEventListener("pointerup", function () { drag = null; });
     canvas.addEventListener("pointercancel", function () { drag = null; });
+    canvas.addEventListener("pointerleave", function () { if (hoverIndex !== -1) { hoverIndex = -1; draw(); } });
     trainBtn.addEventListener("click", function () { if (training) pauseTraining(); else resumeTraining(); });
     resetBtn.addEventListener("click", resetActive);
     matrixBtn.addEventListener("click", function () {

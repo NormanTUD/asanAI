@@ -36,7 +36,7 @@
     var optOrder = ["sgd", "adam", "momentum"];
     var data = null, worker = null, workerFailed = false;
     var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
-    var yaw = -0.38, pitch = 1.02, zoom = 1, drag = null;
+    var yaw = 0.72, pitch = 0.95, zoom = 1, drag = null;
     var size = null, minL = 0, maxL = 1;
 
     function mix(a, b, t) {
@@ -63,6 +63,12 @@
       var z2 = -y1 * sp + z * 0.9 * cp;
       var s = Math.min(size.w * 0.36, size.h * 0.44) * zoom / (1 + z2 * 0.18);
       return { x: size.w * 0.5 + x1 * s, y: size.h * 0.56 - y2 * s, z: z2 };
+    }
+    function projectSafe(a, b, L) {
+      var p = project(a, b, L);
+      p.x = Math.max(18, Math.min(size.w - 18, p.x));
+      p.y = Math.max(24, Math.min(size.h - 28, p.y));
+      return p;
     }
     function drawExamples() {
       if (!data) { tableEl.innerHTML = '<span>' + (DE ? "Lade Beispiele …" : "Loading examples …") + '</span>'; return; }
@@ -142,18 +148,18 @@
         if (name === optimizer) return;
         var tr = data.trajectories[name] || [];
         if (tr.length < 2) return;
-        ctx.beginPath(); tr.forEach(function (p, k) { var q = project(p.a, p.b, p.loss); if (k === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); });
+        ctx.beginPath(); tr.forEach(function (p, k) { var q = projectSafe(p.a, p.b, p.loss); if (k === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); });
         ctx.strokeStyle = optColor(name); ctx.globalAlpha = 0.18; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
       });
       ctx.globalAlpha = 1;
       var tr = trajectory();
       if (tr.length > 1) {
-        ctx.beginPath(); for (var s = 0; s <= Math.min(step, tr.length - 1); s++) { var q = project(tr[s].a, tr[s].b, tr[s].loss); if (s === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); }
+        ctx.beginPath(); for (var s = 0; s <= Math.min(step, tr.length - 1); s++) { var q = projectSafe(tr[s].a, tr[s].b, tr[s].loss); if (s === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); }
         ctx.strokeStyle = optColor(optimizer); ctx.lineWidth = 2.8; ctx.stroke();
       }
       var cur = current();
       if (cur) {
-        var bp = project(cur.a, cur.b, cur.loss);
+        var bp = projectSafe(cur.a, cur.b, cur.loss);
         ctx.beginPath(); ctx.arc(bp.x, bp.y + 5, 10, 0, Math.PI * 2); ctx.fillStyle = "rgba(0,0,0,.16)"; ctx.fill();
         ctx.beginPath(); ctx.arc(bp.x, bp.y, 8, 0, Math.PI * 2); ctx.fillStyle = optColor(optimizer); ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
         ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";

@@ -244,6 +244,7 @@
       prevBtn.disabled = index === 0;
       nextBtn.textContent = index === tabs.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
       track.querySelectorAll("[data-history]").forEach(function (b, i) { b.classList.toggle("is-on", i === index); b.setAttribute("aria-selected", i === index ? "true" : "false"); });
+      if (index === 0) track.scrollLeft = 0;
     }
     function setIndex(i) {
       index = Math.max(0, Math.min(tabs.length - 1, i));
@@ -264,7 +265,7 @@
     render();
     return {
       update: function (s) {
-        if (s && typeof s.tab === "number" && s.tab !== index) {
+        if (s && typeof s.tab === "number") {
           index = s.tab;
           render();
         }

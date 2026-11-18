@@ -473,7 +473,7 @@
     { act: 2, kind: "mobius",        caption: "The Möbius band twists once.", key: "twists", d: 12.0, cy: 2.8 },
     { act: 2, kind: "loopspace",     caption: "A covering space: discrete fibers.", key: "covering", d: 11.8, cy: 2.8 },
 
-    { act: 3, kind: "hopf",          caption: "The Hopf fibration: circles over a sphere.", key: "Hopf", d: 14.0, cy: 3.0 },
+    { act: 3, kind: "hopf",          caption: "The Hopf fibration: circles over a sphere.", key: "Hopf", d: 13.0, cy: 3.0 },
     { act: 3, kind: "pullback",      caption: "Pull back a bundle along a map.", key: "Pull", d: 11.6, cy: 2.6 },
 
     { act: 4, kind: "finale",        caption: "One bundle over the whole path.", key: "bundle", kicker: "Coda &middot; The Whole Bundle", d: 12, cy: 3 }
@@ -518,7 +518,7 @@
   function fatal(err) {
     loader.classList.add("hide");
     fatalEl.classList.add("show");
-    fatalEl.textContent = "HoTT: " + (err && err.message ? err.message : String(err));
+    fatalEl.textContent = "Fibrations: " + (err && err.message ? err.message : String(err));
     document.documentElement.dataset.error = String(err && err.stack || err);
   }
   window.addEventListener("error", (e) => { if (!document.documentElement.dataset.error) fatal(e.error || e.message); });
@@ -3729,7 +3729,7 @@
 
   buildHopf = function (g) {
     const labels = [];
-    const N = 30, SC = 0.34;
+    const N = 30, SC = 0.5;
     const fibers = [];
     let hiCurve = null;
     const baseDots = [];
@@ -3756,18 +3756,18 @@
       const rib = makeRibbon(curve, { a: col, b: hot ? C.gold : C.ice, rad: hot ? 0.022 : 0.006, opacity: hot ? 1 : 0.5, seg: 100, closed: true, pulse: k * 0.05 });
       g.add(rib.core, rib.glow);
       fibers.push(rib);
-      baseDots.push({ p: V(X * 0.4, Y * 0.4, Z * 0.4), size: 0.16, color: hot ? C.gold : C.ice, glow: 0.7, seed: k * 0.1 });
+      baseDots.push({ p: V(X * 0.5, Y * 0.5, Z * 0.5), size: 0.18, color: hot ? C.gold : C.ice, glow: 0.7, seed: k * 0.1 });
       if (hot) hiCurve = curve;
     }
-    const baseSphere = makeIrid(new THREE.SphereGeometry(0.4, 40, 28), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.2, wobble: 0.02 });
+    const baseSphere = makeIrid(new THREE.SphereGeometry(0.5, 40, 28), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.22, wobble: 0.02 });
     g.add(baseSphere.obj);
     const dots = makeDots(baseDots, { opacity: 0.9 });
     g.add(dots.obj);
     const spark = makeMarker(C.white, 1.0);
     g.add(spark.obj);
     labels.push({ text: "S&sup1;", p: hiCurve ? hiCurve.getPoint(0.2) : V(0, 1, 0), dx: 12, dy: -18, kind: "sym", cls: "gold" });
-    labels.push({ text: "S&sup2;", p: V(0.55, 0.55, 0.3), dx: 10, dy: -14, kind: "sym" });
-    labels.push({ text: "S&sup1; &rarr; S&sup3; &rarr; S&sup2;", p: V(0, 1.85, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "S&sup2;", p: V(0.65, 0.62, 0.35), dx: 10, dy: -14, kind: "sym" });
+    labels.push({ text: "S&sup1; &rarr; S&sup3; &rarr; S&sup2;", p: V(0, 2.0, 0), dx: 0, dy: -8, kind: "sym" });
     return {
       labels,
       update(ctx) {
@@ -3805,7 +3805,8 @@
     g.add(subRib.core, subRib.glow);
     const bandPts = [];
     for (let k = 2; k <= 6; k++) bandPts.push(fibers[k][1]);
-    const band = makeRibbon(curveOf(bandPts, false), { a: C.gold, b: C.white, rad: 0.02, opacity: 1, seg: 90, pulse: 0.4 });
+    const bandCurve = curveOf(bandPts, false);
+    const band = makeRibbon(bandCurve, { a: C.gold, b: C.white, rad: 0.02, opacity: 1, seg: 90, pulse: 0.4 });
     g.add(band.core, band.glow);
     const spark = makeMarker(C.white, 0.95);
     g.add(spark.obj);
@@ -3823,7 +3824,7 @@
         subRib.setOpacity(a);
         band.setOpacity(a);
         spark.setOpacity(a);
-        spark.set(band.getPoint(fract(ctx.t * 0.09)));
+        spark.set(bandCurve.getPoint(fract(ctx.t * 0.09)));
       }
     };
   };

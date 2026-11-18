@@ -148,7 +148,7 @@
       game.last = null;
       game.fire = [];
       gameStatus.hidden = false;
-      gameStatus.textContent = DE ? "Du spielst Schwarz. Klicke auf ein gültiges Feld." : "You play black. Click a valid square.";
+      gameStatus.textContent = DE ? "Du spielst Schwarz. Goldene Punkte sind gültige Züge; klicke auf ein Feld." : "You play black. Gold dots are valid moves; click a square.";
       playBtn.textContent = DE ? "Neu starten" : "Restart";
       draw();
     }
@@ -1101,7 +1101,7 @@
     }
 
     function start() {
-      if (game.active || reduced || state.running || state.step === 1) return;
+      if (game.active || reduced || state.running || state.step !== 1) return;
       state.running = true;
       state.last = 0;
       state.raf = requestAnimationFrame(frame);
@@ -1158,6 +1158,7 @@
     playBtn.addEventListener("click", startGame);
     canvas.addEventListener("pointerleave", hideTip);
     fit();
+    if (state.step === 0) startGame();
     if (reduced) {
       state.t = 3.0 * (FRAMES.length - 1);
       draw();
@@ -1177,6 +1178,7 @@
           if (next === 1) stop();
           draw();
         }
+        if (next === 0 && !game.active) startGame();
         start();
       },
       next: function () {

@@ -20,7 +20,7 @@
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var context = 128, dims = 64, pos = 7, rotate = false;
+    var context = 128, dims = 64, pos = 7, rotate = !reducedMotion;
     var posAnim = pos;
     function addTrailTo(target) {
       target = clamp(Math.round(target || 0), 0, 100000);

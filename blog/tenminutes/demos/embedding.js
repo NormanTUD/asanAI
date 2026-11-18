@@ -537,7 +537,6 @@
         ctx.fillText(DE ? "1D: kein freier Weg zwischen ihnen" : "1D: no free path between them", size.w / 2, size.h - 16);
         ctx.globalAlpha = 1;
       }
-      var roomAlpha = smoothstep(1.5, 2, dimMix);
       if (dirMode) {
         ctx.globalAlpha = individualAlpha;
         function arrowWord(from, to, col, dash) {

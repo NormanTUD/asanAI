@@ -54,8 +54,11 @@
     var selected = 0;
     var mode = "directions";
     var yaw = -0.55, pitch = 0.33;
+    var dirRaf = 0, dirLast = 0;
     var dragging = false, dragMoved = false, lastPX = 0, lastPY = 0;
     var angleA = 360, angleB = 90, scaleMag = 1.6;
+    var scaleIndex = 3, scaleRaf = 0;
+    var SCALE_VALUES = [0.7, 1.0, 1.3, 1.6, 2.0];
     var hits = [];
     var C = api.colors();
     var clamp = api.util.clamp;
@@ -349,6 +352,40 @@
       readout.innerHTML = '<span>Vector A <b>[' + Math.cos(a).toFixed(2) + ', ' + Math.sin(a).toFixed(2) + ']</b></span><span>Vector B <b>[' + Math.cos(b).toFixed(2) + ', ' + Math.sin(b).toFixed(2) + ']</b></span><span>Dot <b>' + dotv.toFixed(3) + '</b></span><span><b>' + stat + '</b></span>';
       caption.textContent = DE ? "Der Winkel ist die Ähnlichkeit der Richtungen. Dot nahe 1: ähnlich; nahe 0: neutral; negativ: entgegengesetzt. Das ist eine Interpretation der gelernten Richtungen, kein Wahrheitsbeweis." : "The angle is the similarity of directions. Dot near 1: similar; near 0: neutral; negative: opposite. This is an interpretation of learned directions, not a proof of truth.";
     }
+    function dirLoop(now) {
+      if (mode !== "directions" || api.reducedMotion) { dirRaf = 0; return; }
+      if (!dragging && now - dirLast > 40) {
+        yaw += 0.006;
+        drawDirections();
+        dirLast = now;
+      }
+      dirRaf = requestAnimationFrame(dirLoop);
+    }
+    function ensureDirLoop() {
+      if (mode === "directions" && !dirRaf && !api.reducedMotion) {
+        dirLast = performance.now();
+        dirRaf = requestAnimationFrame(dirLoop);
+      } else if (mode !== "directions" && dirRaf) {
+        cancelAnimationFrame(dirRaf);
+        dirRaf = 0;
+      }
+    }
+    function animateScale(target) {
+      if (scaleRaf) cancelAnimationFrame(scaleRaf);
+      var from = scaleMag, started = performance.now();
+      function frame(now) {
+        var t = Math.min(1, (now - started) / 320);
+        var e = 1 - Math.pow(1 - t, 3);
+        scaleMag = from + (target - from) * e;
+        if (scaleInput) scaleInput.value = String(scaleMag);
+        if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
+        drawScale();
+        if (t < 1) scaleRaf = requestAnimationFrame(frame);
+        else { scaleMag = target; scaleRaf = 0; if (scaleInput) scaleInput.value = String(target); if (scaleOut) scaleOut.textContent = target.toFixed(2) + "×"; drawScale(); }
+      }
+      scaleRaf = requestAnimationFrame(frame);
+    }
+
     function drawScale() {
       var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
       var aA = 25 * Math.PI / 180;
@@ -567,6 +604,7 @@
       function apply() { draw(); }
       if (modeChanged && size && V && V.crossfadeCanvas) V.crossfadeCanvas(canvas, apply, { dir: dir, duration: 280 });
       else apply();
+      ensureDirLoop();
       if (modeChanged) {
         reveal(mapControls, 0);
         reveal(angleControls, 0);
@@ -587,7 +625,7 @@
     });
     if (angleAInput) angleAInput.addEventListener("input", function () { angleA = parseFloat(angleAInput.value) || 0; if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°"; draw(); });
     if (angleBInput) angleBInput.addEventListener("input", function () { angleB = parseFloat(angleBInput.value) || 0; if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°"; draw(); });
-    if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×"; draw(); });
+    if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 1; scaleIndex = -1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×"; draw(); });
     if (unembedReplay) unembedReplay.addEventListener("click", function () {
       unembedFocus = -1; unembedPinned = -1; unembedStep = -1;
       updateAngleList();
@@ -647,30 +685,24 @@
       update: function (s) { if (s && s.mode) setMode(s.mode); },
       next: function () {
         if (mode !== "scale") return false;
-        var values = [0.7, 1.0, 1.3, 1.6, 2.0];
-        var idx = values.indexOf(parseFloat(scaleMag.toFixed(2)));
-        if (idx < 0) idx = 0;
-        scaleMag = values[(idx + 1) % values.length];
-        if (scaleInput) scaleInput.value = String(scaleMag);
-        if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
-        draw();
+        if (scaleIndex < 0) scaleIndex = 0;
+        if (scaleIndex >= SCALE_VALUES.length - 1) return false;
+        scaleIndex++;
+        animateScale(SCALE_VALUES[scaleIndex]);
         return true;
       },
       prev: function () {
         if (mode !== "scale") return false;
-        var values = [0.7, 1.0, 1.3, 1.6, 2.0];
-        var idx = values.indexOf(parseFloat(scaleMag.toFixed(2)));
-        if (idx < 0) idx = 0;
-        scaleMag = values[(idx - 1 + values.length) % values.length];
-        if (scaleInput) scaleInput.value = String(scaleMag);
-        if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
-        draw();
+        if (scaleIndex < 0) scaleIndex = SCALE_VALUES.length - 2;
+        if (scaleIndex <= 0) return false;
+        scaleIndex--;
+        animateScale(SCALE_VALUES[scaleIndex]);
         return true;
       },
       resize: resize,
-      pause: function () {},
-      resume: function () { draw(); },
-      destroy: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
+      pause: function () { if (dirRaf) { cancelAnimationFrame(dirRaf); dirRaf = 0; } },
+      resume: function () { draw(); ensureDirLoop(); },
+      destroy: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); if (dirRaf) cancelAnimationFrame(dirRaf); if (scaleRaf) cancelAnimationFrame(scaleRaf); window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
     };
   };
 })();
