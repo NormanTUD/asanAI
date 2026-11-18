@@ -2696,26 +2696,3 @@ h1,h2,h3,h4{
 .ls-mi-grid article p{margin:0;font:var(--ls-fs-micro)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-mi-note{margin:0;border-top:1px solid var(--ls-line);padding-top:7px;font:600 var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
 @media (max-width:760px){.ls-mi-grid{grid-template-columns:1fr}.ls-mi-scene{justify-content:flex-start}}
-
-/* Final takeaway: one page, one model, three consequences */
-.ls-tw-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:8px;padding:2px 0;overflow-y:auto}
-.ls-tw-lead{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;border-bottom:1px solid var(--ls-line);padding-bottom:6px}
-.ls-tw-lead span{font:700 var(--ls-fs-micro) "Barlow",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--ls-gold);white-space:nowrap}
-.ls-tw-lead b{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;line-height:1.2;color:var(--ls-petrol)}
-.ls-tw-flow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:var(--ls-petrol);color:#fff;padding:7px 10px}
-.ls-tw-flow span{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;white-space:nowrap}
-.ls-tw-flow i{font-style:normal;color:var(--ls-lime);font-weight:700}
-.ls-tw-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;min-height:0}
-.ls-tw-card{border:1px solid var(--ls-line);background:#fff;padding:9px 10px;min-height:0;display:flex;flex-direction:column;gap:3px}
-.ls-tw-card span{font:700 var(--ls-fs-micro) "Barlow",sans-serif;letter-spacing:.07em;text-transform:uppercase}
-.ls-tw-card b{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol);line-height:1.15}
-.ls-tw-card p{margin:0;font:var(--ls-fs-micro)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-tw-card em{margin-top:auto;padding-top:4px;border-top:1px solid var(--ls-line);font:italic var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
-.ls-tw-card--can span{color:var(--ls-green)}
-.ls-tw-card--fail span{color:var(--ls-lilac)}
-.ls-tw-card--open span{color:var(--ls-gold)}
-.ls-tw-bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:9px;border-top:1px solid var(--ls-line);padding-top:7px}
-.ls-tw-bottom b{display:block;font:700 var(--ls-fs-micro) "Barlow",sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--ls-petrol);margin-bottom:2px}
-.ls-tw-bottom p{margin:0;font:600 var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-tw-final{padding-left:9px;border-left:3px solid var(--ls-green);color:var(--ls-petrol)!important}
-@media (max-width:760px){.ls-tw-grid{grid-template-columns:1fr}.ls-tw-bottom{grid-template-columns:1fr}.ls-tw-scene{justify-content:flex-start}}

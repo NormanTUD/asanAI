@@ -140,9 +140,9 @@ def check_learnsys_deck(driver, page, lang, results):
         count = driver.execute_script("return document.querySelectorAll('#ls-steps .ls-dot').length")
     except Exception:
         count = 0
-    results.check(page, lang, "deck has 32 slides", count == 32, f"{count} slides")
+    results.check(page, lang, "deck has 31 slides", count == 31, f"{count} slides")
     nav_labels = driver.execute_script("return Array.from(document.querySelectorAll('#ls-mix-pos button')).map(function (b) { return b.textContent.trim(); })")
-    results.check(page, lang, "slide rail counts 1..32", bool(nav_labels) and nav_labels[0] == "1" and nav_labels[-1] == "32", f"{nav_labels[:2]} … {nav_labels[-2:]}")
+    results.check(page, lang, "slide rail counts 1..31", bool(nav_labels) and nav_labels[0] == "1" and nav_labels[-1] == "31", f"{nav_labels[:2]} … {nav_labels[-2:]}")
     mounted = 0
     with_text = 0
     for i in range(count):
