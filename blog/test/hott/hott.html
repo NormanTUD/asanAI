@@ -2577,7 +2577,7 @@
     ];
     const leftX = -2.8, typeX = -0.15, proofX = 2.45;
     const top = 2.0, step = 0.47;
-    const soft = makeSoftPanel(7.6, 5.6, C.ice, C.violet, 0.13);
+    const soft = makeSoftPanel(7.6, 5.6, C.ice, C.violet, 0.045);
     soft.obj.position.set(0, -0.1, -0.5);
     g.add(soft.obj);
     const ribbons = [];
@@ -2597,13 +2597,21 @@
     const sep = makeLine2(C.ice, 0.16);
     sep.set(V(1.25, -2.35, 0), V(1.25, 2.35, 0));
     g.add(sep.obj);
+    const rowPairs = [];
+    for (let k = 0; k < rows.length; k++) {
+      const y = top - k * step - step * 0.5;
+      rowPairs.push([V(-3.25, y, 0), V(3.35, y, 0)]);
+    }
+    const rowLines = makeLines(rowPairs, { color: C.ice, opacity: 0.07 });
+    g.add(rowLines.obj);
     return {
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
         for (const r of ribbons) r.setOpacity(a * 0.78);
         sep.setOpacity(a * 0.16);
-        soft.setOpacity(a * 0.13);
+        rowLines.setOpacity(a * 0.07);
+        soft.setOpacity(a * 0.045);
       }
     };
   };
@@ -2612,7 +2620,7 @@
     const labels = [];
     const leftBase = [V(-3.1, 0, 0), V(-2.65, 0, 0), V(-2.2, 0, 0), V(-1.75, 0, 0)];
     const rightBase = [V(1.0, 0, 0), V(1.45, 0, 0), V(1.9, 0, 0), V(2.35, 0, 0)];
-    const soft = makeSoftPanel(7.2, 4.2, C.ice, C.gold, 0.14);
+    const soft = makeSoftPanel(7.2, 4.2, C.ice, C.gold, 0.05);
     soft.obj.position.set(0, 0.1, -0.5);
     g.add(soft.obj);
     const baseLine = makeLine2(C.ice, 0.22);
@@ -2633,6 +2641,7 @@
     labels.push({ text: "2 + 2", p: V(-2.42, 1.2, 0), dx: 0, dy: -8, kind: "sym" });
     labels.push({ text: "4", p: V(1.68, 1.2, 0), dx: 0, dy: -8, kind: "sym" });
     labels.push({ text: "2+2 = 4", p: V(0, 2.0, 0), dx: 0, dy: -8, kind: "sym" });
+    labels.push({ text: "2+2 &equiv; 4", p: V(-0.55, 0.72, 0), dx: 0, dy: -8, kind: "sym", cls: "mint" });
     labels.push({ text: "refl : 2+2 = 4", p: V(1.68, -1.25, 0), dx: 0, dy: 12, kind: "sym", cls: "gold" });
     const geo = leftDots.geo;
     return {
@@ -2649,9 +2658,9 @@
         leftDots.setOpacity(a * (1 - 0.5 * u));
         rightDots.setOpacity(a);
         baseLine.setOpacity(a * 0.2);
-        soft.setOpacity(a * 0.14);
-        loop.setOpacity(a * 0.9 * smoothstep(0.22, 0.95, u));
-        loopGlow.setOpacity(a * 0.1 * smoothstep(0.22, 0.95, u));
+        soft.setOpacity(a * 0.05);
+        loop.setOpacity(a * (0.28 + 0.62 * smoothstep(0.22, 0.95, u)));
+        loopGlow.setOpacity(a * (0.04 + 0.08 * smoothstep(0.22, 0.95, u)));
         loop.obj.scale.setScalar(0.82 + 0.18 * u);
         flash.setOpacity(a * 0.35 * smoothstep(0.82, 1.0, u));
         flash.obj.scale.setScalar(0.7 + 0.6 * u);
@@ -2663,7 +2672,7 @@
     const labels = [];
     const xs = [-2.2, -1.1, 0, 1.1, 2.2];
     const baseY = -0.9;
-    const soft = makeSoftPanel(6.8, 3.6, C.ice, C.violet, 0.14);
+    const soft = makeSoftPanel(6.8, 3.6, C.ice, C.violet, 0.05);
     soft.obj.position.set(0, 0.15, -0.5);
     g.add(soft.obj);
     const baseLine = makeLine2(C.ice, 0.24);
@@ -2697,7 +2706,7 @@
         baseDots.setOpacity(a);
         reflDots.setOpacity(a);
         baseLine.setOpacity(a * 0.22);
-        soft.setOpacity(a * 0.14);
+        soft.setOpacity(a * 0.05);
         section.setOpacity(a);
         const ph = 0.5 + 0.5 * Math.sin(ctx.t * 0.9);
         for (const l of loops) l.setOpacity(a * (0.35 + 0.35 * ph));
@@ -2709,7 +2718,7 @@
     const labels = [];
     const xs = [-2.7, -1.8, -0.9, 0, 0.9, 1.8, 2.7];
     const baseY = -1.1, proofY = 0.55;
-    const soft = makeSoftPanel(7.2, 3.8, C.ice, C.gold, 0.14);
+    const soft = makeSoftPanel(7.2, 3.8, C.ice, C.gold, 0.05);
     soft.obj.position.set(0, -0.22, -0.5);
     g.add(soft.obj);
     const baseLine = makeLine2(C.ice, 0.22);
@@ -2759,7 +2768,7 @@
         const a = ctx.a * ctx.r;
         baseDots.setOpacity(a);
         proofObj.setOpacity(a);
-        soft.setOpacity(a * 0.14);
+        soft.setOpacity(a * 0.05);
         baseLine.setOpacity(a * 0.2);
         stemObj.setOpacity(a * 0.75);
         for (const r of empty) r.setOpacity(a * 0.45);
@@ -2775,7 +2784,7 @@
     const labels = [];
     const xs = [-1.8, 0, 1.8];
     const baseY = -0.85, proofY = 0.45;
-    const soft = makeSoftPanel(6.2, 3.4, C.ice, C.violet, 0.15);
+    const soft = makeSoftPanel(6.2, 3.4, C.ice, C.violet, 0.055);
     soft.obj.position.set(0, -0.2, -0.5);
     g.add(soft.obj);
     const basePts = xs.map((x) => V(x, baseY, 0));
@@ -2814,7 +2823,7 @@
         bp.needsUpdate = true; pp.needsUpdate = true; sp.needsUpdate = true;
         baseDots.setOpacity(a * (0.95 - 0.5 * u));
         proofDots.setOpacity(a * (0.95 - 0.45 * u));
-        soft.setOpacity(a * 0.15);
+        soft.setOpacity(a * 0.055);
         stemObj.setOpacity(a * (0.7 - 0.45 * u));
         core.setOpacity(a * (0.2 + 0.8 * u));
         ring.setOpacity(a * (0.25 + 0.55 * u));
