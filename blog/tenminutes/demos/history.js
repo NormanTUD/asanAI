@@ -9,13 +9,13 @@
     var tabs = DE ? [
       {
         year: "~27.000 v. Chr.", label: "Ganz früh", title: "Kerben im Wolfsknochen",
-        text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben in zwei Gruppen von 30 und 25. Die Kerben sind keine Schrift, aber sie halten Zählschritte fest. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
+        text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben. Die Kerben sind keine Schrift, aber sie halten Zählschritte fest. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
         images: [{ src: "../vestonice_wolf_bone.jpg", alt: "Der Wolfsknochen von Dolní Věstonice mit 55 Kerben", cap: "Der Wolfsknochen von Dolní Věstonice. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
         sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }]
       },
       {
         year: "~300 v. Chr.", label: "Antike", title: "Tafeln und Zählbretter",
-        text: "Die Salamis-Tafel ist das älteste erhaltene Zählbrett, etwa 300 v. Chr. Der Abakus macht Stellenwerte körperlich: Steine auf Linien, nicht Ziffern auf Papier. Rechnen wird ein Verfahren mit Regeln.",
+        text: "Die Salamis-Tafel gilt als eines der ältesten erhaltenen Zählbretter, etwa 300 v. Chr. Der Abakus macht Stellenwerte körperlich: Steine auf Linien, nicht Ziffern auf Papier. Rechnen wird ein Verfahren mit Regeln.",
         images: [{ src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, das älteste erhaltene Zählbrett", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
         sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }]
       },
@@ -27,7 +27,7 @@
       },
       {
         year: "1673–1854", label: "Maschinen", title: "Rechnen wird mechanisch",
-        text: "Leibniz baut eine Rechenmaschine für alle vier Grundrechenarten und träumt von einer universalen Zeichensprache. Babbage entwirft die Analytical Engine. Boole schreibt Logik als Algebra. Mechanik und formale Regeln rücken zusammen.",
+        text: "Leibniz beginnt 1673 mit einer Rechenmaschine für alle vier Grundrechenarten; fertig wird sie 1694, arbeitet aber unzuverlässig. Er träumt von einer universalen Zeichensprache. Babbage entwirft die Analytical Engine. Boole schreibt Logik als Algebra. Mechanik und formale Regeln rücken zusammen.",
         images: [{ src: "../Leibnizrechenmaschine.jpg", alt: "Nachbau der Leibniz-Rechenmaschine", cap: "Leibniz-Rechenmaschine, Nachbau. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }],
         sources: [{ label: "Eremeev (2016), Leibniz Rechenmaschine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }]
       },
@@ -85,13 +85,13 @@
     ] : [
       {
         year: "~27,000 BCE", label: "Deep past", title: "Notches in a wolf bone",
-        text: "The wolf bone from Dolní Věstonice carries 55 notches in two groups of 30 and 25. The notches are not writing, but they record counting steps. Arithmetic begins as embodied counting, long before computers.",
+        text: "The wolf bone from Dolní Věstonice carries 55 notches. The notches are not writing, but they record counting steps. Arithmetic begins as embodied counting, long before computers.",
         images: [{ src: "../vestonice_wolf_bone.jpg", alt: "The Dolní Věstonice wolf bone with 55 notches", cap: "The Dolní Věstonice wolf bone. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
         sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }]
       },
       {
         year: "~300 BCE", label: "Antiquity", title: "Tablets and counting boards",
-        text: "The Salamis tablet is the oldest surviving counting board, from about 300 BCE. The abacus makes place value physical: stones on lines, not digits on paper. Calculation becomes a procedure with rules.",
+        text: "The Salamis tablet is regarded as one of the oldest surviving counting boards, from about 300 BCE. The abacus makes place value physical: stones on lines, not digits on paper. Calculation becomes a procedure with rules.",
         images: [{ src: "../salamic_table.jpg", alt: "The Salamis tablet, the oldest surviving counting board", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
         sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }]
       },
@@ -103,7 +103,7 @@
       },
       {
         year: "1673–1854", label: "Machines", title: "Calculation becomes mechanical",
-        text: "Leibniz builds a calculator for all four arithmetic operations and dreams of a universal symbol language. Babbage designs the Analytical Engine. Boole writes logic as algebra. Mechanism and formal rules move closer together.",
+        text: "Leibniz starts a calculator for all four arithmetic operations in 1673; it is finished in 1694 but works unreliably. He dreams of a universal symbol language. Babbage designs the Analytical Engine. Boole writes logic as algebra. Mechanism and formal rules move closer together.",
         images: [{ src: "../Leibnizrechenmaschine.jpg", alt: "A replica of Leibniz's calculating machine", cap: "Leibniz calculating machine, replica. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }],
         sources: [{ label: "Eremeev (2016), Leibniz Calculating Machine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }]
       },
