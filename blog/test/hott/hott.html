@@ -68,13 +68,15 @@
     color:rgba(190,228,255,.55);text-shadow:none;vertical-align:.28em}
 
   #captions{position:fixed;left:clamp(22px,5.4vw,72px);bottom:clamp(104px,15vh,156px);
-    z-index:12;pointer-events:none;width:min(720px,58vw);max-width:none;min-height:0}
+    z-index:12;pointer-events:none;width:min(780px,60vw);max-width:none;min-height:0}
   .cap{position:absolute;left:0;bottom:0;width:100%;opacity:0;visibility:hidden;
-    padding:20px 24px 18px;border:1px solid rgba(150,196,255,.16);
-    border-left:1px solid rgba(118,226,255,.5);border-radius:16px;
-    background:linear-gradient(180deg,rgba(8,14,32,.74),rgba(4,8,20,.68));
-    box-shadow:0 22px 70px rgba(0,0,0,.46),inset 0 1px 0 rgba(255,255,255,.055);
-    backdrop-filter:blur(17px) saturate(1.35);-webkit-backdrop-filter:blur(17px) saturate(1.35);
+    padding:20px 24px 18px;border:1px solid rgba(160,205,255,.24);
+    border-left:1px solid rgba(118,226,255,.66);border-radius:16px;
+    background:linear-gradient(180deg,rgba(20,33,70,.86),rgba(6,11,28,.78));
+    box-shadow:0 28px 84px rgba(0,0,0,.52),0 0 54px rgba(60,160,255,.07),
+      inset 0 1px 0 rgba(255,255,255,.085),inset 0 0 80px rgba(70,160,255,.05);
+    backdrop-filter:blur(18px) saturate(1.45) brightness(1.12);
+    -webkit-backdrop-filter:blur(18px) saturate(1.45) brightness(1.12);
     will-change:transform,opacity,filter}
   .cap-rule{width:42px;height:1px;margin-bottom:12px;
     background:linear-gradient(90deg,var(--cyan),rgba(180,135,255,.35) 60%,transparent)}
@@ -82,7 +84,7 @@
     color:rgba(150,226,255,.72);font-weight:600;margin-bottom:10px}
   .kicker b{font-weight:600;color:rgba(210,244,255,.92)}
   .line{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",serif;
-    font-size:clamp(21px,2.4vw,37px);line-height:1.1;letter-spacing:-.012em;
+    font-size:clamp(20px,2.25vw,35px);line-height:1.12;letter-spacing:-.01em;
     color:#f2fcff;text-shadow:0 0 38px rgba(80,190,255,.12);text-wrap:balance}
   .line .k{color:var(--gold);text-shadow:0 0 26px rgba(255,208,120,.38)}
   .line .w{display:inline-block;opacity:0;transform:translateY(.42em);
@@ -96,7 +98,7 @@
   @media (max-width:760px){
     #captions{left:16px;right:16px;bottom:104px;width:auto;min-height:0}
     .cap{padding:15px 17px 14px;border-radius:14px}
-    .line{font-size:clamp(19px,5.5vw,27px);line-height:1.13}
+    .line{font-size:clamp(18px,5.2vw,26px);line-height:1.14}
     .kicker{font-size:8px;letter-spacing:.22em;margin-bottom:8px}
     .cap-rule{width:32px;margin-bottom:10px}
   }
@@ -240,7 +242,7 @@
 
   #a11y{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .cap.finale-cap{position:fixed;left:clamp(22px,5.4vw,72px);top:clamp(52px,8vh,104px);
-    bottom:auto;width:min(720px,58vw);min-height:0}
+    bottom:auto;width:min(780px,60vw);min-height:0}
   @media (max-width:760px){
     .cap.finale-cap{left:16px;right:16px;top:14px;width:auto}
   }
