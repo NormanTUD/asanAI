@@ -590,13 +590,18 @@
       c.strokeStyle = V.alpha(C.lineStrong, .5);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
-      if (tip) addHit(x, y, w, h, tip);
+      var chunk = Math.max(1, Math.ceil(n / 32));
+      for (var hi = 0; hi < n; hi += chunk) {
+        var hend = Math.min(n - 1, hi + chunk - 1);
+        var hmid = Math.floor((hi + hend) / 2);
+        var htext = (tip ? tip + " · " : "") + (DE ? "Dimension " : "dimension ") + hi + "–" + hend + ": " + V.fmt(values[hmid], 2);
+        addHit(x + hi / n * w, y, Math.max(1, (hend - hi + 1) / n * w), h, htext);
+      }
     }
 
     function drawActivationStrip(c, x, y, w, h, label) {
       txt(c, label || "x · 512", x, y - 10, { size: 9.5, color: C.muted });
-      drawStrip(c, X, x, y, w, h, C.blue, C.green);
-      addHit(x, y, w, h, (DE ? "Aktivierung " : "activation ") + (label || "x") + (DE ? ": 512 Werte pro Token" : ": 512 values per token"));
+      drawStrip(c, X, x, y, w, h, C.blue, C.green, (DE ? "Aktivierung " : "activation ") + (label || "x"));
     }
 
     function drawActivationGrid(c, x, y, w, h) {
@@ -613,7 +618,10 @@
       c.strokeStyle = V.alpha(C.lineStrong, .55);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
-      addHit(x, y, w, h, DE ? "512 Aktivierungen als 32×16-Gitter" : "512 activations as a 32×16 grid");
+      for (var gi = 0; gi < 512; gi++) {
+        addHit(x + (gi % cols) * cw, y + Math.floor(gi / cols) * ch, cw, ch,
+          (DE ? "Aktivierung x[" : "activation x[") + gi + "] = " + V.fmt(X[gi], 2));
+      }
     }
 
     function drawLogitsColumn(c, x, y, w, h, row) {
@@ -633,8 +641,11 @@
       c.strokeStyle = V.alpha(C.lineStrong, .55);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
-      for (var so = 0; so < 3; so++) {
-        addHit(x + so * cw, y, cw, h, (DE ? "Logits: " : "logits: ") + stateName(so) + (DE ? " für alle 64 Felder" : " for all 64 squares"));
+      for (var ls = 0; ls < 64; ls++) {
+        for (var lo = 0; lo < 3; lo++) {
+          addHit(x + lo * cw, y + ls * ch, cw, ch,
+            (DE ? "Feld " : "square ") + squareLabel(ls) + " · " + stateName(lo) + " · Logit " + V.fmt(SCORES[ls][lo], 2));
+        }
       }
       var ry = y + (row + .5) * ch;
       c.strokeStyle = C.gold;
@@ -661,7 +672,13 @@
       c.strokeStyle = V.alpha(C.lineStrong, .65);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, size - 1, size - 1);
-      addHit(x, y, size, size, (DE ? "Wahrscheinlichkeit: " : "probability: ") + stateName(stateIdx));
+      for (var pr = 0; pr < 8; pr++) {
+        for (var pc = 0; pc < 8; pc++) {
+          var pi = pr * 8 + pc;
+          addHit(x + pc * cell, y + pr * cell, cell, cell,
+            (DE ? "Feld " : "square ") + squareLabel(pi) + " · " + stateName(stateIdx) + ": " + (PROBS[pi][stateIdx] * 100).toFixed(1) + "%");
+        }
+      }
       if (typeof row === "number") {
         c.strokeStyle = C.gold;
         c.lineWidth = 1.8;
