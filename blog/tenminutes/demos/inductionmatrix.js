@@ -6,65 +6,95 @@
   function inductionMatrixScene(root, api) {
     var DE = api.lang === "de";
     var tokens = ["A", "B", "C", "A", "B", "C", "A"];
-    var weights = [
-      [1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
-      [0.10, 0.90, 0.00, 0.00, 0.00, 0.00, 0.00],
-      [0.05, 0.15, 0.80, 0.00, 0.00, 0.00, 0.00],
-      [0.10, 0.10, 0.10, 0.70, 0.00, 0.00, 0.00],
-      [0.02, 0.05, 0.01, 0.10, 0.82, 0.00, 0.00],
-      [0.01, 0.02, 0.02, 0.05, 0.10, 0.80, 0.00],
-      [0.01, 0.06, 0.01, 0.03, 0.82, 0.01, 0.06]
-    ];
-    var row = 6;
+    var pred = ["–", "A", "B", "C", "A", "B", "C"];
+    var weights = [0.01, 0.06, 0.01, 0.03, 0.82, 0.01, 0.06];
+    var stage = 0;
+    var labels = DE
+      ? ["Muster", "Vorgänger", "Match", "Attention", "Kopie"]
+      : ["Pattern", "Predecessor", "Match", "Attention", "Copy"];
     var el = document.createElement("div");
     el.className = "ls-ix-scene";
     root.appendChild(el);
 
     function pct(v) { return Math.round(v * 100) + "%"; }
 
+    function table() {
+      var good = stage === 2 ? 4 : (stage === 0 ? -1 : 4);
+      var bad = stage === 2 ? 3 : -1;
+      var marked = stage === 0 ? [3, 4, 6] : (stage === 1 ? [3, 4] : (stage === 2 ? [4, 6] : [4]));
+      function colClass(i) {
+        if (i === bad) return " is-bad-col";
+        if (i === good || marked.indexOf(i) >= 0) return " is-hot-col";
+        return "";
+      }
+      var head = '<tr><th>' + (DE ? "Position" : "Position") + '</th>' + tokens.map(function (t, i) { return '<th class="' + colClass(i).trim() + '">' + i + '</th>'; }).join("") + '</tr>';
+      var tokenRow = '<tr><th>' + (DE ? "Token" : "Token") + '</th>' + tokens.map(function (t, i) { return '<td class="' + colClass(i).trim() + '"><b>' + t + '</b></td>'; }).join("") + '</tr>';
+      var predRow = '<tr><th>' + (DE ? "Vorgänger" : "Predecessor") + '</th>' + pred.map(function (t, i) { return '<td class="' + colClass(i).trim() + '">' + t + '</td>'; }).join("") + '</tr>';
+      var weightRow = '<tr class="is-selected"><th>' + (DE ? "A (6) liest" : "A (6) reads") + '</th>' + weights.map(function (v, i) {
+        var visible = stage >= 3;
+        var hot = visible && i === 4;
+        return '<td class="' + (hot ? "is-hot" : "") + '">' + (visible ? pct(v) : "—") + '</td>';
+      }).join("") + '</tr>';
+      return '<table><thead>' + head + '</thead><tbody>' + tokenRow + predRow + weightRow + '</tbody></table>';
+    }
+
+    function callout() {
+      if (stage === 0) {
+        return '<div class="ls-ix-step">1 · ' + (DE ? "Das Muster" : "The pattern") + '</div>' +
+          '<h4>' + (DE ? "Nach dem früheren A kam B" : "After the earlier A came B") + '</h4>' +
+          '<p>' + (DE ? "Position 6 ist das aktuelle A. Position 3 ist ein früheres A. Direkt danach, an Position 4, steht B. Das ist die Vorhersage, die der Kopf kopieren soll." : "Position 6 is the current A. Position 3 is an earlier A. Directly after it, at position 4, stands B. That is the prediction the head should copy.") + '</p>';
+      }
+      if (stage === 1) {
+        return '<div class="ls-ix-step">2 · ' + (DE ? "Vorgänger merken" : "Remember predecessor") + '</div>' +
+          '<h4>' + (DE ? "Schicht 1: Previous-Token-Head" : "Layer 1: previous-token head") + '</h4>' +
+          '<p>' + (DE ? "An Position 4 steht B. Der Vorgänger dieses B ist A. Der Previous-Token-Head schreibt dieses A in den Key von Position 4." : "Position 4 holds B. The predecessor of this B is A. The previous-token head writes that A into the key at position 4.") + '</p>' +
+          '<div class="ls-ix-flow"><span>3 · A</span><b>→</b><span>4 · B</span><b>→</b><strong>Key: A</strong></div>';
+      }
+      if (stage === 2) {
+        return '<div class="ls-ix-step">3 · ' + (DE ? "Query trifft Key" : "Query meets key") + '</div>' +
+          '<h4>' + (DE ? "Schicht 2: Induction Head" : "Layer 2: induction head") + '</h4>' +
+          '<p>' + (DE ? "Das aktuelle A fragt mit A. Position 4 trägt A als Vorgänger, also passt der Key. Position 3 ist ebenfalls A, aber ihr Vorgänger ist C; deshalb passt sie nicht." : "The current A asks with A. Position 4 carries A as predecessor, so the key matches. Position 3 is also A, but its predecessor is C; that is why it does not match.") + '</p>' +
+          '<div class="ls-ix-matchcards">' +
+            '<div class="ls-ix-q"><span>Query 6</span><b>A</b></div><div class="ls-ix-arrow">→</div>' +
+            '<div class="ls-ix-key is-good"><span>Key 4</span><b>A</b><em>' + (DE ? "Vorgänger" : "predecessor") + '</em></div>' +
+            '<div class="ls-ix-key is-bad"><span>Key 3</span><b>C</b><em>' + (DE ? "Vorgänger" : "predecessor") + '</em></div>' +
+          '</div>';
+      }
+      if (stage === 3) {
+        return '<div class="ls-ix-step">4 · ' + (DE ? "Attention-Gewichte" : "Attention weights") + '</div>' +
+          '<h4>' + (DE ? "QK wählt Position 4" : "QK selects position 4") + '</h4>' +
+          '<p>' + (DE ? "Softmax macht aus den QK-Scores eine Verteilung. Die Zeile für das aktuelle A liest 82 % von Position 4, also von B. Die übrigen 18 % verteilen sich auf die anderen Tokens." : "Softmax turns the QK scores into a distribution. The row for the current A reads 82% from position 4, that is B. The remaining 18% spread over the other tokens.") + '</p>';
+      }
+      return '<div class="ls-ix-step">5 · ' + (DE ? "OV kopiert B" : "OV copies B") + '</div>' +
+        '<h4>' + (DE ? "Output × Value" : "Output × Value") + '</h4>' +
+        '<p>' + (DE ? "QK hat die Spalte gewählt. Jetzt schreibt OV den Value von B an Position 6. Der Logit von B steigt, also wird B als nächstes Token wahrscheinlicher." : "QK selected the column. Now OV writes B's value to position 6. B's logit rises, so B becomes more likely as the next token.") + '</p>' +
+        '<div class="ls-ix-flow"><span>Value B</span><b>→</b><span>Position 6</span><b>→</b><strong>Logit B ↑</strong></div>';
+    }
+
     function render() {
-      var pred = ["–", "A", "B", "C", "A", "B", "C"];
-      var head = '<tr><th>' + (DE ? "fragt ↓ / liest →" : "asks ↓ / reads →") + '</th>' +
-        tokens.map(function (t, i) { return '<th class="' + (row === 6 && i === 4 ? "is-hot-col" : "") + '">' + i + ' ' + t + '</th>'; }).join("") + '</tr>' +
-        '<tr><th>' + (DE ? "Vorgänger" : "Predecessor") + '</th>' + pred.map(function (t, i) { return '<th class="' + (row === 6 && i === 4 ? "is-hot-col" : "") + '">' + t + '</th>'; }).join("") + '</tr>';
-      var body = weights.map(function (values, i) {
-        var cells = values.map(function (v, j) {
-          var hot = i === row && v === Math.max.apply(null, values.filter(function (x) { return x < 1; }));
-          var bg = hot ? "rgba(159,151,0,.30)" : "rgba(0,75,111," + Math.min(0.24, v * 0.28) + ")";
-          return '<td class="' + (hot ? "is-hot" : "") + '" style="background:' + bg + '">' + pct(v) + '</td>';
-        }).join("");
-        return '<tr class="' + (i === row ? "is-selected" : "") + '"><th>' + i + ' ' + tokens[i] + '</th>' + cells + '</tr>';
-      }).join("");
-      var current = weights[row];
-      var best = 0;
-      for (var i = 0; i < current.length; i++) if (i !== row && current[i] > current[best]) best = i;
       el.innerHTML =
-        '<div class="ls-ix-head"><b>' + (DE ? "Attention-Gewichte: Wo liest A?" : "Attention weights: where does A read?") + '</b><span>' + (DE ? "Zeile 6 ist das aktuelle A. Die Spalte zeigt, was es liest." : "Row 6 is the current A. The column shows what it reads.") + '</span></div>' +
-        '<div class="ls-ix-steps">' +
-          '<div><span>1</span><b>' + (DE ? "Vorgänger merken" : "Remember predecessor") + '</b><p>' + (DE ? "Vor B an Position 4 stand A." : "Before B at position 4 stood A.") + '</p></div>' +
-          '<div><span>2</span><b>' + (DE ? "Query trifft Key" : "Query meets key") + '</b><p>' + (DE ? "Das aktuelle A fragt nach A; Position 4 trägt A." : "The current A asks for A; position 4 carries A.") + '</p></div>' +
-          '<div><span>3</span><b>' + (DE ? "B kopieren" : "Copy B") + '</b><p>' + (DE ? "OV kopiert B an die neue Stelle." : "OV copies B to the new position.") + '</p></div>' +
+        '<div class="ls-ix-head"><b>' + (DE ? "Der Induktionskopf in fünf Schritten" : "The induction head in five steps") + '</b><span>' + (DE ? "Klicke einen Schritt oder drücke Weiter." : "Click a step or press Next.") + '</span></div>' +
+        '<div class="ls-ix-progress" role="group" aria-label="' + (DE ? "Schritte" : "Steps") + '">' + labels.map(function (label, i) {
+          return '<button type="button" data-stage="' + i + '" class="' + (i === stage ? "is-on" : "") + '" aria-pressed="' + (i === stage ? "true" : "false") + '"><b>' + (i + 1) + '</b>' + api.esc(label) + '</button>';
+        }).join("") + '</div>' +
+        '<div class="ls-ix-main">' +
+          '<div class="ls-ix-table-wrap">' + table() + '</div>' +
+          '<div class="ls-ix-callout" aria-live="polite">' + callout() + '</div>' +
         '</div>' +
-        '<div class="ls-ix-body">' +
-          '<div class="ls-ix-table-wrap"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
-          '<div class="ls-ix-side">' +
-            '<div class="ls-ix-row-label">' + (DE ? "Zeile 6 · A (Position 6)" : "Row 6 · A (position 6)") + '</div>' +
-            '<div class="ls-ix-strong">' + (DE ? "82 % von B (Position 4)" : "82% from B (position 4)") + '</div>' +
-            '<p>' + (DE ? "Spalte 4 ist B. Ihr Vorgänger ist A. Das aktuelle A fragt mit A und trifft deshalb diese Spalte. Der OV-Schaltkreis kopiert den Value von B." : "Column 4 is B. Its predecessor is A. The current A asks with A and therefore hits this column. The OV circuit copies B's value.") + '</p>' +
-            '<p class="ls-ix-ov"><b>OV = Output × Value.</b> ' + (DE ? "V ist der Value-Vektor, O die Output-Projektion. QK wählt die Spalte; OV schreibt den Inhalt von B in den aktuellen Vektor." : "V is the value vector, O the output projection. QK selects the column; OV writes the content of B into the current vector.") + '</p>' +
-            '<p class="ls-ix-note">' + (DE ? "Hohe Werte sind gelernte Attention-Gewichte, keine statistische Korrelation. Zahlen illustriert." : "High values are learned attention weights, not statistical correlation. Numbers illustrative.") + '</p>' +
-          '</div>' +
-        '</div>';
+        '<p class="ls-ix-foot">' + (DE ? "Die konkreten Zahlen sind illustrativ. Entscheidend sind Positionen, Key und die Kopie." : "The concrete numbers are illustrative. Positions, keys, and the copy are the point.") + '</p>';
+      el.querySelectorAll("[data-stage]").forEach(function (button) {
+        button.addEventListener("click", function () { stage = parseInt(button.getAttribute("data-stage"), 10); render(); });
+      });
       el.querySelector("table").setAttribute("aria-label", DE
-        ? "Attention-Tabelle. Zeile " + row + ", Token " + tokens[row] + ", liest " + pct(current[best]) + " von Spalte " + best + ", " + tokens[best] + ", Vorgänger " + pred[best] + "."
-        : "Attention table. Row " + row + ", token " + tokens[row] + ", reads " + pct(current[best]) + " from column " + best + ", " + tokens[best] + ", predecessor " + pred[best] + ".");
+        ? "Induktionskopf, Schritt " + (stage + 1) + ". Zeile 6, Token A, liest 82 Prozent von Position 4, Token B."
+        : "Induction head, step " + (stage + 1) + ". Row 6, token A, reads 82 percent from position 4, token B.");
     }
 
     render();
     return {
-      update: function (s) {
-        if (s && typeof s.row === "number") { row = Math.max(0, Math.min(tokens.length - 1, s.row)); render(); }
-      },
+      update: function () {},
+      next: function () { if (stage < labels.length - 1) { stage++; render(); return true; } return false; },
+      prev: function () { if (stage > 0) { stage--; render(); return true; } return false; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

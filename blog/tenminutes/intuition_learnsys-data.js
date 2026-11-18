@@ -2285,13 +2285,13 @@
   ];
 
   var inductionMatrix = {
-    kicker: DE ? "Attention-Matrix" : "Attention matrix",
-    title: DE ? "Attention-Gewichte: Wo liest A?" : "Attention weights: where does A read?",
+    kicker: DE ? "Induktion" : "Induction",
+    title: DE ? "Der Induktionskopf in fünf Schritten" : "The induction head in five steps",
     body: DE
-      ? "Das aktuelle A soll das nächste Token vorhersagen. Woher weiß es, dass B kommt? Ein früheres A steht an Position 3. Direkt danach kam B. Der Induktionskopf sucht diese frühere Stelle und kopiert das B nach vorn.\n\nDie Tabelle zeigt, wie er das macht: Zeile 6 fragt mit A. Spalte 4 trägt den Vorgänger A. Deshalb landet die Aufmerksamkeit bei B an Position 4. Klicke eine Zeile, um die Perspektive zu wechseln."
-      : "The current A has to predict the next token. How does it know that B comes next? An earlier A sits at position 3. Right after it came B. The induction head finds that earlier place and copies B forward.\n\nThe table shows how: row 6 asks with A. Column 4 carries the predecessor A. That is why attention lands on B at position 4.\n\nOV means Output × Value: V is a token's value vector, O is the output projection. QK selects the column; OV writes the content of B into the current vector.",
+      ? "Fünf Schritte zeigen, wie aus der Sequenz eine Vorhersage wird. Am Ende steht die Attention-Zeile: Das aktuelle A liest 82 % von B. Klicke die Schritte oben oder drücke Weiter.\n\nDie Tabelle bleibt sichtbar. Sie zeigt Position, Token und Vorgänger; ab Schritt 4 kommt die Attention-Zeile dazu. OV heißt Output × Value: QK wählt die Spalte, OV schreibt den Inhalt."
+      : "Five steps show how the sequence becomes a prediction. At the end stands the attention row: the current A reads 82% from B. Click the steps above or press Next.\n\nThe table stays visible. It shows position, token, and predecessor; from step 4 the attention row joins it. OV means Output × Value: QK selects the column, OV writes the content.",
     watch: "",
-    demoState: { scene: "inductionmatrix", row: 6 },
+    demoState: { scene: "inductionmatrix" },
     context: DE ? "Die Tabelle zeigt Attention-Gewichte: Zeile fragt, Spalte antwortet. Hohe Werte sind gelernte Gewichte, keine statistische Korrelation." : "The table shows attention weights: row asks, column answers. High values are learned weights, not statistical correlation.",
     deep: DE ? "Der Previous-Token-Head schreibt den Vorgänger in den Key. QK vergleicht Query und Key; OV kopiert den Value der getroffenen Spalte. So wird aus einem Muster eine Vorhersage." : "The previous-token head writes the predecessor into the key. QK compares query and key; OV copies the value of the matched column. That is how a pattern becomes a prediction.",
     boxes: [
