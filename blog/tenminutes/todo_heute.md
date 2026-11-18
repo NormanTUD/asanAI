@@ -34,3 +34,11 @@ bei "BPE: Zeichen → Paare → Merges": das "e s" ist bereits markiert wenn man
 
 
 folie "Bedeutung wird eine Zahl":
+
+"15 + 45 = 60 · Warm 15⏟Kalt+45⏟Erwärmung⏟Zahlen addieren=60⏟Warm" erwärmung macht da keinen sinn. mach nur sachen die dastehen, sowas wie kalt + lauwarm. erwärmung gibts da nicht, jedes wort in der rechnung muss im block sein, nehme nur die die im plot sind.
+
+"Bedeutung bekommt eine zweite Achse": der 2d plot ist schief, der sollte von oben gerade im bild liegen. die ganzen linie sind direkt sichtbar, was den sehr unübersichtlich macht. am anfang soll da nur der plot sichtbar sein mit sienem grid und den worten und die ganzen linien usw. nur insofern dass das bsp das zeigt. entferne das "2d: freie wege" darunter.
+
+"Drei Dimensionen, ein Schatten" benenne es um nach "Drei Dimensionen" ohne das schattenzeug. und da sind auch wieder zu viele linien. entferne auch hier dieses grüne "Jedes Wort ist eine Richtung vom Ursprung" darunter
+
+
