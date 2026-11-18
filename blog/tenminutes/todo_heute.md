@@ -94,4 +94,18 @@ folie: "Arten von Halluzinationen"
 
 der soll die ganze folie vertikal zentrieren
 
+bei "Intrinsic Frage Quelle: „Das Treffen war 2019.“ Fasse die Quelle zusammen." soll er einen längeren ausschnitt oben zeigen mit auslassungspunkten und dann die falsche antwort geben die der quelle oben widerspricht. gleiches bei "Extrinsic" oben soll der quellentext angezeigt werden (wenn auch fiktiv), aus dem der das extrahieren soll, und er extrahiert es falsch. ads gilt auch für kontext ignoriert usw.
 
+wenn ich von "So werden Halluzinationen seltener" zurückgehe komme ich wieder auf die "falsche fakten" statt auf "sampling" folie
+
+wenn ich bei "So werden Halluzinationen seltener" weiter mache soll er die qulelen schrittweise hinzufügen. die höhe soll sich nicht ändern, zB das "Frage: Wie hoch ist der Eiffelturm mit Antenne? 2 S1 sagt: 330 m mit Antenne. 3 Schluss: Der Eiffelturm ist mit Antenne 330 m hoch. [S1]" hat andere höhe dann. fixe das.
+
+entferne die folie "Suchen, lesen, einsetzen"
+
+bei "Du bist das Chinesische Zimmer": mach 3 fragen die der user beantworten muss. wenn ich einfach weiter mache soll er die richtige frage auswählen und für mich da durch gehen. mach es dass die antworten nicht immer die mittlere sind sondern random sortiert. sage beim text links dass wenn der user zufällig chinesisch kann, dass er dann so tun soll als könne ers nicht for the sake of this game (übersetze das aber auch auf dt.)
+
+bei "Die Gefahren sind nicht eine Sache" soll er die einzelnen punkte durchgehen wenn ich weiter mache, also von "missbrauch" auf "bias und fehler" auf "machtkonzentration" auf "kontrolle verlieren". gleiches bei "Was wirklich fehlt" und "Vier Konflikte".
+
+"Bewusstsein: die offene Frage": 
+
+stelle am anfang die frage, ob KI irgendeine form von qualia hat, gehe dann auf die verschiedenen perspektiven ein. bei global workspace sage dass man sowas ähnliches (den J-Space) gefunden hat, zitier das originalpape,r aber mach klar, dass das nicht heißt, dass da qualia ist, weil keiner weiß, was das überhaupt ist und wie es entsteht. sage, dass die heutige folie dafür da ist, verschiedene philosophische und wissenschaftliche theorien des bewusstseins zu erforschen, aber es keine klare antwort gibt.
