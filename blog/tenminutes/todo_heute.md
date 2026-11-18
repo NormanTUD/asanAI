@@ -49,4 +49,8 @@ folie "Wie Attention rechnet".
 
 lass mich mouseovern über jedes wort und da infos anzeigen aber lass mich auch worte anklicken im plot oben.mach die buttons "Bögen, graph, simplex" unter die head 1 und head 2 buttons, damit klar ist, dass das ne hierarchie ist. entferne "Wechsle die Heads: Head 1 zeigt auf „Tier“ (Subjekt), Head 2 auf „Straße“ (Ort)." von ganz unten. der simplex ist nicht so hoch wie graph und bögen daher springt der rest, das nervt, der simplex soll genauso hoch sein wie bögen und graph.
 
+folie "Wie wird kopiert?":
+
+die "A B" bei vorgänger merken/"Wie wird kopiert?", stlele finden und kopireen gehen ncah unten aus der box raus. sage klar, dass A und B platzhalter für beliebige worte sind. sage dass es viele verschiedene arten von attention heads gibt und wir hier nur ein paar durchgehen können.
+
 
