@@ -1,3 +1,52 @@
+# Todo heute — Umsetzungsstatus
+
+Stand: 18. November 2026
+
+Legende: **[x]** umgesetzt · **[~]** umgesetzt, visuelle Feinabnahme am Bildschirm offen · **[!]** Problem.
+
+- [x] Datenfolie: größere Texte, zentrierte Blöcke, hübschere Chat-Blasen.
+- [x] Token-Erklärung, ID-Nummern und zweites Wortbeispiel mit gleicher `un`-ID.
+- [x] Embedding: Firth-Zitat, tausende Dimensionen, ähnliche Bedeutungen, Kugeloberfläche.
+- [x] Positional Embedding: Katze, 100.000 Positionen, Slider/Drehen entfernt, Text zusammengeführt.
+- [x] Transformer-Blöcke: FFN-Erklärung, Mini-Demo-Satz und Punkteliste entfernt, Singular korrigiert.
+- [x] Unembedding: `$h$` inline gerendert, Text neu, alte Punkteliste und Formelzeile entfernt.
+- [x] Ausblick → Architektur: kehrt zum zuletzt geöffneten Block (Unembedding) zurück.
+- [x] Datenfolie: Slidertext entfernt, Wahrheitsplot mit glattem grünen Band und rotem Rest.
+- [x] Text → IDs: letzter Sample-Zustand bleibt erhalten.
+- [x] BPE: Start ohne markiertes Paar, kurze Erklärung, Startzustand „einzelne Zeichen“.
+- [x] Bedeutung 1D: Rechnung nur mit Wörtern aus dem Plot.
+- [x] Bedeutung 2D: Draufsicht, weniger Linien, „2D: freie Wege“ entfernt.
+- [x] Drei Dimensionen: Titel gekürzt, grüne Ursprungszeile entfernt.
+- [x] Attention: Formel oben/unten entfernt.
+- [x] Attention: Hover/Klick auf Wörtern, Buttons unter den Head-Buttons, feste Simplexhöhe.
+- [x] Wie wird kopiert: A/B als Platzhalter erklärt, Hinweis auf weitere Head-Typen, Mini-Tokens aus der Box geschoben.
+- [~] Zwei Heads: Text, Titel und Beschriftungen neu; das Diagramm bleibt bewusst schematisch.
+- [x] Wochentage als Zwischenfolie zwischen 1D und 2D ergänzt; IOI-Nebensatz entfernt.
+- [~] Loss Landscape: Kamera gedreht und Zeichnung geclippt; visuelle Feinabnahme offen.
+- [x] ReLU/GELU/Sigmoid/tanh: weiche Morph-Animation beim Weitergehen.
+- [~] 32×32×32: natives Seitenverhältnis per CSS; visuelle Feinabnahme offen.
+- [x] Der Raum biegt sich: Weiter geht alle Presets durch.
+- [x] FFN-Plot: Hover-Tokens, Caption entfernt.
+- [x] Residual Stream: vordefinierte Dimensionen, eigener Stream pro Token.
+- [x] Ähnliche Worte: Prozentbalken vorhanden/geprüft.
+- [x] Skaleninvarianz: B-Länge per Weiter/Pfeil, Distanz und Winkel getrennt.
+- [x] Weltmodell: spielbares Othello, gültige Züge, Achsen, Zugliste, Hover, Temml-Formeln, Feuerwerk.
+- [~] Weltmodell: Layoutsprünge und Formeln behoben; einzelne Spiel-/Hover-Randfälle nicht vollständig visuell geprüft.
+- [x] Spacetime: kein automatischer „Fortsetzung“-Block mehr; Haupttext kommt aus `body`.
+- [x] Agent: `bc`-Konsole, Browser erst beim Browser-Call, HTML-Tabelle vor dem expliziten Screenshot, komplexerer Shop.
+- [x] Halluzinationen: vertikal zentriert, Quellenausschnitte, Navigation merkt sich den letzten Typ, Quellen schrittweise, feste Höhe.
+- [x] „Suchen, lesen, einsetzen“ entfernt; Deck jetzt 33 Folien.
+- [x] Chinesisches Zimmer: drei Fragen, zufällige Antworten, automatisches Weiter.
+- [x] Risiken: Weiter geht Missbrauch → Bias → Macht → Kontrolle; ebenso Limits und Konflikte.
+- [x] Bewusstsein: Einstiegsfrage, Perspektiven, J-Space mit Originalpaper und Qualia-Abgrenzung.
+
+## Prüfung
+
+- `tenminutes_pages_test.py`: 30/30 Checks bestanden.
+- `tenminutes_height_test.py`: 24 Interaktionen, 0 Höhenänderungen.
+- `js_validator.py`: 0 Fehler, 12 bereits vorhandene Warnungen.
+- `node --check` und `git diff --check`: sauber.
+
 arbeite diese punkte hier nacheinander ab. jeden einzelnen sorgfältig. am ende, nicht zwischendurch, einmal die tests.
 
 folie "daten":

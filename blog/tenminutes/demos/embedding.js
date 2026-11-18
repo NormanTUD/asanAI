@@ -399,8 +399,8 @@
       drawLabel(DE ? "Klicke zwei Punkte" : "Click two points", size.w - 24, 26, C.muted, "right", 9);
       drawLabel(text(lo.label) + " + " + (stepLabel || step) + " = " + text(hi.label), size.w / 2, size.h - 22, C.soft, "center", 11);
       canvas.setAttribute("aria-label", DE
-        ? "Temperaturlinie. Addiere " + step + " zu " + text(lo.label) + ": " + lo.value + " + " + step + " = " + hi.value + ", also " + text(hi.label) + "."
-        : "Temperature line. Add " + step + " to " + text(lo.label) + ": " + lo.value + " + " + step + " = " + hi.value + ", which is " + text(hi.label) + ".");
+        ? "Temperaturlinie. Addiere " + (stepLabel || step) + " zu " + text(lo.label) + ": " + text(lo.label) + " + " + (stepLabel || step) + " = " + text(hi.label) + "."
+        : "Temperature line. Add " + (stepLabel || step) + " to " + text(lo.label) + ": " + text(lo.label) + " + " + (stepLabel || step) + " = " + text(hi.label) + ".");
       updateReadout();
     }
     function drawLine3D(a, b, alpha) {
@@ -494,31 +494,17 @@
       }
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
-      if (individualAlpha > 0.05 && dimMix > 1.15) {
+      if (individualAlpha > 0.05 && dimMix > 1.15 && st.selected && WORDS[st.selected]) {
+        var selectedWord = WORDS[st.selected];
+        var selectedPoint = project((selectedWord.v[0] - 12.5) / 15, selectedWord.v[1] / 22, selectedWord.z);
         ctx.save();
-        ctx.strokeStyle = C.blue;
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = individualAlpha * 0.18;
-        drawList.forEach(function (item) {
-          if (item.id === st.selected) return;
-          ctx.globalAlpha = individualAlpha * (item.threeD ? threeDAlpha : 1) * 0.18;
-          ctx.beginPath();
-          ctx.moveTo(origin.x, origin.y);
-          ctx.lineTo(item.p.x, item.p.y);
-          ctx.stroke();
-        });
-        ctx.globalAlpha = individualAlpha * 0.18;
-        if (st.selected && WORDS[st.selected]) {
-          var selectedWord = WORDS[st.selected];
-          var selectedPoint = project((selectedWord.v[0] - 12.5) / 15, selectedWord.v[1] / 22, selectedWord.z);
-          ctx.strokeStyle = C.green;
-          ctx.globalAlpha = individualAlpha * 0.7;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(origin.x, origin.y);
-          ctx.lineTo(selectedPoint.x, selectedPoint.y);
-          ctx.stroke();
-        }
+        ctx.strokeStyle = C.green;
+        ctx.globalAlpha = individualAlpha * 0.7;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(selectedPoint.x, selectedPoint.y);
+        ctx.stroke();
         ctx.restore();
         ctx.globalAlpha = 1;
         drawLabel(DE ? "Ursprung" : "origin", origin.x + 6, origin.y + 14, C.muted, "left", 9);
@@ -552,52 +538,6 @@
         ctx.globalAlpha = 1;
       }
       var roomAlpha = smoothstep(1.5, 2, dimMix);
-      var pathAlpha = smoothstep(0.55, 1, dimMix) * (1 - roomAlpha) * tokenAlpha;
-      if (pathAlpha > 0.01 && !dirMode && dimMix > 1.5) {
-        function freePath(fromId, toId) {
-          var wa = WORDS[fromId], wb = WORDS[toId];
-          var a = project((wa.v[0] - 12.5) / 15, wa.v[1] / 22, wa.z);
-          var b = project((wb.v[0] - 12.5) / 15, wb.v[1] / 22, wb.z);
-          var mx = (a.x + b.x) / 2, my = Math.min(a.y, b.y) - 34;
-          ctx.save();
-          ctx.setLineDash([4, 4]);
-          ctx.strokeStyle = C.green;
-          ctx.globalAlpha = 0.55;
-          ctx.lineWidth = 1.6;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(mx, my, b.x, b.y); ctx.stroke();
-          ctx.restore();
-        }
-        ctx.globalAlpha = pathAlpha;
-        freePath("man", "woman");
-        freePath("king", "queen");
-        ctx.fillStyle = C.green;
-        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-      }
-
-      if (roomAlpha > 0.01) {
-        ctx.globalAlpha = roomAlpha;
-        ctx.fillStyle = C.green;
-        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-      }
-
-      if (threeDAlpha > 0.01) {
-        function pairArrow(from, to, col) {
-          var a = project((WORDS[from].v[0] - 12.5) / 15, WORDS[from].v[1] / 22, WORDS[from].z);
-          var b = project((WORDS[to].v[0] - 12.5) / 15, WORDS[to].v[1] / 22, WORDS[to].z);
-          drawArrow(a.x, a.y, b.x, b.y, col, 1.3, [4, 3]);
-        }
-        ctx.globalAlpha = threeDAlpha * 0.5;
-        pairArrow("man", "woman", C.blue);
-        pairArrow("maleDog", "femaleDog", C.sky);
-        pairArrow("wizard", "sorceress", C.lime);
-        ctx.globalAlpha = 1;
-        if (threeDAlpha > 0.5) {
-          drawLabel(DE ? "3D zusätzlich: Tiere · Figuren" : "3D adds: animals · fiction", 24, 44, C.muted, "left", 9);
-        }
-      }
-
       if (dirMode) {
         ctx.globalAlpha = individualAlpha;
         function arrowWord(from, to, col, dash) {
@@ -770,9 +710,9 @@
         var hiLabel = text(hi.label);
         var stepMeta = TEMP.filter(function (t) { return t.value === step; })[0];
         var stepLabel = stepMeta ? text(stepMeta.label) : "";
-        var stepTex = stepLabel ? "\\underbrace{" + step + "}_{\\text{" + stepLabel + "}}" : String(step);
-        readout.innerHTML = '<b>' + esc(lo.value) + '</b> + <b>' + esc(step) + '</b> = <b>' + esc(hi.value) + '</b> · <b>' + esc(hiLabel) + '</b>';
-        setTex("\\underbrace{\\underbrace{" + lo.value + "}_{\\text{" + loLabel + "}} + " + stepTex + "}_{\\text{" + (DE ? "Zahlen addieren" : "add the numbers") + "}} = \\underbrace{" + hi.value + "}_{\\text{" + hiLabel + "}}");
+        var stepWord = stepLabel || String(step);
+        readout.innerHTML = '<b>' + esc(loLabel) + '</b> + <b>' + esc(stepWord) + '</b> = <b>' + esc(hiLabel) + '</b>';
+        setTex("\\underbrace{\\underbrace{\\text{" + loLabel + "}}_{\\text{" + (DE ? "Start" : "start") + "}} + \\underbrace{\\text{" + stepWord + "}}_{\\text{" + (DE ? "Schritt" : "step") + "}}}_{\\text{" + (DE ? "Bedeutungen addieren" : "add meanings") + "}} = \\underbrace{\\text{" + hiLabel + "}}_{\\text{" + (DE ? "Ziel" : "target") + "}}");
         return;
       }
       var cr = currentResult();
