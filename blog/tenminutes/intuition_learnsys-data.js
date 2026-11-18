@@ -2132,7 +2132,7 @@
     substeps: [aiRiskSub, aiLimitsSub, aiSocietySub]
   };
 
-  var consciousnessStep = {
+  var consciousnessMain = {
     kicker: DE ? "Bewusstsein" : "Consciousness",
     title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
     body: DE
@@ -2158,6 +2158,12 @@
       { label: "Wikipedia: New mysterianism", url: "https://en.wikipedia.org/wiki/New_mysterianism", why: { de: "Menschliche Erkenntnisgrenzen beim Bewusstsein.", en: "Human cognitive limits on consciousness." } },
       { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } }
     ]
+  };
+
+  var consciousnessStep = {
+    kicker: DE ? "Bewusstsein" : "Consciousness",
+    title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
+    substeps: [aiConsciousnessIntro, consciousnessMain]
   };
 
   var qkvSimplex = {
@@ -2606,7 +2612,7 @@
     substeps: [spacetimeSpace, spacetimeTime]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], aiConsciousnessIntro, philosophySteps[0], aiSocietyStep, consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
 
   var day = {
     id: "intuition",
