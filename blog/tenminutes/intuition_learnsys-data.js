@@ -2166,6 +2166,27 @@
     substeps: [aiConsciousnessIntro, consciousnessMain]
   };
 
+  var takeawayStep = {
+    kicker: DE ? "Abschluss" : "Closing",
+    title: DE ? "Was du mitnimmst" : "What you take with you",
+    body: DE ? "Ein Modell ist kein Orakel. Es ist eine Maschine, die aus Daten gelernte Wahrscheinlichkeiten über Tokens in Text verwandelt. Dieselbe Mechanik erklärt, warum es flüssig schreibt, warum es Dinge erfindet und warum ein Demo kein Bewusstsein beweist.\n\nNimm drei Sätze mit: Es sagt Wahrscheinliches, nicht Wahres. Seine Fehler sind kein Betriebsunfall, sondern dieselbe Mechanik ohne Wahrheitsprüfung. Was es tut, kannst du prüfen; was es erlebt, nicht." : "A model is not an oracle. It is a machine that turns learned probabilities over tokens into text. The same mechanism explains why it writes fluently, why it invents things, and why no demo proves consciousness.\n\nTake three sentences with you: it says what is probable, not what is true. Its failures are not an accident outside the system; they are the same mechanism without a truth check. What it does can be tested; what it experiences cannot.",
+    watch: "",
+    demoState: { scene: "takeaway" },
+    context: DE ? "Die Kette ist der rote Faden: Daten, Tokens, Embeddings, Attention, nächstes Token. Jede Fähigkeit und jeder Fehler lässt sich an einer dieser Stellen verorten. Prompt, RAG, Fine-Tuning und Agenten sind verschiedene Griffe an derselben Maschine." : "The chain is the through-line: data, tokens, embeddings, attention, next token. Every capability and every failure can be located somewhere on it. Prompting, RAG, fine-tuning, and agents are different handles on the same machine.",
+    deep: DE ? "Die Prüffragen heißen: Welche Daten? Welche Aufgabe? Welche Architektur? Welche Evidenz? Wer haftet? Sie ersetzen kein Urteil, aber sie machen aus einem Gefühl eine prüfbare Behauptung. Genau das ist der Unterschied zwischen Staunen und Verstehen." : "The questions are: which data? Which task? Which architecture? Which evidence? Who is accountable? They do not replace judgement, but they turn a feeling into a testable claim. That is the difference between being impressed and understanding.",
+    boxes: [
+      box("tw-1", DE ? "Kernidee" : "Core idea", DE ? "Wahrscheinlichkeit statt Wahrheit" : "Probability instead of truth", DE ? "Das Modell wählt eine plausible Fortsetzung. Ob sie stimmt, ist eine zusätzliche Frage, die es nicht automatisch beantwortet." : "The model chooses a plausible continuation. Whether it is true is an additional question it does not answer automatically."),
+      box("tw-2", DE ? "Prüfung" : "Check", DE ? "Von der Schlagzeile zur Frage" : "From headline to question", DE ? "Frage nach Daten, Aufgabe, Architektur, Evidenz und Verantwortung. Dann wird aus „KI kann X“ eine Behauptung, die man prüfen oder verwerfen kann." : "Ask about data, task, architecture, evidence, and accountability. Then “AI can do X” becomes a claim that can be tested or rejected.")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Kette aus Attention und Vorhersage.", en: "The transformer as a chain of attention and prediction." } },
+      { label: "Bender et al. (2021), On the Dangers of Stochastic Parrots", url: "https://doi.org/10.1145/3442188.3445922", why: { de: "Sprachmodelle als Musterfortsetzung, nicht als Wahrheitsgarantie.", en: "Language models as pattern continuation, not a guarantee of truth." } },
+      { label: "Chalmers (1995), Facing Up to the Problem of Consciousness", url: "https://consc.net/papers/facing.pdf", why: { de: "Das schwere Problem: Funktion erklärt nicht automatisch Erleben.", en: "The hard problem: function does not automatically explain experience." } },
+      { label: "Gurnee et al. (2026), Verbalizable Representations Form a Global Workspace in Language Models", url: "https://arxiv.org/abs/2607.15495", why: { de: "J-Space: Zugang und Bericht, keine Aussage über Qualia.", en: "J-space: access and report, no claim about qualia." } },
+      { label: "Southgate (2026), AI Consciousness — The Unfinishable Map", url: "https://unfinishablemap.org/topics/ai-consciousness/", why: { de: "Die offene Frage nach Typen von KI-Bewusstsein.", en: "The open question about types of AI consciousness." } }
+    ]
+  };
+
   var qkvSimplex = {
     kicker: DE ? "Mischung" : "Mixture",
     title: DE ? "Attention als Mischung der Value-Vektoren" : "Attention as a mixture of value vectors",
@@ -2612,7 +2633,7 @@
     substeps: [spacetimeSpace, spacetimeTime]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, takeawayStep];
 
   var day = {
     id: "intuition",
