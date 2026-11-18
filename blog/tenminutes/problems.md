@@ -5,7 +5,7 @@
 - Volltext-Dump: `/tmp/opencode/deck_de.md` (1.453 Zeilen)
 - Methode: Laufzeitstrings, Quelltexte der Demos und Primärliteratur, wo verfügbar. Die englische Fassung und die Bildrechte wurden nicht gesondert geprüft.
 
-**Wichtig:** Es wurden keine Inhalte geändert. Diese Datei ist nur der Prüfbericht.
+**Wichtig:** Diese Datei dokumentiert den Prüfstand. Die inhaltlichen und technischen Korrekturen sind inzwischen im Code umgesetzt.
 
 ## Legende
 
@@ -17,7 +17,7 @@
 
 ## Nachtrag: Formelreparatur
 
-Die kaputten Formeln sind behoben. Geändert wurden nur Backslashes in Mathematik-Strings und die Display-Math-Behandlung in `proseBlock`; der Inhalt der Folien wurde nicht umgeschrieben.
+Die kaputten Formeln sind behoben. Die Formelreparatur änderte nur Backslashes in Mathematik-Strings und die Display-Math-Behandlung in `proseBlock`; die inhaltlichen Korrekturen folgen im nächsten Abschnitt.
 
 - 40 Mathematik-Spans in `intuition_learnsys-data.js` korrigiert, 74 zusätzliche Backslashes, in Deutsch und Englisch.
 - 18.1 rendert beide `$$`-Formeln jetzt als Display-Mathematik. `proseBlock` erkennt reine `$$…$$`-Blöcke und gibt sie an `mathBlock` weiter.

@@ -16,7 +16,7 @@
       {
         year: "~300 v. Chr.", label: "Antike", title: "Tafeln und Zählbretter",
         text: "Die Salamis-Tafel gilt als eines der ältesten erhaltenen Zählbretter, etwa 300 v. Chr. Der Abakus macht Stellenwerte körperlich: Steine auf Linien, nicht Ziffern auf Papier. Rechnen wird ein Verfahren mit Regeln.",
-        images: [{ src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, das älteste erhaltene Zählbrett", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
+        images: [{ src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, eines der ältesten erhaltenen Zählbretter", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
         sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
       },
       {
@@ -92,7 +92,7 @@
       {
         year: "~300 BCE", label: "Antiquity", title: "Tablets and counting boards",
         text: "The Salamis tablet is regarded as one of the oldest surviving counting boards, from about 300 BCE. The abacus makes place value physical: stones on lines, not digits on paper. Calculation becomes a procedure with rules.",
-        images: [{ src: "../salamic_table.jpg", alt: "The Salamis tablet, the oldest surviving counting board", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
+        images: [{ src: "../salamic_table.jpg", alt: "The Salamis tablet, one of the oldest surviving counting boards", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
         sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
       },
       {
