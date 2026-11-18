@@ -376,7 +376,7 @@
       <span><kbd>Esc</kbd></span><span>close</span>
       <span><kbd>drag</kbd> <kbd>scroll</kbd></span><span>look around, zoom</span>
     </div>
-    <div class="help-foot">Each arrow crosses one idea. The space between is part of it.<br>After the HoTT book, Univalent Foundations (2013).</div>
+    <div class="help-foot">Each arrow crosses one idea. The space between is part of it.<br>After Poincaré, Thom, Pontryagin and Milnor.</div>
   </div>
 </div>
 
@@ -469,17 +469,17 @@
     { act: 1, kind: "homotopy",     caption: "A homotopy bends one path into another.", key: "bends", d: 12.6, cy: 2.6 },
     { act: 1, kind: "torus",        caption: "Loops detect the hole.", key: "Loops", d: 12.4, cy: 3.0 },
     { act: 1, kind: "loopspace",    caption: "A covering unwinds the circle.", key: "unwinds", d: 11.8, cy: 2.8 },
-    { act: 1, kind: "homology",     caption: "Homology counts holes, not loops.", key: "holes", d: 12.2, cy: 2.8 },
-    { act: 1, kind: "vectorfield",  caption: "A sphere cannot be combed flat.", key: "combed", d: 12.0, cy: 2.7 },
+    { act: 1, kind: "homology",     caption: "Homology counts holes, not loops.", key: "holes", d: 11.6, cy: 2.8 },
+    { act: 1, kind: "vectorfield",  caption: "A sphere cannot be combed flat.", key: "combed", d: 11.4, cy: 2.7 },
 
-    { act: 2, kind: "boundary",     caption: "A manifold can have a boundary.", key: "boundary", d: 12.0, cy: 2.6 },
-    { act: 2, kind: "cobordism",    caption: "A cobordism is a movie between manifolds.", key: "movie", d: 13.0, cy: 2.9 },
-    { act: 2, kind: "bordismgroup", caption: "Bordism classes form a group.", key: "group", d: 12.0, cy: 2.7 },
-    { act: 2, kind: "bordismex",    caption: "Some manifolds bound; some do not.", key: "bound", d: 13.0, cy: 2.9 },
+    { act: 2, kind: "boundary",     caption: "A manifold can have a boundary.", key: "boundary", d: 11.4, cy: 2.6 },
+    { act: 2, kind: "cobordism",    caption: "A cobordism is a movie between manifolds.", key: "movie", d: 12.2, cy: 2.9 },
+    { act: 2, kind: "bordismgroup", caption: "Bordism classes form a group.", key: "group", d: 11.4, cy: 2.7 },
+    { act: 2, kind: "bordismex",    caption: "Some manifolds bound; some do not.", key: "bound", d: 12.2, cy: 2.9 },
 
-    { act: 3, kind: "bordismtable", caption: "Low-dimensional bordism groups.", key: "groups", d: 12.4, cy: 2.8 },
-    { act: 3, kind: "handles",      caption: "Cobordisms are built from handles.", key: "handles", d: 12.4, cy: 2.7 },
-    { act: 3, kind: "pontryagin",   caption: "Bordism is stable homotopy.", key: "homotopy", d: 12.0, cy: 2.7 },
+    { act: 3, kind: "bordismtable", caption: "Low-dimensional bordism groups.", key: "groups", d: 11.8, cy: 2.8 },
+    { act: 3, kind: "handles",      caption: "Cobordisms are built from handles.", key: "handles", d: 11.6, cy: 2.7 },
+    { act: 3, kind: "pontryagin",   caption: "Bordism is stable homotopy.", key: "homotopy", d: 11.3, cy: 2.7 },
 
     { act: 4, kind: "finale",       caption: "Shape, boundary, bordism.", key: "bordism", kicker: "Coda &middot; The Whole Shape", d: 12, cy: 3 }
   ];
@@ -4521,16 +4521,16 @@
 
   buildBordismGroup = function (g) {
     const labels = [];
-    const cyl = makeIrid(new THREE.CylinderGeometry(0.36, 0.36, 1.3, 32, 1, true), { a: C.ice, b: C.cyan, rim: C.gold, opacity: 0.32, wobble: 0 });
+    const cyl = makeIrid(new THREE.CylinderGeometry(0.5, 0.5, 1.6, 36, 1, true), { a: C.ice, b: C.cyan, rim: C.gold, opacity: 0.5, wobble: 0 });
     cyl.obj.position.set(-2.3, 0.2, 0);
     g.add(cyl.obj);
-    const cap1 = makeIrid(new THREE.CircleGeometry(0.45, 40), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.4, wobble: 0 });
+    const cap1 = makeIrid(new THREE.CircleGeometry(0.62, 40), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.55, wobble: 0 });
     cap1.obj.position.set(2.4, 0.55, 0); g.add(cap1.obj);
-    const cap2 = makeIrid(new THREE.CircleGeometry(0.45, 40), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.4, wobble: 0 });
+    const cap2 = makeIrid(new THREE.CircleGeometry(0.62, 40), { a: C.gold, b: C.rose, rim: C.gold, opacity: 0.55, wobble: 0 });
     cap2.obj.position.set(2.4, -0.55, 0); g.add(cap2.obj);
-    const ring1 = makeRing(0.5, 0.012, C.gold, 0.7); ring1.obj.position.set(-2.3, 0.9, 0); g.add(ring1.obj);
-    const ring2 = makeRing(0.5, 0.012, C.ice, 0.7); ring2.obj.position.set(-2.3, -0.5, 0); g.add(ring2.obj);
-    const flip = makeRing(0.6, 0.018, C.rose, 0.8); flip.obj.rotation.x = Math.PI / 2; flip.obj.position.set(0, -1.6, 0); g.add(flip.obj);
+    const ring1 = makeRing(0.65, 0.016, C.gold, 0.9); ring1.obj.position.set(-2.3, 0.9, 0); g.add(ring1.obj);
+    const ring2 = makeRing(0.65, 0.016, C.ice, 0.9); ring2.obj.position.set(-2.3, -0.5, 0); g.add(ring2.obj);
+    const flip = makeRing(0.8, 0.022, C.rose, 1); flip.obj.rotation.x = Math.PI / 2; flip.obj.position.set(0, -1.6, 0); g.add(flip.obj);
     const conn1 = makeRibbon(curveOf([V(-2.0, 0.2, 0), V(-0.6, 0.5, 0.3), V(0, 0.4, 0.3)], false), { a: C.ice, b: C.gold, rad: 0.012, opacity: 0.6, seg: 60 });
     const conn2 = makeRibbon(curveOf([V(2.0, 0.4, 0), V(0.8, 0.5, 0.3), V(0, 0.4, 0.3)], false), { a: C.gold, b: C.rose, rad: 0.012, opacity: 0.6, seg: 60 });
     g.add(conn1.core, conn1.glow, conn2.core, conn2.glow);
@@ -4544,11 +4544,11 @@
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        cyl.setOpacity(a * 0.3);
-        cap1.setOpacity(a * 0.36); cap2.setOpacity(a * 0.36);
-        ring1.setOpacity(a * 0.6); ring2.setOpacity(a * 0.6);
-        conn1.setOpacity(a * 0.55); conn2.setOpacity(a * 0.55);
-        flip.setOpacity(a * 0.7);
+        cyl.setOpacity(a * 0.5);
+        cap1.setOpacity(a * 0.55); cap2.setOpacity(a * 0.55);
+        ring1.setOpacity(a * 0.9); ring2.setOpacity(a * 0.9);
+        conn1.setOpacity(a * 0.75); conn2.setOpacity(a * 0.75);
+        flip.setOpacity(a);
         flip.obj.rotation.z += ctx.dt * 0.12;
       }
     };
@@ -4556,14 +4556,14 @@
 
   buildBordismEx = function (g) {
     const labels = [];
-    const cap = makeIrid(new THREE.CircleGeometry(0.95, 48), { a: C.gold, b: C.white, rim: C.gold, opacity: 0.34, wobble: 0 });
+    const cap = makeIrid(new THREE.CircleGeometry(1.15, 48), { a: C.gold, b: C.white, rim: C.gold, opacity: 0.5, wobble: 0 });
     cap.obj.position.set(-2.4, 0.2, 0);
-    const capRing = makeRing(0.95, 0.02, C.gold, 0.9); capRing.obj.position.set(-2.4, 0.2, 0.02);
+    const capRing = makeRing(1.15, 0.024, C.gold, 1); capRing.obj.position.set(-2.4, 0.2, 0.02);
     g.add(cap.obj, capRing.obj);
-    const solid = makeIrid(new THREE.TorusGeometry(0.62, 0.34, 24, 80), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.4, wobble: 0.01 });
+    const solid = makeIrid(new THREE.TorusGeometry(0.8, 0.42, 26, 90), { a: C.cyan, b: C.violet, rim: C.gold, opacity: 0.55, wobble: 0.01 });
     solid.obj.position.set(0, 0.2, 0);
     g.add(solid.obj);
-    const mob = makeIrid(makeMobiusGeometry(0.62, 0.3), { a: C.rose, b: C.violet, rim: C.gold, opacity: 0.4, wobble: 0 });
+    const mob = makeIrid(makeMobiusGeometry(0.8, 0.38), { a: C.rose, b: C.violet, rim: C.gold, opacity: 0.55, wobble: 0 });
     mob.obj.position.set(2.4, 0.2, 0);
     g.add(mob.obj);
     const disk = makeIrid(new THREE.CircleGeometry(0.3, 40), { a: C.red, b: C.rose, rim: C.red, opacity: 0.2, wobble: 0 });
@@ -4580,9 +4580,9 @@
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        cap.setOpacity(a * 0.32); capRing.setOpacity(a * 0.9);
-        solid.setOpacity(a * 0.4); solid.obj.rotation.y += ctx.dt * 0.04;
-        mob.setOpacity(a * 0.4); mob.obj.rotation.y += ctx.dt * 0.05;
+        cap.setOpacity(a * 0.5); capRing.setOpacity(a);
+        solid.setOpacity(a * 0.55); solid.obj.rotation.y += ctx.dt * 0.04;
+        mob.setOpacity(a * 0.55); mob.obj.rotation.y += ctx.dt * 0.05;
         disk.setOpacity(a * 0.2); bad.setOpacity(a * 0.5);
       }
     };
@@ -4690,11 +4690,11 @@
 
   buildPontryagin = function (g) {
     const labels = [];
-    const target = makeRing(0.95, 0.022, C.gold, 0.9);
+    const target = makeRing(1.15, 0.03, C.gold, 1);
     target.obj.rotation.x = Math.PI / 2;
     target.obj.position.y = -1.2;
     g.add(target.obj);
-    const source = makeRing(1.7, 0.018, C.ice, 0.65);
+    const source = makeRing(2.0, 0.026, C.ice, 0.9);
     source.obj.rotation.x = Math.PI / 2;
     source.obj.position.y = 0.1;
     g.add(source.obj);
@@ -4718,8 +4718,8 @@
       labels,
       update(ctx) {
         const a = ctx.a * ctx.r;
-        target.setOpacity(a * 0.85);
-        source.setOpacity(a * 0.6);
+        target.setOpacity(a);
+        source.setOpacity(a * 0.9);
         yDot.setOpacity(a);
         pre.setOpacity(a);
         f1.setOpacity(a * 0.4); f2.setOpacity(a * 0.4);
