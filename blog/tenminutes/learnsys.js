@@ -138,6 +138,7 @@
   var lastDemoSub = null;
   var lastMountedScene = null;
   var visitedDemoPositions = {};
+  var lastAppliedSceneKey = {};
   var demoLoaderShownAt = 0;
   var demoLoaderTimer = 0;
   var els = {};
@@ -2031,7 +2032,9 @@
     var sameSlide = lastDemoDay === state.day && lastDemoStep === state.step;
     var samePosition = sameSlide && lastDemoSub === state.substep;
     var positionKey = state.day + "." + state.step + "." + state.substep;
-    var meta = { step: state.step, dir: 0, substep: state.substep, subDir: 0, revisit: !!visitedDemoPositions[positionKey] };
+    var nextScene = s && s.demoState && s.demoState.scene ? s.demoState.scene : null;
+    var revisit = !!visitedDemoPositions[positionKey] && (!nextScene || lastAppliedSceneKey[nextScene] === positionKey);
+    var meta = { step: state.step, dir: 0, substep: state.substep, subDir: 0, revisit: revisit };
     if (lastDemoDay === state.day && lastDemoStep != null) {
       meta.dir = state.step - lastDemoStep;
       if (sameSlide && lastDemoSub != null) meta.subDir = state.substep - lastDemoSub;
@@ -2040,7 +2043,6 @@
     lastDemoDay = state.day;
     lastDemoStep = state.step;
     lastDemoSub = state.substep;
-    var nextScene = s && s.demoState && s.demoState.scene ? s.demoState.scene : null;
     if (els.demo) els.demo.setAttribute("data-scene", nextScene || "");
     if (!nextScene) {
       els.app.classList.add("is-text-only");
@@ -2065,7 +2067,7 @@
       if (!meta.revisit) {
         try { if (demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
       }
-      if (nextScene) lastMountedScene = nextScene;
+      if (nextScene) { lastMountedScene = nextScene; lastAppliedSceneKey[nextScene] = positionKey; }
       preloadNextScene(d);
       if (sceneChanged) hideDemoLoaderWhenReady();
       else if (needsLoader) hideDemoLoader();
@@ -2119,7 +2121,7 @@
     };
     try { demo = fn(els.demo, demoConfig); } catch (err) { demo = null; els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + '</div>'; hideDemoLoader(); return; }
     try { if (demo && demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
-    if (nextScene) lastMountedScene = nextScene;
+    if (nextScene) { lastMountedScene = nextScene; lastAppliedSceneKey[nextScene] = positionKey; }
     preloadNextScene(d);
     if (needsLoader) hideDemoLoaderWhenReady();
   }
