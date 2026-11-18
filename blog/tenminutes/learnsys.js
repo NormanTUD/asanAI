@@ -2031,7 +2031,7 @@
     var sameSlide = lastDemoDay === state.day && lastDemoStep === state.step;
     var samePosition = sameSlide && lastDemoSub === state.substep;
     var positionKey = state.day + "." + state.step + "." + state.substep;
-    var meta = { step: state.step, dir: 0, substep: state.substep, subDir: 0, revisit: !samePosition && !!visitedDemoPositions[positionKey] };
+    var meta = { step: state.step, dir: 0, substep: state.substep, subDir: 0, revisit: !!visitedDemoPositions[positionKey] };
     if (lastDemoDay === state.day && lastDemoStep != null) {
       meta.dir = state.step - lastDemoStep;
       if (sameSlide && lastDemoSub != null) meta.subDir = state.substep - lastDemoSub;
