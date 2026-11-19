@@ -2344,6 +2344,31 @@
     return typeof stepMemory[key] === "number" ? stepMemory[key] : null;
   }
 
+  function hasPrevPage() {
+    var day = activeDay();
+    var base = activeStep();
+    if (base && base.substeps && state.substep > 0) return true;
+    if (state.step > 0) return true;
+    return cfg.days.indexOf(day) > 0;
+  }
+  function hasNextPage() {
+    var day = activeDay();
+    var base = activeStep();
+    if (base && base.substeps && state.substep < base.substeps.length - 1) return true;
+    if (state.step < visibleCount(day) - 1) return true;
+    var pos = cfg.days.indexOf(day);
+    return pos >= 0 && pos < cfg.days.length - 1;
+  }
+  function updateBottomNav() {
+    if (!els.prev || !els.next) return;
+    var canPrev = hasPrevPage();
+    var canNext = hasNextPage();
+    els.prev.hidden = !canPrev;
+    els.next.hidden = !canNext;
+    els.prev.style.display = canPrev ? "" : "none";
+    els.next.style.display = canNext ? "" : "none";
+  }
+
   function renderAll() {
     hideTip();
     var day = activeDay();
@@ -2355,6 +2380,7 @@
     renderPosRail();
     renderText();
     renderStage();
+    updateBottomNav();
     if (els.calOverlay && !els.calOverlay.hidden) renderCalendar();
     save();
   }
@@ -2380,6 +2406,14 @@
   }
   function writeHash() {
     if (suppressHash) return;
+    if (cfg.eoyNoHash) {
+      if (location.hash) {
+        try {
+          history.replaceState(null, "", location.pathname + location.search);
+        } catch (e) {}
+      }
+      return;
+    }
     var day = activeDay();
     if (!day) return;
     var hash = "#/" + encodeURIComponent(day.id) + "/" + state.step + "/" + state.substep;
@@ -5351,6 +5385,11 @@
     setLang(cfg.lang);
     syncOverlayRevision();
     load();
+    if (cfg.eoyResetState) {
+      state.day = 0;
+      state.step = 0;
+      state.substep = 0;
+    }
     loadTextOverlay();
     loadLayout();
     if (!cfg.tracks) cfg.tracks = [];
@@ -5379,12 +5418,16 @@
     if (LOCAL_EDITOR) state.depth = "deep";
     renderAll();
     expandEditorDetails();
-    if (!applyHash()) writeHash();
+    if (cfg.eoyNoHash) {
+      writeHash();
+    } else if (!applyHash()) {
+      writeHash();
+    }
     rememberSubstep();
     booted = true;
     if (!hashBound) {
       hashBound = true;
-      window.addEventListener("hashchange", function () { applyHash(); });
+      window.addEventListener("hashchange", function () { if (!cfg.eoyNoHash) applyHash(); });
     }
     LS.visual = window.LearnSysVisuals || null;
     LS.kit = window.LearnSysSceneKit || null;

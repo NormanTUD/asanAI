@@ -2438,7 +2438,7 @@
   var requestedDay = typeof window.EOY_DAY === "number" ? Math.round(window.EOY_DAY) : 0;
   var singleStep = requestedDay >= 1 && requestedDay <= steps.length ? steps[requestedDay - 1] : null;
   var selectedDay = singleStep ? {
-    id: day.id,
+    id: "eoy-" + requestedDay,
     track: day.track,
     label: day.label,
     kicker: singleStep.kicker || day.kicker,
@@ -2461,6 +2461,8 @@
     mix: true,
     singleDay: true,
     startDay: 0,
+    eoyResetState: !!singleStep,
+    eoyNoHash: true,
     overlayRevision: "2026-11-17-spacetime-after-worldmodel-8",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false

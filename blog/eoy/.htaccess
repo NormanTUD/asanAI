@@ -3,6 +3,14 @@
 RewriteEngine On
 RewriteOptions Inherit
 
+# Pretty URLs: /eoy/1.php redirects to /eoy/1, and /eoy/1 serves 1.php.
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^?\s]+)\.php(?:\?|\s) [NC]
+RewriteRule ^ %1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ %{REQUEST_URI}.php [L]
+
 <IfModule mod_php8.c>
 	php_value auto_prepend_file "prepend.php"
 </IfModule>
