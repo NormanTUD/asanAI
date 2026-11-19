@@ -57,23 +57,22 @@
         return Math.min(1100, Math.max(420, Math.round((window.innerHeight || 800) * 0.9)));
     }
 
-    // Old embeds passed height=1500 and an inline 1500px height. A lesson page
-    // rendered at 1500px puts its fixed prev/next buttons 1500px below the
-    // top, so the reader never sees them. Drop that query parameter and let
-    // the lesson viewport be the iframe height instead; LearnSys scrolls its
-    // text column internally and the buttons stay at the visible bottom.
     function normalizeFrameSize(frame) {
         if (!frame) return;
         var raw = frame.getAttribute("src") || "";
+        var match = raw.match(/[?&]height=(\d+)/i);
+        var paramHeight = match ? parseInt(match[1], 10) : 0;
         var cssHeight = parseInt(frame.style.height, 10) || frame.offsetHeight || 0;
         var limit = viewportHeight();
-        if (!/(?:[?&])height=\d+/i.test(raw) && cssHeight <= limit) return;
-        raw = raw.replace(/([?&])height=\d+/ig, "$1")
-            .replace(/\?&/g, "?")
-            .replace(/&&+/g, "&")
-            .replace(/[?&]+$/, "");
-        frame.setAttribute("src", raw);
-        frame.style.height = limit + "px";
+        var target = paramHeight > 0 ? Math.min(paramHeight, limit) : limit;
+        if (paramHeight > limit) {
+            raw = raw.replace(/([?&])height=\d+/ig, "$1")
+                .replace(/\?&/g, "?")
+                .replace(/&&+/g, "&")
+                .replace(/[?&]+$/, "");
+            frame.setAttribute("src", raw);
+        }
+        if (paramHeight > 0 || cssHeight > limit) frame.style.height = target + "px";
     }
 
     function attachHeight(frame) {

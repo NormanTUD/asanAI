@@ -56,8 +56,6 @@
         for (var i = 0; i < all.length; i++) all[i].style.setProperty("display", "none", "important");
         return;
       }
-      /* The lesson buttons gate themselves on __lsPageReady; un-hiding them
-         here made the back button flash for a frame on first load. */
       if (document.getElementById("ls-quick-prev") || document.getElementById("ls-quick-next")
         || document.getElementById("navfix-prev") || document.getElementById("navfix-next")) return;
       var fallback = document.querySelectorAll("#eoy-embed-nav,.eoy-nav");
