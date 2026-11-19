@@ -1285,9 +1285,9 @@
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. MSE ist bis heute eine wichtige Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.",
-        teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. MSE ist bis heute eine wichtige Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.",
-        watch: "Schau dir die beiden Bilder an. Danach wird das Teleskop Schritt für Schritt besser.",
+        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. MSE ist bis heute eine wichtige Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.",
+        teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. MSE ist bis heute eine wichtige Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.",
+        watch: "",
         demoState: { scene: "gauss", phase: "intro" },
         inherit: false,
         questionGroups: [
@@ -1307,7 +1307,7 @@
             id: "g-lens-daten",
             title: "Daten",
             questions: [
-              { id: "q-box-gauss-3", title: "Warum im Schnitt richtig?", body: "Einzelne Messungen können falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist Kuration wichtig.", tex: "", kind: "question" }
+              { id: "q-box-gauss-3", title: "Warum im Schnitt richtig?", body: "Einzelne Messungen können, genauso wie einzelne Texte, falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist die Auswahl wichtig.", tex: "", kind: "question" }
             ]
           },
           {
@@ -1373,9 +1373,9 @@
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
-        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which Legendre had published in 1805, and helped spread the method. MSE is still an important loss function for regression; LLMs train with cross-entropy.",
-        teaser: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which Legendre had published in 1805, and helped spread the method. MSE is still an important loss function for regression; LLMs train with cross-entropy.",
-        watch: "Look at the two images. Then the telescope gets better step by step.",
+        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), which Legendre had published in 1805, and helped spread the method. MSE is still an important loss function for regression; LLMs train with cross-entropy.",
+        teaser: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), which Legendre had published in 1805, and helped spread the method. MSE is still an important loss function for regression; LLMs train with cross-entropy.",
+        watch: "",
         demoState: { scene: "gauss", phase: "intro" },
         inherit: false,
         questionGroups: [
@@ -1395,7 +1395,7 @@
             id: "g-lens-daten",
             title: "Data",
             questions: [
-              { id: "q-box-gauss-3", title: "Why right on average?", body: "Individual measurements can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why curation matters.", tex: "", kind: "question" }
+              { id: "q-box-gauss-3", title: "Why right on average?", body: "Individual measurements, just like individual texts, can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why selection matters.", tex: "", kind: "question" }
             ]
           },
           {
