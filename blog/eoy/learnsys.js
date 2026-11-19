@@ -2831,21 +2831,18 @@
     // another step or entry, even if a layout overlay says otherwise.
     if (cfg.eoySingle) {
       var singleNext = activeStep();
-      if (singleNext && singleNext.substeps) {
-        if (state.substep < singleNext.substeps.length - 1) {
-          state.substep++;
-          rememberSubstep();
-          cueSuppressUntil = performance.now() + 500;
-          renderSubstep(1);
-          writeHash();
-        }
-        return;
-      }
       if (demo && typeof demo.busy === "function" && demo.busy()) {
         if (typeof demo.finish === "function") demo.finish();
         return;
       }
       if (demo && typeof demo.next === "function" && demo.next()) { updateBottomNav(); return; }
+      if (singleNext && singleNext.substeps && state.substep < singleNext.substeps.length - 1) {
+        state.substep++;
+        rememberSubstep();
+        cueSuppressUntil = performance.now() + 500;
+        renderSubstep(1);
+        writeHash();
+      }
       return;
     }
     if (!cfg.eoySingle && demo && typeof demo.busy === "function" && demo.busy()) {
@@ -2881,17 +2878,14 @@
   function prev() {
     if (cfg.eoySingle) {
       var singlePrev = activeStep();
-      if (singlePrev && singlePrev.substeps) {
-        if (state.substep > 0) {
-          state.substep--;
-          rememberSubstep();
-          cueSuppressUntil = performance.now() + 500;
-          renderSubstep(-1);
-          writeHash();
-        }
-        return;
-      }
       if (demo && typeof demo.prev === "function" && demo.prev()) { updateBottomNav(); return; }
+      if (singlePrev && singlePrev.substeps && state.substep > 0) {
+        state.substep--;
+        rememberSubstep();
+        cueSuppressUntil = performance.now() + 500;
+        renderSubstep(-1);
+        writeHash();
+      }
       return;
     }
     if (!cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) return;
