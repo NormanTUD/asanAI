@@ -111,7 +111,13 @@
       if (trimmed.charAt(0) === "@") {
         var name = (trimmed.match(/^@([\w-]+)/) || [])[1] || "";
         var body = readBlock();
-        if (/^(media|supports|container|layer|document|-moz-document)$/i.test(name)) {
+        var lowerName = name.toLowerCase();
+        var widthQuery = lowerName === "media"
+          && /(?:min|max)-width\s*:|(?:^|[\s(])width\s*:/i.test(prelude)
+          && !/prefers-|print|hover|pointer|resolution|orientation|scripting|color-scheme/i.test(prelude);
+        if (widthQuery) {
+          out += prelude.replace(/@media/i, "@container") + "{" + scopeCss(body, rootSelector) + "}";
+        } else if (/^(media|supports|container|layer|document|-moz-document)$/i.test(name)) {
           out += prelude + "{" + scopeCss(body, rootSelector) + "}";
         } else {
           out += prelude + "{" + body + "}";
