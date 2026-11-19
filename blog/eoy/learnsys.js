@@ -5461,18 +5461,14 @@
   function installAssetRewriter(el) {
     if (!LS.isProxied() || !el || el.__lsAssetObserver) return;
     fixAssetSubtree(el);
+    // Watch for newly inserted demo content only. Do not observe attribute
+    // changes: rewriting those would feed the observer again.
     el.__lsAssetObserver = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
-        if (mutation.type === "attributes") fixAssetElement(mutation.target);
-        else Array.prototype.forEach.call(mutation.addedNodes, fixAssetSubtree);
+        Array.prototype.forEach.call(mutation.addedNodes, fixAssetSubtree);
       });
     });
-    el.__lsAssetObserver.observe(el, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      attributeFilter: ["src", "href", "poster", "srcset"]
-    });
+    el.__lsAssetObserver.observe(el, { subtree: true, childList: true });
   }
 
   LS.mount = function (el, config) {
@@ -5498,6 +5494,10 @@
       state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : Math.floor(Math.random() * cfg.days.length);
       if (cfg.singleDay) state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : 0;
       state.step = 0;
+      if (cfg.startEntry != null) {
+        var startIdx = visibleIndexOfEntry(cfg.days[state.day], cfg.startEntry);
+        if (startIdx >= 0) { state.step = startIdx; state.substep = 0; }
+      }
     }
     if (cfg.singleDay && cfg.days.length === 1 && state.step >= visibleCount(cfg.days[0])) state.step = 0;
     if (state.track !== "all") {

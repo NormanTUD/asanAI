@@ -2437,7 +2437,11 @@
 
   var requestedDay = typeof window.EOY_DAY === "number" ? Math.round(window.EOY_DAY) : 0;
   var singleStep = requestedDay >= 1 && requestedDay <= steps.length ? steps[requestedDay - 1] : null;
-  var selectedDay = singleStep ? {
+  // Through the blog proxy the eoy entry acts as the full lesson: keep all
+  // steps so the in-page previous/next navigation works inside the embed.
+  var proxyNav = !!(window.LearnSys && typeof LearnSys.isProxied === "function" && LearnSys.isProxied());
+  var navAll = !!(singleStep && proxyNav);
+  var selectedDay = singleStep ? (navAll ? day : {
     id: "eoy-" + requestedDay,
     track: day.track,
     label: day.label,
@@ -2447,7 +2451,7 @@
     steps: [singleStep],
     boxes: requestedDay === 1 ? day.boxes : [],
     sources: requestedDay === 1 ? day.sources : []
-  } : day;
+  }) : day;
 
   var rootEl = document.getElementById("learnsys");
 
@@ -2458,9 +2462,10 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    eoyResetState: !!singleStep,
+    eoyResetState: !!singleStep && !navAll,
     eoyNoHash: true,
-    eoySingle: !!singleStep,
+    eoySingle: !!singleStep && !navAll,
+    startEntry: navAll ? String(requestedDay - 1) : null,
     overlayRevision: "2026-11-17-spacetime-after-worldmodel-8",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
