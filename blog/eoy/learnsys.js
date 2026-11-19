@@ -1450,6 +1450,7 @@
         '<span class="ls-edit-kicker">' + esc(t("editing")) + '</span>' +
         '<span class="ls-edit-count" id="ls-edit-count"></span>' +
         '<span class="ls-edit-status" id="ls-edit-status" aria-live="polite"></span>' +
+        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="download-json" title="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' +
         '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="save">' + esc(t("save")) + '</button>' +
         '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="copy">' + esc(t("copy")) + '</button>' +
         '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="reset">' + esc(t("reset")) + '</button>' +
@@ -1909,6 +1910,9 @@
       updateEditorCount();
     } else if (action === "copy") {
       copyEditorPayload();
+    } else if (action === "download-json") {
+      downloadCurrentJSON();
+      setEditorStatus(t("exportOk"));
     } else if (action === "reset") {
       var store = textStore();
       delete store[textStepKey()];
@@ -2367,6 +2371,12 @@
     els.next.hidden = !canNext;
     els.prev.style.display = canPrev ? "" : "none";
     els.next.style.display = canNext ? "" : "none";
+    var bar = els.prev.parentNode;
+    if (bar) {
+      var show = canPrev || canNext;
+      bar.hidden = !show;
+      bar.style.display = show ? "" : "none";
+    }
   }
 
   function renderAll() {
@@ -2797,7 +2807,7 @@
       if (typeof demo.finish === "function") demo.finish();
       return;
     }
-    if (demo && typeof demo.next === "function" && demo.next()) return;
+    if (!cfg.eoySingle && demo && typeof demo.next === "function" && demo.next()) return;
     var d = activeDay();
     var base = activeStep();
     if (base && base.substeps && state.substep < base.substeps.length - 1) {
@@ -2808,11 +2818,15 @@
       writeHash();
       return;
     }
-    if (state.step < visibleCount(d) - 1) go(state.day, state.step + 1);
-    else {
-      var list = cfg.days;
-      var pos = list.indexOf(d);
-      if (pos >= 0 && pos < list.length - 1) go(pos + 1, 0);
+    if (state.step < visibleCount(d) - 1) {
+      go(state.day, state.step + 1);
+      return;
+    }
+    var list = cfg.days;
+    var pos = list.indexOf(d);
+    if (pos >= 0 && pos < list.length - 1) {
+      go(pos + 1, 0);
+      return;
     }
   }
   function lastSubstepFor(day, stepIndex) {
@@ -2820,7 +2834,7 @@
     return b && b.substeps ? Math.max(0, b.substeps.length - 1) : 0;
   }
   function prev() {
-    if (demo && typeof demo.prev === "function" && demo.prev()) return;
+    if (!cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) return;
     var d = activeDay();
     var base = activeStep();
     if (base && base.substeps && state.substep > 0) {
@@ -2835,15 +2849,16 @@
       var prevStep = state.step - 1;
       var rememberedPrev = rememberedSubstep(d, prevStep);
       go(state.day, prevStep, rememberedPrev == null ? lastSubstepFor(d, prevStep) : rememberedPrev);
-    } else {
-      var list = cfg.days;
-      var pos = list.indexOf(d);
-      if (pos > 0) {
-        var p = list[pos - 1];
-        var lastStep = visibleCount(p) - 1;
-        var rememberedDay = rememberedSubstep(p, lastStep);
-        go(pos - 1, lastStep, rememberedDay == null ? lastSubstepFor(p, lastStep) : rememberedDay);
-      }
+      return;
+    }
+    var list = cfg.days;
+    var pos = list.indexOf(d);
+    if (pos > 0) {
+      var p = list[pos - 1];
+      var lastStep = visibleCount(p) - 1;
+      var rememberedDay = rememberedSubstep(p, lastStep);
+      go(pos - 1, lastStep, rememberedDay == null ? lastSubstepFor(p, lastStep) : rememberedDay);
+      return;
     }
   }
 

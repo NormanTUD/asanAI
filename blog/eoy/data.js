@@ -2450,9 +2450,6 @@
   } : day;
 
   var rootEl = document.getElementById("learnsys");
-  if (singleStep) {
-    rootEl.classList.add(singleStep.substeps && singleStep.substeps.length > 1 ? "eoy-has-substeps" : "eoy-no-substeps");
-  }
 
   LearnSys.mount(rootEl, {
     lang: DE ? "de" : "en",
@@ -2463,6 +2460,7 @@
     startDay: 0,
     eoyResetState: !!singleStep,
     eoyNoHash: true,
+    eoySingle: !!singleStep,
     overlayRevision: "2026-11-17-spacetime-after-worldmodel-8",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false

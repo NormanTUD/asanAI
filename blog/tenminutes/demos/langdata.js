@@ -219,9 +219,9 @@
       function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
       function truthCurve(x) { return 0.10 + 0.06 * Math.sin(x * Math.PI * 1.7); }
       function curveY(x) { return Y(truthCurve(x)); }
-      // Red is everything outside the truth band; the green band is smooth and wide.
+      // Wrong items sit outside the truth band; the green band is smooth and wide.
       var bandOuter = 44;
-      ctx.fillStyle = "rgba(198,40,40,.085)";
+      ctx.fillStyle = "rgba(145,133,190,.10)";
       ctx.fillRect(padL, padT, w - padL - padR, h - padT - padB);
       ctx.beginPath();
       for (var ub = 0; ub <= 100; ub++) {
@@ -268,10 +268,10 @@
           ctx.fillStyle = C.blue; ctx.fill();
           ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
         } else {
-          ctx.strokeStyle = red; ctx.lineWidth = 2.8;
+          ctx.strokeStyle = C.lilac; ctx.lineWidth = 2.8;
           ctx.beginPath(); ctx.moveTo(x - 6, y - 6); ctx.lineTo(x + 6, y + 6); ctx.moveTo(x + 6, y - 6); ctx.lineTo(x - 6, y + 6); ctx.stroke();
         }
-        ctx.fillStyle = item.ok ? C.ink : red;
+        ctx.fillStyle = item.ok ? C.ink : C.lilac;
         ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center"; ctx.textBaseline = "bottom";
         ctx.fillText(String(i + 1), x, y - 9);

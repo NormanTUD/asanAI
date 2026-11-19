@@ -49,7 +49,6 @@ $pageTitle = $eoyDay === null ? 'One Word at a Time | Ten Minutes' : 'One Word a
 		.ls-lang-btn { min-width: 34px; font-weight: 600; letter-spacing: .04em; }
 		<?php if ($eoyDay !== null): ?>
 		.ls-top, .ls-navbar { display: none !important; }
-		#learnsys:not(.eoy-has-substeps) .ls-bottom-nav { display: none !important; }
 		<?php endif; ?>
 	</style>
 </head>
