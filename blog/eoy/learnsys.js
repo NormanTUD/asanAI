@@ -5523,6 +5523,83 @@
     el.__lsAssetObserver.observe(el, { subtree: true, childList: true });
   }
 
+  // Bullet-proof lesson navigation. Rendered from learnsys.js (which is
+  // loaded in both direct and proxied pages) with runtime styles, so a proxy
+  // that strips <style>/style="" cannot move it.
+  function installLessonNav() {
+    if (window.__lsQuickNavInstalled || !document.body) return;
+    window.__lsQuickNavInstalled = true;
+
+    function mk(id, side, label) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.id = id;
+      b.textContent = label;
+      var st = b.style;
+      st.setProperty("position", "fixed", "important");
+      st.setProperty("bottom", "14px", "important");
+      st.setProperty(side, "14px", "important");
+      st.setProperty("z-index", "2147483000", "important");
+      st.setProperty("min-width", "120px", "important");
+      st.setProperty("min-height", "44px", "important");
+      st.setProperty("padding", "0 16px", "important");
+      st.setProperty("align-items", "center", "important");
+      st.setProperty("justify-content", "center", "important");
+      st.setProperty("text-align", "center", "important");
+      st.setProperty("border", "1px solid #4f8b3c", "important");
+      st.setProperty("background", "#63a44b", "important");
+      st.setProperty("color", "#fff", "important");
+      st.setProperty("font", "600 15px/1 'Open Sans', system-ui, sans-serif", "important");
+      st.setProperty("cursor", "pointer", "important");
+      st.setProperty("box-shadow", "0 3px 14px rgba(0,20,30,.18)", "important");
+      st.setProperty("display", "none", "important");
+      document.body.appendChild(b);
+      return b;
+    }
+
+    var qPrev = mk("ls-quick-prev", "left", t("back"));
+    var qNext = mk("ls-quick-next", "right", t("forward"));
+
+    function hideOtherNavs() {
+      var olds = document.querySelectorAll(".eoy-nav");
+      for (var i = 0; i < olds.length; i++) if (olds[i].parentNode) olds[i].parentNode.removeChild(olds[i]);
+      var alt = document.querySelectorAll("#eoy-embed-nav");
+      for (var j = 0; j < alt.length; j++) alt[j].style.setProperty("display", "none", "important");
+      // Also remove attribute-stripped leftovers structurally: any direct body
+      // <div> that contains nav buttons but is not #learnsys.
+      var kids = document.body ? document.body.children : [];
+      for (var k = 0; k < kids.length; k++) {
+        var kid = kids[k];
+        if (kid.id === "learnsys" || kid.tagName !== "DIV") continue;
+        var btns = kid.querySelectorAll ? kid.querySelectorAll("button") : [];
+        if (btns.length && /weiter|next|zurück|back/i.test(kid.textContent || "")) {
+          if (kid.parentNode) kid.parentNode.removeChild(kid);
+        }
+      }
+      var bottom = document.querySelector(".ls-bottom-nav");
+      if (bottom) bottom.style.setProperty("display", "none", "important");
+    }
+
+    function updateQuickNav() {
+      hideOtherNavs();
+      var p = hasPrevPage();
+      var n = hasNextPage();
+      qPrev.style.setProperty("display", p ? "inline-flex" : "none", "important");
+      qNext.style.setProperty("display", n ? "inline-flex" : "none", "important");
+    }
+
+    qPrev.addEventListener("click", function () { prev(); setTimeout(updateQuickNav, 140); });
+    qNext.addEventListener("click", function () { next(); setTimeout(updateQuickNav, 140); });
+
+    var main = document.querySelector(".ls-main");
+    if (main) main.style.setProperty("padding-bottom", "72px", "important");
+
+    updateQuickNav();
+    setInterval(updateQuickNav, 250);
+    window.addEventListener("focus", updateQuickNav);
+    document.addEventListener("visibilitychange", updateQuickNav);
+  }
+
   LS.mount = function (el, config) {
     root = el;
     cfg = config;
@@ -5566,6 +5643,7 @@
     bind();
     if (LOCAL_EDITOR) state.depth = "deep";
     renderAll();
+    installLessonNav();
     expandEditorDetails();
     if (cfg.eoyNoHash) {
       writeHash();

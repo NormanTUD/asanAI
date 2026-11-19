@@ -40,6 +40,9 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A 31-day interactive introduction to how large language models work: data, tokens, embeddings, attention, training, agents, society, and consciousness.">
 	<meta name="theme-color" content="#ffffff">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
 	<title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
 	<script>
 		window.TM_LOCAL_EDITOR = <?php echo $localEditor ? 'true' : 'false'; ?>;
@@ -53,6 +56,8 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	</script>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 	<link rel="stylesheet" href="learnsys.css?v=<?php echo filemtime(__DIR__.'/learnsys.css'); ?>">
+	<link rel="stylesheet" href="eoy-nav.css?v=<?php echo filemtime(__DIR__.'/eoy-nav.css'); ?>">
+	<link rel="stylesheet" href="nav-fix.css?v=<?php echo filemtime(__DIR__.'/nav-fix.css'); ?>">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<style>
 		#tm-lang-switch { display: none !important; }
@@ -71,27 +76,36 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 			min-height: <?php echo $embedHeight; ?>px;
 			grid-template-rows: minmax(0, 1fr);
 		}
-		body[data-page="lesson"] .ls-main { grid-row: 1; padding-top: 58px; }
+		body[data-page="lesson"] .ls-main { grid-row: 1; }
 		body[data-page="lesson"] .ls-top,
 		body[data-page="lesson"] .ls-navbar { display: none !important; }
 		body[data-page="lesson"] .ls-title { max-width: 36ch; }
 		@media (max-width: 980px) {
 			body[data-page="lesson"] .ls-main { grid-template-rows: auto minmax(0, 1fr); }
 		}
-		/* Keep the navigation visible at the top of a tall embed instead of the
-		   iframe's bottom edge, which is usually off-screen. */
-		body[data-page="lesson"] .ls-bottom-nav {
-			position: absolute;
-			top: 10px;
-			bottom: auto;
-			left: 12px;
-			right: 12px;
-		}
 		<?php endif; ?>
+		#eoy-embed-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483000; pointer-events: none; }
+		#eoy-embed-nav button {
+			position: fixed; bottom: 14px; display: inline-flex; align-items: center; justify-content: center;
+			min-width: 120px; min-height: 44px; padding: 0 16px; pointer-events: auto;
+			border: 1px solid #4f8b3c; background: #63a44b; color: #fff;
+			font: 600 15px/1 "Open Sans", system-ui, sans-serif; cursor: pointer;
+			box-shadow: 0 3px 14px rgba(0,20,30,.18);
+		}
+		#eoy-embed-nav button:hover { background: #558c3f; }
+		#eoy-embed-nav button[hidden] { display: none !important; }
+		#eoy-embed-nav [data-eoy-prev] { left: 14px; }
+		#eoy-embed-nav [data-eoy-next] { right: 14px; }
+		body[data-page="lesson"] .ls-bottom-nav { display: none !important; }
+		body[data-page="lesson"] .ls-main { padding-bottom: 72px; }
 	</style>
 </head>
 <body data-page="lesson" data-lesson="intuition" data-eoy-day="<?php echo $eoyDay !== null ? $eoyDay : ''; ?>" data-eoy-resolved="<?php echo $eoyDay !== null ? $eoyDay : 0; ?>" data-no-full-article data-tm-reload-lang="1">
 	<div id="learnsys" data-no-i18n></div>
+	<div id="eoy-embed-nav" style="position:fixed;left:0;right:0;bottom:0;z-index:2147483000;pointer-events:none">
+		<button type="button" class="eoy-prev" data-eoy-prev style="position:fixed;left:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18);pointer-events:auto">← Zurück</button>
+		<button type="button" class="eoy-next" data-eoy-next style="position:fixed;right:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18);pointer-events:auto">Weiter →</button>
+	</div>
 	<?php if ($showSnow): ?><canvas class="season-layer" id="season-snow" aria-hidden="true"></canvas><?php endif; ?>
 	<?php if ($showFireworks): ?><canvas class="season-layer" id="season-fireworks" aria-hidden="true"></canvas><?php endif; ?>
 	<script src="../temml.min.js"></script>
@@ -114,7 +128,8 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	<?php endforeach; ?>
 	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
 	<script src="data.js?v=<?php echo filemtime(__DIR__.'/data.js'); ?>"></script>
-	<script src="eoy-nav.js?v=<?php echo filemtime(__DIR__.'/eoy-nav.js'); ?>"></script>
+	<script src="eoy-embed-nav.js?v=<?php echo filemtime(__DIR__.'/eoy-embed-nav.js'); ?>"></script>
+	<script src="nav-fix.js?v=<?php echo filemtime(__DIR__.'/nav-fix.js'); ?>"></script>
 	<script src="frame-height.js?v=<?php echo filemtime(__DIR__.'/frame-height.js'); ?>"></script>
 	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>"></script><?php endif; ?>
 </body>

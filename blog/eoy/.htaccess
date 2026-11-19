@@ -29,3 +29,15 @@ RewriteRule ^(.*)$ %{REQUEST_URI}.php [L]
 		Deny from all
 	</IfModule>
 </FilesMatch>
+
+# Prevent stale lesson HTML/JS/CSS in the WordPress proxy and browsers.
+<IfModule mod_headers.c>
+	<FilesMatch "\.(php|js|css)$">
+		Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+		Header set Pragma "no-cache"
+		Header set Expires "0"
+		Header set CDN-Cache-Control "no-store"
+		Header set Surrogate-Control "no-store"
+		Header set X-Accel-Expires "0"
+	</FilesMatch>
+</IfModule>
