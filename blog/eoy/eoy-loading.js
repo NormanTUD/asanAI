@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var MASK = "radial-gradient(circle closest-side at 50% 50%,#000 52%,rgba(0,0,0,.55) 72%,transparent 100%)";
+  var MASK = "radial-gradient(ellipse farthest-side at 50% 50%,#000 86%,rgba(0,0,0,.5) 95%,transparent 98%)";
 
   function makeCanvas(container, extra) {
     var canvas = document.createElement("canvas");
