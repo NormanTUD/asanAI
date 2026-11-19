@@ -2108,12 +2108,14 @@
       go: go,
       goStep: function (step) { go(state.day, step); },
       goNext: function () {
+        if (cfg.eoySingle) { next(); return; }
         var day = cfg.days[state.day];
         if (!day) return;
         if (state.step < day.steps.length - 1) go(state.day, state.step + 1);
         else if (state.day < cfg.days.length - 1) go(state.day + 1, 0);
       },
       goPrev: function () {
+        if (cfg.eoySingle) { prev(); return; }
         var day = cfg.days[state.day];
         if (!day) return;
         if (state.step > 0) go(state.day, state.step - 1);
@@ -2352,6 +2354,7 @@
   function hasPrevPage() {
     var day = activeDay();
     var base = activeStep();
+    if (cfg.eoySingle) return !!(base && base.substeps && state.substep > 0);
     if (base && base.substeps && state.substep > 0) return true;
     if (state.step > 0) return true;
     return cfg.days.indexOf(day) > 0;
@@ -2359,6 +2362,7 @@
   function hasNextPage() {
     var day = activeDay();
     var base = activeStep();
+    if (cfg.eoySingle) return !!(base && base.substeps && state.substep < base.substeps.length - 1);
     if (base && base.substeps && state.substep < base.substeps.length - 1) return true;
     if (state.step < visibleCount(day) - 1) return true;
     var pos = cfg.days.indexOf(day);
@@ -2756,6 +2760,8 @@
     animateSubstep(dir, ghost);
   }
   function go(day, step, substep) {
+    // Single-entry eoy pages stay on their one step; only substeps may move.
+    if (cfg && cfg.eoySingle) { day = 0; step = 0; }
     hideTip();
     var oldDay = state.day;
     var oldStep = state.step;
@@ -2804,6 +2810,19 @@
     writeHash();
   }
   function next() {
+    // Single-entry eoy pages only walk their own substeps; never cross into
+    // another step or entry, even if a layout overlay says otherwise.
+    if (cfg.eoySingle) {
+      var singleNext = activeStep();
+      if (singleNext && singleNext.substeps && state.substep < singleNext.substeps.length - 1) {
+        state.substep++;
+        rememberSubstep();
+        cueSuppressUntil = performance.now() + 500;
+        renderSubstep(1);
+        writeHash();
+      }
+      return;
+    }
     if (!cfg.eoySingle && demo && typeof demo.busy === "function" && demo.busy()) {
       if (typeof demo.finish === "function") demo.finish();
       return;
@@ -2835,6 +2854,17 @@
     return b && b.substeps ? Math.max(0, b.substeps.length - 1) : 0;
   }
   function prev() {
+    if (cfg.eoySingle) {
+      var singlePrev = activeStep();
+      if (singlePrev && singlePrev.substeps && state.substep > 0) {
+        state.substep--;
+        rememberSubstep();
+        cueSuppressUntil = performance.now() + 500;
+        renderSubstep(-1);
+        writeHash();
+      }
+      return;
+    }
     if (!cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) return;
     var d = activeDay();
     var base = activeStep();

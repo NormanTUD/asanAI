@@ -53,7 +53,9 @@
         if (window.__asanaiLessonKeysBound) return;
         window.__asanaiLessonKeysBound = true;
 
-        document.addEventListener("keydown", function (event) {
+        // Capture phase on window: run before theme/navigation handlers and
+        // stop them from reacting to the same arrow keys.
+        window.addEventListener("keydown", function (event) {
             if (event.defaultPrevented || event.isComposing) return;
             if (event.ctrlKey || event.metaKey) return;
             if (isEditable(event.target)) return;
@@ -65,6 +67,8 @@
             if (!frame || !frame.contentWindow) return;
 
             event.preventDefault();
+            event.stopImmediatePropagation();
+            event.stopPropagation();
             frame.contentWindow.postMessage({
                 type: "learnsys-key",
                 key: key,
@@ -74,7 +78,7 @@
                 ctrlKey: event.ctrlKey,
                 metaKey: event.metaKey
             }, "*");
-        }, false);
+        }, true);
     }
 
     function init() {

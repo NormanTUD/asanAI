@@ -45,6 +45,11 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 		window.TM_LOCAL_EDITOR = <?php echo $localEditor ? 'true' : 'false'; ?>;
 		window.TM_HIDE_EXPAND_ALL = <?php echo $hideExpandAll ? 'true' : 'false'; ?>;
 		<?php if ($eoyDay !== null): ?>window.EOY_DAY = <?php echo $eoyDay; ?>;<?php endif; ?>
+		(function () {
+			if (typeof window.EOY_DAY === "number") return;
+			var m = (location.pathname + location.search + location.hash).match(/eoy(?:%2F|\/)(\d+)/i);
+			if (m) window.EOY_DAY = parseInt(m[1], 10);
+		})();
 	</script>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 	<link rel="stylesheet" href="learnsys.css?v=<?php echo filemtime(__DIR__.'/learnsys.css'); ?>">
