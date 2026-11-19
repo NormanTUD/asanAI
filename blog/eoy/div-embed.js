@@ -303,6 +303,15 @@
       style.setAttribute("data-asanai-eoy-css", "1");
       style.textContent = css;
       document.head.appendChild(style);
+
+      var layoutStyle = document.createElement("style");
+      layoutStyle.setAttribute("data-asanai-eoy-layout", "1");
+      layoutStyle.textContent = "#" + root.id + " .ls-main{outline:5px solid rgb(1,2,3)!important}\n@container (max-width:980px){#" + root.id
+        + " .ls-main{display:flex!important;flex-direction:column!important}"
+        + "#" + root.id + " .ls-text{flex:0 0 auto!important;max-height:60%!important}"
+        + "#" + root.id + " .ls-text-scroll{height:100%!important}"
+        + "#" + root.id + " .ls-stage{flex:1 1 0!important;min-height:0!important}}";
+      document.head.appendChild(layoutStyle);
     });
   }
 
