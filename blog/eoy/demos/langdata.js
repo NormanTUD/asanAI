@@ -223,35 +223,8 @@
       var bandOuter = 44;
       var RED = "#c62828";
       var GREEN_FILL = "rgba(99,164,75,.22)";
-      // Vertical extent of the curved band top, so the red wash can blend
-      // straight into the green band instead of fading out through white.
-      var bandTopMin = Infinity, bandTopMax = -Infinity;
-      for (var bt = 0; bt <= 100; bt++) {
-        var bty = curveY(bt / 100) - bandOuter;
-        if (bty < bandTopMin) bandTopMin = bty;
-        if (bty > bandTopMax) bandTopMax = bty;
-      }
-      if (bandTopMax > padT) {
-        var washSpan = bandTopMax - padT;
-        var greenAt = Math.max(0, Math.min(1, (bandTopMin - padT) / washSpan));
-        var redWash = ctx.createLinearGradient(0, padT, 0, bandTopMax);
-        redWash.addColorStop(0, "rgba(198,40,40,.46)");
-        redWash.addColorStop(greenAt * 0.55, "rgba(198,116,58,.34)");
-        redWash.addColorStop(greenAt * 0.82, "rgba(152,150,60,.26)");
-        redWash.addColorStop(greenAt, GREEN_FILL);
-        // Clip the wash to the area above the band so it blends into the green
-        // edge without stacking opacity on top of the band itself.
-        ctx.beginPath();
-        ctx.moveTo(padL, padT);
-        ctx.lineTo(w - padR, padT);
-        for (var wb = 100; wb >= 0; wb--) {
-          var wx = padL + wb / 100 * (w - padL - padR);
-          ctx.lineTo(wx, curveY(wb / 100) - bandOuter);
-        }
-        ctx.closePath();
-        ctx.fillStyle = redWash;
-        ctx.fill();
-      }
+      // Keep the plot background plain white; only the green band marks the
+      // truth region.
       ctx.beginPath();
       for (var ub = 0; ub <= 100; ub++) {
         var ux = padL + ub / 100 * (w - padL - padR);
