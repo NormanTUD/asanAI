@@ -5,8 +5,9 @@
  *   <script src="/asanai_blog_proxy.php?eoy/wordpress-embed.js"></script>
  *
  * It must be loaded after the iframe markup. It:
- *  - keeps the iframe at a viewport-sized height so the lesson scrolls
- *    internally and its own prev/next buttons stay visible,
+ *  - honours an explicit height=... query parameter, otherwise keeps the
+ *    iframe viewport-sized so the lesson scrolls internally and its own
+ *    prev/next buttons stay visible,
  *  - resizes the iframe from the { type: "height" } messages (a fixed-height
  *    iframe reports its viewport height, so the CSS height wins),
  *  - forwards arrow keys and lesson shortcuts into the iframe,
@@ -62,17 +63,13 @@
         var raw = frame.getAttribute("src") || "";
         var match = raw.match(/[?&]height=(\d+)/i);
         var paramHeight = match ? parseInt(match[1], 10) : 0;
+        if (paramHeight > 0) {
+            frame.style.height = paramHeight + "px";
+            return;
+        }
         var cssHeight = parseInt(frame.style.height, 10) || frame.offsetHeight || 0;
         var limit = viewportHeight();
-        var target = paramHeight > 0 ? Math.min(paramHeight, limit) : limit;
-        if (paramHeight > limit) {
-            raw = raw.replace(/([?&])height=\d+/ig, "$1")
-                .replace(/\?&/g, "?")
-                .replace(/&&+/g, "&")
-                .replace(/[?&]+$/, "");
-            frame.setAttribute("src", raw);
-        }
-        if (paramHeight > 0 || cssHeight > limit) frame.style.height = target + "px";
+        if (cssHeight > limit) frame.style.height = limit + "px";
     }
 
     function attachHeight(frame) {
