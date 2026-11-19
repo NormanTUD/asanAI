@@ -365,6 +365,11 @@
         return loadScripts(doc);
       }).then(function (errors) {
         if (errors.length) console.warn("[asanai-eoy] some scripts failed", errors);
+        if (window.LearnSys && typeof window.LearnSys.go === "function") {
+          try { window.LearnSys.go(0, 0, 0); } catch (error) {
+            console.error("[asanai-eoy] demo re-render failed", error);
+          }
+        }
         return waitForLesson(root);
       }).then(function (ok) {
         if (!ok) {
@@ -433,29 +438,55 @@
     var errors = [];
     var seen = {};
     var list = Array.prototype.slice.call(doc.querySelectorAll("script[src]"));
-    return list.reduce(function (chain, el) {
-      return chain.then(function () {
-        var src = el.getAttribute("src");
-        if (!src || seen[src]) return;
-        seen[src] = true;
-        if (/\/frame-height\.js(?:\?|$)/i.test(src) || /\/nav-fix\.js(?:\?|$)/i.test(src)
-          || /\/wordpress-embed\.js(?:\?|$)/i.test(src)) return;
-        var url = resolveWithProxy(src);
-        if (!url) { errors.push(src); return; }
-        return new Promise(function (resolve) {
-          var script = document.createElement("script");
-          script.src = url;
-          script.async = false;
-          script.onload = function () { script.parentNode && script.parentNode.removeChild(script); resolve(); };
-          script.onerror = function () {
-            script.parentNode && script.parentNode.removeChild(script);
-            errors.push(url);
-            resolve();
-          };
-          document.head.appendChild(script);
-        });
+    var earlyOrder = ["site.js", "learnsys-visuals.js", "learnsys-scene-kit.js", "learnsys.js", "data.js"];
+    function baseName(src) {
+      var path = String(src || "").split("?")[0];
+      return path.slice(path.lastIndexOf("/") + 1);
+    }
+    function skip(src) {
+      return /\/frame-height\.js(?:\?|$)/i.test(src) || /\/nav-fix\.js(?:\?|$)/i.test(src)
+        || /\/wordpress-embed\.js(?:\?|$)/i.test(src);
+    }
+    var early = [], rest = [];
+    list.forEach(function (el) {
+      var src = el.getAttribute("src");
+      if (!src || skip(src)) return;
+      if (earlyOrder.indexOf(baseName(src)) >= 0) early.push(el);
+      else rest.push(el);
+    });
+    early.sort(function (a, b) {
+      return earlyOrder.indexOf(baseName(a.getAttribute("src")))
+        - earlyOrder.indexOf(baseName(b.getAttribute("src")));
+    });
+    function loadOne(el) {
+      var src = el.getAttribute("src");
+      if (!src || seen[src]) return Promise.resolve();
+      seen[src] = true;
+      var url = resolveWithProxy(src);
+      if (!url) { errors.push(src); return Promise.resolve(); }
+      return new Promise(function (resolve) {
+        var script = document.createElement("script");
+        script.src = url;
+        script.async = false;
+        script.onload = function () { script.parentNode && script.parentNode.removeChild(script); resolve(); };
+        script.onerror = function () {
+          script.parentNode && script.parentNode.removeChild(script);
+          errors.push(url);
+          resolve();
+        };
+        document.head.appendChild(script);
       });
-    }, Promise.resolve()).then(function () { return errors; });
+    }
+    function run(group) {
+      return group.reduce(function (chain, el) {
+        return chain.then(function () { return loadOne(el); });
+      }, Promise.resolve());
+    }
+    return run(early).then(function () {
+      var root = window.__ASANAI_EOY_ROOT__;
+      if (root) focusLoaderOnStage(root);
+      return run(rest);
+    }).then(function () { return errors; });
   }
 
   function waitForLesson(root) {
