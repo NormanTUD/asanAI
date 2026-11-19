@@ -89,6 +89,9 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 	<style>
 		#tm-lang-switch { display: none !important; }
 		.ls-lang-btn { min-width: 34px; font-weight: 600; letter-spacing: .04em; }
+		.asanai-eoy-preview .ls-kicker,
+		.asanai-eoy-preview .ls-title,
+		.asanai-eoy-preview .ls-body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important; }
 		<?php if ($eoyDay !== null): ?>
 		.ls-top, .ls-navbar { display: none !important; }
 		body[data-page="lesson"] .ls-app { grid-template-rows: minmax(0, 1fr); }
@@ -128,38 +131,16 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 	</style>
 </head>
 <body data-page="lesson" data-lesson="intuition" data-eoy-day="<?php echo $eoyDay !== null ? $eoyDay : ''; ?>" data-eoy-resolved="<?php echo $eoyDay !== null ? $eoyDay : 0; ?>" data-no-full-article data-tm-reload-lang="1">
-	<div id="ls-page-loader" role="status" aria-live="polite" aria-label="Lädt …"
-		style="position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:#fff">
-		<div class="ls-page-loader-spinner" aria-hidden="true"
-			style="width:38px;height:38px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:ls-page-spin .8s linear infinite"></div>
-	</div>
 	<script>
-		/* Inline bootstrap: runs before the lesson scripts and cannot be cached
-		   away. Creates/styles the loader and hides every nav until loaded. */
+		/* Inline bootstrap: hides navigation until the lesson is ready. It never
+		   covers the page, so the preview text is visible immediately. */
 		(function(){
 			var NAV="#ls-quick-prev,#ls-quick-next,#navfix-prev,#navfix-next,#eoy-embed-nav,.eoy-nav,.ls-bottom-nav";
 			function css(){
 				if(document.getElementById("ls-boot-style"))return;
 				var st=document.createElement("style");st.id="ls-boot-style";
-				st.textContent="#ls-page-loader{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;z-index:2147483647!important;background:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important}"+
-					"#ls-page-loader::backdrop{background:#fff!important}"+
-					"#ls-page-loader .ls-page-loader-spinner{width:40px!important;height:40px!important;border:3px solid #dbe3e0!important;border-top-color:#63a44b!important;border-radius:50%!important;animation:lsBootSpin .8s linear infinite!important}"+
-					"body:not(.ls-loaded) "+NAV.split(",").join(",body:not(.ls-loaded) ")+"{display:none!important}"+
-					"@keyframes lsBootSpin{to{transform:rotate(360deg)}}";
+				st.textContent="body:not(.ls-loaded) "+NAV.split(",").join(",body:not(.ls-loaded) ")+"{display:none!important}";
 				(document.head||document.documentElement).appendChild(st);
-			}
-			function ensure(){
-				var l=document.getElementById("ls-page-loader");
-				if(!l||l.tagName!=="DIALOG"){
-					var dlg=document.createElement("dialog");dlg.id="ls-page-loader";
-					var sp=document.createElement("div");sp.className="ls-page-loader-spinner";dlg.appendChild(sp);
-					if(l&&l.parentNode)l.parentNode.replaceChild(dlg,l);
-					else if(document.body&&document.body.firstChild)document.body.insertBefore(dlg,document.body.firstChild);
-					else if(document.body)document.body.appendChild(dlg);
-					l=dlg;
-				}
-				if(!l.querySelector(".ls-page-loader-spinner")){var sp2=document.createElement("div");sp2.className="ls-page-loader-spinner";l.appendChild(sp2);}
-				try{if(!l.open)l.showModal();}catch(e){l.setAttribute("open","");}
 			}
 			function hideNavs(){
 				var els=document.querySelectorAll(NAV);
@@ -176,11 +157,9 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 			function reveal(){
 				window.__lsPageReady=true;
 				if(document.body)document.body.classList.add("ls-loaded");
-				var l=document.getElementById("ls-page-loader");
-				if(l){try{if(l.tagName==="DIALOG"&&l.close)l.close();}catch(e){}if(l.parentNode)l.parentNode.removeChild(l);}
 				showNavs();
 			}
-			css();ensure();hideNavs();
+			css();hideNavs();
 			var timer=setInterval(hideNavs,60);
 			window.addEventListener("load",function(){setTimeout(function(){clearInterval(timer);reveal();},120);});
 			window.addEventListener("pageshow",function(e){if(e.persisted)reveal();});
@@ -211,29 +190,29 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 	</div>
 	<?php if ($showSnow): ?><canvas class="season-layer" id="season-snow" aria-hidden="true"></canvas><?php endif; ?>
 	<?php if ($showFireworks): ?><canvas class="season-layer" id="season-fireworks" aria-hidden="true"></canvas><?php endif; ?>
-	<script src="../temml.min.js"></script>
-	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
-	<script src="assets/learnsys-visuals.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-visuals.js'); ?>"></script>
-	<script src="assets/learnsys-scene-kit.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-scene-kit.js'); ?>"></script>
-	<script src="learnsys.js?v=<?php echo filemtime(__DIR__.'/learnsys.js'); ?>"></script>
-	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
-	<script src="assets/space-morph.js?v=<?php echo filemtime(__DIR__.'/assets/space-morph.js'); ?>"></script>
-	<script src="intuition_gpt2_data.js?v=<?php echo filemtime(__DIR__.'/intuition_gpt2_data.js'); ?>"></script>
-	<script src="assets/sinus-data.js?v=<?php echo filemtime(__DIR__.'/assets/sinus-data.js'); ?>"></script>
-	<script src="assets/loss-landscape-scene.js?v=<?php echo filemtime(__DIR__.'/assets/loss-landscape-scene.js'); ?>"></script>
-	<script src="assets/tf.min.js"></script>
-	<script src="assets/tf-sinus-scene.js?v=<?php echo filemtime(__DIR__.'/assets/tf-sinus-scene.js'); ?>"></script>
-	<script src="assets/learnsys-unembed-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-unembed-scene.js'); ?>"></script>
-	<script src="assets/learnsys-gauss-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-gauss-scene.js'); ?>"></script>
-	<script src="demos/_core.js?v=<?php echo filemtime(__DIR__.'/demos/_core.js'); ?>"></script>
+	<script src="../temml.min.js" defer></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>" defer></script>
+	<script src="assets/learnsys-visuals.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-visuals.js'); ?>" defer></script>
+	<script src="assets/learnsys-scene-kit.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-scene-kit.js'); ?>" defer></script>
+	<script src="learnsys.js?v=<?php echo filemtime(__DIR__.'/learnsys.js'); ?>" defer></script>
+	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>" defer></script>
+	<script src="assets/space-morph.js?v=<?php echo filemtime(__DIR__.'/assets/space-morph.js'); ?>" defer></script>
+	<script src="intuition_gpt2_data.js?v=<?php echo filemtime(__DIR__.'/intuition_gpt2_data.js'); ?>" defer></script>
+	<script src="assets/sinus-data.js?v=<?php echo filemtime(__DIR__.'/assets/sinus-data.js'); ?>" defer></script>
+	<script src="assets/loss-landscape-scene.js?v=<?php echo filemtime(__DIR__.'/assets/loss-landscape-scene.js'); ?>" defer></script>
+	<script src="assets/tf.min.js" defer></script>
+	<script src="assets/tf-sinus-scene.js?v=<?php echo filemtime(__DIR__.'/assets/tf-sinus-scene.js'); ?>" defer></script>
+	<script src="assets/learnsys-unembed-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-unembed-scene.js'); ?>" defer></script>
+	<script src="assets/learnsys-gauss-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-gauss-scene.js'); ?>" defer></script>
+	<script src="demos/_core.js?v=<?php echo filemtime(__DIR__.'/demos/_core.js'); ?>" defer></script>
 	<?php foreach (glob(__DIR__.'/demos/*.js') as $demoFile): $demoName = basename($demoFile); if ($demoName[0] === '_') continue; ?>
-	<script src="demos/<?php echo $demoName; ?>?v=<?php echo filemtime($demoFile); ?>"></script>
+	<script src="demos/<?php echo $demoName; ?>?v=<?php echo filemtime($demoFile); ?>" defer></script>
 	<?php endforeach; ?>
-	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
-	<script src="data.js?v=<?php echo filemtime(__DIR__.'/data.js'); ?>"></script>
-	<script src="eoy-embed-nav.js?v=<?php echo filemtime(__DIR__.'/eoy-embed-nav.js'); ?>"></script>
-	<script src="nav-fix.js?v=<?php echo filemtime(__DIR__.'/nav-fix.js'); ?>"></script>
-	<script src="frame-height.js?v=<?php echo filemtime(__DIR__.'/frame-height.js'); ?>"></script>
-	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>"></script><?php endif; ?>
+	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>" defer></script>
+	<script src="data.js?v=<?php echo filemtime(__DIR__.'/data.js'); ?>" defer></script>
+	<script src="eoy-embed-nav.js?v=<?php echo filemtime(__DIR__.'/eoy-embed-nav.js'); ?>" defer></script>
+	<script src="nav-fix.js?v=<?php echo filemtime(__DIR__.'/nav-fix.js'); ?>" defer></script>
+	<script src="frame-height.js?v=<?php echo filemtime(__DIR__.'/frame-height.js'); ?>" defer></script>
+	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>" defer></script><?php endif; ?>
 </body>
 </html>

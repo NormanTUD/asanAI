@@ -113,11 +113,15 @@ button{color:inherit}
 .ls-demo{position:relative;z-index:1;flex:1;min-height:0;padding:12px 16px 8px}
 .ls-demo-body{position:relative;flex:1;min-height:0;display:flex}
 .ls-demo-body>.ls-demo{flex:1;min-height:0}
-.ls-demo-loader{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:var(--ls-paper-2);pointer-events:none}
+.ls-demo-loader{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:#fff;pointer-events:none;overflow:hidden}
 .ls-demo-loader[hidden]{display:none}
-.ls-spinner{width:24px;height:24px;border:2px solid var(--ls-line);border-top-color:var(--ls-green);border-radius:50%;animation:ls-spin .8s linear infinite}
+.ls-demo-loader::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(circle closest-side at 50% 50%,rgba(99,164,75,.12) 0%,rgba(99,164,75,.06) 38%,rgba(255,255,255,0) 76%);animation:ls-demo-breathe 2.4s ease-in-out infinite}
+.ls-demo-loader-label{position:relative;z-index:1;font:500 16px/1 "Open Sans",system-ui,sans-serif;letter-spacing:.1em;color:#8a9894}
+@keyframes ls-demo-breathe{0%,100%{opacity:.55}50%{opacity:1}}
+.ls-spinner{width:14px;height:14px;border:0;border-radius:50%;background:var(--ls-green);opacity:.35;animation:ls-spinner-pulse 1.4s ease-in-out infinite}
+@keyframes ls-spinner-pulse{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:.8;transform:scale(1)}}
 @keyframes ls-spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){.ls-spinner{animation:none;border-top-color:var(--ls-green)}}
+@media (prefers-reduced-motion: reduce){.ls-spinner{animation:none;opacity:.6}.ls-demo-loader::before{animation:none;opacity:.75}}
 .ls-stage-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:8px 22px 12px;border-top:1px solid var(--ls-line);font-size:var(--ls-fs-micro);color:var(--ls-muted);background:rgba(247,249,248,.86)}
 .ls-credit{text-align:right;white-space:nowrap}
 .ls-day-row{display:flex;align-items:center;gap:4px;min-width:0;min-height:0}
@@ -2737,13 +2741,6 @@ body[data-eoy-proxy] #ls-stage-kicker,
 body[data-eoy-proxy] #ls-stage-title,
 body[data-eoy-proxy] .asanai-eoy-preview .ls-kicker,
 body[data-eoy-proxy] .asanai-eoy-preview .ls-title{display:none!important}
-
-/* Full-page loading spinner, hidden when the page has loaded. */
-#ls-page-loader{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#fff;transition:opacity .32s ease,visibility .32s ease;opacity:1;visibility:visible;animation:ls-page-loader-fallback .35s ease 9s forwards}
-#ls-page-loader .ls-page-loader-spinner{width:38px;height:38px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:ls-page-spin .8s linear infinite}
-#ls-page-loader.is-done{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important}
-@keyframes ls-page-spin{to{transform:rotate(360deg)}}
-@keyframes ls-page-loader-fallback{to{opacity:0;visibility:hidden}}
 
 /* Hide navigation until the page has finished loading. */
 body:not(.ls-loaded) #ls-quick-prev,

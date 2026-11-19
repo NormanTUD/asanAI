@@ -886,7 +886,7 @@
           '</section>' +
           '<section class="ls-stage" id="ls-stage" aria-label="' + esc(t("interactiveDemo")) + '">' +
             '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-text-toggle" id="ls-text-toggle" aria-expanded="false">' + (LANG === "de" ? "Text" : "Text") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">' + esc(t("demoLarge")) + '</button></div>' +
-            '<div class="ls-demo-body"><div class="ls-demo" id="ls-demo"></div><div class="ls-demo-loader" id="ls-demo-loader" hidden role="status" aria-live="polite"><span class="ls-spinner" aria-hidden="true"></span><span class="ls-sr-only">' + (LANG === "de" ? "Demo lädt …" : "Loading demo …") + '</span></div></div>' +
+            '<div class="ls-demo-body"><div class="ls-demo" id="ls-demo"></div><div class="ls-demo-loader" id="ls-demo-loader" hidden role="status" aria-live="polite"><span class="ls-demo-loader-label" aria-hidden="true">' + (LANG === "de" ? "Demo lädt …" : "Loading demo …") + '</span><span class="ls-sr-only">' + (LANG === "de" ? "Demo lädt …" : "Loading demo …") + '</span></div></div>' +
             '<div class="ls-stage-foot"><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
