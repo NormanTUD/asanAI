@@ -5492,6 +5492,26 @@
     if (document.body) addDebugFps();
     else document.addEventListener("DOMContentLoaded", addDebugFps);
   }
+  // Parent embeds (e.g. WordPress) can forward keyboard input into the iframe
+  // with postMessage({ type: "learnsys-key", key, code, ... }).
+  if (typeof window !== "undefined") {
+    window.addEventListener("message", function (e) {
+      var d = e.data;
+      if (!d || d.type !== "learnsys-key" || typeof d.key !== "string") return;
+      var target = (document.activeElement && document.activeElement !== document.body) ? document.activeElement : document.body;
+      var ev = new KeyboardEvent("keydown", {
+        key: d.key,
+        code: typeof d.code === "string" ? d.code : "",
+        shiftKey: !!d.shiftKey,
+        altKey: !!d.altKey,
+        ctrlKey: !!d.ctrlKey,
+        metaKey: !!d.metaKey,
+        bubbles: true,
+        cancelable: true
+      });
+      target.dispatchEvent(ev);
+    });
+  }
   if (typeof module !== "undefined" && module.exports) module.exports = LS;
   if (typeof window !== "undefined") window.LearnSys = LS;
 })();

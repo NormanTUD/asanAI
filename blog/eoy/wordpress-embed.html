@@ -1,0 +1,18 @@
+<!--
+  WordPress embed for the "One Word at a Time" lesson (eoy split).
+
+  Paste this into a Custom HTML block. No inline JavaScript is needed: the
+  bridge script (height + keyboard forwarding) is loaded from
+  eoy/wordpress-embed.js through asanai_blog_proxy.php.
+
+  The receiving side lives in learnsys.js ("learnsys-key" message).
+-->
+<div id="asanai-final-wrapper" style="width:100%; overflow:visible !important;">
+    <iframe
+        id="asanai-final-iframe"
+        src="/asanai_blog_proxy.php?eoy/1?lang=de&height=1500"
+        style="width:100%; height:1500px; display:block; border:none; overflow:hidden;"
+        scrolling="no">
+    </iframe>
+</div>
+<script src="/asanai_blog_proxy.php?eoy/wordpress-embed.js"></script>
