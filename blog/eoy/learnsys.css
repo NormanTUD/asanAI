@@ -2704,3 +2704,11 @@ h1,h2,h3,h4{
 .ls-ix-key.is-bad{border-color:var(--ls-lilac);background:rgba(145,133,190,.08)}
 .ls-ix-arrow{display:grid;place-items:center;color:var(--ls-gold);font:700 16px/1 "Barlow",sans-serif}
 @media (max-width:760px){.ls-ix-main{grid-template-columns:1fr;min-height:0}.ls-ix-table-wrap{max-height:300px}.ls-ix-callout{min-height:0}.ls-ix-matchcards{grid-template-columns:auto auto 1fr 1fr}}
+
+/* ── consistent white page background for the lesson pages ── */
+html,
+body[data-page="lesson"]{background:#ffffff}
+body[data-page="lesson"] .ls-app{background:#ffffff}
+body[data-page="lesson"] .ls-app:before{display:none}
+body[data-page="lesson"] .ls-stage{background:#ffffff}
+body[data-page="lesson"] .ls-stage:after{display:none}
