@@ -9,6 +9,11 @@ sort($scenes, SORT_NATURAL | SORT_FLAG_CASE);
 $scene = isset($_GET['scene']) ? (string) $_GET['scene'] : 'embedding';
 if (!in_array($scene, $scenes, true)) $scene = 'embedding';
 $lang = (isset($_GET['lang']) && $_GET['lang'] === 'de') ? 'de' : 'en';
+$embedHeight = 0;
+if (isset($_GET['height']) && is_numeric($_GET['height'])) {
+	$embedHeight = (int) round((float) $_GET['height']);
+	$embedHeight = max(0, min(50000, $embedHeight));
+}
 $deps = [
 	'media' => ['phone', 'code'],
 ];
@@ -47,6 +52,18 @@ function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUT
 		.ls-preview-bar a { font: 600 12px/1.2 "Open Sans", sans-serif; color: var(--tm-petrol, #004b6f); text-decoration: none; }
 		.ls-preview-bar a:hover { text-decoration: underline; }
 		.ls-preview-bar .spacer { flex: 1; }
+		<?php if ($embedHeight > 0): ?>
+		html, body { height: <?php echo $embedHeight; ?>px; overflow: auto; }
+		body[data-page="lesson"] { display: flex; flex-direction: column; }
+		body[data-page="lesson"] .ls-preview-bar { flex: 0 0 auto; }
+		#learnsys { flex: 1 1 auto; min-height: 0; position: relative; }
+		body[data-page="lesson"] #learnsys .ls-app {
+			position: relative;
+			inset: auto;
+			height: 100%;
+			min-height: 0;
+		}
+		<?php endif; ?>
 	</style>
 </head>
 <body data-page="lesson" data-lesson="intuition" data-no-full-article data-tm-reload-lang="1">

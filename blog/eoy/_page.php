@@ -26,6 +26,12 @@ $showSeasonal = $showSnow || $showFireworks;
 $localEditor = is_file(__DIR__ . '/.local-editor');
 $hideExpandAll = is_file(__DIR__ . '/.hide-expand-all');
 $pageTitle = $eoyDay === null ? 'One Word at a Time | Ten Minutes' : 'One Word at a Time · Day ' . $eoyDay . ' | Ten Minutes';
+
+$embedHeight = 0;
+if (isset($_GET['height']) && is_numeric($_GET['height'])) {
+	$embedHeight = (int) round((float) $_GET['height']);
+	$embedHeight = max(0, min(50000, $embedHeight));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -48,6 +54,15 @@ $pageTitle = $eoyDay === null ? 'One Word at a Time | Ten Minutes' : 'One Word a
 		.ls-lang-btn { min-width: 34px; font-weight: 600; letter-spacing: .04em; }
 		<?php if ($eoyDay !== null): ?>
 		.ls-top, .ls-navbar { display: none !important; }
+		<?php endif; ?>
+		<?php if ($embedHeight > 0): ?>
+		html, body { height: auto; min-height: <?php echo $embedHeight; ?>px; overflow: auto; }
+		body[data-page="lesson"] .ls-app {
+			position: relative;
+			inset: auto;
+			height: <?php echo $embedHeight; ?>px;
+			min-height: <?php echo $embedHeight; ?>px;
+		}
 		<?php endif; ?>
 	</style>
 </head>
