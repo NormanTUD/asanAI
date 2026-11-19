@@ -65,6 +65,10 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 			height: <?php echo $embedHeight; ?>px;
 			min-height: <?php echo $embedHeight; ?>px;
 		}
+		body[data-page="lesson"] .ls-title { max-width: 36ch; }
+		@media (max-width: 980px) {
+			body[data-page="lesson"] .ls-main { grid-template-rows: auto minmax(0, 1fr); }
+		}
 		<?php endif; ?>
 	</style>
 </head>
