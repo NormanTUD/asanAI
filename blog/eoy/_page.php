@@ -152,8 +152,15 @@ foreach (['learnsys.js', 'learnsys.css', 'data.js', 'frame-height.js', 'nav-fix.
 				var els=document.querySelectorAll(NAV);
 				for(var i=0;i<els.length;i++)els[i].style.setProperty("display","none","important");
 			}
+			function hasQuickNav(){
+				return !!(document.getElementById("ls-quick-prev")||document.getElementById("ls-quick-next")||document.getElementById("navfix-prev")||document.getElementById("navfix-next"));
+			}
 			function showNavs(){
-				var els=document.querySelectorAll(NAV);
+				/* The quick/navfix buttons gate themselves on __lsPageReady; do not
+				   un-hide them here or the back button flashes for one frame. Only
+				   restore the server fallback when the lesson nav never appeared. */
+				if(hasQuickNav())return;
+				var els=document.querySelectorAll("#eoy-embed-nav,.eoy-nav");
 				for(var i=0;i<els.length;i++)els[i].style.removeProperty("display");
 			}
 			function reveal(){

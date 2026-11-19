@@ -76,11 +76,18 @@
 	}
 
 	function gateNav(hide) {
-		var nodes = document.querySelectorAll("#ls-quick-prev,#ls-quick-next,#navfix-prev,#navfix-next,#eoy-embed-nav,.eoy-nav,.ls-bottom-nav");
-		for (var i = 0; i < nodes.length; i++) {
-			if (hide) nodes[i].style.setProperty("display", "none", "important");
-			else nodes[i].style.removeProperty("display");
+		if (hide) {
+			var all = document.querySelectorAll("#ls-quick-prev,#ls-quick-next,#navfix-prev,#navfix-next,#eoy-embed-nav,.eoy-nav,.ls-bottom-nav");
+			for (var i = 0; i < all.length; i++) all[i].style.setProperty("display", "none", "important");
+			return;
 		}
+		/* Do not un-hide the lesson buttons here: they show themselves once
+		   __lsPageReady is set. Un-hiding them made the back button flash for
+		   one frame on first load. */
+		if (document.getElementById("ls-quick-prev") || document.getElementById("ls-quick-next")
+			|| document.getElementById("navfix-prev") || document.getElementById("navfix-next")) return;
+		var fallback = document.querySelectorAll("#eoy-embed-nav,.eoy-nav");
+		for (var j = 0; j < fallback.length; j++) fallback[j].style.removeProperty("display");
 	}
 
 	function reveal() {

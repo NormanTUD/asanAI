@@ -5,9 +5,15 @@
  *   <script src="/asanai_blog_proxy.php?eoy/wordpress-embed.js"></script>
  *
  * It must be loaded after the iframe markup. It:
- *  - resizes the iframe from the { type: "height" } messages,
+ *  - keeps the iframe at a viewport-sized height so the lesson scrolls
+ *    internally and its own prev/next buttons stay visible,
+ *  - resizes the iframe from the { type: "height" } messages (a fixed-height
+ *    iframe reports its viewport height, so the CSS height wins),
  *  - forwards arrow keys and lesson shortcuts into the iframe,
  *    so navigation works without clicking the iframe first.
+ *
+ * The prev/next buttons belong inside the lesson page. Do not add fixed
+ * buttons to the parent page: they would sit outside the iframe.
  */
 (function () {
     "use strict";
@@ -41,48 +47,33 @@
     }
 
     function hideLoader() {
-        if (window.__asanaiApplyScreenNav) window.__asanaiApplyScreenNav();
         var el = document.getElementById("asanai-screen-loader");
         if (!el) return;
         el.style.opacity = "0";
         setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 320);
     }
 
-    var screenNav = { prev: true, next: true, ready: false };
-    function sendKey(key) {
-        var frame = getFrame();
-        if (!frame || !frame.contentWindow) return;
-        frame.contentWindow.postMessage({ type: "learnsys-key", key: key, code: key, shiftKey: false, altKey: false, ctrlKey: false, metaKey: false }, "*");
+    function viewportHeight() {
+        return Math.min(1100, Math.max(420, Math.round((window.innerHeight || 800) * 0.9)));
     }
-    function makeScreenButton(id, side, label) {
-        var b = document.createElement("button");
-        b.type = "button";
-        b.id = id;
-        b.textContent = label;
-        b.setAttribute("style", "position:fixed;bottom:14px;" + side + ":14px;z-index:2147483647;display:none;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 'Open Sans',system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18)");
-        document.body.appendChild(b);
-        return b;
-    }
-    function ensureScreenNav() {
-        var prev = document.getElementById("asanai-screen-prev");
-        var next = document.getElementById("asanai-screen-next");
-        if (!prev) prev = makeScreenButton("asanai-screen-prev", "left", "← Zurück");
-        if (!next) next = makeScreenButton("asanai-screen-next", "right", "Weiter →");
-        function apply() {
-            prev.style.display = (screenNav.ready && screenNav.prev) ? "inline-flex" : "none";
-            next.style.display = (screenNav.ready && screenNav.next) ? "inline-flex" : "none";
-        }
-        prev.addEventListener("click", function () { sendKey("ArrowLeft"); });
-        next.addEventListener("click", function () { sendKey("ArrowRight"); });
-        window.addEventListener("message", function (event) {
-            if (!event.data || event.data.type !== "ls-nav-state") return;
-            screenNav.prev = !!event.data.prev;
-            screenNav.next = !!event.data.next;
-            screenNav.ready = true;
-            apply();
-        });
-        window.__asanaiApplyScreenNav = function () { screenNav.ready = true; apply(); };
-        apply();
+
+    // Old embeds passed height=1500 and an inline 1500px height. A lesson page
+    // rendered at 1500px puts its fixed prev/next buttons 1500px below the
+    // top, so the reader never sees them. Drop that query parameter and let
+    // the lesson viewport be the iframe height instead; LearnSys scrolls its
+    // text column internally and the buttons stay at the visible bottom.
+    function normalizeFrameSize(frame) {
+        if (!frame) return;
+        var raw = frame.getAttribute("src") || "";
+        var cssHeight = parseInt(frame.style.height, 10) || frame.offsetHeight || 0;
+        var limit = viewportHeight();
+        if (!/(?:[?&])height=\d+/i.test(raw) && cssHeight <= limit) return;
+        raw = raw.replace(/([?&])height=\d+/ig, "$1")
+            .replace(/\?&/g, "?")
+            .replace(/&&+/g, "&")
+            .replace(/[?&]+$/, "");
+        frame.setAttribute("src", raw);
+        frame.style.height = limit + "px";
     }
 
     function attachHeight(frame) {
@@ -173,8 +164,8 @@
 
     function init() {
         ensureLoader();
-        ensureScreenNav();
         var frame = getFrame();
+        normalizeFrameSize(frame);
         cacheBustFrame(frame);
         attachHeight(frame);
         attachKeys();
