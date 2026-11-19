@@ -274,6 +274,7 @@
     root.id = rootId;
     root.className = "asanai-eoy-root";
     root.setAttribute("data-asanai-eoy-root", "1");
+    root.setAttribute("data-eoy-proxy", "1");
     root.setAttribute("data-theme", "light");
     root.style.cssText = "position:relative;width:100%;height:" + height + ";min-height:0;max-height:none;"
       + "overflow:hidden;contain:layout paint;isolation:isolate;box-sizing:border-box;";
@@ -383,6 +384,7 @@
 
       return applyStyles(cssEntries).then(function () {
         injectBody(doc, root, loader);
+        focusLoaderOnStage(root);
         headScripts.forEach(runInline);
         if (typeof window.EOY_DAY !== "number") {
           var day = (srcPath.match(/(?:^|\/)(\d+)(?:\?|$)/) || [])[1];

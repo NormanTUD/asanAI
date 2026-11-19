@@ -2734,7 +2734,9 @@ body[data-page="lesson"] .ls-bottom-nav{display:none!important}
 body[data-eoy-proxy] #ls-kicker,
 body[data-eoy-proxy] #ls-title,
 body[data-eoy-proxy] #ls-stage-kicker,
-body[data-eoy-proxy] #ls-stage-title{display:none!important}
+body[data-eoy-proxy] #ls-stage-title,
+body[data-eoy-proxy] .asanai-eoy-preview .ls-kicker,
+body[data-eoy-proxy] .asanai-eoy-preview .ls-title{display:none!important}
 
 /* Full-page loading spinner, hidden when the page has loaded. */
 #ls-page-loader{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#fff;transition:opacity .32s ease,visibility .32s ease;opacity:1;visibility:visible;animation:ls-page-loader-fallback .35s ease 9s forwards}

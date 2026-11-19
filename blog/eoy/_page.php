@@ -41,8 +41,21 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 }
 
 $lsBuild = 0;
-foreach (['learnsys.js', 'learnsys.css', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php'] as $lsBuildFile) {
+foreach (['learnsys.js', 'learnsys.css', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php', 'text_preview.json'] as $lsBuildFile) {
 	$lsBuild = max($lsBuild, (int) @filemtime(__DIR__ . '/' . $lsBuildFile));
+}
+
+$previewEntry = null;
+$previewLang = 'en';
+$requestedLang = isset($_GET['lang']) ? strtolower((string) $_GET['lang']) : '';
+if ($requestedLang === 'de' || $requestedLang === 'en') {
+	$previewLang = $requestedLang;
+}
+if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
+	$previewAll = json_decode((string) @file_get_contents(__DIR__ . '/text_preview.json'), true);
+	if (is_array($previewAll) && isset($previewAll[$previewLang][(string) $eoyDay]) && is_array($previewAll[$previewLang][(string) $eoyDay])) {
+		$previewEntry = $previewAll[$previewLang][(string) $eoyDay];
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -174,7 +187,24 @@ foreach (['learnsys.js', 'learnsys.css', 'data.js', 'frame-height.js', 'nav-fix.
 			setTimeout(function(){clearInterval(timer);reveal();},12000);
 		})();
 	</script>
-	<div id="learnsys" data-no-i18n></div>
+	<div id="learnsys" data-no-i18n>
+		<?php if ($previewEntry !== null): ?>
+		<div class="asanai-eoy-preview">
+			<div class="ls-app">
+				<main class="ls-main">
+					<section class="ls-text">
+						<div class="ls-text-scroll">
+							<?php if (!empty($previewEntry['kicker'])): ?><div class="ls-kicker"><?php echo htmlspecialchars((string) $previewEntry['kicker'], ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
+							<?php if (!empty($previewEntry['title'])): ?><h1 class="ls-title"><?php echo htmlspecialchars((string) $previewEntry['title'], ENT_QUOTES, 'UTF-8'); ?></h1><?php endif; ?>
+							<div class="ls-body"><?php echo (string) ($previewEntry['body'] ?? ''); ?></div>
+						</div>
+					</section>
+					<section class="ls-stage"></section>
+				</main>
+			</div>
+		</div>
+		<?php endif; ?>
+	</div>
 	<div id="eoy-embed-nav" style="position:fixed;left:0;right:0;bottom:0;z-index:2147483000;pointer-events:none">
 		<button type="button" class="eoy-prev" data-eoy-prev style="position:fixed;left:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18);pointer-events:auto">← Zurück</button>
 		<button type="button" class="eoy-next" data-eoy-next style="position:fixed;right:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18);pointer-events:auto">Weiter →</button>

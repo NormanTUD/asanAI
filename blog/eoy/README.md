@@ -60,3 +60,8 @@ Inhalt. `data-demo-height` setzt die bevorzugte Demo-Höhe in Pixel (Default
 600, `media` 780), damit die Höhe nicht an der Demo vorbei wächst. Ohne
 `data-height` gilt `min(90vh, 1100px)` als Maximum. Pro Seite ist eine
 Einbettung vorgesehen, weil die Lesson feste IDs und globale Zustände nutzt.
+
+`text_preview.json` liefert den ersten Textblock für die Lade-Skeleton, damit
+der Text schon vor dem Mounten der App sichtbar ist. Die Datei wird aus den
+Schritt-Daten in `data.js` erzeugt (DE/EN) und von `_page.php` in `#learnsys`
+eingesetzt; die App ersetzt sie beim Mounten.
