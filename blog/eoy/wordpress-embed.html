@@ -6,10 +6,11 @@
   the prev/next buttons stay inside the div.
 
   Options on the target div:
-    data-src     lesson path (default eoy/1?lang=de)
-    data-height  fixed height, number (px) or any CSS length
-                 (default min(90vh, 1100px))
-    data-lang    de or en (also read from ?lang= in data-src)
+    data-src          lesson path (default eoy/1?lang=de)
+    data-height       maximum height, number (px) or any CSS length
+                      (default min(90vh, 1100px)); shorter content shrinks
+    data-demo-height  preferred demo area in px (default 600, media 780)
+    data-lang         de or en (also read from ?lang= in data-src)
 
   The script derives the proxy endpoint from its own URL, so the same snippet
   works with /asanai_blog_proxy.php and extensionless proxy URLs.

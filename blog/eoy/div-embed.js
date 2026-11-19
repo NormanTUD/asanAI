@@ -144,6 +144,68 @@
     setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 300);
   }
 
+  function focusLoaderOnStage(root) {
+    var loader = root.querySelector(".asanai-eoy-loader");
+    var stage = root.querySelector(".ls-stage");
+    if (!loader || !stage || !loader.parentNode) return;
+    var rr = root.getBoundingClientRect();
+    var sr = stage.getBoundingClientRect();
+    if (!sr.width || !sr.height) return;
+    var st = loader.style;
+    st.setProperty("left", (sr.left - rr.left) + "px", "important");
+    st.setProperty("top", (sr.top - rr.top) + "px", "important");
+    st.setProperty("width", sr.width + "px", "important");
+    st.setProperty("height", sr.height + "px", "important");
+    st.setProperty("right", "auto", "important");
+    st.setProperty("bottom", "auto", "important");
+  }
+
+  function fitHeight(root) {
+    var frame = root.__asanaiFrame;
+    var maxHeight = root.__asanaiMaxHeight;
+    if (!frame || !maxHeight) return;
+
+    var scroller = root.querySelector(".ls-text-scroll");
+    var textHeight = 0;
+    if (scroller) {
+      var sr = scroller.getBoundingClientRect();
+      var origin = sr.top - scroller.scrollTop;
+      var bottom = origin;
+      Array.prototype.forEach.call(scroller.children, function (child) {
+        if (getComputedStyle(child).display === "none") return;
+        var r = child.getBoundingClientRect();
+        if (r.height > 0) bottom = Math.max(bottom, r.bottom);
+      });
+      var padBottom = parseFloat(getComputedStyle(scroller).paddingBottom) || 0;
+      textHeight = Math.max(0, bottom - origin + padBottom);
+    }
+
+    var head = root.querySelector(".ls-stage-head");
+    var foot = root.querySelector(".ls-stage-foot");
+    var chrome = (head ? head.getBoundingClientRect().height : 0)
+      + (foot ? foot.getBoundingClientRect().height : 0);
+    var demo = root.querySelector(".ls-demo");
+    var scene = demo ? demo.getAttribute("data-scene") : "";
+    var demoHeight = root.__asanaiDemoHeight || (scene === "media" ? 780 : 600);
+    demoHeight = Math.max(320, Math.min(demoHeight, maxHeight));
+    var stageHeight = demoHeight + chrome;
+
+    var width = root.getBoundingClientRect().width || frame.getBoundingClientRect().width || 0;
+    var wanted;
+    if (width <= 720) wanted = stageHeight;
+    else if (width <= 980) wanted = textHeight + stageHeight + 1;
+    else wanted = Math.max(textHeight, stageHeight);
+
+    var fit = Math.max(320, Math.min(maxHeight, Math.round(wanted)));
+    if (fit >= maxHeight - 8) fit = maxHeight;
+    if (Math.abs(fit - maxHeight) < 2) return;
+
+    frame.style.height = fit + "px";
+    root.style.height = fit + "px";
+    focusLoaderOnStage(root);
+    window.dispatchEvent(new Event("resize"));
+  }
+
   function start() {
     var target = document.querySelector(scriptEl.getAttribute("data-target") || "#asanai-eoy-embed");
     if (!target) return;
@@ -197,6 +259,10 @@
     window.__ASANAI_EOY_LANG__ = (lang === "de" || lang === "en") ? lang : "";
     window.__ASANAI_EOY_PROXY__ = { base: proxyUrl.origin + proxyUrl.pathname, dir: lessonDir, origin: proxyUrl.origin };
     window.__lsPageReady = false;
+    root.__asanaiFrame = frame;
+    root.__asanaiMaxHeight = frame.getBoundingClientRect().height || 0;
+    root.__asanaiDemoHeight = parseFloat(target.getAttribute("data-demo-height")
+      || scriptEl.getAttribute("data-demo-height")) || 0;
 
     var loader = document.createElement("div");
     loader.className = "asanai-eoy-loader";
@@ -208,7 +274,7 @@
     root.appendChild(loader);
 
     var baseCss = rootSelector + "{position:relative!important;display:block!important;width:100%!important;"
-      + "height:" + height + "!important;min-height:0!important;max-height:none!important;"
+      + "min-height:0!important;max-height:none!important;"
       + "overflow:hidden!important;contain:layout paint!important;isolation:isolate!important;"
       + "box-sizing:border-box!important;background:#fff}"
       + rootSelector + " .ls-app{position:absolute!important;inset:0!important}"
@@ -330,7 +396,9 @@
 
       var layoutStyle = document.createElement("style");
       layoutStyle.setAttribute("data-asanai-eoy-layout", "1");
-      layoutStyle.textContent = "@container (min-width:721px) and (max-width:980px){#" + root.id
+      layoutStyle.textContent = "#" + root.id + " .ls-body{max-width:none!important}"
+        + "#" + root.id + " .ls-text-scroll{max-width:none!important}"
+        + "@container (min-width:721px) and (max-width:980px){#" + root.id
         + " .ls-main{display:flex!important;flex-direction:column!important}"
         + "#" + root.id + " .ls-text{flex:0 0 auto!important;max-height:60%!important}"
         + "#" + root.id + " .ls-text-scroll{height:100%!important}"
@@ -394,7 +462,7 @@
     var started = Date.now();
     return new Promise(function (resolve) {
       (function check() {
-        if (window.LearnSys && root.querySelector("#ls-title")) return resolve(true);
+        if (window.LearnSys && root.querySelector("#ls-title")) { focusLoaderOnStage(root); return resolve(true); }
         if (Date.now() - started > 20000) return resolve(false);
         setTimeout(check, 100);
       })();
@@ -416,6 +484,7 @@
     window.__lsPageReady = true;
     var settle = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     Promise.race([settle, new Promise(function (resolve) { setTimeout(resolve, 1500); })]).then(function () {
+      fitHeight(root);
       setTimeout(function () {
         loader.classList.add("is-done");
         settleLoadBar(root);
