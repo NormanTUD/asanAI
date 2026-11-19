@@ -224,9 +224,13 @@
       if (splitMode) { lastSplitStep = step; renderSplit(); } else renderBpe();
       var total = splitMode ? sampleKeys.length : stages.length;
       var pos = step;
+      var canLeave = typeof api.canGoNext === "function" ? !!api.canGoNext() : true;
       navProgress.textContent = (pos + 1) + ' / ' + total;
       navPrev.disabled = pos === 0;
-      navNext.textContent = pos === total - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+      navNext.disabled = pos === total - 1 && !canLeave;
+      navNext.textContent = pos === total - 1
+        ? (canLeave ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Ende" : "End"))
+        : (DE ? "Weiter →" : "Next →");
     }
     function nextInternal() {
       if (mode === "split") {
@@ -270,6 +274,8 @@
       },
       next: nextInternal,
       prev: prevInternal,
+      hasNext: function () { return mode === "split" ? step < sampleKeys.length - 1 : step < stages.length - 1; },
+      hasPrev: function () { return step > 0; },
       onKey: function (e) {
         return api.util.arrowKey(e, nextInternal, prevInternal);
       },

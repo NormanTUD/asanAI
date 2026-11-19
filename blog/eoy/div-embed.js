@@ -136,6 +136,14 @@
     try { return new URL(ref, cfg.base).href; } catch (e) { return ref; }
   }
 
+  function settleLoadBar(root) {
+    var bar = root && root.__asanaiLoadBar;
+    if (!bar || bar.__asanaiDone) return;
+    bar.__asanaiDone = true;
+    bar.classList.add("is-done");
+    setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 300);
+  }
+
   function start() {
     var target = document.querySelector(scriptEl.getAttribute("data-target") || "#asanai-eoy-embed");
     if (!target) return;
@@ -211,14 +219,30 @@
       + rootSelector + " .asanai-eoy-spinner{width:40px!important;height:40px!important;"
       + "border:3px solid #dbe3e0!important;border-top-color:#63a44b!important;"
       + "border-radius:50%!important;animation:asanai-eoy-spin .8s linear infinite!important}"
-      + "@keyframes asanai-eoy-spin{to{transform:rotate(360deg)}}";
+      + "@keyframes asanai-eoy-spin{to{transform:rotate(360deg)}}"
+      + ".asanai-eoy-loadbar{position:fixed;left:0;right:0;top:0;height:3px;z-index:2147483000;"
+      + "pointer-events:none;overflow:hidden;background:rgba(0,75,111,.06);opacity:1;"
+      + "transition:opacity .25s ease}"
+      + ".asanai-eoy-loadbar i{display:block;width:35%;height:100%;"
+      + "background:linear-gradient(90deg,#63a44b,#1275ac,#5c9baf);"
+      + "animation:asanai-eoy-loadbar 1.15s ease-in-out infinite;transform:translateX(-120%)}"
+      + ".asanai-eoy-loadbar.is-done{opacity:0}"
+      + "@keyframes asanai-eoy-loadbar{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}";
     var baseStyle = document.createElement("style");
     baseStyle.setAttribute("data-asanai-eoy-base", "1");
     baseStyle.textContent = baseCss;
     document.head.appendChild(baseStyle);
 
+    var loadBar = document.createElement("div");
+    loadBar.className = "asanai-eoy-loadbar";
+    loadBar.setAttribute("aria-hidden", "true");
+    loadBar.appendChild(document.createElement("i"));
+    document.body.appendChild(loadBar);
+    root.__asanaiLoadBar = loadBar;
+
     function fail(message) {
       loader.classList.add("is-done");
+      settleLoadBar(root);
       var note = document.createElement("p");
       note.textContent = message;
       note.style.cssText = "padding:20px;font:400 16px/1.5 system-ui,sans-serif;color:#2c464d;";
@@ -394,6 +418,7 @@
     Promise.race([settle, new Promise(function (resolve) { setTimeout(resolve, 1500); })]).then(function () {
       setTimeout(function () {
         loader.classList.add("is-done");
+        settleLoadBar(root);
         setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 300);
       }, 30);
     });

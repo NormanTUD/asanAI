@@ -2107,6 +2107,8 @@
       onHint: function () {},
       go: go,
       goStep: function (step) { go(state.day, step); },
+      canGoNext: function () { return hasNextPage(); },
+      canGoPrev: function () { return hasPrevPage(); },
       goNext: function () {
         if (cfg.eoySingle) { next(); return; }
         var day = cfg.days[state.day];
