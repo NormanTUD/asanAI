@@ -9,6 +9,7 @@
     s.setProperty(side, "14px", "important");
     s.setProperty("top", "auto", "important");
     s.setProperty("z-index", "2147483000", "important");
+    try { el.setAttribute("popover", "manual"); } catch (e) {}
     s.setProperty("min-width", "120px", "important");
     s.setProperty("min-height", "44px", "important");
     s.setProperty("padding", "0 16px", "important");
@@ -60,6 +61,15 @@
     var b = document.getElementById("ls-next"); if (b) b.click();
   }
 
+  function pop(btn, show) {
+    try {
+      if (!btn || typeof btn.showPopover !== "function") return;
+      var open = btn.matches && btn.matches(":popover-open");
+      if (show && !open) btn.showPopover();
+      else if (!show && open) btn.hidePopover();
+    } catch (e) {}
+  }
+
   function install() {
     if (window.__navFixInstalled) return;
     window.__navFixInstalled = true;
@@ -95,6 +105,12 @@
       var p = ready && canPrev(), n = ready && canNext();
       prev.style.setProperty("display", p ? "inline-flex" : "none", "important");
       next.style.setProperty("display", n ? "inline-flex" : "none", "important");
+      pop(prev, p); pop(next, n);
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: "ls-nav-state", prev: !!p, next: !!n }, "*");
+        }
+      } catch (e) {}
     }
 
     var main = document.querySelector(".ls-main");
@@ -119,8 +135,8 @@
     if (document.body) document.body.classList.add("ls-loaded");
     var l = document.getElementById("ls-page-loader");
     if (!l) return;
-    l.classList.add("is-done");
-    l.setAttribute("aria-hidden", "true");
+    try { if (l.tagName === "DIALOG" && l.close) l.close(); } catch (e) {}
+    if (l.parentNode) l.parentNode.removeChild(l);
   }
   if (document.readyState === "complete") setTimeout(done, 120);
   else window.addEventListener("load", function () { setTimeout(done, 120); });

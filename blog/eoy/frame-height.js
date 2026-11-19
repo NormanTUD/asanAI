@@ -28,16 +28,25 @@
 	// <style>/style="" from the served HTML.
 	function ensureLoader() {
 		var l = document.getElementById("ls-page-loader");
-		if (!l) {
-			l = document.createElement("div");
-			l.id = "ls-page-loader";
+		// Modal dialog = top layer, so fixed really covers the viewport even
+		// when an embedding theme wraps the page in a transformed container.
+		if (!l || l.tagName !== "DIALOG") {
+			var dlg = document.createElement("dialog");
+			dlg.id = "ls-page-loader";
 			var sp = document.createElement("div");
 			sp.className = "ls-page-loader-spinner";
-			l.appendChild(sp);
-			if (document.body.firstChild) document.body.insertBefore(l, document.body.firstChild);
-			else document.body.appendChild(l);
+			dlg.appendChild(sp);
+			if (l && l.parentNode) l.parentNode.replaceChild(dlg, l);
+			else if (document.body.firstChild) document.body.insertBefore(dlg, document.body.firstChild);
+			else document.body.appendChild(dlg);
+			l = dlg;
 		}
 		var st = l.style;
+		st.setProperty("max-width", "none", "important");
+		st.setProperty("max-height", "none", "important");
+		st.setProperty("margin", "0", "important");
+		st.setProperty("padding", "0", "important");
+		st.setProperty("border", "0", "important");
 		st.setProperty("position", "fixed", "important");
 		st.setProperty("inset", "0", "important");
 		st.setProperty("width", "100vw", "important");
@@ -60,9 +69,10 @@
 		if (!document.getElementById("ls-proxy-spin-style")) {
 			var k = document.createElement("style");
 			k.id = "ls-proxy-spin-style";
-			k.textContent = "@keyframes lsProxySpin{to{transform:rotate(360deg)}}";
+			k.textContent = "@keyframes lsProxySpin{to{transform:rotate(360deg)}}#ls-page-loader::backdrop{background:#fff}";
 			document.head.appendChild(k);
 		}
+		try { if (!l.open) l.showModal(); } catch (e) { l.setAttribute("open", ""); }
 	}
 
 	function gateNav(hide) {
@@ -77,7 +87,10 @@
 		window.__lsPageReady = true;
 		if (document.body) document.body.classList.add("ls-loaded");
 		var l = document.getElementById("ls-page-loader");
-		if (l && l.parentNode) l.parentNode.removeChild(l);
+		if (l) {
+			try { if (l.tagName === "DIALOG" && l.close) l.close(); } catch (e) {}
+			if (l.parentNode) l.parentNode.removeChild(l);
+		}
 		gateNav(false);
 	}
 

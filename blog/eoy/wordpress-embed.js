@@ -41,10 +41,48 @@
     }
 
     function hideLoader() {
+        if (window.__asanaiApplyScreenNav) window.__asanaiApplyScreenNav();
         var el = document.getElementById("asanai-screen-loader");
         if (!el) return;
         el.style.opacity = "0";
         setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 320);
+    }
+
+    var screenNav = { prev: true, next: true, ready: false };
+    function sendKey(key) {
+        var frame = getFrame();
+        if (!frame || !frame.contentWindow) return;
+        frame.contentWindow.postMessage({ type: "learnsys-key", key: key, code: key, shiftKey: false, altKey: false, ctrlKey: false, metaKey: false }, "*");
+    }
+    function makeScreenButton(id, side, label) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.id = id;
+        b.textContent = label;
+        b.setAttribute("style", "position:fixed;bottom:14px;" + side + ":14px;z-index:2147483647;display:none;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 'Open Sans',system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18)");
+        document.body.appendChild(b);
+        return b;
+    }
+    function ensureScreenNav() {
+        var prev = document.getElementById("asanai-screen-prev");
+        var next = document.getElementById("asanai-screen-next");
+        if (!prev) prev = makeScreenButton("asanai-screen-prev", "left", "← Zurück");
+        if (!next) next = makeScreenButton("asanai-screen-next", "right", "Weiter →");
+        function apply() {
+            prev.style.display = (screenNav.ready && screenNav.prev) ? "inline-flex" : "none";
+            next.style.display = (screenNav.ready && screenNav.next) ? "inline-flex" : "none";
+        }
+        prev.addEventListener("click", function () { sendKey("ArrowLeft"); });
+        next.addEventListener("click", function () { sendKey("ArrowRight"); });
+        window.addEventListener("message", function (event) {
+            if (!event.data || event.data.type !== "ls-nav-state") return;
+            screenNav.prev = !!event.data.prev;
+            screenNav.next = !!event.data.next;
+            screenNav.ready = true;
+            apply();
+        });
+        window.__asanaiApplyScreenNav = function () { screenNav.ready = true; apply(); };
+        apply();
     }
 
     function attachHeight(frame) {
@@ -111,9 +149,33 @@
         }, true);
     }
 
+    function cacheBustFrame(frame) {
+        if (!frame) return;
+        var raw = frame.getAttribute("src");
+        if (!raw || /[?&]build=/.test(raw)) return;
+        var build = "";
+        try {
+            var ttl = parseInt(window.ASANAI_BUILD_TTL || "900000", 10);
+            if (!ttl || ttl < 60000) ttl = 900000;
+            var key = "asanai_embed_build";
+            var saved = parseInt(localStorage.getItem(key) || "0", 10) || 0;
+            if (!saved || (Date.now() - saved) > ttl) {
+                saved = Date.now();
+                localStorage.setItem(key, String(saved));
+            }
+            build = String(saved);
+        } catch (e) {
+            build = String(Date.now());
+        }
+        if (frame.getAttribute("data-build")) build = frame.getAttribute("data-build");
+        frame.setAttribute("src", raw + (raw.indexOf("?") >= 0 ? "&" : "?") + "build=" + encodeURIComponent(build));
+    }
+
     function init() {
         ensureLoader();
+        ensureScreenNav();
         var frame = getFrame();
+        cacheBustFrame(frame);
         attachHeight(frame);
         attachKeys();
         if (frame) {

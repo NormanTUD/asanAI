@@ -5,16 +5,25 @@
   (function () {
     function ensure() {
       var l = document.getElementById("ls-page-loader");
-      if (!l) {
-        l = document.createElement("div");
-        l.id = "ls-page-loader";
+      // Use a modal <dialog>: it renders in the top layer and therefore covers
+      // the real viewport even inside transformed/clipped proxy wrappers.
+      if (!l || l.tagName !== "DIALOG") {
+        var dlg = document.createElement("dialog");
+        dlg.id = "ls-page-loader";
         var sp = document.createElement("div");
         sp.className = "ls-page-loader-spinner";
-        l.appendChild(sp);
-        if (document.body && document.body.firstChild) document.body.insertBefore(l, document.body.firstChild);
-        else if (document.body) document.body.appendChild(l);
+        dlg.appendChild(sp);
+        if (l && l.parentNode) l.parentNode.replaceChild(dlg, l);
+        else if (document.body && document.body.firstChild) document.body.insertBefore(dlg, document.body.firstChild);
+        else if (document.body) document.body.appendChild(dlg);
+        l = dlg;
       }
       var s = l.style;
+      s.setProperty("max-width", "none", "important");
+      s.setProperty("max-height", "none", "important");
+      s.setProperty("margin", "0", "important");
+      s.setProperty("padding", "0", "important");
+      s.setProperty("border", "0", "important");
       s.setProperty("position", "fixed", "important");
       s.setProperty("inset", "0", "important");
       s.setProperty("width", "100vw", "important");
@@ -36,9 +45,10 @@
       if (!document.getElementById("ls-data-spin-style")) {
         var k = document.createElement("style");
         k.id = "ls-data-spin-style";
-        k.textContent = "@keyframes lsDataSpin{to{transform:rotate(360deg)}}";
+        k.textContent = "@keyframes lsDataSpin{to{transform:rotate(360deg)}}#ls-page-loader::backdrop{background:#fff}";
         document.head.appendChild(k);
       }
+      try { if (!l.open) l.showModal(); } catch (e) { l.setAttribute("open", ""); }
     }
     function gate(hide) {
       var nodes = document.querySelectorAll("#ls-quick-prev,#ls-quick-next,#navfix-prev,#navfix-next,#eoy-embed-nav,.eoy-nav,.ls-bottom-nav");
@@ -51,7 +61,10 @@
       window.__lsPageReady = true;
       if (document.body) document.body.classList.add("ls-loaded");
       var l = document.getElementById("ls-page-loader");
-      if (l && l.parentNode) l.parentNode.removeChild(l);
+      if (l) {
+        try { if (l.tagName === "DIALOG" && l.close) l.close(); } catch (e) {}
+        if (l.parentNode) l.parentNode.removeChild(l);
+      }
       gate(false);
     }
     ensure();

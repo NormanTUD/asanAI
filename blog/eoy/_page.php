@@ -39,6 +39,11 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	$embedHeight = (int) round((float) $_GET['height']);
 	$embedHeight = max(0, min(50000, $embedHeight));
 }
+
+$lsBuild = 0;
+foreach (['learnsys.js', 'learnsys.css', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php'] as $lsBuildFile) {
+	$lsBuild = max($lsBuild, (int) @filemtime(__DIR__ . '/' . $lsBuildFile));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -47,6 +52,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A 31-day interactive introduction to how large language models work: data, tokens, embeddings, attention, training, agents, society, and consciousness.">
 	<meta name="theme-color" content="#ffffff">
+	<meta name="ls-build" content="<?php echo $lsBuild; ?>">
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">
@@ -54,6 +60,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	<script>
 		window.TM_LOCAL_EDITOR = <?php echo $localEditor ? 'true' : 'false'; ?>;
 		window.TM_HIDE_EXPAND_ALL = <?php echo $hideExpandAll ? 'true' : 'false'; ?>;
+		window.LS_BUILD = <?php echo (int) $lsBuild; ?>;
 		<?php if ($eoyDay !== null): ?>window.EOY_DAY = <?php echo $eoyDay; ?>;<?php endif; ?>
 		(function () {
 			if (typeof window.EOY_DAY === "number") return;
@@ -121,7 +128,8 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 			function css(){
 				if(document.getElementById("ls-boot-style"))return;
 				var st=document.createElement("style");st.id="ls-boot-style";
-				st.textContent="#ls-page-loader{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2147483647!important;background:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important}"+
+				st.textContent="#ls-page-loader{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;z-index:2147483647!important;background:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important}"+
+					"#ls-page-loader::backdrop{background:#fff!important}"+
 					"#ls-page-loader .ls-page-loader-spinner{width:40px!important;height:40px!important;border:3px solid #dbe3e0!important;border-top-color:#63a44b!important;border-radius:50%!important;animation:lsBootSpin .8s linear infinite!important}"+
 					"body:not(.ls-loaded) "+NAV.split(",").join(",body:not(.ls-loaded) ")+"{display:none!important}"+
 					"@keyframes lsBootSpin{to{transform:rotate(360deg)}}";
@@ -129,8 +137,16 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 			}
 			function ensure(){
 				var l=document.getElementById("ls-page-loader");
-				if(!l){l=document.createElement("div");l.id="ls-page-loader";var sp=document.createElement("div");sp.className="ls-page-loader-spinner";l.appendChild(sp);document.body.insertBefore(l,document.body.firstChild);}
+				if(!l||l.tagName!=="DIALOG"){
+					var dlg=document.createElement("dialog");dlg.id="ls-page-loader";
+					var sp=document.createElement("div");sp.className="ls-page-loader-spinner";dlg.appendChild(sp);
+					if(l&&l.parentNode)l.parentNode.replaceChild(dlg,l);
+					else if(document.body&&document.body.firstChild)document.body.insertBefore(dlg,document.body.firstChild);
+					else if(document.body)document.body.appendChild(dlg);
+					l=dlg;
+				}
 				if(!l.querySelector(".ls-page-loader-spinner")){var sp2=document.createElement("div");sp2.className="ls-page-loader-spinner";l.appendChild(sp2);}
+				try{if(!l.open)l.showModal();}catch(e){l.setAttribute("open","");}
 			}
 			function hideNavs(){
 				var els=document.querySelectorAll(NAV);
@@ -144,7 +160,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 				window.__lsPageReady=true;
 				if(document.body)document.body.classList.add("ls-loaded");
 				var l=document.getElementById("ls-page-loader");
-				if(l&&l.parentNode)l.parentNode.removeChild(l);
+				if(l){try{if(l.tagName==="DIALOG"&&l.close)l.close();}catch(e){}if(l.parentNode)l.parentNode.removeChild(l);}
 				showNavs();
 			}
 			css();ensure();hideNavs();
