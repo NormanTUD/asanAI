@@ -101,6 +101,18 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	</style>
 </head>
 <body data-page="lesson" data-lesson="intuition" data-eoy-day="<?php echo $eoyDay !== null ? $eoyDay : ''; ?>" data-eoy-resolved="<?php echo $eoyDay !== null ? $eoyDay : 0; ?>" data-no-full-article data-tm-reload-lang="1">
+	<div id="ls-page-loader" role="status" aria-live="polite" aria-label="Lädt …"
+		style="position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:#fff">
+		<div class="ls-page-loader-spinner" aria-hidden="true"
+			style="width:38px;height:38px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:ls-page-spin .8s linear infinite"></div>
+	</div>
+	<script>
+		(function(){
+			function done(){var l=document.getElementById("ls-page-loader");if(l){l.classList.add("is-done");l.setAttribute("aria-hidden","true");}}
+			window.addEventListener("load",function(){setTimeout(done,120);});
+			window.addEventListener("pageshow",function(e){if(e.persisted)done();});
+		})();
+	</script>
 	<div id="learnsys" data-no-i18n></div>
 	<div id="eoy-embed-nav" style="position:fixed;left:0;right:0;bottom:0;z-index:2147483000;pointer-events:none">
 		<button type="button" class="eoy-prev" data-eoy-prev style="position:fixed;left:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18);pointer-events:auto">← Zurück</button>

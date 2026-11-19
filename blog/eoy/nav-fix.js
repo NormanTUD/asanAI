@@ -109,3 +109,18 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", install, { once: true });
   else install();
 })();
+
+/* Hide the full-page loader once everything has loaded. */
+(function () {
+  "use strict";
+  function done() {
+    var l = document.getElementById("ls-page-loader");
+    if (!l) return;
+    l.classList.add("is-done");
+    l.setAttribute("aria-hidden", "true");
+  }
+  if (document.readyState === "complete") setTimeout(done, 120);
+  else window.addEventListener("load", function () { setTimeout(done, 120); });
+  window.addEventListener("pageshow", function (e) { if (e.persisted) done(); });
+  setTimeout(done, 9000);
+})();

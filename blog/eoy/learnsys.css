@@ -2729,3 +2729,10 @@ body[data-page="lesson"] .ls-stage:after{display:none}
 #eoy-embed-nav .eoy-next,
 .eoy-nav button:last-child{right:14px!important;left:auto!important}
 body[data-page="lesson"] .ls-bottom-nav{display:none!important}
+
+/* Full-page loading spinner, hidden when the page has loaded. */
+#ls-page-loader{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:#fff;transition:opacity .32s ease,visibility .32s ease;opacity:1;visibility:visible;animation:ls-page-loader-fallback .35s ease 9s forwards}
+#ls-page-loader .ls-page-loader-spinner{width:38px;height:38px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:ls-page-spin .8s linear infinite}
+#ls-page-loader.is-done{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important}
+@keyframes ls-page-spin{to{transform:rotate(360deg)}}
+@keyframes ls-page-loader-fallback{to{opacity:0;visibility:hidden}}

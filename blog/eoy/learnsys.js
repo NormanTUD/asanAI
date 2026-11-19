@@ -5726,6 +5726,21 @@
       target.dispatchEvent(ev);
     });
   }
+  // Hide the full-page loader (also covers pages that do not load nav-fix.js).
+  if (typeof window !== "undefined") {
+    (function () {
+      function done() {
+        var l = document.getElementById("ls-page-loader");
+        if (!l) return;
+        l.classList.add("is-done");
+        l.setAttribute("aria-hidden", "true");
+      }
+      if (document.readyState === "complete") setTimeout(done, 120);
+      else window.addEventListener("load", function () { setTimeout(done, 120); });
+      window.addEventListener("pageshow", function (e) { if (e.persisted) done(); });
+      setTimeout(done, 9000);
+    })();
+  }
   if (typeof module !== "undefined" && module.exports) module.exports = LS;
   if (typeof window !== "undefined") window.LearnSys = LS;
 })();
