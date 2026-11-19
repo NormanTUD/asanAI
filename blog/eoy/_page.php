@@ -41,7 +41,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 }
 
 $lsBuild = 0;
-foreach (['learnsys.js', 'learnsys.css', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php', 'text_preview.json'] as $lsBuildFile) {
+foreach (['learnsys.js', 'learnsys.css', 'eoy-loading.js', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php', 'text_preview.json'] as $lsBuildFile) {
 	$lsBuild = max($lsBuild, (int) @filemtime(__DIR__ . '/' . $lsBuildFile));
 }
 
@@ -194,6 +194,7 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>" defer></script>
 	<script src="assets/learnsys-visuals.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-visuals.js'); ?>" defer></script>
 	<script src="assets/learnsys-scene-kit.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-scene-kit.js'); ?>" defer></script>
+	<script src="eoy-loading.js?v=<?php echo filemtime(__DIR__.'/eoy-loading.js'); ?>" defer></script>
 	<script src="learnsys.js?v=<?php echo filemtime(__DIR__.'/learnsys.js'); ?>" defer></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>" defer></script>
 	<script src="assets/space-morph.js?v=<?php echo filemtime(__DIR__.'/assets/space-morph.js'); ?>" defer></script>

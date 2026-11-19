@@ -932,6 +932,8 @@
     els.stageTitle = root.querySelector("#ls-stage-title");
     els.demo = root.querySelector("#ls-demo");
     els.demoLoader = root.querySelector("#ls-demo-loader");
+    els.demoLoaderAnim = (els.demoLoader && window.EoyLoading && window.EoyLoading.attach)
+      ? window.EoyLoading.attach(els.demoLoader) : null;
     els.credit = root.querySelector("#ls-credit");
     els.days = root.querySelector("#ls-days");
     els.dayNav = root.querySelectorAll("[data-day-nav]");
@@ -1996,11 +1998,13 @@
     clearTimeout(demoLoaderTimer);
     demoLoaderShownAt = performance.now();
     els.demoLoader.hidden = false;
+    if (els.demoLoaderAnim) els.demoLoaderAnim.start();
   }
   function hideDemoLoader() {
     if (!els.demoLoader) return;
     clearTimeout(demoLoaderTimer);
     els.demoLoader.hidden = true;
+    if (els.demoLoaderAnim) els.demoLoaderAnim.stop();
   }
   function hideDemoLoaderWhenReady() {
     if (!els.demoLoader) return;
@@ -2008,7 +2012,10 @@
     clearTimeout(demoLoaderTimer);
     var iframe = els.demo ? els.demo.querySelector("iframe") : null;
     function finish() {
-      demoLoaderTimer = setTimeout(function () { if (els.demoLoader) els.demoLoader.hidden = true; }, wait);
+      demoLoaderTimer = setTimeout(function () {
+        if (els.demoLoader) els.demoLoader.hidden = true;
+        if (els.demoLoaderAnim) els.demoLoaderAnim.stop();
+      }, wait);
     }
     if (iframe) {
       var loaded = false;

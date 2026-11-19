@@ -116,7 +116,7 @@ button{color:inherit}
 .ls-demo-loader{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:#fff;pointer-events:none;overflow:hidden}
 .ls-demo-loader[hidden]{display:none}
 .ls-demo-loader::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(circle closest-side at 50% 50%,rgba(99,164,75,.12) 0%,rgba(99,164,75,.06) 38%,rgba(255,255,255,0) 76%);animation:ls-demo-breathe 2.4s ease-in-out infinite}
-.ls-demo-loader-label{position:relative;z-index:1;font:500 16px/1 "Open Sans",system-ui,sans-serif;letter-spacing:.1em;color:#8a9894}
+.ls-demo-loader-label{position:relative;z-index:1;font:600 16px/1 "Open Sans",system-ui,sans-serif;letter-spacing:.14em;color:#e7f6f0;text-shadow:0 1px 18px rgba(0,20,30,.65)}
 @keyframes ls-demo-breathe{0%,100%{opacity:.55}50%{opacity:1}}
 .ls-spinner{width:14px;height:14px;border:0;border-radius:50%;background:var(--ls-green);opacity:.35;animation:ls-spinner-pulse 1.4s ease-in-out infinite}
 @keyframes ls-spinner-pulse{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:.8;transform:scale(1)}}

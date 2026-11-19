@@ -366,8 +366,8 @@
       + rootSelector + " .asanai-eoy-loader-panel:before{content:''!important;position:absolute!important;inset:0!important;"
       + "background:radial-gradient(circle closest-side at 50% 50%,rgba(99,164,75,.12) 0%,rgba(99,164,75,.06) 38%,rgba(255,255,255,0) 76%)!important;"
       + "animation:asanai-eoy-breathe 2.4s ease-in-out infinite!important}"
-      + rootSelector + " .asanai-eoy-loader-label{position:relative!important;z-index:1!important;font:500 16px/1 \"Open Sans\",system-ui,sans-serif!important;"
-      + "letter-spacing:.1em!important;color:#8a9894!important}"
+      + rootSelector + " .asanai-eoy-loader-label{position:relative!important;z-index:1!important;font:600 16px/1 \"Open Sans\",system-ui,sans-serif!important;"
+      + "letter-spacing:.14em!important;color:#e7f6f0!important;text-shadow:0 1px 18px rgba(0,20,30,.65)!important}"
       + "@keyframes asanai-eoy-breathe{0%,100%{opacity:.55}50%{opacity:1}}"
       + "@media (prefers-reduced-motion: reduce){" + rootSelector + " .asanai-eoy-loader-panel:before{animation:none!important;opacity:.75!important}}";
     var baseStyle = document.createElement("style");
@@ -380,8 +380,26 @@
       });
     }
 
+    function attachEmbedLoading() {
+      if (root.__asanaiFinished || loader.__asanaiAnim || !window.EoyLoading) return;
+      loader.__asanaiAnim = window.EoyLoading.attach(loaderPanel);
+      if (loader.__asanaiAnim) loader.__asanaiAnim.start();
+    }
+
+    function ensureLoadingKit() {
+      if (window.EoyLoading) { attachEmbedLoading(); return; }
+      var kit = document.createElement("script");
+      kit.src = proxyFor(lessonDir + "eoy-loading.js");
+      kit.async = true;
+      kit.onload = attachEmbedLoading;
+      document.head.appendChild(kit);
+    }
+
+    ensureLoadingKit();
+
     function fail(message) {
       clearLoaderTimers(root);
+      if (loader.__asanaiAnim) { loader.__asanaiAnim.destroy(); loader.__asanaiAnim = null; }
       loader.classList.add("is-done");
       var note = document.createElement("p");
       note.textContent = message;
@@ -531,7 +549,7 @@
     var errors = [];
     var seen = {};
     var list = Array.prototype.slice.call(doc.querySelectorAll("script[src]"));
-    var earlyOrder = ["site.js", "learnsys-visuals.js", "learnsys-scene-kit.js", "learnsys.js", "data.js"];
+    var earlyOrder = ["site.js", "learnsys-visuals.js", "learnsys-scene-kit.js", "eoy-loading.js", "learnsys.js", "data.js"];
     function baseName(src) {
       var path = String(src || "").split("?")[0];
       return path.slice(path.lastIndexOf("/") + 1);
@@ -623,7 +641,11 @@
       fitHeight(root);
       setTimeout(function () {
         loader.classList.add("is-done");
-        setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 160);
+        if (loader.__asanaiAnim) loader.__asanaiAnim.stop();
+        setTimeout(function () {
+          if (loader.__asanaiAnim) { loader.__asanaiAnim.destroy(); loader.__asanaiAnim = null; }
+          if (loader.parentNode) loader.parentNode.removeChild(loader);
+        }, 160);
       }, 30);
     });
   }
