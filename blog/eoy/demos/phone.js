@@ -106,7 +106,7 @@
     function buildSerp() {
       serp.innerHTML = RESULTS.map(function (r, i) {
         return '<div class="ia-result r' + (i + 1) + '">' +
-          '<div class="ia-res-head"><img class="ia-res-fav" src="' + r.icon + '" alt=""><div class="ia-res-lines"><span class="ia-res-name">' + r.name + '</span><span class="ia-res-url">' + r.url + '</span></div></div>' +
+          '<div class="ia-res-head"><img class="ia-res-fav" src="' + (api.asset ? api.asset(r.icon) : r.icon) + '" alt=""><div class="ia-res-lines"><span class="ia-res-name">' + r.name + '</span><span class="ia-res-url">' + r.url + '</span></div></div>' +
           '<div class="ia-res-title">' + r.title + '</div><div class="ia-res-snippet">' + r.snippet + '</div></div>';
       }).join("");
     }

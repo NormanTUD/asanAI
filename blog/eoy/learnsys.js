@@ -5395,21 +5395,87 @@
     read: function () { return cloneData(layoutOverlay); }
   };
 
+  // Detect whether the lesson is rendered inside the WordPress blog proxy.
+  LS.isProxied = function () {
+    if (typeof window === "undefined") return false;
+    var loc = window.location;
+    return /asanai_blog_proxy/.test(loc.pathname) || /(^|[?&])eoy\//.test(loc.search || "");
+  };
+
   // Resolve a lesson-relative asset. When the lesson is rendered through the
   // WordPress proxy, the document URL is the proxy endpoint, so relative URLs
   // would point at the wrong place; route them back through the proxy.
   LS.asset = function (name) {
-    var clean = String(name || "").replace(/^\.?\//, "");
-    if (!clean || typeof window === "undefined") return name;
-    var loc = window.location;
-    var search = loc.search || "";
-    var proxied = /asanai_blog_proxy/.test(loc.pathname) || /(^|[?&])eoy\//.test(search);
-    return proxied ? loc.pathname + "?eoy/" + clean : name;
+    var raw = String(name == null ? "" : name);
+    if (!raw || !LS.isProxied()) return name;
+    if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(raw)) return name;
+    var clean = raw.replace(/^\.?\//, "");
+    return window.location.pathname + "?eoy/" + clean;
   };
+
+  function isRelativeAsset(value) {
+    return !!value && !/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(String(value).trim());
+  }
+
+  function fixAssetSrcset(el) {
+    var value = el.getAttribute("srcset");
+    if (!value) return;
+    var next = value.split(",").map(function (part) {
+      var bits = part.trim().split(/\s+/);
+      if (bits[0] && isRelativeAsset(bits[0])) bits[0] = LS.asset(bits[0]);
+      return bits.join(" ");
+    }).join(", ");
+    if (next !== value) el.setAttribute("srcset", next);
+  }
+
+  function fixAssetStyle(el) {
+    var value = el.getAttribute("style");
+    if (!value || value.indexOf("url(") === -1) return;
+    var next = value.replace(/url\(\s*(['"]?)([^'")]+)\1\s*\)/gi, function (match, quote, url) {
+      return isRelativeAsset(url) ? "url(" + quote + LS.asset(url) + quote + ")" : match;
+    });
+    if (next !== value) el.setAttribute("style", next);
+  }
+
+  function fixAssetElement(el) {
+    if (!el || el.nodeType !== 1) return;
+    ["src", "href", "poster"].forEach(function (attr) {
+      var value = el.getAttribute(attr);
+      if (value && isRelativeAsset(value)) el.setAttribute(attr, LS.asset(value));
+    });
+    if (el.hasAttribute("srcset")) fixAssetSrcset(el);
+    fixAssetStyle(el);
+  }
+
+  function fixAssetSubtree(node) {
+    if (!node) return;
+    if (node.nodeType === 1) fixAssetElement(node);
+    if (node.querySelectorAll) {
+      Array.prototype.forEach.call(node.querySelectorAll("[src],[href],[poster],[srcset],[style]"), fixAssetElement);
+    }
+  }
+
+  function installAssetRewriter(el) {
+    if (!LS.isProxied() || !el || el.__lsAssetObserver) return;
+    fixAssetSubtree(el);
+    el.__lsAssetObserver = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.type === "attributes") fixAssetElement(mutation.target);
+        else Array.prototype.forEach.call(mutation.addedNodes, fixAssetSubtree);
+      });
+    });
+    el.__lsAssetObserver.observe(el, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["src", "href", "poster", "srcset", "style"]
+    });
+  }
 
   LS.mount = function (el, config) {
     root = el;
     cfg = config;
+    installAssetRewriter(el);
     setLang(cfg.lang);
     syncOverlayRevision();
     load();
