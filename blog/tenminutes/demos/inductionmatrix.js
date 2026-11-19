@@ -47,13 +47,13 @@
       if (stage === 1) {
         return '<div class="ls-ix-step">2 · ' + (DE ? "Vorgänger merken" : "Remember predecessor") + '</div>' +
           '<h4>' + (DE ? "Schicht 1: Previous-Token-Head" : "Layer 1: previous-token head") + '</h4>' +
-          '<p>' + (DE ? "An Position 4 steht B. Der Vorgänger dieses B ist A. Der Previous-Token-Head schreibt dieses A in den Key von Position 4." : "Position 4 holds B. The predecessor of this B is A. The previous-token head writes that A into the key at position 4.") + '</p>' +
-          '<div class="ls-ix-flow"><span>3 · A</span><b>→</b><span>4 · B</span><b>→</b><strong>Key: A</strong></div>';
+          '<p>' + (DE ? "An Position 4 steht B. Der Vorgänger dieses B ist A. Der Head schreibt kein Wort. Er addiert an Position 4 einen gelernten Vektor, der „vorher kam A“ bedeutet." : "Position 4 holds B. The predecessor of this B is A. The head writes no word. It adds a learned vector at position 4 that means “the previous token was A”.") + '</p>' +
+          '<div class="ls-ix-flow"><span>A (3)</span><b>→ W_V → W_O</b><span>+ Position 4</span><b>→</b><strong>Vektor „Vorgänger A“</strong></div>';
       }
       if (stage === 2) {
         return '<div class="ls-ix-step">3 · ' + (DE ? "Query trifft Key" : "Query meets key") + '</div>' +
           '<h4>' + (DE ? "Schicht 2: Induction Head" : "Layer 2: induction head") + '</h4>' +
-          '<p>' + (DE ? "Das aktuelle A fragt mit A. Position 4 trägt A als Vorgänger, also passt der Key. Position 3 ist ebenfalls A, aber ihr Vorgänger ist C; deshalb passt sie nicht." : "The current A asks with A. Position 4 carries A as predecessor, so the key matches. Position 3 is also A, but its predecessor is C; that is why it does not match.") + '</p>' +
+          '<p>' + (DE ? "Das aktuelle A fragt mit einer Query. An Position 4 enthält der Key den Vorgänger-Vektor A, deshalb ist der QK-Score hoch. Position 3 enthält den Vorgänger-Vektor C, deshalb ist der Score niedrig." : "The current A asks with a query. At position 4 the key contains the predecessor vector A, so the QK score is high. Position 3 contains the predecessor vector C, so the score is low.") + '</p>' +
           '<div class="ls-ix-matchcards">' +
             '<div class="ls-ix-q"><span>Query 6</span><b>A</b></div><div class="ls-ix-arrow">→</div>' +
             '<div class="ls-ix-key is-good"><span>Key 4</span><b>A</b><em>' + (DE ? "Vorgänger" : "predecessor") + '</em></div>' +
