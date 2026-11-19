@@ -360,6 +360,8 @@ button{color:inherit}
 .ls-qnested--3>summary,.ls-qnested--4>summary{color:var(--ls-muted);font-weight:600}
 #ls-title,#ls-kicker,#ls-body,#ls-watch,.ls-qbody,.ls-qtex{cursor:text}
 #ls-title:hover,#ls-kicker:hover,#ls-body:hover,#ls-watch:hover,.ls-qbody:hover,.ls-qtex:hover{background:rgba(99,164,75,.045)}
+.ls-no-editor #ls-title,.ls-no-editor #ls-kicker,.ls-no-editor #ls-body,.ls-no-editor #ls-watch,.ls-no-editor .ls-qbody,.ls-no-editor .ls-qtex{cursor:auto}
+.ls-no-editor #ls-title:hover,.ls-no-editor #ls-kicker:hover,.ls-no-editor #ls-body:hover,.ls-no-editor #ls-watch:hover,.ls-no-editor .ls-qbody:hover,.ls-no-editor .ls-qtex:hover{background:transparent}
 .ls-math--inline{display:inline-flex;align-items:baseline;max-width:100%;vertical-align:baseline;overflow-x:auto;overflow-y:hidden}
 .ls-math--inline[data-tex-rendered="1"] .ls-tex-source{display:none}
 .ls-math--inline math{font-size:1.02em}

@@ -46,3 +46,5 @@ test-artifacts/
 blog/facts/CONFLICTS.md
 blog/tenminutes/.local-editor
 blog/tenminutes/.hide-expand-all
+blog/eoy/.local-editor
+blog/eoy/.hide-expand-all
