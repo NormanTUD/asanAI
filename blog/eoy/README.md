@@ -42,3 +42,18 @@ touch blog/eoy/.hide-expand-all
 `window.TM_LOCAL_EDITOR`. `learnsys.js` setzt daraufhin die Klasse
 `ls-no-editor` am `#learnsys`-Container. Diese Klasse versteckt die
 Bearbeiten-Bedienelemente und schaltet den Hover-Effekt der Textblöcke ab.
+
+## WordPress-Einbettung ohne iframe
+
+`wordpress-embed.html` enthält den Snippet für eine Div-Einbettung:
+
+```html
+<div id="asanai-eoy-embed" data-src="eoy/1?lang=de" data-height="1500"></div>
+<script src="/asanai_blog_proxy.php?eoy/div-embed.js"></script>
+```
+
+`div-embed.js` lädt die Lesson über den Proxy, scoped deren CSS auf das Div,
+injiziert das Markup und lädt die Lesson-Skripte in Reihenfolge. Spinner,
+Navigation und Overlays bleiben im Div. `data-height` akzeptiert Pixel oder
+CSS-Längen; ohne Angabe gilt `min(90vh, 1100px)`. Pro Seite ist eine
+Einbettung vorgesehen, weil die Lesson feste IDs und globale Zustände nutzt.
