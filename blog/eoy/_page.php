@@ -77,7 +77,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 		<?php endif; ?>
 	</style>
 </head>
-<body data-page="lesson" data-lesson="intuition" data-no-full-article data-tm-reload-lang="1">
+<body data-page="lesson" data-lesson="intuition" data-eoy-day="<?php echo $eoyDay !== null ? $eoyDay : ''; ?>" data-no-full-article data-tm-reload-lang="1">
 	<div id="learnsys" data-no-i18n></div>
 	<?php if ($showSnow): ?><canvas class="season-layer" id="season-snow" aria-hidden="true"></canvas><?php endif; ?>
 	<?php if ($showFireworks): ?><canvas class="season-layer" id="season-fireworks" aria-hidden="true"></canvas><?php endif; ?>
