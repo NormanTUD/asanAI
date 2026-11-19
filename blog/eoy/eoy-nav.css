@@ -1,0 +1,33 @@
+/* eoy embed navigation – external so the WordPress proxy cannot strip it. */
+#eoy-embed-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+}
+#eoy-embed-nav button {
+  position: fixed;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #4f8b3c;
+  background: #63a44b;
+  color: #fff;
+  font: 600 15px/1 "Open Sans", system-ui, sans-serif;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 3px 14px rgba(0, 20, 30, .18);
+}
+#eoy-embed-nav button:hover { background: #558c3f; }
+#eoy-embed-nav button[hidden] { display: none !important; }
+#eoy-embed-nav [data-eoy-prev],
+#eoy-embed-nav .eoy-prev { left: 14px; }
+#eoy-embed-nav [data-eoy-next],
+#eoy-embed-nav .eoy-next { right: 14px; }
+body[data-page="lesson"] .ls-bottom-nav { display: none !important; }
