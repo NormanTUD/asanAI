@@ -2354,7 +2354,11 @@
   function hasPrevPage() {
     var day = activeDay();
     var base = activeStep();
-    if (cfg.eoySingle) return !!(base && base.substeps && state.substep > 0);
+    if (cfg.eoySingle) {
+      if (base && base.substeps) return state.substep > 0;
+      if (demo && typeof demo.hasPrev === "function") return !!demo.hasPrev();
+      return !!(demo && typeof demo.prev === "function");
+    }
     if (base && base.substeps && state.substep > 0) return true;
     if (state.step > 0) return true;
     return cfg.days.indexOf(day) > 0;
@@ -2362,7 +2366,11 @@
   function hasNextPage() {
     var day = activeDay();
     var base = activeStep();
-    if (cfg.eoySingle) return !!(base && base.substeps && state.substep < base.substeps.length - 1);
+    if (cfg.eoySingle) {
+      if (base && base.substeps) return state.substep < base.substeps.length - 1;
+      if (demo && typeof demo.hasNext === "function") return !!demo.hasNext();
+      return !!(demo && typeof demo.next === "function");
+    }
     if (base && base.substeps && state.substep < base.substeps.length - 1) return true;
     if (state.step < visibleCount(day) - 1) return true;
     var pos = cfg.days.indexOf(day);
@@ -2814,13 +2822,21 @@
     // another step or entry, even if a layout overlay says otherwise.
     if (cfg.eoySingle) {
       var singleNext = activeStep();
-      if (singleNext && singleNext.substeps && state.substep < singleNext.substeps.length - 1) {
-        state.substep++;
-        rememberSubstep();
-        cueSuppressUntil = performance.now() + 500;
-        renderSubstep(1);
-        writeHash();
+      if (singleNext && singleNext.substeps) {
+        if (state.substep < singleNext.substeps.length - 1) {
+          state.substep++;
+          rememberSubstep();
+          cueSuppressUntil = performance.now() + 500;
+          renderSubstep(1);
+          writeHash();
+        }
+        return;
       }
+      if (demo && typeof demo.busy === "function" && demo.busy()) {
+        if (typeof demo.finish === "function") demo.finish();
+        return;
+      }
+      if (demo && typeof demo.next === "function" && demo.next()) { updateBottomNav(); return; }
       return;
     }
     if (!cfg.eoySingle && demo && typeof demo.busy === "function" && demo.busy()) {
@@ -2856,13 +2872,17 @@
   function prev() {
     if (cfg.eoySingle) {
       var singlePrev = activeStep();
-      if (singlePrev && singlePrev.substeps && state.substep > 0) {
-        state.substep--;
-        rememberSubstep();
-        cueSuppressUntil = performance.now() + 500;
-        renderSubstep(-1);
-        writeHash();
+      if (singlePrev && singlePrev.substeps) {
+        if (state.substep > 0) {
+          state.substep--;
+          rememberSubstep();
+          cueSuppressUntil = performance.now() + 500;
+          renderSubstep(-1);
+          writeHash();
+        }
+        return;
       }
+      if (demo && typeof demo.prev === "function" && demo.prev()) { updateBottomNav(); return; }
       return;
     }
     if (!cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) return;
@@ -3285,7 +3305,9 @@
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
       resetPositionBuffer();
-      if (demo && demo.onKey && demo.onKey(e)) { e.preventDefault(); return; }
+      var keyBase = activeStep();
+      var substepKeys = cfg.eoySingle && keyBase && keyBase.substeps;
+      if (!substepKeys && demo && demo.onKey && demo.onKey(e)) { updateBottomNav(); e.preventDefault(); return; }
       if (e.key === "?" || e.key === "h" || e.key === "H") { e.preventDefault(); toggleHelp(); return; }
       if (e.shiftKey && e.key === "ArrowRight") { e.preventDefault(); nextDay(); return; }
       if (e.shiftKey && e.key === "ArrowLeft") { e.preventDefault(); prevDay(); return; }

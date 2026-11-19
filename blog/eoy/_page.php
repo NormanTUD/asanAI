@@ -69,20 +69,24 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 			inset: auto;
 			height: <?php echo $embedHeight; ?>px;
 			min-height: <?php echo $embedHeight; ?>px;
+			grid-template-rows: minmax(0, 1fr);
 		}
+		body[data-page="lesson"] .ls-main { grid-row: 1; padding-top: 58px; }
+		body[data-page="lesson"] .ls-top,
+		body[data-page="lesson"] .ls-navbar { display: none !important; }
 		body[data-page="lesson"] .ls-title { max-width: 36ch; }
 		@media (max-width: 980px) {
 			body[data-page="lesson"] .ls-main { grid-template-rows: auto minmax(0, 1fr); }
 		}
-		/* Keep the entry navigation visible at the top of a tall embed. */
-		body[data-page="lesson"][data-eoy-resolved]:not([data-eoy-resolved="0"]) .ls-bottom-nav {
+		/* Keep the navigation visible at the top of a tall embed instead of the
+		   iframe's bottom edge, which is usually off-screen. */
+		body[data-page="lesson"] .ls-bottom-nav {
 			position: absolute;
 			top: 10px;
 			bottom: auto;
 			left: 12px;
 			right: 12px;
 		}
-		body[data-page="lesson"][data-eoy-resolved]:not([data-eoy-resolved="0"]) .ls-main { padding-top: 58px; }
 		<?php endif; ?>
 	</style>
 </head>

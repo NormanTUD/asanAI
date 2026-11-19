@@ -84,6 +84,8 @@
       },
       next: nextInternal,
       prev: prevInternal,
+      hasNext: function () { return step < 2; },
+      hasPrev: function () { return step > 0; },
       busy: function () {
         if (step !== 2) return false;
         if (codeApi && codeApi.busy && codeApi.busy()) return true;

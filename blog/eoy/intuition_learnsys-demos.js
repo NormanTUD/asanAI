@@ -93,6 +93,16 @@
       finish: function () { if (scene && scene.finish) scene.finish(); },
       next: function () { return scene && scene.next ? scene.next() : false; },
       prev: function () { return scene && scene.prev ? scene.prev() : false; },
+      hasNext: function () {
+        if (!scene) return false;
+        if (typeof scene.hasNext === "function") return !!scene.hasNext();
+        return typeof scene.next === "function";
+      },
+      hasPrev: function () {
+        if (!scene) return false;
+        if (typeof scene.hasPrev === "function") return !!scene.hasPrev();
+        return typeof scene.prev === "function";
+      },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },
       destroy: function () {
         if (ro) ro.disconnect();
