@@ -2,7 +2,7 @@
   "use strict";
 
   // Runtime chrome guard (works even if the proxy strips <style>/style="").
-  (function () {
+  if (!window.__ASANAI_EOY_EMBED__) (function () {
     function ensure() {
       var l = document.getElementById("ls-page-loader");
       // Use a modal <dialog>: it renders in the top layer and therefore covers
@@ -2516,12 +2516,13 @@
   // Resolve the eoy entry from every available source. The WordPress proxy may
   // strip inline scripts, so window.EOY_DAY can be missing; the body data
   // attribute (server side) and the URL itself are reliable fallbacks.
-  var bodyEntry = parseInt((document.body && document.body.getAttribute("data-eoy-day")) || "", 10);
+  var entryHost = window.__ASANAI_EOY_ROOT__ || document.body;
+  var bodyEntry = parseInt((entryHost && entryHost.getAttribute("data-eoy-day")) || "", 10);
   var urlMatch = (window.location.pathname + window.location.search + window.location.hash).match(/eoy(?:%2F|\/)(\d+)/i);
   var requestedDay = typeof window.EOY_DAY === "number" ? Math.round(window.EOY_DAY)
     : (bodyEntry > 0 ? bodyEntry : (urlMatch ? parseInt(urlMatch[1], 10) : 0));
   var singleStep = requestedDay >= 1 && requestedDay <= steps.length ? steps[requestedDay - 1] : null;
-  if (document.body) document.body.setAttribute("data-eoy-resolved", String(singleStep ? requestedDay : 0));
+  if (entryHost) entryHost.setAttribute("data-eoy-resolved", String(singleStep ? requestedDay : 0));
   var selectedDay = singleStep ? {
     id: "eoy-" + requestedDay,
     track: day.track,

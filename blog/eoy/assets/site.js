@@ -21,6 +21,8 @@
 	TM.storage = storage;
 
 	function readLang() {
+		var embedLang = (window.__ASANAI_EOY_LANG__ || "").toLowerCase();
+		if (embedLang === "de" || embedLang === "en") return { lang: embedLang, source: "embed" };
 		var params = new URLSearchParams(window.location.search);
 		var requested = (params.get("lang") || "").toLowerCase();
 		// Proxy URLs look like ?eoy/1?lang=de&height=1500, where URLSearchParams
@@ -285,13 +287,20 @@
 			card: pick("--tm-card", "#ffffff"),
 			line: pick("--tm-line", "rgba(0,75,111,.15)"),
 			lineStrong: pick("--tm-line-strong", "rgba(0,75,111,.28)"),
-			dark: document.documentElement.getAttribute("data-theme") === "dark"
+			dark: themeRoot().getAttribute("data-theme") === "dark"
 		};
 	};
 
 	TM.asset = function (path) {
 		if (!path || /^[a-z][a-z0-9+.-]*:/i.test(path) || path.indexOf("//") === 0 || path.charAt(0) === "/" || path.charAt(0) === "#") {
 			return path;
+		}
+		if (window.__ASANAI_EOY_PROXY__) {
+			try {
+				var cfg = window.__ASANAI_EOY_PROXY__;
+				var embedded = new URL(path, "http://proxy.local/" + (cfg.dir || "eoy/"));
+				return cfg.base + "?" + embedded.pathname.replace(/^\/+/, "") + embedded.search + embedded.hash;
+			} catch (e) {}
 		}
 		var pathname = window.location.pathname;
 		var match = pathname.match(/^(.*\/)?asanai_blog_proxy(?:\.php)?$/);
@@ -648,11 +657,17 @@
 
 	/* ── theme ─────────────────────────────────────────────── */
 
+	function themeRoot() {
+		return window.__ASANAI_EOY_ROOT__ || document.documentElement;
+	}
+
 	function applyTheme(theme) {
-		document.documentElement.setAttribute("data-theme", theme);
-		var meta = document.querySelector('meta[name="theme-color"]');
-		if (meta) meta.setAttribute("content", theme === "dark" ? "#071a22" : "#ffffff");
-		document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+		themeRoot().setAttribute("data-theme", theme);
+		if (!window.__ASANAI_EOY_EMBED__) {
+			var meta = document.querySelector('meta[name="theme-color"]');
+			if (meta) meta.setAttribute("content", theme === "dark" ? "#071a22" : "#ffffff");
+		}
+		themeRoot().querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
 			btn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
 			btn.setAttribute("title", theme === "dark" ? "Light mode" : "Dark mode");
 		});
@@ -663,9 +678,9 @@
 		try { saved = localStorage.getItem("tm_theme"); } catch (e) {}
 		var theme = saved === "dark" ? "dark" : "light";
 		applyTheme(theme);
-		document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+		themeRoot().querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
 			btn.addEventListener("click", function () {
-				var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+				var next = themeRoot().getAttribute("data-theme") === "dark" ? "light" : "dark";
 				applyTheme(next);
 				try { localStorage.setItem("tm_theme", next); } catch (e) {}
 				window.dispatchEvent(new CustomEvent("tm:theme", { detail: { theme: next } }));
@@ -1121,6 +1136,10 @@
 		}
 	}
 
+	TM.initPage = initPage;
+	if (window.__ASANAI_EOY_EMBED__) {
+		return;
+	}
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", initPage);
 	} else {

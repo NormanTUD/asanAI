@@ -2429,6 +2429,7 @@
   }
   function writeHash() {
     if (suppressHash) return;
+    if (window.__ASANAI_EOY_EMBED__) return;
     if (cfg.eoyNoHash) {
       if (location.hash) {
         try {
@@ -5450,6 +5451,7 @@
   // Detect whether the lesson is rendered inside the WordPress blog proxy.
   LS.isProxied = function () {
     if (typeof window === "undefined") return false;
+    if (window.__ASANAI_EOY_PROXY__) return true;
     var loc = window.location;
     return /asanai_blog_proxy/.test(loc.pathname) || /(^|[?&])eoy\//.test(loc.search || "");
   };
@@ -5460,6 +5462,13 @@
   LS.asset = function (name) {
     var raw = String(name == null ? "" : name);
     if (!raw || !LS.isProxied() || !isRelativeAsset(raw)) return name;
+    if (window.__ASANAI_EOY_PROXY__) {
+      try {
+        var cfg = window.__ASANAI_EOY_PROXY__;
+        var resolved = new URL(raw, "http://proxy.local/" + (cfg.dir || "eoy/"));
+        return cfg.base + "?" + resolved.pathname.replace(/^\/+/, "") + resolved.search + resolved.hash;
+      } catch (e) {}
+    }
     var clean = raw.replace(/^\.?\//, "");
     return window.location.pathname + "?eoy/" + clean;
   };
@@ -5536,7 +5545,7 @@
   }
 
   function installLessonNav() {
-    if (window.__lsQuickNavInstalled || !document.body) return;
+    if (window.__ASANAI_EOY_EMBED__ || window.__lsQuickNavInstalled || !document.body) return;
     window.__lsQuickNavInstalled = true;
 
     function mk(id, side, label) {
@@ -5751,7 +5760,8 @@
     (function () {
       function done() {
         window.__lsPageReady = true;
-        if (document.body) document.body.classList.add("ls-loaded");
+        var host = window.__ASANAI_EOY_ROOT__ || document.body;
+        if (host) host.classList.add("ls-loaded");
         var l = document.getElementById("ls-page-loader");
         if (!l) return;
         try { if (l.tagName === "DIALOG" && l.close) l.close(); } catch (e) {}
