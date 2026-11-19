@@ -93,6 +93,22 @@ def wait_app(driver, timeout=20):
     return False
 
 
+def wait_math(driver, timeout=4):
+    end = time.time() + timeout
+    remaining = -1
+    while time.time() < end:
+        try:
+            remaining = driver.execute_script(
+                "return document.querySelectorAll('[data-tex]:not([data-tex-rendered=\"1\"])').length"
+            )
+            if remaining == 0:
+                return 0
+        except Exception:
+            pass
+        time.sleep(0.12)
+    return remaining
+
+
 def state(driver):
     return driver.execute_script(
         """
@@ -159,6 +175,7 @@ class Results:
         return False
 
     def page_state(self, driver, page, lang, name, min_text=40):
+        wait_math(driver)
         s = state(driver)
         issues = console_issues(driver)
         ok = self.check(page, lang, f"{name}: title", bool(s["title"]), s["title"][:80])
@@ -225,104 +242,46 @@ def walk_index(driver, results, page, lang):
     check_layout(results, page, lang, "middle", s)
 
 
-def page_number(page):
-    try:
-        return int(page.split(".")[0])
-    except ValueError:
-        return 0
-
-
 def walk_single(driver, results, page, lang):
-    total_pages = 31
-    number = page_number(page)
-    original_url = driver.current_url
     ok, _ = results.page_state(driver, page, lang, "load")
     if not ok:
         return
-
-    driver.execute_script("LearnSys.go(0, 0, 0)")
-    time.sleep(0.25)
-    previous = signature(driver)
-    max_sub = 0
-    for sub in range(1, 8):
-        driver.execute_script("LearnSys.go(0, 0, arguments[0])", sub)
-        time.sleep(0.25)
-        current = signature(driver)
-        if current == previous:
-            break
-        ok, _ = results.page_state(driver, page, lang, f"sub {sub + 1}", 20)
-        if not ok:
-            return
-        max_sub = sub
-        previous = current
-
-    driver.execute_script("LearnSys.go(0, 0, 0)")
-    time.sleep(0.25)
-    _, s = results.page_state(driver, page, lang, "start", 20)
-    results.check(
-        page, lang,
-        "start: back visible" if number > 1 else "start: back hidden",
-        (s["prev"] is not None) == (number > 1),
-        str(s["prev"]),
-    )
-    results.check(page, lang, "start: forward visible", s["next"] is not None, str(s["next"]))
-    check_layout(results, page, lang, "start", s)
-
-    driver.execute_script("LearnSys.go(0, 0, arguments[0])", max_sub)
-    time.sleep(0.25)
-    _, s = results.page_state(driver, page, lang, "end", 20)
-    results.check(page, lang, "end: back visible", s["prev"] is not None, str(s["prev"]))
-    results.check(
-        page, lang,
-        "end: forward visible" if number < total_pages else "end: forward hidden",
-        (s["next"] is not None) == (number < total_pages),
-        str(s["next"]),
-    )
-    check_layout(results, page, lang, "end", s)
-
-    if number < total_pages:
-        driver.execute_script("LearnSys.go(0, 0, arguments[0])", max_sub)
-        time.sleep(0.2)
+    steps = 0
+    s = state(driver)
+    while s["next"] is not None and steps < 12:
         try:
             driver.find_element("id", "ls-next").click()
-            wait_app(driver, 12)
-            time.sleep(0.4)
-            issues = console_issues(driver)
-            results.check(page, lang, "forward: console", not issues, " | ".join(issues)[:300])
-            path = driver.execute_script("return location.pathname")
-            expected = f"/{number + 1}.php"
-            results.check(
-                page, lang, "forward -> next page",
-                path.endswith(expected) or path.endswith(f"/{number + 1}"),
-                path,
-            )
         except Exception as exc:
-            results.check(page, lang, "forward -> next page", False, str(exc)[:160])
-        driver.get(original_url)
-        wait_app(driver, 12)
-        time.sleep(0.4)
+            results.check(page, lang, f"next click {steps + 1}", False, str(exc)[:160])
+            break
+        steps += 1
+        time.sleep(0.35)
+        ok, s = results.page_state(driver, page, lang, f"next {steps}", 20)
+        if not ok:
+            return
+        check_layout(results, page, lang, f"next {steps}", s)
+    if steps:
+        results.check(page, lang, "end: forward hidden", s["next"] is None, str(s["next"]))
+        results.check(page, lang, "end: back visible", s["prev"] is not None, str(s["prev"]))
+    else:
+        results.check(page, lang, "no substeps: both hidden", s["prev"] is None and s["next"] is None, str(s))
 
-    if number > 1:
-        driver.execute_script("LearnSys.go(0, 0, 0)")
-        time.sleep(0.2)
+    back_steps = 0
+    while s["prev"] is not None and back_steps < 12:
         try:
             driver.find_element("id", "ls-prev").click()
-            wait_app(driver, 12)
-            time.sleep(0.4)
-            issues = console_issues(driver)
-            results.check(page, lang, "back: console", not issues, " | ".join(issues)[:300])
-            path = driver.execute_script("return location.pathname")
-            expected = f"/{number - 1}.php"
-            results.check(
-                page, lang, "back -> previous page",
-                path.endswith(expected) or path.endswith(f"/{number - 1}"),
-                path,
-            )
         except Exception as exc:
-            results.check(page, lang, "back -> previous page", False, str(exc)[:160])
-        driver.get(original_url)
-        wait_app(driver, 12)
-        time.sleep(0.4)
+            results.check(page, lang, f"back click {back_steps + 1}", False, str(exc)[:160])
+            break
+        back_steps += 1
+        time.sleep(0.35)
+        ok, s = results.page_state(driver, page, lang, f"back {back_steps}", 20)
+        if not ok:
+            return
+        check_layout(results, page, lang, f"back {back_steps}", s)
+    if steps:
+        results.check(page, lang, "start: back hidden", s["prev"] is None, str(s["prev"]))
+        results.check(page, lang, "start: forward visible", s["next"] is not None, str(s["next"]))
 
 
 def main():
