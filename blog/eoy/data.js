@@ -1325,45 +1325,33 @@
         watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
         context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
-        deep: "Ohne Ausgleich müsste man eine Bahn durch einen einzelnen Punkt legen. Gauß nutzte alle Beobachtungen zusammen.",
-        boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
       },
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
-        teaser: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
-        watch: "Drücke Weiter. Wie schmal wird die Glockenkurve?",
+        body: "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskope besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein neuronales Netz auf seinen Daten ist und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
+        teaser: "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskope besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein neuronales Netz auf seinen Daten ist und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
+        watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 1 },
-        context: "Je kleiner die Streuung, desto enger liegt die Glockenkurve um die wahre Bahn. Die Beobachtungen bleiben fehlerhaft, aber der Ausgleich wird stabiler.",
-        deep: "Die Methode der kleinsten Quadrate minimiert die Summe der quadrierten Abstände, also den mittleren quadratischen Fehler (MSE). Viele kleine Fehler mitteln sich; ein einzelner Ausreißer zählt quadriert.",
-        boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
       },
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE). MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
-        teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE). MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
-        watch: "Drücke Weiter. Was passiert, wenn die Beobachtungen nicht mehr exakt sind?",
+        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt.",
+        teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt.",
+        watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
-        context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt; minimiert wird der mittlere quadratische Fehler (MSE).",
-        deep: "Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
-        boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
       },
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body,
-        teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body,
-        watch: dataTruthStep.watch,
+        body: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body + "\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
+        teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body + "\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
+        watch: "",
         demoState: dataTruthStep.demoState,
-        context: dataTruthStep.context,
-        deep: dataTruthStep.deep,
-        boxes: dataTruthStep.boxes,
-        sources: dataTruthStep.sources
       }
     ]
   } : {
@@ -1410,48 +1398,36 @@
         title: "Gauss, Ceres, and the data",
         body: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
         teaser: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
-        watch: "Drag the slider or click through and watch the data become more precise with better telescopes. Real data sits around a truth in the same way. Sentences, for example, can be completely right, partly right, or completely wrong.",
+        watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
         context: "The green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
-        deep: "Without fitting, one would have to put an orbit through a single point. Gauss used all observations together.",
-        boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
       },
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
-        body: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
-        teaser: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
-        watch: "Press Next. How narrow does the bell curve become?",
+        body: "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981).\n\nAs the telescopes get better, the cloud contracts and the bell curve narrows. The true orbit stays in the middle.\n\nThe method came from astronomy and entered machine learning because the same problem returned: putting a simple curve through imperfect measurements. MSE is a loss function for regression. Loss functions determine how good a neural network is on its data and give the computer an important signal for how it must improve.",
+        teaser: "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981).\n\nAs the telescopes get better, the cloud contracts and the bell curve narrows. The true orbit stays in the middle.\n\nThe method came from astronomy and entered machine learning because the same problem returned: putting a simple curve through imperfect measurements. MSE is a loss function for regression. Loss functions determine how good a neural network is on its data and give the computer an important signal for how it must improve.",
+        watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 1 },
-        context: "The smaller the spread, the tighter the bell curve around the true orbit. The observations remain noisy, but the fit becomes more stable.",
-        deep: "Least squares minimises the sum of squared distances, the mean squared error (MSE). Many small errors average out; a single outlier counts squared.",
-        boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
       },
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
-        body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE). MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
-        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE). MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
-        watch: "Press Next. What happens when the observations are no longer exact?",
+        body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted.",
+        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted.",
+        watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
-        context: "The bell curve is narrow; the true orbit lies in the middle. The fit trusts no single measurement and chooses the curve closest to all of them at once; it minimises the mean squared error (MSE).",
-        deep: "The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
-        boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
       },
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
-        body: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body,
-        teaser: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body,
-        watch: dataTruthStep.watch,
+        body: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body + "\n\nThe figure is symbolic and not a real measurement. It is meant to show that some sentences lie closer to the truth than others and some far away from it, similar to the measurements from astronomy.",
+        teaser: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body + "\n\nThe figure is symbolic and not a real measurement. It is meant to show that some sentences lie closer to the truth than others and some far away from it, similar to the measurements from astronomy.",
+        watch: "",
         demoState: dataTruthStep.demoState,
-        context: dataTruthStep.context,
-        deep: dataTruthStep.deep,
-        boxes: dataTruthStep.boxes,
-        sources: dataTruthStep.sources
       }
     ]
   };
