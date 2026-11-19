@@ -2,8 +2,7 @@
    TEN MINUTES — a compact path through From Nothing to Large Language Models
    Design: ScaDS.AI palette (Dark Blue, Green, Blue, Teal, Lilac,
    Light Blue, Grey, Light Green, Yellow) on editorial paper,
-   scads.ai typography: system-ui (headings) / Lingua Franca (prose).
-   Barlow and Open Sans stay declared for the canvas/SVG demos and UI.
+   Barlow (headings) / Open Sans (body).
    ============================================================ */
 
 @font-face {
@@ -173,10 +172,10 @@
 	--tm-shadow-lift: 0 2px 2px rgba(0, 0, 0, 0.05), 0 30px 80px -36px rgba(0, 0, 0, 0.6);
 	--tm-radius: 0px;
 	--tm-radius-sm: 0px;
-	--tm-display: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-	--tm-ui: 'Lingua Franca', 'CMS', 'Source Serif 4', Charter, 'Bitstream Charter', Cambria, Georgia, serif;
-	--tm-prose: 'Lingua Franca', 'CMS', 'Source Serif 4', Charter, 'Bitstream Charter', Cambria, Georgia, serif;
-	--tm-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+	--tm-display: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--tm-ui: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--tm-prose: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--tm-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
 	--tm-col: 68ch;
 	--tm-topbar: 66px;
 	color-scheme: light;
@@ -225,7 +224,7 @@ body {
 	font-family: var(--tm-ui);
 	font-size: 1.125rem;
 	line-height: 1.875rem;
-	font-weight: 400;
+	font-weight: 300;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	overflow-x: hidden;
