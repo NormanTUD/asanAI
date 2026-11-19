@@ -2,7 +2,7 @@
  * Load an eoy lesson into a normal <div> instead of an iframe.
  *
  *   <div id="asanai-eoy-embed" data-src="eoy/1?lang=de" data-height="1500"></div>
- *   <script src="/asanai_blog_proxy.php?eoy/div-embed.js"></script>
+ *   <script src="/asanai_blog_proxy.php?eoy/div-embed.js?v=3"></script>
  *
  * The script fetches the lesson through the proxy, scopes its CSS under the
  * target div, injects the lesson markup and loads the lesson scripts in order.
@@ -161,6 +161,7 @@
     if (!root) return;
     if (root.__asanaiLoaderGuard) { clearInterval(root.__asanaiLoaderGuard); root.__asanaiLoaderGuard = null; }
     if (root.__asanaiPlaceholderTimer) { clearInterval(root.__asanaiPlaceholderTimer); root.__asanaiPlaceholderTimer = null; }
+    if (root.__asanaiLoaderObserver) { root.__asanaiLoaderObserver.disconnect(); root.__asanaiLoaderObserver = null; }
   }
 
   function insertPreview(root, all, day, lang) {
@@ -193,6 +194,7 @@
       width = Math.round(rr.width * 0.63);
       height = rr.height;
     }
+    loader.classList.add("is-positioned");
     var st = loader.style;
     st.setProperty("left", left + "px", "important");
     st.setProperty("top", top + "px", "important");
@@ -210,6 +212,7 @@
     var sr = stage.getBoundingClientRect();
     if (!sr.width || !sr.height) return;
     loader.__asanaiStage = true;
+    loader.classList.add("is-positioned");
     if (root.querySelector("#ls-title") && root.__asanaiPlaceholderTimer) {
       clearInterval(root.__asanaiPlaceholderTimer);
       root.__asanaiPlaceholderTimer = null;
@@ -342,10 +345,16 @@
     var spinner = document.createElement("div");
     spinner.className = "asanai-eoy-spinner";
     loader.appendChild(spinner);
+    loader.style.setProperty("width", "0", "important");
+    loader.style.setProperty("height", "0", "important");
     root.appendChild(loader);
     placeLoaderPlaceholder(root, loader);
     removeForeignLoaders();
     root.__asanaiLoaderGuard = setInterval(removeForeignLoaders, 120);
+    if (window.MutationObserver) {
+      root.__asanaiLoaderObserver = new MutationObserver(removeForeignLoaders);
+      root.__asanaiLoaderObserver.observe(document.body, { childList: true, subtree: true });
+    }
     root.__asanaiPlaceholderTimer = setInterval(function () {
       if (root.querySelector("#ls-title")) {
         clearInterval(root.__asanaiPlaceholderTimer);
@@ -362,8 +371,11 @@
       + rootSelector + " .ls-app{position:absolute!important;inset:0!important}"
       + rootSelector + " .asanai-eoy-loader{position:absolute!important;inset:0!important;"
       + "z-index:2147483647!important;display:flex!important;align-items:center!important;"
-      + "justify-content:center!important;background:#fff!important;transition:opacity .25s ease!important}"
+      + "justify-content:center!important;background:#fff!important;opacity:0;pointer-events:none;"
+      + "transition:opacity .18s ease!important}"
+      + rootSelector + " .asanai-eoy-loader.is-positioned{opacity:1!important;pointer-events:auto!important}"
       + rootSelector + " .asanai-eoy-loader.is-done{opacity:0!important;pointer-events:none!important}"
+      + "#ls-page-loader,#asanai-screen-loader,#ls-boot-style{display:none!important}"
       + rootSelector + " .asanai-eoy-spinner{width:40px!important;height:40px!important;"
       + "border:3px solid #dbe3e0!important;border-top-color:#63a44b!important;"
       + "border-radius:50%!important;animation:asanai-eoy-spin .8s linear infinite!important}"
@@ -440,20 +452,25 @@
 
       return applyStyles(cssEntries).then(function () {
         injectBody(doc, root, loader);
+        root.setAttribute("data-asanai-phase", "text");
         focusLoaderOnStage(root);
-        if (previewPromise) {
-          previewPromise.then(function (all) {
-            if (all && !doc.querySelector(".asanai-eoy-preview")) {
-              insertPreview(root, all, previewDay, previewLang);
-            }
-          });
+        var previewFallback = Promise.resolve();
+        if (previewPromise && !doc.querySelector(".asanai-eoy-preview")) {
+          previewFallback = Promise.race([
+            previewPromise.then(function (all) {
+              if (all) insertPreview(root, all, previewDay, previewLang);
+            }),
+            new Promise(function (resolve) { setTimeout(resolve, 300); })
+          ]);
         }
-        headScripts.forEach(runInline);
-        if (typeof window.EOY_DAY !== "number") {
-          var day = (srcPath.match(/(?:^|\/)(\d+)(?:\?|$)/) || [])[1];
-          if (day) window.EOY_DAY = parseInt(day, 10);
-        }
-        return loadScripts(doc);
+        return previewFallback.then(function () {
+          headScripts.forEach(runInline);
+          if (typeof window.EOY_DAY !== "number") {
+            var day = (srcPath.match(/(?:^|\/)(\d+)(?:\?|$)/) || [])[1];
+            if (day) window.EOY_DAY = parseInt(day, 10);
+          }
+          return loadScripts(doc);
+        });
       }).then(function (errors) {
         if (errors.length) console.warn("[asanai-eoy] some scripts failed", errors);
         if (window.LearnSys && typeof window.LearnSys.go === "function") {
@@ -461,6 +478,7 @@
             console.error("[asanai-eoy] demo re-render failed", error);
           }
         }
+        root.setAttribute("data-asanai-phase", "demo");
         return waitForLesson(root);
       }).then(function (ok) {
         if (!ok) {
@@ -576,7 +594,19 @@
     }
     return run(early).then(function () {
       var root = window.__ASANAI_EOY_ROOT__;
-      if (root) focusLoaderOnStage(root);
+      if (root) {
+        focusLoaderOnStage(root);
+        root.setAttribute("data-asanai-phase", "text");
+      }
+      return new Promise(function (resolve) {
+        var done = false;
+        function finish() { if (done) return; done = true; resolve(); }
+        if (window.requestAnimationFrame) {
+          requestAnimationFrame(function () { requestAnimationFrame(finish); });
+        }
+        setTimeout(finish, 120);
+      });
+    }).then(function () {
       return run(rest);
     }).then(function () { return errors; });
   }
@@ -604,6 +634,7 @@
     } catch (error) {
       console.error("[asanai-eoy] initPage failed", error);
     }
+    root.setAttribute("data-asanai-phase", "ready");
     root.classList.add("ls-loaded");
     window.__lsPageReady = true;
     var settle = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();

@@ -49,7 +49,7 @@ Bearbeiten-Bedienelemente und schaltet den Hover-Effekt der Textblöcke ab.
 
 ```html
 <div id="asanai-eoy-embed" data-src="eoy/1?lang=de" data-height="1500"></div>
-<script src="/asanai_blog_proxy.php?eoy/div-embed.js"></script>
+<script src="/asanai_blog_proxy.php?eoy/div-embed.js?v=3"></script>
 ```
 
 `div-embed.js` lädt die Lesson über den Proxy, scoped deren CSS auf das Div,
