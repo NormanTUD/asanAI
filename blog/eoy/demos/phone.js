@@ -95,7 +95,7 @@
     function clearTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
     function buildLogo() {
       var letters = (DE ? "Suchmaschine" : "Search Engine").split("");
-      var palette = ["#63a44b", "#1275ac", "#9f9700", "#9185be", "#5c9baf", "#004b6f"];
+      var palette = ["#1a73e8", "#e53935", "#f57c00", "#0f9d58", "#8e24aa", "#00acc1"];
       logo.removeAttribute("aria-hidden");
       logo.setAttribute("role", "img");
       logo.setAttribute("aria-label", DE ? "Suchmaschine" : "Search Engine");
