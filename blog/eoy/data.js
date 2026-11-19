@@ -1484,7 +1484,7 @@
   var weekdayStep = {
     kicker: DE ? "Wochentage" : "Weekdays",
     title: DE ? "Wochentage auf einer Linie" : "Weekdays on a line",
-    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Da auf Sonntag wieder Montag folgt, bilden sie einen Kreis. Beim Zusammenrollen der Linie entsteht ein eigener Raum: Die Tage liegen dann nicht mehr auf einer Geraden, sondern auf einem geschlossenen Ring." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. Because Monday follows Sunday again, they form a circle. When the line rolls up, it becomes its own space: the days no longer lie on a straight line but on a closed ring.",
+    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Da auf Sonntag wieder Montag folgt, bilden sie einen Kreis. Dieser Kreis ist ein Beispiel für einen sogenannten Unterraum: ein Raum, der in einen höheren Raum eingebettet, aber in sich abgeschlossen ist." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. Because Monday follows Sunday again, they form a circle. This circle is an example of a so-called subspace: a space embedded in a higher space but closed in itself.",
     watch: "",
     demoState: { scene: "weekday" },
     inherit: false,
