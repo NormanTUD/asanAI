@@ -2357,8 +2357,11 @@
     var day = activeDay();
     var base = activeStep();
     if (cfg.eoySingle) {
+      if (demo && typeof demo.hasPrev === "function") {
+        if (demo.hasPrev()) return true;
+        return !!(base && base.substeps && state.substep > 0);
+      }
       if (base && base.substeps) return state.substep > 0;
-      if (demo && typeof demo.hasPrev === "function") return !!demo.hasPrev();
       return !!(demo && typeof demo.prev === "function");
     }
     if (base && base.substeps && state.substep > 0) return true;
@@ -2369,8 +2372,11 @@
     var day = activeDay();
     var base = activeStep();
     if (cfg.eoySingle) {
+      if (demo && typeof demo.hasNext === "function") {
+        if (demo.hasNext()) return true;
+        return !!(base && base.substeps && state.substep < base.substeps.length - 1);
+      }
       if (base && base.substeps) return state.substep < base.substeps.length - 1;
-      if (demo && typeof demo.hasNext === "function") return !!demo.hasNext();
       return !!(demo && typeof demo.next === "function");
     }
     if (base && base.substeps && state.substep < base.substeps.length - 1) return true;
