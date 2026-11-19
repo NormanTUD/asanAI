@@ -222,14 +222,35 @@
       // Wrong items sit outside the truth band; the green band is smooth and wide.
       var bandOuter = 44;
       var RED = "#c62828";
-      var bandTop = curveY(0.5) - bandOuter;
-      if (bandTop > padT) {
-        var redWash = ctx.createLinearGradient(0, padT, 0, bandTop);
-        redWash.addColorStop(0, "rgba(198,40,40,.42)");
-        redWash.addColorStop(0.55, "rgba(198,40,40,.16)");
-        redWash.addColorStop(1, "rgba(198,40,40,0)");
+      var GREEN_FILL = "rgba(99,164,75,.22)";
+      // Vertical extent of the curved band top, so the red wash can blend
+      // straight into the green band instead of fading out through white.
+      var bandTopMin = Infinity, bandTopMax = -Infinity;
+      for (var bt = 0; bt <= 100; bt++) {
+        var bty = curveY(bt / 100) - bandOuter;
+        if (bty < bandTopMin) bandTopMin = bty;
+        if (bty > bandTopMax) bandTopMax = bty;
+      }
+      if (bandTopMax > padT) {
+        var washSpan = bandTopMax - padT;
+        var greenAt = Math.max(0, Math.min(1, (bandTopMin - padT) / washSpan));
+        var redWash = ctx.createLinearGradient(0, padT, 0, bandTopMax);
+        redWash.addColorStop(0, "rgba(198,40,40,.46)");
+        redWash.addColorStop(greenAt * 0.55, "rgba(198,116,58,.34)");
+        redWash.addColorStop(greenAt * 0.82, "rgba(152,150,60,.26)");
+        redWash.addColorStop(greenAt, GREEN_FILL);
+        // Clip the wash to the area above the band so it blends into the green
+        // edge without stacking opacity on top of the band itself.
+        ctx.beginPath();
+        ctx.moveTo(padL, padT);
+        ctx.lineTo(w - padR, padT);
+        for (var wb = 100; wb >= 0; wb--) {
+          var wx = padL + wb / 100 * (w - padL - padR);
+          ctx.lineTo(wx, curveY(wb / 100) - bandOuter);
+        }
+        ctx.closePath();
         ctx.fillStyle = redWash;
-        ctx.fillRect(padL, padT, w - padL - padR, bandTop - padT);
+        ctx.fill();
       }
       ctx.beginPath();
       for (var ub = 0; ub <= 100; ub++) {
@@ -243,7 +264,10 @@
         ctx.lineTo(lx, ly);
       }
       ctx.closePath();
-      ctx.fillStyle = "rgba(99,164,75,.22)";
+      // Lay down the paper first so grid dots do not show through the band.
+      ctx.fillStyle = C.paper;
+      ctx.fill();
+      ctx.fillStyle = GREEN_FILL;
       ctx.fill();
       ctx.strokeStyle = C.green; ctx.lineWidth = 2.6;
       ctx.beginPath();
@@ -258,7 +282,9 @@
       ctx.fillText(DE ? "Wahrheit" : "truth", padL + 4, curveY(0) - 12);
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+      // Keep only the vertical axis: the horizontal line would run right below
+      // the low truth curve and read as a dark stripe inside the green band.
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.stroke();
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.textAlign = "center"; ctx.textBaseline = "top";
