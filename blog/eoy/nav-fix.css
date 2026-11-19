@@ -36,8 +36,17 @@ body[data-page="lesson"] .ls-bottom-nav { display: none !important; }
 #navfix-prev[hidden], #navfix-next[hidden] { display: none !important; }
 
 /* Full-page loading spinner, hidden when the page has loaded. */
-#ls-page-loader{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:#fff;transition:opacity .32s ease,visibility .32s ease;opacity:1;visibility:visible;animation:ls-page-loader-fallback .35s ease 9s forwards}
+#ls-page-loader{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#fff;transition:opacity .32s ease,visibility .32s ease;opacity:1;visibility:visible;animation:ls-page-loader-fallback .35s ease 9s forwards}
 #ls-page-loader .ls-page-loader-spinner{width:38px;height:38px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:ls-page-spin .8s linear infinite}
 #ls-page-loader.is-done{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important}
 @keyframes ls-page-spin{to{transform:rotate(360deg)}}
 @keyframes ls-page-loader-fallback{to{opacity:0;visibility:hidden}}
+
+/* Hide navigation until the page has finished loading. */
+body:not(.ls-loaded) #ls-quick-prev,
+body:not(.ls-loaded) #ls-quick-next,
+body:not(.ls-loaded) #navfix-prev,
+body:not(.ls-loaded) #navfix-next,
+body:not(.ls-loaded) #eoy-embed-nav,
+body:not(.ls-loaded) .eoy-nav,
+body:not(.ls-loaded) .ls-bottom-nav{display:none!important}

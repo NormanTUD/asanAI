@@ -24,8 +24,21 @@
 
 	window.sendHeight = sendHeight;
 
-	window.addEventListener("load", function () { sendHeight(); });
+	function sendReady() {
+		if (window.parent && window.parent !== window) {
+			window.parent.postMessage({ type: "lesson-ready" }, "*");
+		}
+	}
+
+	window.addEventListener("load", function () {
+		sendHeight();
+		sendReady();
+		setTimeout(sendReady, 400);
+		setTimeout(sendReady, 1500);
+	});
+	window.addEventListener("pageshow", function () { sendReady(); });
 	window.addEventListener("resize", function () { sendHeight(); });
+	if (document.readyState === "complete") { sendReady(); }
 
 	var startObserving = function () {
 		if (!document.body) return;

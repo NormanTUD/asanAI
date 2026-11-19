@@ -1,4 +1,11 @@
 <?php
+if (!headers_sent()) {
+	header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+	header('Pragma: no-cache');
+	header('Expires: 0');
+	header('Surrogate-Control: no-store');
+	header('CDN-Cache-Control: no-store');
+}
 if (!array_key_exists('eoyDay', get_defined_vars())) {
 	http_response_code(404);
 	exit;
@@ -55,7 +62,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 		})();
 	</script>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
-	<link rel="stylesheet" href="learnsys.css?v=<?php echo filemtime(__DIR__.'/learnsys.css'); ?>">
+	<link rel="stylesheet" href="learnsys2.css?v=<?php echo filemtime(__DIR__.'/learnsys2.css'); ?>">
 	<link rel="stylesheet" href="eoy-nav.css?v=<?php echo filemtime(__DIR__.'/eoy-nav.css'); ?>">
 	<link rel="stylesheet" href="nav-fix.css?v=<?php echo filemtime(__DIR__.'/nav-fix.css'); ?>">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
@@ -108,7 +115,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	</div>
 	<script>
 		(function(){
-			function done(){var l=document.getElementById("ls-page-loader");if(l){l.classList.add("is-done");l.setAttribute("aria-hidden","true");}}
+			function done(){window.__lsPageReady=true;if(document.body)document.body.classList.add("ls-loaded");var l=document.getElementById("ls-page-loader");if(l){l.classList.add("is-done");l.setAttribute("aria-hidden","true");}}
 			window.addEventListener("load",function(){setTimeout(done,120);});
 			window.addEventListener("pageshow",function(e){if(e.persisted)done();});
 		})();
@@ -124,7 +131,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="assets/learnsys-visuals.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-visuals.js'); ?>"></script>
 	<script src="assets/learnsys-scene-kit.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-scene-kit.js'); ?>"></script>
-	<script src="learnsys.js?v=<?php echo filemtime(__DIR__.'/learnsys.js'); ?>"></script>
+	<script src="learnsys2.js?v=<?php echo filemtime(__DIR__.'/learnsys2.js'); ?>"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
 	<script src="assets/space-morph.js?v=<?php echo filemtime(__DIR__.'/assets/space-morph.js'); ?>"></script>
 	<script src="intuition_gpt2_data.js?v=<?php echo filemtime(__DIR__.'/intuition_gpt2_data.js'); ?>"></script>
@@ -139,7 +146,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	<script src="demos/<?php echo $demoName; ?>?v=<?php echo filemtime($demoFile); ?>"></script>
 	<?php endforeach; ?>
 	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
-	<script src="data.js?v=<?php echo filemtime(__DIR__.'/data.js'); ?>"></script>
+	<script src="data2.js?v=<?php echo filemtime(__DIR__.'/data2.js'); ?>"></script>
 	<script src="eoy-embed-nav.js?v=<?php echo filemtime(__DIR__.'/eoy-embed-nav.js'); ?>"></script>
 	<script src="nav-fix.js?v=<?php echo filemtime(__DIR__.'/nav-fix.js'); ?>"></script>
 	<script src="frame-height.js?v=<?php echo filemtime(__DIR__.'/frame-height.js'); ?>"></script>

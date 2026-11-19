@@ -20,15 +20,45 @@
             || document.querySelector("iframe[" + KEY_ATTR + "]");
     }
 
+    function ensureLoader() {
+        var el = document.getElementById("asanai-screen-loader");
+        if (!el) {
+            el = document.createElement("div");
+            el.id = "asanai-screen-loader";
+            el.setAttribute("style", "position:fixed;inset:0;z-index:2147483647;background:#fff;display:flex;align-items:center;justify-content:center;transition:opacity .28s ease");
+            var spinner = document.createElement("div");
+            spinner.setAttribute("style", "width:40px;height:40px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:asanaiScreenSpin .8s linear infinite");
+            el.appendChild(spinner);
+            document.body.appendChild(el);
+        }
+        if (!document.getElementById("asanai-screen-spin-style")) {
+            var style = document.createElement("style");
+            style.id = "asanai-screen-spin-style";
+            style.textContent = "@keyframes asanaiScreenSpin{to{transform:rotate(360deg)}}";
+            document.head.appendChild(style);
+        }
+        return el;
+    }
+
+    function hideLoader() {
+        var el = document.getElementById("asanai-screen-loader");
+        if (!el) return;
+        el.style.opacity = "0";
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 320);
+    }
+
     function attachHeight(frame) {
         if (!frame || frame.__asanaiHeightBound) return;
         frame.__asanaiHeightBound = true;
 
         window.addEventListener("message", function (event) {
-            if (!event.data || event.data.type !== "height") return;
+            if (!event.data) return;
             if (event.source && frame.contentWindow && event.source !== frame.contentWindow) return;
+            if (event.data.type === "lesson-ready") { hideLoader(); return; }
+            if (event.data.type !== "height") return;
             var height = parseInt(event.data.val, 10);
             if (height > 0) frame.style.height = height + "px";
+            hideLoader();
         }, false);
     }
 
@@ -82,8 +112,17 @@
     }
 
     function init() {
-        attachHeight(getFrame());
+        ensureLoader();
+        var frame = getFrame();
+        attachHeight(frame);
         attachKeys();
+        if (frame) {
+            frame.addEventListener("load", function () { setTimeout(hideLoader, 250); });
+            try {
+                if (frame.contentDocument && frame.contentDocument.readyState === "complete") setTimeout(hideLoader, 250);
+            } catch (e) {}
+        }
+        setTimeout(hideLoader, 12000);
     }
 
     if (document.readyState === "loading") {

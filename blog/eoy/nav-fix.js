@@ -91,7 +91,8 @@
 
     function update() {
       removeStray();
-      var p = canPrev(), n = canNext();
+      var ready = window.__lsPageReady === true;
+      var p = ready && canPrev(), n = ready && canNext();
       prev.style.setProperty("display", p ? "inline-flex" : "none", "important");
       next.style.setProperty("display", n ? "inline-flex" : "none", "important");
     }
@@ -114,6 +115,8 @@
 (function () {
   "use strict";
   function done() {
+    window.__lsPageReady = true;
+    if (document.body) document.body.classList.add("ls-loaded");
     var l = document.getElementById("ls-page-loader");
     if (!l) return;
     l.classList.add("is-done");

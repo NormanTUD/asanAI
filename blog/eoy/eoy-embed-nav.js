@@ -86,8 +86,9 @@
     b.next.addEventListener("click", function () { goNext(); update(); setTimeout(update, 140); });
 
     function update() {
-      var p = canPrev();
-      var n = canNext();
+      var ready = window.__lsPageReady === true;
+      var p = ready && canPrev();
+      var n = ready && canNext();
       b.prev.hidden = !p;
       b.next.hidden = !n;
       // Inline display beats the UA [hidden] rule, so toggle it explicitly.
