@@ -185,21 +185,12 @@
     if (!root || !loader) return;
     var rr = root.getBoundingClientRect();
     if (!rr.width || !rr.height) return;
-    var left = 0, top = 0, width = rr.width, height = rr.height;
-    if (rr.width <= 980) {
-      top = Math.round(rr.height * 0.44);
-      height = Math.round(rr.height * 0.56);
-    } else {
-      left = Math.round(rr.width * 0.37);
-      width = Math.round(rr.width * 0.63);
-      height = rr.height;
-    }
     loader.classList.add("is-positioned");
     var st = loader.style;
-    st.setProperty("left", left + "px", "important");
-    st.setProperty("top", top + "px", "important");
-    st.setProperty("width", width + "px", "important");
-    st.setProperty("height", height + "px", "important");
+    st.setProperty("left", "0", "important");
+    st.setProperty("top", "0", "important");
+    st.setProperty("width", rr.width + "px", "important");
+    st.setProperty("height", rr.height + "px", "important");
     st.setProperty("right", "auto", "important");
     st.setProperty("bottom", "auto", "important");
   }
@@ -342,9 +333,14 @@
     loader.className = "asanai-eoy-loader";
     loader.setAttribute("role", "status");
     loader.setAttribute("aria-live", "polite");
-    var spinner = document.createElement("div");
-    spinner.className = "asanai-eoy-spinner";
-    loader.appendChild(spinner);
+    var loaderPanel = document.createElement("div");
+    loaderPanel.className = "asanai-eoy-loader-panel";
+    var loaderLabel = document.createElement("div");
+    loaderLabel.className = "asanai-eoy-loader-label";
+    loaderLabel.textContent = lang === "de" ? "Lädt …" : "Loading …";
+    loaderPanel.appendChild(loaderLabel);
+    loader.appendChild(loaderPanel);
+    loader.setAttribute("aria-label", lang === "de" ? "Lädt …" : "Loading …");
     loader.style.setProperty("width", "0", "important");
     loader.style.setProperty("height", "0", "important");
     root.appendChild(loader);
@@ -370,16 +366,25 @@
       + "box-sizing:border-box!important;background:#fff}"
       + rootSelector + " .ls-app{position:absolute!important;inset:0!important}"
       + rootSelector + " .asanai-eoy-loader{position:absolute!important;inset:0!important;"
-      + "z-index:2147483647!important;display:flex!important;align-items:center!important;"
-      + "justify-content:center!important;background:#fff!important;opacity:0;pointer-events:none;"
-      + "transition:opacity .18s ease!important}"
+      + "z-index:2147483647!important;display:block!important;padding:12px!important;"
+      + "background:#fff!important;opacity:0;pointer-events:none;"
+      + "transition:opacity .18s ease!important;box-sizing:border-box!important}"
       + rootSelector + " .asanai-eoy-loader.is-positioned{opacity:1!important;pointer-events:auto!important}"
       + rootSelector + " .asanai-eoy-loader.is-done{opacity:0!important;pointer-events:none!important}"
       + "#ls-page-loader,#asanai-screen-loader,#ls-boot-style{display:none!important}"
-      + rootSelector + " .asanai-eoy-spinner{width:40px!important;height:40px!important;"
-      + "border:3px solid #dbe3e0!important;border-top-color:#63a44b!important;"
-      + "border-radius:50%!important;animation:asanai-eoy-spin .8s linear infinite!important}"
-      + "@keyframes asanai-eoy-spin{to{transform:rotate(360deg)}}"
+      + rootSelector + " .asanai-eoy-loader-panel{position:absolute!important;inset:12px!important;"
+      + "overflow:hidden!important;background:#f7f9f8!important;border:1px solid #e3eae7!important}"
+      + rootSelector + " .asanai-eoy-loader-panel:after{content:'';position:absolute!important;"
+      + "top:0!important;bottom:0!important;left:0!important;width:42%!important;"
+      + "background:linear-gradient(90deg,transparent,rgba(99,164,75,.13),rgba(18,117,172,.13),transparent)!important;"
+      + "animation:asanai-eoy-shimmer 1.45s linear infinite!important;transform:translateX(-130%)}"
+      + rootSelector + " .asanai-eoy-loader-label{position:absolute!important;inset:0!important;"
+      + "display:flex!important;align-items:center!important;justify-content:center!important;"
+      + "z-index:2!important;font:600 13px/1 \"Open Sans\",system-ui,sans-serif!important;"
+      + "letter-spacing:.06em!important;color:#627476!important;"
+      + "animation:asanai-eoy-pulse 1.5s ease-in-out infinite!important}"
+      + "@keyframes asanai-eoy-shimmer{to{transform:translateX(330%)}}"
+      + "@keyframes asanai-eoy-pulse{0%,100%{opacity:.55}50%{opacity:1}}"
       + ".asanai-eoy-loadbar{position:fixed;left:0;right:0;top:0;height:3px;z-index:2147483000;"
       + "pointer-events:none;overflow:hidden;background:rgba(0,75,111,.06);opacity:1;"
       + "transition:opacity .25s ease}"
