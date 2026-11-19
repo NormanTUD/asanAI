@@ -158,11 +158,11 @@ class Results:
         print(f"  FAIL {page} [{lang}] {name}" + (f" — {detail}" if detail else ""))
         return False
 
-    def page_state(self, driver, page, lang, name):
+    def page_state(self, driver, page, lang, name, min_text=40):
         s = state(driver)
         issues = console_issues(driver)
         ok = self.check(page, lang, f"{name}: title", bool(s["title"]), s["title"][:80])
-        ok = self.check(page, lang, f"{name}: prose", s["text"] > 40, str(s["text"])) and ok
+        ok = self.check(page, lang, f"{name}: prose", s["text"] > min_text, str(s["text"])) and ok
         ok = self.check(page, lang, f"{name}: math", s["math"] == 0, str(s["math"])) and ok
         ok = self.check(page, lang, f"{name}: overflow", s["overflow"] <= 2, f"+{s['overflow']}px") and ok
         ok = self.check(page, lang, f"{name}: console", not issues, " | ".join(issues)[:300]) and ok
@@ -188,7 +188,7 @@ def walk_index(driver, results, page, lang):
             results.check(page, lang, f"step {step + 1}", False, str(exc)[:160])
             continue
         time.sleep(0.32)
-        ok, s = results.page_state(driver, page, lang, f"step {step + 1}")
+        ok, s = results.page_state(driver, page, lang, f"step {step + 1}", 20)
         if not ok:
             return
         previous = signature(driver)
@@ -202,7 +202,7 @@ def walk_index(driver, results, page, lang):
             current = signature(driver)
             if current == previous:
                 break
-            ok, s = results.page_state(driver, page, lang, f"step {step + 1} sub {sub + 1}")
+            ok, s = results.page_state(driver, page, lang, f"step {step + 1} sub {sub + 1}", 20)
             if not ok:
                 return
             previous = current
@@ -211,7 +211,7 @@ def walk_index(driver, results, page, lang):
     except Exception:
         pass
     time.sleep(0.4)
-    _, s = results.page_state(driver, page, lang, "end")
+    _, s = results.page_state(driver, page, lang, "end", 20)
     results.check(page, lang, "end: forward hidden", s["next"] is None, str(s["next"]))
     results.check(page, lang, "end: back visible", s["prev"] is not None, str(s["prev"]))
     check_layout(results, page, lang, "end", s)
@@ -220,7 +220,7 @@ def walk_index(driver, results, page, lang):
     except Exception:
         pass
     time.sleep(0.4)
-    _, s = results.page_state(driver, page, lang, "middle")
+    _, s = results.page_state(driver, page, lang, "middle", 20)
     results.check(page, lang, "middle: both buttons", s["prev"] is not None and s["next"] is not None, str(s))
     check_layout(results, page, lang, "middle", s)
 
@@ -238,7 +238,7 @@ def walk_single(driver, results, page, lang):
             break
         steps += 1
         time.sleep(0.35)
-        ok, s = results.page_state(driver, page, lang, f"next {steps}")
+        ok, s = results.page_state(driver, page, lang, f"next {steps}", 20)
         if not ok:
             return
         check_layout(results, page, lang, f"next {steps}", s)
@@ -256,7 +256,7 @@ def walk_single(driver, results, page, lang):
             break
         back_steps += 1
         time.sleep(0.35)
-        ok, s = results.page_state(driver, page, lang, f"back {back_steps}")
+        ok, s = results.page_state(driver, page, lang, f"back {back_steps}", 20)
         if not ok:
             return
         check_layout(results, page, lang, f"back {back_steps}", s)

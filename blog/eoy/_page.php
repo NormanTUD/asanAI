@@ -34,7 +34,6 @@ $pageTitle = $eoyDay === null ? 'One Word at a Time | Ten Minutes' : 'One Word a
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A 31-day interactive introduction to how large language models work: data, tokens, embeddings, attention, training, agents, society, and consciousness.">
 	<meta name="theme-color" content="#ffffff">
-	<link rel="preload" as="image" href="opera.jpg">
 	<title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
 	<script>
 		window.TM_LOCAL_EDITOR = <?php echo $localEditor ? 'true' : 'false'; ?>;
