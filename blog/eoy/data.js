@@ -107,7 +107,7 @@
     {
       kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei 15, Lauwarm bei 45. Addiert man den Wert von Lauwarm, landet man bei 60, also bei Warm: 15 + 45 = 60.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
+      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei $15$, Lauwarm bei $45$. Nun kann man $\\text{Kalt} + \\text{Lauwarm}$ rechnen und landet bei 60, also bei Warm.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
       watch: "",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
       inherit: false,
@@ -116,28 +116,26 @@
           id: "g-basics",
           title: DE ? "Eine Ebene tiefer" : "One level deeper",
           questions: [
-            { id: "q-deep", title: DE ? "Einschränkungen hier" : "Limitations here", body: DE ? "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt." : "The positions are chosen by hand here so the arithmetic works out. In a model they are learned from many examples.", tex: "", kind: "question" }
+            { id: "q-deep", title: DE ? "Einschränkungen hier" : "Limitations here", body: DE ? "Die Positionen sind hier von Hand gewählt, damit die Rechnungen aufgehen. In einem Modell werden sie aus vielen Beispielen gelernt." : "The positions are chosen by hand here so the arithmetic works out. In a model they are learned from many examples.", tex: "", kind: "question" }
           ]
         },
         {
           id: "g-lens-mathematik",
           title: DE ? "Mathematik" : "Mathematics",
-          questions: [
-            { id: "q-box-emb-1", title: DE ? "Was ist ein Vektor?" : "What is a vector?", body: DE ? "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist in LLM oft wichtiger als die Länge." : "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. In LLMs, direction often matters more than length.", tex: "", kind: "question" }
-          ]
+          questions: []
         },
         {
           id: "g-lens-geschichte",
           title: DE ? "Geschichte" : "History",
           questions: [
-            { id: "q-box-emb-2", title: DE ? "Woher kommt die Idee?" : "Where does the idea come from?", body: DE ? "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren." : "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors.", tex: "", kind: "question" }
+            { id: "q-box-emb-2", title: DE ? "Woher kommt die Idee?" : "Where does the idea come from?", body: DE ? "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee, dass man Wörter danach gruppieren kann, wie oft sie in der Nähe voneinander vorkommen, als Erster formuliert." : "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) was the first to formulate the distributional idea that words can be grouped by how often they occur near each other.", tex: "", kind: "question" }
           ]
         },
         {
           id: "g-lens-optional",
           title: DE ? "Optional" : "Optional",
           questions: [
-            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
+            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt die Begriffe sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Wahl, keine reale Messung." : "No. The demo separates the concepts cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic choice, not a real measurement.", tex: "", kind: "question" }
           ]
         },
         {
@@ -198,28 +196,26 @@
           id: "g-basics",
           title: DE ? "Eine Ebene tiefer" : "One level deeper",
           questions: [
-            { id: "q-deep", title: DE ? "Einschränkungen hier" : "Limitations here", body: DE ? "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt." : "The positions are chosen by hand here so the arithmetic works out. In a model they are learned from many examples.", tex: "", kind: "question" }
+            { id: "q-deep", title: DE ? "Einschränkungen hier" : "Limitations here", body: DE ? "Die Positionen sind hier von Hand gewählt, damit die Rechnungen aufgehen. In einem Modell werden sie aus vielen Beispielen gelernt." : "The positions are chosen by hand here so the arithmetic works out. In a model they are learned from many examples.", tex: "", kind: "question" }
           ]
         },
         {
           id: "g-lens-mathematik",
           title: DE ? "Mathematik" : "Mathematics",
-          questions: [
-            { id: "q-box-emb-1", title: DE ? "Was ist ein Vektor?" : "What is a vector?", body: DE ? "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist in LLM oft wichtiger als die Länge." : "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. In LLMs, direction often matters more than length.", tex: "", kind: "question" }
-          ]
+          questions: []
         },
         {
           id: "g-lens-geschichte",
           title: DE ? "Geschichte" : "History",
           questions: [
-            { id: "q-box-emb-2", title: DE ? "Woher kommt die Idee?" : "Where does the idea come from?", body: DE ? "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren." : "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors.", tex: "", kind: "question" }
+            { id: "q-box-emb-2", title: DE ? "Woher kommt die Idee?" : "Where does the idea come from?", body: DE ? "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee, dass man Wörter danach gruppieren kann, wie oft sie in der Nähe voneinander vorkommen, als Erster formuliert." : "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) was the first to formulate the distributional idea that words can be grouped by how often they occur near each other.", tex: "", kind: "question" }
           ]
         },
         {
           id: "g-lens-optional",
           title: DE ? "Optional" : "Optional",
           questions: [
-            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
+            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt die Begriffe sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Wahl, keine reale Messung." : "No. The demo separates the concepts cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic choice, not a real measurement.", tex: "", kind: "question" }
           ]
         },
         {
