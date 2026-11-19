@@ -2353,7 +2353,8 @@
     var base = activeStep();
     if (base && base.substeps && state.substep > 0) return true;
     if (state.step > 0) return true;
-    return cfg.days.indexOf(day) > 0;
+    if (cfg.days.indexOf(day) > 0) return true;
+    return !!(cfg.eoyPage && cfg.eoyPage > 1);
   }
   function hasNextPage() {
     var day = activeDay();
@@ -2361,7 +2362,8 @@
     if (base && base.substeps && state.substep < base.substeps.length - 1) return true;
     if (state.step < visibleCount(day) - 1) return true;
     var pos = cfg.days.indexOf(day);
-    return pos >= 0 && pos < cfg.days.length - 1;
+    if (pos >= 0 && pos < cfg.days.length - 1) return true;
+    return !!(cfg.eoyPage && cfg.eoyPage < cfg.eoyPageCount);
   }
   function updateBottomNav() {
     if (!els.prev || !els.next) return;
@@ -2802,8 +2804,12 @@
     }
     writeHash();
   }
+  function eoyPageHref(n) {
+    var suffix = /\.php$/.test(location.pathname) ? ".php" : "";
+    return String(n) + suffix + location.search;
+  }
   function next() {
-    if (demo && typeof demo.busy === "function" && demo.busy()) {
+    if (!cfg.eoySingle && demo && typeof demo.busy === "function" && demo.busy()) {
       if (typeof demo.finish === "function") demo.finish();
       return;
     }
@@ -2827,6 +2833,9 @@
     if (pos >= 0 && pos < list.length - 1) {
       go(pos + 1, 0);
       return;
+    }
+    if (cfg.eoyPage && cfg.eoyPage < cfg.eoyPageCount) {
+      location.href = eoyPageHref(cfg.eoyPage + 1);
     }
   }
   function lastSubstepFor(day, stepIndex) {
@@ -2859,6 +2868,9 @@
       var rememberedDay = rememberedSubstep(p, lastStep);
       go(pos - 1, lastStep, rememberedDay == null ? lastSubstepFor(p, lastStep) : rememberedDay);
       return;
+    }
+    if (cfg.eoyPage && cfg.eoyPage > 1) {
+      location.href = eoyPageHref(cfg.eoyPage - 1);
     }
   }
 

@@ -2461,6 +2461,8 @@
     eoyResetState: !!singleStep,
     eoyNoHash: true,
     eoySingle: !!singleStep,
+    eoyPage: singleStep ? requestedDay : 0,
+    eoyPageCount: steps.length,
     overlayRevision: "2026-11-17-spacetime-after-worldmodel-8",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
