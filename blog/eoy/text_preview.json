@@ -3,7 +3,7 @@
     "1": {
       "kicker": "Chat und Code",
       "title": "Wie funktionieren Sprachmodelle?",
-      "body": "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist."
+      "body": "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.\n\nSprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist."
     },
     "2": {
       "kicker": "Architektur",
@@ -142,8 +142,8 @@
     },
     "29": {
       "kicker": "Philosophie",
-      "title": "Du bist das Chinesische Zimmer",
-      "body": "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust."
+      "title": "Hat eine KI Bewusstsein?",
+      "body": "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein. Auf der nächsten Folie wird daraus die Frage, ob Regeln allein schon Verstehen sind."
     },
     "30": {
       "kicker": "KI und Gesellschaft",
@@ -160,7 +160,7 @@
     "1": {
       "kicker": "Chat and code",
       "title": "How do language models work?",
-      "body": "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology."
+      "body": "Summaries, chatbots, agents: they all work on the same principle. Here we look specifically at generative LLMs, but most models work in very similar ways.\n\nLanguage models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology."
     },
     "2": {
       "kicker": "Architecture",
@@ -299,8 +299,8 @@
     },
     "29": {
       "kicker": "Philosophy",
-      "title": "You are the Chinese Room",
-      "body": "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do."
+      "title": "Does an AI have consciousness?",
+      "body": "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is. The next slide turns this into the question of whether rules alone are already understanding."
     },
     "30": {
       "kicker": "AI and society",

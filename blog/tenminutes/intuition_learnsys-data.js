@@ -14,18 +14,11 @@
     {
       kicker: "Chat und Code",
       title: "Wie funktionieren Sprachmodelle?",
-      body: "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
-      teaser: "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
+      body: "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.\n\nSprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
+      teaser: "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.\n\nSprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
       demoState: { scene: "media", step: 0 },
       inherit: false,
       questionGroups: [
-        {
-          id: "g-basics",
-          title: "Eine Ebene tiefer",
-          questions: [
-            { id: "q-edit-1794746257458-0", title: "Die gleichen Prinzipien", body: "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.", tex: "", kind: "trivia" }
-          ]
-        },
         {
           id: "g-sources",
           title: "Quellen",
@@ -66,18 +59,11 @@
     {
       kicker: "Chat and code",
       title: "How do language models work?",
-      body: "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
-      teaser: "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
+      body: "Summaries, chatbots, agents: they all work on the same principle. Here we look specifically at generative LLMs, but most models work in very similar ways.\n\nLanguage models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
+      teaser: "Summaries, chatbots, agents: they all work on the same principle. Here we look specifically at generative LLMs, but most models work in very similar ways.\n\nLanguage models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
       demoState: { scene: "media", step: 0 },
       inherit: false,
       questionGroups: [
-        {
-          id: "g-basics",
-          title: "One level deeper",
-          questions: [
-            { id: "q-edit-1794746257458-0", title: "The same principles", body: "Summaries, chatbots, agents: they all work on the same principle. Here we look specifically at generative LLMs, but most models work in very similar ways.", tex: "", kind: "trivia" }
-          ]
-        },
         {
           id: "g-sources",
           title: "Sources",
@@ -749,29 +735,19 @@
     kicker: DE ? "Daten" : "Data",
     title: DE ? "Daten" : "Data",
     body: DE
-      ? "Daten sind der erste Schritt, aber technisch nicht Teil des LLM.\n\nMan nutzt Daten, um auf ihnen zu trainieren, damit das LLM viele Beispiele sieht, und weiß, wie es sich verhalten soll. Das Training beginnt mit Pretraining auf einem großen, gefilterten Textkorpus, damit das Netz Muster, Sprache und Fakten lernt. Danach folgen weitere Stufen:\n\nInstruction-Tuning auf Fragen mit nützlichen Antworten; viele Modelle werden zusätzlich mit Preference Optimization wie RLHF oder DPO ausgerichtet. Der große Korpus gibt die Breite, die kuratierten Beispiele geben die Richtung."
-      : "Data is the first step, but technically not part of the LLM.\n\nWe use data to train on it, so the LLM sees many examples and learns how to behave. Training starts with pretraining on a large, filtered text corpus so the net learns patterns, language, and facts. More stages follow:\n\nInstruction tuning on questions with useful answers; many models are also aligned with preference optimization such as RLHF or DPO. The large corpus provides breadth, the curated examples provide direction.",
+      ? "Beim klassischen Programmieren gibt man dem Computer genau vor, wie er sich zu verhalten hat. Bei Machine Learning dagegen gibt man dem Computer viele Beispiele, wie er reagieren soll, und er lernt daraus, darauf sinnvoll zu reagieren.\n\nDer erste Schritt, den man dafür tun muss ist es, diese Beispiele zu sammeln. Das sind die Daten, auf denen man diese Netzwerke trainiert.\n\nDas Training passiert zweistufig. In der ersten Stufe gibt man dem Computer mehr oder weniger das ganze Internet, was er lesen soll, um daraus grobe Muster zu lernen. Diese Daten sind tausende Terabyte groß.\n\nIn der zweiten Stufe gibt man dem Rechner Frage-Antwort-Paare, damit der Rechner lernt, sich wie ein nützlicher Assistent zu verhalten."
+      : "In classical programming, you tell the computer exactly how to behave. In machine learning, by contrast, you give the computer many examples of how it should react, and it learns from them to react sensibly.\n\nThe first step is to collect these examples. That is the data on which these networks are trained.\n\nTraining happens in two stages. In the first stage, you give the computer more or less the entire internet to read so that it learns rough patterns. This data is thousands of terabytes large.\n\nIn the second stage, you give the computer question-answer pairs so that it learns to behave like a useful assistant.",
     teaser: DE
-      ? "Daten sind der erste Schritt, aber technisch nicht Teil des LLM.\n\nMan nutzt Daten, um auf ihnen zu trainieren, damit das LLM viele Beispiele sieht, und weiß, wie es sich verhalten soll. Das Training beginnt mit Pretraining auf einem großen, gefilterten Textkorpus, damit das Netz Muster, Sprache und Fakten lernt. Danach folgen weitere Stufen:\n\nInstruction-Tuning auf Fragen mit nützlichen Antworten; viele Modelle werden zusätzlich mit Preference Optimization wie RLHF oder DPO ausgerichtet. Der große Korpus gibt die Breite, die kuratierten Beispiele geben die Richtung."
-      : "Data is the first step, but technically not part of the LLM.\n\nWe use data to train on it, so the LLM sees many examples and learns how to behave. Training starts with pretraining on a large, filtered text corpus so the net learns patterns, language, and facts. More stages follow:\n\nInstruction tuning on questions with useful answers; many models are also aligned with preference optimization such as RLHF or DPO. The large corpus provides breadth, the curated examples provide direction.",
+      ? "Beim klassischen Programmieren gibt man dem Computer genau vor, wie er sich zu verhalten hat. Bei Machine Learning dagegen gibt man dem Computer viele Beispiele, wie er reagieren soll, und er lernt daraus, darauf sinnvoll zu reagieren.\n\nDer erste Schritt, den man dafür tun muss ist es, diese Beispiele zu sammeln. Das sind die Daten, auf denen man diese Netzwerke trainiert.\n\nDas Training passiert zweistufig. In der ersten Stufe gibt man dem Computer mehr oder weniger das ganze Internet, was er lesen soll, um daraus grobe Muster zu lernen. Diese Daten sind tausende Terabyte groß.\n\nIn der zweiten Stufe gibt man dem Rechner Frage-Antwort-Paare, damit der Rechner lernt, sich wie ein nützlicher Assistent zu verhalten."
+      : "In classical programming, you tell the computer exactly how to behave. In machine learning, by contrast, you give the computer many examples of how it should react, and it learns from them to react sensibly.\n\nThe first step is to collect these examples. That is the data on which these networks are trained.\n\nTraining happens in two stages. In the first stage, you give the computer more or less the entire internet to read so that it learns rough patterns. This data is thousands of terabytes large.\n\nIn the second stage, you give the computer question-answer pairs so that it learns to behave like a useful assistant.",
     watch: "",
     demoState: { scene: "langdata", mode: "scale", summary: true },
     inherit: false,
     questionGroups: [
       {
-        id: "g-basics",
-        title: DE ? "Eine Ebene tiefer" : "One level deeper",
-        questions: [
-          { id: "q-data-external", title: DE ? "Sind die Daten Teil des LLM?" : "Are the data part of the LLM?", body: DE ? "Nein. Sie stehen außerhalb des Modells und werden zum Training verwendet." : "No. They stand outside the model and are used for training.", tex: "", kind: "question" },
-          { id: "q-data-finetune", title: DE ? "Was ist Fine-Tuning?" : "What is fine-tuning?", body: DE ? "Ein zweites Training auf kleinen, gezielten Frage-Antwort-Daten, damit das Modell für Menschen nützlich antwortet." : "A second training run on small, targeted question-answer data so the model answers usefully for people.", tex: "", kind: "question" },
-          { id: "q-edit-1794825074123-2", title: DE ? "Woher kriegt man die menschlichen Fragen?" : "Where do the human questions come from?", body: DE ? "Es gibt dafür Datensätze wie <b>OpenAssistant</b> oder <b>Less Is More for Alignment</b>. Die großen Anbieter nutzen aber die Interaktionen der realen Nutzer mit ihren Modellen, um mehr solcher Daten zu bekommen." : "There are datasets such as <b>OpenAssistant</b> or <b>Less Is More for Alignment</b>. But the big players use the interactions that real users have with their models to get more of this data.", tex: "", kind: "question" }
-        ]
-      },
-      {
         id: "g-sources",
         title: DE ? "Quellen" : "Sources",
         sources: [
-          { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model", why: { de: "Beispiel für einen Trainingsauszug aus Wikipedia.", en: "Example of a training excerpt from Wikipedia." } },
           { label: "Wikipedia: Paris", url: "https://de.wikipedia.org/wiki/Paris", why: { de: "Erster Absatz des Artikels; die Demo zeigt den HTML-Ausschnitt.", en: "First paragraph of the article; the demo shows the HTML excerpt." } },
           { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
           { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
@@ -1070,40 +1046,26 @@
   var philosophySteps = DE ? [
     {
       kicker: "Philosophie",
-      title: "Du bist das Chinesische Zimmer",
-      body: "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust.",
+      title: "Hat eine KI Bewusstsein?",
+      body: "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein. Auf der nächsten Folie wird daraus die Frage, ob Regeln allein schon Verstehen sind.",
       watch: "",
       demoState: { scene: "chineseroom" },
-      context: "Das Zimmer ist ein Bild für ein Programm: Symbole rein, Symbole raus, nach Regeln. Ob das ganze System versteht, ist die offene Frage.",
-      deep: "Der Systems Reply sagt: Vielleicht versteht nicht die Person im Zimmer, sondern das ganze System aus Person, Regelbuch und Zimmer. Searle hält das für eine Verschiebung des Problems, nicht für eine Lösung. Ein LLM sitzt in einer ähnlichen Lage: Es manipuliert Tokens nach gelernten Regeln, ohne einen direkten Weltzugang zu haben. Ob daraus Verstehen wird, entscheidet der Streit, nicht die Demo.",
-      boxes: [
-        box("phil-1", "Argument", "Was zeigt das Zimmer?", "Dass Symbolmanipulation allein kein Verstehen garantieren muss. Die Antwort kann richtig aussehen, obwohl die Person die Zeichen nicht versteht."),
-        box("phil-2", "Einwand", "Was ist der Systems Reply?", "Vielleicht versteht das ganze System, nicht die Person im Zimmer. Searle bestreitet, dass das den Einwand rettet; die Debatte ist offen."),
-        box("phil-3", "LLM", "Wo steht das Modell?", "Ein LLM folgt gelernten statistischen Regeln über Tokens. Es hat keinen direkten Zugang zur Welt, auf die die Tokens zeigen. Ob daraus Verstehen wird, ist genau die Frage.")
-      ],
-      sources: [
-        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756", why: { de: "Chinesisches Zimmer: Regeln befolgen vs. verstehen.", en: "Chinese Room: following rules vs. understanding." } },
-        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6", why: { de: "Symbol Grounding Problem.", en: "The symbol grounding problem." } }
-      ]
+      context: "",
+      deep: "",
+      boxes: [],
+      sources: []
     }
   ] : [
     {
       kicker: "Philosophy",
-      title: "You are the Chinese Room",
-      body: "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do.",
+      title: "Does an AI have consciousness?",
+      body: "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is. The next slide turns this into the question of whether rules alone are already understanding.",
       watch: "",
       demoState: { scene: "chineseroom" },
-      context: "The room is a picture of a program: symbols in, symbols out, by rules. Whether the whole system understands is the open question.",
-      deep: "The systems reply says: perhaps the person in the room does not understand, but the whole system of person, rulebook, and room does. Searle treats that as moving the problem, not solving it. An LLM is in a similar position: it manipulates tokens by learned rules without direct access to the world the words refer to. Whether that becomes understanding is what the dispute is about, not what the demo settles.",
-      boxes: [
-        box("phil-1", "Argument", "What does the room show?", "That symbol manipulation alone need not guarantee understanding. The answer can look correct even though the person does not understand the characters."),
-        box("phil-2", "Objection", "What is the systems reply?", "Perhaps the whole system understands, not the person in the room. Searle denies that this rescues the objection; the debate is open."),
-        box("phil-3", "LLM", "Where does the model stand?", "An LLM follows learned statistical rules over tokens. It has no direct access to the world the tokens point to. Whether that becomes understanding is exactly the question.")
-      ],
-      sources: [
-        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756", why: { de: "Chinesisches Zimmer: Regeln befolgen vs. verstehen.", en: "Chinese Room: following rules vs. understanding." } },
-        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6", why: { de: "Symbol Grounding Problem.", en: "The symbol grounding problem." } }
-      ]
+      context: "",
+      deep: "",
+      boxes: [],
+      sources: []
     }
   ];
 
@@ -2285,20 +2247,19 @@
   ];
 
   var inductionMatrix = {
-    kicker: DE ? "Induktion" : "Induction",
-    title: DE ? "Der Induktionskopf in fünf Schritten" : "The induction head in five steps",
+    kicker: DE ? "Attention-Matrix" : "Attention matrix",
+    title: DE ? "Attention-Gewichte: Wo liest A?" : "Attention weights: where does A read?",
     body: DE
-      ? "Fünf Schritte zeigen, wie aus der Sequenz eine Vorhersage wird. Am Ende steht die Attention-Zeile: Das aktuelle A liest 82 % von B. Klicke die Schritte oben oder drücke Weiter.\n\nWichtig: Kein Head schreibt ein Wort irgendwohin. Ein Head addiert Vektoren zum Residualstrom. Der Previous-Token-Head addiert an Position 4 einen Vektor für „vorher kam A“. Der nächste Head liest diesen Vektor als Key. Deshalb passt die Query A dort, aber nicht an Position 3, wo „vorher kam C“ steht."
-      : "Five steps show how the sequence becomes a prediction. At the end stands the attention row: the current A reads 82% from B. Click the steps above or press Next.\n\nImportant: no head writes a word anywhere. A head adds vectors to the residual stream. The previous-token head adds a vector for “the previous token was A” at position 4. The next head reads that vector as a key. That is why the query A matches there, but not at position 3, where “the previous token was C” is stored.",
+      ? "Die Tabelle zeigt dieselbe Sequenz als Attention-Matrix. Jede Zeile ist ein Token, das fragt; jede Spalte ein Token, das gelesen wird. Zeile 6 ist das aktuelle A: Es liest 82 % von B an Position 4. Genau dieses B kopiert der OV-Schaltkreis. Klicke eine Zeile, um die Perspektive zu wechseln.\n\nA und B sind Tokens, keine Zahlen mit Bedeutung. Ihre IDs sind nur Indizes in die gelernte Embedding-Tabelle; QK und OV sind gelernte Matrizen auf den Vektoren."
+      : "The table shows the same sequence as an attention matrix. Each row is a token asking; each column is a token being read. Row 6 is the current A: it reads 82% from B at position 4. That is exactly the B the OV circuit copies. Click a row to change the perspective.\n\nA and B are tokens, not numbers with meaning. Their IDs are only indices into the learned embedding table; QK and OV are learned matrices on the vectors.",
     watch: "",
     demoState: { scene: "inductionmatrix" },
-    context: DE ? "Die Tabelle zeigt Attention-Gewichte: Zeile fragt, Spalte antwortet. Hohe Werte sind gelernte Gewichte, keine statistische Korrelation." : "The table shows attention weights: row asks, column answers. High values are learned weights, not statistical correlation.",
-    deep: DE ? "Der Previous-Token-Head addiert an Position 4 den transformierten Value des früheren A: $x_4 \\leftarrow x_4 + W_O W_V x_3$. Der Key ist $k_4 = W_K x_4$, die Query $q_6 = W_Q x_6$. QK vergleicht diese Vektoren, keine Wörter. OV kopiert danach den Value von B." : "The previous-token head adds the transformed value of the earlier A at position 4: $x_4 \\leftarrow x_4 + W_O W_V x_3$. The key is $k_4 = W_K x_4$, the query $q_6 = W_Q x_6$. QK compares these vectors, not words. OV then copies B's value.",
+    context: DE ? "Hohe Werte sind gelernte Aufmerksamkeitsgewichte, keine statistische Korrelation. Sie zeigen, wohin der Kopf liest." : "High values are learned attention weights, not statistical correlation. They show where the head reads.",
+    deep: DE ? "QK berechnet die Scores; Softmax normiert jede Zeile auf 100 %. OV kopiert den Value der gewählten Spalte. Die Tabelle ist illustrativ; echte Modelle haben viele Heads und tausende Dimensionen." : "QK computes the scores; softmax normalises each row to 100%. OV copies the value of the chosen column. The table is illustrative; real models have many heads and thousands of dimensions.",
     boxes: [
-      box("ix-1", DE ? "Schritt 1" : "Step 1", DE ? "Vorgänger als Vektor" : "Predecessor as a vector", DE ? "Vor B an Position 4 stand A. Der Head schreibt kein Wort, sondern addiert einen gelernten Vektor für „vorher kam A“ an Position 4." : "Before B at position 4 stood A. The head writes no word; it adds a learned vector for “the previous token was A” at position 4."),
-      box("ix-2", DE ? "Schritt 2" : "Step 2", DE ? "Key lesen" : "Read the key", DE ? "Der nächste Head liest diesen Vektor als Key. Die Query A passt darauf. Position 3 enthält den Vorgänger C, deshalb passt sie nicht." : "The next head reads that vector as a key. The query A matches it. Position 3 holds the predecessor C, so it does not match."),
-      box("ix-3", DE ? "Schritt 3" : "Step 3", DE ? "B kopieren" : "Copy B", DE ? "Der OV-Schaltkreis kopiert den Value von B an die neue Stelle. B wird wahrscheinlicher. Die Prozentwerte sind illustrativ." : "The OV circuit copies B's value to the new position. B becomes more likely. The percentages are illustrative."),
-      box("ix-ov", DE ? "Begriff" : "Term", DE ? "Was ist OV?" : "What is OV?", DE ? "Output × Value: V ist der Value-Vektor eines Tokens, O die Output-Projektion. QK wählt, wohin geschaut wird; OV entscheidet, welcher Inhalt geschrieben wird." : "Output × Value: V is a token's value vector, O is the output projection. QK selects where to look; OV decides which content is written.")
+      box("ix-1", DE ? "Lesen" : "Reading", DE ? "Zeile fragt, Spalte antwortet" : "Row asks, column answers", DE ? "Die Zeile gehört zum aktuellen Token, die Spalte zu dem Token, das es liest. Die Summe jeder Zeile ist 100 %." : "The row belongs to the current token, the column to the token it reads. Each row sums to 100%."),
+      box("ix-2", DE ? "Kopieren" : "Copying", DE ? "Hohe α bei B" : "High α at B", DE ? "Eine hohe Aufmerksamkeit bei B heißt: Der OV-Schaltkreis kopiert den Value von B an die neue Stelle. Es heißt nicht, dass B wahr ist." : "High attention at B means the OV circuit copies B's value to the new position. It does not mean B is true."),
+      box("ix-3", DE ? "Grenze" : "Limit", DE ? "Was ist illustrativ?" : "What is illustrative?", DE ? "Die konkreten Prozentwerte sind didaktisch. Entscheidend ist die Struktur: Zeile 6 liest die Stelle, an der nach dem früheren A das B stand." : "The concrete percentages are didactic. What matters is the structure: row 6 reads the position where B stood after the earlier A.")
     ],
     sources: inductionSequence.sources
   };
@@ -2398,14 +2359,14 @@
     kicker: DE ? "Zeit" : "Time",
     title: DE ? "Wann starb Turing?" : "When did Turing die?",
     teaser: DE
-      ? "Das Paper zeigt, dass Sprachmodelle aus Texten lineare Repräsentationen von Zeit ausbilden. Wenn die KI historische Namen, Kunstwerke oder Filme verarbeitet, lassen sich Jahreszahlen aus den inneren Aktivierungen lesen; die Darstellung ist eine relative Zeitachse, kein dynamisches kausales Weltmodell.\n\nBei historischen Personen ist die Zielgröße das Todesjahr, nicht die Lebensspanne. Die Daten umfassen Personen, die zwischen 1000 v. Chr. und 2000 n. Chr. gestorben sind. Eine Person wird also durch einen Punkt repräsentiert; Turing zum Beispiel durch 1954, sein Todesjahr. Die Probe liest dieses eine Jahr aus der Aktivierung, nicht die Lebensdauer.\n\nZudem fanden die Forscher einzelne Zeit-Neuronen, die mit bestimmten Epochen korrelieren. Pinnt oder ablatiert man diese Neuronen, verändert sich die Vorhersage des nächsten Tokens; das ist ein Hinweis auf eine kausale Rolle, aber keine Verschiebung eines ganzen Zeitstrahls."
-      : "The paper shows that language models form linear representations of time from text. When the AI processes historical names, artworks, or films, years can be read from the internal activations; the representation is a relative time axis, not a dynamic causal world model.\n\nFor historical figures the target is the death year, not the lifespan. The data cover people who died between 1000 BCE and 2000 CE. A person is therefore represented by one point; Turing, for example, by 1954, the year he died. The probe reads that single year from the activation, not the lifespan.\n\nIn addition, the researchers found individual time neurons that correlate with certain eras. Pinning or ablating these neurons changes the next-token prediction; that is evidence of a causal role, but not a shift of a whole timeline.",
+      ? "Das Paper zeigt, dass Sprachmodelle rein durch das Lesen von Texten einen inneren Zeitstrahl entwickeln. Wenn die KI historische Namen, Kunstwerke oder Filme verarbeitet, ordnet sie diese auf einer mathematischen Linie von der Vergangenheit bis zur Gegenwart an, sodass sich Jahreszahlen direkt aus den inneren Signalen ablesen lassen.\n\nBei historischen Personen ist die Zielgröße das Todesjahr, nicht die Lebensspanne. Die Daten umfassen Personen, die zwischen 1000 v. Chr. und 2000 n. Chr. gestorben sind. Eine Person wird also durch einen Punkt repräsentiert; Turing zum Beispiel durch 1954, sein Todesjahr. Die Probe liest dieses eine Jahr aus der Aktivierung, nicht die Lebensdauer.\n\nZudem fanden die Forscher einzelne Zeit-Neuronen, die gezielt auf bestimmte Epochen reagieren. Manipuliert man diese Neuronen künstlich, verändert die KI ihre Vorhersagen und ordnet Ereignisse plötzlich anderen Zeiträumen zu."
+      : "The paper shows that language models develop an internal timeline purely by reading text. When the AI processes historical names, artworks, or films, it arranges them on a mathematical line from the past to the present, so that years can be read directly from the internal signals.\n\nFor historical figures the target is the death year, not the lifespan. The data cover people who died between 1000 BCE and 2000 CE. A person is therefore represented by one point; Turing, for example, by 1954, the year he died. The probe reads that single year from the activation, not the lifespan.\n\nIn addition, the researchers found individual time neurons that respond specifically to certain eras. If these neurons are manipulated artificially, the AI changes its predictions and suddenly places events in different periods.",
     watch: "",
     demoState: { scene: "spacetime", mode: "time" },
     context: DE ? "Die Diagonale ist der perfekte Readout. Der Abstand eines Punktes zur Diagonalen ist der Fehler der Probe; die vertikalen Linien zeigen ihn. Die Jahreszahlen sind Todesjahre im gregorianischen Kalender; bei Newton nennt der julianische Kalender 1726/27." : "The diagonal is the perfect readout. A point's distance from the diagonal is the probe error; the vertical lines show it. The years are death years in the Gregorian calendar; for Newton the Julian calendar gives 1726/27.",
     deep: "",
     boxes: [
-      box("st-limit", DE ? "Grenze" : "Limit", DE ? "Kausalität für das Modell" : "Causality for the model", DE ? "Die Forscher pinnen oder ablatieren einzelne Raum- und Zeit-Neuronen; dabei ändern sich Vorhersagen. Die Probe-Achse selbst wird nicht verschoben, und die Intervention zeigt keine vollständige kausale Weltkarte." : "The researchers pin or ablate individual space and time neurons; predictions change as a result. The probe axis itself is not shifted, and the intervention does not show a complete causal world map.", "")
+      box("st-limit", DE ? "Grenze" : "Limit", DE ? "Kausalität für das Modell" : "Causality for the model", DE ? "Manipuliert man die Punkte in dieser Richtung und fragt das Modell, verändern sich die Antworten gezielt: Verschiebt man die Aktivierungspunkte entlang der Raum- oder Zeitachse, gibt die KI beispielsweise Städte aus einer anderen Himmelsrichtung aus oder verlegt historische Ereignisse in eine andere Epoche." : "If you manipulate the points along this direction and query the model, the answers change in a targeted way: shifting the activation points along the space or time axis makes the AI, for example, output cities from a different compass direction or move historical events into another era.", "")
     ],
     sources: spacetimeSpace.sources
   });
