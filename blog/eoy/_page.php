@@ -54,6 +54,8 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 		.ls-lang-btn { min-width: 34px; font-weight: 600; letter-spacing: .04em; }
 		<?php if ($eoyDay !== null): ?>
 		.ls-top, .ls-navbar { display: none !important; }
+		body[data-page="lesson"] .ls-app { grid-template-rows: minmax(0, 1fr); }
+		body[data-page="lesson"] .ls-main { grid-row: 1; }
 		<?php endif; ?>
 		<?php if ($embedHeight > 0): ?>
 		html, body { height: auto; min-height: <?php echo $embedHeight; ?>px; overflow: auto; }
