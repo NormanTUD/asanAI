@@ -764,22 +764,15 @@
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Die Architektur von LLMs" : "The architecture of LLMs",
     body: DE
-      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste Token vorherzusagen."
-      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next token.",
+      ? "Neuronale Netze, eine Methode zum Machine Learning, funktionieren, indem sie Daten in mehreren Schichten nacheinander bearbeiten, etwa wie wenn man Funktionen schachtelt:\n\n$$\\text{Schicht}_3\\left(\\text{Schicht}_2\\left(\\text{Schicht}_1\\left(\\text{Daten}\\right)\\right)\\right)$$\n\nDie Schichten können dabei verschiedene Aufgaben übernehmen. \n\nBei LLM sind es vor allem 5 Typen von Schichten, die die Arbeit übernehmen: Tokenizer, Embedding, Positional Embedding, Transformer (bestehend aus Attention und Feed-Forward-Netzwerk) und die Unembedding-Schicht.\n\nDie meisten dieser Schichten haben lernbare Gewichte, die der Computer während eines Trainingsprozesses anpasst, um das Ergebnis Schritt-für-Schritt zu verbessern.\n\nDie nächsten Tage werden wir uns diese Bausteine nacheinander systematisch anschauen, wie sie funktionieren und warum, um LLM wirklich greifen zu können."
+      : "Neural networks, a machine-learning method, work by processing data through several layers in sequence, roughly like nesting functions:\n\n$$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{data}\\right)\\right)\\right)$$\n\nThe layers can take on different tasks.\n\nIn LLMs there are mainly 5 types of layers that do the work: tokenizer, embedding, positional embedding, transformer (consisting of attention and a feed-forward network) and the unembedding layer.\n\nMost of these layers have learnable weights that the computer adjusts during a training process to improve the result step by step.\n\nOver the next days we will look at these building blocks one by one, how they work and why, so that we can really grasp LLMs.",
     teaser: DE
-      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste Token vorherzusagen."
-      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next token.",
+      ? "Neuronale Netze, eine Methode zum Machine Learning, funktionieren, indem sie Daten in mehreren Schichten nacheinander bearbeiten, etwa wie wenn man Funktionen schachtelt:\n\n$$\\text{Schicht}_3\\left(\\text{Schicht}_2\\left(\\text{Schicht}_1\\left(\\text{Daten}\\right)\\right)\\right)$$\n\nDie Schichten können dabei verschiedene Aufgaben übernehmen. \n\nBei LLM sind es vor allem 5 Typen von Schichten, die die Arbeit übernehmen: Tokenizer, Embedding, Positional Embedding, Transformer (bestehend aus Attention und Feed-Forward-Netzwerk) und die Unembedding-Schicht.\n\nDie meisten dieser Schichten haben lernbare Gewichte, die der Computer während eines Trainingsprozesses anpasst, um das Ergebnis Schritt-für-Schritt zu verbessern.\n\nDie nächsten Tage werden wir uns diese Bausteine nacheinander systematisch anschauen, wie sie funktionieren und warum, um LLM wirklich greifen zu können."
+      : "Neural networks, a machine-learning method, work by processing data through several layers in sequence, roughly like nesting functions:\n\n$$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{data}\\right)\\right)\\right)$$\n\nThe layers can take on different tasks.\n\nIn LLMs there are mainly 5 types of layers that do the work: tokenizer, embedding, positional embedding, transformer (consisting of attention and a feed-forward network) and the unembedding layer.\n\nMost of these layers have learnable weights that the computer adjusts during a training process to improve the result step by step.\n\nOver the next days we will look at these building blocks one by one, how they work and why, so that we can really grasp LLMs.",
     watch: "",
     demoState: { scene: "blocks" },
     inherit: false,
     questionGroups: [
-      {
-        id: "g-basics",
-        title: DE ? "Eine Ebene tiefer" : "One level deeper",
-        questions: [
-          { id: "q-training", title: DE ? "Wie werden die Modelle trainiert?" : "How are the models trained?", body: DE ? "Wir gehen an einem späteren Tag noch auf das Training ein. Die Idee: Anhand von Trainingsdaten, also Beispielen, prüft man wiederholt, wie gut das Netz ist, und verändert es leicht in die Richtung, in der es besser wird. Besser heißt hier: Gegeben einen Text sagt es das nächste Wort aus dem Text richtig voraus." : "We will look at training in more detail on a later day. The idea: with training data, that is examples, you repeatedly check how good the network is and change it slightly in the direction that makes it better. Better here means: given a text, it predicts the next word from the text correctly.", tex: "", kind: "question" },
-        ]
-      },
       {
         id: "g-sources",
         title: DE ? "Quellen" : "Sources",
@@ -790,19 +783,10 @@
       }
     ]
   };
-  var bausteineOutro = {
-    kicker: DE ? "Ausblick" : "What comes next",
-    title: DE ? "Die nächsten Tage" : "The next days",
-    body: DE ? "Ein kurzer Ausblick auf die nächsten Folien." : "A short look at the next slides.",
-    teaser: DE ? "Ein kurzer Ausblick auf die nächsten Folien." : "A short look at the next slides.",
-    watch: DE ? "Die Demo zeigt, was als Nächstes kommt." : "The demo shows what comes next.",
-    demoState: { scene: "roadmap" },
-    inherit: false
-  };
   var bausteineStep = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
-    substeps: [bausteineData, bausteineIntro, bausteineOutro]
+    substeps: [bausteineData, bausteineIntro]
   };
 
   var manifoldSteps = DE ? [
@@ -2441,7 +2425,7 @@
     eoyResetState: !!singleStep,
     eoyNoHash: !!singleStep,
     eoySingle: !!singleStep,
-    overlayRevision: "2026-11-17-spacetime-after-worldmodel-8",
+    overlayRevision: "2026-11-17-spacetime-after-worldmodel-9",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.
