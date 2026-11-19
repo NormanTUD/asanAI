@@ -144,6 +144,42 @@
     setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 300);
   }
 
+  function removeForeignLoaders() {
+    ["ls-page-loader", "asanai-screen-loader"].forEach(function (id) {
+      var el = document.getElementById(id);
+      while (el) {
+        try { if (el.tagName === "DIALOG" && el.open && el.close) el.close(); } catch (e) {}
+        if (el.parentNode) el.parentNode.removeChild(el);
+        el = document.getElementById(id);
+      }
+    });
+    var style = document.getElementById("asanai-screen-spin-style");
+    if (style && style.parentNode) style.parentNode.removeChild(style);
+  }
+
+  function clearLoaderTimers(root) {
+    if (!root) return;
+    if (root.__asanaiLoaderGuard) { clearInterval(root.__asanaiLoaderGuard); root.__asanaiLoaderGuard = null; }
+    if (root.__asanaiPlaceholderTimer) { clearInterval(root.__asanaiPlaceholderTimer); root.__asanaiPlaceholderTimer = null; }
+  }
+
+  function insertPreview(root, all, day, lang) {
+    var host = root.querySelector("#learnsys");
+    if (!host || !all || host.querySelector(".asanai-eoy-preview") || root.querySelector("#ls-title")) return;
+    var entry = all[lang] && all[lang][day];
+    if (!entry || !entry.body) return;
+    var wrap = document.createElement("div");
+    wrap.className = "asanai-eoy-preview";
+    wrap.innerHTML = '<div class="ls-app"><main class="ls-main"><section class="ls-text"><div class="ls-text-scroll">'
+      + '<div class="ls-kicker"></div><h1 class="ls-title"></h1><div class="ls-body"></div>'
+      + '</div></section><section class="ls-stage"></section></main></div>';
+    wrap.querySelector(".ls-kicker").textContent = entry.kicker || "";
+    wrap.querySelector(".ls-title").textContent = entry.title || "";
+    wrap.querySelector(".ls-body").innerHTML = entry.body || "";
+    host.appendChild(wrap);
+    focusLoaderOnStage(root);
+  }
+
   function placeLoaderPlaceholder(root, loader) {
     if (!root || !loader) return;
     var rr = root.getBoundingClientRect();
@@ -176,6 +212,11 @@
     var rr = root.getBoundingClientRect();
     var sr = stage.getBoundingClientRect();
     if (!sr.width || !sr.height) return;
+    loader.__asanaiStage = true;
+    if (root.querySelector("#ls-title") && root.__asanaiPlaceholderTimer) {
+      clearInterval(root.__asanaiPlaceholderTimer);
+      root.__asanaiPlaceholderTimer = null;
+    }
     var st = loader.style;
     st.setProperty("left", (sr.left - rr.left) + "px", "important");
     st.setProperty("top", (sr.top - rr.top) + "px", "important");
@@ -260,6 +301,14 @@
     function proxyFor(path) {
       return proxyBaseAbs + "?" + path;
     }
+    var previewDay = (srcPath.match(/(?:^|\/)(\d+)(?:\?|$)/) || [])[1] || "";
+    var previewLang = (lang === "de" || lang === "en") ? lang : "en";
+    var previewPromise = null;
+    if (previewDay) {
+      previewPromise = fetch(proxyFor(lessonDir + "text_preview.json"), { credentials: "same-origin" })
+        .then(function (response) { return response.ok ? response.json() : null; })
+        .catch(function () { return null; });
+    }
     var seq = (window.__asanaiEoySeq || 0) + 1;
     window.__asanaiEoySeq = seq;
     var rootId = "asanai-eoy-root-" + seq;
@@ -299,6 +348,16 @@
     loader.appendChild(spinner);
     root.appendChild(loader);
     placeLoaderPlaceholder(root, loader);
+    removeForeignLoaders();
+    root.__asanaiLoaderGuard = setInterval(removeForeignLoaders, 120);
+    root.__asanaiPlaceholderTimer = setInterval(function () {
+      if (root.querySelector("#ls-title")) {
+        clearInterval(root.__asanaiPlaceholderTimer);
+        root.__asanaiPlaceholderTimer = null;
+        return;
+      }
+      if (!loader.__asanaiStage) placeLoaderPlaceholder(root, loader);
+    }, 200);
 
     var baseCss = rootSelector + "{position:relative!important;display:block!important;width:100%!important;"
       + "min-height:0!important;max-height:none!important;"
@@ -334,6 +393,7 @@
     root.__asanaiLoadBar = loadBar;
 
     function fail(message) {
+      clearLoaderTimers(root);
       loader.classList.add("is-done");
       settleLoadBar(root);
       var note = document.createElement("p");
@@ -385,6 +445,13 @@
       return applyStyles(cssEntries).then(function () {
         injectBody(doc, root, loader);
         focusLoaderOnStage(root);
+        if (previewPromise) {
+          previewPromise.then(function (all) {
+            if (all && !doc.querySelector(".asanai-eoy-preview")) {
+              insertPreview(root, all, previewDay, previewLang);
+            }
+          });
+        }
         headScripts.forEach(runInline);
         if (typeof window.EOY_DAY !== "number") {
           var day = (srcPath.match(/(?:^|\/)(\d+)(?:\?|$)/) || [])[1];
@@ -529,6 +596,7 @@
   function finish(root, loader) {
     if (root.__asanaiFinished) return;
     root.__asanaiFinished = true;
+    clearLoaderTimers(root);
     try {
       if (window.TM && typeof window.TM.initPage === "function" && !root.__asanaiPageInit) {
         root.__asanaiPageInit = true;
