@@ -2522,6 +2522,16 @@
   var requestedDay = typeof window.EOY_DAY === "number" ? Math.round(window.EOY_DAY)
     : (bodyEntry > 0 ? bodyEntry : (urlMatch ? parseInt(urlMatch[1], 10) : 0));
   var singleStep = requestedDay >= 1 && requestedDay <= steps.length ? steps[requestedDay - 1] : null;
+  // Day 4 is the tokenizer entry: its second demo (BPE merges) lives in the
+  // next flat step. Keep it inside eoy/4 as a substep instead of sending the
+  // reader to eoy/5.
+  var pairedSubsteps = { 4: [4] };
+  var selectedStep = singleStep;
+  if (singleStep && pairedSubsteps[requestedDay]) {
+    var extraSteps = pairedSubsteps[requestedDay].map(function (index) { return steps[index]; })
+      .filter(function (step) { return !!step; });
+    selectedStep = Object.assign({}, singleStep, { substeps: [singleStep].concat(extraSteps) });
+  }
   if (entryHost) entryHost.setAttribute("data-eoy-resolved", String(singleStep ? requestedDay : 0));
   var selectedDay = singleStep ? {
     id: "eoy-" + requestedDay,
@@ -2530,7 +2540,7 @@
     kicker: singleStep.kicker || day.kicker,
     title: singleStep.title || day.title,
     demo: day.demo,
-    steps: [singleStep],
+    steps: [selectedStep],
     boxes: requestedDay === 1 ? day.boxes : [],
     sources: requestedDay === 1 ? day.sources : []
   } : day;
