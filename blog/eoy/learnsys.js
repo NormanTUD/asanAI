@@ -5634,6 +5634,11 @@
   LS.mount = function (el, config) {
     root = el;
     cfg = config;
+    var proxyHost = window.__ASANAI_EOY_ROOT__ || document.body;
+    if (proxyHost) {
+      if (LS.isProxied()) proxyHost.setAttribute("data-eoy-proxy", "1");
+      else proxyHost.removeAttribute("data-eoy-proxy");
+    }
     installAssetRewriter(el);
     setLang(cfg.lang);
     syncOverlayRevision();

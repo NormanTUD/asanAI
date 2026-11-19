@@ -144,6 +144,31 @@
     setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 300);
   }
 
+  function placeLoaderPlaceholder(root, loader) {
+    if (!root || !loader) return;
+    var rr = root.getBoundingClientRect();
+    if (!rr.width || !rr.height) return;
+    var left = 0, top = 0, width = rr.width, height = rr.height;
+    if (rr.width <= 720) {
+      width = rr.width;
+      height = rr.height;
+    } else if (rr.width <= 980) {
+      top = Math.round(rr.height * 0.44);
+      height = Math.round(rr.height * 0.56);
+    } else {
+      left = Math.round(rr.width * 0.37);
+      width = Math.round(rr.width * 0.63);
+      height = rr.height;
+    }
+    var st = loader.style;
+    st.setProperty("left", left + "px", "important");
+    st.setProperty("top", top + "px", "important");
+    st.setProperty("width", width + "px", "important");
+    st.setProperty("height", height + "px", "important");
+    st.setProperty("right", "auto", "important");
+    st.setProperty("bottom", "auto", "important");
+  }
+
   function focusLoaderOnStage(root) {
     var loader = root.querySelector(".asanai-eoy-loader");
     var stage = root.querySelector(".ls-stage");
@@ -272,6 +297,7 @@
     spinner.className = "asanai-eoy-spinner";
     loader.appendChild(spinner);
     root.appendChild(loader);
+    placeLoaderPlaceholder(root, loader);
 
     var baseCss = rootSelector + "{position:relative!important;display:block!important;width:100%!important;"
       + "min-height:0!important;max-height:none!important;"
@@ -478,9 +504,7 @@
       });
     }
     function run(group) {
-      return group.reduce(function (chain, el) {
-        return chain.then(function () { return loadOne(el); });
-      }, Promise.resolve());
+      return Promise.all(group.map(function (el) { return loadOne(el); }));
     }
     return run(early).then(function () {
       var root = window.__ASANAI_EOY_ROOT__;

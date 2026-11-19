@@ -1,0 +1,316 @@
+{
+  "de": {
+    "1": {
+      "kicker": "Chat und Code",
+      "title": "Wie funktionieren Sprachmodelle?",
+      "body": "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist."
+    },
+    "2": {
+      "kicker": "Architektur",
+      "title": "Bausteine eines LLM",
+      "body": ""
+    },
+    "3": {
+      "kicker": "Ceres",
+      "title": "Gauß, Ceres und die Daten",
+      "body": ""
+    },
+    "4": {
+      "kicker": "Tokenize",
+      "title": "Text wird zu IDs",
+      "body": "Der Tokenizer trennt Worte in einzelne Bestandteile. Diese werden mit einem Algorithmus, zum Beispiel <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>) getrennt. Das basiert auf zwei Gedanken: der erste ist Kompression: es sollen so wenig wie möglich Tokens benutzt werden müssen, um so viel wie möglich zu sagen. Der zweite ist, dass das Netzwerk so auch Worte bearbeiten kann, die es vorher nie gesehen hat, indem es sie in Bestandteile trennt und lernt, wie man Worte aus ihren Bestandteilen heraus versteht, auch wenn man das konkrete Wort vielleicht nie gesehen hat."
+    },
+    "5": {
+      "kicker": "BPE",
+      "title": "BPE: Bytes/Zeichen → Paare → Merges",
+      "body": "BPE beginnt bei Bytes oder Zeichen: Jedes Wort wird in seine Bausteine zerlegt, dann zählt der Algorithmus benachbarte Paare und ersetzt das häufigste Paar durch ein neues Symbol. Die Trennungen kommen aus den Trainingsdaten: Der Algorithmus wählt sie so, dass möglichst viel Text mit möglichst wenigen Tokens dargestellt wird. Nach einigen Merges werden häufige Wörter kurz; seltene Schriften bleiben teurer, weil sie im Trainingskorpus seltener vorkommen (Petrov et al., 2023). Hapax legomena, also Wörter, die im Korpus nur einmal vorkommen, bekommen in der Regel keinen eigenen Merge für das ganze Wort; BPE setzt sie aus häufigen Teilstücken zusammen. Das ist eine gelernte, reversible Tokenisierung."
+    },
+    "6": {
+      "kicker": "1D · 2D · 3D · Tabelle",
+      "title": "Bedeutung wird Geometrie",
+      "body": ""
+    },
+    "7": {
+      "kicker": "Mannigfaltigkeiten",
+      "title": "Von Beziehungen zur Übersetzung",
+      "body": "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehung untereinander die Bedeutung enthält, wird Übersetzung zu einer Abbildung zwischen Punktwolken: Translation, Rotation, Skalierung und Scherung. Die lokale Struktur einer Punktwolke kann wie eine Mannigfaltigkeit aussehen; der Vietoris–Rips-Komplex macht ihre Nachbarschaften sichtbar.\n\nFindet man eine Abbildung, die eine Wolke auf die andere legt, ist das ein Modell für Übersetzung: Semantische Beziehungen liegen in beiden Sprachen ähnlich, auch wenn die konkreten Tokens andere sind."
+    },
+    "8": {
+      "kicker": "Position",
+      "title": "Jeder Platz bekommt einen Fingerabdruck",
+      "body": "Ein Token allein weiß nicht, wo es steht: „Hund“ kann an jeder Stelle im Satz auftreten. Damit die Reihenfolge zählt, wird eine Positionsinformation ergänzt. Die Demo zeigt eine sinusförmige Variante und normiert die Vektoren, damit die Richtungen auf einer Kugel sichtbar werden. Im echten Transformer werden die Sinus- und Kosinuswerte zum Token-Embedding addiert; Attention vergleicht Query und Key über Skalarprodukte. Viele moderne Modelle wie Llama nutzen RoPE: RoPE dreht Query und Key, nicht den Token-Vektor. Die Demo zeigt nur drei Dimensionen; die Kugel ist eine Visualisierung, keine exakte Geometrie der Positionskodierung."
+    },
+    "9": {
+      "kicker": "Attention",
+      "title": "Attention: Kontext und Matrix",
+      "body": ""
+    },
+    "10": {
+      "kicker": "Q · K · V",
+      "title": "Wie Attention rechnet",
+      "body": ""
+    },
+    "11": {
+      "kicker": "Attention",
+      "title": "Attention hilft, Rauschen zu ignorieren",
+      "body": ""
+    },
+    "12": {
+      "kicker": "In-Context",
+      "title": "Induktionsköpfe",
+      "body": ""
+    },
+    "13": {
+      "kicker": "",
+      "title": "Was sind neuronale Netze?",
+      "body": "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: $\\hat y = w\\cdot x + b$. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft."
+    },
+    "14": {
+      "kicker": "Optimizer",
+      "title": "Wie findet man gute Punkte?",
+      "body": "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, $f(x) = w\\cdot x + b$. Der Plot hat 3 Achsen: $w$, $b$ und $Loss$. Für jeden Parameterpunkt in diesem Raum gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre. Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nHier sind es zwei Parameter und damit zwei Dimensionen. Ein großes Sprachmodell hat Milliarden davon, zu viele, um es sich vorzustellen, aber die Idee ist die gleiche."
+    },
+    "15": {
+      "kicker": "",
+      "title": "Was sind neuronale Netze?",
+      "body": "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix."
+    },
+    "16": {
+      "kicker": "",
+      "title": "Was sind neuronale Netze?",
+      "body": "Jetzt ein größeres Netz: 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viel mehr Parameter und Richtungen, als wir zeichnen können; das Prinzip bleibt dasselbe: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen."
+    },
+    "17": {
+      "kicker": "Raum biegen",
+      "title": "Der Raum biegt sich",
+      "body": "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: In der Demo hebt eine Schicht die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Das FFN wendet pro Token eine gelernte nichtlineare Transformation an; die Biegung ist eine Intuition, kein wörtliches Falten."
+    },
+    "18": {
+      "kicker": "Feed-Forward-Netzwerk (FFN)",
+      "title": "Die Rolle von neuronalen Netzen im Transformer",
+      "body": "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.\n\nJedes Token wird nach jedem Attention durch das gleiche Neuronale Netz getan, das dann die kontextualisierten Tokens unabhängig voneinander verschiebt. Die Rolle im LLM: verworrene Muster trennbar machen."
+    },
+    "19": {
+      "kicker": "Residual",
+      "title": "Das gemeinsame Notizbuch wird zum Stream",
+      "body": "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Jedes Token hat einen eigenen Residual Stream. Stell dir jeden Stream als Notizbuch vor: Das Token steht schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich."
+    },
+    "20": {
+      "kicker": "Unembedding",
+      "title": "Ähnliche Worte finden",
+      "body": ""
+    },
+    "21": {
+      "kicker": "Loss",
+      "title": "Der Loss: Was das Modell optimiert",
+      "body": "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: $-\\log(0.30) \\approx 1.20$. Der Gradient $p-y$ sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner. Über alle Trainingsbeispiele bildet dieser Loss die Loss Landscape: Jede Stelle im Gewichtsraum hat einen Loss-Wert, und das Training sucht die Täler. Drücke Weiter oder →: Die Demo macht für jedes der vier Zielwörter mehrere Trainingsschritte, wechselt dabei den Satz und geht dann zum nächsten."
+    },
+    "22": {
+      "kicker": "Die Schleife",
+      "title": "Ein Wort nach dem anderen",
+      "body": "Jetzt schließt sich der Kreis. Der letzte Vektor $h$ wird über $W_U$ zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo."
+    },
+    "23": {
+      "kicker": "Die Wiese",
+      "title": "Die Karte der Wörter",
+      "body": "Jedes Wort besitzt eine Zelle. Bewege den Zeiger; der Gedanke fällt in die nächste Zelle. Die goldenen Nähte sind die Stellen, an denen zwei Wörter fast gleich nah sind. Je mehr Wörter, desto kleiner die Zellen, aber die Naht verschwindet nie."
+    },
+    "24": {
+      "kicker": "Weltmodelle",
+      "title": "Das Weltmodell eines LLM",
+      "body": ""
+    },
+    "25": {
+      "kicker": "Weltkarte",
+      "title": "Raum und Zeit im Modell",
+      "body": ""
+    },
+    "26": {
+      "kicker": "Agent",
+      "title": "Ein Agent ist dasselbe Modell mit Werkzeugen",
+      "body": "Ein Agent ist kein neues Modell. Er kann dasselbe Basismodell verwenden; die Browser-Demo ist kein Agent. Der Unterschied ist der Loop: Das Modell sagt „führe das als Programm aus“, die Runtime tut es, und der Output kommt in den Kontext. So arbeiten opencode, Claude Code und Cursor: Sie lesen Dateien, führen Befehle aus und sehen die Ergebnisse. Multimodale Modelle bekommen zusätzlich Screenshots und können darauf sehen, was auf dem Bildschirm ist."
+    },
+    "27": {
+      "kicker": "Grenze",
+      "title": "Warum Modelle halluzinieren",
+      "body": ""
+    },
+    "28": {
+      "kicker": "Geschichte",
+      "title": "Geschichte in zehn Schritten",
+      "body": "Von den Kerben im Wolfsknochen bis zu GPT. Rechnen als Zählen mit Steinen und Kerben: externen Tools, mit denen man Gedanken auslagern kann auf physische Objekte. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird."
+    },
+    "29": {
+      "kicker": "Philosophie",
+      "title": "Du bist das Chinesische Zimmer",
+      "body": "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust."
+    },
+    "30": {
+      "kicker": "KI und Gesellschaft",
+      "title": "Was KI mit uns macht",
+      "body": ""
+    },
+    "31": {
+      "kicker": "Bewusstsein",
+      "title": "Bewusstsein: die offene Frage",
+      "body": ""
+    }
+  },
+  "en": {
+    "1": {
+      "kicker": "Chat and code",
+      "title": "How do language models work?",
+      "body": "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology."
+    },
+    "2": {
+      "kicker": "Architecture",
+      "title": "Building blocks of an LLM",
+      "body": ""
+    },
+    "3": {
+      "kicker": "Ceres",
+      "title": "Gauss, Ceres, and the data",
+      "body": ""
+    },
+    "4": {
+      "kicker": "Tokenize",
+      "title": "Text becomes IDs",
+      "body": "The tokenizer splits words into individual pieces. It splits them with an algorithm, for example <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>). Two ideas sit behind it: the first is compression, use as few tokens as possible to say as much as possible. The second is that the network can then process words it has never seen before, because it splits them into pieces and learns how words are built from their pieces, even if it never saw the concrete word."
+    },
+    "5": {
+      "kicker": "BPE",
+      "title": "BPE: bytes/characters → pairs → merges",
+      "body": "BPE starts from bytes or characters: every word is split into its pieces, then the algorithm counts adjacent pairs and replaces the most frequent pair with a new symbol. The splits come from the training data: the algorithm chooses them so that as much text as possible is represented with as few tokens as possible. After several merges, frequent words become short; rare scripts stay more expensive because they are rarer in the training corpus (Petrov et al., 2023). Hapax legomena, words that occur only once in the corpus, usually do not get their own whole-word merge; BPE assembles them from frequent pieces. That is a learned, reversible tokenization."
+    },
+    "6": {
+      "kicker": "1D · 2D · 3D · table",
+      "title": "Meaning becomes geometry",
+      "body": ""
+    },
+    "7": {
+      "kicker": "Manifolds",
+      "title": "From relations to translation",
+      "body": "If you have points in this highly abstract space whose relations to one another carry meaning, translation becomes a map between point clouds: translation, rotation, scaling, and shear. The local structure of a point cloud can look like a manifold; the Vietoris–Rips complex makes its neighbourhoods visible.\n\nIf you find a map that lays one cloud onto the other, that is a model for translation: semantic relations sit similarly in both languages, even when the concrete tokens differ."
+    },
+    "8": {
+      "kicker": "Position",
+      "title": "Every slot gets a fingerprint",
+      "body": "A token on its own does not know where it stands: “dog” can appear anywhere in the sentence. For order to matter, positional information is added. The demo shows a sinusoidal variant and normalises the vectors so that directions become visible on a sphere. In a real transformer the sine and cosine values are added to the token embedding; attention compares query and key through dot products. Many modern models such as Llama use RoPE: RoPE rotates query and key, not the token vector. The demo shows only three dimensions; the sphere is a visualisation, not the exact geometry of positional encoding."
+    },
+    "9": {
+      "kicker": "Attention",
+      "title": "Attention: context and matrix",
+      "body": ""
+    },
+    "10": {
+      "kicker": "Q · K · V",
+      "title": "How attention computes",
+      "body": ""
+    },
+    "11": {
+      "kicker": "Attention",
+      "title": "Attention helps ignore noise",
+      "body": ""
+    },
+    "12": {
+      "kicker": "In-context",
+      "title": "Induction heads",
+      "body": ""
+    },
+    "13": {
+      "kicker": "",
+      "title": "What are neural networks?",
+      "body": "A neural network is first a parameterised function. The smallest example is one neuron: $\\hat y = w\\cdot x + b$. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape."
+    },
+    "14": {
+      "kicker": "Optimizer",
+      "title": "How do you find good points?",
+      "body": "We see a small real network training here. It has only two parameters, $f(x) = w\\cdot x + b$. The plot has 3 axes: $w$, $b$, and $loss$. For every parameter point in this space there is a loss, that is, a value for how good the network would be with those values. Training means: the computer looks at how good the current point is and in which directions it has to move the point so that the result gets better. Then it moves the point and looks again.\n\nHere there are two parameters and therefore two dimensions. A large language model has billions of them, too many to picture, but the idea is the same."
+    },
+    "15": {
+      "kicker": "",
+      "title": "What are neural networks?",
+      "body": "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix."
+    },
+    "16": {
+      "kicker": "",
+      "title": "What are neural networks?",
+      "body": "Now a larger network: 1 → 32 → 32 → 32 → 1, dense with ReLU. It has far more parameters and directions than we can draw; the principle stays the same: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live."
+    },
+    "17": {
+      "kicker": "Bending space",
+      "title": "Space bends",
+      "body": "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. The FFN applies a learned nonlinear transformation per token; the bend is an intuition, not a literal fold."
+    },
+    "18": {
+      "kicker": "Feed-forward network (FFN)",
+      "title": "The role of neural networks in the transformer",
+      "body": "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.\n\nAfter every attention step, each token is passed through the same neural network, which then shifts the contextualised tokens independently of one another. The role in the LLM: make entangled patterns separable."
+    },
+    "19": {
+      "kicker": "Residual",
+      "title": "The shared notebook becomes the stream",
+      "body": "This is a strongly simplified, humanised view. Each token has its own residual stream. Think of each stream as a notebook: the token is already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same."
+    },
+    "20": {
+      "kicker": "Unembedding",
+      "title": "Finding similar words",
+      "body": ""
+    },
+    "21": {
+      "kicker": "Loss",
+      "title": "The loss: what the model optimises",
+      "body": "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: $-\\log(0.30) \\approx 1.20$. The gradient $p-y$ then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller. Across all training examples, this loss forms the loss landscape: every point in weight space has a loss value, and training looks for the valleys. Press Next or →: the demo makes several training steps for each of the four target words, switches the sentence, then moves to the next."
+    },
+    "22": {
+      "kicker": "The loop",
+      "title": "One word after another",
+      "body": "Now the circle closes. The last vector $h$ becomes logits through $W_U$, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo."
+    },
+    "23": {
+      "kicker": "The meadow",
+      "title": "The map of words",
+      "body": "Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are almost equally near. More words make smaller cells, but the seam never disappears."
+    },
+    "24": {
+      "kicker": "World models",
+      "title": "An LLM's world model",
+      "body": ""
+    },
+    "25": {
+      "kicker": "World map",
+      "title": "Space and time in the model",
+      "body": ""
+    },
+    "26": {
+      "kicker": "Agent",
+      "title": "An agent is the same model with tools",
+      "body": "An agent is not a new model. It can use the same base model; the browser demo is not an agent. The difference is the loop: the model says “run this as a program”, the runtime does it, and the output goes into the context. That is how opencode, Claude Code, and Cursor work: they read files, run commands, and see the results. Multimodal models also receive screenshots and can see what is on the screen."
+    },
+    "27": {
+      "kicker": "Limit",
+      "title": "Why models hallucinate",
+      "body": ""
+    },
+    "28": {
+      "kicker": "History",
+      "title": "History in ten steps",
+      "body": "From the notches in a wolf bone to GPT. Arithmetic as counting with stones and notches: external tools that let us outsource thoughts onto physical objects. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward."
+    },
+    "29": {
+      "kicker": "Philosophy",
+      "title": "You are the Chinese Room",
+      "body": "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do."
+    },
+    "30": {
+      "kicker": "AI and society",
+      "title": "What AI does to us",
+      "body": ""
+    },
+    "31": {
+      "kicker": "Consciousness",
+      "title": "Consciousness: the open question",
+      "body": ""
+    }
+  }
+}
