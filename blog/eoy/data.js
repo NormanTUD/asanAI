@@ -1484,7 +1484,7 @@
   var weekdayStep = {
     kicker: DE ? "Wochentage" : "Weekdays",
     title: DE ? "Wochentage auf einer Linie" : "Weekdays on a line",
-    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Da auf Sonntag wieder Montag folgt, bilden sie einen Kreis." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. Because Monday follows Sunday again, they form a circle.",
+    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Da auf Sonntag wieder Montag folgt, bilden sie einen Kreis. Beim Zusammenrollen der Linie entsteht ein eigener Raum: Die Tage liegen dann nicht mehr auf einer Geraden, sondern auf einem geschlossenen Ring." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. Because Monday follows Sunday again, they form a circle. When the line rolls up, it becomes its own space: the days no longer lie on a straight line but on a closed ring.",
     watch: "",
     demoState: { scene: "weekday" },
     inherit: false,
