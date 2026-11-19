@@ -114,6 +114,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 	<?php endforeach; ?>
 	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
 	<script src="data.js?v=<?php echo filemtime(__DIR__.'/data.js'); ?>"></script>
+	<script src="eoy-nav.js?v=<?php echo filemtime(__DIR__.'/eoy-nav.js'); ?>"></script>
 	<script src="frame-height.js?v=<?php echo filemtime(__DIR__.'/frame-height.js'); ?>"></script>
 	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>"></script><?php endif; ?>
 </body>

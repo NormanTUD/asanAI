@@ -5594,6 +5594,8 @@
   LS.go = go;
   LS.next = next;
   LS.prev = prev;
+  LS.canNext = hasNextPage;
+  LS.canPrev = hasPrevPage;
   LS.goView = function (day, step, substep) { go(day, step, substep); };
   LS.link = function () { writeHash(); return location.href; };
   LS.hash = { parse: parseHash, apply: applyHash, write: writeHash };
