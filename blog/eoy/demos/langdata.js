@@ -221,8 +221,16 @@
       function curveY(x) { return Y(truthCurve(x)); }
       // Wrong items sit outside the truth band; the green band is smooth and wide.
       var bandOuter = 44;
-      ctx.fillStyle = "rgba(145,133,190,.10)";
-      ctx.fillRect(padL, padT, w - padL - padR, h - padT - padB);
+      var RED = "#c62828";
+      var bandTop = curveY(0.5) - bandOuter;
+      if (bandTop > padT) {
+        var redWash = ctx.createLinearGradient(0, padT, 0, bandTop);
+        redWash.addColorStop(0, "rgba(198,40,40,.42)");
+        redWash.addColorStop(0.55, "rgba(198,40,40,.16)");
+        redWash.addColorStop(1, "rgba(198,40,40,0)");
+        ctx.fillStyle = redWash;
+        ctx.fillRect(padL, padT, w - padL - padR, bandTop - padT);
+      }
       ctx.beginPath();
       for (var ub = 0; ub <= 100; ub++) {
         var ux = padL + ub / 100 * (w - padL - padR);
@@ -268,10 +276,10 @@
           ctx.fillStyle = C.blue; ctx.fill();
           ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
         } else {
-          ctx.strokeStyle = C.lilac; ctx.lineWidth = 2.8;
+          ctx.strokeStyle = RED; ctx.lineWidth = 2.8;
           ctx.beginPath(); ctx.moveTo(x - 6, y - 6); ctx.lineTo(x + 6, y + 6); ctx.moveTo(x + 6, y - 6); ctx.lineTo(x - 6, y + 6); ctx.stroke();
         }
-        ctx.fillStyle = item.ok ? C.ink : C.lilac;
+        ctx.fillStyle = item.ok ? C.ink : RED;
         ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center"; ctx.textBaseline = "bottom";
         ctx.fillText(String(i + 1), x, y - 9);
