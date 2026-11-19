@@ -306,7 +306,7 @@
 
       var layoutStyle = document.createElement("style");
       layoutStyle.setAttribute("data-asanai-eoy-layout", "1");
-      layoutStyle.textContent = "#" + root.id + " .ls-main{outline:5px solid rgb(1,2,3)!important}\n@container (max-width:980px){#" + root.id
+      layoutStyle.textContent = "@container (min-width:721px) and (max-width:980px){#" + root.id
         + " .ls-main{display:flex!important;flex-direction:column!important}"
         + "#" + root.id + " .ls-text{flex:0 0 auto!important;max-height:60%!important}"
         + "#" + root.id + " .ls-text-scroll{height:100%!important}"
