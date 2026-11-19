@@ -185,10 +185,7 @@
     var rr = root.getBoundingClientRect();
     if (!rr.width || !rr.height) return;
     var left = 0, top = 0, width = rr.width, height = rr.height;
-    if (rr.width <= 720) {
-      width = rr.width;
-      height = rr.height;
-    } else if (rr.width <= 980) {
+    if (rr.width <= 980) {
       top = Math.round(rr.height * 0.44);
       height = Math.round(rr.height * 0.56);
     } else {
@@ -258,8 +255,7 @@
 
     var width = root.getBoundingClientRect().width || frame.getBoundingClientRect().width || 0;
     var wanted;
-    if (width <= 720) wanted = stageHeight;
-    else if (width <= 980) wanted = textHeight + stageHeight + 1;
+    if (width <= 980) wanted = textHeight + stageHeight + 1;
     else wanted = Math.max(textHeight, stageHeight);
 
     var fit = Math.max(320, Math.min(maxHeight, Math.round(wanted)));
@@ -498,11 +494,14 @@
       layoutStyle.setAttribute("data-asanai-eoy-layout", "1");
       layoutStyle.textContent = "#" + root.id + " .ls-body{max-width:none!important}"
         + "#" + root.id + " .ls-text-scroll{max-width:none!important}"
-        + "@container (min-width:721px) and (max-width:980px){#" + root.id
+        + "@container (max-width:980px){#" + root.id
         + " .ls-main{display:flex!important;flex-direction:column!important}"
-        + "#" + root.id + " .ls-text{flex:0 0 auto!important;max-height:60%!important}"
+        + "#" + root.id + " .ls-text{display:block!important;flex:0 0 auto!important;max-height:60%!important}"
         + "#" + root.id + " .ls-text-scroll{height:100%!important}"
-        + "#" + root.id + " .ls-stage{flex:1 1 0!important;min-height:0!important}}";
+        + "#" + root.id + " .ls-stage{flex:1 1 0!important;min-height:0!important}"
+        + "#" + root.id + " .ls-text-mobile-head,#" + root.id + " .ls-text-toggle{display:none!important}"
+        + "#" + root.id + " .ls-app.is-text-open .ls-text{position:static!important;inset:auto!important;"
+        + "z-index:auto!important;border:0!important;overflow:hidden!important}}";
       document.head.appendChild(layoutStyle);
     });
   }
