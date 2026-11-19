@@ -165,14 +165,15 @@
     function proxyFor(path) {
       return proxyBaseAbs + "?" + path;
     }
-    function resolveAssetUrl(ref) {
-      try { return new URL(ref, proxyBaseAbs).href; } catch (e) { return ref; }
-    }
-
     var seq = (window.__asanaiEoySeq || 0) + 1;
     window.__asanaiEoySeq = seq;
     var rootId = "asanai-eoy-root-" + seq;
     var rootSelector = "#" + rootId;
+
+    var frame = document.createElement("div");
+    frame.className = "asanai-eoy-frame";
+    frame.style.cssText = "position:relative;width:100%;height:" + height + ";min-height:0;max-height:none;container-type:size;";
+    target.appendChild(frame);
 
     var root = document.createElement("div");
     root.id = rootId;
@@ -181,7 +182,7 @@
     root.setAttribute("data-theme", "light");
     root.style.cssText = "position:relative;width:100%;height:" + height + ";min-height:0;max-height:none;"
       + "overflow:hidden;contain:layout paint;isolation:isolate;box-sizing:border-box;";
-    target.appendChild(root);
+    frame.appendChild(root);
 
     window.__ASANAI_EOY_EMBED__ = true;
     window.__ASANAI_EOY_ROOT__ = root;
@@ -296,7 +297,8 @@
     return Promise.all(fetches).then(function (texts) {
       var root = window.__ASANAI_EOY_ROOT__;
       if (!root) return;
-      var css = texts.map(function (text) { return scopeCss(text, "#" + root.id); }).join("\n");
+      var css = texts.map(function (text) { return scopeCss(text, "#" + root.id); }).join("\n")
+        .replace(/(\d*\.?\d+)(vw|vh)\b/g, function (match, number, unit) { return number + "cq" + unit; });
       var style = document.createElement("style");
       style.setAttribute("data-asanai-eoy-css", "1");
       style.textContent = css;
