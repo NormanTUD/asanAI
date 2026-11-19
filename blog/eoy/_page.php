@@ -114,10 +114,44 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 			style="width:38px;height:38px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:ls-page-spin .8s linear infinite"></div>
 	</div>
 	<script>
+		/* Inline bootstrap: runs before the lesson scripts and cannot be cached
+		   away. Creates/styles the loader and hides every nav until loaded. */
 		(function(){
-			function done(){window.__lsPageReady=true;if(document.body)document.body.classList.add("ls-loaded");var l=document.getElementById("ls-page-loader");if(l){l.classList.add("is-done");l.setAttribute("aria-hidden","true");}}
-			window.addEventListener("load",function(){setTimeout(done,120);});
-			window.addEventListener("pageshow",function(e){if(e.persisted)done();});
+			var NAV="#ls-quick-prev,#ls-quick-next,#navfix-prev,#navfix-next,#eoy-embed-nav,.eoy-nav,.ls-bottom-nav";
+			function css(){
+				if(document.getElementById("ls-boot-style"))return;
+				var st=document.createElement("style");st.id="ls-boot-style";
+				st.textContent="#ls-page-loader{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2147483647!important;background:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important}"+
+					"#ls-page-loader .ls-page-loader-spinner{width:40px!important;height:40px!important;border:3px solid #dbe3e0!important;border-top-color:#63a44b!important;border-radius:50%!important;animation:lsBootSpin .8s linear infinite!important}"+
+					"body:not(.ls-loaded) "+NAV.split(",").join(",body:not(.ls-loaded) ")+"{display:none!important}"+
+					"@keyframes lsBootSpin{to{transform:rotate(360deg)}}";
+				(document.head||document.documentElement).appendChild(st);
+			}
+			function ensure(){
+				var l=document.getElementById("ls-page-loader");
+				if(!l){l=document.createElement("div");l.id="ls-page-loader";var sp=document.createElement("div");sp.className="ls-page-loader-spinner";l.appendChild(sp);document.body.insertBefore(l,document.body.firstChild);}
+				if(!l.querySelector(".ls-page-loader-spinner")){var sp2=document.createElement("div");sp2.className="ls-page-loader-spinner";l.appendChild(sp2);}
+			}
+			function hideNavs(){
+				var els=document.querySelectorAll(NAV);
+				for(var i=0;i<els.length;i++)els[i].style.setProperty("display","none","important");
+			}
+			function showNavs(){
+				var els=document.querySelectorAll(NAV);
+				for(var i=0;i<els.length;i++)els[i].style.removeProperty("display");
+			}
+			function reveal(){
+				window.__lsPageReady=true;
+				if(document.body)document.body.classList.add("ls-loaded");
+				var l=document.getElementById("ls-page-loader");
+				if(l&&l.parentNode)l.parentNode.removeChild(l);
+				showNavs();
+			}
+			css();ensure();hideNavs();
+			var timer=setInterval(hideNavs,60);
+			window.addEventListener("load",function(){setTimeout(function(){clearInterval(timer);reveal();},120);});
+			window.addEventListener("pageshow",function(e){if(e.persisted)reveal();});
+			setTimeout(function(){clearInterval(timer);reveal();},12000);
 		})();
 	</script>
 	<div id="learnsys" data-no-i18n></div>
