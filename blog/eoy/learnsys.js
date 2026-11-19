@@ -5407,14 +5407,17 @@
   // would point at the wrong place; route them back through the proxy.
   LS.asset = function (name) {
     var raw = String(name == null ? "" : name);
-    if (!raw || !LS.isProxied()) return name;
-    if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(raw)) return name;
+    if (!raw || !LS.isProxied() || !isRelativeAsset(raw)) return name;
     var clean = raw.replace(/^\.?\//, "");
     return window.location.pathname + "?eoy/" + clean;
   };
 
   function isRelativeAsset(value) {
-    return !!value && !/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(String(value).trim());
+    if (!value) return false;
+    var v = String(value).trim();
+    // Ignore absolute URLs, protocol-relative URLs, fragments and root-relative
+    // paths (the proxy result is root-relative and must not be rewritten again).
+    return !/^(?:[a-z][a-z0-9+.-]*:|\/\/|\/|#)/i.test(v);
   }
 
   function fixAssetSrcset(el) {
@@ -5468,7 +5471,7 @@
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ["src", "href", "poster", "srcset", "style"]
+      attributeFilter: ["src", "href", "poster", "srcset"]
     });
   }
 
