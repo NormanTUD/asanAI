@@ -74,10 +74,19 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 		@media (max-width: 980px) {
 			body[data-page="lesson"] .ls-main { grid-template-rows: auto minmax(0, 1fr); }
 		}
+		/* Keep the entry navigation visible at the top of a tall embed. */
+		body[data-page="lesson"][data-eoy-resolved]:not([data-eoy-resolved="0"]) .ls-bottom-nav {
+			position: absolute;
+			top: 10px;
+			bottom: auto;
+			left: 12px;
+			right: 12px;
+		}
+		body[data-page="lesson"][data-eoy-resolved]:not([data-eoy-resolved="0"]) .ls-main { padding-top: 58px; }
 		<?php endif; ?>
 	</style>
 </head>
-<body data-page="lesson" data-lesson="intuition" data-eoy-day="<?php echo $eoyDay !== null ? $eoyDay : ''; ?>" data-no-full-article data-tm-reload-lang="1">
+<body data-page="lesson" data-lesson="intuition" data-eoy-day="<?php echo $eoyDay !== null ? $eoyDay : ''; ?>" data-eoy-resolved="<?php echo $eoyDay !== null ? $eoyDay : 0; ?>" data-no-full-article data-tm-reload-lang="1">
 	<div id="learnsys" data-no-i18n></div>
 	<?php if ($showSnow): ?><canvas class="season-layer" id="season-snow" aria-hidden="true"></canvas><?php endif; ?>
 	<?php if ($showFireworks): ?><canvas class="season-layer" id="season-fireworks" aria-hidden="true"></canvas><?php endif; ?>

@@ -2443,6 +2443,7 @@
   var requestedDay = typeof window.EOY_DAY === "number" ? Math.round(window.EOY_DAY)
     : (bodyEntry > 0 ? bodyEntry : (urlMatch ? parseInt(urlMatch[1], 10) : 0));
   var singleStep = requestedDay >= 1 && requestedDay <= steps.length ? steps[requestedDay - 1] : null;
+  if (document.body) document.body.setAttribute("data-eoy-resolved", String(singleStep ? requestedDay : 0));
   var selectedDay = singleStep ? {
     id: "eoy-" + requestedDay,
     track: day.track,
