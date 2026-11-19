@@ -187,7 +187,7 @@
     {
       kicker: "The line",
       title: "Meaning becomes a number",
-      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. The word cold sits at 15, lukewarm at 45. Add the value of lukewarm and you land at 60, which is warm: 15 + 45 = 60.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
+      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. The word cold sits at $15$, lukewarm at $45$. Now you can compute $\\text{cold} + \\text{lukewarm}$ and land at 60, which is warm.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
       watch: "",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
       inherit: false,
@@ -1484,12 +1484,10 @@
   var weekdayStep = {
     kicker: DE ? "Wochentage" : "Weekdays",
     title: DE ? "Wochentage auf einer Linie" : "Weekdays on a line",
-    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Ein Successor-Head kann diese gelernte Ordnung später wiederverwenden." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. A successor head can reuse this learned order later.",
+    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Da auf Sonntag wieder Montag folgt, bilden sie einen Kreis." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. Because Monday follows Sunday again, they form a circle.",
     watch: "",
     demoState: { scene: "weekday" },
     inherit: false,
-    context: DE ? "Die Ordnung ist gelernt, nicht im Kontext nachgeschlagen: Dieselbe Richtung verschiebt Montag zu Dienstag und Dienstag zu Mittwoch." : "The order is learned, not looked up in the context: the same direction moves Monday to Tuesday and Tuesday to Wednesday.",
-    deep: DE ? "Der Successor-Head ist ein Beispiel dafür, dass eine Beziehung als Richtung im Vektorraum liegen kann. Bei Zahlen, Monaten und Wochentagen funktioniert dieselbe Struktur." : "The successor head is an example of a relation living as a direction in vector space. The same structure works for numbers, months, and weekdays.",
     sources: []
   };
 
