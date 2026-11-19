@@ -9,11 +9,13 @@ on:
       - master
     paths:
       - 'blog/**'
+      - '!blog/eoy/**'
   pull_request:
     branches:
       - master
     paths:
       - 'blog/**'
+      - '!blog/eoy/**'
 
 # Don't run two link-check sweeps against the same ref concurrently.
 concurrency:

@@ -1,0 +1,23 @@
+# End-of-year split of the Ten Minutes intuition lesson. It is self-contained:
+# local assets and demos, its own prepend, no blog-wide auto-prepend.
+RewriteEngine On
+RewriteOptions Inherit
+
+<IfModule mod_php8.c>
+	php_value auto_prepend_file "prepend.php"
+</IfModule>
+<IfModule mod_php.c>
+	php_value auto_prepend_file "prepend.php"
+</IfModule>
+<IfModule mod_php7.c>
+	php_value auto_prepend_file "prepend.php"
+</IfModule>
+
+<FilesMatch "^(\.user\.ini|prepend\.php|_page\.php)$">
+	<IfModule mod_authz_core.c>
+		Require all denied
+	</IfModule>
+	<IfModule !mod_authz_core.c>
+		Deny from all
+	</IfModule>
+</FilesMatch>

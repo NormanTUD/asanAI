@@ -1,0 +1,2483 @@
+(function () {
+  "use strict";
+  var DE = window.TM && typeof TM.lang === "function" && TM.lang() === "de";
+  function box(id, lens, title, body, tex, control, controlLabel) {
+    return { id: id, lens: lens, title: title, body: body, tex: tex || "", control: control || "", controlLabel: controlLabel || "" };
+  }
+  var sources = [
+    { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
+    { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
+    { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+    { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
+  ];
+  var introSteps = DE ? [
+    {
+      kicker: "Chat und Code",
+      title: "Wie funktionieren Sprachmodelle?",
+      body: "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
+      teaser: "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
+      demoState: { scene: "media", step: 0 },
+      inherit: false,
+      questionGroups: [
+        {
+          id: "g-basics",
+          title: "Eine Ebene tiefer",
+          questions: [
+            { id: "q-edit-1794746257458-0", title: "Die gleichen Prinzipien", body: "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Quellen",
+          sources: []
+        }
+      ]
+    },
+    {
+      kicker: "Die Schleife",
+      title: "Ein Wort nach dem anderen",
+      body: "Jetzt schließt sich der Kreis. Der letzte Vektor $h$ wird über $W_U$ zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo.",
+      watch: "Vervollständige „Es war einmal ein …“ Wort für Wort, bis <b><|endoftext|></b> kommt. Klicke ein früheres Wort an, um dorthin zurückzuspringen. Die Landschaft ist nur ein vereinfachtes Bild.",
+      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default", camera: { yaw: -0.86, pitch: 0.918, zoom: 1 } },
+      context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
+      deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad. Jedes neue Token läuft wieder durch alle Blöcke. Der KV-Cache spart nur die Neuberechnung der Keys und Values, nicht die Schleife.",
+      boxes: [
+        box("in-5", "Mathematik", "Was macht Temperatur?", "Temperatur teilt die Logits vor dem Softmax: $p_i \\propto \\exp(z_i/T)$. $T < 1$ schärft, $T > 1$ flacht ab. Bei $T \\to 0$ wird daraus Greedy; exakt null wird als Top-Token behandelt."),
+        box("in-6", "Technik", "Warum nicht immer Greedy?", "Greedy ist deterministisch und kann in Schleifen laufen. Sampling ist vielfältiger, aber auch inkohärenter. Top-p behält die kleinste Menge, deren kumulierte Wahrscheinlichkeit p erreicht.")
+      ]
+    },
+    {
+      kicker: "Die Wahl",
+      title: "Die Verteilung ist nicht die Antwort",
+      body: "Du siehst eine Wahrscheinlichkeitslandschaft: Täler sind wahrscheinlich, Berge unwahrscheinlich. Jedes Token ist ein Punkt in einem riesigen, hochdimensionalen Raum. Bei jedem Schritt berechnet das Modell nur die Wahrscheinlichkeit des nächsten Tokens, dann die des darauffolgenden; es sieht immer nur die unmittelbare Umgebung und tastet sich Schritt für Schritt weiter. Die Kugel ist das Token: Mit jeder Wahl bekommt sie Schwung und kann aus ihrem Tal in ein benachbartes entkommen; der goldene Pfad zeigt die gewählten Tokens.",
+      watch: "Dreh die Szene mit Maus oder Finger. Gib der Kugel mit einer Wahl Schwung und sieh, in welches Tal sie rollt.",
+      demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true, view: "top" },
+      context: "Jeder Schritt senkt die Täler seiner Optionen; ein gewähltes Token behält sein Tal. Die Balken zeigen dieselbe Verteilung, aus der die Kugel kommt.",
+      deep: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert. Beam Search hält mehrere Pfade am Leben; Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern.",
+      boxes: [
+        box("in-7", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel."),
+        box("in-8", "Geschichte", "Warum wurde Sampling wichtig?", "Weil ein Modell ohne Sampling immer denselben Text liefert. Die Vielfalt kommt aus der Verteilung, nicht aus dem Modell allein."),
+        box("loop-1", "Grenze", "Gibt es diese Täler wirklich?", "Diese Landschaft ist stark vereinfacht. In einem echten Modell hat der Raum Tausende Dimensionen; dort ist fast jeder flache Punkt ein Sattelpunkt, kein abgeschlossenes Tal. Von dort geht es in viele Richtungen gleichzeitig bergauf und bergab. Die zwei Achsen, die Kugel und die farbigen Täler sind ein Bild für die Idee, keine Messung des echten Token-Raums."),
+        box("loop-2", "Geometrie", "Was sind die Blasen?", "Die farbigen Flächen sind 2D-Projektionen eines viel höherdimensionalen Token-Raums. Im echten Modell liegen unzählige Richtungen und Nachbartokens in der Nähe; die Blase ist nur der sichtbare Schatten."),
+        box("loop-3", "Grenze", "Denken und Sprechen", "Der innere Zustand kann reicher sein als das eine nächste Token, das ihn ausdrücken muss. In der Landschaft liegen ganze Blasen von Möglichkeiten; nach außen wird daraus eine einzige Token-Wahl. Manche nennen diese Lücke eine Expressivitätslücke; der Begriff ist nicht einheitlich, die Intuition ist: Das Modell kann mehr Unterscheidungen tragen, als ein einzelnes Token sichtbar macht.")
+      ]
+    }
+  ] : [
+    {
+      kicker: "Chat and code",
+      title: "How do language models work?",
+      body: "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
+      teaser: "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
+      demoState: { scene: "media", step: 0 },
+      inherit: false,
+      questionGroups: [
+        {
+          id: "g-basics",
+          title: "One level deeper",
+          questions: [
+            { id: "q-edit-1794746257458-0", title: "The same principles", body: "Summaries, chatbots, agents: they all work on the same principle. Here we look specifically at generative LLMs, but most models work in very similar ways.", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Sources",
+          sources: []
+        }
+      ]
+    },
+    {
+      kicker: "The loop",
+      title: "One word after another",
+      body: "Now the circle closes. The last vector $h$ becomes logits through $W_U$, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo.",
+      watch: "Complete “Once upon a time there was …” word by word until <b><|endoftext|></b> appears. Click an earlier word to jump back to it. The landscape is only a simplified picture.",
+      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default", camera: { yaw: -0.86, pitch: 0.918, zoom: 1 } },
+      context: "The model has no working memory other than the context. Every new token changes what is likely next.",
+      deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path. Every new token runs through all blocks again. The KV cache only saves recomputing keys and values, not the loop.",
+      boxes: [
+        box("in-5", "Mathematics", "What does temperature do?", "Temperature divides the logits before softmax: $p_i \\propto \\exp(z_i/T)$. $T < 1$ sharpens, $T > 1$ flattens. At $T \\to 0$ it becomes greedy; exact zero is handled as the top token."),
+        box("in-6", "Technique", "Why not always greedy?", "Greedy is deterministic and can loop. Sampling is more varied, but also less coherent. Top-p keeps the smallest set whose cumulative probability reaches p.")
+      ]
+    },
+    {
+      kicker: "The choice",
+      title: "The distribution is not the answer",
+      body: "You see a probability landscape: valleys are likely, mountains unlikely. Every token is a point in a huge, high-dimensional space. At each step the model computes only the probability of the next token, then of the one after that; it sees only the immediate neighbourhood and feels its way forward step by step. The ball is the token: each choice gives it momentum so it can escape its valley into a neighbouring one; the gold path shows the tokens you chose.",
+      watch: "Rotate the scene with mouse or finger. Give the ball momentum with a choice and watch which valley it rolls into.",
+      demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true, view: "top" },
+      context: "Each step lowers the valleys of its options; a chosen token keeps its valley. The bars show the same distribution the ball comes from.",
+      deep: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised. Beam search keeps several paths alive; speculative sampling speeds up verification without changing the target distribution.",
+      boxes: [
+        box("in-7", "Application", "Which setting for what?", "Code and facts: low temperature, narrow filter. Brainstorming: higher temperature, wider filter. There is no universal rule."),
+        box("in-8", "History", "Why did sampling become important?", "Because a model without sampling always produces the same text. Variety comes from the distribution, not from the model alone."),
+        box("loop-1", "Limit", "Do these valleys really exist?", "This landscape is strongly simplified. A real model works in thousands of dimensions; there almost every flat point is a saddle point, not a closed valley. From such a point the surface goes up and down in many directions at once. The two axes, the ball, and the coloured valleys are a picture of the idea, not a measurement of the real token space."),
+        box("loop-2", "Geometry", "What are the bubbles?", "The coloured areas are 2D projections of a much higher-dimensional token space. In a real model, countless directions and neighbouring tokens lie nearby; the bubble is only the visible shadow."),
+        box("loop-3", "Limit", "Thinking and speaking", "The internal state can be richer than the one next token that has to express it. In the landscape there are whole bubbles of possibilities; on the outside they become a single token choice. Some call this gap an expressivity gap; the term is not uniform, but the intuition is: the model can carry more distinctions than one token can make visible.")
+      ]
+    }
+  ];
+
+  var embedSteps = DE ? [
+    {
+      kicker: "Die Linie",
+      title: "Bedeutung wird eine Zahl",
+      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei 15, Lauwarm bei 45. Addiert man den Wert von Lauwarm, landet man bei 60, also bei Warm: 15 + 45 = 60.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
+      watch: "",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
+      inherit: false,
+      questionGroups: [
+        {
+          id: "g-basics",
+          title: DE ? "Eine Ebene tiefer" : "One level deeper",
+          questions: [
+            { id: "q-deep", title: DE ? "Einschränkungen hier" : "Limitations here", body: DE ? "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt." : "The positions are chosen by hand here so the arithmetic works out. In a model they are learned from many examples.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-mathematik",
+          title: DE ? "Mathematik" : "Mathematics",
+          questions: [
+            { id: "q-box-emb-1", title: DE ? "Was ist ein Vektor?" : "What is a vector?", body: DE ? "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist in LLM oft wichtiger als die Länge." : "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. In LLMs, direction often matters more than length.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-geschichte",
+          title: DE ? "Geschichte" : "History",
+          questions: [
+            { id: "q-box-emb-2", title: DE ? "Woher kommt die Idee?" : "Where does the idea come from?", body: DE ? "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren." : "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-optional",
+          title: DE ? "Optional" : "Optional",
+          questions: [
+            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: DE ? "Quellen" : "Sources",
+          sources: [
+            { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
+            { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
+            { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+            { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
+          ]
+        }
+      ]
+    },
+    {
+      kicker: "Die Ebene",
+      title: "Bedeutung bekommt eine zweite Achse",
+      body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Mann und Frau teilen die Machtposition und fallen deshalb auf derselben Stelle zusammen. Eine zweite Achse schafft freie Wege: Jetzt liegen sie nebeneinander, ohne die Machtposition zu verlieren. Derselbe Richtungsschritt erscheint zwischen König und Königin: König − Mann + Frau liegt nahe bei Königin. Die Beziehung ist eine Richtung, keine benannte Regel.",
+      watch: "Vergleiche 1D und 2D. Welche Richtung wird wiederverwendet?",
+      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
+      context: "In 1D ist die Strecke belegt; mehrere Wörter teilen sich eine Position. In 2D bekommt jede zusätzliche Eigenschaft eine eigene Richtung. Die Analogie ist eine Approximation, keine exakte Regel.",
+      deep: "Freie Wege sind der Kern: Bedeutung braucht Platz für mehrere unabhängige Unterschiede. Jede zusätzliche Achse kann eine weitere Beziehung tragen, ohne eine andere zu überschreiben. Die Nachbarschaft ist ein statistisches Signal, keine Definition.",
+      boxes: [
+        box("emb-6", "Technik", "Warum zwei Achsen?", "Zwei Achsen machen zwei unabhängige Unterschiede sichtbar. Die erste Achse ordnet nach Macht, die zweite nach Geschlecht. Erst dadurch werden Mann und Frau unterscheidbar, obwohl sie auf der Machtachse denselben Wert haben."),
+        box("emb-7", "Geschichte", "Woher kommt die Analogie?", "Mikolov et al. (2013) zeigten, dass Differenzen wie König − Mann + Frau nahe bei Königin landen. Das ist eine Approximation, keine exakte Regel. Sie funktioniert, weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten."),
+        box("emb-8", "Mathematik", "Warum funktioniert die Analogie?", "Weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten. Der Unterschied zwischen Mann und Frau wird zu einer wiederverwendbaren Richtung. Dieselbe Richtung erscheint zwischen König und Königin."),
+        box("emb-14", "Technik", "Was wird übertragen?", "Mann → Frau und König → Königin sind parallel. Die Richtung ist eine gelernte Beziehung, die auf ein neues Paar angewendet wird. Deshalb landet König − Mann + Frau nahe bei Königin."),
+        box("emb-9", "Anwendung", "Wofür ist das gut?", "Suche, Empfehlungen, Clustering und RAG nutzen genau diese Geometrie: semantische Nähe wird zur Abfrage. Die Vektorarithmetik ist eher eine Diagnose als ein Produktmerkmal.")
+      ],
+      sources: sources.slice(2, 4)
+    },
+    {
+      kicker: "Der Raum",
+      title: "Drei Dimensionen",
+      body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Zusätzlich erscheinen Punkte, die es in 2D noch nicht gab: auf einer unteren Ebene Tiere wie Rüde und Hündin, auf einer oberen Ebene Figuren aus Geschichten wie Zauberer und Zauberin. Sie liegen in denselben Verhältnissen; das Geschlecht ist überall dieselbe Richtung. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
+      watch: "Drehe die Ansicht. Welche Richtung bleibt für alle Paare gleich? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
+      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "king-man-woman", tables: true },
+      context: "Ein echtes Modell arbeitet in Tausenden Dimensionen. Die drei Achsen sind eine Projektion, kein vollständiges Bild. Die 2D-Ebene liegt bei z = 0; darunter liegen die Tiere, darüber die Figuren. Die Beispiele zeigen, dass dieselbe Geschlechtsrichtung in jeder Ebene wiederverwendet wird. Mehr Dimensionen tragen mehr unabhängige Beziehungen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
+      deep: "Superposition und Polysemantik erklären, warum ein Neuron mehrere Bedeutungen tragen kann. Die Karte ist nützlich, aber sie ist statistisch. Sie zeigt, was im Training häufig war, nicht was wahr ist. Die Zahlen der 4096-Tabelle sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
+      boxes: [
+        box("emb-10", "Technik", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Eine Kreuzung auf dem Bildschirm bedeutet nicht, dass die Punkte im vollen Raum zusammenfallen."),
+        box("emb-11", "Geschichte", "Woher kommt das Bild?", "Die Idee, Bedeutung als Geometrie zu lesen, verbindet distributionelle Semantik mit Conceptual Spaces. Die konkrete Demo ist eine Vereinfachung, keine Messung eines echten Modells."),
+        box("hd-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, ohne sich gegenseitig zu überschreiben."),
+        box("hd-2", "Grenze", "Kann man das noch sehen?", "Nein. Menschen sehen höchstens drei Achsen. Die Tabelle ist die ehrliche Darstellung für den Rechner; die 3D-Demos sind Projektionen für uns.")
+      ],
+      sources: sources
+    }
+  ] : [
+    {
+      kicker: "The line",
+      title: "Meaning becomes a number",
+      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. The word cold sits at 15, lukewarm at 45. Add the value of lukewarm and you land at 60, which is warm: 15 + 45 = 60.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
+      watch: "",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
+      inherit: false,
+      questionGroups: [
+        {
+          id: "g-basics",
+          title: DE ? "Eine Ebene tiefer" : "One level deeper",
+          questions: [
+            { id: "q-deep", title: DE ? "Einschränkungen hier" : "Limitations here", body: DE ? "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt." : "The positions are chosen by hand here so the arithmetic works out. In a model they are learned from many examples.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-mathematik",
+          title: DE ? "Mathematik" : "Mathematics",
+          questions: [
+            { id: "q-box-emb-1", title: DE ? "Was ist ein Vektor?" : "What is a vector?", body: DE ? "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist in LLM oft wichtiger als die Länge." : "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. In LLMs, direction often matters more than length.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-geschichte",
+          title: DE ? "Geschichte" : "History",
+          questions: [
+            { id: "q-box-emb-2", title: DE ? "Woher kommt die Idee?" : "Where does the idea come from?", body: DE ? "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren." : "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-optional",
+          title: DE ? "Optional" : "Optional",
+          questions: [
+            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: DE ? "Quellen" : "Sources",
+          sources: [
+            { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
+            { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
+            { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+            { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
+          ]
+        }
+      ]
+    },
+    {
+      kicker: "The plane",
+      title: "Meaning gets a second axis",
+      body: "One axis can order words by a single property. Man and woman share the power position, so they collapse onto the same point. A second axis creates free paths: they now sit side by side without losing the power position. The same direction step appears between king and queen: king − man + woman is near queen. The relation is a direction, not a named rule.",
+      watch: "Compare 1D and 2D. Which direction is reused?",
+      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
+      context: "In 1D the line is occupied; several words share one position. In 2D every extra property gets its own direction. The analogy is an approximation, not an exact rule.",
+      deep: "Free paths are the point: meaning needs room for several independent differences. Every extra axis can carry another relation without overwriting one. Neighbourhood is a statistical signal, not a definition.",
+      boxes: [
+        box("emb-6", "Technique", "Why two axes?", "Two axes make two independent differences visible. The first axis orders by power, the second by gender. Only then do man and woman become distinguishable even though they share a value on the power axis."),
+        box("emb-7", "History", "Where does the analogy come from?", "Mikolov et al. (2013) showed that differences such as king − man + woman land near queen. It is an approximation, not an exact rule. It works because similar words appear in similar grammatical slots."),
+        box("emb-8", "Mathematics", "Why does the analogy work?", "Because similar words appear in similar grammatical slots. The difference between man and woman becomes a reusable direction. The same direction appears between king and queen."),
+        box("emb-14", "Technique", "What is carried over?", "Man → woman and king → queen are parallel. The direction is a learned relation applied to a new pair. That is why king − man + woman lands near queen."),
+        box("emb-9", "Application", "What is it good for?", "Search, recommendations, clustering, and RAG use exactly this geometry: semantic closeness becomes a query. Vector arithmetic is more a diagnostic than a product feature.")
+      ],
+      sources: sources.slice(2, 4)
+    },
+    {
+      kicker: "The space",
+      title: "Three dimensions, one shadow",
+      body: "A third axis lifts the plane into a space. Now the same points can carry rank as well as power and gender. Additional points appear that did not exist in 2D: animals such as a male dog and a female dog on a lower level, fictional figures such as a wizard and a sorceress on an upper level. They sit in the same relations; gender is the same direction everywhere. Every view is a projection: lines that cross on screen need not touch in the full space. Every word is an arrow from the origin: the direction carries the meaning, the length is secondary. Drag the view and watch which direction stays stable. The table first shows the three dimensions you see; one click on “4096 dimensions” switches straight to the full table for the computer.",
+      watch: "Rotate the view. Which direction stays the same for all pairs? At the end, open the table of the three dimensions and then the 4096-dimension table.",
+      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions", tables: true },
+      context: "A real model works in thousands of dimensions. The three axes are a projection, not a complete picture. The 2D plane sits at z = 0; animals lie below it, fictional figures above. The examples show that the same gender direction is reused in every layer. More dimensions can carry more independent relations: temperature, gender, power, topic, language, style. Two or three axes collide too quickly.",
+      deep: "Superposition and polysemy explain why a neuron can carry several meanings. The map is useful, but it is statistical. It shows what was frequent in training, not what is true. The numbers in the 4096 table are a slice, not real GPT weights. A real model learns every coordinate from text; no single column means anything on its own. The geometry comes from the interaction.",
+      boxes: [
+        box("emb-10", "Technique", "Why don't we see this in an LLM?", "Because the spaces are too high-dimensional. The demo is a projection onto three axes. A crossing on screen does not mean the points coincide in the full space."),
+        box("emb-11", "History", "Where does the picture come from?", "The idea of reading meaning as geometry connects distributional semantics with conceptual spaces. The concrete demo is a simplification, not a measurement of a real model."),
+        box("hd-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side without overwriting one another."),
+        box("hd-2", "Limit", "Can we still see this?", "No. Humans see at most three axes. The table is the honest view for the computer; the 3D demos are projections for us.")
+      ],
+      sources: sources
+    }
+  ];
+
+  var tokenizeSteps = DE ? [
+    {
+      kicker: "Tokenize",
+      title: "Text wird zu IDs",
+      body: "BPE beginnt bei Bytes oder Zeichen: Jedes Wort wird in seine Bausteine zerlegt, dann zählt der Algorithmus benachbarte Paare und ersetzt das häufigste Paar durch ein neues Symbol. Nach einigen Merges werden häufige Wörter kurz; seltene Schriften bleiben teurer, weil sie im Trainingskorpus seltener vorkommen (Petrov et al., 2023). Das ist eine gelernte, reversible Tokenisierung. Die Beispiele zeigen danach, wie ein Text in Tokens und IDs zerfällt.",
+      watch: "Drücke Weiter: Welches Paar wird als Nächstes verschmolzen?",
+      demoState: { scene: "tokenize" },
+      centerTitle: true,
+      context: "Teil 1: Text wird in Tokens geteilt, jede ID ist eine Adresse in der Embedding-Tabelle. Teil 2: BPE beginnt bei Bytes oder Zeichen und baut das Vokabular durch Merges auf. Jeder Merge ist ein neues Vokabelstück.",
+      deep: "BPE ist eine gelernte Tokenisierung: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
+      boxes: [
+        box("tok-1", "Technik", "Warum Subwords?", "Ein festes Wort-Vokabular müsste jedes unbekannte Wort als Sonderzeichen behandeln. Subwords erlauben es, neue Wörter aus bekannten Teilen zusammenzusetzen. Gleichzeitig bleibt das Vokabular endlich."),
+        box("tok-2", "Mathematik", "Was ist eine ID?", "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum."),
+        box("tok-3", "Technik", "BPE = reversible Tokenisierung", "Byte Pair Encoding beginnt mit Bytes oder Zeichen und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist eine reversible Tokenisierung, gelernt aus dem Trainingskorpus."),
+        box("tok-bpe-data", "Daten", "Warum ist die Tokenisierung datenabhängig?", "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Trainingskorpus seltener vorkommen (Petrov et al., 2023)."),
+        box("tok-4", "Grenze", "Warum ist Englisch kürzer?", "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung."),
+        box("tok-utf8", "Technik", "UTF-8 und Joins", "UTF-8 kodiert Zeichen als Bytes. Ein sichtbares Emoji kann aus mehreren Codepoints bestehen: 🐈‍⬛ kombiniert 🐈, einen unsichtbaren Zero Width Joiner (ZWJ) und ⬛. Der Tokenizer sieht die Bytefolge, nicht das fertige Bild. Deshalb ist die schwarze Katze hier zwei Emoji-Bausteine und mehrere Byte-Tokens.")
+      ],
+      sources: [
+        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909", why: { de: "BPE als Subword-Kompression für seltene Wörter.", en: "BPE as subword compression for rare words." } },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }, { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenizer machen manche Sprachen teurer.", en: "Tokenizers make some languages more expensive." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Tokenize",
+      title: "Text becomes IDs",
+      body: "BPE starts from bytes or characters: every word is split into its pieces, then the algorithm counts adjacent pairs and replaces the most frequent pair with a new symbol. After several merges, frequent words become short; rare scripts stay more expensive because they are rarer in the training corpus (Petrov et al., 2023). That is a learned, reversible tokenization. The examples then show how text breaks into tokens and IDs.",
+      watch: "Press Next: which pair is merged next?",
+      demoState: { scene: "tokenize" },
+      centerTitle: true,
+      context: "Part 1: text is split into tokens, and each ID is an address in the embedding table. Part 2: BPE starts from bytes or characters and builds the vocabulary through merges. Each merge is a new vocabulary item.",
+      deep: "BPE is a learned tokenization: it counts adjacent pairs in the training corpus and replaces the most frequent pair with a new symbol. After several merges, frequent words become short. The exact tokenization depends on the data and the vocabulary target; the demo shows a small corpus, not a measurement of a specific model.",
+      boxes: [
+        box("tok-1", "Technique", "Why subwords?", "A fixed word vocabulary would have to treat every unseen word as a special symbol. Subwords let the model build new words from known pieces while keeping the vocabulary finite."),
+        box("tok-2", "Mathematics", "What is an ID?", "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space."),
+        box("tok-3", "Technique", "BPE = reversible tokenization", "Byte pair encoding starts with bytes or characters and repeatedly replaces the most frequent pair with a new symbol. After many merges, frequent character sequences become a single token. That is a reversible tokenization learned from the training corpus."),
+        box("tok-bpe-data", "Data", "Why does tokenization depend on the data?", "A tokenizer is optimised to cover as much text as possible with as few tokens as possible, without losing information: every word must be reconstructable from its tokens. The exact split therefore follows the training data and the vocabulary target, not a fixed word list. Rare scripts stay more expensive because they are rarer in the training corpus (Petrov et al., 2023)."),
+        box("tok-4", "Limit", "Why is English shorter?", "Because the training corpus is mostly English. Frequent English words get long merges; scripts with little text in the corpus stay at the byte level. The demo shows this illustratively, not as an exact measurement."),
+        box("tok-utf8", "Technique", "UTF-8 and joins", "UTF-8 encodes characters as bytes. A visible emoji can consist of several code points: 🐈‍⬛ combines 🐈, an invisible zero-width joiner (ZWJ), and ⬛. The tokenizer sees the byte sequence, not the finished picture. That is why the black cat is two emoji parts and several byte tokens here.")
+      ],
+      sources: [
+        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909", why: { de: "BPE als Subword-Kompression für seltene Wörter.", en: "BPE as subword compression for rare words." } },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }, { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenizer machen manche Sprachen teurer.", en: "Tokenizers make some languages more expensive." } }
+      ]
+    }
+  ];
+
+  var positionSteps = DE ? [
+    {
+      kicker: "Position",
+      title: "Jeder Platz bekommt einen Fingerabdruck",
+      body: "Ein Token allein weiß nicht, wo es steht: „Hund“ kann an jeder Stelle im Satz auftreten. Damit die Reihenfolge zählt, wird eine Positionsinformation ergänzt. Die Demo zeigt eine sinusförmige Variante und normiert die Vektoren, damit die Richtungen auf einer Kugel sichtbar werden. Im echten Transformer werden die Sinus- und Kosinuswerte zum Token-Embedding addiert; Attention vergleicht Query und Key über Skalarprodukte. Viele moderne Modelle wie Llama nutzen RoPE: RoPE dreht Query und Key, nicht den Token-Vektor. Die Demo zeigt nur drei Dimensionen; die Kugel ist eine Visualisierung, keine exakte Geometrie der Positionskodierung.",
+      watch: "",
+      demoState: { scene: "position" },
+      context: "Die Position wird als Summe von Wellen kodiert: Jede Dimension hat eine andere Frequenz. Die Demo normiert die Vektoren und misst den Winkel auf der Kugel, damit man Richtungen vergleichen kann. Das ist eine Visualisierung; im Transformer werden die Positionswerte addiert und die Attention rechnet mit Skalarprodukten. Längen und Großkreise sind hier also Darstellungsmittel, keine mechanische Beschreibung.",
+      deep: "Die Demo zeigt nur die ersten drei Dimensionen. In einem echten Modell sind es Tausende; die Großkreis-Metrik dient hier nur der Anschauung. Sinusförmige Kodierung und RoPE sind verschiedene Verfahren: Sinus addiert feste Wellen zum Token-Embedding, RoPE rotiert Query und Key.",
+      boxes: [
+        box("pos-1", "Methoden", "Welche Positionsverfahren gibt es?", "Gelernte absolute Embeddings (GPT-2, BERT), sinusförmige Kodierung (Vaswani et al. 2017), relative Position Bias (T5) und ALiBi (Press et al. 2021). RoPE (Su et al. 2021) dreht Query und Key; viele moderne Modelle wie Llama nutzen es."),
+        box("pos-2", "RoPE", "Wie funktioniert RoPE?", "RoPE dreht Query- und Key-Vektoren um einen Winkel, der von der Position abhängt. Das Skalarprodukt zweier gedrehter Vektoren hängt dann von ihrer relativen Position ab: Absolute Position wird als Rotation kodiert, relative Abstände werden sichtbar."),
+        box("pos-3", "Stellenwertsystem", "Warum schnelle und langsame Rotationen?", "Verschiedene Dimensionen drehen unterschiedlich schnell. Schnelle Rotationen unterscheiden nahe Positionen, langsame unterscheiden weit entfernte. Zusammen wirkt das wie ein Stellenwertsystem aus Einern, Zehnern und Hundertern für Positionen."),
+        box("pos-4", "Geometrie", "Was zeigt der Plot?", "Die Demo nutzt die Großkreis-Metrik als Darstellungsmittel: Richtungen zählen, nicht Längen. Jeder grüne Punkt ist dasselbe Wort an einer anderen Position. Die Kugel ist eine Visualisierung der normierten Vektoren; das echte Modell addiert die Positionskodierung zum Token-Embedding. So werden Muster sichtbar, mit denen das Modell „Drache an Position 5“ oder „Drache an Position 22“ unterscheiden kann."),
+        box("pos-5", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt nur wenige Dimensionen und eine sinusförmige Kodierung. RoPE rotiert Query/Key statt des Token-Vektors. Die gezeigten Muster sind eine Intuition, nicht die exakte Implementierung."),
+        box("pos-6", "Detail", "Was passiert mit der Position danach?", "Bei absoluten Positions-Embeddings wird die Positionsinformation zum Token hinzugefügt; alle folgenden Schichten sehen diese Version. Bei RoPE wird stattdessen Query und Key gedreht. So wird das Token für das Netz an seiner Position unterscheidbar."),
+        box("pos-7", "Vergleich", "Sinus, ALiBi, RoPE", "Sinus nutzt feste Wellen; ALiBi bestraft Distanz linear; RoPE dreht Query/Key und macht relative Abstände als Rotation sichtbar. Das Diagramm berechnet die drei Kurven direkt aus ihren Formeln. Gelernte absolute Positionen fehlen, weil dafür die Gewichte eines konkreten Modells nötig wären.")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Positionskodierung als Rotation von Query und Key.", en: "RoPE: position encoding as a rotation of query and key." } },
+        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE; Beispiel für ein modernes Modell.", en: "Llama 2 uses RoPE; an example of a modern model." } },
+        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409", why: { de: "ALiBi: linearer Distanz-Bias statt Positions-Embedding.", en: "ALiBi: a linear distance bias instead of position embeddings." } },
+        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683", why: { de: "T5: relative Position Bias als Alternative.", en: "T5: relative position bias as an alternative." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Position",
+      title: "Every slot gets a fingerprint",
+      body: "A token on its own does not know where it stands: “dog” can appear anywhere in the sentence. For order to matter, positional information is added. The demo shows a sinusoidal variant and normalises the vectors so that directions become visible on a sphere. In a real transformer the sine and cosine values are added to the token embedding; attention compares query and key through dot products. Many modern models such as Llama use RoPE: RoPE rotates query and key, not the token vector. The demo shows only three dimensions; the sphere is a visualisation, not the exact geometry of positional encoding.",
+      watch: "",
+      demoState: { scene: "position" },
+      context: "The position is encoded as a sum of waves: every dimension has a different frequency. The demo normalises the vectors and measures the angle on the sphere so that directions can be compared. That is a visualisation; in the transformer the position values are added and attention uses dot products. Lengths and great circles are presentational devices here, not a mechanical description.",
+      deep: "The demo shows only the first three dimensions. A real model uses thousands; the great-circle metric is only for intuition here. Sinusoidal encoding and RoPE are different methods: sinus adds fixed waves to the token embedding, RoPE rotates query and key.",
+      boxes: [
+        box("pos-1", "Methods", "Which positional methods exist?", "Learned absolute embeddings (GPT-2, BERT), sinusoidal encoding (Vaswani et al. 2017), relative position bias (T5), and ALiBi (Press et al. 2021). RoPE (Su et al. 2021) rotates query and key; many modern models such as Llama use it."),
+        box("pos-2", "RoPE", "How does RoPE work?", "RoPE rotates query and key vectors by an angle that depends on the position. The dot product of two rotated vectors then depends on their relative position: absolute position is encoded as a rotation, and relative distances become visible."),
+        box("pos-3", "Place value", "Why fast and slow rotations?", "Different dimensions rotate at different speeds. Fast rotations distinguish nearby positions, slow rotations distinguish distant ones. Together they act like a place-value system of ones, tens, and hundreds for positions."),
+        box("pos-4", "Geometry", "What does the plot show?", "The demo uses the great-circle metric as a visual device: directions matter, not lengths. Every green point is the same word at a different position. The sphere visualises the normalised vectors; the real model adds the position encoding to the token embedding. This makes patterns visible that let the model distinguish “dragon at position 5” from “dragon at position 22”."),
+        box("pos-5", "Limit", "What is simplified?", "The demo shows only a few dimensions and a sinusoidal encoding. RoPE rotates query/key instead of the token vector. The patterns shown are an intuition, not the exact implementation."),
+        box("pos-6", "Detail", "What happens to the position afterwards?", "With absolute position embeddings, the position information is added to the token; every following layer sees that version. RoPE instead rotates query and key. That is how the token becomes distinguishable to the network at its position."),
+        box("pos-7", "Comparison", "Sinus, ALiBi, RoPE", "Sinus uses fixed waves; ALiBi penalises distance linearly; RoPE rotates query/key and makes relative distances visible as rotation. The chart computes the three curves directly from their formulas. Learned absolute positions are omitted because they need the weights of a specific model.")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Positionskodierung als Rotation von Query und Key.", en: "RoPE: position encoding as a rotation of query and key." } },
+        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE; Beispiel für ein modernes Modell.", en: "Llama 2 uses RoPE; an example of a modern model." } },
+        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409", why: { de: "ALiBi: linearer Distanz-Bias statt Positions-Embedding.", en: "ALiBi: a linear distance bias instead of position embeddings." } },
+        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683", why: { de: "T5: relative Position Bias als Alternative.", en: "T5: relative position bias as an alternative." } }
+      ]
+    }
+  ];
+
+  var attentionSteps = DE ? [
+    {
+      kicker: "Attend",
+      title: "Kontext zieht die Bank an seinen Platz",
+      body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Geld oder Park. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
+      watch: "Klicke ein Wort an. Welche Nachbarn bekommen Aufmerksamkeit?",
+      demoState: { scene: "attention" },
+      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Geld oder Park verschiebt sich der Vektor. Das obere Dreieck in der Matrix ist die kausale Maske: Jedes Token sieht nur die Vergangenheit, damit das Modell lernt, Sätze zu vervollständigen, deren Ende es noch nicht kennt. Das gilt für generative Modelle. Modelle, die fertigen Text bewerten, brauchen keine kausale Maske und dürfen beide Richtungen sehen.",
+      deep: "Ein echter Head berechnet Query-, Key- und Value-Vektoren, macht aus den Skalarprodukten mit Softmax Gewichte und summiert die Values. Die Demo zeigt die Bewegung, nicht die volle Rechnung.",
+      boxes: [
+        box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
+        box("att-2", "Mathematik", "Warum Softmax?", "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget."),
+        box("att-3", "Budget", "Ein Head, ein Budget", "Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Viele Heads haben getrennte Budgets."),
+        box("att-mis", "Grenze", "Ist Attention eine Datenbank?", "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
+    },
+    {
+      kicker: "Der Kontext",
+      title: "Attention verschiebt Bedeutungen in Kontexte",
+      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Drücke Weiter: Die nächste Folie zeigt, wie Attention Oberflächenrauschen in Code ignoriert.",
+      watch: "Klicke die drei Sätze. Welches Wort zieht die Bank? Drücke danach Weiter.",
+      demoState: { scene: "attention", context: "money" },
+      context: "Der Kontext verschiebt den Vektor, nicht das Wort. Die Bank bleibt dasselbe Token; ihre Nachbarn ändern ihre Bedeutung.",
+      deep: "Attention mischt Information aus dem Kontext. Bei „Geld“ zeigt die Bank-Zeile auf Geld, bei „Park“ auf Park. Die Gewichte sind ein Routing-Signal, keine Definition.",
+      boxes: [
+        box("att-4", "Grenze", "Was zeigt Attention nicht?", "Nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen."),
+        box("att-5", "Mathematik", "Die Formel", "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}"),
+        box("att-heads", "Technik", "Mehrere Heads", "Ein echter Layer hat viele Heads. Jeder kann dieselben Tokens aus einer anderen Perspektive sehen: Pronomen, Verb, Thema. Die Struktur ist geteilt, die Parameter sind pro Head gelernt."),
+        box("att-causal", "Optional", "Causal Mask", "Das obere Dreieck in der Matrix ist die kausale Maske. Sie sorgt dafür, dass Tokens nur die Vergangenheit sehen können, damit sie lernen, Sätze zu vervollständigen, deren Ende sie noch nicht kennen. Generative Modelle brauchen sie. Modelle, die fertigen Text bewerten, brauchen sie nicht und dürfen in beide Richtungen schauen.", "", "causal", "nur vergangene Tokens beachten"),
+        box("att-kv", "Optional", "KV-Cache", "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } },
+        { label: "Shazeer (2019), Fast Transformer Decoding", url: "https://arxiv.org/abs/1911.02150", why: { de: "Inkrementelles Decoding mit gespeicherten Keys und Values.", en: "Incremental decoding with cached keys and values." } },
+        { label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
+      ]
+    },
+  ] : [
+    {
+      kicker: "Attend",
+      title: "Context pulls the bank into place",
+      body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the money or park reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
+      watch: "Click a word. Which neighbours receive attention?",
+      demoState: { scene: "attention" },
+      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With money or park, the vector shifts. The upper triangle in the matrix is the causal mask: each token sees only the past, so the model learns to complete sentences whose end it does not yet know. That applies to generative models. Models that score finished text need no causal mask and may look in both directions.",
+      deep: "A real head computes query, key, and value vectors, turns their dot products into weights with softmax, and sums the values. The demo shows the movement, not the full arithmetic.",
+      boxes: [
+        box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
+        box("att-2", "Mathematics", "Why softmax?", "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget."),
+        box("att-3", "Budget", "One head, one budget", "Every row has exactly 1.00 to give. More for one token means less for the others. Many heads have separate budgets."),
+        box("att-mis", "Limit", "Is attention a database?", "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
+    },
+    {
+      kicker: "The context",
+      title: "Attention shifts meaning into context",
+      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights. Press Next: the next slide shows how the same meaning appears in code surfaces.",
+      watch: "Click the three sentences. Which word pulls the bank? Then press Next.",
+      demoState: { scene: "attention", context: "money" },
+      context: "The context shifts the vector, not the word. The bank stays the same token; its neighbours change what it means.",
+      deep: "Attention mixes information from the context. With “money” the bank row points to money, with “park” to park. The weights are a routing signal, not a definition.",
+      boxes: [
+        box("att-4", "Limit", "What does attention not show?", "Not what the FFN does with the information. It shows only which tokens exchange information on this layer."),
+        box("att-5", "Mathematics", "The formula", "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}"),
+        box("att-heads", "Technique", "Several heads", "A real layer has many heads. Each can look at the same tokens from a different perspective: pronoun, verb, topic. The structure is shared; the parameters are learned per head."),
+        box("att-causal", "Optional", "Causal mask", "The upper triangle in the matrix is the causal mask. It makes tokens see only the past, so they learn to complete sentences whose end they do not yet know. Generative models need it. Models that score finished text do not, and may look in both directions.", "", "causal", "attend only to past tokens"),
+        box("att-kv", "Optional", "KV cache", "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } },
+        { label: "Shazeer (2019), Fast Transformer Decoding", url: "https://arxiv.org/abs/1911.02150", why: { de: "Inkrementelles Decoding mit gespeicherten Keys und Values.", en: "Incremental decoding with cached keys and values." } },
+        { label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
+      ]
+    },
+  ];
+
+  var ffnSteps = DE ? [
+    {
+      kicker: "Feed-Forward-Netzwerk (FFN)",
+      title: "Die Rolle von neuronalen Netzen im Transformer",
+      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.\n\nJedes Token wird nach jedem Attention durch das gleiche Neuronale Netz getan, das dann die kontextualisierten Tokens unabhängig voneinander verschiebt. Die Rolle im LLM: verworrene Muster trennbar machen.",
+      watch: "",
+      demoState: { scene: "ffn", mode: "fruit" },
+      context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
+      deep: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂. Die Demo zeigt die Idee, nicht die exakten Gewichte.",
+      boxes: [
+        box("ffn-1", "Mathematik", "Wie sind FFN mathematisch aufgebaut?", "Die Layer sind so aufgebaut:\n\n$$\\text{dense}(x) = \\text{Aktivierung}\\left( \\underbrace{W}_{\\text{Gewichte}} \\cdot \\underbrace{x}_{\\text{Eingabe}} + \\underbrace{b}_{\\text{Bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{Aktivierung}(\\underbrace{\\text{dense}_1(x)}_{\\text{Erste Schicht}})\\right)$$"),
+        box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN ist ein MLP pro Token und trennt Muster, die sonst verworren bleiben. Beide zusammen bilden einen Block."),
+        box("ffn-4", "Geometrie", "Ist der reichere Vektor hochdimensional?", "Ja. Jeder Punkt hier steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in $W_1$ und der Pull in $W_2$ sind Richtungen in diesem hochdimensionalen Raum.")
+      ],
+      questionGroups: [
+        { id: "g-basics", title: "Eine Ebene tiefer", questions: [] },
+        {
+          id: "g-lens-mathematik",
+          title: "Mathematik",
+          questions: [
+            { id: "q-box-ffn-1", title: "Wie sind FFN mathematisch aufgebaut?", body: "Die Layer sind so aufgebaut:\n\n$$\\text{dense}(x) = \\text{Aktivierung}\\left( \\underbrace{W}_{\\text{Gewichte}} \\cdot \\underbrace{x}_{\\text{Eingabe}} + \\underbrace{b}_{\\text{Bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{Aktivierung}(\\underbrace{\\text{dense}_1(x)}_{\\text{Erste Schicht}})\\right)$$", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-lens-technik",
+          title: "Technik",
+          questions: [
+            { id: "q-box-ffn-2", title: "Warum das FFN?", body: "Attention bewegt Information zwischen Tokens. Das FFN ist ein MLP pro Token und trennt Muster, die sonst verworren bleiben. Beide zusammen bilden einen Block.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-geometrie",
+          title: "Geometrie",
+          questions: [
+            { id: "q-box-ffn-4", title: "Ist der reichere Vektor hochdimensional?", body: "Ja. Jeder Punkt hier steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in $W_1$ und der Pull in $W_2$ sind Richtungen in diesem hochdimensionalen Raum.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Quellen",
+          sources: [
+            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+          ]
+        }
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Feed-forward network (FFN)",
+      title: "The role of neural networks in the transformer",
+      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.\n\nAfter every attention step, each token is passed through the same neural network, which then shifts the contextualised tokens independently of one another. The role in the LLM: make entangled patterns separable.",
+      watch: "",
+      demoState: { scene: "ffn", mode: "fruit" },
+      context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
+      deep: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂. The demo shows the idea, not the exact weights.",
+      boxes: [
+        box("ffn-1", "Mathematics", "How is the FFN built mathematically?", "The layers are built like this:\n\n$$\\text{dense}(x) = \\text{activation}\\left( \\underbrace{W}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b}_{\\text{bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{activation}(\\underbrace{\\text{dense}_1(x)}_{\\text{first layer}})\\right)$$"),
+        box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN is an MLP per token and separates patterns that would otherwise stay entangled. Together they form one block."),
+        box("ffn-4", "Geometry", "Is the richer vector high-dimensional?", "Yes. Every point here stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in $W_1$ and the pull in $W_2$ are directions in that high-dimensional space.")
+      ],
+      questionGroups: [
+        { id: "g-basics", title: "One level deeper", questions: [] },
+        {
+          id: "g-lens-mathematics",
+          title: "Mathematics",
+          questions: [
+            { id: "q-box-ffn-1", title: "How is the FFN built mathematically?", body: "The layers are built like this:\n\n$$\\text{dense}(x) = \\text{activation}\\left( \\underbrace{W}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b}_{\\text{bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{activation}(\\underbrace{\\text{dense}_1(x)}_{\\text{first layer}})\\right)$$", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-lens-technique",
+          title: "Technique",
+          questions: [
+            { id: "q-box-ffn-2", title: "Why the FFN?", body: "Attention moves information between tokens. The FFN is an MLP per token and separates patterns that would otherwise stay entangled. Together they form one block.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-geometry",
+          title: "Geometry",
+          questions: [
+            { id: "q-box-ffn-4", title: "Is the richer vector high-dimensional?", body: "Yes. Every point here stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in $W_1$ and the pull in $W_2$ are directions in that high-dimensional space.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Sources",
+          sources: [
+            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+          ]
+        }
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+      ]
+    }
+  ];
+
+  var residualSteps = DE ? [
+    {
+      kicker: "Residual",
+      title: "Das gemeinsame Notizbuch wird zum Stream",
+      body: "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Jedes Token hat einen eigenen Residual Stream. Stell dir jeden Stream als Notizbuch vor: Das Token steht schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich.",
+      watch: "Drücke Weiter: erst schreibt die erste Schicht, dann wächst der Stream.",
+      demoState: { scene: "residual" },
+      context: "Die Notizbuch-Analogie ist eine stark vereinfachte, vermenschlichte Sichtweise. Mathematisch ist der Stream ein Vektor pro Token; die Streams werden getrennt geführt, und jede Schicht addiert pro Token ein Update: x ← x + Layer(x). Frühere Notizen bleiben lesbar, weil addiert und nicht überschrieben wird.",
+      deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben. Jedes Token hat seinen eigenen Stream; Attention mischt Information zwischen ihnen, und FFN schreibt Updates hinein; die Identität bleibt erhalten.",
+      boxes: [
+        box("res-nb", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
+        box("res-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar."),
+        box("res-2", "Grenze", "Was ist das nicht?", "Kein Speicher im Sinne einer Datenbank und keine wörtliche Expertenrunde. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird.")
+      ]
+    }
+  ] : [
+    {
+      kicker: "Residual",
+      title: "The shared notebook becomes the stream",
+      body: "This is a strongly simplified, humanised view. Each token has its own residual stream. Think of each stream as a notebook: the token is already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same.",
+      watch: "Press Next: first the first layer writes, then the stream grows.",
+      demoState: { scene: "residual" },
+      context: "The notebook analogy is a strongly simplified, humanised view. Mathematically the stream is one vector per token; the streams are kept separately, and every layer adds an update per token: x ← x + Layer(x). Earlier notes stay readable because the layer adds instead of overwriting.",
+      deep: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information. Each token has its own stream; attention mixes information between them, and the FFN writes updates into them; the identity survives.",
+      boxes: [
+        box("res-nb", "Mathematics", "The notebook", "x₁ = x₀ + Layer(x₀). The identity stays; every layer adds only its change. Each layer reads the current state.", "\\underbrace{x_1}_{\\text{new}} = \\underbrace{x_0}_{\\text{old}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{layer's note}}"),
+        box("res-1", "Mathematics", "Why addition?", "x ← x + f(x). The identity stays; the layer learns only the change. That makes deep stacks trainable."),
+        box("res-2", "Limit", "What is it not?", "Not a database and not a literal panel of experts. The stream is one vector per token carried through the layers.")
+      ]
+    }
+  ];
+
+  var residualNotebookStep = DE ? {
+    kicker: "Notizbuch",
+    title: "Das gemeinsame Notizbuch",
+    body: "Stell dir den Residual Stream als gemeinsames Notizbuch vor: Jede Schicht ist eine Reihe von Experten, die lesen und ihre Erkenntnisse dazuschreiben; nichts wird gelöscht. Drücke Weiter: Schicht für Schicht kommen Markierungen dazu. Am Ende steht das Wissen aller Schichten.",
+    watch: "Drücke Weiter. Was schreibt jede Schicht dazu?",
+    demoState: { scene: "residual", phase: "notebook" },
+    context: "Die Analogie: Ein Notizbuch wird weitergereicht und ergänzt. Jede Schicht liest den aktuellen Stand und addiert ihre Notiz. Am Ende steht das Wissen aller Schichten.",
+    deep: "Mathematisch: x₁ = x₀ + Layer(x₀). Die Identität bleibt; die Schicht lernt nur die Änderung. Deshalb lassen sich tiefe Stapel trainieren.",
+    boxes: [
+      box("res-nb-1", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
+      box("res-nb-2", "Grenze", "Was ist das nicht?", "Kein Datenbankspeicher. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird; Attention und FFN schreiben Updates hinein.")
+    ],
+    sources: []
+  } : {
+    kicker: "Notebook",
+    title: "The shared notebook",
+    body: "Think of the residual stream as a shared notebook: every layer is a row of experts who read it and write their insights into it; nothing is erased. Press Next: layer by layer, more marks appear. At the end the notebook holds the knowledge of all layers.",
+    watch: "Press Next. What does each layer add?",
+    demoState: { scene: "residual", phase: "notebook" },
+    context: "The analogy: a notebook is passed on and extended. Every layer reads the current state and adds its note. At the end it holds the knowledge of all layers.",
+    deep: "Mathematically: x₁ = x₀ + Layer(x₀). The identity stays; the layer learns only the change. That is why deep stacks can be trained.",
+    boxes: [
+      box("res-nb-1", "Mathematics", "The notebook", "x₁ = x₀ + Layer(x₀). The identity stays; every layer adds only its change. Each layer reads the current state.", "\\underbrace{x_1}_{\\text{new}} = \\underbrace{x_0}_{\\text{old}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{layer's note}}"),
+      box("res-nb-2", "Limit", "What is this not?", "Not a database. The stream is one vector per token carried through the layers; attention and the FFN write updates into it.")
+    ],
+    sources: []
+  };
+
+  var meadowSteps = DE ? [
+    {
+      kicker: "Die Wiese",
+      title: "Die Karte der Wörter",
+      body: "Jedes Wort besitzt eine Zelle. Bewege den Zeiger; der Gedanke fällt in die nächste Zelle. Die goldenen Nähte sind die Stellen, an denen zwei Wörter fast gleich nah sind. Je mehr Wörter, desto kleiner die Zellen, aber die Naht verschwindet nie.",
+      watch: "Bewege den Zeiger. Wann sind zwei Wörter fast gleich wahrscheinlich?",
+      demoState: { scene: "meadow" },
+      context: "Die Wiese ist eine Visualisierung: Jede Zelle steht für ein Token, die goldene Naht für fast gleiche Wahrscheinlichkeit. Die echten Token-Wahrscheinlichkeiten kommen aus Softmax über Logits, nicht aus der räumlichen Nähe zu einem Zentrum. Am Rand und an der Naht ist die Entscheidung unsicher; mehr Wörter machen die Zellen feiner, nicht die Unsicherheit null.",
+      deep: "In einem echten Modell hat der Raum Tausende Dimensionen und das Vokabular Zehntausende Tokens. Die Wiese ist eine Projektion auf zwei Achsen; die Nähte sind die Grenzen zwischen benachbarten Token-Regionen.",
+      boxes: [
+        box("md-1", "Mathematik", "Was ist eine Voronoi-Zelle?", "Die Menge aller Punkte, die einem Wort näher sind als jedem anderen. Die Grenze zwischen zwei Zellen ist die Menge der Punkte mit gleichem Abstand."),
+        box("md-2", "Technik", "Was machen Temperatur und Top-k?", "Temperatur macht die Auswahl breiter oder schärfer. Top-k begrenzt die Auswahl auf die k nächsten Wörter. Beides verändert die Verteilung, nicht die Karte."),
+        box("md-3", "Geometrie", "Großkreis und Naht", "Der letzte Vektor zeigt auf eine Region von Token-Richtungen. Nahe einer Naht sind zwei Wörter fast gleich wahrscheinlich. Mehr Tokens verkleinern die Zellen, aber die Nähte schließen sich nie. Mabrok (2026) nennt die semantische Verzerrung durch das endliche Vokabular die Expressibility Gap.")
+      ],
+      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301", why: { de: "Quelle der zugehörigen Aktivierungs-/Geometrie-Aussagen.", en: "Source for the related activation/geometry claims." } }]
+    }
+  ] : [
+    {
+      kicker: "The meadow",
+      title: "The map of words",
+      body: "Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are almost equally near. More words make smaller cells, but the seam never disappears.",
+      watch: "Move the pointer. When are two words almost equally likely?",
+      demoState: { scene: "meadow" },
+      context: "The meadow is a visualisation: each cell stands for a token, the gold seam for almost equal probability. Real token probabilities come from softmax over logits, not from spatial closeness to a centre. At the edge and on a seam the decision is uncertain; more words make the cells finer, not the uncertainty zero.",
+      deep: "In a real model the space has thousands of dimensions and the vocabulary tens of thousands of tokens. The meadow is a projection onto two axes; the seams are the borders between neighbouring token regions.",
+      boxes: [
+        box("md-1", "Mathematics", "What is a Voronoi cell?", "The set of all points closer to one word than to every other. The border between two cells is the set of points at equal distance."),
+        box("md-2", "Technique", "What do temperature and top-k do?", "Temperature makes the choice wider or sharper. Top-k limits it to the k nearest words. Both change the distribution, not the map."),
+        box("md-3", "Geometry", "Great circle and seam", "The final vector points to a region of token directions. Near a seam two words are almost equally likely. More tokens shrink the cells, but the seams never close. Mabrok (2026) calls the semantic distortion caused by a finite vocabulary the expressibility gap.")
+      ],
+      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301", why: { de: "Quelle der zugehörigen Aktivierungs-/Geometrie-Aussagen.", en: "Source for the related activation/geometry claims." } }]
+    }
+  ];
+
+  var insideSteps = DE ? [
+
+    {
+      kicker: "1 Neuron",
+      title: "Was sind neuronale Netze?",
+      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: $\\hat y = w\\cdot x + b$. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
+      watch: "Starte das Training. Wie reagiert die Gerade? Warum bleiben die Fehler groß?",
+      demoState: { scene: "model", phase: "linear" },
+      context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
+      deep: "Ein Neuron rechnet z = w x + b. Die Gerade hat nur zwei Parameter. Sie kann eine nichtlineare Funktion nicht approximieren, egal wie lange sie trainiert. Erst Aktivierungen und mehrere Schichten erzeugen Knicke und Kurven.",
+      boxes: [
+        box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
+        box("mod-layer", "Mathematik", "Das Neuron", "Ein Input, ein Neuron: $z = w x + b$; $a = \\operatorname{activation}(z)$; Ausgabe $= v a + c$. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
+        box("mod-line", "Grenze", "Warum reicht eine Gerade nicht?", "Ein einzelnes Neuron ist eine lineare Funktion. Es kann den Sinus nur grob annähern, egal wie lange es trainiert. Erst die Aktivierung zwischen mehreren Schichten erzeugt Knicke und Kurven."),
+        box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
+        box("mod-train", "Technik", "Wie wird trainiert?", "Der Gradient zeigt, wie der Loss auf jede Parameteränderung reagiert. Ein Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite."),
+        box("mod-extra", "Grenze", "Warum außerhalb falsch?", "Im Trainingsbereich gibt es Daten. Außerhalb extrapoliert das Netz. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.")
+      ],
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
+    },
+    {
+      kicker: "Die Bausteine",
+      title: "Die Bausteine eines LLM",
+      body: "Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Die Daten stehen davor und werden zum Training verwendet; die Architektur beginnt mit dem Tokenizer. Gehe die fünf Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Positional Embedding, Transformer-Blöcke und Unembedding. In den nächsten Tagen gehen wir alle diese Sachen durch.",
+      watch: "Gehe die fünf Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
+      demoState: { scene: "blocks" },
+      context: "Die Reihenfolge ist die Architektur: Tokens → Vektoren → Position → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
+      deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
+      boxes: [
+        box("mod-1", "Technik", "Die fünf Ebenen", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Positional Embedding: Position → Vektor. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
+        box("mod-dense", "Optional", "Dense = alle mit allen", "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix $W$ steht $W_{ij}$ für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.", "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}"),
+        box("mod-norm", "Technik", "LayerNorm und andere Blöcke", "Ein echter Transformer-Block enthält zusätzlich LayerNorm, Residualverbindungen und mehrere Attention-Heads. Es gibt auch andere Architekturen und Details wie Mixture-of-Experts, Multi-Query-Attention und verschiedene Positionsverfahren. Wir lassen sie hier weg, um bei der Intuition zu bleiben."),
+        box("mod-angle", "Mathematik", "Warum Winkel?", "Am Ende werden Richtungen verglichen, nicht Längen. Der Winkel zwischen zwei Vektoren ändert sich in hohen Dimensionen weniger stark als ihre Länge. Deshalb ist die Großkreis-Metrik hier nützlich; für den Einstieg reicht die Intuition."),
+        box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat."),
+        box("mod-extra", "Grenze", "Was fehlt hier?", "Es gibt weitere Architekturen und Details, die wir hier nicht besprechen: Mixture-of-Experts, andere Normalisierungen, Multi-Query-Attention, verschiedene Positionsverfahren und viele Trainingstricks. Hier geht es nur um die Intuition.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
+    }
+  ] : [
+    {
+      kicker: "1 neuron",
+      title: "What are neural networks?",
+      body: "A neural network is first a parameterised function. The smallest example is one neuron: $\\hat y = w\\cdot x + b$. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape.",
+      watch: "Start training. How does the line react? Why do the errors stay large?",
+      demoState: { scene: "model", phase: "linear" },
+      context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
+      deep: "One neuron computes z = w x + b. The line has only two parameters. It cannot approximate a nonlinear function, no matter how long it trains. Only activations and several layers create bends and curves.",
+      boxes: [
+        box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
+        box("mod-layer", "Mathematics", "The neuron", "One input, one neuron: $z = w x + b$; $a = \\operatorname{activation}(z)$; output $= v a + c$. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
+        box("mod-line", "Limit", "Why is a line not enough?", "A single neuron is a linear function. It can only approximate the sine, no matter how long it trains. Only the activation between several layers creates bends and curves."),
+        box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
+        box("mod-train", "Technique", "How is it trained?", "The gradient shows how the loss reacts to every parameter change. An optimiser moves in the opposite direction. The learning rate sets the step size."),
+        box("mod-extra", "Limit", "Why wrong outside?", "Inside the training range there is data. Outside the network extrapolates. A small training loss does not guarantee good extrapolation.")
+      ],
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
+    },
+    {
+      kicker: "The building blocks",
+      title: "The building blocks of an LLM",
+      body: "An LLM is a chain of levels, not a single magic formula. The data stands before it and is used for training; the architecture begins with the tokenizer. Walk through the five levels with “Next”: tokenizer, embedding, positional embedding, transformer blocks, and unembedding. Over the next days we will go through all of these things.",
+      watch: "Walk through the five levels with “Next” or the arrow key. What does each level do?",
+      demoState: { scene: "blocks" },
+      context: "The order is the architecture: tokens → vectors → position → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
+      deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
+      boxes: [
+        box("mod-1", "Technique", "The five levels", "Tokenizer: text → tokens. Embedding: tokens → vectors. Positional embedding: position → vector. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
+        box("mod-dense", "Optional", "Dense = all to all", "A dense layer connects every input to every output. The weights are the edges of a complete weighted graph. In the matrix $W$, $W_{ij}$ is the edge from input j to output i. That is where the usual network diagrams come from.", "\\underbrace{y_i}_{\\text{output }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{all inputs}}"),
+        box("mod-norm", "Technique", "LayerNorm and other blocks", "A real transformer block also contains LayerNorm, residual connections, and several attention heads. There are further architectures and details such as mixture-of-experts, multi-query attention, and different positional schemes. We leave them out here to keep the intuition in focus."),
+        box("mod-angle", "Mathematics", "Why angles?", "At the end, directions are compared, not lengths. The angle between two vectors changes less in high dimensions than their length. That is why the great-circle metric is useful here; for a first pass the intuition is enough."),
+        box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth."),
+        box("mod-extra", "Limit", "What is missing here?", "There are further architectures and details we do not cover here: mixture-of-experts, other normalisations, multi-query attention, different positional schemes, and many training tricks. This page is about the intuition.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
+    }
+  ];
+
+  var bausteineData = {
+    kicker: DE ? "Daten" : "Data",
+    title: DE ? "Daten" : "Data",
+    body: DE
+      ? "Daten sind der erste Schritt, aber technisch nicht Teil des LLM.\n\nMan nutzt Daten, um auf ihnen zu trainieren, damit das LLM viele Beispiele sieht, und weiß, wie es sich verhalten soll. Das Training beginnt mit Pretraining auf einem großen, gefilterten Textkorpus, damit das Netz Muster, Sprache und Fakten lernt. Danach folgen weitere Stufen:\n\nInstruction-Tuning auf Fragen mit nützlichen Antworten; viele Modelle werden zusätzlich mit Preference Optimization wie RLHF oder DPO ausgerichtet. Der große Korpus gibt die Breite, die kuratierten Beispiele geben die Richtung."
+      : "Data is the first step, but technically not part of the LLM.\n\nWe use data to train on it, so the LLM sees many examples and learns how to behave. Training starts with pretraining on a large, filtered text corpus so the net learns patterns, language, and facts. More stages follow:\n\nInstruction tuning on questions with useful answers; many models are also aligned with preference optimization such as RLHF or DPO. The large corpus provides breadth, the curated examples provide direction.",
+    teaser: DE
+      ? "Daten sind der erste Schritt, aber technisch nicht Teil des LLM.\n\nMan nutzt Daten, um auf ihnen zu trainieren, damit das LLM viele Beispiele sieht, und weiß, wie es sich verhalten soll. Das Training beginnt mit Pretraining auf einem großen, gefilterten Textkorpus, damit das Netz Muster, Sprache und Fakten lernt. Danach folgen weitere Stufen:\n\nInstruction-Tuning auf Fragen mit nützlichen Antworten; viele Modelle werden zusätzlich mit Preference Optimization wie RLHF oder DPO ausgerichtet. Der große Korpus gibt die Breite, die kuratierten Beispiele geben die Richtung."
+      : "Data is the first step, but technically not part of the LLM.\n\nWe use data to train on it, so the LLM sees many examples and learns how to behave. Training starts with pretraining on a large, filtered text corpus so the net learns patterns, language, and facts. More stages follow:\n\nInstruction tuning on questions with useful answers; many models are also aligned with preference optimization such as RLHF or DPO. The large corpus provides breadth, the curated examples provide direction.",
+    watch: "",
+    demoState: { scene: "langdata", mode: "scale", summary: true },
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-data-external", title: DE ? "Sind die Daten Teil des LLM?" : "Are the data part of the LLM?", body: DE ? "Nein. Sie stehen außerhalb des Modells und werden zum Training verwendet." : "No. They stand outside the model and are used for training.", tex: "", kind: "question" },
+          { id: "q-data-finetune", title: DE ? "Was ist Fine-Tuning?" : "What is fine-tuning?", body: DE ? "Ein zweites Training auf kleinen, gezielten Frage-Antwort-Daten, damit das Modell für Menschen nützlich antwortet." : "A second training run on small, targeted question-answer data so the model answers usefully for people.", tex: "", kind: "question" },
+          { id: "q-edit-1794825074123-2", title: DE ? "Woher kriegt man die menschlichen Fragen?" : "Where do the human questions come from?", body: DE ? "Es gibt dafür Datensätze wie <b>OpenAssistant</b> oder <b>Less Is More for Alignment</b>. Die großen Anbieter nutzen aber die Interaktionen der realen Nutzer mit ihren Modellen, um mehr solcher Daten zu bekommen." : "There are datasets such as <b>OpenAssistant</b> or <b>Less Is More for Alignment</b>. But the big players use the interactions that real users have with their models to get more of this data.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-sources",
+        title: DE ? "Quellen" : "Sources",
+        sources: [
+          { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model", why: { de: "Beispiel für einen Trainingsauszug aus Wikipedia.", en: "Example of a training excerpt from Wikipedia." } },
+          { label: "Wikipedia: Paris", url: "https://de.wikipedia.org/wiki/Paris", why: { de: "Erster Absatz des Artikels; die Demo zeigt den HTML-Ausschnitt.", en: "First paragraph of the article; the demo shows the HTML excerpt." } },
+          { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
+          { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
+          { label: "Köpf et al. (2023), OpenAssistant Conversations", url: "https://arxiv.org/abs/2304.07327", why: { de: "Offener Datensatz menschlicher Frage-Antwort-Konversationen.", en: "Open dataset of human question-answer conversations." } },
+          { label: "Zhou et al. (2023), LIMA: Less Is More for Alignment", url: "https://arxiv.org/abs/2305.11206", why: { de: "Wenige, hochwertige Instruktionsdaten für Alignment.", en: "A small, high-quality instruction set for alignment." } },
+          { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } },
+          { label: "Ouyang et al. (2022), Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning mit menschlichem Feedback nach dem Vortraining.", en: "Instruction tuning with human feedback after pretraining." } }
+        ]
+      }
+    ]
+  };
+  var bausteineIntro = {
+    kicker: DE ? "Architektur" : "Architecture",
+    title: DE ? "Die Architektur von LLMs" : "The architecture of LLMs",
+    body: DE
+      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste Token vorherzusagen."
+      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next token.",
+    teaser: DE
+      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste Token vorherzusagen."
+      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next token.",
+    watch: "",
+    demoState: { scene: "blocks" },
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-training", title: DE ? "Wie werden die Modelle trainiert?" : "How are the models trained?", body: DE ? "Wir gehen an einem späteren Tag noch auf das Training ein. Die Idee: Anhand von Trainingsdaten, also Beispielen, prüft man wiederholt, wie gut das Netz ist, und verändert es leicht in die Richtung, in der es besser wird. Besser heißt hier: Gegeben einen Text sagt es das nächste Wort aus dem Text richtig voraus." : "We will look at training in more detail on a later day. The idea: with training data, that is examples, you repeatedly check how good the network is and change it slightly in the direction that makes it better. Better here means: given a text, it predicts the next word from the text correctly.", tex: "", kind: "question" },
+        ]
+      },
+      {
+        id: "g-sources",
+        title: DE ? "Quellen" : "Sources",
+        sources: [
+          { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.", en: "Transformer blocks, residual connections, and layer normalisation." } },
+          { label: "He et al. (2016), Deep Residual Learning", url: "https://arxiv.org/abs/1512.03385", why: { de: "Residualverbindungen: Updates werden addiert, nicht überschrieben.", en: "Residual connections: updates are added, not overwritten." } }
+        ]
+      }
+    ]
+  };
+  var bausteineOutro = {
+    kicker: DE ? "Ausblick" : "What comes next",
+    title: DE ? "Die nächsten Tage" : "The next days",
+    body: DE ? "Ein kurzer Ausblick auf die nächsten Folien." : "A short look at the next slides.",
+    teaser: DE ? "Ein kurzer Ausblick auf die nächsten Folien." : "A short look at the next slides.",
+    watch: DE ? "Die Demo zeigt, was als Nächstes kommt." : "The demo shows what comes next.",
+    demoState: { scene: "roadmap" },
+    inherit: false
+  };
+  var bausteineStep = {
+    kicker: DE ? "Architektur" : "Architecture",
+    title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
+    substeps: [bausteineData, bausteineIntro, bausteineOutro]
+  };
+
+  var manifoldSteps = DE ? [
+    {
+      kicker: "Mannigfaltigkeiten",
+      title: "Von Beziehungen zur Übersetzung",
+      body: "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehung untereinander die Bedeutung enthält, wird Übersetzung zu einer Abbildung zwischen Punktwolken: Translation, Rotation, Skalierung und Scherung. Die lokale Struktur einer Punktwolke kann wie eine Mannigfaltigkeit aussehen; der Vietoris–Rips-Komplex macht ihre Nachbarschaften sichtbar.\n\nFindet man eine Abbildung, die eine Wolke auf die andere legt, ist das ein Modell für Übersetzung: Semantische Beziehungen liegen in beiden Sprachen ähnlich, auch wenn die konkreten Tokens andere sind.",
+      watch: "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
+      demoState: { scene: "manifold" },
+      context: "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
+      deep: "Eine Mannigfaltigkeit sieht lokal wie ein euklidischer Raum aus; global kann sie gekrümmt sein, muss es aber nicht. Die Übersetzung entspricht hier einer Abbildung zwischen zwei Punktwolken, einer Kombination aus Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
+      boxes: [
+        box("man-2", "Grenze", "Was ist vereinfacht?", "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie."),
+        box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt, extrem hochdimensional und für Menschen schwer zu sehen."),
+        box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.")
+      ],
+      sources: [
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } },
+        { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Manifolds",
+      title: "From relations to translation",
+      body: "If you have points in this highly abstract space whose relations to one another carry meaning, translation becomes a map between point clouds: translation, rotation, scaling, and shear. The local structure of a point cloud can look like a manifold; the Vietoris–Rips complex makes its neighbourhoods visible.\n\nIf you find a map that lays one cloud onto the other, that is a model for translation: semantic relations sit similarly in both languages, even when the concrete tokens differ.",
+      watch: "Rotate, roll, and translate the Japanese cloud. Hover the points to see the words. Click “Find translation” or “Next”.",
+      demoState: { scene: "manifold" },
+      context: "The demo is strongly simplified: two point clouds, many words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
+      deep: "A manifold looks locally like Euclidean space; globally it can be curved, but it need not be. Here translation is a map between two point clouds, a combination of rotation and translation: when the clouds coincide, words of the same meaning lie on top of each other.",
+      boxes: [
+        box("man-2", "Limit", "What is simplified?", "The point clouds are small and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations; the edges show one neighbourhood, not the whole geometry."),
+        box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the shapes are abstract, extremely high-dimensional, and hard for humans to see."),
+        box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like $R^n$, the familiar Euclidean space: every point has a chart that maps a neighbourhood onto an open set in $R^n$, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus.")
+      ],
+      sources: [
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } },
+        { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }
+      ]
+    }
+  ];
+
+  var mlpSteps = DE ? [
+    {
+      kicker: "Raum biegen",
+      title: "Was sind neuronale Netze?",
+      body: "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: In der Demo hebt eine Schicht die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Das FFN wendet pro Token eine gelernte nichtlineare Transformation an; die Biegung ist eine Intuition, kein wörtliches Falten.",
+      demoState: { scene: "mlp" },
+      context: "Die Biegung ist eine Dense-Schicht: Sie hebt die Punkte in eine zusätzliche Dimension, bis ein flacher Schnitt reicht.",
+      deep: "Das ist keine Animation über den Daten, sondern eine Animation der Daten selbst: Jeder Punkt behält seine Nachbarschaft, während der Raum sich krümmt. Die Form hängt von Gewichten, Bias und Aktivierung ab.",
+      boxes: [
+        box("mlp-1", "Mathematik", "Die Dense-Schicht", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. Die Schicht dehnt auf n verborgene Werte, biegt jeden mit einer Aktivierung und projiziert auf eine Höhe."),
+        box("mlp-2", "Grenze", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Ein echtes Modell arbeitet mit Tausenden Dimensionen.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }]
+    }
+  ] : [
+    {
+      kicker: "Bending space",
+      title: "What are neural networks?",
+      body: "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. The FFN applies a learned nonlinear transformation per token; the bend is an intuition, not a literal fold.",
+      demoState: { scene: "mlp" },
+      context: "The bend is a dense layer: it lifts the points into an extra dimension until a flat cut is enough.",
+      deep: "This is not an animation over the data; it is an animation of the data itself. Every point keeps its neighbourhood while the space bends. The shape depends on weights, bias, and activation.",
+      boxes: [
+        box("mlp-1", "Mathematics", "The dense layer", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. The layer expands to n hidden values, bends each with an activation, and projects to one height."),
+        box("mlp-2", "Limit", "Why don't we see this in an LLM?", "Because the spaces are too high-dimensional. The demo is a projection onto three axes. A real model works with thousands of dimensions.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }]
+    }
+  ];
+
+  var stackSteps = [];
+
+  var wholeSteps = [];
+
+  var activationSteps = DE ? [
+    {
+      kicker: "Aktivierung",
+      title: "Was sind neuronale Netze?",
+      body: "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix.",
+      watch: "",
+      demoState: { scene: "activation" },
+      context: "Ohne Aktivierung ist ein tiefes Netz nur eine andere Matrix. Die Aktivierung nach jeder Schicht bricht die lineare Komposition.",
+      deep: "ReLU ist nicht injektiv: Alle negativen Eingaben landen bei 0. Dieser Informationsverlust kann beim Entwirren helfen. Sigmoid und tanh sind für endliche Eingaben umkehrbar; GELU ist glatt, aber nicht monoton und daher nicht umkehrbar. Sättigung und niedrige Präzision können auch sie zu einer Treppe machen.",
+      boxes: [
+        box("act-1", "Beispiel", "2 Eingänge, 2 Ausgänge", "W = [[1,2],[0,-1]], x = (3,1), b = (0,-2). Wx = (5,-1), z = (5,-3), ReLU(z) = (5,0). Jede Ausgabe ist ein Skalarprodukt plus Bias, dann die Aktivierung.", "\\begin{aligned} W &= \\begin{pmatrix} 1 & 2 \\\\ 0 & -1 \\end{pmatrix}, \\quad x = \\begin{pmatrix} 3 \\\\ 1 \\end{pmatrix}, \\quad b = \\begin{pmatrix} 0 \\\\ -2 \\end{pmatrix} \\\\ Wx &= \\begin{pmatrix} 5 \\\\ -1 \\end{pmatrix}, \\quad z = Wx+b = \\begin{pmatrix} 5 \\\\ -3 \\end{pmatrix} \\\\ \\operatorname{ReLU}(z) &= \\begin{pmatrix} 5 \\\\ 0 \\end{pmatrix} \\end{aligned}"),
+        box("act-2", "Ohne Knick", "Zwei Dense-Schichten ohne Nichtlinearität", "dense₂(dense₁(x)) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂). Zwei lineare Schichten kollabieren zu einer. Tiefe bringt ohne Aktivierung keine zusätzliche Ausdruckskraft.", "\\begin{aligned} \\operatorname{dense}_2(\\operatorname{dense}_1(x)) &= W_2(W_1 x + b_1) + b_2 \\\\ &= (W_2 W_1)x + (W_2 b_1 + b_2) \\\\ &= Wx + b \\end{aligned}"),
+        box("act-collapse", "Mathematik", "Tiefe ohne Knick", "Die Komposition zweier linearer Schichten ist wieder eine einzige lineare Schicht. Erst die Aktivierung zwischen ihnen macht aus dem Stapel eine neue Funktion. Deshalb ist die Nichtlinearität kein Detail, sondern der Grund, warum Tiefe überhaupt etwas hinzufügt.", "\\underbrace{\\operatorname{dense}_2(\\operatorname{dense}_1(x))}_{\\text{zwei Schichten}} = \\underbrace{(W_2W_1)x + (W_2b_1+b_2)}_{\\text{eine Schicht}}"),
+        box("act-3", "Formeln", "Die vier Funktionen", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU ist ein glatter Durchlass, der kleine negative Werte noch passieren lässt."),
+        box("act-4", "Satz", "Beliebig genau?", "Mit genügend Neuronen und einer nichtlinearen Aktivierung kann ein Netz jede stetige Funktion auf einem begrenzten Bereich beliebig genau annähern. Tiefe hilft, weil sie dieselbe Zahl von Neuronen effizienter nutzt.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }]
+    }
+  ] : [
+    {
+      kicker: "Activation",
+      title: "What are neural networks?",
+      body: "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix.",
+      watch: "",
+      demoState: { scene: "activation" },
+      context: "Without an activation, a deep network is just another matrix. The activation after each layer breaks the linear composition.",
+      deep: "ReLU is not injective: all negative inputs land at 0. That loss of information can help untangle. Sigmoid and tanh are invertible for finite inputs; GELU is smooth but not monotonic and therefore not invertible. Saturation and low precision can turn even a smooth activation into a staircase.",
+      boxes: [
+        box("act-1", "Example", "2 inputs, 2 outputs", "W = [[1,2],[0,-1]], x = (3,1), b = (0,-2). Wx = (5,-1), z = (5,-3), ReLU(z) = (5,0). Each output is a dot product plus bias, then the activation.", "\\begin{aligned} W &= \\begin{pmatrix} 1 & 2 \\\\ 0 & -1 \\end{pmatrix}, \\quad x = \\begin{pmatrix} 3 \\\\ 1 \\end{pmatrix}, \\quad b = \\begin{pmatrix} 0 \\\\ -2 \\end{pmatrix} \\\\ Wx &= \\begin{pmatrix} 5 \\\\ -1 \\end{pmatrix}, \\quad z = Wx+b = \\begin{pmatrix} 5 \\\\ -3 \\end{pmatrix} \\\\ \\operatorname{ReLU}(z) &= \\begin{pmatrix} 5 \\\\ 0 \\end{pmatrix} \\end{aligned}"),
+        box("act-2", "Without a bend", "Two dense layers without a nonlinearity", "dense₂(dense₁(x)) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂). Two linear layers collapse into one. Depth adds no expressive power without an activation.", "\\begin{aligned} \\operatorname{dense}_2(\\operatorname{dense}_1(x)) &= W_2(W_1 x + b_1) + b_2 \\\\ &= (W_2 W_1)x + (W_2 b_1 + b_2) \\\\ &= Wx + b \\end{aligned}"),
+        box("act-collapse", "Mathematics", "Depth without a bend", "The composition of two linear layers is again a single linear layer. Only the activation between them turns the stack into a new function. The nonlinearity is therefore not a detail: it is why depth adds anything at all.", "\\underbrace{\\operatorname{dense}_2(\\operatorname{dense}_1(x))}_{\\text{two layers}} = \\underbrace{(W_2W_1)x + (W_2b_1+b_2)}_{\\text{one layer}}"),
+        box("act-3", "Formulas", "The four functions", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU is a smooth gate that still lets small negative values through."),
+        box("act-4", "Theorem", "Arbitrarily close?", "With enough neurons and a nonlinear activation, a network can approximate any continuous function on a bounded region arbitrarily closely. Depth helps because it uses the same number of neurons more efficiently.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }]
+    }
+  ];
+
+  var gradientSteps = DE ? [
+    {
+      kicker: "Loss-Landschaft",
+      title: "Was sind neuronale Netze?",
+      body: "Jetzt wird der Fehler zur Landschaft. Die Gerade ist $\\hat y = w x + b$; für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet nicht von selbst: Drücke „Weiter“ oder den Startknopf. Mit Pause hältst du es an; „Weiter“ stoppt das Training und geht zur nächsten Folie. SGD, Adam und Momentum laufen nacheinander. Der Loss ist der mittlere quadratische Fehler (MSE), die Zahl, an der das Modell gemessen wird. Die Formel darunter setzt die aktuellen Werte ein.",
+      watch: "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
+      demoState: { scene: "gradient" },
+      context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes dieser 18 Beispiele (x, y) erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
+      deep: "Der Gradient zeigt, wie der Loss auf eine Änderung von w und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
+      boxes: [
+        box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: $\\hat y = w\\cdot x + b$. $w$ ist die Steigung, $b$ der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}"),
+        box("grad-2", "Mathematik", "Die Loss-Fläche (MSE)", "$L(w,b) = \\frac{1}{n}\\sum_i (w\\cdot x_i + b - y_i)^2$. Die beiden Achsen sind $w$ und $b$, nicht zwei beliebige Richtungen.", "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
+        box("grad-3", "Technik", "Der Schritt", "$\\theta \\leftarrow \\theta - \\eta \\nabla L$. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
+        box("grad-todo", "Technik", "Automatisches Ableiten", "Autograd speichert während des Forward-Pass die Operationen als Graph. Im Backward-Pass läuft der Graph rückwärts; jede Operation liefert ihre lokale Ableitung, und die Kettenregel multipliziert sie mit den bereits bekannten Gradienten. So entstehen die Gradienten für alle Parameter, ohne dass man jede Ableitung von Hand programmiert."),
+        box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft."),
+        box("grad-loss", "Optional", "Andere Loss-Funktionen", "MSE passt zu Regression. Für Klassen und Tokens nimmt man Cross-Entropy; für robuste Regression MAE oder Huber. Die Loss-Funktion sagt, was das Modell optimiert, nicht ob es die Aufgabe versteht."),
+        box("grad-opt", "Technik", "SGD, Adam, Momentum", "SGD folgt dem Gradienten direkt. Momentum sammelt Geschwindigkeit und schießt über kleine Täler hinaus. Adam führt ein Gedächtnis für Gradient und Gradientenquadrat: häufig aktualisierte Parameter werden gedämpft, selten aktualisierte stärker gewichtet. Die Demo zeigt alle drei Pfade auf derselben Fläche."),
+        box("grad-saddle", "Optional", "Sattelpunkte statt Minima", "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Viele Sattelpunkte haben eine Abstiegsrichtung; lokale Minima bleiben trotzdem möglich. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis.")
+      ],
+      sources: [
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
+        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } },
+        { label: "Dauphin et al. (2014), Saddle Point Problem", url: "https://arxiv.org/abs/1406.2572", why: { de: "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.", en: "Saddle points as an obstacle in high-dimensional optimization." } },
+        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } },
+        { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Loss-Funktionen für Regression und Klassifikation.", en: "Loss functions for regression and classification." } },
+        { label: "PyTorch, CrossEntropyLoss", url: "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html", why: { de: "Cross-Entropy für Klassifikation.", en: "Cross-entropy for classification." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Loss landscape",
+      title: "What are neural networks?",
+      body: "Now the error becomes a landscape. The line is $\\hat y = w x + b$; the one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training does not start by itself: press “Next” or the Start button. Pause stops it; “Next” stops training and moves to the next slide. SGD, Adam, and Momentum run one after another. The loss is the mean squared error (MSE), the number by which the model is judged. The formula below substitutes the current values.",
+      watch: "Watch the training. How do w and b change, and where in the valley does the point end?",
+      demoState: { scene: "gradient" },
+      context: "This surface is not a slice through hundreds of dimensions: w and b are the two real parameters. Each of these 18 examples (x, y) produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
+      deep: "The gradient shows how the loss reacts to a change in w and b. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
+      boxes: [
+        box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: $\\hat y = w\\cdot x + b$. $w$ is the slope, $b$ is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{w x + b}_{\\text{two parameters}}"),
+        box("grad-2", "Mathematics", "The loss surface (MSE)", "$L(w,b) = \\frac{1}{n}\\sum_i (w\\cdot x_i + b - y_i)^2$. The two axes are $w$ and $b$, not two arbitrary directions.", "\\underbrace{L(w,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mean error}}"),
+        box("grad-3", "Technique", "The step", "$\\theta \\leftarrow \\theta - \\eta \\nabla L$. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
+        box("grad-todo", "Technique", "Automatic differentiation", "Autograd records the operations as a graph during the forward pass. The backward pass walks the graph in reverse; each operation supplies its local derivative, and the chain rule multiplies it by the gradients already known. That produces the gradients for all parameters without programming every derivative by hand."),
+        box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape."),
+        box("grad-loss", "Optional", "Other loss functions", "MSE fits regression. Classes and tokens use cross-entropy; robust regression uses MAE or Huber. The loss says what the model optimises, not whether it understands the task."),
+        box("grad-opt", "Technique", "SGD, Adam, Momentum", "SGD follows the gradient directly. Momentum accumulates velocity and overshoots small valleys. Adam keeps a memory of the gradient and its square: frequently updated parameters are damped, rarely updated ones get more weight. The demo shows all three paths on the same surface."),
+        box("grad-saddle", "Optional", "Saddle points rather than minima", "In high dimensions a local minimum often looks like a dead end. Many critical points are saddle points: Many saddle points have a descent direction; local minima are still possible. Momentum and Adam help escape such plateaus. A local minimum is usually not the main obstacle in a high-dimensional space.")
+      ],
+      sources: [
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
+        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } },
+        { label: "Dauphin et al. (2014), Saddle Point Problem", url: "https://arxiv.org/abs/1406.2572", why: { de: "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.", en: "Saddle points as an obstacle in high-dimensional optimization." } },
+        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } },
+        { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Loss-Funktionen für Regression und Klassifikation.", en: "Loss functions for regression and classification." } },
+        { label: "PyTorch, CrossEntropyLoss", url: "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html", why: { de: "Cross-Entropy für Klassifikation.", en: "Cross-entropy for classification." } }
+      ]
+    }
+  ];
+
+  var historySteps = DE ? [
+
+
+
+    {
+      kicker: "Geschichte",
+      title: "Geschichte in zehn Schritten",
+      body: "Von den Kerben im Wolfsknochen bis zu GPT. Rechnen als Zählen mit Steinen und Kerben: externen Tools, mit denen man Gedanken auslagern kann auf physische Objekte. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
+      watch: "",
+      demoState: { scene: "history", tab: 0 },
+      context: "Die Geschichte ist keine gerade Linie. Mehrere Stränge laufen parallel: formale Logik, mechanisches Rechnen, statistisches Lernen und Hardware. Der Transformer ist ein Knoten, an dem viele davon zusammenkommen.",
+      boxes: [
+        box("hist-2", "Geschichte", "Roter Faden", "Jede Station macht einen Schritt von gegenständlichem Zählen zu lernenden Vektoren: Regeln, Maschinen, Neuronen, Gradienten, Aufmerksamkeit.")
+      ],
+      sources: [
+        { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
+        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze und der erste KI-Winter.", en: "The XOR limit and the first AI winter." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation macht tiefe Netze trainierbar.", en: "Backpropagation makes deep networks trainable." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "History",
+      title: "History in ten steps",
+      body: "From the notches in a wolf bone to GPT. Arithmetic as counting with stones and notches: external tools that let us outsource thoughts onto physical objects. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
+      watch: "",
+      demoState: { scene: "history", tab: 0 },
+      context: "History is not a straight line. Several strands run in parallel: formal logic, mechanical calculation, statistical learning, and hardware. The transformer is a node where many of them meet.",
+      boxes: [
+        box("hist-2", "History", "The thread", "Each station moves from embodied counting toward learned vectors: rules, machines, neurons, gradients, attention.")
+      ],
+      sources: [
+        { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
+        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze und der erste KI-Winter.", en: "The XOR limit and the first AI winter." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation macht tiefe Netze trainierbar.", en: "Backpropagation makes deep networks trainable." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
+      ]
+    }
+  ];
+
+  var aiConsciousnessIntro = {
+    kicker: DE ? "Philosophie" : "Philosophy",
+    title: DE ? "Hat eine KI Bewusstsein?" : "Does an AI have consciousness?",
+    body: DE ? "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein. Auf der nächsten Folie wird daraus die Frage, ob Regeln allein schon Verstehen sind." : "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is. The next slide turns this into the question of whether rules alone are already understanding.",
+    watch: "",
+    demoState: { scene: "mindintro" },
+    inherit: false,
+    context: DE ? "Zugang zu Information, Bericht und Kontrolle lässt sich funktional prüfen. Phänomenales Erleben, also wie es sich anfühlt, ist von außen nicht direkt messbar. Genau diese Lücke macht die Frage so schwer." : "Access to information, report, and control can be tested functionally. Phenomenal experience, what it feels like, cannot be measured directly from outside. That gap is what makes the question hard.",
+    deep: DE ? "Die Unfinishable Map unterscheidet Zugangsbewusstsein und phänomenales Bewusstsein (Block, 1995). Sie fragt nach Typen von Bewusstsein, nicht nur nach einer Ja/Nein-Antwort. Der J-Space (Gurnee et al., 2026) zeigt globale Verfügbarkeit und Bericht, aber keine Qualia. Das Other-Minds-Problem und die Rolle von Zeugnis bleiben bestehen." : "The Unfinishable Map distinguishes access consciousness from phenomenal consciousness (Block, 1995). It asks about types of consciousness, not just a yes/no answer. The J-space (Gurnee et al., 2026) shows global availability and report, but not qualia. The other-minds problem and the role of testimony remain.",
+    boxes: [
+      box("mi-1", DE ? "Begriff" : "Concept", DE ? "Zugang vs. Erleben" : "Access vs. experience", DE ? "Zugang heißt: Information ist für Bericht, Kontrolle und Schlussfolgerungen verfügbar. Erleben heißt: Es fühlt sich von innen wie etwas an. Funktionale Tests erreichen den ersten Teil, nicht den zweiten." : "Access means information is available for report, control, and inference. Experience means it feels like something from the inside. Functional tests reach the first part, not the second."),
+      box("mi-2", DE ? "Grenze" : "Limit", DE ? "Das Other-Minds-Problem" : "The other-minds problem", DE ? "Wir haben keinen direkten Zugang zu fremdem Erleben. Selbst ein perfekter Verhaltensvergleich zeigt nur, dass ein System wie ein bewusstes System reagiert. Ob es etwas erlebt, bleibt eine Inferenz." : "We have no direct access to another's experience. Even a perfect behavioural comparison only shows that a system responds like a conscious system. Whether it experiences anything remains an inference."),
+      box("mi-3", DE ? "Möglichkeiten" : "Possibilities", DE ? "Nicht nur Ja oder Nein" : "Not only yes or no", DE ? "Die Unfinishable Map unterscheidet unter anderem null, simulierte, funktionale, geborgte, epiphänomenale und fremde Phänomenalität. Diese Typen können sich mit Stufen von Zugang und Selbstbericht kreuzen." : "The Unfinishable Map distinguishes, among others, null, simulated, functional, borrowed, epiphenomenal, and alien phenomenality. These types can intersect with levels of access and self-report.")
+    ],
+    sources: [
+      { label: "Southgate (2026), AI Consciousness — The Unfinishable Map", url: "https://unfinishablemap.org/topics/ai-consciousness/", why: { de: "Typologie und offene Frage der KI-Bewusstseinsdebatte.", en: "Typology and open question in the AI consciousness debate." } },
+      { label: "Southgate (2026), Access Consciousness — The Unfinishable Map", url: "https://unfinishablemap.org/concepts/access-consciousness/", why: { de: "Zugangsbewusstsein, phänomenales Bewusstsein und J-Space.", en: "Access consciousness, phenomenal consciousness, and J-space." } },
+      { label: "Southgate (2026), The Voids Between Minds — The Unfinishable Map", url: "https://unfinishablemap.org/voids/other-minds-void/", why: { de: "Other-Minds-Problem und die Grenzen von Zeugnis.", en: "The other-minds problem and the limits of testimony." } },
+      { label: "Southgate (2026), Consciousness and Testimony — The Unfinishable Map", url: "https://unfinishablemap.org/topics/consciousness-and-testimony/", why: { de: "Warum Berichte über Erleben zirkulär bleiben können.", en: "Why reports about experience can remain circular." } },
+      { label: "Gurnee et al. (2026), Verbalizable Representations Form a Global Workspace in Language Models", url: "https://arxiv.org/abs/2607.15495", why: { de: "J-Space: funktionale Merkmale von Zugang, keine Aussage über Qualia.", en: "J-space: functional features of access, no claim about qualia." } },
+      { label: "Block (1995), On a Confusion about a Function of Consciousness", url: "https://doi.org/10.1017/S0140525X00038188", why: { de: "Zugang versus phänomenales Bewusstsein.", en: "Access versus phenomenal consciousness." } }
+    ]
+  };
+
+  var philosophySteps = DE ? [
+    {
+      kicker: "Philosophie",
+      title: "Du bist das Chinesische Zimmer",
+      body: "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust.",
+      watch: "",
+      demoState: { scene: "chineseroom" },
+      context: "Das Zimmer ist ein Bild für ein Programm: Symbole rein, Symbole raus, nach Regeln. Ob das ganze System versteht, ist die offene Frage.",
+      deep: "Der Systems Reply sagt: Vielleicht versteht nicht die Person im Zimmer, sondern das ganze System aus Person, Regelbuch und Zimmer. Searle hält das für eine Verschiebung des Problems, nicht für eine Lösung. Ein LLM sitzt in einer ähnlichen Lage: Es manipuliert Tokens nach gelernten Regeln, ohne einen direkten Weltzugang zu haben. Ob daraus Verstehen wird, entscheidet der Streit, nicht die Demo.",
+      boxes: [
+        box("phil-1", "Argument", "Was zeigt das Zimmer?", "Dass Symbolmanipulation allein kein Verstehen garantieren muss. Die Antwort kann richtig aussehen, obwohl die Person die Zeichen nicht versteht."),
+        box("phil-2", "Einwand", "Was ist der Systems Reply?", "Vielleicht versteht das ganze System, nicht die Person im Zimmer. Searle bestreitet, dass das den Einwand rettet; die Debatte ist offen."),
+        box("phil-3", "LLM", "Wo steht das Modell?", "Ein LLM folgt gelernten statistischen Regeln über Tokens. Es hat keinen direkten Zugang zur Welt, auf die die Tokens zeigen. Ob daraus Verstehen wird, ist genau die Frage.")
+      ],
+      sources: [
+        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756", why: { de: "Chinesisches Zimmer: Regeln befolgen vs. verstehen.", en: "Chinese Room: following rules vs. understanding." } },
+        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6", why: { de: "Symbol Grounding Problem.", en: "The symbol grounding problem." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Philosophy",
+      title: "You are the Chinese Room",
+      body: "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do.",
+      watch: "",
+      demoState: { scene: "chineseroom" },
+      context: "The room is a picture of a program: symbols in, symbols out, by rules. Whether the whole system understands is the open question.",
+      deep: "The systems reply says: perhaps the person in the room does not understand, but the whole system of person, rulebook, and room does. Searle treats that as moving the problem, not solving it. An LLM is in a similar position: it manipulates tokens by learned rules without direct access to the world the words refer to. Whether that becomes understanding is what the dispute is about, not what the demo settles.",
+      boxes: [
+        box("phil-1", "Argument", "What does the room show?", "That symbol manipulation alone need not guarantee understanding. The answer can look correct even though the person does not understand the characters."),
+        box("phil-2", "Objection", "What is the systems reply?", "Perhaps the whole system understands, not the person in the room. Searle denies that this rescues the objection; the debate is open."),
+        box("phil-3", "LLM", "Where does the model stand?", "An LLM follows learned statistical rules over tokens. It has no direct access to the world the tokens point to. Whether that becomes understanding is exactly the question.")
+      ],
+      sources: [
+        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756", why: { de: "Chinesisches Zimmer: Regeln befolgen vs. verstehen.", en: "Chinese Room: following rules vs. understanding." } },
+        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6", why: { de: "Symbol Grounding Problem.", en: "The symbol grounding problem." } }
+      ]
+    }
+  ];
+
+  var unembedSteps = DE ? [
+    {
+      kicker: "Unembedding",
+      title: "Ähnliche Worte finden",
+      body: "Wörter sind Richtungen, keine Punkte. Auf der Kugel siehst du die gelernten Richtungen als Punkte; der grüne Vektor ist dein Wort. Der Winkel zwischen zwei Richtungen ist die Ähnlichkeit. Die Länge ändert daran nichts: Ein kurzer und ein langer grüner Vektor in dieselbe Richtung haben 0°, ein Punkt daneben hat einen größeren Winkel. $W_U$ hat eine Zeile $w_i \\in \\mathbb{R}^{512}$ pro Token; der letzte Vektor $h$ ist der Zustand des aktuellen Tokens. Wähle ein Wort und sieh die nächsten Richtungen. Die Winkel sind Ähnlichkeiten, keine Wahrscheinlichkeiten.\n\n$W_U$ ist gelernt. Wörter in ähnlichen Kontexten bekommen ähnliche Richtungen. Die Kugel ist eine 3D-Projektion der gelernten Richtungen, keine vollständige Geometrie.",
+      watch: "Wähle ein Wort. Ziehe die Kugel, um sie zu drehen. Die Winkel stehen an den Punkten.",
+      demoState: { scene: "unembed", mode: "directions" },
+      context: "Die Kugel ist eine 3D-Projektion der gelernten Richtungen. Die Winkel sind Kosinus-Ähnlichkeiten; erst Softmax macht daraus eine Verteilung. Ähnliche Wörter liegen in ähnlichen Richtungen, weil das Training sie in ähnlichen Kontexten sieht.",
+      deep: "$W_U$ ist gelernt. Wörter in ähnlichen Kontexten bekommen ähnliche Richtungen; das Skalarprodukt misst die Nähe. Die Länge eines Vektors ändert den Winkel nicht; deshalb ist der Winkel oft das robustere Signal. Die Kugel ist eine Projektion, keine vollständige Geometrie.",
+      boxes: [
+        box("un-1", "Mathematik", "Die Matrix $W_U$", "Jede Zeile von $W_U$ ist die gelernte Richtung eines Tokens. Das Skalarprodukt mit $h$ ergibt einen Logit. Ähnliche Richtungen ergeben hohe Werte; Softmax macht daraus eine Verteilung.", "\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Richtung mal Vektor}}"),
+        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Kugel zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Winkel sind keine Wahrscheinlichkeiten."),
+        box("un-4", "Unembedding", "Von $n$ Vektoren zu Prozenten", "Jede Zeile von $W_U$ ist ein gelernter Token-Vektor. $z = W_U h$ rechnet ein Skalarprodukt pro Token, also $n$ Werte. Der Winkel steckt im Skalarprodukt; Softmax macht aus den $n$ Logits eine Verteilung.", "\\underbrace{\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Dot-Produkt}} = \\underbrace{\\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i}_{\\text{Winkel}} \\qquad \\underbrace{p_i}_{\\text{Prozent}} = \\underbrace{\\operatorname{softmax}(z)_i}_{\\text{Verteilung}}}_{\\text{von der Richtung zur Wahrscheinlichkeit}}"),
+        box("un-5", "Begriff", "Was ist $h$?", "$h$ ist der letzte Vektor aus den Transformer-Blöcken. In ihn haben Attention und FFN den gesamten Kontext über viele Schichten und Heads eingemischt. Aus diesem $h$ sagt $W_U$ das nächste Token voraus.")
+      ],
+      sources: [
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "Globale Kookkurrenz als Wortvektoren.", en: "Global co-occurrence as word vectors." } },
+        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Unembedding",
+      title: "Finding similar words",
+      body: "Words are directions, not points. On the sphere you see the learned directions as points; the green vector is your word. The angle between two directions is the similarity. Length does not change it: a short and a long green vector in the same direction have 0°, while a point off the line has a larger angle. $W_U$ has one row $w_i \\in \\mathbb{R}^{512}$ per token; the final vector $h$ is the state of the current token. Choose a word and see the nearest directions. The angles are similarities, not probabilities.\n\n$W_U$ is learned. Words that occur in similar contexts get similar directions. The sphere is a 3D projection of the learned directions, not the full geometry.",
+      watch: "Choose a word. Drag the sphere to rotate it. The angles are shown on the points.",
+      demoState: { scene: "unembed", mode: "directions" },
+      context: "The sphere is a 3D projection of the learned directions. The angles are cosine similarities; only softmax turns them into a distribution. Similar words lie in similar directions because training sees them in similar contexts.",
+      deep: "$W_U$ is learned. Words in similar contexts get similar directions; the dot product measures closeness. A vector's length does not change the angle; that is why the angle is often the more robust signal. The sphere is a projection, not the full geometry.",
+      boxes: [
+        box("un-1", "Mathematics", "The matrix $W_U$", "Every row of $W_U$ is the learned direction of a token. The dot product with $h$ gives a logit. Similar directions give high values; softmax turns them into a distribution.", "\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{direction times vector}}"),
+        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The sphere shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the angles are not probabilities."),
+        box("un-4", "Unembedding", "From $n$ vectors to percentages", "Every row of $W_U$ is a learned token vector. $z = W_U h$ computes one dot product per token, so $n$ values. The angle sits inside the dot product; softmax turns the $n$ logits into a distribution.", "\\underbrace{\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{dot product}} = \\underbrace{\\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i}_{\\text{angle}} \\qquad \\underbrace{p_i}_{\\text{percent}} = \\underbrace{\\operatorname{softmax}(z)_i}_{\\text{distribution}}}_{\\text{from direction to probability}}"),
+        box("un-5", "Term", "What is $h$?", "$h$ is the final vector from the transformer blocks. Attention and the FFN have mixed the entire context into it through many layers and heads. From this $h$, $W_U$ predicts the next token.")
+      ],
+      sources: [
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "Globale Kookkurrenz als Wortvektoren.", en: "Global co-occurrence as word vectors." } },
+        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } }
+      ]
+    }
+  ];
+
+  var unembedScaleStep = Object.assign({}, unembedSteps[0], {
+    kicker: DE ? "Skaleninvarianz" : "Scale invariance",
+    title: DE ? "Länge vs. Richtung" : "Length vs. direction",
+    body: DE
+      ? "A und B zeigen in verschiedene Richtungen. B ist länger. Der Winkel zwischen A und B hängt nur von den Richtungen ab: Ziehe die Länge von B, und der Winkel bleibt gleich. Die Länge ändert die Ähnlichkeit nicht; der Cosinus misst nur den Winkel."
+      : "A and B point in different directions. B is longer. The angle between A and B depends only on the directions: drag the length of B and the angle stays the same. Length does not change the similarity; the cosine measures only the angle.",
+    watch: DE ? "Ziehe die Länge von B. Was bleibt gleich, was ändert sich?" : "Drag the length of B. What stays the same, what changes?",
+    context: DE ? "A und B zeigen in verschiedene Richtungen. Der Winkel zwischen ihnen bleibt gleich, wenn du B länger oder kürzer machst. Die Länge fällt aus dem Cosinus heraus." : "A and B point in different directions. The angle between them stays the same when you make B longer or shorter. Length drops out of the cosine.",
+    deep: DE ? "Der Cosinus ist $\\cos\\theta = \\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}$. Skalierst du einen Vektor mit einer positiven Zahl, kürzt sich die Länge heraus; nur die Richtungen bleiben. Ein großer und ein kleiner Vektor in derselben Richtung haben 0°, ein Vektor in einer anderen Richtung hat einen größeren Winkel." : "The cosine is $\\cos\\theta = \\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}$. Scaling a vector by a positive number cancels its length; only the directions remain. A large and a small vector in the same direction have 0°, a vector in a different direction has a larger angle.",
+    demoState: { scene: "unembed", mode: "scale" },
+    boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-scale" }); })
+  });
+
+  var unembedUnembedStep = Object.assign({}, unembedSteps[0], {
+    kicker: DE ? "Unembedding" : "Unembedding",
+    title: DE ? "Vom Vektor zur Verteilung" : "From vector to distribution",
+    body: DE
+      ? "$h$ ist der Zustand des aktuellen Tokens nach allen Transformer-Blöcken. $W_U$ hat eine gelernte Zeile $w_i$ pro Vokabular-Token, also $n$ Vektoren. $z = W_U h$ rechnet $n$ Skalarprodukte, eines pro Token; jedes ist $w_i \\cdot h = \\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i$. Der Winkel misst die Ähnlichkeit, die Länge skaliert den Logit. Softmax macht aus den $n$ Logits Prozente. Klicke einen Vorschlag oder nutze „Nächster Winkel“."
+      : "$h$ is the state of the current token after all transformer blocks. $W_U$ has one learned row $w_i$ per vocabulary token, so $n$ vectors. $z = W_U h$ computes $n$ dot products, one per token; each is $w_i \\cdot h = \\lVert w_i\\rVert\\,\\lVert h\\rVert\\cos\\theta_i$. The angle measures similarity; the length scales the logit. Softmax turns the $n$ logits into percentages. Click a suggestion or use “Next angle”.",
+    watch: DE ? "Klicke die Vorschläge. Welcher Winkel wird zur höchsten Wahrscheinlichkeit?" : "Click the suggestions. Which angle becomes the highest probability?",
+    context: DE ? "Der Logit ist das Skalarprodukt aus $h$ und einer Token-Zeile; der Winkel bestimmt die Ähnlichkeit, die Länge kann den Wert skalieren. Softmax normalisiert alle $n$ Logits zu Prozenten." : "The logit is the dot product of $h$ and a token row; the angle determines similarity, and the length can scale the value. Softmax normalises all $n$ logits into percentages.",
+    deep: DE ? "Ja: $W_U h$ ist eine Matrix-Vektor-Multiplikation. Jede der $n$ Zeilen wird mit $h$ multipliziert und summiert. Bei ähnlichen Längen entspricht die Reihenfolge der Logits dem Winkel; unterschiedliche Längen können die Reihenfolge verschieben. Softmax macht daraus eine Verteilung." : "Yes: $W_U h$ is a matrix-vector multiplication. Each of the $n$ rows is multiplied by $h$ and summed. When the lengths are similar, the order of the logits follows the angle; different lengths can shift the order. Softmax turns it into a distribution.",
+    demoState: { scene: "unembed", mode: "unembed" },
+    boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-unembed" }); })
+  });
+
+  var unembedStep = {
+    title: DE ? "Ähnliche Worte finden" : "Finding similar words",
+    kicker: "Unembedding",
+    substeps: [unembedSteps[0], unembedScaleStep, unembedUnembedStep]
+  };
+
+  var highdimSteps = DE ? [
+    {
+      kicker: "Der Raum",
+      title: "Tausende Dimensionen",
+      body: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      teaser: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      watch: "",
+      demoState: { scene: "highdim" },
+      context: "Mehr Dimensionen erlauben mehr unabhängige Unterschiede. Die 3D-Demos sind Projektionen; die Tabelle ist die ehrliche Darstellung für den Rechner.",
+      deep: "Die Zahlen sind didaktisch, keine echten GPT-Gewichte. In einem echten Modell wird jede Koordinate aus Text gelernt; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
+      boxes: [
+        box("hd-new-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, ohne sich gegenseitig zu überschreiben."),
+        box("hd-new-2", "Grenze", "Was zeigt die Tabelle nicht?", "Sie zeigt einen Ausschnitt, keine echten Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; die Tabelle ist eine didaktische Darstellung.")
+      ],
+      sources: sources
+    }
+  ] : [
+    {
+      kicker: "The space",
+      title: "Thousands of dimensions",
+      body: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 16 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
+      teaser: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 16 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
+      watch: "",
+      demoState: { scene: "highdim" },
+      context: "More dimensions allow more independent differences. The 3D demos are projections; the table is the honest view for the computer.",
+      deep: "The numbers are didactic, not real GPT weights. In a real model every coordinate is learned from text; no single column means anything on its own. The geometry comes from the interaction.",
+      boxes: [
+        box("hd-new-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side without overwriting one another."),
+        box("hd-new-2", "Limit", "What does the table not show?", "It shows a slice, not real weights. A real model learns every coordinate from text; the table is a didactic view.")
+      ],
+      sources: sources
+    }
+  ];
+
+  var neuralLargeSteps = DE ? [
+    {
+      kicker: "Großes Netz",
+      title: "Was sind neuronale Netze?",
+      body: "Jetzt ein größeres Netz: 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viel mehr Parameter und Richtungen, als wir zeichnen können; das Prinzip bleibt dasselbe: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen.",
+      watch: "Starte das Training. Wann biegt die Kurve den Sinus? Was passiert außerhalb der Trainingsdaten?",
+      demoState: { scene: "model", phase: "net" },
+      context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
+      deep: "Das Netz hat drei versteckte Schichten mit je 32 ReLU-Neuronen. Jede Schicht hat eigene Gewichte. Der Loss ist der mittlere quadratische Fehler. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.",
+      boxes: [
+        box("mod-width", "Technik", "Warum größer?", "Mehr Neuronen und Schichten geben dem Netz mehr Richtungen und Knicke. Es kann den Sinus biegen, braucht aber Daten und Training."),
+        box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
+        box("mod-train", "Technik", "Wie wird trainiert?", "Der Gradient zeigt, wie der Loss auf jede Parameteränderung reagiert. Ein Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite."),
+        box("mod-extra", "Grenze", "Warum außerhalb falsch?", "Im Trainingsbereich gibt es Daten. Außerhalb extrapoliert das Netz. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.")
+      ],
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Larger network",
+      title: "What are neural networks?",
+      body: "Now a larger network: 1 → 32 → 32 → 32 → 1, dense with ReLU. It has far more parameters and directions than we can draw; the principle stays the same: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live.",
+      watch: "Start training. When does the curve bend the sine? What happens outside the training data?",
+      demoState: { scene: "model", phase: "net" },
+      context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
+      deep: "The network has three hidden layers with 32 ReLU neurons each. Every layer has its own weights. The loss is mean squared error. A small training loss does not guarantee good extrapolation.",
+      boxes: [
+        box("mod-width", "Technique", "Why larger?", "More neurons and layers give the network more directions and bends. It can bend the sine, but it needs data and training."),
+        box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
+        box("mod-train", "Technique", "How is it trained?", "The gradient shows how the loss reacts to every parameter change. An optimiser moves in the opposite direction. The learning rate sets the step size."),
+        box("mod-extra", "Limit", "Why wrong outside?", "Inside the training range there is data. Outside the network extrapolates. A small training loss does not guarantee good extrapolation.")
+      ],
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
+    }
+  ];
+
+  var gaussSteps = DE ? [
+    {
+      kicker: "Ceres",
+      title: "Gauß, Ceres und die Daten",
+      body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn, also den mittleren quadratischen Fehler (MSE), und sagte voraus, wo Ceres wieder auftauchen würde (Stigler, 1981). Drehe am Teleskop: Je besser die Messung, desto enger die Glockenkurve. Der Ausgleich glaubt keiner einzelnen Messung; er wählt die Kurve, die allen zugleich am nächsten bleibt. MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.",
+      watch: "Bewege den Teleskop-Regler. Wie verändert sich die Wolke, und wie eng wird die Glockenkurve?",
+      demoState: { scene: "gauss" },
+      context: "Die Beobachtungen sind synthetisch, nicht Piazzis originale Messungen. Der Plot zeigt das Prinzip: eine wahre Bahn (grün), eine Wolke verrauschter Messungen (blau) und die Glockenkurve ihrer Fehler. Die Methode der kleinsten Quadrate sucht die Bahn, die allen Beobachtungen zugleich am nächsten liegt.",
+      deep: "Gauß veröffentlichte die Methode 1809. Sie wählt die Parameter, die die Summe der quadrierten Abstände minimieren. Ein einzelner Ausreißer zählt quadriert, aber viele kleine Fehler mitteln sich. Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
+      boxes: [
+        box("gauss-1", "Geschichte", "Ceres und Piazzi", "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981)."),
+        box("gauss-2", "Mathematik", "Was macht die Methode?", "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell, den mittleren quadratischen Fehler (MSE). Große Abweichungen zählen quadratisch, kleine kaum.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{quadratische Fehler}}}_{\\text{kleinste Summe}}"),
+        box("gauss-3", "Daten", "Warum im Schnitt richtig?", "Einzelne Messungen können falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist Kuration wichtig."),
+        box("gauss-4", "Geschichte", "Die Rückkehr in die KI", "Die Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.")
+      ],
+      sources: [
+        { label: "Stigler (1981), Gauss and the Invention of Least Squares", url: "https://doi.org/10.1214/aos/1176345451", why: { de: "Gauß, Ceres und die Methode der kleinsten Quadrate.", en: "Gauss, Ceres, and the method of least squares." } },
+        { label: "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg", why: { de: "Bild von Ceres, Public Domain.", en: "Image of Ceres, public domain." } },
+        { label: "The Flammarion Engraving (1888), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg", why: { de: "Kolorierter Flammarion-Holzschnitt, Public Domain.", en: "Coloured Flammarion engraving, public domain." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Ceres",
+      title: "Gauss, Ceres, and the data",
+      body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. His method of least squares minimised the squared distance between observations and orbit, the mean squared error (MSE), and predicted where Ceres would reappear (Stigler, 1981). Turn the telescope: the better the measurement, the narrower the bell curve. The fit believes no single measurement; it chooses the curve that stays closest to all of them at once. MSE is a loss function for regression; LLMs train with cross-entropy.",
+      watch: "Move the telescope slider. How does the cloud change, and how narrow does the bell curve become?",
+      demoState: { scene: "gauss" },
+      context: "The observations are synthetic, not Piazzi's original measurements. The plot shows the principle: a true orbit (green), a cloud of noisy measurements (blue), and the bell curve of their errors. The method of least squares looks for the orbit that stays closest to all observations at once.",
+      deep: "Gauss published the method in 1809. It chooses the parameters that minimise the sum of squared distances. A single outlier counts squared, but many small errors average out. The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
+      boxes: [
+        box("gauss-1", "History", "Ceres and Piazzi", "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981)."),
+        box("gauss-2", "Mathematics", "What does the method do?", "It minimises the sum of squared distances between observations and model, the mean squared error (MSE). Large deviations count squared, small ones barely.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{squared errors}}}_{\\text{smallest sum}}"),
+        box("gauss-3", "Data", "Why right on average?", "Individual measurements can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why curation matters."),
+        box("gauss-4", "History", "The return to AI", "The method came from astronomy and entered machine learning because the same problem returned: putting a simple curve through imperfect measurements. MSE is a loss function for regression; LLMs train with cross-entropy.")
+      ],
+      sources: [
+        { label: "Stigler (1981), Gauss and the Invention of Least Squares", url: "https://doi.org/10.1214/aos/1176345451", why: { de: "Gauß, Ceres und die Methode der kleinsten Quadrate.", en: "Gauss, Ceres, and the method of least squares." } },
+        { label: "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg", why: { de: "Bild von Ceres, Public Domain.", en: "Image of Ceres, public domain." } },
+        { label: "The Flammarion Engraving (1888), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg", why: { de: "Kolorierter Flammarion-Holzschnitt, Public Domain.", en: "Coloured Flammarion engraving, public domain." } }
+      ]
+    }
+  ];
+
+  var dataTruthStep = DE ? {
+    kicker: "Wahrheit",
+    title: "Viele Sätze, eine Wahrheit",
+    body: "Eine Wahrheit ist eine Kurve, viele Beschreibungen liegen darum. Je näher ein Satz an der Kurve liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.",
+    watch: "Schau auf die Punkte. Welche Sätze liegen nah an der Wahrheit, welcher ist falsch?",
+    demoState: { scene: "langdata", mode: "truth" },
+    context: "Die Sätze sind eine Illustration, keine Messung. Die Kurve steht symbolisch für die Wahrheit; der Abstand ist ein didaktisches Maß. In echten Daten gibt es nicht immer eine so klare Linie, und Wahrheit ist oft umstritten.",
+    deep: "Daten sind viele Beschreibungen desselben Sachverhalts. Einzelne Sätze können irren; über viele Beschreibungen hofft man, dass die tragfähige Struktur durchscheint. Das ist keine Garantie, sondern eine statistische Hoffnung.",
+    boxes: [
+      box("data-t-1", "Idee", "Die Kurve", "Die Kurve ist die Wahrheit. Punkte darüber und darunter sind Beschreibungen; ihr Abstand zeigt, wie weit sie in diesem Beispiel von der Wahrheit entfernt sind."),
+      box("data-t-2", "Grenze", "Was ist das nicht?", "Keine automatische Wahrheitsmaschine. Der Plot ist eine Illustration. Die Sätze sind Beispiele; die Abstände sind didaktisch, nicht gemessen.")
+    ],
+    sources: []
+  } : {
+    kicker: "Truth",
+    title: "Many sentences, one truth",
+    body: "A truth is a curve; many descriptions sit around it. The closer a sentence is to the curve, the truer it is in this example. Most descriptions sit near; one false sentence lies far away. This is the shape Gauss saw with Ceres: many noisy observations, one true orbit in the middle.",
+    watch: "Look at the points. Which sentences lie near the truth, and which one is false?",
+    demoState: { scene: "langdata", mode: "truth" },
+    context: "The sentences are an illustration, not a measurement. The curve stands symbolically for truth; the distance is a didactic measure. Real data does not always have such a clear line, and truth is often disputed.",
+    deep: "Data are many descriptions of the same situation. Individual sentences can be wrong; over many descriptions one hopes the robust structure shines through. That is not a guarantee, but a statistical hope.",
+    boxes: [
+      box("data-t-1", "Idea", "The curve", "The curve is the truth. Points above and below are descriptions; their distance shows how far they are from the truth in this example."),
+      box("data-t-2", "Limit", "What is this not?", "Not an automatic truth machine. The plot is an illustration. The sentences are examples; the distances are didactic, not measured.")
+    ],
+    sources: []
+  };
+
+  var gaussDataStep = DE ? {
+    title: "Gauß, Ceres und die Daten",
+    kicker: "Ceres",
+    substeps: [
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. MSE ist bis heute eine wichtige Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.",
+        teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. MSE ist bis heute eine wichtige Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy.",
+        watch: "Schau dir die beiden Bilder an. Danach wird das Teleskop Schritt für Schritt besser.",
+        demoState: { scene: "gauss", phase: "intro" },
+        inherit: false,
+        questionGroups: [
+          {
+            id: "g-basics",
+            title: "Eine Ebene tiefer",
+            questions: []
+          },
+          {
+            id: "g-lens-mathematik",
+            title: "Mathematik",
+            questions: [
+              { id: "q-box-gauss-2", title: "Was macht die Methode?", body: "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell, den mittleren quadratischen Fehler (MSE). Große Abweichungen zählen quadratisch, kleine kaum.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-daten",
+            title: "Daten",
+            questions: [
+              { id: "q-box-gauss-3", title: "Warum im Schnitt richtig?", body: "Einzelne Messungen können falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist Kuration wichtig.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-sources",
+            title: "Quellen",
+            sources: gaussSteps[0].sources
+          }
+        ]
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        watch: "",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
+        deep: "Ohne Ausgleich müsste man eine Bahn durch einen einzelnen Punkt legen. Gauß nutzte alle Beobachtungen zusammen.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
+        teaser: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
+        watch: "Drücke Weiter. Wie schmal wird die Glockenkurve?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        context: "Je kleiner die Streuung, desto enger liegt die Glockenkurve um die wahre Bahn. Die Beobachtungen bleiben fehlerhaft, aber der Ausgleich wird stabiler.",
+        deep: "Die Methode der kleinsten Quadrate minimiert die Summe der quadrierten Abstände, also den mittleren quadratischen Fehler (MSE). Viele kleine Fehler mitteln sich; ein einzelner Ausreißer zählt quadriert.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE). MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
+        teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE). MSE ist eine Loss-Funktion für Regression; LLMs trainieren mit Cross-Entropy. Drücke Weiter zu den Daten.",
+        watch: "Drücke Weiter. Was passiert, wenn die Beobachtungen nicht mehr exakt sind?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt; minimiert wird der mittlere quadratische Fehler (MSE).",
+        deep: "Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body,
+        teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body,
+        watch: dataTruthStep.watch,
+        demoState: dataTruthStep.demoState,
+        context: dataTruthStep.context,
+        deep: dataTruthStep.deep,
+        boxes: dataTruthStep.boxes,
+        sources: dataTruthStep.sources
+      }
+    ]
+  } : {
+    title: "Gauss, Ceres, and the data",
+    kicker: "Ceres",
+    substeps: [
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which Legendre had published in 1805, and helped spread the method. MSE is still an important loss function for regression; LLMs train with cross-entropy.",
+        teaser: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which Legendre had published in 1805, and helped spread the method. MSE is still an important loss function for regression; LLMs train with cross-entropy.",
+        watch: "Look at the two images. Then the telescope gets better step by step.",
+        demoState: { scene: "gauss", phase: "intro" },
+        inherit: false,
+        questionGroups: [
+          {
+            id: "g-basics",
+            title: "One level deeper",
+            questions: []
+          },
+          {
+            id: "g-lens-mathematik",
+            title: "Mathematics",
+            questions: [
+              { id: "q-box-gauss-2", title: "What does the method do?", body: "It minimises the sum of squared distances between observations and model, the mean squared error (MSE). Large deviations count squared, small ones barely.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-daten",
+            title: "Data",
+            questions: [
+              { id: "q-box-gauss-3", title: "Why right on average?", body: "Individual measurements can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why curation matters.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-sources",
+            title: "Sources",
+            sources: gaussSteps[0].sources
+          }
+        ]
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
+        teaser: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
+        watch: "Drag the slider or click through and watch the data become more precise with better telescopes. Real data sits around a truth in the same way. Sentences, for example, can be completely right, partly right, or completely wrong.",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        context: "The green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
+        deep: "Without fitting, one would have to put an orbit through a single point. Gauss used all observations together.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
+        teaser: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
+        watch: "Press Next. How narrow does the bell curve become?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        context: "The smaller the spread, the tighter the bell curve around the true orbit. The observations remain noisy, but the fit becomes more stable.",
+        deep: "Least squares minimises the sum of squared distances, the mean squared error (MSE). Many small errors average out; a single outlier counts squared.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE). MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
+        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE). MSE is a loss function for regression; LLMs train with cross-entropy. Press Next to the data.",
+        watch: "Press Next. What happens when the observations are no longer exact?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        context: "The bell curve is narrow; the true orbit lies in the middle. The fit trusts no single measurement and chooses the curve closest to all of them at once; it minimises the mean squared error (MSE).",
+        deep: "The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body,
+        teaser: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body,
+        watch: dataTruthStep.watch,
+        demoState: dataTruthStep.demoState,
+        context: dataTruthStep.context,
+        deep: dataTruthStep.deep,
+        boxes: dataTruthStep.boxes,
+        sources: dataTruthStep.sources
+      }
+    ]
+  };
+
+  var tokenizeBpeStep = Object.assign({}, tokenizeSteps[0], {
+    kicker: DE ? "BPE" : "BPE",
+    title: DE ? "BPE: Bytes/Zeichen → Paare → Merges" : "BPE: bytes/characters → pairs → merges",
+    body: DE ? "BPE beginnt bei Bytes oder Zeichen: Jedes Wort wird in seine Bausteine zerlegt, dann zählt der Algorithmus benachbarte Paare und ersetzt das häufigste Paar durch ein neues Symbol. Die Trennungen kommen aus den Trainingsdaten: Der Algorithmus wählt sie so, dass möglichst viel Text mit möglichst wenigen Tokens dargestellt wird. Nach einigen Merges werden häufige Wörter kurz; seltene Schriften bleiben teurer, weil sie im Trainingskorpus seltener vorkommen (Petrov et al., 2023). Hapax legomena, also Wörter, die im Korpus nur einmal vorkommen, bekommen in der Regel keinen eigenen Merge für das ganze Wort; BPE setzt sie aus häufigen Teilstücken zusammen. Das ist eine gelernte, reversible Tokenisierung." : "BPE starts from bytes or characters: every word is split into its pieces, then the algorithm counts adjacent pairs and replaces the most frequent pair with a new symbol. The splits come from the training data: the algorithm chooses them so that as much text as possible is represented with as few tokens as possible. After several merges, frequent words become short; rare scripts stay more expensive because they are rarer in the training corpus (Petrov et al., 2023). Hapax legomena, words that occur only once in the corpus, usually do not get their own whole-word merge; BPE assembles them from frequent pieces. That is a learned, reversible tokenization.",
+    watch: DE ? "Drücke Weiter: Welches Paar wird als Nächstes verschmolzen?" : "Press Next: which pair is merged next?",
+    demoState: { scene: "tokenize", mode: "bpe" },
+    deep: DE ? "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Hapax legomena – Wörter, die nur einmal vorkommen – bekommen in der Regel keinen eigenen Merge für das ganze Wort, werden aber aus häufigen Teilen zusammengesetzt. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells." : "BPE is learned compression: it counts adjacent pairs in the training corpus and replaces the most frequent pair with a new symbol. After several merges, frequent words become short. Hapax legomena, words that occur only once, usually get no whole-word merge but are assembled from frequent pieces. The exact tokenization depends on the data and the vocabulary target; the demo shows a small corpus, not a measurement of a particular model.",
+    boxes: tokenizeSteps[0].boxes.concat([
+      box("tok-hapax", DE ? "Daten" : "Data", DE ? "Was sind Hapax legomena?" : "What are hapax legomena?", DE ? "Wörter, die im Trainingskorpus nur einmal vorkommen. Sie bekommen in der Regel keinen eigenen Merge für das ganze Wort. BPE setzt sie aus häufigen Teilstücken zusammen, zum Beispiel un- + zerbrech + -lich; so bleibt das Wort aus bekannten Bausteinen rekonstruierbar, auch wenn es selbst nie als Token gelernt wurde." : "Words that occur only once in the training corpus. They usually get no whole-word merge. BPE assembles them from frequent subword pieces, for example un- + break + -able; the word stays reconstructable from known pieces even though it was never learned as a token.")
+    ])
+  });
+  var tokenizeExamplesStep = Object.assign({}, tokenizeSteps[0], {
+    kicker: DE ? "Tokenize" : "Tokenize",
+    title: DE ? "Text wird zu IDs" : "Text becomes IDs",
+    body: DE ? "Der Tokenizer trennt Worte in einzelne Bestandteile. Diese werden mit einem Algorithmus, zum Beispiel <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>) getrennt. Das basiert auf zwei Gedanken: der erste ist Kompression: es sollen so wenig wie möglich Tokens benutzt werden müssen, um so viel wie möglich zu sagen. Der zweite ist, dass das Netzwerk so auch Worte bearbeiten kann, die es vorher nie gesehen hat, indem es sie in Bestandteile trennt und lernt, wie man Worte aus ihren Bestandteilen heraus versteht, auch wenn man das konkrete Wort vielleicht nie gesehen hat." : "The tokenizer splits words into individual pieces. It splits them with an algorithm, for example <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>). Two ideas sit behind it: the first is compression, use as few tokens as possible to say as much as possible. The second is that the network can then process words it has never seen before, because it splits them into pieces and learns how words are built from their pieces, even if it never saw the concrete word.",
+    watch: "",
+    demoState: { scene: "tokenize", mode: "split" },
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-deep", title: DE ? "Warum ist das so?" : "Why is that?", body: DE ? "BPE ist eine gelernte Tokenisierung: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells." : "BPE is learned compression: it counts adjacent pairs in the training corpus and replaces the most frequent pair with a new symbol. After several merges, frequent words become short. The exact tokenization depends on the data and the vocabulary target; the demo shows a small corpus, not a measurement of a particular model.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-lens-technik",
+        title: DE ? "Technik" : "Technique",
+        questions: [
+          { id: "q-box-tok-1", title: DE ? "Wie geht es mit unbekannten Zeichen um?" : "How does it handle unknown characters?", body: DE ? "Bei Encodings wie UTF8 kann ein Zeichen mehrere Byte lang sein. Was, wenn ein Zeichen nicht ein einziges Mal im Kontext war, wie zum Beispiel die neuen Emojis? Die sind aufgebaut aus zwei oder mehr Bestandteilen, so besteht 🐈‍⬛ aus 🐈, dem \"zero-width-joiner\"-Charakter und danach dem ⬛. Stehen die drei hintereinander, wird es als 🐈‍⬛ angezeigt. Man sagt dem Tokenizer nun auch alle 256 Möglichkeiten, die 8 Bit haben können. Damit kann es unbekannte Charakter trotzdem klassifizieren und nach Kontext in gewisse Richtungen schieben, so zum Beispiel die Richtung für \"Emoji\", wo unter Anderem auch 🐈 bereits ist." : "With encodings such as UTF-8, one character can be several bytes long. What if a character never appeared in the context, such as new emojis? They are built from two or more parts: 🐈‍⬛ consists of 🐈, the zero-width joiner character, and then ⬛. When the three stand together, they display as 🐈‍⬛. The tokenizer is also given all 256 values a byte can take. That lets it represent unknown characters anyway and, depending on context, push them in certain directions, for example the direction for “emoji”, where 🐈 already sits, among others.", tex: "", kind: "question" },
+          { id: "q-box-tok-3", title: DE ? "BPE = Kompression" : "BPE = compression", body: DE ? "Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus." : "Byte Pair Encoding starts from characters or bytes and repeatedly replaces the most frequent pair with a new symbol. After many merges, a frequent sequence of characters becomes a single token. That is data compression, learned from the training corpus.", tex: "", kind: "trivia" }
+        ]
+      },
+      {
+        id: "g-lens-mathematik",
+        title: DE ? "Mathematik" : "Mathematics",
+        questions: [
+          { id: "q-box-tok-2", title: DE ? "Was ist eine ID?" : "What is an ID?", body: DE ? "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum." : "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-lens-daten",
+        title: DE ? "Daten" : "Data",
+        questions: [
+          { id: "q-box-tok-bpe-data", title: DE ? "Warum ist die Tokenisierung datenabhängig?" : "Why does tokenization depend on the data?", body: DE ? "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Trainingskorpus seltener vorkommen (Petrov et al., 2023)." : "A tokenizer is optimised to cover as much text as possible with as few tokens as possible without losing information: every word must be reconstructable from its tokens. The exact split is therefore a consequence of the training data and the vocabulary target, not a fixed word list. Rare scripts stay more expensive because they are rarer in the training corpus (Petrov et al., 2023).", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-lens-grenze",
+        title: DE ? "Grenze" : "Limit",
+        questions: [
+          { id: "q-box-tok-4", title: DE ? "Warum brauchen englische Texte oft weniger Token?" : "Why do English texts often need fewer tokens?", body: DE ? "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung." : "Because the training corpus is mostly English. Frequent English words receive long merges; scripts with little text in the corpus stay at the byte level. The demo shows this illustratively, not as an exact measurement.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-sources",
+        title: DE ? "Quellen" : "Sources",
+        sources: [
+          { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909", why: { de: "BPE als Subword-Kompression für seltene Wörter.", en: "BPE as subword compression for rare words." } },
+          { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }, { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenizer machen manche Sprachen teurer.", en: "Tokenizers make some languages more expensive." } }
+        ]
+      }
+    ]
+  });
+
+  var weekdayStep = {
+    kicker: DE ? "Wochentage" : "Weekdays",
+    title: DE ? "Wochentage auf einer Linie" : "Weekdays on a line",
+    body: DE ? "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Ein Successor-Head kann diese gelernte Ordnung später wiederverwenden." : "Monday, Tuesday, Wednesday, and the other days lie on a line. The direction from one day to the next is the same everywhere. A successor head can reuse this learned order later.",
+    watch: "",
+    demoState: { scene: "weekday" },
+    inherit: false,
+    context: DE ? "Die Ordnung ist gelernt, nicht im Kontext nachgeschlagen: Dieselbe Richtung verschiebt Montag zu Dienstag und Dienstag zu Mittwoch." : "The order is learned, not looked up in the context: the same direction moves Monday to Tuesday and Tuesday to Wednesday.",
+    deep: DE ? "Der Successor-Head ist ein Beispiel dafür, dass eine Beziehung als Richtung im Vektorraum liegen kann. Bei Zahlen, Monaten und Wochentagen funktioniert dieselbe Struktur." : "The successor head is an example of a relation living as a direction in vector space. The same structure works for numbers, months, and weekdays.",
+    sources: []
+  };
+
+  var embeddingMergeStep = {
+    title: DE ? "Bedeutung wird Geometrie" : "Meaning becomes geometry",
+    kicker: DE ? "1D · 2D · 3D · Tabelle" : "1D · 2D · 3D · table",
+    substeps: [embedSteps[0], weekdayStep, embedSteps[1], embedSteps[2], highdimSteps[0]]
+  };
+  var attentionMergedGroups = DE ? [
+    {
+      id: "g-basics",
+      title: "Eine Ebene tiefer",
+      questions: []
+    },
+    {
+      id: "g-lens-grenze",
+      title: "Grenze",
+      questions: [
+        { id: "q-box-att-mis", title: "Ist Attention eine Datenbank?", body: "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Wird das für jedes Token einzeln berechnet?", body: "Ja, es wird für jedes Token einzeln berechnet. Wenn man autoregressive Modelle wie Chatbots hat, fügt man noch eine Causal Mask hinzu, die dafür sorgt, dass kein Token von sich aus in die Zukunft schauen kann.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-mathematik",
+      title: "Mathematik",
+      questions: [
+        { id: "q-box-att-5", title: "Die Formel", body: "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", tex: "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}", kind: "trivia" },
+        { id: "q-box-att-2", title: "Warum Softmax?", body: "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-technik",
+      title: "Technik",
+      questions: [
+        { id: "q-box-att-1", title: "Warum drei Vektoren?", body: "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-optional",
+      title: "Optional",
+      questions: [
+        { id: "q-box-att-kv", title: "KV-Cache", body: "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).", tex: "", kind: "trivia" }
+      ]
+    },
+    {
+      id: "g-lens-budget",
+      title: "Budget",
+      questions: [
+        { id: "q-box-att-3", title: "Ein Head, ein Budget", body: "Jede Zeile hat genau 1,00 Attention zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Jeder Head hat ein getrenntes Budget.", tex: "", kind: "trivia" },
+        { id: "q-edit-1794817884757-1", title: "Warum hat der Punkt fast 60 %? Kodiert er nicht die gesamte Bedeutung?", body: "Ja, für dieses eine Wort. Aber jedes Wort wird eigenständig kodiert. Der Punkt bleibt deshalb größtenteils „Punkt“; das heißt aber nicht, dass alle nur auf diesen Punkt schauen, weil jedes Token ein eigenes Token bleibt.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-sources",
+      title: "Quellen",
+      sources: attentionSteps[1].sources
+    }
+  ] : [
+    {
+      id: "g-basics",
+      title: "One level deeper",
+      questions: []
+    },
+    {
+      id: "g-lens-limit",
+      title: "Limit",
+      questions: [
+        { id: "q-box-att-mis", title: "Is attention a database?", body: "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Is this computed separately for each token?", body: "Yes, it is computed separately for each token. For autoregressive models such as chatbots, you also add a causal mask, which prevents any token from looking into the future.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-mathematics",
+      title: "Mathematics",
+      questions: [
+        { id: "q-box-att-5", title: "The formula", body: "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", tex: "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}", kind: "trivia" },
+        { id: "q-box-att-2", title: "Why softmax?", body: "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-technique",
+      title: "Technique",
+      questions: [
+        { id: "q-box-att-1", title: "Why three vectors?", body: "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-optional",
+      title: "Optional",
+      questions: [
+        { id: "q-box-att-kv", title: "KV cache", body: "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).", tex: "", kind: "trivia" }
+      ]
+    },
+    {
+      id: "g-lens-budget",
+      title: "Budget",
+      questions: [
+        { id: "q-box-att-3", title: "One head, one budget", body: "Every row has exactly 1.00 attention to give. More for one token means less for the others. Each head has a separate budget.", tex: "", kind: "trivia" },
+        { id: "q-edit-1794817884757-1", title: "Why does the period get almost 60 %? Doesn't it encode the entire meaning?", body: "Yes, for this one word. But each word is encoded independently. The period therefore stays mostly “period”; that does not mean everything only attends to this period, because each token remains its own token.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-sources",
+      title: "Sources",
+      sources: attentionSteps[1].sources
+    }
+  ];
+
+
+  var attentionMerged = {
+    kicker: DE ? "Attention" : "Attention",
+    title: DE ? "Attention bewegt Punkte anhand des Kontextes" : "Attention moves points based on context",
+    body: DE ? "Attention erlaubt es zu schauen, wie sehr jedes Token im Kontext von jedem anderen Token abhängt. Kontext ist alles, was bisher gesagt worden ist in dem Chat bzw. der gesamte Text. Jeder Attention-Head hat für jedes Token 100% Attention zur Verfügung, die er auf gelernte Weise auf andere Tokens verteilen kann. Wenn es sagt \"das zweite Token kriegt 80% Attention\", bleiben für alle anderen nur noch 20% übrig. Diese Prozentwerte werden dann genommen, um alle Vektoren gewichtet zu addieren, um einen neuen Vektor zu bekommen, der die Bedeutung (unter einem gewissen Kontext) repräsentiert. Es erlaubt, Antworten in Richtungen zu schieben, ohne sich festzulegen. Attention erlaubt es, sich relativ stark festzulegen, ohne die Flexibilität zu verlieren, die ein konkretes hundertprozentiges Festlegen bedeuten würde. Die Antwort bleibt flexibel. Reale Modelle nutzen nicht nur eine Attention, sondern viele, die lernen, auf verschiedene Kontexte zu achten." : "Attention lets you see how strongly each token in the context depends on every other token. Context is everything said so far in the chat, or the entire text. Each attention head has 100% attention to distribute for each token over other tokens in a learned way. If it says “the second token gets 80% attention”, only 20% remains for all the others. These percentages are then used to add all vectors with weights, producing a new vector that represents meaning under a certain context. It lets answers be pushed in directions without committing. Attention lets a model commit relatively strongly without losing the flexibility that a concrete 100% commitment would mean. The answer stays flexible. Real models use not just one attention but many, which learn to attend to different contexts.",
+    watch: "",
+    demoState: { scene: "attention" },
+    context: attentionSteps[1].context,
+    deep: attentionSteps[1].deep,
+    boxes: [],
+    questionGroups: attentionMergedGroups,
+    sources: []
+  };
+  var codeAttentionSubstep = {
+    kicker: "Attention",
+    title: DE ? "Attention hilft, Rauschen zu ignorieren" : "Attention helps ignore noise",
+    body: DE
+      ? "Sprache selbst ist Rauschen: „Der Hundt läuft die Strasse“, „The dgo runs the street“ und „Le chienn court la rue“ sind verschiedene Sprachen, Grammatiken und Tippfehler für denselben Gedanken. Dasselbe gilt für Code: Python, JavaScript, Java, Rust und Go schreiben dieselbe Funktion jeweils anders. Attention kann gelernte Repräsentationen so verschieben, dass ähnliche Bedeutungen über Sprachen und Schreibweisen hinweg näher zusammenrücken. Eine ausdrücklich sprachunabhängige Ebene gibt es nicht; das Modell lernt Annäherungen aus geteiltem Kontext. Viele Heads laufen parallel und achten auf unterschiedliche Muster."
+      : "Language itself is noise: “Der Hundt läuft die Strasse”, “The dgo runs the street”, and “Le chienn court la rue” are different languages, grammars, and typos for the same thought. The same holds for code: Python, JavaScript, Java, Rust, and Go each write the same function differently. Attention can shift learned representations so that similar meanings move closer together across languages and spellings. There is no explicitly language-independent layer; the model learns approximations from shared context. Many heads run in parallel and attend to different patterns.",
+    watch: "",
+    demoState: { scene: "codesemantic", kind: "language" },
+    context: DE ? "Die linke Seite ist die Oberfläche: Sprachen, Grammatiken, Tippfehler, Schreibweisen. Die rechte Seite ist die Bedeutung: „Hund läuft Straße“. Attention löscht die Wörter nicht; sie verschiebt ihre Repräsentation und lässt die Rauschanteile fallen. Ein echtes Modell hat keine ausdrücklich sprachunabhängige Ebene; es lernt Annäherungen aus geteiltem Kontext." : "The left side is the surface: languages, grammars, typos, spellings. The right side is the meaning: “dog runs street”. Attention does not delete the words; it moves their representation and lets the noise parts drop. A real model has no explicitly language-independent layer; it learns approximations from shared context.",
+    deep: DE ? "Mehrsprachige Modelle wie XLM-R und mBERT bilden ähnliche Repräsentationen für verwandte Bedeutungen über Sprachen hinweg (Conneau et al., 2020; Pires et al., 2019). Das ist gelernt und nicht garantiert: Bedeutung kann mehrdeutig sein, und seltene Sprachen bleiben benachteiligt. Und weil viele Heads parallel laufen, kann ein anderer Head gleichzeitig auf Syntax, ein dritter auf Position und ein vierter auf etwas ganz anderes achten." : "Multilingual models such as XLM-R and mBERT form similar representations for related meanings across languages (Conneau et al., 2020; Pires et al., 2019). This is learned and not guaranteed: meaning can be ambiguous, and low-resource languages remain disadvantaged. And because many heads run in parallel, another head can attend to syntax, a third to position, and a fourth to something else entirely.",
+    boxes: DE ? [
+      box("sem-1", "Sprache", "Sprache als Rauschen", "Drei Sätze in drei Sprachen, mit Tippfehlern und anderer Grammatik, meinen dasselbe. Sprache, Schreibweise und Tippfehler sind Oberfläche; die Bedeutung ist der gemeinsame Kern."),
+      box("sem-2", "Code", "Code als Rauschen", "def und function sind verschiedene Oberflächen für dieselbe Rolle: eine Funktionsdefinition. quick_sort und quickSort sind verschiedene Oberflächen für dieselbe Rolle: Quicksort."),
+      box("sem-3", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt drei Sätze, zwei Codeblöcke und einen abstrakten Punkt. Ein echtes Modell hat Tausende Dimensionen und viele überlappende Rollen; die Pfade sind eine didaktische Vereinfachung."),
+      box("sem-4", "Technik", "Viele Heads parallel", "Ein Head ist eine Perspektive. Ein Transformer hat viele Heads gleichzeitig; sie können auf Syntax, Bedeutung, Position, Code oder völlig andere Muster achten. Die Ausgaben werden danach zusammengeführt."),
+      box("sem-5", "Grenze", "Gibt es eine sprachunabhängige Ebene?", "Nicht als eigene eingebaute Ebene. Mehrsprachige Modelle lernen ähnliche Richtungen für ähnliche Bedeutungen, weil dieselben Kontexte in vielen Sprachen auftreten. Das ist eine gelernte Annäherung, keine Garantie.")
+    ] : [
+      box("sem-1", "Language", "Language as noise", "Three sentences in three languages, with typos and different grammar, mean the same thing. Language, spelling, and typos are surface; meaning is the shared core."),
+      box("sem-2", "Code", "Code as noise", "def and function are different surfaces for the same role: a function definition. quick_sort and quickSort are different surfaces for the same role: quicksort."),
+      box("sem-3", "Limit", "What is simplified?", "The demo shows three sentences, two code blocks, and one abstract point. A real model has thousands of dimensions and many overlapping roles; the paths are a didactic simplification."),
+      box("sem-4", "Technique", "Many heads in parallel", "A head is one perspective. A transformer has many heads at once; they can attend to syntax, meaning, position, code, or completely different patterns. Their outputs are combined afterwards."),
+      box("sem-5", "Limit", "Is there a language-independent layer?", "Not as a built-in layer. Multilingual models learn similar directions for similar meanings because the same contexts occur in many languages. That is a learned approximation, not a guarantee.")
+    ],
+    sources: [
+      { label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "Schichten bilden linguistische Rollen heraus.", en: "Layers develop linguistic roles." } },
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Multi-Head-Attention: viele Heads parallel.", en: "Multi-head attention: many heads in parallel." } },
+      { label: "Conneau et al. (2020), Unsupervised Cross-lingual Representation Learning at Scale", url: "https://arxiv.org/abs/1911.02116", why: { de: "XLM-R: mehrsprachige Repräsentationen über Sprachen hinweg.", en: "XLM-R: multilingual representations across languages." } },
+      { label: "Pires et al. (2019), How Multilingual is Multilingual BERT?", url: "https://arxiv.org/abs/1906.01502", why: { de: "mBERT: gemeinsame Repräsentationen trotz verschiedener Sprachen.", en: "mBERT: shared representations despite different languages." } }
+    ]
+  };
+  var codeAttentionCodeSubstep = Object.assign({}, codeAttentionSubstep, {
+    body: DE ? "Dasselbe Prinzip gilt für Code: Python, JavaScript, Java, Rust und Go schreiben dieselbe Funktion jeweils anders. Attention kann gelernte Repräsentationen so verschieben, dass ähnliche Rollen über Schreibweisen hinweg näher zusammenrücken. Eine ausdrückliche sprachunabhängige Ebene gibt es nicht; viele Heads achten parallel auf Syntax, Rollen und Positionen." : "The same principle holds for code: Python, JavaScript, Java, Rust, and Go each write the same function differently. Attention can shift learned representations so that similar roles move closer together across spellings. There is no explicit language-independent layer; many heads attend to syntax, roles, and positions in parallel.",
+    context: DE ? "Die linke Seite ist die Oberfläche: Python, JavaScript, Java, Rust und Go schreiben dieselbe Funktion anders. Die rechte Seite ist die gemeinsame Rolle: Funktionsdefinition, Schleife, Sortierung. Attention löscht den Code nicht; sie verschiebt die Repräsentation und lässt Oberflächenunterschiede fallen." : "The left side is the surface: Python, JavaScript, Java, Rust, and Go write the same function differently. The right side is the shared role: function definition, loop, sorting. Attention does not delete the code; it shifts the representation and lets surface differences drop.",
+    deep: DE ? "Ein Modell lernt ähnliche Richtungen für ähnliche Rollen, weil dieselben Kontexte in vielen Sprachen auftreten. Das ist eine gelernte Annäherung, keine Garantie; seltene Sprachen und exotische Syntax bleiben benachteiligt." : "A model learns similar directions for similar roles because the same contexts occur in many languages. That is a learned approximation, not a guarantee; low-resource languages and unusual syntax remain disadvantaged.",
+    demoState: { scene: "codesemantic", kind: "code" }
+  });
+  var codeAttentionStep = {
+    title: codeAttentionSubstep.title,
+    kicker: codeAttentionSubstep.kicker,
+    substeps: [codeAttentionSubstep, codeAttentionCodeSubstep]
+  };
+  var attentionMergeStep = {
+    title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
+    kicker: DE ? "Attention" : "Attention",
+    substeps: [attentionMerged]
+  };
+
+  var neuralNeuronStep = Object.assign({}, insideSteps[0], {
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: ""
+  });
+  var neuralLossStep = Object.assign({}, gradientSteps[0], {
+    title: DE ? "Wie findet man gute Punkte?" : "How do you find good points?",
+    kicker: DE ? "Optimizer" : "Optimizer",
+    watch: "",
+    body: DE ? "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, $f(x) = w\\cdot x + b$. Der Plot hat 3 Achsen: $w$, $b$ und $Loss$. Für jeden Parameterpunkt in diesem Raum gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre. Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nHier sind es zwei Parameter und damit zwei Dimensionen. Ein großes Sprachmodell hat Milliarden davon, zu viele, um es sich vorzustellen, aber die Idee ist die gleiche." : "We see a small real network training here. It has only two parameters, $f(x) = w\\cdot x + b$. The plot has 3 axes: $w$, $b$, and $loss$. For every parameter point in this space there is a loss, that is, a value for how good the network would be with those values. Training means: the computer looks at how good the current point is and in which directions it has to move the point so that the result gets better. Then it moves the point and looks again.\n\nHere there are two parameters and therefore two dimensions. A large language model has billions of them, too many to picture, but the idea is the same.",
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-deep", title: DE ? "Wie wird der Loss bestimmt?" : "How is the loss determined?", body: DE ? "Der Loss wird über die Trainingsdaten bestimmt: sie werden einmal komplett durchgetestet und für jedes gespeichert, was aus dem Netz rauskommt, und was rauskommen sollte. " : "The loss is determined by the training data: run all of it through the network once and record, for each example, what comes out and what should come out.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-lens-mathematik",
+        title: DE ? "Mathematik" : "Mathematics",
+        questions: [
+          { id: "q-box-grad-1", title: DE ? "Wie wird bestimmt, in welche Richtung gegangen werden muss?" : "How is the direction determined?", body: DE ? "Durch tape-basiertes Ableiten. Neuronale Netze sind verschachtelte Funktionen, was bedeutet, dass man beim testen (\"Forward-Pass\") der Daten speichern kann, welche Operationen ausgeführt werden, und dann für jede diese Operationen ihre Ableitungen definiert und sie beim Rückrechnen der Gewichte (\"Backward-Pass\") mit ihrer Ableitung ersetzen kann. Dann kriegt man für jeden Parameter die Steigung an der Stelle, mit der man die Richtung bestimmen kann, in welcher der Fehler niedriger wird." : "Through tape-based differentiation. Neural networks are nested functions, which means that during the forward pass you can record which operations were executed, then define the derivative for each of those operations and replace them with their derivative during the backward pass through the weights. That gives you the slope at the current point for every parameter, which tells you the direction in which the error becomes lower.", tex: "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}", kind: "trivia" }
+        ]
+      },
+      {
+        id: "g-lens-optional",
+        title: DE ? "Optional" : "Optional",
+        questions: [
+          { id: "q-box-grad-loss", title: DE ? "Andere Loss-Funktionen" : "Other loss functions", body: DE ? "Dieses Modell nutzt <b>MSE</b>, um den Fehler zu bestimmen. Andere Lossfunktionen wie <b>C</b>ategorical <b>Cross</b> <b>E</b>ntropy (<b>CCE</b>) sind besser geeignet für zum Beispiel kategorielle Klassifikationen, funktionieren im Loss etwas anders, aber der Optimizer zieht nicht, wie der Loss zustande kam, sondern nur ihr Ergebnis." : "This model uses <b>MSE</b> to measure the error. Other loss functions such as <b>C</b>ategorical <b>Cross</b> <b>E</b>ntropy (<b>CCE</b>) are better suited to categorical classification, for example; they work slightly differently inside the loss, but the optimizer does not care how the loss was produced, only its result.", tex: "", kind: "trivia" },
+          { id: "q-box-grad-saddle", title: DE ? "Sattelpunkte statt Minima" : "Saddle points rather than minima", body: DE ? "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Viele Sattelpunkte haben eine Abstiegsrichtung; lokale Minima bleiben trotzdem möglich. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis." : "In high dimensions a local minimum often looks like a dead end. Many critical points are saddle points: Many saddle points have a descent direction; local minima are still possible. Momentum and Adam help escape such plateaus. A local minimum is usually not the main obstacle in a high-dimensional space.", tex: "", kind: "trivia" },
+          { id: "q-edit-1794810324364-2", title: DE ? "Wie funktioniert Backpropagation?" : "How does backpropagation work?", body: DE ? "Man wusste lange nicht, wie man die Gewichte der inneren Layer trainieren soll. Sagen wir wir haben $\\text{Output} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Daten})))$. Dann können wir sagen, wie groß die Differenz ist zwischen dem Output und den Daten, die wir wollen, aber wie kommt man an die Differenz zwischen dem, was aus Layer 2 und 1 rauskommt und dem was wir wollen? \n\nWir bestimmen dafür die Differenz zwischen Output und Trainingsziel, und berechnen die Gewichte des letzten Layers, indem wir sagen \"es wäre gut, wenn dieser Wert etwas größer gewesen wäre, und dieser etwas kleiner\". Dann sagen wir, dass der letzte Layer nun der \"Output\"-Layer ist. Damit kriegen wir genau die gleiche Struktur wie vorher: wir können Output und Differenz usw. betrachten und berechnen, dann definieren wir den Layer als Letzten und sagen, dass wir die Differenz berechnen usw. So können wir uns Layer für Layer durch das Netzwerk hangeln, und immer wieder die Änderungen des vorherigen nehmen und als letzten Layer definieren, und so den davor anpassen. Das ist die Idee von Backpropagation." : "For a long time it was unclear how to train the weights of the inner layers. Suppose we have $\\text{Output} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Data})))$. Then we can say how large the difference is between the output and the data we want, but how do we get at the difference between what comes out of layers 2 and 1 and what we want? \n\nWe determine the difference between output and training target, and compute the weights of the last layer by saying “it would be good if this value had been a bit larger, and this one a bit smaller”. Then we treat the last layer as the new “output” layer. That gives exactly the same structure as before: we can look at output and difference, compute, then define the layer as the last one and say we compute the difference, and so on. That way we can move layer by layer through the network, always take the changes of the previous layer, define it as the last layer, and adjust the one before it. That is the idea of backpropagation.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-sources",
+        title: DE ? "Quellen" : "Sources",
+        sources: [
+          { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
+          { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
+          { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } },
+          { label: "Dauphin et al. (2014), Saddle Point Problem", url: "https://arxiv.org/abs/1406.2572", why: { de: "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.", en: "Saddle points as an obstacle in high-dimensional optimization." } },
+          { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } },
+          { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Loss-Funktionen für Regression und Klassifikation.", en: "Loss functions for regression and classification." } },
+          { label: "PyTorch, CrossEntropyLoss", url: "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html", why: { de: "Cross-Entropy für Klassifikation.", en: "Cross-entropy for classification." } },
+          { label: "Seppo Linnainmaa (1970), The representation of the cumulative rounding error of an algorithm as a Taylor expansion of the local rounding errors", url: "https://people.idsia.ch/~juergen/linnainmaa1970thesis.pdf", why: { de: "Tapebasiertes Ableiten.", en: "Tape-based differentiation." } }
+        ]
+      }
+    ]
+  });
+  var neuralActivationStep = Object.assign({}, activationSteps[0], {
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: ""
+  });
+  var neuralLargeStep = Object.assign({}, neuralLargeSteps[0], {
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: ""
+  });
+  var neuralMlpStep = Object.assign({}, mlpSteps[0], {
+    title: DE ? "Der Raum biegt sich" : "Space bends"
+  });
+
+  var crossEntropyStep = {
+    kicker: DE ? "Loss" : "Loss",
+    title: DE ? "Der Loss: Was das Modell optimiert" : "The loss: what the model optimises",
+    body: DE
+      ? "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: $-\\log(0.30) \\approx 1.20$. Der Gradient $p-y$ sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner. Über alle Trainingsbeispiele bildet dieser Loss die Loss Landscape: Jede Stelle im Gewichtsraum hat einen Loss-Wert, und das Training sucht die Täler. Drücke Weiter oder →: Die Demo macht für jedes der vier Zielwörter mehrere Trainingsschritte, wechselt dabei den Satz und geht dann zum nächsten."
+      : "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: $-\\log(0.30) \\approx 1.20$. The gradient $p-y$ then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller. Across all training examples, this loss forms the loss landscape: every point in weight space has a loss value, and training looks for the valleys. Press Next or →: the demo makes several training steps for each of the four target words, switches the sentence, then moves to the next.",
+    watch: DE ? "Drücke Weiter oder →: Paris, London, Berlin, Rom. Jedes Zielwort bekommt mehrere Trainingsschritte; beobachte, wie der Loss fällt und p steigt. Du kannst die Balken auch selbst ziehen: Der Loss aktualisiert sich live, die übrigen Wahrscheinlichkeiten gleichen sich aus, sodass die Summe 1 bleibt." : "Press Next or →: Paris, London, Berlin, Rome. Each target gets several training steps; watch the loss fall and p rise. You can also drag the bars yourself: the loss updates live, and the other probabilities adjust so the sum stays 1.",
+    demoState: { scene: "crossentropy" },
+    context: DE ? "y ist ein One-Hot-Vektor: 1 für Paris, 0 sonst. p ist die Softmax-Verteilung. Der Loss ist die negative Log-Likelihood des Ziels." : "y is a one-hot vector: 1 for Paris, 0 elsewhere. p is the softmax distribution. The loss is the negative log-likelihood of the target.",
+    deep: DE ? "Der Gradient $p-y$ ist der Grund, warum Softmax und Cross-Entropy zusammen so sauber funktionieren. Ein Schritt lautet $z \\leftarrow z - \\eta(p-y)$: Das Ziel-Logit steigt, alle anderen fallen." : "The gradient $p-y$ is why softmax and cross-entropy work together so cleanly. A step is z ← z − η(p−y): the target logit rises, all others fall.",
+    boxes: [
+      box("ce-1", DE ? "Beispiel" : "Example", DE ? "Was ist das Ziel?" : "What is the target?", DE ? "Richtig ist Paris. Das Modell gibt Paris 30 %, London 50 %. Der Loss bestraft nur die 30 % des richtigen Tokens." : "The target is Paris. The model gives Paris 30%, London 50%. The loss punishes only the 30% of the correct token."),
+      box("ce-2", DE ? "Mathematik" : "Mathematics", DE ? "Warum −log?" : "Why −log?", DE ? "$-\\log(0.30) \\approx 1.20$. Bei p = 1 wäre der Loss 0; je kleiner die Wahrscheinlichkeit des Ziels, desto größer der Loss." : "$-\\log(0.30) \\approx 1.20$. At p = 1 the loss would be 0; the smaller the target probability, the larger the loss."),
+      box("ce-3", DE ? "Training" : "Training", DE ? "Was macht der Gradient?" : "What does the gradient do?", DE ? "$p-y$: Paris bekommt einen negativen Gradienten (Logit steigt), London einen positiven (Logit fällt). Der Trainingsschritt folgt genau diesem Signal." : "$p-y$: Paris gets a negative gradient (its logit rises), London a positive one (its logit falls). The training step follows exactly this signal."),
+      box("ce-4", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Cross-Entropy für ein Token und ihr Gradient nach den Logits." : "Cross-entropy for one token and its gradient with respect to the logits.", DE ? "\\underbrace{-\\log \\underbrace{p_\\theta(y\\mid x)}_{\\substack{\\text{Wahrscheinlichkeit}\\\\ \\text{des Ziels}}}}_{\\text{Loss des richtigen Tokens}} \\qquad \\underbrace{\\frac{\\partial L}{\\partial z_i} = \\underbrace{p_i - y_i}_{\\text{Gradient pro Logit}}}_{\\text{was der Trainingsschritt benutzt}}" : "\\underbrace{-\\log \\underbrace{p_\\theta(y\\mid x)}_{\\substack{\\text{probability}\\\\ \\text{of the target}}}}_{\\text{loss of the correct token}} \\qquad \\underbrace{\\frac{\\partial L}{\\partial z_i} = \\underbrace{p_i - y_i}_{\\text{gradient per logit}}}_{\\text{what the training step uses}}"),
+      box("ce-5", DE ? "Loss" : "Loss", DE ? "Die Loss Landscape" : "The loss landscape", DE ? "Dieser Loss über alle Trainingsbeispiele bildet die Loss Landscape: Jeder Punkt im Gewichtsraum hat einen Loss-Wert. Das Training sucht die Täler, in denen der Loss klein ist." : "This loss across all training examples forms the loss landscape: every point in weight space has a loss value. Training looks for the valleys where the loss is small.")
+    ],
+    sources: [
+      { label: "Bengio et al. (2003), A Neural Probabilistic Language Model", url: "https://www.jmlr.org/papers/v3/bengio03a.html", why: { de: "Neuronale Sprachmodelle und Next-Token-Wahrscheinlichkeiten.", en: "Neural language models and next-token probabilities." } },
+      { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Softmax, Cross-Entropy und Gradienten.", en: "Softmax, cross-entropy, and gradients." } }
+    ]
+  };
+
+  var qkvArcs = {
+    kicker: DE ? "Q · K · V" : "Q · K · V",
+    title: DE ? "Wie Attention rechnet" : "How attention computes",
+    body: DE
+      ? "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort."
+      : "Every token produces three vectors: query, key, and value. The query asks, the key answers, and the value carries the information. Attention compares query and key, turns the scores into weights with softmax, and mixes the values. Multiple heads do this in parallel with their own weights: one head can ask for the subject, another for the location.",
+    watch: "",
+    demoState: { scene: "qkv", head: 0, view: "arcs" },
+    context: DE ? "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden. Jede Query-Zeile summiert nach Softmax zu 1." : "The scores are divided by $\\sqrt{d_k}$ so they do not grow too large in high dimensions. Each query row sums to 1 after softmax.",
+    deep: DE ? "Die Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort." : "The heads are not hand-programmed; they specialise during training. The two patterns in the demo are didactic: head 1 asks for the subject, head 2 for the location.",
+    boxes: [
+      box("qkv-1", DE ? "Technik" : "Technique", "Q, K, V", DE ? "Query: wonach fragt das Token? Key: was bietet es an? Value: welche Information wird weitergegeben?" : "Query: what does the token ask for? Key: what does it offer? Value: which information is passed on?"),
+      box("qkv-2", DE ? "Mathematik" : "Mathematics", "Softmax", DE ? "Macht aus den Scores eine Verteilung. Jede Query-Zeile summiert zu 1; mehr Gewicht für einen Key heißt weniger für alle anderen." : "Turns scores into a distribution. Every query row sums to 1; more weight for one key means less for all others."),
+      box("qkv-3", DE ? "Technik" : "Technique", DE ? "Mehrere Heads" : "Multiple heads", DE ? "Jeder Head hat eigene Q/K/V-Projektionen. Die Ausgaben werden konkateniert und projiziert." : "Every head has its own Q/K/V projections. The outputs are concatenated and projected."),
+      box("qkv-4", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Attention als gewichtete Mischung der Values." : "Attention as a weighted mixture of the values.", DE ? "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{gewichtete Mischung der Values}}" : "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{weighted mixture of the values}}"),
+      box("qkv-5", DE ? "Technik" : "Technique", DE ? "Auch für Bilder" : "Images too", DE ? "Ein Vision Transformer zerlegt ein Bild in Patches und behandelt die Patches wie Tokens. Dieselbe Self-Attention lässt sie aufeinander schauen; das ist die Technik aus der Sprachverarbeitung (Dosovitskiy et al., 2021)." : "A vision transformer splits an image into patches and treats the patches like tokens. The same self-attention lets them attend to each other; this is the technique from language processing (Dosovitskiy et al., 2021).")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Q/K/V, Multi-Head-Attention und Softmax-Gewichte.", en: "Q/K/V, multi-head attention, and softmax weights." } },
+      { label: "Dosovitskiy et al. (2021), An Image is Worth 16x16 Words", url: "https://arxiv.org/abs/2010.11929", why: { de: "Vision Transformer: Bild-Patches mit Self-Attention.", en: "Vision transformer: image patches with self-attention." } }
+    ]
+  };
+
+  var hallucinationCauses = {
+    kicker: DE ? "Typen" : "Types",
+    title: DE ? "Arten von Halluzinationen" : "Types of hallucination",
+    body: DE
+      ? "Halluzinationen sind nicht ein einziger Fehler. Die Forschung unterscheidet unter anderem falsche Fakten, erfundene Quellen, intrinsische und extrinsische Halluzinationen, Kontextkonflikte, veraltetes Wissen, Entitätsvertauschungen und Negationsfehler. Jeder Typ hat ein Beispiel und ein Gegenmittel. Klicke die Typen durch."
+      : "Hallucinations are not one single failure. Research distinguishes false facts, fabricated citations, intrinsic and extrinsic hallucinations, context conflicts, outdated knowledge, entity swaps, and negation errors. Every type has an example and a countermeasure. Click through the types.",
+    watch: DE ? "Klicke die Typen. Welches Beispiel erkennst du wieder? Welches Gegenmittel passt?" : "Click the types. Which example do you recognise? Which countermeasure fits?",
+    demoState: { scene: "hallucinationtypes" },
+    context: DE ? "Intrinsic heißt: Die Antwort widerspricht der Quelle. Extrinsic heißt: Sie fügt Information hinzu, die die Quelle nicht deckt (Maynez et al., 2020; Ji et al., 2023)." : "Intrinsic means the answer contradicts the source. Extrinsic means it adds information the source does not support (Maynez et al., 2020; Ji et al., 2023).",
+    deep: DE ? "Die Typen überschneiden sich. Wichtig ist die Unterscheidung nach Ursache: Datenproblem, Decoding-Problem, Repräsentationsproblem oder fehlende Erdung. Daraus folgt, welches Gegenmittel sinnvoll ist." : "The types overlap. What matters is the cause: data problem, decoding problem, representation problem, or missing grounding. That decides which countermeasure is useful.",
+    boxes: DE ? [
+      box("hct-1", "Daten", "Falsche Fakten", "Das Modell wiederholt eine falsche Aussage mit ruhiger Stimme. Gegenmittel: Quelle prüfen, RAG, Zitat verlangen."),
+      box("hct-2", "Quelle", "Erfundene Quellen", "Eine DOI, ein Autor oder ein Paper klingt echt, existiert aber nicht. Gegenmittel: Link prüfen, nur bereitgestellte Quellen zitieren."),
+      box("hct-3", "Quelle", "Intrinsic vs. extrinsic", "Intrinsic widerspricht der Quelle; extrinsic ergänzt Unbelegtes. Gegenmittel: Faithfulness-Check und Attribution."),
+      box("hct-4", "Kontext", "Konflikt und Zeit", "Die Antwort ignoriert den gegebenen Kontext oder nutzt veraltetes Wissen. Gegenmittel: Kontext zitieren, Datum prüfen, Retrieval."),
+      box("hct-5", "Sprache", "Entität und Negation", "Namen oder Zahlen werden vertauscht; „nicht traurig“ ist nicht automatisch „glücklich“. Negationsfehler sind eigene Fehler; Attention ist kein Antonym-Operator. Gegenmittel: Entitäten und logische Schritte separat prüfen."),
+      box("hct-6", "Decoding", "Sampling", "Zufall wählt einen plausiblen, aber falschen Pfad. Gegenmittel: Temperatur senken, mehrere Antworten vergleichen, Selbstkonsistenz.")
+    ] : [
+      box("hct-1", "Data", "False facts", "The model repeats a false statement in a calm voice. Countermeasure: check the source, use RAG, require a citation."),
+      box("hct-2", "Source", "Fabricated citations", "A DOI, author, or paper sounds real but does not exist. Countermeasure: check the link, cite only provided sources."),
+      box("hct-3", "Source", "Intrinsic vs. extrinsic", "Intrinsic contradicts the source; extrinsic adds unsupported content. Countermeasure: faithfulness check and attribution."),
+      box("hct-4", "Context", "Conflict and time", "The answer ignores the given context or uses outdated knowledge. Countermeasure: quote the context, check the date, use retrieval."),
+      box("hct-5", "Language", "Entity and negation", "Names or numbers get swapped; “not sad” is not automatically “happy”. Negation errors are their own error type; attention is not an antonym operator. Countermeasure: check entities and logical steps separately."),
+      box("hct-6", "Decoding", "Sampling", "Randomness picks a plausible but false path. Countermeasure: lower temperature, compare several answers, use self-consistency.")
+    ],
+    sources: [
+      { label: "Ji et al. (2023), Survey of Hallucination in Natural Language Generation", url: "https://arxiv.org/abs/2202.03629", why: { de: "Überblick über Halluzinationsarten und -ursachen.", en: "Overview of hallucination types and causes." } },
+      { label: "Maynez et al. (2020), On Faithfulness and Factuality in Abstractive Summarization", url: "https://arxiv.org/abs/2005.00661", why: { de: "Intrinsic und extrinsic Halluzinationen in Zusammenfassungen.", en: "Intrinsic and extrinsic hallucinations in summarization." } },
+      { label: "Huang et al. (2023), A Survey on Hallucination in Large Language Models", url: "https://arxiv.org/abs/2311.05232", why: { de: "Taxonomie und offene Fragen zu LLM-Halluzinationen.", en: "Taxonomy and open questions on LLM hallucinations." } },
+      { label: "Rawte et al. (2023), A Survey of Hallucination in Large Foundation Models", url: "https://arxiv.org/abs/2309.05922", why: { de: "Überblick über Halluzinationen in großen Foundation-Modellen.", en: "Overview of hallucinations in large foundation models." } }
+    ]
+  };
+
+  var hallucinationGuard = {
+    kicker: DE ? "Schutz" : "Defence",
+    title: DE ? "So werden Halluzinationen seltener" : "How to make hallucinations rarer",
+    body: DE
+      ? "Drei Hebel: vertrauenswürdige Quellen in den Kontext legen (RAG), schrittweise prüfen (CoT und Verifikation) und die Antwort mit einem Zitat oder einem Eingeständnis absichern. Klicke die Schalter: Ohne Quelle bleibt die Antwort eine Vermutung; mit Quelle und Gegenprüfung wird sie gedeckt."
+      : "Three levers: put trusted sources into the context (RAG), check step by step (CoT and verification), and secure the answer with a citation or an admission. Click the toggles: without a source the answer stays a guess; with a source and a cross-check it becomes grounded.",
+    watch: DE ? "Schalte Quellen, Schrittweise und Gegenprüfung. Wann ist die Antwort gedeckt, wann sagt das Modell „keine Quelle“?" : "Toggle sources, step-by-step, and verification. When is the answer grounded, and when does the model say “no source”?",
+    demoState: { scene: "hallucinationguard" },
+    context: DE ? "RAG holt Dokumente und legt sie in den Kontext (Lewis et al., 2020). CoT macht Zwischenschritte sichtbar (Wei et al., 2022); Chain-of-Verification prüft die Antwort mit unabhängigen Fragen (Dhuliawala et al., 2023)." : "RAG retrieves documents and puts them into the context (Lewis et al., 2020). CoT makes intermediate steps visible (Wei et al., 2022); chain-of-verification checks the answer with independent questions (Dhuliawala et al., 2023).",
+    deep: DE ? "Keine Methode garantiert Wahrheit. RAG hilft nur, wenn die Quelle gut ist; CoT kann plausibel, aber falsch schlussfolgern; Verifikation braucht eine unabhängige Quelle. Am robustesten ist die Kombination: Quelle, Zitat und ein Eingeständnis, wenn die Deckung fehlt." : "No method guarantees truth. RAG helps only if the source is good; CoT can reason plausibly but wrongly; verification needs an independent source. The most robust combination is source, citation, and an admission when support is missing.",
+    boxes: DE ? [
+      box("hg-1", "RAG", "Quellen in den Kontext", "Retrieval holt vertrauenswürdige Dokumente und legt sie in den Kontext. Das Modell soll daraus antworten und die Quelle nennen, nicht aus dem Gedächtnis raten."),
+      box("hg-2", "CoT", "Schrittweise prüfen", "Die Antwort wird in Schritte zerlegt: Frage, Quelle, Schluss. So werden übersprungene Schritte und selbst gefüllte Lücken sichtbar."),
+      box("hg-3", "Verifikation", "Gegenprüfung", "Chain-of-Verification stellt unabhängige Prüffragen und revidiert die Antwort. Ohne Deckung lautet die Antwort „keine Quelle“ statt einer Erfindung."),
+      box("hg-4", "Grenze", "Was bleibt?", "RAG ist nur so gut wie die Quelle; CoT kann falsch reasoning; Verifikation braucht Unabhängigkeit. Keine Methode macht Wahrheit garantiert.")
+    ] : [
+      box("hg-1", "RAG", "Sources in the context", "Retrieval pulls trusted documents into the context. The model should answer from them and name the source instead of guessing from memory."),
+      box("hg-2", "CoT", "Check step by step", "Break the answer into steps: question, source, conclusion. That makes skipped steps and self-filled gaps visible."),
+      box("hg-3", "Verification", "Cross-check", "Chain-of-verification asks independent checking questions and revises the answer. Without support the answer is “no source” instead of an invention."),
+      box("hg-4", "Limit", "What remains?", "RAG is only as good as the source; CoT can reason wrongly; verification needs independence. No method guarantees truth.")
+    ],
+    sources: [
+      { label: "Lewis et al. (2020), Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks", url: "https://arxiv.org/abs/2005.11401", why: { de: "RAG: Retrieval und Generierung verbinden.", en: "RAG: combine retrieval and generation." } },
+      { label: "Wei et al. (2022), Chain-of-Thought Prompting", url: "https://arxiv.org/abs/2201.11903", why: { de: "Schrittweises Reasoning als Prompt-Muster.", en: "Step-by-step reasoning as a prompting pattern." } },
+      { label: "Dhuliawala et al. (2023), Chain-of-Verification Reduces Hallucination", url: "https://arxiv.org/abs/2309.11495", why: { de: "Antworten mit unabhängigen Prüffragen verifizieren.", en: "Verify answers with independent checking questions." } }
+    ]
+  };
+
+  var hallucinationStep = {
+    title: DE ? "Warum Modelle halluzinieren" : "Why models hallucinate",
+    kicker: DE ? "Grenze" : "Limit",
+    substeps: [hallucinationCauses, hallucinationGuard]
+  };
+
+  var aiRiskSub = {
+    kicker: DE ? "Risiken" : "Risks",
+    title: DE ? "Die Gefahren sind nicht eine Sache" : "The dangers are not one thing",
+    body: DE
+      ? "Gefahren sind kein einzelnes Ding. Heute stehen Missbrauch (Betrug, Cyber, Desinformation) und Bias im Vordergrund: Gesichtserkennung war bei dunkler Haut und Frauen schlechter (Buolamwini & Gebru, 2018), ein Gesundheitsalgorithmus unterschätzte den Pflegebedarf Schwarzer Patient:innen (Obermeyer et al., 2019). Dazu kommt Machtkonzentration, weil Rechenleistung, Daten und Talente bei wenigen liegen (Sastry et al., 2024). Das langfristige Risiko ist Kontrollverlust: ein System, dessen Ziele wir nicht mehr korrigieren können (Amodei et al., 2016; Bostrom, 2014). Wähle eine Gefahr in der Karte: Sie zeigt, wie sie technisch entsteht und welche Gegenmittel es gibt."
+      : "Dangers are not one thing. Today the focus is misuse (fraud, cyber, disinformation) and bias: face recognition was worse for darker skin and women (Buolamwini & Gebru, 2018), and a health algorithm underestimated the care needs of Black patients (Obermeyer et al., 2019). Add power concentration: compute, data, and talent sit with a few actors (Sastry et al., 2024). The long-term risk is loss of control: a system whose goals we can no longer correct (Amodei et al., 2016; Bostrom, 2014). Choose a danger in the map: it shows how it arises technically and which countermeasures exist.",
+    watch: DE ? "Klicke eine Gefahr. Was passiert, warum, und wie wird man sie los?" : "Click a danger. What happens, why, and how do we get rid of it?",
+    demoState: { scene: "riskmap", mode: "risks" },
+    context: DE ? "Jede Gefahr hat einen anderen Mechanismus und ein anderes Gegenmittel: Missbrauch ist ein Zugangsproblem, Bias ein Datenproblem, Macht ein Marktproblem, Kontrollverlust ein Alignmentproblem." : "Each danger has a different mechanism and a different countermeasure: misuse is an access problem, bias a data problem, power a market problem, loss of control an alignment problem.",
+    deep: DE ? "Die Gegenmittel greifen an verschiedenen Stellen: Provenienz und Abuse-Monitoring beim Missbrauch, Datenaudits und faire Metriken beim Bias, Wettbewerbs- und Compute-Politik bei Macht, Alignment-Forschung und Rechtebegrenzung beim Kontrollverlust. Keines davon ist ein Schalter." : "The countermeasures act in different places: provenance and abuse monitoring for misuse, data audits and fair metrics for bias, competition and compute policy for power, alignment research and permission limits for loss of control. None of them is a switch.",
+    boxes: [
+      box("risk-bias", DE ? "Technik" : "Technique", DE ? "Wie entsteht Bias technisch?" : "How does bias arise technically?", DE ? "Das Modell lernt die Verteilung der Trainingsdaten. Historische Ungleichheit wird zur Vorhersage, wenn die Zielfunktion sie nicht korrigiert; Fehler treffen Gruppen unterschiedlich, weil Daten, Labels und Schwellenwerte ungleich sind." : "The model learns the training distribution. Historical inequality becomes prediction when the objective does not correct it; errors hit groups differently because data, labels, and thresholds are uneven."),
+      box("risk-align", DE ? "Grenze" : "Limit", DE ? "Was heißt Alignment?" : "What is alignment?", DE ? "Ein System verfolgt die Ziele, die wir intendieren, auch wenn es skaliert oder neue Situationen sieht. Alignment ist kein einmaliger Test, sondern ein laufender Prozess." : "A system pursues the goals we intend, even when it scales or meets new situations. Alignment is not a one-off test but an ongoing process."),
+      box("risk-power", DE ? "Gesellschaft" : "Society", DE ? "Warum Machtkonzentration?" : "Why power concentration?", DE ? "Compute ist teuer und knapp; Daten und Talente sind ungleich verteilt. Wer sie kontrolliert, kann Märkte und Regeln mitgestalten." : "Compute is expensive and scarce; data and talent are unevenly distributed. Whoever controls them can shape markets and rules."),
+      box("risk-counter", DE ? "Gegenmittel" : "Countermeasure", DE ? "Warum reicht ein Gegenmittel nicht?" : "Why is one countermeasure not enough?", DE ? "Jede Gegenmaßnahme hat eine Lücke: Filter lassen sich umgehen, Audits finden nur bekannte Fehler, Regeln gelten nicht überall. Deshalb braucht es mehrere Ebenen gleichzeitig." : "Every countermeasure has a gap: filters can be bypassed, audits find only known failures, and rules do not apply everywhere. That is why several layers are needed at once.")
+    ],
+    sources: [
+      { label: "International AI Safety Report (2025)", url: "https://arxiv.org/abs/2501.17805", why: { de: "Überblick über gegenwärtige und zukünftige KI-Risiken.", en: "Overview of current and future AI risks." } },
+      { label: "Buolamwini & Gebru (2018), Gender Shades", url: "https://proceedings.mlr.press/v81/buolamwini18a.html", why: { de: "Gesichtserkennung mit höheren Fehlerraten bei dunkler Haut und Frauen.", en: "Face recognition with higher error rates for darker skin and women." } },
+      { label: "Obermeyer et al. (2019), Dissecting racial bias in an algorithm", url: "https://doi.org/10.1126/science.aax2342", why: { de: "Gesundheitsalgorithmus unterschätzt Pflegebedarf Schwarzer Patient:innen.", en: "Health algorithm underestimates care needs of Black patients." } },
+      { label: "Sastry et al. (2024), Computing Power and the Governance of AI", url: "https://arxiv.org/abs/2402.08797", why: { de: "Rechenleistung als Machtfaktor und Governance-Problem.", en: "Compute as a factor of power and a governance problem." } },
+      { label: "Amodei et al. (2016), Concrete Problems in AI Safety", url: "https://arxiv.org/abs/1606.06565", why: { de: "Unfallrisiken und Alignment als technische Probleme.", en: "Accident risks and alignment as technical problems." } },
+      { label: "Bostrom (2014), Superintelligence", url: "https://global.oup.com/academic/product/superintelligence-9780199678112", why: { de: "Langfristige Kontroll- und Zielprobleme.", en: "Long-term control and goal problems." } }
+    ]
+  };
+
+  var aiLimitsSub = {
+    kicker: DE ? "Grenzen" : "Limits",
+    title: DE ? "Grenzen: Was LLMs nicht zuverlässig können" : "Limits: what LLMs cannot do reliably",
+    body: DE
+      ? "Ein LLM sagt das nächste Token voraus; daraus folgt nicht automatisch ein Weltmodell. Ob Sprache allein Bedeutung erdet, ist umstritten (Bender & Koller, 2020; Bisk et al., 2020). Das Gedächtnis endet am Kontext, und Informationen in der Mitte langer Kontexte gehen unter (Liu et al., 2023). Kompositionelles Denken ist brüchig (Dziri et al., 2023); Halluzinationen haben mehrere Ursachen, darunter das Ziel plausibler Fortsetzungen (Ji et al., 2023). Ein Agent kann Werkzeuge nutzen, aber Zuverlässigkeit und Selbstkontrolle sind nicht garantiert (Amodei et al., 2016)."
+      : "An LLM predicts the next token; that does not automatically give it a world model. Whether language alone grounds meaning is contested (Bender & Koller, 2020; Bisk et al., 2020). Memory ends at the context, and information in the middle of long contexts gets lost (Liu et al., 2023). Compositional reasoning is brittle (Dziri et al., 2023); hallucinations have several causes, including the goal of plausible continuations (Ji et al., 2023). An agent can use tools, but reliability and self-control are not guaranteed (Amodei et al., 2016).",
+    watch: DE ? "Klicke eine Fähigkeit. Was fehlt strukturell?" : "Click a capability. What is structurally missing?",
+    demoState: { scene: "riskmap", mode: "limits" },
+    context: DE ? "Die Grenzen sind nicht alle gleich: Manche sind heute brüchig, andere fehlen strukturell. Ein größeres Modell verschiebt die Grenze, hebt sie aber nicht automatisch auf." : "The limits are not all the same: some are brittle today, others are structurally missing. A larger model moves the boundary but does not automatically remove it.",
+    deep: DE ? "Ein Weltmodell ist eine innere Simulation, die Vorhersagen und Handlungen stabil trägt. Ein LLM kann Teile davon lernen, garantiert sie aber nicht. Für viele Ansätze braucht Grounding Wahrnehmung, Handlung und Feedback; Text allein reicht ihnen nicht." : "A world model is an inner simulation that carries predictions and actions stably. An LLM can learn parts of it but does not guarantee it. For many accounts, grounding needs perception, action, and feedback; text alone is not enough.",
+    boxes: [
+      box("lim-ground", DE ? "Grenze" : "Limit", DE ? "Was ist Grounding?" : "What is grounding?", DE ? "Die Verbindung zwischen Zeichen und Welt: Wahrnehmung, Handlung, Feedback. Ohne sie bleibt Bedeutung eine statistische Nähe." : "The link between symbols and the world: perception, action, feedback. Without it, meaning stays statistical proximity."),
+      box("lim-agent", DE ? "Technik" : "Technique", DE ? "Warum ist Agency riskant?" : "Why is agency risky?", DE ? "Ein Agent kann planen und Werkzeuge nutzen. Damit wächst die Wirkung, aber auch die Möglichkeit, dass ein Fehler reale Konsequenzen hat." : "An agent can plan and use tools. That increases impact, but also the chance that a mistake has real consequences.")
+    ],
+    sources: [
+      { label: "Bender & Koller (2020), Climbing towards NLU", url: "https://aclanthology.org/2020.acl-main.463/", why: { de: "Form ohne Bedeutung: Warum Text allein nicht reicht.", en: "Form without meaning: why text alone is not enough." } },
+      { label: "Bisk et al. (2020), Experience Grounds Language", url: "https://arxiv.org/abs/2004.10151", why: { de: "Sprache braucht Erfahrung und Weltbezug.", en: "Language needs experience and contact with the world." } },
+      { label: "Liu et al. (2023), Lost in the Middle", url: "https://arxiv.org/abs/2307.03172", why: { de: "Lange Kontexte nutzen Informationen in der Mitte schlechter.", en: "Long contexts use information in the middle less well." } },
+      { label: "Dziri et al. (2023), Faith and Fate", url: "https://arxiv.org/abs/2305.18654", why: { de: "Grenzen der Kompositionalität bei Transformer-Modellen.", en: "Limits of compositionality in transformer models." } },
+      { label: "Ji et al. (2023), Survey of Hallucination in NLG", url: "https://arxiv.org/abs/2202.03629", why: { de: "Halluzination als systematisches Problem generativer Modelle.", en: "Hallucination as a systematic problem of generative models." } },
+      { label: "Amodei et al. (2016), Concrete Problems in AI Safety", url: "https://arxiv.org/abs/1606.06565", why: { de: "Sicherheitsprobleme bei lernenden Agenten.", en: "Safety problems in learning agents." } }
+    ]
+  };
+
+  var aiSocietySub = {
+    kicker: DE ? "Gesellschaft" : "Society",
+    title: DE ? "KI verteilt Macht neu" : "AI redistributes power",
+    body: DE
+      ? "KI verteilt Macht neu. Automatisierung ersetzt Aufgaben und schafft neue (Acemoglu & Restrepo, 2019); ob der Gewinn bei vielen ankommt, ist eine politische Frage. In der untersuchten Twitter-Stichprobe verbreiteten sich falsche Nachrichten schneller als wahre (Vosoughi et al., 2018), und generative Modelle machen Fälschungen billig. Urheberrecht, Datenschutz und demokratische Kontrolle sind offen; wer Rechenleistung, Daten und Modelle besitzt, hat einen strukturellen Vorsprung (Sastry et al., 2024). Die Frage ist nicht, ob KI die Gesellschaft verändert, sondern wer die Regeln schreibt."
+      : "AI redistributes power. Automation replaces tasks and creates new ones (Acemoglu & Restrepo, 2019); whether the gains reach many people is a political question. In the Twitter sample studied, false news spread faster than true news (Vosoughi et al., 2018), and generative models make convincing fakes cheap. Copyright, privacy, and democratic control are open; whoever owns compute, data, and models has a structural advantage (Sastry et al., 2024). The question is not whether AI changes society, but who writes the rules.",
+    watch: DE ? "Klicke die vier Felder. Wer gewinnt, wer trägt das Risiko?" : "Click the four fields. Who wins, who carries the risk?",
+    demoState: { scene: "riskmap", mode: "society" },
+    context: DE ? "Technik entscheidet nicht allein. Institutionen, Eigentumsrechte und Politik bestimmen, ob KI Macht teilt oder konzentriert." : "Technology does not decide alone. Institutions, property rights, and politics determine whether AI shares or concentrates power.",
+    deep: DE ? "Die vier Felder hängen zusammen: Wer Compute kontrolliert, kann Märkte, Medien und Regeln beeinflussen. Deshalb sind Transparenz, Wettbewerb und öffentliche Kontrolle Teil der KI-Frage, nicht ein Anhang." : "The four fields are linked: whoever controls compute can shape markets, media, and rules. Transparency, competition, and public oversight are therefore part of the AI question, not an appendix.",
+    boxes: [
+      box("soc-power", DE ? "Gesellschaft" : "Society", DE ? "Was heißt Macht hier?" : "What does power mean here?", DE ? "Die Fähigkeit, Bedingungen zu setzen: Zugang zu Compute, Daten, Modellen und Märkten. Sie ist nicht automatisch böse, aber sie braucht Kontrolle." : "The ability to set conditions: access to compute, data, models, and markets. It is not automatically evil, but it needs oversight."),
+      box("soc-copyright", DE ? "Recht" : "Law", DE ? "Warum Urheberrecht?" : "Why copyright?", DE ? "Modelle lernen aus Werken und können Stile nachahmen. Wer was darf und wie vergütet wird, ist offen und national verschieden." : "Models learn from works and can imitate styles. Who may do what and how it is paid for is open and differs by country.")
+    ],
+    sources: [
+      { label: "Acemoglu & Restrepo (2019), Automation and New Tasks", url: "https://doi.org/10.1257/jep.33.2.3", why: { de: "Automatisierung ersetzt Aufgaben und schafft neue.", en: "Automation replaces tasks and creates new ones." } },
+      { label: "Vosoughi, Roy & Aral (2018), The spread of true and false news online", url: "https://doi.org/10.1126/science.aap9559", why: { de: "Falsche Nachrichten verbreiten sich schneller als wahre.", en: "False news spreads faster than true news." } },
+      { label: "Sastry et al. (2024), Computing Power and the Governance of AI", url: "https://arxiv.org/abs/2402.08797", why: { de: "Compute-Konzentration als Macht- und Governance-Frage.", en: "Compute concentration as a question of power and governance." } },
+      { label: "US Copyright Office (2025), Copyright and Artificial Intelligence", url: "https://www.copyright.gov/ai/", why: { de: "Offizielle Einordnung zu Training, Urheberrecht und KI.", en: "Official discussion of training, copyright, and AI." } },
+      { label: "EU AI Act (2024)", url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj", why: { de: "Regeln nach Risikoklassen und Transparenzpflichten.", en: "Rules by risk class and transparency duties." } }
+    ]
+  };
+
+  var aiSocietyStep = {
+    kicker: DE ? "KI und Gesellschaft" : "AI and society",
+    title: DE ? "Was KI mit uns macht" : "What AI does to us",
+    substeps: [aiRiskSub, aiLimitsSub, aiSocietySub]
+  };
+
+  var consciousnessMain = {
+    kicker: DE ? "Bewusstsein" : "Consciousness",
+    title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
+    body: DE
+      ? "Bewusstsein hat ein leichtes und ein schweres Problem. Zugang, Bericht und Kontrolle lassen sich funktional erklären. Warum sich irgendetwas von innen anfühlt, bleibt Chalmers' hard problem: Selbst für das leichte Problem fehlen vollständige Antworten; für das schwere Problem fehlt sogar die Richtung.\n\nQualia sind diese gefühlten Eigenschaften. Was Bewusstsein und Qualia eigentlich sind, weiß niemand. Ob ein KI-System empfindet, ist offen; auch du kennst nur deinen eigenen Zugang.\n\nGlobal Workspace, IIT/Phi, Predictive Processing und Kastrups analytischer Idealismus beschreiben oder deuten Bewusstsein, sind sich aber uneinig, was als Beweis zählt. Ein LLM kann Aufmerksamkeit, Bericht und einen lesbaren Arbeitsraum haben; das zeigt Zugang, nicht Erleben. New Mysterianism sagt, dass Menschen hier an eine kognitive Grenze stoßen könnten, so wie Ratten ein Labyrinth lernen, aber keine Gleichungen lösen. Qualia könnte so ein Punkt sein (mehr in [The Unfinishable Map](https://unfinishablemap.org))."
+      : "Consciousness has an easy and a hard problem. Access, report, and control can be explained functionally. Why anything feels like something from the inside remains Chalmers's hard problem: even the easy problem lacks complete answers; for the hard problem, even the direction is missing.\n\nQualia are those felt properties. No one knows what consciousness and qualia actually are. Whether an AI system feels anything is open; you too know only your own access.\n\nGlobal workspace, IIT/Phi, predictive processing, and Kastrup's analytic idealism describe or interpret consciousness, but disagree about what counts as evidence. An LLM can have attention, report, and a readable workspace; that shows access, not experience. New mysterianism says humans may hit a cognitive limit here, as rats can learn a maze but cannot solve equations. Qualia could be such a point (more in [The Unfinishable Map](https://unfinishablemap.org)).",
+    watch: "",
+    demoState: { scene: "consciousness" },
+    sources: [
+      { label: "Chalmers (1995), Facing Up to the Problem of Consciousness", url: "https://consc.net/papers/facing.pdf", why: { de: "Das leichte und das schwere Problem; der Begriff hard problem.", en: "The easy and the hard problem; the term hard problem." } },
+      { label: "Nagel (1974), What Is It Like to Be a Bat?", url: "https://doi.org/10.2307/2183914", why: { de: "Subjektive Erfahrung als offene Frage.", en: "Subjective experience as an open question." } },
+      { label: "Block (1995), On a Confusion about a Function of Consciousness", url: "https://doi.org/10.1017/S0140525X00038188", why: { de: "Zugang versus phänomenales Bewusstsein.", en: "Access versus phenomenal consciousness." } },
+      { label: "Mashour et al. (2020), Global Neuronal Workspace", url: "https://doi.org/10.1016/j.neuron.2020.01.026", why: { de: "Global Workspace als Broadcast an viele Prozesse.", en: "Global workspace as broadcast to many processes." } },
+      { label: "Tononi et al. (2016), Integrated Information Theory", url: "https://doi.org/10.1038/nrn.2016.44", why: { de: "IIT und Phi als geeinte Ursache-Wirkungs-Struktur.", en: "IIT and Phi as a unified cause-effect structure." } },
+      { label: "Baars (1988), A Cognitive Theory of Consciousness", url: "https://archive.org/details/cognitivetheoryo0000baar", why: { de: "Original: Bewusstsein als globaler Arbeitsraum, der an viele Prozesse sendet.", en: "Original: consciousness as a global workspace broadcast to many processes." } },
+      { label: "Dehaene & Naccache (2001), Towards a Cognitive Neuroscience of Consciousness", url: "https://doi.org/10.1016/S0010-0277(00)00123-2", why: { de: "Global Workspace als neuronaler Broadcast; Ignition und Zugang.", en: "Global workspace as neuronal broadcast; ignition and access." } },
+      { label: "Tononi (2004), An Information Integration Theory of Consciousness", url: "https://doi.org/10.1186/1471-2202-5-42", why: { de: "Original: Bewusstsein als integrierte Information, Phi.", en: "Original: consciousness as integrated information, Phi." } },
+      { label: "Clark (2013), Whatever Next? Predictive Brains, Situated Agents", url: "https://doi.org/10.1017/S0140525X12000477", why: { de: "Predictive Processing: das Gehirn als Vorhersagemaschine.", en: "Predictive processing: the brain as a prediction machine." } },
+      { label: "Friston (2010), The Free-Energy Principle", url: "https://doi.org/10.1038/nrn2787", why: { de: "Free Energy als formales Prinzip hinter Predictive Processing.", en: "Free energy as the formal principle behind predictive processing." } },
+      { label: "Kastrup (2018/2019), The Universe in Consciousness / Analytic Idealism", url: "https://www.bernardokastrup.com/p/papers.html", why: { de: "Analytischer Idealismus: Bewusstsein ist fundamental, Materie seine Erscheinung.", en: "Analytic idealism: consciousness is fundamental, matter its appearance." } },
+      { label: "McGinn (1989), Can We Solve the Mind-Body Problem?", url: "https://doi.org/10.1093/mind/XCVIII.391.349", why: { de: "New Mysterianism: Bewusstsein könnte unsere kognitiven Grenzen übersteigen.", en: "New mysterianism: consciousness may lie beyond our cognitive limits." } },
+      { label: "The Unfinishable Map", url: "https://unfinishablemap.org", why: { de: "Lebendes philosophisches Framework zu Bewusstsein, Meaning und Realität.", en: "A living philosophical framework on consciousness, meaning, and reality." } },
+      { label: "Seth & Bayne (2022), Theories of Consciousness", url: "https://doi.org/10.1038/s41583-022-00587-4", why: { de: "Überblick über konkurrierende Bewusstseinstheorien.", en: "Overview of competing theories of consciousness." } },
+      { label: "Wikipedia: New mysterianism", url: "https://en.wikipedia.org/wiki/New_mysterianism", why: { de: "Menschliche Erkenntnisgrenzen beim Bewusstsein.", en: "Human cognitive limits on consciousness." } },
+      { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } }
+    ]
+  };
+
+  var takeawayClosing = {
+    kicker: DE ? "Mitnehmen" : "Takeaway",
+    title: DE ? "Was du mitnimmst" : "What you take with you",
+    body: DE
+      ? "Von den Kerben im Wolfsknochen über Gauß' Ceres-Bahn bis zum Chatfenster: Jede Station macht eine Darstellung nutzbar, die Vorhersage trägt. Beim LLM sind das Tokens, gelernte Vektoren und Attention.\n\nDrei Bewegungen fassen das Deck zusammen: Aus Zeichen wird Bedeutung. Aus Bedeutung wird Kontext. Aus Kontext wird Wirkung. Der rote Faden bleibt derselbe: Das Modell optimiert eine Wahrscheinlichkeit, nicht die Wahrheit.\n\nOb es erlebt, bleibt offen. Was du daraus machst, bleibt deine Entscheidung."
+      : "From notches in a wolf bone through Gauss's Ceres orbit to a chat window: each station makes a representation usable that carries prediction. In an LLM those are tokens, learned vectors, and attention.\n\nThree moves sum up the deck: signs become meaning. Meaning becomes context. Context becomes impact. The through-line stays the same: the model optimises a probability, not the truth.\n\nWhether it experiences anything stays open. What you make of it stays your decision.",
+    watch: "",
+    demoState: { scene: "takeaway" },
+    context: DE ? "Die drei Karten sind keine neue Liste von Themen. Sie sind die eine Bewegung, die von Daten zu Bedeutung, von Bedeutung zu Kontext und von Kontext zu Wirkung führt." : "The three cards are not another topic list. They are the single movement from data to meaning, from meaning to context, and from context to impact.",
+    deep: DE ? "Die Prüffragen am Ende passen auf jede dieser Ebenen: Daten, Aufgabe, Evidenz, Verantwortung. Sie machen aus einem Eindruck eine Behauptung, die man prüfen oder verwerfen kann." : "The closing questions apply at every level: data, task, evidence, accountability. They turn an impression into a claim that can be tested or rejected.",
+    boxes: [],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Kette aus Attention und Vorhersage.", en: "The transformer as a chain of attention and prediction." } },
+      { label: "Bender et al. (2021), On the Dangers of Stochastic Parrots", url: "https://doi.org/10.1145/3442188.3445922", why: { de: "Sprachmodelle als Musterfortsetzung, nicht als Wahrheitsgarantie.", en: "Language models as pattern continuation, not a guarantee of truth." } },
+      { label: "Chalmers (1995), Facing Up to the Problem of Consciousness", url: "https://consc.net/papers/facing.pdf", why: { de: "Funktion erklärt nicht automatisch Erleben.", en: "Function does not automatically explain experience." } },
+      { label: "Southgate (2026), AI Consciousness — The Unfinishable Map", url: "https://unfinishablemap.org/topics/ai-consciousness/", why: { de: "Die offene Frage nach Typen von KI-Bewusstsein.", en: "The open question about types of AI consciousness." } }
+    ]
+  };
+
+  var consciousnessStep = {
+    kicker: DE ? "Bewusstsein" : "Consciousness",
+    title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
+    substeps: [aiConsciousnessIntro, consciousnessMain, takeawayClosing]
+  };
+
+  var qkvSimplex = {
+    kicker: DE ? "Mischung" : "Mixture",
+    title: DE ? "Attention als Mischung der Value-Vektoren" : "Attention as a mixture of value vectors",
+    body: DE
+      ? "Die drei Ecken sind die gelernten Value-Vektoren dreier Tokens. Attention mischt sie mit Gewichten: $r_i = \\sum_j \\alpha_{ij} v_j$, mit $\\alpha_{ij}\\ge 0$ und Summe 1. Der Mischungspunkt bleibt in der konvexen Hülle der Values; $W_O$ verschiebt ihn danach linear."
+      : "The three corners are the learned value vectors of three tokens. Attention mixes them with weights: $r_i = \\sum_j \\alpha_{ij} v_j$, with $\\alpha_{ij}\\ge 0$ and sum 1. The mixture point stays in the convex hull of the values; $W_O$ then shifts it linearly.",
+    watch: DE ? "Wechsle die Heads oder ziehe den Punkt im Dreieck. Die $\\alpha$-Werte unten ändern sich live; ihre Summe bleibt 1." : "Switch the heads or drag the point inside the triangle. The $\\alpha$ values below update live; their sum stays 1.",
+    demoState: { scene: "qkv", head: 0, view: "simplex" },
+    context: DE ? "Vaswani et al. (2017, §3.2) sagen es direkt: „The output is computed as a weighted sum of the values“. Die Ecken sind $v_j = W_V x_j$, also gelernte Value-Vektoren, keine Token-IDs. Die Gewichte $\\alpha_{ij}$ sind die baryzentrischen Koordinaten; sie sind $\\ge 0$ und summieren zu $1$. Bei drei Values ist die konvexe Hülle ein 2-Simplex; bei $n$ Tokens ist der Gewichts-Simplex $(n-1)$-dimensional, bei 12 Tokens also ein 11-Simplex. Die Ecken sind nicht die übrigen Tokens, sondern die Value-Vektoren der drei ausgewählten Tokens; die übrigen Tokens sind ausgeblendet. Der echte Mischungsvektor $r_i = \\sum_j \\alpha_{ij} v_j$ nutzt alle Values und liegt in deren konvexer Hülle; die Head-Ausgabe ist $y_i = W_O r_i$." : "Vaswani et al. (2017, §3.2) put it directly: “The output is computed as a weighted sum of the values.” The corners are $v_j = W_V x_j$, learned value vectors, not token IDs. The weights $\\alpha_{ij}$ are barycentric coordinates; they are $\\ge 0$ and sum to $1$. With three values the convex hull is a 2-simplex; with $n$ tokens the weight simplex is $(n-1)$-dimensional, so 12 tokens give an 11-simplex. The corners are not the other tokens; they are the value vectors of the three selected tokens, and the other tokens are hidden. The real mixture vector $r_i = \\sum_j \\alpha_{ij} v_j$ uses all values and lies in their convex hull; the head output is $y_i = W_O r_i$.",
+    deep: DE ? "Die Ecken sind input-abhängig: Gelernt ist $W_V$, nicht ein fester Simplex. Bei drei Values ist die Hülle ein Dreieck (2-Simplex). Allgemein ist die konvexe Hülle von $n$ Value-Vektoren höchstens ein $(n-1)$-Simplex, und genau dann ein $(n-1)$-Simplex, wenn die $n$ Vektoren affin unabhängig sind; sonst ist sie ein niederdimensionaleres Polytop. In hohen Dimensionen ist sie in den Value-Raum eingebettet. Der Simplex ist keine eigene gelernte Größe, sondern die konvexe Hülle der Value-Vektoren. $n$ ist die Kontextlänge, nicht 3; gelernt wird $W_V$, nicht ein fester 3-Simplex. Die Aussage gilt für jeden Head; die Gewichte unterscheiden sich, die Konvexität bleibt." : "The corners depend on the input: $W_V$ is learned, not a fixed simplex. With three values the hull is a triangle (2-simplex). In general the convex hull of $n$ value vectors is at most an $(n-1)$-simplex, and exactly an $(n-1)$-simplex when the $n$ vectors are affinely independent; otherwise it is a lower-dimensional polytope. In high dimensions it is embedded in the value space. The simplex is not a separate learned object; it is the convex hull of the value vectors. $n$ is the context length, not 3; $W_V$ is learned, not a fixed 3-simplex. The statement holds for every head; the weights differ, the convexity stays.",
+    boxes: DE ? [
+      box("qkv-s1", "Geometrie", "Die Ecken sind Values", "Die drei Punkte sind keine Tokens, sondern die gelernten Value-Vektoren $v_j = W_V x_j$ von drei Tokens. Jeder Token trägt über $W_V$ einen Vektor bei."),
+      box("qkv-s2", "Mathematik", "Was ist ein Simplex?", "Ein Simplex ist die einfachste konvexe Hülle: ein Punkt ist ein 0-Simplex, zwei Punkte eine Strecke, drei Punkte ein Dreieck."),
+      box("qkv-s3", "Mathematik", "Die Variablen", "Die drei Gewichte $\\alpha$ sind die Variablen; wegen $\\sum \\alpha = 1$ haben sie zwei Freiheitsgrade. Sie sind nicht negativ; die Tokens selbst sind nicht die Koordinaten des Simplex."),
+      box("qkv-s6", "Geometrie", "Drei Ecken sind ein Ausschnitt", "Der Simplex ist nicht auf drei Ecken beschränkt. Mit 12 Tokens hat der Gewichts-Simplex 11 Dimensionen. Ein 2D-Bild kann nur drei Ecken zeigen. Die Demo wählt Tier, Straße und es aus und blendet die anderen neun Value-Vektoren aus. Gelernt wird $W_V$, also ein Value-Vektor pro Token, nicht drei Zahlen. $Q$, $K$ und $V$ sind drei gelernte Projektionen; die drei Ecken sind nicht diese Matrizen, sondern drei der n Value-Vektoren."),
+      box("qkv-s4", "Mathematik", "Die Formel", "Gewichtete Summe mit nicht-negativen Gewichten, die zu 1 summieren; $W_O$ bildet die Mischung danach auf die Head-Ausgabe ab.", "\\underbrace{r_i = \\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} \\underbrace{v_j}_{\\text{Value}}}_{\\text{konvexe Kombination der Values}} \\qquad \\underbrace{y_i = W_O r_i}_{\\text{Head-Ausgabe}}"),
+      box("qkv-s5", "Grenze", "Was kommt danach?", "Die Mischung $r_i = \\sum_j \\alpha_{ij} v_j$ bleibt in der konvexen Hülle der Values. Die gelernte Output-Projektion $W_O$ bildet $r_i$ linear ab und kann den Punkt aus der Hülle bewegen; das FFN danach ist zusätzlich nichtlinear. Deshalb ist der Transformer-Block mehr als eine Mischung.")
+    ] : [
+      box("qkv-s1", "Geometry", "The corners are values", "The three points are not tokens; they are the learned value vectors $v_j = W_V x_j$ of three tokens. Each token contributes a vector through $W_V$."),
+      box("qkv-s2", "Mathematics", "What is a simplex?", "A simplex is the simplest convex hull: one point is a 0-simplex, two points a segment, three points a triangle."),
+      box("qkv-s3", "Mathematics", "The variables", "The three weights $\\alpha$ are the variables; because $\\sum \\alpha = 1$ they have two degrees of freedom. They are non-negative; the tokens themselves are not the coordinates of the simplex."),
+      box("qkv-s6", "Geometry", "Three corners are a slice", "The simplex is not limited to three corners. With 12 tokens the weight simplex has 11 dimensions. A 2D picture can show only three corners. The demo selects animal, street, and it and hides the other nine value vectors. The learned object is $W_V$, which gives one value vector per token, not three numbers. $Q$, $K$, and $V$ are three learned projections; the three corners are not those matrices but three of the n value vectors."),
+      box("qkv-s4", "Mathematics", "The formula", "Weighted sum with non-negative weights that sum to 1; $W_O$ maps the mixture to the head output afterwards.", "\\underbrace{r_i = \\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} \\underbrace{v_j}_{\\text{value}}}_{\\text{convex combination of the values}} \\qquad \\underbrace{y_i = W_O r_i}_{\\text{head output}}"),
+      box("qkv-s5", "Limit", "What comes next?", "The mixture $r_i = \\sum_j \\alpha_{ij} v_j$ stays inside the convex hull of the values. The learned output projection $W_O$ maps $r_i$ linearly and can move the point outside the hull; the FFN afterwards is nonlinear as well. That is why the transformer block is more than a mixture.")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Attention als gewichtete Summe der Values mit Softmax-Gewichten.", en: "Attention as a weighted sum of values with softmax weights." } },
+      { label: "Weng (2018), Attention? Attention!", url: "https://lilianweng.github.io/posts/2018-06-24-attention/", why: { de: "Die Ausgabe ist eine gewichtete Summe der Values; die Gewichte kommen aus Query-Key-Scores.", en: "The output is a weighted sum of values; the weights come from query-key scores." } },
+      { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "Attention-Heads als Mischungen von Values; das Residual Stream trägt die Information weiter.", en: "Attention heads as mixtures of values; the residual stream carries information onward." } }
+    ]
+  };
+
+  var qkvArcs2 = Object.assign({}, qkvArcs, {
+    title: DE ? "Head 2: Wo ist es?" : "Head 2: where is it?",
+    body: DE
+      ? "Head 2 fragt nach dem Ort. Die Query von „es“ trifft jetzt die Keys von „Straße“ und „Tier“; die Gewichte kippen. Wieder gilt: Die Prozentwerte sind Softmax-Gewichte, keine Wahrscheinlichkeiten für Wahrheit."
+      : "Head 2 asks for the location. The query from “it” now meets the keys of “street” and “animal”; the weights flip. Again, the percentages are softmax weights, not probabilities of truth.",
+    watch: DE ? "Head 2: Der Ort gewinnt. Vergleiche die Bögen mit Head 1." : "Head 2: the location wins. Compare the arcs with head 1.",
+    demoState: { scene: "qkv", head: 1, view: "arcs" },
+    boxes: qkvArcs.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
+  });
+
+  var qkvSimplex2 = Object.assign({}, qkvSimplex, {
+    title: DE ? "Head 2 als Value-Mischung" : "Head 2 as a value mixture",
+    body: DE
+      ? "Dieselben drei Value-Vektoren, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt der Value von „Straße“ mehr Gewicht; der Mischungspunkt $r_i$ wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Im gezeigten Drei-Werte-Ausschnitt bleibt das Dreieck die Grenze für $r_i$; der echte Mischungsvektor nutzt alle Values. die Head-Ausgabe ist $y_i = W_O r_i$. Du kannst den Punkt auch hier ziehen und die Mischung direkt verändern."
+      : "The same three value vectors, different weights. Because head 2 asks for the location, the value of “street” gets more weight; the mixture point $r_i$ moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. In the three-value view shown here the triangle remains the boundary for $r_i$; the real mixture uses all values. the head output is $y_i = W_O r_i$. You can also drag the point here to change the mixture directly.",
+    demoState: { scene: "qkv", head: 1, view: "simplex" },
+    boxes: qkvSimplex.boxes.map(function (b) {
+      var copy = Object.assign({}, b, { id: b.id + "-h2" });
+      if (b.id === "qkv-s2") {
+        copy.body = DE ? "Ein Simplex ist die einfachste konvexe Hülle: ein Punkt ist ein 0-Simplex, zwei Punkte eine Strecke, drei Punkte ein Dreieck. Attention arbeitet mit dem Wahrscheinlichkeitssimplex der Gewichte: Für drei Values gilt $a,b,c \\in [0,1]$ und $a+b+c=1$; die drei Gewichte sind die baryzentrischen Koordinaten eines Punktes im Dreieck." : "A simplex is the simplest convex hull: one point is a 0-simplex, two points a segment, three points a triangle. Attention works with the probability simplex of the weights: for three values, $a,b,c \\in [0,1]$ and $a+b+c=1$; the three weights are the barycentric coordinates of a point in the triangle.";
+      }
+      return copy;
+    })
+  });
+
+  var qkvGraph = Object.assign({}, qkvArcs, {
+    kicker: DE ? "Graph" : "Graph",
+    title: DE ? "Attention als vollverbundener Graph (ohne Causal Mask)" : "Attention as a fully connected graph (without causal mask)",
+    body: DE
+      ? "In dieser Darstellung ohne Causal Mask kann jedes Token auf jedes andere schauen: Die Attention-Matrix hat keine fehlenden Einträge. In einem GPT-Decoder maskiert die Causal Mask die Zukunft; dort sieht ein Token nur die Vergangenheit. Im Kreis siehst du alle Token; die Kanten von der Query „es“ zu jedem anderen Token sind die Softmax-Gewichte. Dick und hell heißt viel, dünn und blass heißt wenig. Fahre mit der Maus über eine Kante oder ein Token: Die Demo zeigt die Verbindung und den Prozentwert. Gezeigt ist eine Query-Zeile; für jede Query gibt es eine eigene Verteilung."
+      : "In this view without a causal mask, every token can attend to every other token: the attention matrix has no missing entries. In a GPT decoder the causal mask hides the future; there a token sees only the past. You see all tokens in a circle; the edges from the query “it” to every other token are the softmax weights. Thick and bright means a lot, thin and pale means little. Hover over an edge or a token: the demo shows the connection and the percentage. This is one query row; every query has its own distribution.",
+    watch: DE ? "Fahre über die Kanten. Welche Verbindung ist am stärksten? Vergleiche Head 1 und Head 2." : "Hover over the edges. Which connection is strongest? Compare head 1 and head 2.",
+    demoState: { scene: "qkv", head: 0, view: "graph" },
+    context: DE ? "In dieser Darstellung ist die Matrix voll besetzt: Jede Query bekommt zu jedem Key einen Score, auch wenn viele Scores klein sind. Softmax macht daraus Gewichte. In einem kausalen Decoder ist die obere Dreiecksmatrix maskiert. Die blassen Linien zeigen die vollständige Topologie dieser Darstellung; die farbigen Kanten zeigen die Gewichte dieser Query." : "In this view the matrix is fully populated: every query gets a score for every key, even if many scores are small. Softmax turns them into weights. In a causal decoder the upper triangle is masked. The faint lines show the complete topology of this view; the coloured edges show the weights for this query.",
+    deep: DE ? "Ein Head ist ein Graph. Viele Heads sind viele Graphen mit eigenen Kantengewichten; die Ausgaben werden konkateniert und projiziert. Deshalb kann ein Head auf Syntax achten, ein anderer auf Position oder Bedeutung." : "One head is one graph. Many heads are many graphs with their own edge weights; the outputs are concatenated and projected. That is why one head can attend to syntax, another to position or meaning.",
+    boxes: DE ? [
+      box("qkv-g1", "Graph", "Vollverbunden in dieser Darstellung", "In dieser Darstellung ohne Causal Mask ist jedes Token mit jedem anderen verbunden. Die Attention-Matrix hat keine fehlenden Einträge; viele Gewichte sind nur sehr klein. Ein GPT-Decoder maskiert die Zukunft."),
+      box("qkv-g2", "Graph", "Kantenstärke", "Die Linienbreite und Helligkeit sind das Softmax-Gewicht. Eine dicke Kante bedeutet: Diese Query liest viel von diesem Token."),
+      box("qkv-g3", "Graph", "Pro Query", "Gezeigt ist eine Zeile der Matrix, nämlich die Query „es“. Jede andere Query hat ihre eigene Verteilung und damit ihre eigenen Kantengewichte.")
+    ] : [
+      box("qkv-g1", "Graph", "Fully connected in this view", "In this view without a causal mask, every token is connected to every other token. The attention matrix has no missing entries; many weights are just very small. A GPT decoder masks the future."),
+      box("qkv-g2", "Graph", "Edge strength", "Line width and brightness are the softmax weight. A thick edge means this query reads a lot from that token."),
+      box("qkv-g3", "Graph", "Per query", "This shows one row of the matrix, the query “it”. Every other query has its own distribution and therefore its own edge weights.")
+    ],
+    sources: qkvArcs.sources
+  });
+
+  var qkvGraph2 = Object.assign({}, qkvGraph, {
+    title: DE ? "Head 2 als Graph" : "Head 2 as a graph",
+    body: DE
+      ? "Derselbe vollverbundene Graph in dieser Darstellung, andere Kantengewichte. Head 2 fragt nach dem Ort, deshalb wird die Kante von „es“ zu „Straße“ dick und hell; die Kante zu „Tier“ wird dünner. In dieser Darstellung bleibt die Topologie vollständig; in einem GPT-Decoder ist sie kausal maskiert. Nur die Stärke der Verbindung ändert sich."
+      : "The same fully connected graph in this view, different edge weights. Head 2 asks for the location, so the edge from “it” to “street” becomes thick and bright; the edge to “animal” gets thinner. In this view the topology stays complete; in a GPT decoder it is causally masked. Only the strength of the connection changes.",
+    watch: DE ? "Vergleiche die Kanten mit Head 1. Welche Verbindung gewinnt jetzt?" : "Compare the edges with head 1. Which connection wins now?",
+    demoState: { scene: "qkv", head: 1, view: "graph" },
+    boxes: qkvGraph.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
+  });
+
+  var qkvStep = {
+    title: DE ? "Wie Attention rechnet" : "How attention computes",
+    kicker: DE ? "Q · K · V" : "Q · K · V",
+    substeps: [qkvArcs, qkvGraph, qkvSimplex, qkvArcs2, qkvGraph2, qkvSimplex2]
+  };
+
+  var agentsStep = {
+    kicker: DE ? "Agent" : "Agent",
+    title: DE ? "Ein Agent ist dasselbe Modell mit Werkzeugen" : "An agent is the same model with tools",
+    body: DE
+      ? "Ein Agent ist kein neues Modell. Er kann dasselbe Basismodell verwenden; die Browser-Demo ist kein Agent. Der Unterschied ist der Loop: Das Modell sagt „führe das als Programm aus“, die Runtime tut es, und der Output kommt in den Kontext. So arbeiten opencode, Claude Code und Cursor: Sie lesen Dateien, führen Befehle aus und sehen die Ergebnisse. Multimodale Modelle bekommen zusätzlich Screenshots und können darauf sehen, was auf dem Bildschirm ist."
+      : "An agent is not a new model. It can use the same base model; the browser demo is not an agent. The difference is the loop: the model says “run this as a program”, the runtime does it, and the output goes into the context. That is how opencode, Claude Code, and Cursor work: they read files, run commands, and see the results. Multimodal models also receive screenshots and can see what is on the screen.",
+    watch: DE ? "Drücke Weiter. Verfolge, wie Tool-Call, Ausführung und Ergebnis in den Kontext wandern." : "Press Next. Follow how the tool call, the execution, and the result move into the context.",
+    demoState: { scene: "agents" },
+    context: DE ? "Der Kontext ist das Arbeitsgedächtnis. Jeder Tool-Output wächst hinein. Das Modell entscheidet auf dieser Grundlage den nächsten Schritt; die Runtime liegt außerhalb des Modells." : "The context is the working memory. Every tool output grows into it. The model decides the next step on that basis; the runtime sits outside the model.",
+    deep: DE ? "ReAct und Toolformer beschreiben diesen Loop; OSWorld und WebArena testen Computer-Use. Das Modell bleibt ein Nächstes-Token-Vorhersager; die Werkzeuge machen daraus einen Akteur. Grenzen: falsche Tool-Calls, Berechtigungen, Prompt Injection und Kosten." : "ReAct and Toolformer describe this loop; OSWorld and WebArena test computer use. The model remains a next-token predictor; the tools turn it into an actor. Limits: wrong tool calls, permissions, prompt injection, and cost.",
+    boxes: DE ? [
+      box("ag-1", "Technik", "Was ist ein Tool?", "Ein Programm außerhalb des Modells: Terminal, Datei, Browser, API. Das Modell ruft es über eine strukturierte Nachricht auf."),
+      box("ag-2", "Multimodal", "Screenshot und Bild", "Die Runtime macht einen Screenshot. Ein multimodales Modell kodiert das Bild und legt die Tokens in den Kontext; so kann es UI-Elemente lesen."),
+      box("ag-3", "Gleiches Modell?", "Ein Loop um ein LLM", "Ein Agent kann dasselbe LLM verwenden; die Gewichte müssen aber nicht mit dieser Browser-Demo identisch sein. Es ändern sich der Kontext und die verfügbaren Werkzeuge."),
+      box("ag-4", "Grenze", "Was kann schiefgehen?", "Falsche Tool-Calls, zu weitreichende Berechtigungen, Prompt Injection in Webseiten oder Dateien und hohe Kosten durch viele Schritte.")
+    ] : [
+      box("ag-1", "Technique", "What is a tool?", "A program outside the model: terminal, file, browser, API. The model calls it through a structured message."),
+      box("ag-2", "Multimodal", "Screenshot and image", "The runtime takes a screenshot. A multimodal model encodes the image and puts the tokens into the context; that is how it reads UI elements."),
+      box("ag-3", "Same model?", "A loop around an LLM", "An agent can use the same LLM; its weights need not be identical to this browser demo. The context and the available tools are what change."),
+      box("ag-4", "Limit", "What can go wrong?", "Wrong tool calls, excessive permissions, prompt injection in websites or files, and high cost from many steps.")
+    ],
+    sources: [
+      { label: "Yao et al. (2022), ReAct: Synergizing Reasoning and Acting in Language Models", url: "https://arxiv.org/abs/2210.03629", why: { de: "Reasoning und Tool-Aktionen im Wechsel.", en: "Interleaving reasoning and tool actions." } },
+      { label: "Schick et al. (2023), Toolformer", url: "https://arxiv.org/abs/2302.04761", why: { de: "Sprachmodelle lernen, Werkzeuge aufzurufen.", en: "Language models learn to call tools." } },
+      { label: "Xie et al. (2024), OSWorld", url: "https://arxiv.org/abs/2404.07972", why: { de: "Benchmark für Computer-Use-Agenten mit Screenshots.", en: "Benchmark for computer-use agents with screenshots." } }
+    ]
+  };
+
+  var wmSources = [
+    { label: "Li et al. (2023), Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task", url: "https://arxiv.org/abs/2210.13382", why: { de: "Othello-GPT: ein Brettzustand entsteht aus reiner Zugvorhersage.", en: "Othello-GPT: a board state emerges from next-move prediction alone." } },
+    { label: "Nanda, Lee & Wattenberg (2023), Emergent Linear Representations in World Models of Self-Supervised Sequence Models", url: "https://arxiv.org/abs/2309.00941", why: { de: "Der Brettzustand ist linear aus dem Residualstrom lesbar; lineare Probes und Interventionen.", en: "The board state is linearly readable from the residual stream; linear probes and interventions." } },
+    { label: "Park, Choe & Veitch (2024), The Linear Representation Hypothesis and the Geometry of Large Language Models", url: "https://arxiv.org/abs/2311.03658", why: { de: "Konzepte als Richtungen; Messung und Intervention als lineare Operationen.", en: "Concepts as directions; measurement and intervention as linear operations." } },
+    { label: "Elhage et al. (2022), Toy Models of Superposition", url: "https://transformer-circuits.pub/2022/toy_model/index.html", why: { de: "Mehr Features als Dimensionen; Features können sich überlagern.", en: "More features than dimensions; features can overlap." } },
+    { label: "Engels et al. (2025), Not All Language Model Features Are One-Dimensionally Linear", url: "https://arxiv.org/abs/2405.14860", why: { de: "Manche Features sind mehrdimensional, zum Beispiel Kreise für Wochentage.", en: "Some features are multi-dimensional, for example circles for weekdays." } },
+    { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Attention-Heads können gelernte Algorithmen tragen.", en: "Attention heads can carry learned algorithms." } },
+    { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Musterdetektoren.", en: "FFN layers as key-value pattern detectors." } },
+    { label: "Othello-GPT code and probe weights", url: "https://github.com/likenneth/othello_world", why: { de: "Öffentlicher Checkpoint und Code zum Othello-GPT-Experiment.", en: "Public checkpoint and code for the Othello-GPT experiment." } },
+    { label: "Karvonen (2024), Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models", url: "https://arxiv.org/abs/2403.15498", why: { de: "Schach: lineare Brettrepräsentation, 13 Zustände pro Feld und Interventionen.", en: "Chess: linear board representation, 13 states per square, and interventions." } },
+    { label: "Gurnee & Tegmark (2023), Language Models Represent Space and Time", url: "https://arxiv.org/abs/2310.02207", why: { de: "Llama-2: lineare Karten von realem Raum und Zeit, mit space/time neurons.", en: "Llama-2: linear maps of real space and time, with space/time neurons." } }
+  ];
+
+  var wmBoardText = DE ? "Die Welt ist ein Zustand aus 64 Feldern: leer, schwarz oder weiß. Ein Zug kann viele Felder gleichzeitig ändern. Genau diesen Zustand muss das Modell aus den Zügen rekonstruieren. Die Demo zeigt eine schematische, aber regelkonforme Zugfolge. Sie soll das Muster zeigen, nicht ein bestimmtes Spiel bewerten." : "The world is a state of 64 squares: empty, black, or white. A move can change many squares at once. The model has to reconstruct exactly this state from the moves. The demo shows a schematic but legal move sequence. It is there to show the pattern, not to judge a particular game.";
+
+  var wmBoardText = DE ? "Othello ist ein Brettspiel für zwei Personen auf 8×8 Feldern. Jede Scheibe ist auf einer Seite schwarz und auf der anderen weiß. Ein Zug legt eine neue Scheibe und dreht alle gegnerischen Scheiben, die zwischen der neuen Scheibe und einer eigenen eingeschlossen sind, auf die eigene Farbe.\n\nForscher haben eine Menge an validen Spielzügen an ein LLM gegeben, ohne ihm zu erklären, was es da sieht, und es trainiert, bis es valide Züge voraussagen konnte. Dann haben sie geschaut, wie das LLM das intern repräsentiert." : "Othello is a two-player board game on an 8×8 grid. Each disc is black on one side and white on the other. A move places a new disc and flips every opposing disc enclosed between the new disc and an existing one to the player's colour.\n\nResearchers gave a large set of valid moves to an LLM without explaining what it was seeing, and trained it until it could predict valid moves. Then they looked at how the LLM represents this internally.";
+
+  var wmBoard = {
+    kicker: DE ? "Das Brett" : "The board",
+    title: DE ? "Das Weltmodell eines LLM" : "An LLM's world model",
+    teaser: wmBoardText,
+    body: wmBoardText,
+    watch: "",
+    demoState: { scene: "worldmodel", step: 0 },
+  };
+
+  var wmMachineText = DE ? "Li et al. haben ein kleines GPT-Modell darauf trainiert, Züge vorherzusagen. Dazu haben sie ihm als Text bisherige Züge gegeben, und das Netzwerk sollte den nächsten Zug sagen. Das LLM hat dabei nie ein Brett gesehen und keine Regeln, sondern nur viele valide Züge.\n\nNachdem das Netz gut genug war, valide Züge vorherzusagen, fand man mit einer Probe (einfachen linearen Rechnungen) heraus, dass im Inneren des LLMs ein Zustand ist, der dem Spielfeld entspricht. Das Netz weiß nicht, dass es sich um ein Spiel handelt, sondern nur, wie es valide Züge vorhersagt, nutzt dafür aber eine Repräsentation, die dem Spielfeld entspricht.\n\nDas ist ein Beleg dafür, dass ein kleines Modell aus reiner Zugvorhersage eine lesbare Brettrepräsentation ausbilden kann. Es zeigt nicht, dass alle LLMs ein allgemeines Weltmodell besitzen.\n\nFür jedes Feld liest die Probe einen Zustand mit einer gelernten Richtung und einem gelernten Nullpunkt (der nicht bei 0 liegen muss). Am Nullpunkt ist das Feld leer; in die eine Richtung ist es der eine Spieler, in die andere Richtung der andere.\n\nFür andere Spiele wie Schach reicht eine einzelne Richtung nicht mehr aus, und die Möglichkeiten werden in komplexeren Unterräumen repräsentiert. Für noch komplexere Strukturen sind die Weltmodelle noch nicht richtig verstanden." : "Li et al. trained a small GPT model to predict moves. They gave it previous moves as text, and the network had to predict the next move. The LLM never saw a board and had no rules, only many valid moves.\n\nAfter the network was good enough to predict valid moves, a probe (simple linear calculations) revealed that inside the LLM there is a state that corresponds to the board. The network does not know that this is a game; it only knows how to predict valid moves, but it uses a representation that corresponds to the board.\n\nThat is evidence that a small model trained only on move prediction can form a readable board representation. It does not show that all LLMs have a general world model.\n\nFor each square, the probe reads a state with a learned direction and a learned zero point (which does not have to be at 0). At the zero point the square is empty; in one direction it is one player, in the other direction the other.\n\nFor other games such as chess a single direction is no longer enough, and the possibilities are represented in more complex subspaces. For even more complex structures, the world models are not yet properly understood.";
+
+  var wmMachine = {
+    kicker: DE ? "Der Weg zum Brett" : "The path to the board",
+    title: DE ? "Wie ein LLM sein Weltmodell aufbaut" : "How an LLM builds its world model",
+    teaser: wmMachineText,
+    body: wmMachineText,
+    watch: "",
+    demoState: { scene: "worldmodel", step: 1 },
+    contextTitle: DE ? "Was sieht man in der Demo?" : "What does the demo show?",
+    context: DE ? "Eine feste Schicht (L6), ein 512-dimensionaler Residualstrom. Der Probe hat 64×3×512 Gewichte; jedes Skalarprodukt liest ein Feld. Die Modellgewichte bleiben frozen." : "One fixed layer (L6), a 512-dimensional residual stream. The probe has 64×3×512 weights; each dot product reads one square. The model weights stay frozen.",
+    boxes: [
+      box("wm-machine-legal", DE ? "Grenze" : "Limit", DE ? "Valide Züge heißt nicht Gewinnen" : "Valid moves are not winning", DE ? "Das Training belohnte nur die richtige Fortsetzung, nicht den Sieg. Othello-GPT sagt legale Züge voraus, nicht notwendig starke. Das Weltmodell entsteht als Nebenprodukt der Vorhersage. Würde man es auf gute Züge trainieren, würde es vermutlich auch das lernen." : "Training rewarded only the correct continuation, not a win. Othello-GPT predicts legal moves, not necessarily strong ones. The world model emerges as a by-product of prediction. If it were trained on good moves, it would presumably learn that too."),
+      box("wm-probe-train", DE ? "Optional" : "Optional", DE ? "Wie trainiert man einen Probe?" : "How is a probe trained?", DE ? "Man sammelt Paare aus Aktivierung x und wahrem Brett. Für jedes der 64 Felder und jeden der 3 Zustände trainiert man einen linearen Klassifikator, meist logistische Regression. Sein 512-dimensionaler Gewichtsvektor ist die Probe-Richtung. Danach friert man den Probe ein. Die Gewichte des Modells werden nie verändert; der Probe liest nur." : "Collect pairs of activation x and the true board. For each of the 64 squares and each of the 3 states, train a linear classifier, usually logistic regression. Its 512-dimensional weight vector is the probe direction. Then freeze the probe. The model weights are never changed; the probe only reads."),
+      box("wm-probe-math", DE ? "Mathematik" : "Mathematics", DE ? "Die Projektion" : "The projection", DE ? "Für jedes Feld $s$ und jeden Zustand $o$ ist der Logit das Skalarprodukt aus $x$ und der Probe-Zeile $W[s,o]$. $64 \\times 3 = 192$ Dot-Products. Danach Softmax über die 3 Zustände und Argmax pro Feld." : "For every square $s$ and state $o$, the logit is the dot product of $x$ and the probe row $W[s,o]$. $64 \\times 3 = 192$ dot products. Then softmax over the 3 states and argmax per square.", "\\underbrace{\\underbrace{\\operatorname{logit}[s,o]}_{\\text{Probe-Logit}} = \\underbrace{\\sum_{d=0}^{511} W[s,o,d]\\,x[d]}_{192\\ \\text{Dot-Products}}}_{\\text{board readout}}")
+    ]
+  };
+
+  var wmGeometryText = DE ? "Bei Othello reicht eine Richtung pro Feld: leer, Spieler 1 oder Spieler 2 liegen auf einer Linie.\n\nBei Schach reicht eine Richtung nicht, weil ein Feld leer sein oder eine von zwölf Figuren tragen kann.\n\nDer Probe braucht dort 13 Richtungen pro Feld, also einen Unterraum; Karvonen (2024) findet das auch in einem Schach-Sprachmodell. In echten Modellen sind diese Unterräume noch komplexer und überlagern sich. Das Othello-Brett ist der klare, kleine Fall, ein guter Einblick in die Art, wie ein Modell Welt repräsentiert.\n\nGurnee & Tegmark (2023) finden lineare Repräsentationen von realem Raum und Zeit in Llama-2: Orte und Jahre liegen auf lesbaren Richtungen, mit einzelnen „space neurons“ und „time neurons“. Das zeigt, dass auch reale Weltzustände linear lesbar sein können. Es heißt nicht, dass eine einzige Achse reicht: Andere Features sind mehrdimensional (Engels et al., 2025), und in großen Modellen überlagern sich viele Richtungen (Elhage et al., 2022).\n\nDie eigentliche Aussage ist bescheiden und stark zugleich: Ein Modell, das nur das nächste Token vorhersagt, kann einen Weltzustand ausbilden, weil das die einfachste Möglichkeit sein kann, möglichst viel richtig vorherzusagen. Wie reich dieser Zustand ist, hängt von der Welt ab, die in den Daten steckt." : "For Othello, one direction per square is enough: empty, player 1, or player 2 lie on a line.\n\nFor chess, one direction is not enough, because a square can be empty or hold one of twelve pieces.\n\nThere the probe needs 13 directions per square, a subspace; Karvonen (2024) finds this in a chess language model as well. In real models these subspaces are more complex still and overlap. The Othello board is the clear, small case, a good glimpse of how a model represents a world.\n\nGurnee & Tegmark (2023) find linear representations of real space and time in Llama-2: places and years lie on readable directions, with individual “space neurons” and “time neurons”. That shows that real-world states can be linearly readable too. It does not mean that one axis is enough: other features are multi-dimensional (Engels et al., 2025), and in large models many directions overlap (Elhage et al., 2022).\n\nThe real claim is modest and strong at once: a model trained only to predict the next token can develop a world state, because that can be the simplest way to predict as much as possible correctly. How rich that state is depends on the world in the data.";
+
+  var wmGeometry = {
+    kicker: DE ? "Geometrie" : "Geometry",
+    title: DE ? "Schach und die reale Welt" : "Chess and the real world",
+    teaser: wmGeometryText,
+    body: wmGeometryText,
+    watch: DE ? "Drücke Weiter. Vergleiche eine Linie mit einem Unterraum." : "Press Next. Compare a line with a subspace.",
+    demoState: { scene: "worldmodel", step: 2 },
+    context: DE ? "Die lineare Probe ist ein Readout. Die Brettrichtungen leben im 512-dim Residualstrom. Bei Schach kommen pro Feld 13 Zustände dazu; bei realen Modellen überlagern sich viele solcher Richtungen." : "The linear probe is a readout. The board directions live in the 512-dim residual stream. In chess, 13 states per square are added; in real models many such directions overlap.",
+    deep: DE ? "Die Linear Representation Hypothesis beschreibt Features als Richtungen. Superposition packt mehr Features in den Raum als Dimensionen. Engels et al. finden mehrdimensionale Features, etwa Kreise für Wochentage und Monate. Karvonen zeigt für Schach 13 Zustände pro Feld. Deshalb ist die Weltmodell-Debatte kein Entweder-oder: Manche Zustände sind Richtungen, andere brauchen einen Unterraum." : "The linear representation hypothesis describes features as directions. Superposition packs more features into the space than there are dimensions. Engels et al. find multi-dimensional features, such as circles for weekdays and months. Karvonen shows 13 states per square for chess. So the world-model debate is not either-or: some states are directions, others need a subspace.",
+    boxes: [
+      box("wm-geo-line", DE ? "Geometrie" : "Geometry", DE ? "Eine Richtung" : "One direction", DE ? "Der Unterschied zwischen Spieler 1 und Spieler 2 ist eine Achse: $w_{\\text{Spieler 1}} - w_{\\text{Spieler 2}}$. Der Logit ist die Projektion auf diese Achse. Ein fester Nullpunkt ist nicht nötig; Softmax vergleicht die drei Logits." : "The difference between player 1 and player 2 is one axis: $w_{\\text{player 1}} - w_{\\text{player 2}}$. The logit is the projection onto this axis. A fixed zero point is not needed; softmax compares the three logits."),
+      box("wm-geo-sub", DE ? "Schach" : "Chess", DE ? "13 Zustände pro Feld" : "13 states per square", DE ? "Ein Feld ist leer oder trägt eine von zwölf Figuren. Der Probe hat 13 Ausgänge; die zugehörigen Richtungen bilden einen Unterraum. Ein einzelner Skalar reicht nicht." : "A square is empty or holds one of twelve pieces. The probe has 13 outputs; the corresponding directions form a subspace. A single scalar is not enough."),
+      box("wm-geo-real", DE ? "Grenze" : "Limit", DE ? "Reale Modelle" : "Real models", DE ? "In echten Modellen überlagern sich viele Features. Eine Richtung kann mehrere Bedeutungen tragen; manche Features liegen auf Kreisen oder höherdimensionalen Mannigfaltigkeiten. Das Othello-Brett ist ein klarer Spezialfall." : "In real models many features overlap. One direction can carry several meanings; some features lie on circles or higher-dimensional manifolds. The Othello board is a clear special case."),
+      box("wm-geo-gurnee", DE ? "Realer Raum" : "Real space", DE ? "Was zeigen Gurnee & Tegmark?" : "What do Gurnee & Tegmark show?", DE ? "In Llama-2 liegen Orte und Jahre auf linearen Richtungen; einzelne Neuronen kodieren Koordinaten. Auch reale Weltzustände sind also lesbar, aber nicht mit einer einzigen Achse pro Feld." : "In Llama-2, places and years lie on linear directions; individual neurons encode coordinates. Real-world states are readable too, but not with a single axis per square.")
+    ]
+  };
+
+  wmBoard.sources = [wmSources[0], wmSources[7]];
+  wmMachine.sources = [wmSources[0], wmSources[1], wmSources[2], wmSources[7], wmSources[8]];
+  wmGeometry.sources = [wmSources[2], wmSources[3], wmSources[4], wmSources[8], wmSources[9]];
+
+  var worldModelStep = {
+    kicker: DE ? "Weltmodelle" : "World models",
+    title: DE ? "Das Weltmodell eines LLM" : "An LLM's world model",
+    substeps: [wmBoard, wmMachine, wmGeometry]
+  };
+
+
+
+  var inductionSequence = {
+    kicker: DE ? "Induction" : "Induction",
+    title: DE ? "A B … A → B" : "A B … A → B",
+    teaser: DE
+      ? "Beispiel: „Hund bellt … Hund“ → „bellt“. Ein Induktionskopf merkt sich: Nach dem ersten „Hund“ kam „bellt“. Als „Hund“ wieder da ist, schaut er auf das frühere „bellt“ und kopiert es nach vorn. A ist das wiederholte Token („Hund“), B das Token danach („bellt“). Der Kopf hat zwei gelernte Teile: Der eine sucht die Stelle, der andere kopiert; der Kopierer heißt OV-Matrix.\n\nEin kleiner Hilfskopf in der Schicht davor merkt sich, welches Token vor jedem Token kam. So findet der Induktionskopf die Stelle nach dem früheren „Hund“. Das klappt mit jedem Paar: „Paris, Frankreich … Paris → Frankreich“ oder „Montag, Dienstag … Montag → Dienstag“.\n\nDer Kopf speichert keine Tabelle, sondern sucht das Muster. Deshalb braucht er zwei Schichten: erst den Vorgänger merken, dann nachschauen und kopieren."
+      : "Example: “dog barks … dog” → “barks”. An induction head remembers: after the first “dog” came “barks”. When “dog” appears again, it looks at the earlier “barks” and copies it forward. A is the repeated token (“dog”); B is the token after it (“barks”). The head has two learned parts: one finds the place, the other copies; the copier is called the OV matrix.\n\nA small helper head in the previous layer remembers which token came before each token. That is how the induction head finds the place after the earlier “dog”. This works for any pair: “Paris, France … Paris → France” or “Monday, Tuesday … Monday → Tuesday”.\n\nThe head stores no table; it looks for the pattern. That is why it needs two layers: first remember the predecessor, then look it up and copy.",
+    watch: DE ? "Klicke ein Token. Sieh, wohin der Kopf schaut und was er kopiert." : "Click a token. See where the head looks and what it copies.",
+    demoState: { scene: "induction", mode: "sequence" },
+    context: DE ? "Der Kopf liest keine Bedeutung. Er vergleicht gelernte Vektoren: Wenn zwei Stellen ähnlich genug sind, schaut er dorthin." : "The head does not read meaning. It compares learned vectors: when two places are similar enough, it looks there.",
+    deep: DE ? "Mechanisch ist der Schaltkreis eine K-Composition: Der Key des Induktionskopfs liest einen Unterraum, den der Previous-Token-Head geschrieben hat. Die OV-Matrix kopiert den Value des besuchten Tokens. Olsson et al. (2022) definieren Induktionsköpfe empirisch über Prefix-Matching und Copying; die Definition ist eine klare Teilmenge, keine perfekte Beschreibung jedes Heads." : "Mechanically, the circuit is a K composition: the induction head's key reads a subspace written by the previous-token head. The OV matrix copies the value of the attended token. Olsson et al. (2022) define induction heads empirically through prefix matching and copying; the definition is a clear subset, not a perfect description of every head.",
+    boxes: [
+      box("ind-1", DE ? "Regel" : "Rule", DE ? "Was wird kopiert?" : "What is copied?", DE ? "Nicht das aktuelle $A$, sondern das $B$, das beim vorherigen $A$ folgte. Der Kopf findet die Stelle über den Key und kopiert über die OV-Matrix." : "Not the current $A$, but the $B$ that followed the previous $A$. The head finds the position through the key and copies through the OV matrix."),
+      box("ind-2", DE ? "Mathematik" : "Mathematics", DE ? "QK wählt, OV kopiert" : "QK selects, OV copies", DE ? "Der QK-Schaltkreis $W_Q^\\top W_K$ entscheidet, wohin geschaut wird. Der OV-Schaltkreis $W_O W_V$ entscheidet, was an der aktuellen Position ankommt. Beide sind gelernt und pro Head verschieden." : "The QK circuit $W_Q^\\top W_K$ decides where to look. The OV circuit $W_O W_V$ decides what arrives at the current position. Both are learned and differ per head.", "\\underbrace{\\underbrace{\\operatorname{score}(i,j)}_{\\text{Attention}} = \\underbrace{\\mathbf{q}_i^\\top \\mathbf{k}_j}_{\\text{QK-Schaltkreis}}}_{\\text{wen besuchen?}} \\qquad \\underbrace{\\underbrace{\\Delta \\mathbf{x}_i}_{\\text{Kopie}} = \\underbrace{W_O W_V}_{\\text{OV-Schaltkreis}} \\mathbf{v}_j}_{\\text{was ankommt?}}"),
+      box("ind-3", DE ? "Grenze" : "Limit", DE ? "Keine Tabelle" : "No table", DE ? "Der Kopf speichert nicht alle Paare. Er vergleicht Vektoren; deshalb funktioniert die Regel auch für Token-Kombinationen, die im Training nicht als Paar vorkamen. Die Definition bleibt empirisch: Ein Head kann diese Eigenschaften teilweise erfüllen." : "The head does not store all pairs. It compares vectors; that is why the rule also works for token combinations that never appeared as a pair in training. The definition stays empirical: a head can satisfy these properties partially.")
+    ],
+    sources: [
+      { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Induktionsköpfe, Zwei-Head-Schaltkreis und Phase Change.", en: "Induction heads, the two-head circuit, and the phase change." } },
+      { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK/OV-Zerlegung, Copying Heads und K-Composition.", en: "QK/OV decomposition, copying heads, and K-composition." } }
+    ]
+  };
+
+  var inductionCopySources = [
+    { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Prefix-Matching, Copying und der Zwei-Head-Schaltkreis.", en: "Prefix matching, copying, and the two-head circuit." } },
+    { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK/OV-Zerlegung und K-Composition.", en: "QK/OV decomposition and K-composition." } },
+    { label: "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models", url: "https://arxiv.org/abs/2405.00208", why: { de: "Mechanismen von Previous-Token- und Induktionsköpfen.", en: "Mechanisms of previous-token and induction heads." } }
+  ];
+
+  var inductionMatrix = {
+    kicker: DE ? "Induktion" : "Induction",
+    title: DE ? "Der Induktionskopf in fünf Schritten" : "The induction head in five steps",
+    body: DE
+      ? "Fünf Schritte zeigen, wie aus der Sequenz eine Vorhersage wird. Am Ende steht die Attention-Zeile: Das aktuelle A liest 82 % von B. Klicke die Schritte oben oder drücke Weiter.\n\nWichtig: Kein Head schreibt ein Wort irgendwohin. Ein Head addiert Vektoren zum Residualstrom. Der Previous-Token-Head addiert an Position 4 einen Vektor für „vorher kam A“. Der nächste Head liest diesen Vektor als Key. Deshalb passt die Query A dort, aber nicht an Position 3, wo „vorher kam C“ steht."
+      : "Five steps show how the sequence becomes a prediction. At the end stands the attention row: the current A reads 82% from B. Click the steps above or press Next.\n\nImportant: no head writes a word anywhere. A head adds vectors to the residual stream. The previous-token head adds a vector for “the previous token was A” at position 4. The next head reads that vector as a key. That is why the query A matches there, but not at position 3, where “the previous token was C” is stored.",
+    watch: "",
+    demoState: { scene: "inductionmatrix" },
+    context: DE ? "Die Tabelle zeigt Attention-Gewichte: Zeile fragt, Spalte antwortet. Hohe Werte sind gelernte Gewichte, keine statistische Korrelation." : "The table shows attention weights: row asks, column answers. High values are learned weights, not statistical correlation.",
+    deep: DE ? "Der Previous-Token-Head addiert an Position 4 den transformierten Value des früheren A: $x_4 \\leftarrow x_4 + W_O W_V x_3$. Der Key ist $k_4 = W_K x_4$, die Query $q_6 = W_Q x_6$. QK vergleicht diese Vektoren, keine Wörter. OV kopiert danach den Value von B." : "The previous-token head adds the transformed value of the earlier A at position 4: $x_4 \\leftarrow x_4 + W_O W_V x_3$. The key is $k_4 = W_K x_4$, the query $q_6 = W_Q x_6$. QK compares these vectors, not words. OV then copies B's value.",
+    boxes: [
+      box("ix-1", DE ? "Schritt 1" : "Step 1", DE ? "Vorgänger als Vektor" : "Predecessor as a vector", DE ? "Vor B an Position 4 stand A. Der Head schreibt kein Wort, sondern addiert einen gelernten Vektor für „vorher kam A“ an Position 4." : "Before B at position 4 stood A. The head writes no word; it adds a learned vector for “the previous token was A” at position 4."),
+      box("ix-2", DE ? "Schritt 2" : "Step 2", DE ? "Key lesen" : "Read the key", DE ? "Der nächste Head liest diesen Vektor als Key. Die Query A passt darauf. Position 3 enthält den Vorgänger C, deshalb passt sie nicht." : "The next head reads that vector as a key. The query A matches it. Position 3 holds the predecessor C, so it does not match."),
+      box("ix-3", DE ? "Schritt 3" : "Step 3", DE ? "B kopieren" : "Copy B", DE ? "Der OV-Schaltkreis kopiert den Value von B an die neue Stelle. B wird wahrscheinlicher. Die Prozentwerte sind illustrativ." : "The OV circuit copies B's value to the new position. B becomes more likely. The percentages are illustrative."),
+      box("ix-ov", DE ? "Begriff" : "Term", DE ? "Was ist OV?" : "What is OV?", DE ? "Output × Value: V ist der Value-Vektor eines Tokens, O die Output-Projektion. QK wählt, wohin geschaut wird; OV entscheidet, welcher Inhalt geschrieben wird." : "Output × Value: V is a token's value vector, O is the output projection. QK selects where to look; OV decides which content is written.")
+    ],
+    sources: inductionSequence.sources
+  };
+
+  var inductionCopy = {
+    kicker: DE ? "Mechanik" : "Mechanics",
+    title: DE ? "Wie wird kopiert?" : "How is copying done?",
+    teaser: DE
+      ? "Jetzt die Mechanik in drei Schritten. A und B sind Platzhalter für beliebige Wörter. Erst merkt sich ein Hilfskopf den Vorgänger: Nach dem früheren „Hund“ steht die Information „davor war Hund“. Dann sucht der Induktionskopf das frühere „Hund“ und schaut auf das Token danach: „bellt“. Zuletzt kopiert die OV-Matrix „bellt“ an die neue Stelle. Es gibt viele verschiedene Arten von Attention Heads; wir sehen hier nur einige.\n\nQK entscheidet, wohin geschaut wird. OV entscheidet, was kopiert wird. Die OV-Matrix ist also der Kopierer, die Attention der Sucher. Kein Schritt liest eine Tabelle: Beide Teile sind gelernte Abbildungen auf Vektoren."
+      : "Now the mechanics in three steps. A and B are placeholders for arbitrary words. First a helper head remembers the predecessor: after the earlier “dog” it stores the information “the token before me was dog”. Then the induction head finds the earlier “dog” and looks at the token after it: “barks”. Finally the OV matrix copies “barks” to the new place. There are many different kinds of attention heads; we look at only a few here.\n\nQK decides where to look. OV decides what is copied. So the OV matrix is the copier and attention is the searcher. No step reads a table: both parts are learned maps on vectors.",
+    watch: DE ? "Klicke die drei Schritte: Vorgänger merken, Stelle finden, kopieren." : "Click the three steps: remember the predecessor, find the place, copy.",
+    demoState: { scene: "induction", mode: "copy" },
+    context: DE ? "Der Hilfskopf ist ein eigener Kopf in einer früheren Schicht. Er merkt sich nur, welches Token vorher kam." : "The helper head is a separate head in an earlier layer. It only remembers which token came before.",
+    deep: DE ? "Formal ist der Key des Induktionskopfs $k_j = W_K x_j$, wobei $x_j$ den Output des Previous-Token-Heads enthält. Der QK-Score vergleicht $q_i$ mit $k_j$; die OV-Matrix schreibt $W_O W_V x_j$. Das ist K-Composition, keine V- oder Q-Composition." : "Formally, the induction head's key is $k_j = W_K x_j$, where $x_j$ contains the output of the previous-token head. The QK score compares $q_i$ with $k_j$; the OV matrix writes $W_O W_V x_j$. This is K-composition, not V- or Q-composition.",
+    boxes: [
+      box("copy-1", DE ? "Mathematik" : "Mathematics", DE ? "Drei Matrizen" : "Three matrices", DE ? "Die Query kommt aus $W_Q$, der Key aus $W_K$, der Value aus $W_V$. Zusammen mit $W_O$ ergibt das zwei Schaltkreise: QK wählt die Quelle, OV schreibt ihren Inhalt." : "The query comes from $W_Q$, the key from $W_K$, the value from $W_V$. Together with $W_O$ this gives two circuits: QK selects the source, OV writes its content.", "\\underbrace{\\underbrace{\\operatorname{score}(i,j)}_{\\text{wen besuchen?}} = \\underbrace{\\mathbf{q}_i^\\top \\mathbf{k}_j}_{\\text{QK}}}_{\\text{Aufmerksamkeit}} \\qquad \\underbrace{\\underbrace{\\Delta \\mathbf{x}_i}_{\\text{was ankommt?}} = \\underbrace{W_O W_V}_{\\text{OV}} \\mathbf{v}_j}_{\\text{Kopie}}"),
+      box("copy-2", DE ? "Schaltkreis" : "Circuit", DE ? "K-Composition" : "K-composition", DE ? "Der Key des Induktionskopfs liest einen Unterraum, den der Previous-Token-Head geschrieben hat. Deshalb braucht der Schaltkreis zwei Schichten: Ein einzelner Head kann seinen Key nicht von einem anderen Head abhängig machen." : "The induction head's key reads a subspace written by the previous-token head. That is why the circuit needs two layers: a single head cannot make its key depend on another head."),
+      box("copy-3", DE ? "Grenze" : "Limit", DE ? "Kopieren ist relativ" : "Copying is relative", DE ? "Die Kopie hängt davon ab, wohin die Attention fällt. Fällt sie auf eine andere Stelle, kopiert derselbe OV-Schaltkreis etwas anderes. Deshalb ist die Attention der Teil, der die Regel trägt; die OV-Matrix ist der Teil, der den Inhalt überträgt." : "The copy depends on where attention lands. If it lands elsewhere, the same OV circuit copies something else. Attention carries the rule; the OV matrix carries the content.")
+    ],
+    sources: inductionCopySources
+  };
+
+  var inductionHeads = {
+    kicker: DE ? "Familie" : "Family",
+    title: DE ? "Vier Köpfe, vier Regeln" : "Four heads, four rules",
+    teaser: DE
+      ? "Induktion ist ein Mitglied einer Familie von Copy-Heads. Ein Duplicate-Token-Head schaut auf ein früheres Vorkommen desselben Tokens und kopiert dessen Position. Ein Successor-Head erhöht ein geordnetes Token (Montag → Dienstag) über eine gelernte Richtung. Ein Name-Mover-Head kopiert einen Namen aus dem Kontext in die Antwort. Alle teilen denselben Kern: Attention wählt eine Quelle, OV schreibt ihren Inhalt. Was sie unterscheidet, ist die Regel, die die Quelle wählt.\n\nDie vier Köpfe sind keine vier Etiketten für dieselbe Sache. Induktion und Duplicate arbeiten über Wiederholung im Kontext; Successor über eine gelernte Ordnung; Name-Mover über eine Aufgabe mit zwei Kandidaten. Klicke die Karten."
+      : "Induction is one member of a family of copy heads. A duplicate-token head attends to an earlier occurrence of the same token and copies its position. A successor head increments an ordered token (Monday → Tuesday) through a learned direction. A name-mover head copies a name from the context into the answer. They share the same core: attention selects a source, OV writes its content. What differs is the rule that selects the source.\n\nThe four heads are not four labels for the same thing. Induction and duplicate work through repetition in the context; successor through a learned order; name-mover through a task with two candidates. Click the cards.",
+    watch: DE ? "Klicke eine Karte. Vergleiche, welche Quelle die Attention wählt und was kopiert wird." : "Click a card. Compare which source attention selects and what is copied.",
+    demoState: { scene: "induction", mode: "heads" },
+    context: DE ? "Die vier Köpfe sind keine vier Namen für dieselbe Schaltung. Sie teilen die Aufmerksamkeits-/OV-Struktur, aber die Quelle wird nach unterschiedlichen Regeln gewählt." : "The four heads are not four names for the same circuit. They share the attention/OV structure, but the source is selected by different rules.",
+    deep: DE ? "Duplicate- und Successor-Heads sind in der Primer-Literatur beschrieben; Name-Mover stammt aus dem IOI-Schaltkreis von GPT-2 small. Die Einordnung als Head-Typ ist eine funktionale Beschreibung, keine feste anatomische Kategorie: Ein Head kann mehrere Rollen tragen, und dieselbe Rolle kann über mehrere Heads verteilt sein." : "Duplicate and successor heads are described in the primer literature; name-movers come from the IOI circuit of GPT-2 small. The label is a functional description, not a fixed anatomical category: one head can carry several roles, and one role can be spread across several heads.",
+    boxes: [
+      box("heads-1", DE ? "Gemeinsam" : "Shared", DE ? "Der Kern" : "The core", DE ? "Alle vier benutzen Attention, um eine Quelle zu wählen, und eine OV-Matrix, um deren Inhalt in den Residualstrom zu schreiben. Der Unterschied liegt in der Query-Key-Regel." : "All four use attention to select a source and an OV matrix to write its content into the residual stream. The difference is in the query-key rule."),
+      box("heads-2", DE ? "Duplicate" : "Duplicate", DE ? "Gleiches Token, frühere Stelle" : "Same token, earlier place", DE ? "Der Kopf schaut auf ein früheres Vorkommen desselben Tokens. Im IOI-Schaltkreis signalisiert das, dass ein Name wiederholt wurde; die Position des früheren Vorkommens wird weitergegeben." : "The head attends to an earlier occurrence of the same token. In the IOI circuit this signals that a name was repeated; the position of the earlier occurrence is passed on."),
+      box("heads-3", DE ? "Successor" : "Successor", DE ? "Nächstes in der Ordnung" : "Next in the order", DE ? "Der Kopf erhöht ein Token aus einer geordneten Folge: Montag → Dienstag, 4 → 5, März → April. Die Ordnung ist gelernt, nicht im Kontext nachgeschlagen; die OV-Matrix verschiebt die Aktivierung entlang einer Richtung." : "The head increments a token from an ordered sequence: Monday → Tuesday, 4 → 5, March → April. The order is learned, not looked up in the context; the OV matrix shifts the activation along a direction."),
+      box("heads-4", DE ? "Name-Mover" : "Name-mover", DE ? "Kopiere den richtigen Namen" : "Copy the right name", DE ? "Im Satz „Als Mary und John ... John gab ...“ schaut der Name-Mover-Head auf Mary und kopiert sie in die Antwort. S-Inhibition-Heads unterdrücken dabei den wiederholten John. Das ist kein Sequenzmuster, sondern faktenbezogenes Kopieren." : "In “When Mary and John … John gave …”, the name-mover head attends to Mary and copies her into the answer. S-inhibition heads suppress the repeated John. This is not sequence matching; it is fact-like copying.")
+    ],
+    sources: [
+      { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Induktionsköpfe und Copying-Heads im Kontext.", en: "Induction heads and copying heads in context." } },
+      { label: "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models", url: "https://arxiv.org/abs/2405.00208", why: { de: "Überblick über Duplicate-, Successor- und Name-Mover-Heads.", en: "Overview of duplicate, successor, and name-mover heads." } },
+      { label: "Gould et al. (2023), Successor Heads", url: "https://arxiv.org/abs/2312.09230", why: { de: "Successor-Heads erhöhen geordnete Tokens wie Montag → Dienstag.", en: "Successor heads increment ordered tokens such as Monday → Tuesday." } },
+      { label: "Wang et al. (2022), Interpretability in the Wild", url: "https://arxiv.org/abs/2211.00593", why: { de: "Der IOI-Schaltkreis mit Name-Mover- und S-Inhibition-Heads.", en: "The IOI circuit with name-mover and S-inhibition heads." } }
+    ]
+  };
+
+  var inductionCircuit = Object.assign({}, inductionSequence, {
+    kicker: DE ? "Schaltkreis" : "Circuit",
+    title: DE ? "Zwei Schichten, ein Trick" : "Two layers, one trick",
+    teaser: DE
+      ? "Zwei Schichten, ein Trick. Der Previous-Token-Head in Schicht 1 merkt sich für jede Position, welches Token davor stand. Der Induktionskopf in Schicht 2 fragt mit dem aktuellen $A$. Sein Key enthält das vorherige Token; deshalb trifft er die frühere Stelle, an der vor $A$ ebenfalls $A$ stand. Von dort kopiert er $B$.\n\n$A$ und $B$ sind Platzhalter für beliebige Wörter. Das ist K-Composition: Der Key hängt vom vorherigen Token ab. Deshalb braucht der Schaltkreis mindestens zwei Schichten."
+      : "Two layers, one trick. The previous-token head in layer 1 remembers, for every position, which token came before it. The induction head in layer 2 queries with the current $A$. Its key contains the previous token; that is how it hits the earlier position where $A$ also stood before $A$. From there it copies $B$.\n\n$A$ and $B$ are placeholders for arbitrary words. This is K-composition: the key depends on the previous token. That is why the circuit needs at least two layers.",
+    watch: DE ? "Klicke Weiter. Verfolge den Weg vom Previous-Token-Head zum Induktionskopf." : "Click Next. Follow the path from the previous-token head to the induction head.",
+    demoState: { scene: "induction", mode: "circuit" },
+    boxes: [
+      box("circ-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Key ist verschoben" : "The key is shifted", DE ? "Der Induktionskopf liest einen Key, der aus Token plus Vorgänger besteht. Deshalb kann seine Query mit dem aktuellen $A$ eine Stelle treffen, an der vorher $A$ stand, obwohl dort jetzt $B$ steht." : "The induction head reads a key made of token plus predecessor. That is how its query with the current $A$ can hit a position where $A$ stood before, even though $B$ stands there now.", "\\underbrace{\\underbrace{\\mathbf{k}_j}_{\\text{Key}} = \\underbrace{W_K}_{\\text{gelernt}}\\,\\underbrace{(\\mathbf{x}_j + \\mathbf{h}^{\\mathrm{prev}}_j)}_{\\text{Token + Previous-Token-Head}}}_{\\text{Key mit Vorgänger}}"),
+      box("circ-2", DE ? "Schaltkreis" : "Circuit", DE ? "Zwei Schichten minimum" : "Two layers minimum", DE ? "Der Previous-Token-Head muss seinen Output in den Residualstrom schreiben, bevor der Induktionskopf ihn lesen kann. Ein einzelner Head hat keinen früheren Head, dessen Output er in seinen Key aufnehmen könnte." : "The previous-token head must write its output into the residual stream before the induction head can read it. A single head has no earlier head whose output it could include in its key.")
+    ],
+    sources: inductionCopySources
+  });
+
+  var inductionEmergence = Object.assign({}, inductionSequence, {
+    kicker: DE ? "Emergenz" : "Emergence",
+    title: DE ? "Der Phase Change" : "The phase change",
+    teaser: DE
+      ? "Induktionsköpfe entstehen nicht von Anfang an. In kleinen Modellen bilden sie sich in einem schmalen Trainingsfenster, etwa zwischen 2,5 und 5 Milliarden Tokens. Im selben Fenster springt der In-Context-Learning-Score von unter 0,15 auf etwa 0,4 Nats. Die Loss-Kurve bekommt dort einen kleinen Buckel. Ein einlagiges Modell ohne Induktionsköpfe zeigt keinen solchen Sprung.\n\nDas ist Evidenz für einen Zusammenhang, nicht für einen Beweis. Andere Mechanismen könnten im selben Fenster entstehen; die Ablationen betreffen kleine Modelle. Für die Folie reicht: Ein gelerntes Muster und eine messbare Fähigkeit tauchen zusammen auf."
+      : "Induction heads do not exist from the start. In small models they form in a narrow training window, roughly between 2.5 and 5 billion tokens. In the same window the in-context-learning score jumps from below 0.15 to about 0.4 nats. The loss curve gets a small bump there. A one-layer model without induction heads shows no such jump.\n\nThis is evidence for a connection, not a proof. Other mechanisms could form in the same window; the ablations concern small models. For this slide the point is enough: a learned pattern and a measurable ability appear together.",
+    watch: DE ? "Klicke Weiter. Sieh, wie die Kurven im selben Fenster springen." : "Click Next. Watch the curves jump in the same window.",
+    demoState: { scene: "induction", mode: "emergence" },
+    boxes: [],
+    sources: inductionSequence.sources
+  });
+
+  var inductionStep = {
+    kicker: DE ? "In-Context" : "In-context",
+    title: DE ? "Induktionsköpfe" : "Induction heads",
+    substeps: [inductionSequence, inductionMatrix, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence]
+  };
+
+  var spacetimeSpace = {
+    kicker: DE ? "Raum" : "Space",
+    title: DE ? "Wo liegt Paris?" : "Where is Paris?",
+    teaser: DE
+      ? "Wes Gurnee und Max Tegmark untersuchten 2023, ob große Sprachmodelle geografische und historische Informationen nur auswendig lernen oder ob sie lineare, relative Repräsentationen von Raum und Zeit in ihren Aktivierungen ausbilden. Dazu trainierten sie lineare Probes auf den inneren Aktivierungen des Modells.\n\nDas Ergebnis zeigte eine relative, lineare Karte: Städte und Ereignisse liegen in einer Geometrie, die Nachbarschaften und Richtungen teilweise wiedergibt. Absolute Koordinaten sind schwächer, die Fehler messbar; die Repräsentationen sind kein dynamisches kausales Weltmodell."
+      : "Wes Gurnee and Max Tegmark asked in 2023 whether large language models only memorise geographic and historical information or whether they form linear, relative representations of space and time in their activations. They trained linear probes on the model's internal activations.\n\nThe result showed a relative, linear map: cities and events lie in a geometry that partially reproduces neighbourhoods and directions. Absolute coordinates are weaker and the errors are measurable; the representations are not a dynamic causal world model.",
+    watch: "",
+    demoState: { scene: "spacetime", mode: "space" },
+    deep: DE ? "Llama-2 7B, 13B und 70B; lineare Ridge-Probe und ein MLP-Probe als Kontrolle. Der MLP-Probe verbessert $R^2$ kaum, was für lineare Lesbarkeit spricht. Absolute Koordinaten sind schwächer als relative Geometrie; NYC ist der schwächste Datensatz." : "Llama-2 7B, 13B, and 70B; linear ridge probe and an MLP probe as control. The MLP probe barely improves $R^2$, which supports linear readability. Absolute coordinates are weaker than relative geometry; NYC is the weakest dataset.",
+    boxes: [
+      box("st-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Readout" : "The readout", DE ? "Eine lineare Probe bildet die Aktivierung $\\mathbf{x}$ auf Breite und Länge ab. Die Gewichte sind die gelernte Raumrichtung." : "A linear probe maps activation $\\mathbf{x}$ to latitude and longitude. The weights are the learned space direction.", "\\underbrace{(\\hat{\\phi},\\hat{\\lambda})}_{\\text{vorhergesagte Koordinaten}} = \\underbrace{W\\mathbf{x} + \\mathbf{b}}_{\\text{lineare Probe}}"),
+      box("st-3", DE ? "Karte" : "Map", DE ? "Relativ, nicht absolut" : "Relative, not absolute", DE ? "Die Probe trifft die Nachbarschaft besser als den exakten Ort. Ein Ort kann relativ richtig liegen und trotzdem hunderte Kilometer daneben. Die Karte ist also eine Koordinatenabbildung mit Fehlern, kein gespeichertes GIS." : "The probe gets the neighbourhood better than the exact place. A location can be relatively right and still hundreds of kilometres off. The map is a coordinate mapping with errors, not a stored GIS."),
+    ],
+    sources: [{ label: "Gurnee & Tegmark (2023), Language Models Represent Space and Time", url: "https://arxiv.org/abs/2310.02207", why: { de: "Lineare Karten von Raum und Zeit in Llama-2; space/time neurons.", en: "Linear maps of space and time in Llama-2; space/time neurons." } }]
+  };
+
+  var spacetimeTime = Object.assign({}, spacetimeSpace, {
+    kicker: DE ? "Zeit" : "Time",
+    title: DE ? "Wann starb Turing?" : "When did Turing die?",
+    teaser: DE
+      ? "Das Paper zeigt, dass Sprachmodelle aus Texten lineare Repräsentationen von Zeit ausbilden. Wenn die KI historische Namen, Kunstwerke oder Filme verarbeitet, lassen sich Jahreszahlen aus den inneren Aktivierungen lesen; die Darstellung ist eine relative Zeitachse, kein dynamisches kausales Weltmodell.\n\nBei historischen Personen ist die Zielgröße das Todesjahr, nicht die Lebensspanne. Die Daten umfassen Personen, die zwischen 1000 v. Chr. und 2000 n. Chr. gestorben sind. Eine Person wird also durch einen Punkt repräsentiert; Turing zum Beispiel durch 1954, sein Todesjahr. Die Probe liest dieses eine Jahr aus der Aktivierung, nicht die Lebensdauer.\n\nZudem fanden die Forscher einzelne Zeit-Neuronen, die mit bestimmten Epochen korrelieren. Pinnt oder ablatiert man diese Neuronen, verändert sich die Vorhersage des nächsten Tokens; das ist ein Hinweis auf eine kausale Rolle, aber keine Verschiebung eines ganzen Zeitstrahls."
+      : "The paper shows that language models form linear representations of time from text. When the AI processes historical names, artworks, or films, years can be read from the internal activations; the representation is a relative time axis, not a dynamic causal world model.\n\nFor historical figures the target is the death year, not the lifespan. The data cover people who died between 1000 BCE and 2000 CE. A person is therefore represented by one point; Turing, for example, by 1954, the year he died. The probe reads that single year from the activation, not the lifespan.\n\nIn addition, the researchers found individual time neurons that correlate with certain eras. Pinning or ablating these neurons changes the next-token prediction; that is evidence of a causal role, but not a shift of a whole timeline.",
+    watch: "",
+    demoState: { scene: "spacetime", mode: "time" },
+    context: DE ? "Die Diagonale ist der perfekte Readout. Der Abstand eines Punktes zur Diagonalen ist der Fehler der Probe; die vertikalen Linien zeigen ihn. Die Jahreszahlen sind Todesjahre im gregorianischen Kalender; bei Newton nennt der julianische Kalender 1726/27." : "The diagonal is the perfect readout. A point's distance from the diagonal is the probe error; the vertical lines show it. The years are death years in the Gregorian calendar; for Newton the Julian calendar gives 1726/27.",
+    deep: "",
+    boxes: [
+      box("st-limit", DE ? "Grenze" : "Limit", DE ? "Kausalität für das Modell" : "Causality for the model", DE ? "Die Forscher pinnen oder ablatieren einzelne Raum- und Zeit-Neuronen; dabei ändern sich Vorhersagen. Die Probe-Achse selbst wird nicht verschoben, und die Intervention zeigt keine vollständige kausale Weltkarte." : "The researchers pin or ablate individual space and time neurons; predictions change as a result. The probe axis itself is not shifted, and the intervention does not show a complete causal world map.", "")
+    ],
+    sources: spacetimeSpace.sources
+  });
+
+  var spacetimeStep = {
+    kicker: DE ? "Weltkarte" : "World map",
+    title: DE ? "Raum und Zeit im Modell" : "Space and time in the model",
+    substeps: [spacetimeSpace, spacetimeTime]
+  };
+
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
+
+  var day = {
+    id: "intuition",
+    track: "transformer",
+    label: DE ? "Intuition" : "Intuition",
+    kicker: DE ? "Im Transformer · Bedeutung wird Geometrie" : "Inside the transformer · Meaning becomes geometry",
+    title: DE ? "Ein Wort nach dem anderen" : "One word after another",
+    demo: "intuition",
+    steps: steps,
+    boxes: [
+      box("emb-day", DE ? "Mathematik" : "Mathematics",
+        DE ? "Die ganze Rechnung" : "The whole calculation",
+        DE ? "Ein Embedding ist eine gelernte Tabelle: eine Zeile pro Token. Der Startvektor eines Tokens ist die Zeile zu seiner ID. Zwei Vektoren sind sich ähnlich, wenn der Winkel zwischen ihnen klein ist. Die Demo zeigt nur zwei oder drei Achsen; ein echtes Modell nutzt Tausende." : "An embedding is a learned table: one row per token. A token's starting vector is the row for its ID. Two vectors are similar when the angle between them is small. The demo shows only two or three axes; a real model uses thousands.",
+        DE ? "\\underbrace{\\begin{aligned} E &\\in \\mathbb{R}^{|V|\\times d} \\\\ e_t &= \\underbrace{E[\\,\\mathrm{id}(t)\\,]}_{\\text{Zeile des Tokens}} \\\\ \\operatorname{sim}(a,b) &= \\underbrace{\\cos(e_a,e_b)}_{\\text{Winkel zwischen den Vektoren}} \\end{aligned}}_{\\substack{\\text{so wird aus einer ID ein Vektor}\\\\ \\text{und aus zwei Vektoren eine Ähnlichkeit}}}" : "\\underbrace{\\begin{aligned} E &\\in \\mathbb{R}^{|V|\\times d} \\\\ e_t &= \\underbrace{E[\\,\\mathrm{id}(t)\\,]}_{\\text{row of the token}} \\\\ \\operatorname{sim}(a,b) &= \\underbrace{\\cos(e_a,e_b)}_{\\text{angle between the vectors}} \\end{aligned}}_{\\substack{\\text{an ID becomes a vector}\\\\ \\text{and two vectors become a similarity}}}")
+    ],
+    sources: sources
+  };
+
+  var requestedDay = typeof window.EOY_DAY === "number" ? Math.round(window.EOY_DAY) : 0;
+  var singleStep = requestedDay >= 1 && requestedDay <= steps.length ? steps[requestedDay - 1] : null;
+  var selectedDay = singleStep ? {
+    id: day.id,
+    track: day.track,
+    label: day.label,
+    kicker: singleStep.kicker || day.kicker,
+    title: singleStep.title || day.title,
+    demo: day.demo,
+    steps: [singleStep],
+    boxes: requestedDay === 1 ? day.boxes : [],
+    sources: requestedDay === 1 ? day.sources : []
+  } : day;
+
+  LearnSys.mount(document.getElementById("learnsys"), {
+    lang: DE ? "de" : "en",
+    days: [selectedDay],
+    tracks: [{ id: "transformer", label: DE ? "Im Transformer" : "Inside the transformer", days: "Intuition" }],
+    mix: true,
+    singleDay: true,
+    startDay: 0,
+    overlayRevision: "2026-11-17-spacetime-after-worldmodel-8",
+    // Draft scaffold: steps without a teaser show the lorem placeholder; every
+    // old body stays recoverable in the "Bisheriger Text" group. Set to false
+    // to use bodies everywhere.
+    textDraft: false,
+    demoPreview: "intuition_learnsys-demo.php",
+    typeset: function (scope) {
+      if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(scope);
+    }
+  });
+
+  var nav = document.getElementById("ls-navbar");
+  if (nav) {
+    var lang = document.createElement("button");
+    lang.type = "button";
+    lang.className = "ls-btn ls-btn--tiny ls-lang-btn";
+    lang.textContent = DE ? "EN" : "DE";
+    lang.setAttribute("aria-label", DE ? "Switch to English" : "Auf Deutsch wechseln");
+    lang.setAttribute("data-no-height-test", "1");
+    lang.addEventListener("click", function () {
+      if (window.TM && typeof TM.setLang === "function") TM.setLang(DE ? "en" : "de");
+    });
+    nav.appendChild(lang);
+  }
+})();
