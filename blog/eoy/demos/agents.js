@@ -58,7 +58,7 @@
       '<div class="ls-agents-grid">' +
         '<section class="ls-agents-col"><div class="ls-agents-col-head"><b>' + (DE ? "Kontext" : "Context") + '</b><span>' + (DE ? "wächst mit Tool-Ausgaben" : "grows with tool output") + '</span></div><div class="ls-agents-context" aria-live="polite"></div></section>' +
         '<section class="ls-agents-col"><div class="ls-agents-col-head"><b>' + (DE ? "Runtime" : "Runtime") + '</b><span>' + (DE ? "außerhalb des Modells" : "outside the model") + '</span></div><div class="ls-agents-runtime"><div class="ls-agents-terminal" aria-live="polite"></div><div class="ls-agents-shot" role="img" aria-label="' + (DE ? "Browser-Screenshot: Beispiel-Shop mit dem Preis 42 Euro." : "Browser screenshot: example shop with the price 42 euros.") + '">' +
-          '<div class="ls-code-monitor"><div class="ls-code-frame"><div class="ls-code-screen"><div class="ls-code-desktop" style="background-image:url(\'opera.jpg\')">' +
+          '<div class="ls-code-monitor"><div class="ls-code-frame"><div class="ls-code-screen"><div class="ls-code-desktop" style="background-image:url(\'' + (api.asset ? api.asset("opera.jpg") : "opera.jpg") + '\')">' +
             '<div class="ls-code-window ls-agents-browser">' +
               '<div class="ls-code-bar"><i></i><i></i><i></i><span>Browser</span></div>' +
               '<div class="ls-agents-address"><span class="ls-agents-lock">https</span>example.com/shop</div>' +

@@ -33,7 +33,7 @@
     el.className = "ls-code-monitor";
     el.innerHTML =
       '<div class="ls-code-frame"><div class="ls-code-screen">' +
-        '<div class="ls-code-desktop" style="background-image:url(\'opera.jpg\')">' +
+        '<div class="ls-code-desktop" style="background-image:url(\'' + (api.asset ? api.asset("opera.jpg") : "opera.jpg") + '\')">' +
           '<div class="ls-code-window ls-code-window--agent">' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
             '<div class="ls-code-chat">' +

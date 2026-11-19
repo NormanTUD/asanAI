@@ -2100,6 +2100,7 @@
       motion: LS.motion,
       scene: LS.scene,
       util: LS.util,
+      asset: LS.asset,
       visual: window.LearnSysVisuals || null,
       kit: window.LearnSysSceneKit || null,
       reducedMotion: !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
@@ -5392,6 +5393,18 @@
     unpromote: function (step) { runLayoutChange(function (day) { unpromoteStep(day, step); }); },
     reset: function () { runLayoutChange(function (day) { resetLayout(day); }); },
     read: function () { return cloneData(layoutOverlay); }
+  };
+
+  // Resolve a lesson-relative asset. When the lesson is rendered through the
+  // WordPress proxy, the document URL is the proxy endpoint, so relative URLs
+  // would point at the wrong place; route them back through the proxy.
+  LS.asset = function (name) {
+    var clean = String(name || "").replace(/^\.?\//, "");
+    if (!clean || typeof window === "undefined") return name;
+    var loc = window.location;
+    var search = loc.search || "";
+    var proxied = /asanai_blog_proxy/.test(loc.pathname) || /(^|[?&])eoy\//.test(search);
+    return proxied ? loc.pathname + "?eoy/" + clean : name;
   };
 
   LS.mount = function (el, config) {

@@ -21,12 +21,18 @@
 	TM.storage = storage;
 
 	function readLang() {
+		var params = new URLSearchParams(window.location.search);
+		var requested = (params.get("lang") || "").toLowerCase();
+		// Proxy URLs look like ?eoy/1?lang=de&height=1500, where URLSearchParams
+		// sees the key "eoy/1?lang" instead of "lang". Pick that up as well.
+		if (requested !== "de" && requested !== "en") {
+			var nested = (window.location.search || "").match(/[?&]lang=(de|en)\b/i);
+			if (nested) requested = nested[1].toLowerCase();
+		}
+		if (requested === "de" || requested === "en") return { lang: requested, source: "url" };
 		var choice = "";
 		try { choice = (localStorage.getItem("tm_lang_choice") || "").toLowerCase(); } catch (e) {}
 		if (choice === "de" || choice === "en") return { lang: choice, source: "stored" };
-		var params = new URLSearchParams(window.location.search);
-		var requested = (params.get("lang") || "").toLowerCase();
-		if (requested === "de" || requested === "en") return { lang: requested, source: "url" };
 		var match = document.cookie.match(/(?:^|;\s*)tm_lang=(de|en)\b/);
 		if (match) return { lang: match[1], source: "cookie" };
 		return { lang: "en", source: "default" };
@@ -40,6 +46,9 @@
 		}
 		try {
 			var url = new URL(window.location.href);
+			// Nested proxy URLs (?eoy/1?lang=de) must not be rebuilt with
+			// URLSearchParams, which would percent-encode the proxied path.
+			if (/(^|[?&])eoy\//.test(url.search || "")) return;
 			var requested = (url.searchParams.get("lang") || "").toLowerCase();
 			if (currentLang === "de") {
 				if (requested !== "de") url.searchParams.set("lang", "de");
