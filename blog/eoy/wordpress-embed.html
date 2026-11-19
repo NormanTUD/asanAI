@@ -8,14 +8,9 @@
   The receiving side lives in learnsys.js ("learnsys-key" message).
   Omit height=... for a viewport-sized frame whose prev/next buttons stay
   visible. An explicit height=... is honoured as the frame height; the buttons
-  then sit at that frame's bottom. Do not add fixed buttons to the parent page.
+  then sit at that frame's bottom. The lesson page renders its own loading
+  spinner inside the iframe; do not add fixed overlays to the parent page.
 -->
-<div id="asanai-screen-loader" aria-hidden="true"
-     style="position:fixed;inset:0;z-index:2147483647;background:#fff;display:flex;align-items:center;justify-content:center">
-    <div style="width:40px;height:40px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:asanaiScreenSpin .8s linear infinite"></div>
-</div>
-<style>@keyframes asanaiScreenSpin{to{transform:rotate(360deg)}}</style>
-
 <div id="asanai-final-wrapper" style="width:100%; overflow:visible !important;">
     <iframe
         id="asanai-final-iframe"

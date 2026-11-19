@@ -13,8 +13,9 @@
  *  - forwards arrow keys and lesson shortcuts into the iframe,
  *    so navigation works without clicking the iframe first.
  *
- * The prev/next buttons belong inside the lesson page. Do not add fixed
- * buttons to the parent page: they would sit outside the iframe.
+ * The prev/next buttons and the loading spinner belong inside the lesson
+ * page. Do not add fixed overlays to the parent page: they would cover the
+ * whole WordPress page instead of just the iframe.
  */
 (function () {
     "use strict";
@@ -27,31 +28,11 @@
             || document.querySelector("iframe[" + KEY_ATTR + "]");
     }
 
-    function ensureLoader() {
+    function removeLegacyLoader() {
         var el = document.getElementById("asanai-screen-loader");
-        if (!el) {
-            el = document.createElement("div");
-            el.id = "asanai-screen-loader";
-            el.setAttribute("style", "position:fixed;inset:0;z-index:2147483647;background:#fff;display:flex;align-items:center;justify-content:center;transition:opacity .28s ease");
-            var spinner = document.createElement("div");
-            spinner.setAttribute("style", "width:40px;height:40px;border:3px solid #dbe3e0;border-top-color:#63a44b;border-radius:50%;animation:asanaiScreenSpin .8s linear infinite");
-            el.appendChild(spinner);
-            document.body.appendChild(el);
-        }
-        if (!document.getElementById("asanai-screen-spin-style")) {
-            var style = document.createElement("style");
-            style.id = "asanai-screen-spin-style";
-            style.textContent = "@keyframes asanaiScreenSpin{to{transform:rotate(360deg)}}";
-            document.head.appendChild(style);
-        }
-        return el;
-    }
-
-    function hideLoader() {
-        var el = document.getElementById("asanai-screen-loader");
-        if (!el) return;
-        el.style.opacity = "0";
-        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 320);
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+        var style = document.getElementById("asanai-screen-spin-style");
+        if (style && style.parentNode) style.parentNode.removeChild(style);
     }
 
     function viewportHeight() {
@@ -79,11 +60,9 @@
         window.addEventListener("message", function (event) {
             if (!event.data) return;
             if (event.source && frame.contentWindow && event.source !== frame.contentWindow) return;
-            if (event.data.type === "lesson-ready") { hideLoader(); return; }
             if (event.data.type !== "height") return;
             var height = parseInt(event.data.val, 10);
             if (height > 0) frame.style.height = height + "px";
-            hideLoader();
         }, false);
     }
 
@@ -159,19 +138,12 @@
     }
 
     function init() {
-        ensureLoader();
+        removeLegacyLoader();
         var frame = getFrame();
         normalizeFrameSize(frame);
         cacheBustFrame(frame);
         attachHeight(frame);
         attachKeys();
-        if (frame) {
-            frame.addEventListener("load", function () { setTimeout(hideLoader, 250); });
-            try {
-                if (frame.contentDocument && frame.contentDocument.readyState === "complete") setTimeout(hideLoader, 250);
-            } catch (e) {}
-        }
-        setTimeout(hideLoader, 12000);
     }
 
     if (document.readyState === "loading") {
