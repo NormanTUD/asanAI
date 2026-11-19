@@ -1,7 +1,7 @@
 # LearnSys Style Guidelines
 
 Scope: every page that uses `learnsys.css` / `learnsys.js`, including
-`intuition_learnsys.php` and every later conversion. These rules are the
+`intuition_learnsys___DONT_USE_ANYMORE.php` and every later conversion. These rules are the
 visual contract. If a demo looks different from the rest, the demo is wrong,
 not the guideline.
 

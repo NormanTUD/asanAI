@@ -2449,7 +2449,12 @@
     sources: requestedDay === 1 ? day.sources : []
   } : day;
 
-  LearnSys.mount(document.getElementById("learnsys"), {
+  var rootEl = document.getElementById("learnsys");
+  if (singleStep) {
+    rootEl.classList.add(singleStep.substeps && singleStep.substeps.length > 1 ? "eoy-has-substeps" : "eoy-no-substeps");
+  }
+
+  LearnSys.mount(rootEl, {
     lang: DE ? "de" : "en",
     days: [selectedDay],
     tracks: [{ id: "transformer", label: DE ? "Im Transformer" : "Inside the transformer", days: "Intuition" }],

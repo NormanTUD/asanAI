@@ -7,9 +7,9 @@ demo changes only the objects that actually change.
 
 Files:
 
-- `intuition_learnsys.php` — the real intuition page. It loads `learnsys.js`,
-  `intuition_learnsys-data.js`, and `learnsys.css`; it is the first production
-  shell for the new system.
+- `intuition_learnsys___DONT_USE_ANYMORE.php` — the old intuition page. It
+  loads `learnsys.js`, `intuition_learnsys-data.js`, and `learnsys.css`; it is
+  kept for reference. The current split lives in `../eoy/`.
 - `intuition_learnsys-data.js` — the day/step data used by the real page
   (currently the tested nine-demo set).
 - `learnsystest.html` — the random demo-mix test page. It shares the same

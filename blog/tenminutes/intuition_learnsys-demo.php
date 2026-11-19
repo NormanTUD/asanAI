@@ -60,7 +60,7 @@ function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUT
 		</label>
 		<span class="spacer"></span>
 		<a href="?scene=<?php echo h($scene); ?>&amp;lang=<?php echo $lang === 'de' ? 'en' : 'de'; ?>"><?php echo $lang === 'de' ? 'EN' : 'DE'; ?></a>
-		<a href="intuition_learnsys"><?php echo $lang === 'de' ? 'Ganze Lektion' : 'Full lesson'; ?></a>
+		<a href="intuition_learnsys___DONT_USE_ANYMORE"><?php echo $lang === 'de' ? 'Ganze Lektion' : 'Full lesson'; ?></a>
 	</div>
 	<div id="learnsys" data-no-i18n></div>
 	<script src="../temml.min.js"></script>
