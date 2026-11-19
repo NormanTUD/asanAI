@@ -64,7 +64,7 @@ $hideExpandAll = is_file(__DIR__ . '/.hide-expand-all');
 	<script src="demos/<?php echo $demoName; ?>?v=<?php echo filemtime($demoFile); ?>"></script>
 	<?php endforeach; ?>
 	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
-	<script src="intuition_learnsys-data.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-data.js'); ?>"></script>
+	<script src="../eoy/data.js?v=<?php echo filemtime(__DIR__.'/../eoy/data.js'); ?>"></script>
 	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>"></script><?php endif; ?>
 </body>
 </html>
