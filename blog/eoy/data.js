@@ -2522,8 +2522,19 @@
   var requestedDay = typeof window.EOY_DAY === "number" ? Math.round(window.EOY_DAY)
     : (bodyEntry > 0 ? bodyEntry : (urlMatch ? parseInt(urlMatch[1], 10) : 0));
   var singleStep = requestedDay >= 1 && requestedDay <= steps.length ? steps[requestedDay - 1] : null;
+  var continuous = !!(window.__ASANAI_EOY_EMBED__ && singleStep);
   if (entryHost) entryHost.setAttribute("data-eoy-resolved", String(singleStep ? requestedDay : 0));
-  var selectedDay = singleStep ? {
+  var selectedDay = continuous ? {
+    id: "eoy-embed",
+    track: day.track,
+    label: day.label,
+    kicker: day.kicker,
+    title: day.title,
+    demo: day.demo,
+    steps: day.steps,
+    boxes: day.boxes,
+    sources: day.sources
+  } : (singleStep ? {
     id: "eoy-" + requestedDay,
     track: day.track,
     label: day.label,
@@ -2533,7 +2544,7 @@
     steps: [singleStep],
     boxes: requestedDay === 1 ? day.boxes : [],
     sources: requestedDay === 1 ? day.sources : []
-  } : day;
+  } : day);
 
   var rootEl = document.getElementById("learnsys");
 
@@ -2544,9 +2555,10 @@
     mix: true,
     singleDay: true,
     startDay: 0,
+    startEntry: continuous ? String(requestedDay - 1) : null,
     eoyResetState: !!singleStep,
     eoyNoHash: true,
-    eoySingle: !!singleStep,
+    eoySingle: !!singleStep && !continuous,
     overlayRevision: "2026-11-17-spacetime-after-worldmodel-8",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
