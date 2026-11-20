@@ -54,7 +54,7 @@
     var el = document.createElement("div");
     el.className = "ls-agents-scene";
     el.innerHTML =
-      '<div class="ls-agents-head"><span class="ls-agents-badge">' + (DE ? "Gleiches Modell" : "Same model") + '</span><span class="ls-agents-sub">' + (DE ? "ein Agent kann dasselbe Modell verwenden · Kontext und Werkzeuge ändern sich" : "an agent can use the same model · context and tools change") + '</span></div>' +
+      '<div class="ls-agents-head"><span class="ls-agents-badge">' + (DE ? "Gleiches Modell" : "Same model") + '</span><span class="ls-agents-sub">' + (DE ? "Ein Agent kann dasselbe Modell verwenden; Kontext und Werkzeuge ändern sich." : "An agent can use the same model; context and tools change.") + '</span></div>' +
       '<div class="ls-agents-grid">' +
         '<section class="ls-agents-col"><div class="ls-agents-col-head"><b>' + (DE ? "Kontext" : "Context") + '</b><span>' + (DE ? "wächst mit Tool-Ausgaben" : "grows with tool output") + '</span></div><div class="ls-agents-context" aria-live="polite"></div></section>' +
         '<section class="ls-agents-col"><div class="ls-agents-col-head"><b>' + (DE ? "Runtime" : "Runtime") + '</b><span>' + (DE ? "außerhalb des Modells" : "outside the model") + '</span></div><div class="ls-agents-runtime"><div class="ls-agents-terminal" aria-live="polite"></div><div class="ls-agents-shot" role="img" aria-label="' + (DE ? "Browser-Screenshot: Beispiel-Shop mit dem Preis 42 Euro." : "Browser screenshot: example shop with the price 42 euros.") + '">' +

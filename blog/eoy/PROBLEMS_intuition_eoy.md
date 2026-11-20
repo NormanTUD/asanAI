@@ -27,7 +27,7 @@
 
 **Gerade in Arbeit:** abgeschlossen. Geprüft mit `node --check` für `data.js`, `attention.js` und `tokenize.js`; 15 Chromium-Seitenchecks für DE/EN sind grün. Der einzige offene Arbeitsbaum-Rest ist die letzte `data.js`-Änderung (Titel von 29.0), die noch nicht committed ist.
 
-**Umsetzungsstand:** BPE, Wochentag, Attention, Q/K/V, OV, Neuron, FFN, Unembedding, Schritt 29 und die EN-Formeln sind im Code geändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
+**Umsetzungsstand:** Ab P0-07 sind alle Code-Befunde umgesetzt: Attention/Values, Q/K/V, OV, Neuron, GELU, FFN, Unembedding, Schritt 29, QKV-Normalisierung, die EN-Formeln, P1-02 bis P1-13 sowie P2-01 bis P2-12. P0-12 bleibt bewusst unverändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
 
 ## Legende
 
@@ -376,7 +376,9 @@ Der Zustand ist also nicht bei jedem frischen Laden reproduzierbar. Er deutet au
 - 15: `Aktivierungen machen den Knick`
 - 16: `Tiefe Netze biegen die Kurve`
 
-### P1-04: 28.0: Grammatik und Quellenlage
+### P1-04: 28.0: Grammatik (behoben), Quellenlage dünn
+
+**Status:** Der Grammatikfehler ist behoben; die Quellenlage der Geschichtsfolie bleibt dünn und ist hier nicht weiter ausgebaut.
 
 **Folie:** 28.0, `Geschichte in zehn Schritten`
 
@@ -578,7 +580,9 @@ Gemeint ist „knickt bei null“ oder „faltet den Raum bei null“. „Faltet
 
 **Korrektur:** Eine Darstellung wählen und in Formel und UI gleich halten.
 
-### P2-07: 22.0: `Drache·Ritter` ohne Leerzeichen
+### P2-07: 22.0: `Drache·Ritter` ohne Leerzeichen (bereits korrekt)
+
+**Status:** Die Demo nutzt bereits ein Trenner-Element mit `margin: 0 5px`; im DOM-Text wirkt es nur ohne Leerzeichen. Kein Fix nötig.
 
 **Folie:** 22.0
 
@@ -640,31 +644,31 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 |---|---|---|
 | `gauss` | 3.x | Synthetische Daten sind im Plot als solche gekennzeichnet; gut. |
 | `tokenize` | 4.0 | Token-IDs und Subword-Splits sind illustrativ; kein Rechenfehler gefunden. |
-| `bpe` | 5.x | Startet mit Zeichen, während der Text Byte-Level beschreibt; siehe P0-01. |
-| `weekday` | 6.1 | Linie→Kreis→Linie ist sichtbar; der Begriff „Unterraum“ ist falsch; siehe P0-02. |
+| `bpe` | 5.x | Zeichen-BPE und Byte-BPE sind getrennt; die Demo ist als Zeichen-BPE markiert. |
+| `weekday` | 6.1 | Linie→Kreis→Linie ist sichtbar; der Unterraum-Begriff ist entfernt. |
 | `embedding` | 6.2/6.3 | Konkrete Vektoren und `≈ Königin` stimmen; 1D/2D/3D-Umschaltung geprüft. |
 | `manifold` | 7.0 | Nur Drehung/Rotation/Verschiebung; keine Skalierung/Scherung; siehe P0-05. |
 | `position` | 8.0 | Startzustand jetzt leer, Trail wird erst nach „Weiter“ aufgebaut; kein Prefill mehr. |
-| `qkv` | 9.x/10.x | Prozentanzeige kann transient >1000 % werden; siehe P0-16. |
+| `qkv` | 9.x/10.x | Gewichte werden vor der Anzeige normalisiert; Readout bleibt in `[0, 100]`. |
 | `induction` | 12.0–12.5 | 82 % in 12.1 und die 2.5–5B/0.15→0.4-nats-Zahlen in 12.5 sind gedeckt. |
-| `linear` | 13.0 | Text und Demo widersprechen sich bei den Parametern; siehe P0-10. |
+| `linear` | 13.0 | 2-Parameter-Neuron und 4-Parameter-Box sind erklärt. |
 | `gradient` | 14.0 | Loss-Werte und `p(Paris)=30 %` stimmen; Formatierung der x-Werte ist unruhig. |
-| `activation` | 15.0 | GELU-Begründung falsch; siehe P0-11. |
-| `mlp` | 16.0/17.0 | Dense/Aktivierung verwechselt; siehe P0-12. |
-| `ffn` | 18.0 | Formel aktiviert doppelt; siehe P0-13. |
-| `residual` | 19.0 | „Notizbuch“ ist klar als Analogie markiert; „bleiben lesbar“ zu stark. |
-| `unembed` | 20.x | `R^512` und Cosine/Logit; siehe P0-14/P1-08. |
+| `activation` | 15.0 | GELU-Begründung korrigiert. |
+| `mlp` | 16.0/17.0 | Dense/Aktivierung bewusst als Origami-Bild, kein Fix. |
+| `ffn` | 18.0 | Formel korrigiert: `dense` ist affin, die Aktivierung sitzt dazwischen. |
+| `residual` | 19.0 | „Notizbuch“ ist als Analogie markiert; „lesbar“ ist abgeschwächt. |
+| `unembed` | 20.x | `R^768`; Cosine und Logit sind getrennt. |
 | `loss` | 21.0 | `-log(0.30) ≈ 1.20` und `p-y` stimmen für Softmax-Cross-Entropy. |
-| `loop` | 22.0 | Sampling/Greedy/Top-p sind getrennt; Kontext-Metapher zu absolut. |
+| `loop` | 22.0 | Sampling/Greedy/Top-p getrennt; Kontext-Metapher korrigiert. |
 | `meadow` | 23.0 | „Naht“ ist als Visualisierung markiert; Mabrok/Expressibility Gap ist im Deep-Text korrekt. |
 | `worldmodel` | 24.x | Othello-Zahlen 8 Layer/8 Heads/512 Dim stimmen. |
 | `worldmap` | 25.x | Gurnee & Tegmark NYC/ridge/MLP/3000 Jahre stimmen. |
-| `agent` | 26.0 | Loop und Tool-Ausgaben sind klar. |
-| `hallucination` | 27.0 | Typen und Ji et al. sind okay; Eiffelturm-300-m-Antwort sollte als falsch markiert werden. |
-| `history` | 28.0 | Chronologie ist didaktisch, aber dünn belegt; Grammatikfehler. |
-| `chineseroom` | 29.0/31.x | Doppelung und falscher „nächste Folie“-Verweis. |
+| `agent` | 26.0 | Loop und Tool-Ausgaben sind klar; Untertitel korrigiert. |
+| `hallucination` | 27.0 | Typen und Ji et al. sind okay; 300 m ist jetzt als falsch markiert. |
+| `history` | 28.0 | Grammatik korrigiert; Llull-Grenze ist im Label markiert. |
+| `chineseroom` | 29.0/31.x | 29.0 ist jetzt das Chinesische Zimmer; kein Duplikat, kein falscher Verweis. |
 | `riskmap` | 30.x | Mechanismen und Gegenmittel sind sachlich; Quellen sind knapp, aber vorhanden. |
-| `consciousness` | 31.x | Theorien sind getrennt; „was Qualia sind, weiß niemand“ zu stark. |
+| `consciousness` | 31.x | Theorien sind getrennt; Qualia-Formulierung abgeschwächt. |
 
 ### Ohne inhaltlichen Befund geprüft
 
@@ -722,6 +726,8 @@ Die leeren `innerText`-Werte bei 12.0/12.2/12.3/12.4/12.5, 11.1, 24.1/24.2 und 2
 
 ## Empfohlene Reihenfolge
 
+Die Liste ist ab P0-07 abgearbeitet. Offen bleiben nur die frühen P0-03 bis P0-06 und der vollständige Render-/Link-Check.
+
 1. **P0-07, P0-08, P0-09, P0-13:** Attention- und FFN-Formeln zuerst, weil sie das technische Rückgrat sind.
 2. **P0-01, P0-02, P0-04, P0-14:** Begriffe und Modellgrößen, bevor Leser:innen sie weiterverwenden.
 3. **P0-10, P0-11:** Neuron und GELU.
@@ -741,7 +747,8 @@ Die leeren `innerText`-Werte bei 12.0/12.2/12.3/12.4/12.5, 11.1, 24.1/24.2 und 2
 
 ## Prüfstatus
 
-- **Inhalt:** vollständig gesichtet; die Befunde oben sind die Arbeitsliste.
+- **Inhalt:** Befunde ab P0-07 sind umgesetzt; P0-12 bleibt bewusst unverändert. P0-03, P0-04, P0-05 und P0-06 liegen vor diesem Block und bleiben offen.
+- **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen.
 - **Layout:** direkte Sprünge behoben; ein vollständiger Render-Sweep über alle Lessons steht noch aus.
 - **Quellen:** tragende Quellen geprüft; vollständiger Link-Check offen.
-- **EN:** Text gesichtet; Formel-Labels und einzelne Demo-Texte noch nicht durchgehend übersetzt.
+- **EN:** Formel-Labels und die geänderten Demo-/Textstellen sind übersetzt; vollständiger EN-Durchlauf offen.

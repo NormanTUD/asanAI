@@ -75,7 +75,7 @@
       var cur = current() || { a: 0, b: 0 };
       var rows = data.examples.xs.map(function (x, i) {
         var yhat = cur.a * x + cur.b;
-        return '<span><b>x ' + x + '</b><small>y ' + data.examples.ys[i].toFixed(2) + ' · ŷ ' + yhat.toFixed(2) + '</small></span>';
+        return '<span><b>x ' + x.toFixed(3) + '</b><small>y ' + data.examples.ys[i].toFixed(2) + ' · ŷ ' + yhat.toFixed(2) + '</small></span>';
       }).join("");
       tableEl.innerHTML = rows;
     }

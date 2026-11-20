@@ -314,13 +314,13 @@
       ctx.fillStyle = C.green;
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText("x′", ex + 7, ey - 6);
+      ctx.fillText("r", ex + 7, ey - 6);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       vector.setAttribute("aria-label", DE
-        ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
-        : "2-D embeddings. Weighted sum of the value vectors for " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ").");
+        ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "; r = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
+        : "2-D embeddings. Weighted sum of the value vectors for " + ts[selected] + "; r = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ").");
     }
     function renderTable() {
       var ts = tokens(), m = matrix();
@@ -331,7 +331,7 @@
           var pct = Math.round(wt * 100);
           var alpha = Math.min(0.80, 0.10 + wt * 0.95);
           var ink = wt > 0.48 ? "#fff" : C.ink;
-          html += '<td style="background:rgba(18,117,172,' + alpha.toFixed(2) + ');color:' + ink + '">' + pct + '</td>';
+          html += '<td style="background:rgba(18,117,172,' + alpha.toFixed(2) + ');color:' + ink + '">' + pct + '%</td>';
         });
         html += '</tr>';
       });
@@ -348,14 +348,14 @@
         var label = texText(formulaLabel(ts[j]));
         terms.push('\\underbrace{' + wt.toFixed(2) + '}_{\\text{' + label + '}}\\cdot v_{\\text{' + label + '}}');
       });
-      var t = '\\underbrace{x\'}_{\\substack{\\text{' + (DE ? 'neuer Vektor' : 'new vector') + '}\\\\ \\text{' + (DE ? 'für' : 'for') + ' } \\text{' + texText(formulaLabel(ts[selected])) + '}}} = ' +
+      var t = '\\underbrace{r}_{\\substack{\\text{' + (DE ? 'Mischung' : 'mixture') + '}\\\\ \\text{' + (DE ? 'für' : 'for') + ' } \\text{' + texText(formulaLabel(ts[selected])) + '}}} = ' +
         '\\underbrace{' + terms.join(' + ') + '}_{\\substack{\\text{' + (DE ? 'gewichtete Summe' : 'weighted sum') + '}\\\\ \\text{' + (DE ? 'Summe aller Gewichte' : 'sum of all weights') + ' } = 1}}';
       formulaEl.innerHTML = '<div class="ls-math" data-tex="' + escAttr(t) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(t) + '</code></div>';
       if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
     }
     function renderReadout() {
       var ts = tokens(), row = matrix()[selected], key = topKey(row, selected);
-      readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(ts[selected]) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(ts[key]) + ' ' + Math.round(row[key] * 100) + '%</b></span><span><b>x′</b> ' + 'x′ = Σ w · v</span>';
+      readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(ts[selected]) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(ts[key]) + ' ' + Math.round(row[key] * 100) + '%</b></span><span><b>r</b> ' + 'r = Σ w · v</span>';
     }
     function animateRow(target) {
       if (animRaf) cancelAnimationFrame(animRaf);

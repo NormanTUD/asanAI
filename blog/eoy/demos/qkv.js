@@ -567,7 +567,16 @@
       setReadout('<span><b>Query</b> ' + (DE ? "es" : "it") + '</span><span><b>' + (DE ? "verbunden" : "connected") + '</b> ' + tokens.length + '/' + tokens.length + '</span>' + top.map(function (x) { return '<span><b>' + api.esc(x.tok) + '</b> ' + (x.w * 100).toFixed(1) + '%</span>'; }).join(""));
       canvas.setAttribute("aria-label", DE ? "Attention als vollverbundener Graph: alle Token im Kreis, Kanten von der Query es zu jedem Token mit unterschiedlicher Stärke. Fahre über eine Kante, um Verbindung und Prozentwert zu sehen." : "Attention as a fully connected graph: all tokens in a circle, edges from the query it to every token with different strength. Hover an edge to see the connection and percentage.");
     }
+    function normalizeWeights() {
+      var sum = weights.reduce(function (a, b) { return a + b; }, 0);
+      if (!isFinite(sum) || sum <= 1e-9) {
+        weights = tokens.map(function () { return 1 / tokens.length; });
+      } else if (Math.abs(sum - 1) > 1e-9) {
+        weights = weights.map(function (w) { return w / sum; });
+      }
+    }
     function draw() {
+      normalizeWeights();
       if (!size) return;
       if (view === "simplex") drawSimplex();
       else if (view === "graph") drawGraph(performance.now());

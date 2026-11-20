@@ -20,7 +20,7 @@
         sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
       },
       {
-        year: "Antike–1305", label: "Logik", title: "Denken als Regelwerk",
+        year: "Antike–1305", label: "Logik · Llull 1305", title: "Denken als Regelwerk",
         text: "Aristoteles ordnet Schlüsse in Formen. Pāṇini beschreibt Sanskrit-Grammatik als Regelsystem. Llull kombiniert Begriffe auf drehenden Scheiben. Die Idee dahinter: Denken lässt sich als Regelwerk schreiben, nicht nur als Erfahrung.",
         images: [{ src: "../FigurScheiben.jpg", alt: "Llulls Ars Magna mit drehenden Begriffsscheiben", cap: "Llulls Ars Magna, 1305. Ramon Llull, Public Domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
         sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }]
@@ -96,7 +96,7 @@
         sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
       },
       {
-        year: "Antiquity–1305", label: "Logic", title: "Thought as a rulebook",
+        year: "Antiquity–1305", label: "Logic · Llull 1305", title: "Thought as a rulebook",
         text: "Aristotle arranges inferences into forms. Pāṇini describes Sanskrit grammar as a rule system. Llull combines concepts on rotating wheels. The idea: thought can be written as a rulebook, not only lived as experience.",
         images: [{ src: "../FigurScheiben.jpg", alt: "Llull's Ars Magna with rotating concept wheels", cap: "Llull's Ars Magna, 1305. Ramon Llull, public domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
         sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }]

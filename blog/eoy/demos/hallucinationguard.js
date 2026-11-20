@@ -51,12 +51,12 @@
         risk = 18;
       } else {
         answer = DE ? "Der Eiffelturm ist 300 m hoch." : "The Eiffel Tower is 300 m tall.";
-        cite = DE ? "Keine Quelle · aus dem Gedächtnis" : "No source · from memory";
+        cite = DE ? "Keine Quelle · aus dem Gedächtnis · falsch (330 m mit Antenne)" : "No source · from memory · wrong (330 m with antenna)";
         risk = 86;
       }
       if (cot) {
         htmlSteps += '<div class="ls-hg-step"><b>1</b><span>' + (DE ? "Frage: Wie hoch ist der Eiffelturm mit Antenne?" : "Question: how tall is the Eiffel Tower with its antenna?") + '</span></div>';
-        htmlSteps += '<div class="ls-hg-step"><b>2</b><span>' + (rag ? (DE ? "S1 sagt: 330 m mit Antenne." : "S1 says: 330 m with antenna.") : (DE ? "Ich erinnere mich an 300 m; keine Quelle im Kontext." : "I recall 300 m; no source in the context.")) + '</span></div>';
+        htmlSteps += '<div class="ls-hg-step"><b>2</b><span>' + (rag ? (DE ? "S1 sagt: 330 m mit Antenne." : "S1 says: 330 m with antenna.") : (DE ? "Ich erinnere mich an 300 m; das ist zu niedrig, aber keine Quelle im Kontext." : "I recall 300 m; that is too low, but no source is in the context.")) + '</span></div>';
         htmlSteps += '<div class="ls-hg-step"><b>3</b><span>' + (DE ? "Schluss: " : "Conclusion: ") + answer + '</span></div>';
       }
       if (verify) {

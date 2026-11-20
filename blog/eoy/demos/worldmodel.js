@@ -763,7 +763,7 @@
       var boardY = narrow ? 330 : 132;
       var questions = DE ? [
         ["Was ist die Aktivierung?", "Der Zustand nach Schicht 6: 512 Zahlen pro Token."],
-        ["Was macht der Probe pro Feld?", "Für jedes Feld und jeden Zustand eine eigene Richtung."],
+        ["Was macht die Probe pro Feld?", "Für jedes Feld und jeden Zustand eine eigene Richtung."],
         ["Wie entsteht ein Score?", "Skalarprodukt: Zahl für Zahl multiplizieren und summieren."],
         ["Warum Softmax?", "Drei Scores werden zu drei Wahrscheinlichkeiten; Argmax wählt."],
         ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten pro Feld. Argmax wählt die größte."],
