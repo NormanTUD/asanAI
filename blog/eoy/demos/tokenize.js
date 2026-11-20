@@ -55,13 +55,13 @@
         '<div class="ls-tokenize-stats"></div>' +
       '</div>' +
       '<div class="ls-bpe" hidden>' +
-        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: einzelne Zeichen" : "Start: individual characters") + '</span></div>' +
+        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: Zeichen-BPE · einzelne Zeichen" : "Start: character-level BPE · individual characters") + '</span></div>' +
         '<div class="ls-bpe-equation" aria-live="polite"></div>' +
         '<div class="ls-bpe-corpus" aria-live="polite"></div>' +
         '<div class="ls-bpe-stage" aria-live="polite"></div>' +
         '<div class="ls-bpe-meters" aria-live="polite"></div>' +
         '<div class="ls-bpe-counts" aria-live="polite"></div>' +
-        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar." : "Each merge replaces a frequent pair with a new symbol. The splits are learned from the training data: as much text as possible with as few tokens as possible. The word remains reconstructable from its symbols; the text is lossless.") + '</p>' +
+        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Diese Demo zeigt Zeichen-BPE; Byte-BPE (z. B. GPT-2) startet mit 256 Byte-Werten." : "Each merge replaces a frequent pair with a new symbol. The splits are learned from the training data: as much text as possible with as few tokens as possible. The word remains reconstructable from its symbols; the text is lossless. This demo shows character-level BPE; byte-level BPE (e.g. GPT-2) starts with 256 byte values.") + '</p>' +
       '</div>' +
       '</div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
@@ -193,13 +193,13 @@
       }).join("");
       var mergeText = st.merge
         ? (DE ? "Stufe " + step + ": „" + st.merge.a + "“ + „" + st.merge.b + "“ → „" + st.merge.a + st.merge.b + "“ (" + st.merge.count + "×)" : "Stage " + step + ": “" + st.merge.a + "” + “" + st.merge.b + "” → “" + st.merge.a + st.merge.b + "” (" + st.merge.count + "×)")
-        : (DE ? "Start: Alles ist in einzelne Zeichen getrennt." : "Start: everything is split into individual characters.");
+        : (DE ? "Start (Zeichen-BPE): Alles ist in einzelne Zeichen getrennt." : "Start (character-level BPE): everything is split into individual characters.");
       var nextText = next && next.merge
         ? (DE ? "Nächster Merge: „" + next.merge.a + "“ + „" + next.merge.b + "“ (" + next.merge.count + "×)" : "Next merge: “" + next.merge.a + "” + “" + next.merge.b + "” (" + next.merge.count + "×)")
         : (DE ? "Fertig: vier Merges." : "Done: four merges.");
       var eq = st.merge
         ? '<span class="ls-bpe-eq-part">' + api.esc(st.merge.a) + '</span><span class="ls-bpe-eq-op">+</span><span class="ls-bpe-eq-part">' + api.esc(st.merge.b) + '</span><span class="ls-bpe-eq-op">→</span><span class="ls-bpe-eq-part is-new">' + api.esc(st.merge.a + st.merge.b) + '</span><span class="ls-bpe-eq-count">' + st.merge.count + '×</span>'
-        : '<span class="ls-bpe-eq-note">' + (DE ? "Start: Alles ist in einzelne Zeichen getrennt." : "Start: everything is split into individual characters.") + '</span>';
+        : '<span class="ls-bpe-eq-note">' + (DE ? "Start (Zeichen-BPE): Alles ist in einzelne Zeichen getrennt." : "Start (character-level BPE): everything is split into individual characters.") + '</span>';
       equationEl.innerHTML = eq;
       var tokensNow = totalSymbols(st.words);
       var tokensStart = totalSymbols(stages[0].words);

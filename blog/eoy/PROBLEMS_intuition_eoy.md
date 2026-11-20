@@ -8,6 +8,25 @@
 
 **Zweck.** Diese Datei sammelt jeden gefundenen inhaltlichen, mathematischen, sprachlichen und Demo-Fehler. Layoutsprünge wurden direkt behoben; alles andere steht hier als Arbeitsliste. Die Datei ist kein Ersatz für die Quelltexte, sondern der Prüfstand.
 
+## Arbeitsstand
+
+- [x] Bestandsaufnahme und Problemsammlung
+- [ ] BPE: Byte- und Zeichen-Ebene trennen
+- [ ] Wochentags-Kreis: Unterraum-Behauptung entfernen
+- [ ] Attention: Values statt Tokens, Gewichte zu 1
+- [ ] Q/K/V: Projektionen statt gelernter Gewichte
+- [ ] OV-Formel: doppeltes `W_V` entfernen
+- [ ] Neuron: 2 vs. 4 Parameter erklären
+- [ ] FFN: doppelte Aktivierung entfernen
+- [ ] Unembedding: `R^768` statt `R^512`
+- [ ] Schritt 29: nächste Folie und Duplikat
+- [ ] EN-Formeln: deutsche Labels übersetzen
+- [ ] Quellen: L6, WebArena, RoPE/ALiBi, Newton/Julian aus der Liste entfernen
+- [ ] Rattenvergleich: als bewusste Analogie behalten
+- [ ] Verifikation: Syntax und ausgewählte Seiten
+
+**Gerade in Arbeit:** BPE. Die Textstelle und die Demo-Beschriftung werden zuerst angepasst.
+
 ## Legende
 
 - **P0:** mathematisch oder faktisch falsch, irreführend oder ohne belastbare Quelle. Vor Veröffentlichung beheben.
