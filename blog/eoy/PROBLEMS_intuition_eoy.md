@@ -25,7 +25,7 @@
 - [x] Rattenvergleich: als bewusste Analogie behalten
 - [x] Verifikation: Syntax und ausgewählte Seiten
 
-**Gerade in Arbeit:** abgeschlossen. Geprüft mit `node --check` für `data.js`, `attention.js` und `tokenize.js`; 15 Chromium-Seitenchecks für DE/EN sind grün. Der einzige offene Arbeitsbaum-Rest ist die letzte `data.js`-Änderung (Titel von 29.0), die noch nicht committed ist.
+**Gerade in Arbeit:** abgeschlossen. Geprüft mit `node --check` für alle EOY-JS-Dateien, 95 statischen MD-Assertions und Chromium/CDP: alle 61 Substeps in DE und EN sowie 62 Step-Seiten liefen ohne JS-Fehler. Die Änderungen im Working Tree sind noch nicht committed.
 
 **Umsetzungsstand:** P0-01 bis P0-06 sind nachgezogen; ab P0-07 sind alle Code-Befunde umgesetzt: Attention/Values, Q/K/V, OV, Neuron, GELU, FFN, Unembedding, Schritt 29, QKV-Normalisierung, die EN-Formeln, P1-02 bis P1-13 sowie P2-01 bis P2-12. P0-12 bleibt bewusst unverändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
 
@@ -756,7 +756,7 @@ Die Liste ist abgearbeitet. Offen bleiben nur P0-12 (bewusst), die dünne Quelle
 ## Prüfstatus
 
 - **Inhalt:** P0-01 bis P0-06 sind nachgezogen; ab P0-07 sind alle Code-Befunde umgesetzt. P0-12 bleibt bewusst unverändert; P1-04 hat weiterhin eine dünne Quellenlage.
-- **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen.
+- **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen. Alle 61 Substeps in DE/EN liefen ohne JS-Fehler.
 - **Layout:** direkte Sprünge behoben; ein vollständiger Render-Sweep über alle Lessons steht noch aus.
 - **Quellen:** tragende Quellen geprüft; vollständiger Link-Check offen.
 - **EN:** Formel-Labels und die geänderten Demo-/Textstellen sind übersetzt; vollständiger EN-Durchlauf offen.
