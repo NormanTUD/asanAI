@@ -622,7 +622,7 @@
     {
       kicker: "1 Neuron",
       title: "Was sind neuronale Netze?",
-      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein lineares Neuron: $\\hat y = w\\cdot x + b$. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Architektur-Box in 2.1 zeigt ein Neuron mit zusätzlicher Ausgangsprojektion; dort kommen zwei weitere Parameter und eine Aktivierung hinzu. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
+      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein lineares Neuron: $\\hat y = w\\cdot x + b$. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Box `mod-layer` auf dieser Folie zeigt ein Neuron mit zusätzlicher Ausgangsprojektion; dort kommen zwei weitere Parameter und eine Aktivierung hinzu. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
       watch: "Starte das Training. Wie reagiert die Gerade? Warum bleiben die Fehler groß?",
       demoState: { scene: "model", phase: "linear" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
@@ -662,7 +662,7 @@
     {
       kicker: "1 neuron",
       title: "What are neural networks?",
-      body: "A neural network is first a parameterised function. The smallest example is a linear neuron: $\\hat y = w\\cdot x + b$. It has two parameters and can draw only a straight line. The architecture box in 2.1 shows a neuron with an additional output projection; that version has two more parameters and an activation. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape.",
+      body: "A neural network is first a parameterised function. The smallest example is a linear neuron: $\\hat y = w\\cdot x + b$. It has two parameters and can draw only a straight line. The `mod-layer` box on this slide shows a neuron with an additional output projection; that version has two more parameters and an activation. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape.",
       watch: "Start training. How does the line react? Why do the errors stay large?",
       demoState: { scene: "model", phase: "linear" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
@@ -993,7 +993,7 @@
   var philosophySteps = DE ? [
     {
       kicker: "Philosophie",
-      title: "Hat eine KI Bewusstsein?",
+      title: "Das Chinesische Zimmer",
       body: "Das Chinesische Zimmer ist Searles Gedankenexperiment: Du bekommst chinesische Zeichen, ein Regelbuch und gibst passende Zeichen zurück. Von außen wirkt das wie Verstehen; innen bleiben es Regeln. Searle (1980) unterscheidet Symbolmanipulation von Bedeutung. Ob das ganze System versteht, ist umstritten.",
       watch: "",
       demoState: { scene: "chineseroom" },
@@ -1007,7 +1007,7 @@
   ] : [
     {
       kicker: "Philosophy",
-      title: "Does an AI have consciousness?",
+      title: "The Chinese room",
       body: "The Chinese room is Searle's thought experiment: you receive Chinese characters, a rule book, and return matching characters. From outside it looks like understanding; inside it remains rule-following. Searle (1980) distinguishes symbol manipulation from meaning. Whether the whole system understands is disputed.",
       watch: "",
       demoState: { scene: "chineseroom" },

@@ -23,9 +23,9 @@
 - [x] EN-Formeln: deutsche Labels übersetzen
 - [x] Quellen: nicht gewünschte Quellenforderungen aus der Liste entfernt
 - [x] Rattenvergleich: als bewusste Analogie behalten
-- [ ] Verifikation: Syntax und ausgewählte Seiten
+- [x] Verifikation: Syntax und ausgewählte Seiten
 
-**Gerade in Arbeit:** Verifikation. Die Code-Änderungen sind umgesetzt; als Nächstes werden Syntax, ausgewählte Seiten und dieser Bericht abgeglichen.
+**Gerade in Arbeit:** abgeschlossen. Geprüft mit `node --check` für `data.js`, `attention.js` und `tokenize.js`; 15 Chromium-Seitenchecks für DE/EN sind grün. Der einzige offene Arbeitsbaum-Rest ist die letzte `data.js`-Änderung (Titel von 29.0), die noch nicht committed ist.
 
 **Umsetzungsstand:** BPE, Wochentag, Attention, Q/K/V, OV, Neuron, FFN, Unembedding, Schritt 29 und die EN-Formeln sind im Code geändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
 
@@ -46,7 +46,7 @@ Die schwersten Probleme sind:
 3. **Attention addiert „Tokens prozentual“.** Gemeint sind Value-Vektoren; die Demo rechnet außerdem mit Prozentkoeffizienten, deren Summe 100 statt 1 ist.
 4. **Q/K/V werden als „gelernte Gewichte“ bezeichnet.** Es sind berechnete Vektoren aus gelernten Projektionen.
 5. **Die OV-Formel wendet `W_V` doppelt an.** `W_O W_V v_j` ist falsch, wenn `v_j = W_V x_j` schon eingesetzt ist.
-6. **Neuron-Parameter widersprechen der Architektur-Box.** Text: 2 Parameter; `mod-layer` in 2.1: 4 Parameter plus Aktivierung.
+6. **Neuron-Parameter widersprechen der Architektur-Box.** Text: 2 Parameter; `mod-layer` auf der Neuron-Folie: 4 Parameter plus Aktivierung.
 7. **Dense und Aktivierung werden verwechselt.** Die Biegung kommt von der Nichtlinearität, nicht von der Dense-Schicht.
 8. **Die FFN-Formel aktiviert doppelt.** `dense` enthält bereits eine Aktivierung; `activation(dense1(x))` aktiviert ein zweites Mal.
 9. **`R^512` ist nicht GPT-2 small.** GPT-2 small hat 768 Dimensionen; 512 ist Othello-GPT.
@@ -213,21 +213,21 @@ Wenn `v_j = W_V x_j` bereits der Value-Vektor ist, ist `W_O W_V v_j` eine doppel
 
 ### P0-10: Neuron: 2 Parameter im Text, 4 in der Architektur-Box
 
-**Folie:** 13.0, Text `Was sind neuronale Netze?`; Kontrast: `mod-layer` in 2.1
+**Folie:** 13.0, Text `Was sind neuronale Netze?`; Kontrast: `mod-layer` auf derselben Folie
 
 **Befund:** Der Text in 13.0 sagt:
 
 > „Das kleinste Beispiel ist ein Neuron: $\hat y = w\cdot x + b$. Es hat zwei Parameter“
 
-Die Architektur-Box `mod-layer` in 2.1 sagt dagegen:
+Die Box `mod-layer` in 13.0 sagt dagegen:
 
 > „w, b, v und c sind Parameter“ und zeigt eine Aktivierung.
 
-Damit beschreiben Text und Architektur-Box nicht dieselbe Funktion.
+Damit beschreiben Text und Box nicht dieselbe Funktion.
 
 **Risiko:** Leser:innen zählen Parameter falsch.
 
-**Korrektur:** Entweder die Demo auf ein lineares Neuron mit `w`, `b` reduzieren oder im Text klar sagen: „Das Demo-Neuron hat vier Parameter und eine Aktivierung; das einfachste lineare Neuron hat zwei.“
+**Korrektur:** Entweder die Demo auf ein lineares Neuron mit `w`, `b` reduzieren oder im Text klar sagen: „Das Modell-Neuron hat vier Parameter und eine Aktivierung; das einfachste lineare Neuron hat zwei.“
 
 ### P0-11: GELU: „nicht monoton, daher nicht umkehrbar“ ist kein gültiger Schluss
 
