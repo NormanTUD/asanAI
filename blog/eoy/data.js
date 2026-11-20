@@ -777,14 +777,11 @@
     {
       kicker: "Mannigfaltigkeiten",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehung untereinander die Bedeutung enthält, wird Übersetzung zu einer Abbildung zwischen Punktwolken: Translation, Rotation, Skalierung und Scherung. Die lokale Struktur einer Punktwolke kann wie eine Mannigfaltigkeit aussehen; der Vietoris–Rips-Komplex macht ihre Nachbarschaften sichtbar.\n\nFindet man eine Abbildung, die eine Wolke auf die andere legt, ist das ein Modell für Übersetzung: Semantische Beziehungen liegen in beiden Sprachen ähnlich, auch wenn die konkreten Tokens andere sind.",
-      watch: "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
+      body: "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Wörtern. Man nennt solche Gebilde Mannigfaltigkeit: etwas, das lokal einem klassisch-euklidischen Raum ähnelt, aber global eine ganz andere Struktur haben kann. Übersetzung ist dann dasselbe wie Verschieben, Skalieren und Drehen dieser Mannigfaltigkeit.\n\nDiese Demo ist stark vereinfacht. Reale Modelle haben tausende Dimensionen, und die Relationen sind nicht so ähnlich wie hier, aber das Prinzip ist dasselbe.\n\nWichtig sind nicht die konkreten Punkte, sondern ihre Nachbarschaften.",
+      watch: "",
       demoState: { scene: "manifold" },
-      context: "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
       deep: "Eine Mannigfaltigkeit sieht lokal wie ein euklidischer Raum aus; global kann sie gekrümmt sein, muss es aber nicht. Die Übersetzung entspricht hier einer Abbildung zwischen zwei Punktwolken, einer Kombination aus Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
       boxes: [
-        box("man-2", "Grenze", "Was ist vereinfacht?", "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie."),
-        box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt, extrem hochdimensional und für Menschen schwer zu sehen."),
         box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.")
       ],
       sources: [
@@ -797,14 +794,11 @@
     {
       kicker: "Manifolds",
       title: "From relations to translation",
-      body: "If you have points in this highly abstract space whose relations to one another carry meaning, translation becomes a map between point clouds: translation, rotation, scaling, and shear. The local structure of a point cloud can look like a manifold; the Vietoris–Rips complex makes its neighbourhoods visible.\n\nIf you find a map that lays one cloud onto the other, that is a model for translation: semantic relations sit similarly in both languages, even when the concrete tokens differ.",
-      watch: "Rotate, roll, and translate the Japanese cloud. Hover the points to see the words. Click “Find translation” or “Next”.",
+      body: "Meaning lies not in the individual points but in the relations between them. Different languages have roughly the same relations between words. Such a structure is called a manifold: something that locally resembles a classical Euclidean space but can have a completely different global structure. Translation is then the same as shifting, scaling, and rotating this manifold.\n\nThis demo is strongly simplified. Real models have thousands of dimensions, and the relations are not as similar as they are here, but the principle is the same.\n\nWhat matters is not the concrete points but their neighbourhoods.",
+      watch: "",
       demoState: { scene: "manifold" },
-      context: "The demo is strongly simplified: two point clouds, many words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
       deep: "A manifold looks locally like Euclidean space; globally it can be curved, but it need not be. Here translation is a map between two point clouds, a combination of rotation and translation: when the clouds coincide, words of the same meaning lie on top of each other.",
       boxes: [
-        box("man-2", "Limit", "What is simplified?", "The point clouds are small and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations; the edges show one neighbourhood, not the whole geometry."),
-        box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the shapes are abstract, extremely high-dimensional, and hard for humans to see."),
         box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like $R^n$, the familiar Euclidean space: every point has a chart that maps a neighbourhood onto an open set in $R^n$, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus.")
       ],
       sources: [
