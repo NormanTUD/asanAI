@@ -38,10 +38,10 @@
       if (trail[trail.length - 1] !== target) trail.push(target);
       trail.sort(function (a, b) { return a - b; });
     }
-    var trail = [pos];
     var clamp = api.util.clamp;
-    addTrailTo(100000);
+    var trail = [];
     var trailPoints = [], hoverTrail = -1;
+    var reveal = false;
     var sweep = null;
     var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
@@ -146,6 +146,27 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
+      var origin = P([0, 0, 0]);
+      function drawToken() {
+        ctx.beginPath(); ctx.arc(origin.x, origin.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = Cc.petrol; ctx.fill();
+        ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
+        if (api.visual && api.visual.tokenChip) {
+          api.visual.tokenChip(ctx, DE ? "Katze" : "cat", origin.x, origin.y - 16, Cc.petrol, Cc, { size: api.font("canvas-sm") });
+          ctx.fillStyle = Cc.muted;
+          ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(DE ? "Token" : "token", origin.x, origin.y + 20);
+          ctx.textBaseline = "alphabetic";
+        }
+      }
+      if (!reveal) {
+        drawToken();
+        curve.__lsPosition = { pos: pos, trail: [], sweeping: false, metric: "angle", start: curvePoint(0), current: curvePoint(posAnim), distance: 0, angle: 0 };
+        readout.innerHTML = "";
+        return;
+      }
       trailPoints = [];
       trail.forEach(function (p) {
         var pp = P(unit3(curvePoint(p)));
@@ -178,7 +199,6 @@
       var startP = unit3(startVec);
       var curP = unit3(curVec);
       var sp = P(startP), cp = P(curP);
-      var origin = P([0, 0, 0]);
       ctx.save();
       ctx.setLineDash([3, 4]);
       ctx.strokeStyle = Cc.petrol;
@@ -189,15 +209,7 @@
       ctx.lineTo(cp.x, cp.y);
       ctx.stroke();
       ctx.restore();
-      if (api.visual && api.visual.tokenChip) {
-        api.visual.tokenChip(ctx, DE ? "Katze" : "cat", origin.x, origin.y - 16, Cc.petrol, Cc, { size: api.font("canvas-sm") });
-        ctx.fillStyle = Cc.muted;
-        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        ctx.fillText(DE ? "Token" : "token", origin.x, origin.y + 20);
-        ctx.textBaseline = "alphabetic";
-      }
+      drawToken();
       var dot = Math.max(-1, Math.min(1, startP[0] * curP[0] + startP[1] * curP[1] + startP[2] * curP[2]));
       var theta = Math.acos(dot);
       ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.8;
@@ -276,6 +288,7 @@
       }
     }
     heat.addEventListener("pointerdown", function (e) {
+      reveal = true;
       var r = heat.getBoundingClientRect();
       var padL = 34, padT = 8, padB = 22;
       var y = (e.clientY - r.top - padT) / (r.height - padT - padB);
@@ -306,7 +319,7 @@
       drag.x = e.clientX; drag.y = e.clientY; drawCurve();
     });
     window.addEventListener("pointerup", function () { drag = null; });
-    posEl.addEventListener("input", function () { sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; addTrailTo(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
+    posEl.addEventListener("input", function () { reveal = true; sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; addTrailTo(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
     window.addEventListener("resize", resize);
     function onTheme() { C = api.colors(); draw(); }
     window.addEventListener("tm:theme", onTheme);
@@ -314,6 +327,7 @@
     raf = requestAnimationFrame(loop);
     function finishSweep() {
       if (!sweep) return;
+      reveal = true;
       sweep = null;
       pos = 100000; posAnim = 100000;
       trail = [];
@@ -326,12 +340,14 @@
     function next() {
       if (sweep) { finishSweep(); return true; }
       if (pos >= 100000) return false;
+      reveal = true;
       sweep = { from: pos, to: 100000, start: performance.now(), duration: 5000 };
+      drawCurve();
       return true;
     }
     function prev() {
       if (sweep) { sweep = null; return true; }
-      if (pos > 0) { pos = 0; posAnim = 0; addTrailTo(0); if (posEl) { posEl.value = "0"; posEl.nextElementSibling.textContent = "0"; } draw(); return true; }
+      if (pos > 0) { reveal = true; pos = 0; posAnim = 0; addTrailTo(0); if (posEl) { posEl.value = "0"; posEl.nextElementSibling.textContent = "0"; } draw(); return true; }
       return false;
     }
     return {
