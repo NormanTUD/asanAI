@@ -250,6 +250,38 @@
       });
       return { pos: pos, steps: steps };
     }
+    function texNum(x) {
+      if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x));
+      return x.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+    }
+    function findWordId(token, withZ) {
+      var found = null;
+      wordIdsForDim(withZ).forEach(function (id) {
+        if (WORDS[id].label[0].toLowerCase() === token.toLowerCase() ||
+            WORDS[id].label[1].toLowerCase() === token.toLowerCase() ||
+            id.toLowerCase() === token.toLowerCase()) found = id;
+      });
+      return found;
+    }
+    function vectorExprTex(expr, dims) {
+      var toks = expr.match(/[A-Za-z]+|\d+|[+\-*()/]/g) || [];
+      var parts = [];
+      toks.forEach(function (t) {
+        if (t === "+" || t === "-") { parts.push(t); return; }
+        if (t === "*") { parts.push("\\cdot"); return; }
+        if (t === "/") { parts.push("\\div"); return; }
+        if (t === "(") { parts.push("\\left("); return; }
+        if (t === ")") { parts.push("\\right)"); return; }
+        if (/^\d+$/.test(t)) { parts.push(t); return; }
+        var id = findWordId(t, dims === 3);
+        if (!id) { parts.push("\\text{" + t + "}"); return; }
+        var v = WORDS[id].v.slice(0, dims === 1 ? 1 : 2);
+        if (dims === 3) v.push(WORDS[id].z);
+        var body = dims === 1 ? texNum(v[0]) : "\\begin{pmatrix}" + v.map(texNum).join("\\\\") + "\\end{pmatrix}";
+        parts.push("\\underbrace{" + body + "}_{\\text{" + wordLabel(id) + "}}");
+      });
+      return parts.join(" ");
+    }
     function normPoint(v) {
       return { x: (v[0] - 12.5) / 15, y: v[1] / 22, z: v.length > 2 ? v[2] : 0 };
     }
@@ -710,7 +742,7 @@
         var bLabel = text(b.label);
         var targetLabel = text(target.label);
         readout.innerHTML = '<b>' + esc(aLabel) + '</b> + <b>' + esc(bLabel) + '</b> = <b>' + esc(targetLabel) + '</b>';
-        setTex("\\underbrace{\\underbrace{\\text{" + aLabel + "}}_{\\text{" + (DE ? "Start" : "start") + "}} + \\underbrace{\\text{" + bLabel + "}}_{\\text{" + (DE ? "Schritt" : "step") + "}}}_{\\text{" + (DE ? "Bedeutungen addieren" : "add meanings") + "}} = \\underbrace{\\text{" + targetLabel + "}}_{\\text{" + (DE ? "Ziel" : "target") + "}}");
+        setTex("\\underbrace{" + texNum(a.value) + "}_{\\text{" + aLabel + "}} + \\underbrace{" + texNum(b.value) + "}_{\\text{" + bLabel + "}} = \\underbrace{" + texNum(target.value) + "}_{\\text{" + targetLabel + "}}");
         return;
       }
       var cr = currentResult();
@@ -737,7 +769,10 @@
       if (result) {
         readout.innerHTML = '<b>' + esc(example ? text(example.label) : "") + '</b> · (' + result.v.map(function (x) { return esc(x.toFixed(1)); }).join(', ') + ') · ' +
           (DE ? "nächstes Wort" : "nearest word") + ': <b>' + esc(wordLabel(result.near)) + '</b>';
-        setTex("\\underbrace{\\text{" + (example ? text(example.label) : "") + "}}_{\\text{" + (DE ? "Vektoren addieren" : "add the vectors") + "}} = \\begin{pmatrix}" + result.v.map(function (x) { return x.toFixed(1); }).join("\\\\") + "\\end{pmatrix} \\approx \\underbrace{\\text{" + wordLabel(result.near) + "}}_{\\text{" + (DE ? "Ergebnis" : "result") + "}}");
+        var dims = st.dim === 0 ? 1 : (st.dim === 2 ? 3 : 2);
+        var resV = result.v.slice(0, dims);
+        var resultTex = dims === 1 ? texNum(resV[0]) : "\\begin{pmatrix}" + resV.map(texNum).join("\\\\") + "\\end{pmatrix}";
+        setTex(vectorExprTex(example ? example.expr : "", dims) + " = \\underbrace{" + resultTex + "}_{\\approx \\text{" + wordLabel(result.near) + "}}");
         return;
       }
       var groupIds = st.group;
