@@ -560,7 +560,8 @@ h1,h2,h3,h4{
   min-height:56px;max-height:170px;overflow:auto;padding:2px 0 4px;
   color:var(--ls-soft);display:flex;align-items:flex-start;
 }
-.ls-embed-scene .ls-scene-formula{min-height:112px}
+.ls-embed-scene .ls-scene-formula{min-height:112px;max-height:112px;align-items:center}
+.ls-embed-scene .ls-scene-controls{min-height:106px}
 .ls-scene-formula .ls-math{font-size:.95rem}
 .ls-scene-formula .ls-math{width:100%}
 .ls-word-select{
@@ -2717,6 +2718,7 @@ body[data-page="lesson"] .ls-app{background:#ffffff}
 body[data-page="lesson"] .ls-app:before{display:none}
 body[data-page="lesson"] .ls-stage{background:#ffffff}
 body[data-page="lesson"] .ls-stage:after{display:none}
+@media (min-width:981px){body[data-page="lesson"] .ls-stage{padding-bottom:0}}
 
 /* ── eoy embed navigation: bottom corners, proxy-safe ── */
 #eoy-embed-nav,

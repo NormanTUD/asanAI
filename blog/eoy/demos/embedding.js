@@ -1142,8 +1142,8 @@
       renderControls();
       draw();
       var maxAllowed = size && size.w < 560 ? 132 : 170;
-      var cH = Math.ceil(maxControls);
-      var fH = Math.min(Math.ceil(maxFormula), maxAllowed);
+      var cH = Math.max(Math.ceil(maxControls), 106);
+      var fH = Math.min(Math.max(Math.ceil(maxFormula), 112), maxAllowed);
       if (Math.abs((parseFloat(controls.style.minHeight) || 0) - cH) > 1) controls.style.minHeight = cH + "px";
       if (Math.abs((parseFloat(formula.style.minHeight) || 0) - fH) > 1) {
         formula.style.minHeight = fH + "px";
@@ -1245,7 +1245,7 @@
     }
     renderControls();
     resize();
-    scheduleReserve();
+    reserveHeights();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleReserve);
     return {
       update: function (s) {
