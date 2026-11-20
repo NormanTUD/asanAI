@@ -27,7 +27,7 @@
 
 **Gerade in Arbeit:** abgeschlossen. Geprüft mit `node --check` für `data.js`, `attention.js` und `tokenize.js`; 15 Chromium-Seitenchecks für DE/EN sind grün. Der einzige offene Arbeitsbaum-Rest ist die letzte `data.js`-Änderung (Titel von 29.0), die noch nicht committed ist.
 
-**Umsetzungsstand:** Ab P0-07 sind alle Code-Befunde umgesetzt: Attention/Values, Q/K/V, OV, Neuron, GELU, FFN, Unembedding, Schritt 29, QKV-Normalisierung, die EN-Formeln, P1-02 bis P1-13 sowie P2-01 bis P2-12. P0-12 bleibt bewusst unverändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
+**Umsetzungsstand:** P0-01 bis P0-06 sind nachgezogen; ab P0-07 sind alle Code-Befunde umgesetzt: Attention/Values, Q/K/V, OV, Neuron, GELU, FFN, Unembedding, Schritt 29, QKV-Normalisierung, die EN-Formeln, P1-02 bis P1-13 sowie P2-01 bis P2-12. P0-12 bleibt bewusst unverändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
 
 ## Legende
 
@@ -94,6 +94,8 @@ Ein Kreis ist kein Vektor-Unterraum. Ein Unterraum muss den Nullvektor enthalten
 
 ### P0-03: `Kalt + Lauwarm = Warm` ist kein allgemeines Embedding-Gesetz
 
+**Status:** behoben.
+
 **Folie:** 6.0, `Bedeutung wird eine Zahl`
 
 **Befund:**
@@ -107,6 +109,8 @@ Das ist ein handgebautes 1D-Spielzeug. Es zeigt keine Eigenschaft echter Embeddi
 **Korrektur:** Explizit als „Spielzeug mit einer einzigen Achse“ markieren; danach klar sagen, dass echte Embeddings viele Achsen haben und Addition nur eine lokale Richtung approximiert.
 
 ### P0-04: 4096 Dimensionen gegen GPT-2 small mit 768
+
+**Status:** behoben.
 
 **Folie:** 6.4, `Tausende Dimensionen`
 
@@ -126,6 +130,8 @@ Die Tabelle ist also nicht GPT-2 small. 4096 ist eine andere Modellgröße oder 
 
 ### P0-05: Punktwolke, Mannigfaltigkeit und Übersetzung werden überzogen
 
+**Status:** behoben.
+
 **Folie:** 7.0, `Von Beziehungen zur Übersetzung`
 
 **Befund:**
@@ -143,6 +149,8 @@ Das ist eine didaktische Metapher, keine mathematische Äquivalenz. Die Demo bie
 **Korrektur:** „Diese Punktwolke sieht lokal wie eine niedrigdimensionale Struktur aus; ob sie global eine Mannigfaltigkeit ist, wäre eine eigene Frage.“ Und: „Die Demo zeigt eine Ähnlichkeitstransformation aus Drehung und Verschiebung, nicht jede Übersetzung.“
 
 ### P0-06: Positionskodierung: Sinuswellen sind keine Rotationen
+
+**Status:** behoben.
 
 **Folie:** 8.0, `Jeder Platz bekommt einen Fingerabdruck`
 
@@ -646,9 +654,9 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 | `tokenize` | 4.0 | Token-IDs und Subword-Splits sind illustrativ; kein Rechenfehler gefunden. |
 | `bpe` | 5.x | Zeichen-BPE und Byte-BPE sind getrennt; die Demo ist als Zeichen-BPE markiert. |
 | `weekday` | 6.1 | Linie→Kreis→Linie ist sichtbar; der Unterraum-Begriff ist entfernt. |
-| `embedding` | 6.2/6.3 | Konkrete Vektoren und `≈ Königin` stimmen; 1D/2D/3D-Umschaltung geprüft. |
-| `manifold` | 7.0 | Nur Drehung/Rotation/Verschiebung; keine Skalierung/Scherung; siehe P0-05. |
-| `position` | 8.0 | Startzustand jetzt leer, Trail wird erst nach „Weiter“ aufgebaut; kein Prefill mehr. |
+| `embedding` | 6.2/6.3 | Vektoren und `≈ Königin` stimmen; 1D-Spielzeug und 4096-Tabelle sind erklärt. |
+| `manifold` | 7.0 | Nur Drehung/Rotation/Verschiebung; die Mannigfaltigkeits-Behauptung ist entfernt. |
+| `position` | 8.0 | Startzustand leer; Sinuswellen statt Rotationen, keine Kugel-Behauptung. |
 | `qkv` | 9.x/10.x | Gewichte werden vor der Anzeige normalisiert; Readout bleibt in `[0, 100]`. |
 | `induction` | 12.0–12.5 | 82 % in 12.1 und die 2.5–5B/0.15→0.4-nats-Zahlen in 12.5 sind gedeckt. |
 | `linear` | 13.0 | 2-Parameter-Neuron und 4-Parameter-Box sind erklärt. |
@@ -726,7 +734,7 @@ Die leeren `innerText`-Werte bei 12.0/12.2/12.3/12.4/12.5, 11.1, 24.1/24.2 und 2
 
 ## Empfohlene Reihenfolge
 
-Die Liste ist ab P0-07 abgearbeitet. Offen bleiben nur die frühen P0-03 bis P0-06 und der vollständige Render-/Link-Check.
+Die Liste ist abgearbeitet. Offen bleiben nur P0-12 (bewusst), die dünne Quellenlage in P1-04 und der vollständige Render-/Link-Check.
 
 1. **P0-07, P0-08, P0-09, P0-13:** Attention- und FFN-Formeln zuerst, weil sie das technische Rückgrat sind.
 2. **P0-01, P0-02, P0-04, P0-14:** Begriffe und Modellgrößen, bevor Leser:innen sie weiterverwenden.
@@ -747,7 +755,7 @@ Die Liste ist ab P0-07 abgearbeitet. Offen bleiben nur die frühen P0-03 bis P0-
 
 ## Prüfstatus
 
-- **Inhalt:** Befunde ab P0-07 sind umgesetzt; P0-12 bleibt bewusst unverändert. P0-03, P0-04, P0-05 und P0-06 liegen vor diesem Block und bleiben offen.
+- **Inhalt:** P0-01 bis P0-06 sind nachgezogen; ab P0-07 sind alle Code-Befunde umgesetzt. P0-12 bleibt bewusst unverändert; P1-04 hat weiterhin eine dünne Quellenlage.
 - **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen.
 - **Layout:** direkte Sprünge behoben; ein vollständiger Render-Sweep über alle Lessons steht noch aus.
 - **Quellen:** tragende Quellen geprüft; vollständiger Link-Check offen.

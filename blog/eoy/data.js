@@ -107,7 +107,7 @@
     {
       kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei $15$, Lauwarm bei $45$. Nun kann man $\\text{Kalt} + \\text{Lauwarm}$ rechnen und landet bei 60, also bei Warm.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
+      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei $15$, Lauwarm bei $45$. Nun kann man $\\text{Kalt} + \\text{Lauwarm}$ rechnen und landet bei 60, also bei Warm.\n\nDas ist bewusst ein Spielzeug mit genau einer Achse: Die Zahlen sind von Hand gewählt, damit die Addition aufgeht. Es zeigt die Idee, nicht wie echte Embeddings rechnen. In einem echten Modell liegen Wörter in vielen Dimensionen; Addition bewegt dort entlang gelernter Richtungen und trifft nicht automatisch ein Wort.",
       watch: "",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
       inherit: false,
@@ -181,7 +181,7 @@
     {
       kicker: "The line",
       title: "Meaning becomes a number",
-      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. The word cold sits at $15$, lukewarm at $45$. Now you can compute $\\text{cold} + \\text{lukewarm}$ and land at 60, which is warm.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
+      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. The word cold sits at $15$, lukewarm at $45$. Now you can compute $\\text{cold} + \\text{lukewarm}$ and land at 60, which is warm.\n\nThis is deliberately a toy with exactly one axis: the numbers are chosen by hand so that the addition works out. It shows the idea, not how real embeddings compute. In a real model words live in many dimensions; addition moves along learned directions and does not automatically land on a word.",
       watch: "",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "lukewarm"] },
       inherit: false,
@@ -305,7 +305,7 @@
     {
       kicker: "Position",
       title: "Jeder Platz bekommt einen Fingerabdruck",
-      body: "Für den Transformer wären die Sätze „Der Mann beißt den Hund“ und „Der Hund beißt den Mann“ identisch, weil er keine Information über die Position der Tokens bekommt. Um dieses Problem zu lösen, kodiert man mit Positional Embedding die Position direkt im Token: Für jede Dimension werden je nach Position unterschiedlich schnelle Sinus- und Cosinuswellen addiert.\n\nDiese schnellen und langsamen Rotationen wirken ähnlich wie das Stellenwertsystem bei Zahlen mit Einern, Zehnern, Hundertern, Tausendern usw., womit die Position kodiert werden kann.\n\nLinks sieht man dieses Muster über mehrere Dimensionen, rechts sieht man, wie sich die Positionen auf einer Kugeloberfläche anordnen. In Wahrheit sind es nicht drei, sondern tausende Dimensionen, aber die Idee ist ähnlich. Durch diese Kodierung werden relative Abstände von Tokens zueinander sichtbar, und das Netz kann zwischen „Der Mann beißt den Hund“ und „Der Hund beißt den Mann“ unterscheiden.\n\nEs gibt andere Verfahren wie gelernte Positions-Embeddings, die hier aber nicht behandelt werden sollen.",
+      body: "Für einen Transformer sind die Sätze „Der Mann beißt den Hund“ und „Der Hund beißt den Mann“ ohne Positionsinformation nicht zuverlässig unterscheidbar, weil er keine Information über die Position der Tokens bekommt. Um dieses Problem zu lösen, kodiert man mit Positional Embedding die Position direkt im Token: Für jede Dimension werden je nach Position unterschiedlich schnelle Sinus- und Cosinuswellen addiert.\n\nDiese schnellen und langsamen Wellen wirken ähnlich wie das Stellenwertsystem bei Zahlen mit Einern, Zehnern, Hundertern, Tausendern usw., womit die Position kodiert werden kann.\n\nLinks sieht man dieses Muster über mehrere Dimensionen, rechts eine Projektion der Positionsvektoren. In Wahrheit sind es nicht drei, sondern tausende Dimensionen, aber die Idee ist ähnlich. Durch diese Kodierung werden relative Abstände von Tokens zueinander sichtbar, und das Netz kann die Reihenfolge der Tokens unterscheiden.\n\nEs gibt andere Verfahren wie gelernte Positions-Embeddings, die hier aber nicht behandelt werden sollen.",
       watch: "",
       demoState: { scene: "position" },
       context: "",
@@ -323,7 +323,7 @@
     {
       kicker: "Position",
       title: "Every slot gets a fingerprint",
-      body: "For a transformer, the sentences “The man bites the dog” and “The dog bites the man” would be identical, because it receives no information about the position of the tokens. To solve this, positional embedding encodes the position directly in the token: for each dimension, sine and cosine waves of different speeds are added depending on the position.\n\nThese fast and slow rotations work similarly to the place-value system in numbers with ones, tens, hundreds, thousands, and so on, which is how the position can be encoded.\n\nOn the left you see this pattern across several dimensions; on the right you see how the positions arrange themselves on the surface of a sphere. In reality there are not three but thousands of dimensions, but the idea is similar. This encoding makes relative distances between tokens visible, and the network can distinguish “The man bites the dog” from “The dog bites the man”.\n\nOther methods such as learned position embeddings exist, but they are not covered here.",
+      body: "For a transformer, the sentences “The man bites the dog” and “The dog bites the man” cannot be reliably distinguished without positional information, because it receives no information about the position of the tokens. To solve this, positional embedding encodes the position directly in the token: for each dimension, sine and cosine waves of different speeds are added depending on the position.\n\nThese fast and slow waves work similarly to the place-value system in numbers with ones, tens, hundreds, thousands, and so on, which is how the position can be encoded.\n\nOn the left you see this pattern across several dimensions; on the right you see a projection of the position vectors. In reality there are not three but thousands of dimensions, but the idea is similar. This encoding makes relative distances between tokens visible, and the network can distinguish the order of the tokens.\n\nOther methods such as learned position embeddings exist, but they are not covered here.",
       watch: "",
       demoState: { scene: "position" },
       context: "",
@@ -759,14 +759,14 @@
 
   var manifoldSteps = DE ? [
     {
-      kicker: "Mannigfaltigkeiten",
+      kicker: "Geometrie",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Wörtern. Man nennt solche Gebilde Mannigfaltigkeit: etwas, das lokal einem klassisch-euklidischen Raum ähnelt, aber global eine ganz andere Struktur haben kann. Übersetzung ist dann dasselbe wie Verschieben, Skalieren und Drehen dieser Mannigfaltigkeit.\n\nDiese Demo ist stark vereinfacht. Reale Modelle haben tausende Dimensionen, und die Relationen sind nicht so ähnlich wie hier, aber das Prinzip ist dasselbe.\n\nWichtig sind nicht die konkreten Punkte, sondern ihre Nachbarschaften.",
+      body: "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Wörtern. Diese Punktwolke sieht lokal wie eine niedrigdimensionale Struktur aus; ob sie global eine Mannigfaltigkeit ist, wäre eine eigene Frage. Die Übersetzung ist hier eine didaktische Abbildung: Die japanische Wolke wird gedreht und verschoben, bis sie auf der englischen liegt.\n\nDiese Demo ist stark vereinfacht. Reale Modelle haben tausende Dimensionen, und die Relationen sind nicht so ähnlich wie hier, aber das Prinzip ist dasselbe.\n\nWichtig sind nicht die konkreten Punkte, sondern ihre Nachbarschaften.",
       watch: "",
       demoState: { scene: "manifold" },
-      deep: "Eine Mannigfaltigkeit sieht lokal wie ein euklidischer Raum aus; global kann sie gekrümmt sein, muss es aber nicht. Die Übersetzung entspricht hier einer Abbildung zwischen zwei Punktwolken, einer Kombination aus Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
+      deep: "Die Demo zeigt eine Ähnlichkeitstransformation aus Rotation und Translation. Das ist eine didaktische Übersetzung, keine Aussage über alle Sprachen oder über die globale Struktur des Wortraums.",
       boxes: [
-        box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.")
+        box("man-4", "Mathematik", "Was zeigt die Demo?", "Zwei Punktwolken mit ähnlichen Nachbarschaften. Die Demo dreht und verschiebt die japanische Wolke, bis sie auf der englischen liegt. Das ist eine didaktische Übersetzung, keine Aussage über alle Sprachen.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
@@ -776,14 +776,14 @@
     }
   ] : [
     {
-      kicker: "Manifolds",
+      kicker: "Geometry",
       title: "From relations to translation",
-      body: "Meaning lies not in the individual points but in the relations between them. Different languages have roughly the same relations between words. Such a structure is called a manifold: something that locally resembles a classical Euclidean space but can have a completely different global structure. Translation is then the same as shifting, scaling, and rotating this manifold.\n\nThis demo is strongly simplified. Real models have thousands of dimensions, and the relations are not as similar as they are here, but the principle is the same.\n\nWhat matters is not the concrete points but their neighbourhoods.",
+      body: "Meaning lies not in the individual points but in the relations between them. Different languages have roughly the same relations between words. This point cloud looks locally like a low-dimensional structure; whether it is globally a manifold would be a separate question. Translation here is a didactic map: the Japanese cloud is rotated and shifted until it sits on the English one.\n\nThis demo is strongly simplified. Real models have thousands of dimensions, and the relations are not as similar as they are here, but the principle is the same.\n\nWhat matters is not the concrete points but their neighbourhoods.",
       watch: "",
       demoState: { scene: "manifold" },
-      deep: "A manifold looks locally like Euclidean space; globally it can be curved, but it need not be. Here translation is a map between two point clouds, a combination of rotation and translation: when the clouds coincide, words of the same meaning lie on top of each other.",
+      deep: "The demo shows a similarity transformation made of rotation and translation. It is a didactic translation, not a claim about all languages or about the global structure of word space.",
       boxes: [
-        box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like $R^n$, the familiar Euclidean space: every point has a chart that maps a neighbourhood onto an open set in $R^n$, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus.")
+        box("man-4", "Mathematics", "What does the demo show?", "Two point clouds with similar neighbourhoods. The demo rotates and shifts the Japanese cloud until it sits on the English one. It is a didactic translation, not a claim about all languages.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
@@ -1100,8 +1100,8 @@
     {
       kicker: "Der Raum",
       title: "Tausende Dimensionen",
-      body: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
-      teaser: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      body: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt aus einem hypothetischen 4096-dimensionalen Modell, nicht GPT-2 small; von diesen 4096 Spalten sind 16 sichtbar. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      teaser: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt aus einem hypothetischen 4096-dimensionalen Modell, nicht GPT-2 small; von diesen 4096 Spalten sind 16 sichtbar. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
       watch: "",
       demoState: { scene: "highdim" },
       context: "Mehr Dimensionen erlauben mehr unabhängige Unterschiede. Die 3D-Demos sind Projektionen; die Tabelle ist die ehrliche Darstellung für den Rechner.",
@@ -1116,8 +1116,8 @@
     {
       kicker: "The space",
       title: "Thousands of dimensions",
-      body: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 16 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
-      teaser: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 16 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
+      body: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice of a hypothetical 4096-dimensional model, not GPT-2 small; 16 of its 4096 columns are visible. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
+      teaser: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice of a hypothetical 4096-dimensional model, not GPT-2 small; 16 of its 4096 columns are visible. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
       watch: "",
       demoState: { scene: "highdim" },
       context: "More dimensions allow more independent differences. The 3D demos are projections; the table is the honest view for the computer.",
