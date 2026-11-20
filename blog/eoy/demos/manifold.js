@@ -259,11 +259,11 @@
     }
     function updateReadout() {
       var pair = hover ? WORDS[hover.index] : null;
-      readout.innerHTML = '<span><b>' + (DE ? "Ausrichtung" : "alignment") + '</b> ' + score() + '%</span>' +
-        '<span><b>' + (DE ? "Drehung" : "yaw") + '</b> ' + Math.round(angle) + '°</span>' +
-        '<span><b>' + (DE ? "Rotation" : "roll") + '</b> ' + Math.round(roll) + '°</span>' +
-        '<span><b>' + (DE ? "Verschiebung" : "translation") + '</b> ' + V.fmt(shift) + '</span>' +
-        (pair ? '<span><b>' + (DE ? "Wort" : "word") + '</b> ' + api.esc(pair[0]) + ' · ' + api.esc(pair[1]) + '</span>' : '<span>' + (DE ? "Fahre über einen Punkt." : "Hover a point.") + '</span>');
+      readout.innerHTML = '<span><b>' + (DE ? "Ausrichtung" : "alignment") + '</b> <span class="ls-manifold-value">' + score() + '%</span></span>' +
+        '<span><b>' + (DE ? "Drehung" : "yaw") + '</b> <span class="ls-manifold-value">' + Math.round(angle) + '°</span></span>' +
+        '<span><b>' + (DE ? "Rotation" : "roll") + '</b> <span class="ls-manifold-value">' + Math.round(roll) + '°</span></span>' +
+        '<span><b>' + (DE ? "Verschiebung" : "translation") + '</b> <span class="ls-manifold-value">' + V.fmt(shift) + '</span></span>' +
+        (pair ? '<span class="ls-manifold-word"><b>' + (DE ? "Wort" : "word") + '</b> ' + api.esc(pair[0]) + ' · ' + api.esc(pair[1]) + '</span>' : '<span class="ls-manifold-hint">' + (DE ? "Fahre über einen Punkt." : "Hover a point.") + '</span>');
     }
     function updateButton() {
       findBtn.textContent = found ? (DE ? "Übersetzung gefunden" : "Translation found") : (DE ? "Übersetzung finden" : "Find translation");
