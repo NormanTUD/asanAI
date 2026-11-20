@@ -933,7 +933,7 @@
     els.demo = root.querySelector("#ls-demo");
     els.demoLoader = root.querySelector("#ls-demo-loader");
     els.demoLoaderAnim = (els.demoLoader && window.EoyLoading && window.EoyLoading.attach)
-      ? window.EoyLoading.attach(els.demoLoader) : null;
+      ? window.EoyLoading.attach(els.demoLoader, { subtle: true }) : null;
     els.credit = root.querySelector("#ls-credit");
     els.days = root.querySelector("#ls-days");
     els.dayNav = root.querySelectorAll("[data-day-nav]");

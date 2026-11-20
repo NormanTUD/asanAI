@@ -14,9 +14,11 @@
     return canvas;
   }
 
-  function attach(container) {
+  function attach(container, options) {
     if (!container) return null;
     if (container.__eoyLoading) return container.__eoyLoading;
+    options = options || {};
+    var subtle = !!options.subtle;
 
     var bgCanvas = makeCanvas(container, "");
     var trailCanvas = makeCanvas(container, "");
@@ -42,6 +44,13 @@
     function colorize(p, x, y, t) {
       var n = Math.sin(x * 0.0022 + t * 0.00012) * 0.5
         + Math.cos(y * 0.0028 - t * 0.00009) * 0.5;
+      if (subtle) {
+        p.hue = 164 + n * 18;
+        p.sat = 22 + Math.random() * 16;
+        p.light = 42 + Math.random() * 14;
+        p.alpha = 0.035 + Math.random() * 0.045;
+        return;
+      }
       p.hue = 156 + n * 46;
       p.sat = 72 + Math.random() * 22;
       p.light = 54 + Math.random() * 20;
@@ -58,8 +67,8 @@
     }
 
     function seed() {
-      var count = Math.round((width * height) / 900);
-      count = Math.max(450, Math.min(2600, count));
+      var count = Math.round((width * height) / (subtle ? 3600 : 900));
+      count = Math.max(subtle ? 70 : 450, Math.min(subtle ? 380 : 2600, count));
       particles = [];
       for (var i = 0; i < count; i++) {
         var p = {};
@@ -72,6 +81,15 @@
     function paintBackground(t) {
       var base = Math.max(width, height);
       bg.clearRect(0, 0, width, height);
+      if (subtle) {
+        var wash = bg.createRadialGradient(width * 0.5, height * 0.5, 0, width * 0.5, height * 0.5, base * 0.72);
+        wash.addColorStop(0, "rgba(99,164,75,.045)");
+        wash.addColorStop(0.55, "rgba(18,117,172,.025)");
+        wash.addColorStop(1, "rgba(255,255,255,0)");
+        bg.fillStyle = wash;
+        bg.fillRect(0, 0, width, height);
+        return;
+      }
       var core = bg.createRadialGradient(width * 0.5, height * 0.5, 0, width * 0.5, height * 0.5, base * 0.72);
       core.addColorStop(0, "#00455c");
       core.addColorStop(0.55, "#00293a");
@@ -103,7 +121,7 @@
         ctx.fillStyle = "rgba(0,0,0,0.035)";
         ctx.fillRect(0, 0, width, height);
       }
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = subtle ? "source-over" : "lighter";
       ctx.lineCap = "round";
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
