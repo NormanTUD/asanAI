@@ -153,18 +153,12 @@
     {
       kicker: "Die Ebene",
       title: "Bedeutung bekommt eine zweite Achse",
-      body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Mann und Frau teilen die Machtposition und fallen deshalb auf derselben Stelle zusammen. Eine zweite Achse schafft freie Wege: Jetzt liegen sie nebeneinander, ohne die Machtposition zu verlieren. Derselbe Richtungsschritt erscheint zwischen König und Königin: König − Mann + Frau liegt nahe bei Königin. Die Beziehung ist eine Richtung, keine benannte Regel.",
+      body: "Eine Dimension kann Wörter nach einer einzigen Relation ordnen, aber Wörter stehen in vielen Relationen zueinander. Daher braucht man mehr Dimensionen, in denen man mehr Relationen darstellen kann. Jede Richtung kann nun eine Eigenschaft darstellen. Es entstehen Nachbarschaften von Punkten anhand ihrer Relationen und Nähe, und auch mit diesen Punkten kann man rechnen.\n\n$\\text{Mann} \\rightarrow \\text{Frau}$ und $\\text{König} \\rightarrow \\text{Königin}$ sind parallel: Die Bedeutung, die diese Richtung symbolisiert, ist dieselbe, auch wenn die konkreten Punkte anders sind. Jede Relation wird zu einem Vektor, zu einer Richtung.",
       watch: "",
       demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
-      context: "In 1D ist die Strecke belegt; mehrere Wörter teilen sich eine Position. In 2D bekommt jede zusätzliche Eigenschaft eine eigene Richtung. Die Analogie ist eine Approximation, keine exakte Regel.",
-      deep: "Freie Wege sind der Kern: Bedeutung braucht Platz für mehrere unabhängige Unterschiede. Jede zusätzliche Achse kann eine weitere Beziehung tragen, ohne eine andere zu überschreiben. Die Nachbarschaft ist ein statistisches Signal, keine Definition.",
-      boxes: [
-        box("emb-6", "Technik", "Warum zwei Achsen?", "Zwei Achsen machen zwei unabhängige Unterschiede sichtbar. Die erste Achse ordnet nach Macht, die zweite nach Geschlecht. Erst dadurch werden Mann und Frau unterscheidbar, obwohl sie auf der Machtachse denselben Wert haben."),
-        box("emb-7", "Geschichte", "Woher kommt die Analogie?", "Mikolov et al. (2013) zeigten, dass Differenzen wie König − Mann + Frau nahe bei Königin landen. Das ist eine Approximation, keine exakte Regel. Sie funktioniert, weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten."),
-        box("emb-8", "Mathematik", "Warum funktioniert die Analogie?", "Weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten. Der Unterschied zwischen Mann und Frau wird zu einer wiederverwendbaren Richtung. Dieselbe Richtung erscheint zwischen König und Königin."),
-        box("emb-14", "Technik", "Was wird übertragen?", "Mann → Frau und König → Königin sind parallel. Die Richtung ist eine gelernte Beziehung, die auf ein neues Paar angewendet wird. Deshalb landet König − Mann + Frau nahe bei Königin."),
-        box("emb-9", "Anwendung", "Wofür ist das gut?", "Suche, Empfehlungen, Clustering und RAG nutzen genau diese Geometrie: semantische Nähe wird zur Abfrage. Die Vektorarithmetik ist eher eine Diagnose als ein Produktmerkmal.")
-      ],
+      context: "",
+      deep: "",
+      boxes: [],
       sources: sources.slice(2, 4)
     },
     {
@@ -233,18 +227,12 @@
     {
       kicker: "The plane",
       title: "Meaning gets a second axis",
-      body: "One axis can order words by a single property. Man and woman share the power position, so they collapse onto the same point. A second axis creates free paths: they now sit side by side without losing the power position. The same direction step appears between king and queen: king − man + woman is near queen. The relation is a direction, not a named rule.",
+      body: "One dimension can order words by a single relation, but words stand in many relations to one another. That is why we need more dimensions, in which more relations can be represented. Each direction can now represent a property. Neighbourhoods of points emerge from their relations and proximity, and we can do arithmetic with these points as well.\n\n$\\text{man} \\rightarrow \\text{woman}$ and $\\text{king} \\rightarrow \\text{queen}$ are parallel: the meaning symbolised by this direction is the same, even though the concrete points differ. Every relation becomes a vector, a direction.",
       watch: "",
       demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
-      context: "In 1D the line is occupied; several words share one position. In 2D every extra property gets its own direction. The analogy is an approximation, not an exact rule.",
-      deep: "Free paths are the point: meaning needs room for several independent differences. Every extra axis can carry another relation without overwriting one. Neighbourhood is a statistical signal, not a definition.",
-      boxes: [
-        box("emb-6", "Technique", "Why two axes?", "Two axes make two independent differences visible. The first axis orders by power, the second by gender. Only then do man and woman become distinguishable even though they share a value on the power axis."),
-        box("emb-7", "History", "Where does the analogy come from?", "Mikolov et al. (2013) showed that differences such as king − man + woman land near queen. It is an approximation, not an exact rule. It works because similar words appear in similar grammatical slots."),
-        box("emb-8", "Mathematics", "Why does the analogy work?", "Because similar words appear in similar grammatical slots. The difference between man and woman becomes a reusable direction. The same direction appears between king and queen."),
-        box("emb-14", "Technique", "What is carried over?", "Man → woman and king → queen are parallel. The direction is a learned relation applied to a new pair. That is why king − man + woman lands near queen."),
-        box("emb-9", "Application", "What is it good for?", "Search, recommendations, clustering, and RAG use exactly this geometry: semantic closeness becomes a query. Vector arithmetic is more a diagnostic than a product feature.")
-      ],
+      context: "",
+      deep: "",
+      boxes: [],
       sources: sources.slice(2, 4)
     },
     {
