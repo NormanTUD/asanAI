@@ -1645,6 +1645,33 @@
     ]
   };
 
+
+  var qkvArcsIntro = Object.assign({}, qkvArcs, {
+    body: DE
+      ? "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort.\n\n$$ \\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}}\\right) V $$\n\n$$\\underbrace{x'_i}_{\\substack{\\text{neuer Vektor} \\\\ \\text{für Position } i}} \\;=\\; \\sum_j \\underbrace{\\frac{\\exp\\left( \\frac{q_i \\cdot k_j}{\\sqrt{d_k}} \\right)}{\\sum_k \\exp\\left( \\frac{q_i \\cdot k_k}{\\sqrt{d_k}} \\right)}}_{\\alpha_{ij}} \\;\\cdot\\; \\underbrace{v_j}_{\\text{Value von } j}$$"
+      : "Every token produces three vectors: query, key, and value. The query asks, the key answers, and the value carries the information. Attention compares query and key, turns the scores into weights with softmax, and mixes the values. Multiple heads do this in parallel with their own weights: one head can ask for the subject, another for the location.\n\n$$ \\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}}\\right) V $$\n\n$$\\underbrace{x'_i}_{\\substack{\\text{new vector} \\\\ \\text{for position } i}} \\;=\\; \\sum_j \\underbrace{\\frac{\\exp\\left( \\frac{q_i \\cdot k_j}{\\sqrt{d_k}} \\right)}{\\sum_k \\exp\\left( \\frac{q_i \\cdot k_k}{\\sqrt{d_k}} \\right)}}_{\\alpha_{ij}} \\;\\cdot\\; \\underbrace{v_j}_{\\text{value of } j}$$",
+    watch: "",
+    context: "",
+    deep: "",
+    boxes: [],
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-context", title: DE ? "Warum $\\sqrt{d_k}$?" : "Why $\\sqrt{d_k}$?", body: DE ? "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden." : "The scores are divided by $\\sqrt{d_k}$ so they do not grow too large in high dimensions.", tex: "", kind: "question" },
+          { id: "q-deep", title: DE ? "Woher kommen Q, K und V?" : "Where do Q, K, and V come from?", body: DE ? "$Q$, $K$ und $V$ sind gelernte Gewichte. Der Computer bringt sie sich im Training selbst bei, genau wie alle anderen Gewichte, um den Loss zu reduzieren. Wir gehen später auf den Trainingsprozess ein." : "$Q$, $K$, and $V$ are learned weights. The computer learns them during training, just like all other weights, to reduce the loss. We will look at the training process later.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-sources",
+        title: DE ? "Quellen" : "Sources",
+        sources: qkvArcs.sources
+      }
+    ]
+  });
+
   var hallucinationCauses = {
     kicker: DE ? "Typen" : "Types",
     title: DE ? "Arten von Halluzinationen" : "Types of hallucination",
@@ -1936,7 +1963,7 @@
   var qkvStep = {
     title: DE ? "Wie Attention rechnet" : "How attention computes",
     kicker: DE ? "Q · K · V" : "Q · K · V",
-    substeps: [qkvArcs, qkvGraph, qkvSimplex, qkvArcs2, qkvGraph2, qkvSimplex2]
+    substeps: [qkvArcsIntro, qkvGraph, qkvSimplex, qkvArcs2, qkvGraph2, qkvSimplex2]
   };
 
   var agentsStep = {

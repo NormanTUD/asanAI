@@ -412,6 +412,14 @@
   function inlineMath(tex) {
     return '<span class="ls-math ls-math--inline" data-tex="' + esc(tex) + '" data-tex-display="false"><code class="ls-tex-source">' + esc(tex) + '</code></span>';
   }
+  function titleHTML(text) {
+    return String(text == null ? "" : text).split(/(\$[^$]+\$)/g).map(function (part) {
+      if (part.length > 1 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
+        return inlineMath(part.slice(1, -1));
+      }
+      return richText(part);
+    }).join("");
+  }
   function watchHTML(text) {
     return String(text == null ? "" : text).split(/(\$\$[\s\S]*?\$\$|\$[^$]+\$)/g).map(function (part) {
       if (part.length > 4 && part.slice(0, 2) === "$$" && part.slice(-2) === "$$") {
@@ -1107,7 +1115,7 @@
     var children = countQuestions(q.questions);
     var html = '<details class="ls-deepbox ls-qnested ls-qnested--' + depth + '" data-qid="' + esc(id) + '"' + (open ? " open" : "") + '>' +
       '<summary>' +
-        esc(q.title || t("question")) +
+        titleHTML(q.title || t("question")) +
         (children ? ' <span class="ls-depth-count">' + children + '</span>' : '') +
       '</summary>' +
       (q.body ? '<div class="ls-qbody" data-edit-question-path="' + esc(path) + '" data-edit-question-field="body">' + proseBlock(q.body) + '</div>' : '') +
@@ -1143,7 +1151,7 @@
         return;
       }
       html += '<details class="ls-deepbox ls-qgroup" data-qid="' + esc(g.id) + '"' + (gi === 0 ? firstGroupOpen : "") + '>' +
-        '<summary>' + esc(g.title || t("moreKnowledge")) +
+        '<summary>' + titleHTML(g.title || t("moreKnowledge")) +
           (g.sources ? ' <span class="ls-depth-count">' + g.sources.length + '</span>' : '') +
         '</summary>' +
         '<div class="ls-qgroup-body">';
