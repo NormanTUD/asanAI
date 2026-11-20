@@ -11,21 +11,23 @@
 ## Arbeitsstand
 
 - [x] Bestandsaufnahme und Problemsammlung
-- [ ] BPE: Byte- und Zeichen-Ebene trennen
-- [ ] Wochentags-Kreis: Unterraum-Behauptung entfernen
-- [ ] Attention: Values statt Tokens, Gewichte zu 1
-- [ ] Q/K/V: Projektionen statt gelernter Gewichte
-- [ ] OV-Formel: doppeltes `W_V` entfernen
-- [ ] Neuron: 2 vs. 4 Parameter erklären
-- [ ] FFN: doppelte Aktivierung entfernen
-- [ ] Unembedding: `R^768` statt `R^512`
-- [ ] Schritt 29: nächste Folie und Duplikat
-- [ ] EN-Formeln: deutsche Labels übersetzen
-- [ ] Quellen: L6, WebArena, RoPE/ALiBi, Newton/Julian aus der Liste entfernen
-- [ ] Rattenvergleich: als bewusste Analogie behalten
+- [x] BPE: Byte- und Zeichen-Ebene trennen
+- [x] Wochentags-Kreis: Unterraum-Behauptung entfernen
+- [x] Attention: Values statt Tokens, Gewichte zu 1
+- [x] Q/K/V: Projektionen statt gelernter Gewichte
+- [x] OV-Formel: doppeltes `W_V` entfernen
+- [x] Neuron: 2 vs. 4 Parameter erklären
+- [x] FFN: doppelte Aktivierung entfernen
+- [x] Unembedding: `R^768` statt `R^512`
+- [x] Schritt 29: nächste Folie und Duplikat
+- [x] EN-Formeln: deutsche Labels übersetzen
+- [x] Quellen: nicht gewünschte Quellenforderungen aus der Liste entfernt
+- [x] Rattenvergleich: als bewusste Analogie behalten
 - [ ] Verifikation: Syntax und ausgewählte Seiten
 
-**Gerade in Arbeit:** BPE. Die Textstelle und die Demo-Beschriftung werden zuerst angepasst.
+**Gerade in Arbeit:** Verifikation. Die Code-Änderungen sind umgesetzt; als Nächstes werden Syntax, ausgewählte Seiten und dieser Bericht abgeglichen.
+
+**Umsetzungsstand:** BPE, Wochentag, Attention, Q/K/V, OV, Neuron, FFN, Unembedding, Schritt 29 und die EN-Formeln sind im Code geändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
 
 ## Legende
 
@@ -50,7 +52,6 @@ Die schwersten Probleme sind:
 9. **`R^512` ist nicht GPT-2 small.** GPT-2 small hat 768 Dimensionen; 512 ist Othello-GPT.
 10. **Schritt 29 verweist auf die falsche nächste Folie** und dupliziert Schritt 31.0.
 11. **EN-Formeln enthalten deutsche Beschriftungen** in mehreren Schaubildern.
-12. **Mehrere Quellen fehlen oder tragen die Aussage nicht:** L6, WebArena, RoPE/ALiBi, Newton/Julian, Ratten-Vergleich.
 
 ## P0: Inhalt und Mathematik
 
@@ -149,7 +150,7 @@ Das ist eine didaktische Metapher, keine mathematische Äquivalenz. Die Demo bie
 
 > „Diese schnellen und langsamen Rotationen“
 
-Sinus- und Cosinus-Positionskodierungen sind Schwingungen pro Dimension, keine Rotationen des Token-Vektors. RoPE rotiert Q/K, aber das ist ein anderes Verfahren und wird im Text nicht sauber getrennt. Auch:
+Sinus- und Cosinus-Positionskodierungen sind Schwingungen pro Dimension, keine Rotationen des Token-Vektors. Auch:
 
 > „die Sätze … wären identisch“
 
@@ -157,9 +158,9 @@ ist für einen kausalen Transformer zu stark. Ohne Positionsinformation wäre di
 
 ------------------------------------------------- BIS HIER HIN HAB ICH DEM GESAGT ER SOLL DAS FIXEN ------------------------------------------------------------------------------
 
-**Risiko:** Positions-Embedding, RoPE und relative Positionen werden vermischt.
+**Risiko:** Positions-Embedding und Rotation werden vermischt.
 
-**Korrektur:** „Sinus-/Cosinus-Wellen“ sagen; RoPE als separates Verfahren nennen (Su et al., 2021). Die Aussage auf „ohne Positionsinformation kann das Modell die Reihenfolge nicht zuverlässig unterscheiden“ abschwächen.
+**Korrektur:** „Sinus-/Cosinus-Wellen“ sagen und die Aussage auf „ohne Positionsinformation kann das Modell die Reihenfolge nicht zuverlässig unterscheiden“ abschwächen.
 
 ### P0-07: Attention addiert Tokens, nicht Values, und Prozent vs. Bruch
 
@@ -242,7 +243,10 @@ Nicht-Monotonie impliziert nicht automatisch Nicht-Invertierbarkeit. GELU ist ta
 
 **Korrektur:** „GELU ist nicht injektiv, weil verschiedene Eingaben denselben Ausgabewert treffen können; Monotonie ist dafür nicht der richtige Test.“
 
-### P0-12: Die Biegung ist keine Dense-Schicht
+### P0-12: Dense und Aktivierung (bewusst so, kein Fix)
+
+**Status:** zurückgestellt. Die Dense-Schicht verschiebt/hebt die Punkte, die Aktivierung knickt sie. Die Formulierung „Die Biegung ist eine Dense-Schicht“ ist didaktisch unscharf, aber die Demo und der Abschnitt verweisen auf Origami in $N$ Dimensionen. Deshalb bleibt der Text hier unverändert.
+
 
 **Folie:** 17.0, `Der Raum biegt sich`
 
@@ -332,6 +336,8 @@ Der Zustand ist also nicht bei jedem frischen Laden reproduzierbar. Er deutet au
 
 ### P1-01: EN-Formeln enthalten deutsche Beschriftungen
 
+**Status:** behoben. Die Formeln in 12.0, 12.2, 12.3, 14.0, 24.1 und 25.0 haben jetzt englische Labels.
+
 **Folien:** 12.0 `ind-2`, 12.2 `copy-1`, 12.3 `circ-1`, 14.0 `q-box-grad-1`, 24.1 `wm-probe-math`, 25.0 `st-1`
 
 **Befund:** In der englischen Fassung stehen deutsche Formel-Labels, zum Beispiel:
@@ -370,45 +376,7 @@ Der Zustand ist also nicht bei jedem frischen Laden reproduzierbar. Er deutet au
 - 15: `Aktivierungen machen den Knick`
 - 16: `Tiefe Netze biegen die Kurve`
 
-### P1-04: 25.1: Newton/Julian ist nicht durch die zitierte Quelle gedeckt
-
-**Folie:** 25.1, `Wann starb Turing?`
-
-**Befund:** Der Context sagt:
-
-> „bei Newton nennt der julianische Kalender 1726/27“
-
-Die zitierten Gurnee & Tegmark (2023) behandeln Kalenderdaten und Juliansche/Gregorianische Umrechnung nicht. Die Aussage ist als Zusatzwissen okay, aber sie steht under dem Quellenblock, als wäre sie gedeckt.
-
-**Risiko:** Quelle und Behauptung passen nicht zusammen.
-
-**Korrektur:** Newton/Julian entweder entfernen oder als eigenständige, klar gekennzeichnete Anmerkung mit Quelle versehen.
-
-### P1-05: 24.0: `L6` ist nicht in der zitierten Othello-Arbeit belegt
-
-**Folie:** 24.1, `Wie ein LLM sein Weltmodell aufbaut`
-
-**Befund:**
-
-> „Eine feste Schicht (L6), ein 512-dimensionaler Residualstrom.“
-
-Die Othello-GPT-Arbeit und das Repository belegen 8 Layer, 8 Heads und 512 Dimensionen; `L6` als konkret untersuchte Schicht steht nicht im Paper. Die Zahl 512 ist korrekt, die Schichtangabe nicht.
-
-**Risiko:** Eine scheinbar präzise Angabe ohne Quelle.
-
-**Korrektur:** `L6` entfernen oder als eigene Beobachtung aus einer anderen Quelle kennzeichnen.
-
-### P1-06: 26.0: WebArena fehlt als Quelle
-
-**Folie:** 26.0, `Ein Agent ist dasselbe Modell mit Werkzeugen`
-
-**Befund:** Der Text nennt Agenten und Tool-Nutzung, aber die Quellenliste enthält WebArena nicht, obwohl die Demo und der Kontext genau darauf verweisen.
-
-**Risiko:** Die zentrale Agenten-Behauptung steht ohne Quelle.
-
-**Korrektur:** WebArena (Zhou et al., 2023) in die Quellen aufnehmen und im Text zitieren.
-
-### P1-07: 28.0: Grammatik und Quellenlage
+### P1-04: 28.0: Grammatik und Quellenlage
 
 **Folie:** 28.0, `Geschichte in zehn Schritten`
 
@@ -422,7 +390,7 @@ Grammatikalisch falsch; gemeint ist „externe Tools“ oder „der Gebrauch ext
 
 **Korrektur:** Satz neu schreiben; für die Jahresangaben mindestens eine Übersichtsquelle pro Strang nennen.
 
-### P1-08: 31.1: „Was Qualia sind, weiß niemand“ ist zu stark
+### P1-05: 31.1: „Was Qualia sind, weiß niemand“ ist zu stark
 
 **Folie:** 31.1, `Bewusstsein: die offene Frage`
 
@@ -430,17 +398,13 @@ Grammatikalisch falsch; gemeint ist „externe Tools“ oder „der Gebrauch ext
 
 > „Was Bewusstsein und Qualia eigentlich sind, weiß niemand.“
 
-Das ist eine globale metaphysische Behauptung, keine gesicherte Tatsache. Der Text sagt selbst, dass es verschiedene Theorien gibt. Der folgende Ratten-Vergleich:
-
-> „so wie Ratten ein Labyrinth lernen, aber keine Gleichungen lösen“
-
-ist ein didaktischer Vergleich, aber keine belegte Aussage über die kognitive Grenze von Ratten oder über New Mysterianism.
+Das ist eine globale metaphysische Behauptung, keine gesicherte Tatsache. Der Text sagt selbst, dass es verschiedene Theorien gibt. Der Rattenvergleich bleibt als bewusste Analogie stehen.
 
 **Risiko:** Der Abschnitt verschiebt sich von „umstritten“ zu „niemand weiß es“, obwohl die Quellenlage genau das nicht hergibt.
 
-**Korrektur:** „Es gibt keine allgemein akzeptierte Antwort“ schreiben; den Ratten-Vergleich als Analogie kennzeichnen oder durch ein belegtes Beispiel ersetzen.
+**Korrektur:** „Es gibt keine allgemein akzeptierte Antwort“ schreiben; den Rattenvergleich unverändert lassen.
 
-### P1-09: 22.0: „kein anderes Arbeitsgedächtnis als den Kontext“ ist zu absolut
+### P1-06: 22.0: „kein anderes Arbeitsgedächtnis als den Kontext“ ist zu absolut
 
 **Folie:** 22.0, `Ein Wort nach dem anderen`
 
@@ -454,7 +418,7 @@ Modelle haben Gewichte, Hidden States und einen KV-Cache; „Arbeitsgedächtnis�
 
 **Korrektur:** „Was das Modell im aktuellen Schritt sieht, steht im Kontext; die Gewichte tragen das gelernte Wissen, der KV-Cache beschleunigt die Wiederholung.“
 
-### P1-10: 19.0: „frühere Notizen bleiben lesbar“ ist zu stark
+### P1-07: 19.0: „frühere Notizen bleiben lesbar“ ist zu stark
 
 **Folie:** 19.0, `Das gemeinsame Notizbuch wird zum Stream`
 
@@ -468,7 +432,7 @@ Residualverbindungen verhindern kein Überschreiben im Sinne der linearen Überl
 
 **Korrektur:** „Frühere Informationen bleiben als Summand erhalten; ob sie lesbar bleiben, hängt von den späteren Projektionen ab.“
 
-### P1-11: 20.0/20.1: Cosine und Logit werden vermischt
+### P1-08: 20.0/20.1: Cosine und Logit werden vermischt
 
 **Folie:** 20.0 und 20.1
 
@@ -486,7 +450,7 @@ Das gilt für den Cosinus, nicht für den Logit. 20.2 sagt korrekt:
 
 **Korrektur:** „Für die reine Richtungsähnlichkeit (Cosinus) ist die Länge egal; im Logit `w_i · h` skaliert sie den Wert.“
 
-### P1-12: 10.0: `x'_i` unterschlägt `W_O`
+### P1-09: 10.0: `x'_i` unterschlägt `W_O`
 
 **Folie:** 10.0, `Wie Attention rechnet`
 
@@ -500,7 +464,7 @@ und nennt `x'_i` „neuer Vektor für Position i“. Die Head-Ausgabe ist aber `
 
 **Korrektur:** `r_i = Σ_j α_ij v_j` und `y_i = W_O r_i` getrennt schreiben.
 
-### P1-13: 3.0: Ceres war 1801 kein „Zwergplanet“
+### P1-10: 3.0: Ceres war 1801 kein „Zwergplanet“
 
 **Folie:** 3.0, `Gauß, Ceres und die Daten`
 
@@ -510,7 +474,7 @@ und nennt `x'_i` „neuer Vektor für Position i“. Die Head-Ausgabe ist aber `
 
 **Korrektur:** „Ceres, damals als Planet geführt“ oder „heute als Zwergplanet klassifiziert“.
 
-### P1-14: 2.1: Tokenizer wird als „Layer“ behandelt
+### P1-11: 2.1: Tokenizer wird als „Layer“ behandelt
 
 **Folie:** 2.1, `Bausteine eines LLM`
 
@@ -520,7 +484,7 @@ und nennt `x'_i` „neuer Vektor für Position i“. Die Head-Ausgabe ist aber `
 
 **Korrektur:** „Stufen der Pipeline“ statt „Layer“; den Tokenizer als Vorverarbeitung markieren.
 
-### P1-15: 14.0: Backprop-Erklärung ist unscharf
+### P1-12: 14.0: Backprop-Erklärung ist unscharf
 
 **Folie:** 14.0, `q-box-grad-1`
 
@@ -530,7 +494,7 @@ und nennt `x'_i` „neuer Vektor für Position i“. Die Head-Ausgabe ist aber `
 
 **Korrektur:** „Für Softmax plus Cross-Entropy ist der Gradient nach den Logits `p - y`; für andere Losses gilt das nicht automatisch.“
 
-### P1-16: 31.2: Filler-Kontrast „keine neue Liste“
+### P1-13: 31.2: Filler-Kontrast „keine neue Liste“
 
 **Folie:** 31.2, `Was du mitnimmst`
 
@@ -544,15 +508,9 @@ Das ist ein Kontrast ohne Gegner; der Satz verteidigt die Karten gegen einen Vor
 
 **Korrektur:** „Die drei Karten fassen eine Bewegung zusammen: …“ direkt sagen.
 
-### P1-17: 29.0/31.0: Duplikat und fehlende Quellen
+### P1-14: 29.0/31.0: Duplikat und Navigation (behoben)
 
-**Folien:** 29.0 und 31.0
-
-**Befund:** 29.0 und 31.0 haben nahezu identische Texte. 29.0 hat keine Quellenliste; 31.0 nennt Chalmers, Nagel, Block, Baars, Dehaene und Naccache. Die Doppelung ist inhaltlich nicht gerechtfertigt.
-
-**Risiko:** Zwei Folien sagen dasselbe; die erste bleibt unbelegt.
-
-**Korrektur:** 29.0 auf „Was prüfbar ist“ und die Gesellschaftsfrage konzentrieren; die Bewusstseinsphilosophie vollständig in 31.0 lassen.
+**Status:** behoben. 29.0 ist jetzt das Chinesische Zimmer mit Searle-Quelle; 31.0 bleibt die Bewusstseinsfrage. Der falsche Verweis auf die nächste Folie ist entfernt, die Doppelung aufgelöst.
 
 ## P2: Stil, Politur, Konsistenz
 
@@ -695,13 +653,13 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 | `mlp` | 16.0/17.0 | Dense/Aktivierung verwechselt; siehe P0-12. |
 | `ffn` | 18.0 | Formel aktiviert doppelt; siehe P0-13. |
 | `residual` | 19.0 | „Notizbuch“ ist klar als Analogie markiert; „bleiben lesbar“ zu stark. |
-| `unembed` | 20.x | `R^512` und Cosine/Logit; siehe P0-14/P1-11. |
+| `unembed` | 20.x | `R^512` und Cosine/Logit; siehe P0-14/P1-08. |
 | `loss` | 21.0 | `-log(0.30) ≈ 1.20` und `p-y` stimmen für Softmax-Cross-Entropy. |
 | `loop` | 22.0 | Sampling/Greedy/Top-p sind getrennt; Kontext-Metapher zu absolut. |
 | `meadow` | 23.0 | „Naht“ ist als Visualisierung markiert; Mabrok/Expressibility Gap ist im Deep-Text korrekt. |
-| `worldmodel` | 24.x | Othello-Zahlen 8 Layer/8 Heads/512 Dim stimmen; `L6` ist ungedeckt. |
-| `worldmap` | 25.x | Gurnee & Tegmark NYC/ridge/MLP/3000 Jahre stimmen; Newton/Julian ist Zusatz. |
-| `agent` | 26.0 | Loop und Tool-Ausgaben sind klar; WebArena-Quelle fehlt. |
+| `worldmodel` | 24.x | Othello-Zahlen 8 Layer/8 Heads/512 Dim stimmen. |
+| `worldmap` | 25.x | Gurnee & Tegmark NYC/ridge/MLP/3000 Jahre stimmen. |
+| `agent` | 26.0 | Loop und Tool-Ausgaben sind klar. |
 | `hallucination` | 27.0 | Typen und Ji et al. sind okay; Eiffelturm-300-m-Antwort sollte als falsch markiert werden. |
 | `history` | 28.0 | Chronologie ist didaktisch, aber dünn belegt; Grammatikfehler. |
 | `chineseroom` | 29.0/31.x | Doppelung und falscher „nächste Folie“-Verweis. |
@@ -752,17 +710,13 @@ Die leeren `innerText`-Werte bei 12.0/12.2/12.3/12.4/12.5, 11.1, 24.1/24.2 und 2
 - **Mabrok (2026):** `https://arxiv.org/abs/2603.22301`, „Latent Semantic Manifolds in Large Language Models“; Expressibility Gap und Voronoi-Regionen sind vorhanden. Der Deep-Text in 23.0 gibt das korrekt wieder.
 - **Gurnee et al. (2026):** `https://arxiv.org/abs/2607.15495`, „Verbalizable Representations Form a Global Workspace in Language Models“; J-space und verbale Reportbarkeit sind gedeckt.
 - **Gurnee & Tegmark (2023):** `https://arxiv.org/html/2310.02207v1`; NYC als schwächster Fall, Ridge-/MLP-Probes und 3000-Jahres-Bereich sind gedeckt.
-- **Othello-GPT:** 8 Layer, 8 Heads, 512-dimensionaler Residualstrom, 60 legale Züge. `L6` ist nicht im Paper belegt.
+- **Othello-GPT:** 8 Layer, 8 Heads, 512-dimensionaler Residualstrom, 60 legale Züge.
 - **International AI Safety Report 2025:** `https://arxiv.org/abs/2501.17805`; als Quelle für 30.0 vorhanden.
 - **12.1:** 82 % Attention von Position 6 auf Position 4 ist in der Demo und im Text konsistent.
 
 ### Fehlt oder ist zu dünn
 
-- **WebArena** für 26.0.
-- **RoPE/ALiBi** für 8.0, obwohl die Quellen im Deep-Bereich liegen.
-- **L6-Beleg** für 24.1.
-- **Newton/Julian** für 25.1.
-- **New Mysterianism/Ratten-Vergleich** für 31.1.
+- **Rattenvergleich:** bleibt als bewusste Analogie, keine Quellenforderung.
 - **Eiffelturm 330 m** als explizite Korrektur der 300-m-Halluzination.
 - **Alle 107 URLs** wurden nicht vollständig auf HTTP-Status geprüft. Vor dem nächsten Release `blog/tests/link_checker.py` laufen lassen.
 
@@ -770,11 +724,11 @@ Die leeren `innerText`-Werte bei 12.0/12.2/12.3/12.4/12.5, 11.1, 24.1/24.2 und 2
 
 1. **P0-07, P0-08, P0-09, P0-13:** Attention- und FFN-Formeln zuerst, weil sie das technische Rückgrat sind.
 2. **P0-01, P0-02, P0-04, P0-14:** Begriffe und Modellgrößen, bevor Leser:innen sie weiterverwenden.
-3. **P0-10, P0-11, P0-12:** Neuron, GELU, Dense/Aktivierung.
-4. **P0-15/P1-17:** 29.0 und 31.0 entwirren; Navigation reparieren.
+3. **P0-10, P0-11:** Neuron und GELU.
+4. **P0-15/P1-14:** erledigt (29.0 und 31.0 entwirrt, Navigation repariert).
 5. **P1-01:** EN-Formel-Labels; das ist eine schnelle, sichtbare Korrektur.
 6. **P0-16:** QKV-Prozentanzeige normalisieren und testen.
-7. **P1-03/P1-04/P1-05/P1-06:** Titel und Quellen.
+7. **P1-03:** Titel differenzieren.
 8. **P2:** Stil, Formatierung, Eiffelturm-Label.
 
 ## Prüfartefakte

@@ -349,7 +349,7 @@
         terms.push('\\underbrace{' + wt.toFixed(2) + '}_{\\text{' + label + '}}\\cdot v_{\\text{' + label + '}}');
       });
       var t = '\\underbrace{x\'}_{\\substack{\\text{' + (DE ? 'neuer Vektor' : 'new vector') + '}\\\\ \\text{' + (DE ? 'für' : 'for') + ' } \\text{' + texText(formulaLabel(ts[selected])) + '}}} = ' +
-        '\\underbrace{' + terms.join(' + ') + '}_{\\substack{\\text{' + (DE ? 'gewichtete Summe' : 'weighted sum') + '}\\\\ \\text{' + (DE ? 'Summe der Gewichte' : 'sum of weights') + ' } = 1}}';
+        '\\underbrace{' + terms.join(' + ') + '}_{\\substack{\\text{' + (DE ? 'gewichtete Summe' : 'weighted sum') + '}\\\\ \\text{' + (DE ? 'Summe aller Gewichte' : 'sum of all weights') + ' } = 1}}';
       formulaEl.innerHTML = '<div class="ls-math" data-tex="' + escAttr(t) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(t) + '</code></div>';
       if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
     }
