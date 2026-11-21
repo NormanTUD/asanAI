@@ -770,6 +770,7 @@ Die Liste ist abgearbeitet. Offen bleiben nur P0-12 (bewusst), die dünne Quelle
 - `/tmp/opencode/layoutscan.txt`
 - `/tmp/opencode/eoy_browser_audit2.json` und `/tmp/opencode/eoy_pages2/` (122 Chromium-Screenshots)
 - `blog/eoy/PERFORMANCE.md` (Ladezeiten aller 122 Seiten)
+- `blog/eoy/FACT_AUDIT.md` (Satz- und Faktenprüfung)
 - `/tmp/opencode/eoy_timing_baseline.json`, `/tmp/opencode/eoy_timing_final.json`
 - `/tmp/opencode/qkv_graph.png` (Graph mit Selbstkanten)
 - `/tmp/opencode/extract_eoy.js`, `/tmp/opencode/show_step.js`
