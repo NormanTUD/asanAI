@@ -15,7 +15,7 @@
     ];
     var head = 0, view = "arcs", weights = W[0].slice(), prev = W[0].slice();
     var simplexGeom = null, simplexDrag = false, simplexCorner = -1, simplexVerts = null;
-    var graphHover = -1, graphMouse = { x: 0, y: 0 };
+    var graphHover = -1, graphQuery = query, graphMouse = { x: 0, y: 0 };
     var arcHits = [], arcHover = -1, pinnedToken = -1;
     var t = 1, start = 0, raf = 0, loopRaf = 0, running = true;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -39,6 +39,7 @@
     var tipEl = el.querySelector(".ls-qkv-tip");
     var readout = el.querySelector(".ls-qkv-readout");
     var percentEl = el.querySelector(".ls-qkv-percent");
+    var queryEl = el.querySelector(".ls-qkv-query b");
     var formulaEl = el.querySelector(".ls-qkv-formula .ls-math");
     var pipelineTex = DE
       ? "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K gelernt}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{Gewichte }\\alpha}}_{\\text{bestimmt den Punkt im Gewichts-Simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V gelernt}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\underbrace{\\alpha_{ij}}_{\\text{Gewicht}}\\underbrace{v_j}_{\\text{Value}}}_{\\text{gewichtete Mischung der Values}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{Head-Ausgabe}}\\end{aligned}"
@@ -427,9 +428,23 @@
     function graphLayout(w, h) {
       var n = tokens.length, cx = w / 2, cy = h / 2 + 4, R = Math.min(w, h) * 0.36;
       return tokens.map(function (tok, i) {
-        var a = -Math.PI / 2 + (i - query) * Math.PI * 2 / n;
+        var a = -Math.PI / 2 + (i - graphQuery) * Math.PI * 2 / n;
         return { x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R, a: a, i: i };
       });
+    }
+    function graphRow(qi) {
+      if (qi === query) return weights.slice();
+      var row = tokens.map(function () { return 0.02; });
+      row[qi] += 0.40;
+      if (qi > 0) row[qi - 1] += 0.10;
+      if (qi < tokens.length - 1) row[qi + 1] += 0.10;
+      if (head === 0) {
+        row[1] += 0.10; row[8] += 0.08; row[11] += 0.05;
+      } else {
+        row[6] += 0.18; row[4] += 0.08; row[9] += 0.05;
+      }
+      var sum = row.reduce(function (a, b) { return a + b; }, 0) || 1;
+      return row.map(function (v) { return v / sum; });
     }
     function segDist(px, py, ax, ay, bx, by) {
       var dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
@@ -460,7 +475,8 @@
       ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
       V.grid(ctx, w, h, C, 30, 0.10);
       var nodes = graphLayout(w, h);
-      var q = nodes[query];
+      var q = nodes[graphQuery];
+      var row = graphRow(graphQuery);
       var col = head === 0 ? C.green : C.blue;
       // complete topology, very faint: every pair is connected
       ctx.lineWidth = 0.6;
@@ -475,8 +491,8 @@
       ctx.beginPath(); ctx.arc(w / 2, h / 2 + 4, Math.min(w, h) * 0.36, 0, Math.PI * 2); ctx.stroke();
       // query edges, strength = softmax weight
       nodes.forEach(function (node) {
-        if (node.i === query) return;
-        var a = weights[node.i];
+        if (node.i === graphQuery) return;
+        var a = row[node.i];
         var hot = graphHover === node.i;
         ctx.strokeStyle = V.alpha(hot ? C.gold : col, 0.06 + 0.30 * a + (hot ? 0.22 : 0));
         ctx.lineWidth = 5 + 18 * a + (hot ? 4 : 0);
@@ -506,9 +522,20 @@
         }
       });
       // nodes and weight rings
+      // self-loops: every token has an edge to itself
       nodes.forEach(function (node) {
-        var isQ = node.i === query;
-        var a = isQ ? 1 : weights[node.i];
+        var selfA = node.i === graphQuery ? row[node.i] : 0.02;
+        var loopX = node.x + Math.cos(node.a) * 17;
+        var loopY = node.y + Math.sin(node.a) * 17;
+        ctx.strokeStyle = V.alpha(node.i === graphQuery ? col : C.petrol, 0.20 + 0.55 * Math.min(0.6, selfA));
+        ctx.lineWidth = 1.2 + (node.i === graphQuery ? 2.2 : 0.6);
+        ctx.beginPath(); ctx.arc(loopX, loopY, 6.5, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = V.alpha(node.i === graphQuery ? col : C.petrol, 0.35 + 0.45 * Math.min(0.6, selfA));
+        ctx.beginPath(); ctx.arc(loopX + 4.5, loopY - 4.5, 1.7, 0, Math.PI * 2); ctx.fill();
+      });
+      nodes.forEach(function (node) {
+        var isQ = node.i === graphQuery;
+        var a = isQ ? 1 : row[node.i];
         if (!isQ) {
           ctx.strokeStyle = V.alpha(col, 0.30 + 0.55 * a);
           ctx.lineWidth = 2.2;
@@ -534,9 +561,9 @@
       // hover overlay
       if (graphHover >= 0) {
         var tIdx = graphHover;
-        var text = tIdx === query
-          ? (DE ? "Query es · verteilt 100% auf alle Tokens" : "query it · distributes 100% over all tokens")
-          : (DE ? tokens[query] + " → " + tokens[tIdx] + "  " + (weights[tIdx] * 100).toFixed(1) + "%" : tokens[query] + " → " + tokens[tIdx] + "  " + (weights[tIdx] * 100).toFixed(1) + "%");
+        var text = tIdx === graphQuery
+          ? (DE ? tokens[graphQuery] + " · Selbstkante + " + (row[graphQuery] * 100).toFixed(1) + "% auf sich selbst" : tokens[graphQuery] + " · self-loop + " + (row[graphQuery] * 100).toFixed(1) + "% to itself")
+          : (DE ? tokens[graphQuery] + " → " + tokens[tIdx] + "  " + (row[tIdx] * 100).toFixed(1) + "%" : tokens[graphQuery] + " → " + tokens[tIdx] + "  " + (row[tIdx] * 100).toFixed(1) + "%");
         ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
         var tw = ctx.measureText(text).width;
         var bx = clamp(graphMouse.x + 14, 6, w - tw - 24);
@@ -546,7 +573,7 @@
         ctx.fillStyle = "rgba(255,255,255,.96)";
         ctx.fillRect(bx, by, tw + 18, 26);
         ctx.restore();
-        ctx.strokeStyle = tIdx === query ? C.green : C.gold;
+        ctx.strokeStyle = tIdx === graphQuery ? C.green : C.gold;
         ctx.lineWidth = 1.4;
         ctx.strokeRect(bx + 0.5, by + 0.5, tw + 17, 25);
         ctx.fillStyle = C.petrol;
@@ -562,10 +589,10 @@
       ctx.fillStyle = col;
       ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Barlow", sans-serif';
       ctx.fillText(head === 0 ? (DE ? "Head 1 · Wer?" : "Head 1 · who?") : (DE ? "Head 2 · Wo?" : "Head 2 · where?"), w - 12, 7);
-      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "Vollverbunden:" : "Fully connected:") + '</span><span>' + (DE ? "jedes Token kann auf jedes andere schauen." : "every token can attend to every other token.") + '</span><span><b>' + tokens.length + '</b> ' + (DE ? "Knoten" : "nodes") + '</span>');
-      var top = tokens.map(function (tok, i) { return { tok: tok, w: i === query ? -1 : weights[i] }; }).sort(function (a, b) { return b.w - a.w; }).slice(0, 3);
-      setReadout('<span><b>Query</b> ' + (DE ? "es" : "it") + '</span><span><b>' + (DE ? "verbunden" : "connected") + '</b> ' + tokens.length + '/' + tokens.length + '</span>' + top.map(function (x) { return '<span><b>' + api.esc(x.tok) + '</b> ' + (x.w * 100).toFixed(1) + '%</span>'; }).join(""));
-      canvas.setAttribute("aria-label", DE ? "Attention als vollverbundener Graph: alle Token im Kreis, Kanten von der Query es zu jedem Token mit unterschiedlicher Stärke. Fahre über eine Kante, um Verbindung und Prozentwert zu sehen." : "Attention as a fully connected graph: all tokens in a circle, edges from the query it to every token with different strength. Hover an edge to see the connection and percentage.");
+      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "Vollverbunden:" : "Fully connected:") + '</span><span>' + (DE ? "jedes Token hat eine Kante zu sich selbst und zu jedem anderen." : "every token has an edge to itself and to every other token.") + '</span><span><b>' + tokens.length + '</b> ' + (DE ? "Knoten" : "nodes") + '</span>');
+      var top = tokens.map(function (tok, i) { return { tok: tok, w: row[i] }; }).sort(function (a, b) { return b.w - a.w; }).slice(0, 3);
+      setReadout('<span><b>Query</b> ' + api.esc(tokens[graphQuery]) + '</span><span><b>' + (DE ? "verbunden" : "connected") + '</b> ' + tokens.length + '/' + tokens.length + '</span>' + top.map(function (x) { return '<span><b>' + api.esc(x.tok) + '</b> ' + (x.w * 100).toFixed(1) + '%</span>'; }).join(""));
+      canvas.setAttribute("aria-label", DE ? "Attention als vollverbundener Graph: alle Token im Kreis, jedes Token mit einer Selbstkante. Die Kanten von der ausgewählten Query " + tokens[graphQuery] + " zu jedem Token zeigen die Gewichte. Klicke ein Token, um seine Verbindungen zu sehen." : "Attention as a fully connected graph: all tokens in a circle, each token with a self-loop. Edges from the selected query " + tokens[graphQuery] + " show the weights. Click a token to see its connections.");
     }
     function normalizeWeights() {
       var sum = weights.reduce(function (a, b) { return a + b; }, 0);
@@ -577,11 +604,12 @@
     }
     function draw() {
       normalizeWeights();
+      if (queryEl) queryEl.textContent = view === "graph" ? tokens[graphQuery] : tokens[query];
       if (!size) return;
       if (view === "simplex") drawSimplex();
       else if (view === "graph") drawGraph(performance.now());
       else drawArcs();
-      canvas.__lsQkv = { view: view, head: head, weights: weights.slice(), simplex: simplexGeom ? { ids: simplexGeom.ids.slice(), ox: simplexGeom.ox, oy: simplexGeom.oy, verts: simplexGeom.verts.map(function (v) { return { x: v.x, y: v.y }; }) } : null };
+      canvas.__lsQkv = { view: view, head: head, graphQuery: graphQuery, weights: weights.slice(), simplex: simplexGeom ? { ids: simplexGeom.ids.slice(), ox: simplexGeom.ox, oy: simplexGeom.oy, verts: simplexGeom.verts.map(function (v) { return { x: v.x, y: v.y }; }) } : null };
     }
     function setView(v) {
       if (v !== "arcs" && v !== "simplex" && v !== "graph") return;
@@ -637,8 +665,8 @@
       });
       if (best < 0) {
         nodes.forEach(function (node) {
-          if (node.i === query) return;
-          var d = segDist(graphMouse.x, graphMouse.y, nodes[query].x, nodes[query].y, node.x, node.y);
+          if (node.i === graphQuery) return;
+          var d = segDist(graphMouse.x, graphMouse.y, nodes[graphQuery].x, nodes[graphQuery].y, node.x, node.y);
           if (d < 8 && d < bestD) { bestD = d; best = node.i; }
         });
       }
@@ -664,6 +692,20 @@
           if (pinnedToken >= 0) showTip(found, ax, ay); else hideTip();
           return;
         }
+      }
+      if (view === "graph") {
+        var gr = canvas.getBoundingClientRect();
+        var gx = e.clientX - gr.left, gy = e.clientY - gr.top;
+        var gnodes = graphLayout(size.w, size.h);
+        for (var gi = 0; gi < gnodes.length; gi++) {
+          if (Math.hypot(gx - gnodes[gi].x, gy - gnodes[gi].y) < 18) {
+            graphQuery = gnodes[gi].i;
+            graphHover = graphQuery;
+            draw();
+            return;
+          }
+        }
+        return;
       }
       if (view !== "simplex") return;
       var r = canvas.getBoundingClientRect();

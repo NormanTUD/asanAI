@@ -25,7 +25,7 @@
 - [x] Rattenvergleich: als bewusste Analogie behalten
 - [x] Verifikation: Syntax und ausgewählte Seiten
 
-**Gerade in Arbeit:** abgeschlossen. Geprüft mit `node --check` für alle EOY-JS-Dateien, 95 statischen MD-Assertions und Chromium/CDP: alle 61 Substeps in DE und EN sowie 62 Step-Seiten liefen ohne JS-Fehler. Die Änderungen im Working Tree sind noch nicht committed.
+**Gerade in Arbeit:** abgeschlossen. Geprüft mit `node --check` für alle EOY-JS-Dateien, 95 statischen MD-Assertions und einem Chromium-Screenshot-Audit bei 1440×1000: alle 122 Seiten (61 Substeps × DE/EN) liefen ohne JS-Fehler, ohne fehlende Bilder, ohne ungerenderte Formeln und ohne leere Screenshots. Die Änderungen im Working Tree sind noch nicht committed.
 
 **Umsetzungsstand:** P0-01 bis P0-06 sind nachgezogen; ab P0-07 sind alle Code-Befunde umgesetzt: Attention/Values, Q/K/V, OV, Neuron, GELU, FFN, Unembedding, Schritt 29, QKV-Normalisierung, die EN-Formeln, P1-02 bis P1-13 sowie P2-01 bis P2-12. P0-12 bleibt bewusst unverändert. Die Befunde unten bleiben als Prüfprotokoll stehen.
 
@@ -658,7 +658,7 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 | `highdim` | 6.4 | 16 Spalten im Text und in der Tabelle; Werte sind als didaktisch markiert. |
 | `manifold` | 7.0 | Nur Drehung/Rotation/Verschiebung; die Mannigfaltigkeits-Behauptung ist entfernt. |
 | `position` | 8.0 | Startzustand leer; Sinuswellen statt Rotationen, keine Kugel-Behauptung. |
-| `qkv` | 9.x/10.x | Gewichte werden vor der Anzeige normalisiert; Readout bleibt in `[0, 100]`. |
+| `qkv` | 9.x/10.x | Gewichte werden vor der Anzeige normalisiert; Readout bleibt in `[0, 100]`. Der Graph hat Selbstkanten, und jedes Token ist als Query anklickbar. |
 | `induction` | 12.0–12.5 | 82 % in 12.1 und die 2.5–5B/0.15→0.4-nats-Zahlen in 12.5 sind gedeckt. |
 | `linear` | 13.0 | 2-Parameter-Neuron und 4-Parameter-Box sind erklärt. |
 | `gradient` | 14.0 | Loss-Werte und `p(Paris)=30 %` stimmen; x-Werte werden auf drei Nachkommastellen gerundet. |
@@ -685,13 +685,14 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 - **`model` / `tf-sinus-scene`:** Vor dem Training stand `Loss 0.0000` bei einer zufälligen Geraden. Der Initial-Loss wird jetzt aus `predict` und MSE berechnet.
 - **`embedding`:** 1D-, 2D- und 3D-Arithmetik geprüft: `Kalt + Lauwarm`, `König − Mann + Frau`, `Mann + 2·Macht`, `Prinz + Macht` und die 3D-Geschlechtsrichtungen gehen auf.
 - **`bpe`:** Startvokabular 10, Korpus 79 Tokens, Merges `e+s` 9×, `s+t` 9×, `w+e` 8×, `l+o` 7× nachgerechnet; korrekt.
-- **`qkv`:** `normalizeWeights()` geprüft; nach schnellem Head-/View-Wechsel ist die Summe der Gewichte `1.0`, die Anzeige bleibt unter 100 %.
+- **`qkv`:** `normalizeWeights()` geprüft; nach schnellem Head-/View-Wechsel ist die Summe der Gewichte `1.0`, die Anzeige bleibt unter 100 %. Der Graph zeichnet für jedes Token eine Selbstkante; ein Klick auf ein Token setzt es als Query und zeigt seine Kanten.
 - **`inductionmatrix`:** Gewichte summieren zu 1; Zeile 6 liest 82 % von Position 4.
 - **`worldmodel`:** `DATA.moves` mit einer unabhängigen Othello-Regelprüfung getestet; alle 30 Züge sind legal. 8 Layer, 8 Heads, 512 Dimensionen und 60 Tokens sind durch die Quelle gedeckt.
 - **`history`:** Jahresangaben gesichtet; alle referenzierten Bilder existieren.
 - **`spacetime`:** Todesjahre und Abbildung gesichtet; `gurnee-tegmark-world.png` existiert, Quelle und Lizenz stehen am Bild.
 - **`crossentropy`:** Initial-Logits ergeben `p(Paris) ≈ 0.30`, `Loss ≈ 1.20`, Gradient `p−y ≈ −0.70`; korrekt.
 - **`manifold`:** Die Mannigfaltigkeits-Behauptung ist entfernt; die Demo bleibt bei Rotation und Translation.
+- **Ladezeit:** `tf.min.js` (ca. 1.4 MB) wird nur noch von den Modell-Folien 13 und 16 nachgeladen. Median-Payload sank von 3762 KB auf 2331 KB pro Seite; die Wanduhrzeiten sind auf dem belasteten Host nicht sauber vergleichbar. Details: `PERFORMANCE.md`.
 
 ### Ohne inhaltlichen Befund geprüft
 
@@ -766,12 +767,17 @@ Die Liste ist abgearbeitet. Offen bleiben nur P0-12 (bewusst), die dünne Quelle
 - `/tmp/opencode/all_steps_de.txt`, `/tmp/opencode/all_steps_en.txt`
 - `/tmp/opencode/demo_text_de.json`
 - `/tmp/opencode/layoutscan.txt`
+- `/tmp/opencode/eoy_browser_audit2.json` und `/tmp/opencode/eoy_pages2/` (122 Chromium-Screenshots)
+- `blog/eoy/PERFORMANCE.md` (Ladezeiten aller 122 Seiten)
+- `/tmp/opencode/eoy_timing_baseline.json`, `/tmp/opencode/eoy_timing_final.json`
+- `/tmp/opencode/qkv_graph.png` (Graph mit Selbstkanten)
 - `/tmp/opencode/extract_eoy.js`, `/tmp/opencode/show_step.js`
 
 ## Prüfstatus
 
 - **Inhalt:** P0-01 bis P0-06 sind nachgezogen; ab P0-07 sind alle Code-Befunde umgesetzt. P0-12 bleibt bewusst unverändert; P1-04 hat weiterhin eine dünne Quellenlage.
-- **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen. Alle 61 Substeps in DE/EN (122 Seiten) liefen ohne JS-Fehler; 36 aktive Szenen wurden im Code geprüft.
+- **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen. Alle 61 Substeps in DE/EN (122 Seiten) liefen im Chromium-Screenshot-Audit ohne JS-Fehler, fehlende Bilder oder ungerenderte Formeln; 36 aktive Szenen wurden im Code geprüft.
 - **Layout:** direkte Sprünge behoben; ein vollständiger Render-Sweep über alle Lessons steht noch aus.
+- **Performance:** TF.js ist für alle Seiten außer 13 und 16 lazy; Payload-Median 3762 → 2331 KB. Messungen und alle 122 Einzelseiten: `PERFORMANCE.md`.
 - **Quellen:** tragende Quellen geprüft; vollständiger Link-Check offen.
 - **EN:** Formel-Labels und die geänderten Demo-/Textstellen sind übersetzt; vollständiger EN-Durchlauf offen.
