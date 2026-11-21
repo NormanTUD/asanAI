@@ -83,6 +83,7 @@ const G = 3.75;              // spacing between spaces
 const HH = 1.0;              // cube half size
 const PRE = 1.7, STEP = 2.1, POST = 2.6;
 const Tc = PRE + (NS - 1) * STEP + POST;
+const T_POST = PRE + (NS - 1) * STEP;
 
 /* ---------- shared probe lattice: the same field at every point ---------- */
 const DIM = 4, GE = 0.62, GRID = [], GRID_E = [];
@@ -113,7 +114,7 @@ const AXC = [[255, 84, 110], [90, 245, 160], [96, 160, 255]];
 
 /* ---------- model state ---------- */
 let W = 0, TT = 0;
-let vocab = [], vcol = [], S = [], C = [], A = [], LAT = [], LC = [], idCol = [], HD = [];
+let vocab = [], vcol = [], S = [], C = [], A = [], LAT = [], LC = [], HC = [], idCol = [], HD = [], PRED = [];
 const READER = T - 1;
 
 function build() {
@@ -151,21 +152,25 @@ function build() {
     idCol.push(hsl(i * (360 / T) + 18, 92, 66));
   }
 
-  S = [V0]; C = [C0]; A = [null]; LAT = [GRID]; HD = []; LC = [];
+  S = [V0]; C = [C0]; A = [null]; LAT = [GRID]; HD = []; LC = []; HC = []; PRED = [];
   LC[0] = [165, 140, 255];
 
   for (let l = 0; l < L; l++) {
-    const Wq = mat(3, 3, 0.95), Wk = mat(3, 3, 0.95), Wv = mat(3, 3, 0.90);
-    const W1 = mat(6, 3, 1.25), W2 = mat(3, 6, 0.40);
+    const Wq0 = mat(3, 3, 0.95), Wk0 = mat(3, 3, 0.95), Wv0 = mat(3, 3, 0.90), Wo0 = mat(3, 3, 0.90);
+    const Wq1 = mat(3, 3, 0.95), Wk1 = mat(3, 3, 0.95), Wv1 = mat(3, 3, 0.90), Wo1 = mat(3, 3, 0.90);
+    const W1 = mat(12, 3, 1.10), W2 = mat(3, 12, 0.32);
 
-    /* ------- attention: one shared function, every token at its own point ------- */
+    /* ------- attention: two parallel heads, one shared function per head ------- */
     const sa = 2 * l + 1;
-    LC[sa] = hsl(20 + l * 11, 100, 62);
+    const tint0 = hsl(20 + l * 11, 100, 62);
+    const tint1 = hsl(292 + l * 12, 100, 64);
+    LC[sa] = tint0;
+    HC[sa] = [tint0, tint1];
     const pv = S[sa - 1], pc = C[sa - 1], pl = LAT[sa - 1];
-    const K = pv.map(v => mv(Wk, v));
-    const Vv = pv.map(v => mv(Wv, v));
+    const K0 = pv.map(v => mv(Wk0, v)), V0 = pv.map(v => mv(Wv0, v));
+    const K1 = pv.map(v => mv(Wk1, v)), V1 = pv.map(v => mv(Wv1, v));
 
-    const att = (q, n) => {
+    const mkAtt = (Wq, K, Vv) => (q, n) => {
       const qq = mv(Wq, q);
       let sc = [], mx = -1e9;
       for (let j = 0; j < n; j++) {
@@ -179,15 +184,18 @@ function build() {
       for (let j = 0; j < n; j++) for (let k = 0; k < 3; k++) o[k] += sc[j] * Vv[j][k];
       return { w: sc, o };
     };
+    const att0 = mkAtt(Wq0, K0, V0), att1 = mkAtt(Wq1, K1, V1);
 
-    const ns = [], nc = [], aw = [];
+    const ns = [], nc = [], aw0 = [], aw1 = [];
     pv.forEach((v, i) => {
-      const r = att(v, i + 1);
-      aw.push(r.w);
-      ns.push(squash(v.map((x, k) => x + 0.92 * r.o[k])));
+      const r0 = att0(v, i + 1), r1 = att1(v, i + 1);
+      aw0.push(r0.w); aw1.push(r1.w);
+      const o0 = mv(Wo0, r0.o), o1 = mv(Wo1, r1.o);
+      const upd = [0.5 * (o0[0] + o1[0]), 0.5 * (o0[1] + o1[1]), 0.5 * (o0[2] + o1[2])];
+      ns.push(squash(v.map((x, k) => x + 0.92 * upd[k])));
       let cr = 0, cg = 0, cb = 0;
       for (let j = 0; j <= i; j++) {
-        const wt = r.w[j];
+        const wt = 0.5 * (r0.w[j] + r1.w[j]);
         cr += wt * pc[j][0]; cg += wt * pc[j][1]; cb += wt * pc[j][2];
       }
       nc.push([
@@ -196,17 +204,20 @@ function build() {
         pc[i][2] * 0.45 + cb * 0.55
       ]);
     });
-    S[sa] = ns; C[sa] = nc; A[sa] = aw;
+    S[sa] = ns; C[sa] = nc; A[sa] = [aw0, aw1];
     /* the whole space feels the same attention field */
     LAT[sa] = pl.map(q => {
-      const r = att(q, T);
-      return squash(q.map((x, k) => x + 0.80 * r.o[k]));
+      const r0 = att0(q, T), r1 = att1(q, T);
+      const o0 = mv(Wo0, r0.o), o1 = mv(Wo1, r1.o);
+      const o = [0.5 * (o0[0] + o1[0]), 0.5 * (o0[1] + o1[1]), 0.5 * (o0[2] + o1[2])];
+      return squash(q.map((x, k) => x + 0.80 * o[k]));
     });
 
-    /* ------- feed-forward: same field for every point, no talk between tokens ------- */
+    /* ------- feed-forward: expand 4x into the hidden dims, then back down ------- */
     const sf = 2 * l + 2;
     LC[sf] = hsl(192 + l * 11, 100, 62);
-    const ffn = v => {
+    HC[sf] = null;
+    const ffnLat = v => {
       const d = mv(W2, mv(W1, v).map(z => Math.tanh(z * 1.6)));
       return squash(v.map((x, k) => x + 0.92 * d[k]));
     };
@@ -219,8 +230,14 @@ function build() {
     });
     C[sf] = C[sa].map(c => c.slice());
     A[sf] = null;
-    LAT[sf] = LAT[sa].map(ffn);
+    LAT[sf] = LAT[sa].map(ffnLat);
   }
+
+  /* the last token, projected back onto the vocabulary */
+  const rv = S[NS - 1][READER];
+  const scored = vocab.map((v, k) => ({ k, s: v[0] * rv[0] + v[1] * rv[1] + v[2] * rv[2] }));
+  scored.sort((a, b) => b.s - a.s);
+  PRED = scored.slice(0, 6).map(o => ({ v: vocab[o.k], col: vcol[o.k], s: o.s }));
 }
 build();
 
@@ -515,7 +532,8 @@ function drawAttention(t) {
       if (!p2) continue;
       for (let j = 0; j <= i; j++) {
         const wt = aw[i][j];
-        if (wt < 0.04) continue;
+        if (wt < 0.04 && i !== READER) continue;
+        const vis = i === READER ? Math.max(wt, 0.05) : wt;
         const src = worldState(s - 1, j);
         const p0 = P(src[0], src[1], src[2]);
         if (!p0) continue;
@@ -528,16 +546,16 @@ function drawAttention(t) {
         const pc = P(ctrl[0], ctrl[1], ctrl[2]);
         if (!pc) continue;
         const col = mixc(C[s - 1][j], beadColor(i), 0.30);
-        const base = (0.05 + 0.55 * wt) * g * (i === READER ? 1.7 : 1.0);
+        const base = (0.05 + 0.55 * vis) * g * (i === READER ? 1.7 : 1.0);
         strokeBezier(p0, pc, p2, col, base);
         for (let k = 0; k < 2; k++) {
           const ph = (phase + k * 0.5) % 1;
           const pos = bez3(src, ctrl, dst, ph);
           const pp = P(pos[0], pos[1], pos[2]);
           if (!pp) continue;
-          const rr = Math.max(0.6, (1.1 + wt * 3.0) * 0.05 * pp[2]);
+          const rr = Math.max(0.6, (1.1 + vis * 3.0) * 0.05 * pp[2]);
           ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.5),
-                               Math.sin(Math.PI * ph) * (0.22 + 0.7 * wt) * g);
+                               Math.sin(Math.PI * ph) * (0.22 + 0.7 * vis) * g);
           ctx.beginPath(); ctx.arc(pp[0], pp[1], rr, 0, TAU); ctx.fill();
         }
       }
@@ -571,17 +589,18 @@ function drawFFN(t) {
       const a0 = P(...worldState(s - 1, i));
       const a1 = P(...worldState(s, i));
       if (!a0 || !a1) continue;
-      const mid = lerp3(worldState(s - 1, i), worldState(s, i), 0.5);
+
+      const emph = i === READER ? 1.8 : 1.0;
+      const mid0 = lerp3(worldState(s - 1, i), worldState(s, i), 0.5);
+      const mid = [mid0[0], mid0[1] + (i === READER ? 0.82 : 0.66), mid0[2]];
       const am = P(mid[0], mid[1], mid[2]);
       if (!am) continue;
-
-      const emph = i === READER ? 1.7 : 1.0;
-      const baseR = 0.235 * am[2];
+      const baseR = 0.30 * am[2];
       const ports = [];
       for (let k = 0; k < 6; k++) {
         const h = hid[i][k] || 0;
         const ang = k / 6 * TAU + t * 0.22;
-        const rr = baseR * (0.55 + 0.95 * Math.abs(h));
+        const rr = baseR * (0.50 + 1.05 * Math.abs(h));
         ports.push({
           x: am[0] + Math.cos(ang) * rr,
           y: am[1] + Math.sin(ang) * rr * 0.82,
@@ -597,8 +616,8 @@ function drawFFN(t) {
         if (k === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
       }
       ctx.closePath();
-      ctx.strokeStyle = rgba(LC[s], 0.13 * g * emph);
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = rgba(LC[s], (0.18 + (i === READER ? 0.12 : 0)) * g * emph);
+      ctx.lineWidth = i === READER ? 1.6 : 1.0;
       ctx.stroke();
 
       for (let k = 0; k < 6; k++) {
