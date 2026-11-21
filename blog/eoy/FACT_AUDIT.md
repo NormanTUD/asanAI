@@ -5,9 +5,12 @@
 - Davon gesichtet: 317 numerische Claims, 553 Kandidaten mit Modell-, Personen- oder Werknamen.
 - `url:`-Felder: 120 geprüft, keine 404er; 8 Antworten waren Bot-Blocker (403/202).
 
-## Neue Korrektur
+## Korrekturen
 
 - **Othello-Attribution:** Der Text schrieb die lineare Probe Li et al. zu. Li et al. (2023) nutzten nichtlineare Probes; Nanda, Lee und Wattenberg (2023) zeigten die lineare Lesbarkeit. Text in DE/EN korrigiert.
+- **Zeitachse:** „innerer Zeitstrahl“ ist zu stark; ersetzt durch „linear aus den Aktivierungen auslesbar“.
+- **Sprache:** „Rechtebegrenzung“ durch „Berechtigungsgrenzen“ ersetzt.
+- **QKV-Graph:** Hinweis ergänzt, dass die Gewichte für nicht ausgewählte Queries illustrativ sind.
 
 ## Verifizierte Kernfakten
 
