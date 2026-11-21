@@ -1086,8 +1086,8 @@
         var cy = H * .52;
         var n1 = W * .18, n2 = W * .50, n3 = W * .82;
         drawFlow(c, pad + 40, cy, W - pad - 40, cy);
-        drawChevron(c, (n1 + n2) / 2, cy + .5, DE ? "Vektor" : "vector");
-        drawChevron(c, (n2 + n3) / 2, cy + .5, DE ? "Vektor" : "vector");
+        drawChevron(c, (n1 + n2) / 2, cy + .5, "h");
+        drawChevron(c, (n2 + n3) / 2, cy + .5, "h");
         drawLineNode(c, n1, cy, 180);
         txt(c, "Othello", n1, cy + 56, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
         txt(c, DE ? "3 Logits pro Feld · reicht" : "3 logits per square · enough", n1, cy + 75, { align: "center", size: 10, color: C.muted });
