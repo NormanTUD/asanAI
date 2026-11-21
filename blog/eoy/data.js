@@ -523,6 +523,38 @@
     }
   ];
 
+  var ffnSplitSubstep = {
+    kicker: "FFN",
+    title: DE ? "Im FFN: auffächern und zurück" : "Inside the FFN: expand and project back",
+    body: DE
+      ? "Das FFN bekommt pro Token den einen $d_{\\text{model}}$-Vektor, nicht die einzelnen Heads. Es projiziert ihn mit $W_1$ auf $d_{\\text{ff}}$ Hidden-Werte, aktiviert sie und projiziert mit $W_2$ zurück. Die Aufspaltung im FFN ist also keine Head-Trennung, sondern die Aufspaltung in Hidden-Neuronen."
+      : "The FFN receives the one $d_{\\text{model}}$ token vector per token, not the individual heads. It projects it with $W_1$ onto $d_{\\text{ff}}$ hidden values, activates them, and projects back with $W_2$. The split inside the FFN is therefore not a split by head, but a split into hidden neurons.",
+    watch: DE ? "Drücke Weiter: Token-Vektor, W_1, Hidden, Aktivierung, W_2." : "Press Next: token vector, W_1, hidden, activation, W_2.",
+    demoState: { scene: "ffnsplit" },
+    context: DE
+      ? "Wichtig: Die Heads werden nicht erneut getrennt. Concat und $W_O$ haben sie bereits gemischt; das FFN arbeitet auf dem einen Token-Vektor."
+      : "Important: the heads are not split again. Concat and $W_O$ have already mixed them; the FFN works on the one token vector.",
+    deep: DE
+      ? "Typisch ist $d_{\\text{ff}} \\approx 4\\,d_{\\text{model}}$. $W_1$ fächert den Vektor auf, die Aktivierung macht ihn nichtlinear, $W_2$ projiziert zurück. Das FFN arbeitet pro Token, nicht pro Head."
+      : "Typically $d_{\\text{ff}} \\approx 4\\,d_{\\text{model}}$. $W_1$ fans the vector out, the activation makes it nonlinear, and $W_2$ projects it back. The FFN works per token, not per head.",
+    boxes: [
+      box("ffn-split-formula", "Mathematik", "Die FFN-Expansion", DE
+        ? "Der Token-Vektor wird auf $d_{\\text{ff}}$ Hidden-Werte aufgefächert, aktiviert und zurückprojiziert."
+        : "The token vector is fanned out to $d_{\\text{ff}}$ hidden values, activated, and projected back.",
+        "\\underbrace{\\underbrace{\\begin{pmatrix} u_1 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor}} \\;\\overset{W_1,\\,b_1}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} z_1 \\\\ \\vdots \\\\ z_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{Hidden: }d_{\\text{ff}}\\gg d_{\\text{model}}} \\;\\overset{\\operatorname{act}}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} a_1 \\\\ \\vdots \\\\ a_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{aktiviert}} \\;\\overset{W_2,\\,b_2}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} y_1 \\\\ \\vdots \\\\ y_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{zurück}}}_{\\text{das FFN fächert den Token-Vektor auf und projiziert ihn zurück}}")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Das FFN als zwei lineare Projektionen mit Aktivierung dazwischen.", en: "The FFN as two linear projections with an activation in between." } },
+      { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+    ]
+  };
+
+  var ffnStep = {
+    title: ffnSteps[0].title,
+    kicker: ffnSteps[0].kicker,
+    substeps: [ffnSteps[0], ffnSplitSubstep]
+  };
+
   var residualSteps = DE ? [
     {
       kicker: "Residual",
@@ -533,7 +565,7 @@
       context: "Die Notizbuch-Analogie ist eine stark vereinfachte, vermenschlichte Sichtweise. Mathematisch ist der Stream ein Vektor pro Token; die Streams werden getrennt geführt, und jede Schicht addiert pro Token ein Update: x ← x + Layer(x). Frühere Informationen bleiben als Summand erhalten; ob sie lesbar bleiben, hängt von den späteren Projektionen ab.",
       deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben. Jedes Token hat seinen eigenen Stream; Attention mischt Information zwischen ihnen, und FFN schreibt Updates hinein; die Identität bleibt erhalten.",
       boxes: [
-        box("res-nb", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
+        box("res-nb", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", DE ? "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}" : "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
         box("res-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar."),
         box("res-2", "Grenze", "Was ist das nicht?", "Kein Speicher im Sinne einer Datenbank und keine wörtliche Expertenrunde. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird.")
       ]
@@ -1510,6 +1542,32 @@
     questionGroups: attentionMergedGroups,
     sources: []
   };
+  var headConcatSubstep = {
+    kicker: DE ? "Concat" : "Concat",
+    title: DE ? "Heads zusammenfügen" : "Joining the heads",
+    body: DE
+      ? "Jeder Head liefert pro Token einen Vektor. Multi-Head-Attention legt diese Vektoren nebeneinander (Concat) und projiziert sie mit $W_O$ auf einen Token-Vektor der Modellbreite. Erst dieser eine Vektor geht pro Token ins FFN."
+      : "Each head produces one vector per token. Multi-head attention places these vectors side by side (concat) and projects them with $W_O$ onto one token vector of the model width. Only this one vector per token goes into the FFN.",
+    watch: DE ? "Drücke Weiter: Heads, Concat, W_O, Token-Vektor." : "Press Next: heads, concat, W_O, token vector.",
+    demoState: { scene: "headconcat" },
+    context: DE
+      ? "Die Heads sind keine getrennten Ströme, die ins FFN wandern. Concat macht aus ihnen einen breiten Vektor; $W_O$ mischt ihn auf $d_{\\text{model}}$. Das FFN sieht danach einen Vektor pro Token."
+      : "The heads are not separate streams that travel into the FFN. Concat turns them into one wide vector; $W_O$ mixes it down to $d_{\\text{model}}$. The FFN then sees one vector per token.",
+    deep: DE
+      ? "Formal: $H$ Heads mit je $d_v$ Werten ergeben nach Concat $H d_v$ Werte. $W_O \\in \\mathbb{R}^{d_{\\text{model}}\\times H d_v}$ mischt sie zum Token-Vektor. Die einzelnen Heads bleiben danach nicht als getrennte Kanäle erhalten."
+      : "Formally: $H$ heads with $d_v$ values each give $H d_v$ values after concat. $W_O \\in \\mathbb{R}^{d_{\\text{model}}\\times H d_v}$ mixes them into the token vector. The individual heads do not remain as separate channels afterwards.",
+    boxes: [
+      box("hc-formula", "Mathematik", "Concat und $W_O$", DE
+        ? "Die Head-Ausgaben stehen als Spalten; Concat stapelt sie; $W_O$ mischt sie zum Token-Vektor."
+        : "The head outputs are columns; concat stacks them; $W_O$ mixes them into the token vector.",
+        "\\underbrace{\\underbrace{\\begin{pmatrix} h_{1,1} & h_{2,1} & \\cdots & h_{H,1} \\\\ h_{1,2} & h_{2,2} & \\cdots & h_{H,2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ h_{1,d_v} & h_{2,d_v} & \\cdots & h_{H,d_v} \\end{pmatrix}}_{\\text{Heads: }d_v\\text{ Zeilen, }H\\text{ Spalten}} \\;\\longrightarrow\\; \\underbrace{\\begin{pmatrix} h_1 \\\\ h_2 \\\\ \\vdots \\\\ h_H \\end{pmatrix}}_{\\text{Concat: }H d_v\\text{ Werte}}}_{\\text{aus vielen Heads wird ein breiter Vektor}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} u_1 \\\\ u_2 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor fürs FFN}}")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Multi-Head-Attention: Concat der Heads und Ausgabeprojektion W_O.", en: "Multi-head attention: concat of the heads and output projection W_O." } },
+      { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK- und OV-Schaltkreise; die Head-Ausgabe wird in den Residualstrom geschrieben.", en: "QK and OV circuits; the head output is written into the residual stream." } }
+    ]
+  };
+
   var codeAttentionSubstep = {
     kicker: "Attention",
     title: DE ? "Attention hilft, Rauschen zu ignorieren" : "Attention helps ignore noise",
@@ -1563,7 +1621,7 @@
   var attentionMergeStep = {
     title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
     kicker: DE ? "Attention" : "Attention",
-    substeps: [attentionMerged]
+    substeps: [attentionMerged, headConcatSubstep]
   };
 
   var neuralNeuronStep = Object.assign({}, insideSteps[0], {
@@ -1915,7 +1973,7 @@
       box("qkv-s2", "Mathematik", "Was ist ein Simplex?", "Ein Simplex ist die einfachste konvexe Hülle: ein Punkt ist ein 0-Simplex, zwei Punkte eine Strecke, drei Punkte ein Dreieck."),
       box("qkv-s3", "Mathematik", "Die Variablen", "Die drei Gewichte $\\alpha$ sind die Variablen; wegen $\\sum \\alpha = 1$ haben sie zwei Freiheitsgrade. Sie sind nicht negativ; die Tokens selbst sind nicht die Koordinaten des Simplex."),
       box("qkv-s6", "Geometrie", "Drei Ecken sind ein Ausschnitt", "Der Simplex ist nicht auf drei Ecken beschränkt. Mit 12 Tokens hat der Gewichts-Simplex 11 Dimensionen. Ein 2D-Bild kann nur drei Ecken zeigen. Die Demo wählt Tier, Straße und es aus und blendet die anderen neun Value-Vektoren aus. Gelernt wird $W_V$, also ein Value-Vektor pro Token, nicht drei Zahlen. $Q$, $K$ und $V$ sind drei gelernte Projektionen; die drei Ecken sind nicht diese Matrizen, sondern drei der n Value-Vektoren."),
-      box("qkv-s4", "Mathematik", "Die Formel", "Gewichtete Summe mit nicht-negativen Gewichten, die zu 1 summieren; $W_O$ bildet die Mischung danach auf die Head-Ausgabe ab.", "\\underbrace{r_i = \\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} \\underbrace{v_j}_{\\text{Value}}}_{\\text{konvexe Kombination der Values}} \\qquad \\underbrace{y_i = W_O r_i}_{\\text{Head-Ausgabe}}"),
+      box("qkv-s4", "Mathematik", "Die Formel", "Gewichtete Summe mit nicht-negativen Gewichten, die zu 1 summieren; $W_O$ bildet die Mischung danach auf die Head-Ausgabe ab.", DE ? "\\underbrace{r_i = \\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} \\underbrace{v_j}_{\\text{Value}}}_{\\text{konvexe Kombination der Values}} \\qquad \\underbrace{y_i = W_O r_i}_{\\text{Head-Ausgabe}}" : "\\underbrace{r_i = \\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} \\underbrace{v_j}_{\\text{Value}}}_{\\text{konvexe Kombination der Values}} \\qquad \\underbrace{y_i = W_O r_i}_{\\text{Head-Ausgabe}}"),
       box("qkv-s5", "Grenze", "Was kommt danach?", "Die Mischung $r_i = \\sum_j \\alpha_{ij} v_j$ bleibt in der konvexen Hülle der Values. Die gelernte Output-Projektion $W_O$ bildet $r_i$ linear ab und kann den Punkt aus der Hülle bewegen; das FFN danach ist zusätzlich nichtlinear. Deshalb ist der Transformer-Block mehr als eine Mischung.")
     ] : [
       box("qkv-s1", "Geometry", "The corners are values", "The three points are not tokens; they are the learned value vectors $v_j = W_V x_j$ of three tokens. Each token contributes a vector through $W_V$."),
@@ -2262,7 +2320,7 @@
     substeps: [spacetimeSpace, spacetimeTime]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnStep, residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
 
   var day = {
     id: "intuition",

@@ -26,9 +26,11 @@ const ctx = cv.getContext('2d');
 const TAU = Math.PI * 2;
 
 let w = 0, h = 0, dpr = 1, F = 1, cx = 0, cy = 0;
+let bgCv = null, bgKey = '';
 
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  bgCv = null; bgKey = '';
   w = innerWidth; h = innerHeight;
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -300,7 +302,7 @@ function orb(p, wr, col, alpha) {
   ctx.beginPath(); ctx.arc(p[0], p[1], r * 4.2, 0, TAU); ctx.fill();
 
   const g2 = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 1.9);
-  g2.addColorStop(0, rgba(mixc(col, [255, 255, 255], 0.55), alpha));
+  g2.addColorStop(0, rgba(mixc(col, [255, 255, 255], 0.32), alpha));
   g2.addColorStop(0.5, rgba(col, alpha * 0.75));
   g2.addColorStop(1, rgba(col, 0));
   ctx.fillStyle = g2;
@@ -686,7 +688,7 @@ function drawFFN(t) {
 }
 
 /* ---------- the residual stream: every sublayer adds a small update ---------- */
-function drawResidual(t) {
+function drawResidual() {
   for (let s = 1; s < NS; s++) {
     const g = stageGlow(s);
     if (g <= 0.04) continue;
@@ -708,7 +710,7 @@ function drawResidual(t) {
 }
 
 /* ---------- the payoff: the last token is read out through the vocabulary ---------- */
-function drawReadout(t) {
+function drawReadout() {
   if (TT <= T_POST) return;
   const k = clamp((TT - T_POST) / POST, 0, 1);
   const fade = Math.sin(k * Math.PI * 0.5);
@@ -761,7 +763,7 @@ function drawBeads(t) {
     const p = P(bw[0], bw[1], bw[2]);
     if (!p) continue;
     const read = i === READER;
-    orb(p, (read ? 0.096 : 0.070) * pulse, col, 0.95);
+    orb(p, (read ? 0.096 : 0.070) * pulse, col, 0.88);
     const r = Math.max(1.2, (read ? 0.185 : 0.155) * p[2]);
     ctx.strokeStyle = rgba(idCol[i], read ? 0.55 : 0.34);
     ctx.lineWidth = read ? 1.6 : 1;
@@ -835,6 +837,29 @@ function mini() {
   ctx.beginPath(); ctx.arc(px, y0 + m + 8, 2, 0, TAU); ctx.fill();
 }
 
+/* ---------- cached radial wash / fade ---------- */
+function drawBackground(tint, key) {
+  const bw = Math.max(1, Math.round(w * dpr)), bh = Math.max(1, Math.round(h * dpr));
+  if (!bgCv) { bgCv = document.createElement('canvas'); bgKey = ''; }
+  if (bgCv.width !== bw || bgCv.height !== bh) {
+    bgCv.width = bw; bgCv.height = bh; bgKey = '';
+  }
+  if (bgKey !== String(key)) {
+    bgKey = String(key);
+    const g2 = bgCv.getContext('2d');
+    g2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g2.clearRect(0, 0, w, h);
+    const c0 = mixc([2, 3, 10], tint, 0.10);
+    const bg = g2.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.78);
+    bg.addColorStop(0, `rgba(${c0[0] | 0},${c0[1] | 0},${c0[2] | 0},0.50)`);
+    bg.addColorStop(0.52, 'rgba(3,4,12,0.58)');
+    bg.addColorStop(1, 'rgba(0,0,3,0.82)');
+    g2.fillStyle = bg;
+    g2.fillRect(0, 0, w, h);
+  }
+  ctx.drawImage(bgCv, 0, 0, w, h);
+}
+
 /* ---------- main loop ---------- */
 const t0 = performance.now();
 let lastNow = t0, curCyc = null;
@@ -868,13 +893,7 @@ function frame(now) {
   ctx.globalCompositeOperation = 'source-over';
   const sAct = clamp(Math.round(W), 0, NS - 1);
   const tint = LC[sAct] || [165, 140, 255];
-  const c0 = mixc([2, 3, 10], tint, 0.10);
-  const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.78);
-  bg.addColorStop(0, `rgba(${c0[0] | 0},${c0[1] | 0},${c0[2] | 0},0.50)`);
-  bg.addColorStop(0.52, 'rgba(3,4,12,0.58)');
-  bg.addColorStop(1, 'rgba(0,0,3,0.82)');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, w, h);
+  drawBackground(tint, sAct);
 
   ctx.globalCompositeOperation = 'lighter';
   ctx.lineCap = 'round';
@@ -892,10 +911,10 @@ function frame(now) {
   drawStates();
   drawAttention(t);
   drawFFN(t);
-  drawResidual(t);
+  drawResidual();
   drawBeads(t);
   drawFinale(t);
-  drawReadout(t);
+  drawReadout();
 
   mini();
 
