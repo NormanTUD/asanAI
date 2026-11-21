@@ -345,7 +345,7 @@
       var top = 36, bottom = h - 36;
       var panelW = Math.min(w * 0.33, (w - 2 * pad) * 0.40);
       var gap = Math.max(18, w * 0.055);
-      var leftX = pad, rightX = leftX + panelW + gap;
+      var leftX = (w - (2 * panelW + gap)) / 2, rightX = leftX + panelW + gap;
       var center = top + (bottom - top) / 2;
       var barW = Math.min(18, panelW / (values.length * 1.8));
       var scaleL = (bottom - top - 10) / 5.2;
