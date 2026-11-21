@@ -19,7 +19,7 @@
       {
         id: "embedding", label: "Embedding", short: "Tokens → Vektoren", icon: "E", color: "sky",
         title: "Embedding",
-        body: "Jede ID wird zu einem Vektor in einem Raum mit hunderten bis tausenden Dimensionen (GPT-2 small: 768). Ähnliche Bedeutungen landen in ähnlichen Richtungen. Die Bedeutung ergibt sich aus dem Kontext, wie Firth (1957) formulierte: „You shall know a word by the company it keeps.“ Die Visualisierung normalisiert die Vektoren; echte Embeddings haben unterschiedliche Längen.",
+        body: "Jede ID wird zu einem Vektor in einem Raum mit hunderten bis tausenden Dimensionen (GPT-2 small: 768). Ähnliche Bedeutungen landen in ähnlichen Richtungen. Die Bedeutung ergibt sich aus dem Kontext, wie Firth (1957) formulierte: „You shall know a word by the company it keeps.“ Die Demo zeigt Richtungen und Längen schematisch; echte Embeddings haben unterschiedliche Längen.",
         points: [],
         source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
         mini: "embedding"
@@ -46,7 +46,7 @@
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "Am Ende, nachdem die Bedeutungen viele Male gemischt und wieder getrennt worden sind, enthält der Vektor $h$ des letzten Tokens die Gesamtbedeutung des Kontexts. Man vergleicht $h$ mit den gelernten Richtungen aller Wörter und misst die Winkel. Ein kleiner Winkel heißt: Das Wort passt gut an diese Stelle. In der normalisierten Ansicht wird das Wort mit dem größten Kosinus ausgewählt; im echten Logit zählt auch die Länge.",
+        body: "Am Ende, nachdem die Bedeutungen viele Male gemischt und wieder getrennt worden sind, enthält der Vektor $h$ des letzten Tokens die Gesamtbedeutung des Kontexts. Man vergleicht $h$ mit den gelernten Richtungen aller Wörter und misst die Winkel. Ein kleiner Winkel heißt: Das Wort passt gut an diese Stelle. In dieser schematischen Ansicht wird das Wort mit dem größten Kosinus ausgewählt; im echten Logit zählt auch die Länge.",
         points: [],
         mini: "unembed",
       }
@@ -61,7 +61,7 @@
       {
         id: "embedding", label: "Embedding", short: "tokens → vectors", icon: "E", color: "sky",
         title: "Embedding",
-        body: "Every ID becomes a vector in a space with hundreds to thousands of dimensions (GPT-2 small: 768). Similar meanings land in similar directions. Meaning comes from context, as Firth (1957) put it: “You shall know a word by the company it keeps.” The visualisation normalises the vectors; real embeddings have different lengths.",
+        body: "Every ID becomes a vector in a space with hundreds to thousands of dimensions (GPT-2 small: 768). Similar meanings land in similar directions. Meaning comes from context, as Firth (1957) put it: “You shall know a word by the company it keeps.” The demo shows directions and lengths schematically; real embeddings have different lengths.",
         points: [],
         source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
         mini: "embedding"
@@ -88,7 +88,7 @@
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "At the end, after meanings have been mixed and separated many times, the vector $h$ of the last token contains the overall meaning of the context. It is compared with the learned directions of all words, and the angles are measured. A small angle means the word fits this position well. In the normalised view the word with the largest cosine is selected; in the real logit the length also counts.",
+        body: "At the end, after meanings have been mixed and separated many times, the vector $h$ of the last token contains the overall meaning of the context. It is compared with the learned directions of all words, and the angles are measured. A small angle means the word fits this position well. In this schematic view the word with the largest cosine is selected; in the real logit the length also counts.",
         points: [],
         mini: "unembed",
       }
@@ -408,7 +408,7 @@
         html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
       if (b.mini === "unembed") {
-        html += '<p class="ls-bs-traj-caption">' + (DE ? "h = Output-Vektor des LLM: der letzte Vektor aus den Transformer-Blöcken. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; in dieser normalisierten Ansicht entscheidet der Kosinus zu h, im echten Logit zählt auch die Länge." : "h = output vector of the LLM: the final vector from the transformer blocks. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; in this normalised view the cosine to h decides, while the real logit also includes length.") + '</p>';
+        html += '<p class="ls-bs-traj-caption">' + (DE ? "h = Output-Vektor des LLM: der letzte Vektor aus den Transformer-Blöcken. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; in dieser schematischen Ansicht entscheidet der Kosinus zu h, im echten Logit zählt auch die Länge." : "h = output vector of the LLM: the final vector from the transformer blocks. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; in this schematic view the cosine to h decides, while the real logit also includes length.") + '</p>';
       }
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }

@@ -8,6 +8,8 @@
 
 **Zweck.** Diese Datei sammelt jeden gefundenen inhaltlichen, mathematischen, sprachlichen und Demo-Fehler. Layoutsprünge wurden direkt behoben; alles andere steht hier als Arbeitsliste. Die Datei ist kein Ersatz für die Quelltexte, sondern der Prüfstand.
 
+> **Hinweis (21.11.2026):** Dieses Protokoll ist historisch. Die vollständige unabhängige Prüfung und der aktuelle Behebungsstatus stehen in [`AUDIT_2026-11-21.md`](AUDIT_2026-11-21.md). Mehrere hier als erledigt markierte Punkte waren in den Demos noch offen und wurden dort nachgezogen.
+
 ## Arbeitsstand
 
 - [x] Bestandsaufnahme und Problemsammlung
