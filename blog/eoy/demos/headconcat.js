@@ -43,15 +43,15 @@
     var concat = mode === "concat";
     var notes = concat
       ? [
-          DE ? "Jeder Head liefert pro Token einen eigenen Vektor." : "Each head produces its own vector per token.",
-          DE ? "Concat legt die Head-Ausgaben zu einem breiten Vektor zusammen." : "Concat joins the head outputs into one wide vector.",
-          DE ? "W_O mischt den breiten Vektor auf d_model. Dieser eine Vektor geht pro Token ins FFN." : "W_O mixes the wide vector down to d_model. This one vector per token goes into the FFN."
+          DE ? "Jeder Head liefert pro Token einen eigenen kurzen Vektor." : "Each head produces its own short vector per token.",
+          DE ? "Concat hängt die Vektoren der Heads aneinander: aus vier kurzen Vektoren wird ein langer." : "Concat joins the head vectors: four short vectors become one long one.",
+          DE ? "Die Matrix W_O verrechnet den langen Vektor zu einem einzigen Vektor pro Token. Nur diesen einen Vektor bekommt das FFN." : "The matrix W_O combines the long vector into a single vector per token. That is the only vector the FFN receives."
         ]
       : [
-          DE ? "Das FFN bekommt den einen Token-Vektor, nicht die einzelnen Heads." : "The FFN receives the one token vector, not the individual heads.",
-          DE ? "W_1 fächert ihn in d_ff Hidden-Werte auf." : "W_1 fans it out into d_ff hidden values.",
+          DE ? "Das FFN bekommt einen einzigen Vektor pro Token, nicht die einzelnen Heads." : "The FFN receives a single vector per token, not the individual heads.",
+          DE ? "W_1 rechnet ihn auf viele Hidden-Werte hoch." : "W_1 expands it into many hidden values.",
           DE ? "Die Aktivierung biegt jeden Hidden-Wert." : "The activation bends each hidden value.",
-          DE ? "W_2 projiziert zurück auf d_model." : "W_2 projects back to d_model."
+          DE ? "W_2 rechnet die vielen Hidden-Werte wieder auf die ursprüngliche Breite herunter." : "W_2 reduces the many hidden values back to the original width."
         ];
     var stage = 0;
     var last = notes.length - 1;

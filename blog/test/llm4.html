@@ -254,7 +254,7 @@ function build() {
       ]);
     });
     S[sa] = ns; C[sa] = nc; A[sa] = [aw0, aw1];
-    MESH[sa] = MESH_REG.map(q => {
+    MESH[sa] = MESH[sa - 1].map(q => {
       const r0 = att0(q, T), r1 = att1(q, T);
       const o0 = mv(Wo0, r0.o), o1 = mv(Wo1, r1.o);
       const o = [0.5 * (o0[0] + o1[0]), 0.5 * (o0[1] + o1[1]), 0.5 * (o0[2] + o1[2])];
@@ -274,7 +274,7 @@ function build() {
     });
     C[sf] = C[sa].map(c => c.slice());
     A[sf] = null;
-    MESH[sf] = MESH_REG.map(q => {
+    MESH[sf] = MESH[sf - 1].map(q => {
       const hid = mv(W1, q).map(z => Math.tanh(z * 1.6));
       const d = mv(W2, hid);
       return squash(q.map((x, k) => x + 0.9 * d[k]));
@@ -496,15 +496,16 @@ function drawStages() {
 function drawMesh(s, morph, alphaMul, ghost) {
   const fg = fogOf(s);
   if (fg <= 0.02) return;
-  const pts = MESH[s] || MESH_REG;
-  const vis = MESH_REG.map((q, k) => lerp3(q, pts[k], morph));
+  const from = s > 0 ? MESH[s - 1] : MESH_REG;
+  const to = MESH[s] || from;
+  const vis = from.map((q, k) => lerp3(q, to[k], morph));
   const ox = s * G;
   const tint = LC[s] || EMB;
   const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
   if (ghost && morph > 0.02) {
     for (const [a, b] of MESH_EDGES) {
-      const pa = MESH_REG[a], pb = MESH_REG[b];
+      const pa = from[a], pb = from[b];
       line3([ox + pa[0], pa[1], pa[2]], [ox + pb[0], pb[1], pb[2]],
             [170, 196, 255], 0.055 * morph * alphaMul * fg, 0.8);
     }
@@ -512,25 +513,25 @@ function drawMesh(s, morph, alphaMul, ghost) {
 
   for (const [a, b] of MESH_EDGES) {
     const pa = vis[a], pb = vis[b];
-    const d = 0.5 * (dist(pa, MESH_REG[a]) + dist(pb, MESH_REG[b]));
-    const col = mixc(tint, [255, 255, 255], clamp(d * 2.0, 0, 0.72));
-    const alpha = (0.10 + 0.65 * Math.min(d, 1)) * alphaMul * fg;
+    const d = 0.5 * (dist(pa, from[a]) + dist(pb, from[b]));
+    const col = mixc(tint, [255, 255, 255], clamp(d * 1.4, 0, 0.55));
+    const alpha = (0.07 + 0.50 * Math.min(d, 1)) * alphaMul * fg;
     line3([ox + pa[0], pa[1], pa[2]], [ox + pb[0], pb[1], pb[2]], col, alpha, 0.9);
   }
 
   for (let k = 0; k < vis.length; k++) {
     const p = vis[k];
-    const d = dist(p, MESH_REG[k]);
+    const d = dist(p, from[k]);
     const sp = P(ox + p[0], p[1], p[2]);
     if (!sp) continue;
-    ctx.fillStyle = rgba(mixc(tint, [255, 255, 255], clamp(d * 2.0, 0, 0.8)),
-                         (0.10 + 0.55 * Math.min(d, 1)) * alphaMul * fg);
+    ctx.fillStyle = rgba(mixc(tint, [255, 255, 255], clamp(d * 1.4, 0, 0.6)),
+                         (0.06 + 0.35 * Math.min(d, 1)) * alphaMul * fg);
     ctx.beginPath(); ctx.arc(sp[0], sp[1], Math.max(0.45, 0.006 * sp[2]), 0, TAU); ctx.fill();
   }
 
   if (morph > 0.04) {
     for (let k = 0; k < vis.length; k += 4) {
-      const p = vis[k], q = MESH_REG[k];
+      const p = vis[k], q = from[k];
       const d = dist(p, q);
       if (d < 0.035) continue;
       line3([ox + q[0], q[1], q[2]], [ox + p[0], p[1], p[2]],
