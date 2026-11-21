@@ -72,7 +72,7 @@ let w = 0, h = 0, dpr = 1, F = 1, cx = 0, cy = 0;
 let bgCv = null, bgKey = '';
 
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  dpr = Math.min(window.devicePixelRatio || 1, 1.25);
   w = innerWidth; h = innerHeight;
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -146,7 +146,7 @@ let MESH = [], MESH_REG = [], MESH_EDGES = [];
 
 /* ---------- deformable space mesh ---------- */
 const MRAD = RAD * 0.90;
-const MER = 12, PAR = 5;
+const MER = 10, PAR = 4;
 for (let i = 0; i <= PAR; i++) {
   const th = Math.PI * i / PAR;
   const y = Math.cos(th), rr = Math.sin(th);
@@ -178,7 +178,7 @@ function build() {
     const n = Math.hypot(...v) || 1;
     cents.push(v.map(x => x / n * 0.56));
   }
-  const PER = 62;
+  const PER = 48;
   vocab = []; vcol = [];
   const NV = NC * PER;
   for (let i = 0; i < NV; i++) {
@@ -365,8 +365,8 @@ function ring3D(cx3, cy3, cz3, r, u, v, col, alpha, lw) {
   if (alpha <= 0.002) return;
   ctx.beginPath();
   let started = false, ok = true;
-  for (let k = 0; k <= 48; k++) {
-    const a = k / 48 * TAU;
+  for (let k = 0; k <= 36; k++) {
+    const a = k / 36 * TAU;
     const ca = Math.cos(a), sa = Math.sin(a);
     const p = P(cx3 + r * (ca * u[0] + sa * v[0]),
                 cy3 + r * (ca * u[1] + sa * v[1]),
@@ -444,7 +444,7 @@ function ringGlow(s) {
   return smooth(clamp(1 - Math.abs(W - s) / 1.2, 0, 1));
 }
 function fogOf(s) {
-  const d = Math.abs(s * G - cam.tx) / (2.6 * G);
+  const d = Math.abs(s * G - cam.tx) / (2.0 * G);
   return clamp(1 - d * d, 0, 1);
 }
 
@@ -504,45 +504,93 @@ function drawMesh(s, morph, alphaMul, ghost) {
   const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
   if (ghost && morph > 0.02) {
+    ctx.beginPath();
     for (const [a, b] of MESH_EDGES) {
-      const pa = from[a], pb = from[b];
-      line3([ox + pa[0], pa[1], pa[2]], [ox + pb[0], pb[1], pb[2]],
-            [170, 196, 255], 0.055 * morph * alphaMul * fg, 0.8);
+      const pa = P(ox + from[a][0], from[a][1], from[a][2]);
+      const pb = P(ox + from[b][0], from[b][1], from[b][2]);
+      if (!pa || !pb) continue;
+      ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]);
     }
+    ctx.strokeStyle = rgba([170, 196, 255], 0.055 * morph * alphaMul * fg);
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
   }
 
+  const NB = 4;
+  const buckets = Array.from({ length: NB }, () => []);
   for (const [a, b] of MESH_EDGES) {
-    const pa = vis[a], pb = vis[b];
-    const d = 0.5 * (dist(pa, from[a]) + dist(pb, from[b]));
-    const col = mixc(tint, [255, 255, 255], clamp(d * 1.4, 0, 0.55));
-    const alpha = (0.07 + 0.50 * Math.min(d, 1)) * alphaMul * fg;
-    line3([ox + pa[0], pa[1], pa[2]], [ox + pb[0], pb[1], pb[2]], col, alpha, 0.9);
+    const d = 0.5 * (dist(vis[a], from[a]) + dist(vis[b], from[b]));
+    const bi = Math.min(NB - 1, Math.floor(Math.min(d, 1) * NB));
+    buckets[bi].push(a, b);
+  }
+  for (let bi = 0; bi < NB; bi++) {
+    const arr = buckets[bi];
+    if (!arr.length) continue;
+    const dc = (bi + 0.5) / NB;
+    const col = mixc(tint, [255, 255, 255], clamp(dc * 1.4, 0, 0.55));
+    const alpha = (0.07 + 0.50 * dc) * alphaMul * fg;
+    ctx.beginPath();
+    for (let n = 0; n < arr.length; n += 2) {
+      const a = arr[n], b = arr[n + 1];
+      const pa = P(ox + vis[a][0], vis[a][1], vis[a][2]);
+      const pb = P(ox + vis[b][0], vis[b][1], vis[b][2]);
+      if (!pa || !pb) continue;
+      ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]);
+    }
+    ctx.strokeStyle = rgba(col, alpha);
+    ctx.lineWidth = 0.9;
+    ctx.stroke();
   }
 
+  const VB = 3;
+  const vb = Array.from({ length: VB }, () => []);
   for (let k = 0; k < vis.length; k++) {
-    const p = vis[k];
-    const d = dist(p, from[k]);
-    const sp = P(ox + p[0], p[1], p[2]);
+    const d = dist(vis[k], from[k]);
+    if (d < 0.03) continue;
+    const sp = P(ox + vis[k][0], vis[k][1], vis[k][2]);
     if (!sp) continue;
-    ctx.fillStyle = rgba(mixc(tint, [255, 255, 255], clamp(d * 1.4, 0, 0.6)),
-                         (0.06 + 0.35 * Math.min(d, 1)) * alphaMul * fg);
-    ctx.beginPath(); ctx.arc(sp[0], sp[1], Math.max(0.45, 0.006 * sp[2]), 0, TAU); ctx.fill();
+    const bi = Math.min(VB - 1, Math.floor(Math.min(d, 1) * VB));
+    vb[bi].push(sp);
+  }
+  for (let bi = 0; bi < VB; bi++) {
+    const arr = vb[bi];
+    if (!arr.length) continue;
+    const dc = (bi + 0.5) / VB;
+    const col = mixc(tint, [255, 255, 255], clamp(dc * 1.4, 0, 0.6));
+    const alpha = (0.06 + 0.35 * dc) * alphaMul * fg;
+    ctx.beginPath();
+    for (const sp of arr) {
+      const r = Math.max(0.45, 0.006 * sp[2]);
+      ctx.moveTo(sp[0] + r, sp[1]);
+      ctx.arc(sp[0], sp[1], r, 0, TAU);
+    }
+    ctx.fillStyle = rgba(col, alpha);
+    ctx.fill();
   }
 
   if (morph > 0.04) {
+    ctx.beginPath();
+    let any = false;
     for (let k = 0; k < vis.length; k += 4) {
-      const p = vis[k], q = from[k];
-      const d = dist(p, q);
+      const d = dist(vis[k], from[k]);
       if (d < 0.035) continue;
-      line3([ox + q[0], q[1], q[2]], [ox + p[0], p[1], p[2]],
-            mixc(tint, [255, 255, 255], 0.45), 0.18 * d * alphaMul * fg, 0.8);
+      const q = P(ox + from[k][0], from[k][1], from[k][2]);
+      const p = P(ox + vis[k][0], vis[k][1], vis[k][2]);
+      if (!q || !p) continue;
+      ctx.moveTo(q[0], q[1]); ctx.lineTo(p[0], p[1]);
+      any = true;
+    }
+    if (any) {
+      ctx.strokeStyle = rgba(mixc(tint, [255, 255, 255], 0.45), 0.15 * alphaMul * fg);
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
     }
   }
 }
 
 function drawCloud(t) {
   const cvv = clamp(1 - Math.abs(W) / 1.4, 0, 1) * fogOf(0);
-  if (cvv <= 0.02) return;
+  if (cvv <= 0.05) return;
   const c0 = P(0, 0, 0);
   if (c0) softDisc(c0[0], c0[1], 1.35 * RAD * c0[2], EMB, 0.06 * cvv);
   for (let i = 0; i < vocab.length; i++) {
@@ -898,7 +946,10 @@ for (let i = 0; i <= NS; i++) {
   ticksEl.appendChild(el);
 }
 
-function updateHUD() {
+let lastHUD = -1, lastPlaying = null;
+function updateHUD(force) {
+  if (!force && Math.abs(POS - lastHUD) < 1e-5 && playing === lastPlaying) return;
+  lastHUD = POS; lastPlaying = playing;
   const p = clamp(POS, 0, NS);
   fillEl.style.width = (p / NS * 100) + '%';
   knobEl.style.left = (p / NS * 100) + '%';
