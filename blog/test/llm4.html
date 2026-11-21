@@ -991,11 +991,16 @@ function frame(now) {
   drawStages();
 
   const ph = phaseInfo();
-  let focus, morph, ghost;
-  if (ph.s1 === ph.s0) { focus = ph.s0; morph = 1; ghost = false; }
-  else if (ph.local < 0.35) { focus = ph.s0; morph = 1; ghost = false; }
-  else { focus = ph.s1; morph = smooth(clamp((ph.local - 0.35) / 0.60, 0, 1)); ghost = morph > 0.03; }
-  drawMesh(focus, morph, 1, ghost);
+  if (ph.s1 === ph.s0) {
+    drawMesh(ph.s0, 1, 1, false);
+  } else if (ph.local < 0.35) {
+    const u = smooth(ph.local / 0.35);
+    drawMesh(ph.s0, 1, 1 - u, false);
+    drawMesh(ph.s1, 0, u, false);
+  } else {
+    const morph = smooth(clamp((ph.local - 0.35) / 0.60, 0, 1));
+    drawMesh(ph.s1, morph, 1, morph > 0.03);
+  }
 
   drawCloud(t);
   drawWorldlines();
