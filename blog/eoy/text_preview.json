@@ -63,12 +63,12 @@
     "13": {
       "kicker": "",
       "title": "Was sind neuronale Netze?",
-      "body": "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: $\\hat y = w\\cdot x + b$. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft."
+      "body": "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w · x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft."
     },
     "14": {
       "kicker": "Optimizer",
       "title": "Wie findet man gute Punkte?",
-      "body": "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, $f(x) = w\\cdot x + b$. Der Plot hat 3 Achsen: $w$, $b$ und $Loss$. Für jeden Parameterpunkt in diesem Raum gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre. Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nHier sind es zwei Parameter und damit zwei Dimensionen. Ein großes Sprachmodell hat Milliarden davon, zu viele, um es sich vorzustellen, aber die Idee ist die gleiche."
+      "body": "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, f(x) = w · x + b. Der Plot hat 3 Achsen: w, b und Loss. Für jeden Parameterpunkt in diesem Raum gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre. Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nHier sind es zwei Parameter und damit zwei Dimensionen. Ein großes Sprachmodell hat Milliarden davon, zu viele, um es sich vorzustellen, aber die Idee ist die gleiche."
     },
     "15": {
       "kicker": "",
@@ -103,12 +103,12 @@
     "21": {
       "kicker": "Loss",
       "title": "Der Loss: Was das Modell optimiert",
-      "body": "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: $-\\log(0.30) \\approx 1.20$. Der Gradient $p-y$ sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner. Über alle Trainingsbeispiele bildet dieser Loss die Loss Landscape: Jede Stelle im Gewichtsraum hat einen Loss-Wert, und das Training sucht die Täler. Drücke Weiter oder →: Die Demo macht für jedes der vier Zielwörter mehrere Trainingsschritte, wechselt dabei den Satz und geht dann zum nächsten."
+      "body": "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: −log(0.30) ≈ 1.20. Der Gradient p − y sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner. Über alle Trainingsbeispiele bildet dieser Loss die Loss Landscape: Jede Stelle im Gewichtsraum hat einen Loss-Wert, und das Training sucht die Täler. Drücke Weiter oder →: Die Demo macht für jedes der vier Zielwörter mehrere Trainingsschritte, wechselt dabei den Satz und geht dann zum nächsten."
     },
     "22": {
       "kicker": "Die Schleife",
       "title": "Ein Wort nach dem anderen",
-      "body": "Jetzt schließt sich der Kreis. Der letzte Vektor $h$ wird über $W_U$ zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo."
+      "body": "Jetzt schließt sich der Kreis. Der letzte Vektor des letzten Tokens in der letzten Schicht wird über W_U zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo."
     },
     "23": {
       "kicker": "Die Wiese",
@@ -220,12 +220,12 @@
     "13": {
       "kicker": "",
       "title": "What are neural networks?",
-      "body": "A neural network is first a parameterised function. The smallest example is one neuron: $\\hat y = w\\cdot x + b$. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape."
+      "body": "A neural network is first a parameterised function. The smallest example is one neuron: ŷ = w · x + b. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape."
     },
     "14": {
       "kicker": "Optimizer",
       "title": "How do you find good points?",
-      "body": "We see a small real network training here. It has only two parameters, $f(x) = w\\cdot x + b$. The plot has 3 axes: $w$, $b$, and $loss$. For every parameter point in this space there is a loss, that is, a value for how good the network would be with those values. Training means: the computer looks at how good the current point is and in which directions it has to move the point so that the result gets better. Then it moves the point and looks again.\n\nHere there are two parameters and therefore two dimensions. A large language model has billions of them, too many to picture, but the idea is the same."
+      "body": "We see a small real network training here. It has only two parameters, f(x) = w · x + b. The plot has 3 axes: w, b, and loss. For every parameter point in this space there is a loss, that is, a value for how good the network would be with those values. Training means: the computer looks at how good the current point is and in which directions it has to move the point so that the result gets better. Then it moves the point and looks again.\n\nHere there are two parameters and therefore two dimensions. A large language model has billions of them, too many to picture, but the idea is the same."
     },
     "15": {
       "kicker": "",
@@ -260,12 +260,12 @@
     "21": {
       "kicker": "Loss",
       "title": "The loss: what the model optimises",
-      "body": "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: $-\\log(0.30) \\approx 1.20$. The gradient $p-y$ then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller. Across all training examples, this loss forms the loss landscape: every point in weight space has a loss value, and training looks for the valleys. Press Next or →: the demo makes several training steps for each of the four target words, switches the sentence, then moves to the next."
+      "body": "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: −log(0.30) ≈ 1.20. The gradient p − y then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller. Across all training examples, this loss forms the loss landscape: every point in weight space has a loss value, and training looks for the valleys. Press Next or →: the demo makes several training steps for each of the four target words, switches the sentence, then moves to the next."
     },
     "22": {
       "kicker": "The loop",
       "title": "One word after another",
-      "body": "Now the circle closes. The last vector $h$ becomes logits through $W_U$, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo."
+      "body": "Now the circle closes. The final vector of the last token in the last layer becomes logits through W_U, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo."
     },
     "23": {
       "kicker": "The meadow",

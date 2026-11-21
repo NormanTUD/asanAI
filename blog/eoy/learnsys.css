@@ -571,6 +571,8 @@ h1,h2,h3,h4{
 }
 .ls-word-select:focus-visible{outline:2px solid var(--ls-green);outline-offset:2px}
 .ls-math{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.ls-math:not([data-tex-rendered]) .ls-tex-source{visibility:hidden}
+.ls-math[data-tex-rendered="error"] .ls-tex-source{visibility:visible}
 .ls-tex-source{
   display:inline-block;font-family:ui-monospace,"Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
   font-size:.82em;color:var(--ls-muted);white-space:pre-wrap;

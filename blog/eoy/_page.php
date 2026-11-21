@@ -1,4 +1,9 @@
 <?php
+function eoy_preview_plain($html) {
+	$html = preg_replace('/\$\$.*?\$\$/s', '…', (string) $html);
+	$html = preg_replace('/\$[^$]+\$/', '…', $html);
+	return $html;
+}
 if (!headers_sent()) {
 	header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 	header('Pragma: no-cache');
@@ -175,7 +180,7 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 						<div class="ls-text-scroll">
 							<?php if (!empty($previewEntry['kicker'])): ?><div class="ls-kicker"><?php echo htmlspecialchars((string) $previewEntry['kicker'], ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
 							<?php if (!empty($previewEntry['title'])): ?><h1 class="ls-title"><?php echo htmlspecialchars((string) $previewEntry['title'], ENT_QUOTES, 'UTF-8'); ?></h1><?php endif; ?>
-							<div class="ls-body"><?php echo (string) ($previewEntry['body'] ?? ''); ?></div>
+							<div class="ls-body"><?php echo eoy_preview_plain((string) ($previewEntry['body'] ?? '')); ?></div>
 						</div>
 					</section>
 					<section class="ls-stage"></section>

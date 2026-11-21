@@ -1290,7 +1290,7 @@
   function typesetText() { typesetScope(els.textScroll); }
   function scheduleTypeset() {
     clearTimeout(typesetTimer);
-    typesetTimer = setTimeout(typesetText, 300);
+    typesetText();
   }
 
   function renderText() {

@@ -249,8 +249,15 @@
 	};
 
 	TM.typesetMath = function (root) {
-		if (!window.temml) return;
-		(root || document).querySelectorAll("[data-tex]:not(math)").forEach(function (el) {
+		var scope = root || document;
+		var nodes = scope.querySelectorAll("[data-tex]:not(math)");
+		if (!window.temml) {
+			nodes.forEach(function (el) {
+				if (el.getAttribute("data-tex-rendered") !== "1") el.setAttribute("data-tex-rendered", "error");
+			});
+			return;
+		}
+		nodes.forEach(function (el) {
 			if (el.getAttribute("data-tex-rendered") === "1") return;
 			var tex = el.getAttribute("data-tex");
 			var displayMode = el.getAttribute("data-tex-display") !== "false";
@@ -259,6 +266,7 @@
 				el.setAttribute("data-tex-rendered", "1");
 			} catch (e) {
 				el.textContent = tex;
+				el.setAttribute("data-tex-rendered", "error");
 			}
 		});
 	};
