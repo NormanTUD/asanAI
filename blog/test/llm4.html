@@ -415,7 +415,7 @@ function drawCubeWire(s) {
   if (fog <= 0.01) return;
   const g = stageGlow(s);
   const col = s === 0 ? [165, 140, 255] : LC[s];
-  const a = (0.05 + 0.13 * g) * fog;
+  const a = (0.075 + 0.17 * g) * fog;
   const ox = s * G;
   for (const [i, j] of EDGES) {
     line3(
@@ -428,7 +428,7 @@ function drawCubeWire(s) {
   for (let k = 0; k < 3; k++) {
     const p = [ox, 0, 0], q = [ox, 0, 0];
     p[k] -= hl; q[k] += hl;
-    line3(p, q, AXC[k], (0.04 + 0.20 * g) * fog, 1);
+    line3(p, q, AXC[k], (0.06 + 0.24 * g) * fog, 1);
   }
 }
 
@@ -485,9 +485,9 @@ function drawStates() {
       const col = C[s][i];
       const read = i === READER;
       const cen = P(ox, 0, 0);
-      if (cen) seg(cen, p, col, ((read ? 0.06 : 0.035) + boost + 0.06 * g) * fog, read ? 1.3 : 0.9);
+      if (cen) seg(cen, p, col, ((read ? 0.085 : 0.05) + boost + 0.09 * g) * fog, read ? 1.3 : 0.9);
       const r = Math.max(0.5, (read ? 0.030 : 0.020) * p[2]);
-      ctx.fillStyle = rgba(col, (0.16 + 0.22 * g + (read ? 0.18 : 0)) * fog);
+      ctx.fillStyle = rgba(col, (0.20 + 0.26 * g + (read ? 0.20 : 0)) * fog);
       ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
     }
   }
@@ -524,39 +524,57 @@ function drawAttention(t) {
   for (let s = 1; s < NS; s += 2) {
     const g = stageGlow(s);
     if (g <= 0.02) continue;
-    const aw = A[s];
-    if (!aw) continue;
-    for (let i = 0; i < T; i++) {
-      const dst = beadWorld(i);
-      const p2 = P(dst[0], dst[1], dst[2]);
-      if (!p2) continue;
-      for (let j = 0; j <= i; j++) {
-        const wt = aw[i][j];
-        if (wt < 0.04 && i !== READER) continue;
-        const vis = i === READER ? Math.max(wt, 0.05) : wt;
-        const src = worldState(s - 1, j);
-        const p0 = P(src[0], src[1], src[2]);
-        if (!p0) continue;
-        const lift = 0.34 + 0.10 * (i - j);
-        const ctrl = [
-          (src[0] + dst[0]) / 2,
-          (src[1] + dst[1]) / 2 + lift,
-          (src[2] + dst[2]) / 2 + (j - i) * 0.12
-        ];
-        const pc = P(ctrl[0], ctrl[1], ctrl[2]);
-        if (!pc) continue;
-        const col = mixc(C[s - 1][j], beadColor(i), 0.30);
-        const base = (0.05 + 0.55 * vis) * g * (i === READER ? 1.7 : 1.0);
-        strokeBezier(p0, pc, p2, col, base);
-        for (let k = 0; k < 2; k++) {
-          const ph = (phase + k * 0.5) % 1;
-          const pos = bez3(src, ctrl, dst, ph);
-          const pp = P(pos[0], pos[1], pos[2]);
-          if (!pp) continue;
-          const rr = Math.max(0.6, (1.1 + vis * 3.0) * 0.05 * pp[2]);
-          ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.5),
-                               Math.sin(Math.PI * ph) * (0.22 + 0.7 * vis) * g);
-          ctx.beginPath(); ctx.arc(pp[0], pp[1], rr, 0, TAU); ctx.fill();
+    const heads = A[s];
+    if (!heads) continue;
+    const tints = HC[s] || [LC[s], LC[s]];
+
+    for (let h = 0; h < heads.length; h++) {
+      const aw = heads[h];
+      const tint = tints[h] || LC[s];
+      const hf = h === 0 ? 1.0 : 0.7;
+      for (let i = 0; i < T; i++) {
+        const dst = beadWorld(i);
+        const p2 = P(dst[0], dst[1], dst[2]);
+        if (!p2) continue;
+
+        let js = [];
+        for (let j = 0; j <= i; j++) {
+          const wt = aw[i][j];
+          const thr = h === 0 ? 0.04 : (i === READER ? 0.05 : 0.13);
+          if (wt >= thr) js.push(j);
+        }
+        if (h === 1 && i !== READER) {
+          js.sort((a, b) => aw[i][b] - aw[i][a]);
+          js = js.slice(0, 2);
+        }
+
+        for (const j of js) {
+          const wt = aw[i][j];
+          const vis = i === READER ? Math.max(wt, 0.05) : wt;
+          const src = worldState(s - 1, j);
+          const p0 = P(src[0], src[1], src[2]);
+          if (!p0) continue;
+          const lift = 0.34 + 0.10 * (i - j) + h * 0.09;
+          const ctrl = [
+            (src[0] + dst[0]) / 2,
+            (src[1] + dst[1]) / 2 + lift,
+            (src[2] + dst[2]) / 2 + (j - i) * 0.12
+          ];
+          const pc = P(ctrl[0], ctrl[1], ctrl[2]);
+          if (!pc) continue;
+          const col = mixc(mixc(C[s - 1][j], beadColor(i), 0.30), tint, 0.18);
+          const base = (0.05 + 0.55 * vis) * g * (i === READER ? 1.7 : 1.0) * hf;
+          strokeBezier(p0, pc, p2, col, base);
+          for (let k = 0; k < 2; k++) {
+            const ph = (phase + k * 0.5) % 1;
+            const pos = bez3(src, ctrl, dst, ph);
+            const pp = P(pos[0], pos[1], pos[2]);
+            if (!pp) continue;
+            const rr = Math.max(0.6, (1.1 + vis * 3.0) * 0.05 * pp[2]);
+            ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.5),
+                                 Math.sin(Math.PI * ph) * (0.22 + 0.7 * vis) * g * hf);
+            ctx.beginPath(); ctx.arc(pp[0], pp[1], rr, 0, TAU); ctx.fill();
+          }
         }
       }
     }
@@ -595,12 +613,13 @@ function drawFFN(t) {
       const mid = [mid0[0], mid0[1] + (i === READER ? 0.82 : 0.66), mid0[2]];
       const am = P(mid[0], mid[1], mid[2]);
       if (!am) continue;
-      const baseR = 0.30 * am[2];
+      const baseR = 0.27 * am[2];
       const ports = [];
-      for (let k = 0; k < 6; k++) {
+      for (let k = 0; k < 12; k++) {
         const h = hid[i][k] || 0;
-        const ang = k / 6 * TAU + t * 0.22;
-        const rr = baseR * (0.50 + 1.05 * Math.abs(h));
+        const ring = k < 6 ? 0 : 1;
+        const ang = (k % 6) / 6 * TAU + t * 0.22 + ring * (Math.PI / 6);
+        const rr = baseR * (ring ? 1.42 : 0.78) * (0.52 + 0.92 * Math.abs(h));
         ports.push({
           x: am[0] + Math.cos(ang) * rr,
           y: am[1] + Math.sin(ang) * rr * 0.82,
@@ -609,21 +628,23 @@ function drawFFN(t) {
         });
       }
 
-      /* the hidden ring: more ports than visible axes */
-      ctx.beginPath();
-      for (let k = 0; k < 6; k++) {
-        const pt = ports[k];
-        if (k === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+      /* two hidden rings: twelve units, four times the visible width */
+      for (let ring = 0; ring < 2; ring++) {
+        ctx.beginPath();
+        for (let j = 0; j < 6; j++) {
+          const pt = ports[ring * 6 + j];
+          if (j === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = rgba(LC[s], (0.16 + (i === READER ? 0.12 : 0)) * g * emph * (ring ? 0.6 : 1));
+        ctx.lineWidth = i === READER ? 1.5 : 1.0;
+        ctx.stroke();
       }
-      ctx.closePath();
-      ctx.strokeStyle = rgba(LC[s], (0.18 + (i === READER ? 0.12 : 0)) * g * emph);
-      ctx.lineWidth = i === READER ? 1.6 : 1.0;
-      ctx.stroke();
 
-      for (let k = 0; k < 6; k++) {
+      for (let k = 0; k < 12; k++) {
         const pt = ports[k];
         const ah = Math.abs(pt.h);
-        const ra = (0.08 + 0.38 * ah) * g * emph;
+        const ra = (0.07 + 0.34 * ah) * g * emph;
 
         /* up-projection */
         ctx.strokeStyle = rgba(pt.col, ra);
@@ -634,8 +655,8 @@ function drawFFN(t) {
         ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(a1[0], a1[1]); ctx.stroke();
 
         /* hidden unit */
-        const pr = Math.max(1, (0.014 + 0.032 * ah) * am[2]);
-        ctx.fillStyle = rgba(pt.col, (0.30 + 0.60 * ah) * g * emph);
+        const pr = Math.max(0.9, (0.012 + 0.026 * ah) * am[2]);
+        ctx.fillStyle = rgba(pt.col, (0.28 + 0.55 * ah) * g * emph);
         ctx.beginPath(); ctx.arc(pt.x, pt.y, pr, 0, TAU); ctx.fill();
 
         /* a pulse that climbs, then descends */
@@ -647,10 +668,65 @@ function drawFFN(t) {
           const u = (phase - 0.5) / 0.5;
           pp = [lerp(pt.x, a1[0], u), lerp(pt.y, a1[1], u)];
         }
-        const pa = Math.sin(Math.PI * phase) * (0.35 + 0.65 * ah) * g * emph;
+        const pa = Math.sin(Math.PI * phase) * (0.30 + 0.60 * ah) * g * emph;
         ctx.fillStyle = rgba(mixc(pt.col, [255, 255, 255], 0.5), pa);
-        ctx.beginPath(); ctx.arc(pp[0], pp[1], Math.max(0.7, 0.018 * am[2]), 0, TAU); ctx.fill();
+        ctx.beginPath(); ctx.arc(pp[0], pp[1], Math.max(0.7, 0.016 * am[2]), 0, TAU); ctx.fill();
       }
+    }
+  }
+}
+
+/* ---------- the residual stream: every sublayer adds a small update ---------- */
+function drawResidual(t) {
+  for (let s = 1; s < NS; s++) {
+    const g = stageGlow(s);
+    if (g <= 0.04) continue;
+    for (let i = 0; i < T; i++) {
+      const src = worldState(s - 1, i);
+      const p = P(src[0], src[1], src[2]);
+      if (!p) continue;
+      const read = i === READER;
+      const r = Math.max(1.6, 0.045 * p[2]);
+      const a = g * (read ? 0.55 : 0.32);
+      ctx.strokeStyle = rgba([255, 255, 255], a);
+      ctx.lineWidth = read ? 1.4 : 1.0;
+      ctx.beginPath();
+      ctx.moveTo(p[0] - r, p[1]); ctx.lineTo(p[0] + r, p[1]);
+      ctx.moveTo(p[0], p[1] - r); ctx.lineTo(p[0], p[1] + r);
+      ctx.stroke();
+    }
+  }
+}
+
+/* ---------- the payoff: the last token is read out through the vocabulary ---------- */
+function drawReadout(t) {
+  if (TT <= T_POST) return;
+  const k = clamp((TT - T_POST) / POST, 0, 1);
+  const fade = Math.sin(k * Math.PI * 0.5);
+  const rv = S[NS - 1][READER];
+  const p = P((NS - 1) * G + rv[0], rv[1], rv[2]);
+  if (!p) return;
+  const cxw = (NS - 1) * G + 1.65;
+
+  for (let c = PRED.length - 1; c >= 0; c--) {
+    const cand = PRED[c];
+    const center = [cxw + cand.v[0] * 0.55, cand.v[1] * 0.55, cand.v[2] * 0.55];
+    const q = P(center[0], center[1], center[2]);
+    if (!q) continue;
+    if (c === 0) {
+      const drift = 0.55 * k;
+      const np = P(center[0] + drift, center[1], center[2]);
+      ctx.strokeStyle = rgba(cand.col, 0.5 * fade);
+      ctx.lineWidth = 2.2;
+      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+      orb(q, 0.075, cand.col, 0.95 * fade);
+      if (np) orb(np, 0.05, cand.col, 0.8 * fade);
+    } else {
+      ctx.strokeStyle = rgba(cand.col, 0.10 * fade);
+      ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+      ctx.fillStyle = rgba(cand.col, 0.34 * fade);
+      ctx.beginPath(); ctx.arc(q[0], q[1], Math.max(1.1, 0.024 * q[2]), 0, TAU); ctx.fill();
     }
   }
 }
@@ -769,7 +845,8 @@ function frame(now) {
   TT = tt;
   W = clamp((tt - PRE) / STEP, 0, NS - 1);
 
-  const targetX = clamp((W + 0.4) * G, 0.3 * G, (NS - 1) * G);
+  let targetX = clamp((W + 0.4) * G, 0.3 * G, (NS - 1) * G);
+  if (TT > T_POST) targetX += smooth(clamp((TT - T_POST) / POST, 0, 1)) * 1.2;
   if (FIXED !== null) cam.tx = targetX;
   else cam.tx += (targetX - cam.tx) * Math.min(1, dt * 3.2);
 
@@ -784,7 +861,9 @@ function frame(now) {
   ctx.fillRect(0, 0, w, h);
 
   const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.72);
-  bg.addColorStop(0, 'rgba(30,22,66,0.10)');
+  const sAct = clamp(Math.round(W), 0, NS - 1);
+  const tint = LC[sAct] || [165, 140, 255];
+  bg.addColorStop(0, `rgba(${tint[0] | 0},${tint[1] | 0},${tint[2] | 0},0.04)`);
   bg.addColorStop(0.55, 'rgba(8,6,24,0.05)');
   bg.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = bg;
@@ -806,9 +885,20 @@ function frame(now) {
   drawStates();
   drawAttention(t);
   drawFFN(t);
+  drawResidual(t);
   drawBeads(t);
   drawFinale(t);
+  drawReadout(t);
 
+  ctx.globalCompositeOperation = 'source-over';
+  const vg = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.28, cx, cy, Math.max(w, h) * 0.78);
+  vg.addColorStop(0, 'rgba(0,0,0,0)');
+  vg.addColorStop(0.7, 'rgba(0,0,0,0.10)');
+  vg.addColorStop(1, 'rgba(0,0,0,0.48)');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.globalCompositeOperation = 'lighter';
   mini();
 
   ctx.globalCompositeOperation = 'source-over';
