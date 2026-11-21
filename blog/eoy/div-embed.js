@@ -155,6 +155,12 @@
     if (root.__asanaiLoaderObserver) { root.__asanaiLoaderObserver.disconnect(); root.__asanaiLoaderObserver = null; }
   }
 
+  function plainPreviewBody(html) {
+    return String(html || "")
+      .replace(/\$\$[\s\S]*?\$\$/g, "…")
+      .replace(/\$[^$]+\$/g, "…");
+  }
+
   function buildPreview(entry) {
     var wrap = document.createElement("div");
     wrap.className = "asanai-eoy-preview";
@@ -163,7 +169,7 @@
       + '</div></section><section class="ls-stage"></section></main></div>';
     wrap.querySelector(".ls-kicker").textContent = entry.kicker || "";
     wrap.querySelector(".ls-title").textContent = entry.title || "";
-    wrap.querySelector(".ls-body").innerHTML = entry.body || "";
+    wrap.querySelector(".ls-body").innerHTML = plainPreviewBody(entry.body);
     return wrap;
   }
 

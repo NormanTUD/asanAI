@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title></title>
+<style>
+  html,body{margin:0;height:100%;background:#02030a;overflow:hidden}
+  canvas{display:block;width:100vw;height:100vh;cursor:grab;touch-action:none}
+  canvas:active{cursor:grabbing}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+"use strict";
+
+/* ============================================================
+   pure geometry, pure light, no words
+   embedding cloud -> stacked 3-D spaces -> attention mixes ->
+   shared FFN field -> next space -> repeat
+   ============================================================ */
+
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+const TAU = Math.PI * 2;
+
+let w = 0, h = 0, dpr = 1, F = 1, cx = 0, cy = 0;
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  w = innerWidth; h = innerHeight;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  F = Math.min(w * 1.25, h * 2.1);
+  cx = w / 2; cy = h * 0.46;
+}
+addEventListener('resize', resize);
+resize();
+
+/* ---------- tiny math kit ---------- */
+const clamp = (x, a, b) => x < a ? a : x > b ? b : x;
+const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+let R = mulberry32(1);
+const gauss = () => Math.sqrt(-2 * Math.log(1 - R())) * Math.cos(TAU * R());
+const mat = (r, c, s) => Array.from({ length: r }, () => Array.from({ length: c }, () => gauss() * s));
+const mv = (M, v) => M.map(row => row.reduce((a, x, k) => a + x * v[k], 0));
+function squash(v) {
+  const n = Math.hypot(v[0], v[1], v[2]) || 1e-9;
+  const f = 0.95 * Math.tanh(n / 0.95) / n;
+  return [v[0] * f, v[1] * f, v[2] * f];
+}
+
+/* ---------- colour kit ---------- */
+function hsl(hue, s, l) {
+  hue = ((hue % 360) + 360) % 360; s /= 100; l /= 100;
+  const k = n => (n + hue / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [255 * f(0), 255 * f(8), 255 * f(4)];
+}
+const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+
+let GA = 1;
+const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${clamp(a * GA, 0, 1)})`;
+
+/* ---------- scene constants ---------- */
+const T = 6;                 // tokens
+const L = 4;                 // layers
+const NS = 2 * L + 1;        // embedding + attention/ffn per layer
+const G = 3.75;              // spacing between spaces
+const HH = 1.0;              // cube half size
+const PRE = 1.7, STEP = 2.1, POST = 2.6;
+const Tc = PRE + (NS - 1) * STEP + POST;
+
+/* ---------- shared probe lattice: the same field at every point ---------- */
+const DIM = 4, GE = 0.62, GRID = [], GRID_E = [];
+for (let a = 0; a < DIM; a++)
+  for (let b = 0; b < DIM; b++)
+    for (let c = 0; c < DIM; c++)
+      GRID.push([(a / (DIM - 1) - 0.5) * 2 * GE, (b / (DIM - 1) - 0.5) * 2 * GE, (c / (DIM - 1) - 0.5) * 2 * GE]);
+const gi = (a, b, c) => (a * DIM + b) * DIM + c;
+for (let a = 0; a < DIM; a++)
+  for (let b = 0; b < DIM; b++)
+    for (let c = 0; c < DIM; c++) {
+      const i = gi(a, b, c);
+      if (a < DIM - 1) GRID_E.push([i, gi(a + 1, b, c)]);
+      if (b < DIM - 1) GRID_E.push([i, gi(a, b + 1, c)]);
+      if (c < DIM - 1) GRID_E.push([i, gi(a, b, c + 1)]);
+    }
+
+/* ---------- cube wireframe + axes ---------- */
+const CORN = [];
+for (const a of [-HH, HH]) for (const b of [-HH, HH]) for (const c of [-HH, HH]) CORN.push([a, b, c]);
+const EDGES = [];
+for (let i = 0; i < 8; i++) for (let j = i + 1; j < 8; j++) {
+  let d = 0;
+  for (let k = 0; k < 3; k++) if (CORN[i][k] !== CORN[j][k]) d++;
+  if (d === 1) EDGES.push([i, j]);
+}
+const AXC = [[255, 84, 110], [90, 245, 160], [96, 160, 255]];
+
+/* ---------- model state ---------- */
+let W = 0;
+let vocab = [], vcol = [], S = [], C = [], A = [], LAT = [], LC = [], idCol = [];
+
+function build() {
+  R = mulberry32((Math.random() * 1e9) | 0);
+
+  /* vocabulary: a cloud of meanings in the embedding space */
+  const NC = 7;
+  const cents = [];
+  for (let c = 0; c < NC; c++) {
+    const v = [gauss(), gauss(), gauss()];
+    const n = Math.hypot(...v) || 1;
+    cents.push(v.map(x => x / n * 0.56));
+  }
+  vocab = []; vcol = [];
+  const NV = NC * 80;
+  for (let i = 0; i < NV; i++) {
+    const c = cents[i % NC];
+    vocab.push(squash([c[0] + gauss() * 0.27, c[1] + gauss() * 0.27, c[2] + gauss() * 0.27]));
+    vcol.push(hsl((i % NC) * (360 / NC) + 8, 88, 60));
+  }
+
+  /* the sequence: a handful of vectors pulled out of that cloud */
+  const V0 = [], C0 = [];
+  idCol = [];
+  const perm = [...Array(NC).keys()];
+  for (let i = perm.length - 1; i > 0; i--) {
+    const j = (R() * (i + 1)) | 0;
+    [perm[i], perm[j]] = [perm[j], perm[i]];
+  }
+  for (let i = 0; i < T; i++) {
+    const cl = perm[i % NC];
+    const idx = cl + NC * ((R() * 80) | 0);
+    V0.push(vocab[idx].slice());
+    C0.push(vcol[idx].slice());
+    idCol.push(hsl(i * (360 / T) + 18, 92, 66));
+  }
+
+  S = [V0]; C = [C0]; A = [null]; LAT = [GRID]; LC = [];
+  LC[0] = [165, 140, 255];
+
+  for (let l = 0; l < L; l++) {
+    const Wq = mat(3, 3, 0.95), Wk = mat(3, 3, 0.95), Wv = mat(3, 3, 0.90);
+    const W1 = mat(6, 3, 1.25), W2 = mat(3, 6, 0.40);
+
+    /* ------- attention: one shared function, every token at its own point ------- */
+    const sa = 2 * l + 1;
+    LC[sa] = hsl(20 + l * 11, 100, 62);
+    const pv = S[sa - 1], pc = C[sa - 1], pl = LAT[sa - 1];
+    const K = pv.map(v => mv(Wk, v));
+    const Vv = pv.map(v => mv(Wv, v));
+
+    const att = (q, n) => {
+      const qq = mv(Wq, q);
+      let sc = [], mx = -1e9;
+      for (let j = 0; j < n; j++) {
+        const d = (qq[0] * K[j][0] + qq[1] * K[j][1] + qq[2] * K[j][2]) * 3.2;
+        sc.push(d); if (d > mx) mx = d;
+      }
+      let sum = 0;
+      sc = sc.map(d => { const e = Math.exp(d - mx); sum += e; return e; });
+      sc = sc.map(e => e / sum);
+      const o = [0, 0, 0];
+      for (let j = 0; j < n; j++) for (let k = 0; k < 3; k++) o[k] += sc[j] * Vv[j][k];
+      return { w: sc, o };
+    };
+
+    const ns = [], nc = [], aw = [];
+    pv.forEach((v, i) => {
+      const r = att(v, i + 1);
+      aw.push(r.w);
+      ns.push(squash(v.map((x, k) => x + 0.92 * r.o[k])));
+      let cr = 0, cg = 0, cb = 0;
+      for (let j = 0; j <= i; j++) {
+        const wt = r.w[j];
+        cr += wt * pc[j][0]; cg += wt * pc[j][1]; cb += wt * pc[j][2];
+      }
+      nc.push([
+        pc[i][0] * 0.45 + cr * 0.55,
+        pc[i][1] * 0.45 + cg * 0.55,
+        pc[i][2] * 0.45 + cb * 0.55
+      ]);
+    });
+    S[sa] = ns; C[sa] = nc; A[sa] = aw;
+    /* the whole space feels the same attention field */
+    LAT[sa] = pl.map(q => {
+      const r = att(q, T);
+      return squash(q.map((x, k) => x + 0.80 * r.o[k]));
+    });
+
+    /* ------- feed-forward: same field for every point, no talk between tokens ------- */
+    const sf = 2 * l + 2;
+    LC[sf] = hsl(192 + l * 11, 100, 62);
+    const ffn = v => {
+      const d = mv(W2, mv(W1, v).map(z => Math.tanh(z * 1.6)));
+      return squash(v.map((x, k) => x + 0.92 * d[k]));
+    };
+    S[sf] = S[sa].map(ffn);
+    C[sf] = C[sa].map(c => c.slice());
+    A[sf] = null;
+    LAT[sf] = LAT[sa].map(ffn);
+  }
+}
+build();
+
+/* ---------- camera ---------- */
+const cam = { tx: 0.4 * G, D: 10.5 };
+let yawOff = 0, pitchOff = 0, drag = false, lx = 0, ly = 0;
+
+cv.addEventListener('pointerdown', e => {
+  drag = true; lx = e.clientX; ly = e.clientY;
+});
+addEventListener('pointerup', () => { drag = false; });
+addEventListener('pointermove', e => {
+  if (!drag) return;
+  yawOff += (e.clientX - lx) * 0.005;
+  pitchOff = clamp(pitchOff + (e.clientY - ly) * 0.004, -0.55, 0.95);
+  lx = e.clientX; ly = e.clientY;
+});
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  cam.D = clamp(cam.D + e.deltaY * 0.0025, 5.8, 20);
+}, { passive: false });
+
+let cyw = 1, syw = 0, cp = 1, sp = 0, ref = 1;
+
+function P(x, y, z) {
+  const dx = x - cam.tx;
+  const x1 = dx * cyw + z * syw;
+  const z1 = -dx * syw + z * cyw;
+  const y2 = y * cp + z1 * sp;
+  const z2 = -y * sp + z1 * cp + cam.D;
+  if (z2 < 0.6) return null;
+  const s = F / z2;
+  return [cx + x1 * s, cy - y2 * s, s];
+}
+
+function seg(p, q, col, a, lw) {
+  if (!p || !q) return;
+  if (a <= 0.002) return;
+  ctx.strokeStyle = rgba(col, a);
+  ctx.lineWidth = Math.max(0.35, lw * (p[2] + q[2]) * 0.5 / ref);
+  ctx.beginPath();
+  ctx.moveTo(p[0], p[1]);
+  ctx.lineTo(q[0], q[1]);
+  ctx.stroke();
+}
+function line3(a, b, col, alpha, lw) {
+  seg(P(a[0], a[1], a[2]), P(b[0], b[1], b[2]), col, alpha, lw);
+}
+
+function orb(p, wr, col, alpha) {
+  if (!p) return;
+  if (alpha <= 0.003) return;
+  const r = Math.max(0.6, wr * p[2]);
+  const g1 = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 4.2);
+  g1.addColorStop(0, rgba(col, alpha * 0.50));
+  g1.addColorStop(0.35, rgba(col, alpha * 0.14));
+  g1.addColorStop(1, rgba(col, 0));
+  ctx.fillStyle = g1;
+  ctx.beginPath(); ctx.arc(p[0], p[1], r * 4.2, 0, TAU); ctx.fill();
+
+  const g2 = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 1.9);
+  g2.addColorStop(0, rgba(mixc(col, [255, 255, 255], 0.55), alpha));
+  g2.addColorStop(0.5, rgba(col, alpha * 0.75));
+  g2.addColorStop(1, rgba(col, 0));
+  ctx.fillStyle = g2;
+  ctx.beginPath(); ctx.arc(p[0], p[1], r * 1.9, 0, TAU); ctx.fill();
+}
+
+function spark3(a, wr, col, alpha) {
+  const p = P(a[0], a[1], a[2]);
+  if (!p || alpha <= 0.002) return;
+  const r = Math.max(0.4, wr * p[2]);
+  ctx.fillStyle = rgba(col, alpha);
+  ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
+}
+
+/* ---------- world helpers ---------- */
+function fogOf(s) {
+  const d = Math.abs(s * G - cam.tx) / (2.6 * G);
+  return clamp(1 - d * d, 0, 1);
+}
+function worldState(s, i) {
+  const p = S[s][i];
+  return [s * G + p[0], p[1], p[2]];
+}
+function beadWorld(i) {
+  const wc = clamp(W, 0, NS - 1);
+  const s0 = Math.floor(wc), s1 = Math.min(NS - 1, s0 + 1);
+  const u = s1 === s0 ? 1 : smooth(clamp((wc - s0) / 0.7, 0, 1));
+  return lerp3(worldState(s0, i), worldState(s1, i), u);
+}
+function beadColor(i) {
+  const wc = clamp(W, 0, NS - 1);
+  const s0 = Math.floor(wc), s1 = Math.min(NS - 1, s0 + 1);
+  const u = s1 === s0 ? 1 : smooth(clamp((wc - s0) / 0.7, 0, 1));
+  return mixc(C[s0][i], C[s1][i], u);
+}
+function stageGlow(s) {
+  if (s === 0) return 1;
+  const u = smooth(clamp((W - (s - 1)) / 0.7, 0, 1));
+  const decay = W <= s ? 1 : clamp(1 - (W - s) / 0.55, 0, 1);
+  return u * decay;
+}
+function latticeAt(s) {
+  if (s === 0) return GRID;
+  const u = smooth(clamp((W - (s - 1)) / 0.7, 0, 1));
+  return GRID.map((_, k) => lerp3(LAT[s - 1][k], LAT[s][k], u));
+}
+
+/* ---------- background dust ---------- */
+const DUST = [];
+{
+  const dr = mulberry32(99173);
+  for (let i = 0; i < 170; i++) {
+    DUST.push([
+      dr() * (NS * G + 2 * G) - G,
+      (dr() * 2 - 1) * 6.6,
+      (dr() * 2 - 1) * 6.6,
+      dr() * TAU,
+      0.4 + dr() * 0.9
+    ]);
+  }
+}
+
+function drawDust(t) {
+  for (const d of DUST) {
+    const p = P(d[0] + Math.sin(t * 0.18 + d[3]) * 0.45,
+                d[1] + Math.cos(t * 0.15 + d[3]) * 0.32,
+                d[2]);
+    if (!p) continue;
+    const tw = 0.5 + 0.5 * Math.sin(t * 1.15 + d[3] * 3.1);
+    const a = (0.035 + 0.085 * tw) * clamp(1 - Math.abs(p[2] - ref) / (ref * 2.2), 0, 1);
+    const r = Math.max(0.3, 0.006 * p[2] * d[4]);
+    ctx.fillStyle = `rgba(150,170,225,${clamp(a * GA, 0, 1)})`;
+    ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
+  }
+}
+
+/* ---------- rail + gates ---------- */
+function drawRail() {
+  const a = P(-0.7 * G, 0, 0);
+  const b = P((NS - 0.35) * G, 0, 0);
+  seg(a, b, [118, 128, 190], 0.10, 1);
+}
+
+function drawGates(t) {
+  for (let s = 1; s < NS; s++) {
+    const g = stageGlow(s);
+    const fog = fogOf(s);
+    const a = (0.02 + 0.34 * g) * fog;
+    if (a <= 0.004) continue;
+    const x = (s - 0.5) * G;
+    const N = 44;
+    const r = 1.18 + 0.05 * Math.sin(t * 2.4 + s);
+    let started = false, ok = true;
+    ctx.beginPath();
+    for (let k = 0; k <= N; k++) {
+      const an = k / N * TAU;
+      const pp = P(x, r * Math.cos(an), r * Math.sin(an));
+      if (!pp) { ok = false; break; }
+      if (!started) { ctx.moveTo(pp[0], pp[1]); started = true; }
+      else ctx.lineTo(pp[0], pp[1]);
+    }
+    if (ok && started) {
+      ctx.strokeStyle = rgba(LC[s], a);
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    }
+  }
+}
+
+/* ---------- the spaces ---------- */
+function drawCubeWire(s) {
+  const fog = fogOf(s);
+  if (fog <= 0.01) return;
+  const g = stageGlow(s);
+  const col = s === 0 ? [165, 140, 255] : LC[s];
+  const a = (0.05 + 0.13 * g) * fog;
+  const ox = s * G;
+  for (const [i, j] of EDGES) {
+    line3(
+      [ox + CORN[i][0], CORN[i][1], CORN[i][2]],
+      [ox + CORN[j][0], CORN[j][1], CORN[j][2]],
+      col, a, 1.0
+    );
+  }
+  const hl = 0.96;
+  for (let k = 0; k < 3; k++) {
+    const p = [ox, 0, 0], q = [ox, 0, 0];
+    p[k] -= hl; q[k] += hl;
+    line3(p, q, AXC[k], (0.04 + 0.20 * g) * fog, 1);
+  }
+}
+
+function drawLattice(s) {
+  const fog = fogOf(s);
+  if (fog <= 0.01) return;
+  const g = stageGlow(s);
+  const a = (0.045 + 0.52 * g) * fog;
+  const pts = latticeAt(s);
+  const ox = s * G;
+  const pr = pts.map(p => P(ox + p[0], p[1], p[2]));
+  for (const [i, j] of GRID_E) seg(pr[i], pr[j], LC[s], a, 0.9);
+}
+
+function drawVocab(t) {
+  const fog = fogOf(0);
+  if (fog <= 0.02) return;
+  for (let i = 0; i < vocab.length; i++) {
+    const v = vocab[i];
+    const p = P(v[0], v[1], v[2]);
+    if (!p) continue;
+    const tw = 0.55 + 0.45 * Math.sin(t * 1.3 + i * 1.7);
+    const a = (0.05 + 0.16 * tw) * fog;
+    const r = Math.max(0.4, 0.011 * p[2]);
+    ctx.fillStyle = rgba(vcol[i], a);
+    ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
+  }
+}
+
+function drawWorldlines() {
+  for (let i = 0; i < T; i++) {
+    for (let s = 0; s < NS - 1; s++) {
+      const fog = Math.max(fogOf(s), fogOf(s + 1));
+      if (fog <= 0.02) continue;
+      const col = mixc(C[s][i], C[s + 1][i], 0.5);
+      line3(worldState(s, i), worldState(s + 1, i), col, 0.10 * fog, 1.0);
+    }
+  }
+}
+
+function drawStates() {
+  const sCur = clamp(Math.round(W), 0, NS - 1);
+  for (let s = 0; s < NS; s++) {
+    const fog = fogOf(s);
+    if (fog <= 0.02) continue;
+    const ox = s * G;
+    const g = stageGlow(s);
+    const boost = s === sCur ? 0.10 : 0.0;
+    for (let i = 0; i < T; i++) {
+      const st = S[s][i];
+      const p = P(ox + st[0], st[1], st[2]);
+      if (!p) continue;
+      const col = C[s][i];
+      const cen = P(ox, 0, 0);
+      if (cen) seg(cen, p, col, (0.035 + boost + 0.06 * g) * fog, 0.9);
+      const r = Math.max(0.5, 0.020 * p[2]);
+      ctx.fillStyle = rgba(col, (0.16 + 0.22 * g + 0.15 * boost / 0.1 * 0.0) * fog);
+      ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
+    }
+  }
+}
+
+/* ---------- attention: the same field, every token at a different point ---------- */
+function bez3(a, c, b, t) {
+  const u = 1 - t;
+  return [
+    u * u * a[0] + 2 * u * t * c[0] + t * t * b[0],
+    u * u * a[1] + 2 * u * t * c[1] + t * t * b[1],
+    u * u * a[2] + 2 * u * t * c[2] + t * t * b[2]
+  ];
+}
+function strokeBezier(a, c, b, col, alpha) {
+  const N = 18;
+  ctx.beginPath();
+  for (let n = 0; n <= N; n++) {
+    const u = n / N, iu = 1 - u;
+    const x = iu * iu * a[0] + 2 * iu * u * c[0] + u * u * b[0];
+    const y = iu * iu * a[1] + 2 * iu * u * c[1] + u * u * b[1];
+    if (n === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = rgba(col, alpha * 0.20);
+  ctx.lineWidth = 3.1; ctx.stroke();
+  ctx.strokeStyle = rgba(col, alpha * 0.52);
+  ctx.lineWidth = 1.25; ctx.stroke();
+  ctx.strokeStyle = rgba(mixc(col, [255, 255, 255], 0.55), alpha * 0.85);
+  ctx.lineWidth = 0.45; ctx.stroke();
+}
+
+function drawAttention(t) {
+  const phase = (t * 0.55) % 1;
+  for (let s = 1; s < NS; s += 2) {
+    const g = stageGlow(s);
+    if (g <= 0.02) continue;
+    const aw = A[s];
+    if (!aw) continue;
+    for (let i = 0; i < T; i++) {
+      const dst = beadWorld(i);
+      const p2 = P(dst[0], dst[1], dst[2]);
+      if (!p2) continue;
+      for (let j = 0; j <= i; j++) {
+        const wt = aw[i][j];
+        if (wt < 0.04) continue;
+        const src = worldState(s - 1, j);
+        const p0 = P(src[0], src[1], src[2]);
+        if (!p0) continue;
+        const lift = 0.34 + 0.10 * (i - j);
+        const ctrl = [
+          (src[0] + dst[0]) / 2,
+          (src[1] + dst[1]) / 2 + lift,
+          (src[2] + dst[2]) / 2 + (j - i) * 0.12
+        ];
+        const pc = P(ctrl[0], ctrl[1], ctrl[2]);
+        if (!pc) continue;
+        const col = mixc(C[s - 1][j], beadColor(i), 0.30);
+        const base = (0.05 + 0.55 * wt) * g;
+        strokeBezier(p0, pc, p2, col, base);
+        for (let k = 0; k < 2; k++) {
+          const ph = (phase + k * 0.5) % 1;
+          const pos = bez3(src, ctrl, dst, ph);
+          const pp = P(pos[0], pos[1], pos[2]);
+          if (!pp) continue;
+          const rr = Math.max(0.6, (1.1 + wt * 3.0) * 0.05 * pp[2]);
+          ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.5),
+                               Math.sin(Math.PI * ph) * (0.22 + 0.7 * wt) * g);
+          ctx.beginPath(); ctx.arc(pp[0], pp[1], rr, 0, TAU); ctx.fill();
+        }
+      }
+    }
+  }
+}
+
+/* ---------- feed-forward: the whole space flows, each point alone ---------- */
+function drawFFN(t) {
+  const phase = (t * 0.5) % 1;
+  const e = smooth(phase);
+  for (let s = 2; s < NS; s += 2) {
+    const g = stageGlow(s);
+    if (g <= 0.02) continue;
+    const ox = s * G;
+    const A0 = LAT[s - 1], B0 = LAT[s];
+    const col = LC[s];
+    for (let k = 0; k < A0.length; k += 2) {
+      const p0 = A0[k];
+      const dx = B0[k][0] - p0[0], dy = B0[k][1] - p0[1], dz = B0[k][2] - p0[2];
+      const amp = 1.9;
+      const pp = P(ox + p0[0] + dx * amp * e,
+                   p0[1] + dy * amp * e,
+                   p0[2] + dz * amp * e);
+      if (!pp) continue;
+      const a = Math.sin(Math.PI * phase) * g;
+      const r = Math.max(0.5, 0.028 * pp[2]);
+      ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.35), a * 0.7);
+      ctx.beginPath(); ctx.arc(pp[0], pp[1], r, 0, TAU); ctx.fill();
+    }
+  }
+}
+
+/* ---------- the tokens themselves ---------- */
+function drawBeads(t) {
+  const pulse = 0.92 + 0.08 * Math.sin(t * 2.2);
+  for (let i = 0; i < T; i++) {
+    const bw = beadWorld(i);
+    const col = beadColor(i);
+    const p = P(bw[0], bw[1], bw[2]);
+    if (!p) continue;
+    orb(p, 0.070 * pulse, col, 0.95);
+    const r = Math.max(1.2, 0.155 * p[2]);
+    ctx.strokeStyle = rgba(idCol[i], 0.34);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.stroke();
+  }
+}
+
+/* ---------- the quiet contact sheet: all spaces, same size ---------- */
+function mini() {
+  const m = 17, gap = 7, tot = NS * m + (NS - 1) * gap;
+  const x0 = (w - tot) / 2, y0 = h - m - 18;
+  const cur = clamp(W, 0, NS - 1);
+
+  for (let i = 0; i < T; i++) {
+    for (let s = 0; s < NS - 1; s++) {
+      const p = S[s][i], q = S[s + 1][i];
+      const ax = x0 + s * (m + gap) + m / 2 + p[0] * m * 0.42;
+      const ay = y0 + m / 2 - p[1] * m * 0.42;
+      const bx = x0 + (s + 1) * (m + gap) + m / 2 + q[0] * m * 0.42;
+      const by = y0 + m / 2 - q[1] * m * 0.42;
+      ctx.strokeStyle = rgba(mixc(C[s][i], C[s + 1][i], 0.5), 0.11);
+      ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    }
+  }
+
+  for (let s = 0; s < NS; s++) {
+    const x = x0 + s * (m + gap);
+    const act = clamp(1 - Math.abs(cur - s), 0, 1);
+    ctx.strokeStyle = rgba(LC[s], 0.15 + 0.42 * act);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, y0 + 0.5, m - 1, m - 1);
+    for (let i = 0; i < T; i++) {
+      const p = S[s][i];
+      const px = x + m / 2 + p[0] * m * 0.42;
+      const py = y0 + m / 2 - p[1] * m * 0.42;
+      ctx.fillStyle = rgba(C[s][i], 0.32 + 0.48 * act);
+      ctx.beginPath(); ctx.arc(px, py, 1.55, 0, TAU); ctx.fill();
+    }
+  }
+
+  const px = x0 + cur * (m + gap) + m / 2;
+  ctx.strokeStyle = `rgba(255,255,255,${0.16 * GA})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(px, y0 - 5); ctx.lineTo(px, y0 + m + 5); ctx.stroke();
+  ctx.fillStyle = `rgba(255,255,255,${0.55 * GA})`;
+  ctx.beginPath(); ctx.arc(px, y0 + m + 8, 2, 0, TAU); ctx.fill();
+}
+
+/* ---------- main loop ---------- */
+const t0 = performance.now();
+let lastNow = t0, curCyc = null;
+const qp = new URLSearchParams(location.search);
+const FIXED = qp.has('t') ? parseFloat(qp.get('t')) : null;
+
+function frame(now) {
+  const t = FIXED !== null ? FIXED : Math.max(0, (now - t0) / 1000);
+  const dt = clamp((now - lastNow) / 1000 || 0.016, 0.001, 0.05);
+  lastNow = now;
+
+  const cyc = Math.floor(t / Tc);
+  const tt = t - cyc * Tc;
+  if (cyc !== curCyc) { curCyc = cyc; build(); cam.tx = 0.4 * G; }
+
+  GA = Math.min(1, tt / 0.9) * Math.min(1, (Tc - tt) / 1.15);
+  W = clamp((tt - PRE) / STEP, 0, NS - 1);
+
+  const targetX = clamp((W + 0.4) * G, 0.3 * G, (NS - 1) * G);
+  if (FIXED !== null) cam.tx = targetX;
+  else cam.tx += (targetX - cam.tx) * Math.min(1, dt * 3.2);
+
+  const yaw = -0.55 + 0.28 * Math.sin(t * 0.11) + yawOff;
+  const pitch = 0.30 + 0.06 * Math.sin(t * 0.17) + pitchOff;
+  cyw = Math.cos(yaw); syw = Math.sin(yaw);
+  cp = Math.cos(pitch); sp = Math.sin(pitch);
+  ref = F / cam.D;
+
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = 'rgba(2,3,10,0.58)';
+  ctx.fillRect(0, 0, w, h);
+
+  const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.72);
+  bg.addColorStop(0, 'rgba(30,22,66,0.10)');
+  bg.addColorStop(0.55, 'rgba(8,6,24,0.05)');
+  bg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  drawDust(t);
+  drawRail();
+  drawGates(t);
+
+  for (let s = 0; s < NS; s++) drawCubeWire(s);
+  for (let s = 0; s < NS; s++) drawLattice(s);
+
+  drawVocab(t);
+  drawWorldlines();
+  drawStates();
+  drawAttention(t);
+  drawFFN(t);
+  drawBeads(t);
+
+  mini();
+
+  ctx.globalCompositeOperation = 'source-over';
+  requestAnimationFrame(frame);
+}
+
+requestAnimationFrame(frame);
+if (FIXED !== null) { lastNow = t0; frame(t0); }
+</script>
+</body>
+</html>
