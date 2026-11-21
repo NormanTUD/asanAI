@@ -98,6 +98,23 @@
       xsTensor = tf.tensor2d(points.map(function (p) { return [p.x]; }), [points.length, 1]);
       ysTensor = tf.tensor2d(points.map(function (p) { return [p.y]; }), [points.length, 1]);
     }
+    function initialLoss(m) {
+      if (!m || !xsTensor || !ysTensor) return 0;
+      try {
+        var pred = m.predict(xsTensor);
+        var pv = pred.dataSync();
+        var yv = ysTensor.dataSync();
+        var sum = 0;
+        for (var i = 0; i < pv.length; i++) {
+          var d = pv[i] - yv[i];
+          sum += d * d;
+        }
+        pred.dispose();
+        return pv.length ? sum / pv.length : 0;
+      } catch (err) {
+        return 0;
+      }
+    }
     function buildLinear() {
       if (data.linear.model) data.linear.model.dispose();
       var m = tf.sequential();
@@ -105,8 +122,8 @@
       m.compile({ optimizer: tf.train.adam(0.05), loss: "meanSquaredError" });
       data.linear.model = m;
       data.linear.epochs = 0;
-      data.linear.loss = 0;
-      data.linear.history = [];
+      data.linear.loss = initialLoss(m);
+      data.linear.history = [data.linear.loss];
     }
     function buildNet() {
       if (data.net.model) data.net.model.dispose();
@@ -118,8 +135,8 @@
       m.compile({ optimizer: tf.train.adam(0.03), loss: "meanSquaredError" });
       data.net.model = m;
       data.net.epochs = 0;
-      data.net.loss = 0;
-      data.net.history = [];
+      data.net.loss = initialLoss(m);
+      data.net.history = [data.net.loss];
     }
     function grid() {
       var out = [];

@@ -21,7 +21,7 @@
       { t: "king", id: 3364 },
       { t: "animal", id: 41607 }
     ];
-    var cols = 14;
+    var cols = 16;
     var selected = 3;
     function value(ti, j) {
       var x = Math.sin((ti + 1) * 12.9898 + (j + 1) * 78.233) * 43758.5453;

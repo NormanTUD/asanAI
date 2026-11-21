@@ -761,7 +761,7 @@
     {
       kicker: "Geometrie",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Wörtern. Diese Punktwolke sieht lokal wie eine niedrigdimensionale Struktur aus; ob sie global eine Mannigfaltigkeit ist, wäre eine eigene Frage. Die Übersetzung ist hier eine didaktische Abbildung: Die japanische Wolke wird gedreht und verschoben, bis sie auf der englischen liegt.\n\nDiese Demo ist stark vereinfacht. Reale Modelle haben tausende Dimensionen, und die Relationen sind nicht so ähnlich wie hier, aber das Prinzip ist dasselbe.\n\nWichtig sind nicht die konkreten Punkte, sondern ihre Nachbarschaften.",
+      body: "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Wörtern. Diese Punktwolke sieht lokal wie eine niedrigdimensionale Struktur aus; ob sie global eine einfache Struktur hat, wäre eine eigene Frage. Die Übersetzung ist hier eine didaktische Abbildung: Die japanische Wolke wird gedreht und verschoben, bis sie auf der englischen liegt.\n\nDiese Demo ist stark vereinfacht. Reale Modelle haben tausende Dimensionen, und die Relationen sind nicht so ähnlich wie hier, aber das Prinzip ist dasselbe.\n\nWichtig sind nicht die konkreten Punkte, sondern ihre Nachbarschaften.",
       watch: "",
       demoState: { scene: "manifold" },
       deep: "Die Demo zeigt eine Ähnlichkeitstransformation aus Rotation und Translation. Das ist eine didaktische Übersetzung, keine Aussage über alle Sprachen oder über die globale Struktur des Wortraums.",
@@ -778,7 +778,7 @@
     {
       kicker: "Geometry",
       title: "From relations to translation",
-      body: "Meaning lies not in the individual points but in the relations between them. Different languages have roughly the same relations between words. This point cloud looks locally like a low-dimensional structure; whether it is globally a manifold would be a separate question. Translation here is a didactic map: the Japanese cloud is rotated and shifted until it sits on the English one.\n\nThis demo is strongly simplified. Real models have thousands of dimensions, and the relations are not as similar as they are here, but the principle is the same.\n\nWhat matters is not the concrete points but their neighbourhoods.",
+      body: "Meaning lies not in the individual points but in the relations between them. Different languages have roughly the same relations between words. This point cloud looks locally like a low-dimensional structure; whether it has a simple global structure would be a separate question. Translation here is a didactic map: the Japanese cloud is rotated and shifted until it sits on the English one.\n\nThis demo is strongly simplified. Real models have thousands of dimensions, and the relations are not as similar as they are here, but the principle is the same.\n\nWhat matters is not the concrete points but their neighbourhoods.",
       watch: "",
       demoState: { scene: "manifold" },
       deep: "The demo shows a similarity transformation made of rotation and translation. It is a didactic translation, not a claim about all languages or about the global structure of word space.",

@@ -655,12 +655,13 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 | `bpe` | 5.x | Zeichen-BPE und Byte-BPE sind getrennt; die Demo ist als Zeichen-BPE markiert. |
 | `weekday` | 6.1 | Linie→Kreis→Linie ist sichtbar; der Unterraum-Begriff ist entfernt. |
 | `embedding` | 6.2/6.3 | Vektoren und `≈ Königin` stimmen; 1D-Spielzeug und 4096-Tabelle sind erklärt. |
+| `highdim` | 6.4 | 16 Spalten im Text und in der Tabelle; Werte sind als didaktisch markiert. |
 | `manifold` | 7.0 | Nur Drehung/Rotation/Verschiebung; die Mannigfaltigkeits-Behauptung ist entfernt. |
 | `position` | 8.0 | Startzustand leer; Sinuswellen statt Rotationen, keine Kugel-Behauptung. |
 | `qkv` | 9.x/10.x | Gewichte werden vor der Anzeige normalisiert; Readout bleibt in `[0, 100]`. |
 | `induction` | 12.0–12.5 | 82 % in 12.1 und die 2.5–5B/0.15→0.4-nats-Zahlen in 12.5 sind gedeckt. |
 | `linear` | 13.0 | 2-Parameter-Neuron und 4-Parameter-Box sind erklärt. |
-| `gradient` | 14.0 | Loss-Werte und `p(Paris)=30 %` stimmen; Formatierung der x-Werte ist unruhig. |
+| `gradient` | 14.0 | Loss-Werte und `p(Paris)=30 %` stimmen; x-Werte werden auf drei Nachkommastellen gerundet. |
 | `activation` | 15.0 | GELU-Begründung korrigiert. |
 | `mlp` | 16.0/17.0 | Dense/Aktivierung bewusst als Origami-Bild, kein Fix. |
 | `ffn` | 18.0 | Formel korrigiert: `dense` ist affin, die Aktivierung sitzt dazwischen. |
@@ -677,6 +678,20 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 | `chineseroom` | 29.0/31.x | 29.0 ist jetzt das Chinesische Zimmer; kein Duplikat, kein falscher Verweis. |
 | `riskmap` | 30.x | Mechanismen und Gegenmittel sind sachlich; Quellen sind knapp, aber vorhanden. |
 | `consciousness` | 31.x | Theorien sind getrennt; Qualia-Formulierung abgeschwächt. |
+
+### Zusätzlicher Demo-Durchgang (21. November 2026)
+
+- **`highdim`:** Die Tabelle hatte 14 Spalten, der Text sagte 16. `cols` steht jetzt auf 16; die Tabelle ist horizontal scrollbar.
+- **`model` / `tf-sinus-scene`:** Vor dem Training stand `Loss 0.0000` bei einer zufälligen Geraden. Der Initial-Loss wird jetzt aus `predict` und MSE berechnet.
+- **`embedding`:** 1D-, 2D- und 3D-Arithmetik geprüft: `Kalt + Lauwarm`, `König − Mann + Frau`, `Mann + 2·Macht`, `Prinz + Macht` und die 3D-Geschlechtsrichtungen gehen auf.
+- **`bpe`:** Startvokabular 10, Korpus 79 Tokens, Merges `e+s` 9×, `s+t` 9×, `w+e` 8×, `l+o` 7× nachgerechnet; korrekt.
+- **`qkv`:** `normalizeWeights()` geprüft; nach schnellem Head-/View-Wechsel ist die Summe der Gewichte `1.0`, die Anzeige bleibt unter 100 %.
+- **`inductionmatrix`:** Gewichte summieren zu 1; Zeile 6 liest 82 % von Position 4.
+- **`worldmodel`:** `DATA.moves` mit einer unabhängigen Othello-Regelprüfung getestet; alle 30 Züge sind legal. 8 Layer, 8 Heads, 512 Dimensionen und 60 Tokens sind durch die Quelle gedeckt.
+- **`history`:** Jahresangaben gesichtet; alle referenzierten Bilder existieren.
+- **`spacetime`:** Todesjahre und Abbildung gesichtet; `gurnee-tegmark-world.png` existiert, Quelle und Lizenz stehen am Bild.
+- **`crossentropy`:** Initial-Logits ergeben `p(Paris) ≈ 0.30`, `Loss ≈ 1.20`, Gradient `p−y ≈ −0.70`; korrekt.
+- **`manifold`:** Die Mannigfaltigkeits-Behauptung ist entfernt; die Demo bleibt bei Rotation und Translation.
 
 ### Ohne inhaltlichen Befund geprüft
 
@@ -756,7 +771,7 @@ Die Liste ist abgearbeitet. Offen bleiben nur P0-12 (bewusst), die dünne Quelle
 ## Prüfstatus
 
 - **Inhalt:** P0-01 bis P0-06 sind nachgezogen; ab P0-07 sind alle Code-Befunde umgesetzt. P0-12 bleibt bewusst unverändert; P1-04 hat weiterhin eine dünne Quellenlage.
-- **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen. Alle 61 Substeps in DE/EN liefen ohne JS-Fehler.
+- **Demo:** QKV-Gewichte werden normalisiert; BPE, Wochentag, Code-Boxen, Eiffelturm und History-Label sind nachgezogen. Alle 61 Substeps in DE/EN (122 Seiten) liefen ohne JS-Fehler; 36 aktive Szenen wurden im Code geprüft.
 - **Layout:** direkte Sprünge behoben; ein vollständiger Render-Sweep über alle Lessons steht noch aus.
 - **Quellen:** tragende Quellen geprüft; vollständiger Link-Check offen.
 - **EN:** Formel-Labels und die geänderten Demo-/Textstellen sind übersetzt; vollständiger EN-Durchlauf offen.
