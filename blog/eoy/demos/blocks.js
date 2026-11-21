@@ -46,7 +46,7 @@
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "Am Ende, nachdem die Bedeutungen viele Male gemischt und wieder getrennt worden sind, enthält der Vektor $h$ des letzten Tokens die Gesamtbedeutung des Kontexts. Man vergleicht $h$ mit den gelernten Richtungen aller Wörter und misst die Winkel. Ein kleiner Winkel heißt: Das Wort passt gut an diese Stelle. In dieser schematischen Ansicht wird das Wort mit dem größten Kosinus ausgewählt; im echten Logit zählt auch die Länge.",
+        body: "Am Ende, nachdem die Bedeutungen viele Male gemischt und wieder getrennt worden sind, enthält der letzte Vektor des letzten Tokens in der letzten Schicht die Gesamtbedeutung des Kontexts. Man vergleicht diesen Vektor mit den gelernten Richtungen aller Wörter und misst die Winkel. Ein kleiner Winkel heißt: Das Wort passt gut an diese Stelle. In dieser schematischen Ansicht wird das Wort mit dem größten Kosinus ausgewählt; im echten Logit zählt auch die Länge.",
         points: [],
         mini: "unembed",
       }
@@ -88,7 +88,7 @@
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "At the end, after meanings have been mixed and separated many times, the vector $h$ of the last token contains the overall meaning of the context. It is compared with the learned directions of all words, and the angles are measured. A small angle means the word fits this position well. In this schematic view the word with the largest cosine is selected; in the real logit the length also counts.",
+        body: "At the end, after meanings have been mixed and separated many times, the final vector of the last token in the last layer contains the overall meaning of the context. It is compared with the learned directions of all words, and the angles are measured. A small angle means the word fits this position well. In this schematic view the word with the largest cosine is selected; in the real logit the length also counts.",
         points: [],
         mini: "unembed",
       }
@@ -337,7 +337,7 @@
       });
       var ht = { x: ox + H[0] * s, y: oy - H[1] * s };
       V.arrow(ctx, ox, oy, ht.x, ht.y, C.petrol, 3.2, 8);
-      V.tokenChip(ctx, "h", ht.x + 5, ht.y - 8, C.petrol, C, { size: 10 });
+      V.tokenChip(ctx, DE ? "letzter Vektor" : "last vector", ht.x + 5, ht.y - 8, C.petrol, C, { size: 9 });
       var bx = w * 0.55, bw = w * 0.34, top = 0.95;
       rows.forEach(function (row, i) {
         var y = h * 0.30 + i * h * 0.14;
@@ -408,7 +408,7 @@
         html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
       if (b.mini === "unembed") {
-        html += '<p class="ls-bs-traj-caption">' + (DE ? "h = Output-Vektor des LLM: der letzte Vektor aus den Transformer-Blöcken. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; in dieser schematischen Ansicht entscheidet der Kosinus zu h, im echten Logit zählt auch die Länge." : "h = output vector of the LLM: the final vector from the transformer blocks. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; in this schematic view the cosine to h decides, while the real logit also includes length.") + '</p>';
+        html += '<p class="ls-bs-traj-caption">' + (DE ? "Der Output-Vektor des LLM ist der letzte Vektor des letzten Tokens in der letzten Schicht. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; in dieser schematischen Ansicht entscheidet der Kosinus zu diesem Vektor, im echten Logit zählt auch die Länge." : "The output vector of the LLM is the final vector of the last token in the last layer. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; in this schematic view the cosine to this vector decides, while the real logit also includes length.") + '</p>';
       }
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }

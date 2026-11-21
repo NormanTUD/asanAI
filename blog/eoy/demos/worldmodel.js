@@ -1069,7 +1069,7 @@
         drawChevron(c, cx, (y2 + y3) / 2, "v");
         drawLineNode(c, cx, y1, 220);
         txt(c, "Othello", cx, y1 + 56, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
-        txt(c, DE ? "1 Richtung pro Feld · reicht" : "1 direction per square · enough", cx, y1 + 74, { align: "center", size: 9.5, color: C.muted });
+        txt(c, DE ? "3 Logits pro Feld · reicht" : "3 logits per square · enough", cx, y1 + 74, { align: "center", size: 9.5, color: C.muted });
         txt(c, "Li et al. (2023) · Nanda et al. (2023)", cx, y1 + 90, { align: "center", size: 8, color: C.muted });
         drawChessNode(c, cx, y2, 72);
         txt(c, DE ? "Schach" : "Chess", cx, y2 + 78, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
@@ -1086,11 +1086,11 @@
         var cy = H * .52;
         var n1 = W * .18, n2 = W * .50, n3 = W * .82;
         drawFlow(c, pad + 40, cy, W - pad - 40, cy);
-        drawChevron(c, (n1 + n2) / 2, cy + .5, "h");
-        drawChevron(c, (n2 + n3) / 2, cy + .5, "h");
+        drawChevron(c, (n1 + n2) / 2, cy + .5, DE ? "Vektor" : "vector");
+        drawChevron(c, (n2 + n3) / 2, cy + .5, DE ? "Vektor" : "vector");
         drawLineNode(c, n1, cy, 180);
         txt(c, "Othello", n1, cy + 56, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
-        txt(c, DE ? "1 Richtung pro Feld · reicht" : "1 direction per square · enough", n1, cy + 75, { align: "center", size: 10, color: C.muted });
+        txt(c, DE ? "3 Logits pro Feld · reicht" : "3 logits per square · enough", n1, cy + 75, { align: "center", size: 10, color: C.muted });
         txt(c, "Li et al. (2023) · Nanda et al. (2023)", n1, cy + 91, { align: "center", size: 8, color: C.muted });
         drawChessNode(c, n2, cy, 90);
         txt(c, DE ? "Schach" : "Chess", n2, cy + 82, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });

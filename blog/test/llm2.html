@@ -229,7 +229,7 @@ function mini(time){
 }
 
 /* ============ main loop ============ */
-const t0=performance.now();let curCyc=-1,lastNow=t0;
+const t0=performance.now();let curCyc=null,lastNow=t0;
 function frame(now){
   const dt=Math.min(.05,(now-lastNow)/1000);lastNow=now;
   const t=(now-t0)/1000,Tc=1.2+2*L*STEP+3.5,cyc=Math.floor(t/Tc),tt=t-cyc*Tc;
