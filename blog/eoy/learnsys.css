@@ -1550,7 +1550,13 @@ h1,h2,h3,h4{
 @media (max-width:720px){.ls-app{--ls-nav-safe:48px}}
 
 /* Building blocks: one clean stack, clickable stations, large minis */
-.ls-blocks-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(190px,.40fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px;padding:2px}
+.ls-blocks-scene{height:100%;min-height:0;display:grid;grid-template-columns:54px minmax(190px,.40fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px;padding:2px}
+.ls-bs-residual{position:relative;min-height:0;border-right:1px solid var(--ls-line);margin-right:-2px}
+.ls-bs-residual-label{position:absolute;top:0;left:50%;transform:translateX(-50%);font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-green)}
+.ls-bs-residual-line{position:absolute;left:50%;top:20px;bottom:26px;width:2px;transform:translateX(-50%);background:linear-gradient(var(--ls-green),var(--ls-blue));opacity:.7}
+.ls-bs-residual-plus{position:absolute;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:18px;height:18px;border:1px solid var(--ls-green);border-radius:50%;background:var(--ls-paper);color:var(--ls-green);font:700 12px/1 "Barlow",sans-serif;box-shadow:0 0 0 3px var(--ls-paper);transition:top .18s ease}
+.ls-bs-residual-xtimes{position:absolute;left:50%;transform:translateX(-50%);font:700 8px/1 "Open Sans",sans-serif;color:var(--ls-green);letter-spacing:.04em}
+.ls-bs-residual-note{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font:600 8px/1 "Open Sans",sans-serif;color:var(--ls-muted);white-space:nowrap}
 .ls-bs-stack{display:flex;flex-direction:column;gap:0;overflow:auto;min-height:0;padding-right:2px}
 .ls-bs-step{position:relative;display:flex;flex-direction:column;align-items:stretch}
 .ls-bs-card{width:100%;display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;align-items:center;text-align:left;border:1px solid var(--ls-line);background:#fff;padding:7px 8px;cursor:pointer;color:var(--ls-ink);font:600 var(--ls-fs-ui-sm)/1.2 "Open Sans",sans-serif;transition:border-color .14s ease,box-shadow .14s ease,background .14s ease}
@@ -1593,6 +1599,7 @@ h1,h2,h3,h4{
 .ls-bs-prev:disabled{opacity:.4;cursor:default}
 @media (max-width:640px){
   .ls-blocks-scene{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr) auto}
+  .ls-bs-residual{display:none}
   .ls-bs-stack{flex-direction:row;gap:6px;overflow-x:auto;padding-bottom:2px}
   .ls-bs-step{min-width:168px}
   .ls-bs-connector{width:13px;height:1px;margin:auto 0}

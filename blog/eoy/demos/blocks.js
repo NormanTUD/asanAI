@@ -102,11 +102,20 @@
     var positionDemo = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
-    el.innerHTML = '<div class="ls-bs-stack" role="list"></div>' +
+    el.innerHTML = '<div class="ls-bs-residual" role="img" aria-label="' + (DE ? "Residualstrom: x läuft durch alle Blöcke; Attention und FFN addieren Updates." : "Residual stream: x runs through all blocks; attention and FFN add updates.") + '">' +
+      '<span class="ls-bs-residual-label">x</span>' +
+      '<span class="ls-bs-residual-line"></span>' +
+      '<span class="ls-bs-residual-plus">+</span>' +
+      '<span class="ls-bs-residual-plus">+</span>' +
+      '<span class="ls-bs-residual-xtimes">×N</span>' +
+      '<span class="ls-bs-residual-note">Updates</span>' +
+      '</div>' +
+      '<div class="ls-bs-stack" role="list"></div>' +
       '<div class="ls-bs-detail" aria-live="polite"></div>' +
       '<div class="ls-bs-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-bs-prev" data-no-height-test="1">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-bs-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-bs-next" data-no-height-test="1">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var stack = el.querySelector(".ls-bs-stack");
+    var residualRail = el.querySelector(".ls-bs-residual");
     var detail = el.querySelector(".ls-bs-detail");
     var progress = el.querySelector(".ls-bs-progress");
     var prevBtn = el.querySelector(".ls-bs-prev");
@@ -526,8 +535,24 @@
       stack.querySelectorAll(".ls-bs-card").forEach(function (btn) {
         btn.classList.toggle("is-on", parseInt(btn.getAttribute("data-index"), 10) === index);
       });
-      requestAnimationFrame(drawMinis);
+      requestAnimationFrame(function () { drawMinis(); layoutResidual(); });
     }
+    function layoutResidual() {
+      if (!residualRail || !residualRail.offsetHeight) return;
+      var card = stack.querySelector('.ls-bs-card[data-index="3"]');
+      if (!card) return;
+      var rr = residualRail.getBoundingClientRect(), cr = card.getBoundingClientRect();
+      if (!rr.height || !cr.height) return;
+      var center = cr.top - rr.top + cr.height / 2;
+      var pluses = residualRail.querySelectorAll(".ls-bs-residual-plus");
+      if (pluses.length >= 2) {
+        pluses[0].style.top = (center - 17) + "px";
+        pluses[1].style.top = (center + 7) + "px";
+      }
+      var badge = residualRail.querySelector(".ls-bs-residual-xtimes");
+      if (badge) badge.style.top = (center - 41) + "px";
+    }
+    function onResize() { drawMinis(); layoutResidual(); }
     function setIndex(i) {
       index = Math.max(0, Math.min(blocks.length - 1, i));
       renderDetail();
@@ -544,7 +569,8 @@
     renderDetail();
     prevBtn.addEventListener("click", function () { if (!prevInternal()) api.goPrev(); });
     nextBtn.addEventListener("click", function () { if (!nextInternal()) api.goNext(); });
-    window.addEventListener("resize", drawMinis);
+    window.addEventListener("resize", onResize);
+    stack.addEventListener("scroll", layoutResidual, { passive: true });
     window.addEventListener("tm:theme", function () { C = api.colors(); renderDetail(); });
     return {
       update: function (s) {
@@ -556,7 +582,7 @@
       prev: prevInternal,
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
+      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", onResize); stack.removeEventListener("scroll", layoutResidual); el.remove(); }
     };
   }
 
