@@ -1613,7 +1613,7 @@
   var attentionMergeStep = {
     title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
     kicker: DE ? "Attention" : "Attention",
-    substeps: [attentionMerged, headConcatSubstep]
+    substeps: [attentionMerged]
   };
 
   var neuralNeuronStep = Object.assign({}, insideSteps[0], {
@@ -2271,7 +2271,7 @@
   var inductionStep = {
     kicker: DE ? "In-Context" : "In-context",
     title: DE ? "Induktionsköpfe" : "Induction heads",
-    substeps: [inductionSequence, inductionMatrix, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence]
+    substeps: [inductionSequence, inductionMatrix, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence, headConcatSubstep]
   };
 
   var spacetimeSpace = {
