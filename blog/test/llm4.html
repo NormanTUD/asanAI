@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title></title>
 <style>
-  html,body{margin:0;height:100%;background:#02030a;overflow:hidden}
+  html,body{margin:0;height:100%;background:#04050c;overflow:hidden}
   canvas{display:block;width:100vw;height:100vh;cursor:grab;touch-action:none}
   canvas:active{cursor:grabbing}
 </style>
@@ -16,9 +16,12 @@
 "use strict";
 
 /* ============================================================
-   pure geometry, pure light, no words
-   embedding cloud -> stacked 3-D spaces -> attention mixes ->
-   shared FFN field -> next space -> repeat
+   no words. only light, vectors, and the way they move.
+   an embedding cloud feeds a corridor of equal 3-D spaces.
+   every layer: attention moves meaning between tokens,
+   then the feed-forward lifts every token into the same
+   elevated hidden space and returns it. the last token
+   collects it all and is read out through the vocabulary.
    ============================================================ */
 
 const cv = document.getElementById('c');
@@ -30,17 +33,17 @@ let bgCv = null, bgKey = '';
 
 function resize() {
   dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-  bgCv = null; bgKey = '';
   w = innerWidth; h = innerHeight;
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   F = Math.min(w * 1.25, h * 2.1);
-  cx = w / 2; cy = h * 0.46;
+  cx = w / 2; cy = h * 0.525;
+  bgCv = null; bgKey = '';
 }
 addEventListener('resize', resize);
 resize();
 
-/* ---------- tiny math kit ---------- */
+/* ---------- math kit ---------- */
 const clamp = (x, a, b) => x < a ? a : x > b ? b : x;
 const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -78,51 +81,38 @@ let GA = 1;
 const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${clamp(a * GA, 0, 1)})`;
 
 /* ---------- scene constants ---------- */
-const T = 6;                 // tokens
-const L = 4;                 // layers
-const NS = 2 * L + 1;        // embedding + attention/ffn per layer
-const G = 3.75;              // spacing between spaces
-const HH = 1.0;              // cube half size
-const PRE = 1.7, STEP = 2.1, POST = 2.6;
+const T = 6;                     // tokens
+const L = 4;                     // layers
+const NS = 2 * L + 1;            // embedding + attention + ffn per layer
+const G = 3.6;                   // spacing of the spaces
+const RAD = 0.95;                // radius of one space
+const PRE = 1.8, STEP = 2.0, POST = 3.0;
 const Tc = PRE + (NS - 1) * STEP + POST;
 const T_POST = PRE + (NS - 1) * STEP;
+const READER = T - 1;            // the token that gets read out
 
-/* ---------- shared probe lattice: the same field at every point ---------- */
-const DIM = 4, GE = 0.62, GRID = [], GRID_E = [];
-for (let a = 0; a < DIM; a++)
-  for (let b = 0; b < DIM; b++)
-    for (let c = 0; c < DIM; c++)
-      GRID.push([(a / (DIM - 1) - 0.5) * 2 * GE, (b / (DIM - 1) - 0.5) * 2 * GE, (c / (DIM - 1) - 0.5) * 2 * GE]);
-const gi = (a, b, c) => (a * DIM + b) * DIM + c;
-for (let a = 0; a < DIM; a++)
-  for (let b = 0; b < DIM; b++)
-    for (let c = 0; c < DIM; c++) {
-      const i = gi(a, b, c);
-      if (a < DIM - 1) GRID_E.push([i, gi(a + 1, b, c)]);
-      if (b < DIM - 1) GRID_E.push([i, gi(a, b + 1, c)]);
-      if (c < DIM - 1) GRID_E.push([i, gi(a, b, c + 1)]);
-    }
+const EMB = [158, 140, 255];
+const ATT = [255, 188, 108];
+const ATT2 = [240, 142, 220];
+const FFN = [112, 224, 255];
 
-/* ---------- cube wireframe + axes ---------- */
-const CORN = [];
-for (const a of [-HH, HH]) for (const b of [-HH, HH]) for (const c of [-HH, HH]) CORN.push([a, b, c]);
-const EDGES = [];
-for (let i = 0; i < 8; i++) for (let j = i + 1; j < 8; j++) {
-  let d = 0;
-  for (let k = 0; k < 3; k++) if (CORN[i][k] !== CORN[j][k]) d++;
-  if (d === 1) EDGES.push([i, j]);
-}
-const AXC = [[255, 84, 110], [90, 245, 160], [96, 160, 255]];
+const PAL = [
+  [255, 198, 112],
+  [120, 236, 188],
+  [120, 196, 255],
+  [196, 158, 255],
+  [255, 142, 202],
+  [255, 162, 124]
+];
 
 /* ---------- model state ---------- */
 let W = 0, TT = 0;
-let vocab = [], vcol = [], S = [], C = [], A = [], LAT = [], LC = [], HC = [], idCol = [], HD = [], PRED = [];
-const READER = T - 1;
+let vocab = [], vcol = [], S = [], C = [], A = [], HC = [], LC = [], HD = [], PRED = [], idCol = [];
 
 function build() {
   R = mulberry32((Math.random() * 1e9) | 0);
 
-  /* vocabulary: a cloud of meanings in the embedding space */
+  /* the embedding cloud: every possible token is a point in one 3-D space */
   const NC = 7;
   const cents = [];
   for (let c = 0; c < NC; c++) {
@@ -135,11 +125,11 @@ function build() {
   const NV = NC * PER;
   for (let i = 0; i < NV; i++) {
     const c = cents[i % NC];
-    vocab.push(squash([c[0] + gauss() * 0.27, c[1] + gauss() * 0.27, c[2] + gauss() * 0.27]));
-    vcol.push(hsl((i % NC) * (360 / NC) + 8, 88, 60));
+    vocab.push(squash([c[0] + gauss() * 0.26, c[1] + gauss() * 0.26, c[2] + gauss() * 0.26]));
+    vcol.push(hsl(198 + (i % NC) * 15, 70, 62));
   }
 
-  /* the sequence: a handful of vectors pulled out of that cloud */
+  /* the sequence: a few points pulled out of the cloud */
   const V0 = [], C0 = [];
   idCol = [];
   const perm = [...Array(NC).keys()];
@@ -151,27 +141,24 @@ function build() {
     const cl = perm[i % NC];
     const idx = cl + NC * ((R() * PER) | 0);
     V0.push(vocab[idx].slice());
-    C0.push(vcol[idx].slice());
-    idCol.push(hsl(i * (360 / T) + 18, 92, 66));
+    C0.push(PAL[i].slice());
+    idCol.push(PAL[i].slice());
   }
 
-  S = [V0]; C = [C0]; A = [null]; LAT = [GRID]; HD = []; LC = []; HC = []; PRED = [];
-  LC[0] = [165, 140, 255];
+  S = [V0]; C = [C0]; A = [null]; LC = [EMB]; HC = [null]; HD = []; PRED = [];
 
   for (let l = 0; l < L; l++) {
     const Wq0 = mat(3, 3, 0.95), Wk0 = mat(3, 3, 0.95), Wv0 = mat(3, 3, 0.90), Wo0 = mat(3, 3, 0.90);
     const Wq1 = mat(3, 3, 0.95), Wk1 = mat(3, 3, 0.95), Wv1 = mat(3, 3, 0.90), Wo1 = mat(3, 3, 0.90);
     const W1 = mat(12, 3, 1.10), W2 = mat(3, 12, 0.32);
 
-    /* ------- attention: two parallel heads, one shared function per head ------- */
+    /* attention: two parallel heads, one shared function per head */
     const sa = 2 * l + 1;
-    const tint0 = hsl(20 + l * 11, 100, 62);
-    const tint1 = hsl(292 + l * 12, 100, 64);
-    LC[sa] = tint0;
-    HC[sa] = [tint0, tint1];
-    const pv = S[sa - 1], pc = C[sa - 1], pl = LAT[sa - 1];
-    const K0 = pv.map(v => mv(Wk0, v)), V0 = pv.map(v => mv(Wv0, v));
-    const K1 = pv.map(v => mv(Wk1, v)), V1 = pv.map(v => mv(Wv1, v));
+    LC[sa] = ATT;
+    HC[sa] = [ATT, ATT2];
+    const pv = S[sa - 1], pc = C[sa - 1];
+    const K0 = pv.map(v => mv(Wk0, v)), Vv0 = pv.map(v => mv(Wv0, v));
+    const K1 = pv.map(v => mv(Wk1, v)), Vv1 = pv.map(v => mv(Wv1, v));
 
     const mkAtt = (Wq, K, Vv) => (q, n) => {
       const qq = mv(Wq, q);
@@ -187,7 +174,7 @@ function build() {
       for (let j = 0; j < n; j++) for (let k = 0; k < 3; k++) o[k] += sc[j] * Vv[j][k];
       return { w: sc, o };
     };
-    const att0 = mkAtt(Wq0, K0, V0), att1 = mkAtt(Wq1, K1, V1);
+    const att0 = mkAtt(Wq0, K0, Vv0), att1 = mkAtt(Wq1, K1, Vv1);
 
     const ns = [], nc = [], aw0 = [], aw1 = [];
     pv.forEach((v, i) => {
@@ -202,28 +189,17 @@ function build() {
         cr += wt * pc[j][0]; cg += wt * pc[j][1]; cb += wt * pc[j][2];
       }
       nc.push([
-        pc[i][0] * 0.45 + cr * 0.55,
-        pc[i][1] * 0.45 + cg * 0.55,
-        pc[i][2] * 0.45 + cb * 0.55
+        pc[i][0] * 0.60 + cr * 0.40,
+        pc[i][1] * 0.60 + cg * 0.40,
+        pc[i][2] * 0.60 + cb * 0.40
       ]);
     });
     S[sa] = ns; C[sa] = nc; A[sa] = [aw0, aw1];
-    /* the whole space feels the same attention field */
-    LAT[sa] = pl.map(q => {
-      const r0 = att0(q, T), r1 = att1(q, T);
-      const o0 = mv(Wo0, r0.o), o1 = mv(Wo1, r1.o);
-      const o = [0.5 * (o0[0] + o1[0]), 0.5 * (o0[1] + o1[1]), 0.5 * (o0[2] + o1[2])];
-      return squash(q.map((x, k) => x + 0.80 * o[k]));
-    });
 
-    /* ------- feed-forward: expand 4x into the hidden dims, then back down ------- */
+    /* feed-forward: 4x expansion, applied to every token alone */
     const sf = 2 * l + 2;
-    LC[sf] = hsl(192 + l * 11, 100, 62);
+    LC[sf] = FFN;
     HC[sf] = null;
-    const ffnLat = v => {
-      const d = mv(W2, mv(W1, v).map(z => Math.tanh(z * 1.6)));
-      return squash(v.map((x, k) => x + 0.92 * d[k]));
-    };
     HD[sf] = [];
     S[sf] = S[sa].map((v, i) => {
       const hid = mv(W1, v).map(z => Math.tanh(z * 1.6));
@@ -233,34 +209,31 @@ function build() {
     });
     C[sf] = C[sa].map(c => c.slice());
     A[sf] = null;
-    LAT[sf] = LAT[sa].map(ffnLat);
   }
 
-  /* the last token, projected back onto the vocabulary */
+  /* the last token, matched against the vocabulary */
   const rv = S[NS - 1][READER];
   const scored = vocab.map((v, k) => ({ k, s: v[0] * rv[0] + v[1] * rv[1] + v[2] * rv[2] }));
   scored.sort((a, b) => b.s - a.s);
-  PRED = scored.slice(0, 6).map(o => ({ v: vocab[o.k], col: vcol[o.k], s: o.s }));
+  PRED = scored.slice(0, 5).map(o => ({ v: vocab[o.k], col: vcol[o.k], s: o.s }));
 }
 build();
 
 /* ---------- camera ---------- */
-const cam = { tx: 0.4 * G, D: 10.5 };
+const cam = { tx: 0.5 * G, D: 10.5 };
 let yawOff = 0, pitchOff = 0, drag = false, lx = 0, ly = 0;
 
-cv.addEventListener('pointerdown', e => {
-  drag = true; lx = e.clientX; ly = e.clientY;
-});
+cv.addEventListener('pointerdown', e => { drag = true; lx = e.clientX; ly = e.clientY; });
 addEventListener('pointerup', () => { drag = false; });
 addEventListener('pointermove', e => {
   if (!drag) return;
   yawOff += (e.clientX - lx) * 0.005;
-  pitchOff = clamp(pitchOff + (e.clientY - ly) * 0.004, -0.55, 0.95);
+  pitchOff = clamp(pitchOff + (e.clientY - ly) * 0.004, -0.5, 0.85);
   lx = e.clientX; ly = e.clientY;
 });
 cv.addEventListener('wheel', e => {
   e.preventDefault();
-  cam.D = clamp(cam.D + e.deltaY * 0.0025, 5.8, 20);
+  cam.D = clamp(cam.D + e.deltaY * 0.0025, 6.5, 19);
 }, { passive: false });
 
 let cyw = 1, syw = 0, cp = 1, sp = 0, ref = 1;
@@ -271,14 +244,14 @@ function P(x, y, z) {
   const z1 = -dx * syw + z * cyw;
   const y2 = y * cp + z1 * sp;
   const z2 = -y * sp + z1 * cp + cam.D;
-  if (z2 < 0.6) return null;
+  if (z2 < 0.7) return null;
   const s = F / z2;
   return [cx + x1 * s, cy - y2 * s, s];
 }
 
+/* ---------- drawing primitives ---------- */
 function seg(p, q, col, a, lw) {
-  if (!p || !q) return;
-  if (a <= 0.002) return;
+  if (!p || !q || a <= 0.002) return;
   ctx.strokeStyle = rgba(col, a);
   ctx.lineWidth = Math.max(0.35, lw * (p[2] + q[2]) * 0.5 / ref);
   ctx.beginPath();
@@ -291,163 +264,177 @@ function line3(a, b, col, alpha, lw) {
 }
 
 function orb(p, wr, col, alpha) {
-  if (!p) return;
-  if (alpha <= 0.003) return;
+  if (!p || alpha <= 0.003) return;
   const r = Math.max(0.6, wr * p[2]);
-  const g1 = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 4.2);
-  g1.addColorStop(0, rgba(col, alpha * 0.50));
-  g1.addColorStop(0.35, rgba(col, alpha * 0.14));
+  const g1 = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 4.6);
+  g1.addColorStop(0, rgba(col, alpha * 0.42));
+  g1.addColorStop(0.34, rgba(col, alpha * 0.11));
   g1.addColorStop(1, rgba(col, 0));
   ctx.fillStyle = g1;
-  ctx.beginPath(); ctx.arc(p[0], p[1], r * 4.2, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(p[0], p[1], r * 4.6, 0, TAU); ctx.fill();
 
-  const g2 = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 1.9);
-  g2.addColorStop(0, rgba(mixc(col, [255, 255, 255], 0.32), alpha));
-  g2.addColorStop(0.5, rgba(col, alpha * 0.75));
+  const g2 = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 1.8);
+  g2.addColorStop(0, rgba(mixc(col, [255, 255, 255], 0.30), alpha));
+  g2.addColorStop(0.55, rgba(col, alpha * 0.72));
   g2.addColorStop(1, rgba(col, 0));
   ctx.fillStyle = g2;
-  ctx.beginPath(); ctx.arc(p[0], p[1], r * 1.9, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(p[0], p[1], r * 1.8, 0, TAU); ctx.fill();
 }
 
-/* ---------- world helpers ---------- */
+function softDisc(sx, sy, r, col, alpha) {
+  if (alpha <= 0.002 || r <= 1) return;
+  const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, r);
+  g.addColorStop(0, rgba(col, alpha));
+  g.addColorStop(0.45, rgba(col, alpha * 0.35));
+  g.addColorStop(1, rgba(col, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(sx, sy, r, 0, TAU); ctx.fill();
+}
+
+function ring3D(cx3, cy3, cz3, r, u, v, col, alpha, lw) {
+  if (alpha <= 0.002) return;
+  ctx.beginPath();
+  let started = false, ok = true;
+  for (let k = 0; k <= 48; k++) {
+    const a = k / 48 * TAU;
+    const ca = Math.cos(a), sa = Math.sin(a);
+    const p = P(cx3 + r * (ca * u[0] + sa * v[0]),
+                cy3 + r * (ca * u[1] + sa * v[1]),
+                cz3 + r * (ca * u[2] + sa * v[2]));
+    if (!p) { ok = false; break; }
+    if (!started) { ctx.moveTo(p[0], p[1]); started = true; } else ctx.lineTo(p[0], p[1]);
+  }
+  if (ok && started) {
+    ctx.strokeStyle = rgba(col, alpha);
+    ctx.lineWidth = lw;
+    ctx.stroke();
+  }
+}
+const RINGS = [
+  [[0, 1, 0], [0, 0, 1]],
+  [[0, 0, 1], [1, 0, 0]],
+  [[1, 0, 0], [0, 1, 0]]
+];
+
+function drawShell(cx3, cy3, cz3, rad, col, alpha) {
+  const c = P(cx3, cy3, cz3);
+  if (!c || alpha <= 0.004) return;
+  const r = rad * c[2];
+  if (r < 2) return;
+  softDisc(c[0], c[1], r * 0.98, col, alpha * 0.11);
+  ctx.strokeStyle = rgba(col, alpha * 0.32);
+  ctx.lineWidth = Math.max(3, r * 0.035);
+  ctx.beginPath(); ctx.arc(c[0], c[1], r, 0, TAU); ctx.stroke();
+  ctx.strokeStyle = rgba(mixc(col, [255, 255, 255], 0.28), alpha * 0.72);
+  ctx.lineWidth = 1.1;
+  ctx.beginPath(); ctx.arc(c[0], c[1], r, 0, TAU); ctx.stroke();
+  ctx.strokeStyle = rgba([255, 255, 255], alpha * 0.10);
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(c[0], c[1], r * 0.82, Math.PI * 1.05, Math.PI * 1.55); ctx.stroke();
+}
+
+/* ---------- stage-local state ---------- */
+function phaseInfo() {
+  const wc = clamp(W, 0, NS - 1);
+  const s0 = Math.floor(wc);
+  const s1 = Math.min(NS - 1, s0 + 1);
+  return { s0, s1, local: wc - s0 };
+}
+function inputWorld(s, i) {
+  const v = S[s - 1][i];
+  return [s * G + v[0], v[1], v[2]];
+}
+function outputWorld(s, i) {
+  const v = S[s][i];
+  return [s * G + v[0], v[1], v[2]];
+}
+function tokenPos(i) {
+  const { s0, s1, local } = phaseInfo();
+  const prev = outputWorld(s0, i);
+  if (s1 === s0) return prev;
+  const inW = inputWorld(s1, i);
+  if (local < 0.5) return lerp3(prev, inW, smooth(local / 0.5));
+  const outW = outputWorld(s1, i);
+  return lerp3(inW, outW, smooth(clamp((local - 0.68) / 0.32, 0, 1)));
+}
+function tokenColor(i) {
+  const { s0, s1, local } = phaseInfo();
+  if (s1 === s0) return C[s0][i];
+  const u = smooth(clamp((local - 0.68) / 0.32, 0, 1));
+  return mixc(C[s1 - 1][i], C[s1][i], u);
+}
+function fieldVis(s) {
+  const local = W - (s - 1);
+  if (local <= 0.5) return 0;
+  const up = smooth(clamp((local - 0.5) / 0.14, 0, 1));
+  const down = local > 0.76 ? clamp(1 - (local - 0.76) / 0.22, 0, 1) : 1;
+  return up * down;
+}
+function ringGlow(s) {
+  return smooth(clamp(1 - Math.abs(W - s) / 1.2, 0, 1));
+}
 function fogOf(s) {
   const d = Math.abs(s * G - cam.tx) / (2.6 * G);
   return clamp(1 - d * d, 0, 1);
 }
-function worldState(s, i) {
-  const p = S[s][i];
-  return [s * G + p[0], p[1], p[2]];
-}
-function beadWorld(i) {
-  const wc = clamp(W, 0, NS - 1);
-  const s0 = Math.floor(wc), s1 = Math.min(NS - 1, s0 + 1);
-  const u = s1 === s0 ? 1 : smooth(clamp((wc - s0) / 0.7, 0, 1));
-  return lerp3(worldState(s0, i), worldState(s1, i), u);
-}
-function beadColor(i) {
-  const wc = clamp(W, 0, NS - 1);
-  const s0 = Math.floor(wc), s1 = Math.min(NS - 1, s0 + 1);
-  const u = s1 === s0 ? 1 : smooth(clamp((wc - s0) / 0.7, 0, 1));
-  return mixc(C[s0][i], C[s1][i], u);
-}
-function stageGlow(s) {
-  if (s === 0) return 1;
-  const u = smooth(clamp((W - (s - 1)) / 0.7, 0, 1));
-  const decay = W <= s ? 1 : clamp(1 - (W - s) / 0.55, 0, 1);
-  return u * decay;
-}
-function latticeAt(s) {
-  if (s === 0) return GRID;
-  const u = smooth(clamp((W - (s - 1)) / 0.7, 0, 1));
-  return GRID.map((_, k) => lerp3(LAT[s - 1][k], LAT[s][k], u));
-}
 
-/* ---------- background dust ---------- */
-const DUST = [];
-{
-  const dr = mulberry32(99173);
-  for (let i = 0; i < 120; i++) {
-    DUST.push([
-      dr() * (NS * G + 2 * G) - G,
-      (dr() * 2 - 1) * 6.6,
-      (dr() * 2 - 1) * 6.6,
-      dr() * TAU,
-      0.4 + dr() * 0.9
-    ]);
+/* ---------- cached radial wash / vignette ---------- */
+function drawBackground(tint, key) {
+  const bw = Math.max(1, Math.round(w * dpr)), bh = Math.max(1, Math.round(h * dpr));
+  if (!bgCv) { bgCv = document.createElement('canvas'); bgKey = ''; }
+  if (bgCv.width !== bw || bgCv.height !== bh) {
+    bgCv.width = bw; bgCv.height = bh; bgKey = '';
   }
-}
-
-function drawDust(t) {
-  for (const d of DUST) {
-    const p = P(d[0] + Math.sin(t * 0.18 + d[3]) * 0.45,
-                d[1] + Math.cos(t * 0.15 + d[3]) * 0.32,
-                d[2]);
-    if (!p) continue;
-    const tw = 0.5 + 0.5 * Math.sin(t * 1.15 + d[3] * 3.1);
-    const a = (0.035 + 0.085 * tw) * clamp(1 - Math.abs(p[2] - ref) / (ref * 2.2), 0, 1);
-    const r = Math.max(0.3, 0.006 * p[2] * d[4]);
-    ctx.fillStyle = `rgba(150,170,225,${clamp(a * GA, 0, 1)})`;
-    ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
+  if (bgKey !== String(key)) {
+    bgKey = String(key);
+    const g2 = bgCv.getContext('2d');
+    g2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g2.clearRect(0, 0, w, h);
+    const c0 = mixc([4, 5, 14], tint, 0.08);
+    const bg = g2.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.8);
+    bg.addColorStop(0, `rgba(${c0[0] | 0},${c0[1] | 0},${c0[2] | 0},0.46)`);
+    bg.addColorStop(0.5, 'rgba(5,7,16,0.58)');
+    bg.addColorStop(1, 'rgba(0,0,4,0.84)');
+    g2.fillStyle = bg;
+    g2.fillRect(0, 0, w, h);
   }
+  ctx.drawImage(bgCv, 0, 0, w, h);
 }
 
-/* ---------- rail + gates ---------- */
-function drawRail() {
-  const a = P(-0.7 * G, 0, 0);
-  const b = P((NS - 0.35) * G, 0, 0);
-  seg(a, b, [118, 128, 190], 0.10, 1);
-}
-
-function drawGates(t) {
-  for (let s = 1; s < NS; s++) {
-    const g = stageGlow(s);
-    const fog = fogOf(s);
-    const a = (0.02 + 0.34 * g) * fog;
-    if (a <= 0.004) continue;
-    const x = (s - 0.5) * G;
-    const N = 44;
-    const r = 1.18 + 0.05 * Math.sin(t * 2.4 + s);
-    let started = false, ok = true;
-    ctx.beginPath();
-    for (let k = 0; k <= N; k++) {
-      const an = k / N * TAU;
-      const pp = P(x, r * Math.cos(an), r * Math.sin(an));
-      if (!pp) { ok = false; break; }
-      if (!started) { ctx.moveTo(pp[0], pp[1]); started = true; }
-      else ctx.lineTo(pp[0], pp[1]);
+/* ---------- the equal 3-D spaces ---------- */
+function drawStages() {
+  for (let s = 0; s < NS; s++) {
+    const fg = fogOf(s);
+    if (fg <= 0.02) continue;
+    const rg = ringGlow(s);
+    const col = LC[s];
+    drawShell(s * G, 0, 0, RAD, col, (0.06 + 0.30 * rg) * fg);
+    const a = (0.06 + 0.20 * rg) * fg;
+    const ox = s * G;
+    for (let r = 0; r < 3; r++) {
+      const [u, v] = RINGS[r];
+      ring3D(ox, 0, 0, RAD, u, v, col, a * (r === 0 ? 1 : r === 1 ? 0.82 : 0.68), 1);
     }
-    if (ok && started) {
-      ctx.strokeStyle = rgba(LC[s], a);
-      ctx.lineWidth = 1.1;
-      ctx.stroke();
+    const c = P(ox, 0, 0);
+    if (c) {
+      ctx.fillStyle = rgba(col, (0.10 + 0.22 * rg) * fg);
+      ctx.beginPath(); ctx.arc(c[0], c[1], Math.max(0.6, 0.011 * c[2]), 0, TAU); ctx.fill();
     }
   }
 }
 
-/* ---------- the spaces ---------- */
-function drawCubeWire(s) {
-  const fog = fogOf(s);
-  if (fog <= 0.01) return;
-  const g = stageGlow(s);
-  const col = s === 0 ? [165, 140, 255] : LC[s];
-  const a = (0.075 + 0.17 * g) * fog;
-  const ox = s * G;
-  for (const [i, j] of EDGES) {
-    line3(
-      [ox + CORN[i][0], CORN[i][1], CORN[i][2]],
-      [ox + CORN[j][0], CORN[j][1], CORN[j][2]],
-      col, a, 1.0
-    );
-  }
-  const hl = 0.96;
-  for (let k = 0; k < 3; k++) {
-    const p = [ox, 0, 0], q = [ox, 0, 0];
-    p[k] -= hl; q[k] += hl;
-    line3(p, q, AXC[k], (0.06 + 0.24 * g) * fog, 1);
-  }
-}
-
-function drawLattice(s) {
-  const fog = fogOf(s);
-  if (fog <= 0.01) return;
-  const g = stageGlow(s);
-  const a = (0.045 + 0.52 * g) * fog;
-  const pts = latticeAt(s);
-  const ox = s * G;
-  const pr = pts.map(p => P(ox + p[0], p[1], p[2]));
-  for (const [i, j] of GRID_E) seg(pr[i], pr[j], LC[s], a, 0.9);
-}
-
-function drawVocab(t) {
-  const fog = fogOf(0);
-  if (fog <= 0.02) return;
+function drawCloud(t) {
+  const cvv = clamp(1 - Math.abs(W) / 1.4, 0, 1) * fogOf(0);
+  if (cvv <= 0.02) return;
+  const c0 = P(0, 0, 0);
+  if (c0) softDisc(c0[0], c0[1], 1.35 * RAD * c0[2], EMB, 0.06 * cvv);
   for (let i = 0; i < vocab.length; i++) {
     const v = vocab[i];
     const p = P(v[0], v[1], v[2]);
     if (!p) continue;
-    const tw = 0.55 + 0.45 * Math.sin(t * 1.3 + i * 1.7);
-    const a = (0.05 + 0.16 * tw) * fog;
-    const r = Math.max(0.4, 0.011 * p[2]);
+    const tw = 0.5 + 0.5 * Math.sin(t * 1.1 + i * 1.7);
+    const a = (0.07 + 0.16 * tw) * cvv;
+    const r = Math.max(0.4, 0.009 * p[2]);
     ctx.fillStyle = rgba(vcol[i], a);
     ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
   }
@@ -457,34 +444,11 @@ function drawWorldlines() {
   for (let i = 0; i < T; i++) {
     const read = i === READER;
     for (let s = 0; s < NS - 1; s++) {
-      const fog = Math.max(fogOf(s), fogOf(s + 1));
-      if (fog <= 0.02) continue;
+      const fg = Math.max(fogOf(s), fogOf(s + 1));
+      if (fg <= 0.02) continue;
       const col = mixc(C[s][i], C[s + 1][i], 0.5);
-      line3(worldState(s, i), worldState(s + 1, i), col, (read ? 0.19 : 0.09) * fog, read ? 1.6 : 1.0);
-    }
-  }
-}
-
-function drawStates() {
-  const sCur = clamp(Math.round(W), 0, NS - 1);
-  for (let s = 0; s < NS; s++) {
-    const fog = fogOf(s);
-    if (fog <= 0.02) continue;
-    const ox = s * G;
-    const g = stageGlow(s);
-    const boost = s === sCur ? 0.10 : 0.0;
-    for (let i = 0; i < T; i++) {
-      const st = S[s][i];
-      const p = P(ox + st[0], st[1], st[2]);
-      if (!p) continue;
-      const col = C[s][i];
-      const read = i === READER;
-      const showStem = s === 0 || s === sCur || read;
-      const cen = P(ox, 0, 0);
-      if (cen && showStem) seg(cen, p, col, ((read ? 0.085 : 0.05) + boost + 0.09 * g) * fog, read ? 1.3 : 0.9);
-      const r = Math.max(0.5, (read ? 0.030 : 0.020) * p[2]);
-      ctx.fillStyle = rgba(col, (0.20 + 0.26 * g + (read ? 0.20 : 0)) * fog);
-      ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
+      line3(outputWorld(s, i), outputWorld(s + 1, i), col,
+            (read ? 0.14 : 0.06) * fg, read ? 1.3 : 0.8);
     }
   }
 }
@@ -498,358 +462,293 @@ function bez3(a, c, b, t) {
     u * u * a[2] + 2 * u * t * c[2] + t * t * b[2]
   ];
 }
-function strokeBezier(a, c, b, col, alpha) {
-  const N = 18;
+function strokeCurve(p0, pc, p2, col, alpha, width) {
+  if (alpha <= 0.003) return;
   ctx.beginPath();
+  const N = 20;
   for (let n = 0; n <= N; n++) {
     const u = n / N, iu = 1 - u;
-    const x = iu * iu * a[0] + 2 * iu * u * c[0] + u * u * b[0];
-    const y = iu * iu * a[1] + 2 * iu * u * c[1] + u * u * b[1];
+    const x = iu * iu * p0[0] + 2 * iu * u * pc[0] + u * u * p2[0];
+    const y = iu * iu * p0[1] + 2 * iu * u * pc[1] + u * u * p2[1];
     if (n === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
   }
-  ctx.strokeStyle = rgba(col, alpha * 0.20);
-  ctx.lineWidth = 3.1; ctx.stroke();
-  ctx.strokeStyle = rgba(col, alpha * 0.52);
-  ctx.lineWidth = 1.25; ctx.stroke();
-  ctx.strokeStyle = rgba(mixc(col, [255, 255, 255], 0.55), alpha * 0.85);
-  ctx.lineWidth = 0.45; ctx.stroke();
+  ctx.strokeStyle = rgba(col, alpha * 0.24);
+  ctx.lineWidth = width * 3.1;
+  ctx.stroke();
+  ctx.strokeStyle = rgba(mixc(col, [255, 255, 255], 0.35), alpha);
+  ctx.lineWidth = width;
+  ctx.stroke();
 }
 
-function drawAttention(t) {
-  const phase = (t * 0.55) % 1;
+function drawThreads(t) {
+  const phase = (t * 0.5) % 1;
   for (let s = 1; s < NS; s += 2) {
-    const g = stageGlow(s);
-    if (g <= 0.02) continue;
+    const fv = fieldVis(s);
+    if (fv <= 0.02) continue;
     const heads = A[s];
     if (!heads) continue;
-    const tints = HC[s] || [LC[s], LC[s]];
+    const tints = HC[s] || [ATT, ATT2];
+
+    const c0 = P(s * G, 0, 0);
+    if (c0) softDisc(c0[0], c0[1], 1.35 * RAD * c0[2], ATT, 0.05 * fv);
 
     for (let h = 0; h < heads.length; h++) {
       const aw = heads[h];
-      const tint = tints[h] || LC[s];
-      const hf = h === 0 ? 1.0 : 0.6;
+      const tint = tints[h] || ATT;
+      const hf = h === 0 ? 1 : 0.55;
       for (let i = 0; i < T; i++) {
-        const dst = beadWorld(i);
+        const dst = tokenPos(i);
         const p2 = P(dst[0], dst[1], dst[2]);
         if (!p2) continue;
 
         let js = [];
         for (let j = 0; j <= i; j++) {
           const wt = aw[i][j];
-          const thr = h === 0 ? 0.04 : (i === READER ? 0.05 : 0.15);
+          const thr = h === 0 ? (i === READER ? 0.02 : 0.07) : (i === READER ? 0.05 : 0.18);
           if (wt >= thr) js.push(j);
         }
-        if (h === 1 && i !== READER) {
+        if (h === 1) {
           js.sort((a, b) => aw[i][b] - aw[i][a]);
-          js = js.slice(0, 1);
+          js = js.slice(0, i === READER ? 3 : 1);
         }
 
         for (const j of js) {
           const wt = aw[i][j];
-          const vis = i === READER ? Math.max(wt, 0.05) : wt;
-          const src = worldState(s - 1, j);
+          const vis = i === READER ? Math.max(wt, 0.06) : wt;
+          const src = tokenPos(j);
           const p0 = P(src[0], src[1], src[2]);
           if (!p0) continue;
-          const lift = 0.34 + 0.10 * (i - j) + h * 0.09;
+          const lift = 0.30 + 0.08 * (i - j) + h * 0.07;
           const ctrl = [
             (src[0] + dst[0]) / 2,
             (src[1] + dst[1]) / 2 + lift,
-            (src[2] + dst[2]) / 2 + (j - i) * 0.12
+            (src[2] + dst[2]) / 2 + (j - i) * 0.10
           ];
           const pc = P(ctrl[0], ctrl[1], ctrl[2]);
           if (!pc) continue;
-          const col = mixc(mixc(C[s - 1][j], beadColor(i), 0.30), tint, 0.18);
-          const base = (0.05 + 0.55 * vis) * g * (i === READER ? 1.7 : 1.0) * hf;
-          strokeBezier(p0, pc, p2, col, base);
-          for (let k = 0; k < 2; k++) {
-            const ph = (phase + k * 0.5) % 1;
-            const pos = bez3(src, ctrl, dst, ph);
-            const pp = P(pos[0], pos[1], pos[2]);
-            if (!pp) continue;
-            const rr = Math.max(0.6, (1.1 + vis * 3.0) * 0.05 * pp[2]);
-            ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.5),
-                                 Math.sin(Math.PI * ph) * (0.22 + 0.7 * vis) * g * hf);
-            ctx.beginPath(); ctx.arc(pp[0], pp[1], rr, 0, TAU); ctx.fill();
-          }
+          const col = mixc(tokenColor(j), tint, 0.25);
+          const alpha = (0.09 + 0.56 * vis) * fv * hf * (i === READER ? 1.8 : 1);
+          strokeCurve(p0, pc, p2, col, alpha, 1.0 + 0.9 * vis);
+
+          const ph = phase;
+          const pos = bez3(src, ctrl, dst, ph);
+          const pp = P(pos[0], pos[1], pos[2]);
+          if (!pp) continue;
+          const rr = Math.max(0.6, (0.7 + vis * 2.4) * 0.05 * pp[2]);
+          ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.5),
+                               Math.sin(Math.PI * ph) * (0.25 + 0.6 * vis) * fv * hf);
+          ctx.beginPath(); ctx.arc(pp[0], pp[1], rr, 0, TAU); ctx.fill();
         }
       }
     }
 
     /* everything pours into the last token */
-    const rd = beadWorld(READER);
-    for (let k = 0; k < T; k++) {
-      const src = worldState(s - 1, k);
-      const ph = (t * 0.6 + k / T) % 1;
-      const pos = lerp3(src, rd, smooth(ph));
-      const pp = P(pos[0], pos[1], pos[2]);
-      if (!pp) continue;
-      const a = Math.sin(Math.PI * ph) * 0.65 * g;
-      ctx.fillStyle = rgba(C[s - 1][k], a);
-      ctx.beginPath(); ctx.arc(pp[0], pp[1], Math.max(0.6, 0.020 * pp[2]), 0, TAU); ctx.fill();
+    const rd = tokenPos(READER);
+    const pr = P(rd[0], rd[1], rd[2]);
+    if (pr) {
+      const ph = (t * 0.5) % 1;
+      for (let k = 0; k < T; k++) {
+        const src = tokenPos(k);
+        const pos = lerp3(src, rd, smooth(ph));
+        const pp = P(pos[0], pos[1], pos[2]);
+        if (!pp) continue;
+        const a = Math.sin(Math.PI * ph) * 0.5 * fv;
+        ctx.fillStyle = rgba(tokenColor(k), a);
+        ctx.beginPath(); ctx.arc(pp[0], pp[1], Math.max(0.6, 0.016 * pp[2]), 0, TAU); ctx.fill();
+      }
     }
   }
 }
 
-/* ---------- feed-forward: project up into the hidden dims, then back down ---------- */
-function drawFFN(t) {
-  const phase = (t * 0.55) % 1;
+/* ---------- feed-forward: every token, alone, through the same hidden sphere ---------- */
+function drawBloom(t) {
+  const phase = (t * 0.5) % 1;
   for (let s = 2; s < NS; s += 2) {
-    const g = stageGlow(s);
-    if (g <= 0.02) continue;
+    const fv = fieldVis(s);
+    if (fv <= 0.02) continue;
     const hid = HD[s];
     if (!hid) continue;
 
+    const hx = s * G, hy = 1.70, hz = 0, hr = 0.76;
+    drawShell(hx, hy, hz, hr, FFN, 0.38 * fv);
+    for (let r = 0; r < 3; r++) {
+      const [u, v] = RINGS[r];
+      ring3D(hx, hy, hz, hr, u, v, FFN, (0.05 + 0.12 * fv) * (r === 0 ? 1 : 0.8), 1);
+    }
+
+    const NODES = 12;
+    const rot = t * 0.12 + s * 0.4;
+    const nodes = [];
+    for (let k = 0; k < NODES; k++) {
+      const y = 1 - (k / (NODES - 1)) * 2;
+      const rr = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = k * 2.399963 + rot;
+      const dir = [Math.cos(th) * rr, y, Math.sin(th) * rr];
+      nodes.push({
+        sp: P(hx + dir[0] * hr, hy + dir[1] * hr, hz + dir[2] * hr),
+        act: 0, col: [0, 0, 0], wsum: 0
+      });
+    }
+
     for (let i = 0; i < T; i++) {
-      const a0 = P(...worldState(s - 1, i));
-      const a1 = P(...worldState(s, i));
-      if (!a0 || !a1) continue;
+      const h = hid[i];
+      const order = [...Array(NODES).keys()].sort((a, b) => Math.abs(h[b]) - Math.abs(h[a]));
+      const sel = order.slice(0, i === READER ? 4 : 3);
+      const a0 = inputWorld(s, i), a1 = outputWorld(s, i);
+      const p0 = P(a0[0], a0[1], a0[2]);
+      const p1 = P(a1[0], a1[1], a1[2]);
+      if (!p0 || !p1) continue;
+      const col = tokenColor(i);
+      const emph = i === READER ? 1.5 : 1;
 
-      const emph = i === READER ? 1.8 : 1.0;
-      const mid0 = lerp3(worldState(s - 1, i), worldState(s, i), 0.5);
-      const mid = [mid0[0], mid0[1] + (i === READER ? 0.82 : 0.66), mid0[2]];
-      const am = P(mid[0], mid[1], mid[2]);
-      if (!am) continue;
-      const baseR = 0.27 * am[2];
-      const ports = [];
-      for (let k = 0; k < 12; k++) {
-        const h = hid[i][k] || 0;
-        const ring = k < 6 ? 0 : 1;
-        const ang = (k % 6) / 6 * TAU + t * 0.22 + ring * (Math.PI / 6);
-        const rr = baseR * (ring ? 1.42 : 0.78) * (0.52 + 0.92 * Math.abs(h));
-        ports.push({
-          x: am[0] + Math.cos(ang) * rr,
-          y: am[1] + Math.sin(ang) * rr * 0.82,
-          h: h,
-          col: h >= 0 ? [255, 198, 118] : [118, 190, 255]
-        });
-      }
+      for (const k of sel) {
+        const av = Math.abs(h[k]);
+        const node = nodes[k];
+        node.act += av;
+        const w = av + 1e-6;
+        node.col = [node.col[0] + col[0] * w, node.col[1] + col[1] * w, node.col[2] + col[2] * w];
+        node.wsum += w;
+        const np = node.sp;
+        if (!np) continue;
+        const ra = (0.13 + 0.30 * av) * fv * emph;
 
-      /* two hidden rings: twelve units, four times the visible width */
-      for (let ring = 0; ring < 2; ring++) {
-        ctx.beginPath();
-        for (let j = 0; j < 6; j++) {
-          const pt = ports[ring * 6 + j];
-          if (j === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
-        }
-        ctx.closePath();
-        ctx.strokeStyle = rgba(LC[s], (0.16 + (i === READER ? 0.12 : 0)) * g * emph * (ring ? 0.6 : 1));
-        ctx.lineWidth = i === READER ? 1.5 : 1.0;
-        ctx.stroke();
-      }
+        ctx.strokeStyle = rgba(col, ra);
+        ctx.lineWidth = 1.0;
+        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(np[0], np[1]); ctx.stroke();
+        ctx.strokeStyle = rgba(col, ra * 0.9);
+        ctx.beginPath(); ctx.moveTo(np[0], np[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
 
-      /* every unit glows; only the strongest carry the projecting rays */
-      const strong = [...Array(12).keys()].sort((a, b) => Math.abs(ports[b].h) - Math.abs(ports[a].h));
-      const drawSet = i === READER ? strong : strong.slice(0, 6);
-
-      for (let k = 0; k < 12; k++) {
-        const pt = ports[k];
-        const ah = Math.abs(pt.h);
-        const pr = Math.max(0.9, (0.012 + 0.026 * ah) * am[2]);
-        ctx.fillStyle = rgba(pt.col, (0.28 + 0.55 * ah) * g * emph);
-        ctx.beginPath(); ctx.arc(pt.x, pt.y, pr, 0, TAU); ctx.fill();
-      }
-
-      for (const k of drawSet) {
-        const pt = ports[k];
-        const ah = Math.abs(pt.h);
-        const ra = (0.07 + 0.34 * ah) * g * emph;
-
-        /* up-projection */
-        ctx.strokeStyle = rgba(pt.col, ra);
-        ctx.lineWidth = 0.8;
-        ctx.beginPath(); ctx.moveTo(a0[0], a0[1]); ctx.lineTo(pt.x, pt.y); ctx.stroke();
-        /* down-projection */
-        ctx.strokeStyle = rgba(pt.col, ra * 0.9);
-        ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(a1[0], a1[1]); ctx.stroke();
-
-        /* a pulse that climbs, then descends */
         let pp;
         if (phase < 0.5) {
           const u = phase / 0.5;
-          pp = [lerp(a0[0], pt.x, u), lerp(a0[1], pt.y, u)];
+          pp = [lerp(p0[0], np[0], u), lerp(p0[1], np[1], u)];
         } else {
           const u = (phase - 0.5) / 0.5;
-          pp = [lerp(pt.x, a1[0], u), lerp(pt.y, a1[1], u)];
+          pp = [lerp(np[0], p1[0], u), lerp(np[1], p1[1], u)];
         }
-        const pa = Math.sin(Math.PI * phase) * (0.30 + 0.60 * ah) * g * emph;
-        ctx.fillStyle = rgba(mixc(pt.col, [255, 255, 255], 0.5), pa);
-        ctx.beginPath(); ctx.arc(pp[0], pp[1], Math.max(0.7, 0.016 * am[2]), 0, TAU); ctx.fill();
+        ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.5),
+                             Math.sin(Math.PI * phase) * (0.28 + 0.5 * av) * fv * emph);
+        ctx.beginPath(); ctx.arc(pp[0], pp[1], Math.max(0.6, 0.014 * np[2]), 0, TAU); ctx.fill();
       }
     }
-  }
-}
 
-/* ---------- the residual stream: every sublayer adds a small update ---------- */
-function drawResidual() {
-  for (let s = 1; s < NS; s++) {
-    const g = stageGlow(s);
-    if (g <= 0.04) continue;
-    for (let i = 0; i < T; i++) {
-      const src = worldState(s - 1, i);
-      const p = P(src[0], src[1], src[2]);
-      if (!p) continue;
-      const read = i === READER;
-      const r = Math.max(1.6, 0.045 * p[2]);
-      const a = g * (read ? 0.55 : 0.32);
-      ctx.strokeStyle = rgba([255, 255, 255], a);
-      ctx.lineWidth = read ? 1.4 : 1.0;
-      ctx.beginPath();
-      ctx.moveTo(p[0] - r, p[1]); ctx.lineTo(p[0] + r, p[1]);
-      ctx.moveTo(p[0], p[1] - r); ctx.lineTo(p[0], p[1] + r);
-      ctx.stroke();
+    for (let k = 0; k < NODES; k++) {
+      const node = nodes[k];
+      const np = node.sp;
+      if (!np) continue;
+      const col = node.wsum > 0
+        ? [node.col[0] / node.wsum, node.col[1] / node.wsum, node.col[2] / node.wsum]
+        : FFN;
+      const glow = Math.min(node.act, 1.5);
+      softDisc(np[0], np[1], 0.10 * np[2] * (0.6 + glow), col, 0.10 * glow * fv);
+      const rr = Math.max(1.2, (0.013 + 0.028 * Math.min(node.act, 2)) * np[2]);
+      ctx.fillStyle = rgba(mixc(col, [255, 255, 255], 0.22),
+                           (0.20 + 0.58 * glow) * fv);
+      ctx.beginPath(); ctx.arc(np[0], np[1], rr, 0, TAU); ctx.fill();
     }
   }
 }
 
-/* ---------- the payoff: the last token is read out through the vocabulary ---------- */
-function drawReadout() {
-  if (TT <= T_POST) return;
-  const k = clamp((TT - T_POST) / POST, 0, 1);
-  const fade = Math.sin(k * Math.PI * 0.5);
-  const rv = S[NS - 1][READER];
-  const p = P((NS - 1) * G + rv[0], rv[1], rv[2]);
-  if (!p) return;
-  const cxw = (NS - 1) * G + 1.65;
-
-  for (let c = PRED.length - 1; c >= 0; c--) {
-    const cand = PRED[c];
-    const center = [cxw + cand.v[0] * 0.55, cand.v[1] * 0.55, cand.v[2] * 0.55];
-    const q = P(center[0], center[1], center[2]);
-    if (!q) continue;
-    if (c === 0) {
-      const drift = 0.55 * k;
-      const np = P(center[0] + drift, center[1], center[2]);
-      ctx.strokeStyle = rgba(cand.col, 0.5 * fade);
-      ctx.lineWidth = 2.2;
-      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
-      orb(q, 0.075, cand.col, 0.95 * fade);
-      if (np) orb(np, 0.05, cand.col, 0.8 * fade);
-    } else {
-      ctx.strokeStyle = rgba(cand.col, 0.10 * fade);
-      ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
-      ctx.fillStyle = rgba(cand.col, 0.34 * fade);
-      ctx.beginPath(); ctx.arc(q[0], q[1], Math.max(1.1, 0.024 * q[2]), 0, TAU); ctx.fill();
-    }
-  }
-}
-
-/* ---------- the tokens themselves ---------- */
+/* ---------- the tokens ---------- */
 function readerHalo(t, p) {
-  const r = Math.max(2, 0.235 * p[2]);
-  const a = 0.38 + 0.10 * Math.sin(t * 2.6);
+  const r = Math.max(2, 0.27 * p[2]);
+  const a = 0.42 + 0.12 * Math.sin(t * 2.4);
   for (let k = 0; k < T; k++) {
-    const a0 = t * 0.5 + k / T * TAU;
+    const a0 = t * 0.45 + k / T * TAU;
     const a1 = a0 + TAU / T * 0.82;
-    ctx.strokeStyle = rgba(beadColor(k), a);
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = rgba(tokenColor(k), a);
+    ctx.lineWidth = 2.4;
     ctx.beginPath(); ctx.arc(p[0], p[1], r, a0, a1); ctx.stroke();
   }
 }
 
-function drawBeads(t) {
-  const pulse = 0.92 + 0.08 * Math.sin(t * 2.2);
+function drawTokens(t) {
+  const { s0, s1, local } = phaseInfo();
+  const pulse = 0.94 + 0.06 * Math.sin(t * 2.1);
+
+  let stemCube = null;
+  if (s1 === s0) stemCube = s0;
+  else if (local >= 0.5) stemCube = s1;
+  else if (W < 0.5) stemCube = 0;
+
+  if (stemCube !== null) {
+    const ox = stemCube * G;
+    const fg = fogOf(stemCube);
+    const c = P(ox, 0, 0);
+    for (let i = 0; i < T; i++) {
+      const pos = tokenPos(i);
+      const p = P(pos[0], pos[1], pos[2]);
+      if (!p) continue;
+      const read = i === READER;
+      const col = tokenColor(i);
+      if (c) {
+        ctx.strokeStyle = rgba(col, (read ? 0.28 : 0.16) * fg);
+        ctx.lineWidth = read ? 1.3 : 0.8;
+        ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(p[0], p[1]); ctx.stroke();
+      }
+      if (s1 !== s0 && local >= 0.5) {
+        const ow = outputWorld(s1, i);
+        const op = P(ow[0], ow[1], ow[2]);
+        if (op) {
+          const morph = smooth(clamp((local - 0.68) / 0.32, 0, 1));
+          const ga = 0.12 * (1 - morph) * fieldVis(s1);
+          if (ga > 0.005) {
+            ctx.strokeStyle = rgba(C[s1][i], ga);
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.arc(op[0], op[1], Math.max(2, 0.08 * op[2]), 0, TAU); ctx.stroke();
+          }
+        }
+      }
+    }
+  }
+
   for (let i = 0; i < T; i++) {
-    const bw = beadWorld(i);
-    const col = beadColor(i);
-    const p = P(bw[0], bw[1], bw[2]);
+    const pos = tokenPos(i);
+    const col = tokenColor(i);
+    const p = P(pos[0], pos[1], pos[2]);
     if (!p) continue;
     const read = i === READER;
-    orb(p, (read ? 0.096 : 0.070) * pulse, col, 0.88);
-    const r = Math.max(1.2, (read ? 0.185 : 0.155) * p[2]);
-    ctx.strokeStyle = rgba(idCol[i], read ? 0.55 : 0.34);
+    orb(p, (read ? 0.108 : 0.078) * pulse, col, read ? 0.96 : 0.90);
+    const r = Math.max(1.6, (read ? 0.225 : 0.175) * p[2]);
+    ctx.strokeStyle = rgba(idCol[i], read ? 0.55 : 0.30);
     ctx.lineWidth = read ? 1.6 : 1;
     ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.stroke();
     if (read) readerHalo(t, p);
   }
 }
 
-/* ---------- the last token holds the whole sequence ---------- */
-function drawFinale(t) {
-  const start = PRE + (NS - 1) * STEP;
-  if (TT <= start) return;
-  const k = clamp((TT - start) / POST, 0, 1);
-  const rd = beadWorld(READER);
+/* ---------- the payoff: the last token is read out ---------- */
+function drawReadout() {
+  if (TT <= T_POST) return;
+  const k = clamp((TT - T_POST) / POST, 0, 1);
+  const fade = Math.sin(k * Math.PI * 0.5);
+  const rd = outputWorld(NS - 1, READER);
   const p = P(rd[0], rd[1], rd[2]);
   if (!p) return;
-  for (let ring = 0; ring < 3; ring++) {
-    const ph = clamp(k * 1.7 - ring * 0.18, 0, 1);
-    if (ph <= 0 || ph >= 1) continue;
-    const rr = (0.28 + ph * 1.05) * p[2];
-    const a = (1 - ph) * 0.42;
-    for (let j = 0; j < T; j++) {
-      const a0 = t * 0.4 + j / T * TAU;
-      const a1 = a0 + TAU / T * 0.84;
-      ctx.strokeStyle = rgba(beadColor(j), a);
-      ctx.lineWidth = 1.6;
-      ctx.beginPath(); ctx.arc(p[0], p[1], rr, a0, a1); ctx.stroke();
-    }
-  }
-}
 
-/* ---------- the quiet contact sheet: all spaces, same size ---------- */
-function mini() {
-  const m = 17, gap = 7, tot = NS * m + (NS - 1) * gap;
-  const x0 = (w - tot) / 2, y0 = h - m - 18;
-  const cur = clamp(W, 0, NS - 1);
-
-  for (let i = 0; i < T; i++) {
-    for (let s = 0; s < NS - 1; s++) {
-      const p = S[s][i], q = S[s + 1][i];
-      const ax = x0 + s * (m + gap) + m / 2 + p[0] * m * 0.42;
-      const ay = y0 + m / 2 - p[1] * m * 0.42;
-      const bx = x0 + (s + 1) * (m + gap) + m / 2 + q[0] * m * 0.42;
-      const by = y0 + m / 2 - q[1] * m * 0.42;
-      ctx.strokeStyle = rgba(mixc(C[s][i], C[s + 1][i], 0.5), 0.11);
+  const baseX = (NS - 1) * G + 1.55;
+  for (let c = PRED.length - 1; c >= 0; c--) {
+    const cand = PRED[c];
+    const pos = [baseX + cand.v[0] * 0.72, cand.v[1] * 0.72, cand.v[2] * 0.72];
+    const q = P(pos[0], pos[1], pos[2]);
+    if (!q) continue;
+    if (c === 0) {
+      const drift = 0.5 * k;
+      const q2 = P(pos[0] + drift, pos[1], pos[2]);
+      ctx.strokeStyle = rgba(cand.col, 0.55 * fade);
+      ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+      softDisc(q[0], q[1], 0.24 * q[2], cand.col, 0.10 * fade);
+      orb(q, 0.085, cand.col, 0.96 * fade);
+      if (q2) orb(q2, 0.05, cand.col, 0.75 * fade);
+    } else {
+      ctx.strokeStyle = rgba(cand.col, 0.10 * fade);
       ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+      ctx.fillStyle = rgba(cand.col, 0.30 * fade);
+      ctx.beginPath(); ctx.arc(q[0], q[1], Math.max(1, 0.02 * q[2]), 0, TAU); ctx.fill();
     }
   }
-
-  for (let s = 0; s < NS; s++) {
-    const x = x0 + s * (m + gap);
-    const act = clamp(1 - Math.abs(cur - s), 0, 1);
-    ctx.strokeStyle = rgba(LC[s], 0.15 + 0.42 * act);
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x + 0.5, y0 + 0.5, m - 1, m - 1);
-    for (let i = 0; i < T; i++) {
-      const p = S[s][i];
-      const px = x + m / 2 + p[0] * m * 0.42;
-      const py = y0 + m / 2 - p[1] * m * 0.42;
-      ctx.fillStyle = rgba(C[s][i], 0.32 + 0.48 * act);
-      ctx.beginPath(); ctx.arc(px, py, 1.55, 0, TAU); ctx.fill();
-    }
-  }
-
-  const px = x0 + cur * (m + gap) + m / 2;
-  ctx.strokeStyle = `rgba(255,255,255,${0.16 * GA})`;
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(px, y0 - 5); ctx.lineTo(px, y0 + m + 5); ctx.stroke();
-  ctx.fillStyle = `rgba(255,255,255,${0.55 * GA})`;
-  ctx.beginPath(); ctx.arc(px, y0 + m + 8, 2, 0, TAU); ctx.fill();
-}
-
-/* ---------- cached radial wash / fade ---------- */
-function drawBackground(tint, key) {
-  const bw = Math.max(1, Math.round(w * dpr)), bh = Math.max(1, Math.round(h * dpr));
-  if (!bgCv) { bgCv = document.createElement('canvas'); bgKey = ''; }
-  if (bgCv.width !== bw || bgCv.height !== bh) {
-    bgCv.width = bw; bgCv.height = bh; bgKey = '';
-  }
-  if (bgKey !== String(key)) {
-    bgKey = String(key);
-    const g2 = bgCv.getContext('2d');
-    g2.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g2.clearRect(0, 0, w, h);
-    const c0 = mixc([2, 3, 10], tint, 0.10);
-    const bg = g2.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.78);
-    bg.addColorStop(0, `rgba(${c0[0] | 0},${c0[1] | 0},${c0[2] | 0},0.50)`);
-    bg.addColorStop(0.52, 'rgba(3,4,12,0.58)');
-    bg.addColorStop(1, 'rgba(0,0,3,0.82)');
-    g2.fillStyle = bg;
-    g2.fillRect(0, 0, w, h);
-  }
-  ctx.drawImage(bgCv, 0, 0, w, h);
 }
 
 /* ---------- main loop ---------- */
@@ -865,50 +764,38 @@ function frame(now) {
 
   const cyc = Math.floor(t / Tc);
   const tt = t - cyc * Tc;
-  if (cyc !== curCyc) { curCyc = cyc; build(); cam.tx = 0.4 * G; }
+  if (cyc !== curCyc) { curCyc = cyc; build(); cam.tx = 0.5 * G; }
 
-  GA = Math.min(1, tt / 0.9) * Math.min(1, (Tc - tt) / 1.15);
+  GA = Math.min(1, tt / 0.9) * Math.min(1, (Tc - tt) / 1.2);
   TT = tt;
   W = clamp((tt - PRE) / STEP, 0, NS - 1);
 
-  let targetX = clamp((W + 0.4) * G, 0.3 * G, (NS - 1) * G);
-  if (TT > T_POST) targetX += smooth(clamp((TT - T_POST) / POST, 0, 1)) * 1.2;
-  if (FIXED !== null) cam.tx = targetX;
-  else cam.tx += (targetX - cam.tx) * Math.min(1, dt * 3.2);
+  let target = clamp((W + 0.45) * G, 0.4 * G, (NS - 1) * G);
+  if (TT > T_POST) target += smooth(clamp((TT - T_POST) / POST, 0, 1)) * 1.0;
+  if (FIXED !== null) cam.tx = target;
+  else cam.tx += (target - cam.tx) * Math.min(1, dt * 2.8);
 
-  const yaw = -0.55 + 0.28 * Math.sin(t * 0.11) + yawOff;
-  const pitch = 0.30 + 0.06 * Math.sin(t * 0.17) + pitchOff;
+  const yaw = -0.38 + 0.22 * Math.sin(t * 0.09) + yawOff;
+  const pitch = 0.20 + 0.05 * Math.sin(t * 0.13) + pitchOff;
   cyw = Math.cos(yaw); syw = Math.sin(yaw);
   cp = Math.cos(pitch); sp = Math.sin(pitch);
   ref = F / cam.D;
 
   ctx.globalCompositeOperation = 'source-over';
   const sAct = clamp(Math.round(W), 0, NS - 1);
-  const tint = LC[sAct] || [165, 140, 255];
-  drawBackground(tint, sAct);
+  drawBackground(LC[sAct] || EMB, sAct);
 
   ctx.globalCompositeOperation = 'lighter';
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  drawDust(t);
-  drawRail();
-  drawGates(t);
-
-  for (let s = 0; s < NS; s++) drawCubeWire(s);
-  for (let s = 0; s < NS; s++) drawLattice(s);
-
-  drawVocab(t);
+  drawStages();
+  drawCloud(t);
   drawWorldlines();
-  drawStates();
-  drawAttention(t);
-  drawFFN(t);
-  drawResidual();
-  drawBeads(t);
-  drawFinale(t);
+  drawThreads(t);
+  drawBloom(t);
+  drawTokens(t);
   drawReadout();
-
-  mini();
 
   ctx.globalCompositeOperation = 'source-over';
   requestAnimationFrame(frame);
