@@ -89,7 +89,7 @@
         '<div class="ls-lang-mix-detail">' +
         '<div class="ls-lang-mix-head">' + (DE ? "Die Datenmischung" : "The data mix") + '</div>' +
         '<div class="ls-lang-scale"><span class="ls-lang-scale-label">' + (DE ? "Datenmenge" : "data scale") + '</span><span class="ls-lang-scale-unit">KB</span><span class="ls-lang-scale-unit">MB</span><span class="ls-lang-scale-unit">GB</span><span class="ls-lang-scale-unit">TB</span><span class="ls-lang-scale-unit">PB</span><span class="ls-lang-scale-unit">EB</span><span class="ls-lang-scale-unit is-on">ZB</span><span class="ls-lang-scale-year">2016</span></div>' +
-        '<div class="ls-lang-scale-note">' + (DE ? "1 ZB = 10²¹ Byte. Erst seit der Zettabyte-Ära gibt es genug Text für diese Modelle." : "1 ZB = 10²¹ bytes. Only since the zettabyte era has there been enough text for these models.") + '</div>' +
+        '<div class="ls-lang-scale-note">' + (DE ? "1 ZB = 10²¹ Byte. Die Zettabyte-Ära beschreibt das gesamte digitale Datenvolumen, nicht den Trainingskorpus; GPT-3 trainierte auf 300 Mrd. Tokens, etwa 570 GB gefilterter Text." : "1 ZB = 10²¹ bytes. The zettabyte era describes total digital data, not the training corpus; GPT-3 trained on 300 billion tokens, about 570 GB of filtered text.") + '</div>' +
         '<div class="ls-lang-bars"></div>' +
         '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
         '</div>' +

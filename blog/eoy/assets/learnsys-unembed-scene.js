@@ -252,7 +252,7 @@
       ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      ctx.fillText(DE ? "gleiche Richtung · 0° · Länge egal" : "same direction · 0° · length does not matter", Math.min(shortP.x + 8, w * 0.62 - 150), shortP.y + 12);
+      ctx.fillText(DE ? "gleiche Richtung · 0° · Länge egal für den Winkel" : "same direction · 0° · length irrelevant for the angle", Math.min(shortP.x + 8, w * 0.62 - 150), shortP.y + 12);
 
       top.slice(0, 3).forEach(function (t, k) {
         var ptsArc = [];
@@ -280,7 +280,7 @@
       ctx.fillText(DE ? "3D-Kugel der Richtungen" : "3D sphere of directions", 18, 28);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "Winkel = Ähnlichkeit · Länge zählt nicht · ziehen zum Drehen" : "angle = similarity · length does not count · drag to rotate", 18, 45);
+      ctx.fillText(DE ? "Winkel = Kosinus-Ähnlichkeit · normalisierte Richtungen · ziehen zum Drehen" : "angle = cosine similarity · normalised directions · drag to rotate", 18, 45);
 
       var bx = w * .64, by = 64, bw = w - bx - 18;
       ctx.textAlign = "left";
@@ -289,7 +289,7 @@
       ctx.fillText(DE ? "nächste Richtungen" : "nearest directions", bx, 28);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "kleinster Winkel zuerst" : "smallest angle first", bx, 44);
+      ctx.fillText(DE ? "größter Kosinus zuerst" : "largest cosine first", bx, 44);
       top.forEach(function (t, i) {
         var y = by + i * Math.min(28, (h - by - 20) / top.length);
         ctx.fillStyle = i === 0 ? C.green : C.ink;
@@ -433,7 +433,7 @@
       var dy = Math.sin(aB) * magB - Math.sin(aA) * magA;
       var dist = Math.hypot(dx, dy);
       readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + Math.round(angleDeg) + '.0°</b></span><span>|A−B| <b>' + dist.toFixed(3) + '</b></span><span>Cos <b>' + Math.cos(aB - aA).toFixed(3) + '</b></span>';
-      caption.textContent = DE ? "A und B zeigen in verschiedene Richtungen. Wenn du B länger machst, ändert sich die euklidische Distanz |A−B|, aber nicht der Winkel. Die Länge ändert die Ähnlichkeit nicht; nur die Richtungen zählen." : "A and B point in different directions. Making B longer changes the Euclidean distance |A−B|, but not the angle. Length does not change the similarity; only the directions count.";
+      caption.textContent = DE ? "A und B zeigen in verschiedene Richtungen. Wenn du B länger machst, ändert sich die euklidische Distanz |A−B|, aber nicht der Winkel. Für den Winkel zählen nur die Richtungen; im Logit zählt auch die Länge." : "A and B point in different directions. Making B longer changes the Euclidean distance |A−B|, but not the angle. For the angle only the directions count; in the logit the length also counts.";
     }
     function unembedData() {
       return UN_TOKENS.map(function (tok) {
@@ -544,7 +544,7 @@
       // right: sorted probabilities in a fixed-width panel
       var probs = V.softmax(rows.map(function (x) { return x.cos; }), 0.35);
       ctx.textAlign = "left"; ctx.fillStyle = C.petrol; ctx.font = '700 ' + Math.max(10, api.font("canvas-sm")) + 'px "Barlow", sans-serif'; ctx.fillText(DE ? "Wahrscheinlichkeit" : "probability", bx, 20);
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.fillText(DE ? "kleinster Winkel → höchste" : "smallest angle → highest", bx, 34);
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.fillText(DE ? "größter Kosinus → höchste (normiert)" : "largest cosine → highest (normalised)", bx, 34);
       var listTop = 48;
       var rowStep = Math.min(22, (h - listTop - 16) / Math.max(1, rows.length - 1));
       rows.forEach(function (row, i) {
@@ -559,8 +559,8 @@
       });
       var top = rows[0], bottom = rows[rows.length - 1];
       var focusTxt = focus ? '<span>' + (DE ? "Winkel" : "angle") + ' <b>' + focus.t + ' · ' + Math.round(Math.abs(focus.diff) * 180 / Math.PI) + '°</b></span>' : '';
-      readout.innerHTML = '<span><b>h</b> ' + (DE ? "letzter Vektor nach allen Transformer-Blöcken" : "final vector after all transformer blocks") + '</span><span>h → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "kleinster Winkel" : "smallest angle") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "größter" : "largest") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
-      caption.textContent = DE ? "h ist der letzte Vektor, der aus den Transformer-Blöcken kommt. In ihn ist der gesamte Kontext wieder und wieder unter verschiedenen Heads eingemischt worden. W_U vergleicht h mit jeder Token-Richtung; der kleinste Winkel wird zum höchsten Logit, Softmax macht daraus eine Verteilung. Fahre über einen Vorschlag oder klicke ihn an: Der Winkel wird hervorgehoben." : "h is the final vector coming out of the transformer blocks. The entire context has been mixed into it again and again under different heads. W_U compares h with every token direction; the smallest angle becomes the highest logit, and softmax turns that into a distribution. Hover or click a suggestion to highlight its angle.";
+      readout.innerHTML = '<span><b>h</b> ' + (DE ? "letzter Vektor nach allen Transformer-Blöcken" : "final vector after all transformer blocks") + '</span><span>h → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "größter Kosinus" : "largest cosine") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "kleinster Kosinus" : "smallest cosine") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
+      caption.textContent = DE ? "h ist der letzte Vektor, der aus den Transformer-Blöcken kommt. In ihn ist der gesamte Kontext wieder und wieder unter verschiedenen Heads eingemischt worden. In dieser normalisierten Demo vergleicht W_U h mit jeder Token-Richtung; der größte Kosinus wird zum höchsten Wert, Softmax macht daraus eine Verteilung. Im echten Logit skaliert zusätzlich die Länge der Token-Zeile. Fahre über einen Vorschlag oder klicke ihn an: Der Winkel wird hervorgehoben." : "h is the final vector coming out of the transformer blocks. The entire context has been mixed into it again and again under different heads. In this normalised demo W_U compares h with every token direction; the largest cosine becomes the highest value, and softmax turns that into a distribution. In the real logit the length of the token row also scales the result. Hover or click a suggestion to highlight its angle.";
       if (unembedRaf) { if (t < 1) unembedRaf = requestAnimationFrame(drawUnembed); else unembedRaf = 0; }
     }
     function startUnembed() {

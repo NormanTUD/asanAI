@@ -66,20 +66,20 @@
       {
         id: "entity", label: "Entität vertauscht", color: "lilac",
         question: "Wo hängt die Mona Lisa?",
-        answer: "Im Prado in Madrid.",
+        answer: "Im British Museum in London.",
         why: "Das Modell vertauscht zwei bekannte Museen. Die Form der Antwort ist plausibel, die Entität ist falsch.",
         check: "Name, Ort und Beziehung einzeln prüfen.",
         fix: "Entitäten extrahieren und gegen eine Quelle abgleichen.",
         source: "Ji et al. (2023)"
       },
       {
-        id: "negation", label: "Negation", color: "blue",
+        id: "negation", label: "Negation (Reasoning)", color: "blue",
         question: "Was bedeutet „nicht traurig“?",
         answer: "Nicht automatisch „glücklich“.",
-        why: "Negation ist keine exakte Umkehrung. Attention ist kein Antonym-Operator: „nicht traurig“ landet nicht punktgenau auf „glücklich“. Dazwischen bleiben Abstufungen, Gleichgültigkeit oder etwas anderes.",
+        why: "Negation ist keine exakte Umkehrung und kein Halluzinationstyp. Attention ist kein Antonym-Operator: „nicht traurig“ landet nicht punktgenau auf „glücklich“. Dazwischen bleiben Abstufungen, Gleichgültigkeit oder etwas anderes.",
         check: "Wird die Verneinung als eigene Bedeutung behandelt oder als exakte Umkehrung?",
         fix: "Logische Schritte separat prüfen; Negation und Antonym nicht gleichsetzen.",
-        source: "Ji et al. (2023)"
+        source: "Reasoning-Fehler, kein Halluzinationstyp"
       },
       {
         id: "sampling", label: "Sampling", color: "green",
@@ -151,20 +151,20 @@
       {
         id: "entity", label: "Entity swap", color: "lilac",
         question: "Where is the Mona Lisa?",
-        answer: "In the Prado in Madrid.",
+        answer: "In the British Museum in London.",
         why: "The model swaps two famous museums. The shape is plausible; the entity is wrong.",
         check: "Check name, place, and relation separately.",
         fix: "Extract entities and compare them against a source.",
         source: "Ji et al. (2023)"
       },
       {
-        id: "negation", label: "Negation", color: "blue",
+        id: "negation", label: "Negation (Reasoning)", color: "blue",
         question: "What does “not sad” mean?",
         answer: "Not automatically “happy”.",
-        why: "Negation is not an exact reversal. Attention is not an antonym operator: “not sad” does not land precisely on “happy”. Degrees, indifference, or something else remain in between.",
+        why: "Negation is not an exact reversal and not a hallucination type. Attention is not an antonym operator: “not sad” does not land precisely on “happy”. Degrees, indifference, or something else remain in between.",
         check: "Is the negation treated as its own meaning or as an exact reversal?",
         fix: "Check logical steps separately; do not equate negation with an antonym.",
-        source: "Ji et al. (2023)"
+        source: "Reasoning error, not a hallucination type"
       },
       {
         id: "sampling", label: "Sampling", color: "green",

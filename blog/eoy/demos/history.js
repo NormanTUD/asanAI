@@ -8,10 +8,10 @@
     var DE = api.lang === "de";
     var tabs = DE ? [
       {
-        year: "~27.000 v. Chr.", label: "Ganz früh", title: "Kerben im Wolfsknochen",
-        text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben. Die Kerben sind keine Schrift, aber sie halten Zählschritte fest. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
+        year: "ca. 30.000 BP", label: "Ganz früh", title: "Kerben im Wolfsknochen",
+        text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben. Die Kerben sind keine Schrift; sie werden als Zählmarken gedeutet, die Deutung ist aber umstritten. Die Datierung schwankt in der Literatur zwischen etwa 26.000 und 30.000 Jahren vor heute. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
         images: [{ src: "../vestonice_wolf_bone.jpg", alt: "Der Wolfsknochen von Dolní Věstonice mit 55 Kerben", cap: "Der Wolfsknochen von Dolní Věstonice. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
-        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }]
+        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }, { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick" }]
       },
       {
         year: "~300 v. Chr.", label: "Antike", title: "Tafeln und Zählbretter",
@@ -34,7 +34,7 @@
       {
         year: "1943–1958", label: "Neuron", title: "Das Neuron als Recheneinheit",
         text: "McCulloch und Pitts modellieren 1943 ein Neuron als logische Schwelle. Hebb formuliert 1949, dass gemeinsames Feuern Verbindungen stärkt. 1958 baut Rosenblatt das Perzeptron, das Gewichte aus Fehlern anpasst. Das Gehirn wird zum Vorbild für lernende Maschinen.",
-        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts an einer Tafel, 1954", cap: "Walter Pitts, 1954. Francis Bello, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" }],
+        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts an einer Tafel, 1954", cap: "Walter Pitts, 1954. Francis Bello, Public Domain. Die ursprüngliche Commons-Datei ist derzeit nicht erreichbar.", href: "https://en.wikipedia.org/wiki/Walter_Pitts" }],
         sources: [{ label: "HNF (2023), McCulloch und Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }]
       },
       {
@@ -64,19 +64,21 @@
       },
       {
         year: "1989–2012", label: "Deep Learning", title: "Bilder, GPUs, tiefe Netze",
-        text: "LeCun kombiniert 1989 Backpropagation mit Faltungen für handgeschriebene Postleitzahlen. Fukushima, Waibel und Zhang liefern frühe Bausteine. 2012 gewinnt AlexNet mit tiefen CNNs und GPUs die ImageNet-Challenge. Tiefe Netze werden praktisch.",
-        sources: [{ label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
+        text: "LeCun kombiniert 1989 Backpropagation mit Faltungen für handgeschriebene Postleitzahlen. 2012 gewinnt AlexNet mit tiefen CNNs und GPUs die ImageNet-Challenge. Tiefe Netze werden praktisch.",
+        sources: [{ label: "LeCun et al. (1989), Backpropagation Applied to Handwritten Zip Code Recognition", url: "https://doi.org/10.1162/neco.1989.1.4.541" }, { label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
       },
       {
         year: "2014–2017", label: "Transformer", title: "Attention ersetzt die Schleife",
         text: "Bahdanau, Cho und Bengio lassen 2014 den Decoder auf die Eingabewörter zurückblicken. 2017 ersetzt der Transformer die wiederkehrende Verarbeitung durch Self-Attention und fügt Positionsinformation hinzu. Sätze lassen sich parallel verarbeiten, ohne die Wortreihenfolge zu verlieren.",
         images: [{ src: "../transformer_architecture.png", alt: "Die Encoder-Decoder-Architektur des Transformers", cap: "Transformer-Architektur, Figur 1 aus Attention Is All You Need. Ashish Vaswani et al. (Google), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png" }],
-        sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+        sources: [{ label: "Bahdanau et al. (2014), Neural Machine Translation by Jointly Learning to Align and Translate", url: "https://arxiv.org/abs/1409.0473" }, { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
       },
       {
         year: "2018–2022", label: "GPT", title: "Vorhersage wird Dialog",
-        text: "2018 zeigt GPT-1 mit 117 Millionen Parametern Pretraining plus Fine-Tuning. 2019 folgt GPT-2 mit 1,5 Milliarden und Prompting, 2020 GPT-3 mit 175 Milliarden und Few-Shot. 2022 zeigt Chinchilla, dass mehr Daten pro Parameter oft besser sind; ChatGPT verbindet Instruction-Tuning und RLHF.",
+        text: "2018 zeigt GPT-1 mit 117 Millionen Parametern Pretraining plus Fine-Tuning. 2019 folgt GPT-2 mit 1,5 Milliarden und Prompting, 2020 GPT-3 mit 175 Milliarden und Few-Shot. 2022 zeigt Chinchilla, dass mehr Daten pro Parameter oft besser sind; InstructGPT zeigt SFT plus RLHF, und ChatGPTs genaues Rezept ist nicht veröffentlicht.",
         sources: [
+          { label: "Radford et al. (2018), Improving Language Understanding by Generative Pre-Training", url: "https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf" },
+          { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" },
           { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" },
           { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" },
           { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }
@@ -84,10 +86,10 @@
       }
     ] : [
       {
-        year: "~27,000 BCE", label: "Deep past", title: "Notches in a wolf bone",
-        text: "The wolf bone from Dolní Věstonice carries 55 notches. The notches are not writing, but they record counting steps. Arithmetic begins as embodied counting, long before computers.",
+        year: "ca. 30,000 BP", label: "Deep past", title: "Notches in a wolf bone",
+        text: "The wolf bone from Dolní Věstonice carries 55 notches. The notches are not writing; they are interpreted as tally marks, but that interpretation is disputed. Dating in the literature ranges from about 26,000 to 30,000 years before present. Arithmetic begins as embodied counting, long before computers.",
         images: [{ src: "../vestonice_wolf_bone.jpg", alt: "The Dolní Věstonice wolf bone with 55 notches", cap: "The Dolní Věstonice wolf bone. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
-        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }]
+        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }, { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick" }]
       },
       {
         year: "~300 BCE", label: "Antiquity", title: "Tablets and counting boards",
@@ -110,7 +112,7 @@
       {
         year: "1943–1958", label: "Neuron", title: "The neuron as a computing unit",
         text: "McCulloch and Pitts model a neuron as a logical threshold in 1943. Hebb formulates in 1949 that neurons that fire together strengthen their connection. In 1958 Rosenblatt builds the perceptron, which adjusts weights from errors. The brain becomes the model for learning machines.",
-        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts at a blackboard, 1954", cap: "Walter Pitts, 1954. Francis Bello, public domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" }],
+        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts at a blackboard, 1954", cap: "Walter Pitts, 1954. Francis Bello, public domain. The original Commons file is currently unavailable.", href: "https://en.wikipedia.org/wiki/Walter_Pitts" }],
         sources: [{ label: "HNF (2023), McCulloch and Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }]
       },
       {
@@ -140,19 +142,21 @@
       },
       {
         year: "1989–2012", label: "Deep Learning", title: "Images, GPUs, deep networks",
-        text: "LeCun combines backpropagation with convolutions in 1989 for handwritten ZIP codes. Fukushima, Waibel, and Zhang supply early building blocks. In 2012 AlexNet wins ImageNet with deep CNNs and GPUs. Deep networks become practical.",
-        sources: [{ label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
+        text: "LeCun combines backpropagation with convolutions in 1989 for handwritten ZIP codes. In 2012 AlexNet wins ImageNet with deep CNNs and GPUs. Deep networks become practical.",
+        sources: [{ label: "LeCun et al. (1989), Backpropagation Applied to Handwritten Zip Code Recognition", url: "https://doi.org/10.1162/neco.1989.1.4.541" }, { label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
       },
       {
         year: "2014–2017", label: "Transformer", title: "Attention replaces the loop",
         text: "Bahdanau, Cho, and Bengio let the decoder look back at the input words in 2014. In 2017 the transformer replaces recurrent processing with self-attention and adds positional information. Sentences can be processed in parallel without losing word order.",
         images: [{ src: "../transformer_architecture.png", alt: "The transformer encoder-decoder architecture", cap: "Transformer architecture, figure 1 from Attention Is All You Need. Ashish Vaswani et al. (Google), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png" }],
-        sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+        sources: [{ label: "Bahdanau et al. (2014), Neural Machine Translation by Jointly Learning to Align and Translate", url: "https://arxiv.org/abs/1409.0473" }, { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
       },
       {
         year: "2018–2022", label: "GPT", title: "Prediction becomes dialogue",
-        text: "In 2018 GPT-1 shows with 117 million parameters that pretraining plus fine-tuning works. In 2019 GPT-2 follows with 1.5 billion and prompting; in 2020 GPT-3 has 175 billion and few-shot learning. In 2022 Chinchilla shows that more data per parameter often helps, and ChatGPT combines instruction tuning with RLHF.",
+        text: "In 2018 GPT-1 shows with 117 million parameters that pretraining plus fine-tuning works. In 2019 GPT-2 follows with 1.5 billion and prompting; in 2020 GPT-3 has 175 billion and few-shot learning. In 2022 Chinchilla shows that more data per parameter often helps; InstructGPT demonstrates SFT plus RLHF, and ChatGPT's exact recipe is not published.",
         sources: [
+          { label: "Radford et al. (2018), Improving Language Understanding by Generative Pre-Training", url: "https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf" },
+          { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" },
           { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" },
           { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" },
           { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }

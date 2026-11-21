@@ -111,11 +111,11 @@
     var ARIA = DE ? [
       "Schematisches Othello-Brett mit schwarzen und weißen Scheiben",
       "Fünf Schritte vom L6-Residualstrom über Dot-Product und Softmax zum Brett",
-      "Eine Linie für Othello, ein Unterraum für Schach und viele überlagerte Unterräume für reale Modelle"
+      "Zwei Richtungen für Othello, ein Unterraum für Schach und viele überlagerte Unterräume für reale Modelle"
     ] : [
       "Schematic Othello board with black and white discs",
       "Five steps from the L6 residual stream through dot product and softmax to the board",
-      "One line for Othello, a subspace for chess and many overlapping subspaces for real models"
+      "Two directions for Othello, a subspace for chess, and many overlapping subspaces for real models"
     ];
     canvas.setAttribute("role", "img");
     canvas.setAttribute("aria-label", ARIA[0]);
@@ -1059,7 +1059,7 @@
       var pad = Math.max(18, Math.min(26, W * .035));
       var narrow = W < 620;
       head(c, DE ? "Vom Feld zur realen Welt" : "From one square to the real world", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
-      txt(c, DE ? "Bei Othello hat jedes Feld 3 Zustände: leer, Spieler 1, Spieler 2. Bei Schach sind es pro Feld 13: ein ganzer Unterraum. In Modellen der realen Welt sind es viel mehr und viel komplexere Unterräume." : "In Othello each square has 3 states: empty, player 1, player 2. In chess there are 13 per square: a whole subspace. In real-world models there are many more and much more complex subspaces.", pad, 58, { size: 10.5, color: C.muted });
+      txt(c, DE ? "Bei Othello hat jedes Feld 3 Zustände: leer, Spieler 1, Spieler 2. Die Probe liest drei Logits pro Feld; bei Schach sind es 13 Logits, ein affiner 12-dimensionaler Unterraum. In Modellen der realen Welt sind es viel mehr und viel komplexere Unterräume." : "In Othello each square has 3 states: empty, player 1, player 2. The probe reads three logits per square; in chess there are 13 logits, an affine 12-dimensional subspace. In real-world models there are many more and much more complex subspaces.", pad, 58, { size: 10.5, color: C.muted });
       accent(c, pad, 72, 42);
       if (narrow) {
         var cx = W * .5;
@@ -1073,14 +1073,14 @@
         txt(c, "Li et al. (2023) · Nanda et al. (2023)", cx, y1 + 90, { align: "center", size: 8, color: C.muted });
         drawChessNode(c, cx, y2, 72);
         txt(c, DE ? "Schach" : "Chess", cx, y2 + 78, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
-        txt(c, DE ? "13 Richtungen pro Feld · Unterraum" : "13 directions per square · subspace", cx, y2 + 96, { align: "center", size: 9.5, color: C.muted });
+        txt(c, DE ? "13 Logits pro Feld · affiner Unterraum" : "13 logits per square · affine subspace", cx, y2 + 96, { align: "center", size: 9.5, color: C.muted });
         txt(c, "Karvonen (2024)", cx, y2 + 112, { align: "center", size: 8, color: C.muted });
         drawRealNode(c, cx, y3, 72);
         txt(c, DE ? "Reale Modelle" : "Real models", cx, y3 + 78, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
         txt(c, DE ? "viele Unterräume · überlagert" : "many subspaces · overlapping", cx, y3 + 96, { align: "center", size: 9.5, color: C.muted });
         txt(c, DE ? "z. B. Gurnee & Tegmark (2023)" : "e.g. Gurnee & Tegmark (2023)", cx, y3 + 112, { align: "center", size: 8, color: C.muted });
-        addHit(cx - 120, y1 - 50, 240, 170, DE ? "Othello: eine Richtung pro Feld reicht (leer, schwarz, weiß)" : "Othello: one direction per square is enough (empty, black, white)");
-        addHit(cx - 90, y2 - 90, 180, 220, DE ? "Schach: 13 Zustände pro Feld, also ein Unterraum" : "chess: 13 states per square, a subspace");
+        addHit(cx - 120, y1 - 50, 240, 170, DE ? "Othello: drei Logits pro Feld (leer, Spieler 1, Spieler 2)" : "Othello: three logits per square (empty, player 1, player 2)");
+        addHit(cx - 90, y2 - 90, 180, 220, DE ? "Schach: 13 Zustände pro Feld, also ein affiner Unterraum" : "chess: 13 states per square, an affine subspace");
         addHit(cx - 90, y3 - 90, 180, 220, DE ? "Reale Modelle: viele überlagerte Unterräume" : "real models: many overlapping subspaces");
       } else {
         var cy = H * .52;
@@ -1094,17 +1094,17 @@
         txt(c, "Li et al. (2023) · Nanda et al. (2023)", n1, cy + 91, { align: "center", size: 8, color: C.muted });
         drawChessNode(c, n2, cy, 90);
         txt(c, DE ? "Schach" : "Chess", n2, cy + 82, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
-        txt(c, DE ? "13 Richtungen pro Feld · Unterraum" : "13 directions per square · subspace", n2, cy + 101, { align: "center", size: 10, color: C.muted });
+        txt(c, DE ? "13 Logits pro Feld · affiner Unterraum" : "13 logits per square · affine subspace", n2, cy + 101, { align: "center", size: 10, color: C.muted });
         txt(c, "Karvonen (2024)", n2, cy + 117, { align: "center", size: 8, color: C.muted });
         drawRealNode(c, n3, cy, 90);
         txt(c, DE ? "Reale Modelle" : "Real models", n3, cy + 82, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
         txt(c, DE ? "viele Unterräume · überlagert" : "many subspaces · overlapping", n3, cy + 101, { align: "center", size: 10, color: C.muted });
         txt(c, DE ? "z. B. Gurnee & Tegmark (2023)" : "e.g. Gurnee & Tegmark (2023)", n3, cy + 117, { align: "center", size: 8, color: C.muted });
-        addHit(n1 - 105, cy - 100, 210, 200, DE ? "Othello: eine Richtung pro Feld reicht (leer, schwarz, weiß)" : "Othello: one direction per square is enough (empty, black, white)");
-        addHit(n2 - 105, cy - 100, 210, 230, DE ? "Schach: 13 Zustände pro Feld, also ein Unterraum" : "chess: 13 states per square, a subspace");
+        addHit(n1 - 105, cy - 100, 210, 200, DE ? "Othello: drei Logits pro Feld (leer, Spieler 1, Spieler 2)" : "Othello: three logits per square (empty, player 1, player 2)");
+        addHit(n2 - 105, cy - 100, 210, 230, DE ? "Schach: 13 Zustände pro Feld, also ein affiner Unterraum" : "chess: 13 states per square, an affine subspace");
         addHit(n3 - 105, cy - 100, 210, 230, DE ? "Reale Modelle: viele überlagerte Unterräume" : "real models: many overlapping subspaces");
       }
-      txt(c, DE ? "Eine Richtung → ein Unterraum → viele Unterräume." : "One direction → one subspace → many subspaces.", W / 2, H - 18, { align: "center", size: 10, color: C.ink });
+      txt(c, DE ? "Drei Logits → ein Unterraum → viele Unterräume." : "Three logits → one subspace → many subspaces.", W / 2, H - 18, { align: "center", size: 10, color: C.ink });
     }
 
     function draw() {

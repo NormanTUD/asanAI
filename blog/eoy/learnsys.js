@@ -5084,7 +5084,7 @@
         note: "Kerben speichern Zahlen außerhalb des Kopfes. Die Gruppen sind ein Hinweis, kein entschlüsselter Text."
       },
       {
-        date: "ca. 200–60 v. Chr.",
+        date: "ca. 205–100 v. Chr.",
         name: "Antikythera",
         img: "../antikythera.jpg",
         alt: "Fragmente des Antikythera-Mechanismus",

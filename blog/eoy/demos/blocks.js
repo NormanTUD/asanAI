@@ -19,7 +19,7 @@
       {
         id: "embedding", label: "Embedding", short: "Tokens → Vektoren", icon: "E", color: "sky",
         title: "Embedding",
-        body: "Jede ID wird zu einem Vektor in einem Raum mit tausenden Dimensionen. Ähnliche Bedeutungen landen in ähnlichen Richtungen. Die Bedeutung ergibt sich aus dem Kontext, wie Firth (1957) formulierte: „You shall know a word by the company it keeps.“ Die meisten gelernten Vektoren liegen auf der Oberfläche einer hochdimensionalen Kugel.",
+        body: "Jede ID wird zu einem Vektor in einem Raum mit hunderten bis tausenden Dimensionen (GPT-2 small: 768). Ähnliche Bedeutungen landen in ähnlichen Richtungen. Die Bedeutung ergibt sich aus dem Kontext, wie Firth (1957) formulierte: „You shall know a word by the company it keeps.“ Die Visualisierung normalisiert die Vektoren; echte Embeddings haben unterschiedliche Längen.",
         points: [],
         source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
         mini: "embedding"
@@ -27,7 +27,7 @@
       {
         id: "position", label: "Positional Embedding", short: "Position → Vektor", icon: "P", color: "blue",
         title: "Positional Embedding",
-        body: "Ein Token allein weiß nicht, ob es an erster oder dritter Stelle steht. Deshalb wird seine Position als spezielle Kodierung ergänzt. Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Katze) an einer anderen Position. Die Positionskodierung liegt auf der Oberfläche einer hochdimensionalen Kugel. Die Darstellung enthält Positionen bis 100.000.",
+        body: "Ein Token allein weiß nicht, ob es an erster oder dritter Stelle steht. Deshalb wird seine Position als spezielle Kodierung ergänzt. Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Katze) an einer anderen Position. Die sinusförmige Positionskodierung hat eine konstante Norm und liegt damit auf einer Kugel. Die Darstellung enthält Positionen bis 100.000.",
         points: [],
         mini: "position",
         position: true
@@ -35,7 +35,7 @@
       {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. Der Block läuft dutzende bis hunderte Male.",
+        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert.",
         points: [],
         mini: "transformer",
         sub: [
@@ -46,7 +46,7 @@
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "Am Ende, nachdem die Bedeutungen viele Male gemischt und wieder getrennt worden sind, enthält der Vektor $h$ des letzten Tokens die Gesamtbedeutung des Kontexts. Man vergleicht $h$ mit den gelernten Richtungen aller Wörter und misst die Winkel. Ein kleiner Winkel heißt: Das Wort passt gut an diese Stelle. Das Wort mit dem kleinsten Winkel wird ausgewählt.",
+        body: "Am Ende, nachdem die Bedeutungen viele Male gemischt und wieder getrennt worden sind, enthält der Vektor $h$ des letzten Tokens die Gesamtbedeutung des Kontexts. Man vergleicht $h$ mit den gelernten Richtungen aller Wörter und misst die Winkel. Ein kleiner Winkel heißt: Das Wort passt gut an diese Stelle. In der normalisierten Ansicht wird das Wort mit dem größten Kosinus ausgewählt; im echten Logit zählt auch die Länge.",
         points: [],
         mini: "unembed",
       }
@@ -61,7 +61,7 @@
       {
         id: "embedding", label: "Embedding", short: "tokens → vectors", icon: "E", color: "sky",
         title: "Embedding",
-        body: "Every ID becomes a vector in a space with thousands of dimensions. Similar meanings land in similar directions. Meaning comes from context, as Firth (1957) put it: “You shall know a word by the company it keeps.” Most learned vectors lie on the surface of a high-dimensional sphere.",
+        body: "Every ID becomes a vector in a space with hundreds to thousands of dimensions (GPT-2 small: 768). Similar meanings land in similar directions. Meaning comes from context, as Firth (1957) put it: “You shall know a word by the company it keeps.” The visualisation normalises the vectors; real embeddings have different lengths.",
         points: [],
         source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
         mini: "embedding"
@@ -69,7 +69,7 @@
       {
         id: "position", label: "Positional Embedding", short: "position → vector", icon: "P", color: "blue",
         title: "Positional Embedding",
-        body: "A token alone does not know whether it stands first or third. That is why its position is added as a special encoding. Waves on circular orbits are added in different dimensions; each dimension has a different frequency, and together they form the fingerprint of the position. Every green point is the same word (cat) at a different position. The position encoding lies on the surface of a high-dimensional sphere. The view contains positions up to 100,000.",
+        body: "A token alone does not know whether it stands first or third. That is why its position is added as a special encoding. Waves on circular orbits are added in different dimensions; each dimension has a different frequency, and together they form the fingerprint of the position. Every green point is the same word (cat) at a different position. The sinusoidal position encoding has a constant norm and therefore lies on a sphere. The view contains positions up to 100,000.",
         points: [],
         mini: "position",
         position: true
@@ -77,7 +77,7 @@
       {
         id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. The block runs dozens to hundreds of times.",
+        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred.",
         points: [],
         mini: "transformer",
         sub: [
@@ -88,7 +88,7 @@
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "At the end, after meanings have been mixed and separated many times, the vector $h$ of the last token contains the overall meaning of the context. It is compared with the learned directions of all words, and the angles are measured. A small angle means the word fits this position well. The word with the smallest angle is selected.",
+        body: "At the end, after meanings have been mixed and separated many times, the vector $h$ of the last token contains the overall meaning of the context. It is compared with the learned directions of all words, and the angles are measured. A small angle means the word fits this position well. In the normalised view the word with the largest cosine is selected; in the real logit the length also counts.",
         points: [],
         mini: "unembed",
       }
@@ -408,7 +408,7 @@
         html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
       if (b.mini === "unembed") {
-        html += '<p class="ls-bs-traj-caption">' + (DE ? "h = Output-Vektor des LLM: der letzte Vektor aus den Transformer-Blöcken. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; der Winkel zu h entscheidet über den Logit." : "h = output vector of the LLM: the final vector from the transformer blocks. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; the angle to h decides the logit.") + '</p>';
+        html += '<p class="ls-bs-traj-caption">' + (DE ? "h = Output-Vektor des LLM: der letzte Vektor aus den Transformer-Blöcken. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; in dieser normalisierten Ansicht entscheidet der Kosinus zu h, im echten Logit zählt auch die Länge." : "h = output vector of the LLM: the final vector from the transformer blocks. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; in this normalised view the cosine to h decides, while the real logit also includes length.") + '</p>';
       }
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }

@@ -1129,11 +1129,11 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
     Status: OK - CC BY-SA 4.0
 
 24. img_walter_pitts
-    URL: https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg
-    Lizenz: Public domain (via Commons API extmetadata)
+    URL: https://en.wikipedia.org/wiki/Walter_Pitts
+    Lizenz: Public domain (via Commons API extmetadata; Commons-Datei derzeit 404)
     Autor: Francis Bello (1917-1987)
     Lokal: walter_pitts_1954.jpg (733x1078)
-    Status: OK - Public domain
+    Status: OK - Public domain; Original-Commons-Link derzeit nicht erreichbar
 
 25. img_alexnet_architecture
     URL: https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png

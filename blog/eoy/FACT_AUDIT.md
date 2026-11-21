@@ -3,7 +3,7 @@
 - Geprüfte Quellen: `blog/eoy/data.js`, aktive Demos, `PERFORMANCE.md`-Seiten.
 - Extrahierte Sätze: 2.961 Deutsch, 2.952 Englisch (inklusive Teaser, Context, Deep, Boxen und Fragen).
 - Davon gesichtet: 317 numerische Claims, 553 Kandidaten mit Modell-, Personen- oder Werknamen.
-- `url:`-Felder: 120 geprüft, keine 404er; 8 Antworten waren Bot-Blocker (403/202).
+- `url:`-Felder und Demo-Quellen: erneut geprüft. Der Walter-Pitts-Commons-Link war 404 und wurde auf Wikipedia umgestellt; der Geva-Link zeigte auf das falsche Paper und wurde auf arXiv:2012.14913 korrigiert. Die übrigen Nicht-200-Antworten sind Bot-Blocker (202/403/503), keine echten 404er.
 
 ## Korrekturen
 
