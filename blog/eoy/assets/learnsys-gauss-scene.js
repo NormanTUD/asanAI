@@ -222,7 +222,7 @@
         '<span><b>' + (DE ? "Beobachtungen" : "observations") + '</b> ' + N + '</span>' +
         '<span><b>' + (DE ? "Mittlerer Fehler" : "mean error") + '</b> ' + (mean >= 0 ? "+" : "") + mean.toFixed(2) + '</span>' +
         '<span><b>' + (DE ? "Methode" : "method") + '</b> ' + (DE ? "kleinste Quadrate" : "least squares") + '</span>';
-      statusEl.textContent = DE ? "Gauß glaubt keiner einzelnen Messung." : "Gauss believes no single measurement.";
+      statusEl.textContent = DE ? "Keine einzelne Messung entscheidet allein." : "No single measurement decides alone.";
     }
     function resize() { draw(); }
     var sigmaAnim = 0, lastSigmaTarget = null;

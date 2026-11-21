@@ -33,15 +33,17 @@
         position: true
       },
       {
-        id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "×N", color: "green",
+        id: "transformer", label: "Transformer-Blöcke", short: "Attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert.",
+        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert. Der Residualstrom läuft durch alle Blöcke; Attention und FFN addieren ihre Updates darauf.",
         points: [],
         mini: "transformer",
         sub: [
-          { title: "Attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesem Gesichtspunkt beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
-          { title: "Feed-Forward-Netzwerk (FFN)", text: "Das FFN projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück. So isoliert es Bedeutungszusammenhänge kontextabhängig und kann auf einzelne Bedeutungen reagieren." }
-        ]
+          { title: "Attention", mini: "attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesem Gesichtspunkt beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
+          { title: "Feed-Forward-Netzwerk (FFN)", mini: "ffn", text: "Das FFN projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück. So isoliert es Bedeutungszusammenhänge kontextabhängig und kann auf einzelne Bedeutungen reagieren." },
+          { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm zentriert jede Token-Zeile auf Mittelwert 0 und skaliert sie auf Varianz 1; gelernte γ/β justieren danach. Das hält Attention und FFN in einer stabilen Skala. Ein Transformer-Block hat zwei LayerNorm-Stellen, eine für Attention und eine für das FFN. Im Original-Transformer stehen sie nach den jeweiligen Residual-Additionen, in GPT-2 davor; GPT-2 hat zusätzlich eine finale LayerNorm nach dem letzten Block. Die Demo zeigt den Kern: Aus Werten um 3 wird eine Verteilung um 0. Wichtig: Danach sind die Werte nicht auf [-1, 1] begrenzt; bei γ=1, β=0 hat der Vektor die Länge √d, nicht 1. Nicht alles im Transformer liegt auf einer Kugel: Der Residualstrom sammelt die Updates aller Blöcke und bleibt nicht global auf einer Hypersphäre. Die Kugel ist eine nützliche Richtungs-Projektion, kein exakter Zustand." }
+        ],
+        source: { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }
       },
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
@@ -75,15 +77,17 @@
         position: true
       },
       {
-        id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "×N", color: "green",
+        id: "transformer", label: "Transformer blocks", short: "attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred.",
+        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred. The residual stream runs through all blocks; attention and FFN add their updates to it.",
         points: [],
         mini: "transformer",
         sub: [
-          { title: "Attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context." },
-          { title: "Feed-forward network (FFN)", text: "The FFN projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back. That is how it isolates meaning relations depending on context and can react to individual meanings." }
-        ]
+          { title: "Attention", mini: "attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context." },
+          { title: "Feed-forward network (FFN)", mini: "ffn", text: "The FFN projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back. That is how it isolates meaning relations depending on context and can react to individual meanings." },
+          { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm centers each token row on mean 0 and variance 1; learned γ/β adjust it afterwards. That keeps attention and FFN at a stable scale. A transformer block has two LayerNorm sites, one for attention and one for the FFN. In the original transformer they stand after the respective residual additions; in GPT-2 they stand before them, and GPT-2 adds a final LayerNorm after the last block. The demo shows the core: values around 3 become a distribution around 0. Important: afterwards the values are not bounded to [-1, 1]; with γ=1 and β=0 the vector has length √d, not 1. Not everything in the transformer lies on a sphere: the residual stream collects the updates of all blocks and does not stay globally on a hypersphere. The sphere is a useful direction projection, not an exact state." }
+        ],
+        source: { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }
       },
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
@@ -123,7 +127,7 @@
         if (b.id === "transformer") {
           card.innerHTML = '<span class="ls-bs-group-head"><span class="ls-bs-icon">×N</span><span class="ls-bs-label"><b>' + esc(b.label) + '</b><small>' + esc(b.short) + '</small></span><span class="ls-bs-badge">' + (DE ? "diese n mal" : "these n times") + '</span></span>' +
             '<span class="ls-bs-brace" aria-hidden="true"></span>' +
-            '<span class="ls-bs-pills"><span class="ls-bs-pill">A · Attention</span><span class="ls-bs-pill">FFN</span></span>';
+            '<span class="ls-bs-pills"><span class="ls-bs-pill">A · Attention</span><span class="ls-bs-pill">LN · LayerNorm</span><span class="ls-bs-pill">FFN</span></span>';
         } else {
           card.innerHTML = '<span class="ls-bs-icon">' + esc(b.icon) + '</span><span class="ls-bs-label"><b>' + esc(b.label) + '</b><small>' + esc(b.short) + '</small></span>';
         }
@@ -324,6 +328,97 @@
       V.heading(ctx, DE ? "FFN: erkennen · trennen · neu ordnen" : "FFN: recognise · separate · reorder", 12, 14, C.petrol, 10, 1);
       V.label(ctx, DE ? "pro Token" : "per token", w * 0.50, h - 8, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
     }
+    function miniLayerNorm(ctx, w, h) {
+      var values = [1, 2, 3, 4, 5];
+      var mean = 3, std = Math.sqrt(2);
+      var normed = values.map(function (v) { return (v - mean) / std; });
+      var pad = Math.max(10, w * 0.035);
+      var top = 36, bottom = h - 36;
+      var panelW = Math.min(w * 0.33, (w - 2 * pad) * 0.40);
+      var gap = Math.max(18, w * 0.055);
+      var leftX = pad, rightX = leftX + panelW + gap;
+      var center = top + (bottom - top) / 2;
+      var barW = Math.min(18, panelW / (values.length * 1.8));
+      var scaleL = (bottom - top - 10) / 5.2;
+      var scaleR = (bottom - top - 10) / 3.4;
+      function bars(x, vals, scale, zero, positiveOnly) {
+        vals.forEach(function (v, i) {
+          var cx = x + panelW * (i + 0.5) / vals.length;
+          var y = zero - v * scale;
+          var y0 = positiveOnly ? y : Math.min(y, zero);
+          ctx.fillStyle = V.alpha(positiveOnly ? C.sky : C.green, 0.62);
+          ctx.fillRect(cx - barW / 2, y0, barW, Math.abs(y - zero));
+        });
+      }
+      function meanLine(x, y, label, color) {
+        ctx.save();
+        ctx.strokeStyle = V.alpha(color, 0.85);
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + panelW, y);
+        ctx.stroke();
+        ctx.restore();
+        V.label(ctx, label, x + panelW, y - 5, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: color, align: "right" });
+      }
+      ctx.strokeStyle = V.alpha(C.line, 0.9);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(leftX, bottom);
+      ctx.lineTo(leftX + panelW, bottom);
+      ctx.moveTo(rightX, center);
+      ctx.lineTo(rightX + panelW, center);
+      ctx.stroke();
+      bars(leftX, values, scaleL, bottom, true);
+      bars(rightX, normed, scaleR, center, false);
+      meanLine(leftX, bottom - mean * scaleL, DE ? "μ 3,0" : "μ 3.0", C.sky);
+      meanLine(rightX, center, DE ? "μ 0,0" : "μ 0.0", C.green);
+      [-1, 1].forEach(function (v) {
+        var y = center - v * scaleR;
+        ctx.save();
+        ctx.strokeStyle = V.alpha(C.line, 0.7);
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(rightX, y);
+        ctx.lineTo(rightX + panelW, y);
+        ctx.stroke();
+        ctx.restore();
+        V.label(ctx, v > 0 ? "+1" : "−1", rightX + panelW - 2, y - 2, { font: '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif', color: C.muted, align: "right" });
+      });
+      V.label(ctx, DE ? "vorher" : "before", leftX, top - 8, { font: '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Barlow", sans-serif', color: C.sky });
+      V.label(ctx, DE ? "nachher" : "after", rightX, top - 8, { font: '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Barlow", sans-serif', color: C.green });
+      V.label(ctx, DE ? "σ 1,4" : "σ 1.4", leftX, bottom + 15, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted });
+      V.label(ctx, DE ? "σ 1,0" : "σ 1.0", rightX, bottom + 15, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted });
+      var ax = leftX + panelW + 4, bx = rightX - 8;
+      ctx.strokeStyle = V.alpha(C.petrol, 0.8);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(ax, center);
+      ctx.lineTo(bx, center);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(bx, center);
+      ctx.lineTo(bx - 5, center - 3);
+      ctx.lineTo(bx - 5, center + 3);
+      ctx.closePath();
+      ctx.fillStyle = C.petrol;
+      ctx.fill();
+      V.label(ctx, "−μ / σ", (ax + bx) / 2, center - 9, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.petrol, align: "center" });
+      var sx = Math.min(w - 30, rightX + panelW + gap * 0.8), sr = Math.min(w * 0.045, h * 0.17);
+      if (sx + sr + 18 < w) {
+        ctx.strokeStyle = V.alpha(C.petrol, 0.55);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(sx, center, sr, 0, Math.PI * 2);
+        ctx.stroke();
+        V.arrow(ctx, sx, center, sx + Math.cos(-0.55) * sr, center + Math.sin(-0.55) * sr, C.petrol, 1.8, 4);
+        V.label(ctx, DE ? "√d, nicht 1" : "√d, not 1", sx, center + sr + 13, { font: '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif', color: C.petrol, align: "center" });
+      }
+      V.label(ctx, DE ? "Werte dürfen > 1 sein; Kugel = Richtungs-Projektion" : "values may exceed 1; sphere = direction projection", w / 2, h - 7, { font: '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
+      V.heading(ctx, DE ? "LayerNorm · pro Token" : "LayerNorm · per token", 12, 16, C.petrol, 10, 1);
+    }
     function miniUnembed(ctx, w, h) {
       var ox = w * 0.16, oy = h * 0.60, s = Math.min(w * 0.20, h * 0.32);
       var H = [0.90, 0.35];
@@ -358,6 +453,7 @@
       else if (kind === "embedding") miniEmbedding(ctx, w, h);
       else if (kind === "attention") miniAttention(ctx, w, h);
       else if (kind === "ffn") miniFFN(ctx, w, h);
+      else if (kind === "layernorm") miniLayerNorm(ctx, w, h);
       else if (kind === "unembed") miniUnembed(ctx, w, h);
     }
     function drawMinis() {
@@ -402,7 +498,9 @@
           '<p class="ls-bs-traj-caption">' + (DE ? "Die Kugel zeigt mögliche Positionskodierungen. Bewege die Position und drehe die Ansicht; der Punkt wandert auf der Kugel." : "The sphere shows possible position encodings. Move the position and rotate the view; the point moves on the sphere.") + '</p>';
       } else if (b.sub) {
         html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
-          return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
+          var kind = s.mini || (["attention", "ffn"][i] || "ffn");
+          var cls = "ls-bs-sub" + (s.wide ? " ls-bs-sub--wide" : "");
+          return '<div class="' + cls + '"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + kind + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
       } else {
         html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '"></canvas></div>';

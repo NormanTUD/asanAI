@@ -1581,6 +1581,8 @@ h1,h2,h3,h4{
 .ls-bs-canvas-wrap--unembed{aspect-ratio:3/2}
 .ls-bs-subgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .ls-bs-sub{border:1px solid var(--ls-line);background:var(--ls-paper-2);padding:7px 8px;display:flex;flex-direction:column;gap:5px}
+.ls-bs-sub--wide{grid-column:1/-1}
+.ls-bs-sub--wide .ls-bs-subcanvas{aspect-ratio:21/9}
 .ls-bs-sub b{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
 .ls-bs-subcanvas{position:relative;width:100%;aspect-ratio:16/9;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
 .ls-bs-subcanvas canvas{display:block;width:100%;height:100%}
