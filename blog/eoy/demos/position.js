@@ -330,10 +330,11 @@
       reveal = true;
       sweep = null;
       pos = 100000; posAnim = 100000;
-      trail = [];
-      var step = Math.max(12, Math.ceil(100000 / 1200));
-      for (var tv = 0; tv <= 100000; tv += step) trail.push(tv);
-      if (trail[trail.length - 1] !== 100000) trail.push(100000);
+      var set = Object.create(null);
+      trail.forEach(function (v) { set[v] = 1; });
+      for (var tv = 0; tv <= 2000; tv++) set[tv] = 1;
+      trail = Object.keys(set).map(Number).sort(function (a, b) { return a - b; });
+      addTrailTo(pos);
       if (posEl) { posEl.value = "100000"; posEl.nextElementSibling.textContent = "100000"; }
       draw();
     }
