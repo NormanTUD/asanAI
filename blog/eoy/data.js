@@ -550,8 +550,8 @@
   };
 
   var ffnStep = {
-    title: ffnSteps[0].title,
-    kicker: ffnSteps[0].kicker,
+    title: DE ? "Feed-Forward-Netzwerk (FFN)" : "Feed-forward network (FFN)",
+    kicker: "FFN",
     substeps: [ffnSteps[0], ffnSplitSubstep]
   };
 
