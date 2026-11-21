@@ -308,7 +308,7 @@
         txt(c, DE ? "Todesjahr historischer Personen" : "death year of historical figures", cardX + 14, cardY + 44, { size: 9.5, color: C.muted });
         accent(c, cardX + 14, cardY + 58, 28);
         head(c, "R² = 0.835", cardX + 14, cardY + 88, { size: 27, color: C.petrol });
-        txt(c, DE ? "linearer Ridge-Probe, out-of-sample" : "linear ridge probe, out-of-sample", cardX + 14, cardY + 108, { size: 9, color: C.muted });
+        txt(c, DE ? "Ridge-Probe (Paper); Punkte schematisch" : "ridge probe (paper); points schematic", cardX + 14, cardY + 108, { size: 9, color: C.muted });
         var gaugeX = cardX + 14, gaugeY = cardY + 124, gaugeW = cardW - 28;
         c.fillStyle = V.alpha(C.line, 0.7);
         c.fillRect(gaugeX, gaugeY, gaugeW, 8);
@@ -344,7 +344,7 @@
           txt(c, DE ? "schematische Punkte" : "schematic points", cardX + 14, cardY + 216, { size: 8, color: C.muted });
         }
       } else {
-        txt(c, DE ? "Llama-2-70B · R² = 0.835 · Todesjahr" : "Llama-2-70B · R² = 0.835 · death year", W / 2, H - 28, {
+        txt(c, DE ? "Llama-2-70B · R² = 0.835 (Paper) · Punkte schematisch" : "Llama-2-70B · R² = 0.835 (paper) · points schematic", W / 2, H - 28, {
           align: "center",
           size: W < 620 ? 9.4 : 10.2,
           color: C.ink,

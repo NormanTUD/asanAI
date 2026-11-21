@@ -314,8 +314,8 @@
       });
       var topRow = top[0];
       readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span><span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
-      caption.textContent = DE ? "Die Kugel ist eine 3D-Projektion der gelernten Richtungen. Der Winkel ist die Ähnlichkeit; ein kurzer und ein langer Vektor in dieselbe Richtung haben 0°, ein Punkt daneben hat einen größeren Winkel." : "The sphere is a 3D projection of the learned directions. The angle is the similarity; a short and a long vector in the same direction have 0°, while a point off the line has a larger angle.";
-      canvas.setAttribute("aria-label", DE ? "3D-Kugel der gelernten Wortrichtungen; der grüne Vektor ist das gewählte Wort, die Winkel zu den nächsten Richtungen stehen daneben." : "3D sphere of learned word directions; the green vector is the chosen word, with angles to the nearest directions.");
+      caption.textContent = DE ? "Die Kugel ist eine schematische 3D-Projektion von Wortrichtungen. Der Winkel ist die Ähnlichkeit; ein kurzer und ein langer Vektor in dieselbe Richtung haben 0°, ein Punkt daneben hat einen größeren Winkel." : "The sphere is a schematic 3D projection of word directions. The angle is the similarity; a short and a long vector in the same direction have 0°, while a point off the line has a larger angle.";
+      canvas.setAttribute("aria-label", DE ? "3D-Kugel schematischer Wortrichtungen; der grüne Vektor ist das gewählte Wort, die Winkel zu den nächsten Richtungen stehen daneben." : "3D sphere of schematic word directions; the green vector is the chosen word, with angles to the nearest directions.");
     }
 
     function circleScene() {
@@ -350,7 +350,7 @@
       var dotv = Math.cos(a - b);
       var stat = dotv > 0.9 ? (DE ? "sehr ähnlich" : "very similar") : dotv > 0.1 ? (DE ? "verwandt" : "related") : dotv > -0.1 ? (DE ? "neutral" : "neutral") : (DE ? "entgegengesetzt" : "opposite");
       readout.innerHTML = '<span>Vector A <b>[' + Math.cos(a).toFixed(2) + ', ' + Math.sin(a).toFixed(2) + ']</b></span><span>Vector B <b>[' + Math.cos(b).toFixed(2) + ', ' + Math.sin(b).toFixed(2) + ']</b></span><span>Dot <b>' + dotv.toFixed(3) + '</b></span><span><b>' + stat + '</b></span>';
-      caption.textContent = DE ? "Der Winkel ist die Ähnlichkeit der Richtungen. Dot nahe 1: ähnlich; nahe 0: neutral; negativ: entgegengesetzt. Das ist eine Interpretation der gelernten Richtungen, kein Wahrheitsbeweis." : "The angle is the similarity of directions. Dot near 1: similar; near 0: neutral; negative: opposite. This is an interpretation of learned directions, not a proof of truth.";
+      caption.textContent = DE ? "Der Winkel ist die Ähnlichkeit der Richtungen. Dot nahe 1: ähnlich; nahe 0: neutral; negativ: entgegengesetzt. Das ist eine Interpretation der gezeigten Richtungen, kein Wahrheitsbeweis." : "The angle is the similarity of directions. Dot near 1: similar; near 0: neutral; negative: opposite. This is an interpretation of the shown directions, not a proof of truth.";
     }
     function dirLoop(now) {
       if (mode !== "directions" || api.reducedMotion) { dirRaf = 0; return; }

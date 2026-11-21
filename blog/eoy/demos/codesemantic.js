@@ -351,8 +351,8 @@
       startGroups.forEach(drawStartGroup);
       var nodeMain = isLang ? (DE ? "Bedeutung" : "meaning") : "Quicksort";
       var nodeSub = isLang ? (DE ? "Hund läuft Straße" : "dog runs street") : (DE ? "Funktion" : "function");
-      var nodeAbove = isLang ? (DE ? "sprachunabhängig" : "language-independent") : (DE ? "abstrakte Bedeutung" : "abstract meaning");
-      var nodeBelow = isLang ? (DE ? "drei Sätze, ein Punkt" : "three sentences, one point") : (DE ? "beide landen hier" : "both land here");
+      var nodeAbove = isLang ? (DE ? "sprachübergreifend" : "cross-lingual") : (DE ? "abstrakte Bedeutung" : "abstract meaning");
+      var nodeBelow = isLang ? (DE ? "neun Sätze, ein Punkt" : "nine sentences, one point") : (DE ? "fünf landen hier" : "five land here");
       var pulse = 0.5 + 0.5 * Math.sin(now / 430);
       ctx.save();
       var glow = ctx.createRadialGradient(nodeX, nodeY, 2, nodeX, nodeY, nodeR * 2.1);
@@ -393,7 +393,7 @@
       V.heading(ctx, isLang ? (DE ? "Drei Sprachen, eine Bedeutung" : "Three languages, one meaning") : (DE ? "Verschiedene Oberflächen, ein Punkt" : "Different surfaces, one point"), 14, 16, C.petrol, headingSize, 1);
       V.label(ctx, spaceTitle, w - 14, 16, { font: '700 ' + headingSize + 'px "Barlow", sans-serif', color: C.muted, align: "right", alpha: 1 });
       canvas.setAttribute("aria-label", isLang
-        ? (DE ? "Neun Sätze in drei Sprachen, jeweils mit und ohne Tippfehler, zeigen auf denselben sprachunabhängigen Bedeutungs-Knoten. Tippfehler, Schreibweise und Sprache sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Nine sentences in three languages, with and without typos, point to the same language-independent meaning node. Typos, spelling, and language are noise; the meaning lands on the same point.")
+        ? (DE ? "Neun Sätze in drei Sprachen, jeweils mit und ohne Tippfehler, zeigen auf denselben angenäherten sprachübergreifenden Bedeutungs-Knoten. Tippfehler, Schreibweise und Sprache sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Nine sentences in three languages, with and without typos, point to the same approximate cross-lingual meaning node. Typos, spelling, and language are noise; the meaning lands on the same point.")
         : (DE ? "Fünf Codeblöcke in Python, JavaScript, Java, Rust und Go zeigen auf denselben abstrakten Quicksort-Knoten. def, function, void, fn und func sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Five code blocks in Python, JavaScript, Java, Rust, and Go point to the same abstract quicksort node. def, function, void, fn, and func are noise; the meaning lands on the same point."));
     }
     function setKind(next) {

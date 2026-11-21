@@ -111,11 +111,11 @@
     var ARIA = DE ? [
       "Schematisches Othello-Brett mit schwarzen und weißen Scheiben",
       "Fünf Schritte vom L6-Residualstrom über Dot-Product und Softmax zum Brett",
-      "Zwei Richtungen für Othello, ein Unterraum für Schach und viele überlagerte Unterräume für reale Modelle"
+      "Drei Logits pro Feld für Othello, ein Unterraum für Schach und viele überlagerte Unterräume für reale Modelle"
     ] : [
       "Schematic Othello board with black and white discs",
       "Five steps from the L6 residual stream through dot product and softmax to the board",
-      "Two directions for Othello, a subspace for chess, and many overlapping subspaces for real models"
+      "Three logits per square for Othello, a subspace for chess, and many overlapping subspaces for real models"
     ];
     canvas.setAttribute("role", "img");
     canvas.setAttribute("aria-label", ARIA[0]);

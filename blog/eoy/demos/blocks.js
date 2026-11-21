@@ -388,12 +388,12 @@
           '  <span class="ls-syn-tag">&lt;meta</span> <span class="ls-syn-attr">name</span>=<span class="ls-syn-str">"referrer"</span> <span class="ls-syn-attr">content</span>=<span class="ls-syn-str">"origin"</span><span class="ls-syn-tag">&gt;</span>\n' +
           '  <span class="ls-syn-tag">&lt;link</span> <span class="ls-syn-attr">rel</span>=<span class="ls-syn-str">"stylesheet"</span> <span class="ls-syn-attr">href</span>=<span class="ls-syn-str">"/w/load.php?lang=en&amp;modules=…"</span><span class="ls-syn-tag">&gt;</span>\n' +
           '<span class="ls-syn-tag">&lt;/head&gt;</span>\n' +
-          '<span class="ls-syn-comment">&lt;!-- … 1 062 378 Bytes HTML … --&gt;</span>' +
+          '<span class="ls-syn-comment">&lt;!-- … over 1 MB HTML … --&gt;</span>' +
           '</code></pre></div>' +
           '<div class="ls-bs-book">' +
           '<div class="ls-bs-book-head">' + (DE ? "… danach: ein Buchtext aus dem Korpus" : "… then: a book text from the corpus") + '</div>' +
           '<p class="ls-bs-book-title">' + (DE ? "Also sprach Zarathustra. Ein Buch für Alle und Keinen." : "Thus Spoke Zarathustra. A Book for All and None.") + '</p>' +
-          '<p class="ls-bs-book-quote">' + (DE ? "„Man muss noch Chaos in sich tragen, um einen tanzenden Stern gebären zu können.“" : "“One must still have chaos in oneself to be able to give birth to a dancing star.”") + '</p>' +
+          '<p class="ls-bs-book-quote">' + (DE ? "„Man muss noch Chaos in sich haben, um einen tanzenden Stern gebären zu können.“" : "“One must still have chaos in oneself to be able to give birth to a dancing star.”") + '</p>' +
           '<p class="ls-bs-book-src">' + (DE ? "Friedrich Nietzsche, 1883 · " : "Friedrich Nietzsche, 1883 · ") + '<a href="' + (DE ? "https://www.gutenberg.org/ebooks/7205" : "https://www.gutenberg.org/ebooks/1998") + '" target="_blank" rel="noopener">Project Gutenberg</a></p>' +
           '</div>' +
           '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist über ein Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen, Tags und Text. Zwischen dem HTML und dem Buch liegt eine Auslassung: Der Korpus enthält beides." : "The real page is over a megabyte. The model does not see “the article”, but a very long sequence of characters, tags, and text. Between the HTML and the book sits an omission: the corpus contains both.") + '</p>';

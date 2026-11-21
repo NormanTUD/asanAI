@@ -73,8 +73,8 @@
         '<div class="ls-lang-data-summary" hidden>' +
           '<div class="ls-lang-data-stage">' +
             '<div class="ls-lang-data-stage-head"><span class="ls-lang-data-num">1</span><b>' + (DE ? "Vortraining" : "Pretraining") + '</b><span>' + (DE ? "großer Datensatz" : "large dataset") + '</span></div>' +
-            '<p class="ls-lang-data-stage-data">' + (DE ? "Großer, gefilterter Textkorpus: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "A large, filtered text corpus: Wikipedia, Reddit, books, websites, source code.") + '</p>' +
-            '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz lernt Muster, Sprache, Fakten und Code und setzt rohe Daten fort." : "The net learns patterns, language, facts, and code, and continues raw data.") + '</p>' +
+            '<p class="ls-lang-data-stage-data">' + (DE ? "Großer, gefilterter Textkorpus: Webseiten, Bücher, Wikipedia." : "A large, filtered text corpus: websites, books, Wikipedia.") + '</p>' +
+            '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz lernt Muster, Sprache und Fakten und setzt rohe Daten fort." : "The net learns patterns, language, and facts, and continues raw data.") + '</p>' +
             '<p class="ls-lang-data-stage-source">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p>' +
             '<pre class="ls-lang-data-code"><code>' + wikiHtml + '</code></pre>' +
           '</div>' +

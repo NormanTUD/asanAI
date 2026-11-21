@@ -66,8 +66,8 @@
 		{
 			title: "The layer bends space",
 			titleDe: "Die Schicht biegt den Raum",
-			body: "The layer lifts the grid into a bowl: z = r². Inside the ring sinks, outside it rises. The bend is smooth and reversible. It stretches the space without tearing it or gluing distinct points together.",
-			bodyDe: "Die Schicht hebt das Gitter in eine Schale: z = r². Innerhalb des Rings sinkt es, außerhalb steigt es. Die Biegung ist glatt und umkehrbar. Sie dehnt den Raum, ohne ihn zu zerreißen oder verschiedene Punkte zu verkleben.",
+			body: "The layer lifts the grid into a bowl: z ≈ r². Inside the ring sinks, outside it rises. The bend is smooth and reversible. It stretches the space without tearing it or gluing distinct points together.",
+			bodyDe: "Die Schicht hebt das Gitter in eine Schale: z ≈ r². Innerhalb des Rings sinkt es, außerhalb steigt es. Die Biegung ist glatt und umkehrbar. Sie dehnt den Raum, ohne ihn zu zerreißen oder verschiedene Punkte zu verkleben.",
 			lift: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 0
 		},
 		{
@@ -94,8 +94,8 @@
 		{
 			title: "The dense layer in numbers",
 			titleDe: "Die Dense-Schicht in Zahlen",
-			body: "The lift is a small dense layer. It expands the two input coordinates into n hidden values, bends each with an activation, and projects them back to one height. Change n, the weight scale or the bias and watch the surface change. One neuron gives one smooth ridge; more neurons can carve a bowl.",
-			bodyDe: "Die Anhebung ist eine kleine Dense-Schicht. Sie dehnt die beiden Eingabekoordinaten auf n verborgene Werte aus, biegt jeden mit einer Aktivierung und projiziert sie zurück auf eine Höhe. Ändere n, die Gewichtsskala oder den Bias und beobachte, wie sich die Fläche verändert. Ein Neuron ergibt einen glatten Grat; mehr Neuronen können eine Schüssel formen.",
+			body: "The lift is a small dense layer. It expands the two input coordinates into n hidden values, bends each with an activation, and projects them back to one height. Change n, the weight scale or the bias and watch the surface change. One neuron gives one ridge; more neurons can carve a bowl.",
+			bodyDe: "Die Anhebung ist eine kleine Dense-Schicht. Sie dehnt die beiden Eingabekoordinaten auf n verborgene Werte aus, biegt jeden mit einer Aktivierung und projiziert sie zurück auf eine Höhe. Ändere n, die Gewichtsskala oder den Bias und beobachte, wie sich die Fläche verändert. Ein Neuron ergibt einen Grat; mehr Neuronen können eine Schüssel formen.",
 			formula: "\\underbrace{x=\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}}_{\\text{input point}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ hidden neurons}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{one height}}",
 			formulaDe: "\\underbrace{x=\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}}_{\\text{Eingabepunkt}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ versteckte Neuronen}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{eine Höhe}}",
 			lift: 0, dense: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 0

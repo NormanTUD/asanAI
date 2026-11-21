@@ -339,7 +339,7 @@
         drawMeadowLandscape(ctx, size.w, size.h, pal);
         if (modeMix > 0.5) {
           readout.innerHTML = '<span>' + (DE ? "Landschaft" : "landscape") + ' <b>' + (DE ? "Höhe = Nähe" : "height = closeness") + '</b></span><span>' + (DE ? "Wörter auf der Token-Ebene" : "words on the token plane") + '</span>';
-          caption.textContent = DE ? "Dieselben Wörter, jetzt als Wahrscheinlichkeitslandschaft: Jedes Wort ist ein Gipfel, die Täler dazwischen sind unsicher." : "The same words as a probability landscape: every word is a peak, the valleys between them are uncertain.";
+          caption.textContent = DE ? "Dieselben Wörter, jetzt als Wahrscheinlichkeitslandschaft: Jedes Wort ist ein Gipfel, die Täler dazwischen sind unwahrscheinlich." : "The same words as a probability landscape: every word is a peak, the valleys between them are unlikely.";
         }
       }
       nEl.nextElementSibling.textContent = N;

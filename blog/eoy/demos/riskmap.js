@@ -48,7 +48,7 @@
         sub: "Wer gewinnt, wer trägt das Risiko? Klicke ein Feld.",
         items: [
           { tag: "Arbeit", title: "Aufgaben, nicht Berufe", short: "Ersetzen und neu schaffen", body: "Automatisierung ersetzt Aufgaben und schafft neue. Ob der Gewinn bei vielen ankommt, hängt von Institutionen und Politik ab, nicht von der Technik allein.", cite: "Acemoglu & Restrepo (2019)" },
-          { tag: "Wahrheit", title: "Falsch ist billiger", short: "Desinformation in Echtzeit", body: "Falsche Nachrichten verbreiten sich online schneller als wahre. Generative Modelle machen überzeugende Fälschungen billig und skalierbar.", cite: "Vosoughi et al. (2018)" },
+          { tag: "Wahrheit", title: "Falsch ist billiger", short: "Desinformation in Echtzeit", body: "In der untersuchten Twitter-Stichprobe verbreiteten sich falsche Nachrichten schneller als wahre. Generative Modelle machen überzeugende Fälschungen billig und skalierbar.", cite: "Vosoughi et al. (2018)" },
           { tag: "Urheberrecht", title: "Wer besitzt den Stil?", short: "Training, Remix, Lizenz", body: "Modelle lernen aus geschützten Werken und können Stile nachahmen. Urheberrecht, Lizenz und Vergütung sind national unterschiedlich und offen.", cite: "US Copyright Office (2025)" },
           { tag: "Macht", title: "Wer schreibt die Regeln?", short: "Compute, Staaten, Konzerne", body: "Rechenleistung ist konzentriert; Daten und Talente sind ebenfalls ungleich verteilt. Demokratische Kontrolle braucht Transparenz, Wettbewerb und Regeln, die auch über Grenzen gelten.", cite: "Sastry et al. (2024); EU AI Act (2024)" }
         ]
@@ -95,7 +95,7 @@
         sub: "Who wins, who carries the risk? Click a field.",
         items: [
           { tag: "Work", title: "Tasks, not jobs", short: "replace and create", body: "Automation replaces tasks and creates new ones. Whether the gains reach many people depends on institutions and politics, not on technology alone.", cite: "Acemoglu & Restrepo (2019)" },
-          { tag: "Truth", title: "False is cheaper", short: "real-time disinformation", body: "False news spreads online faster than true news. Generative models make convincing fakes cheap and scalable.", cite: "Vosoughi et al. (2018)" },
+          { tag: "Truth", title: "False is cheaper", short: "real-time disinformation", body: "In the Twitter sample studied, false news spread faster than true news. Generative models make convincing fakes cheap and scalable.", cite: "Vosoughi et al. (2018)" },
           { tag: "Copyright", title: "Who owns the style?", short: "training, remix, licence", body: "Models learn from protected works and can imitate styles. Copyright, licensing, and payment are national questions and remain open.", cite: "US Copyright Office (2025)" },
           { tag: "Power", title: "Who writes the rules?", short: "compute, states, companies", body: "Compute is concentrated; data and talent are also unevenly distributed. Democratic control needs transparency, competition, and rules that work across borders.", cite: "Sastry et al. (2024); EU AI Act (2024)" }
         ]
