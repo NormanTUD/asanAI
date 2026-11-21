@@ -8,10 +8,50 @@
   html,body{margin:0;height:100%;background:#04050c;overflow:hidden}
   canvas{display:block;width:100vw;height:100vh;cursor:grab;touch-action:none}
   canvas:active{cursor:grabbing}
+  #hud{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:12px;
+    padding:8px 12px;border-radius:999px;background:rgba(8,10,22,.42);border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 8px 30px rgba(0,0,0,.35);backdrop-filter:blur(10px);opacity:.66;transition:opacity .25s ease;
+    user-select:none;touch-action:none}
+  #hud:hover{opacity:1}
+  .btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.045);
+    color:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+    transition:background .2s,border-color .2s,transform .15s}
+  .btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28)}
+  .btn:active{transform:scale(.94)}
+  .btn svg{width:13px;height:13px;display:block}
+  #play .ic-pause{display:none}
+  #play.playing .ic-play{display:none}
+  #play.playing .ic-pause{display:block}
+  #track{position:relative;width:min(46vw,600px);height:26px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+  #rail{position:absolute;left:0;right:0;top:50%;height:2px;transform:translateY(-50%);border-radius:2px;
+    background:rgba(255,255,255,.13);box-shadow:0 0 14px rgba(120,180,255,.14)}
+  #fill{position:absolute;left:0;top:50%;height:2px;transform:translateY(-50%);border-radius:2px;width:0%;
+    background:linear-gradient(90deg,rgba(160,140,255,.8),rgba(255,190,110,.8),rgba(110,225,255,.85))}
+  #ticks{position:absolute;inset:0;pointer-events:none}
+  .tick{position:absolute;top:50%;width:2px;height:6px;transform:translate(-50%,-50%);border-radius:2px;
+    background:rgba(255,255,255,.18);transition:background .2s}
+  .tick.on{background:rgba(255,255,255,.55)}
+  #knob{position:absolute;top:50%;left:0%;width:11px;height:11px;border-radius:50%;transform:translate(-50%,-50%);
+    background:#fff;box-shadow:0 0 10px rgba(255,255,255,.85),0 0 24px rgba(120,200,255,.5);pointer-events:none}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<div id="hud">
+  <button id="prev" class="btn" aria-label="previous">
+    <svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div id="track" aria-label="timeline">
+    <div id="rail"></div><div id="fill"></div><div id="ticks"></div><div id="knob"></div>
+  </div>
+  <button id="next" class="btn" aria-label="next">
+    <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button id="play" class="btn" aria-label="play">
+    <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+    <svg class="ic-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>
+  </button>
+</div>
 <script>
 "use strict";
 
@@ -835,6 +875,89 @@ let POS = qp.has('p') ? clamp(parseFloat(qp.get('p')), 0, NS) : 0;
 let playing = false;
 const PLAY_SPEED = 0.25;
 
+function camTarget() {
+  const wc = clamp(POS, 0, NS - 1);
+  const rk = clamp(POS - (NS - 1), 0, 1);
+  return clamp((wc + 0.45) * G, 0.4 * G, (NS - 1) * G) + smooth(rk) * 1.0;
+}
+cam.tx = camTarget();
+
+const trackEl = document.getElementById('track');
+const fillEl = document.getElementById('fill');
+const knobEl = document.getElementById('knob');
+const ticksEl = document.getElementById('ticks');
+const playEl = document.getElementById('play');
+let dragging = false;
+
+for (let i = 0; i <= NS; i++) {
+  const el = document.createElement('div');
+  el.className = 'tick';
+  el.style.left = (i / NS * 100) + '%';
+  el.dataset.i = i;
+  ticksEl.appendChild(el);
+}
+
+function updateHUD() {
+  const p = clamp(POS, 0, NS);
+  fillEl.style.width = (p / NS * 100) + '%';
+  knobEl.style.left = (p / NS * 100) + '%';
+  const cur = Math.floor(p + 1e-6);
+  for (const el of ticksEl.children) el.classList.toggle('on', Number(el.dataset.i) <= cur);
+  playEl.classList.toggle('playing', playing);
+  playEl.setAttribute('aria-label', playing ? 'pause' : 'play');
+  trackEl.setAttribute('aria-valuenow', p.toFixed(2));
+}
+
+function setPOS(v) {
+  POS = clamp(v, 0, NS);
+  playing = false;
+  updateHUD();
+}
+
+function posFromEvent(e) {
+  const r = trackEl.getBoundingClientRect();
+  return clamp((e.clientX - r.left) / r.width, 0, 1) * NS;
+}
+
+trackEl.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  dragging = true;
+  trackEl.setPointerCapture(e.pointerId);
+  POS = posFromEvent(e);
+  playing = false;
+  updateHUD();
+});
+trackEl.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  POS = posFromEvent(e);
+  updateHUD();
+});
+trackEl.addEventListener('pointerup', () => { dragging = false; });
+trackEl.addEventListener('pointercancel', () => { dragging = false; });
+
+document.getElementById('prev').addEventListener('click', () => setPOS(Math.round(POS * 2) / 2 - 0.5));
+document.getElementById('next').addEventListener('click', () => setPOS(Math.round(POS * 2) / 2 + 0.5));
+playEl.addEventListener('click', () => {
+  if (POS >= NS - 1e-4) POS = 0;
+  playing = !playing;
+  updateHUD();
+});
+
+addEventListener('keydown', e => {
+  if (e.code === 'ArrowLeft') { setPOS(POS - (e.shiftKey ? 1 : 0.25)); e.preventDefault(); }
+  else if (e.code === 'ArrowRight') { setPOS(POS + (e.shiftKey ? 1 : 0.25)); e.preventDefault(); }
+  else if (e.code === 'Home') { setPOS(0); e.preventDefault(); }
+  else if (e.code === 'End') { setPOS(NS); e.preventDefault(); }
+  else if (e.code === 'Space') {
+    if (POS >= NS - 1e-4) POS = 0;
+    playing = !playing;
+    updateHUD();
+    e.preventDefault();
+  }
+});
+
+updateHUD();
+
 function frame(now) {
   const t = (now - t0) / 1000;
   const dt = clamp((now - lastNow) / 1000 || 0.016, 0.001, 0.05);
@@ -848,9 +971,7 @@ function frame(now) {
   W = clamp(POS, 0, NS - 1);
   const readoutK = clamp(POS - (NS - 1), 0, 1);
 
-  let target = clamp((W + 0.45) * G, 0.4 * G, (NS - 1) * G);
-  target += smooth(readoutK) * 1.0;
-  cam.tx += (target - cam.tx) * Math.min(1, dt * 3.0);
+  cam.tx += (camTarget() - cam.tx) * Math.min(1, dt * 8);
 
   const yaw = -0.38 + 0.22 * Math.sin(t * 0.09) + yawOff;
   const pitch = 0.20 + 0.05 * Math.sin(t * 0.13) + pitchOff;
@@ -883,6 +1004,7 @@ function frame(now) {
   drawReadout();
 
   ctx.globalCompositeOperation = 'source-over';
+  updateHUD();
   requestAnimationFrame(frame);
 }
 
