@@ -38,20 +38,27 @@
     return '<span class="ls-hc-concat-block">' + out + "</span>";
   }
 
+  function tokensHtml(DE) {
+    var toks = DE ? ["Der", "Hund", "läuft", "."] : ["The", "dog", "runs", "."];
+    return '<span class="ls-hc-tokens">' + toks.map(function (t) {
+      return '<span class="ls-hc-token"><b>' + t + "</b>" + bars(3, "ls-hc-token-bars") + "</span>";
+    }).join("") + "</span>";
+  }
+
   function flowScene(root, api, mode) {
     var DE = api.lang === "de";
     var concat = mode === "concat";
     var notes = concat
       ? [
-          DE ? "Jeder Head liefert pro Token einen eigenen kurzen Vektor." : "Each head produces its own short vector per token.",
-          DE ? "Concat hängt die Vektoren der Heads aneinander: aus vier kurzen Vektoren wird ein langer." : "Concat joins the head vectors: four short vectors become one long one.",
-          DE ? "Die Matrix W_O verrechnet den langen Vektor zu einem einzigen Vektor pro Token. Nur diesen einen Vektor bekommt das FFN." : "The matrix W_O combines the long vector into a single vector per token. That is the only vector the FFN receives."
+          DE ? "Jeder Head liefert pro Token einen eigenen Vektor." : "Each head produces its own vector per token.",
+          DE ? "Concat hängt die vier Head-Vektoren hintereinander. Aus vier kurzen Vektoren wird ein langer." : "Concat joins the four head vectors. Four short vectors become one long one.",
+          DE ? "Die Matrix <b>W<sub>O</sub></b> fasst die vier Head-Ergebnisse zu einem gemeinsamen Vektor zusammen. Das FFN bekommt also einen einzigen Token-Vektor, nicht vier getrennte Eingänge." : "The matrix <b>W<sub>O</sub></b> combines the four head results into one shared vector. The FFN therefore receives a single token vector, not four separate inputs."
         ]
       : [
           DE ? "Das FFN bekommt einen einzigen Vektor pro Token, nicht die einzelnen Heads." : "The FFN receives a single vector per token, not the individual heads.",
-          DE ? "W_1 rechnet ihn auf viele Hidden-Werte hoch." : "W_1 expands it into many hidden values.",
+          DE ? "<b>W<sub>1</sub></b> macht daraus viele einzelne Hidden-Werte." : "<b>W<sub>1</sub></b> turns it into many individual hidden values.",
           DE ? "Die Aktivierung biegt jeden Hidden-Wert." : "The activation bends each hidden value.",
-          DE ? "W_2 rechnet die vielen Hidden-Werte wieder auf die ursprüngliche Breite herunter." : "W_2 reduces the many hidden values back to the original width."
+          DE ? "<b>W<sub>2</sub></b> macht aus den vielen Hidden-Werten wieder einen Vektor pro Token. Das Ergebnis geht zurück auf die einzelnen Tokens; jeder Token bekommt seinen eigenen neuen Vektor." : "<b>W<sub>2</sub></b> turns the many hidden values back into one vector per token. The result goes back to the individual tokens; each token receives its own new vector."
         ];
     var stage = 0;
     var last = notes.length - 1;
@@ -79,7 +86,9 @@
         '<span class="ls-hc-arrow">→</span>' +
         group(3, "W_2", matrix(7, 5)) +
         '<span class="ls-hc-arrow">→</span>' +
-        group(3, DE ? "zurück" : "back", bars(5, "ls-hc-vector"));
+        group(3, DE ? "zurück" : "back", bars(5, "ls-hc-vector")) +
+        '<span class="ls-hc-arrow">→</span>' +
+        group(3, DE ? "zurück zu den Tokens" : "back to the tokens", tokensHtml(DE));
     }
     var el = document.createElement("div");
     el.className = "ls-hc-scene";
@@ -88,12 +97,12 @@
       '<p class="ls-hc-note"></p>' +
       '<p class="ls-hc-footer">' + (concat
         ? (DE ? "Wichtig: Das FFN sieht nicht die einzelnen Heads. Concat und W_O machen daraus einen Token-Vektor." : "Important: the FFN does not see the individual heads. Concat and W_O turn them into one token vector.")
-        : (DE ? "Wichtig: Das FFN trennt nicht wieder nach Heads. Es fächert den Token-Vektor in Hidden-Neuronen auf." : "Important: the FFN does not split the heads again. It fans the token vector out into hidden neurons.")) + "</p>";
+        : (DE ? "Wichtig: Das FFN läuft für jedes Token einzeln. Es trennt nicht wieder nach Heads; es gibt jedem Token seinen neuen Vektor zurück." : "Important: the FFN runs separately for each token. It does not split the heads again; it gives each token its new vector back.")) + "</p>";
     root.appendChild(el);
     var note = el.querySelector(".ls-hc-note");
     function render() {
       el.setAttribute("data-stage", String(stage));
-      note.textContent = notes[stage] || "";
+      note.innerHTML = notes[stage] || "";
       el.querySelectorAll("[data-hc-step]").forEach(function (node) {
         var s = parseInt(node.getAttribute("data-hc-step"), 10);
         node.classList.toggle("is-on", s === stage);

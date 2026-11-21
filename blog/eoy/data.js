@@ -528,13 +528,13 @@
     kicker: "FFN",
     title: DE ? "Im FFN: auffächern und zurück" : "Inside the FFN: expand and project back",
     body: (DE
-      ? "Das FFN bekommt pro Token einen einzigen Vektor, nicht die einzelnen Heads. Es rechnet ihn mit $W_1$ auf viele Hidden-Werte hoch, aktiviert sie und rechnet sie mit $W_2$ wieder auf die ursprüngliche Breite herunter. Die Aufspaltung im FFN ist also keine Head-Trennung, sondern die Aufspaltung in Hidden-Neuronen."
-      : "The FFN receives a single vector per token, not the individual heads. It expands it with $W_1$ into many hidden values, activates them, and reduces them back with $W_2$ to the original width. The split inside the FFN is therefore not a split by head, but a split into hidden neurons.") + "\n\n$$" + ffnSplitTex + "$$",
+      ? "Das FFN bekommt pro Token einen einzigen Vektor, nicht die einzelnen Heads. Es rechnet ihn mit $W_1$ auf viele Hidden-Werte hoch, aktiviert sie und rechnet sie mit $W_2$ wieder auf die ursprüngliche Breite herunter. Die Aufspaltung im FFN ist also keine Head-Trennung, sondern die Aufspaltung in Hidden-Neuronen. Am Ende liegt wieder ein Vektor pro Token vor; das FFN läuft für jedes Token einzeln."
+      : "The FFN receives a single vector per token, not the individual heads. It expands it with $W_1$ into many hidden values, activates them, and reduces them back with $W_2$ to the original width. The split inside the FFN is therefore not a split by head, but a split into hidden neurons. At the end there is again one vector per token; the FFN runs separately for each token.") + "\n\n$$" + ffnSplitTex + "$$",
     watch: DE ? "Drücke Weiter: Token-Vektor, W_1, Hidden, Aktivierung, W_2." : "Press Next: token vector, W_1, hidden, activation, W_2.",
     demoState: { scene: "ffnsplit" },
     context: DE
-      ? "Wichtig: Die Heads werden nicht erneut getrennt. Concat und $W_O$ haben sie bereits gemischt; das FFN arbeitet auf dem einen Token-Vektor."
-      : "Important: the heads are not split again. Concat and $W_O$ have already mixed them; the FFN works on the one token vector.",
+      ? "Wichtig: Die Heads werden nicht erneut getrennt. Concat und $W_O$ haben sie bereits gemischt; das FFN arbeitet auf dem einen Token-Vektor. Danach bekommt jeder Token seinen eigenen neuen Vektor zurück."
+      : "Important: the heads are not split again. Concat and $W_O$ have already mixed them; the FFN works on the one token vector. Afterwards each token gets its own new vector back.",
     deep: DE
       ? "Typisch ist die Zwischenschicht etwa viermal so breit wie der Token-Vektor. $W_1$ fächert ihn auf, die Aktivierung macht ihn nichtlinear, $W_2$ rechnet zurück. Das FFN arbeitet pro Token, nicht pro Head."
       : "Typically the intermediate layer is about four times as wide as the token vector. $W_1$ fans it out, the activation makes it nonlinear, and $W_2$ reduces it back. The FFN works per token, not per head.",
@@ -1543,13 +1543,13 @@
     kicker: DE ? "Concat" : "Concat",
     title: DE ? "Heads zusammenfügen" : "Joining the heads",
     body: (DE
-      ? "Jeder Head liefert pro Token einen kurzen Vektor. Multi-Head-Attention hängt diese Vektoren aneinander (Concat) und verrechnet sie mit der gelernten Matrix $W_O$ zu einem einzigen Vektor pro Token. Diesen einen Vektor bekommt das FFN."
-      : "Each head produces a short vector per token. Multi-head attention concatenates these vectors and combines them with the learned matrix $W_O$ into a single vector per token. That is the vector the FFN receives.") + "\n\n$$" + headConcatTex + "$$",
+      ? "Jeder Head liefert pro Token einen eigenen Vektor. Concat hängt die vier Vektoren hintereinander. Die gelernte Matrix $W_O$ fasst sie danach zu einem gemeinsamen Token-Vektor zusammen. Diesen einen Vektor liest das FFN."
+      : "Each head produces its own vector per token. Concat joins the four vectors. The learned matrix $W_O$ then combines them into one shared token vector. That is the vector the FFN reads.") + "\n\n$$" + headConcatTex + "$$",
     watch: DE ? "Drücke Weiter: Heads, Concat, W_O, Token-Vektor." : "Press Next: heads, concat, W_O, token vector.",
     demoState: { scene: "headconcat" },
     context: DE
-      ? "Die Heads sind keine getrennten Ströme, die ins FFN wandern. Concat hängt ihre Vektoren aneinander; $W_O$ verrechnet den langen Vektor zu einem einzigen Vektor pro Token. Das FFN sieht danach nur diesen einen Vektor."
-      : "The heads are not separate streams that travel into the FFN. Concat joins their vectors; $W_O$ combines the long vector into a single vector per token. The FFN then sees only this one vector.",
+      ? "Die Heads sind keine getrennten Ströme, die ins FFN wandern. Concat hängt ihre Vektoren aneinander; $W_O$ macht daraus einen gemeinsamen Token-Vektor. Das FFN bekommt also einen einzigen Vektor pro Token, nicht vier getrennte Eingänge."
+      : "The heads are not separate streams that travel into the FFN. Concat joins their vectors; $W_O$ turns them into one shared token vector. The FFN therefore receives a single vector per token, not four separate inputs.",
     deep: DE
       ? "Formal: Jeder Head liefert $d_v$ Werte; zusammen sind das $H d_v$ Werte. Die gelernte Matrix $W_O$ rechnet diese $H d_v$ Werte auf $d_{\\text{model}}$ Werte herunter. $d_{\\text{model}}$ ist die feste Vektorbreite, mit der der übrige Transformer arbeitet. Danach bleiben die Heads nicht als getrennte Kanäle erhalten."
       : "Formally: each head gives $d_v$ values; together that is $H d_v$ values. The learned matrix $W_O$ reduces these $H d_v$ values to $d_{\\text{model}}$ values. $d_{\\text{model}}$ is the fixed vector width used by the rest of the transformer. The individual heads do not remain as separate channels afterwards.",

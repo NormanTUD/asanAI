@@ -2795,3 +2795,9 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
   .ls-hc-stage{gap:5px}
   .ls-hc-scene{min-height:300px}
 }
+
+.ls-hc-tokens{display:flex;gap:4px}
+.ls-hc-token{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 5px;border:1px solid var(--ls-line);background:var(--ls-paper)}
+.ls-hc-token b{font:700 var(--ls-fs-micro)/1 "Barlow","Open Sans",sans-serif;color:var(--ls-petrol)}
+.ls-hc-token-bars{display:flex;flex-direction:column;gap:2px}
+.ls-hc-token-bars i{display:block;width:18px;height:3px;background:var(--ls-green)}
