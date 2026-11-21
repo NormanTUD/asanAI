@@ -41,7 +41,7 @@
         sub: [
           { title: "Attention", mini: "attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesem Gesichtspunkt beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
           { title: "Feed-Forward-Netzwerk (FFN)", mini: "ffn", text: "Das FFN projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück. So isoliert es Bedeutungszusammenhänge kontextabhängig und kann auf einzelne Bedeutungen reagieren." },
-          { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm zentriert jede Token-Zeile auf Mittelwert 0 und skaliert sie auf Varianz 1; gelernte γ/β justieren danach. Das hält Attention und FFN in einer stabilen Skala. Ein Transformer-Block hat zwei LayerNorm-Stellen, eine für Attention und eine für das FFN. Im Original-Transformer stehen sie nach den jeweiligen Residual-Additionen, in GPT-2 davor; GPT-2 hat zusätzlich eine finale LayerNorm nach dem letzten Block. Die Demo zeigt den Kern: Aus Werten um 3 wird eine Verteilung um 0. Wichtig: Danach sind die Werte nicht auf [-1, 1] begrenzt; bei γ=1, β=0 hat der Vektor die Länge √d, nicht 1. Nicht alles im Transformer liegt auf einer Kugel: Der Residualstrom sammelt die Updates aller Blöcke und bleibt nicht global auf einer Hypersphäre. Die Kugel ist eine nützliche Richtungs-Projektion, kein exakter Zustand." }
+          { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm bringt jede Token-Zeile auf Mittelwert 0 und Varianz 1; gelernte γ/β justieren danach. Das hält Attention und FFN in einer stabilen Skala. Jeder Block hat zwei LayerNorm-Stellen: eine für Attention, eine für das FFN. Im Original-Transformer stehen sie nach den Residual-Additionen, in GPT-2 davor (plus eine finale LayerNorm am Ende). Der Residualstrom läuft durch alle Blöcke; die LayerNorm normalisiert nur die Eingabe der Subschicht. Die Demo zeigt den Kern: Aus Werten um 3 wird eine Verteilung um 0. Wichtig: Die Werte sind danach nicht auf [-1, 1] begrenzt; bei γ=1, β=0 hat der Vektor die Länge √d, nicht 1." }
         ],
         source: { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }
       },
@@ -85,7 +85,7 @@
         sub: [
           { title: "Attention", mini: "attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context." },
           { title: "Feed-forward network (FFN)", mini: "ffn", text: "The FFN projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back. That is how it isolates meaning relations depending on context and can react to individual meanings." },
-          { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm centers each token row on mean 0 and variance 1; learned γ/β adjust it afterwards. That keeps attention and FFN at a stable scale. A transformer block has two LayerNorm sites, one for attention and one for the FFN. In the original transformer they stand after the respective residual additions; in GPT-2 they stand before them, and GPT-2 adds a final LayerNorm after the last block. The demo shows the core: values around 3 become a distribution around 0. Important: afterwards the values are not bounded to [-1, 1]; with γ=1 and β=0 the vector has length √d, not 1. Not everything in the transformer lies on a sphere: the residual stream collects the updates of all blocks and does not stay globally on a hypersphere. The sphere is a useful direction projection, not an exact state." }
+          { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm brings each token row to mean 0 and variance 1; learned γ/β adjust it afterwards. That keeps attention and FFN at a stable scale. Each block has two LayerNorm sites: one for attention, one for the FFN. In the original transformer they stand after the residual additions; in GPT-2 they stand before them, plus a final LayerNorm at the end. The residual stream runs through all blocks; LayerNorm normalizes only the input to the sublayer. The demo shows the core: values around 3 become a distribution around 0. Important: the values are not bounded to [-1, 1] afterwards; with γ=1 and β=0 the vector has length √d, not 1." }
         ],
         source: { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }
       },
@@ -406,17 +406,7 @@
       ctx.fillStyle = C.petrol;
       ctx.fill();
       V.label(ctx, "−μ / σ", (ax + bx) / 2, center - 9, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.petrol, align: "center" });
-      var sx = Math.min(w - 30, rightX + panelW + gap * 0.8), sr = Math.min(w * 0.045, h * 0.17);
-      if (sx + sr + 18 < w) {
-        ctx.strokeStyle = V.alpha(C.petrol, 0.55);
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.arc(sx, center, sr, 0, Math.PI * 2);
-        ctx.stroke();
-        V.arrow(ctx, sx, center, sx + Math.cos(-0.55) * sr, center + Math.sin(-0.55) * sr, C.petrol, 1.8, 4);
-        V.label(ctx, DE ? "√d, nicht 1" : "√d, not 1", sx, center + sr + 13, { font: '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif', color: C.petrol, align: "center" });
-      }
-      V.label(ctx, DE ? "Werte dürfen > 1 sein; Kugel = Richtungs-Projektion" : "values may exceed 1; sphere = direction projection", w / 2, h - 7, { font: '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
+      V.label(ctx, DE ? "Werte dürfen > 1 sein; Länge √d, nicht 1" : "values may exceed 1; length √d, not 1", w / 2, h - 7, { font: '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
       V.heading(ctx, DE ? "LayerNorm · pro Token" : "LayerNorm · per token", 12, 16, C.petrol, 10, 1);
     }
     function miniUnembed(ctx, w, h) {
