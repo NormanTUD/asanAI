@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  html,body{margin:0;height:100%;background:#04050b;overflow:hidden}
+  canvas{display:block;width:100vw;height:100vh}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+/* ---------- tiny real transformer: every number you see is computed ---------- */
+const N=7, D=10, L=6, DIST=9;
+const LT=9.5, INTRO=2.4, OUT=7.5, G=2.7, ZOFF=1.3, zE=-2.4;
+const TOTAL=INTRO+L*LT+OUT;
+const zA=k=>k*G, zFn=k=>k*G+ZOFF;
+
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const rnd=mulberry(11);
+const gauss=()=>Math.sqrt(-2*Math.log(rnd()+1e-9))*Math.cos(6.2831853*rnd());
+const mat=(r,c,s)=>Array.from({length:r},()=>Array.from({length:c},()=>gauss()*s));
+const dot=(a,b)=>{let s=0;for(let i=0;i<a.length;i++)s+=a[i]*b[i];return s};
+const mv=(m,v)=>m.map(r=>dot(r,v));
+const norm=(v,t=0.85)=>{let s=0;for(const x of v)s+=x*x;const r=Math.sqrt(s/v.length)+1e-6;return v.map(x=>x*t/r)};
+const gelu=x=>x/(1+Math.exp(-1.702*x));
+const sat=c=>{const m=Math.max(...c)+1e-6;return c.map(x=>Math.pow(x/m,1.35))};
+function hsl(h,s,l){h/=360;const a=s*Math.min(l,1-l);const f=n=>{const k=(n+h*12)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1))};return [f(0),f(8),f(4)]}
+
+let P1=Array.from({length:D},gauss);{const n=Math.sqrt(dot(P1,P1));P1=P1.map(x=>x/n)}
+let P2=Array.from({length:D},gauss);{const d=dot(P1,P2);P2=P2.map((x,i)=>x-d*P1[i]);const n=Math.sqrt(dot(P2,P2));P2=P2.map(x=>x/n)}
+const pos=(v,i)=>[(i-(N-1)/2)*1.05+0.75*dot(P1,v), 1.25*dot(P2,v)];
+
+const ffn=(Wl,v)=>mv(Wl.w2, mv(Wl.w1,v).map(gelu));
+
+let X=Array.from({length:N},()=>norm(Array.from({length:D},gauss)));
+let T=Array.from({length:N},(_,i)=>sat(hsl(190+i*48,0.9,0.6)));
+const S=[];
+for(let k=0;k<L;k++){
+  const sc=1/Math.sqrt(D);
+  const Wl={q:mat(D,D,1.5*sc),k:mat(D,D,1.5*sc),v:mat(D,D,1.1*sc),w1:mat(2*D,D,1.5*sc),w2:mat(D,2*D,1.4/Math.sqrt(2*D))};
+  const Q=X.map(v=>mv(Wl.q,v)),K=X.map(v=>mv(Wl.k,v)),V=X.map(v=>mv(Wl.v,v));
+  const A=[];
+  for(let i=0;i<N;i++){
+    const s=[];let mx=-1e9;
+    for(let j=0;j<=i;j++){const z=dot(Q[i],K[j])/Math.sqrt(D)*1.5-0.18*(i-j);s.push(z);mx=Math.max(mx,z)}
+    let sum=0;const e=s.map(z=>{const x=Math.exp(z-mx);sum+=x;return x});
+    const row=new Array(N).fill(0);e.forEach((x,j)=>row[j]=x/sum);A.push(row);
+  }
+  const X1=X.map((v,i)=>{const a=new Array(D).fill(0);for(let j=0;j<=i;j++)for(let d=0;d<D;d++)a[d]+=A[i][j]*V[j][d];return norm(v.map((x,d)=>x+a[d]))});
+  const T1=T.map((t,i)=>{const m=[0,0,0];for(let j=0;j<=i;j++)for(let c=0;c<3;c++)m[c]+=A[i][j]*T[j][c];return sat(t.map((x,c)=>0.4*x+0.6*m[c]))});
+  const X2=X1.map(v=>{const o=ffn(Wl,v);return norm(v.map((x,d)=>x+0.9*o[d]))});
+  // the ONE shared ffn function, sampled over the whole plane
+  const field=[];
+  for(let a=0;a<15;a++)for(let b=0;b<9;b++){
+    const gx=-4+8*a/14, gy=-2.4+4.8*b/8;
+    const u=P1.map((p,d)=>(p*gx+P2[d]*gy)*0.55);
+    const o=ffn(Wl,u), dx=dot(P1,o), dy=dot(P2,o);
+    field.push({gx,gy,dx,dy,m:Math.hypot(dx,dy)});
+  }
+  const mm=Math.max(...field.map(q=>q.m))+1e-6;
+  field.forEach(q=>{const l=Math.hypot(q.dx,q.dy)+1e-6;q.ux=q.dx/l;q.uy=q.dy/l;q.m/=mm;q.hue=(Math.atan2(q.uy,q.ux)*57.3+360)%360;q.h=rnd()});
+  S.push({X0:X,X1,X2,A,T0:T,T1,field,Wl});
+  X=X2;T=T1;
+}
+// final readout
+const NB=28, U=mat(NB,D,1.5/Math.sqrt(D));
+const lg=mv(U,X[N-1]).map(x=>x*1.8);
+const lmx=Math.max(...lg);let ls=0;const PR=lg.map(x=>{const e=Math.exp(x-lmx);ls+=e;return e});PR.forEach((_,i)=>PR[i]/=ls);
+const pmax=Math.max(...PR), winner=PR.indexOf(pmax);
+
+/* ---------- render setup ---------- */
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let w,h,dpr,unit,f;
+function resize(){dpr=Math.min(2,devicePixelRatio||1);w=innerWidth;h=innerHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);unit=Math.min(w/10.5,h/6.4);f=unit*DIST}
+addEventListener('resize',resize);resize();
+
+let mx=0.5,my=0.5,mxs=0.5,mys=0.5,paused=false;
+addEventListener('mousemove',e=>{mx=e.clientX/w;my=e.clientY/h});
+addEventListener('click',()=>paused=!paused);
+
+let yaw=0.5,pitch=0.2,tz=0;
+function proj(x,y,z){
+  const Z=z-tz,cy=Math.cos(yaw),sy=Math.sin(yaw);
+  const x1=x*cy+Z*sy, z1=-x*sy+Z*cy;
+  const cp=Math.cos(pitch),sp=Math.sin(pitch);
+  const y2=y*cp+z1*sp, z2=-y*sp+z1*cp+DIST;
+  const s=f/Math.max(0.5,z2);
+  return [w/2-unit*0.9+x1*s, h/2-y2*s, z2, s];
+}
+const ss=(a,b,x)=>{x=Math.min(1,Math.max(0,(x-a)/(b-a)));return x*x*(3-2*x)};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const POS=[255,135,70], NEG=[70,200,255];
+const tc=(t,a,b=1)=>`rgba(${Math.min(255,t[0]*255*b)|0},${Math.min(255,t[1]*255*b)|0},${Math.min(255,t[2]*255*b)|0},${a})`;
+
+const dust=Array.from({length:180},()=>[(rnd()-0.5)*14,(rnd()-0.5)*8,-5+rnd()*(L*G+9),rnd()]);
+
+/* ---------- state at time t ---------- */
+function state(t){
+  const tl=t-INTRO; let k=0,u=0;
+  if(tl>=0){k=Math.min(L-1,Math.floor(tl/LT));u=Math.min(1,(tl-k*LT)/LT);if(tl>=L*LT){k=L-1;u=1}}
+  const prevZ=k==0?zE:zFn(k-1);
+  const ease=x=>x*x*(3-2*x);
+  let z;
+  if(tl<0)z=zE;
+  else if(u<0.16)z=lerp(prevZ,zA(k),ease(u/0.16));
+  else if(u<0.5)z=zA(k);
+  else if(u<0.63)z=lerp(zA(k),zFn(k),ease((u-0.5)/0.13));
+  else z=zFn(k);
+  const aEnv=tl<0?0:ss(.16,.24,u)*(1-ss(.44,.52,u));
+  const aMix=tl<0?0:ss(.24,.44,u);
+  const fEnv=tl<0?0:ss(.63,.70,u)*(1-ss(.92,.99,u));
+  const fMix=tl<0?0:ss(.70,.90,u);
+  const s=S[k];
+  const v=[],tint=[];
+  for(let i=0;i<N;i++){
+    v.push(s.X0[i].map((x,d)=>x+aMix*(s.X1[i][d]-x)+fMix*(s.X2[i][d]-s.X1[i][d])));
+    tint.push(s.T0[i].map((x,c)=>x+aMix*(s.T1[i][c]-x)));
+  }
+  return {k,u,z,aEnv,fEnv,v,tint,tl};
+}
+
+/* ---------- drawing parts ---------- */
+function plane(z,rgb,glow){
+  const X=4.4,Y=2.7;
+  const c=[[-X,-Y],[X,-Y],[X,Y],[-X,Y]].map(q=>proj(q[0],q[1],z));
+  ctx.beginPath();c.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();
+  ctx.fillStyle=`rgba(${rgb},${0.015+0.08*glow})`;ctx.fill();
+  ctx.strokeStyle=`rgba(${rgb},${0.18+0.6*glow})`;ctx.lineWidth=1+glow*1.4;ctx.stroke();
+  ctx.beginPath();
+  for(let i=1;i<12;i++){const x=-X+2*X*i/12,a=proj(x,-Y,z),b=proj(x,Y,z);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}
+  for(let i=1;i<7;i++){const y=-Y+2*Y*i/7,a=proj(-X,y,z),b=proj(X,y,z);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}
+  ctx.strokeStyle=`rgba(${rgb},${0.04+0.22*glow})`;ctx.lineWidth=1;ctx.stroke();
+}
+
+function column(v,sx,sy,s,alpha,tint,ramp0){
+  const cw=0.15*s, st=0.17*s, H=D*st;
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle=`rgba(4,5,12,${0.62*alpha})`;
+  ctx.fillRect(sx-cw*0.8,sy-H/2-cw*0.35,cw*1.6,H+cw*0.7);
+  ctx.strokeStyle=tc(tint,0.55*alpha);ctx.lineWidth=1.2;
+  ctx.strokeRect(sx-cw*0.8,sy-H/2-cw*0.35,cw*1.6,H+cw*0.7);
+  ctx.globalCompositeOperation='lighter';
+  for(let d=0;d<D;d++){
+    const val=v[d],a=Math.min(1,Math.abs(val)/1.5),col=val>0?POS:NEG;
+    const cy=sy+H/2-(d+0.5)*st;
+    const ramp=Math.min(1,Math.max(0,ramp0*1.8-d*0.09));
+    ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${(0.12+0.88*a)*alpha*ramp})`;
+    ctx.fillRect(sx-cw/2,cy-cw*0.45,cw,cw*0.9);
+    if(a>0.45){ctx.fillStyle=`rgba(255,255,255,${(a-0.45)*0.9*alpha*ramp})`;ctx.fillRect(sx-cw*0.25,cy-cw*0.2,cw*0.5,cw*0.4)}
+  }
+  // crown
+  ctx.fillStyle=tc(tint,0.9*alpha,1.1);
+  ctx.beginPath();ctx.arc(sx,sy-H/2-cw*0.95,cw*0.3,0,6.283);ctx.fill();
+}
+
+function glyph(cx,cy,s,M,alpha,t){
+  const R=5,C=5,cs=0.075*s,scan=Math.floor(t*5)%R;
+  ctx.globalCompositeOperation='lighter';
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){
+    const val=M[r][c]*1.3,a=Math.min(1,Math.abs(val)/1.3),col=val>0?POS:NEG;
+    const boost=r==scan?0.55:0;
+    ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${Math.min(1,(0.12+0.5*a+boost))*alpha})`;
+    ctx.fillRect(cx+(c-C/2)*cs+1,cy+(r-R/2)*cs+1,cs-2,cs-2);
+  }
+}
+
+function drawField(st,t){
+  const F=S[st.k].field,z=st.z;
+  ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
+  for(const q of F){
+    const len=0.4*(0.5+0.5*q.m);
+    const rgb=hsl(q.hue,0.85,0.62).map(x=>x*255|0);
+    const col=`${rgb[0]},${rgb[1]},${rgb[2]}`;
+    let a=proj(q.gx-q.ux*len*0.5,q.gy-q.uy*len*0.5,z),b=proj(q.gx+q.ux*len*0.5,q.gy+q.uy*len*0.5,z);
+    ctx.strokeStyle=`rgba(${col},${0.16*st.fEnv})`;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+    const s=(t*0.45+q.h)%1;
+    const p0=[q.gx+q.ux*len*(s-0.5),q.gy+q.uy*len*(s-0.5)],p1=[p0[0]+q.ux*len*0.4,p0[1]+q.uy*len*0.4];
+    a=proj(p0[0],p0[1],z);b=proj(p1[0],p1[1],z);
+    ctx.strokeStyle=`rgba(${col},${Math.sin(3.1416*s)*0.9*st.fEnv})`;ctx.lineWidth=2+2*q.m;
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+  }
+  ctx.lineCap='butt';
+}
+
+function drawAttn(st,pw,t){
+  const A=S[st.k].A,z=st.z;
+  ctx.globalCompositeOperation='lighter';
+  for(let i=0;i<N;i++)for(let j=0;j<=i;j++){
+    const wgt=A[i][j]*st.aEnv;if(wgt<0.025)continue;
+    const H=pw[i].p[3]*0.92;
+    if(i==j){
+      const p=pw[i].p,r=(0.22+0.5*A[i][i])*p[3];
+      ctx.strokeStyle=tc(st.tint[i],0.8*wgt+0.1,1.1);ctx.lineWidth=1+4*wgt;
+      ctx.beginPath();ctx.arc(p[0],p[1]-0.95*p[3],r*(0.8+0.2*Math.sin(t*5+i)),0,6.283);ctx.stroke();continue;
+    }
+    const a=[pw[j].x,pw[j].y+0.95,z],b=[pw[i].x,pw[i].y+0.95,z];
+    const lift=0.8+0.28*(i-j),zb=-0.2*(i-j);
+    const c=[(a[0]+b[0])/2,(a[1]+b[1])/2+lift,z+zb];
+    const B=s=>{const m=1-s;return [m*m*a[0]+2*m*s*c[0]+s*s*b[0],m*m*a[1]+2*m*s*c[1]+s*s*b[1],m*m*a[2]+2*m*s*c[2]+s*s*b[2]]};
+    const pa=proj(...a),pb=proj(...b);
+    const g=ctx.createLinearGradient(pa[0],pa[1],pb[0],pb[1]);
+    g.addColorStop(0,tc(st.tint[j],0.15+0.7*wgt,1.1));g.addColorStop(1,tc(st.tint[i],0.15+0.7*wgt,1.1));
+    ctx.strokeStyle=g;ctx.lineWidth=(1+wgt*9)*pa[3]/unit*1.1;
+    ctx.beginPath();
+    for(let q=0;q<=20;q++){const p=proj(...B(q/20));q?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])}
+    ctx.stroke();
+    // particles: little vectors in flight, carrying the source's own numbers
+    const m=Math.ceil(wgt*10),hsh=((i*7+j*13)%10)/10;
+    for(let q=0;q<m;q++){
+      const s=(t*0.42+q/m+hsh)%1,p=proj(...B(s));
+      const sz=Math.max(2,(0.035+0.06*wgt)*p[3]),al=Math.pow(Math.sin(3.1416*s),0.6);
+      ctx.fillStyle=tc(st.tint[j],0.22*al,1.2);
+      ctx.beginPath();ctx.arc(p[0],p[1],sz*2.6,0,6.283);ctx.fill();
+      for(let r=0;r<4;r++){
+        const val=st.v[j][(i*3+j+r*2)%D],col=val>0?POS:NEG,aa=Math.min(1,0.35+Math.abs(val)/1.5);
+        ctx.fillStyle=`rgba(${col[0]},${col[1
+]},${col[2]},${aa*al})`;
+        ctx.fillRect(p[0]-sz*0.5,p[1]+(r-1.5)*sz*1.0-sz*0.42,sz,sz*0.84);
+      }
+    }
+  }
+}
+
+/* ---------- precomputed pieces ---------- */
+// each token's path through space: embed -> attn plane -> (mixed) -> ffn plane -> next layer
+const RAILS=Array.from({length:N},(_,i)=>{
+  const pts=[[...pos(S[0].X0[i],i),zE]];
+  for(let k=0;k<L;k++){
+    pts.push([...pos(S[k].X0[i],i),zA(k)]);
+    pts.push([...pos(S[k].X1[i],i),zA(k)]);
+    pts.push([...pos(S[k].X1[i],i),zFn(k)]);
+    pts.push([...pos(S[k].X2[i],i),zFn(k)]);
+  }
+  return pts;
+});
+// small 5x5 windows of the shared weight matrices, shown as glowing glyphs
+S.forEach(s=>{
+  const c=m=>m.slice(0,5).map(r=>r.slice(0,5).map(x=>x*2.2));
+  s.G=[c(s.Wl.q),c(s.Wl.k),c(s.Wl.v),c(s.Wl.w1),c(s.Wl.w2)];
+});
+
+/* ---------- more drawing parts ---------- */
+function drawPlanes(st,far){
+  for(let k=0;k<L;k++){
+    const list=[[zA(k),'90,190,255',st.k==k?st.aEnv:0],[zFn(k),'255,140,90',st.k==k?st.fEnv:0]];
+    for(const [z,rgb,g] of list){
+      if((z>st.z-0.01)!==far)continue;
+      if(proj(0,0,z)[2]<1.5)continue;
+      ctx.globalCompositeOperation='lighter';
+      plane(z,rgb,g);
+    }
+  }
+}
+
+function drawRails(st){
+  ctx.globalCompositeOperation='lighter';
+  for(let i=0;i<N;i++){
+    const R=RAILS[i];
+    // faint full path
+    ctx.strokeStyle=tc(st.tint[i],0.07,1);ctx.lineWidth=1;ctx.beginPath();
+    R.forEach((q,n)=>{const p=proj(q[0],q[1],q[2]);n?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])});
+    ctx.stroke();
+    // travelled part, bright
+    ctx.strokeStyle=tc(st.tint[i],0.55,1.1);ctx.lineWidth=1.6;ctx.beginPath();
+    let started=false;
+    for(const q of R){
+      if(q[2]>st.z+0.001)break;
+      const p=proj(q[0],q[1],q[2]);
+      started?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);started=true;
+    }
+    const cur=pos(st.v[i],i),pc=proj(cur[0],cur[1],st.z);
+    started?ctx.lineTo(pc[0],pc[1]):ctx.moveTo(pc[0],pc[1]);
+    ctx.stroke();
+  }
+}
+
+function link(ax,ay,bx,by,a,t,seed,rgb){
+  ctx.strokeStyle=`rgba(${rgb},${a*0.22})`;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+  const s=(t*0.5+seed)%1;
+  ctx.fillStyle=`rgba(${rgb},${a*Math.sin(3.1416*s)})`;
+  ctx.beginPath();ctx.arc(ax+(bx-ax)*s,ay+(by-ay)*s,2.6,0,6.283);ctx.fill();
+}
+
+// ONE set of weights, wired to every token at once
+function drawWeights(st,pw,t){
+  const G=S[st.k].G,cx=w/2+unit*4.05,cy=h/2,gs=unit*1.5;
+  ctx.globalCompositeOperation='lighter';
+  if(st.aEnv>0.01){
+    const ys=[cy-unit*0.9,cy,cy+unit*0.9],cols=['90,190,255','150,220,255','200,170,255'];
+    for(let g=0;g<3;g++){
+      glyph(cx,ys[g],gs,G[g],st.aEnv,t+g*0.3);
+      for(let i=0;i<N;i++){
+        const p=pw[i].p;
+        link(cx-unit*0.3,ys[g],p[0]+p[3]*0.2,p[1]-0.5*p[3],st.aEnv*0.35,t,(i*0.13+g*0.31)%1,cols[g]);
+      }
+    }
+  }
+  if(st.fEnv>0.01){
+    const ys=[cy-unit*0.55,cy+unit*0.55];
+    for(let g=0;g<2;g++){
+      glyph(cx,ys[g],gs,G[3+g],st.fEnv,t+g*0.5);
+      for(let i=0;i<N;i++){
+        const p=pw[i].p;
+        link(cx-unit*0.3,ys[g],p[0]+p[3]*0.2,p[1]+0.3*p[3],st.fEnv*0.3,t,(i*0.11+g*0.5)%1,'255,170,110');
+      }
+    }
+  }
+}
+
+// every token slides along the very same flow field, all at once
+function drawFfnTrails(st,pw){
+  if(st.fEnv<0.01)return;
+  ctx.globalCompositeOperation='lighter';
+  for(let i=0;i<N;i++){
+    const a0=pos(S[st.k].X1[i],i),a=proj(a0[0],a0[1],st.z),b=pw[i].p;
+    ctx.strokeStyle=tc(st.tint[i],0.65*st.fEnv,1.1);ctx.lineWidth=2+3*st.fEnv;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+    ctx.strokeStyle=tc(st.tint[i],0.5*st.fEnv,1.1);ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.arc(a[0],a[1],a[3]*0.14,0,6.283);ctx.stroke();
+    ctx.lineCap='butt';
+  }
+}
+
+function drawTokens(st,pw,ramp0,t){
+  const env=Math.max(st.aEnv,st.fEnv);
+  for(let i=0;i<N;i++){
+    const p=pw[i].p,R=p[3]*1.7;
+    ctx.globalCompositeOperation='lighter';
+    // halo
+    const g=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],R);
+    g.addColorStop(0,tc(st.tint[i],(0.14+0.26*env)*ramp0,1.1));g.addColorStop(1,tc(st.tint[i],0));
+    ctx.fillStyle=g;ctx.fillRect(p[0]-R,p[1]-R,R*2,R*2);
+    // foot ring on the plane
+    const f0=proj(pw[i].x,pw[i].y-0.98,st.z);
+    ctx.strokeStyle=tc(st.tint[i],0.35*ramp0+0.3*env,1.1);ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.ellipse(f0[0],f0[1],f0[3]*0.22,f0[3]*0.08,0,0,6.283);ctx.stroke();
+    // the vector itself
+    column(st.v[i],p[0],p[1],p[3],1,st.tint[i],ramp0);
+  }
+}
+
+function drawOut(st,pw,t,outT){
+  if(outT<=0)return;
+  const zb=zFn(L-1)+3.0,e=ss(0,2.6,outT),lt=pw[N-1];
+  const src=[lt.p[0],lt.p[1]-0.95*lt.p[3]];
+  ctx.globalCompositeOperation='lighter';
+  let wTop=null;
+  for(let b=0;b<NB;b++){
+    const x=-4+8*(b+0.5)/NB,pr=PR[b]/pmax,hgt=(0.1+2.3*pr)*e;
+    const rgb=hsl((b*360/NB+200)%360,0.85,0.6).map(c=>c*255|0),col=`${rgb[0]},${rgb[1]},${rgb[2]}`;
+    const base=proj(x,-1.5,zb),top=proj(x,-1.5+hgt,zb);
+    // fan beam from the last token
+    ctx.strokeStyle=`rgba(${col},${(0.05+0.55*pr)*e})`;ctx.lineWidth=0.6+PR[b]*16;
+    ctx.beginPath();ctx.moveTo(src[0],src[1]);
+    ctx.quadraticCurveTo((src[0]+top[0])/2,Math.min(src[1],top[1])-unit*0.5,top[0],top[1]);ctx.stroke();
+    // bar
+    const bw=Math.max(3,0.17*base[3]);
+    const gg=ctx.createLinearGradient(0,base[1],0,top[1]);
+    gg.addColorStop(0,`rgba(${col},0.08)`);gg.addColorStop(1,`rgba(${col},${0.35+0.6*pr})`);
+    ctx.fillStyle=gg;ctx.fillRect(base[0]-bw/2,top[1],bw,base[1]-top[1]);
+    ctx.fillStyle=`rgba(255,255,255,${(0.2+0.7*pr)*e})`;
+    ctx.beginPath();ctx.arc(top[0],top[1],bw*0.55,0,6.283);ctx.fill();
+    if(b==winner){
+      wTop={x,y:-1.5+hgt,p:top,hue:(b*360/NB+200)%360};
+      const R=bw*(3.5+1.2*Math.sin(t*5));
+      const rg=ctx.createRadialGradient(top[0],top[1],0,top[0],top[1],R);
+      rg.addColorStop(0,`rgba(255,255,255,${0.6*e})`);rg.addColorStop(0.3,`rgba(${col},${0.5*e})`);rg.addColorStop(1,`rgba(${col},0)`);
+      ctx.fillStyle=rg;ctx.fillRect(top[0]-R,top[1]-R,R*2,R*2);
+    }
+  }
+  // the chosen vector detaches and becomes the next token in the row
+  if(wTop&&outT>2.8){
+    const q=ss(2.8,6.6,outT),slot=(N-(N-1)/2)*1.05;
+    const x=lerp(wTop.x,slot,q),y=lerp(wTop.y,0,q),z=lerp(zb,st.z,q);
+    const p=proj(x,y,z),tint=hsl(wTop.hue,0.9,0.6),vN=norm(U[winner],0.85);
+    const R=p[3]*1.7,g=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],R);
+    g.addColorStop(0,tc(tint,0.3*q+0.1,1.1));g.addColorStop(1,tc(tint,0));
+    ctx.fillStyle=g;ctx.fillRect(p[0]-R,p[1]-R,R*2,R*2);
+    column(vN,p[0],p[1],p[3],0.3+0.7*q,tint,1);
+  }
+}
+
+function pips(st){
+  ctx.globalCompositeOperation='lighter';
+  const y=h-unit*0.35,x0=w/2-L*unit*0.2;
+  for(let k=0;k<L;k++)for(let m=0;m<2;m++){
+    const x=x0+k*unit*0.4+m*unit*0.14;
+    const done=st.tl>=0&&(k<st.k||(k==st.k&&(m==0?st.u>0.5:st.u>0.9)));
+    const cur=(k==st.k&&st.tl>=0)?(m==0?st.aEnv:st.fEnv):0;
+    const rgb=m==0?'90,190,255':'255,140,90';
+    ctx.fillStyle=`rgba(${rgb},${0.12+(done?0.4:0)+0.6*cur})`;
+    ctx.beginPath();ctx.arc(x,y,unit*(0.03+0.015*cur),0,6.283);ctx.fill();
+  }
+}
+
+/* ---------- main loop ---------- */
+let clock=0,lastT=performance.now()/1000;
+function frame(now){
+  now/=1000;
+  const dt=Math.min(0.05,Math.max(0,now-lastT));lastT=now;
+  if(!paused)clock+=dt;
+  const cyc=clock%(TOTAL+1.5),tt=Math.min(cyc,TOTAL);
+  const fade=ss(0,0.9,cyc)*(1-ss(TOTAL+0.3,TOTAL+1.3,cyc));
+  mxs+=(mx-mxs)*0.06;mys+=(my-mys)*0.06;
+
+  const st=state(tt);
+  const outT=Math.max(0,st.tl-L*LT);
+  const ramp0=st.tl<0?ss(0.15,INTRO-0.3,tt):1;
+
+  yaw=0.38+(mxs-0.5)*0.9+0.06*Math.sin(clock*0.15);
+  pitch=0.16+(mys-0.5)*0.5;
+  tz=st.z-1.3-1.4*ss(0,3,outT);
+
+  // background
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+  ctx.fillStyle='#04050b';ctx.fillRect(0,0,w,h);
+  const bg=ctx.createRadialGradient(w/2,h*0.55,0,w/2,h*0.55,Math.max(w,h)*0.7);
+  bg.addColorStop(0,'rgba(30,40,90,0.35)');bg.addColorStop(1,'rgba(4,5,11,0)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+  ctx.globalAlpha=fade;
+
+  // dust for depth and parallax
+  ctx.globalCompositeOperation='lighter';
+  for(const d of dust){
+    const p=proj(d[0],d[1],d[2]);if(p[2]<1.2)continue;
+    const a=0.16*d[3]*Math.min(1,p[3]/unit)*(0.6+0.4*Math.sin(clock*1.3+d[3]*30));
+    ctx.fillStyle=`rgba(180,200,255,${a})`;ctx.fillRect(p[0],p[1],1.6,1.6);
+  }
+
+  // where every token is right now (all at the same time)
+  const pw=[];
+  for(let i=0;i<N;i++){
+    const q=pos(st.v[i],i);
+    pw.push({x:q[0],y:q[1],p:proj(q[0],q[1],st.z)});
+  }
+
+  drawPlanes(st,true);
+  drawRails(st);
+  if(st.fEnv>0.01)drawField(st,clock);
+  drawWeights(st,pw,clock);
+  drawFfnTrails(st,pw);
+  drawTokens(st,pw,ramp0,clock);
+  if(st.aEnv>0.01)drawAttn(st,pw,clock);
+  drawPlanes(st,false);
+  drawOut(st,pw,clock,outT);
+  pips(st);
+
+  ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+}
+requestAnimationFrame(function loop(now){frame(now);requestAnimationFrame(loop)});
+</script>
+</body>
+</html>
