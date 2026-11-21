@@ -687,12 +687,13 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 - **`bpe`:** Startvokabular 10, Korpus 79 Tokens, Merges `e+s` 9×, `s+t` 9×, `w+e` 8×, `l+o` 7× nachgerechnet; korrekt.
 - **`qkv`:** `normalizeWeights()` geprüft; nach schnellem Head-/View-Wechsel ist die Summe der Gewichte `1.0`, die Anzeige bleibt unter 100 %. Der Graph zeichnet für jedes Token eine Selbstkante; ein Klick auf ein Token setzt es als Query und zeigt seine Kanten.
 - **`inductionmatrix`:** Gewichte summieren zu 1; Zeile 6 liest 82 % von Position 4.
-- **`worldmodel`:** `DATA.moves` mit einer unabhängigen Othello-Regelprüfung getestet; alle 30 Züge sind legal. 8 Layer, 8 Heads, 512 Dimensionen und 60 Tokens sind durch die Quelle gedeckt.
+- **`worldmodel`:** `DATA.moves` mit einer unabhängigen Othello-Regelprüfung getestet; alle 30 Züge sind legal. 8 Layer, 8 Heads, 512 Dimensionen und 60 Tokens sind durch die Quelle gedeckt. Die Attribution ist korrigiert: Li et al. nutzten nichtlineare Probes; Nanda, Lee und Wattenberg zeigten 2023 die lineare Lesbarkeit.
 - **`history`:** Jahresangaben gesichtet; alle referenzierten Bilder existieren.
 - **`spacetime`:** Todesjahre und Abbildung gesichtet; `gurnee-tegmark-world.png` existiert, Quelle und Lizenz stehen am Bild.
 - **`crossentropy`:** Initial-Logits ergeben `p(Paris) ≈ 0.30`, `Loss ≈ 1.20`, Gradient `p−y ≈ −0.70`; korrekt.
 - **`manifold`:** Die Mannigfaltigkeits-Behauptung ist entfernt; die Demo bleibt bei Rotation und Translation.
 - **Ladezeit:** `tf.min.js` (ca. 1.4 MB) wird nur noch von den Modell-Folien 13 und 16 nachgeladen. Median-Payload sank von 3762 KB auf 2331 KB pro Seite; die Wanduhrzeiten sind auf dem belasteten Host nicht sauber vergleichbar. Details: `PERFORMANCE.md`.
+- **Fakten:** 2.961 deutsche und 2.952 englische Sätze extrahiert, 317 numerische Claims gesichtet, 120 `url:`-Felder geprüft: keine 404er, nur 403/202-Bot-Blocker. Die übrigen 553 Kandidaten mit Modell-/Personennamen wurden auf Attributionsfehler geprüft; der Li/Nanda-Fehler war der einzige neue harte Befund.
 
 ### Ohne inhaltlichen Befund geprüft
 
