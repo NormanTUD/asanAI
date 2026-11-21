@@ -86,9 +86,6 @@ const L = 4;                     // layers
 const NS = 2 * L + 1;            // embedding + attention + ffn per layer
 const G = 3.6;                   // spacing of the spaces
 const RAD = 0.95;                // radius of one space
-const PRE = 1.8, STEP = 2.0, POST = 3.0;
-const Tc = PRE + (NS - 1) * STEP + POST;
-const T_POST = PRE + (NS - 1) * STEP;
 const READER = T - 1;            // the token that gets read out
 
 const EMB = [158, 140, 255];
@@ -105,8 +102,29 @@ const PAL = [
   [255, 162, 124]
 ];
 
+let MESH = [], MESH_REG = [], MESH_EDGES = [];
+
+/* ---------- deformable space mesh ---------- */
+const MRAD = RAD * 0.90;
+const MER = 12, PAR = 5;
+for (let i = 0; i <= PAR; i++) {
+  const th = Math.PI * i / PAR;
+  const y = Math.cos(th), rr = Math.sin(th);
+  for (let j = 0; j < MER; j++) {
+    const ph = TAU * j / MER;
+    MESH_REG.push([MRAD * rr * Math.cos(ph), MRAD * y, MRAD * rr * Math.sin(ph)]);
+  }
+}
+const mIdx = (i, j) => i * MER + (j % MER);
+for (let i = 0; i < PAR; i++) {
+  for (let j = 0; j < MER; j++) {
+    MESH_EDGES.push([mIdx(i, j), mIdx(i + 1, j)]);
+    if (i > 0) MESH_EDGES.push([mIdx(i, j), mIdx(i, (j + 1) % MER)]);
+  }
+}
+
 /* ---------- model state ---------- */
-let W = 0, TT = 0;
+let W = 0;
 let vocab = [], vcol = [], S = [], C = [], A = [], HC = [], LC = [], HD = [], PRED = [], idCol = [];
 
 function build() {
@@ -146,6 +164,7 @@ function build() {
   }
 
   S = [V0]; C = [C0]; A = [null]; LC = [EMB]; HC = [null]; HD = []; PRED = [];
+  MESH = [MESH_REG];
 
   for (let l = 0; l < L; l++) {
     const Wq0 = mat(3, 3, 0.95), Wk0 = mat(3, 3, 0.95), Wv0 = mat(3, 3, 0.90), Wo0 = mat(3, 3, 0.90);
@@ -195,6 +214,12 @@ function build() {
       ]);
     });
     S[sa] = ns; C[sa] = nc; A[sa] = [aw0, aw1];
+    MESH[sa] = MESH_REG.map(q => {
+      const r0 = att0(q, T), r1 = att1(q, T);
+      const o0 = mv(Wo0, r0.o), o1 = mv(Wo1, r1.o);
+      const o = [0.5 * (o0[0] + o1[0]), 0.5 * (o0[1] + o1[1]), 0.5 * (o0[2] + o1[2])];
+      return squash(q.map((x, k) => x + 0.9 * o[k]));
+    });
 
     /* feed-forward: 4x expansion, applied to every token alone */
     const sf = 2 * l + 2;
@@ -209,6 +234,11 @@ function build() {
     });
     C[sf] = C[sa].map(c => c.slice());
     A[sf] = null;
+    MESH[sf] = MESH_REG.map(q => {
+      const hid = mv(W1, q).map(z => Math.tanh(z * 1.6));
+      const d = mv(W2, hid);
+      return squash(q.map((x, k) => x + 0.9 * d[k]));
+    });
   }
 
   /* the last token, matched against the vocabulary */
@@ -353,21 +383,21 @@ function tokenPos(i) {
   const prev = outputWorld(s0, i);
   if (s1 === s0) return prev;
   const inW = inputWorld(s1, i);
-  if (local < 0.5) return lerp3(prev, inW, smooth(local / 0.5));
+  if (local < 0.35) return lerp3(prev, inW, smooth(local / 0.35));
   const outW = outputWorld(s1, i);
-  return lerp3(inW, outW, smooth(clamp((local - 0.68) / 0.32, 0, 1)));
+  return lerp3(inW, outW, smooth(clamp((local - 0.35) / 0.60, 0, 1)));
 }
 function tokenColor(i) {
   const { s0, s1, local } = phaseInfo();
   if (s1 === s0) return C[s0][i];
-  const u = smooth(clamp((local - 0.68) / 0.32, 0, 1));
+  const u = smooth(clamp((local - 0.35) / 0.60, 0, 1));
   return mixc(C[s1 - 1][i], C[s1][i], u);
 }
 function fieldVis(s) {
   const local = W - (s - 1);
-  if (local <= 0.5) return 0;
-  const up = smooth(clamp((local - 0.5) / 0.14, 0, 1));
-  const down = local > 0.76 ? clamp(1 - (local - 0.76) / 0.22, 0, 1) : 1;
+  if (local <= 0.35) return 0;
+  const up = smooth(clamp((local - 0.35) / 0.12, 0, 1));
+  const down = local > 0.80 ? clamp(1 - (local - 0.80) / 0.20, 0, 1) : 1;
   return up * down;
 }
 function ringGlow(s) {
@@ -419,6 +449,52 @@ function drawStages() {
     if (c) {
       ctx.fillStyle = rgba(col, (0.10 + 0.22 * rg) * fg);
       ctx.beginPath(); ctx.arc(c[0], c[1], Math.max(0.6, 0.011 * c[2]), 0, TAU); ctx.fill();
+    }
+  }
+}
+
+function drawMesh(s, morph, alphaMul, ghost) {
+  const fg = fogOf(s);
+  if (fg <= 0.02) return;
+  const pts = MESH[s] || MESH_REG;
+  const vis = MESH_REG.map((q, k) => lerp3(q, pts[k], morph));
+  const ox = s * G;
+  const tint = LC[s] || EMB;
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+
+  if (ghost && morph > 0.02) {
+    for (const [a, b] of MESH_EDGES) {
+      const pa = MESH_REG[a], pb = MESH_REG[b];
+      line3([ox + pa[0], pa[1], pa[2]], [ox + pb[0], pb[1], pb[2]],
+            [170, 196, 255], 0.055 * morph * alphaMul * fg, 0.8);
+    }
+  }
+
+  for (const [a, b] of MESH_EDGES) {
+    const pa = vis[a], pb = vis[b];
+    const d = 0.5 * (dist(pa, MESH_REG[a]) + dist(pb, MESH_REG[b]));
+    const col = mixc(tint, [255, 255, 255], clamp(d * 2.0, 0, 0.72));
+    const alpha = (0.10 + 0.65 * Math.min(d, 1)) * alphaMul * fg;
+    line3([ox + pa[0], pa[1], pa[2]], [ox + pb[0], pb[1], pb[2]], col, alpha, 0.9);
+  }
+
+  for (let k = 0; k < vis.length; k++) {
+    const p = vis[k];
+    const d = dist(p, MESH_REG[k]);
+    const sp = P(ox + p[0], p[1], p[2]);
+    if (!sp) continue;
+    ctx.fillStyle = rgba(mixc(tint, [255, 255, 255], clamp(d * 2.0, 0, 0.8)),
+                         (0.10 + 0.55 * Math.min(d, 1)) * alphaMul * fg);
+    ctx.beginPath(); ctx.arc(sp[0], sp[1], Math.max(0.45, 0.006 * sp[2]), 0, TAU); ctx.fill();
+  }
+
+  if (morph > 0.04) {
+    for (let k = 0; k < vis.length; k += 4) {
+      const p = vis[k], q = MESH_REG[k];
+      const d = dist(p, q);
+      if (d < 0.035) continue;
+      line3([ox + q[0], q[1], q[2]], [ox + p[0], p[1], p[2]],
+            mixc(tint, [255, 255, 255], 0.45), 0.18 * d * alphaMul * fg, 0.8);
     }
   }
 }
@@ -668,7 +744,7 @@ function drawTokens(t) {
 
   let stemCube = null;
   if (s1 === s0) stemCube = s0;
-  else if (local >= 0.5) stemCube = s1;
+  else if (local >= 0.35) stemCube = s1;
   else if (W < 0.5) stemCube = 0;
 
   if (stemCube !== null) {
@@ -686,11 +762,11 @@ function drawTokens(t) {
         ctx.lineWidth = read ? 1.3 : 0.8;
         ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(p[0], p[1]); ctx.stroke();
       }
-      if (s1 !== s0 && local >= 0.5) {
+      if (s1 !== s0 && local >= 0.35) {
         const ow = outputWorld(s1, i);
         const op = P(ow[0], ow[1], ow[2]);
         if (op) {
-          const morph = smooth(clamp((local - 0.68) / 0.32, 0, 1));
+          const morph = smooth(clamp((local - 0.35) / 0.60, 0, 1));
           const ga = 0.12 * (1 - morph) * fieldVis(s1);
           if (ga > 0.005) {
             ctx.strokeStyle = rgba(C[s1][i], ga);
@@ -719,8 +795,8 @@ function drawTokens(t) {
 
 /* ---------- the payoff: the last token is read out ---------- */
 function drawReadout() {
-  if (TT <= T_POST) return;
-  const k = clamp((TT - T_POST) / POST, 0, 1);
+  const k = clamp(POS - (NS - 1), 0, 1);
+  if (k <= 0.001) return;
   const fade = Math.sin(k * Math.PI * 0.5);
   const rd = outputWorld(NS - 1, READER);
   const p = P(rd[0], rd[1], rd[2]);
@@ -753,27 +829,28 @@ function drawReadout() {
 
 /* ---------- main loop ---------- */
 const t0 = performance.now();
-let lastNow = t0, curCyc = null;
+let lastNow = t0;
 const qp = new URLSearchParams(location.search);
-const FIXED = qp.has('t') ? parseFloat(qp.get('t')) : null;
+let POS = qp.has('p') ? clamp(parseFloat(qp.get('p')), 0, NS) : 0;
+let playing = false;
+const PLAY_SPEED = 0.25;
 
 function frame(now) {
-  const t = FIXED !== null ? FIXED : Math.max(0, (now - t0) / 1000);
+  const t = (now - t0) / 1000;
   const dt = clamp((now - lastNow) / 1000 || 0.016, 0.001, 0.05);
   lastNow = now;
 
-  const cyc = Math.floor(t / Tc);
-  const tt = t - cyc * Tc;
-  if (cyc !== curCyc) { curCyc = cyc; build(); cam.tx = 0.5 * G; }
+  if (playing) {
+    POS += dt * PLAY_SPEED;
+    if (POS >= NS) { POS = NS; playing = false; }
+  }
 
-  GA = Math.min(1, tt / 0.9) * Math.min(1, (Tc - tt) / 1.2);
-  TT = tt;
-  W = clamp((tt - PRE) / STEP, 0, NS - 1);
+  W = clamp(POS, 0, NS - 1);
+  const readoutK = clamp(POS - (NS - 1), 0, 1);
 
   let target = clamp((W + 0.45) * G, 0.4 * G, (NS - 1) * G);
-  if (TT > T_POST) target += smooth(clamp((TT - T_POST) / POST, 0, 1)) * 1.0;
-  if (FIXED !== null) cam.tx = target;
-  else cam.tx += (target - cam.tx) * Math.min(1, dt * 2.8);
+  target += smooth(readoutK) * 1.0;
+  cam.tx += (target - cam.tx) * Math.min(1, dt * 3.0);
 
   const yaw = -0.38 + 0.22 * Math.sin(t * 0.09) + yawOff;
   const pitch = 0.20 + 0.05 * Math.sin(t * 0.13) + pitchOff;
@@ -790,6 +867,14 @@ function frame(now) {
   ctx.lineJoin = 'round';
 
   drawStages();
+
+  const ph = phaseInfo();
+  let focus, morph, ghost;
+  if (ph.s1 === ph.s0) { focus = ph.s0; morph = 1; ghost = false; }
+  else if (ph.local < 0.35) { focus = ph.s0; morph = 1; ghost = false; }
+  else { focus = ph.s1; morph = smooth(clamp((ph.local - 0.35) / 0.60, 0, 1)); ghost = morph > 0.03; }
+  drawMesh(focus, morph, 1, ghost);
+
   drawCloud(t);
   drawWorldlines();
   drawThreads(t);
@@ -802,7 +887,6 @@ function frame(now) {
 }
 
 requestAnimationFrame(frame);
-if (FIXED !== null) { lastNow = t0; frame(t0); }
 </script>
 </body>
 </html>

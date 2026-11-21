@@ -29,11 +29,13 @@
   }
 
   function concatHtml() {
+    var colors = ["sky", "green", "gold", "lilac"];
+    var labels = ["h₁", "h₂", "h₃", "h₄"];
     var out = "";
-    ["h₁", "h₂", "h₃", "h₄"].forEach(function (label) {
-      out += '<span class="ls-hc-block"><b>' + label + "</b><i></i><i></i><i></i></span>";
+    labels.forEach(function (label, i) {
+      out += '<span class="ls-hc-concat-row" style="--hc-color:var(--ls-' + colors[i] + ')"><b>' + label + "</b><i></i><i></i><i></i></span>";
     });
-    return '<span class="ls-hc-stack">' + out + "</span>";
+    return '<span class="ls-hc-concat-block">' + out + "</span>";
   }
 
   function flowScene(root, api, mode) {

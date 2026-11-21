@@ -523,12 +523,13 @@
     }
   ];
 
+  var ffnSplitTex = DE ? "\\underbrace{\\underbrace{\\begin{pmatrix} u_1 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor}} \\;\\overset{W_1,\\,b_1}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} z_1 \\\\ \\vdots \\\\ z_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{Hidden: }d_{\\text{ff}}\\gg d_{\\text{model}}} \\;\\overset{\\operatorname{act}}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} a_1 \\\\ \\vdots \\\\ a_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{aktiviert}} \\;\\overset{W_2,\\,b_2}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} y_1 \\\\ \\vdots \\\\ y_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{zurück}}}_{\\text{das FFN fächert den Token-Vektor auf und projiziert ihn zurück}}" : "\\underbrace{\\underbrace{\\begin{pmatrix} u_1 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{one token vector}} \\;\\overset{W_1,\\,b_1}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} z_1 \\\\ \\vdots \\\\ z_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{hidden: }d_{\\text{ff}}\\gg d_{\\text{model}}} \\;\\overset{\\operatorname{act}}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} a_1 \\\\ \\vdots \\\\ a_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{activated}} \\;\\overset{W_2,\\,b_2}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} y_1 \\\\ \\vdots \\\\ y_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{back}}}_{\\text{the FFN fans the token vector out and projects it back}}";
   var ffnSplitSubstep = {
     kicker: "FFN",
     title: DE ? "Im FFN: auffächern und zurück" : "Inside the FFN: expand and project back",
-    body: DE
+    body: (DE
       ? "Das FFN bekommt pro Token den einen $d_{\\text{model}}$-Vektor, nicht die einzelnen Heads. Es projiziert ihn mit $W_1$ auf $d_{\\text{ff}}$ Hidden-Werte, aktiviert sie und projiziert mit $W_2$ zurück. Die Aufspaltung im FFN ist also keine Head-Trennung, sondern die Aufspaltung in Hidden-Neuronen."
-      : "The FFN receives the one $d_{\\text{model}}$ token vector per token, not the individual heads. It projects it with $W_1$ onto $d_{\\text{ff}}$ hidden values, activates them, and projects back with $W_2$. The split inside the FFN is therefore not a split by head, but a split into hidden neurons.",
+      : "The FFN receives the one $d_{\\text{model}}$ token vector per token, not the individual heads. It projects it with $W_1$ onto $d_{\\text{ff}}$ hidden values, activates them, and projects back with $W_2$. The split inside the FFN is therefore not a split by head, but a split into hidden neurons.") + "\n\n$$" + ffnSplitTex + "$$",
     watch: DE ? "Drücke Weiter: Token-Vektor, W_1, Hidden, Aktivierung, W_2." : "Press Next: token vector, W_1, hidden, activation, W_2.",
     demoState: { scene: "ffnsplit" },
     context: DE
@@ -537,12 +538,7 @@
     deep: DE
       ? "Typisch ist $d_{\\text{ff}} \\approx 4\\,d_{\\text{model}}$. $W_1$ fächert den Vektor auf, die Aktivierung macht ihn nichtlinear, $W_2$ projiziert zurück. Das FFN arbeitet pro Token, nicht pro Head."
       : "Typically $d_{\\text{ff}} \\approx 4\\,d_{\\text{model}}$. $W_1$ fans the vector out, the activation makes it nonlinear, and $W_2$ projects it back. The FFN works per token, not per head.",
-    boxes: [
-      box("ffn-split-formula", "Mathematik", "Die FFN-Expansion", DE
-        ? "Der Token-Vektor wird auf $d_{\\text{ff}}$ Hidden-Werte aufgefächert, aktiviert und zurückprojiziert."
-        : "The token vector is fanned out to $d_{\\text{ff}}$ hidden values, activated, and projected back.",
-        DE ? "\\underbrace{\\underbrace{\\begin{pmatrix} u_1 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor}} \\;\\overset{W_1,\\,b_1}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} z_1 \\\\ \\vdots \\\\ z_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{Hidden: }d_{\\text{ff}}\\gg d_{\\text{model}}} \\;\\overset{\\operatorname{act}}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} a_1 \\\\ \\vdots \\\\ a_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{aktiviert}} \\;\\overset{W_2,\\,b_2}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} y_1 \\\\ \\vdots \\\\ y_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{zurück}}}_{\\text{das FFN fächert den Token-Vektor auf und projiziert ihn zurück}}" : "\\underbrace{\\underbrace{\\begin{pmatrix} u_1 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{one token vector}} \\;\\overset{W_1,\\,b_1}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} z_1 \\\\ \\vdots \\\\ z_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{hidden: }d_{\\text{ff}}\\gg d_{\\text{model}}} \\;\\overset{\\operatorname{act}}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} a_1 \\\\ \\vdots \\\\ a_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{activated}} \\;\\overset{W_2,\\,b_2}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} y_1 \\\\ \\vdots \\\\ y_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{back}}}_{\\text{the FFN fans the token vector out and projects it back}}")
-    ],
+    boxes: [],
     sources: [
       { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Das FFN als zwei lineare Projektionen mit Aktivierung dazwischen.", en: "The FFN as two linear projections with an activation in between." } },
       { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
@@ -1542,12 +1538,13 @@
     questionGroups: attentionMergedGroups,
     sources: []
   };
+  var headConcatTex = DE ? "\\underbrace{\\underbrace{\\begin{pmatrix} h_{1,1} & h_{2,1} & \\cdots & h_{H,1} \\\\ h_{1,2} & h_{2,2} & \\cdots & h_{H,2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ h_{1,d_v} & h_{2,d_v} & \\cdots & h_{H,d_v} \\end{pmatrix}}_{\\text{Heads: }d_v\\text{ Zeilen, }H\\text{ Spalten}} \\;\\longrightarrow\\; \\underbrace{\\begin{pmatrix} h_1 \\\\ h_2 \\\\ \\vdots \\\\ h_H \\end{pmatrix}}_{\\text{Concat: }H d_v\\text{ Werte}}}_{\\text{aus vielen Heads wird ein breiter Vektor}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} u_1 \\\\ u_2 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor fürs FFN}}" : "\\underbrace{\\underbrace{\\begin{pmatrix} h_{1,1} & h_{2,1} & \\cdots & h_{H,1} \\\\ h_{1,2} & h_{2,2} & \\cdots & h_{H,2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ h_{1,d_v} & h_{2,d_v} & \\cdots & h_{H,d_v} \\end{pmatrix}}_{\\text{Heads: }d_v\\text{ rows, }H\\text{ columns}} \\;\\longrightarrow\\; \\underbrace{\\begin{pmatrix} h_1 \\\\ h_2 \\\\ \\vdots \\\\ h_H \\end{pmatrix}}_{\\text{concat: }H d_v\\text{ values}}}_{\\text{many heads become one wide vector}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} u_1 \\\\ u_2 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{one token vector for the FFN}}";
   var headConcatSubstep = {
     kicker: DE ? "Concat" : "Concat",
     title: DE ? "Heads zusammenfügen" : "Joining the heads",
-    body: DE
+    body: (DE
       ? "Jeder Head liefert pro Token einen Vektor. Multi-Head-Attention legt diese Vektoren nebeneinander (Concat) und projiziert sie mit $W_O$ auf einen Token-Vektor der Modellbreite. Erst dieser eine Vektor geht pro Token ins FFN."
-      : "Each head produces one vector per token. Multi-head attention places these vectors side by side (concat) and projects them with $W_O$ onto one token vector of the model width. Only this one vector per token goes into the FFN.",
+      : "Each head produces one vector per token. Multi-head attention places these vectors side by side (concat) and projects them with $W_O$ onto one token vector of the model width. Only this one vector per token goes into the FFN.") + "\n\n$$" + headConcatTex + "$$",
     watch: DE ? "Drücke Weiter: Heads, Concat, W_O, Token-Vektor." : "Press Next: heads, concat, W_O, token vector.",
     demoState: { scene: "headconcat" },
     context: DE
@@ -1556,12 +1553,7 @@
     deep: DE
       ? "Formal: $H$ Heads mit je $d_v$ Werten ergeben nach Concat $H d_v$ Werte. $W_O \\in \\mathbb{R}^{d_{\\text{model}}\\times H d_v}$ mischt sie zum Token-Vektor. Die einzelnen Heads bleiben danach nicht als getrennte Kanäle erhalten."
       : "Formally: $H$ heads with $d_v$ values each give $H d_v$ values after concat. $W_O \\in \\mathbb{R}^{d_{\\text{model}}\\times H d_v}$ mixes them into the token vector. The individual heads do not remain as separate channels afterwards.",
-    boxes: [
-      box("hc-formula", "Mathematik", "Concat und $W_O$", DE
-        ? "Die Head-Ausgaben stehen als Spalten; Concat stapelt sie; $W_O$ mischt sie zum Token-Vektor."
-        : "The head outputs are columns; concat stacks them; $W_O$ mixes them into the token vector.",
-        DE ? "\\underbrace{\\underbrace{\\begin{pmatrix} h_{1,1} & h_{2,1} & \\cdots & h_{H,1} \\\\ h_{1,2} & h_{2,2} & \\cdots & h_{H,2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ h_{1,d_v} & h_{2,d_v} & \\cdots & h_{H,d_v} \\end{pmatrix}}_{\\text{Heads: }d_v\\text{ Zeilen, }H\\text{ Spalten}} \\;\\longrightarrow\\; \\underbrace{\\begin{pmatrix} h_1 \\\\ h_2 \\\\ \\vdots \\\\ h_H \\end{pmatrix}}_{\\text{Concat: }H d_v\\text{ Werte}}}_{\\text{aus vielen Heads wird ein breiter Vektor}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} u_1 \\\\ u_2 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor fürs FFN}}" : "\\underbrace{\\underbrace{\\begin{pmatrix} h_{1,1} & h_{2,1} & \\cdots & h_{H,1} \\\\ h_{1,2} & h_{2,2} & \\cdots & h_{H,2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ h_{1,d_v} & h_{2,d_v} & \\cdots & h_{H,d_v} \\end{pmatrix}}_{\\text{Heads: }d_v\\text{ rows, }H\\text{ columns}} \\;\\longrightarrow\\; \\underbrace{\\begin{pmatrix} h_1 \\\\ h_2 \\\\ \\vdots \\\\ h_H \\end{pmatrix}}_{\\text{concat: }H d_v\\text{ values}}}_{\\text{many heads become one wide vector}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} u_1 \\\\ u_2 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{one token vector for the FFN}}")
-    ],
+    boxes: [],
     sources: [
       { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Multi-Head-Attention: Concat der Heads und Ausgabeprojektion W_O.", en: "Multi-head attention: concat of the heads and output projection W_O." } },
       { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK- und OV-Schaltkreise; die Head-Ausgabe wird in den Residualstrom geschrieben.", en: "QK and OV circuits; the head output is written into the residual stream." } }

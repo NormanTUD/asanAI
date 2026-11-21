@@ -128,7 +128,7 @@
         c.fillStyle = C.muted;
         c.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         c.textAlign = "center"; c.textBaseline = "middle";
-        c.fillText(DE ? "eigener Raum" : "its own space", g.cx, g.cy);
+        c.fillText(DE ? "zyklische Ordnung" : "cyclic order", g.cx, g.cy);
         c.globalAlpha = 1;
       }
 
