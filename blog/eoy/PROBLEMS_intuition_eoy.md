@@ -693,7 +693,7 @@ Mit Antenne sind es 330 m. Die 300-m-Antwort ist als absichtliche Halluzination 
 - **`crossentropy`:** Initial-Logits ergeben `p(Paris) ≈ 0.30`, `Loss ≈ 1.20`, Gradient `p−y ≈ −0.70`; korrekt.
 - **`manifold`:** Die Mannigfaltigkeits-Behauptung ist entfernt; die Demo bleibt bei Rotation und Translation.
 - **Ladezeit:** `tf.min.js` (ca. 1.4 MB) wird nur noch von den Modell-Folien 13 und 16 nachgeladen. Median-Payload sank von 3762 KB auf 2331 KB pro Seite; die Wanduhrzeiten sind auf dem belasteten Host nicht sauber vergleichbar. Details: `PERFORMANCE.md`.
-- **Fakten:** 2.961 deutsche und 2.952 englische Sätze extrahiert, 317 numerische Claims gesichtet, 120 `url:`-Felder geprüft: keine 404er, nur 403/202-Bot-Blocker. Die übrigen 553 Kandidaten mit Modell-/Personennamen wurden auf Attributionsfehler geprüft; der Li/Nanda-Fehler war der einzige neue harte Befund.
+- **Fakten:** 2.961 deutsche und 2.952 englische Sätze extrahiert, 317 numerische Claims gesichtet, 120 `url:`-Felder geprüft: keine 404er, nur 403/202-Bot-Blocker. Die übrigen 553 Kandidaten mit Modell-/Personennamen wurden auf Attributionsfehler geprüft; der Li/Nanda-Fehler war der einzige neue harte Befund. Zusätzlich wurden „innerer Zeitstrahl“ zu „linear auslesbar“ abgeschwächt, die Spacetime-Punkte als schematisch markiert und „Rechtebegrenzung“ zu „Berechtigungsgrenzen“ korrigiert.
 
 ### Ohne inhaltlichen Befund geprüft
 

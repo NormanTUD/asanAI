@@ -11,6 +11,7 @@
 - **Zeitachse:** „innerer Zeitstrahl“ ist zu stark; ersetzt durch „linear aus den Aktivierungen auslesbar“.
 - **Sprache:** „Rechtebegrenzung“ durch „Berechtigungsgrenzen“ ersetzt.
 - **QKV-Graph:** Hinweis ergänzt, dass die Gewichte für nicht ausgewählte Queries illustrativ sind.
+- **Spacetime:** Die Demo-Punkte sind jetzt ausdrücklich als schematisch markiert; die echten Llama-Aktivierungen sind nicht abgebildet.
 
 ## Verifizierte Kernfakten
 
