@@ -309,14 +309,6 @@ function orb(p, wr, col, alpha) {
   ctx.beginPath(); ctx.arc(p[0], p[1], r * 1.9, 0, TAU); ctx.fill();
 }
 
-function spark3(a, wr, col, alpha) {
-  const p = P(a[0], a[1], a[2]);
-  if (!p || alpha <= 0.002) return;
-  const r = Math.max(0.4, wr * p[2]);
-  ctx.fillStyle = rgba(col, alpha);
-  ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, TAU); ctx.fill();
-}
-
 /* ---------- world helpers ---------- */
 function fogOf(s) {
   const d = Math.abs(s * G - cam.tx) / (2.6 * G);
