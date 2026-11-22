@@ -83,11 +83,6 @@
         '</div>' +
       '</div>' +
       '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img"></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Input und Output bleiben d_model; das FFN dehnt den Vektor auf d_ff und projiziert ihn zurück. Es arbeitet pro Token." : "Input and output stay at d_model; the FFN expands the vector to d_ff and projects it back. It works per token.") + '</p></div>' +
-      '<div class="ls-ffn-2d">' +
-        '<div class="ls-ffn-2d-head"><b>' + (DE ? "2D-Bewegung" : "2D movement") + '</b><span>' + (DE ? "Eine Schicht verschiebt die Punkte im Raum. Vorher → nachher." : "A layer moves the points in space. Before → after.") + '</span></div>' +
-        '<div class="ls-ffn-2d-stage"><canvas class="ls-ffn-2d-canvas" role="img"></canvas></div>' +
-        '<div class="ls-ffn-2d-bar"><button type="button" class="ls-btn ls-btn--tiny ls-ffn-2d-step">' + (DE ? "Schicht anwenden" : "Apply layer") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-ffn-2d-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button><span class="ls-ffn-2d-readout" aria-live="polite"></span></div>' +
-      '</div>' +
       '<p class="ls-ffn-caveat">' + (DE ? "Die Punkte sind symbolisch: Im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen noch höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The points are symbolic: in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
@@ -102,13 +97,6 @@
     var bendReadout = el.querySelector(".ls-ffn-bend-readout");
     var bendToggle = el.querySelector(".ls-ffn-bend-toggle");
     var dimsCanvas = el.querySelector(".ls-ffn-dims-canvas");
-    var moveStage = el.querySelector(".ls-ffn-2d-stage");
-    var moveCanvas = el.querySelector(".ls-ffn-2d-canvas");
-    var moveStepBtn = el.querySelector(".ls-ffn-2d-step");
-    var moveResetBtn = el.querySelector(".ls-ffn-2d-reset");
-    var moveReadout = el.querySelector(".ls-ffn-2d-readout");
-    var moveSize = null, moveRaf = 0;
-    var moveState = { step: 0, from: 0, to: 0, t: 1 };
     var dimsSize = null;
     var bend = 0, bendRaf = 0, size = null, ctx = null;
     var modeOrder = ["fruit", "tech"];
@@ -358,153 +346,6 @@
     }
     bendRange.addEventListener("input", function () { setBend(parseFloat(bendRange.value) || 0); });
     bendToggle.addEventListener("click", function () { animateBend(bend > 0.5 ? 0 : 1); });
-    var MOVE_POINTS = [
-      { label: DE ? "Katze" : "cat", base: [-0.46, 0.30], s1: [-0.62, 0.52], s2: [-0.78, 0.70], col: "green" },
-      { label: DE ? "Hund" : "dog", base: [-0.25, 0.16], s1: [-0.40, 0.38], s2: [-0.54, 0.56], col: "green" },
-      { label: DE ? "Bank" : "bank", base: [0.28, -0.08], s1: [0.16, 0.12], s2: [0.04, 0.30], col: "gold" },
-      { label: DE ? "Fluss" : "river", base: [0.50, -0.28], s1: [0.38, 0.06], s2: [0.26, 0.26], col: "gold" },
-      { label: DE ? "König" : "king", base: [-0.10, -0.46], s1: [0.18, -0.54], s2: [0.38, -0.60], col: "lilac" },
-      { label: DE ? "Königin" : "queen", base: [0.12, -0.30], s1: [0.36, -0.36], s2: [0.56, -0.42], col: "lilac" }
-    ];
-    function movePos(pt, step, t) {
-      var a = step <= 0 ? pt.base : step === 1 ? pt.base : pt.s1;
-      var b = step <= 0 ? pt.base : step === 1 ? pt.s1 : pt.s2;
-      return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
-    }
-    function moveProject(p, w, h) {
-      var scale = Math.min(w * 0.42, h * 0.40);
-      return { x: w / 2 + p[0] * scale, y: h / 2 - p[1] * scale };
-    }
-    function moveArrow(g, x1, y1, x2, y2, color) {
-      var ang = Math.atan2(y2 - y1, x2 - x1);
-      g.strokeStyle = color;
-      g.fillStyle = color;
-      g.lineWidth = 1.1;
-      g.setLineDash([3, 3]);
-      g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
-      g.setLineDash([]);
-      var head = 5;
-      g.beginPath();
-      g.moveTo(x2, y2);
-      g.lineTo(x2 - head * Math.cos(ang - 0.45), y2 - head * Math.sin(ang - 0.45));
-      g.lineTo(x2 - head * Math.cos(ang + 0.45), y2 - head * Math.sin(ang + 0.45));
-      g.closePath();
-      g.fill();
-    }
-    function drawMove() {
-      if (!moveCanvas || !moveCanvas.parentNode) return;
-      moveSize = api.fit(moveCanvas, moveStage);
-      var g = moveSize.ctx, w = moveSize.w, h = moveSize.h;
-      var C = api.colors();
-      g.clearRect(0, 0, w, h);
-      var bg = g.createLinearGradient(0, 0, 0, h);
-      bg.addColorStop(0, C.paper || "#fff");
-      bg.addColorStop(1, C.paper2 || C.paper || "#fff");
-      g.fillStyle = bg;
-      g.fillRect(0, 0, w, h);
-      g.strokeStyle = C.line;
-      g.globalAlpha = 0.24;
-      g.lineWidth = 1;
-      for (var i = -2; i <= 2; i++) {
-        var gx = w / 2 + i * Math.min(w * 0.20, h * 0.20);
-        var gy = h / 2 + i * Math.min(w * 0.20, h * 0.20);
-        g.beginPath(); g.moveTo(gx, 10); g.lineTo(gx, h - 10); g.stroke();
-        g.beginPath(); g.moveTo(10, gy); g.lineTo(w - 10, gy); g.stroke();
-      }
-      g.globalAlpha = 0.65;
-      g.strokeStyle = C.lineStrong;
-      g.beginPath(); g.moveTo(10, h / 2); g.lineTo(w - 10, h / 2); g.stroke();
-      g.beginPath(); g.moveTo(w / 2, 10); g.lineTo(w / 2, h - 10); g.stroke();
-      g.globalAlpha = 1;
-      g.fillStyle = C.muted;
-      g.font = '600 ' + Math.max(8, Math.min(10, w * 0.016)) + 'px "Open Sans", sans-serif';
-      g.textAlign = "left"; g.textBaseline = "alphabetic";
-      g.fillText(DE ? "Dimension 1" : "dimension 1", 12, h - 10);
-      g.save();
-      g.translate(12, 16);
-      g.rotate(-Math.PI / 2);
-      g.fillText(DE ? "Dimension 2" : "dimension 2", 0, 0);
-      g.restore();
-      g.textAlign = "right";
-      g.fillStyle = C.petrol;
-      g.fillText((DE ? "Schicht " : "layer ") + moveState.to + " / 2", w - 12, 18);
-      g.textAlign = "left";
-      g.fillStyle = C.muted;
-      g.fillText(DE ? "schematisch · Punkte = Token-Vektoren" : "schematic · points = token vectors", 12, 18);
-
-      var pts = MOVE_POINTS.map(function (pt) {
-        var from = movePos(pt, moveState.from, 1);
-        var to = movePos(pt, moveState.to, 1);
-        var p = [from[0] + (to[0] - from[0]) * moveState.t, from[1] + (to[1] - from[1]) * moveState.t];
-        var prev = movePos(pt, Math.max(0, moveState.to - 1), 1);
-        return { pt: pt, p: p, prev: prev, col: C[pt.col] || C.petrol };
-      });
-      pts.forEach(function (item) {
-        if (moveState.to > 0) {
-          var a = moveProject(item.prev, w, h);
-          var b = moveProject(item.p, w, h);
-          g.globalAlpha = 0.42;
-          moveArrow(g, a.x, a.y, b.x, b.y, item.col);
-          g.globalAlpha = 1;
-        }
-        var q = moveProject(item.p, w, h);
-        g.beginPath();
-        g.arc(q.x, q.y, 8, 0, Math.PI * 2);
-        g.fillStyle = item.col;
-        g.globalAlpha = 0.10;
-        g.fill();
-        g.globalAlpha = 1;
-        g.beginPath();
-        g.arc(q.x, q.y, 3.6, 0, Math.PI * 2);
-        g.fillStyle = item.col;
-        g.fill();
-        g.strokeStyle = C.paper;
-        g.lineWidth = 1.5;
-        g.stroke();
-        g.fillStyle = C.ink;
-        g.font = '600 ' + Math.max(8, Math.min(11, w * 0.018)) + 'px "Open Sans", sans-serif';
-        g.textAlign = "center";
-        g.textBaseline = "bottom";
-        g.fillText(item.pt.label, q.x, q.y - 9);
-      });
-      g.textBaseline = "alphabetic";
-      moveCanvas.setAttribute("aria-label", DE
-        ? "2D-Punktbewegung nach " + moveState.to + " von 2 Schichten. Punkte sind Token-Vektoren; die Pfeile zeigen die Verschiebung."
-        : "2D point movement after " + moveState.to + " of 2 layers. Points are token vectors; arrows show the displacement.");
-    }
-    function updateMoveReadout() {
-      if (!moveReadout) return;
-      moveReadout.textContent = moveState.to === 0
-        ? (DE ? "Start: Punkte an ihren Ausgangspositionen." : "Start: points at their initial positions.")
-        : (DE ? "Schicht " + moveState.to + " angewandt: die Punkte haben sich verschoben." : "Layer " + moveState.to + " applied: the points have moved.");
-      if (moveStepBtn) moveStepBtn.disabled = moveState.step >= 2;
-      if (moveResetBtn) moveResetBtn.disabled = moveState.step <= 0;
-    }
-    function animateMove(to) {
-      if (moveRaf) cancelAnimationFrame(moveRaf);
-      if (moveState.step === to) { updateMoveReadout(); return; }
-      moveState.from = moveState.step;
-      moveState.to = to;
-      moveState.t = 0;
-      var t0 = performance.now(), dur = 650;
-      function frame(now) {
-        var t = Math.max(0, Math.min(1, (now - t0) / dur));
-        moveState.t = 1 - Math.pow(1 - t, 3);
-        drawMove();
-        if (t < 1) moveRaf = requestAnimationFrame(frame);
-        else {
-          moveState.step = to;
-          moveState.from = to;
-          moveState.t = 1;
-          moveRaf = 0;
-          updateMoveReadout();
-        }
-      }
-      moveRaf = requestAnimationFrame(frame);
-    }
-    if (moveStepBtn) moveStepBtn.addEventListener("click", function () { animateMove(Math.min(2, moveState.step + 1)); });
-    if (moveResetBtn) moveResetBtn.addEventListener("click", function () { animateMove(0); });
-
     function drawDims() {
       if (!dimsCanvas || !dimsCanvas.parentNode) return;
       dimsSize = api.fit(dimsCanvas, dimsCanvas.parentNode);
@@ -555,15 +396,13 @@
       size = api.fit(bendCanvas, bendStage);
       drawBend();
       drawDims();
-      drawMove();
     }
     var ro = null;
-    if (window.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(bendStage); if (moveStage) ro.observe(moveStage); }
-    function onTheme() { drawBend(); drawDims(); drawMove(); }
+    if (window.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(bendStage); }
+    function onTheme() { drawBend(); drawDims(); }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", onTheme);
     updateBendReadout();
-    updateMoveReadout();
     resize();
     setContext(activeMode);
     return {
@@ -586,7 +425,6 @@
       resize: resize,
       destroy: function () {
         if (bendRaf) cancelAnimationFrame(bendRaf);
-        if (moveRaf) cancelAnimationFrame(moveRaf);
         if (ro) ro.disconnect();
         window.removeEventListener("resize", resize);
         window.removeEventListener("tm:theme", onTheme);

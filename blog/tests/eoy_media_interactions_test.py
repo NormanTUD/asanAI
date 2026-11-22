@@ -1585,22 +1585,20 @@ def test_blocks_sequence(browser, base, lang, results):
     overview = page.evaluate("() => ({ pills: document.querySelectorAll('.ls-bs-pill').length, current: document.querySelectorAll('.ls-bs-pill.is-current').length, subnav: !!document.querySelector('.ls-bs-subnav'), text: document.body.innerText })")
     results.check(tag, "transformer overview clears the current sub-marker", overview["pills"] == 3 and overview["current"] == 0, str(overview)[:200])
     results.check(tag, "architecture no longer repeats the next pages", not overview["subnav"] and "Die nächsten Seiten" not in overview["text"] and "The next pages" not in overview["text"], str(overview)[:200])
-    traj = page.evaluate(
-        r"""
-() => ({
-  host: !!document.querySelector('.ls-bs-traj'),
-  canvas: !!document.querySelector('.ls-bs-traj-canvas'),
-  static: !document.querySelector('.ls-bs-traj-step'),
-  legend: Array.from(document.querySelectorAll('.ls-bs-traj-legend i')).map(e => e.className),
-  text: document.querySelector('.ls-bs-traj')?.innerText || '',
-  aria: document.querySelector('.ls-bs-traj-canvas')?.getAttribute('aria-label') || ''
-})
-"""
-    )
-    results.check(tag, "transformer overview shows the static trajectory image", traj["host"] and traj["canvas"] and traj["static"], str(traj)[:240])
-    results.check(tag, "trajectory image shows input, hidden and output", all(token in traj["text"] for token in ("Input", "Hidden", "Output")), traj["text"][:240])
-    results.check(tag, "trajectory image shows separation and reassembly", ("isoliert" in traj["text"] or "isolated" in traj["text"]) and ("zusammengesetzt" in traj["text"] or "reassembled" in traj["text"]), traj["text"][:240])
-    results.check(tag, "trajectory image explains the regions", "trennt" in traj["aria"] or "separates" in traj["aria"], traj["aria"][:240])
+    traj = page.evaluate("() => ({ host: !!document.querySelector('.ls-bs-traj'), canvas: !!document.querySelector('.ls-bs-traj-canvas'), step: !!document.querySelector('.ls-bs-traj-step'), text: document.querySelector('.ls-bs-traj')?.innerText || '' })")
+    results.check(tag, "transformer overview shows the trajectory plot", traj["host"] and traj["canvas"] and traj["step"], str(traj)[:200])
+    results.check(tag, "trajectory plot says thinking moves points", "Denken" in traj["text"] or "Thinking" in traj["text"], traj["text"][:200])
+    page.locator('.ls-bs-traj-step').click()
+    page.wait_for_timeout(850)
+    traj1 = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-traj-readout')?.textContent || '', reset: document.querySelector('.ls-bs-traj-reset')?.disabled })")
+    results.check(tag, "trajectory steps through a layer", "Schicht 1" in traj1["readout"] or "Layer 1" in traj1["readout"], str(traj1))
+    page.locator('.ls-bs-traj-step').click(); page.wait_for_timeout(850)
+    page.locator('.ls-bs-traj-step').click(); page.wait_for_timeout(850)
+    page.locator('.ls-bs-traj-step').click(); page.wait_for_timeout(850)
+    traj4 = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-traj-readout')?.textContent || '', step: document.querySelector('.ls-bs-traj-step')?.disabled, reset: document.querySelector('.ls-bs-traj-reset')?.disabled })")
+    results.check(tag, "trajectory reaches layer four", "Schicht 4" in traj4["readout"] or "Layer 4" in traj4["readout"], str(traj4))
+    results.check(tag, "trajectory stops at the last layer", traj4["step"], str(traj4))
+    page.locator('.ls-bs-traj-reset').click(); page.wait_for_timeout(850)
     page.evaluate('() => LearnSys.next()')
     page.wait_for_timeout(250)
     attention = page.evaluate("() => ({ current: Array.from(document.querySelectorAll('.ls-bs-pill.is-current')).map(e => e.getAttribute('data-sub')), block: Array.from(document.querySelectorAll('.ls-bs-res-block.is-current')).map(e => e.textContent) })")
@@ -1621,33 +1619,29 @@ def test_blocks_sequence(browser, base, lang, results):
     context.close()
 
 
-def test_ffn_2d(browser, base, lang, results):
-    context, page, logs = open_page(browser, base, lang, path="/eoy/intuition_learnsys-demo.php?scene=ffn", wait_media=False)
-    tag = f"ffn-2d-{lang}"
+def test_ffn_separation(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/intuition_learnsys-demo.php?scene=ffnsplit", wait_media=False)
+    tag = f"ffn-sep-{lang}"
     page.wait_for_timeout(1800)
     info = page.evaluate(
         r"""
 () => ({
-  card: !!document.querySelector('.ls-ffn-2d'),
-  canvas: !!document.querySelector('.ls-ffn-2d-canvas'),
-  step: !!document.querySelector('.ls-ffn-2d-step'),
-  readout: document.querySelector('.ls-ffn-2d-readout')?.textContent || '',
+  card: !!document.querySelector('.ls-hc-sep'),
+  canvas: !!document.querySelector('.ls-hc-sep-canvas'),
+  buttons: document.querySelectorAll('.ls-hc-sep button').length,
+  note: document.querySelector('.ls-hc-sep')?.innerText || '',
+  aria: document.querySelector('.ls-hc-sep-canvas')?.getAttribute('aria-label') || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
-    results.check(tag, "FFN 2D movement card is mounted", info["card"] and info["canvas"] and info["step"], str(info))
-    results.check(tag, "FFN 2D movement has no page overflow", info["overflow"] <= 2, str(info["overflow"]))
-    page.locator('.ls-ffn-2d-step').click()
-    page.wait_for_timeout(900)
-    one = page.evaluate("() => ({ readout: document.querySelector('.ls-ffn-2d-readout')?.textContent || '', reset: document.querySelector('.ls-ffn-2d-reset')?.disabled })")
-    results.check(tag, "FFN 2D movement applies a layer", "Schicht 1" in one["readout"] or "Layer 1" in one["readout"], str(one))
-    page.locator('.ls-ffn-2d-step').click()
-    page.wait_for_timeout(900)
-    two = page.evaluate("() => ({ readout: document.querySelector('.ls-ffn-2d-readout')?.textContent || '', step: document.querySelector('.ls-ffn-2d-step')?.disabled })")
-    results.check(tag, "FFN 2D movement stops after two layers", ("Schicht 2" in two["readout"] or "Layer 2" in two["readout"]) and two["step"], str(two))
+    results.check(tag, "FFN subdivision shows the separation visual", info["card"] and info["canvas"], str(info)[:240])
+    results.check(tag, "FFN separation is purely visual", info["buttons"] == 0, str(info)[:240])
+    results.check(tag, "FFN separation shows input, hidden and output", all(token in info["note"] for token in ("Input", "Hidden", "Output")), info["note"][:240])
+    results.check(tag, "FFN separation explains the regions", "trennt" in info["aria"] or "separates" in info["aria"], info["aria"][:240])
+    results.check(tag, "FFN separation has no page overflow", info["overflow"] <= 2, str(info["overflow"]))
     errors = logs.take()
-    results.check(tag, "FFN 2D movement has no console errors", not errors, " | ".join(errors)[:400])
+    results.check(tag, "FFN separation has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
 
 
@@ -2171,7 +2165,7 @@ def main():
                 test_text_blur_swap(browser, base, lang, results)
                 test_nav_hint(browser, base, lang, results)
                 test_blocks_sequence(browser, base, lang, results)
-                test_ffn_2d(browser, base, lang, results)
+                test_ffn_separation(browser, base, lang, results)
                 test_embedding_arrows(browser, base, lang, results)
                 test_residual_layout(browser, base, lang, results)
                 test_attention_layout(browser, base, lang, results)

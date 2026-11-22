@@ -4,116 +4,84 @@ This file is the durable checklist for the current EOY pass. It records what is
 done, what is still open, and the exact validation commands. The user asked for
 this file before further edits.
 
-## Current state
+## Status (last updated 2026-11-22)
 
-The last takeaway slide was the main target of the previous pass. The FFN and
-attention slides were also edited because the previous message explicitly asked
-for those two changes. The old slides were not changed for their own sake.
+**Done before the latest request**
+- Takeaway: no "Prüffragen" row, no green focus cycle/progress bar/dots, no
+  pulsing distribution bar or "sampeln", no `[object HTMLDivElement]`.
+- FFN main visual: gradient, halos, glow, translucent separating plane.
+- Attention: fully connected graph, weighted edges with arrowheads and
+  percentages, visible `␣` whitespace labels, prettier 2D vector panel.
+- Residual: high-contrast notebook/stream labels (`C.ink`, `onDark`).
+- 3D embedding: normal point plot plus an "Pfeile" view that draws every word
+  as an arrow from the origin; body/watch text updated.
+- Hallucination types: two-source strip (weights/training data vs context/RAG),
+  source-kind highlight, RAG context-position strip with Liu et al. (2023),
+  richer boxes and sources.
+- Risk/limits/society: speech-recognition bias, censorship examples, agent
+  test-editing, four-test limits bench, five-stage value chain.
+- Mary's Room: grayscale world, no S/W/Rot pseudo-labels.
+- Architecture overview: current sub-step marked in the left stack and residual
+  flow; "Die nächsten Seiten …" subnav removed.
+- Architecture "Denken = Punkte verschieben": restored to the animated
+  5-layer, 4-token trajectory with thick, visible lines and a step button.
 
-- Takeaway (`demos/takeaway.js`)
-  - Removed the "Prüffragen" row.
-  - Removed the green focus cycle, the moving green border, the progress bar and
-    the bottom focus dots. Panels are now static.
-  - Removed the pulsing distribution bar and the pulsing "sampeln" label.
-  - Fixed the visible `[object HTMLDivElement]`: a trailing `+` concatenated
-    `root.appendChild(el)` into `el.innerHTML`.
-- FFN (`demos/ffn.js`)
-  - Added a soft background gradient, cluster halos, active-point glow, a
-    translucent separating plane and a clearer cluster label.
-- Attention (`demos/attention.js`)
-  - Fully connected graph: all token pairs have edges; selected row edges are
-    thicker, brighter and carry arrowheads and percentages.
-  - Tokens show a leading `␣` for whitespace; table and readout use the same
-    labels. The 2D vector panel keeps its animated row transition and now has a
-    grid and a `␣` legend.
-- Residual (`demos/residual.js`)
-  - **Open:** the top graphic on "Das gemeinsame Notizbuch wird zum Stream" has
-    blue text on a blue background in at least one theme. Make the top title,
-    badges, legend and stream labels high-contrast, using `C.ink` / `onDark`
-    instead of `C.petrol` / `C.muted` where the background is dark.
-- Hallucination types (`demos/hallucinationtypes.js`, `data.js`)
-  - **Open:** the page does not make the difference between **context** and
-    **training data** explicit. Add a visible two-source model and label every
-    type by its evidence base.
-  - **Open:** improve the lab further; keep it interactive and explanatory.
-- Risk / limits / society (`demos/riskmap.js`, `demos/limitslab.js`, `data.js`)
-  - Bias example is now speech recognition in noise/microphones.
-  - Power risk names concrete censorship (Chinese models / Tiananmen; Western
-    model red lines) with Noels et al. (2025) and Naseh et al. (2025).
-  - Alignment risk uses an agent that edits the test that grades it.
-  - Limits page is the new four-test reliability bench (paraphrase, citation,
-    knowledge boundary, long context).
-  - Society page is a five-stage value chain plus cross-section conflicts.
-- Mary's Room (`demos/mindintro.js`, `data.js`)
-  - No `S/W` / `Rot` pseudo-labels. Text says she lives in a grayscale world,
-    has never had access to anything red, and knows every theoretical fact about
-    colour.
+**Current work when the latest requests arrived**
+- The static "Input / Hidden / Output" separation diagram was moved to the FFN
+  **sub-slide** ("Im FFN: auffächern und zurück", scene `ffnsplit`) and the extra
+  card was removed from the main FFN role slide. This is done.
+- Tests: DE quick run reached 681 checks with one performance flake in the
+  media switch (`maxFrame` 286 ms); EN reached 680 checks with one case-sensitive
+  workspace string check (test fixed). A clean DE+EN run is still needed.
 
-## Open tasks
+**Open tasks (work stepwise)**
 
-1. **Residual contrast**
-   - Inspect the notebook and stream drawings.
-   - Replace blue-on-blue text with `C.ink` on paper and `onDark` / `onDarkSoft`
-     on the dark petrol panel. Check light and dark.
-2. **3D embedding slide**
-   - The 3D slide is `embedding` with `mode: "space", dim: 2`.
-   - At the start, state that a word is not a point but a vector from the
-     origin, i.e. a direction.
-   - Show the normal 3D point plot first; then show the same words as arrows
-     from the origin (or add a contrast step after the point plot). Add the
-     explanatory sentence in the slide body and in the demo readout.
-   - Keep the existing 3D drag and the tables.
-3. **Architecture of LLMs — current-position marker and cleanup**
-   - On "Die Architektur von LLMs", the left-side architecture diagram
-     (Attention / LayerNorm / FFN or the surrounding block) must mark the
-     current sub-step as a child element, so the reader sees where they are.
-   - Remove the "Die nächsten Seiten: Attention / Feed-Forward-Netzwerk (FFN) /
-     LayerNorm" text. The navigation already shows the next pages, and the
-     reader can reach them with Next.
-   - Do not add a new scene; extend the existing architecture diagram and keep
-     its `demoState` stable. The marker should update when the substep changes.
-4. **2D point-movement demo**
-   - Add a small, compact 2D canvas demo that shows points moving in the plane
-     as a layer transforms them, analogous to the 2D feature-space / migration
-     view in `blog/transformer.php`.
-   - Put it where the deck discusses moving points (FFN / architecture), keep it
-     lightweight and theme-reactive, and label the before/after and the layer
-     step. It must not become a second full 3D scene.
-5. **Hallucination types — context vs training data**
-   - Add a clear two-source visual: **weights / training data** vs **context
-     window / prompt / RAG source**.
-   - Label each type:
-     - training-data hallucination: false facts, outdated knowledge, fabricated
-       citations, entity swaps;
-     - context hallucination: intrinsic (contradicts the source) and extrinsic
-       (adds unsupported details);
-     - conflict: the context and the training data disagree, and the model picks
-       one.
-   - Explain that factuality is about the world, faithfulness about the source.
-   - Keep the existing evidence inspector and countermeasures; add the source
-     dimension to the claim readout.
-   - **RAG context position:** retrieved evidence is used better when it sits at
-     the beginning or end of the context; relevant information in the middle of
-     a long context is sometimes lost. This is the "lost in the middle" effect:
-     Nelson F. Liu et al. (2023), *Lost in the Middle: How Language Models Use
-     Long Contexts*, TACL, arXiv:2307.03172. Add the effect to the context /
-     RAG explanation (not as a separate hallucination type): it is a context
-     failure mode that RAG can trigger when it packs many chunks. Mitigations:
-     put the key evidence near the edges, rerank and trim chunks, cite the
-     source, and evaluate retrieval separately from generation.
-6. **Tests**
-   - Update `blog/tests/eoy_media_interactions_test.py` for the residual,
-     embedding and hallucination changes.
-   - Run:
-     - `uv run --with playwright python3 blog/tests/eoy_media_interactions_test.py --langs de --steps 1 --cycles 1`
-     - same with `--langs en`
-     - `uv run blog/tests/eoy_pages_test.py --pages 27.php 30.php 31.php --langs en,de`
-     - full `eoy_pages_test.py --langs en,de` if time allows.
-     - `uv run blog/tests/js_validator.py blog/eoy`
-     - `php -l` for changed PHP files.
-7. **Commit / push**
-   - Only after the suites are green. Include `todo_eoy.md` if useful.
-   - Do not stage unrelated files.
+1. **FFN sub-slide placement / main FFN cleanup**
+   - Remove the extra "2D-Bewegung / Eine Schicht verschiebt die Punkte im Raum.
+     Vorher → nachher." card from the main FFN role slide ("Die Rolle von
+     neuronalen Netzen im Transformer") so the top has enough space.
+   - Put the static "Input / Hidden / Output" separation diagram on the FFN
+     sub-slide (`ffnSplitSubstep`, scene `ffnsplit`) instead. Keep it static and
+     purely visual: tangled input, separated hidden regions, isolated/reassembled
+     output, with dashed region ellipses and W₁/W₂ arrows.
+   - Update the FFN sub-slide body/watch text accordingly.
+2. **"Drei Dimensionen"**
+   - The old 2D plane must lie straight/flat in 3D, not skewed; when the new
+     plane is added, the old plane should sit completely flat in the middle.
+   - Add a categorical second plane: human / animal / (fairy tale or a better
+     fitting category). Use plausible analogies; they do not need to be exact.
+   - Make the categories visually clear and arrange the old plane between them.
+3. **"Zwei Schichten, ein Trick"**
+   - Replace "„$A$ und $B$ sind Platzhalter für beliebige Wörter.“" with the
+     accurate statement that $A$ and $B$ can also be whole sub-sentences or
+     longer phrases the head reacts to.
+4. **Bias example — rich/poor, access to knowledge**
+   - Replace the speech-recognition/noise example with one about **access to
+     knowledge**: models learn mostly from digitally abundant, wealthier,
+     English-speaking contexts; questions about low-income regions, local
+     legal/medical knowledge, or low-resource languages are answered worse.
+   - Find and cite the studies while implementing. Starting points:
+     Joshi et al. (2020), *The State and Fate of Linguistic Diversity and
+     Inclusion in the NLP World*; Gururangan et al. (2022), *Whose Language
+     Counts as High Quality?*; Dodge et al. (2021), *Documenting Large Webtext
+     Corpora*. Verify each source before using it.
+   - Update the risk-map bias item, `aiRiskSub` body/boxes/sources, and any test
+     that assumes the speech-recognition example.
+5. **Limits page — complete presentation rewrite**
+   - "Grenzen: Was LLMs nicht zuverlässig können" is currently the weakest page:
+     the questions are arbitrary, and the lab pretends to show real LLM output
+     when it does not. Keep the same content, but rebuild the presentation from
+     scratch with better, realistic examples.
+   - Do not fake model output. Label simulated examples clearly and explain what
+     is reconstructed vs measured. Use realistic failure cases and make the
+     reasoning visible.
+   - Keep the four failure modes (paraphrase brittleness, fabricated citations,
+     knowledge boundary, long-context position) and the countermeasures, but
+     present them as a credible test bench, not as arbitrary quiz questions.
+6. **Tests and finish**
+   - Run DE and EN media suites; investigate the performance flake if it repeats.
+   - Run `eoy_pages_test` for 27/30/31 and the full suite.
+   - Run `js_validator`, `php -l`, and commit/push.
 
 ## Prior open items carried over
 
