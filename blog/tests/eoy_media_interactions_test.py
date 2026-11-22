@@ -1762,6 +1762,170 @@ def test_gauss_slider(browser, base, lang, results):
     context.close()
 
 
+def test_hallucination_lab(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/27.php", wait_media=False)
+    tag = f"hallucination-lab-{lang}"
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(1000)
+    info = page.evaluate(
+        r"""
+() => ({
+  scene: !!document.querySelector('.ls-hx-scene'),
+  chips: document.querySelectorAll('.ls-hx-chip').length,
+  claims: document.querySelectorAll('.ls-hx-claim').length,
+  measures: document.querySelectorAll('.ls-hx-measure').length,
+  risk: !!document.querySelector('.ls-hx-risk-svg svg'),
+  group: document.querySelector('.ls-hx-question span')?.textContent || '',
+  source: document.querySelector('.ls-hx-source-body')?.innerText || '',
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "hallucination lab is mounted", info["scene"], str(info))
+    results.check(tag, "hallucination lab has nine types", info["chips"] == 9, str(info["chips"]))
+    results.check(tag, "hallucination lab has claims and measures", info["claims"] > 0 and info["measures"] == 5, str(info))
+    results.check(tag, "hallucination lab has a risk map", info["risk"], str(info))
+    results.check(tag, "hallucination lab exposes the taxonomy group", "Faktizität" in info["group"] or "Factuality" in info["group"], info["group"])
+    page.locator('.ls-hx-measure[data-measure="source"]').click()
+    page.wait_for_timeout(400)
+    after = page.evaluate(
+        r"""
+() => ({
+  score: document.querySelector('.ls-hx-score b')?.textContent || '',
+  risk: document.querySelector('.ls-hx-risk-caption')?.textContent || '',
+  takeaway: document.querySelector('.ls-hx-takeaway')?.innerText || '',
+  active: document.querySelector('.ls-hx-measure.is-on')?.getAttribute('data-measure'),
+  source: document.querySelector('.ls-hx-source-body')?.innerText || ''
+})
+"""
+    )
+    results.check(tag, "RAG grounds the first false fact", after["score"] == "100%" and after["active"] == "source", str(after))
+    results.check(tag, "RAG moves the answer out of the hallucination zone", "gedeckt" in after["risk"] or "grounded" in after["risk"], after["risk"])
+    results.check(tag, "takeaway names the active measure", "Gedeckt" in after["takeaway"] or "Grounded" in after["takeaway"], after["takeaway"][:120])
+    titles = []
+    for _ in range(8):
+        page.evaluate("() => LearnSys.next()")
+        page.wait_for_timeout(120)
+        titles.append(page.evaluate("() => document.querySelector('.ls-hx-chip.is-on')?.textContent || ''"))
+    results.check(tag, "all hallucination types can be visited", len(set(titles)) >= 7, str(titles))
+    current = state(page)
+    results.check(tag, "hallucination lab has no page overflow", current["overflow"] <= 2, str(current["overflow"]))
+    errors = logs.take()
+    results.check(tag, "hallucination lab has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
+def test_risk_and_limit_visuals(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/30.php", wait_media=False)
+    tag = f"risk-map-{lang}"
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(800)
+    info = page.evaluate(
+        r"""
+() => ({
+  quadrant: !!document.querySelector('.ls-rm-quadrant'),
+  bubbles: document.querySelectorAll('.ls-rm-bubble').length,
+  defense: document.querySelectorAll('.ls-rm-defense-card').length,
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "risk quadrant is mounted", info["quadrant"], str(info))
+    results.check(tag, "risk quadrant has four bubbles", info["bubbles"] == 4, str(info["bubbles"]))
+    results.check(tag, "risk page shows four defence layers", info["defense"] == 4, str(info["defense"]))
+    page.locator('.ls-rm-bubble[data-item="2"]').click()
+    page.wait_for_timeout(250)
+    detail = page.evaluate(
+        r"""
+() => ({
+  title: document.querySelector('.ls-rm-detail-head b')?.textContent || '',
+  off: document.querySelectorAll('.ls-rm-defense-card.is-off').length,
+  line: document.querySelector('.ls-rm-defense-head span')?.textContent || ''
+})
+"""
+    )
+    results.check(tag, "risk detail follows the selected bubble", "Macht" in detail["title"] or "Power" in detail["title"], str(detail))
+    results.check(tag, "power concentration marks a layer as not acting", detail["off"] >= 1, str(detail))
+    results.check(tag, "risk page states a layered defence", bool(detail["line"]), str(detail))
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(800)
+    limits = page.evaluate(
+        r"""
+() => ({
+  rows: document.querySelectorAll('.ls-rm-meter-row').length,
+  pins: document.querySelectorAll('.ls-rm-meter-pin').length,
+  detail: document.querySelector('.ls-rm-detail-head b')?.textContent || '',
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "limit spectrum is mounted", limits["rows"] == 6, str(limits))
+    results.check(tag, "limit spectrum has six markers", limits["pins"] == 6, str(limits))
+    page.locator('.ls-rm-meter-row[data-item="2"]').click()
+    page.wait_for_timeout(200)
+    limit_detail = page.evaluate("() => ({ title: document.querySelector('.ls-rm-detail-head b')?.textContent || '', text: document.querySelector('.ls-rm-detail')?.innerText || '' })")
+    results.check(tag, "limit detail follows the selected capability", "Kontext" in limit_detail["title"] or "Context" in limit_detail["title"], str(limit_detail)[:200])
+    results.check(tag, "limit detail explains the structural cause", "Warum strukturell" in limit_detail["text"] or "Why structural" in limit_detail["text"], str(limit_detail)[:300])
+    results.check(tag, "risk/limit page has no overflow", limits["overflow"] <= 2, str(limits["overflow"]))
+    errors = logs.take()
+    results.check(tag, "risk/limit page has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
+def test_qualia_and_takeaway(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/31.php", wait_media=False)
+    tag = f"qualia-{lang}"
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(800)
+    qualia = page.evaluate(
+        r"""
+() => ({
+  scene: !!document.querySelector('.ls-mi-qualia'),
+  outside: !!document.querySelector('.ls-mi-outside'),
+  inside: !!document.querySelector('.ls-mi-inside'),
+  mary: !!document.querySelector('.ls-mi-mary'),
+  text: document.querySelector('.ls-mi-qualia-text')?.innerText || '',
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "qualia card is mounted", qualia["scene"] and qualia["outside"] and qualia["inside"], str(qualia))
+    results.check(tag, "qualia card shows Mary's room", qualia["mary"], str(qualia))
+    results.check(tag, "qualia text explains the felt redness", "Quale" in qualia["text"] or "quale" in qualia["text"], qualia["text"][:160])
+    results.check(tag, "qualia page has no overflow", qualia["overflow"] <= 2, str(qualia["overflow"]))
+    page.evaluate("() => LearnSys.go(0, 0, 2)")
+    page.wait_for_timeout(1600)
+    takeaway = page.evaluate(
+        r"""
+() => {
+  var canvas = document.querySelector('.ls-tk-canvas');
+  var r = canvas ? canvas.getBoundingClientRect() : null;
+  return {
+    canvas: !!canvas,
+    w: canvas ? canvas.width : 0,
+    h: canvas ? canvas.height : 0,
+    cssW: r ? Math.round(r.width) : 0,
+    cssH: r ? Math.round(r.height) : 0,
+    summary: document.querySelectorAll('.ls-tk-summary article').length,
+    questions: document.querySelectorAll('.ls-tk-questions span').length,
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+}
+"""
+    )
+    results.check(tag, "takeaway canvas is mounted", takeaway["canvas"] and takeaway["cssW"] > 200 and takeaway["cssH"] > 200, str(takeaway))
+    results.check(tag, "takeaway canvas has a real drawing buffer", takeaway["w"] > 200 and takeaway["h"] > 200, str(takeaway))
+    results.check(tag, "takeaway summarises three moves", takeaway["summary"] == 3, str(takeaway))
+    results.check(tag, "takeaway asks four questions", takeaway["questions"] == 4, str(takeaway))
+    results.check(tag, "takeaway page has no overflow", takeaway["overflow"] <= 2, str(takeaway["overflow"]))
+    errors = logs.take()
+    results.check(tag, "qualia/takeaway pages have no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
 def test_index_sprint(browser, base, lang, results):
     context = browser.new_context(viewport={"width": 1200, "height": 900})
     page = context.new_page()
@@ -1830,6 +1994,9 @@ def main():
                 test_attention_layout(browser, base, lang, results)
                 test_sinus_size(browser, base, lang, results)
                 test_gauss_slider(browser, base, lang, results)
+                test_hallucination_lab(browser, base, lang, results)
+                test_risk_and_limit_visuals(browser, base, lang, results)
+                test_qualia_and_takeaway(browser, base, lang, results)
                 test_tabs_and_code(page, logs, results, tag)
                 test_phone_screen_clicks(page, logs, results, tag)
                 test_hidden_media_buttons(page, logs, results, tag)

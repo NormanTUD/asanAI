@@ -101,6 +101,21 @@
         ]
       }
     };
+    var RISK_META = [
+      { quad: "tl", color: "lilac", layers: [true, true, true, true], line: L("Zugang, Monitoring, Evals und Strafverfolgung greifen zusammen.", "Access, monitoring, evals, and law enforcement work together."), notes: [L("Refusal und Filter.", "Refusal and filters."), L("Abuse-Monitoring und Zugang.", "Abuse monitoring and access."), L("Red-Team und Evals.", "Red team and evals."), L("Strafverfolgung und Regeln.", "Law enforcement and rules.")] },
+      { quad: "tr", color: "gold", layers: [true, true, true, true], line: L("Daten, Kontrolle, faire Metriken und Regeln greifen zusammen.", "Data, oversight, fair metrics, and rules work together."), notes: [L("Datenaudits im Training.", "Data audits in training."), L("Menschliche Kontrolle und Schwellen.", "Human oversight and thresholds."), L("Faire Metriken.", "Fair metrics."), L("Regulierung und Audits.", "Regulation and audits.")] },
+      { quad: "bl", color: "green", layers: [false, true, true, true], line: L("Markt, Zugang, Transparenz und Regeln; Modelltuning reicht nicht.", "Market, access, transparency, and rules; model tuning is not enough."), notes: [L("Modelltuning reicht nicht.", "Model tuning is not enough."), L("Zugang zu Compute.", "Access to compute."), L("Transparenz und Evals.", "Transparency and evals."), L("Wettbewerb und Regeln.", "Competition and rules.")] },
+      { quad: "br", color: "blue", layers: [true, true, true, true], line: L("Alignment, Rechte, Evals und internationale Regeln greifen zusammen.", "Alignment, permissions, evals, and international rules work together."), notes: [L("Alignment-Training.", "Alignment training."), L("Berechtigungen und Kill-Switch.", "Permissions and kill switch."), L("Gefährliche Fähigkeiten testen.", "Test dangerous capabilities."), L("Internationale Regeln.", "International rules.")] }
+    ];
+    var LIMIT_META = [
+      { position: 40, why: L("Das Trainingsziel ist Next-Token-Vorhersage, keine Simulation.", "The training objective is next-token prediction, not simulation."), fix: L("Werkzeuge, externe Simulatoren und Prüfung.", "Tools, external simulators, and verification.") },
+      { position: 88, why: L("Zeichen ohne Wahrnehmung, Handlung und Feedback.", "Symbols without perception, action, and feedback."), fix: L("Multimodalität, Sensoren und menschliches Feedback.", "Multimodality, sensors, and human feedback.") },
+      { position: 44, why: L("Das Arbeitsgedächtnis ist der Kontext; die Mitte langer Kontexte geht unter.", "Working memory is the context; the middle of long contexts gets lost."), fix: L("Retrieval, Chunking und Notizen.", "Retrieval, chunking, and notes.") },
+      { position: 46, why: L("Komposition ist brüchig; kleine Änderungen kippen mehrstufige Aufgaben.", "Composition is brittle; small changes tip multi-step tasks."), fix: L("Zerlegen, Werkzeuge und Gegenprüfung.", "Decomposition, tools, and verification.") },
+      { position: 86, why: L("Das Ziel ist plausibler Text, nicht Wahrheit.", "The objective is plausible text, not truth."), fix: L("RAG, Zitate und Verifikation.", "RAG, citations, and verification.") },
+      { position: 62, why: L("Werkzeuge und Autonomie vergrößern die Wirkung von Fehlern.", "Tools and autonomy increase the impact of errors."), fix: L("Berechtigungen, Sandbox und Monitoring.", "Permissions, sandboxing, and monitoring.") }
+    ];
+    function L(de, en) { return DE ? de : en; }
     var el = document.createElement("div");
     el.className = "ls-rm";
     root.appendChild(el);
@@ -118,28 +133,82 @@
       var active = Math.min(state.active, d.items.length - 1);
       state.active = active;
       var item = d.items[active];
-      var cards = d.items.map(function (it, idx) {
-        return '<button type="button" class="ls-rm-card ls-rm-card--risk' + (idx === state.active ? ' is-active' : '') + '" data-item="' + idx + '">' +
-          '<span class="ls-rm-tag">' + esc(it.tag) + '</span>' +
-          '<b>' + esc(it.title) + '</b>' +
-          '<span class="ls-rm-short">' + esc(it.short) + '</span>' +
-        '</button>';
+      var meta = RISK_META[active] || RISK_META[0];
+      var pos = { tl: [100, 66], tr: [300, 66], bl: [100, 176], br: [300, 176] };
+      var bubbles = d.items.map(function (it, idx) {
+        var m = RISK_META[idx] || RISK_META[0];
+        var p = pos[m.quad] || pos.tl;
+        return '<g class="ls-rm-bubble is-' + m.color + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '" transform="translate(' + p[0] + ',' + p[1] + ')" role="button" tabindex="0" aria-label="' + esc(it.title) + '">' +
+          '<circle class="ls-rm-bubble-ring" r="34"></circle>' +
+          '<circle class="ls-rm-bubble-dot" r="26"></circle>' +
+          '<text class="ls-rm-bubble-num" text-anchor="middle" y="5">0' + (idx + 1) + '</text>' +
+          '<text class="ls-rm-bubble-tag" text-anchor="middle" y="-42">' + esc(it.tag) + '</text>' +
+          '<text class="ls-rm-bubble-title" text-anchor="middle" y="46">' + esc(it.title) + '</text>' +
+        '</g>';
       }).join("");
+      var svg = '<svg class="ls-rm-quadrant" viewBox="0 0 400 240" role="img" aria-label="' + esc(d.sub) + '">' +
+        '<rect class="ls-rm-q q-tl" x="0" y="0" width="200" height="120"></rect>' +
+        '<rect class="ls-rm-q q-tr" x="200" y="0" width="200" height="120"></rect>' +
+        '<rect class="ls-rm-q q-bl" x="0" y="120" width="200" height="120"></rect>' +
+        '<rect class="ls-rm-q q-br" x="200" y="120" width="200" height="120"></rect>' +
+        '<line class="ls-rm-axis" x1="200" y1="0" x2="200" y2="240"></line>' +
+        '<line class="ls-rm-axis" x1="0" y1="120" x2="400" y2="120"></line>' +
+        '<text class="ls-rm-axis-label" x="200" y="14" text-anchor="middle">' + (DE ? "Heute" : "Today") + '</text>' +
+        '<text class="ls-rm-axis-label" x="200" y="234" text-anchor="middle">' + (DE ? "Zukunft" : "Future") + '</text>' +
+        '<text class="ls-rm-axis-label" x="8" y="114" text-anchor="start">' + (DE ? "Absicht" : "Intent") + '</text>' +
+        '<text class="ls-rm-axis-label" x="392" y="114" text-anchor="end">' + (DE ? "Unfall" : "Accident") + '</text>' +
+        bubbles +
+      '</svg>';
       var detail = '<div class="ls-rm-detail ls-rm-detail--risk">' +
         '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag) + '</span><b>' + esc(item.title) + '</b></div>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Gefahr" : "Danger") + ':</b> ' + esc(item.body) + '</p>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Warum" : "Why") + ':</b> ' + esc(item.mechanism) + '</p>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Beispiel" : "Example") + ':</b> ' + esc(item.examples) + '</p>' +
-        '<div class="ls-rm-fix"><b>' + (DE ? "So wird man sie los" : "How to get rid of it") + ':</b> ' + esc(item.countermeasure) + '</div>' +
         '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite) + '</span>' +
       '</div>';
-      var axes = '<div class="ls-rm-axes"><span>' + (DE ? "links Absicht · rechts Unfall" : "left intent · right accident") + '</span><span>' + (DE ? "oben Heute · unten Zukunft" : "top today · bottom future") + '</span></div>';
-      el.innerHTML = header(d) + axes + '<div class="ls-rm-grid ls-rm-grid--risks">' + cards + '</div>' + detail;
+      var layers = DATA.safety.items.map(function (layer, idx) {
+        var on = !!meta.layers[idx];
+        return '<div class="ls-rm-defense-card' + (on ? ' is-on' : ' is-off') + '">' +
+          '<span class="ls-rm-defense-num">' + esc(layer.level) + '</span>' +
+          '<b>' + esc(layer.title) + '</b>' +
+          '<span class="ls-rm-defense-pill">' + (on ? (DE ? "greift" : "acts") : (DE ? "greift kaum" : "barely acts")) + '</span>' +
+          '<p>' + esc(meta.notes[idx] || layer.short) + '</p></div>';
+      }).join("");
+      var defense = '<div class="ls-rm-defense">' +
+        '<div class="ls-rm-defense-head"><b>' + (DE ? "Verteidigung in der Tiefe" : "Defence in depth") + '</b><span>' + esc(meta.line) + '</span></div>' +
+        '<div class="ls-rm-defense-grid">' + layers + '</div>' +
+      '</div>';
+      el.innerHTML = header(d) + svg + detail + defense;
+    }
+    function renderLimits(d) {
+      var active = Math.min(state.active, d.items.length - 1);
+      state.active = active;
+      var rows = d.items.map(function (item, idx) {
+        var meta = LIMIT_META[idx] || LIMIT_META[0];
+        return '<button type="button" class="ls-rm-meter-row' + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '">' +
+          '<span class="ls-rm-meter-name">' + esc(item.title) + '</span>' +
+          '<span class="ls-rm-meter-track"><i class="ls-rm-meter-pin is-' + item.status + '" style="left:' + meta.position + '%"></i></span>' +
+          '<span class="ls-rm-status is-' + item.status + '">' + esc(statusLabel(item.status)) + '</span>' +
+        '</button>';
+      }).join("");
+      var item = d.items[active];
+      var meta = LIMIT_META[active] || LIMIT_META[0];
+      var detail = '<div class="ls-rm-detail ls-rm-detail--limit">' +
+        '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag) + '</span><b>' + esc(item.title) + '</b></div>' +
+        '<p class="ls-rm-block">' + esc(item.body) + '</p>' +
+        '<p class="ls-rm-block"><b>' + (DE ? "Warum strukturell?" : "Why structural?") + ':</b> ' + esc(meta.why) + '</p>' +
+        '<div class="ls-rm-fix"><b>' + (DE ? "Was hilft?" : "What helps?") + ':</b> ' + esc(meta.fix) + '</div>' +
+        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite) + '</span>' +
+      '</div>';
+      el.innerHTML = header(d) +
+        '<div class="ls-rm-spectrum"><div class="ls-rm-spectrum-scale"><span>' + (DE ? "stabil" : "stable") + '</span><span>' + (DE ? "brüchig" : "brittle") + '</span><span>' + (DE ? "fehlt" : "missing") + '</span></div>' + rows + '</div>' +
+        detail;
     }
     function render() {
       var d = modeData();
       el.className = "ls-rm ls-rm--" + state.mode;
       if (state.mode === "risks") { renderRisks(d); return; }
+      if (state.mode === "limits") { renderLimits(d); return; }
       var active = Math.min(state.active, d.items.length - 1);
       var gridClass = state.mode === "safety" ? " ls-rm-grid--stack" : (state.mode === "limits" ? " ls-rm-grid--limits" : "");
       el.innerHTML =
