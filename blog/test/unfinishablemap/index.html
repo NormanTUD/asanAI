@@ -2481,28 +2481,117 @@ function W(overrides) {
   return Object.assign({}, BASE_WEIGHTS, overrides);
 }
 
-const SCENES = [
-  { label: 'A map that cannot finish.', cam: new V3(0, 62, 315), look: new V3(0, 34, 0), fov: 45, drift: 1.2, weights: W({ tenets: 0.55, research: 0.4, concepts: 0.4, topics: 0.4, apex: 0.4, positions: 0.4, arguments: 0.3, questions: 0.3, voids: 0.44 }) },
-  { label: 'Human-directed, AI-assisted, reviewed.', cam: new V3(0, 22, 112), look: new V3(0, 16, 36), fov: 50, drift: 0.7, weights: W({ method: 1, tenets: 0.55, research: 0.2, concepts: 0.18, topics: 0.14, apex: 0.12, positions: 0.12, arguments: 0.08, questions: 0.08, voids: 0.16 }) },
-  { label: 'Eight kinds of knowledge.', cam: new V3(0, 60, 205), look: new V3(0, 42, 0), fov: 55, drift: 0.8, weights: W({ tenets: 0.9, research: 0.8, concepts: 0.8, topics: 0.8, apex: 0.8, positions: 0.8, arguments: 0.75, questions: 0.75, voids: 0.8 }) },
-  { label: 'Everything flows into positions.', cam: new V3(0, 25, 118), look: new V3(0, 22, 50), fov: 50, drift: 0.45, weights: W({ flow: 1, tenets: 0.4, research: 0.18, concepts: 0.35, topics: 0.35, apex: 0.35, positions: 0.35, voids: 0.16 }) },
-  { label: 'Five chosen starting points.', cam: new V3(0, 6, 96), look: new V3(0, 13, 0), fov: 56, drift: 0.55, focus: 'all', weights: W({ tenets: 1, research: 0.16, concepts: 0.18, topics: 0.14, apex: 0.14, positions: 0.12, arguments: 0.12, questions: 0.12, voids: 0.16 }) },
-  { label: 'Mind is not reducible.', cam: new V3(-35, 14, 96), look: new V3(-59, 17, 16), fov: 52, drift: 0.35, focus: 0, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
-  { label: 'The smallest possible influence.', cam: new V3(-11, 14, 84), look: new V3(-31, 17, 4.5), fov: 52, drift: 0.35, focus: 1, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
-  { label: 'Experience acts back on matter.', cam: new V3(0, 14, 88), look: new V3(0, 17, 0), fov: 52, drift: 0.35, focus: 2, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
-  { label: 'One world becomes actual.', cam: new V3(51, 14, 84), look: new V3(31, 17, 4.5), fov: 52, drift: 0.35, focus: 3, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
-  { label: 'Simplicity cannot decide here.', cam: new V3(83, 14, 96), look: new V3(59, 17, 16), fov: 52, drift: 0.35, focus: 4, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
-  { label: 'Raw notes, openly inspected.', cam: new V3(0, 20, 118), look: new V3(0, 26, 0), fov: 60, drift: 0.8, weights: W({ research: 1, concepts: 0.35, tenets: 0.28, topics: 0.14, apex: 0.08, positions: 0.06, arguments: 0.05, questions: 0.05, voids: 0.14 }) },
-  { label: 'The atoms of meaning.', cam: new V3(0, 50, 108), look: new V3(0, 47, 0), fov: 55, drift: 0.7, weights: W({ concepts: 1, topics: 0.3, research: 0.2, tenets: 0.2, apex: 0.1, positions: 0.06, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
-  { label: 'Five threads through everything.', cam: new V3(0, 74, 112), look: new V3(0, 68, 0), fov: 55, drift: 0.7, weights: W({ topics: 1, concepts: 0.35, apex: 0.4, tenets: 0.2, research: 0.1, positions: 0.08, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
-  { label: 'Threads woven into wholes.', cam: new V3(0, 94, 88), look: new V3(0, 89, 0), fov: 52, drift: 0.6, weights: W({ apex: 1, topics: 0.45, positions: 0.35, tenets: 0.2, concepts: 0.16, research: 0.06, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
-  { label: 'What the Map actually holds.', cam: new V3(0, 120, 82), look: new V3(0, 109, 0), fov: 52, drift: 0.55, weights: W({ positions: 1, apex: 0.35, tenets: 0.25, topics: 0.1, concepts: 0.08, research: 0.04, arguments: 0.04, questions: 0.04, voids: 0.08 }) },
-  { label: 'Openly partisan cases.', cam: new V3(105, 40, 76), look: new V3(75, 37, 0), fov: 55, drift: 0.6, weights: W({ arguments: 1, concepts: 0.32, tenets: 0.25, topics: 0.08, apex: 0.06, positions: 0.04, research: 0.04, questions: 0.04, voids: 0.08 }) },
-  { label: 'Questions end; voids may not.', cam: new V3(-98, 28, 130), look: new V3(-40, 30, 0), fov: 66, drift: 0.6, weights: W({ questions: 1, voids: 0.8, topics: 0.2, concepts: 0.16, tenets: 0.14, research: 0.04, apex: 0.04, positions: 0.04, arguments: 0.04 }) },
-  { label: 'Why thought goes dark.', cam: new V3(0, -8, 122), look: new V3(0, -28, 54), fov: 50, drift: 0.4, weights: W({ taxonomy: 1, voids: 0.42, questions: 0.2, tenets: 0.14, concepts: 0.08, topics: 0.06, research: 0.03, apex: 0.03, positions: 0.03, arguments: 0.03 }) },
-  { label: 'Every limit points inward.', cam: new V3(0, -24, 128), look: new V3(0, -46, 0), fov: 55, drift: 0.5, weights: W({ convergence: 1, voids: 0.18, tenets: 0.25, concepts: 0.12, topics: 0.08, research: 0.03, apex: 0.04, positions: 0.03, arguments: 0.03, questions: 0.05 }) },
-  { label: 'The map is never done.', cam: new V3(0, 80, 380), look: new V3(0, 28, 0), fov: 48, drift: 1.0, slow: new V3(0, 0.25, 2.1), weights: W({ tenets: 0.75, research: 0.62, concepts: 0.7, topics: 0.7, apex: 0.7, positions: 0.7, arguments: 0.62, questions: 0.62, voids: 0.62, growth: 1 }) }
+const MAIN_SCENES = [
+  { kind: 'intro', label: 'A map that cannot finish.', cam: new V3(0, 62, 315), look: new V3(0, 34, 0), fov: 45, drift: 1.2, weights: W({ tenets: 0.55, research: 0.4, concepts: 0.4, topics: 0.4, apex: 0.4, positions: 0.4, arguments: 0.3, questions: 0.3, voids: 0.44 }) },
+  { kind: 'method', label: 'Human-directed, AI-assisted, reviewed.', cam: new V3(0, 22, 112), look: new V3(0, 16, 36), fov: 50, drift: 0.7, weights: W({ method: 1, tenets: 0.55, research: 0.2, concepts: 0.18, topics: 0.14, apex: 0.12, positions: 0.12, arguments: 0.08, questions: 0.08, voids: 0.16 }) },
+  { kind: 'architecture', label: 'Eight kinds of knowledge.', cam: new V3(0, 60, 205), look: new V3(0, 42, 0), fov: 55, drift: 0.8, weights: W({ tenets: 0.9, research: 0.8, concepts: 0.8, topics: 0.8, apex: 0.8, positions: 0.8, arguments: 0.75, questions: 0.75, voids: 0.8 }) },
+  { kind: 'flow', label: 'Everything flows into positions.', cam: new V3(0, 25, 118), look: new V3(0, 22, 50), fov: 50, drift: 0.45, weights: W({ flow: 1, tenets: 0.4, research: 0.18, concepts: 0.35, topics: 0.35, apex: 0.35, positions: 0.35, voids: 0.16 }) },
+  { kind: 'tenets', label: 'Five chosen starting points.', cam: new V3(0, 6, 96), look: new V3(0, 13, 0), fov: 56, drift: 0.55, focus: 'all', weights: W({ tenets: 1, research: 0.16, concepts: 0.18, topics: 0.14, apex: 0.14, positions: 0.12, arguments: 0.12, questions: 0.12, voids: 0.16 }) },
+  { kind: 'dualism', label: 'Mind is not reducible.', cam: new V3(-35, 14, 96), look: new V3(-59, 17, 16), fov: 52, drift: 0.35, focus: 0, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { kind: 'quantum', label: 'The smallest possible influence.', cam: new V3(-11, 14, 84), look: new V3(-31, 17, 4.5), fov: 52, drift: 0.35, focus: 1, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { kind: 'bidirectional', label: 'Experience acts back on matter.', cam: new V3(0, 14, 88), look: new V3(0, 17, 0), fov: 52, drift: 0.35, focus: 2, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { kind: 'manyworlds', label: 'One world becomes actual.', cam: new V3(51, 14, 84), look: new V3(31, 17, 4.5), fov: 52, drift: 0.35, focus: 3, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { kind: 'occam', label: 'Simplicity cannot decide here.', cam: new V3(83, 14, 96), look: new V3(59, 17, 16), fov: 52, drift: 0.35, focus: 4, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { kind: 'research', label: 'Raw notes, openly inspected.', cam: new V3(0, 20, 118), look: new V3(0, 26, 0), fov: 60, drift: 0.8, weights: W({ research: 1, concepts: 0.35, tenets: 0.28, topics: 0.14, apex: 0.08, positions: 0.06, arguments: 0.05, questions: 0.05, voids: 0.14 }) },
+  { kind: 'concepts', label: 'The atoms of meaning.', cam: new V3(0, 50, 108), look: new V3(0, 47, 0), fov: 55, drift: 0.7, weights: W({ concepts: 1, topics: 0.3, research: 0.2, tenets: 0.2, apex: 0.1, positions: 0.06, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
+  { kind: 'topics', label: 'Five threads through everything.', cam: new V3(0, 74, 112), look: new V3(0, 68, 0), fov: 55, drift: 0.7, weights: W({ topics: 1, concepts: 0.35, apex: 0.4, tenets: 0.2, research: 0.1, positions: 0.08, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
+  { kind: 'apex', label: 'Threads woven into wholes.', cam: new V3(0, 94, 88), look: new V3(0, 89, 0), fov: 52, drift: 0.6, weights: W({ apex: 1, topics: 0.45, positions: 0.35, tenets: 0.2, concepts: 0.16, research: 0.06, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
+  { kind: 'positions', label: 'What the Map actually holds.', cam: new V3(0, 120, 82), look: new V3(0, 109, 0), fov: 52, drift: 0.55, weights: W({ positions: 1, apex: 0.35, tenets: 0.25, topics: 0.1, concepts: 0.08, research: 0.04, arguments: 0.04, questions: 0.04, voids: 0.08 }) },
+  { kind: 'arguments', label: 'Openly partisan cases.', cam: new V3(105, 40, 76), look: new V3(75, 37, 0), fov: 55, drift: 0.6, weights: W({ arguments: 1, concepts: 0.32, tenets: 0.25, topics: 0.08, apex: 0.06, positions: 0.04, research: 0.04, questions: 0.04, voids: 0.08 }) },
+  { kind: 'questions', label: 'Questions end; voids may not.', cam: new V3(-98, 28, 130), look: new V3(-40, 30, 0), fov: 66, drift: 0.6, weights: W({ questions: 1, voids: 0.8, topics: 0.2, concepts: 0.16, tenets: 0.14, research: 0.04, apex: 0.04, positions: 0.04, arguments: 0.04 }) },
+  { kind: 'taxonomy', label: 'Why thought goes dark.', cam: new V3(0, -8, 122), look: new V3(0, -28, 54), fov: 50, drift: 0.4, weights: W({ taxonomy: 1, voids: 0.42, questions: 0.2, tenets: 0.14, concepts: 0.08, topics: 0.06, research: 0.03, apex: 0.03, positions: 0.03, arguments: 0.03 }) },
+  { kind: 'convergence', label: 'Every limit points inward.', cam: new V3(0, -24, 128), look: new V3(0, -46, 0), fov: 55, drift: 0.5, weights: W({ convergence: 1, voids: 0.18, tenets: 0.25, concepts: 0.12, topics: 0.08, research: 0.03, apex: 0.04, positions: 0.03, arguments: 0.03, questions: 0.05 }) },
+  { kind: 'finale', label: 'The map is never done.', cam: new V3(0, 80, 380), look: new V3(0, 28, 0), fov: 48, drift: 1.0, slow: new V3(0, 0.25, 2.1), weights: W({ tenets: 0.75, research: 0.62, concepts: 0.7, topics: 0.7, apex: 0.7, positions: 0.7, arguments: 0.62, questions: 0.62, voids: 0.62, growth: 1 }) }
 ];
+
+const SUB_SLIDES = {
+  3: [
+    { kind: 'flow-constrain', label: 'Tenets constrain every layer.', cam: new V3(0, 25, 118), look: new V3(0, 22, 50), fov: 50, drift: 0.4, weights: W({ flow: 1, tenets: 0.5, concepts: 0.35, topics: 0.35, apex: 0.35, positions: 0.35, arguments: 0.3, voids: 0.3 }), highlight: { pairs: [['tenets', 'concepts'], ['tenets', 'topics'], ['tenets', 'apex'], ['tenets', 'positions'], ['tenets', 'voids']] } }
+  ],
+  11: [
+    { kind: 'concepts-shape', label: 'The vocabulary is tenet-shaped.', cam: new V3(0, 38, 138), look: new V3(0, 32, 0), fov: 60, drift: 0.6, weights: W({ concepts: 1, tenets: 0.55, topics: 0.2, research: 0.1, apex: 0.08 }), highlight: { pairs: [['tenets', 'concepts']] } }
+  ],
+  14: [
+    { kind: 'positions-dependency', label: 'Some positions hold up tenets.', cam: new V3(0, 92, 190), look: new V3(0, 55, 0), fov: 62, drift: 0.5, weights: W({ positions: 1, tenets: 0.6, apex: 0.2, topics: 0.08 }), highlight: { nodes: K.dependencyNodes || [], edgeIndices: K.dependencyEdges || [] } }
+  ],
+  15: [
+    { kind: 'arguments-steelman', label: 'Build the rival before the case.', cam: new V3(105, 40, 76), look: new V3(75, 37, 0), fov: 55, drift: 0.5, weights: W({ arguments: 1, concepts: 0.4, tenets: 0.25, topics: 0.06 }), highlight: { nodes: Object.values(K.rivals), pairs: [['arguments', 'concepts']] } }
+  ],
+  16: [
+    { kind: 'void-why', label: 'Each tenet casts a shadow.', cam: new V3(0, -12, 118), look: new V3(0, -28, 54), fov: 50, drift: 0.35, weights: W({ voidWhy: 1, voids: 0.36, tenets: 0.34, concepts: 0.08, questions: 0.05 }), highlight: { pairs: [['tenets', 'voids']] } },
+    { kind: 'void-territories', label: 'Three kinds of darkness.', cam: new V3(0, -12, 118), look: new V3(0, -28, 54), fov: 50, drift: 0.35, weights: W({ territory: 1, voids: 0.2, tenets: 0.12, questions: 0.06 }) }
+  ],
+  17: [
+    { kind: 'taxonomy-reasons', label: 'Four reasons, one seam.', cam: new V3(0, -6, 116), look: new V3(0, -28, 54), fov: 48, drift: 0.35, weights: W({ taxonomy: 1, voids: 0.32, questions: 0.12, tenets: 0.12 }) },
+    { kind: 'taxonomy-signatures', label: 'Failure has a structure.', cam: new V3(0, -8, 120), look: new V3(0, -28, 54), fov: 52, drift: 0.35, weights: W({ signature: 1, voids: 0.2, taxonomy: 0.05, tenets: 0.1 }) }
+  ],
+  18: [
+    { kind: 'convergence-independent', label: 'The convergence is not proof.', cam: new V3(0, -24, 128), look: new V3(0, -46, 0), fov: 55, drift: 0.4, weights: W({ convergence: 1, ratio: 1, voids: 0.12, tenets: 0.16, concepts: 0.08 }) },
+    { kind: 'convergence-discipline', label: 'Map the boundary, not the fantasy.', cam: new V3(0, -10, 144), look: new V3(0, -46, 0), fov: 56, drift: 0.4, weights: W({ discipline: 1, convergence: 0.45, voids: 0.1, tenets: 0.2, concepts: 0.06 }) }
+  ]
+};
+
+const SCENES = [];
+MAIN_SCENES.forEach((main, i) => {
+  SCENES.push(Object.assign({}, main, { group: i, sub: false, subIndex: 0 }));
+  const subs = SUB_SLIDES[i];
+  if (subs) {
+    subs.forEach((sub, j) => {
+      const slide = Object.assign({}, main, sub, { group: i, sub: true, subIndex: j + 1 });
+      slide.weights = Object.assign({}, main.weights, sub.weights);
+      if (sub.focus === undefined) slide.focus = null;
+      SCENES.push(slide);
+    });
+  }
+});
+
+let nodeHl = null;
+let nodeHlTarget = null;
+let edgeHl = null;
+let edgeHlTarget = null;
+
+function initHighlights() {
+  nodeHl = new Float32Array(nodes.length);
+  nodeHlTarget = new Float32Array(nodes.length);
+  edgeHl = new Float32Array(edges.length);
+  edgeHlTarget = new Float32Array(edges.length);
+}
+
+function applyHighlight(spec) {
+  if (!nodeHl) initHighlights();
+  nodeHlTarget.fill(0);
+  edgeHlTarget.fill(0);
+  if (!spec) return;
+  if (spec.nodes) {
+    spec.nodes.forEach(pos => {
+      let best = -1;
+      let bestD = 16;
+      for (let i = 0; i < nodes.length; i++) {
+        const d = nodes[i].p.distanceToSquared(pos);
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      if (best >= 0) nodeHlTarget[best] = 1;
+    });
+  }
+  if (spec.pairs) {
+    for (let i = 0; i < edges.length; i++) {
+      const e = edges[i];
+      const hit = spec.pairs.some(([a, b]) => (e.ra === a && e.rb === b) || (e.ra === b && e.rb === a));
+      if (hit) edgeHlTarget[i] = 1;
+    }
+  }
+  if (spec.edgeIndices) {
+    spec.edgeIndices.forEach(i => {
+      if (i !== undefined && i >= 0) edgeHlTarget[i] = 1;
+    });
+  }
+}
+
+function updateHighlights(dt) {
+  if (!nodeHl) return;
+  for (let i = 0; i < nodeHl.length; i++) nodeHl[i] = damp(nodeHl[i], nodeHlTarget[i], 5.5, dt);
+  for (let i = 0; i < edgeHl.length; i++) edgeHl[i] = damp(edgeHl[i], edgeHlTarget[i], 5.5, dt);
+}
 
 let sceneIndex = -1;
 let targetIndex = 0;
@@ -2549,7 +2638,9 @@ function setCaption(text, index) {
   prev.classList.remove('in');
   prev.classList.add('out');
   captionFlip = !captionFlip;
-  capIndex.textContent = String(index + 1).padStart(2, '0');
+  const slide = SCENES[index];
+  const groupLabel = String(slide.group + 1).padStart(2, '0');
+  capIndex.textContent = slide.sub ? groupLabel + ' · ' + slide.subIndex : groupLabel;
   counterEl.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(SCENES.length).padStart(2, '0');
   const ticks = railEl.children;
   for (let i = 0; i < ticks.length; i++) ticks[i].classList.toggle('active', i === index);
@@ -2582,6 +2673,7 @@ function goTo(index, durationOverride) {
   REGION_LIST.forEach(r => {
     regionTargets[r] = scene.weights[r] === undefined ? BASE_WEIGHTS[r] : scene.weights[r];
   });
+  applyHighlight(scene.highlight);
   setCaption(scene.label, index);
   mouse.x = 0;
   mouse.y = 0;
@@ -2639,7 +2731,7 @@ function updateNodes(t) {
     const nd = nodes[i];
     const w = regionWeights[nd.region] || 0;
     const pulse = 0.88 + 0.12 * Math.sin(t * 1.15 + nd.phase);
-    arr[i] = Math.pow(w, 1.22) * nd.base * pulse;
+    arr[i] = Math.pow(w, 1.22) * nd.base * pulse * (1 + (nodeHl ? nodeHl[i] * 1.9 : 0));
   }
   nodeOpAttr.needsUpdate = true;
 }
@@ -2653,7 +2745,7 @@ function updateEdges(dt) {
     const wa = regionWeights[e.ra] || 0;
     const wb = regionWeights[e.rb] || 0;
     const w = (wa + wb) * 0.5;
-    let op = e.base * (0.26 + 0.74 * w);
+    let op = e.base * (0.26 + 0.74 * w) * (1 + (edgeHl ? edgeHl[i] * 2.5 : 0));
     if (bridgeBoost > 0.01 && (bridgeRegions.includes(e.ra) || bridgeRegions.includes(e.rb))) {
       op *= 1 + bridgeBoost * 1.7;
     }
@@ -2769,6 +2861,53 @@ function updateConvergence(t) {
     const scale = 0.5 + 0.8 * (1 - f);
     s.mesh.scale.setScalar(scale);
   });
+}
+
+function updateVoidWhy(t) {
+  if (!voidWhyGroup.visible) return;
+  voidWhySparks.forEach(s => {
+    const f = (s.phase + t * 0.17) % 1;
+    s.mesh.position.copy(s.curve.getPoint(f));
+    s.mesh.scale.setScalar(0.6 + 0.7 * Math.sin(f * Math.PI));
+  });
+}
+
+function updateTerritory(t) {
+  if (!territoryGroup.visible) return;
+  territorySparks.forEach(s => {
+    const f = (s.phase + t * 0.08) % 1;
+    s.mesh.position.copy(s.curve.getPoint(f));
+    s.mesh.scale.setScalar(0.55 + 0.75 * Math.sin(f * Math.PI));
+  });
+  if (territoryVeilMat) territoryVeilMat.uniforms.uTime.value = t;
+}
+
+function updateSignature(t) {
+  if (!signatureGroup.visible) return;
+  const w = fadeGroups.signature.weight;
+  signaturePulse.forEach((s, i) => {
+    const pulse = 0.72 + 0.28 * Math.sin(t * 0.9 + s.phase);
+    s.group.scale.setScalar(0.96 + 0.06 * pulse);
+    s.group.children.forEach(c => {
+      if (c.material && c.material.uniforms && c.material.uniforms.uOpacity) {
+        c.material.uniforms.uOpacity.value = w * (c.material.userData.baseOpacity || 1);
+      }
+    });
+  });
+}
+
+function updateRatio(t) {
+  if (!ratioGroup.visible) return;
+  if (ratioArcMesh) {
+    ratioArcMesh.rotation.z = Math.PI / 2 + Math.sin(t * 0.18) * 0.04;
+    ratioArcMesh.material.opacity = 0.72 + 0.24 * Math.sin(t * 1.1);
+  }
+}
+
+function updateDiscipline(t) {
+  if (!disciplineGroup.visible) return;
+  if (disciplineWire) disciplineWire.rotation.y = t * 0.05;
+  if (disciplineRing) disciplineRing.material.opacity = 0.2 + 0.2 * (0.5 + 0.5 * Math.sin(t * 0.7));
 }
 
 function updateLabels() {
