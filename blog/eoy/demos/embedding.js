@@ -506,6 +506,7 @@
     }
     function drawSpace() {
       hits = [];
+      var hoverInfo = null;
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) {
@@ -746,10 +747,7 @@
           var labelY = p.y - 12;
           if (id === "power") labelY = p.y + 20;
           drawLabel(wordLabel(id), p.x, labelY, selected ? groupColor(WORDS[id].group) : C.soft, "center", 11);
-          if (hovered) {
-            var extra = item.threeD ? ", " + WORDS[id].z.toFixed(2) : "";
-            drawLabel("(" + WORDS[id].v[0] + ", " + WORDS[id].v[1] + extra + ")", p.x, p.y + 18, C.muted, "center", 9);
-          }
+          if (hovered) hoverInfo = { x: p.x, y: p.y, id: id, threeD: item.threeD };
           ctx.globalAlpha = 1;
         });
         if (result && individualAlpha > 0.5) {
@@ -771,6 +769,23 @@
         ctx.globalAlpha = 1;
       }
 
+      if (hoverInfo) {
+        var hw = WORDS[hoverInfo.id];
+        var dims = st.dim === 0 ? [hw.v[0]] : st.dim === 1 ? [hw.v[0], hw.v[1]] : [hw.v[0], hw.v[1], hw.z];
+        var htext = wordLabel(hoverInfo.id) + " · (" + dims.join(", ") + ")";
+        ctx.font = '700 ' + Math.max(9, Math.min(11, size.w * 0.018)) + 'px "Open Sans", sans-serif';
+        var htw = ctx.measureText(htext).width;
+        var htx = Math.max(8, Math.min(size.w - htw - 18, hoverInfo.x + 12));
+        var hty = Math.max(28, hoverInfo.y - 14);
+        ctx.fillStyle = C.paper || "#fff";
+        ctx.strokeStyle = C.lineStrong;
+        ctx.lineWidth = 1;
+        ctx.fillRect(htx - 5, hty - 12, htw + 10, 17);
+        ctx.strokeRect(htx - 5, hty - 12, htw + 10, 17);
+        ctx.fillStyle = C.ink;
+        ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+        ctx.fillText(htext, htx, hty);
+      }
       var modeLabel = dimMix < 0.5 ? "1D" : (dimMix < 1.5 ? "2D" : "3D");
       drawLabel("EMBEDDING · " + modeLabel, 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Ziehen zum Drehen · Wörter anklicken" : "Drag to rotate · click words", size.w - 24, 26, C.muted, "right", 9);
@@ -951,7 +966,12 @@
       } else {
         examplesForDim().forEach(function (ex) {
           row2.appendChild(makeChip(text(ex.label), st.arithmetic === ex.id, function () {
-            st.arithmetic = st.arithmetic === ex.id ? null : ex.id; syncControls(); draw();
+            st.arithmetic = st.arithmetic === ex.id ? null : ex.id;
+            if (ex.id === "layers") {
+              st.vectorMode = true;
+              if (st.dim !== 2) { st.dim = 2; animateDimTo(2); }
+            }
+            syncControls(); draw();
           }));
         });
         var select = document.createElement("select");
@@ -1009,6 +1029,7 @@
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
       st.vectorMode = !!s.vectorMode;
+      if (st.arithmetic === "layers" && st.dim === 2) st.vectorMode = true;
       st.showHighdim = !!s.showHighdim;
       if (st.dim !== 2) { st.showHighdim = false; st.vectorMode = false; }
       syncControls();

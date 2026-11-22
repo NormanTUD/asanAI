@@ -35,7 +35,7 @@
       {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert. Der Residualstrom läuft durch alle Blöcke; Attention und FFN addieren ihre Updates darauf. Dazu kommt LayerNorm, das die Aktivierungen in einer stabilen Skala hält. Der Transformer nutzt das Verschieben dieser Punkte zum Denken: Jede Schicht verschiebt den Punkt neu. Die nächsten Seiten gehen Attention, LayerNorm und FFN einzeln durch; am Ende steht die ganze Architektur als Funktion f(x).",
+        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert. Der Residualstrom läuft durch alle Blöcke; Attention und FFN addieren ihre Updates darauf. Dazu kommt LayerNorm, das die Aktivierungen in einer stabilen Skala hält. Der Transformer nutzt das Verschieben dieser Punkte zum Denken: Jede Schicht verschiebt den Punkt neu. Die Tokens aus dem Embedding bilden die Werte am Anfang; jede Schicht addiert ihre Änderung auf diese Wortpositionen. Die nächsten Seiten gehen Attention, LayerNorm und FFN einzeln durch; am Ende steht die ganze Architektur als Funktion f(x).",
         points: [],
         mini: "transformer",
         sub: [
@@ -80,7 +80,7 @@
       {
         id: "transformer", label: "Transformer blocks", short: "attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred. The residual stream runs through all blocks; attention and FFN add their updates to it. LayerNorm keeps the activations at a stable scale. The transformer uses moving these points to think: every layer moves the point again. The next pages go through attention, LayerNorm, and FFN one by one; at the end the whole architecture is a function f(x).",
+        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred. The residual stream runs through all blocks; attention and FFN add their updates to it. LayerNorm keeps the activations at a stable scale. The transformer uses moving these points to think: every layer moves the point again. The tokens from the embedding form the initial values; every layer adds its change to these word positions. The next pages go through attention, LayerNorm, and FFN one by one; at the end the whole architecture is a function f(x).",
         points: [],
         mini: "transformer",
         sub: [
@@ -117,19 +117,19 @@
     var fxCleanup = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
-    el.innerHTML = '<div class="ls-bs-residual" role="img" aria-label="' + (DE ? "Residualstrom: x läuft durch die Blöcke; Attention und FFN addieren ihre Updates." : "Residual stream: x runs through the blocks; attention and FFN add their updates.") + '">' +
+    el.innerHTML = '<div class="ls-bs-residual" aria-label="' + (DE ? "Residualstrom: x läuft durch die Blöcke; Attention und FFN addieren ihre Updates." : "Residual stream: x runs through the blocks; attention and FFN add their updates.") + '">' +
       '<span class="ls-bs-residual-title">' + (DE ? "Residualstrom" : "Residual stream") + '</span>' +
       '<span class="ls-bs-res-flow">' +
-        '<span class="ls-bs-res-node">x</span>' +
-        '<span class="ls-bs-res-arrow">→</span>' +
-        '<span class="ls-bs-res-block"><b>LN</b><span>Attention</span></span>' +
-        '<span class="ls-bs-res-plus">+</span>' +
-        '<span class="ls-bs-res-arrow">→</span>' +
-        '<span class="ls-bs-res-block"><b>LN</b><span>FFN</span></span>' +
-        '<span class="ls-bs-res-plus">+</span>' +
-        '<span class="ls-bs-res-arrow">→</span>' +
-        '<span class="ls-bs-res-node is-output">x′</span>' +
-        '<span class="ls-bs-res-times">× N</span>' +
+        '<span class="ls-bs-res-node" data-tip="' + (DE ? "Startwert: Token-Embedding + Position." : "Start value: token embedding + position.") + '">x</span>' +
+        '<span class="ls-bs-res-arrow">↓</span>' +
+        '<span class="ls-bs-res-block" data-tip="' + (DE ? "LayerNorm + Attention: liest den Stream und berechnet ein Update." : "LayerNorm + attention: reads the stream and computes an update.") + '"><b>LN</b><span>Attention</span></span>' +
+        '<span class="ls-bs-res-plus" data-tip="' + (DE ? "Residual-Addition: x + Attention-Update." : "Residual addition: x + attention update.") + '">+</span>' +
+        '<span class="ls-bs-res-arrow">↓</span>' +
+        '<span class="ls-bs-res-block" data-tip="' + (DE ? "LayerNorm + FFN: liest den Stream und addiert ein Update." : "LayerNorm + FFN: reads the stream and adds an update.") + '"><b>LN</b><span>FFN</span></span>' +
+        '<span class="ls-bs-res-plus" data-tip="' + (DE ? "Residual-Addition: x + FFN-Update." : "Residual addition: x + FFN update.") + '">+</span>' +
+        '<span class="ls-bs-res-arrow">↓</span>' +
+        '<span class="ls-bs-res-node is-output" data-tip="' + (DE ? "Ausgabe des Blocks; derselbe Stream läuft weiter." : "Block output; the same stream continues.") + '">x′</span>' +
+        '<span class="ls-bs-res-times" data-tip="' + (DE ? "Dieser Block wiederholt sich N-mal." : "This block repeats N times.") + '">× N</span>' +
       '</span>' +
       '<span class="ls-bs-residual-note">' + (DE ? "x bleibt erhalten; die Blöcke addieren nur ihre Änderung." : "x is preserved; the blocks only add their change.") + '</span>' +
       '</div>' +
@@ -142,6 +142,26 @@
     var progress = el.querySelector(".ls-bs-progress");
     var prevBtn = el.querySelector(".ls-bs-prev");
     var nextBtn = el.querySelector(".ls-bs-next");
+    var resTip = document.createElement("div");
+    resTip.className = "ls-bs-res-tip";
+    resTip.hidden = true;
+    el.appendChild(resTip);
+    function showResTip(event) {
+      var text = event.currentTarget.getAttribute("data-tip");
+      if (!text) return;
+      resTip.textContent = text;
+      resTip.hidden = false;
+      var x = Math.min(window.innerWidth - 240, event.clientX + 12);
+      var y = Math.min(window.innerHeight - 44, event.clientY + 12);
+      resTip.style.left = Math.max(8, x) + "px";
+      resTip.style.top = Math.max(8, y) + "px";
+    }
+    function hideResTip() { resTip.hidden = true; }
+    el.querySelectorAll(".ls-bs-residual [data-tip]").forEach(function (node) {
+      node.addEventListener("pointerenter", showResTip);
+      node.addEventListener("pointermove", showResTip);
+      node.addEventListener("pointerleave", hideResTip);
+    });
     var C = api.colors();
     function color(name) { return C[name] || C.petrol; }
     function esc(s) { return api.esc(s); }

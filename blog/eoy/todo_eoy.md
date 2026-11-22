@@ -100,9 +100,11 @@ this file before further edits.
    - Transformer subpages and prose now go Attention → LayerNorm → FFN, matching
      the displayed pills and architecture list. The blocks test was updated.
 15. **3D embedding — final direction state** — **done**
-   - With "Pfeile" active the points disappear; every word is an arrow from
-     (0, 0, 0) to its position.
-   - "Bedeutung ist Richtung" is shown in the plot and in the aria-label.
+   - The "Ebenen" example switches on the direction view: points disappear and
+     every word becomes an arrow from (0, 0, 0) to its position.
+   - Hover shows the represented numbers; "Bedeutung ist Richtung" is shown in
+     the plot and in the aria-label.
+   - The category planes are shown briefly when entering 3D, then fade out.
 16. **"Die Karte der Wörter" — hover percentage bars** — **done**
    - The track is now a neutral ink tint with an outline; winner fill is green,
      other fills are ink; percentages use ink text.
