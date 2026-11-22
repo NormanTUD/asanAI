@@ -2444,21 +2444,27 @@
       }, 320);
     }
   }
-  function renderAll() {
-    hideTip();
-    var day = activeDay();
-    var count = day ? visibleCount(day) : 0;
-    if (count && state.step >= count) state.step = count - 1;
+  function renderTextUi() {
     renderTop();
     renderDays();
     renderSteps();
     renderPosRail();
     renderText();
-    renderStage();
     renderNavHint();
-    updateBottomNav();
     if (els.calOverlay && !els.calOverlay.hidden) renderCalendar();
     save();
+  }
+  function renderStageUi(morph, canvasMorph) {
+    swap(renderStage, morph, canvasMorph);
+    updateBottomNav();
+  }
+  function renderAll() {
+    hideTip();
+    var day = activeDay();
+    var count = day ? visibleCount(day) : 0;
+    if (count && state.step >= count) state.step = count - 1;
+    renderTextUi();
+    renderStageUi(false, false);
   }
 
   function parseHash() {
@@ -2757,9 +2763,13 @@
       ], { duration: 100, delay: 100 + i * 15, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
     });
   }
-  function animateTextSwap(renderFn) {
+  function animateTextSwap(renderTextFn, renderStageFn) {
     var host = els.textBody;
-    if (reducedMotion() || !host) { renderFn(); return; }
+    if (reducedMotion() || !host) {
+      renderTextFn();
+      if (renderStageFn) renderStageFn();
+      return;
+    }
     cancelTransitions();
     playTransition(host, [
       { opacity: 1, filter: "blur(0px)" },
@@ -2767,21 +2777,29 @@
     ], { duration: 100, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
     textSwapTimer = setTimeout(function () {
       textSwapTimer = 0;
-      renderFn();
+      renderTextFn();
       playTransition(host, [
         { opacity: 0, filter: "blur(6px)" },
         { opacity: 1, filter: "blur(0px)" }
       ], { duration: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+      if (renderStageFn) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { renderStageFn(); });
+        });
+      }
     }, 100);
     clearTimeout(substepSafetyTimer);
     substepSafetyTimer = setTimeout(cancelTransitions, 700);
   }
   function renderSubstep(dir) {
     animateTextSwap(function () {
-      renderAll();
+      renderTextUi();
       if (els.textScroll) els.textScroll.scrollTop = 0;
+    }, function () {
+      renderStage();
+      updateBottomNav();
+      animateStageTitles(dir);
     });
-    animateStageTitles(dir);
   }
   function go(day, step, substep) {
     day = Number(day);
@@ -2823,13 +2841,19 @@
       setTimeout(function () { ignoreScroll = false; }, 140);
     }
     cueSuppressUntil = performance.now() + 500;
-    var renderFn = function () {
-      swap(renderAll, changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
+    if ((changed || substepChanged) && booted && !reducedMotion()) {
+      animateTextSwap(function () {
+        renderTextUi();
+        if (els.textScroll) els.textScroll.scrollTop = 0;
+      }, function () {
+        renderStageUi(changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
+        if (substepChanged && booted) animateStageTitles(substepDir);
+      });
+    } else {
+      renderAll();
       if (els.textScroll) els.textScroll.scrollTop = 0;
-    };
-    if ((changed || substepChanged) && booted && !reducedMotion()) animateTextSwap(renderFn);
-    else renderFn();
-    if (substepChanged && booted) animateStageTitles(substepDir);
+      if (substepChanged && booted) animateStageTitles(substepDir);
+    }
     if (dayChanged && els.app) {
       var dir = state.day > oldDay ? "next" : "prev";
       els.app.classList.remove("is-day-next", "is-day-prev");
