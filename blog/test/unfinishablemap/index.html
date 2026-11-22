@@ -453,6 +453,7 @@ function mixColor(a, b, t) {
   return a.clone().lerp(b, t);
 }
 
+const FX_LOW = new URLSearchParams(location.search).get('fx') === 'low';
 const stage = document.getElementById('stage');
 const labelLayer = document.getElementById('labelLayer');
 const railEl = document.getElementById('rail');
@@ -471,7 +472,7 @@ try {
   document.body.innerHTML = '<div style="color:#e8eefc;font:16px/1.6 Georgia,serif;display:grid;place-items:center;height:100%;padding:40px;text-align:center">This visual needs WebGL. Please open it in a current browser with hardware acceleration enabled.</div>';
   throw err;
 }
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setPixelRatio(FX_LOW ? 0.85 : Math.min(window.devicePixelRatio || 1, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.toneMapping = THREE.NoToneMapping;
@@ -491,7 +492,7 @@ scene.add(rimLight);
 const pixelMats = [];
 const fadeGroups = {};
 
-const REGION_LIST = ['tenets', 'research', 'concepts', 'topics', 'apex', 'positions', 'arguments', 'questions', 'voids', 'method', 'flow', 'taxonomy', 'convergence', 'growth'];
+const REGION_LIST = ['tenets', 'research', 'concepts', 'topics', 'apex', 'positions', 'arguments', 'questions', 'voids', 'method', 'flow', 'taxonomy', 'convergence', 'growth', 'voidWhy', 'territory', 'signature', 'ratio', 'discipline'];
 const regionWeights = {};
 const regionTargets = {};
 REGION_LIST.forEach(r => { regionWeights[r] = 0; regionTargets[r] = 0; });
@@ -515,7 +516,7 @@ function background() {
     side: THREE.BackSide,
     depthWrite: false,
     depthTest: false,
-    uniforms: { uTime: { value: 0 } },
+    uniforms: { uTime: { value: 0 }, uSimple: { value: FX_LOW ? 1 : 0 } },
     vertexShader: `
       varying vec3 vDir;
       void main() {
@@ -527,6 +528,7 @@ function background() {
       precision highp float;
       varying vec3 vDir;
       uniform float uTime;
+      uniform float uSimple;
       float hash(vec3 p) {
         p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
         p *= 17.0;
@@ -544,14 +546,18 @@ function background() {
       }
       void main() {
         vec3 d = normalize(vDir);
-        float n1 = noise(d * 2.1 + vec3(0.0, 0.0, uTime * 0.004));
-        float n2 = noise(d * 5.2 + vec3(3.1, 1.7, -uTime * 0.003));
-        float n3 = noise(d * 3.4 + vec3(-7.0, 2.0, 1.0));
-        vec3 col = vec3(0.006, 0.008, 0.018);
-        col += vec3(0.012, 0.021, 0.062) * smoothstep(0.42, 0.92, n1) * 0.9;
-        col += vec3(0.030, 0.009, 0.052) * smoothstep(0.52, 1.0, n2) * 0.42;
-        col += vec3(0.000, 0.030, 0.040) * smoothstep(0.5, 0.92, n3) * 0.38;
         float horizon = 0.5 + 0.5 * d.y;
+        vec3 col = vec3(0.006, 0.008, 0.018);
+        if (uSimple < 0.5) {
+          float n1 = noise(d * 2.1 + vec3(0.0, 0.0, uTime * 0.004));
+          float n2 = noise(d * 5.2 + vec3(3.1, 1.7, -uTime * 0.003));
+          float n3 = noise(d * 3.4 + vec3(-7.0, 2.0, 1.0));
+          col += vec3(0.012, 0.021, 0.062) * smoothstep(0.42, 0.92, n1) * 0.9;
+          col += vec3(0.030, 0.009, 0.052) * smoothstep(0.52, 1.0, n2) * 0.42;
+          col += vec3(0.000, 0.030, 0.040) * smoothstep(0.5, 0.92, n3) * 0.38;
+        } else {
+          col += vec3(0.008, 0.014, 0.038) * smoothstep(0.3, 0.9, horizon);
+        }
         col *= mix(0.55, 1.18, horizon);
         gl_FragColor = vec4(col, 1.0);
       }
@@ -621,7 +627,7 @@ function makePointsShader(star, tint) {
 
 function buildStars() {
   const isSmall = window.innerWidth < 760;
-  const count = isSmall ? 2200 : 3800;
+  const count = FX_LOW ? 1000 : (isSmall ? 2200 : 3800);
   const pos = new Float32Array(count * 3);
   const col = new Float32Array(count * 3);
   const size = new Float32Array(count);
@@ -657,7 +663,7 @@ function buildStars() {
 const starField = buildStars();
 
 function buildDust() {
-  const count = window.innerWidth < 760 ? 360 : 720;
+  const count = FX_LOW ? 160 : (window.innerWidth < 760 ? 360 : 720);
   const pos = new Float32Array(count * 3);
   const col = new Float32Array(count * 3);
   const size = new Float32Array(count);
@@ -996,6 +1002,18 @@ function buildVoids() {
     p.y += 2;
     K.voidHero[heroNames[i]] = p;
   });
+  const generated = [
+    { name: 'Explanatory gap', pos: new V3(-47, -33, 34), tenet: 0 },
+    { name: 'Amplification void', pos: new V3(-23, -37, 49), tenet: 1 },
+    { name: 'Agency void', pos: new V3(3, -35, 53), tenet: 2 },
+    { name: 'Indexical void', pos: new V3(30, -39, 39), tenet: 3 },
+    { name: 'Parsimony void', pos: new V3(-7, -41, 18), tenet: 4 }
+  ];
+  generated.forEach(g => {
+    K.voids.push(g.pos.clone());
+    K.voidHero[g.name] = g.pos.clone();
+    addEdge(K.tenets[g.tenet], g.pos, TENETS[g.tenet].color, PALETTE.void, 'tenets', 'voids', 0.24, { dash: true, bow: 0.42, seg: 16 });
+  });
   const linkConcepts = [
     K.concepts['dualism|Dualism'],
     K.concepts['quantum|Decoherence'],
@@ -1040,6 +1058,23 @@ function buildQuestions() {
   });
 }
 buildQuestions();
+
+function buildTenetLinks() {
+  const apexMap = ['Taxonomy of voids', 'Post-decoherence', 'Consciousness & agency', 'One-world wager', 'Living with the map'];
+  TENETS.forEach((t, i) => {
+    const cl = CLUSTERS[i];
+    addEdge(K.tenets[i], cl.center, t.color, cl.color, 'tenets', 'concepts', 0.065, { dash: true, bow: 0.32, seg: 16 });
+    addEdge(K.tenets[i], HUBS[i].center, t.color, HUBS[i].color, 'tenets', 'topics', 0.05, { dash: true, bow: 0.4, seg: 18 });
+    if (K.apex[apexMap[i]]) {
+      addEdge(K.tenets[i], K.apex[apexMap[i]], t.color, PALETTE.gold, 'tenets', 'apex', 0.04, { dash: true, bow: 0.46, seg: 18 });
+    }
+    addEdge(K.tenets[i], positionsCenter, t.color, 0xe2e8f0, 'tenets', 'positions', 0.035, { dash: true, bow: 0.5, seg: 20 });
+  });
+  const depPositions = [positionNodes[8], positionNodes[16], positionNodes[24]];
+  K.dependencyNodes = depPositions;
+  K.dependencyEdges = depPositions.map(p => addEdge(p, K.tenets[3], PALETTE.amber, TENETS[3].color, 'positions', 'tenets', 0.14, { dash: true, bow: 0.28, seg: 16 }));
+}
+buildTenetLinks();
 
 function buildGrowth() {
   const mainNodes = nodes.slice();
@@ -1446,14 +1481,34 @@ function makeTenetIcon(index) {
     g.add(corridor);
     const bead = new THREE.Mesh(new THREE.SphereGeometry(0.85, 16, 12), additiveMaterial(0xffffff, 1));
     g.add(bead);
-    for (let i = 0; i < 34; i++) {
-      const p = new Float32Array([rr(-1.6, 1.6), rr(-1.6, 1.6), rr(-1.6, 1.6)]);
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(p, 3));
-      const pt = new THREE.Points(geo, makePointsShader(false, 0xffffff));
-      pt.material.uniforms.uTint.value = colorOf(c);
-      g.add(pt);
+    const cloudCount = 46;
+    const cloudPos = new Float32Array(cloudCount * 3);
+    const cloudCol = new Float32Array(cloudCount * 3);
+    const cloudSize = new Float32Array(cloudCount);
+    const cloudPhase = new Float32Array(cloudCount);
+    const cloudOp = new Float32Array(cloudCount);
+    const cloudColor = colorOf(c);
+    for (let i = 0; i < cloudCount; i++) {
+      const u = rr(-1.6, 1.6);
+      const th = rnd() * TAU;
+      const s = Math.sqrt(Math.max(0, 1 - (u / 1.7) * (u / 1.7)));
+      cloudPos[i * 3] = Math.cos(th) * s * rr(0.4, 2.1);
+      cloudPos[i * 3 + 1] = u;
+      cloudPos[i * 3 + 2] = Math.sin(th) * s * rr(0.4, 2.1);
+      cloudCol[i * 3] = cloudColor.r;
+      cloudCol[i * 3 + 1] = cloudColor.g;
+      cloudCol[i * 3 + 2] = cloudColor.b;
+      cloudSize[i] = rr(0.6, 1.8);
+      cloudPhase[i] = rnd() * 6.283;
+      cloudOp[i] = rr(0.2, 0.75);
     }
+    const cloudGeo = new THREE.BufferGeometry();
+    cloudGeo.setAttribute('position', new THREE.BufferAttribute(cloudPos, 3));
+    cloudGeo.setAttribute('aColor', new THREE.BufferAttribute(cloudCol, 3));
+    cloudGeo.setAttribute('aSize', new THREE.BufferAttribute(cloudSize, 1));
+    cloudGeo.setAttribute('aPhase', new THREE.BufferAttribute(cloudPhase, 1));
+    cloudGeo.setAttribute('aOp', new THREE.BufferAttribute(cloudOp, 1));
+    g.add(new THREE.Points(cloudGeo, makePointsShader(false, 0xffffff)));
   } else if (index === 2) {
     const up = new THREE.Mesh(new THREE.ConeGeometry(1.25, 5.5, 4), additiveMaterial(c, 0.9));
     up.position.y = 4.2;
@@ -1902,6 +1957,334 @@ function buildConvergence() {
 }
 buildConvergence();
 
+const VOID_STAGE = new V3(0, -28, 54);
+const voidWhySparks = [];
+const territorySparks = [];
+const signaturePulse = [];
+let territoryVeilMat = null;
+let ratioArcMesh = null;
+let disciplineWire = null;
+let disciplineRing = null;
+
+function darkOrb(color, radius) {
+  const g = new THREE.Group();
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(radius, 40), new THREE.MeshBasicMaterial({ color: 0x010208, transparent: true, opacity: 0.96, side: THREE.DoubleSide, depthWrite: false }));
+  g.add(disc);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(radius, radius * 1.22, 48), additiveMaterial(color, 0.85));
+  g.add(ring);
+  const halo = new THREE.Mesh(new THREE.RingGeometry(radius * 1.32, radius * 1.9, 48), additiveMaterial(color, 0.06));
+  g.add(halo);
+  return g;
+}
+
+function roundedPlate(w, h, color, fillOpacity) {
+  const shape = roundedRectShape(w, h, 1.6);
+  const geo = new THREE.ShapeGeometry(shape, 8);
+  const fill = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x040814, transparent: true, opacity: fillOpacity, side: THREE.DoubleSide, depthWrite: false }));
+  const pts = [];
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) pts.push(new V3(p.getX(i), p.getY(i), 0.02));
+  const border = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(color, 0.35));
+  const g = new THREE.Group();
+  g.add(fill);
+  g.add(border);
+  return g;
+}
+
+const voidWhyGroup = new THREE.Group();
+voidWhyGroup.position.copy(VOID_STAGE);
+function buildVoidWhy() {
+  const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(64, 46), additiveMaterial(0x1a2450, 0.035));
+  backdrop.position.z = -1.4;
+  voidWhyGroup.add(backdrop);
+  const border = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
+    new V3(-31, -22, -1.2), new V3(31, -22, -1.2), new V3(31, 22, -1.2), new V3(-31, 22, -1.2)
+  ]), lineMaterial(0xa5b4fc, 0.16));
+  voidWhyGroup.add(border);
+  const divider = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(0, -20, 0), new V3(0, 20, 0)]), lineMaterial(0xffffff, 0.12));
+  voidWhyGroup.add(divider);
+  const rows = [
+    { t: 0, name: 'Explanatory gap', y: 16 },
+    { t: 1, name: 'Amplification', y: 8 },
+    { t: 2, name: 'Agency void', y: 0 },
+    { t: 3, name: 'Indexical void', y: -8 },
+    { t: 4, name: 'Parsimony void', y: -16 }
+  ];
+  rows.forEach(row => {
+    const tenet = TENETS[row.t];
+    const left = new V3(-25, row.y, 0);
+    const right = new V3(25, row.y, 0);
+    const orb = new THREE.Mesh(new THREE.SphereGeometry(1.25, 18, 12), additiveMaterial(tenet.color, 0.9));
+    orb.position.copy(left);
+    voidWhyGroup.add(orb);
+    const ring = darkOrb(PALETTE.void, 2.4);
+    ring.position.copy(right);
+    voidWhyGroup.add(ring);
+    const mid = new V3(0, row.y + 2.4, 0);
+    const curve = new THREE.QuadraticBezierCurve3(left, mid, right);
+    const pts = curve.getPoints(40);
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(tenet.color, 0.42));
+    voidWhyGroup.add(line);
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.3, 12), additiveMaterial(tenet.color, 0.9));
+    cone.position.copy(right).add(new V3(-1.6, 0.2, 0));
+    cone.quaternion.setFromUnitVectors(new V3(0, 1, 0), curve.getTangent(1).normalize());
+    voidWhyGroup.add(cone);
+    for (let i = 0; i < 2; i++) {
+      const spark = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), additiveMaterial(0xffffff, 0.9));
+      voidWhyGroup.add(spark);
+      voidWhySparks.push({ mesh: spark, curve, phase: i / 2 + rnd() * 0.25 });
+    }
+  });
+  voidWhyGroup.visible = false;
+  scene.add(voidWhyGroup);
+  registerFadeGroup('voidWhy', voidWhyGroup);
+}
+buildVoidWhy();
+
+const territoryGroup = new THREE.Group();
+territoryGroup.position.copy(VOID_STAGE);
+function buildTerritory() {
+  const xs = [-22, 0, 22];
+  const colors = [PALETTE.ice, PALETTE.violet, PALETTE.rose];
+  xs.forEach((x, i) => {
+    const plate = roundedPlate(19, 26, colors[i], 0.42);
+    plate.position.set(x, 0, 0);
+    territoryGroup.add(plate);
+    const divider = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(x - 8.2, -8.4, 0.05), new V3(x + 8.2, -8.4, 0.05)]), lineMaterial(colors[i], 0.28));
+    territoryGroup.add(divider);
+  });
+  const gridPts = [];
+  for (let i = 0; i <= 6; i++) {
+    const x = -22 - 7.5 + i * 2.5;
+    gridPts.push(new V3(x, -7, 0.04), new V3(x, 8, 0.04));
+  }
+  for (let i = 0; i <= 6; i++) {
+    const y = -7 + i * 2.5;
+    gridPts.push(new V3(-29.5, y, 0.04), new V3(-14.5, y, 0.04));
+  }
+  territoryGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPts), lineMaterial(PALETTE.ice, 0.13)));
+  const pathPts = [
+    new V3(-28.4, -6.5, 0.1), new V3(-25.5, -3.5, 0.1), new V3(-23.2, 1.4, 0.1),
+    new V3(-19.5, 3.8, 0.1), new V3(-16.2, 7.2, 0.1)
+  ];
+  const exploredCurve = new THREE.CatmullRomCurve3(pathPts);
+  territoryGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(exploredCurve.getPoints(60)), lineMaterial(0xffffff, 0.7)));
+  for (let i = 0; i < 4; i++) {
+    const spark = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), additiveMaterial(PALETTE.ice, 0.9));
+    territoryGroup.add(spark);
+    territorySparks.push({ mesh: spark, curve: exploredCurve, phase: i / 4 });
+  }
+  const unexplorable = darkOrb(PALETTE.violet, 6.0);
+  territoryGroup.add(unexplorable);
+  for (let i = 0; i < 3; i++) {
+    const r = 8 + i * 1.8;
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(r, 0.045, 6, 96, TAU * (0.78 - i * 0.12)), additiveMaterial(PALETTE.violet, 0.25 - i * 0.05));
+    arc.rotation.z = 0.5 + i * 0.7;
+    territoryGroup.add(arc);
+  }
+  const lockBar = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.26, 0.3), additiveMaterial(0xffffff, 0.45));
+  territoryGroup.add(lockBar);
+  const occludedOrb = new THREE.Mesh(new THREE.SphereGeometry(2.6, 20, 14), additiveMaterial(PALETTE.gold, 0.9));
+  occludedOrb.position.set(22, 0, -2.4);
+  territoryGroup.add(occludedOrb);
+  territoryVeilMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      uniform float uTime;
+      varying vec2 vUv;
+      float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+      void main() {
+        float n = sin(vUv.x * 22.0 + uTime * 0.7) * 0.5 + 0.5;
+        float n2 = sin(vUv.y * 13.0 - uTime * 0.4) * 0.5 + 0.5;
+        float grain = hash(floor(vUv * vec2(80.0, 40.0)) + floor(uTime * 2.0));
+        float a = 0.10 + 0.16 * n * n2 + 0.08 * grain;
+        vec3 col = mix(vec3(0.24, 0.12, 0.42), vec3(0.6, 0.3, 0.8), n);
+        gl_FragColor = vec4(col, a);
+      }
+    `,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+  pixelMats.push(territoryVeilMat);
+  const veil = new THREE.Mesh(new THREE.PlaneGeometry(15, 20), territoryVeilMat);
+  veil.position.set(22, 0, 1.6);
+  territoryGroup.add(veil);
+  for (let i = 0; i < 10; i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), additiveMaterial(0xffffff, 0.6));
+    m.position.set(22 + rr(-6, 6), rr(-8, 8), rr(1.8, 3.2));
+    territoryGroup.add(m);
+  }
+  territoryGroup.visible = false;
+  scene.add(territoryGroup);
+  registerFadeGroup('territory', territoryGroup);
+}
+buildTerritory();
+
+const signatureGroup = new THREE.Group();
+signatureGroup.position.copy(VOID_STAGE);
+function buildSignature() {
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(10, 0.04, 6, 120), additiveMaterial(0xa5b4fc, 0.18));
+  signatureGroup.add(ring);
+  const names = ['self-refutation', 'aporia', 'construction', 'illusion', 'ineffability', 'vertigo', 'dissolution', 'erasure'];
+  const colors = [PALETTE.rose, PALETTE.amber, PALETTE.sky, PALETTE.violet, PALETTE.emerald, PALETTE.ice, PALETTE.coral, 0x9fb4d8];
+  names.forEach((name, i) => {
+    const a = -Math.PI / 2 + (i / 8) * TAU;
+    const cx = Math.cos(a) * 27;
+    const cy = Math.sin(a) * 27;
+    const g = new THREE.Group();
+    g.position.set(cx, cy, 0);
+    const col = colors[i];
+    if (i === 0) {
+      const pts = [];
+      for (let k = 0; k <= 40; k++) {
+        const t = k / 40;
+        const ang = t * TAU * 0.82 + 0.4;
+        pts.push(new V3(Math.cos(ang) * 4, Math.sin(ang) * 4, 0));
+      }
+      g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(col, 0.8)));
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(0.5, 1.4, 10), additiveMaterial(col, 0.9));
+      cone.position.set(pts[pts.length - 1].x, pts[pts.length - 1].y, 0);
+      cone.rotation.z = -1.2;
+      g.add(cone);
+    } else if (i === 1) {
+      const pts = [
+        new V3(-5, 3, 0), new V3(-1, 0, 0), new V3(-5, -3, 0),
+        new V3(5, 3, 0), new V3(1, 0, 0), new V3(5, -3, 0),
+        new V3(0, 5, 0), new V3(0, -5, 0)
+      ];
+      g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(col, 0.8)));
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.4, 10, 8), additiveMaterial(0xffffff, 0.9));
+      g.add(dot);
+    } else if (i === 2) {
+      const mirror = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 9), additiveMaterial(col, 0.8));
+      g.add(mirror);
+      const grid = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints([
+        new V3(-4, -3, 0), new V3(-4, 3, 0), new V3(-2, -3, 0), new V3(-2, 3, 0), new V3(-4, -1, 0), new V3(-2, -1, 0)
+      ]), lineMaterial(col, 0.4));
+      g.add(grid);
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 8), additiveMaterial(0xffffff, 0.9));
+      dot.position.set(2, 0.5, 0);
+      g.add(dot);
+    } else if (i === 3) {
+      const pts = [];
+      for (let k = 0; k <= 80; k++) {
+        const t = k / 80;
+        const ang = t * TAU * 2.4;
+        const r = 0.3 + t * 3.8;
+        pts.push(new V3(Math.cos(ang) * r, Math.sin(ang) * r, 0));
+      }
+      g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(col, 0.8)));
+    } else if (i === 4) {
+      const pts = [];
+      for (let k = 0; k < 12; k++) {
+        const a0 = (k / 12) * TAU;
+        const a1 = a0 + TAU / 18;
+        pts.push(new V3(Math.cos(a0) * 4, Math.sin(a0) * 4, 0), new V3(Math.cos(a1) * 4, Math.sin(a1) * 4, 0));
+      }
+      g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(col, 0.8)));
+    } else if (i === 5) {
+      for (let k = 0; k < 4; k++) {
+        const pts = [];
+        for (let j = 0; j <= 40; j++) {
+          const ang = (j / 40) * TAU;
+          pts.push(new V3(Math.cos(ang) * (2.5 + k * 0.8) + k * 0.35, Math.sin(ang) * (2.5 + k * 0.8) + k * 0.2, 0));
+        }
+        g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(col, 0.25 + k * 0.14)));
+      }
+    } else if (i === 6) {
+      const pts = [];
+      for (let k = 0; k <= 40; k++) {
+        const t = k / 40;
+        pts.push(new V3(-4 + t * 8, Math.sin(t * TAU * 1.5) * 1.6, 0));
+      }
+      g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(col, 0.8)));
+      for (let k = 0; k < 8; k++) {
+        const m = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), additiveMaterial(col, 0.6 - k * 0.06));
+        m.position.set(1 + k * 0.7, Math.sin((0.6 + k * 0.05) * TAU * 1.5) * 1.6, 0);
+        g.add(m);
+      }
+    } else {
+      for (let k = 0; k < 9; k++) {
+        const m = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), additiveMaterial(col, 0.7 - k * 0.07));
+        m.position.set(-4 + k * 1, 0, 0);
+        g.add(m);
+      }
+    }
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(6.4, 0.03, 6, 64), additiveMaterial(col, 0.08));
+    g.add(halo);
+    signatureGroup.add(g);
+    signaturePulse.push({ group: g, phase: i * 0.79 });
+  });
+  signatureGroup.visible = false;
+  scene.add(signatureGroup);
+  registerFadeGroup('signature', signatureGroup);
+}
+buildSignature();
+
+const ratioGroup = new THREE.Group();
+ratioGroup.position.copy(convergenceGroup.position);
+function buildRatio() {
+  const full = new THREE.Mesh(new THREE.TorusGeometry(48, 0.06, 6, 160), additiveMaterial(0x5b4fd0, 0.25));
+  ratioGroup.add(full);
+  ratioArcMesh = new THREE.Mesh(new THREE.TorusGeometry(48, 0.15, 8, 160, TAU * 0.26), additiveMaterial(0x9ff5ff, 0.9));
+  ratioArcMesh.rotation.z = Math.PI / 2;
+  ratioGroup.add(ratioArcMesh);
+  const tick = new THREE.Mesh(new THREE.BoxGeometry(0.22, 3.2, 0.22), additiveMaterial(0xffffff, 0.8));
+  tick.position.set(Math.cos(Math.PI / 2 + TAU * 0.26) * 48, Math.sin(Math.PI / 2 + TAU * 0.26) * 48, 0);
+  tick.rotation.z = Math.PI / 2 + TAU * 0.26;
+  ratioGroup.add(tick);
+  const inner = new THREE.Mesh(new THREE.TorusGeometry(31, 0.03, 6, 120), additiveMaterial(0x9fb4d8, 0.12));
+  ratioGroup.add(inner);
+  ratioGroup.visible = false;
+  scene.add(ratioGroup);
+  registerFadeGroup('ratio', ratioGroup);
+}
+buildRatio();
+
+const disciplineGroup = new THREE.Group();
+disciplineGroup.position.copy(convergenceGroup.position);
+function buildDiscipline() {
+  disciplineWire = new THREE.Mesh(new THREE.SphereGeometry(58, 22, 14), new THREE.MeshBasicMaterial({ color: 0x6d5dfc, wireframe: true, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false }));
+  disciplineGroup.add(disciplineWire);
+  const veil = new THREE.Mesh(new THREE.SphereGeometry(44, 32, 20), new THREE.MeshBasicMaterial({ color: 0x01020a, transparent: true, opacity: 0.22, side: THREE.FrontSide, depthWrite: false }));
+  disciplineGroup.add(veil);
+  const ringPts = [];
+  for (let i = 0; i <= 120; i++) {
+    const a = (i / 120) * TAU;
+    ringPts.push(new V3(Math.cos(a) * 52, Math.sin(a) * 52, 0));
+  }
+  const ringGeo = new THREE.BufferGeometry().setFromPoints(ringPts);
+  disciplineRing = new THREE.Line(ringGeo, new THREE.LineDashedMaterial({ color: 0xa5b4fc, dashSize: 1.4, gapSize: 1.2, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
+  disciplineRing.computeLineDistances();
+  disciplineGroup.add(disciplineRing);
+  const gridPts = [];
+  for (let i = -6; i <= 6; i++) {
+    gridPts.push(new V3(i * 7, -34, 50), new V3(i * 7, 34, 50));
+  }
+  for (let i = -4; i <= 4; i++) {
+    gridPts.push(new V3(-42, i * 8, 50), new V3(42, i * 8, 50));
+  }
+  disciplineGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPts), lineMaterial(0xa5b4fc, 0.08)));
+  const border = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
+    new V3(-45, -36, 50), new V3(45, -36, 50), new V3(45, 36, 50), new V3(-45, 36, 50)
+  ]), lineMaterial(0xffffff, 0.12));
+  disciplineGroup.add(border);
+  disciplineGroup.visible = false;
+  scene.add(disciplineGroup);
+  registerFadeGroup('discipline', disciplineGroup);
+}
+buildDiscipline();
+
 const labels = [];
 function addLabel(text, pos, region, opts = {}) {
   const el = document.createElement('div');
@@ -1914,49 +2297,51 @@ function addLabel(text, pos, region, opts = {}) {
     region,
     base: opts.base === undefined ? 0.62 : opts.base,
     minWeight: opts.minWeight === undefined ? 0.22 : opts.minWeight,
-    scenes: opts.scenes || null
+    kinds: opts.kinds || null,
+    mainOnly: !!opts.mainOnly
   });
 }
 
-TENETS.forEach((t, i) => {
+TENETS.forEach(t => {
   addLabel(t.name, t.pos.clone().add(new V3(0, 33.5, 0)), 'tenets', { cls: 'bright', base: 0.78, minWeight: 0.3 });
 });
 
 CLUSTERS.forEach(cl => {
-  addLabel(cl.name, cl.center.clone().add(new V3(0, 14.5, 0)), 'concepts', { cls: 'bright', base: 0.6, scenes: [11], minWeight: 0.3 });
-  const names = cl.names.slice(0, 3);
-  names.forEach((name, i) => {
+  addLabel(cl.name, cl.center.clone().add(new V3(0, 14.5, 0)), 'concepts', { cls: 'bright', base: 0.6, minWeight: 0.3, kinds: ['concepts', 'concepts-shape'] });
+  cl.names.slice(0, 3).forEach(name => {
     const p = K.concepts[cl.key + '|' + name];
-    if (p) addLabel(name, p.clone().add(new V3(0, 1.4, 0)), 'concepts', { cls: 'tiny', base: 0.52, scenes: [11], minWeight: 0.34 });
+    if (p) addLabel(name, p.clone().add(new V3(0, 1.4, 0)), 'concepts', { cls: 'tiny', base: 0.52, minWeight: 0.34, kinds: ['concepts', 'concepts-shape'] });
   });
 });
 
 HUBS.forEach(h => {
-  addLabel(h.name, h.center.clone().add(new V3(0, 6.2, 0)), 'topics', { cls: 'bright', base: 0.68, scenes: [12], minWeight: 0.3 });
+  addLabel(h.name, h.center.clone().add(new V3(0, 6.2, 0)), 'topics', { cls: 'bright', base: 0.68, minWeight: 0.3, kinds: ['topics'] });
   h.names.slice(0, 2).forEach(name => {
     const p = K.concepts['topic|' + name];
-    if (p) addLabel(name, p.clone().add(new V3(0, 1.2, 0)), 'topics', { cls: 'tiny', base: 0.5, scenes: [12], minWeight: 0.34 });
+    if (p) addLabel(name, p.clone().add(new V3(0, 1.2, 0)), 'topics', { cls: 'tiny', base: 0.5, minWeight: 0.34, kinds: ['topics'] });
   });
 });
 
 ['Taxonomy of voids', 'Machine question', 'Post-decoherence', 'Attention as bridge', 'Living with the map', 'What consciousness tells physics'].forEach(name => {
   const p = K.apex[name];
-  if (p) addLabel(name, p.clone().add(new V3(0, 3, 0)), 'apex', { cls: name === 'Taxonomy of voids' ? 'gold bright' : 'gold', base: 0.66, scenes: [13], minWeight: 0.3 });
+  if (p) addLabel(name, p.clone().add(new V3(0, 3, 0)), 'apex', { cls: name === 'Taxonomy of voids' ? 'gold bright' : 'gold', base: 0.66, minWeight: 0.3, kinds: ['apex'] });
 });
 
 ARGS.forEach(a => {
-  addLabel(a.name, a.pos.clone().add(new V3(0, 3.3, 0)), 'arguments', { base: 0.62, scenes: [15], minWeight: 0.32 });
+  addLabel(a.name, a.pos.clone().add(new V3(0, 3.3, 0)), 'arguments', { base: 0.62, minWeight: 0.32, kinds: ['arguments', 'arguments-steelman'] });
 });
 RIVALS.forEach(r => {
-  addLabel(r.name, r.pos.clone().add(new V3(0, 3.1, 0)), 'arguments', { base: 0.5, scenes: [15], minWeight: 0.32 });
+  addLabel(r.name, r.pos.clone().add(new V3(0, 3.1, 0)), 'arguments', { base: 0.5, minWeight: 0.32, kinds: ['arguments', 'arguments-steelman'] });
 });
 
 QUESTIONS.forEach(q => {
-  addLabel(q.name, q.pos.clone().add(new V3(0, 3.2, 0)), 'questions', { cls: 'bright', base: 0.6, scenes: [16], minWeight: 0.3 });
+  addLabel(q.name, q.pos.clone().add(new V3(0, 3.2, 0)), 'questions', { cls: 'bright', base: 0.6, minWeight: 0.3, kinds: ['questions'] });
 });
 
-Object.keys(K.voidHero).forEach(name => {
-  addLabel(name, K.voidHero[name].clone().add(new V3(0, 3.4, 0)), 'voids', { cls: 'void', base: 0.5, scenes: [16], minWeight: 0.3 });
+const voidHeroNames = ['Causal interface', 'Unobservable self', 'Other minds', 'Death', 'Vagueness', 'Binding', 'Agency', 'Erasure'];
+voidHeroNames.forEach(name => {
+  const p = K.voidHero[name];
+  if (p) addLabel(name, p.clone().add(new V3(0, 3.4, 0)), 'voids', { cls: 'void', base: 0.5, minWeight: 0.3, kinds: ['questions'] });
 });
 
 const voidFamilyLabels = [
@@ -1966,7 +2351,7 @@ const voidFamilyLabels = [
   ['Intersocial', new V3(-46, -38, -16)],
   ['Formal', new V3(42, -44, -30)]
 ];
-voidFamilyLabels.forEach(([name, p]) => addLabel(name, p, 'voids', { cls: 'void tiny', base: 0.45, scenes: [16], minWeight: 0.35 }));
+voidFamilyLabels.forEach(([name, p]) => addLabel(name, p, 'voids', { cls: 'void tiny', base: 0.45, minWeight: 0.35, kinds: ['questions'] }));
 
 const methodLabels = [
   ['Human', new V3(15, 15, 0)],
@@ -1974,7 +2359,7 @@ const methodLabels = [
   ['Review', new V3(0, -21, 0)],
   ['History', new V3(0, 28, -2)]
 ];
-methodLabels.forEach(([name, p]) => addLabel(name, methodGroup.position.clone().add(p), 'method', { base: 0.55, scenes: [1], minWeight: 0.3 }));
+methodLabels.forEach(([name, p]) => addLabel(name, methodGroup.position.clone().add(p), 'method', { base: 0.55, minWeight: 0.3, kinds: ['method'] }));
 
 const flowLabelPositions = {
   research: 'Research',
@@ -1987,7 +2372,7 @@ const flowLabelPositions = {
 };
 Object.keys(flowLabelPositions).forEach(key => {
   const p = flowCards[key];
-  if (p) addLabel(flowLabelPositions[key], p.clone(), 'flow', { cls: 'bright', base: 0.72, scenes: [3], minWeight: 0.3 });
+  if (p) addLabel(flowLabelPositions[key], p.clone(), 'flow', { cls: 'bright', base: 0.72, minWeight: 0.3, kinds: ['flow', 'flow-constrain'] });
 });
 
 const radarLabels = [
@@ -1996,14 +2381,21 @@ const radarLabels = [
 radarLabels.forEach(([name, i]) => {
   const a = -Math.PI / 2 + i * TAU / 6;
   const p = radarGroup.position.clone().add(new V3(Math.cos(a) * 15.2, Math.sin(a) * 15.2, 0));
-  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.46, scenes: [14], minWeight: 0.35 });
+  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.46, minWeight: 0.35, kinds: ['positions'] });
 });
 const positionDomains = ['Quantum', 'Agency', 'Voids', 'Value', 'Moral', 'Subjects', 'Scope', 'AI'];
 positionDomains.forEach((name, i) => {
   const a = (i / 8) * TAU + 0.2;
   const p = new V3(Math.cos(a) * 58, 108, Math.sin(a) * 58);
-  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.44, scenes: [14], minWeight: 0.35 });
+  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.44, minWeight: 0.35, kinds: ['positions'] });
 });
+
+const dependencyLabels = ['P-I1', 'P-SC3', 'P-A2'];
+if (K.dependencyNodes) {
+  K.dependencyNodes.forEach((p, i) => {
+    addLabel(dependencyLabels[i], p.clone().add(new V3(0, 4.4, 0)), 'positions', { cls: 'gold bright', base: 0.72, minWeight: 0.3, kinds: ['positions-dependency'] });
+  });
+}
 
 const taxonomyLabels = [
   ['Unexplored', -18, 23.5], ['Unexplorable', 0, 23.5], ['Occluded', 18, 23.5],
@@ -2012,7 +2404,7 @@ const taxonomyLabels = [
 ];
 taxonomyLabels.forEach(([name, x, y]) => {
   const p = taxonomyGroup.position.clone().add(new V3(x, y, 0.5));
-  addLabel(name, p, 'taxonomy', { cls: 'tiny', base: 0.46, scenes: [17], minWeight: 0.35 });
+  addLabel(name, p, 'taxonomy', { cls: 'tiny', base: 0.46, minWeight: 0.35, kinds: ['taxonomy', 'taxonomy-reasons'] });
 });
 
 const convergenceLabels = [
@@ -2031,7 +2423,7 @@ convergenceLabels.forEach(([name, key]) => {
   } else {
     p = convergenceGroup.position.clone().add(new V3(0, 20, 0));
   }
-  addLabel(name, p, 'convergence', { cls: name === 'Interface' ? 'bright' : 'tiny', base: name === 'Interface' ? 0.7 : 0.48, scenes: [18], minWeight: 0.3 });
+  addLabel(name, p, 'convergence', { cls: name === 'Interface' ? 'bright' : 'tiny', base: name === 'Interface' ? 0.7 : 0.48, minWeight: 0.3, kinds: ['convergence'] });
 });
 
 const architectureLabels = [
@@ -2045,11 +2437,45 @@ const architectureLabels = [
   ['Voids', new V3(64, -39, 0)],
   ['Questions', new V3(-82, 56, 0)]
 ];
-architectureLabels.forEach(([name, p]) => addLabel(name, p, 'tenets', { cls: 'bright', base: 0.7, scenes: [2], minWeight: 0.3 }));
+architectureLabels.forEach(([name, p]) => addLabel(name, p, 'tenets', { cls: 'bright', base: 0.7, minWeight: 0.3, kinds: ['architecture'] }));
+
+const voidWhyRows = [
+  ['Dualism', 'Explanatory gap', 16],
+  ['Minimal quantum', 'Amplification', 8],
+  ['Bidirectional', 'Agency void', 0],
+  ['No many worlds', 'Indexical void', -8],
+  ["Occam's limits", 'Parsimony void', -16]
+];
+voidWhyRows.forEach(([tenet, voidName, y]) => {
+  addLabel(tenet, VOID_STAGE.clone().add(new V3(-25, y + 2.3, 0)), 'voidWhy', { cls: 'bright tiny', base: 0.58, minWeight: 0.3, kinds: ['void-why'] });
+  addLabel(voidName, VOID_STAGE.clone().add(new V3(25, y + 2.8, 0)), 'voidWhy', { cls: 'void tiny', base: 0.54, minWeight: 0.3, kinds: ['void-why'] });
+});
+
+const territoryLabels = [
+  ['Unexplored', -22, 15.5], ['Unexplorable', 0, 15.5], ['Occluded', 22, 15.5],
+  ['can be mapped', -22, -14.5], ['cannot be mapped', 0, -14.5], ['may be defended', 22, -14.5]
+];
+territoryLabels.forEach(([name, x, y]) => {
+  addLabel(name, VOID_STAGE.clone().add(new V3(x, y, 0.4)), 'territory', { cls: y > 0 ? 'bright tiny' : 'tiny', base: 0.56, minWeight: 0.3, kinds: ['void-territories'] });
+});
+
+const signatureNames = ['Self-refutation', 'Aporia', 'Construction', 'Illusion', 'Ineffability', 'Vertigo', 'Dissolution', 'Erasure'];
+signatureNames.forEach((name, i) => {
+  const a = -Math.PI / 2 + (i / 8) * TAU;
+  const p = VOID_STAGE.clone().add(new V3(Math.cos(a) * 32, Math.sin(a) * 32, 0.4));
+  addLabel(name, p, 'signature', { cls: 'tiny', base: 0.52, minWeight: 0.3, kinds: ['taxonomy-signatures'] });
+});
+
+addLabel('26 / 101', convergenceGroup.position.clone().add(new V3(0, 54, 0)), 'ratio', { cls: 'bright', base: 0.72, minWeight: 0.3, kinds: ['convergence-independent'] });
+addLabel('framework-independent', convergenceGroup.position.clone().add(new V3(-34, 34, 18)), 'ratio', { cls: 'tiny', base: 0.5, minWeight: 0.3, kinds: ['convergence-independent'] });
+addLabel('framework-shaped', convergenceGroup.position.clone().add(new V3(32, -30, 22)), 'ratio', { cls: 'void tiny', base: 0.48, minWeight: 0.3, kinds: ['convergence-independent'] });
+addLabel('common-cause null', convergenceGroup.position.clone().add(new V3(0, 62, 0)), 'discipline', { cls: 'bright', base: 0.66, minWeight: 0.3, kinds: ['convergence-discipline'] });
+addLabel('coherence, not proof', convergenceGroup.position.clone().add(new V3(0, -64, 0)), 'discipline', { cls: 'tiny', base: 0.56, minWeight: 0.3, kinds: ['convergence-discipline'] });
 
 const BASE_WEIGHTS = {
   tenets: 0.14, research: 0.1, concepts: 0.1, topics: 0.1, apex: 0.1, positions: 0.1,
-  arguments: 0.06, questions: 0.06, voids: 0.1, method: 0, flow: 0, taxonomy: 0, convergence: 0, growth: 0
+  arguments: 0.06, questions: 0.06, voids: 0.1, method: 0, flow: 0, taxonomy: 0, convergence: 0, growth: 0,
+  voidWhy: 0, territory: 0, signature: 0, ratio: 0, discipline: 0
 };
 function W(overrides) {
   return Object.assign({}, BASE_WEIGHTS, overrides);
@@ -2354,9 +2780,19 @@ function updateLabels() {
       l.el.style.opacity = '0';
       continue;
     }
-    if (l.scenes && !l.scenes.includes(sceneIndex) && !l.scenes.includes(targetIndex)) {
-      l.el.style.opacity = '0';
-      continue;
+    if (l.kinds) {
+      const cur = SCENES[sceneIndex];
+      const tgt = SCENES[targetIndex];
+      const curKind = cur ? cur.kind : null;
+      const tgtKind = tgt ? tgt.kind : null;
+      if (!l.kinds.includes(curKind) && !l.kinds.includes(tgtKind)) {
+        l.el.style.opacity = '0';
+        continue;
+      }
+      if (l.mainOnly && (!cur || cur.sub || !tgt || tgt.sub)) {
+        l.el.style.opacity = '0';
+        continue;
+      }
     }
     const weight = regionWeights[l.region] || 0;
     if (weight < l.minWeight) {
@@ -2481,7 +2917,7 @@ function hideHint() {
 function resize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(FX_LOW ? 0.85 : Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
