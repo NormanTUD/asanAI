@@ -183,6 +183,17 @@
       ctx.clearRect(0, 0, w, h);
       var cx = w * 0.5, cy = h * 0.58;
       var scale = Math.min(w * 0.38, h * 0.34);
+      var bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, C.paper || "#fff");
+      bg.addColorStop(1, C.paper2 || C.paper || "#fff");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      var halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.64);
+      halo.addColorStop(0, V.alpha(C.green, 0.10));
+      halo.addColorStop(0.55, V.alpha(C.blue, 0.045));
+      halo.addColorStop(1, V.alpha(C.paper || "#fff", 0));
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, 0, w, h);
       function warp(x, y) {
         var r2 = x * x + y * y;
         return { x: x, y: y, z: bend * 1.45 * Math.exp(-r2 / 0.20) };
@@ -217,6 +228,24 @@
         return { x: p.x, y: p.y, z: p.z, c: pt.c, label: pt.label };
       });
       bendProjected = projected;
+      var center = project(0, 0, bend * 1.45);
+      var coreR = 0.42 * scale, ringR = 0.95 * scale;
+      var activeColor = activeMode === "fruit" ? C.green : C.gold;
+      ctx.save();
+      ctx.strokeStyle = activeColor;
+      ctx.lineWidth = 1.2;
+      ctx.globalAlpha = 0.12 + 0.08 * bend;
+      ctx.beginPath(); ctx.ellipse(center.x, center.y, ringR, ringR * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 0.18 + 0.08 * bend;
+      ctx.beginPath(); ctx.ellipse(center.x, center.y, coreR, coreR * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+      var haloTag = activeMode === "fruit" ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0];
+      var haloR = activeMode === "fruit" ? coreR : ringR;
+      ctx.fillStyle = activeColor;
+      ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText(haloTag, center.x, center.y - haloR * 0.34 - 7);
+      ctx.restore();
       ffnEdges.forEach(function (e) {
         var a = projected[e.a], b = projected[e.b];
         ctx.strokeStyle = a.c === 0 ? C.green : C.gold;
@@ -228,10 +257,18 @@
       projected.sort(function (a, b) { return a.z - b.z; });
       projected.forEach(function (p) {
         var active = (p.c === 0 && activeMode === "fruit") || (p.c === 1 && activeMode === "tech");
+        var col = p.c === 0 ? C.green : C.gold;
+        if (active) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.c === 0 ? 7 : 6, 0, Math.PI * 2);
+          ctx.fillStyle = col;
+          ctx.globalAlpha = 0.10;
+          ctx.fill();
+        }
         ctx.beginPath();
         ctx.arc(p.x, p.y, (p.c === 0 ? 2.6 : 2.3) * (active ? 1.12 : 1), 0, Math.PI * 2);
-        ctx.fillStyle = p.c === 0 ? C.green : C.gold;
-        ctx.globalAlpha = active ? 0.9 : 0.22;
+        ctx.fillStyle = col;
+        ctx.globalAlpha = active ? 0.92 : 0.22;
         ctx.fill();
         ctx.strokeStyle = C.paper;
         ctx.lineWidth = 0.8;
@@ -255,18 +292,25 @@
       var lineAlpha = Math.max(0, Math.min(1, (bend - 0.45) / 0.25));
       if (lineAlpha > 0.01) {
         var ly = cy - 0.62 * scale * 0.98;
+        var band = 12 + 10 * lineAlpha;
+        var planeGrad = ctx.createLinearGradient(0, ly - band, 0, ly + band);
+        planeGrad.addColorStop(0, V.alpha(C.petrol, 0));
+        planeGrad.addColorStop(0.5, V.alpha(C.petrol, 0.10 * lineAlpha));
+        planeGrad.addColorStop(1, V.alpha(C.petrol, 0));
+        ctx.fillStyle = planeGrad;
+        ctx.fillRect(8, ly - band, w - 16, band * 2);
         ctx.save();
         ctx.setLineDash([6, 4]);
         ctx.strokeStyle = C.petrol;
-        ctx.globalAlpha = lineAlpha;
-        ctx.lineWidth = 1.6;
+        ctx.globalAlpha = 0.75 * lineAlpha;
+        ctx.lineWidth = 1.4;
         ctx.beginPath(); ctx.moveTo(16, ly); ctx.lineTo(w - 16, ly); ctx.stroke();
         ctx.restore();
         ctx.fillStyle = C.petrol;
         ctx.globalAlpha = lineAlpha;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "right";
-        ctx.fillText(labels.plane, w - 18, ly - 6);
+        ctx.fillText(labels.plane, w - 18, ly - 7);
         ctx.globalAlpha = 1;
       }
       ctx.fillStyle = C.muted;
