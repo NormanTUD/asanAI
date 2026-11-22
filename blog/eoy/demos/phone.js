@@ -84,11 +84,18 @@
     if (homeTimeEl) {
       try { homeTimeEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
     }
+    function setScreen(el, active) {
+      if (!el) return;
+      el.classList.toggle("is-active", active);
+      el.setAttribute("aria-hidden", active ? "false" : "true");
+      try { el.inert = !active; } catch (e) {}
+    }
     function setPhone(which) {
       var mode = which === "chat" ? "chat" : (which === "home" ? "home" : "search");
-      if (searchPhone) searchPhone.classList.toggle("is-active", mode === "search");
-      if (chatPhone) chatPhone.classList.toggle("is-active", mode === "chat");
-      if (homeScreen) homeScreen.classList.toggle("is-active", mode === "home");
+      setScreen(searchPhone, mode === "search");
+      setScreen(chatPhone, mode === "chat");
+      setScreen(homeScreen, mode === "home");
+      if (homeChatApp) homeChatApp.tabIndex = mode === "home" ? 0 : -1;
       var activeTab = mode === "chat" ? "chat" : (mode === "search" ? "search" : null);
       modeBtns.forEach(function (b) {
         var on = b.getAttribute("data-phone") === activeTab;
