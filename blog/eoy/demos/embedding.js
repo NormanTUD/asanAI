@@ -66,12 +66,12 @@
     function buildMiniTable() {
       if (!miniTable) return;
       var ids = ["man", "woman", "prince", "princess", "king", "queen", "power", "maleDog", "femaleDog", "wizard", "sorceress"];
-      var head = '<tr><th></th><th>' + (DE ? "Macht" : "Power") + '</th><th>' + (DE ? "Geschlecht" : "Gender") + '</th><th>' + (DE ? "Rang · Welt" : "Rank · world") + '</th></tr>';
+      var head = '<tr><th></th><th>' + (DE ? "Macht" : "Power") + '</th><th>' + (DE ? "Geschlecht" : "Gender") + '</th><th>' + (DE ? "Kategorie" : "Category") + '</th></tr>';
       var body = ids.map(function (id) {
         var w = WORDS[id];
         var x = ((w.v[0] - 12.5) / 15).toFixed(2);
         var y = (w.v[1] / 22).toFixed(2);
-        var z = w.z.toFixed(2);
+        var z = w.z < -0.5 ? (DE ? "Tier" : "animal") : w.z > 0.5 ? (DE ? "Fiktion" : "fiction") : (DE ? "Mensch" : "human");
         return '<tr data-word="' + id + '" tabindex="0" aria-selected="false"><th>' + api.esc(wordLabel(id)) + '</th><td>' + x + '</td><td>' + y + '</td><td>' + z + '</td></tr>';
       }).join("");
       miniTable.setAttribute("role", "group");
@@ -470,11 +470,51 @@
       drawLine3D(project(x0, y1, z1), project(x0, y0, z1), .12);
       ctx.globalAlpha = 1;
     }
+    function drawCategoryPlanes(zMix) {
+      var planes = [
+        { z: -1, label: DE ? "TIER" : "ANIMAL", col: C.sky, alpha: 0.06, grid: 0.20 },
+        { z: 0, label: DE ? "MENSCH · MACHT × GESCHLECHT" : "HUMAN · POWER × GENDER", col: C.green, alpha: 0.12, grid: 0.38 },
+        { z: 1, label: DE ? "FIKTION" : "FICTION", col: C.lilac, alpha: 0.06, grid: 0.20 }
+      ];
+      planes.forEach(function (plane) {
+        var corners = [project(-1, -1, plane.z), project(1, -1, plane.z), project(1, 1, plane.z), project(-1, 1, plane.z)];
+        ctx.save();
+        ctx.globalAlpha = zMix * plane.alpha;
+        ctx.fillStyle = plane.col;
+        ctx.beginPath();
+        ctx.moveTo(corners[0].x, corners[0].y);
+        ctx.lineTo(corners[1].x, corners[1].y);
+        ctx.lineTo(corners[2].x, corners[2].y);
+        ctx.lineTo(corners[3].x, corners[3].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+        ctx.save();
+        ctx.globalAlpha = zMix;
+        for (var g = -1; g <= 1.001; g += 0.5) {
+          drawLine3D(project(g, -1, plane.z), project(g, 1, plane.z), plane.grid);
+          drawLine3D(project(-1, g, plane.z), project(1, g, plane.z), plane.grid);
+        }
+        ctx.restore();
+        var labelPoint = project(-1, -1, plane.z);
+        ctx.save();
+        ctx.globalAlpha = zMix;
+        ctx.fillStyle = plane.z === 0 ? C.petrol : plane.col;
+        ctx.font = '700 ' + Math.max(8, Math.min(10, api.font("canvas-sm"))) + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(plane.label, labelPoint.x + 4, labelPoint.y - 4);
+        ctx.restore();
+      });
+    }
     function drawSpace() {
       hits = [];
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
-      if (zMix > 0.02) drawRoomGrid(zMix);
+      if (zMix > 0.02) {
+        drawRoomGrid(zMix);
+        drawCategoryPlanes(zMix);
+      }
       var planeAlpha = smoothstep(0.18, 0.86, dimMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
         ctx.globalAlpha = planeAlpha;
@@ -504,7 +544,7 @@
         var zEnd = project(0, 0, 1.7);
         drawArrow(origin.x, origin.y, zEnd.x, zEnd.y, "rgba(0,75,111,.24)", 1.2);
         ctx.globalAlpha = zMix;
-        drawLabel(DE ? "RANG · WELT" : "RANK · WORLD", zEnd.x + 6, zEnd.y, C.muted, "left", 9);
+        drawLabel(DE ? "KATEGORIE" : "CATEGORY", zEnd.x + 6, zEnd.y, C.muted, "left", 9);
         ctx.globalAlpha = 1;
       }
 
