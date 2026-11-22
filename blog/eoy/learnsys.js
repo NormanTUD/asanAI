@@ -162,7 +162,6 @@
   var substepAnims = [];
   var substepSafetyTimer = 0;
   var textSwapTimer = 0;
-  var stageRenderTimer = 0;
 
   var FONT_LEVELS = [
     { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
@@ -2749,8 +2748,6 @@
     substepSafetyTimer = 0;
     clearTimeout(textSwapTimer);
     textSwapTimer = 0;
-    clearTimeout(stageRenderTimer);
-    stageRenderTimer = 0;
     substepAnims.slice().forEach(function (anim) {
       try { anim.cancel(); } catch (e) {}
     });
@@ -2809,10 +2806,9 @@
       function (el) { return !el.hidden && (!!el.textContent.trim() || el.children.length > 0); }
     );
   }
-  function animateTextSwap(renderTextFn, renderStageFn) {
+  function animateTextSwap(renderTextFn) {
     if (reducedMotion() || !els.textBody) {
       renderTextFn();
-      if (renderStageFn) renderStageFn();
       return;
     }
     cancelTransitions();
@@ -2853,25 +2849,17 @@
           { opacity: 1, filter: "blur(0px)" }
         ], { duration: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
       });
-      if (renderStageFn) {
-        clearTimeout(stageRenderTimer);
-        stageRenderTimer = setTimeout(function () {
-          stageRenderTimer = 0;
-          renderStageFn();
-        }, 120);
-      }
     }, 100);
     clearTimeout(substepSafetyTimer);
     substepSafetyTimer = setTimeout(cancelTransitions, 700);
   }
   function renderSubstep(dir) {
+    renderStage();
+    updateBottomNav();
+    animateStageTitles(dir);
     animateTextSwap(function () {
       renderTextUi();
       if (els.textScroll) els.textScroll.scrollTop = 0;
-    }, function () {
-      renderStage();
-      updateBottomNav();
-      animateStageTitles(dir);
     });
   }
   function go(day, step, substep) {
@@ -2915,12 +2903,11 @@
     }
     cueSuppressUntil = performance.now() + 500;
     if ((changed || substepChanged) && booted && !reducedMotion()) {
+      renderStageUi(changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
+      if (substepChanged && booted) animateStageTitles(substepDir);
       animateTextSwap(function () {
         renderTextUi();
         if (els.textScroll) els.textScroll.scrollTop = 0;
-      }, function () {
-        renderStageUi(changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
-        if (substepChanged && booted) animateStageTitles(substepDir);
       });
     } else {
       renderAll();

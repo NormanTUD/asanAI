@@ -1355,7 +1355,7 @@
         body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung entscheidet allein.",
         teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung entscheidet allein.",
         watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.1 },
         sources: gaussSteps[0].sources
       },
       {
@@ -1431,7 +1431,7 @@
         body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement decides alone.",
         teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement decides alone.",
         watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.1 },
         sources: gaussSteps[0].sources
       },
       {
