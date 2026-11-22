@@ -782,10 +782,33 @@
       }
     ]
   };
+  var bausteineFunctionStep = {
+    kicker: DE ? "Architektur" : "Architecture",
+    title: DE ? "Die Architektur als Funktion" : "The architecture as a function",
+    body: DE
+      ? "Die ganze Architektur ist eine Funktion $f(x)$: Daten rein, eine Verteilung über das nächste Token raus. Beim Training wird $f$ so genudged, dass die Vorhersage zum nächsten Token in den Daten passt. Pretraining nutzt fast das ganze Internet; Fine-tuning nutzt wenige, spezifische Fragen. Die Beispiele zeigen, warum die Daten den Unterschied machen."
+      : "The whole architecture is a function $f(x)$: data in, a distribution over the next token out. During training, $f$ is nudged so that the prediction matches the next token in the data. Pretraining uses almost the whole internet; fine-tuning uses a few specific questions. The examples show why the data make the difference.",
+    watch: DE ? "Drücke Nudge: Wie verschieben sich die Kandidaten? Welche Option ist in den Daten, welche ist nur plausibel, welche passt nicht?" : "Press Nudge: how do the candidates shift? Which option is in the data, which is merely plausible, which does not fit?",
+    demoState: { scene: "fx" },
+    context: DE ? "In den Daten steht „Die Katze sitzt auf der Matte“. Das Netz bekommt den Anfang und soll „Matte“ vorhersagen. „Heizung“ ist auch plausibel, war aber in diesem Beispiel nicht der nächste Token; „Gleichung“ passt semantisch nicht." : "The data says “The cat sits on the mat”. The network gets the beginning and should predict “mat”. “Heater” is also plausible, but was not the next token in this example; “equation” does not fit semantically.",
+    deep: DE ? "Der Nudge ist der Trainingsschritt: Vergleiche die Vorhersage mit dem nächsten Token in den Daten und verschiebe die Gewichte ein wenig in die Richtung, die den Fehler senkt. Ohne Daten gibt es kein Ziel und keinen Nudge." : "The nudge is the training step: compare the prediction with the next token in the data and move the weights a little in the direction that lowers the error. Without data there is no target and no nudge.",
+    boxes: [
+      box("fx-1", DE ? "Mathematik" : "Mathematics", DE ? "Die Funktion" : "The function", DE ? "$f(x)$ nimmt Daten und gibt eine Verteilung über das nächste Token aus. Der ganze Transformer ist diese eine Funktion." : "$f(x)$ takes data and returns a distribution over the next token. The whole transformer is this one function."),
+      box("fx-2", DE ? "Training" : "Training", DE ? "Pretraining" : "Pretraining", DE ? "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged dieselben Gewichte." : "Almost the whole internet supplies billions of next tokens. Every comparison nudges the same weights."),
+      box("fx-3", DE ? "Training" : "Training", DE ? "Fine-tuning" : "Fine-tuning", DE ? "Wenige, gezielte Fragen nudged dieselben Gewichte in Richtung hilfreicher Antworten." : "A few targeted questions nudge the same weights toward helpful answers."),
+      box("fx-4", DE ? "Grenze" : "Limit", DE ? "Warum sind Daten so wichtig?" : "Why are data so important?", DE ? "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Nudge; das Modell kann nur raten." : "The next token in the data is the target. Without it there is no comparison and no nudge; the model can only guess.")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Architektur.", en: "The transformer as an architecture." } },
+      { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "Großes Pretraining und Few-Shot-Verhalten.", en: "Large-scale pretraining and few-shot behaviour." } },
+      { label: "Ouyang et al. (2022), Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155", why: { de: "Fine-tuning mit menschlichem Feedback.", en: "Fine-tuning with human feedback." } }
+    ]
+  };
+
   var bausteineStep = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
-    substeps: [bausteineData, bausteineIntro]
+    substeps: [bausteineIntro, bausteineFunctionStep, bausteineData]
   };
 
   var manifoldSteps = DE ? [
