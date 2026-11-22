@@ -28,7 +28,7 @@
       deepDive: "Tiefer eintauchen", question: "Frage", questions: "Fragen",
       context: "Kontext", oneLevel: "Eine Ebene tiefer", sources: "Quellen",
       moreInLesson: "Mehr in der Lektion →", clickExample: "Klicken für ein Beispiel",
-      watch: "Beobachte", defaultHint: "",
+      watch: "Beobachte", defaultHint: "", navHint: "Weiter",
       helpTitle: "Tastatur und Position", helpStep: "Schritt zurück / vor",
       helpDay: "Tag zurück / vor", helpJump: "Fünf Schritte zurück / vor", helpUndo: "Letztes Token zurücknehmen (Demo)",
       helpPos: "Position, auch mehrstellig (z. B. 1 1)",
@@ -70,7 +70,7 @@
       deepDive: "Go deeper", question: "question", questions: "questions",
       context: "Context", oneLevel: "One level deeper", sources: "Sources",
       moreInLesson: "More in the lesson →", clickExample: "Click for an example",
-      watch: "Watch", defaultHint: "",
+      watch: "Watch", defaultHint: "", navHint: "Next",
       helpTitle: "Keyboard and position", helpStep: "Step back / forward",
       helpDay: "Day back / forward", helpJump: "Five steps back / forward", helpUndo: "Undo the last token (demo)",
       helpPos: "Position, multi-digit (e.g. 1 1)",
@@ -157,6 +157,8 @@
   var suppressHash = false;
   var hashBound = false;
   var booted = false;
+  var navHintDismissed = false;
+  var navHintHideTimer = 0;
   var substepAnims = [];
   var substepSafetyTimer = 0;
   var activeTextGhost = null;
@@ -895,7 +897,7 @@
           '<section class="ls-stage" id="ls-stage" aria-label="' + esc(t("interactiveDemo")) + '">' +
             '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-text-toggle" id="ls-text-toggle" aria-expanded="false">' + (LANG === "de" ? "Text" : "Text") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">' + esc(t("demoLarge")) + '</button></div>' +
             '<div class="ls-demo-body"><div class="ls-demo" id="ls-demo"></div><div class="ls-demo-loader" id="ls-demo-loader" hidden role="status" aria-live="polite"><span class="ls-demo-loader-label" aria-hidden="true">' + (LANG === "de" ? "Demo lädt …" : "Loading demo …") + '</span><span class="ls-sr-only">' + (LANG === "de" ? "Demo lädt …" : "Loading demo …") + '</span></div></div>' +
-            '<div class="ls-stage-foot"><span class="ls-credit" id="ls-credit"></span></div>' +
+            '<div class="ls-stage-foot"><span class="ls-nav-hint" id="ls-nav-hint" aria-hidden="true" hidden><span class="ls-nav-hint-keys"><kbd>←</kbd><kbd>→</kbd></span><span class="ls-nav-hint-touch"><i></i></span><span class="ls-nav-hint-label">' + esc(t("navHint")) + '</span></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
         '<div class="ls-bottom-nav"><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-prev" data-no-height-test="1">' + esc(t("back")) + '</button><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + '</button></div>' +
@@ -943,6 +945,7 @@
     els.demoLoaderAnim = (els.demoLoader && window.EoyLoading && window.EoyLoading.attach)
       ? window.EoyLoading.attach(els.demoLoader, { subtle: true }) : null;
     els.credit = root.querySelector("#ls-credit");
+    els.navHint = root.querySelector("#ls-nav-hint");
     els.days = root.querySelector("#ls-days");
     els.dayNav = root.querySelectorAll("[data-day-nav]");
     els.steps = root.querySelector("#ls-steps");
@@ -2415,6 +2418,29 @@
     }
   }
 
+  function renderNavHint() {
+    if (!els.navHint) return;
+    var host = window.__ASANAI_EOY_ROOT__ || document.body;
+    var rawDay = host ? host.getAttribute("data-eoy-day") : "";
+    var eoyDay = parseInt(rawDay || "", 10);
+    var firstPage = !isFinite(eoyDay) || eoyDay <= 1;
+    var show = !navHintDismissed && firstPage && state.day === 0 && state.step === 0 && state.substep === 0;
+    if (show) {
+      clearTimeout(navHintHideTimer);
+      if (!els.navHint.classList.contains("is-on")) {
+        els.navHint.hidden = false;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { if (els.navHint) els.navHint.classList.add("is-on"); });
+        });
+      }
+    } else {
+      els.navHint.classList.remove("is-on");
+      clearTimeout(navHintHideTimer);
+      navHintHideTimer = setTimeout(function () {
+        if (els.navHint && !els.navHint.classList.contains("is-on")) els.navHint.hidden = true;
+      }, 320);
+    }
+  }
   function renderAll() {
     hideTip();
     var day = activeDay();
@@ -2426,6 +2452,7 @@
     renderPosRail();
     renderText();
     renderStage();
+    renderNavHint();
     updateBottomNav();
     if (els.calOverlay && !els.calOverlay.hidden) renderCalendar();
     save();
@@ -2724,72 +2751,59 @@
     ghost.removeAttribute("id");
     ghost.querySelectorAll("[id]").forEach(function (node) { node.removeAttribute("id"); });
     ghost.querySelectorAll("[aria-live]").forEach(function (node) { node.removeAttribute("aria-live"); });
-    var ghostNav = ghost.querySelector("#ls-navbar");
-    var ghostTop = els.kicker ? els.kicker.offsetTop : (ghostNav ? ghostNav.offsetTop + ghostNav.offsetHeight : 0);
-    if (ghostNav) ghostNav.remove();
     ghost.classList.add("ls-text-ghost");
     ghost.setAttribute("aria-hidden", "true");
     try { ghost.inert = true; } catch (e) {}
     ghost.style.width = els.textScroll.offsetWidth + "px";
-    ghost.style.top = Math.max(0, ghostTop) + "px";
-    ghost.style.height = Math.max(0, els.textScroll.clientHeight - ghostTop) + "px";
-    ghost.style.paddingTop = "0px";
+    ghost.style.top = "0px";
+    ghost.style.height = els.textScroll.clientHeight + "px";
+    ghost.style.paddingTop = getComputedStyle(els.textScroll).paddingTop;
     ghost.scrollTop = els.textScroll.scrollTop;
     els.textScroll.parentNode.appendChild(ghost);
     activeTextGhost = ghost;
     return ghost;
   }
-  function animateSubstep(dir, ghost) {
-    if (reducedMotion()) {
-      if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
-      if (activeTextGhost === ghost) activeTextGhost = null;
-      return;
-    }
+  function animateStageTitles(dir) {
     var shift = dir < 0 ? -10 : 10;
-    var outEase = "cubic-bezier(.4,0,.2,1)";
-    var inEase = "cubic-bezier(.22,1,.36,1)";
-    if (ghost) {
-      function dropGhost() {
-        if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
-        if (activeTextGhost === ghost) activeTextGhost = null;
-      }
-      var leaveAnim = playTransition(ghost, [
-        { opacity: 1, transform: "translate3d(0,0,0)" },
-        { opacity: 0, transform: "translate3d(0," + (-shift * 0.6) + "px,0)" }
-      ], { duration: 260, easing: outEase, fill: "both" });
-      if (leaveAnim) leaveAnim.addEventListener("finish", dropGhost);
-      setTimeout(dropGhost, 1600);
-    }
-    [
-      [els.kicker, 0, shift * 0.5],
-      [els.title, 22, shift],
-      [els.body, 52, shift * 1.4],
-      [els.watch, 88, shift * 1.1],
-      [els.extras, 112, shift * 0.8]
-    ].forEach(function (row) {
-      var el = row[0];
-      if (!el || el.hidden) return;
-      playTransition(el, [
-        { opacity: 0, transform: "translate3d(0," + row[2] + "px,0)" },
-        { opacity: 1, transform: "translate3d(0,0,0)" }
-      ], { duration: 300, delay: row[1], easing: inEase, fill: "both" });
-    });
     [els.stageKicker, els.stageTitle].forEach(function (el, i) {
       if (!el) return;
       playTransition(el, [
-        { opacity: 0, transform: "translate3d(" + shift + "px,0,0)" },
-        { opacity: 1, transform: "translate3d(0,0,0)" }
-      ], { duration: 300, delay: 28 + i * 22, easing: inEase, fill: "both" });
+        { opacity: 0, filter: "blur(4px)", transform: "translate3d(" + shift + "px,0,0)" },
+        { opacity: 1, filter: "blur(0px)", transform: "translate3d(0,0,0)" }
+      ], { duration: 100, delay: 100 + i * 15, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
     });
+  }
+  function animateTextSwap(renderFn) {
+    if (reducedMotion() || !els.textScroll) { renderFn(); return; }
+    cancelTransitions();
+    var ghost = textGhost();
+    var host = els.textScroll;
+    function dropGhost() {
+      if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+      if (activeTextGhost === ghost) activeTextGhost = null;
+    }
+    renderFn();
+    if (ghost) {
+      var out = playTransition(ghost, [
+        { opacity: 1, filter: "blur(0px)" },
+        { opacity: 0, filter: "blur(6px)" }
+      ], { duration: 100, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
+      if (out) out.addEventListener("finish", dropGhost);
+      setTimeout(dropGhost, 600);
+    }
+    playTransition(host, [
+      { opacity: 0, filter: "blur(6px)" },
+      { opacity: 1, filter: "blur(0px)" }
+    ], { duration: 100, delay: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
     clearTimeout(substepSafetyTimer);
     substepSafetyTimer = setTimeout(cancelTransitions, 700);
   }
   function renderSubstep(dir) {
-    cancelTransitions();
-    var ghost = reducedMotion() ? null : textGhost();
-    renderAll();
-    if (els.textScroll) els.textScroll.scrollTop = 0;
-    animateSubstep(dir, ghost);
+    animateTextSwap(function () {
+      renderAll();
+      if (els.textScroll) els.textScroll.scrollTop = 0;
+    });
+    animateStageTitles(dir);
   }
   function go(day, step, substep) {
     day = Number(day);
@@ -2823,19 +2837,21 @@
     var changed = dayChanged || demoChanged || stepChanged;
     var substepChanged = !changed && oldSub !== state.substep;
     var substepDir = state.substep > oldSub ? 1 : -1;
-    if (substepChanged) cancelTransitions();
-    var ghost = substepChanged && booted && !reducedMotion() ? textGhost() : null;
     var elementStep = stepChanged && !dayChanged && !demoChanged && ELEMENT_ANIM[d.demo];
     var canvasMorph = changed && CANVAS_DEMOS[oldDemo] && CANVAS_DEMOS[d.demo] && (dayChanged || demoChanged || FLOW_ON_STEP[d.demo]);
     if (els.textScroll) {
       cuesArmed = false;
       ignoreScroll = true;
-      els.textScroll.scrollTop = 0;
       setTimeout(function () { ignoreScroll = false; }, 140);
     }
     cueSuppressUntil = performance.now() + 500;
-    swap(renderAll, changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
-    if (substepChanged && booted) animateSubstep(substepDir, ghost);
+    var renderFn = function () {
+      swap(renderAll, changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
+      if (els.textScroll) els.textScroll.scrollTop = 0;
+    };
+    if ((changed || substepChanged) && booted && !reducedMotion()) animateTextSwap(renderFn);
+    else renderFn();
+    if (substepChanged && booted) animateStageTitles(substepDir);
     if (dayChanged && els.app) {
       var dir = state.day > oldDay ? "next" : "prev";
       els.app.classList.remove("is-day-next", "is-day-prev");
@@ -2846,6 +2862,8 @@
     writeHash();
   }
   function next() {
+    navHintDismissed = true;
+    renderNavHint();
     // Single-entry eoy pages only walk their own substeps; never cross into
     // another step or entry, even if a layout overlay says otherwise.
     if (cfg.eoySingle) {
@@ -2895,6 +2913,8 @@
     return b && b.substeps ? Math.max(0, b.substeps.length - 1) : 0;
   }
   function prev() {
+    navHintDismissed = true;
+    renderNavHint();
     if (cfg.eoySingle) {
       var singlePrev = activeStep();
       if (demo && typeof demo.prev === "function" && demo.prev()) { updateBottomNav(); return; }
@@ -3328,6 +3348,10 @@
       }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === " " || e.key === "PageDown" || e.key === "PageUp" || e.key === "Home" || e.key === "End") {
+        navHintDismissed = true;
+        renderNavHint();
+      }
       resetPositionBuffer();
       var keyBase = activeStep();
       var substepKeys = cfg.eoySingle && keyBase && keyBase.substeps;

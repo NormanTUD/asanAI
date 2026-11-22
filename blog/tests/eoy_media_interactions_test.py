@@ -180,7 +180,15 @@ def launch_browser(playwright):
         raise SystemExit("Could not launch Chromium: " + " | ".join(errors))
 
 
-def open_page(browser, base, lang, viewport=None, reduced_motion="no-preference", mobile=False, path=PAGE):
+def wait_any(page):
+    page.wait_for_function(
+        "() => window.LearnSys && document.querySelector('#ls-title')",
+        timeout=30000,
+    )
+    page.wait_for_timeout(400)
+
+
+def open_page(browser, base, lang, viewport=None, reduced_motion="no-preference", mobile=False, path=PAGE, wait_media=True):
     context = browser.new_context(
         viewport=viewport or {"width": 1440, "height": 1000},
         reduced_motion=reduced_motion,
@@ -193,7 +201,10 @@ def open_page(browser, base, lang, viewport=None, reduced_motion="no-preference"
     page.add_init_script(INIT_SCRIPT)
     logs = PageLog(page)
     page.goto(f"{base}{path}?lang={lang}", wait_until="load", timeout=30000)
-    wait_ready(page)
+    if wait_media:
+        wait_ready(page)
+    else:
+        wait_any(page)
     return context, page, logs
 
 
@@ -1406,6 +1417,130 @@ def test_tampered_track(browser, base, lang, results):
     context.close()
 
 
+def test_text_blur_swap(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/3.php", wait_media=False)
+    tag = f"textblur-{lang}"
+    page.wait_for_timeout(900)
+    before = page.evaluate("() => ({ step: LearnSys.state().step, sub: LearnSys.state().substep })")
+    result = page.evaluate(
+        r"""
+() => new Promise((resolve) => {
+  var host = document.querySelector('.ls-text-scroll');
+  var start = performance.now();
+  var minOpacity = 1;
+  var maxHostBlur = 0;
+  var maxGhostBlur = 0;
+  var sawGhost = false;
+  var samples = 0;
+  function blurOf(el) {
+    var match = String(getComputedStyle(el).filter || "").match(/blur\(([^)]+)\)/);
+    return match ? parseFloat(match[1]) || 0 : 0;
+  }
+  LearnSys.next();
+  function sample() {
+    samples++;
+    var ghost = document.querySelector('.ls-text-ghost');
+    var opacity = parseFloat(getComputedStyle(host).opacity) || 0;
+    minOpacity = Math.min(minOpacity, opacity);
+    maxHostBlur = Math.max(maxHostBlur, blurOf(host));
+    if (ghost) {
+      sawGhost = true;
+      maxGhostBlur = Math.max(maxGhostBlur, blurOf(ghost));
+    }
+    if ((opacity > 0.95 && blurOf(host) < 0.5 && performance.now() - start > 150) || performance.now() - start > 800) {
+      resolve({
+        ms: performance.now() - start,
+        minOpacity: minOpacity,
+        maxHostBlur: maxHostBlur,
+        maxGhostBlur: maxGhostBlur,
+        sawGhost: sawGhost,
+        samples: samples,
+        step: LearnSys.state().step,
+        sub: LearnSys.state().substep,
+        title: document.querySelector('#ls-title').textContent
+      });
+      return;
+    }
+    requestAnimationFrame(sample);
+  }
+  requestAnimationFrame(sample);
+})
+"""
+    )
+    detail = str(result)
+    results.check(tag, "substep swap creates a text ghost", result.get("sawGhost"), detail)
+    results.check(tag, "old text blurs out", result.get("maxGhostBlur", 0) > 1, detail)
+    results.check(tag, "new text blurs in", result.get("maxHostBlur", 0) > 1, detail)
+    results.check(tag, "text blends fully with the background", result.get("minOpacity", 1) < 0.1, detail)
+    results.check(tag, "blur swap finishes within 200ms plus scheduling slack", result.get("ms", 9999) <= 700, detail)
+    results.check(tag, "substep swap advances the page", result.get("sub") != before["sub"] or result.get("step") != before["step"], f"{before} -> {result}")
+    results.check(tag, "blur swap keeps a title", bool(result.get("title")), detail)
+    current = state(page)
+    results.check(tag, "blur swap has no horizontal overflow", current["overflow"] <= 2, str(current["overflow"]))
+    errors = logs.take()
+    results.check(tag, "blur swap has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
+def test_nav_hint(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang)
+    tag = f"hint-{lang}"
+    page.wait_for_timeout(900)
+    hint = page.evaluate(
+        r"""
+() => {
+  var h = document.querySelector('#ls-nav-hint');
+  return {
+    hidden: h.hidden,
+    on: h.classList.contains('is-on'),
+    opacity: getComputedStyle(h).opacity,
+    keys: getComputedStyle(h.querySelector('.ls-nav-hint-keys')).display,
+    touch: getComputedStyle(h.querySelector('.ls-nav-hint-touch')).display,
+    text: h.textContent.trim()
+  };
+}
+"""
+    )
+    results.check(tag, "first page shows the navigation hint", not hint["hidden"] and hint["on"] and hint["opacity"] == "1", str(hint))
+    results.check(tag, "desktop hint shows arrow keys", hint["keys"] != "none" and hint["touch"] == "none", str(hint))
+    results.check(tag, "hint names the action", bool(hint["text"]), str(hint))
+    page.keyboard.press("ArrowRight")
+    page.wait_for_timeout(450)
+    after = page.evaluate("() => ({ hidden: document.querySelector('#ls-nav-hint').hidden, on: document.querySelector('#ls-nav-hint').classList.contains('is-on') })")
+    results.check(tag, "hint disappears after the first navigation", after["hidden"] and not after["on"], str(after))
+    errors = logs.take()
+    results.check(tag, "desktop hint has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+    context, page, logs = open_page(browser, base, lang, path="/eoy/2.php", wait_media=False)
+    tag2 = f"hint-later-{lang}"
+    page.wait_for_timeout(700)
+    hint = page.evaluate("() => { var h = document.querySelector('#ls-nav-hint'); return { hidden: h.hidden, on: h.classList.contains('is-on'), display: getComputedStyle(h).display }; }")
+    results.check(tag2, "later pages do not repeat the hint", hint["hidden"] and not hint["on"] and hint["display"] == "none", str(hint))
+    context.close()
+
+    context, page, logs = open_page(browser, base, lang, viewport={"width": 390, "height": 844}, mobile=True)
+    tag3 = f"hint-mobile-{lang}"
+    page.wait_for_timeout(900)
+    hint = page.evaluate(
+        r"""
+() => {
+  var h = document.querySelector('#ls-nav-hint');
+  return {
+    hidden: h.hidden,
+    on: h.classList.contains('is-on'),
+    keys: getComputedStyle(h.querySelector('.ls-nav-hint-keys')).display,
+    touch: getComputedStyle(h.querySelector('.ls-nav-hint-touch')).display
+  };
+}
+"""
+    )
+    results.check(tag3, "mobile hint shows a swipe gesture", not hint["hidden"] and hint["on"] and hint["keys"] == "none" and hint["touch"] != "none", str(hint))
+    errors = logs.take()
+    results.check(tag3, "mobile hint has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
 def test_index_sprint(browser, base, lang, results):
     context = browser.new_context(viewport={"width": 1200, "height": 900})
     page = context.new_page()
@@ -1467,6 +1602,8 @@ def main():
                 test_initial(page, logs, results, tag)
                 test_accessibility(page, logs, results, tag)
                 test_launch(page, logs, results, tag)
+                test_text_blur_swap(browser, base, lang, results)
+                test_nav_hint(browser, base, lang, results)
                 test_tabs_and_code(page, logs, results, tag)
                 test_phone_screen_clicks(page, logs, results, tag)
                 test_hidden_media_buttons(page, logs, results, tag)
