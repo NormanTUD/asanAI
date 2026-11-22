@@ -27,34 +27,23 @@ file after every completed item.
 
 ## Open tasks
 
-1. **3D "Drei Dimensionen" — user-driven directions**
-   - Do **not** auto-hide the category planes. They stay until the reader acts.
-   - Remove the "Ebenen" option; use "Richtungen" instead.
-   - The first action after showing the planes is a "Richtungen" control:
-     hide the planes, fade out every point, and grow an arrow from (0, 0, 0) to
-     exactly the old point position. Not a jump: animate point → vector.
-   - Hovering an arrow shows the word and its numbers.
-   - Keep the existing category-plane content briefly, then let the reader
-     choose the direction view.
-2. **"Die Architektur als Funktion" — move to its own sub-slide**
-   - It must come **immediately after** "Die Architektur von LLMs" and **before**
-     the data slide that currently comes first.
-   - Move the f(x) card out of the architecture overview/transformer subpages
-     into a dedicated scene/substep.
-   - Keep the f(x) card, the Nudge button, pretraining/fine-tuning, and the
-     next-word example. Show all candidate options and state which cannot be the
-     next word (in the data, plausible but not in this example, impossible).
-3. **Residual stream — left long line**
-   - Keep the left vertical line, the hover tooltips, and the short sentence:
-     tokens from the embedding form the initial values; every layer adds to
-     these word positions.
-   - Verify the new 3-column layout and the mobile fallback.
-4. **Test fixes**
-   - Remove "Die nächsten Seiten …" from the architecture body as well, not just
-     the subnav; the media test checks the body.
-   - Give the FFN separation canvas an aria-label in the HTML so it is present
-     before/without a draw.
-   - Re-run all tests once at the end; fix regressions.
+1. **3D "Drei Dimensionen" — user-driven directions** — **done**
+   - The category planes stay until the reader presses "Richtungen"; no timer.
+   - "Richtungen" fades the points out while arrows grow from (0, 0, 0) to the
+     old point positions; hovering an arrow shows word and numbers.
+2. **"Die Architektur als Funktion" — move to its own sub-slide** — **done**
+   - New `demos/fx.js` scene and `bausteineFunctionStep`; order is now
+     architecture overview → function sub-slide → data slide.
+   - The f(x) card keeps pretraining/fine-tuning, the Nudge button, and the
+     Matte / Heizung / Gleichung options with explicit status labels.
+3. **Residual stream — left long line** — **done**
+   - Vertical left line with hover tooltips; 3-column layout with mobile
+     fallback. The text says the embedding tokens form the initial values and
+     every layer adds to these word positions.
+4. **Test fixes** — **done**
+   - Removed the "Die nächsten Seiten …" phrase from the architecture body.
+   - FFN separation canvas now has an aria-label in the HTML.
+   - Tests updated for the new sub-step order and the f(x) slide.
 5. **Final gate**
    - DE + EN media suite.
    - `eoy_pages_test` 27/30/31 and the full suite.
