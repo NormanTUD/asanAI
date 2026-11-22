@@ -219,7 +219,11 @@
       update: function () {},
       resize: resize,
       next: next,
-      hasNext: function () { return true; },
+      hasNext: function () {
+        if (api.reducedMotion) return false;
+        return transitioning || (phase === "line" && !shown) || phase === "circle";
+      },
+      hasPrev: function () { return false; },
       busy: function () { return transitioning; },
       finish: finish,
       pause: pause,

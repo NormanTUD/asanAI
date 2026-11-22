@@ -140,6 +140,8 @@
         if (step > 0) { setStep(step - 1); return true; }
         return false;
       },
+      hasNext: function () { return step < STEPS.length - 1; },
+      hasPrev: function () { return step > 0; },
       resize: function () {},
       pause: function () {},
       resume: function () {},

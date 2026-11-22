@@ -425,6 +425,12 @@
         setContext(contexts[idx - 1].id);
         return true;
       },
+      hasNext: function () {
+        return contexts.map(function (c) { return c.id; }).indexOf(context) < contexts.length - 1;
+      },
+      hasPrev: function () {
+        return contexts.map(function (c) { return c.id; }).indexOf(context) > 0;
+      },
       onKey: function (e) {
         var idx = contexts.map(function (c) { return c.id; }).indexOf(context);
         if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return idx < contexts.length - 1 ? (setContext(contexts[++idx].id), true) : false;

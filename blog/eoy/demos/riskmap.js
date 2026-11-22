@@ -226,6 +226,8 @@
         }
         return false;
       },
+      hasNext: function () { return state.active < modeData().items.length - 1; },
+      hasPrev: function () { return state.active > 0; },
       resize: function () {},
       destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
     };

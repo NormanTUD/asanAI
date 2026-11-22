@@ -580,6 +580,8 @@
       },
       next: nextInternal,
       prev: prevInternal,
+      hasNext: function () { return index < blocks.length - 1; },
+      hasPrev: function () { return index > 0; },
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
       destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", onResize); stack.removeEventListener("scroll", layoutResidual); el.remove(); }

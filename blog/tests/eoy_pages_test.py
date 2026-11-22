@@ -120,17 +120,19 @@ return {
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
   dots: document.querySelectorAll('#ls-steps .ls-dot').length,
   prev: (function () {
-    var n = document.getElementById('ls-prev');
+    var n = document.getElementById('ls-quick-prev') || document.getElementById('ls-prev');
     if (!n || n.hidden || getComputedStyle(n).display === 'none') return null;
     var r = n.getBoundingClientRect();
     return { left: Math.round(r.left), right: Math.round(r.right) };
   })(),
   next: (function () {
-    var n = document.getElementById('ls-next');
+    var n = document.getElementById('ls-quick-next') || document.getElementById('ls-next');
     if (!n || n.hidden || getComputedStyle(n).display === 'none') return null;
     var r = n.getBoundingClientRect();
     return { left: Math.round(r.left), right: Math.round(r.right) };
   })(),
+  canPrev: (window.LearnSys && typeof LearnSys.canPrev === 'function') ? !!LearnSys.canPrev() : null,
+  canNext: (window.LearnSys && typeof LearnSys.canNext === 'function') ? !!LearnSys.canNext() : null,
   vw: window.innerWidth
 };
 """
@@ -335,9 +337,13 @@ def walk_single(driver, results, page, lang):
         return
     steps = 0
     s = state(driver)
-    while s["next"] is not None and steps < 12:
+    while s["canNext"] and steps < 40:
         try:
-            driver.find_element("id", "ls-next").click()
+            driver.execute_script(
+                "var b=document.getElementById('ls-quick-next');"
+                "if(!b || b.hidden || getComputedStyle(b).display==='none') b=document.getElementById('ls-next');"
+                "if(b) b.click();"
+            )
         except Exception as exc:
             results.check(page, lang, f"next click {steps + 1}", False, str(exc)[:160])
             break
@@ -348,15 +354,26 @@ def walk_single(driver, results, page, lang):
             return
         check_layout(results, page, lang, f"next {steps}", s)
     if steps:
-        results.check(page, lang, "end: forward hidden", s["next"] is None, str(s["next"]))
-        results.check(page, lang, "end: back visible", s["prev"] is not None, str(s["prev"]))
-    else:
-        results.check(page, lang, "no substeps: both hidden", s["prev"] is None and s["next"] is None, str(s))
+        time.sleep(0.9)
+        s = state(driver)
+    results.check(page, lang, "end: forward disabled", s["canNext"] is False, str(s["canNext"]))
+    results.check(page, lang, "end: forward button hidden", s["next"] is None, str(s["next"]))
+    results.check(
+        page,
+        lang,
+        "end: back button matches capability",
+        (s["canPrev"] is True and s["prev"] is not None) or (s["canPrev"] is False and s["prev"] is None),
+        str({"canPrev": s["canPrev"], "prev": s["prev"]}),
+    )
 
     back_steps = 0
-    while s["prev"] is not None and back_steps < 12:
+    while s["canPrev"] and back_steps < 40:
         try:
-            driver.find_element("id", "ls-prev").click()
+            driver.execute_script(
+                "var b=document.getElementById('ls-quick-prev');"
+                "if(!b || b.hidden || getComputedStyle(b).display==='none') b=document.getElementById('ls-prev');"
+                "if(b) b.click();"
+            )
         except Exception as exc:
             results.check(page, lang, f"back click {back_steps + 1}", False, str(exc)[:160])
             break
@@ -366,9 +383,25 @@ def walk_single(driver, results, page, lang):
         if not ok:
             return
         check_layout(results, page, lang, f"back {back_steps}", s)
+    if back_steps:
+        time.sleep(1.2)
+        s = state(driver)
+    if steps and back_steps == 0 and s["canPrev"] is False and s["prev"] is None:
+        results.check(page, lang, "one-way demo has no back at the end", True, "")
+        return
+    results.check(page, lang, "start: back disabled", s["canPrev"] is False, str(s["canPrev"]))
+    results.check(page, lang, "start: back button hidden", s["prev"] is None, str(s["prev"]))
     if steps:
-        results.check(page, lang, "start: back hidden", s["prev"] is None, str(s["prev"]))
-        results.check(page, lang, "start: forward visible", s["next"] is not None, str(s["next"]))
+        results.check(page, lang, "start: forward enabled", s["canNext"] is True, str(s["canNext"]))
+        results.check(page, lang, "start: forward button visible", s["next"] is not None, str(s["next"]))
+    else:
+        results.check(
+            page,
+            lang,
+            "start: static page has no forward",
+            s["canNext"] is False and s["next"] is None,
+            str({"canNext": s["canNext"], "next": s["next"]}),
+        )
 
 
 def main():

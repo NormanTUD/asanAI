@@ -310,6 +310,14 @@
         return false;
       },
       prev: function () { return false; },
+      hasNext: function () {
+        if (!data) return true;
+        if (playing) return optimizer !== "momentum";
+        if (!started) return true;
+        if (optimizer === "momentum" && step >= trajectory().length - 1) return false;
+        return optOrder.indexOf(optimizer) < optOrder.length - 1;
+      },
+      hasPrev: function () { return false; },
       pause: pause,
       resume: function () { visible = true; if (data) draw(); },
       resize: resize,

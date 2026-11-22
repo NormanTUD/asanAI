@@ -125,6 +125,8 @@
         if (stage > 0) { stage -= 1; render(); return true; }
         return false;
       },
+      hasNext: function () { return stage < last; },
+      hasPrev: function () { return stage > 0; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

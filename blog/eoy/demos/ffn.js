@@ -370,6 +370,8 @@
         return stepContext(1);
       },
       prev: function () { return stepContext(-1); },
+      hasNext: function () { return bend < 0.94 || modeOrder.indexOf(activeMode) < modeOrder.length - 1; },
+      hasPrev: function () { return modeOrder.indexOf(activeMode) > 0; },
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowLeft") return stepContext(-1);

@@ -12,6 +12,8 @@
         update: function () {},
         next: function () { return false; },
         prev: function () { return false; },
+        hasNext: function () { return false; },
+        hasPrev: function () { return false; },
         resize: function () {},
         onKey: function () { return false; },
         destroy: function () {}
@@ -54,6 +56,14 @@
         if (!st || st.cur <= 0) return false;
         window.IntuitionSpaceMorph.prev();
         return true;
+      },
+      hasNext: function () {
+        var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
+        return !!(st && st.cur < st.count - 1);
+      },
+      hasPrev: function () {
+        var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
+        return !!(st && st.cur > 0);
       },
       resize: function () { if (window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.resize) window.IntuitionSpaceMorph.resize(); },
       onKey: function (e) {

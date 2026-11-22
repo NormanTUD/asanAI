@@ -810,7 +810,7 @@
     try {
       var p = JSON.parse(localStorage.getItem(KEY) || "{}");
       if (p.track) state.track = p.track;
-      if (p.depth) state.depth = p.depth;
+      if (p.depth === "short" || p.depth === "standard" || p.depth === "deep") state.depth = p.depth;
       state.font = normalizeFont(p.font);
       if (typeof p.day === "number") state.day = p.day;
       if (typeof p.step === "number") state.step = p.step;
@@ -2792,6 +2792,10 @@
     animateSubstep(dir, ghost);
   }
   function go(day, step, substep) {
+    day = Number(day);
+    step = Number(step);
+    if (!isFinite(day)) day = state.day;
+    if (!isFinite(step)) step = state.step;
     // Single-entry eoy pages stay on their one step; only substeps may move.
     if (cfg && cfg.eoySingle) { day = 0; step = 0; }
     hideTip();
@@ -2799,10 +2803,10 @@
     var oldStep = state.step;
     var oldSub = state.substep;
     var oldDemo = cfg.days[oldDay] ? cfg.days[oldDay].demo : null;
-    state.day = clamp(day, 0, cfg.days.length - 1);
+    state.day = Math.floor(clamp(day, 0, cfg.days.length - 1));
     var d = cfg.days[state.day];
     if (state.track !== "all" && d.track !== state.track) state.track = d.track;
-    state.step = clamp(step, 0, Math.max(0, visibleCount(d) - 1));
+    state.step = Math.floor(clamp(step, 0, Math.max(0, visibleCount(d) - 1)));
     var dayChanged = oldDay !== state.day;
     var demoChanged = oldDemo !== d.demo;
     var stepChanged = oldStep !== state.step;
@@ -2813,7 +2817,7 @@
     if (typeof substep === "number" && isFinite(substep)) {
       var viewBase = stepAt(d, state.step);
       var viewMax = viewBase && viewBase.substeps ? viewBase.substeps.length - 1 : 0;
-      state.substep = clamp(substep, 0, viewMax);
+      state.substep = Math.floor(clamp(substep, 0, viewMax));
     }
     rememberSubstep();
     var changed = dayChanged || demoChanged || stepChanged;
@@ -3050,6 +3054,7 @@
   }
 
   function setTrack(id) {
+    if (id !== "all" && !TRACK_LABEL[id]) return;
     hideTip();
     var oldDay = state.day;
     var oldDemo = cfg.days[oldDay] ? cfg.days[oldDay].demo : null;
@@ -3072,6 +3077,7 @@
     setTimeout(function () { centerActiveDay(true); }, 80);
   }
   function setDepth(d) {
+    if (d !== "short" && d !== "standard" && d !== "deep") return;
     hideTip();
     state.depth = d;
     renderTop();
@@ -5668,12 +5674,16 @@
     if (!cfg.tracks) cfg.tracks = [];
     cfg.tracks.forEach(function (t) { TRACK_LABEL[t.id] = t; });
     if (state.track !== "all" && !TRACK_LABEL[state.track]) state.track = "all";
-    if (state.day >= cfg.days.length) state.day = 0;
+    state.day = Math.floor(state.day);
+    if (!isFinite(state.day) || state.day < 0 || state.day >= cfg.days.length) state.day = 0;
+    if (!isFinite(state.step)) state.step = 0;
+    if (!isFinite(state.substep)) state.substep = 0;
     if (cfg.mix && cfg.days.length) {
       state.track = "all";
       state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : Math.floor(Math.random() * cfg.days.length);
       if (cfg.singleDay) state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : 0;
       state.step = 0;
+      state.substep = 0;
       if (cfg.startEntry != null) {
         var startIdx = visibleIndexOfEntry(cfg.days[state.day], cfg.startEntry);
         if (startIdx >= 0) { state.step = startIdx; state.substep = 0; }
@@ -5685,7 +5695,15 @@
       if (trackDays.length && trackDays.indexOf(cfg.days[state.day]) === -1) {
         state.day = cfg.days.indexOf(trackDays[0]);
         state.step = 0;
+        state.substep = 0;
       }
+    }
+    var bootDay = cfg.days[state.day];
+    if (bootDay) {
+      state.step = Math.floor(clamp(state.step, 0, Math.max(0, visibleCount(bootDay) - 1)));
+      var bootStep = stepAt(bootDay, state.step);
+      var bootMaxSub = bootStep && bootStep.substeps ? bootStep.substeps.length - 1 : 0;
+      state.substep = Math.floor(clamp(state.substep, 0, Math.max(0, bootMaxSub)));
     }
     LOCAL_EDITOR = window.TM_LOCAL_EDITOR === true;
     HIDE_EXPAND_ALL = window.TM_HIDE_EXPAND_ALL === true;

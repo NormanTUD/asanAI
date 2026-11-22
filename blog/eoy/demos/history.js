@@ -276,6 +276,8 @@
       },
       next: nextInternal,
       prev: prevInternal,
+      hasNext: function () { return index < tabs.length - 1; },
+      hasPrev: function () { return index > 0; },
       onKey: function (e) {
         return api.util.arrowKey(e, nextInternal, prevInternal);
       },

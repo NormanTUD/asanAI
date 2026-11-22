@@ -425,6 +425,8 @@
       setKind: setKind,
       next: function () { return false; },
       prev: function () { return false; },
+      hasNext: function () { return false; },
+      hasPrev: function () { return false; },
       resize: resize,
       pause: function () { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; },
       resume: function () { if (!running && !reduced) { running = true; raf = requestAnimationFrame(loop); } else { running = true; draw(); } },

@@ -331,6 +331,8 @@
         }
         return false;
       },
+      hasNext: function () { return !!(showSummary && mode === "scale" && summaryStep < 1); },
+      hasPrev: function () { return !!(showSummary && mode === "scale" && summaryStep > 0); },
       onKey: function () { return false; },
       resize: function () { drawTruth(); },
       destroy: function () { window.removeEventListener("resize", resize); el.remove(); }

@@ -699,6 +699,12 @@
         animateScale(SCALE_VALUES[scaleIndex]);
         return true;
       },
+      hasNext: function () {
+        return mode === "scale" && scaleIndex < SCALE_VALUES.length - 1;
+      },
+      hasPrev: function () {
+        return mode === "scale" && scaleIndex !== 0;
+      },
       resize: resize,
       pause: function () { if (dirRaf) { cancelAnimationFrame(dirRaf); dirRaf = 0; } },
       resume: function () { draw(); ensureDirLoop(); },

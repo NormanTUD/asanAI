@@ -357,6 +357,8 @@
       finish: finishSweep,
       next: next,
       prev: prev,
+      hasNext: function () { return !!sweep || pos < 100000; },
+      hasPrev: function () { return !!sweep || pos > 0; },
       onKey: function (e) { return api.util.arrowKey(e, next, prev); },
       pause: function () { cancelAnimationFrame(raf); raf = 0; },
       resume: function () { if (!raf) raf = requestAnimationFrame(loop); },

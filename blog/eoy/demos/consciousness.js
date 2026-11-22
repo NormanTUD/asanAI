@@ -131,6 +131,8 @@
         if (selected > 0) { selected--; render(); return true; }
         return false;
       },
+      hasNext: function () { return selected < THEORIES.length - 1; },
+      hasPrev: function () { return selected > 0; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

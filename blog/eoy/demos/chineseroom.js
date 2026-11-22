@@ -141,6 +141,8 @@
         choose(r.answer, correct);
         return true;
       },
+      hasNext: function () { return !done; },
+      hasPrev: function () { return false; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

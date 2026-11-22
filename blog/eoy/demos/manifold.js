@@ -426,6 +426,13 @@
       update: function () {},
       next: nextInternal,
       prev: prevInternal,
+      hasNext: function () { return finding || !found; },
+      hasPrev: function () {
+        return finding ||
+          Math.abs(angle - INITIAL_ANGLE) >= 0.5 ||
+          Math.abs(roll - INITIAL_ROLL) >= 0.5 ||
+          Math.abs(shift - INITIAL_SHIFT) >= 0.01;
+      },
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: resize,
       pause: function () { stopFind(); },

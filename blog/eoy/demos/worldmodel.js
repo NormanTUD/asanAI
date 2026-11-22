@@ -1221,6 +1221,8 @@
         draw();
         return true;
       },
+      hasNext: function () { return state.step === 1 && state.phase < 5; },
+      hasPrev: function () { return state.step === 1 && state.phase > 0; },
       onKey: function (e) {
         if (state.step !== 1) return false;
         if (e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return false;

@@ -107,6 +107,8 @@
         render();
         return true;
       },
+      hasNext: function () { return !rag || !cot || !verify; },
+      hasPrev: function () { return verify || cot || rag; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

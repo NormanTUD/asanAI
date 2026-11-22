@@ -95,6 +95,8 @@
       update: function () {},
       next: function () { if (stage < labels.length - 1) { stage++; render(); return true; } return false; },
       prev: function () { if (stage > 0) { stage--; render(); return true; } return false; },
+      hasNext: function () { return stage < labels.length - 1; },
+      hasPrev: function () { return stage > 0; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

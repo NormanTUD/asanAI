@@ -159,21 +159,33 @@
       if (chatInputEl) chatInputEl.textContent = "";
       chatStarted = false;
     }
+    var navHideTimer = null;
+    function clearNavHideTimer() {
+      if (navHideTimer == null) return;
+      clearTimeout(navHideTimer);
+      navHideTimer = null;
+    }
     function showPhoneNav() {
       if (!phoneNavbar) return;
+      clearNavHideTimer();
       phoneNavbar.hidden = false;
       void phoneNavbar.offsetWidth;
       phoneNavbar.classList.add("is-up");
     }
     function hidePhoneNav() {
       if (!phoneNavbar) return;
+      clearNavHideTimer();
       phoneNavbar.hidden = true;
       phoneNavbar.classList.remove("is-up");
     }
     function dismissPhoneNav() {
       if (!phoneNavbar) return;
+      clearNavHideTimer();
       phoneNavbar.classList.remove("is-up");
-      later(function () { if (phoneNavbar) phoneNavbar.hidden = true; }, 340);
+      navHideTimer = setTimeout(function () {
+        navHideTimer = null;
+        if (phoneNavbar) phoneNavbar.hidden = true;
+      }, 340);
     }
     function reset() {
       clearTimers();
@@ -425,6 +437,7 @@
       resize: fit,
       destroy: function () {
         clearTimers();
+        clearNavHideTimer();
         if (ro) ro.disconnect();
         window.removeEventListener("resize", fit);
         el.remove();

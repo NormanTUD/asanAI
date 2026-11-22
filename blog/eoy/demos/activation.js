@@ -121,6 +121,8 @@
       update: function () {},
       next: function () { return stepFn(1); },
       prev: function () { return stepFn(-1); },
+      hasNext: function () { return fns.map(function (fn) { return fn.id; }).indexOf(active) < fns.length - 1; },
+      hasPrev: function () { return fns.map(function (fn) { return fn.id; }).indexOf(active) > 0; },
       onKey: function (e) { return api.util.arrowKey(e, function () { return stepFn(1); }, function () { return stepFn(-1); }); },
       resize: resize,
       destroy: function () { if (morphRaf) cancelAnimationFrame(morphRaf); window.removeEventListener("resize", resize); el.remove(); }

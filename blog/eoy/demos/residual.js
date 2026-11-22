@@ -907,6 +907,14 @@
       },
       next: next,
       prev: prev,
+      hasNext: function () {
+        if (phase === "notebook") return !separate || layer < NOTE_LAYERS.length;
+        return streamLayer < STREAM_LAYERS.length - 1;
+      },
+      hasPrev: function () {
+        if (phase === "stream") return streamLayer > 0 || !separate;
+        return layer > 0;
+      },
       onKey: function (e) { return api.util.arrowKey(e, next, prev); },
       resize: resize,
       pause: function () {

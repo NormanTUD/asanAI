@@ -1253,6 +1253,23 @@
       },
       next: nextExample,
       prev: prevExample,
+      hasNext: function () {
+        if (st.mode === "temperature") {
+          var pi = currentPairIndex();
+          if (pi < 0) pi = -1;
+          return pi < PAIRS.length - 1;
+        }
+        if (st.mode !== "space" || st.dim < 1) return false;
+        var list = examplesForDim();
+        var idx = currentExampleIndex();
+        if (idx < 0) idx = -1;
+        return idx < list.length - 1;
+      },
+      hasPrev: function () {
+        if (st.mode === "temperature") return currentPairIndex() > 0;
+        if (st.mode !== "space" || st.dim < 1) return false;
+        return currentExampleIndex() > 0;
+      },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
       resume: function () { ensureLoop(); },
       resize: resize,

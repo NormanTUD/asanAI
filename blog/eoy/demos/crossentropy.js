@@ -467,6 +467,8 @@
       update: function () {},
       next: nextTarget,
       prev: prevTarget,
+      hasNext: function () { return !(target >= tokens.length - 1 && sequenceDone); },
+      hasPrev: function () { return target > 0; },
       resize: resize,
       destroy: function () {
         if (tween) cancelAnimationFrame(tween);
