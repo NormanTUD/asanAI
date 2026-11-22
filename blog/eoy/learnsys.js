@@ -2766,26 +2766,93 @@
       ], { duration: 100, delay: 100 + i * 15, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
     });
   }
+  function headlineSnapshot() {
+    var d = activeDay();
+    var base = activeStep();
+    var s = activeView();
+    var doc = state.edit && editorDoc ? editorDoc : currentTextDoc();
+    return {
+      kicker: (doc.kicker || s.kicker || d.kicker) + (base && base.substeps ? " · " + (state.substep + 1) + " / " + base.substeps.length : ""),
+      title: doc.title || s.title || ""
+    };
+  }
+  function swapSpans(text, other, changedClass) {
+    var out = "";
+    var i = 0;
+    while (i < text.length) {
+      var same = i < other.length && text.charAt(i) === other.charAt(i);
+      var j = i + 1;
+      while (j < text.length) {
+        var sameNext = j < other.length && text.charAt(j) === other.charAt(j);
+        if (sameNext !== same) break;
+        j++;
+      }
+      var chunk = text.slice(i, j);
+      out += same ? esc(chunk) : '<span class="ls-swap-char ' + changedClass + '">' + esc(chunk) + '</span>';
+      i = j;
+    }
+    return out;
+  }
+  function animateSwapChars(el, changedClass, fromBlur, toBlur, fromOpacity, toOpacity) {
+    if (!el) return;
+    el.querySelectorAll("." + changedClass).forEach(function (ch) {
+      playTransition(ch, [
+        { opacity: fromOpacity, filter: "blur(" + fromBlur + "px)" },
+        { opacity: toOpacity, filter: "blur(" + toBlur + "px)" }
+      ], { duration: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+    });
+  }
+  function textBodyParts() {
+    if (!els.textBody) return [];
+    return Array.prototype.filter.call(
+      els.textBody.querySelectorAll(".ls-body, .ls-watch, .ls-cues, .ls-extras, .ls-actions"),
+      function (el) { return !el.hidden && (!!el.textContent.trim() || el.children.length > 0); }
+    );
+  }
   function animateTextSwap(renderTextFn, renderStageFn) {
-    var host = els.textBody;
-    if (reducedMotion() || !host) {
+    if (reducedMotion() || !els.textBody) {
       renderTextFn();
       if (renderStageFn) renderStageFn();
       return;
     }
     cancelTransitions();
-    var outAnim = playTransition(host, [
-      { opacity: 1, filter: "blur(0px)" },
-      { opacity: 0, filter: "blur(6px)" }
-    ], { duration: 100, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
+    var oldKicker = els.kicker ? els.kicker.textContent : "";
+    var oldTitle = els.title ? els.title.textContent : "";
+    var nextHead = headlineSnapshot();
+    if (els.kicker && oldKicker !== nextHead.kicker) {
+      els.kicker.innerHTML = swapSpans(oldKicker, nextHead.kicker, "is-swap-out");
+      animateSwapChars(els.kicker, "is-swap-out", 0, 6, 1, 0);
+    }
+    if (els.title && oldTitle !== nextHead.title) {
+      els.title.innerHTML = swapSpans(oldTitle, nextHead.title, "is-swap-out");
+      animateSwapChars(els.title, "is-swap-out", 0, 6, 1, 0);
+    }
+    var parts = textBodyParts();
+    parts.forEach(function (part) {
+      playTransition(part, [
+        { opacity: 1, filter: "blur(0px)" },
+        { opacity: 0, filter: "blur(6px)" }
+      ], { duration: 100, easing: "cubic-bezier(.4,0,.2,1)", fill: "none" });
+    });
     textSwapTimer = setTimeout(function () {
       textSwapTimer = 0;
-      if (outAnim) { try { outAnim.cancel(); } catch (e) {} }
       renderTextFn();
-      playTransition(host, [
-        { opacity: 0, filter: "blur(6px)" },
-        { opacity: 1, filter: "blur(0px)" }
-      ], { duration: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+      var newKicker = els.kicker ? els.kicker.textContent : "";
+      var newTitle = els.title ? els.title.textContent : "";
+      if (els.kicker && newKicker !== oldKicker) {
+        els.kicker.innerHTML = swapSpans(newKicker, oldKicker, "is-swap-in");
+        animateSwapChars(els.kicker, "is-swap-in", 6, 0, 0, 1);
+      }
+      if (els.title && newTitle !== oldTitle) {
+        els.title.innerHTML = swapSpans(newTitle, oldTitle, "is-swap-in");
+        animateSwapChars(els.title, "is-swap-in", 6, 0, 0, 1);
+      }
+      parts.forEach(function (part) {
+        playTransition(part, [
+          { opacity: 0, filter: "blur(6px)" },
+          { opacity: 1, filter: "blur(0px)" }
+        ], { duration: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+      });
       if (renderStageFn) {
         clearTimeout(stageRenderTimer);
         stageRenderTimer = setTimeout(function () {

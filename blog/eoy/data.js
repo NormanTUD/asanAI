@@ -775,6 +775,7 @@
         sources: [
           { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.", en: "Transformer blocks, residual connections, and layer normalisation." } },
           { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450", why: { de: "LayerNorm: Mittelwert und Varianz pro Token, danach gelerntes γ/β.", en: "LayerNorm: per-token mean and variance, then learned γ/β." } },
+          { label: "Xiong et al. (2020), On Layer Normalization in the Transformer Architecture", url: "https://arxiv.org/abs/2002.04745", why: { de: "Pre-LN ist stabiler als Post-LN und erlaubt Training ohne Warm-up.", en: "Pre-LN is more stable than Post-LN and allows training without warm-up." } },
           { label: "Radford et al. (2019), Language Models are Unsupervised Multitask Learners", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: LayerNorm vor den Subblöcken und final nach dem letzten Block.", en: "GPT-2: LayerNorm before the sub-blocks and a final one after the last block." } },
           { label: "He et al. (2016), Deep Residual Learning", url: "https://arxiv.org/abs/1512.03385", why: { de: "Residualverbindungen: Updates werden addiert, nicht überschrieben.", en: "Residual connections: updates are added, not overwritten." } }
         ]

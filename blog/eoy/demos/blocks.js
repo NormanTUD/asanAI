@@ -97,7 +97,18 @@
         mini: "unembed",
       }
     ];
-    var index = lastBlocksIndex;
+    var pages = [];
+    blocks.forEach(function (b, bi) {
+      pages.push({ block: b, blockIndex: bi, sub: null });
+      if (b.sub) b.sub.forEach(function (sub) { pages.push({ block: b, blockIndex: bi, sub: sub }); });
+    });
+    function blockStartPage(blockIndex) {
+      for (var p = 0; p < pages.length; p++) {
+        if (pages[p].blockIndex === blockIndex && !pages[p].sub) return p;
+      }
+      return 0;
+    }
+    var index = Math.max(0, Math.min(pages.length - 1, lastBlocksIndex));
     var resetKey = null;
     var positionDemo = null;
     var el = document.createElement("div");
@@ -140,7 +151,7 @@
         } else {
           card.innerHTML = '<span class="ls-bs-icon">' + esc(b.icon) + '</span><span class="ls-bs-label"><b>' + esc(b.label) + '</b><small>' + esc(b.short) + '</small></span>';
         }
-        card.addEventListener("click", function () { setIndex(i); });
+        card.addEventListener("click", function () { setIndex(blockStartPage(i)); });
         step.appendChild(card);
         if (i < blocks.length - 1) {
           var conn = document.createElement("span");
@@ -465,12 +476,27 @@
       });
     }
     function renderDetail() {
-      var b = blocks[index];
-      var html = '<div class="ls-bs-kicker">' + (DE ? "Station " : "Station ") + (index + 1) + ' / ' + blocks.length + '</div>' +
-        '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
-        '<p class="ls-bs-body">' + inlineMathText(b.body) + '</p>' +
-        '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
-      if (b.id === "data") {
+      var page = pages[index];
+      var b = page.block;
+      var sub = page.sub;
+      var stage = page.blockIndex + 1;
+      var kicker = (DE ? "Station " : "Station ") + stage + " / " + blocks.length + (sub ? " · " + esc(sub.title) : "");
+      var html = '<div class="ls-bs-kicker">' + kicker + '</div>';
+      if (sub) {
+        html += '<h3 class="ls-bs-title">' + esc(sub.title) + '</h3>' +
+          '<div class="ls-bs-sub ls-bs-sub--wide"><div class="ls-bs-subcanvas"><canvas data-mini="' + (sub.mini || "ffn") + '"></canvas></div><p>' + inlineMathText(sub.text) + '</p></div>';
+      } else {
+        html += '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
+          '<p class="ls-bs-body">' + inlineMathText(b.body) + '</p>' +
+          '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
+        if (b.sub) {
+          html += '<div class="ls-bs-subnav">' + (DE ? "Die nächsten Seiten: " : "The next pages: ") +
+            b.sub.map(function (s) { return '<span class="ls-bs-subpill">' + esc(s.title) + '</span>'; }).join("") + '</div>';
+        }
+      }
+      if (sub) {
+        // Sub-page detail is already rendered above.
+      } else if (b.id === "data") {
         html += '<div class="ls-bs-html">' +
           '<div class="ls-bs-html-head">' + (DE ? "Anfang des HTML-Codes · gekürzt" : "Beginning of the HTML · shortened") + '</div>' +
           '<pre><code>' +
@@ -496,18 +522,20 @@
         html += '<div class="ls-bs-position-full" data-position-host></div>' +
           '<p class="ls-bs-traj-caption">' + (DE ? "Die Kugel zeigt mögliche Positionskodierungen. Bewege die Position und drehe die Ansicht; der Punkt wandert auf der Kugel." : "The sphere shows possible position encodings. Move the position and rotate the view; the point moves on the sphere.") + '</p>';
       } else if (b.sub) {
-        html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
-          var kind = s.mini || (["attention", "ffn"][i] || "ffn");
-          var cls = "ls-bs-sub" + (s.wide ? " ls-bs-sub--wide" : "");
-          return '<div class="' + cls + '"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + kind + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
-        }).join("") + '</div>';
+        // The overview signpost is already rendered above; sub-pages follow.
       } else {
         html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
-      if (b.mini === "unembed") {
+      if (!sub && b.mini === "unembed") {
         html += '<p class="ls-bs-traj-caption">' + (DE ? "Der Output-Vektor des LLM ist der letzte Vektor des letzten Tokens in der letzten Schicht. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; in dieser schematischen Ansicht entscheidet der Kosinus zu diesem Vektor, im echten Logit zählt auch die Länge." : "The output vector of the LLM is the final vector of the last token in the last layer. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; in this schematic view the cosine to this vector decides, while the real logit also includes length.") + '</p>';
       }
-      if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
+      var sources = sub && sub.sources ? sub.sources : (b.sources || (b.source ? [b.source] : []));
+      if (sources.length) {
+        html += '<p class="ls-bs-source">' + (DE ? (sources.length > 1 ? "Quellen: " : "Quelle: ") : (sources.length > 1 ? "Sources: " : "Source: ")) +
+          sources.map(function (source) {
+            return '<a href="' + esc(source.url) + '" target="_blank" rel="noopener">' + esc(source.label) + '</a>';
+          }).join(" · ") + '</p>';
+      }
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
       detail.innerHTML = html;
       if (window.TM && typeof window.TM.typesetMath === "function") { try { window.TM.typesetMath(detail); } catch (e) {} }
@@ -529,11 +557,11 @@
         }
       }
       detail.scrollTop = 0;
-      progress.textContent = (index + 1) + ' / ' + blocks.length;
+      progress.textContent = (DE ? "Station " : "Station ") + stage + " / " + blocks.length + (sub ? " · " + sub.title : "");
       prevBtn.disabled = index === 0;
-      nextBtn.textContent = index === blocks.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+      nextBtn.textContent = index === pages.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
       stack.querySelectorAll(".ls-bs-card").forEach(function (btn) {
-        btn.classList.toggle("is-on", parseInt(btn.getAttribute("data-index"), 10) === index);
+        btn.classList.toggle("is-on", parseInt(btn.getAttribute("data-index"), 10) === page.blockIndex);
       });
       requestAnimationFrame(function () { drawMinis(); layoutResidual(); });
     }
@@ -554,11 +582,11 @@
     }
     function onResize() { drawMinis(); layoutResidual(); }
     function setIndex(i) {
-      index = Math.max(0, Math.min(blocks.length - 1, i));
+      index = Math.max(0, Math.min(pages.length - 1, i));
       renderDetail();
     }
     function nextInternal() {
-      if (index < blocks.length - 1) { setIndex(index + 1); return true; }
+      if (index < pages.length - 1) { setIndex(index + 1); return true; }
       return false;
     }
     function prevInternal() {
@@ -576,11 +604,11 @@
       update: function (s) {
         if (!s || s.resetKey === undefined || s.resetKey === resetKey) return;
         resetKey = s.resetKey;
-        setIndex(typeof s.start === "number" ? s.start : 0);
+        setIndex(typeof s.start === "number" ? blockStartPage(s.start) : 0);
       },
       next: nextInternal,
       prev: prevInternal,
-      hasNext: function () { return index < blocks.length - 1; },
+      hasNext: function () { return index < pages.length - 1; },
       hasPrev: function () { return index > 0; },
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
