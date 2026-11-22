@@ -1579,83 +1579,6 @@ def test_blocks_sequence(browser, base, lang, results):
     page.wait_for_timeout(180)
     rapid = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), title: document.querySelector('.ls-bs-title')?.textContent || '' })")
     results.check(tag, "rapid next reaches the blocks demo", rapid["scene"] == "blocks", str(rapid))
-    page.evaluate("() => LearnSys.go(0, 0, 1)")
-    page.wait_for_timeout(800)
-    bench = page.evaluate(
-        r"""
-() => ({
-  mounted: !!document.querySelector('.ls-ll'),
-  tabs: document.querySelectorAll('.ls-ll-tab').length,
-  vars: document.querySelectorAll('.ls-ll-var').length,
-  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
-})
-"""
-    )
-    results.check(tag, "limits test bench is mounted", bench["mounted"], str(bench))
-    results.check(tag, "limits test bench has four tests", bench["tabs"] == 4, str(bench))
-    results.check(tag, "paraphrase test shows three variants", bench["vars"] == 3, str(bench))
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    para = page.evaluate(
-        r"""
-() => ({
-  badges: document.querySelectorAll('.ls-ll-badge').length,
-  consistency: document.querySelector('.ls-ll-consistency b')?.textContent || '',
-  why: document.querySelector('.ls-ll-why')?.textContent || ''
-})
-"""
-    )
-    results.check(tag, "paraphrase test reveals answers", para["badges"] == 3, str(para))
-    results.check(tag, "paraphrase test shows inconsistency", para["consistency"] == "2 / 3", str(para))
-    results.check(tag, "paraphrase test explains the failure", "Formulierung" in para["why"] or "wording" in para["why"], para["why"][:160])
-    page.locator('.ls-ll-tab[data-test="citation"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    page.locator('.ls-ll-check').click()
-    page.wait_for_timeout(200)
-    cite = page.evaluate("() => ({ result: document.querySelector('.ls-ll-cite-result')?.textContent || '', why: document.querySelector('.ls-ll-why')?.textContent || '' })")
-    results.check(tag, "citation test exposes a missing DOI", "nicht gefunden" in cite["result"] or "not found" in cite["result"], str(cite)[:200])
-    results.check(tag, "citation test explains the shape-not-proof failure", "Form" in cite["why"] or "shape" in cite["why"], cite["why"][:160])
-    page.locator('.ls-ll-tab[data-test="boundary"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    page.locator('.ls-ll-ask').click()
-    page.wait_for_timeout(150)
-    boundary = page.evaluate("() => ({ answer: document.querySelector('.ls-ll-answer b')?.textContent || '', asked: document.querySelector('.ls-ll-asked')?.textContent || '', conf: document.querySelector('.ls-ll-conf')?.textContent || '' })")
-    results.check(tag, "boundary test gives a confident answer", bool(boundary["answer"]) and "91" in boundary["conf"], str(boundary))
-    results.check(tag, "boundary test keeps the answer on follow-up", "14" in boundary["asked"], str(boundary))
-    page.locator('.ls-ll-tab[data-test="context"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    page.locator('.ls-ll-posbtn[data-pos="1"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    ctx = page.evaluate("() => ({ answer: document.querySelector('.ls-ll-answer b')?.textContent || '', badge: document.querySelector('.ls-ll-answer .ls-ll-badge')?.textContent || '', fact: !!document.querySelector('.ls-ll-context-fact'), summary: document.querySelector('.ls-ll-summary')?.textContent || '', overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
-    results.check(tag, "context test marks the middle fact as wrong", "2025" in ctx["answer"] and "✗" in ctx["badge"], str(ctx)[:200])
-    results.check(tag, "context test shows the fact marker and progress", ctx["fact"] and "4 / 4" in ctx["summary"], str(ctx)[:200])
-    results.check(tag, "risk/limit/society page has no overflow", ctx["overflow"] <= 2, str(ctx["overflow"]))
-    page.evaluate("() => LearnSys.go(0, 0, 2)")
-    page.wait_for_timeout(700)
-    chain = page.evaluate(
-        r"""
-() => ({
-  steps: document.querySelectorAll('.ls-rm-chain-step').length,
-  cross: document.querySelectorAll('.ls-rm-cross-card').length,
-  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
-})
-"""
-    )
-    results.check(tag, "society value chain is mounted", chain["steps"] == 5, str(chain)[:200])
-    results.check(tag, "society shows four cross-section conflicts", chain["cross"] == 4, str(chain)[:200])
-    page.locator('.ls-rm-chain-step[data-soc-item="4"]').click()
-    page.wait_for_timeout(200)
-    rules = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
-    results.check(tag, "society rules stage names censorship", "Tiananmen" in rules, rules[:200])
-    page.locator('.ls-rm-cross-card[data-soc-item="3"]').click()
-    page.wait_for_timeout(200)
-    power = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
-    results.check(tag, "society power conflict names censorship", "Tiananmen" in power, power[:200])
-    results.check(tag, "society page has no overflow", chain["overflow"] <= 2, str(chain["overflow"]))
     errors = logs.take()
     results.check(tag, "blocks sequence has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
@@ -1923,24 +1846,81 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     results.check(tag, "alignment risk shows an agent editing its test", "Test" in align or "test" in align, align[:200])
     page.evaluate("() => LearnSys.go(0, 0, 1)")
     page.wait_for_timeout(800)
-    limits = page.evaluate(
+    bench = page.evaluate(
         r"""
 () => ({
-  rows: document.querySelectorAll('.ls-rm-meter-row').length,
-  pins: document.querySelectorAll('.ls-rm-meter-pin').length,
-  detail: document.querySelector('.ls-rm-detail-head b')?.textContent || '',
+  mounted: !!document.querySelector('.ls-ll'),
+  tabs: document.querySelectorAll('.ls-ll-tab').length,
+  vars: document.querySelectorAll('.ls-ll-var').length,
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
-    results.check(tag, "limit spectrum is mounted", limits["rows"] == 6, str(limits))
-    results.check(tag, "limit spectrum has six markers", limits["pins"] == 6, str(limits))
-    page.locator('.ls-rm-meter-row[data-item="2"]').click()
+    results.check(tag, "limits test bench is mounted", bench["mounted"], str(bench))
+    results.check(tag, "limits test bench has four tests", bench["tabs"] == 4, str(bench))
+    results.check(tag, "paraphrase test shows three variants", bench["vars"] == 3, str(bench))
+    page.locator('.ls-ll-run').click()
+    page.wait_for_timeout(700)
+    para = page.evaluate(
+        r"""
+() => ({
+  badges: document.querySelectorAll('.ls-ll-badge').length,
+  consistency: document.querySelector('.ls-ll-consistency b')?.textContent || '',
+  why: document.querySelector('.ls-ll-why')?.textContent || ''
+})
+"""
+    )
+    results.check(tag, "paraphrase test reveals answers", para["badges"] == 3, str(para))
+    results.check(tag, "paraphrase test shows inconsistency", para["consistency"] == "2 / 3", str(para))
+    results.check(tag, "paraphrase test explains the failure", "Formulierung" in para["why"] or "wording" in para["why"], para["why"][:160])
+    page.locator('.ls-ll-tab[data-test="citation"]').click()
+    page.locator('.ls-ll-run').click()
+    page.wait_for_timeout(700)
+    page.locator('.ls-ll-check').click()
     page.wait_for_timeout(200)
-    limit_detail = page.evaluate("() => ({ title: document.querySelector('.ls-rm-detail-head b')?.textContent || '', text: document.querySelector('.ls-rm-detail')?.innerText || '' })")
-    results.check(tag, "limit detail follows the selected capability", "Kontext" in limit_detail["title"] or "Context" in limit_detail["title"], str(limit_detail)[:200])
-    results.check(tag, "limit detail explains the structural cause", "Warum strukturell" in limit_detail["text"] or "Why structural" in limit_detail["text"], str(limit_detail)[:300])
-    results.check(tag, "risk/limit page has no overflow", limits["overflow"] <= 2, str(limits["overflow"]))
+    cite = page.evaluate("() => ({ result: document.querySelector('.ls-ll-cite-result')?.textContent || '', why: document.querySelector('.ls-ll-why')?.textContent || '' })")
+    results.check(tag, "citation test exposes a missing DOI", "nicht gefunden" in cite["result"] or "not found" in cite["result"], str(cite)[:200])
+    results.check(tag, "citation test explains the shape-not-proof failure", "Form" in cite["why"] or "shape" in cite["why"], cite["why"][:160])
+    page.locator('.ls-ll-tab[data-test="boundary"]').click()
+    page.locator('.ls-ll-run').click()
+    page.wait_for_timeout(700)
+    page.locator('.ls-ll-ask').click()
+    page.wait_for_timeout(150)
+    boundary = page.evaluate("() => ({ answer: document.querySelector('.ls-ll-answer b')?.textContent || '', asked: document.querySelector('.ls-ll-asked')?.textContent || '', conf: document.querySelector('.ls-ll-conf')?.textContent || '' })")
+    results.check(tag, "boundary test gives a confident answer", bool(boundary["answer"]) and "91" in boundary["conf"], str(boundary))
+    results.check(tag, "boundary test keeps the answer on follow-up", "14" in boundary["asked"], str(boundary))
+    page.locator('.ls-ll-tab[data-test="context"]').click()
+    page.locator('.ls-ll-run').click()
+    page.wait_for_timeout(700)
+    page.locator('.ls-ll-posbtn[data-pos="1"]').click()
+    page.locator('.ls-ll-run').click()
+    page.wait_for_timeout(700)
+    ctx = page.evaluate("() => ({ answer: document.querySelector('.ls-ll-answer b')?.textContent || '', badge: document.querySelector('.ls-ll-answer .ls-ll-badge')?.textContent || '', fact: !!document.querySelector('.ls-ll-context-fact'), summary: document.querySelector('.ls-ll-summary')?.textContent || '', overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
+    results.check(tag, "context test marks the middle fact as wrong", "2025" in ctx["answer"] and "✗" in ctx["badge"], str(ctx)[:200])
+    results.check(tag, "context test shows the fact marker and progress", ctx["fact"] and "4 / 4" in ctx["summary"], str(ctx)[:200])
+    results.check(tag, "risk/limit/society page has no overflow", ctx["overflow"] <= 2, str(ctx["overflow"]))
+    page.evaluate("() => LearnSys.go(0, 0, 2)")
+    page.wait_for_timeout(700)
+    chain = page.evaluate(
+        r"""
+() => ({
+  steps: document.querySelectorAll('.ls-rm-chain-step').length,
+  cross: document.querySelectorAll('.ls-rm-cross-card').length,
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "society value chain is mounted", chain["steps"] == 5, str(chain)[:200])
+    results.check(tag, "society shows four cross-section conflicts", chain["cross"] == 4, str(chain)[:200])
+    page.locator('.ls-rm-chain-step[data-soc-item="4"]').click()
+    page.wait_for_timeout(200)
+    rules = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
+    results.check(tag, "society rules stage names censorship", "Tiananmen" in rules, rules[:200])
+    page.locator('.ls-rm-cross-card[data-soc-item="3"]').click()
+    page.wait_for_timeout(200)
+    power = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
+    results.check(tag, "society power conflict names censorship", "Tiananmen" in power, power[:200])
+    results.check(tag, "society page has no overflow", chain["overflow"] <= 2, str(chain["overflow"]))
     errors = logs.take()
     results.check(tag, "risk/limit page has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
@@ -1963,6 +1943,8 @@ def test_qualia_and_takeaway(browser, base, lang, results):
   graph: !!document.querySelector('.ls-mi-measure-graph'),
   apples: document.querySelectorAll('.ls-mi-mary-apple').length,
   bw: document.querySelector('.ls-mi-mary-apple.is-bw') ? getComputedStyle(document.querySelector('.ls-mi-mary-apple.is-bw')).filter : '',
+  maryText: document.querySelector('.ls-mi-mary p')?.innerText || '',
+  maryLabels: getComputedStyle(document.querySelector('.ls-mi-mary-room'), '::before').content,
   text: document.querySelector('.ls-mi-qualia-text')?.innerText || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
@@ -1972,6 +1954,8 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     results.check(tag, "qualia card shows Mary's room", qualia["mary"], str(qualia))
     results.check(tag, "outside view is a measurement panel", qualia["measure"] and qualia["graph"], str(qualia))
     results.check(tag, "Mary's left apple is the same apple in grayscale", qualia["apples"] == 2 and "grayscale" in qualia["bw"], str(qualia))
+    results.check(tag, "Mary lives in a grayscale world without red", ("grau" in qualia["maryText"] or "gray" in qualia["maryText"]) and ("Rot" in qualia["maryText"] or "red" in qualia["maryText"]), qualia["maryText"][:220])
+    results.check(tag, "Mary's room has no S/W or Rot pseudo-labels", qualia["maryLabels"] in ("none", "normal", '""'), qualia["maryLabels"])
     results.check(tag, "qualia text explains the felt redness", "Quale" in qualia["text"] or "quale" in qualia["text"], qualia["text"][:160])
     results.check(tag, "qualia page has no overflow", qualia["overflow"] <= 2, str(qualia["overflow"]))
     page.evaluate("() => LearnSys.go(0, 0, 1)")

@@ -27,7 +27,7 @@ $labels = [
 	'manifold' => 'Manifold', 'gauss' => 'Gauss', 'unembed' => 'Unembedding',
 	'model' => 'Modell', 'blocks' => 'Bausteine', 'highdim' => 'Hochdimensional', 'mlp' => 'MLP',
 	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'agents' => 'Agent',
-	'gradient' => 'Gradient', 'riskmap' => 'AI and society',
+	'gradient' => 'Gradient', 'riskmap' => 'AI and society', 'limitslab' => 'Grenzen-Prüfstand',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room',
 	'consciousness' => 'Bewusstsein',
 	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz', 'takeaway' => 'Takeaway', 'inductionmatrix' => 'Induktions-Tabelle', 'weekday' => 'Wochentage', 'mindintro' => 'Bewusstseinsfrage', 'roadmap' => 'Roadmap', 'spacetime' => 'Raum und Zeit', 'worldmodel' => 'Weltmodell',
