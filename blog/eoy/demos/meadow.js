@@ -208,10 +208,17 @@
         g.fillStyle = k === 0 ? rgb(pal.thought) : rgb(pal.ink);
         g.textAlign = "left"; g.fillText(anchors[cd.i].w, panelX + 9, rowY);
         var bw = Math.max(3, prob * barMax);
-        g.fillStyle = rgb(pal.border); g.fillRect(barX, rowY - 4, barMax, 8);
-        g.fillStyle = k === 0 ? rgb(pal.thought) : rgb(pal.muted); g.globalAlpha = k === 0 ? 1 : 0.5;
-        g.fillRect(barX, rowY - 4, bw, 8); g.globalAlpha = 1;
-        g.font = "600 9px ui-monospace, monospace"; g.fillStyle = k === 0 ? rgb(pal.thought) : rgb(pal.muted); g.textAlign = "right";
+        g.fillStyle = rgb(pal.ink); g.globalAlpha = 0.10;
+        g.fillRect(barX, rowY - 5, barMax, 10);
+        g.globalAlpha = 1;
+        g.strokeStyle = rgb(pal.ink); g.globalAlpha = 0.32; g.lineWidth = 1;
+        g.strokeRect(barX + 0.5, rowY - 4.5, barMax - 1, 9);
+        g.globalAlpha = 1;
+        g.fillStyle = k === 0 ? rgb(pal.thought) : rgb(pal.ink);
+        g.globalAlpha = k === 0 ? 1 : 0.72;
+        g.fillRect(barX, rowY - 5, bw, 10);
+        g.globalAlpha = 1;
+        g.font = "600 9px ui-monospace, monospace"; g.fillStyle = rgb(pal.ink); g.textAlign = "right";
         g.fillText(Math.round(prob * 100) + "%", panelX + panelW - 7, rowY);
       }
       g.beginPath(); g.arc(mx, my, 7, 0, Math.PI * 2); g.fillStyle = rgb(pal.surface); g.fill();

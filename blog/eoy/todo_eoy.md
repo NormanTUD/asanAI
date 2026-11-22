@@ -103,11 +103,9 @@ this file before further edits.
    - With "Pfeile" active the points disappear; every word is an arrow from
      (0, 0, 0) to its position.
    - "Bedeutung ist Richtung" is shown in the plot and in the aria-label.
-16. **"Die Karte der Wörter" — hover percentage bars**
-   - The hover panel's percentage bars are low contrast: the track is green and
-     the fill is also green. Make the track a neutral high-contrast surface with
-     a visible outline, keep the fill green/ink, and make the percentage text
-     readable.
+16. **"Die Karte der Wörter" — hover percentage bars** — **done**
+   - The track is now a neutral ink tint with an outline; winner fill is green,
+     other fills are ink; percentages use ink text.
 17. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.
