@@ -15,7 +15,7 @@
       {
         tone: "hard", tag: "IIT / Phi",
         body: "Bewusstsein ist die geeinte Ursache-Wirkungs-Struktur eines Systems. Phi misst, wie irreduzibel diese Struktur ist.",
-        problem: "Phi ist für große Systeme kaum berechenbar, für LLMs nicht gemessen, und die Theorie ist umstritten.",
+        problem: "Phi ist für große Systeme kaum berechenbar, für LLMs nicht belastbar gemessen, und die Theorie ist umstritten.",
         cite: '<a href="https://doi.org/10.1186/1471-2202-5-42" target="_blank" rel="noopener">Tononi (2004)</a>; <a href="https://doi.org/10.1038/nrn.2016.44" target="_blank" rel="noopener">Tononi et al. (2016)</a>'
       },
       {
@@ -46,7 +46,7 @@
       {
         tone: "hard", tag: "IIT / Phi",
         body: "Consciousness is a system's unified cause-effect structure. Phi measures how irreducible that structure is.",
-        problem: "Phi is hard to compute for large systems, has not been measured for LLMs, and the theory is contested.",
+        problem: "Phi is hard to compute for large systems, has not been robustly measured for LLMs, and the theory is contested.",
         cite: '<a href="https://doi.org/10.1186/1471-2202-5-42" target="_blank" rel="noopener">Tononi (2004)</a>; <a href="https://doi.org/10.1038/nrn.2016.44" target="_blank" rel="noopener">Tononi et al. (2016)</a>'
       },
       {

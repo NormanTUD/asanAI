@@ -28,7 +28,7 @@
 | AlexNet 2012, Transformer 2017, Bahdanau 2014 | korrekt | History-Demo |
 | Eiffelturm mit Antenne: 330 m | korrekt | Halluzinations-Demo, als falsche 300-m-Antwort markiert |
 | Cross-Entropy: −log(0,30) ≈ 1,20; Gradient p−y ≈ −0,70 | korrekt | nachgerechnet |
-| BPE-Demo: 10 Startzeichen, 79 Korpus-Tokens, Merges 9/9/8/7 | korrekt | nachgerechnet |
+| BPE-Demo: 10 Startzeichen, 79 Korpus-Tokens, Merges 9/9/7/7 | korrekt | nachgerechnet (der frühere Wert 9/9/8/7 war falsch) |
 | Othello-Demo: alle 30 Züge legal | korrekt | unabhängige Othello-Regelprüfung |
 | Llama-2-70B-Karte: Abb. 10, CC BY 4.0 | korrekt | Gurnee & Tegmark (2023), Bildquelle vorhanden |
 

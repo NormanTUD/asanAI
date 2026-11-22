@@ -39,7 +39,7 @@ schematic.
 | `assets/space-morph.js` | `z = r²` overstated the exact lift, and a ReLU neuron was called a `smooth ridge`. | Changed to `z ≈ r²` and `one ridge` / `einen Grat`. |
 | `assets/learnsys-unembed-scene.js` | Hand-built token angles were presented as `learned` GPT-2 directions. | Changed captions and ARIA to `schematic`; updated the unembed step in `data.js` accordingly. |
 | `demos/qkv.js` | The fully connected graph was labelled without saying it is the view without a causal mask. | Added `ohne Causal Mask` / `without a causal mask` to the visible note and ARIA label. |
-| `demos/worldmodel.js` | ARIA summary said `Zwei Richtungen für Othello`; the probe has three logits per square (empty, player 1, player 2). | Changed to `Drei Logits pro Feld`. |
+| `demos/worldmodel.js` | ARIA summary said `Zwei Richtungen für Othello`; the probe has three logits per square (empty, mine, yours). | Changed to `Drei Logits pro Feld`. |
 | `demos/spacetime.js` | `R² = 0.835` was shown next to synthetic points that actually have R² ≈ 0.999; the schematic label disappeared when a person was selected. | Card and bottom label now say the R² is the paper value and the points are schematic. |
 
 ## Per-demo audit
@@ -193,7 +193,7 @@ Status: correct but illustrative.
   correct; Arabic is correctly marked right-to-left.
 - GPT-3 mix: Common Crawl 60 %, WebText2 22 %, Books1 8 %, Books2 8 %,
   Wikipedia 3 %, rounded from Brown et al. (2020), Table 2.2. Correct.
-- GPT-3 300 billion tokens, about 570 GB filtered text; 1 ZB = 10^21 bytes;
+- GPT-3 300 billion training tokens; the filtered Common Crawl portion was about 570 GB, roughly 400 billion tokens; 1 ZB = 10^21 bytes;
   zettabyte era is total digital data, not the training corpus. Correct.
 - Petrov et al. (2023) tokenizer cost across languages: correct.
 - Pretraining corpus list: fixed.
@@ -297,7 +297,7 @@ Status: correct but illustrative.
 ### `demos/worldmodel.js`
 - The 30-move Othello sequence is legal and rule-conforming.
 - `L6` state has 512 numbers per token; three probabilities/logits per square
-  (empty, player 1, player 2); chess has 13 states per square; argmax picks the
+  (empty, mine, yours); chess has 13 states per square; argmax picks the
   largest. Correct.
 - `Zwei Richtungen für Othello` was inconsistent with the three-logit probe;
   fixed.
@@ -318,7 +318,7 @@ Status: fixed and correct.
 
 ### `assets/learnsys-gauss-scene.js`
 - Ceres and the Dawn mission: correct.
-- Ceres image by Justin Cowart, public domain; Flammarion engraving 1888,
+- Ceres image: NASA material public domain, processing by Justin Cowart, CC BY 2.0; Flammarion engraving 1888,
   public domain: credits verified.
 - The plot uses synthetic data, not Piazzi's measurements; the scene says so.
 - `Gauss believes no single measurement` was changed to `No single measurement

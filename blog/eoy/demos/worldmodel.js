@@ -400,7 +400,7 @@
 
     function drawRangeLine(c, x, y, w, h, probs, opts) {
       var o = opts || {};
-      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+      var labels = DE ? ["leer", "mein Spieler", "Gegner"] : ["empty", "my player", "opponent"];
       var colors = [V.alpha(C.line, .42), C.ink, C.paper];
       var seg = w / 3;
       var win = winIndex(probs);
@@ -539,7 +539,7 @@
       }
       var cy = by + boardS + 22;
       txt(c, DE ? "8 × 8 · schematisch" : "8 × 8 · schematic", bx + boardS / 2, cy, { align: "center", size: 10, color: C.muted });
-      txt(c, DE ? "leer · Spieler 1 · Spieler 2" : "empty · player 1 · player 2", bx + boardS / 2, cy + 18, {
+      txt(c, DE ? "leer · mein Spieler · Gegner" : "empty · my player · opponent", bx + boardS / 2, cy + 18, {
         align: "center",
         size: 11,
         color: C.ink
@@ -566,7 +566,7 @@
     }
 
     function stateName(idx) {
-      return DE ? ["leer", "Spieler 1", "Spieler 2"][idx] : ["empty", "player 1", "player 2"][idx];
+      return DE ? ["leer", "mein Spieler", "Gegner"][idx] : ["empty", "my player", "opponent"][idx];
     }
 
     function probeDir(sq, stateIdx, d) {
@@ -918,7 +918,7 @@
         if (narrow) {
           drawLogitsColumn(c, pad, 110, 44, 160, e4);
           var hs = 80, gap = 8;
-          var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+          var labels = DE ? ["leer", "mein Spieler", "Gegner"] : ["empty", "my player", "opponent"];
           for (var o8 = 0; o8 < 3; o8++) {
             txt(c, labels[o8], pad + 60 + o8 * (hs + gap) + hs / 2, 100, { align: "center", size: 8.5, color: o8 === 1 ? C.gold : o8 === 2 ? C.ink : C.muted });
             drawProbGrid(c, pad + 60 + o8 * (hs + gap), 110, hs, o8, e4);
@@ -929,7 +929,7 @@
         } else {
           drawLogitsColumn(c, pad, 110, 54, 200, e4);
           var hs2 = 90, gap2 = 10;
-          var labels2 = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+          var labels2 = DE ? ["leer", "mein Spieler", "Gegner"] : ["empty", "my player", "opponent"];
           for (var o9 = 0; o9 < 3; o9++) {
             txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted });
             drawProbGrid(c, pad + 80 + o9 * (hs2 + gap2), 110, hs2, o9, e4);
@@ -975,7 +975,7 @@
 
     function drawLineNode(c, cx, cy, w) {
       var seg = w / 3;
-      var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+      var labels = DE ? ["leer", "mein Spieler", "Gegner"] : ["empty", "my player", "opponent"];
       var colors = [V.alpha(C.line, .45), C.ink, C.paper];
       for (var i = 0; i < 3; i++) {
         c.fillStyle = colors[i];
@@ -1059,7 +1059,7 @@
       var pad = Math.max(18, Math.min(26, W * .035));
       var narrow = W < 620;
       head(c, DE ? "Vom Feld zur realen Welt" : "From one square to the real world", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
-      txt(c, DE ? "Bei Othello hat jedes Feld 3 Zustände: leer, Spieler 1, Spieler 2. Die Probe liest drei Logits pro Feld; bei Schach sind es 13 Logits, ein affiner 12-dimensionaler Unterraum. In Modellen der realen Welt sind es viel mehr und viel komplexere Unterräume." : "In Othello each square has 3 states: empty, player 1, player 2. The probe reads three logits per square; in chess there are 13 logits, an affine 12-dimensional subspace. In real-world models there are many more and much more complex subspaces.", pad, 58, { size: 10.5, color: C.muted });
+      txt(c, DE ? "Bei Othello hat jedes Feld 3 Zustände: leer, mein Spieler, Gegner (relativ zum Spieler am Zug). Die Probe liest drei Logits pro Feld; bei Schach sind es 13 Logits, ein affiner 12-dimensionaler Unterraum. In Modellen der realen Welt sind es viel mehr und viel komplexere Unterräume." : "In Othello each square has 3 states: empty, my player, opponent (relative to the player to move). The probe reads three logits per square; in chess there are 13 logits, an affine 12-dimensional subspace. In real-world models there are many more and much more complex subspaces.", pad, 58, { size: 10.5, color: C.muted });
       accent(c, pad, 72, 42);
       if (narrow) {
         var cx = W * .5;
@@ -1079,7 +1079,7 @@
         txt(c, DE ? "Reale Modelle" : "Real models", cx, y3 + 78, { align: "center", size: 16, font: '700 16px "Barlow", "Open Sans", sans-serif', color: C.ink });
         txt(c, DE ? "viele Unterräume · überlagert" : "many subspaces · overlapping", cx, y3 + 96, { align: "center", size: 9.5, color: C.muted });
         txt(c, DE ? "z. B. Gurnee & Tegmark (2023)" : "e.g. Gurnee & Tegmark (2023)", cx, y3 + 112, { align: "center", size: 8, color: C.muted });
-        addHit(cx - 120, y1 - 50, 240, 170, DE ? "Othello: drei Logits pro Feld (leer, Spieler 1, Spieler 2)" : "Othello: three logits per square (empty, player 1, player 2)");
+        addHit(cx - 120, y1 - 50, 240, 170, DE ? "Othello: drei Logits pro Feld (leer, mein Spieler, Gegner; relativ zum Spieler am Zug)" : "Othello: three logits per square (empty, my player, opponent; relative to the player to move)");
         addHit(cx - 90, y2 - 90, 180, 220, DE ? "Schach: 13 Zustände pro Feld, also ein affiner Unterraum" : "chess: 13 states per square, an affine subspace");
         addHit(cx - 90, y3 - 90, 180, 220, DE ? "Reale Modelle: viele überlagerte Unterräume" : "real models: many overlapping subspaces");
       } else {
@@ -1100,7 +1100,7 @@
         txt(c, DE ? "Reale Modelle" : "Real models", n3, cy + 82, { align: "center", size: 17, font: '700 17px "Barlow", "Open Sans", sans-serif', color: C.ink });
         txt(c, DE ? "viele Unterräume · überlagert" : "many subspaces · overlapping", n3, cy + 101, { align: "center", size: 10, color: C.muted });
         txt(c, DE ? "z. B. Gurnee & Tegmark (2023)" : "e.g. Gurnee & Tegmark (2023)", n3, cy + 117, { align: "center", size: 8, color: C.muted });
-        addHit(n1 - 105, cy - 100, 210, 200, DE ? "Othello: drei Logits pro Feld (leer, Spieler 1, Spieler 2)" : "Othello: three logits per square (empty, player 1, player 2)");
+        addHit(n1 - 105, cy - 100, 210, 200, DE ? "Othello: drei Logits pro Feld (leer, mein Spieler, Gegner; relativ zum Spieler am Zug)" : "Othello: three logits per square (empty, my player, opponent; relative to the player to move)");
         addHit(n2 - 105, cy - 100, 210, 230, DE ? "Schach: 13 Zustände pro Feld, also ein affiner Unterraum" : "chess: 13 states per square, an affine subspace");
         addHit(n3 - 105, cy - 100, 210, 230, DE ? "Reale Modelle: viele überlagerte Unterräume" : "real models: many overlapping subspaces");
       }

@@ -556,7 +556,7 @@
       g.fillText(DE ? "Sechs Dimensionen" : "Six dimensions", panelX + 16, barY + 24);
       g.fillStyle = C.muted;
       g.font = '600 ' + Math.max(8, Math.min(10, panelW * 0.0125)) + 'px "Open Sans", sans-serif';
-      var layerText = streamLayer === 0 ? (DE ? "Start: sechs gelernte Dimensionen" : "Start: six learned dimensions") : (DE ? "Schicht " + streamLayer + " · getragen + Attention + FFN" : "Layer " + streamLayer + " · carried + attention + FFN");
+      var layerText = streamLayer === 0 ? (DE ? "Start: sechs konstruierte Dimensionen" : "Start: six constructed dimensions") : (DE ? "Schicht " + streamLayer + " · getragen + Attention + FFN" : "Layer " + streamLayer + " · carried + attention + FFN");
       g.fillText(layerText, panelX + 16, barY + 40);
       if (panelW > 430) drawLegend(g, panelX + panelW - 286, barY + 26, C, true);
       var plotX = panelX + 24;
@@ -716,7 +716,7 @@
         readout.innerHTML = '<span class="ls-res-phase-label">' + (DE ? "Notizbuch" : "Notebook") + '</span>' +
           '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Tokens stehen" : "Tokens are here")) + '</b>' +
           '<span>' + (info ? info.desc : (DE ? "Die Tokens stehen im Notizbuch. Drücke Weiter, um die erste Schicht zu öffnen." : "The tokens are in the notebook. Press Next to open the first layer.")) + '</span>';
-        caption.textContent = DE ? "Jede Schicht liest das Notizbuch und schreibt ihre Erkenntnis dazu; nichts wird gelöscht." : "Every layer reads the notebook and writes its insight into it; nothing is deleted.";
+        caption.textContent = DE ? "Jede Schicht liest das Notizbuch und schreibt ihre Erkenntnis dazu; nichts wird gelöscht. Die Rollen der Schichten sind eine didaktische Erzählung, keine Messung." : "Every layer reads the notebook and writes its insight into it; nothing is deleted. The layer roles are a didactic story, not a measurement.";
       } else {
         readout.innerHTML = '<div class="ls-res-eq-row">' + equationHTML(streamLayer) + dimDetailHTML(streamLayer) + '</div>' +
           '<span class="ls-res-hint">' + (DE ? "Ziehe über eine Dimension oder klicke sie an." : "Hover a dimension or click it.") + '</span>';

@@ -76,10 +76,10 @@
         id: "negation", label: "Negation (Reasoning)", color: "blue",
         question: "Was bedeutet „nicht traurig“?",
         answer: "Nicht automatisch „glücklich“.",
-        why: "Negation ist keine exakte Umkehrung und kein Halluzinationstyp. Attention ist kein Antonym-Operator: „nicht traurig“ landet nicht punktgenau auf „glücklich“. Dazwischen bleiben Abstufungen, Gleichgültigkeit oder etwas anderes.",
+        why: "Negation ist keine exakte Umkehrung und in den zitierten Surveys kein eigener Halluzinationstyp. Attention ist kein Antonym-Operator: „nicht traurig“ landet nicht punktgenau auf „glücklich“. Dazwischen bleiben Abstufungen, Gleichgültigkeit oder etwas anderes.",
         check: "Wird die Verneinung als eigene Bedeutung behandelt oder als exakte Umkehrung?",
         fix: "Logische Schritte separat prüfen; Negation und Antonym nicht gleichsetzen.",
-        source: "Reasoning-Fehler, kein Halluzinationstyp"
+        source: "Reasoning-Fehler, in den Surveys kein eigener Halluzinationstyp"
       },
       {
         id: "sampling", label: "Sampling", color: "green",
@@ -161,10 +161,10 @@
         id: "negation", label: "Negation (Reasoning)", color: "blue",
         question: "What does “not sad” mean?",
         answer: "Not automatically “happy”.",
-        why: "Negation is not an exact reversal and not a hallucination type. Attention is not an antonym operator: “not sad” does not land precisely on “happy”. Degrees, indifference, or something else remain in between.",
+        why: "Negation is not an exact reversal and not its own hallucination type in the cited surveys. Attention is not an antonym operator: “not sad” does not land precisely on “happy”. Degrees, indifference, or something else remain in between.",
         check: "Is the negation treated as its own meaning or as an exact reversal?",
         fix: "Check logical steps separately; do not equate negation with an antonym.",
-        source: "Reasoning error, not a hallucination type"
+        source: "Reasoning error, not its own hallucination type in the surveys"
       },
       {
         id: "sampling", label: "Sampling", color: "green",

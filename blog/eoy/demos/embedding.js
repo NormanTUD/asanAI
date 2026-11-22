@@ -749,12 +749,12 @@
       var result = cr.result, dirMode = cr.dirMode, example = cr.example;
       if (dirMode) {
         var desc = dirMode === "gender"
-          ? (DE ? "Eine gelernte Richtung verbindet Mann und Frau sowie König und Königin." : "One learned direction connects man and woman, and king and queen.")
+          ? (DE ? "In echten Embeddings verbindet eine gelernte Richtung Mann und Frau sowie König und Königin; in dieser Demo ist sie konstruiert." : "In real embeddings one learned direction connects man and woman, and king and queen; in this demo it is constructed.")
           : dirMode === "power-dir"
-            ? (DE ? "Eine andere gelernte Richtung führt von Mann zu Prinz zu König." : "Another learned direction moves from man to prince to king.")
+            ? (DE ? "In echten Embeddings führt eine andere gelernte Richtung von Mann zu Prinz zu König; hier ist auch sie konstruiert." : "In real embeddings another learned direction moves from man to prince to king; here it is constructed as well.")
             : dirMode === "layers"
               ? (DE ? "Dieselbe Geschlechtsrichtung erscheint in der Tier- und Figurenebene; die dritte Achse verschiebt die Punkte nach unten oder oben." : "The same gender direction appears in the animal and fiction layers; the third axis moves the points down or up.")
-              : (DE ? "Zwei gelernte Richtungen: Geschlecht und Macht." : "Two learned directions: gender and power.");
+              : (DE ? "Zwei konstruierte Richtungen: Geschlecht und Macht." : "Two constructed directions: gender and power.");
         readout.innerHTML = esc(desc);
         var tex = dirMode === "gender"
           ? "\\underbrace{\\vec{x}_{\\text{" + wordLabel("woman") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Geschlechtsschritt" : "gender step") + "}} = \\underbrace{\\vec{x}_{\\text{" + wordLabel("queen") + "}} - \\vec{x}_{\\text{" + wordLabel("king") + "}}}_{\\text{" + (DE ? "derselbe Schritt" : "the same step") + "}}"
@@ -790,7 +790,7 @@
         var w = WORDS[st.selected];
         var wv = st.dim === 2 ? [w.v[0], w.v[1], w.z] : [w.v[0], w.v[1]];
         readout.innerHTML = '<b>' + esc(wordLabel(st.selected)) + '</b> · (' + wv.map(function (x) { return esc(x); }).join(', ') + ')';
-        setTex("\\underbrace{\\vec{x}_{\\text{" + wordLabel(st.selected) + "}}}_{\\text{" + (DE ? "gelerntes Wort" : "learned word") + "}} = \\begin{pmatrix}" + wv.join("\\\\") + "\\end{pmatrix}");
+        setTex("\\underbrace{\\vec{x}_{\\text{" + wordLabel(st.selected) + "}}}_{\\text{" + (DE ? "konstruierter Wortvektor" : "constructed word vector") + "}} = \\begin{pmatrix}" + wv.join("\\\\") + "\\end{pmatrix}");
         return;
       }
       readout.textContent = DE ? "Klicke ein Wort im Raum." : "Click a word in the space.";

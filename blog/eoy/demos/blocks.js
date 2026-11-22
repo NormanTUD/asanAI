@@ -21,7 +21,7 @@
         title: "Embedding",
         body: "Jede ID wird zu einem Vektor in einem Raum mit hunderten bis tausenden Dimensionen (GPT-2 small: 768). Ähnliche Bedeutungen landen in ähnlichen Richtungen. Die Bedeutung ergibt sich aus dem Kontext, wie Firth (1957) formulierte: „You shall know a word by the company it keeps.“ Die Demo zeigt Richtungen und Längen schematisch; echte Embeddings haben unterschiedliche Längen.",
         points: [],
-        source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
+        source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/studiesinlinguis0000vari" },
         mini: "embedding"
       },
       {
@@ -65,7 +65,7 @@
         title: "Embedding",
         body: "Every ID becomes a vector in a space with hundreds to thousands of dimensions (GPT-2 small: 768). Similar meanings land in similar directions. Meaning comes from context, as Firth (1957) put it: “You shall know a word by the company it keeps.” The demo shows directions and lengths schematically; real embeddings have different lengths.",
         points: [],
-        source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
+        source: { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/studiesinlinguis0000vari" },
         mini: "embedding"
       },
       {
