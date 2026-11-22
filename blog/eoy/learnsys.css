@@ -3197,9 +3197,6 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-mi-qualia-text{margin:0;font:var(--ls-fs-micro)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-mi-mary{display:grid;grid-template-columns:118px minmax(0,1fr);gap:10px;align-items:center;border:1px solid var(--ls-line);background:rgba(159,151,0,.05);padding:8px 10px}
 .ls-mi-mary-room{position:relative;height:74px;border:1px solid var(--ls-line);background:linear-gradient(90deg,#f7f7f7 0 50%,#ededed 50% 100%);overflow:hidden}
-.ls-mi-mary-room:before,.ls-mi-mary-room:after{position:absolute;bottom:4px;font:600 7px/1 "Open Sans",sans-serif;color:var(--ls-muted)}
-.ls-mi-mary-room:before{content:"S/W";left:7px}
-.ls-mi-mary-room:after{content:"Rot";right:7px;color:#a33}
 .ls-mi-mary-bw,.ls-mi-mary-red{position:absolute;top:50%;width:26px;height:26px;margin-top:-15px;border-radius:50%}
 .ls-mi-mary-bw{left:22%;background:#b8b8b8}
 .ls-mi-mary-red{right:22%;background:radial-gradient(circle at 38% 35%,#ff8a80,#e53935 58%,#8e0000);box-shadow:0 0 10px rgba(229,57,53,.35)}
@@ -3220,9 +3217,6 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-tk-summary article span{font:700 var(--ls-fs-micro) "Barlow",sans-serif;letter-spacing:.07em;color:var(--ls-gold)}
 .ls-tk-summary article b{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol);line-height:1.15}
 .ls-tk-summary article p{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
-.ls-tk-questions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;border-top:1px solid var(--ls-line);padding-top:6px;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);flex:0 0 auto}
-.ls-tk-questions b{font:700 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-green);margin-right:2px}
-.ls-tk-questions span{padding:3px 7px;border:1px solid var(--ls-line);background:rgba(255,255,255,.65);color:var(--ls-petrol)}
 @media (max-width:760px){
   .ls-tk-stage{min-height:340px}
   .ls-tk-summary{grid-template-columns:1fr}

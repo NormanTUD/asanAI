@@ -1933,7 +1933,7 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     cssW: r ? Math.round(r.width) : 0,
     cssH: r ? Math.round(r.height) : 0,
     summary: document.querySelectorAll('.ls-tk-summary article').length,
-    questions: document.querySelectorAll('.ls-tk-questions span').length,
+    questions: !!document.querySelector('.ls-tk-questions'),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 }
@@ -1942,7 +1942,7 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     results.check(tag, "takeaway canvas is mounted", takeaway["canvas"] and takeaway["cssW"] > 200 and takeaway["cssH"] > 200, str(takeaway))
     results.check(tag, "takeaway canvas has a real drawing buffer", takeaway["w"] > 200 and takeaway["h"] > 200, str(takeaway))
     results.check(tag, "takeaway summarises three moves", takeaway["summary"] == 3, str(takeaway))
-    results.check(tag, "takeaway asks four questions", takeaway["questions"] == 4, str(takeaway))
+    results.check(tag, "takeaway has no Prüffragen row", not takeaway["questions"], str(takeaway))
     results.check(tag, "takeaway page has no overflow", takeaway["overflow"] <= 2, str(takeaway["overflow"]))
     errors = logs.take()
     results.check(tag, "qualia/takeaway pages have no console errors", not errors, " | ".join(errors)[:400])

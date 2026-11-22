@@ -15,16 +15,13 @@
         '<article><span>02</span><b>' + (DE ? "Bedeutung → Kontext" : "Meaning → context") + '</b><p>' + (DE ? "Attention mischt den Kontext, das FFN verschiebt die Punkte, der Residualstrom trägt alles weiter." : "Attention mixes context, the FFN shifts the points, the residual stream carries everything forward.") + '</p></article>' +
         '<article><span>03</span><b>' + (DE ? "Kontext → Wirkung" : "Context → impact") + '</b><p>' + (DE ? "Am Ende steht eine Verteilung über das nächste Token; daraus wird Text, Verhalten und Verantwortung." : "At the end stands a distribution over the next token; from it come text, behaviour, and responsibility.") + '</p></article>' +
       '</div>' +
-      '<div class="ls-tk-questions"><b>' + (DE ? "Prüffragen" : "Questions") + '</b>' +
-        '<span>' + (DE ? "Daten?" : "Data?") + '</span><span>' + (DE ? "Aufgabe?" : "Task?") + '</span><span>' + (DE ? "Evidenz?" : "Evidence?") + '</span><span>' + (DE ? "Verantwortung?" : "Accountability?") + '</span>' +
-      '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-tk-stage");
     var canvas = el.querySelector(".ls-tk-canvas");
     var C = api.colors();
     var reduce = !!api.reducedMotion;
     var size = null, ctx = null, raf = 0, start = performance.now(), paused = false;
-    var focusMs = 2600;
+    var focusMs = 2100;
     var labels = DE
       ? ["Text", "Tokens", "Vektoren", "Attention", "FFN", "Verteilung"]
       : ["Text", "Tokens", "Vectors", "Attention", "FFN", "Distribution"];
@@ -46,7 +43,7 @@
       drawFrame(performance.now());
     }
     function font(px, weight) { return (weight || 600) + " " + Math.max(8, Math.round(px)) + 'px "Open Sans", sans-serif'; }
-    function panelBg(x, y, w, h, active) {
+    function panelBg(x, y, w, h, active, frac) {
       roundRect(ctx, x, y, w, h, 8);
       ctx.fillStyle = active ? (C.paper || "#fff") : (C.paper2 || C.paper || "#fff");
       ctx.fill();
@@ -60,6 +57,8 @@
         ctx.fillStyle = C.green;
         ctx.fill();
         ctx.restore();
+        ctx.fillStyle = C.green;
+        ctx.fillRect(x + 8, y + h - 5, Math.max(0, Math.min(1, frac || 0)) * (w - 16), 3);
       }
     }
     function panelLabel(index, x, y, w, active) {
@@ -188,37 +187,73 @@
       ctx.fillText("+ x", cx, cy + 58);
     }
     function drawDistribution(x, y, w, h, t, active) {
-      var pad = 18;
-      var bottom = y + h - 24;
-      var maxH = h - 54;
-      var heights = [0.32, 0.48, 0.26, 0.72, 0.44, 0.86];
-      var colors = [C.petrol, C.blue, C.lilac, C.gold, C.blue, C.green];
-      var bw = (w - pad * 2 - 5 * 4) / 6;
-      heights.forEach(function (v, i) {
-        var bh = maxH * v * (i === 5 ? (0.9 + 0.1 * Math.sin(t * 3)) : 1);
+      var names = DE ? ["Katze", "Hund", "Maus", "Pferd", "…"] : ["cat", "dog", "mouse", "horse", "…"];
+      var probs = [0.18, 0.62, 0.09, 0.06, 0.05];
+      var pad = 16;
+      var top = y + 40;
+      var bottom = y + h - 34;
+      var maxH = Math.max(28, bottom - top);
+      var bw = (w - pad * 2 - 4 * 4) / 5;
+      var chosen = 1;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = font(api.font("canvas-sm") * 0.78, 600);
+      ctx.fillStyle = C.muted;
+      var prefix = DE ? "Es war einmal ein" : "Once upon a time a";
+      var px = x + pad;
+      ctx.textAlign = "left";
+      ctx.fillStyle = C.soft;
+      ctx.fillText(prefix, px, y + 26);
+      var prefW = ctx.measureText(prefix).width;
+      ctx.fillStyle = C.green;
+      ctx.font = font(api.font("canvas-sm") * 0.9, 700);
+      ctx.fillText(names[chosen], px + prefW + 4, y + 26);
+      var endX = px + prefW + 4 + ctx.measureText(names[chosen]).width;
+      probs.forEach(function (p, i) {
+        var bh = maxH * (p / 0.62) * (i === chosen && !reduce ? (0.94 + 0.06 * Math.sin(t * 3)) : 1);
         var bx = x + pad + i * (bw + 4);
-        roundRect(ctx, bx, bottom - bh, bw, bh, 3);
-        ctx.fillStyle = colors[i];
-        ctx.globalAlpha = i === 5 ? 0.9 : 0.48;
+        var by = bottom - bh;
+        roundRect(ctx, bx, by, bw, bh, 3);
+        ctx.fillStyle = i === chosen ? C.green : [C.blue, C.petrol, C.lilac, C.gold][i % 4];
+        ctx.globalAlpha = i === chosen ? 0.92 : 0.46;
         ctx.fill();
-      });
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = C.line;
-      ctx.beginPath(); ctx.moveTo(x + pad - 4, bottom); ctx.lineTo(x + w - pad + 4, bottom); ctx.stroke();
-      if (!reduce) {
-        var fly = 0.5 + 0.5 * Math.sin(t * 2.2);
-        ctx.fillStyle = C.green;
-        ctx.globalAlpha = fly;
-        ctx.font = font(api.font("canvas-sm") * 0.9, 700);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = i === chosen ? C.green : C.muted;
+        ctx.font = font(api.font("canvas-sm") * 0.72, 700);
         ctx.textAlign = "center";
-        ctx.fillText(DE ? "Hund" : "dog", x + w - pad - bw / 2, bottom - maxH - 8 - fly * 4);
+        ctx.fillText(Math.round(p * 100) + "%", bx + bw / 2, by - 7);
+        ctx.fillStyle = i === chosen ? C.petrol : C.muted;
+        ctx.font = font(api.font("canvas-sm") * 0.68, 600);
+        ctx.fillText(names[i], bx + bw / 2, bottom + 9);
+      });
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x + pad - 4, bottom); ctx.lineTo(x + w - pad + 4, bottom); ctx.stroke();
+      var chosenX = x + pad + chosen * (bw + 4) + bw / 2;
+      ctx.strokeStyle = C.green;
+      ctx.setLineDash([3, 3]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(chosenX, bottom - maxH * (probs[chosen] / 0.62) - 12);
+      ctx.quadraticCurveTo((chosenX + endX) / 2, y + 12, endX + 3, y + 24);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (!reduce) {
+        var fly = (Math.sin(t * 2.2) + 1) / 2;
+        ctx.globalAlpha = 0.35 + 0.55 * fly;
+        ctx.fillStyle = C.green;
+        ctx.font = font(api.font("canvas-sm") * 0.72, 700);
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "sampeln" : "sample", chosenX, bottom - maxH * (probs[chosen] / 0.62) - 26);
         ctx.globalAlpha = 1;
       }
     }
     function drawFrame(now) {
       if (!size || !ctx || size.w < 40 || size.h < 40) return;
       var t = (now - start) / 1000;
-      var focus = reduce ? 0 : Math.floor((now - start) / focusMs) % 6;
+      var phase = reduce ? 0 : ((now - start) / focusMs) % 6;
+      var focus = reduce ? 0 : Math.floor(phase);
+      var frac = reduce ? 1 : phase - focus;
       ctx.clearRect(0, 0, size.w, size.h);
       var cols = 3, rows = 2, gap = 8, pad = 4;
       var pw = (size.w - pad * 2 - gap * (cols - 1)) / cols;
@@ -227,7 +262,7 @@
       for (var i = 0; i < 6; i++) {
         var x = pad + (i % cols) * (pw + gap);
         var y = pad + Math.floor(i / cols) * (ph + gap);
-        panelBg(x, y, pw, ph, i === focus);
+        panelBg(x, y, pw, ph, i === focus, frac);
         panelLabel(i, x, y, pw, i === focus);
         drawFns[i](x, y, pw, ph, t, i === focus);
       }
