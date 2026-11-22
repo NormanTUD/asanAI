@@ -38,6 +38,12 @@
       pair: ["cold", "lukewarm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false,
       vectorMode: false
     };
+    var planeRevealUntil = 0, planeTimer = 0;
+    function revealPlanes() {
+      planeRevealUntil = performance.now() + 3200;
+      if (planeTimer) clearTimeout(planeTimer);
+      planeTimer = setTimeout(function () { planeRevealUntil = 0; planeTimer = 0; ensureLoop(); draw(); }, 3200);
+    }
 
     function color(name) { return C[name] || C.ink; }
     function groupColor(g) {
@@ -504,7 +510,8 @@
       var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) {
         drawRoomGrid(zMix);
-        drawCategoryPlanes(zMix);
+        var planeRemain = planeRevealUntil - performance.now();
+        if (planeRemain > 0) drawCategoryPlanes(zMix * Math.min(1, planeRemain / 450));
       }
       var planeAlpha = smoothstep(0.18, 0.86, dimMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
@@ -768,7 +775,7 @@
       drawLabel("EMBEDDING · " + modeLabel, 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Ziehen zum Drehen · Wörter anklicken" : "Drag to rotate · click words", size.w - 24, 26, C.muted, "right", 9);
       canvas.setAttribute("aria-label", DE
-        ? "Interaktiver Embedding-Raum in " + modeLabel + ". Wörter sind anklickbar; im 3D-Modus kannst du ziehen." + (st.vectorMode ? " Wörter werden als Pfeile vom Ursprung gezeigt." : "")
+        ? "Interaktiver Embedding-Raum in " + modeLabel + ". Wörter sind anklickbar; im 3D-Modus kannst du ziehen." + (st.vectorMode ? " Wörter werden als Pfeile vom Ursprung gezeigt. Bedeutung ist Richtung." : "")
         : "Interactive embedding space in " + modeLabel + ". Words are clickable; in 3D you can drag." + (st.vectorMode ? " Words are shown as arrows from the origin. Meaning is direction." : ""));
       updateReadout();
     }
@@ -888,6 +895,7 @@
         ["1D", "2D", "3D"].forEach(function (label, i) {
           row1.appendChild(makeChip(label, st.dim === i, function () {
             st.dim = i; animateDimTo(i); st.group = null;
+            if (i === 2) revealPlanes();
             if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
             if (i !== 2 && st.arithmetic) {
               var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
@@ -988,6 +996,7 @@
         if (nextDim !== st.dim) animateDimTo(nextDim);
         else dimTarget = nextDim;
         st.dim = nextDim;
+        if (nextDim === 2) revealPlanes();
       }
       if (s.selected) st.selected = s.selected;
       if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
@@ -1329,6 +1338,7 @@
       resize: resize,
       destroy: function () {
         if (raf) cancelAnimationFrame(raf);
+        if (planeTimer) clearTimeout(planeTimer);
         clearTimeout(reserveTimer);
         if (reserveIdle && window.cancelIdleCallback) { try { window.cancelIdleCallback(reserveIdle); } catch (e) {} }
         if (ro) ro.disconnect();
