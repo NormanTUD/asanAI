@@ -571,7 +571,8 @@
           drawArrow(origin.x, origin.y, item.p.x, item.p.y, col, selected ? 2.2 : 1.0);
         });
         ctx.globalAlpha = 1;
-        drawLabel(DE ? "Jedes Wort ist ein Pfeil vom Ursprung: Richtung = Bedeutung" : "Every word is an arrow from the origin: direction = meaning", size.w / 2, size.h - 18, C.petrol, "center", 10);
+        drawLabel(DE ? "Bedeutung ist Richtung" : "Meaning is direction", size.w / 2, size.h - 34, C.green, "center", 12);
+        drawLabel(DE ? "Jedes Wort ist ein Pfeil vom Ursprung" : "Every word is an arrow from the origin", size.w / 2, size.h - 18, C.petrol, "center", 10);
         drawLabel(DE ? "Ursprung" : "origin", origin.x + 6, origin.y + 14, C.muted, "left", 9);
       } else if (individualAlpha > 0.05 && dimMix > 1.15 && st.selected && WORDS[st.selected]) {
         var selectedWord = WORDS[st.selected];
@@ -730,15 +731,7 @@
           var hovered = id === hover;
           var hit;
           if (st.vectorMode && zMix > 0.5) {
-            var tipCol = selected ? C.green : groupColor(WORDS[id].group);
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, selected ? 3.4 : 2.1, 0, Math.PI * 2);
-            ctx.fillStyle = tipCol;
-            ctx.fill();
-            ctx.strokeStyle = C.paper;
-            ctx.lineWidth = 1.3;
-            ctx.stroke();
-            hit = { x: p.x, y: p.y, r: selected ? 9 : 7 };
+            hit = { x: p.x, y: p.y, r: selected ? 12 : 9 };
           } else {
             hit = drawPoint(p.x, p.y, id, selected, hovered);
           }
@@ -776,7 +769,7 @@
       drawLabel(DE ? "Ziehen zum Drehen · Wörter anklicken" : "Drag to rotate · click words", size.w - 24, 26, C.muted, "right", 9);
       canvas.setAttribute("aria-label", DE
         ? "Interaktiver Embedding-Raum in " + modeLabel + ". Wörter sind anklickbar; im 3D-Modus kannst du ziehen." + (st.vectorMode ? " Wörter werden als Pfeile vom Ursprung gezeigt." : "")
-        : "Interactive embedding space in " + modeLabel + ". Words are clickable; in 3D you can drag." + (st.vectorMode ? " Words are shown as arrows from the origin." : ""));
+        : "Interactive embedding space in " + modeLabel + ". Words are clickable; in 3D you can drag." + (st.vectorMode ? " Words are shown as arrows from the origin. Meaning is direction." : ""));
       updateReadout();
     }
     function draw() {

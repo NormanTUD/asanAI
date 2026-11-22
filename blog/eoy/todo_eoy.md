@@ -86,24 +86,24 @@ this file before further edits.
    - The alignment item now names the July 2026 Hugging Face incident and cites
      Ozer et al. (2026), arXiv:2609.32390, and Zhang (2026), arXiv:2609.15494.
    - `aiRiskSub` body, box and sources updated; test checks the name.
-12. **Architecture slide — f(x), pretraining, fine-tuning, next-word nudge**
-   - Show the whole architecture as a function $f(x)$: data goes in, the
-     prediction is nudged in the direction of the next correct token.
-   - Show pretraining as $f(\text{almost the whole internet})$ and fine-tuning
-     as $f(\text{a small set of specific questions})$.
-   - Show the next-word mechanism with a few words: "Die Katze sitzt auf der
-     ___" → "Matte" (in the data, good), "Heizung" (plausible but not in the
-     example), "Gleichung" (nonsensical, not in the data). Explain above the
-     visual why data matters and why the nudge is the training signal.
-   - Build a compact, step-by-step visual on the architecture overview page.
-13. **Trajectory plot — crisp scaling and hover**
-   - The "Denken = Punkte verschieben" canvas is poorly upscaled; fit it to the
-     available size and keep lines clearly visible.
-   - Add mouseover per point with the layer index and token, e.g. "Katze · L1".
+12. **Architecture slide — f(x), pretraining, fine-tuning, next-word nudge** — **done**
+   - Added a compact f(x) card: x → f(x) → P(next token), with the 01–04 loop
+     (input, prediction, compare with the data, nudge weights).
+   - Pretraining f(almost the whole internet) and fine-tuning f(small question
+     set) are shown side by side.
+   - Next-word example: "Die Katze sitzt auf der ___" with Matte / Heizung /
+     Gleichung and a Nudge button that shifts the bars toward Matte.
+13. **Trajectory plot — crisp scaling and hover** — **done**
+   - Larger stage, thicker lines and points, all five layer points visible.
+   - Hover shows a ring and a tooltip like "Katze · L1".
 14. **Architecture subpage order** — **done**
    - Transformer subpages and prose now go Attention → LayerNorm → FFN, matching
      the displayed pills and architecture list. The blocks test was updated.
-15. **Tests and finish**
+15. **3D embedding — final direction state** — **done**
+   - With "Pfeile" active the points disappear; every word is an arrow from
+     (0, 0, 0) to its position.
+   - "Bedeutung ist Richtung" is shown in the plot and in the aria-label.
+16. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.
    - Run `js_validator`, `php -l`, and commit/push.
