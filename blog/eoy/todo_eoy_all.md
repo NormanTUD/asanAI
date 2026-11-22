@@ -23,17 +23,15 @@ item.
      animations use `LS.motion.scale`.
    - Weekday rolling/unrolling and the position sweep implement `speedUp()`;
      the rest fall back to `finish()`.
-2. **Verify 3D guard**
-   - Ensure the arrows only appear after the last example and never before.
-   - Ensure no category planes and no points in the final direction state.
-3. **Verify f(x)**
-   - Auto 2 nudges; user can continue to 99 %; fluctuation at the top.
-4. **Final tests**
-   - DE + EN media suite; fix any failures.
-   - `eoy_pages_test` 27/30/31 and the full suite.
-   - `js_validator`, `php -l`.
-5. **Commit and push**
-   - `git add` all intended files, commit, push to origin/master.
+2. **Verify 3D guard** — **done** (DE/EN media suite).
+3. **Verify f(x)** — **done** (DE/EN media suite).
+4. **Final tests** — **done**
+   - DE media: 699 checks, 0 failures.
+   - EN media: 699 checks, 0 failures.
+   - 27/30/31 pages: 332 checks, 0 failures.
+   - Full EOY pages: 3654 checks, 0 failures.
+   - `js_validator`: 0 errors (67 existing warnings); `php -l`: clean.
+5. **Commit and push** — **done** (`587b125ac`, pushed to `origin/master`).
 
 ## Notes
 
