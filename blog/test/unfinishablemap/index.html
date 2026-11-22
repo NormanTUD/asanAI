@@ -149,6 +149,9 @@ canvas#stage {
   background: rgba(240, 246, 255, 0.95);
   box-shadow: 0 0 14px rgba(150, 190, 255, 0.8);
 }
+.tick.sub { width: 5px; opacity: 0.5; }
+.tick.sub.active { width: 18px; opacity: 1; }
+.tick.group { margin-top: 6px; }
 .caption-wrap {
   position: fixed;
   left: max(76px, calc(env(safe-area-inset-left) + 76px));
@@ -2088,7 +2091,7 @@ function buildTerritory() {
   occludedOrb.position.set(22, 0, -2.4);
   territoryGroup.add(occludedOrb);
   territoryVeilMat = new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 } },
+    uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 } },
     vertexShader: `
       varying vec2 vUv;
       void main() {
@@ -2099,6 +2102,7 @@ function buildTerritory() {
     fragmentShader: `
       precision highp float;
       uniform float uTime;
+      uniform float uOpacity;
       varying vec2 vUv;
       float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
       void main() {
@@ -2107,7 +2111,7 @@ function buildTerritory() {
         float grain = hash(floor(vUv * vec2(80.0, 40.0)) + floor(uTime * 2.0));
         float a = 0.10 + 0.16 * n * n2 + 0.08 * grain;
         vec3 col = mix(vec3(0.24, 0.12, 0.42), vec3(0.6, 0.3, 0.8), n);
-        gl_FragColor = vec4(col, a);
+        gl_FragColor = vec4(col, a * uOpacity);
       }
     `,
     transparent: true,
@@ -2879,7 +2883,10 @@ function updateTerritory(t) {
     s.mesh.position.copy(s.curve.getPoint(f));
     s.mesh.scale.setScalar(0.55 + 0.75 * Math.sin(f * Math.PI));
   });
-  if (territoryVeilMat) territoryVeilMat.uniforms.uTime.value = t;
+  if (territoryVeilMat) {
+    territoryVeilMat.uniforms.uTime.value = t;
+    territoryVeilMat.uniforms.uOpacity.value = fadeGroups.territory.weight;
+  }
 }
 
 function updateSignature(t) {
@@ -2900,14 +2907,14 @@ function updateRatio(t) {
   if (!ratioGroup.visible) return;
   if (ratioArcMesh) {
     ratioArcMesh.rotation.z = Math.PI / 2 + Math.sin(t * 0.18) * 0.04;
-    ratioArcMesh.material.opacity = 0.72 + 0.24 * Math.sin(t * 1.1);
+    ratioArcMesh.material.opacity = fadeGroups.ratio.weight * (0.72 + 0.24 * Math.sin(t * 1.1));
   }
 }
 
 function updateDiscipline(t) {
   if (!disciplineGroup.visible) return;
   if (disciplineWire) disciplineWire.rotation.y = t * 0.05;
-  if (disciplineRing) disciplineRing.material.opacity = 0.2 + 0.2 * (0.5 + 0.5 * Math.sin(t * 0.7));
+  if (disciplineRing) disciplineRing.material.opacity = fadeGroups.discipline.weight * (0.2 + 0.2 * (0.5 + 0.5 * Math.sin(t * 0.7)));
 }
 
 function updateLabels() {
@@ -3021,9 +3028,9 @@ function setupComposer() {
 }
 
 function buildRail() {
-  SCENES.forEach((_, i) => {
+  SCENES.forEach((slide, i) => {
     const b = document.createElement('button');
-    b.className = 'tick';
+    b.className = 'tick' + (slide.sub ? ' sub' : '') + (slide.sub && slide.subIndex === 1 ? ' group' : '');
     b.setAttribute('aria-label', 'Go to scene ' + (i + 1));
     b.addEventListener('click', e => {
       e.stopPropagation();
@@ -3075,6 +3082,7 @@ function loop(now) {
   time += dt;
   updateTransition(now);
   updateWeights(dt);
+  updateHighlights(dt);
   updateCamera(dt, time);
   updateNodes(time);
   updateEdges(dt);
@@ -3085,6 +3093,11 @@ function loop(now) {
   updateRadar(time);
   updateTaxonomy(time);
   updateConvergence(time);
+  updateVoidWhy(time);
+  updateTerritory(time);
+  updateSignature(time);
+  updateRatio(time);
+  updateDiscipline(time);
   updateLabels();
   bgMat.uniforms.uTime.value = time;
   starField.material.uniforms.uTime.value = time;
@@ -3178,6 +3191,7 @@ window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', () => setTimeout(resize, 120));
 
 function init() {
+  initHighlights();
   buildRail();
   resize();
   setupComposer();
@@ -3191,6 +3205,19 @@ function init() {
   requestAnimationFrame(loop);
   setTimeout(() => loaderEl.classList.add('done'), 800);
 }
+
+window.__UFM__ = {
+  scenes: SCENES,
+  goTo,
+  state: () => ({
+    sceneIndex,
+    targetIndex,
+    kind: SCENES[targetIndex] ? SCENES[targetIndex].kind : null,
+    camera: camera.position.toArray(),
+    visibleLabels: labels.filter(l => parseFloat(l.el.style.opacity || '0') > 0.05).map(l => l.el.textContent),
+    weights: Object.assign({}, regionWeights)
+  })
+};
 
 init();
 })();
