@@ -358,7 +358,7 @@
         g.fillText(String(ti), tabX + 6, ty + tabH / 2 + 0.5);
       }
       var titleSize = Math.max(13, Math.min(19, cardW * 0.024));
-      g.fillStyle = C.petrol;
+      g.fillStyle = C.ink;
       g.font = '700 ' + titleSize + 'px "Barlow", sans-serif';
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       g.fillText(DE ? "Das gemeinsame Notizbuch" : "The shared notebook", cardX + 48, cardY + 30);
@@ -374,7 +374,7 @@
         g.fillRect(badgeX, cardY + 14, badgeW, 28);
         g.strokeStyle = layer ? V.alpha(colors[layer - 1], 0.65) : V.alpha(C.lineStrong, 0.6);
         g.strokeRect(badgeX + 0.5, cardY + 14.5, badgeW - 1, 27);
-        g.fillStyle = layer ? colors[layer - 1] : C.muted;
+        g.fillStyle = C.ink;
         g.font = '700 ' + Math.max(8, Math.min(11, cardW * 0.015)) + 'px "Open Sans", sans-serif';
         g.textAlign = "center"; g.textBaseline = "middle";
         g.fillText(layer ? (DE ? "Schicht " : "Layer ") + layer + " / 5" : (DE ? "Tokens" : "Tokens"), badgeX + badgeW / 2, cardY + 28.5);
@@ -398,7 +398,7 @@
         g.restore();
       }
       var hintY = cardY + cardH - 23;
-      g.fillStyle = C.muted;
+      g.fillStyle = C.soft;
       g.font = 'italic ' + Math.max(9, fs * 0.45) + 'px "Open Sans", sans-serif';
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       var hint = layer === 0
@@ -421,7 +421,7 @@
         var xx = x + i * 92;
         g.fillStyle = item.col;
         g.fillRect(xx, y - 4, 8, 8);
-        g.fillStyle = onPaper ? C.muted : V.alpha(C.paper, 0.72);
+        g.fillStyle = onPaper ? C.ink : V.alpha(C.paper, 0.88);
         g.fillText(item.label, xx + 12, y + 0.5);
       });
     }
@@ -494,7 +494,7 @@
       g.font = '700 ' + Math.max(12, Math.min(17, panelW * 0.022)) + 'px "Barlow", sans-serif';
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       g.fillText(DE ? "Residual Stream" : "Residual stream", panelX + 16, panelY + 23);
-      g.fillStyle = onDarkFaint;
+      g.fillStyle = onDarkSoft;
       g.font = '600 ' + Math.max(9, Math.min(12, panelW * 0.014)) + 'px "Open Sans", sans-serif';
       if (wide) g.fillText(DE ? "xₗ₊₁ = xₗ + Aₗ + Fₗ · dieselbe Dimension, nur Addition" : "xₗ₊₁ = xₗ + Aₗ + Fₗ · same dimension, only addition", panelX + 16, panelY + 40);
       if (wide) drawSentenceStrip(g, panelX + 16, panelY + 56, panelW - 32, C, onDarkSoft);
@@ -550,11 +550,11 @@
       g.restore();
       g.strokeStyle = V.alpha(C.lineStrong, 0.8);
       g.strokeRect(panelX + 0.5, barY + 0.5, panelW - 1, barH - 1);
-      g.fillStyle = C.petrol;
+      g.fillStyle = C.ink;
       g.font = '700 ' + Math.max(11, Math.min(15, panelW * 0.019)) + 'px "Barlow", sans-serif';
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       g.fillText(DE ? "Sechs Dimensionen" : "Six dimensions", panelX + 16, barY + 24);
-      g.fillStyle = C.muted;
+      g.fillStyle = C.soft;
       g.font = '600 ' + Math.max(8, Math.min(10, panelW * 0.0125)) + 'px "Open Sans", sans-serif';
       var layerText = streamLayer === 0 ? (DE ? "Start: sechs konstruierte Dimensionen" : "Start: six constructed dimensions") : (DE ? "Schicht " + streamLayer + " · getragen + Attention + FFN" : "Layer " + streamLayer + " · carried + attention + FFN");
       g.fillText(layerText, panelX + 16, barY + 40);
@@ -603,7 +603,7 @@
         barHits.push({ x: plotX + slot * d, y: plotTop, w: slot, h: plotH + 18, i: d });
       }
       if (streamLayer === 0) {
-        g.fillStyle = C.muted;
+        g.fillStyle = C.soft;
         g.font = 'italic ' + Math.max(10, Math.min(14, panelW * 0.02)) + 'px "Open Sans", sans-serif';
         g.textAlign = "center"; g.textBaseline = "middle";
         g.fillText(DE ? "x₀ = 0" : "x₀ = 0", plotX + plotW / 2, plotTop + plotH * 0.4);

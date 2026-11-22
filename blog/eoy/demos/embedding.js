@@ -35,7 +35,8 @@
     var viewPreset = 0, camTarget = null;
     var st = {
       mode: "space", dim: 1, selected: "king", arithmetic: "King - Man + Woman",
-      pair: ["cold", "lukewarm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false
+      pair: ["cold", "lukewarm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false,
+      vectorMode: false
     };
 
     function color(name) { return C[name] || C.ink; }
@@ -529,7 +530,19 @@
       }
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
-      if (individualAlpha > 0.05 && dimMix > 1.15 && st.selected && WORDS[st.selected]) {
+      if (st.vectorMode && zMix > 0.5 && individualAlpha > 0.05) {
+        drawList.forEach(function (item) {
+          var itemAlpha = individualAlpha * (item.threeD ? threeDAlpha : 1);
+          if (itemAlpha < 0.01) return;
+          var selected = item.id === st.selected;
+          var col = selected ? C.green : groupColor(WORDS[item.id].group);
+          ctx.globalAlpha = itemAlpha * (selected ? 0.92 : 0.30);
+          drawArrow(origin.x, origin.y, item.p.x, item.p.y, col, selected ? 2.2 : 1.0);
+        });
+        ctx.globalAlpha = 1;
+        drawLabel(DE ? "Jedes Wort ist ein Pfeil vom Ursprung: Richtung = Bedeutung" : "Every word is an arrow from the origin: direction = meaning", size.w / 2, size.h - 18, C.petrol, "center", 10);
+        drawLabel(DE ? "Ursprung" : "origin", origin.x + 6, origin.y + 14, C.muted, "left", 9);
+      } else if (individualAlpha > 0.05 && dimMix > 1.15 && st.selected && WORDS[st.selected]) {
         var selectedWord = WORDS[st.selected];
         var selectedPoint = project((selectedWord.v[0] - 12.5) / 15, selectedWord.v[1] / 22, selectedWord.z);
         ctx.save();
@@ -684,7 +697,20 @@
           ctx.globalAlpha = itemAlpha;
           var selected = id === st.selected;
           var hovered = id === hover;
-          var hit = drawPoint(p.x, p.y, id, selected, hovered);
+          var hit;
+          if (st.vectorMode && zMix > 0.5) {
+            var tipCol = selected ? C.green : groupColor(WORDS[id].group);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, selected ? 3.4 : 2.1, 0, Math.PI * 2);
+            ctx.fillStyle = tipCol;
+            ctx.fill();
+            ctx.strokeStyle = C.paper;
+            ctx.lineWidth = 1.3;
+            ctx.stroke();
+            hit = { x: p.x, y: p.y, r: selected ? 9 : 7 };
+          } else {
+            hit = drawPoint(p.x, p.y, id, selected, hovered);
+          }
           if (itemAlpha > 0.5) hits.push({ id: id, x: hit.x, y: hit.y, r: hit.r + 10, kind: "word" });
           var labelY = p.y - 12;
           if (id === "power") labelY = p.y + 20;
@@ -718,8 +744,8 @@
       drawLabel("EMBEDDING · " + modeLabel, 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Ziehen zum Drehen · Wörter anklicken" : "Drag to rotate · click words", size.w - 24, 26, C.muted, "right", 9);
       canvas.setAttribute("aria-label", DE
-        ? "Interaktiver Embedding-Raum in " + modeLabel + ". Wörter sind anklickbar; im 3D-Modus kannst du ziehen."
-        : "Interactive embedding space in " + modeLabel + ". Words are clickable; in 3D you can drag.");
+        ? "Interaktiver Embedding-Raum in " + modeLabel + ". Wörter sind anklickbar; im 3D-Modus kannst du ziehen." + (st.vectorMode ? " Wörter werden als Pfeile vom Ursprung gezeigt." : "")
+        : "Interactive embedding space in " + modeLabel + ". Words are clickable; in 3D you can drag." + (st.vectorMode ? " Words are shown as arrows from the origin." : ""));
       updateReadout();
     }
     function draw() {
@@ -861,6 +887,9 @@
         });
         row1.appendChild(reset);
         if (st.dim === 2) {
+          row1.appendChild(makeChip(DE ? "Pfeile" : "Arrows", st.vectorMode, function () {
+            st.vectorMode = !st.vectorMode; syncControls(); draw();
+          }));
           var tableBtn = document.createElement("button");
           tableBtn.type = "button";
           tableBtn.className = "ls-btn ls-btn--ghost ls-btn--tiny";
@@ -946,8 +975,9 @@
       if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
+      st.vectorMode = !!s.vectorMode;
       st.showHighdim = !!s.showHighdim;
-      if (st.dim !== 2) st.showHighdim = false;
+      if (st.dim !== 2) { st.showHighdim = false; st.vectorMode = false; }
       syncControls();
       function paint() { draw(); ensureLoop(); }
       if (modeChanged && stateApplied && V && V.crossfadeCanvas) {
