@@ -41,10 +41,13 @@
           '<button type="button" class="ls-fx-input" data-fx-input="first"><span class="ls-fx-input-label">' + INPUTS.first.label + '</span><b>' + INPUTS.first.tag + '</b><small>' + INPUTS.first.sub + '</small></button>' +
           '<button type="button" class="ls-fx-input" data-fx-input="second"><span class="ls-fx-input-label">' + INPUTS.second.label + '</span><b>' + INPUTS.second.tag + '</b><small>' + INPUTS.second.sub + '</small></button>' +
         '</div>' +
+        '<span class="ls-fx-link" aria-hidden="true">→</span>' +
         '<div class="ls-fx-core" aria-hidden="true">' +
           '<span class="ls-fx-core-ring"></span>' +
           '<span class="ls-fx-core-node"><b>f(x)</b><small>Transformer</small></span>' +
+          '<span class="ls-fx-core-caption">' + (DE ? "dieselbe Funktion" : "the same function") + '</span>' +
         '</div>' +
+        '<span class="ls-fx-link" aria-hidden="true">→</span>' +
         '<div class="ls-fx-output">' +
           '<div class="ls-fx-output-head"><span>' + (DE ? "Ausgabe" : "Output") + '</span><b class="ls-fx-active-label">' + INPUTS.corpus.label + '</b></div>' +
           '<div class="ls-bs-fx-prompt">' + INPUTS.corpus.prompt + '</div>' +

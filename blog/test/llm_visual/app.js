@@ -1121,7 +1121,7 @@ nextGroup.add(nextHaloOuter);
 const NEXT_SLOT = new V3(13.15, 0.9, 0.75);
 
 const PARAM_KEYS = [
-	"cloud", "regions", "tokens", "residual", "rays", "manifold", "shell",
+	"cloud", "regions", "tokens", "base", "residual", "rays", "manifold", "shell",
 	"subspaces", "attention", "slices", "ffn", "fibers", "layers", "dirs", "pred"
 ];
 const DEFAULT_PARAMS = {};
@@ -1483,12 +1483,34 @@ function updateTokens(dt, now) {
 function updateRoots(now) {
 	for (let i = 0; i < tokens.length; i += 1) {
 		const token = tokens[i];
-		const rootY = sheetBaseY(token.rootX, token.rootZ, now) + 0.18;
-		token.rootMarker.position.set(token.rootX, rootY, token.rootZ);
-		token.rootMarker.material.opacity = current.tokens * (0.2 + 0.1 * Math.sin(now * 0.9 + token.phase));
-		token.rootMarker.scale.setScalar(2.2 * token.size * (1 + 0.05 * Math.sin(now * 0.7 + token.phase)));
+		tmpRoot.copy(token.cluster.group.position);
+		token.rootMarker.position.copy(tmpRoot);
+		const distance = token.pos.distanceTo(tmpRoot);
+		const moved = smoothstep(0.8, 6, distance);
+		token.rootMarker.material.opacity = current.tokens * (0.12 + 0.34 * current.base + 0.18 * moved) * (0.8 + 0.2 * Math.sin(now * 0.9 + token.phase));
+		token.rootMarker.scale.setScalar(2.8 * token.size * (1 + 0.05 * Math.sin(now * 0.7 + token.phase)));
+		token.rootMarker.visible = current.tokens > 0.002;
 
-		tmpRoot.set(token.rootX, rootY, token.rootZ);
+		const stemPositions = token.baseStemGeometry.getAttribute("position");
+		const sheetY = sheetBaseY(token.rootX, token.rootZ, now) + 0.16;
+		stemPositions.setXYZ(0, token.rootX, sheetY, token.rootZ);
+		stemPositions.setXYZ(1, tmpRoot.x, tmpRoot.y, tmpRoot.z);
+		stemPositions.needsUpdate = true;
+		token.baseStemMaterial.opacity = current.tokens * current.base * 0.3;
+		token.baseStem.visible = token.baseStemMaterial.opacity > 0.002;
+
+		const cross = token.baseCrossGeometry.getAttribute("position");
+		const arm = 0.85 * token.size;
+		cross.setXYZ(0, tmpRoot.x - arm, tmpRoot.y, tmpRoot.z);
+		cross.setXYZ(1, tmpRoot.x + arm, tmpRoot.y, tmpRoot.z);
+		cross.setXYZ(2, tmpRoot.x, tmpRoot.y - arm, tmpRoot.z);
+		cross.setXYZ(3, tmpRoot.x, tmpRoot.y + arm, tmpRoot.z);
+		cross.setXYZ(4, tmpRoot.x, tmpRoot.y, tmpRoot.z - arm);
+		cross.setXYZ(5, tmpRoot.x, tmpRoot.y, tmpRoot.z + arm);
+		cross.needsUpdate = true;
+		token.baseCrossMaterial.opacity = current.tokens * current.base * 0.5;
+		token.baseCross.visible = token.baseCrossMaterial.opacity > 0.002;
+
 		const positions = token.residualGeometry.getAttribute("position");
 		for (let k = 0; k < 24; k += 1) {
 			const t = k / 23;
@@ -1501,7 +1523,7 @@ function updateRoots(now) {
 		}
 		positions.needsUpdate = true;
 		token.residualMaterial.opacity = current.residual * 0.55;
-		token.rootMarker.visible = current.tokens > 0.002;
+		token.residualMaterial.visible = token.residualMaterial.opacity > 0.002;
 	}
 }
 
@@ -1528,7 +1550,7 @@ function updateSheet(now) {
 }
 
 function fiberPoint(token, strand, t, now, out) {
-	tmpRoot.set(token.rootX, sheetBaseY(token.rootX, token.rootZ, now) + 0.18, token.rootZ);
+	tmpRoot.copy(token.cluster.group.position);
 	out.copy(tmpRoot).lerp(token.pos, t);
 	const envelope = Math.sin(Math.PI * t);
 	const bend = envelope * 0.9;
