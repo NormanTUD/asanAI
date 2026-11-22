@@ -11,14 +11,14 @@
       '<div class="ls-mi-qualia">' +
         '<div class="ls-mi-qualia-head"><span>Qualia</span><b>' + (DE ? "Die Röte des Roten" : "The redness of red") + '</b></div>' +
         '<div class="ls-mi-qualia-split">' +
-          '<div class="ls-mi-outside"><div class="ls-mi-swatch is-physical"><i></i><i></i><i></i></div><b>' + (DE ? "Von außen" : "From outside") + '</b><p>' + (DE ? "Wellenlänge ~700 nm · Zapfen · Neuronen · Bericht" : "Wavelength ~700 nm · cones · neurons · report") + '</p></div>' +
+          '<div class="ls-mi-outside"><div class="ls-mi-measure"><svg class="ls-mi-measure-graph" viewBox="0 0 160 46" aria-hidden="true"><path d="M4 40 C28 40 40 34 52 30 C74 22 86 10 100 12 C118 14 132 28 156 30" fill="none" stroke="var(--ls-blue)" stroke-width="1.6"></path><line x1="96" y1="6" x2="96" y2="42" stroke="var(--ls-gold)" stroke-dasharray="3 2"></line><text x="100" y="10" class="ls-mi-measure-label">700 nm</text></svg><div class="ls-mi-measure-bars"><i></i><i></i><i></i><i></i></div><span class="ls-mi-measure-note">' + (DE ? "Zapfen · Neuronen · Bericht" : "cones · neurons · report") + '</span></div><b>' + (DE ? "Von außen" : "From outside") + '</b><p>' + (DE ? "Messung, Aktivität, Beschreibung" : "measurement, activity, description") + '</p></div>' +
           '<div class="ls-mi-gap"><span>?</span><b>' + (DE ? "Erklärungslücke" : "Explanatory gap") + '</b></div>' +
-          '<div class="ls-mi-inside"><div class="ls-mi-swatch is-felt"><i></i></div><b>' + (DE ? "Von innen" : "From inside") + '</b><p>' + (DE ? "Wie sich das Rot anfühlt" : "What the red feels like") + '</p></div>' +
+          '<div class="ls-mi-inside"><div class="ls-mi-swatch is-felt"><i></i><span>?</span></div><b>' + (DE ? "Von innen" : "From inside") + '</b><p>' + (DE ? "Wie sich das Rot anfühlt" : "What the red feels like") + '</p></div>' +
         '</div>' +
         '<p class="ls-mi-qualia-text">' + (DE ? "Wir können die Wellenlänge messen, die Zapfen und Neuronen beobachten und deinen Bericht lesen. Aber die gefühlte Röte ist in keiner dieser Beschreibungen enthalten. Diese gefühlte Eigenschaft heißt Quale." : "We can measure the wavelength, observe the cones and neurons, and read your report. But the felt redness is not contained in any of these descriptions. This felt property is called a quale.") + '</p>' +
       '</div>' +
       '<div class="ls-mi-mary">' +
-        '<div class="ls-mi-mary-room"><span class="ls-mi-mary-bw"></span><span class="ls-mi-mary-red"></span></div>' +
+        '<div class="ls-mi-mary-room"><span class="ls-mi-mary-apple is-bw"></span><span class="ls-mi-mary-apple is-red"></span></div>' +
         '<div><b>' + (DE ? "Mary's Room" : "Mary's room") + '</b><p>' + (DE ? "Mary kennt alle physikalischen Fakten über Rot, sieht aber nur Schwarz-Weiß. Lernt sie etwas Neues, wenn sie Rot zum ersten Mal sieht? Wenn ja, dann ist physikalisches Wissen nicht alles, was es über Erfahrung zu wissen gibt." : "Mary knows every physical fact about red but sees only black and white. Does she learn something new when she sees red for the first time? If so, physical knowledge is not everything there is to know about experience.") + '</p></div>' +
       '</div>' +
       '<div class="ls-mi-grid">' +

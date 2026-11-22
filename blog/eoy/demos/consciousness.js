@@ -8,7 +8,8 @@
     var THEORIES = DE ? [
       {
         tone: "easy", tag: "Global Workspace",
-        body: "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird: Broadcast statt lokaler Verarbeitung. Das erklärt Zugang, Integration und Bericht.",
+        body: "Im Gehirn rechnen viele Subsysteme getrennt: der visuelle Cortex, die Amygdala, Sprache, Motorik. Sie schreiben die Ergebnisse ihrer Berechnungen in einen globalen Workspace. Dort stehen nur die Ergebnisse, nicht die Methoden, mit denen sie erzielt wurden. Dieser Workspace ist das Bewusstsein: eine Bühne, auf der die Ergebnisse vorgeführt werden, aber niemand sitzt im Zuschauerraum. So vermeidet man das cartesianische Theater.",
+        viz: '<div class="ls-con-gw"><div class="ls-con-gw-systems"><span>Visueller Cortex</span><span>Amygdala</span><span>Sprache</span><span>Motorik</span></div><div class="ls-con-gw-flow" aria-hidden="true">→</div><div class="ls-con-gw-stage"><b>Global Workspace</b><div class="ls-con-gw-results"><span>Ergebnis</span><span>Ergebnis</span><span>Ergebnis</span></div><em>nur Ergebnisse, nicht Methoden</em><span class="ls-con-gw-audience">— keine Zuschauer —</span></div></div>',
         problem: "Es erklärt nicht, warum der Broadcast sich von innen anfühlt.",
         cite: '<a href="https://archive.org/details/cognitivetheoryo0000baar" target="_blank" rel="noopener">Baars (1988)</a>; <a href="https://doi.org/10.1016/S0010-0277(00)00123-2" target="_blank" rel="noopener">Dehaene &amp; Naccache (2001)</a>'
       },
@@ -39,7 +40,8 @@
     ] : [
       {
         tone: "easy", tag: "Global workspace",
-        body: "A state becomes conscious when it is broadcast to many processes: broadcast instead of local processing. That explains access, integration, and report.",
+        body: "In the brain, many subsystems compute separately: the visual cortex, the amygdala, language, motor control. They write the results of their computations into a global workspace. Only the results are there, not the methods by which they were obtained. This workspace is consciousness: a stage on which the results are presented, but no one sits in the audience. That avoids the Cartesian theatre.",
+        viz: '<div class="ls-con-gw"><div class="ls-con-gw-systems"><span>Visual cortex</span><span>Amygdala</span><span>Language</span><span>Motor</span></div><div class="ls-con-gw-flow" aria-hidden="true">→</div><div class="ls-con-gw-stage"><b>Global workspace</b><div class="ls-con-gw-results"><span>result</span><span>result</span><span>result</span></div><em>results, not methods</em><span class="ls-con-gw-audience">— no audience —</span></div></div>',
         problem: "It does not explain why the broadcast feels like something from the inside.",
         cite: '<a href="https://archive.org/details/cognitivetheoryo0000baar" target="_blank" rel="noopener">Baars (1988)</a>; <a href="https://doi.org/10.1016/S0010-0277(00)00123-2" target="_blank" rel="noopener">Dehaene &amp; Naccache (2001)</a>'
       },
@@ -89,7 +91,7 @@
     var el = document.createElement("div");
     el.className = "ls-con-notes";
     el.innerHTML =
-      '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Hat eine KI irgendeine Form von Qualia?" : "Does an AI have any form of qualia?") + '</b><p class="ls-con-sub">' + (DE ? "Diese Folie prüft verschiedene philosophische und wissenschaftliche Theorien des Bewusstseins. Klicke eine Theorie oder drücke →. Eine klare Antwort gibt es nicht." : "This slide examines different philosophical and scientific theories of consciousness. Click a theory or press →. There is no clear answer.") + '</p></div>' +
+      '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Hat eine KI irgendeine Form von Qualia?" : "Does an AI have any form of qualia?") + '</b><p class="ls-con-sub">' + (DE ? "Um überlegen zu können, ob KI Bewusstsein hat, müssen wir erstmal überlegen, was Bewusstsein überhaupt ist. Keiner weiß es so genau, aber hier sind einige Theorien." : "To consider whether AI has consciousness, we first need to consider what consciousness actually is. No one knows exactly, but here are some theories.") + '</p></div>' +
       '<div class="ls-con-map" aria-label="' + (DE ? "Zugang ist funktional erklärbar, Erleben bleibt offen" : "Access is functionally explainable, experience remains open") + '">' +
         '<div class="ls-con-map-box"><b>' + (DE ? "Zugang" : "Access") + '</b><span>' + (DE ? "Bericht · Kontrolle · Aufmerksamkeit" : "report · control · attention") + '</span><em>' + (DE ? "funktional erklärbar" : "functionally explainable") + '</em></div>' +
         '<div class="ls-con-map-gap" aria-hidden="true">?</div>' +
@@ -117,6 +119,7 @@
       detail.className = "ls-con-detail ls-con-detail--" + t.tone;
       detail.innerHTML =
         '<div class="ls-con-detail-head"><span>' + (DE ? "Theorie " : "Theory ") + (selected + 1) + ' / ' + THEORIES.length + '</span><b>' + esc(t.tag) + '</b></div>' +
+        (t.viz || '') +
         '<div class="ls-con-split"><div><b>' + (DE ? "Kernidee" : "Core idea") + '</b><p>' + esc(t.body) + '</p></div><div><b>' + (DE ? "Was offen bleibt" : "What remains open") + '</b><p>' + esc(t.problem) + '</p></div></div>' +
         '<p class="ls-con-cite">' + t.cite + '</p>';
     }

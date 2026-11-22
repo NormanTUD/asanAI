@@ -1887,6 +1887,10 @@ def test_qualia_and_takeaway(browser, base, lang, results):
   outside: !!document.querySelector('.ls-mi-outside'),
   inside: !!document.querySelector('.ls-mi-inside'),
   mary: !!document.querySelector('.ls-mi-mary'),
+  measure: !!document.querySelector('.ls-mi-measure'),
+  graph: !!document.querySelector('.ls-mi-measure-graph'),
+  apples: document.querySelectorAll('.ls-mi-mary-apple').length,
+  bw: document.querySelector('.ls-mi-mary-apple.is-bw') ? getComputedStyle(document.querySelector('.ls-mi-mary-apple.is-bw')).filter : '',
   text: document.querySelector('.ls-mi-qualia-text')?.innerText || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
@@ -1894,8 +1898,27 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     )
     results.check(tag, "qualia card is mounted", qualia["scene"] and qualia["outside"] and qualia["inside"], str(qualia))
     results.check(tag, "qualia card shows Mary's room", qualia["mary"], str(qualia))
+    results.check(tag, "outside view is a measurement panel", qualia["measure"] and qualia["graph"], str(qualia))
+    results.check(tag, "Mary's left apple is the same apple in grayscale", qualia["apples"] == 2 and "grayscale" in qualia["bw"], str(qualia))
     results.check(tag, "qualia text explains the felt redness", "Quale" in qualia["text"] or "quale" in qualia["text"], qualia["text"][:160])
     results.check(tag, "qualia page has no overflow", qualia["overflow"] <= 2, str(qualia["overflow"]))
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(800)
+    theories = page.evaluate(
+        r"""
+() => ({
+  sub: document.querySelector('.ls-con-sub')?.textContent || '',
+  gw: !!document.querySelector('.ls-con-gw'),
+  stage: document.querySelector('.ls-con-gw-stage b')?.textContent || '',
+  audience: document.querySelector('.ls-con-gw-audience')?.textContent || '',
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "theory page starts with what consciousness is", "was Bewusstsein" in theories["sub"] or "what consciousness" in theories["sub"], theories["sub"][:160])
+    results.check(tag, "global workspace visual is mounted", theories["gw"] and "Workspace" in theories["stage"], str(theories))
+    results.check(tag, "global workspace has no audience", "Zuschauer" in theories["audience"] or "audience" in theories["audience"], theories["audience"])
+    results.check(tag, "theory page has no overflow", theories["overflow"] <= 2, str(theories["overflow"]))
     page.evaluate("() => LearnSys.go(0, 0, 2)")
     page.wait_for_timeout(1600)
     takeaway = page.evaluate(
