@@ -106,7 +106,12 @@ this file before further edits.
 16. **"Die Karte der Wörter" — hover percentage bars** — **done**
    - The track is now a neutral ink tint with an outline; winner fill is green,
      other fills are ink; percentages use ink text.
-17. **Tests and finish**
+17. **Residual stream — left long line with hover**
+   - Rework the residual stream at the top of the architecture slide back into a
+     long line on the left, with mouseover details.
+   - Add one short sentence in the text: the tokens from the embedding form the
+     initial values, and every layer adds to these word positions.
+18. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.
    - Run `js_validator`, `php -l`, and commit/push.

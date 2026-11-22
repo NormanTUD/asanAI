@@ -147,6 +147,7 @@
       return '<div class="ls-ll-visual">' + visualHead(t) + taskHTML(t) +
         '<div class="ls-ll-vars">' + vars + '</div>' +
         '<div class="ls-ll-consistency"><span>' + L("Konsistenz", "Consistency") + '</span><div class="ls-ll-meter-track"><i style="width:' + (revealed ? '66%' : '0%') + '"></i></div><b>' + (revealed ? "2 / 3" : "– / 3") + '</b></div>' +
+        protocolHTML(t) +
         runButton(t.id, revealed) +
       '</div>';
     }

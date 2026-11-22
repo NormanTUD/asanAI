@@ -1585,14 +1585,6 @@ def test_blocks_sequence(browser, base, lang, results):
     overview = page.evaluate("() => ({ pills: document.querySelectorAll('.ls-bs-pill').length, current: document.querySelectorAll('.ls-bs-pill.is-current').length, subnav: !!document.querySelector('.ls-bs-subnav'), text: document.body.innerText })")
     results.check(tag, "transformer overview clears the current sub-marker", overview["pills"] == 3 and overview["current"] == 0, str(overview)[:200])
     results.check(tag, "architecture no longer repeats the next pages", not overview["subnav"] and "Die nächsten Seiten" not in overview["text"] and "The next pages" not in overview["text"], str(overview)[:200])
-    fx = page.evaluate("() => ({ card: !!document.querySelector('.ls-bs-fx'), prompt: document.querySelector('.ls-bs-fx-prompt')?.textContent || '', cands: document.querySelectorAll('.ls-bs-fx-cand').length, nudge: !!document.querySelector('.ls-bs-fx-nudge'), stages: document.querySelectorAll('.ls-bs-fx-stage').length })")
-    results.check(tag, "architecture shows the function view", fx["card"] and fx["nudge"] and fx["stages"] == 2, str(fx))
-    results.check(tag, "architecture shows the next-token example", "___" in fx["prompt"] and fx["cands"] == 3, str(fx))
-    page.locator('.ls-bs-fx-nudge').click(); page.wait_for_timeout(500)
-    page.locator('.ls-bs-fx-nudge').click(); page.wait_for_timeout(500)
-    fx_done = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '', disabled: document.querySelector('.ls-bs-fx-nudge')?.disabled, widths: Array.from(document.querySelectorAll('.ls-bs-fx-cand i b')).map(e => e.style.width) })")
-    results.check(tag, "architecture nudge reaches the data target", ("Matte" in fx_done["readout"] or "mat" in fx_done["readout"]) and fx_done["disabled"], str(fx_done))
-    results.check(tag, "architecture nudge shifts the candidate bars", fx_done["widths"][0] == "82%", str(fx_done["widths"]))
     traj = page.evaluate("() => ({ host: !!document.querySelector('.ls-bs-traj'), canvas: !!document.querySelector('.ls-bs-traj-canvas'), step: !!document.querySelector('.ls-bs-traj-step'), text: document.querySelector('.ls-bs-traj')?.innerText || '' })")
     results.check(tag, "transformer overview shows the trajectory plot", traj["host"] and traj["canvas"] and traj["step"], str(traj)[:200])
     results.check(tag, "trajectory plot says thinking moves points", "Denken" in traj["text"] or "Thinking" in traj["text"], traj["text"][:200])
@@ -1622,15 +1614,27 @@ def test_blocks_sequence(browser, base, lang, results):
     ffn = page.evaluate("() => ({ current: Array.from(document.querySelectorAll('.ls-bs-pill.is-current')).map(e => e.getAttribute('data-sub')), block: Array.from(document.querySelectorAll('.ls-bs-res-block.is-current')).map(e => e.textContent) })")
     results.check(tag, "ffn sub-step is marked in the left stack", ffn["current"] == ["ffn"], str(ffn))
     results.check(tag, "ffn sub-step is marked in the residual flow", any("FFN" in b for b in ffn["block"]), str(ffn))
+    page.evaluate('() => LearnSys.next()')
+    page.wait_for_timeout(350)
+    fx = page.evaluate("() => ({ card: !!document.querySelector('.ls-bs-fx'), prompt: document.querySelector('.ls-bs-fx-prompt')?.textContent || '', cands: document.querySelectorAll('.ls-bs-fx-cand').length, nudge: !!document.querySelector('.ls-bs-fx-nudge'), stages: document.querySelectorAll('.ls-bs-fx-stage').length })")
+    results.check(tag, "architecture function sub-slide shows the function view", fx["card"] and fx["nudge"] and fx["stages"] == 2, str(fx))
+    results.check(tag, "architecture function sub-slide shows the next-token example", "___" in fx["prompt"] and fx["cands"] == 3, str(fx))
+    page.locator('.ls-bs-fx-nudge').click(); page.wait_for_timeout(500)
+    page.locator('.ls-bs-fx-nudge').click(); page.wait_for_timeout(500)
+    fx_done = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '', disabled: document.querySelector('.ls-bs-fx-nudge')?.disabled, widths: Array.from(document.querySelectorAll('.ls-bs-fx-cand i b')).map(e => e.style.width) })")
+    results.check(tag, "architecture nudge reaches the data target", ("Matte" in fx_done["readout"] or "mat" in fx_done["readout"]) and fx_done["disabled"], str(fx_done))
+    results.check(tag, "architecture nudge shifts the candidate bars", fx_done["widths"][0] == "82%", str(fx_done["widths"]))
     errors = logs.take()
     results.check(tag, "blocks sequence has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
 
 
 def test_ffn_separation(browser, base, lang, results):
-    context, page, logs = open_page(browser, base, lang, path="/eoy/intuition_learnsys-demo.php?scene=ffnsplit", wait_media=False)
+    context, page, logs = open_page(browser, base, lang, path="/eoy/18.php", wait_media=False)
     tag = f"ffn-sep-{lang}"
-    page.wait_for_timeout(1800)
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(1000)
     info = page.evaluate(
         r"""
 () => ({
@@ -1813,7 +1817,7 @@ def test_sinus_size(browser, base, lang, results):
     stage = info["stage"]
     canvas = info["canvas"]
     attr = info["canvasAttr"]
-    results.check(tag, "sinus stage has a wide aspect ratio", stage and abs(stage["w"] / stage["h"] - 16 / 9) < 0.06, str(stage))
+    results.check(tag, "sinus stage uses the available width", stage and info["sceneRect"] and stage["w"] >= info["sceneRect"]["w"] - 8, str({"stage": stage, "scene": info["sceneRect"]}))
     results.check(tag, "sinus canvas matches its stage size", stage and canvas and abs(stage["w"] - canvas["w"]) <= 3 and abs(stage["h"] - canvas["h"]) <= 3, str({"stage": stage, "canvas": canvas}))
     results.check(tag, "sinus canvas resolution matches its CSS size", canvas and attr and abs(attr["w"] - canvas["w"] * info["dpr"]) <= 3 and abs(attr["h"] - canvas["h"] * info["dpr"]) <= 3, str({"attr": attr, "canvas": canvas, "dpr": info["dpr"]}))
     results.check(tag, "sinus controls stay inside the scene", info["sceneRect"] and info["readout"] and info["readout"]["bottom"] <= info["sceneRect"]["bottom"] + 2, detail)
