@@ -38,13 +38,16 @@
       pair: ["cold", "lukewarm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false,
       vectorMode: false
     };
-    var planesVisible = true, vectorMix = 0, vectorTarget = 0;
-    function setVectorMode(on) {
-      st.vectorMode = !!on;
-      vectorTarget = st.vectorMode ? 1 : 0;
-      if (st.vectorMode) planesVisible = false;
-      else planesVisible = true;
-      ensureLoop();
+    var vectorMix = 0, vectorTarget = 0;
+    // HARD RULE (1/5): 3D is arrow-only. Do not add category planes or point
+    // markers back to the 3D view; the final state must be bare arrows from
+    // (0, 0, 0) to each word position.
+    function forceDirectionView() {
+      if (st.dim === 2) {
+        st.vectorMode = true;
+        vectorMix = 1;
+        vectorTarget = 1;
+      }
     }
 
     function color(name) { return C[name] || C.ink; }
@@ -478,43 +481,15 @@
       drawLine3D(project(x0, y1, z1), project(x0, y0, z1), .12);
       ctx.globalAlpha = 1;
     }
-    function drawCategoryPlanes(zMix) {
-      var planes = [
-        { z: -1, label: DE ? "TIER" : "ANIMAL", col: C.sky, alpha: 0.06, grid: 0.20 },
-        { z: 0, label: DE ? "MENSCH · MACHT × GESCHLECHT" : "HUMAN · POWER × GENDER", col: C.green, alpha: 0.12, grid: 0.38 },
-        { z: 1, label: DE ? "FIKTION" : "FICTION", col: C.lilac, alpha: 0.06, grid: 0.20 }
-      ];
-      planes.forEach(function (plane) {
-        var corners = [project(-1, -1, plane.z), project(1, -1, plane.z), project(1, 1, plane.z), project(-1, 1, plane.z)];
-        ctx.save();
-        ctx.globalAlpha = zMix * plane.alpha;
-        ctx.fillStyle = plane.col;
-        ctx.beginPath();
-        ctx.moveTo(corners[0].x, corners[0].y);
-        ctx.lineTo(corners[1].x, corners[1].y);
-        ctx.lineTo(corners[2].x, corners[2].y);
-        ctx.lineTo(corners[3].x, corners[3].y);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-        ctx.save();
-        ctx.globalAlpha = zMix;
-        for (var g = -1; g <= 1.001; g += 0.5) {
-          drawLine3D(project(g, -1, plane.z), project(g, 1, plane.z), plane.grid);
-          drawLine3D(project(-1, g, plane.z), project(1, g, plane.z), plane.grid);
-        }
-        ctx.restore();
-      });
-    }
     function drawSpace() {
       hits = [];
       var hoverInfo = null;
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
-      if (zMix > 0.02) {
-        drawRoomGrid(zMix);
-        if (planesVisible && !st.vectorMode) drawCategoryPlanes(zMix);
-      }
+      if (zMix > 0.02) drawRoomGrid(zMix);
+      // HARD RULE (3/5): every draw re-forces the arrow-only 3D view, so a
+      // stale flag or a cached state cannot bring the points/planes back.
+      forceDirectionView();
       var planeAlpha = smoothstep(0.18, 0.86, dimMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
         ctx.globalAlpha = planeAlpha;
@@ -570,17 +545,19 @@
       }
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
-      if (vectorMix > 0.01 && zMix > 0.5 && individualAlpha > 0.05) {
+      // HARD RULE (5/5): 3D always draws the arrows from the origin.
+      if (st.dim === 2 || (vectorMix > 0.01 && zMix > 0.5 && individualAlpha > 0.05)) {
         drawList.forEach(function (item) {
           var itemAlpha = individualAlpha * (item.threeD ? threeDAlpha : 1);
           if (itemAlpha < 0.01) return;
           var selected = item.id === st.selected;
           var col = selected ? C.green : groupColor(WORDS[item.id].group);
-          var ex = origin.x + (item.p.x - origin.x) * vectorMix;
-          var ey = origin.y + (item.p.y - origin.y) * vectorMix;
-          ctx.globalAlpha = itemAlpha * (selected ? 0.92 : 0.30) * Math.min(1, vectorMix * 1.4);
+          var arrowMix = st.dim === 2 ? 1 : vectorMix;
+          var ex = origin.x + (item.p.x - origin.x) * arrowMix;
+          var ey = origin.y + (item.p.y - origin.y) * arrowMix;
+          ctx.globalAlpha = itemAlpha * (selected ? 0.92 : 0.30) * Math.min(1, arrowMix * 1.4);
           drawArrow(origin.x, origin.y, ex, ey, col, selected ? 2.2 : 1.0);
-          if (vectorMix > 0.45) {
+          if (arrowMix > 0.45) {
             hits.push({ id: item.id, x: (origin.x + ex) / 2, y: (origin.y + ey) / 2, r: 12, kind: "word" });
           }
         });
@@ -744,7 +721,9 @@
           var selected = id === st.selected;
           var hovered = id === hover;
           var hit;
-          var pointAlpha = itemAlpha * (1 - vectorMix);
+          // HARD RULE (4/5): in 3D the point alpha is forced to zero; only the
+          // arrow tip/label remain.
+          var pointAlpha = st.dim === 2 ? 0 : itemAlpha * (1 - vectorMix);
           if (pointAlpha < 0.01) {
             hit = { x: p.x, y: p.y, r: selected ? 12 : 9 };
           } else {
@@ -919,7 +898,9 @@
         ["1D", "2D", "3D"].forEach(function (label, i) {
           row1.appendChild(makeChip(label, st.dim === i, function () {
             st.dim = i; animateDimTo(i); st.group = null;
-            if (i === 2) { planesVisible = true; }
+            // HARD RULE (2/5): the 3D chip also forces arrow-only.
+            if (i === 2) { st.vectorMode = true; vectorMix = 1; vectorTarget = 1; }
+            else { st.vectorMode = false; vectorMix = 0; vectorTarget = 0; }
             if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
             if (i !== 2 && st.arithmetic) {
               var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
@@ -943,10 +924,6 @@
         });
         row1.appendChild(reset);
         if (st.dim === 2) {
-          row1.appendChild(makeChip(DE ? "Richtungen" : "Directions", st.vectorMode, function () {
-            setVectorMode(!st.vectorMode);
-            syncControls();
-          }));
           var tableBtn = document.createElement("button");
           tableBtn.type = "button";
           tableBtn.className = "ls-btn ls-btn--ghost ls-btn--tiny";
@@ -1026,7 +1003,8 @@
         if (nextDim !== st.dim) animateDimTo(nextDim);
         else dimTarget = nextDim;
         st.dim = nextDim;
-        if (nextDim === 2) planesVisible = true;
+        if (nextDim === 2) { st.vectorMode = true; vectorMix = 1; vectorTarget = 1; }
+        else { st.vectorMode = false; vectorMix = 0; vectorTarget = 0; }
       }
       if (s.selected) st.selected = s.selected;
       if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
@@ -1038,10 +1016,15 @@
       if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
-      st.vectorMode = !!s.vectorMode;
-      vectorTarget = st.vectorMode ? 1 : 0;
-      if (!st.vectorMode) vectorMix = 0;
-      planesVisible = !st.vectorMode;
+      if (st.dim === 2) {
+        st.vectorMode = true;
+        vectorMix = 1;
+        vectorTarget = 1;
+      } else {
+        st.vectorMode = false;
+        vectorMix = 0;
+        vectorTarget = 0;
+      }
       st.showHighdim = !!s.showHighdim;
       if (st.dim !== 2) { st.showHighdim = false; st.vectorMode = false; }
       syncControls();

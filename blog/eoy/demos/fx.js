@@ -36,32 +36,64 @@
     var readout = el.querySelector(".ls-bs-fx-readout");
     var btn = el.querySelector(".ls-bs-fx-nudge");
     var step = 0;
-    var values = [[45, 35, 8], [65, 25, 5], [82, 14, 2]];
+    // HARD RULE: the slide nudges twice on its own, the reader can continue to
+    // 99 %, and at the top the percentages fluctuate slightly. Do not freeze
+    // at 82 % or disable the button before 99 %.
+    var values = [[45, 40, 15], [65, 27, 8], [82, 14, 4], [90, 8, 2], [95, 4, 1], [98, 1.5, 0.5], [99, 0.8, 0.2]];
+    var jitterTimer = 0;
+    var autoTimers = [];
+    function stopJitter() { if (jitterTimer) { clearInterval(jitterTimer); jitterTimer = 0; } }
+    function stopAuto() { autoTimers.forEach(function (t) { clearTimeout(t); }); autoTimers = []; }
+    function renderJitter() {
+      var m = 98.6 + Math.random() * 0.7;
+      var h = 0.5 + Math.random() * 0.5;
+      var g = 0.1 + Math.random() * 0.3;
+      var vals = [m, h, g];
+      for (var i = 0; i < bars.length; i++) {
+        bars[i].style.width = vals[i] + "%";
+        if (pcts[i]) pcts[i].textContent = vals[i].toFixed(1) + " %";
+      }
+    }
+    function startJitter() {
+      stopJitter();
+      renderJitter();
+      jitterTimer = setInterval(renderJitter, 240);
+    }
     function render() {
+      stopJitter();
       for (var i = 0; i < bars.length; i++) {
         bars[i].style.width = values[step][i] + "%";
         if (pcts[i]) pcts[i].textContent = values[step][i] + " %";
       }
       if (readout) readout.textContent = step === 0
-        ? (DE ? "Nudge 0 / 2: die Verteilung ist noch unsicher." : "Nudge 0 / 2: the distribution is still uncertain.")
-        : step === 1
-          ? (DE ? "Nudge 1 / 2: „Matte“ wird wahrscheinlicher." : "Nudge 1 / 2: “mat” becomes more likely.")
-          : (DE ? "Nudge 2 / 2: die Daten ziehen die Verteilung zu „Matte“." : "Nudge 2 / 2: the data pull the distribution toward “mat”.");
-      if (btn) btn.disabled = step >= 2;
+        ? (DE ? "Nudge 0 / 6: die Verteilung ist noch unsicher." : "Nudge 0 / 6: the distribution is still uncertain.")
+        : step < 6
+          ? (DE ? "Nudge " + step + " / 6: „Matte“ wird wahrscheinlicher." : "Nudge " + step + " / 6: “mat” becomes more likely.")
+          : (DE ? "99 %: „Matte“ ist fast sicher; die Werte fluktuieren leicht." : "99 %: “mat” is almost certain; the values fluctuate slightly.");
+      if (btn) btn.disabled = step >= values.length - 1;
+      if (step >= values.length - 1) startJitter();
     }
-    if (btn) btn.addEventListener("click", function () { if (step < 2) { step++; render(); } });
+    function manualNudge() {
+      stopAuto();
+      if (step < values.length - 1) { step++; render(); }
+    }
+    if (btn) btn.addEventListener("click", manualNudge);
+    // Two automatic nudges make the mechanism visible without a click.
+    autoTimers.push(setTimeout(function () { if (step === 0) { step = 1; render(); } }, 700));
+    autoTimers.push(setTimeout(function () { if (step === 1) { step = 2; render(); } }, 1400));
     render();
     return {
       update: function () {},
       next: function () {
-        if (step < 2) { step++; render(); return true; }
+        stopAuto();
+        if (step < values.length - 1) { step++; render(); return true; }
         return false;
       },
       prev: function () { return false; },
-      hasNext: function () { return step < 2; },
+      hasNext: function () { return step < values.length - 1; },
       hasPrev: function () { return false; },
       resize: function () {},
-      destroy: function () { el.remove(); }
+      destroy: function () { stopJitter(); stopAuto(); el.remove(); }
     };
   }
   core.register("fx", fxScene);

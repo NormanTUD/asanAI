@@ -48,7 +48,18 @@ file after every completed item.
    - Make the Nudge button green.
    - Pressing Next on the f(x) slide should click the Nudge a few times
      (advance the steps) before leaving the slide.
-6. **Final gate**
+6. **f(x) Nudge behavior**
+   - Nudge itself twice automatically.
+   - Let the user keep nudging Matte up to 99%.
+   - At 99%, let the percentages fluctuate slightly instead of freezing.
+   - Comment the behavior so it is not removed accidentally.
+7. **3D: planes out, arrows guaranteed**
+   - Remove the category planes from the 3D view completely.
+   - In 3D, every word must be a bare arrow from (0, 0, 0) to the word position;
+     no points, no planes.
+   - Implement five independent guards (state, draw, points, arrows, aria/test)
+     and add comments so this cannot regress silently.
+8. **Final gate**
    - DE + EN media suite.
    - `eoy_pages_test` 27/30/31 and the full suite.
    - `js_validator`, `php -l`, commit/push.
