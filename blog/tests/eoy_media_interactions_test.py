@@ -1695,7 +1695,7 @@ def test_residual_layout(browser, base, lang, results):
     context, page, logs = open_page(browser, base, lang, path="/eoy/2.php", wait_media=False)
     tag = f"residual-{lang}"
     page.wait_for_timeout(700)
-    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
     page.wait_for_timeout(1000)
     layout = page.evaluate(
         r"""
