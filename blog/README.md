@@ -650,7 +650,6 @@ disabled at the server level.
 ## Origin & credit
 
 This work was developed by **Norman Koch** (norman.koch@tu-dresden.de) as a Software
-Engineer at TU Dresden / ScaDS.AI. It reflects professional interest in AI but is largely
-the product of personal time, driven by a wish to make these topics accessible.
+Engineer at TU Dresden / ScaDS.AI. It is driven by a wish to make these topics accessible.
 
 -- **License:** MIT

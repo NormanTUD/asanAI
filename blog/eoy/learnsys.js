@@ -162,6 +162,7 @@
   var substepAnims = [];
   var substepSafetyTimer = 0;
   var textSwapTimer = 0;
+  var stageRenderTimer = 0;
 
   var FONT_LEVELS = [
     { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
@@ -2748,6 +2749,8 @@
     substepSafetyTimer = 0;
     clearTimeout(textSwapTimer);
     textSwapTimer = 0;
+    clearTimeout(stageRenderTimer);
+    stageRenderTimer = 0;
     substepAnims.slice().forEach(function (anim) {
       try { anim.cancel(); } catch (e) {}
     });
@@ -2771,21 +2774,24 @@
       return;
     }
     cancelTransitions();
-    playTransition(host, [
+    var outAnim = playTransition(host, [
       { opacity: 1, filter: "blur(0px)" },
       { opacity: 0, filter: "blur(6px)" }
     ], { duration: 100, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
     textSwapTimer = setTimeout(function () {
       textSwapTimer = 0;
+      if (outAnim) { try { outAnim.cancel(); } catch (e) {} }
       renderTextFn();
       playTransition(host, [
         { opacity: 0, filter: "blur(6px)" },
         { opacity: 1, filter: "blur(0px)" }
       ], { duration: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
       if (renderStageFn) {
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () { renderStageFn(); });
-        });
+        clearTimeout(stageRenderTimer);
+        stageRenderTimer = setTimeout(function () {
+          stageRenderTimer = 0;
+          renderStageFn();
+        }, 120);
       }
     }, 100);
     clearTimeout(substepSafetyTimer);
