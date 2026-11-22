@@ -44,7 +44,11 @@ file after every completed item.
    - Removed the "Die nächsten Seiten …" phrase from the architecture body.
    - FFN separation canvas now has an aria-label in the HTML.
    - Tests updated for the new sub-step order and the f(x) slide.
-5. **Final gate**
+5. **f(x) Nudge interaction**
+   - Make the Nudge button green.
+   - Pressing Next on the f(x) slide should click the Nudge a few times
+     (advance the steps) before leaving the slide.
+6. **Final gate**
    - DE + EN media suite.
    - `eoy_pages_test` 27/30/31 and the full suite.
    - `js_validator`, `php -l`, commit/push.

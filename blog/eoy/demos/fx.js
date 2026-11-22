@@ -53,9 +53,12 @@
     render();
     return {
       update: function () {},
-      next: function () { return false; },
+      next: function () {
+        if (step < 2) { step++; render(); return true; }
+        return false;
+      },
       prev: function () { return false; },
-      hasNext: function () { return false; },
+      hasNext: function () { return step < 2; },
       hasPrev: function () { return false; },
       resize: function () {},
       destroy: function () { el.remove(); }
