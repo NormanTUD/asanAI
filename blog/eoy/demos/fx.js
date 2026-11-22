@@ -11,22 +11,49 @@
         label: DE ? "f(Daten)" : "f(data)",
         tag: DE ? "Pretraining" : "Pretraining",
         sub: DE ? "das ganze Korpus" : "the whole corpus",
-        prompt: DE ? "Die Katze sitzt auf der ___" : "The cat sits on the ___",
-        note: DE ? "Im Korpus stehen Milliarden solcher Fortsetzungen. Jede wird zum Vergleich und zum Nudge." : "The corpus holds billions of such continuations. Each one becomes a comparison and a nudge."
+        prompt: DE ? "Meine Bestellung ist seit zwei Wochen nicht da. Ich möchte sie ___." : "My order has not arrived for two weeks. I want to ___ it.",
+        target: DE ? "stornieren" : "cancel",
+        targetIdx: 1,
+        startStep: 0,
+        levels: [[55, 30, 15], [50, 38, 12], [42, 48, 10], [30, 62, 8], [18, 76, 6], [8, 90, 2], [1, 98.5, 0.5]],
+        cands: [
+          { name: DE ? "verschieben" : "delay", cls: "is-mid", status: DE ? "häufig in den Daten" : "frequent in the data" },
+          { name: DE ? "stornieren" : "cancel", cls: "is-good", status: DE ? "richtig, aber unsicher" : "right, but uncertain" },
+          { name: DE ? "drucken" : "print", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+        ],
+        note: DE ? "Pretraining: Die Verteilung ist breit. „verschieben“ ist häufig, „stornieren“ nur möglich. Das Modell hat die Aufgabe noch nicht gelernt." : "Pretraining: the distribution is broad. “delay” is frequent, “cancel” only possible. The model has not learned the task yet."
       },
       first: {
         label: DE ? "f(1. Trainingsdatensatz)" : "f(first training example)",
         tag: DE ? "Fine-tuning" : "Fine-tuning",
-        sub: DE ? "Beispiel 1" : "example 1",
-        prompt: DE ? "Die Katze sitzt auf der ___" : "The cat sits on the ___",
-        note: DE ? "Im ersten Trainingsdatensatz steht „Matte“. Der Vergleich macht „Matte“ wahrscheinlicher." : "The first training example says “mat”. The comparison makes “mat” more likely."
+        sub: DE ? "Storno-Beispiel" : "cancel example",
+        prompt: DE ? "Meine Bestellung ist seit zwei Wochen nicht da. Ich möchte sie ___." : "My order has not arrived for two weeks. I want to ___ it.",
+        target: DE ? "stornieren" : "cancel",
+        targetIdx: 0,
+        startStep: 4,
+        levels: [[30, 55, 15], [38, 50, 12], [48, 42, 10], [62, 30, 8], [76, 18, 6], [90, 8, 2], [98.5, 1, 0.5]],
+        cands: [
+          { name: DE ? "stornieren" : "cancel", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
+          { name: DE ? "verschieben" : "delay", cls: "is-mid", status: DE ? "plausibel, falsch" : "plausible, wrong" },
+          { name: DE ? "drucken" : "print", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+        ],
+        note: DE ? "Fine-tuning-Beispiel 1: Im Datensatz steht „stornieren“. Der Nudge zieht die Verteilung dorthin; das Modell reagiert jetzt auf die Absicht." : "Fine-tuning example 1: the dataset says “cancel”. The nudge pulls the distribution there; the model now reacts to the intent."
       },
       second: {
         label: DE ? "f(2. Trainingsdatensatz)" : "f(second training example)",
         tag: DE ? "Fine-tuning" : "Fine-tuning",
-        sub: DE ? "Beispiel 2" : "example 2",
-        prompt: DE ? "Die Katze schläft auf der ___" : "The cat sleeps on the ___",
-        note: DE ? "Im zweiten Trainingsdatensatz steht „Matte“. Dieselbe Funktion, ein neues Beispiel, derselbe Nudge." : "The second training example says “mat”. The same function, a new example, the same nudge."
+        sub: DE ? "Reklamations-Beispiel" : "complaint example",
+        prompt: DE ? "Das Paket kam beschädigt an. Ich möchte es ___." : "The parcel arrived damaged. I want to ___ it.",
+        target: DE ? "zurückschicken" : "return",
+        targetIdx: 0,
+        startStep: 4,
+        levels: [[25, 60, 15], [35, 52, 13], [48, 40, 12], [62, 30, 8], [78, 18, 4], [92, 6, 2], [98.5, 1, 0.5]],
+        cands: [
+          { name: DE ? "zurückschicken" : "return", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
+          { name: DE ? "behalten" : "keep", cls: "is-mid", status: DE ? "plausibel, falsch" : "plausible, wrong" },
+          { name: DE ? "falten" : "fold", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+        ],
+        note: DE ? "Fine-tuning-Beispiel 2: Im Datensatz steht „zurückschicken“. Dieselbe Funktion, ein anderes Beispiel, ein anderes Ziel." : "Fine-tuning example 2: the dataset says “return”. The same function, another example, another target."
       }
     };
     el.innerHTML =
@@ -49,38 +76,42 @@
         '</div>' +
         '<span class="ls-fx-link" aria-hidden="true">→</span>' +
         '<div class="ls-fx-output">' +
-          '<div class="ls-fx-output-head"><span>' + (DE ? "Ausgabe" : "Output") + '</span><b class="ls-fx-active-label">' + INPUTS.corpus.label + '</b></div>' +
-          '<div class="ls-bs-fx-prompt">' + INPUTS.corpus.prompt + '</div>' +
-          '<div class="ls-bs-fx-cands">' +
-            '<div class="ls-bs-fx-cand is-good"><span>' + (DE ? "Matte" : "mat") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>45 %</em><small>' + (DE ? "in den Daten" : "in the data") + '</small></div>' +
-            '<div class="ls-bs-fx-cand is-mid"><span>' + (DE ? "Heizung" : "heater") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>40 %</em><small>' + (DE ? "plausibel, nicht in diesem Beispiel" : "plausible, not in this example") + '</small></div>' +
-            '<div class="ls-bs-fx-cand is-bad"><span>' + (DE ? "Gleichung" : "equation") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>15 %</em><small>' + (DE ? "passt nicht" : "does not fit") + '</small></div>' +
-          '</div>' +
-          '<p class="ls-bs-fx-note">' + INPUTS.corpus.note + '</p>' +
+          '<div class="ls-fx-output-head"><span>' + (DE ? "P(nächstes Token)" : "P(next token)") + '</span><b class="ls-fx-active-label">' + INPUTS.corpus.label + '</b></div>' +
+          '<div class="ls-bs-fx-prompt"></div>' +
+          '<div class="ls-bs-fx-cands"></div>' +
+          '<p class="ls-bs-fx-note"></p>' +
         '</div>' +
       '</div>' +
       '<div class="ls-fx-loop"><span>' + (DE ? "Vergleich mit dem nächsten Token in den Daten" : "compare with the next token in the data") + '</span><i>→</i><b>Nudge</b><span>' + (DE ? "Gewichte ein wenig in die richtige Richtung" : "move the weights a little in the right direction") + '</span></div>' +
       '<div class="ls-bs-fx-bar"><button type="button" class="ls-btn ls-bs-fx-nudge">' + (DE ? "Nudge (Gewichte anpassen)" : "Nudge (adjust weights)") + '</button><span class="ls-bs-fx-readout" aria-live="polite"></span></div>';
     root.appendChild(el);
     var inputs = el.querySelectorAll("[data-fx-input]");
-    var prompt = el.querySelector(".ls-bs-fx-prompt");
-    var note = el.querySelector(".ls-bs-fx-note");
+    var promptEl = el.querySelector(".ls-bs-fx-prompt");
+    var noteEl = el.querySelector(".ls-bs-fx-note");
+    var candsEl = el.querySelector(".ls-bs-fx-cands");
     var activeLabel = el.querySelector(".ls-fx-active-label");
-    var bars = el.querySelectorAll("[data-fx-bar]");
-    var pcts = el.querySelectorAll("[data-fx-pct]");
     var readout = el.querySelector(".ls-bs-fx-readout");
     var btn = el.querySelector(".ls-bs-fx-nudge");
     var active = "corpus";
     var step = 0;
-    var values = [[45, 40, 15], [65, 27, 8], [82, 14, 4], [90, 8, 2], [95, 4, 1], [98, 1.5, 0.5], [99, 0.8, 0.2]];
+    var bars = [], pcts = [];
     var jitterTimer = 0, autoTimers = [];
     function stopJitter() { if (jitterTimer) { clearInterval(jitterTimer); jitterTimer = 0; } }
     function stopAuto() { autoTimers.forEach(function (t) { clearTimeout(t); }); autoTimers = []; }
+    function renderCandidates() {
+      var data = INPUTS[active];
+      candsEl.innerHTML = data.cands.map(function (c) {
+        return '<div class="ls-bs-fx-cand ' + c.cls + '"><span>' + c.name + '</span><i><b data-fx-bar></b></i><em data-fx-pct>0 %</em><small>' + c.status + '</small></div>';
+      }).join("");
+      bars = candsEl.querySelectorAll("[data-fx-bar]");
+      pcts = candsEl.querySelectorAll("[data-fx-pct]");
+    }
     function renderJitter() {
-      var m = 98.6 + Math.random() * 0.7;
-      var h = 0.5 + Math.random() * 0.5;
-      var g = 0.1 + Math.random() * 0.3;
-      var vals = [m, h, g];
+      var target = INPUTS[active].targetIdx;
+      var vals = [0.2, 0.2, 0.2];
+      vals[target] = 98.6 + Math.random() * 0.7;
+      vals[(target + 1) % 3] = 0.5 + Math.random() * 0.5;
+      vals[(target + 2) % 3] = 0.1 + Math.random() * 0.3;
       for (var i = 0; i < bars.length; i++) {
         bars[i].style.width = vals[i] + "%";
         if (pcts[i]) pcts[i].textContent = vals[i].toFixed(1) + " %";
@@ -89,39 +120,45 @@
     function startJitter() { stopJitter(); renderJitter(); jitterTimer = setInterval(renderJitter, 240); }
     function render() {
       stopJitter();
+      var data = INPUTS[active];
+      var vals = data.levels[step] || data.levels[data.levels.length - 1];
       for (var i = 0; i < bars.length; i++) {
-        bars[i].style.width = values[step][i] + "%";
-        if (pcts[i]) pcts[i].textContent = values[step][i] + " %";
+        bars[i].style.width = vals[i] + "%";
+        if (pcts[i]) pcts[i].textContent = vals[i] + " %";
       }
       if (readout) readout.textContent = step === 0
         ? (DE ? "Nudge 0 / 6: die Verteilung ist noch unsicher." : "Nudge 0 / 6: the distribution is still uncertain.")
         : step < 6
-          ? (DE ? "Nudge " + step + " / 6: „Matte“ wird wahrscheinlicher." : "Nudge " + step + " / 6: “mat” becomes more likely.")
-          : (DE ? "99 %: „Matte“ ist fast sicher; die Werte fluktuieren leicht." : "99 %: “mat” is almost certain; the values fluctuate slightly.");
-      if (btn) btn.disabled = step >= values.length - 1;
-      if (step >= values.length - 1) startJitter();
+          ? (DE ? "Nudge " + step + " / 6: „" + data.target + "“ wird wahrscheinlicher." : "Nudge " + step + " / 6: “" + data.target + "” becomes more likely.")
+          : (DE ? "99 %: „" + data.target + "“ ist fast sicher; die Werte fluktuieren leicht." : "99 %: “" + data.target + "” is almost certain; the values fluctuate slightly.");
+      if (btn) btn.disabled = step >= data.levels.length - 1;
+      if (step >= data.levels.length - 1) startJitter();
     }
     function setActive(name) {
       if (!INPUTS[name]) return;
+      stopAuto();
       active = name;
       inputs.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-fx-input") === name); });
-      prompt.textContent = INPUTS[name].prompt;
-      note.textContent = INPUTS[name].note;
+      promptEl.textContent = INPUTS[name].prompt;
+      noteEl.textContent = INPUTS[name].note;
       activeLabel.textContent = INPUTS[name].label;
+      step = INPUTS[name].startStep;
+      renderCandidates();
+      render();
     }
     inputs.forEach(function (b) {
       b.addEventListener("click", function () { setActive(b.getAttribute("data-fx-input")); });
     });
-    function manualNudge() { stopAuto(); if (step < values.length - 1) { step++; render(); } }
+    function manualNudge() { stopAuto(); if (step < INPUTS[active].levels.length - 1) { step++; render(); } }
     if (btn) btn.addEventListener("click", manualNudge);
+    setActive("corpus");
     autoTimers.push(setTimeout(function () { if (step === 0) { step = 1; render(); } }, 700));
     autoTimers.push(setTimeout(function () { if (step === 1) { step = 2; render(); } }, 1400));
-    render();
     return {
       update: function () {},
-      next: function () { stopAuto(); if (step < values.length - 1) { step++; render(); return true; } return false; },
+      next: function () { stopAuto(); if (step < INPUTS[active].levels.length - 1) { step++; render(); return true; } return false; },
       prev: function () { return false; },
-      hasNext: function () { return step < values.length - 1; },
+      hasNext: function () { return step < INPUTS[active].levels.length - 1; },
       hasPrev: function () { return false; },
       resize: function () {},
       destroy: function () { stopJitter(); stopAuto(); el.remove(); }

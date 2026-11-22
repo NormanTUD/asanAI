@@ -3550,7 +3550,7 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-fx .ls-bs-fx-prompt{font:700 clamp(20px,2.2vw,30px)/1.2 "Barlow",sans-serif;color:var(--ls-ink)}
 .ls-fx .ls-bs-fx-prompt b{color:var(--ls-green)}
 .ls-fx .ls-bs-fx-cands{gap:5px}
-.ls-fx .ls-bs-fx-cand{grid-template-columns:92px minmax(0,1fr) 56px;gap:9px;font:600 var(--ls-fs-ui) "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-fx .ls-bs-fx-cand{grid-template-columns:112px minmax(0,1fr) 56px;gap:9px;font:600 var(--ls-fs-ui) "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-fx .ls-bs-fx-cand i{height:12px;background:rgba(0,75,111,.10);border:1px solid rgba(0,75,111,.16)}
 .ls-fx .ls-bs-fx-cand i b{background:var(--ls-green)}
 .ls-fx .ls-bs-fx-cand.is-mid i b{background:var(--ls-gold)}

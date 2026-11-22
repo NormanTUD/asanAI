@@ -57,6 +57,69 @@ document.getElementById("scene").appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 500);
 
+const nebulaMaterial = new THREE.ShaderMaterial({
+	uniforms: {
+		uTime: { value: 0 }
+	},
+	vertexShader: `
+		varying vec2 vUv;
+		void main() {
+			vUv = uv;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+		}
+	`,
+	fragmentShader: `
+		uniform float uTime;
+		varying vec2 vUv;
+		float hash(vec2 p) {
+			return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+		}
+		float noise(vec2 p) {
+			vec2 i = floor(p);
+			vec2 f = fract(p);
+			f = f * f * (3.0 - 2.0 * f);
+			float a = hash(i);
+			float b = hash(i + vec2(1.0, 0.0));
+			float c = hash(i + vec2(0.0, 1.0));
+			float d = hash(i + vec2(1.0, 1.0));
+			return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+		}
+		float fbm(vec2 p) {
+			float v = 0.0;
+			float a = 0.5;
+			for (int i = 0; i < 4; i++) {
+				v += a * noise(p);
+				p *= 2.03;
+				a *= 0.5;
+			}
+			return v;
+		}
+		void main() {
+			vec2 p = vUv * 2.0 - 1.0;
+			vec2 q = p * vec2(1.0, 1.35);
+			float n1 = fbm(q * 2.1 + vec2(uTime * 0.013, -uTime * 0.008));
+			float n2 = fbm(q * 4.4 - vec2(uTime * 0.01, uTime * 0.015));
+			vec3 a = vec3(0.02, 0.12, 0.2);
+			vec3 b = vec3(0.12, 0.05, 0.24);
+			vec3 c = vec3(0.03, 0.22, 0.2);
+			vec3 color = mix(a, b, smoothstep(0.2, 0.85, n1));
+			color = mix(color, c, smoothstep(0.55, 1.0, n2) * 0.6);
+			float r = length(p * vec2(0.9, 1.1));
+			float vignette = smoothstep(1.25, 0.15, r);
+			float alpha = vignette * (0.035 + 0.15 * n1) * 0.55;
+			gl_FragColor = vec4(color * (0.6 + 0.8 * n1), alpha);
+		}
+	`,
+	transparent: true,
+	blending: THREE.AdditiveBlending,
+	depthWrite: false,
+	depthTest: false
+});
+const nebula = new THREE.Mesh(new THREE.PlaneGeometry(320, 210), nebulaMaterial);
+nebula.position.set(0, -3, -94);
+nebula.renderOrder = -100;
+scene.add(nebula);
+
 function makeGlowTexture() {
 	const size = 256;
 	const canvas = document.createElement("canvas");
@@ -78,6 +141,54 @@ function makeGlowTexture() {
 }
 
 const glowTex = makeGlowTexture();
+
+function makeFlareTexture() {
+	const width = 512;
+	const height = 128;
+	const canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	const ctx = canvas.getContext("2d");
+	ctx.globalCompositeOperation = "lighter";
+	const line = ctx.createLinearGradient(0, 0, width, 0);
+	line.addColorStop(0, "rgba(255,255,255,0)");
+	line.addColorStop(0.18, "rgba(255,255,255,0.08)");
+	line.addColorStop(0.4, "rgba(255,255,255,0.7)");
+	line.addColorStop(0.5, "rgba(255,255,255,1)");
+	line.addColorStop(0.6, "rgba(255,255,255,0.7)");
+	line.addColorStop(0.82, "rgba(255,255,255,0.08)");
+	line.addColorStop(1, "rgba(255,255,255,0)");
+	ctx.fillStyle = line;
+	ctx.fillRect(0, height / 2 - 2, width, 4);
+	const bloom = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, 54);
+	bloom.addColorStop(0, "rgba(255,255,255,0.95)");
+	bloom.addColorStop(0.2, "rgba(255,255,255,0.36)");
+	bloom.addColorStop(1, "rgba(255,255,255,0)");
+	ctx.fillStyle = bloom;
+	ctx.fillRect(0, 0, width, height);
+	const texture = new THREE.CanvasTexture(canvas);
+	texture.minFilter = THREE.LinearFilter;
+	texture.magFilter = THREE.LinearFilter;
+	return texture;
+}
+
+const flareTex = makeFlareTexture();
+
+function flareSprite(color, width, height, opacity) {
+	const material = new THREE.SpriteMaterial({
+		map: flareTex,
+		color,
+		transparent: true,
+		opacity,
+		blending: THREE.AdditiveBlending,
+		depthWrite: false,
+		depthTest: false
+	});
+	const sprite = new THREE.Sprite(material);
+	sprite.scale.set(width, height, 1);
+	sprite.renderOrder = 9;
+	return sprite;
+}
 
 function glowSprite(color, scale, opacity) {
 	const material = new THREE.SpriteMaterial({
@@ -283,6 +394,22 @@ sheetWire.renderOrder = 2;
 scene.add(sheetMesh);
 scene.add(sheetWire);
 
+const shockPoints = [];
+for (let i = 0; i < 180; i += 1) {
+	const a = (i / 180) * TAU;
+	shockPoints.push(new V3(Math.cos(a), 0, Math.sin(a)));
+}
+const shockMaterial = new THREE.LineBasicMaterial({
+	color: 0xa6f3ff,
+	transparent: true,
+	opacity: 0,
+	blending: THREE.AdditiveBlending,
+	depthWrite: false
+});
+const shockRing = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(shockPoints), shockMaterial);
+shockRing.visible = false;
+scene.add(shockRing);
+
 const shellGroup = new THREE.Group();
 shellGroup.position.set(0, -2, -7);
 scene.add(shellGroup);
@@ -468,6 +595,8 @@ for (let i = 0; i < TOKEN_COUNT; i += 1) {
 	group.add(halo);
 	const haloOuter = glowSprite(color, 13 * size, 0);
 	group.add(haloOuter);
+	const flare = flareSprite(color, 17 * size, 2.1 * size, 0);
+	group.add(flare);
 
 	const rayPositions = new Float32Array(RAY_COUNT * 6);
 	const rayColors = new Float32Array(RAY_COUNT * 6);
@@ -615,6 +744,7 @@ for (let i = 0; i < TOKEN_COUNT; i += 1) {
 		coreMat: core.material,
 		halo,
 		haloOuter,
+		flare,
 		rays,
 		rayGeometry,
 		rayMaterial,
@@ -669,10 +799,39 @@ for (let i = 0; i < subspaceSpecs.length; i += 1) {
 	const spec = subspaceSpecs[i];
 	const group = new THREE.Group();
 	const geometry = new THREE.SphereGeometry(spec.radius, 48, 28, 0, TAU, 0, Math.PI * spec.theta);
-	const material = new THREE.MeshBasicMaterial({
-		color: spec.color,
+	const colorB = new THREE.Color(spec.color).offsetHSL(0.1, 0.12, 0.12);
+	const material = new THREE.ShaderMaterial({
+		uniforms: {
+			uColorA: { value: new THREE.Color(spec.color) },
+			uColorB: { value: colorB },
+			uOpacity: { value: 0 }
+		},
+		vertexShader: `
+			varying vec3 vN;
+			varying vec3 vV;
+			void main() {
+				vec4 mv = modelViewMatrix * vec4(position, 1.0);
+				vN = normalize(normalMatrix * normal);
+				vV = normalize(-mv.xyz);
+				gl_Position = projectionMatrix * mv;
+			}
+		`,
+		fragmentShader: `
+			uniform vec3 uColorA;
+			uniform vec3 uColorB;
+			uniform float uOpacity;
+			varying vec3 vN;
+			varying vec3 vV;
+			void main() {
+				vec3 n = normalize(vN) * (gl_FrontFacing ? 1.0 : -1.0);
+				float f = 1.0 - abs(dot(n, normalize(vV)));
+				f = pow(f, 2.15);
+				vec3 color = mix(uColorA, uColorB, smoothstep(0.0, 0.92, f));
+				float alpha = (0.008 + f * 0.18) * uOpacity;
+				gl_FragColor = vec4(color, alpha);
+			}
+		`,
 		transparent: true,
-		opacity: 0,
 		side: THREE.DoubleSide,
 		blending: THREE.AdditiveBlending,
 		depthWrite: false
@@ -811,6 +970,25 @@ for (let i = 0; i < TOKEN_COUNT; i += 1) {
 	}
 }
 
+const queryRays = [];
+for (let i = 0; i < TOKEN_COUNT; i += 1) {
+	const positions = new Float32Array(6);
+	const geometry = new THREE.BufferGeometry();
+	geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+	const material = new THREE.LineBasicMaterial({
+		color: TOKEN_PALETTE[i],
+		transparent: true,
+		opacity: 0,
+		blending: THREE.AdditiveBlending,
+		depthWrite: false
+	});
+	const line = new THREE.Line(geometry, material);
+	arcGroup.add(line);
+	const tip = glowSprite(TOKEN_PALETTE[i], 1.8, 0);
+	arcGroup.add(tip);
+	queryRays.push({ line, geometry, material, tip, phase: rr(0, TAU) });
+}
+
 const sparkleCount = arcs.length * 2;
 const sparkleGeometry = new THREE.BufferGeometry();
 const sparklePositions = new Float32Array(sparkleCount * 3);
@@ -865,6 +1043,28 @@ const sparkleMaterial = new THREE.ShaderMaterial({
 const sparkles = new THREE.Points(sparkleGeometry, sparkleMaterial);
 sparkles.renderOrder = 6;
 scene.add(sparkles);
+
+const residualSparkCount = TOKEN_COUNT * 2;
+const residualSparkGeometry = new THREE.BufferGeometry();
+const residualSparkPositions = new Float32Array(residualSparkCount * 3);
+const residualSparkColors = new Float32Array(residualSparkCount * 3);
+const residualSparkSizes = new Float32Array(residualSparkCount);
+const residualSparkAlphas = new Float32Array(residualSparkCount);
+for (let i = 0; i < residualSparkCount; i += 1) {
+	const tokenIndex = Math.floor(i / 2);
+	const color = TOKEN_PALETTE[tokenIndex].clone().lerp(new THREE.Color(0xffffff), 0.45);
+	residualSparkColors[i * 3] = color.r;
+	residualSparkColors[i * 3 + 1] = color.g;
+	residualSparkColors[i * 3 + 2] = color.b;
+	residualSparkSizes[i] = rr(1.5, 2.6);
+}
+residualSparkGeometry.setAttribute("position", new THREE.BufferAttribute(residualSparkPositions, 3));
+residualSparkGeometry.setAttribute("aColor", new THREE.BufferAttribute(residualSparkColors, 3));
+residualSparkGeometry.setAttribute("aSize", new THREE.BufferAttribute(residualSparkSizes, 1));
+residualSparkGeometry.setAttribute("aAlpha", new THREE.BufferAttribute(residualSparkAlphas, 1));
+const residualSparks = new THREE.Points(residualSparkGeometry, sparkleMaterial);
+residualSparks.renderOrder = 7;
+scene.add(residualSparks);
 
 const ffnGroup = new THREE.Group();
 scene.add(ffnGroup);
@@ -977,7 +1177,7 @@ if (scoredClusters.length > 0) {
 	);
 	const pool = visible.length > 3 ? visible : scoredClusters;
 	predictionTarget = pool[0].cluster;
-	candidates = pool.slice(0, 9);
+	candidates = pool.slice(0, 12);
 	predictionTarget.isTarget = true;
 	predictionTarget.glow.material.color.set(0xffe7ae);
 	const attr = predictionTarget.points.geometry.getAttribute("aColor");
@@ -998,6 +1198,9 @@ dirGroup.add(originCore);
 const originHalo = glowSprite(new THREE.Color(0xffedb0), 4.2, 0);
 originHalo.position.copy(dirOrigin);
 dirGroup.add(originHalo);
+const originFlare = flareSprite(new THREE.Color(0xffedb0), 24, 2.6, 0);
+originFlare.position.copy(dirOrigin);
+dirGroup.add(originFlare);
 
 const tokenDirRays = [];
 for (let i = 0; i < TOKEN_COUNT; i += 1) {
@@ -1082,6 +1285,161 @@ function slerpDirection(a, b, t, out) {
 	return out.copy(a).multiplyScalar(wa).addScaledVector(b, wb);
 }
 
+const HYPER_RADIUS = 17.6;
+const hyperMaterial = new THREE.ShaderMaterial({
+	uniforms: {
+		uColorA: { value: new THREE.Color(0x5fe7ff) },
+		uColorB: { value: new THREE.Color(0xb38cff) },
+		uOpacity: { value: 0 },
+		uTime: { value: 0 }
+	},
+	vertexShader: `
+		varying vec3 vPos;
+		varying vec3 vN;
+		varying vec3 vV;
+		void main() {
+			vPos = position;
+			vec4 mv = modelViewMatrix * vec4(position, 1.0);
+			vN = normalize(normalMatrix * normal);
+			vV = normalize(-mv.xyz);
+			gl_Position = projectionMatrix * mv;
+		}
+	`,
+	fragmentShader: `
+		uniform vec3 uColorA;
+		uniform vec3 uColorB;
+		uniform float uOpacity;
+		uniform float uTime;
+		varying vec3 vPos;
+		varying vec3 vN;
+		varying vec3 vV;
+		void main() {
+			vec3 n = normalize(vN) * (gl_FrontFacing ? 1.0 : -1.0);
+			float fresnel = 1.0 - abs(dot(n, normalize(vV)));
+			fresnel = pow(fresnel, 2.3);
+			vec3 p = normalize(vPos);
+			float latitude = 0.5 + 0.5 * sin(p.y * 23.0 + uTime * 0.24);
+			float longitude = 0.5 + 0.5 * sin(atan(p.z, p.x) * 13.0 - uTime * 0.16);
+			float grid = smoothstep(0.93, 1.0, latitude) * 0.55 + smoothstep(0.955, 1.0, longitude) * 0.28;
+			vec3 color = mix(uColorA, uColorB, clamp(fresnel * 0.84 + latitude * 0.16, 0.0, 1.0));
+			float alpha = (0.0025 + fresnel * 0.075 + grid * 0.018) * uOpacity;
+			gl_FragColor = vec4(color, alpha);
+		}
+	`,
+	transparent: true,
+	blending: THREE.AdditiveBlending,
+	depthWrite: false,
+	side: THREE.DoubleSide
+});
+const hyperSphere = new THREE.Mesh(new THREE.SphereGeometry(HYPER_RADIUS, 64, 42), hyperMaterial);
+hyperSphere.position.copy(dirOrigin);
+dirGroup.add(hyperSphere);
+
+const hyperRingMaterial = new THREE.LineBasicMaterial({
+	color: 0x8be9ff,
+	transparent: true,
+	opacity: 0,
+	blending: THREE.AdditiveBlending,
+	depthWrite: false
+});
+const hyperRings = [];
+for (let i = 0; i < 3; i += 1) {
+	const points = [];
+	for (let k = 0; k < 170; k += 1) {
+		const a = (k / 170) * TAU;
+		points.push(new V3(Math.cos(a) * HYPER_RADIUS, 0, Math.sin(a) * HYPER_RADIUS));
+	}
+	const line = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), hyperRingMaterial);
+	line.position.copy(dirOrigin);
+	line.rotation.x = i === 0 ? Math.PI / 2 : i === 1 ? 0.55 : 1.15;
+	line.rotation.y = i === 1 ? 0.7 : -0.4;
+	dirGroup.add(line);
+	hyperRings.push(line);
+}
+
+const hyperProjections = [];
+for (let i = 0; i < TOKEN_COUNT; i += 1) {
+	const sprite = glowSprite(TOKEN_PALETTE[i], 2.9 * TOKEN_SIZES[i], 0);
+	dirGroup.add(sprite);
+	hyperProjections.push(sprite);
+}
+
+const pathArcs = [];
+const PATH_ARC_SEGMENTS = 9;
+const LAYER_FRACTIONS = [0, 0.24, 0.46, 0.68, 1];
+for (let i = 0; i < TOKEN_COUNT; i += 1) {
+	const positions = new Float32Array(4 * PATH_ARC_SEGMENTS * 6);
+	const colors = new Float32Array(4 * PATH_ARC_SEGMENTS * 6);
+	const color = TOKEN_PALETTE[i];
+	for (let arc = 0; arc < 4; arc += 1) {
+		for (let k = 0; k < PATH_ARC_SEGMENTS; k += 1) {
+			const t = (arc + k / PATH_ARC_SEGMENTS) / 4;
+			const c = color.clone().multiplyScalar(0.1 + 0.72 * t);
+			const index = (arc * PATH_ARC_SEGMENTS + k) * 6;
+			colors[index] = c.r;
+			colors[index + 1] = c.g;
+			colors[index + 2] = c.b;
+			colors[index + 3] = c.r;
+			colors[index + 4] = c.g;
+			colors[index + 5] = c.b;
+		}
+	}
+	const geometry = new THREE.BufferGeometry();
+	geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+	geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+	const material = new THREE.LineBasicMaterial({
+		vertexColors: true,
+		transparent: true,
+		opacity: 0,
+		blending: THREE.AdditiveBlending,
+		depthWrite: false
+	});
+	const line = new THREE.LineSegments(geometry, material);
+	dirGroup.add(line);
+	pathArcs.push({ line, geometry, material, positions });
+}
+
+const angleRingMaterial = new THREE.LineBasicMaterial({
+	color: 0xffdfa0,
+	transparent: true,
+	opacity: 0,
+	blending: THREE.AdditiveBlending,
+	depthWrite: false
+});
+const angleRings = [];
+const ANGLE_RING_POINTS = 100;
+for (let r = 0; r < 3; r += 1) {
+	const positions = new Float32Array(ANGLE_RING_POINTS * 3);
+	const geometry = new THREE.BufferGeometry();
+	geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+	const line = new THREE.LineLoop(geometry, angleRingMaterial);
+	dirGroup.add(line);
+	angleRings.push({ line, geometry, positions, angle: 0.13 + r * 0.13 });
+}
+
+const angleItems = scoredClusters.slice(0, 18);
+const angleDotCount = angleItems.length;
+const angleDotGeometry = new THREE.BufferGeometry();
+const angleDotPositions = new Float32Array(angleDotCount * 3);
+const angleDotColors = new Float32Array(angleDotCount * 3);
+const angleDotSizes = new Float32Array(angleDotCount);
+const angleDotAlphas = new Float32Array(angleDotCount);
+for (let i = 0; i < angleDotCount; i += 1) {
+	const item = angleItems[i];
+	const color = item.cluster.isTarget ? new THREE.Color(0xffe7ae) : item.cluster.color;
+	angleDotColors[i * 3] = color.r;
+	angleDotColors[i * 3 + 1] = color.g;
+	angleDotColors[i * 3 + 2] = color.b;
+	angleDotSizes[i] = item.cluster.isTarget ? 3.2 : rr(1.2, 2.1);
+}
+angleDotGeometry.setAttribute("position", new THREE.BufferAttribute(angleDotPositions, 3));
+angleDotGeometry.setAttribute("aColor", new THREE.BufferAttribute(angleDotColors, 3));
+angleDotGeometry.setAttribute("aSize", new THREE.BufferAttribute(angleDotSizes, 1));
+angleDotGeometry.setAttribute("aAlpha", new THREE.BufferAttribute(angleDotAlphas, 1));
+const angleDots = new THREE.Points(angleDotGeometry, sparkleMaterial);
+angleDots.renderOrder = 7;
+dirGroup.add(angleDots);
+
 const predictGroup = new THREE.Group();
 scene.add(predictGroup);
 const predictionBeams = [];
@@ -1118,11 +1476,13 @@ const nextHalo = glowSprite(nextColor, 5.2, 0);
 nextGroup.add(nextHalo);
 const nextHaloOuter = glowSprite(nextColor, 15, 0);
 nextGroup.add(nextHaloOuter);
+const nextFlare = flareSprite(nextColor, 19, 2.2, 0);
+nextGroup.add(nextFlare);
 const NEXT_SLOT = new V3(13.15, 0.9, 0.75);
 
 const PARAM_KEYS = [
 	"cloud", "regions", "tokens", "base", "residual", "rays", "manifold", "shell",
-	"subspaces", "attention", "slices", "ffn", "fibers", "layers", "dirs", "pred"
+	"subspaces", "attention", "slices", "ffn", "fibers", "layers", "dirs", "hyper", "pred"
 ];
 const DEFAULT_PARAMS = {};
 for (let i = 0; i < PARAM_KEYS.length; i += 1) DEFAULT_PARAMS[PARAM_KEYS[i]] = 0;
@@ -1143,60 +1503,67 @@ const STEPS = [
 		params: { cloud: 0.82, regions: 1, manifold: 0.55, shell: 0.58 }
 	},
 	{
-		cam: [0, 7, 41],
-		look: [0, -0.5, -2],
-		fov: 50,
-		orbit: 0.5,
-		params: { cloud: 0.48, regions: 0.55, tokens: 1, residual: 0.3, manifold: 0.78, shell: 0.46 }
+		cam: [18, 13, 54],
+		look: [0, 1.2, -9],
+		fov: 52,
+		orbit: 1.6,
+		params: { cloud: 0.58, regions: 0.72, tokens: 1, base: 1, residual: 0.14, manifold: 0.6, shell: 0.6 }
 	},
 	{
-		cam: [18, 11, 36],
+		cam: [0, 7, 42],
+		look: [0, 0, -4],
+		fov: 50,
+		orbit: 0.5,
+		params: { cloud: 0.48, regions: 0.52, tokens: 1, base: 0.62, residual: 0.46, manifold: 0.75, shell: 0.5 }
+	},
+	{
+		cam: [18, 11, 37],
 		look: [0, 0, -2],
 		fov: 48,
 		orbit: 2.0,
-		params: { cloud: 0.4, regions: 0.4, tokens: 1, residual: 0.28, rays: 1, manifold: 1, shell: 0.52, subspaces: 0.15 }
+		params: { cloud: 0.4, regions: 0.4, tokens: 1, base: 0.18, residual: 0.44, rays: 1, manifold: 1, shell: 0.52, subspaces: 0.15 }
 	},
 	{
 		cam: [24, 19, 33],
 		look: [0, 0, -1],
 		fov: 50,
 		orbit: 2.4,
-		params: { cloud: 0.34, regions: 0.36, tokens: 1, residual: 0.24, rays: 0.55, manifold: 0.62, shell: 0.52, subspaces: 0.65, attention: 1, slices: 1 }
+		params: { cloud: 0.34, regions: 0.36, tokens: 1, base: 0.1, residual: 0.28, rays: 0.55, manifold: 0.62, shell: 0.52, subspaces: 0.65, attention: 1, slices: 1 }
 	},
 	{
 		cam: [-23, 9, 35],
 		look: [0, -0.2, -2],
 		fov: 52,
 		orbit: 1.6,
-		params: { cloud: 0.34, regions: 0.36, tokens: 1, residual: 0.36, rays: 0.7, manifold: 0.56, shell: 0.46, subspaces: 0.8, attention: 0.12, ffn: 1, fibers: 0.12 }
+		params: { cloud: 0.34, regions: 0.36, tokens: 1, base: 0.08, residual: 0.38, rays: 0.7, manifold: 0.56, shell: 0.46, subspaces: 0.8, attention: 0.12, ffn: 1, fibers: 0.12 }
 	},
 	{
 		cam: [21, 1, 39],
 		look: [0, -1.4, -2],
 		fov: 48,
 		orbit: 2.2,
-		params: { cloud: 0.34, regions: 0.38, tokens: 1, residual: 0.66, rays: 0.4, manifold: 0.9, shell: 0.5, subspaces: 0.38, ffn: 0.2, fibers: 1, layers: 1 }
+		params: { cloud: 0.34, regions: 0.38, tokens: 1, base: 0.18, residual: 0.66, rays: 0.4, manifold: 0.9, shell: 0.5, subspaces: 0.38, ffn: 0.2, fibers: 1, layers: 1 }
 	},
 	{
 		cam: [16, 11, 44],
 		look: [4, -1, -4],
 		fov: 50,
 		orbit: 1.0,
-		params: { cloud: 0.44, regions: 0.55, tokens: 1, residual: 0.3, rays: 0.18, manifold: 0.76, shell: 0.78, subspaces: 0.45, attention: 0.08, fibers: 0.55, layers: 0.55, dirs: 1 }
+		params: { cloud: 0.44, regions: 0.55, tokens: 1, base: 0.12, residual: 0.3, rays: 0.18, manifold: 0.76, shell: 0.78, subspaces: 0.45, attention: 0.08, fibers: 0.55, layers: 0.55, dirs: 1, hyper: 1 }
 	},
 	{
 		cam: [0, 8, 44],
 		look: [5, -0.5, -2],
 		fov: 48,
 		orbit: 0.4,
-		params: { cloud: 0.54, regions: 0.55, tokens: 1, residual: 0.3, rays: 0.18, manifold: 0.7, shell: 0.56, subspaces: 0.34, fibers: 0.5, layers: 0.4, dirs: 0.45, pred: 1 }
+		params: { cloud: 0.54, regions: 0.55, tokens: 1, base: 0.1, residual: 0.3, rays: 0.18, manifold: 0.7, shell: 0.56, subspaces: 0.34, fibers: 0.5, layers: 0.4, dirs: 0.45, hyper: 0.66, pred: 1 }
 	},
 	{
 		cam: [0, 21, 64],
 		look: [0, -1.5, -5],
 		fov: 55,
 		orbit: 1.8,
-		params: { cloud: 0.95, regions: 0.85, tokens: 0.9, residual: 0.35, rays: 0.23, manifold: 0.95, shell: 0.95, subspaces: 0.28, attention: 0.12, ffn: 0.08, fibers: 0.65, layers: 0.55, dirs: 0.5, pred: 0.3 }
+		params: { cloud: 0.95, regions: 0.85, tokens: 0.9, base: 0.2, residual: 0.35, rays: 0.23, manifold: 0.95, shell: 0.95, subspaces: 0.28, attention: 0.12, ffn: 0.08, fibers: 0.65, layers: 0.55, dirs: 0.5, hyper: 0.88, pred: 0.3 }
 	}
 ];
 
@@ -1218,6 +1585,9 @@ let fov = fovGoal;
 let orbitGoal = STEPS[0].orbit;
 let orbit = orbitGoal;
 const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+const userOrbit = { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0 };
+let shockStart = -100;
+renderer.domElement.style.cursor = "grab";
 
 const dotsElement = document.getElementById("dots");
 const dotButtons = [];
@@ -1276,9 +1646,9 @@ function layerPosition(i) {
 }
 
 function layoutFor(i, index = stepIndex) {
-	if (index <= 1) return tokens[i].cluster.group.position;
-	if (index === 5) return FFN_POSITIONS[i];
-	if (index === 6) return layerPosition(i);
+	if (index <= 2) return tokens[i].cluster.group.position;
+	if (index === 6) return FFN_POSITIONS[i];
+	if (index === 7) return layerPosition(i);
 	return linePosition(i);
 }
 
@@ -1292,6 +1662,9 @@ function applyStep(index, snap) {
 	fovGoal = step.fov;
 	orbitGoal = step.orbit;
 	stepStartedAt = performance.now() * 0.001;
+	shockStart = performance.now() * 0.001;
+	userOrbit.targetYaw = 0;
+	userOrbit.targetPitch = 0;
 
 	if (snap) {
 		for (let i = 0; i < PARAM_KEYS.length; i += 1) {
@@ -1302,6 +1675,8 @@ function applyStep(index, snap) {
 		camLook.copy(lookGoal);
 		fov = fovGoal;
 		orbit = orbitGoal;
+		userOrbit.yaw = 0;
+		userOrbit.pitch = 0;
 		for (let i = 0; i < tokens.length; i += 1) {
 			tokens[i].pos.copy(layoutFor(i, stepIndex));
 			tokens[i].group.position.copy(tokens[i].pos);
@@ -1335,28 +1710,52 @@ window.addEventListener("keydown", (event) => {
 	}
 });
 
-let pointerStart = null;
+let dragging = false;
+let lastPointer = null;
+let hintHiddenByDrag = false;
 
 window.addEventListener("pointerdown", (event) => {
 	if (event.target.closest("#dots") || event.target.closest("#hint")) return;
-	pointerStart = { x: event.clientX, y: event.clientY };
-});
-
-window.addEventListener("pointerup", (event) => {
-	if (!pointerStart) return;
-	const dx = event.clientX - pointerStart.x;
-	const dy = event.clientY - pointerStart.y;
-	pointerStart = null;
-	if (Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+	dragging = true;
+	lastPointer = { x: event.clientX, y: event.clientY };
+	renderer.domElement.style.cursor = "grabbing";
+	if (!hintHiddenByDrag) {
+		hintHiddenByDrag = true;
 		hideHint();
-		navigate(dx < 0 ? 1 : -1);
 	}
 });
 
+window.addEventListener("pointerup", () => {
+	dragging = false;
+	lastPointer = null;
+	renderer.domElement.style.cursor = "grab";
+});
+
+window.addEventListener("pointercancel", () => {
+	dragging = false;
+	lastPointer = null;
+	renderer.domElement.style.cursor = "grab";
+});
+
 window.addEventListener("pointermove", (event) => {
+	if (dragging && lastPointer) {
+		const dx = event.clientX - lastPointer.x;
+		const dy = event.clientY - lastPointer.y;
+		userOrbit.targetYaw -= dx * 0.0052;
+		userOrbit.targetPitch = clamp(userOrbit.targetPitch - dy * 0.0038, -1.08, 1.08);
+		lastPointer.x = event.clientX;
+		lastPointer.y = event.clientY;
+		return;
+	}
 	if (event.pointerType === "touch") return;
 	mouse.tx = (event.clientX / window.innerWidth) * 2 - 1;
 	mouse.ty = -((event.clientY / window.innerHeight) * 2 - 1);
+});
+
+window.addEventListener("dblclick", (event) => {
+	if (event.target.closest("#dots") || event.target.closest("#hint")) return;
+	userOrbit.targetYaw = 0;
+	userOrbit.targetPitch = 0;
 });
 
 window.addEventListener("resize", () => {
@@ -1376,6 +1775,14 @@ const tmpSide = new V3();
 const tmpUp = new V3(0, 1, 0);
 const tmpRoot = new V3();
 const tmpC = new V3();
+const hypQuery = new V3();
+const hypSide = new V3();
+const hypUp = new V3();
+const hypRef = new V3();
+const hypA = new V3();
+const hypB = new V3();
+const hypC = new V3();
+const hypD = new V3();
 
 function attentionOffsets() {
 	const offsets = [];
@@ -1402,7 +1809,7 @@ function updateParams(dt) {
 }
 
 function cycleInfo(now) {
-	if (stepIndex === 8) {
+	if (stepIndex === 9) {
 		const phase = ((now - stepStartedAt) % 6.8 + 6.8) % 6.8;
 		const beams = smoothstep(0.15, 1.1, phase) * (1 - smoothstep(6.1, 6.8, phase));
 		const flare = smoothstep(0.5, 1.4, phase) * (1 - smoothstep(6.0, 6.7, phase));
@@ -1410,7 +1817,7 @@ function cycleInfo(now) {
 		const settle = smoothstep(3.3, 4.6, phase);
 		return { phase, beams, flare, orb, settle, visible: 1 - smoothstep(6.15, 6.8, phase) };
 	}
-	if (stepIndex === 9) {
+	if (stepIndex === 10) {
 		return { phase: 4.8, beams: 0.45, flare: 0.6, orb: 1, settle: 1, visible: 1 };
 	}
 	return { phase: 0, beams: 0, flare: 0, orb: 0, settle: 0, visible: 0 };
@@ -1426,7 +1833,7 @@ function updateClusters(now, dt, cycle) {
 			lit += current.tokens * 0.36 * (0.55 + 0.45 * Math.sin(now * 1.15 + cluster.phase * 1.8));
 		}
 		let flareTarget = 0;
-		if (cluster === predictionTarget && stepIndex >= 7) {
+		if (cluster === predictionTarget && stepIndex >= 8) {
 			flareTarget = current.dirs * 0.44 * (0.62 + 0.38 * Math.sin(now * 1.35));
 			flareTarget += current.pred * cycle.flare * 0.9;
 		}
@@ -1460,6 +1867,9 @@ function updateTokens(dt, now) {
 		token.haloOuter.material.opacity = aura * (0.12 + 0.02 * Math.sin(now * 0.8 + token.phase));
 		token.halo.scale.setScalar(4.4 * token.size * (1 + 0.035 * Math.sin(now * 1.5 + token.phase)));
 		token.haloOuter.scale.setScalar(13 * token.size * (1 + 0.025 * Math.sin(now * 0.7 + token.phase)));
+		const flareBoost = i === 5 ? current.pred * 0.25 : 0;
+		token.flare.material.opacity = current.tokens * (0.16 + 0.035 * Math.sin(now * 1.1 + token.phase)) + flareBoost;
+		token.flare.scale.set(17 * token.size * (1 + 0.03 * Math.sin(now * 1.4 + token.phase)), 2.1 * token.size, 1);
 
 		token.rayMaterial.opacity = current.rays * 0.52;
 		token.rays.visible = current.rays > 0.002;
@@ -1527,6 +1937,29 @@ function updateRoots(now) {
 	}
 }
 
+function updateResidualSparks(now) {
+	const base = current.residual * 0.8 + current.fibers * 0.8;
+	residualSparks.visible = base > 0.002;
+	if (!residualSparks.visible) return;
+	const positions = residualSparkGeometry.getAttribute("position");
+	const alphas = residualSparkGeometry.getAttribute("aAlpha");
+	for (let i = 0; i < residualSparkCount; i += 1) {
+		const token = tokens[Math.floor(i / 2)];
+		const sub = i % 2;
+		tmpRoot.copy(token.cluster.group.position);
+		const t = (now * (0.16 + sub * 0.022) + token.phase * 0.09 + sub * 0.52) % 1;
+		tmpPoint.copy(tmpRoot).lerp(token.pos, t);
+		const bow = Math.sin(Math.PI * t) * (0.65 + 0.25 * Math.sin(now * 0.6 + token.phase));
+		tmpPoint.y += bow;
+		tmpPoint.x += Math.sin(now * 0.52 + token.phase + t * 2.4) * 0.12 * Math.sin(Math.PI * t);
+		tmpPoint.z += Math.cos(now * 0.47 + token.phase * 1.3 + t * 2.2) * 0.1 * Math.sin(Math.PI * t);
+		positions.setXYZ(i, tmpPoint.x, tmpPoint.y, tmpPoint.z);
+		alphas.setX(i, base * Math.pow(Math.sin(Math.PI * t), 1.25) * (0.65 + 0.35 * Math.sin(now * 2.1 + sub * 3.1)));
+	}
+	positions.needsUpdate = true;
+	alphas.needsUpdate = true;
+}
+
 function updateSheet(now) {
 	const positions = sheetGeometry.getAttribute("position");
 	for (let i = 0; i < positions.count; i += 1) {
@@ -1570,8 +2003,16 @@ function fiberPoint(token, strand, t, now, out) {
 	return out;
 }
 
+function layerStage(now) {
+	if (stepIndex !== 7) return -1;
+	const progress = clamp((now - stepStartedAt) / 6.2, 0, 1);
+	if (progress >= 0.97) return -1;
+	return progress * 3;
+}
+
 function updateFibers(now) {
 	const opacity = current.fibers * 0.34;
+	const stage = layerStage(now);
 	for (let i = 0; i < tokens.length; i += 1) {
 		const token = tokens[i];
 		token.fiberMaterial.opacity = opacity;
@@ -1595,8 +2036,9 @@ function updateFibers(now) {
 			const strand = token.fiberStrands[0];
 			fiberPoint(token, strand, echo.fraction, now, tmpA);
 			echo.sprite.position.copy(tmpA);
-			echo.sprite.material.opacity = current.fibers * (0.22 - k * 0.045);
-			echo.sprite.scale.setScalar((2.5 - k * 0.45) * token.size * (1 + 0.06 * Math.sin(now * 0.9 + token.phase + k)));
+			const highlight = stage < 0 ? 0.32 : Math.exp(-Math.pow((stage - (k + 0.5)) * 1.75, 2));
+			echo.sprite.material.opacity = current.fibers * (0.08 + highlight * 0.56);
+			echo.sprite.scale.setScalar((2.5 - k * 0.45) * token.size * (1 + 0.06 * Math.sin(now * 0.9 + token.phase + k) + highlight * 0.18));
 			echo.sprite.visible = current.fibers > 0.002;
 		}
 	}
@@ -1635,6 +2077,32 @@ function updateAttention(now) {
 		const shimmer = 0.62 + 0.38 * Math.sin(now * 1.75 + arc.phase);
 		arc.material.opacity = current.attention * (0.055 + 0.72 * Math.pow(arc.weight, 1.35)) * shimmer * sweep;
 		arc.material.visible = current.attention > 0.002;
+	}
+
+	for (let i = 0; i < queryRays.length; i += 1) {
+		const gaze = queryRays[i];
+		const token = tokens[i];
+		const sum = tmpB.set(0, 0, 0);
+		let weightSum = 0;
+		for (let j = 0; j < TOKEN_COUNT; j += 1) {
+			if (i === j) continue;
+			const weight = ATTENTION_W[i][j];
+			sum.addScaledVector(tmpA.copy(tokens[j].pos).sub(token.pos), weight);
+			weightSum += weight;
+		}
+		if (weightSum > 0) sum.multiplyScalar(1 / weightSum);
+		if (sum.lengthSq() < 0.0001) sum.set(1, 0, 0);
+		sum.normalize();
+		const end = tmpC.copy(token.pos).addScaledVector(sum, 3.3);
+		const positions = gaze.geometry.getAttribute("position");
+		positions.setXYZ(0, token.pos.x, token.pos.y, token.pos.z);
+		positions.setXYZ(1, end.x, end.y, end.z);
+		positions.needsUpdate = true;
+		gaze.material.opacity = current.attention * (0.2 + 0.24 * Math.sin(now * 1.4 + gaze.phase));
+		gaze.tip.position.copy(end);
+		gaze.tip.material.opacity = current.attention * (0.3 + 0.18 * Math.sin(now * 1.7 + gaze.phase));
+		gaze.line.visible = current.attention > 0.002;
+		gaze.tip.visible = gaze.line.visible;
 	}
 
 	const sparklePositionsAttr = sparkleGeometry.getAttribute("position");
@@ -1680,8 +2148,8 @@ function updateAttention(now) {
 		sub.group.rotation.x = sub.baseRot[0] + Math.sin(now * 0.12 + sub.phase) * 0.16;
 		sub.group.rotation.y = sub.baseRot[1] + now * sub.speed;
 		sub.group.rotation.z = sub.baseRot[2] + Math.cos(now * 0.1 + sub.phase) * 0.12;
-		sub.material.opacity = current.subspaces * 0.05;
-		sub.rimMaterial.opacity = current.subspaces * 0.2;
+		sub.material.uniforms.uOpacity.value = current.subspaces;
+		sub.rimMaterial.opacity = current.subspaces * 0.22;
 	}
 }
 
@@ -1717,11 +2185,12 @@ function updateFFN(now, dt) {
 }
 
 function updateDirs(now, cycle) {
-	dirGroup.visible = current.dirs > 0.002;
+	dirGroup.visible = current.dirs > 0.002 || current.hyper > 0.002;
 	if (!dirGroup.visible) return;
 	originCore.material.uniforms.uOpacity.value = current.dirs * 0.85;
 	originHalo.material.opacity = current.dirs * (0.3 + 0.1 * Math.sin(now * 1.4));
 	originHalo.scale.setScalar(4.2 * (1 + 0.06 * Math.sin(now * 1.1)));
+	originFlare.material.opacity = current.dirs * (0.15 + 0.04 * Math.sin(now * 1.2));
 
 	for (let i = 0; i < tokens.length; i += 1) {
 		const token = tokens[i];
@@ -1797,11 +2266,128 @@ function updateDirs(now, cycle) {
 	dirArcMaterial.opacity *= 0.85 + 0.15 * Math.sin(now * 1.6);
 }
 
+function updateHypersphere(now) {
+	const amount = current.hyper;
+	const visible = amount > 0.002;
+	hyperSphere.visible = visible;
+	angleDots.visible = visible;
+	for (let i = 0; i < hyperRings.length; i += 1) hyperRings[i].visible = visible;
+	for (let i = 0; i < angleRings.length; i += 1) angleRings[i].line.visible = visible;
+	for (let i = 0; i < hyperProjections.length; i += 1) hyperProjections[i].visible = visible;
+	for (let i = 0; i < pathArcs.length; i += 1) pathArcs[i].line.visible = visible;
+	if (!visible) return;
+
+	hyperMaterial.uniforms.uOpacity.value = amount;
+	hyperMaterial.uniforms.uTime.value = now;
+	hyperRingMaterial.opacity = amount * 0.055;
+	angleRingMaterial.opacity = amount * (0.2 + 0.03 * Math.sin(now * 0.8));
+
+	hypQuery.copy(tokens[5].pos).sub(dirOrigin);
+	if (hypQuery.lengthSq() < 0.0001) hypQuery.set(1, 0, 0);
+	hypQuery.normalize();
+	hypRef.set(0, 1, 0);
+	if (Math.abs(hypQuery.y) > 0.92) hypRef.set(1, 0, 0);
+	hypSide.crossVectors(hypQuery, hypRef).normalize();
+	hypUp.crossVectors(hypSide, hypQuery).normalize();
+
+	for (let r = 0; r < angleRings.length; r += 1) {
+		const ring = angleRings[r];
+		const positions = ring.geometry.getAttribute("position");
+		const cosAngle = Math.cos(ring.angle);
+		const sinAngle = Math.sin(ring.angle);
+		for (let k = 0; k < ANGLE_RING_POINTS; k += 1) {
+			const phi = (k / ANGLE_RING_POINTS) * TAU;
+			hypA.copy(hypQuery).multiplyScalar(cosAngle);
+			hypA.addScaledVector(hypSide, Math.cos(phi) * sinAngle);
+			hypA.addScaledVector(hypUp, Math.sin(phi) * sinAngle);
+			hypA.normalize();
+			positions.setXYZ(
+				k,
+				dirOrigin.x + hypA.x * HYPER_RADIUS,
+				dirOrigin.y + hypA.y * HYPER_RADIUS,
+				dirOrigin.z + hypA.z * HYPER_RADIUS
+			);
+		}
+		positions.needsUpdate = true;
+	}
+
+	const dotPositions = angleDotGeometry.getAttribute("position");
+	const dotAlphas = angleDotGeometry.getAttribute("aAlpha");
+	for (let i = 0; i < angleDotCount; i += 1) {
+		const item = angleItems[i];
+		hypA.copy(item.cluster.group.position).sub(dirOrigin);
+		if (hypA.lengthSq() < 0.0001) hypA.set(0, 1, 0);
+		hypA.normalize();
+		const alignment = Math.max(0, hypA.dot(hypQuery));
+		dotPositions.setXYZ(
+			i,
+			dirOrigin.x + hypA.x * HYPER_RADIUS,
+			dirOrigin.y + hypA.y * HYPER_RADIUS,
+			dirOrigin.z + hypA.z * HYPER_RADIUS
+		);
+		let alpha = amount * (0.015 + 0.92 * Math.pow(alignment, 6)) * (0.7 + 0.3 * Math.sin(now * 1.25 + i));
+		if (item.cluster === predictionTarget) alpha = Math.max(alpha, amount * 0.88);
+		dotAlphas.setX(i, alpha);
+	}
+	dotPositions.needsUpdate = true;
+	dotAlphas.needsUpdate = true;
+
+	for (let i = 0; i < tokens.length; i += 1) {
+		const token = tokens[i];
+		hypA.copy(token.pos).sub(dirOrigin);
+		if (hypA.lengthSq() < 0.0001) hypA.set(0, 1, 0);
+		hypA.normalize();
+		const projection = hyperProjections[i];
+		projection.position.set(
+			dirOrigin.x + hypA.x * HYPER_RADIUS,
+			dirOrigin.y + hypA.y * HYPER_RADIUS,
+			dirOrigin.z + hypA.z * HYPER_RADIUS
+		);
+		projection.material.opacity = amount * (0.38 + 0.1 * Math.sin(now * 1.3 + token.phase));
+		projection.scale.setScalar(2.9 * token.size * (1 + 0.06 * Math.sin(now * 1.1 + token.phase)));
+	}
+
+	for (let i = 0; i < tokens.length; i += 1) {
+		const token = tokens[i];
+		const arc = pathArcs[i];
+		const positions = arc.geometry.getAttribute("position");
+		for (let a = 0; a < 4; a += 1) {
+			fiberPoint(token, token.fiberStrands[0], LAYER_FRACTIONS[a], now, hypA);
+			fiberPoint(token, token.fiberStrands[0], LAYER_FRACTIONS[a + 1], now, hypB);
+			hypC.copy(hypA).sub(dirOrigin).normalize();
+			hypD.copy(hypB).sub(dirOrigin).normalize();
+			for (let k = 0; k < PATH_ARC_SEGMENTS; k += 1) {
+				const t1 = k / PATH_ARC_SEGMENTS;
+				const t2 = (k + 1) / PATH_ARC_SEGMENTS;
+				slerpDirection(hypC, hypD, t1, hypA);
+				slerpDirection(hypC, hypD, t2, hypB);
+				const index = (a * PATH_ARC_SEGMENTS + k) * 2;
+				positions.setXYZ(
+					index,
+					dirOrigin.x + hypA.x * HYPER_RADIUS,
+					dirOrigin.y + hypA.y * HYPER_RADIUS,
+					dirOrigin.z + hypA.z * HYPER_RADIUS
+				);
+				positions.setXYZ(
+					index + 1,
+					dirOrigin.x + hypB.x * HYPER_RADIUS,
+					dirOrigin.y + hypB.y * HYPER_RADIUS,
+					dirOrigin.z + hypB.z * HYPER_RADIUS
+				);
+			}
+		}
+		positions.needsUpdate = true;
+		arc.material.opacity = amount * (i === 5 ? 0.38 : 0.16);
+	}
+}
+
 function updateLayerRings(now) {
 	layerRingGroup.visible = current.layers > 0.002;
+	const stage = layerStage(now);
 	for (let i = 0; i < layerRings.length; i += 1) {
 		const ring = layerRings[i];
-		ring.material.opacity = current.layers * (0.08 + 0.025 * Math.sin(now * 0.7 + ring.phase));
+		const highlight = stage < 0 ? 0.25 : Math.exp(-Math.pow((stage - (i + 0.5)) * 1.9, 2));
+		ring.material.opacity = current.layers * (0.045 + 0.2 * highlight + 0.02 * Math.sin(now * 0.7 + ring.phase));
 		ring.ring.rotation.z = Math.sin(now * 0.13 + ring.phase) * 0.08;
 		ring.ring.rotation.y = now * 0.02 + i * 0.4;
 	}
@@ -1837,11 +2423,11 @@ function updatePrediction(now, cycle) {
 
 	let visible = false;
 	let opacity = 0;
-	if (stepIndex === 9) {
+	if (stepIndex === 10) {
 		visible = true;
 		opacity = current.pred * 1.25;
 		nextGroup.position.copy(NEXT_SLOT);
-	} else if (stepIndex === 8) {
+	} else if (stepIndex === 9) {
 		visible = cycle.orb > 0.001;
 		opacity = current.pred * cycle.orb * cycle.visible;
 		const target = predictionTarget ? predictionTarget.group.position : NEXT_SLOT;
@@ -1860,18 +2446,34 @@ function updatePrediction(now, cycle) {
 	nextCore.material.uniforms.uOpacity.value = opacity;
 	nextHalo.material.opacity = opacity * 0.75;
 	nextHaloOuter.material.opacity = opacity * 0.18;
+	nextFlare.material.opacity = opacity * 0.2;
 	nextHalo.scale.setScalar(5.2 * (1 + 0.06 * Math.sin(now * 1.3)));
 	nextHaloOuter.scale.setScalar(15 * (1 + 0.04 * Math.sin(now * 0.8)));
+	nextFlare.scale.set(19 * (1 + 0.04 * Math.sin(now * 1.1)), 2.2, 1);
 }
 
 function updateBackground(now) {
+	nebulaMaterial.uniforms.uTime.value = now;
 	dust.material.uniforms.uTime.value = now;
 	dust.material.uniforms.uOpacity.value = 0.16 + current.cloud * 0.42;
 	dust.rotation.y = now * 0.004;
 	shellMaterial.opacity = current.shell * 0.055;
 	shellGroup.rotation.y = now * 0.006;
 	shellGroup.rotation.x = Math.sin(now * 0.04) * 0.06;
+	const shock = (now - shockStart) / 1.65;
+	if (shock >= 0 && shock < 1) {
+		shockRing.visible = true;
+		shockRing.position.y = sheetBaseY(0, 0, now) + 0.24;
+		shockRing.scale.setScalar(3.5 + shock * 34);
+		shockMaterial.opacity = Math.pow(1 - shock, 2.2) * 0.23;
+	} else {
+		shockRing.visible = false;
+	}
 }
+
+const camOffset = new V3();
+const camSpherical = new THREE.Spherical();
+const camFinal = new V3();
 
 function updateCamera(now, dt) {
 	camPos.x = damp(camPos.x, camGoal.x, 1.35, dt);
@@ -1884,15 +2486,23 @@ function updateCamera(now, dt) {
 	orbit = damp(orbit, orbitGoal, 1.4, dt);
 	mouse.x = damp(mouse.x, mouse.tx, 2.2, dt);
 	mouse.y = damp(mouse.y, mouse.ty, 2.2, dt);
+	userOrbit.yaw = damp(userOrbit.yaw, userOrbit.targetYaw, 2.6, dt);
+	userOrbit.pitch = damp(userOrbit.pitch, userOrbit.targetPitch, 2.6, dt);
 	if (Math.abs(camera.fov - fov) > 0.001) {
 		camera.fov = fov;
 		camera.updateProjectionMatrix();
 	}
-	const orbitAngle = now * 0.055 + stepIndex * 0.4;
+	camOffset.copy(camPos).sub(camLook);
+	camSpherical.setFromVector3(camOffset);
+	const interaction = clamp((Math.abs(userOrbit.yaw) + Math.abs(userOrbit.pitch)) / 1.15, 0, 1);
+	const autoOrbit = Math.sin(now * 0.055 + stepIndex * 0.62) * orbit * 0.024 * (1 - interaction * 0.88);
+	camSpherical.theta += autoOrbit + userOrbit.yaw;
+	camSpherical.phi = clamp(camSpherical.phi + userOrbit.pitch, 0.18, Math.PI - 0.18);
+	camFinal.setFromSpherical(camSpherical).add(camLook);
 	camera.position.set(
-		camPos.x + Math.cos(orbitAngle) * orbit * 0.42 + mouse.x * 1.15 + Math.sin(now * 0.21) * 0.28,
-		camPos.y + mouse.y * 0.7 + Math.cos(now * 0.17) * 0.2,
-		camPos.z + Math.sin(orbitAngle) * orbit * 0.42
+		camFinal.x + mouse.x * 0.32 * (1 - interaction) + Math.sin(now * 0.21) * 0.22,
+		camFinal.y + mouse.y * 0.2 * (1 - interaction) + Math.cos(now * 0.17) * 0.16,
+		camFinal.z
 	);
 	camera.lookAt(camLook);
 }
@@ -1911,11 +2521,13 @@ function frame(millis) {
 	updateClusters(now, dt, cycle);
 	updateTokens(dt, now);
 	updateRoots(now);
+	updateResidualSparks(now);
 	updateSheet(now);
 	updateFibers(now);
 	updateAttention(now);
 	updateFFN(now, dt);
 	updateDirs(now, cycle);
+	updateHypersphere(now);
 	updatePrediction(now, cycle);
 	updateLayerRings(now);
 	updateCamera(now, dt);
