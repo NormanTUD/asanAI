@@ -1902,7 +1902,723 @@ function buildConvergence() {
 }
 buildConvergence();
 
-/*__APP2__*/
+const labels = [];
+function addLabel(text, pos, region, opts = {}) {
+  const el = document.createElement('div');
+  el.className = 'node-label' + (opts.cls ? ' ' + opts.cls : '');
+  el.textContent = text;
+  labelLayer.appendChild(el);
+  labels.push({
+    el,
+    pos: pos.clone(),
+    region,
+    base: opts.base === undefined ? 0.62 : opts.base,
+    minWeight: opts.minWeight === undefined ? 0.22 : opts.minWeight,
+    scenes: opts.scenes || null
+  });
+}
+
+TENETS.forEach((t, i) => {
+  addLabel(t.name, t.pos.clone().add(new V3(0, 33.5, 0)), 'tenets', { cls: 'bright', base: 0.78, minWeight: 0.3 });
+});
+
+CLUSTERS.forEach(cl => {
+  addLabel(cl.name, cl.center.clone().add(new V3(0, 14.5, 0)), 'concepts', { cls: 'bright', base: 0.6, scenes: [11], minWeight: 0.3 });
+  const names = cl.names.slice(0, 3);
+  names.forEach((name, i) => {
+    const p = K.concepts[cl.key + '|' + name];
+    if (p) addLabel(name, p.clone().add(new V3(0, 1.4, 0)), 'concepts', { cls: 'tiny', base: 0.52, scenes: [11], minWeight: 0.34 });
+  });
+});
+
+HUBS.forEach(h => {
+  addLabel(h.name, h.center.clone().add(new V3(0, 6.2, 0)), 'topics', { cls: 'bright', base: 0.68, scenes: [12], minWeight: 0.3 });
+  h.names.slice(0, 2).forEach(name => {
+    const p = K.concepts['topic|' + name];
+    if (p) addLabel(name, p.clone().add(new V3(0, 1.2, 0)), 'topics', { cls: 'tiny', base: 0.5, scenes: [12], minWeight: 0.34 });
+  });
+});
+
+['Taxonomy of voids', 'Machine question', 'Post-decoherence', 'Attention as bridge', 'Living with the map', 'What consciousness tells physics'].forEach(name => {
+  const p = K.apex[name];
+  if (p) addLabel(name, p.clone().add(new V3(0, 3, 0)), 'apex', { cls: name === 'Taxonomy of voids' ? 'gold bright' : 'gold', base: 0.66, scenes: [13], minWeight: 0.3 });
+});
+
+ARGS.forEach(a => {
+  addLabel(a.name, a.pos.clone().add(new V3(0, 3.3, 0)), 'arguments', { base: 0.62, scenes: [15], minWeight: 0.32 });
+});
+RIVALS.forEach(r => {
+  addLabel(r.name, r.pos.clone().add(new V3(0, 3.1, 0)), 'arguments', { base: 0.5, scenes: [15], minWeight: 0.32 });
+});
+
+QUESTIONS.forEach(q => {
+  addLabel(q.name, q.pos.clone().add(new V3(0, 3.2, 0)), 'questions', { cls: 'bright', base: 0.6, scenes: [16], minWeight: 0.3 });
+});
+
+Object.keys(K.voidHero).forEach(name => {
+  addLabel(name, K.voidHero[name].clone().add(new V3(0, 3.4, 0)), 'voids', { cls: 'void', base: 0.5, scenes: [16], minWeight: 0.3 });
+});
+
+const voidFamilyLabels = [
+  ['Self-knowledge', new V3(-30, -36, 20)],
+  ['Phenomenal', new V3(20, -34, -10)],
+  ['Access', new V3(0, -40, 50)],
+  ['Intersocial', new V3(-46, -38, -16)],
+  ['Formal', new V3(42, -44, -30)]
+];
+voidFamilyLabels.forEach(([name, p]) => addLabel(name, p, 'voids', { cls: 'void tiny', base: 0.45, scenes: [16], minWeight: 0.35 }));
+
+const methodLabels = [
+  ['Human', new V3(15, 15, 0)],
+  ['AI', new V3(-15, 15, 0)],
+  ['Review', new V3(0, -21, 0)],
+  ['History', new V3(0, 28, -2)]
+];
+methodLabels.forEach(([name, p]) => addLabel(name, methodGroup.position.clone().add(p), 'method', { base: 0.55, scenes: [1], minWeight: 0.3 }));
+
+const flowLabelPositions = {
+  research: 'Research',
+  concepts: 'Concepts',
+  topics: 'Topics',
+  apex: 'Apex',
+  positions: 'Positions',
+  tenets: 'Tenets',
+  voids: 'Voids'
+};
+Object.keys(flowLabelPositions).forEach(key => {
+  const p = flowCards[key];
+  if (p) addLabel(flowLabelPositions[key], p.clone(), 'flow', { cls: 'bright', base: 0.72, scenes: [3], minWeight: 0.3 });
+});
+
+const radarLabels = [
+  ['Credence', 0], ['Evidence', 1], ['Centrality', 2], ['Maturity', 3], ['Discriminability', 4], ['Internal', 5]
+];
+radarLabels.forEach(([name, i]) => {
+  const a = -Math.PI / 2 + i * TAU / 6;
+  const p = radarGroup.position.clone().add(new V3(Math.cos(a) * 15.2, Math.sin(a) * 15.2, 0));
+  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.46, scenes: [14], minWeight: 0.35 });
+});
+const positionDomains = ['Quantum', 'Agency', 'Voids', 'Value', 'Moral', 'Subjects', 'Scope', 'AI'];
+positionDomains.forEach((name, i) => {
+  const a = (i / 8) * TAU + 0.2;
+  const p = new V3(Math.cos(a) * 58, 108, Math.sin(a) * 58);
+  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.44, scenes: [14], minWeight: 0.35 });
+});
+
+const taxonomyLabels = [
+  ['Unexplored', -18, 23.5], ['Unexplorable', 0, 23.5], ['Occluded', 18, 23.5],
+  ['Architectural', -29, 15], ['Adaptive', -29, 5], ['Naturally occluded', -29, -5], ['Deliberately occluded', -29, -15],
+  ['Self', -34, -26], ['Phenomenal', -17, -26], ['Access', 0, -26], ['Social', 17, -26], ['Formal', 34, -26]
+];
+taxonomyLabels.forEach(([name, x, y]) => {
+  const p = taxonomyGroup.position.clone().add(new V3(x, y, 0.5));
+  addLabel(name, p, 'taxonomy', { cls: 'tiny', base: 0.46, scenes: [17], minWeight: 0.35 });
+});
+
+const convergenceLabels = [
+  ['Phenomenal core', 'Phenomenal core'],
+  ['Self-knowledge', 'Self-knowledge'],
+  ['Intersubjectivity', 'Intersubjectivity'],
+  ['Architecture', 'Architecture'],
+  ['Reflexivity', 'Reflexivity'],
+  ['Interface', null]
+];
+convergenceLabels.forEach(([name, key]) => {
+  let p;
+  if (key) {
+    const f = convergenceGroup.userData.families.find(x => x.name === key);
+    p = f ? f.pos : convergenceGroup.position.clone();
+  } else {
+    p = convergenceGroup.position.clone().add(new V3(0, 20, 0));
+  }
+  addLabel(name, p, 'convergence', { cls: name === 'Interface' ? 'bright' : 'tiny', base: name === 'Interface' ? 0.7 : 0.48, scenes: [18], minWeight: 0.3 });
+});
+
+const architectureLabels = [
+  ['Research', new V3(48, 28, 0)],
+  ['Concepts', new V3(48, 47, 0)],
+  ['Topics', new V3(50, 69, 0)],
+  ['Apex', new V3(35, 91, 0)],
+  ['Positions', new V3(48, 109, 0)],
+  ['Tenets', new V3(72, 9, 0)],
+  ['Arguments', new V3(86, 37, 0)],
+  ['Voids', new V3(64, -39, 0)],
+  ['Questions', new V3(-82, 56, 0)]
+];
+architectureLabels.forEach(([name, p]) => addLabel(name, p, 'tenets', { cls: 'bright', base: 0.7, scenes: [2], minWeight: 0.3 }));
+
+const BASE_WEIGHTS = {
+  tenets: 0.14, research: 0.1, concepts: 0.1, topics: 0.1, apex: 0.1, positions: 0.1,
+  arguments: 0.06, questions: 0.06, voids: 0.1, method: 0, flow: 0, taxonomy: 0, convergence: 0, growth: 0
+};
+function W(overrides) {
+  return Object.assign({}, BASE_WEIGHTS, overrides);
+}
+
+const SCENES = [
+  { label: 'A map that cannot finish.', cam: new V3(0, 62, 315), look: new V3(0, 34, 0), fov: 45, drift: 1.2, weights: W({ tenets: 0.55, research: 0.4, concepts: 0.4, topics: 0.4, apex: 0.4, positions: 0.4, arguments: 0.3, questions: 0.3, voids: 0.44 }) },
+  { label: 'Human-directed, AI-assisted, reviewed.', cam: new V3(0, 22, 112), look: new V3(0, 16, 36), fov: 50, drift: 0.7, weights: W({ method: 1, tenets: 0.55, research: 0.2, concepts: 0.18, topics: 0.14, apex: 0.12, positions: 0.12, arguments: 0.08, questions: 0.08, voids: 0.16 }) },
+  { label: 'Eight kinds of knowledge.', cam: new V3(0, 60, 205), look: new V3(0, 42, 0), fov: 55, drift: 0.8, weights: W({ tenets: 0.9, research: 0.8, concepts: 0.8, topics: 0.8, apex: 0.8, positions: 0.8, arguments: 0.75, questions: 0.75, voids: 0.8 }) },
+  { label: 'Everything flows into positions.', cam: new V3(0, 25, 118), look: new V3(0, 22, 50), fov: 50, drift: 0.45, weights: W({ flow: 1, tenets: 0.4, research: 0.18, concepts: 0.35, topics: 0.35, apex: 0.35, positions: 0.35, voids: 0.16 }) },
+  { label: 'Five chosen starting points.', cam: new V3(0, 6, 96), look: new V3(0, 13, 0), fov: 56, drift: 0.55, focus: 'all', weights: W({ tenets: 1, research: 0.16, concepts: 0.18, topics: 0.14, apex: 0.14, positions: 0.12, arguments: 0.12, questions: 0.12, voids: 0.16 }) },
+  { label: 'Mind is not reducible.', cam: new V3(-35, 14, 96), look: new V3(-59, 17, 16), fov: 52, drift: 0.35, focus: 0, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { label: 'The smallest possible influence.', cam: new V3(-11, 14, 84), look: new V3(-31, 17, 4.5), fov: 52, drift: 0.35, focus: 1, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { label: 'Experience acts back on matter.', cam: new V3(0, 14, 88), look: new V3(0, 17, 0), fov: 52, drift: 0.35, focus: 2, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { label: 'One world becomes actual.', cam: new V3(51, 14, 84), look: new V3(31, 17, 4.5), fov: 52, drift: 0.35, focus: 3, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { label: 'Simplicity cannot decide here.', cam: new V3(83, 14, 96), look: new V3(59, 17, 16), fov: 52, drift: 0.35, focus: 4, weights: W({ tenets: 1, research: 0.12, concepts: 0.16, topics: 0.1, apex: 0.1, positions: 0.08, arguments: 0.08, questions: 0.08, voids: 0.14 }) },
+  { label: 'Raw notes, openly inspected.', cam: new V3(0, 20, 118), look: new V3(0, 26, 0), fov: 60, drift: 0.8, weights: W({ research: 1, concepts: 0.35, tenets: 0.28, topics: 0.14, apex: 0.08, positions: 0.06, arguments: 0.05, questions: 0.05, voids: 0.14 }) },
+  { label: 'The atoms of meaning.', cam: new V3(0, 50, 108), look: new V3(0, 47, 0), fov: 55, drift: 0.7, weights: W({ concepts: 1, topics: 0.3, research: 0.2, tenets: 0.2, apex: 0.1, positions: 0.06, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
+  { label: 'Five threads through everything.', cam: new V3(0, 74, 112), look: new V3(0, 68, 0), fov: 55, drift: 0.7, weights: W({ topics: 1, concepts: 0.35, apex: 0.4, tenets: 0.2, research: 0.1, positions: 0.08, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
+  { label: 'Threads woven into wholes.', cam: new V3(0, 94, 88), look: new V3(0, 89, 0), fov: 52, drift: 0.6, weights: W({ apex: 1, topics: 0.45, positions: 0.35, tenets: 0.2, concepts: 0.16, research: 0.06, arguments: 0.05, questions: 0.05, voids: 0.1 }) },
+  { label: 'What the Map actually holds.', cam: new V3(0, 120, 82), look: new V3(0, 109, 0), fov: 52, drift: 0.55, weights: W({ positions: 1, apex: 0.35, tenets: 0.25, topics: 0.1, concepts: 0.08, research: 0.04, arguments: 0.04, questions: 0.04, voids: 0.08 }) },
+  { label: 'Openly partisan cases.', cam: new V3(105, 40, 76), look: new V3(75, 37, 0), fov: 55, drift: 0.6, weights: W({ arguments: 1, concepts: 0.32, tenets: 0.25, topics: 0.08, apex: 0.06, positions: 0.04, research: 0.04, questions: 0.04, voids: 0.08 }) },
+  { label: 'Questions end; voids may not.', cam: new V3(-98, 28, 130), look: new V3(-40, 30, 0), fov: 66, drift: 0.6, weights: W({ questions: 1, voids: 0.8, topics: 0.2, concepts: 0.16, tenets: 0.14, research: 0.04, apex: 0.04, positions: 0.04, arguments: 0.04 }) },
+  { label: 'Why thought goes dark.', cam: new V3(0, -8, 122), look: new V3(0, -28, 54), fov: 50, drift: 0.4, weights: W({ taxonomy: 1, voids: 0.42, questions: 0.2, tenets: 0.14, concepts: 0.08, topics: 0.06, research: 0.03, apex: 0.03, positions: 0.03, arguments: 0.03 }) },
+  { label: 'Every limit points inward.', cam: new V3(0, -24, 128), look: new V3(0, -46, 0), fov: 55, drift: 0.5, weights: W({ convergence: 1, voids: 0.18, tenets: 0.25, concepts: 0.12, topics: 0.08, research: 0.03, apex: 0.04, positions: 0.03, arguments: 0.03, questions: 0.05 }) },
+  { label: 'The map is never done.', cam: new V3(0, 80, 380), look: new V3(0, 28, 0), fov: 48, drift: 1.0, slow: new V3(0, 0.25, 2.1), weights: W({ tenets: 0.75, research: 0.62, concepts: 0.7, topics: 0.7, apex: 0.7, positions: 0.7, arguments: 0.62, questions: 0.62, voids: 0.62, growth: 1 }) }
+];
+
+let sceneIndex = -1;
+let targetIndex = 0;
+let transitioning = false;
+let transStart = 0;
+let transDur = 2000;
+let fromPos = new V3();
+let fromLook = new V3();
+let fromFov = 48;
+let toPos = new V3();
+let toLook = new V3();
+let toFov = 48;
+let camPos = new V3(0, 62, 450);
+let camLook = new V3(0, 34, 0);
+let camFov = 48;
+let time = 0;
+let last = performance.now();
+let bloomPulse = 0;
+let bridgeBoost = 0;
+let bridgeRegions = [];
+let labelToggle = true;
+let captionFlip = false;
+const mouse = { x: 0, y: 0 };
+const mouseSmooth = { x: 0, y: 0 };
+const tmpV = new V3();
+const tmpV2 = new V3();
+
+function primaryRegion(scene) {
+  let best = 'concepts';
+  let bestV = -1;
+  Object.keys(scene.weights).forEach(k => {
+    if (scene.weights[k] > bestV) { bestV = scene.weights[k]; best = k; }
+  });
+  return best;
+}
+
+function setCaption(text, index) {
+  const next = captionFlip ? capA : capB;
+  const prev = captionFlip ? capB : capA;
+  next.textContent = text;
+  next.classList.remove('out', 'in');
+  void next.offsetWidth;
+  next.classList.add('in');
+  prev.classList.remove('in');
+  prev.classList.add('out');
+  captionFlip = !captionFlip;
+  capIndex.textContent = String(index + 1).padStart(2, '0');
+  counterEl.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(SCENES.length).padStart(2, '0');
+  const ticks = railEl.children;
+  for (let i = 0; i < ticks.length; i++) ticks[i].classList.toggle('active', i === index);
+}
+
+function goTo(index, durationOverride) {
+  index = clamp(index, 0, SCENES.length - 1);
+  if (index === targetIndex && sceneIndex === index && !durationOverride) return;
+  const scene = SCENES[index];
+  const oldPrimary = SCENES[targetIndex] ? primaryRegion(SCENES[targetIndex]) : 'tenets';
+  fromPos.copy(camPos);
+  fromLook.copy(camLook);
+  fromFov = camFov;
+  toPos.copy(scene.cam);
+  toLook.copy(scene.look);
+  toFov = scene.fov;
+  const dist = fromPos.distanceTo(toPos);
+  transDur = durationOverride || clamp(1500 + dist * 4.4, 1500, 2800);
+  transStart = performance.now();
+  transitioning = true;
+  targetIndex = index;
+  bridgeRegions = [oldPrimary, primaryRegion(scene)];
+  bridgeBoost = 1;
+  bloomPulse = 1;
+  const focus = scene.focus;
+  for (let i = 0; i < 5; i++) {
+    iconTargets[i] = focus === 'all' ? 1 : (focus === i ? 1 : 0);
+    fadeGroups['icon' + i].target = iconTargets[i];
+  }
+  REGION_LIST.forEach(r => {
+    regionTargets[r] = scene.weights[r] === undefined ? BASE_WEIGHTS[r] : scene.weights[r];
+  });
+  setCaption(scene.label, index);
+  mouse.x = 0;
+  mouse.y = 0;
+}
+
+function updateTransition(now) {
+  if (!transitioning) return;
+  const t = clamp((now - transStart) / transDur, 0, 1);
+  const e = ease(t);
+  camPos.lerpVectors(fromPos, toPos, e);
+  camLook.lerpVectors(fromLook, toLook, e);
+  camFov = lerp(fromFov, toFov, e);
+  if (t >= 1) {
+    transitioning = false;
+    sceneIndex = targetIndex;
+    bloomPulse = Math.max(bloomPulse, 0.35);
+  }
+}
+
+function updateWeights(dt) {
+  REGION_LIST.forEach(r => {
+    regionWeights[r] = damp(regionWeights[r], regionTargets[r], 3.1, dt);
+  });
+}
+
+function updateCamera(dt, t) {
+  const scene = SCENES[targetIndex] || SCENES[0];
+  if (!transitioning && scene.slow) {
+    camPos.addScaledVector(scene.slow, dt);
+  }
+  mouseSmooth.x = damp(mouseSmooth.x, mouse.x, 4.5, dt);
+  mouseSmooth.y = damp(mouseSmooth.y, mouse.y, 4.5, dt);
+  const ds = scene.drift === undefined ? 1 : scene.drift;
+  const driftX = Math.sin(t * 0.13) * 0.9 * ds;
+  const driftY = Math.cos(t * 0.11) * 0.65 * ds;
+  const driftZ = Math.sin(t * 0.09) * 1.05 * ds;
+  const lookX = Math.sin(t * 0.17) * 0.65 * ds;
+  const lookY = Math.sin(t * 0.15) * 0.5 * ds;
+  const lookZ = Math.cos(t * 0.12) * 0.55 * ds;
+  const forward = tmpV.copy(camLook).sub(camPos).normalize();
+  const right = tmpV2.crossVectors(forward, new V3(0, 1, 0)).normalize();
+  const up = new V3().crossVectors(right, forward).normalize();
+  const px = mouseSmooth.x * 2.2;
+  const py = mouseSmooth.y * 1.5;
+  camera.position.copy(camPos).add(new V3(driftX, driftY, driftZ)).addScaledVector(right, px).addScaledVector(up, py);
+  const look = camLook.clone().add(new V3(lookX, lookY, lookZ)).addScaledVector(right, px * 0.24).addScaledVector(up, py * 0.24);
+  camera.lookAt(look);
+  camera.fov = camFov;
+  camera.updateProjectionMatrix();
+}
+
+function updateNodes(t) {
+  const arr = nodeOpAttr.array;
+  for (let i = 0; i < nodes.length; i++) {
+    const nd = nodes[i];
+    const w = regionWeights[nd.region] || 0;
+    const pulse = 0.88 + 0.12 * Math.sin(t * 1.15 + nd.phase);
+    arr[i] = Math.pow(w, 1.22) * nd.base * pulse;
+  }
+  nodeOpAttr.needsUpdate = true;
+}
+
+function updateEdges(dt) {
+  bridgeBoost = Math.max(0, bridgeBoost - dt * 0.55);
+  const arr = edgeOpAttr.array;
+  let off = 0;
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    const wa = regionWeights[e.ra] || 0;
+    const wb = regionWeights[e.rb] || 0;
+    const w = (wa + wb) * 0.5;
+    let op = e.base * (0.26 + 0.74 * w);
+    if (bridgeBoost > 0.01 && (bridgeRegions.includes(e.ra) || bridgeRegions.includes(e.rb))) {
+      op *= 1 + bridgeBoost * 1.7;
+    }
+    const n = e.seg * 2;
+    for (let j = 0; j < n; j++) arr[off + j] = op;
+    off += n;
+  }
+  edgeOpAttr.needsUpdate = true;
+}
+
+function updateVoids(t) {
+  const w = regionWeights.voids;
+  voidShadow.visible = w > 0.02;
+  voidRim.visible = w > 0.02;
+  if (!voidRim.visible) return;
+  const attr = voidRim.geometry.getAttribute('aOp');
+  const arr = attr.array;
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = w * voidBase[i] * (0.82 + 0.18 * Math.sin(t * 0.7 + voidPhases[i]));
+  }
+  attr.needsUpdate = true;
+}
+
+function updateFadeGroups(dt, t) {
+  Object.keys(fadeGroups).forEach(name => {
+    const fg = fadeGroups[name];
+    fg.weight = damp(fg.weight, fg.target, 3.2, dt);
+    fg.group.visible = fg.weight > 0.003;
+    if (!fg.group.visible) return;
+    fg.mats.forEach(m => {
+      if (m.uniforms && m.uniforms.uOpacity) {
+        m.uniforms.uOpacity.value = fg.weight * m.userData.baseOpacity;
+      } else {
+        m.transparent = true;
+        m.opacity = fg.weight * m.userData.baseOpacity;
+      }
+    });
+  });
+  for (let i = 0; i < 5; i++) {
+    tenetBeams[i].uniforms.uOpacity.value = regionWeights.tenets * (0.18 + 0.82 * fadeGroups['icon' + i].weight);
+    tenetBeams[i].uniforms.uTime.value = t;
+    tenetCores[i].emissiveIntensity = 0.4 + 0.8 * regionWeights.tenets;
+    tenetRings[i * 2].opacity = 0.18 + 0.55 * fadeGroups['icon' + i].weight;
+    tenetRings[i * 2 + 1].opacity = 0.2 + 0.6 * fadeGroups['icon' + i].weight;
+    const icon = iconGroups[i];
+    icon.rotation.y = t * 0.16 + i;
+    icon.rotation.z = Math.sin(t * 0.22 + i) * 0.06;
+    icon.scale.setScalar(0.96 + 0.04 * Math.sin(t * 0.5 + i));
+  }
+}
+
+function updateMethod(dt, t) {
+  if (!methodGroup.visible) return;
+  const pivotHuman = methodGroup.userData.pivotHuman;
+  const pivotAI = methodGroup.userData.pivotAI;
+  if (pivotHuman) pivotHuman.rotation.z = t * 0.55;
+  if (pivotAI) pivotAI.rotation.z = -t * 0.42 + Math.PI * 0.7;
+  const review = methodGroup.userData.review;
+  if (review) review.rotation.z = -t * 0.12;
+  methodSparks.forEach((s, i) => {
+    const a = (s.phase + t * 0.12) % 1;
+    s.mesh.position.set(Math.cos(a * TAU) * 19, Math.sin(a * TAU) * 19, 0.5);
+  });
+}
+
+function updateFlow(t) {
+  if (!flowGroup.visible) return;
+  flowSparks.forEach(s => {
+    const f = (s.phase + t * s.speed) % 1;
+    s.mesh.position.copy(s.a).lerp(s.b, f);
+  });
+}
+
+function updateRadar(t) {
+  const values = radarValues.map((v, i) => clamp(v + Math.sin(t * 0.33 + i * 1.7) * 0.035, 0.08, 1));
+  const fp = radarFillAttr.array;
+  let k = 0;
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + i * TAU / 6;
+    const b = -Math.PI / 2 + (i + 1) * TAU / 6;
+    fp[k++] = 0; fp[k++] = 0; fp[k++] = 0;
+    fp[k++] = Math.cos(a) * 12 * values[i]; fp[k++] = Math.sin(a) * 12 * values[i]; fp[k++] = 0;
+    fp[k++] = Math.cos(b) * 12 * values[(i + 1) % 6]; fp[k++] = Math.sin(b) * 12 * values[(i + 1) % 6]; fp[k++] = 0;
+  }
+  radarFillAttr.needsUpdate = true;
+  const pp = radarPolyAttr.array;
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + i * TAU / 6;
+    pp[i * 3] = Math.cos(a) * 12 * values[i];
+    pp[i * 3 + 1] = Math.sin(a) * 12 * values[i];
+    pp[i * 3 + 2] = 0.02;
+  }
+  radarPolyAttr.needsUpdate = true;
+}
+
+function updateTaxonomy(t) {
+  if (!taxonomyGroup.visible) return;
+  const w = fadeGroups.taxonomy.weight;
+  taxonomyCells.forEach((c, i) => {
+    const pulse = 0.62 + 0.38 * Math.sin(t * 0.8 + c.phase);
+    c.ring.opacity = w * 0.75 * pulse;
+    c.core.opacity = w * (0.55 + 0.45 * pulse);
+  });
+}
+
+function updateConvergence(t) {
+  if (!convergenceGroup.visible) return;
+  convSparks.forEach(s => {
+    const ray = convRayPoints[s.ray];
+    if (!ray) return;
+    const f = (s.phase + t * 0.085) % 1;
+    s.mesh.position.copy(ray.a).lerp(ray.b, f);
+    const scale = 0.5 + 0.8 * (1 - f);
+    s.mesh.scale.setScalar(scale);
+  });
+}
+
+function updateLabels() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  for (let i = 0; i < labels.length; i++) {
+    const l = labels[i];
+    if (!labelToggle) {
+      l.el.style.opacity = '0';
+      continue;
+    }
+    if (l.scenes && !l.scenes.includes(sceneIndex) && !l.scenes.includes(targetIndex)) {
+      l.el.style.opacity = '0';
+      continue;
+    }
+    const weight = regionWeights[l.region] || 0;
+    if (weight < l.minWeight) {
+      l.el.style.opacity = '0';
+      continue;
+    }
+    const dist = camera.position.distanceTo(l.pos);
+    const distFade = clamp(1.22 - dist / 520, 0.3, 1.12);
+    const opacity = weight * l.base * distFade;
+    if (opacity < 0.02) {
+      l.el.style.opacity = '0';
+      continue;
+    }
+    const v = l.pos.clone().project(camera);
+    if (v.z < -1 || v.z > 1) {
+      l.el.style.opacity = '0';
+      continue;
+    }
+    const x = (v.x * 0.5 + 0.5) * w;
+    const y = (-v.y * 0.5 + 0.5) * h;
+    if (x < -100 || x > w + 100 || y < -60 || y > h + 60) {
+      l.el.style.opacity = '0';
+      continue;
+    }
+    l.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) translate(-50%,-50%)';
+    l.el.style.opacity = opacity.toFixed(3);
+  }
+}
+
+function setupComposer() {
+  if (!(THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass)) return;
+  try {
+    composer = new THREE.EffectComposer(renderer);
+    composer.addPass(new THREE.RenderPass(scene, camera));
+    bloom = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.95, 0.72, 0.16);
+    composer.addPass(bloom);
+    const finalShader = {
+      uniforms: { tDiffuse: { value: null }, uTime: { value: 0 } },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        precision highp float;
+        uniform sampler2D tDiffuse;
+        uniform float uTime;
+        varying vec2 vUv;
+        vec3 aces(vec3 x) {
+          const float a = 2.51;
+          const float b = 0.03;
+          const float c = 2.43;
+          const float d = 0.59;
+          const float e = 0.14;
+          return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
+        }
+        float rand(vec2 co) {
+          return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+        }
+        void main() {
+          vec3 col = texture2D(tDiffuse, vUv).rgb;
+          col = aces(col * 1.08);
+          col = pow(col, vec3(1.0 / 2.2));
+          vec2 q = vUv - 0.5;
+          float vig = smoothstep(0.92, 0.24, length(q));
+          col *= mix(0.7, 1.02, vig);
+          float grain = rand(vUv * vec2(1920.0, 1080.0) + fract(uTime) * 31.0);
+          col += (grain - 0.5) * 0.024;
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `
+    };
+    finalPass = new THREE.ShaderPass(finalShader);
+    finalPass.renderToScreen = true;
+    composer.addPass(finalPass);
+    renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+  } catch (err) {
+    composer = null;
+    bloom = null;
+    finalPass = null;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+  }
+}
+
+function buildRail() {
+  SCENES.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'tick';
+    b.setAttribute('aria-label', 'Go to scene ' + (i + 1));
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      goTo(i);
+      hideHint();
+    });
+    railEl.appendChild(b);
+  });
+}
+
+function toggleHelp(force) {
+  const open = force === undefined ? !helpEl.classList.contains('open') : force;
+  helpEl.classList.toggle('open', open);
+  helpEl.setAttribute('aria-hidden', String(!open));
+  if (open) hideHint();
+}
+
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen && document.exitFullscreen();
+  } else {
+    document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  }
+}
+
+function hideHint() {
+  hintEl.classList.add('gone');
+}
+
+function resize() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  pixelMats.forEach(m => {
+    if (m.uniforms && m.uniforms.uPixelRatio) m.uniforms.uPixelRatio.value = renderer.getPixelRatio();
+  });
+  if (composer) {
+    composer.setPixelRatio(renderer.getPixelRatio());
+    composer.setSize(w, h);
+  }
+}
+
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  time += dt;
+  updateTransition(now);
+  updateWeights(dt);
+  updateCamera(dt, time);
+  updateNodes(time);
+  updateEdges(dt);
+  updateVoids(time);
+  updateFadeGroups(dt, time);
+  updateMethod(dt, time);
+  updateFlow(time);
+  updateRadar(time);
+  updateTaxonomy(time);
+  updateConvergence(time);
+  updateLabels();
+  bgMat.uniforms.uTime.value = time;
+  starField.material.uniforms.uTime.value = time;
+  dustField.material.uniforms.uTime.value = time;
+  nodeMat.uniforms.uTime.value = time;
+  edgeMat.uniforms.uTime.value = time;
+  voidRimMat.uniforms.uTime.value = time;
+  pixelMats.forEach(m => {
+    if (m.uniforms && m.uniforms.uTime) m.uniforms.uTime.value = time;
+  });
+  bloomPulse = damp(bloomPulse, 0, 2.4, dt);
+  if (bloom) bloom.strength = 0.92 + bloomPulse * 0.6;
+  if (finalPass && finalPass.uniforms.uTime) finalPass.uniforms.uTime.value = time;
+  if (composer) composer.render(dt);
+  else renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+
+stage.addEventListener('pointermove', e => {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  mouse.x = (e.clientX / w) * 2 - 1;
+  mouse.y = -((e.clientY / h) * 2 - 1);
+}, { passive: true });
+
+let pointerStart = null;
+stage.addEventListener('pointerdown', e => {
+  pointerStart = { x: e.clientX, y: e.clientY, t: performance.now() };
+  hideHint();
+}, { passive: true });
+stage.addEventListener('pointerup', e => {
+  if (!pointerStart) return;
+  const dx = e.clientX - pointerStart.x;
+  const dy = e.clientY - pointerStart.y;
+  const dt = performance.now() - pointerStart.t;
+  pointerStart = null;
+  if (Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy) * 1.2 && dt < 900) {
+    if (dx < 0) goTo(targetIndex + 1);
+    else goTo(targetIndex - 1);
+    return;
+  }
+  if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && dt < 550) {
+    const w = window.innerWidth;
+    if (e.clientX > w * 0.58) goTo(targetIndex + 1);
+    else if (e.clientX < w * 0.2) goTo(targetIndex - 1);
+  }
+}, { passive: true });
+
+window.addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown' || k === 'Enter') {
+    e.preventDefault();
+    goTo(targetIndex + 1);
+    hideHint();
+  } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+    e.preventDefault();
+    goTo(targetIndex - 1);
+    hideHint();
+  } else if (k === 'Home') {
+    e.preventDefault();
+    goTo(0);
+    hideHint();
+  } else if (k === 'End') {
+    e.preventDefault();
+    goTo(SCENES.length - 1);
+    hideHint();
+  } else if (k === 'h' || k === 'H' || k === '?') {
+    e.preventDefault();
+    toggleHelp();
+  } else if (k === 'Escape') {
+    toggleHelp(false);
+  } else if (k === 'f' || k === 'F') {
+    e.preventDefault();
+    toggleFullscreen();
+  } else if (k === 'r' || k === 'R') {
+    e.preventDefault();
+    goTo(0, 2400);
+    hideHint();
+  } else if (k === 'l' || k === 'L') {
+    e.preventDefault();
+    labelToggle = !labelToggle;
+  }
+});
+
+document.getElementById('helpBtn').addEventListener('click', e => { e.stopPropagation(); toggleHelp(); });
+document.getElementById('fsBtn').addEventListener('click', e => { e.stopPropagation(); toggleFullscreen(); });
+helpEl.addEventListener('click', e => {
+  if (e.target === helpEl) toggleHelp(false);
+});
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+
+function init() {
+  buildRail();
+  resize();
+  setupComposer();
+  camPos.copy(SCENES[0].cam).add(new V3(0, 58, 160));
+  camLook.copy(SCENES[0].look);
+  camFov = SCENES[0].fov + 3;
+  fromPos.copy(camPos);
+  fromLook.copy(camLook);
+  fromFov = camFov;
+  goTo(0, 3400);
+  requestAnimationFrame(loop);
+  setTimeout(() => loaderEl.classList.add('done'), 800);
+}
+
+init();
+})();
 </script>
 </body>
 </html>
