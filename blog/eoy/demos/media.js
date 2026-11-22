@@ -28,9 +28,12 @@
     var nextBtn = el.querySelector(".ls-media-next");
     var progress = el.querySelector(".ls-media-progress");
     var step = 0;
+    var currentMode = null;
     codeApi.pause();
     function show(mode) {
       var modeName = mode === "chat" ? "chat" : (mode === "code" ? "code" : "search");
+      if (modeName === currentMode) return;
+      currentMode = modeName;
       var isPhone = modeName !== "code";
       step = modeName === "search" ? 0 : (modeName === "chat" ? 1 : 2);
       phoneLayer.hidden = !isPhone;
@@ -42,8 +45,11 @@
       });
       if (isPhone) {
         codeApi.pause();
-        phoneApi.update({ view: modeName });
-        phoneApi.start();
+        if (modeName === "chat") phoneApi.launchChat();
+        else {
+          phoneApi.update({ view: "search" });
+          phoneApi.start();
+        }
       } else {
         phoneApi.pause();
         codeApi.resize();
@@ -96,8 +102,8 @@
       onKey: function (e) {
         return api.util.arrowKey(e, nextInternal, prevInternal);
       },
-      pause: function () { phoneApi.pause(); codeApi.pause(); },
-      resume: function () { show(step === 0 ? "phone" : "code"); },
+      pause: function () { if (step === 2) codeApi.pause(); },
+      resume: function () { if (step === 2) codeApi.resume(); else phoneApi.resize(); },
       resize: function () { phoneApi.resize(); codeApi.resize(); },
       destroy: function () { phoneApi.destroy(); codeApi.destroy(); el.remove(); }
     };

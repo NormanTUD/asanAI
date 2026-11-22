@@ -193,6 +193,59 @@ def check_layout(results, page, lang, name, s):
         results.check(page, lang, f"{name}: forward right", False, str(s["next"]))
 
 
+def check_media_launch(driver, results, page, lang):
+    present = driver.execute_script("return !!document.querySelector('.ls-media-scene')")
+    results.check(page, lang, "media demo present", present, "missing .ls-media-scene")
+    if not present:
+        return
+    home = driver.execute_script("return !!document.querySelector('#ia-home')")
+    results.check(page, lang, "media home screen exists", home, "missing #ia-home")
+    if not home:
+        return
+    bg = driver.execute_script("return getComputedStyle(document.querySelector('#ia-home')).backgroundImage")
+    results.check(page, lang, "media home uses opera wallpaper", "opera.jpg" in (bg or ""), str(bg)[:120])
+    timing = driver.execute_async_script(
+        """
+var done = arguments[arguments.length - 1];
+var home = document.querySelector('#ia-home');
+var chat = document.querySelector('#ia-chat-phone');
+var search = document.querySelector('#ia-phone');
+var btn = document.querySelector('[data-media="chat"]');
+var start = performance.now();
+var sawHome = false, sawChat = false, blank = false, samples = 0;
+function sample() {
+  samples++;
+  var h = home.classList.contains('is-active');
+  var c = chat.classList.contains('is-active');
+  var oh = parseFloat(getComputedStyle(home).opacity) || 0;
+  var oc = parseFloat(getComputedStyle(chat).opacity) || 0;
+  var os = parseFloat(getComputedStyle(search).opacity) || 0;
+  if (h) sawHome = true;
+  if (oh + oc + os < 0.05) blank = true;
+  if (c && oc > 0.9) {
+    sawChat = true;
+    done({ms: performance.now() - start, sawHome: sawHome, sawChat: sawChat, blank: blank, samples: samples});
+    return;
+  }
+  if (performance.now() - start > 2500) {
+    done({ms: performance.now() - start, sawHome: sawHome, sawChat: sawChat, blank: blank, samples: samples});
+    return;
+  }
+  requestAnimationFrame(sample);
+}
+btn.click();
+requestAnimationFrame(sample);
+"""
+    )
+    detail = str(timing)
+    results.check(page, lang, "media launch shows the phone home", timing["sawHome"], detail)
+    results.check(page, lang, "media launch opens KI-Chat", timing["sawChat"], detail)
+    results.check(page, lang, "media launch takes at most one second", 0 < timing["ms"] <= 1000, detail)
+    results.check(page, lang, "media launch never blanks the phone", not timing["blank"], detail)
+    driver.execute_script("document.querySelector('[data-media=\"search\"]').click()")
+    time.sleep(0.4)
+
+
 def walk_index(driver, results, page, lang):
     ok, s = results.page_state(driver, page, lang, "load")
     results.check(page, lang, "index has 31 steps", s["dots"] == 31, str(s["dots"]))
@@ -320,6 +373,8 @@ def main():
                     results.check(page, lang, "app ready", False, "LearnSys did not mount")
                     continue
                 time.sleep(args.settle)
+                if page in ("1.php", "index.php"):
+                    check_media_launch(driver, results, page, lang)
                 if page == "index.php":
                     walk_index(driver, results, page, lang)
                 else:

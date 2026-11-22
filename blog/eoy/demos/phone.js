@@ -38,6 +38,18 @@
               '</div>' +
               '<div class="ia-chat-compose"><span class="ia-chat-placeholder">' + (DE ? "Nachricht" : "Message") + '</span><span class="ia-chat-input"></span><i class="ia-chat-send" aria-hidden="true"></i></div>' +
             '</div>' +
+            '<div class="ia-phone-screen ia-screen-layer ia-home-screen" id="ia-home">' +
+              '<div class="ia-home-status"><span class="ia-home-time"></span><span class="ia-home-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>' +
+              '<div class="ia-home-apps">' +
+                '<button type="button" class="ia-home-app" data-home-app="chat" aria-label="' + (DE ? "KI-Chat öffnen" : "Open AI chat") + '">' +
+                  '<span class="ia-home-icon ia-home-icon--chat" aria-hidden="true"></span>' +
+                  '<span class="ia-home-label">' + (DE ? "KI-Chat" : "AI chat") + '</span>' +
+                '</button>' +
+                '<div class="ia-home-app is-muted" aria-hidden="true"><span class="ia-home-icon ia-home-icon--search"></span><span class="ia-home-label">' + (DE ? "Suche" : "Search") + '</span></div>' +
+                '<div class="ia-home-app is-muted" aria-hidden="true"><span class="ia-home-icon ia-home-icon--code"></span><span class="ia-home-label">Code</span></div>' +
+                '<div class="ia-home-app is-muted" aria-hidden="true"><span class="ia-home-icon ia-home-icon--photos"></span><span class="ia-home-label">' + (DE ? "Fotos" : "Photos") + '</span></div>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -47,18 +59,29 @@
     var chatPhone = el.querySelector("#ia-chat-phone");
     var chatScreen = el.querySelector(".ia-chat-screen");
     var searchPhone = el.querySelector("#ia-phone");
+    var homeScreen = el.querySelector("#ia-home");
+    var homeChatApp = el.querySelector('[data-home-app="chat"]');
+    var homeTimeEl = el.querySelector(".ia-home-time");
     var chatQuestionEl = el.querySelector(".ia-chat-question");
     var chatAnswerEl = el.querySelector(".ia-chat-answer");
     var chatInputEl = el.querySelector(".ia-chat-input");
     var chatComposeEl = el.querySelector(".ia-chat-compose");
-    var view = "search", chatStarted = false, sequenceDone = null, advance = null;
+    var view = "search", chatStarted = false, launchingChat = false, sequenceDone = null, advance = null;
     var modeBtns = el.querySelectorAll("[data-phone]");
+    var homeWallpaper = api.asset ? api.asset("opera.jpg") : "opera.jpg";
+    if (homeScreen) homeScreen.style.backgroundImage = "url('" + homeWallpaper + "')";
+    try { var preloadHome = new Image(); preloadHome.src = homeWallpaper; } catch (e) {}
+    if (homeTimeEl) {
+      try { homeTimeEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
+    }
     function setPhone(which) {
-      var isChat = which === "chat";
-      if (searchPhone) searchPhone.classList.toggle("is-active", !isChat);
-      if (chatPhone) chatPhone.classList.toggle("is-active", isChat);
+      var mode = which === "chat" ? "chat" : (which === "home" ? "home" : "search");
+      if (searchPhone) searchPhone.classList.toggle("is-active", mode === "search");
+      if (chatPhone) chatPhone.classList.toggle("is-active", mode === "chat");
+      if (homeScreen) homeScreen.classList.toggle("is-active", mode === "home");
+      var activeTab = mode === "chat" ? "chat" : (mode === "search" ? "search" : null);
       modeBtns.forEach(function (b) {
-        var on = b.getAttribute("data-phone") === (isChat ? "chat" : "search");
+        var on = b.getAttribute("data-phone") === activeTab;
         b.classList.toggle("is-on", on);
         b.setAttribute("aria-selected", on ? "true" : "false");
       });
@@ -111,6 +134,14 @@
       }).join("");
     }
     function setCentered(on) { searchBar.classList.toggle("centered", !!on); }
+    function resetChatVisuals() {
+      if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
+      if (chatScreen) chatScreen.classList.remove("is-answering", "is-composing", "is-sent");
+      if (chatQuestionEl) chatQuestionEl.textContent = "";
+      if (chatAnswerEl) chatAnswerEl.textContent = "";
+      if (chatInputEl) chatInputEl.textContent = "";
+      chatStarted = false;
+    }
     function reset() {
       clearTimers();
       setCentered(true);
@@ -120,12 +151,9 @@
       aiText.innerHTML = "";
       thinking.classList.remove("on");
       serp.classList.remove("on");
-      if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
-      if (chatScreen) chatScreen.classList.remove("is-answering", "is-composing", "is-sent");
-      if (chatQuestionEl) chatQuestionEl.textContent = "";
-      if (chatAnswerEl) chatAnswerEl.textContent = "";
-      if (chatInputEl) chatInputEl.textContent = "";
-      chatStarted = false;
+      resetChatVisuals();
+      launchingChat = false;
+      cleanupHomeLaunch();
       setPhone(view);
     }
     function typeChat(el, text, speed, done) {
@@ -211,6 +239,43 @@
         }, 260);
       });
     }
+    function cleanupHomeLaunch() {
+      if (!homeChatApp) return;
+      homeChatApp.classList.remove("is-target", "is-tapped", "is-opening");
+    }
+    function launchChat() {
+      if (launchingChat) return;
+      launchingChat = true;
+      clearTimers();
+      view = "chat";
+      resetChatVisuals();
+      cleanupHomeLaunch();
+      setPhone("home");
+      if (reduce) {
+        setPhone("chat");
+        startChat();
+        launchingChat = false;
+        return;
+      }
+      later(function () {
+        if (homeChatApp) homeChatApp.classList.add("is-target");
+      }, 60);
+      later(function () {
+        if (homeChatApp) homeChatApp.classList.add("is-tapped");
+      }, 300);
+      later(function () {
+        if (homeChatApp) {
+          homeChatApp.classList.remove("is-tapped");
+          homeChatApp.classList.add("is-opening");
+        }
+        setPhone("chat");
+        later(startChat, 60);
+      }, 450);
+      later(function () {
+        cleanupHomeLaunch();
+        launchingChat = false;
+      }, 800);
+    }
     function play() {
       reset();
       buildLogo();
@@ -272,15 +337,21 @@
     });
     modeBtns.forEach(function (b) {
       b.addEventListener("click", function () {
-        clearTimers();
         started = true;
-        view = b.getAttribute("data-phone");
-        reset();
-        setPhone(view);
-        if (view === "chat") startChat();
-        else play();
+        var nextView = b.getAttribute("data-phone");
+        if (nextView === "chat") { launchChat(); return; }
+        view = nextView;
+        play();
       });
     });
+    if (homeChatApp) {
+      homeChatApp.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        started = true;
+        launchChat();
+      });
+    }
     fit();
     return {
       update: function (s) {
@@ -291,15 +362,16 @@
             if (started) play();
             return;
           }
+          if (view === "chat") { launchChat(); return; }
           setPhone(view);
-          if (view === "chat") startChat();
         }
       },
       start: function () { started = true; shownOnce = true; play(); },
+      launchChat: launchChat,
       onSequenceDone: function (fn) { sequenceDone = fn; },
       onAdvance: function (fn) { advance = fn; },
       pause: clearTimers,
-      resume: function () { if (shownOnce && started) play(); shownOnce = true; fit(); },
+      resume: function () { shownOnce = true; fit(); },
       resize: fit,
       destroy: function () {
         clearTimers();
