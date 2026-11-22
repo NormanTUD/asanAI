@@ -63,7 +63,13 @@ for those two changes. The old slides were not changed for their own sake.
      from the origin (or add a contrast step after the point plot). Add the
      explanatory sentence in the slide body and in the demo readout.
    - Keep the existing 3D drag and the tables.
-3. **Hallucination types — context vs training data**
+3. **Architecture of LLMs — current-position marker**
+   - On "Die Architektur von LLMs", the left-side architecture diagram
+     (Attention / LayerNorm / FFN or the surrounding block) must mark the
+     current sub-step as a child element, so the reader sees where they are.
+   - Do not add a new scene; extend the existing architecture diagram and keep
+     its `demoState` stable. The marker should update when the substep changes.
+4. **Hallucination types — context vs training data**
    - Add a clear two-source visual: **weights / training data** vs **context
      window / prompt / RAG source**.
    - Label each type:
@@ -85,7 +91,7 @@ for those two changes. The old slides were not changed for their own sake.
      failure mode that RAG can trigger when it packs many chunks. Mitigations:
      put the key evidence near the edges, rerank and trim chunks, cite the
      source, and evaluate retrieval separately from generation.
-4. **Tests**
+5. **Tests**
    - Update `blog/tests/eoy_media_interactions_test.py` for the residual,
      embedding and hallucination changes.
    - Run:
@@ -95,7 +101,7 @@ for those two changes. The old slides were not changed for their own sake.
      - full `eoy_pages_test.py --langs en,de` if time allows.
      - `uv run blog/tests/js_validator.py blog/eoy`
      - `php -l` for changed PHP files.
-5. **Commit / push**
+6. **Commit / push**
    - Only after the suites are green. Include `todo_eoy.md` if useful.
    - Do not stage unrelated files.
 
