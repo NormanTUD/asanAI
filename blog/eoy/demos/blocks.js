@@ -35,13 +35,14 @@
       {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert. Der Residualstrom läuft durch alle Blöcke; Attention und FFN addieren ihre Updates darauf. Dazu kommt LayerNorm, das die Aktivierungen in einer stabilen Skala hält. Der Transformer nutzt das Verschieben dieser Punkte zum Denken: Jede Schicht verschiebt den Punkt neu. Die nächsten drei Seiten gehen Attention, LayerNorm und FFN einzeln durch.",
+        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert. Der Residualstrom läuft durch alle Blöcke; Attention und FFN addieren ihre Updates darauf. Dazu kommt LayerNorm, das die Aktivierungen in einer stabilen Skala hält. Der Transformer nutzt das Verschieben dieser Punkte zum Denken: Jede Schicht verschiebt den Punkt neu. Die nächsten Seiten gehen Attention, LayerNorm und FFN einzeln durch; am Ende steht die ganze Architektur als Funktion f(x).",
         points: [],
         mini: "transformer",
         sub: [
           { title: "Attention", mini: "attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesem Gesichtspunkt beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht.", sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }] },
           { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm normiert für jedes Token den Vektor über seine Merkmalsdimensionen: Mittelwert 0, Varianz 1, danach zwei gelernte Parameter γ und β (Ba et al., 2016). Es mischt keine Information zwischen Tokens und erzeugt keine Bedeutung; es hält die Aktivierungen nur in einem stabilen Bereich, damit Attention und FFN trainierbar bleiben. Wo es sitzt, ist eine Trainingsentscheidung: Post-LN im Original braucht Warm-up, Pre-LN in GPT-2 ist stabiler (Xiong et al., 2020); technisch wichtig, aber nicht der inhaltliche Kern.", sources: [{ label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }, { label: "Xiong et al. (2020), On Layer Normalization in the Transformer Architecture", url: "https://arxiv.org/abs/2002.04745" }] },
-          { title: "Feed-Forward-Netzwerk (FFN)", mini: "ffn", text: "Das FFN projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück. So isoliert es Bedeutungszusammenhänge kontextabhängig und kann auf einzelne Bedeutungen reagieren.", sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }] }
+          { title: "Feed-Forward-Netzwerk (FFN)", mini: "ffn", text: "Das FFN projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück. So isoliert es Bedeutungszusammenhänge kontextabhängig und kann auf einzelne Bedeutungen reagieren.", sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }] },
+          { title: "Die Architektur als Funktion", mini: "fx", fx: true, text: "Die ganze Architektur ist eine Funktion $f(x)$: Sie nimmt Daten und gibt eine Verteilung über das nächste Token aus. Beim Training wird $f$ so genudged, dass die Vorhersage zum nächsten Token in den Daten passt. Pretraining nutzt fast das ganze Internet; Fine-tuning nutzt wenige, spezifische Fragen. Die Beispiele zeigen, warum die Daten den Unterschied machen." }
         ],
         sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }]
       },
@@ -79,13 +80,14 @@
       {
         id: "transformer", label: "Transformer blocks", short: "attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred. The residual stream runs through all blocks; attention and FFN add their updates to it. LayerNorm keeps the activations at a stable scale. The transformer uses moving these points to think: every layer moves the point again. The next three pages go through attention, LayerNorm, and FFN one by one.",
+        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred. The residual stream runs through all blocks; attention and FFN add their updates to it. LayerNorm keeps the activations at a stable scale. The transformer uses moving these points to think: every layer moves the point again. The next pages go through attention, LayerNorm, and FFN one by one; at the end the whole architecture is a function f(x).",
         points: [],
         mini: "transformer",
         sub: [
           { title: "Attention", mini: "attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context.", sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }] },
           { title: "LayerNorm", mini: "layernorm", wide: true, text: "LayerNorm normalizes each token vector across its feature dimensions: mean 0, variance 1, then two learned parameters γ and β (Ba et al., 2016). It mixes no information between tokens and creates no meaning; it only keeps the activations in a stable range so attention and FFN remain trainable. Where it sits is a training choice: Post-LN in the original needs warm-up, Pre-LN in GPT-2 is more stable (Xiong et al., 2020); technically important, but not the content core.", sources: [{ label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }, { label: "Xiong et al. (2020), On Layer Normalization in the Transformer Architecture", url: "https://arxiv.org/abs/2002.04745" }] },
-          { title: "Feed-forward network (FFN)", mini: "ffn", text: "The FFN projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back. That is how it isolates meaning relations depending on context and can react to individual meanings.", sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }] }
+          { title: "Feed-forward network (FFN)", mini: "ffn", text: "The FFN projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back. That is how it isolates meaning relations depending on context and can react to individual meanings.", sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }] },
+          { title: "The architecture as a function", mini: "fx", fx: true, text: "The whole architecture is a function $f(x)$: it takes data and returns a distribution over the next token. During training, $f$ is nudged so that the prediction matches the next token in the data. Pretraining uses almost the whole internet; fine-tuning uses a few specific questions. The examples show why the data make the difference." }
         ],
         sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450" }]
       },
@@ -495,6 +497,31 @@
         block.classList.toggle("is-current", current);
       });
     }
+    function fxCardHTML() {
+      return '<div class="ls-bs-fx" data-fx>' +
+            '<div class="ls-bs-fx-head"><b>' + (DE ? "Die Architektur ist eine Funktion" : "The architecture is a function") + '</b><span>' + (DE ? "Daten rein, nächste Token-Wahrscheinlichkeit raus." : "Data in, next-token probability out.") + '</span></div>' +
+            '<div class="ls-bs-fx-flow">' +
+              '<span class="ls-bs-fx-node"><b>x</b><small>' + (DE ? "Daten" : "data") + '</small></span><i>→</i>' +
+              '<span class="ls-bs-fx-node is-main"><b>f(x)</b><small>Transformer</small></span><i>→</i>' +
+              '<span class="ls-bs-fx-node"><b>P</b><small>' + (DE ? "nächstes Token" : "next token") + '</small></span>' +
+            '</div>' +
+            '<div class="ls-bs-fx-loop">01 Input · 02 ' + (DE ? "Vorhersage" : "prediction") + ' · 03 ' + (DE ? "Vergleich mit dem nächsten Token in den Daten" : "compare with the next token in the data") + ' · 04 <b>Nudge</b>: ' + (DE ? "Gewichte ein wenig in die richtige Richtung" : "nudge the weights a little in the right direction") + '</div>' +
+            '<div class="ls-bs-fx-stages">' +
+              '<div class="ls-bs-fx-stage"><span>Pretraining</span><b>f(' + (DE ? "fast das ganze Internet" : "almost the whole internet") + ')</b><p>' + (DE ? "Der gewaltige Datensatz liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged die Gewichte." : "The huge dataset supplies billions of next tokens. Every comparison nudges the weights.") + '</p></div>' +
+              '<div class="ls-bs-fx-stage"><span>Fine-tuning</span><b>f(' + (DE ? "kleine Menge spezifischer Fragen" : "small set of specific questions") + ')</b><p>' + (DE ? "Wenige, gezielte Beispiele nudged dieselben Gewichte in Richtung hilfreicher Antworten." : "A few targeted examples nudge the same weights toward helpful answers.") + '</p></div>' +
+            '</div>' +
+            '<div class="ls-bs-fx-example">' +
+              '<div class="ls-bs-fx-prompt">' + (DE ? "Die Katze sitzt auf der " : "The cat sits on the ") + '<b>___</b></div>' +
+              '<div class="ls-bs-fx-cands">' +
+                '<div class="ls-bs-fx-cand is-good"><span>' + (DE ? "Matte" : "mat") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>45 %</em></div>' +
+                '<div class="ls-bs-fx-cand is-mid"><span>' + (DE ? "Heizung" : "heater") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>35 %</em></div>' +
+                '<div class="ls-bs-fx-cand is-bad"><span>' + (DE ? "Gleichung" : "equation") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>8 %</em></div>' +
+              '</div>' +
+              '<p class="ls-bs-fx-note">' + (DE ? "In den Daten steht „Die Katze sitzt auf der Matte“. Das Netz bekommt „Die Katze sitzt auf der“ und soll „Matte“ vorhersagen. Jeder Nudge macht „Matte“ wahrscheinlicher. „Heizung“ ist auch plausibel, war in diesem Beispiel aber nicht der nächste Token; „Gleichung“ passt semantisch nicht und kommt in den Daten nicht vor." : "The data says “The cat sits on the mat”. The network gets “The cat sits on the” and should predict “mat”. Every nudge makes “mat” more likely. “Heater” is also plausible, but was not the next token in this example; “equation” does not fit semantically and is not in the data.") + '</p>' +
+            '</div>' +
+            '<div class="ls-bs-fx-bar"><button type="button" class="ls-btn ls-btn--tiny ls-bs-fx-nudge">' + (DE ? "Nudge (Gewichte anpassen)" : "Nudge (adjust weights)") + '</button><span class="ls-bs-fx-readout" aria-live="polite"></span></div>' +
+          '</div>';
+    }
     function setupFxDemo() {
       var host = detail.querySelector("[data-fx]");
       if (!host) return null;
@@ -736,36 +763,17 @@
       var kicker = (DE ? "Station " : "Station ") + stage + " / " + blocks.length + (sub ? " · " + esc(sub.title) : "");
       var html = '<div class="ls-bs-kicker">' + kicker + '</div>';
       if (sub) {
-        html += '<h3 class="ls-bs-title">' + esc(sub.title) + '</h3>' +
-          '<div class="ls-bs-sub ls-bs-sub--wide"><div class="ls-bs-subcanvas"><canvas data-mini="' + (sub.mini || "ffn") + '"></canvas></div><p>' + inlineMathText(sub.text) + '</p></div>';
+        html += '<h3 class="ls-bs-title">' + esc(sub.title) + '</h3>';
+        if (sub.fx) {
+          html += '<p class="ls-bs-body">' + inlineMathText(sub.text) + '</p>' + fxCardHTML();
+        } else {
+          html += '<div class="ls-bs-sub ls-bs-sub--wide"><div class="ls-bs-subcanvas"><canvas data-mini="' + (sub.mini || "ffn") + '"></canvas></div><p>' + inlineMathText(sub.text) + '</p></div>';
+        }
       } else {
         html += '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
           '<p class="ls-bs-body">' + inlineMathText(b.body) + '</p>' +
           '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
         if (b.id === "transformer") {
-          html += '<div class="ls-bs-fx" data-fx>' +
-            '<div class="ls-bs-fx-head"><b>' + (DE ? "Die Architektur ist eine Funktion" : "The architecture is a function") + '</b><span>' + (DE ? "Daten rein, nächste Token-Wahrscheinlichkeit raus." : "Data in, next-token probability out.") + '</span></div>' +
-            '<div class="ls-bs-fx-flow">' +
-              '<span class="ls-bs-fx-node"><b>x</b><small>' + (DE ? "Daten" : "data") + '</small></span><i>→</i>' +
-              '<span class="ls-bs-fx-node is-main"><b>f(x)</b><small>Transformer</small></span><i>→</i>' +
-              '<span class="ls-bs-fx-node"><b>P</b><small>' + (DE ? "nächstes Token" : "next token") + '</small></span>' +
-            '</div>' +
-            '<div class="ls-bs-fx-loop">01 Input · 02 ' + (DE ? "Vorhersage" : "prediction") + ' · 03 ' + (DE ? "Vergleich mit dem nächsten Token in den Daten" : "compare with the next token in the data") + ' · 04 <b>Nudge</b>: ' + (DE ? "Gewichte ein wenig in die richtige Richtung" : "nudge the weights a little in the right direction") + '</div>' +
-            '<div class="ls-bs-fx-stages">' +
-              '<div class="ls-bs-fx-stage"><span>Pretraining</span><b>f(' + (DE ? "fast das ganze Internet" : "almost the whole internet") + ')</b><p>' + (DE ? "Der gewaltige Datensatz liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged die Gewichte." : "The huge dataset supplies billions of next tokens. Every comparison nudges the weights.") + '</p></div>' +
-              '<div class="ls-bs-fx-stage"><span>Fine-tuning</span><b>f(' + (DE ? "kleine Menge spezifischer Fragen" : "small set of specific questions") + ')</b><p>' + (DE ? "Wenige, gezielte Beispiele nudged dieselben Gewichte in Richtung hilfreicher Antworten." : "A few targeted examples nudge the same weights toward helpful answers.") + '</p></div>' +
-            '</div>' +
-            '<div class="ls-bs-fx-example">' +
-              '<div class="ls-bs-fx-prompt">' + (DE ? "Die Katze sitzt auf der " : "The cat sits on the ") + '<b>___</b></div>' +
-              '<div class="ls-bs-fx-cands">' +
-                '<div class="ls-bs-fx-cand is-good"><span>' + (DE ? "Matte" : "mat") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>45 %</em></div>' +
-                '<div class="ls-bs-fx-cand is-mid"><span>' + (DE ? "Heizung" : "heater") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>35 %</em></div>' +
-                '<div class="ls-bs-fx-cand is-bad"><span>' + (DE ? "Gleichung" : "equation") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>8 %</em></div>' +
-              '</div>' +
-              '<p class="ls-bs-fx-note">' + (DE ? "In den Daten steht „Die Katze sitzt auf der Matte“. Das Netz bekommt „Die Katze sitzt auf der“ und soll „Matte“ vorhersagen. Jeder Nudge macht „Matte“ wahrscheinlicher. „Heizung“ ist auch plausibel, war in diesem Beispiel aber nicht der nächste Token; „Gleichung“ passt semantisch nicht und kommt in den Daten nicht vor." : "The data says “The cat sits on the mat”. The network gets “The cat sits on the” and should predict “mat”. Every nudge makes “mat” more likely. “Heater” is also plausible, but was not the next token in this example; “equation” does not fit semantically and is not in the data.") + '</p>' +
-            '</div>' +
-            '<div class="ls-bs-fx-bar"><button type="button" class="ls-btn ls-btn--tiny ls-bs-fx-nudge">' + (DE ? "Nudge (Gewichte anpassen)" : "Nudge (adjust weights)") + '</button><span class="ls-bs-fx-readout" aria-live="polite"></span></div>' +
-          '</div>';
           html += '<div class="ls-bs-traj" data-traj-host>' +
             '<div class="ls-bs-traj-head"><b>' + (DE ? "Denken = Punkte verschieben" : "Thinking = moving points") + '</b><span>' + (DE ? "Jede Schicht verschiebt den Token-Vektor neu." : "Every layer moves the token vector again.") + '</span></div>' +
             '<div class="ls-bs-traj-stage"><canvas class="ls-bs-traj-canvas" role="img"></canvas></div>' +
@@ -821,10 +829,8 @@
       if (fxCleanup) { try { fxCleanup(); } catch (e) {} fxCleanup = null; }
       detail.innerHTML = html;
       if (window.TM && typeof window.TM.typesetMath === "function") { try { window.TM.typesetMath(detail); } catch (e) {} }
-      if (!sub && b.id === "transformer") {
-        fxCleanup = setupFxDemo();
-        trajCleanup = setupTrajectoryDemo();
-      }
+      if (!sub && b.id === "transformer") trajCleanup = setupTrajectoryDemo();
+      if (sub && sub.fx) fxCleanup = setupFxDemo();
       if (b.position) {
         var posHost = detail.querySelector("[data-position-host]");
         var posFactory = core.get("position");
