@@ -39,7 +39,11 @@
               '<div class="ia-chat-compose"><span class="ia-chat-placeholder">' + (DE ? "Nachricht" : "Message") + '</span><span class="ia-chat-input"></span><i class="ia-chat-send" aria-hidden="true"></i></div>' +
             '</div>' +
             '<div class="ia-phone-screen ia-screen-layer ia-home-screen" id="ia-home">' +
-              '<div class="ia-home-status"><span class="ia-home-time"></span><span class="ia-home-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>' +
+              '<div class="ia-home-status"><span class="ia-home-time"></span><span class="ia-home-status-icons" aria-hidden="true">' +
+                '<span class="ia-status-signal"><i></i><i></i><i></i><i></i></span>' +
+                '<svg class="ia-status-wifi" viewBox="0 0 18 14"><path d="M2 5.5c4-3.8 10-3.8 14 0M4.6 8.2c2.5-2.3 6.3-2.3 8.8 0M7.2 10.9c1-.9 2.6-.9 3.6 0M9 13h.01" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+                '<svg class="ia-status-battery" viewBox="0 0 20 11"><rect x="0.75" y="0.75" width="15.5" height="9.5" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="2.6" y="2.6" width="10" height="5.8" rx="1.2" fill="currentColor"/><path d="M18 3.6v3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' +
+              '</span></div>' +
               '<div class="ia-home-apps">' +
                 '<button type="button" class="ia-home-app" data-home-app="chat" aria-label="' + (DE ? "KI-Chat öffnen" : "Open AI chat") + '">' +
                   '<span class="ia-home-icon ia-home-icon--chat" aria-hidden="true"></span>' +
@@ -50,6 +54,11 @@
                 '<div class="ia-home-app is-muted" aria-hidden="true"><span class="ia-home-icon ia-home-icon--photos"></span><span class="ia-home-label">' + (DE ? "Fotos" : "Photos") + '</span></div>' +
               '</div>' +
             '</div>' +
+            '<div class="ia-phone-chrome" aria-hidden="true"><div class="ia-phone-navbar" hidden>' +
+              '<span class="ia-nav-key ia-nav-back"></span>' +
+              '<span class="ia-nav-key ia-nav-home"></span>' +
+              '<span class="ia-nav-key ia-nav-recents"></span>' +
+            '</div></div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -62,6 +71,7 @@
     var homeScreen = el.querySelector("#ia-home");
     var homeChatApp = el.querySelector('[data-home-app="chat"]');
     var homeTimeEl = el.querySelector(".ia-home-time");
+    var phoneNavbar = el.querySelector(".ia-phone-navbar");
     var chatQuestionEl = el.querySelector(".ia-chat-question");
     var chatAnswerEl = el.querySelector(".ia-chat-answer");
     var chatInputEl = el.querySelector(".ia-chat-input");
@@ -142,6 +152,17 @@
       if (chatInputEl) chatInputEl.textContent = "";
       chatStarted = false;
     }
+    function showPhoneNav() {
+      if (!phoneNavbar) return;
+      phoneNavbar.hidden = false;
+      void phoneNavbar.offsetWidth;
+      phoneNavbar.classList.add("is-up");
+    }
+    function hidePhoneNav() {
+      if (!phoneNavbar) return;
+      phoneNavbar.hidden = true;
+      phoneNavbar.classList.remove("is-up");
+    }
     function reset() {
       clearTimers();
       setCentered(true);
@@ -154,6 +175,7 @@
       resetChatVisuals();
       launchingChat = false;
       cleanupHomeLaunch();
+      hidePhoneNav();
       setPhone(view);
     }
     function typeChat(el, text, speed, done) {
@@ -209,6 +231,7 @@
     function startChat() {
       if (chatStarted) return;
       chatStarted = true;
+      hidePhoneNav();
       if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
       if (chatScreen) chatScreen.classList.remove("is-answering", "is-sent");
       if (chatQuestionEl) chatQuestionEl.textContent = "";
@@ -240,8 +263,7 @@
       });
     }
     function cleanupHomeLaunch() {
-      if (!homeChatApp) return;
-      homeChatApp.classList.remove("is-target", "is-tapped", "is-opening");
+      if (homeChatApp) homeChatApp.classList.remove("is-target", "is-tapped", "is-opening");
     }
     function launchChat() {
       if (launchingChat) return;
@@ -250,31 +272,39 @@
       view = "chat";
       resetChatVisuals();
       cleanupHomeLaunch();
-      setPhone("home");
+      var onSearch = !!(searchPhone && searchPhone.classList.contains("is-active"));
       if (reduce) {
+        hidePhoneNav();
         setPhone("chat");
         startChat();
         launchingChat = false;
         return;
       }
+      var base = onSearch ? 480 : 0;
+      later(function () {
+        setPhone("home");
+        showPhoneNav();
+      }, base);
       later(function () {
         if (homeChatApp) homeChatApp.classList.add("is-target");
-      }, 60);
+      }, base + 120);
       later(function () {
         if (homeChatApp) homeChatApp.classList.add("is-tapped");
-      }, 300);
+      }, base + 600);
       later(function () {
         if (homeChatApp) {
           homeChatApp.classList.remove("is-tapped");
           homeChatApp.classList.add("is-opening");
         }
+        hidePhoneNav();
         setPhone("chat");
         later(startChat, 60);
-      }, 450);
+      }, base + 900);
       later(function () {
+        hidePhoneNav();
         cleanupHomeLaunch();
         launchingChat = false;
-      }, 800);
+      }, base + 1500);
     }
     function play() {
       reset();
@@ -287,10 +317,12 @@
         card.classList.add("on");
         typeAnswer();
         serp.classList.add("on");
+        showPhoneNav();
         if (view === "chat") startChat();
         if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
         return;
       }
+      later(showPhoneNav, 600);
       typeSearch(SATZ, function () {
         searchText.textContent = SATZ;
         setCentered(false);
@@ -370,7 +402,12 @@
       launchChat: launchChat,
       onSequenceDone: function (fn) { sequenceDone = fn; },
       onAdvance: function (fn) { advance = fn; },
-      pause: clearTimers,
+      pause: function () {
+        clearTimers();
+        launchingChat = false;
+        cleanupHomeLaunch();
+        hidePhoneNav();
+      },
       resume: function () { shownOnce = true; fit(); },
       resize: fit,
       destroy: function () {

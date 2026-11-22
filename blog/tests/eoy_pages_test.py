@@ -204,15 +204,50 @@ def check_media_launch(driver, results, page, lang):
         return
     bg = driver.execute_script("return getComputedStyle(document.querySelector('#ia-home')).backgroundImage")
     results.check(page, lang, "media home uses opera wallpaper", "opera.jpg" in (bg or ""), str(bg)[:120])
+    nav_on_search = driver.execute_async_script(
+        """
+var done = arguments[arguments.length - 1];
+var start = performance.now();
+function poll() {
+  var nav = document.querySelector('.ia-phone-navbar');
+  var search = document.querySelector('#ia-phone');
+  if (!nav.hidden && nav.classList.contains('is-up') && search.classList.contains('is-active')) { done(true); return; }
+  if (performance.now() - start > 3000) { done(false); return; }
+  setTimeout(poll, 50);
+}
+poll();
+"""
+    )
+    results.check(page, lang, "media nav bar swipes up on the search page", nav_on_search, str(nav_on_search))
+    nav_bottom = driver.execute_script("return parseFloat(getComputedStyle(document.querySelector('.ia-phone-navbar')).bottom)")
+    results.check(page, lang, "media nav bar sits at the bottom of the phone", 0 < (nav_bottom or 0) < 300, str(nav_bottom))
+    status = driver.execute_script(
+        """
+var bar = document.querySelector('.ia-home-status');
+var time = document.querySelector('.ia-home-time');
+return {
+  exists: !!bar,
+  top: bar ? parseFloat(getComputedStyle(bar).top) : null,
+  time: time ? time.textContent.trim() : '',
+  signal: !!document.querySelector('.ia-status-signal'),
+  wifi: !!document.querySelector('.ia-status-wifi'),
+  battery: !!document.querySelector('.ia-status-battery')
+};
+"""
+    )
+    results.check(page, lang, "media status bar has its own top lane", status["exists"] and status["top"] == 0, str(status))
+    results.check(page, lang, "media status bar shows time and phone icons",
+                  bool(status["time"]) and status["signal"] and status["wifi"] and status["battery"], str(status))
     timing = driver.execute_async_script(
         """
 var done = arguments[arguments.length - 1];
 var home = document.querySelector('#ia-home');
 var chat = document.querySelector('#ia-chat-phone');
 var search = document.querySelector('#ia-phone');
+var nav = document.querySelector('.ia-phone-navbar');
 var btn = document.querySelector('[data-media="chat"]');
 var start = performance.now();
-var sawHome = false, sawChat = false, blank = false, samples = 0;
+var sawHome = false, sawChat = false, sawNav = false, navOnSearch = false, navOnHome = false, blank = false, samples = 0;
 function sample() {
   samples++;
   var h = home.classList.contains('is-active');
@@ -221,14 +256,19 @@ function sample() {
   var oc = parseFloat(getComputedStyle(chat).opacity) || 0;
   var os = parseFloat(getComputedStyle(search).opacity) || 0;
   if (h) sawHome = true;
+  if (nav.classList.contains('is-up')) {
+    sawNav = true;
+    if (search.classList.contains('is-active')) navOnSearch = true;
+    if (h) navOnHome = true;
+  }
   if (oh + oc + os < 0.05) blank = true;
   if (c && oc > 0.9) {
     sawChat = true;
-    done({ms: performance.now() - start, sawHome: sawHome, sawChat: sawChat, blank: blank, samples: samples});
+    done({ms: performance.now() - start, sawHome: sawHome, sawChat: sawChat, sawNav: sawNav, navOnSearch: navOnSearch, navOnHome: navOnHome, blank: blank, samples: samples});
     return;
   }
   if (performance.now() - start > 2500) {
-    done({ms: performance.now() - start, sawHome: sawHome, sawChat: sawChat, blank: blank, samples: samples});
+    done({ms: performance.now() - start, sawHome: sawHome, sawChat: sawChat, sawNav: sawNav, navOnSearch: navOnSearch, navOnHome: navOnHome, blank: blank, samples: samples});
     return;
   }
   requestAnimationFrame(sample);
@@ -239,8 +279,10 @@ requestAnimationFrame(sample);
     )
     detail = str(timing)
     results.check(page, lang, "media launch shows the phone home", timing["sawHome"], detail)
+    results.check(page, lang, "media launch keeps the nav bar on the search page", timing["sawNav"] and timing["navOnSearch"], detail)
+    results.check(page, lang, "media launch keeps the nav bar on the desktop", timing["sawNav"] and timing["navOnHome"], detail)
     results.check(page, lang, "media launch opens KI-Chat", timing["sawChat"], detail)
-    results.check(page, lang, "media launch takes at most one second", 0 < timing["ms"] <= 1000, detail)
+    results.check(page, lang, "media launch takes between one and two seconds", 1200 <= timing["ms"] <= 2200, detail)
     results.check(page, lang, "media launch never blanks the phone", not timing["blank"], detail)
     driver.execute_script("document.querySelector('[data-media=\"search\"]').click()")
     time.sleep(0.4)
