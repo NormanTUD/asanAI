@@ -7,6 +7,17 @@
   function attentionScene(root, api) {
     var DE = api.lang === "de";
     var V = window.LearnSysVisuals;
+    function tokenLabel(tok, i) { return (i > 0 ? "␣" : "") + tok; }
+    function roundRect(c, x, y, w, h, r) {
+      r = Math.max(0, Math.min(r, w / 2, h / 2));
+      c.beginPath();
+      c.moveTo(x + r, y);
+      c.arcTo(x + w, y, x + w, y + h, r);
+      c.arcTo(x + w, y + h, x, y + h, r);
+      c.arcTo(x, y + h, x, y, r);
+      c.arcTo(x, y, x + w, y, r);
+      c.closePath();
+    }
     var contexts = DE ? [
       { id: "none", sentence: "Ich gehe zur Bank.", tokens: ["Ich", "gehe", "zur", "Bank", "."], bank: 3, anchor: null, color: "muted" },
       { id: "money", sentence: "Ich bringe mein Geld auf die Bank.", tokens: ["Ich", "bringe", "mein", "Geld", "auf", "die", "Bank", "."], bank: 6, anchor: "Geld", color: "gold" },
@@ -166,88 +177,132 @@
       if (!graphSize) return;
       var ctx = graphSize.ctx, w = graphSize.w, h = graphSize.h;
       ctx.clearRect(0, 0, w, h);
-      var ts = tokens(), n = ts.length, row = displayRow();
-      var pad = 18, gap = (w - pad * 2) / n, y = h - 44;
+      var ts = tokens(), n = ts.length, row = displayRow(), m = matrix();
+      var pad = 18, gap = (w - pad * 2) / n, y = h - 46;
       graphHits = [];
-      var maxBox = Math.min(92, gap - 6);
+      var maxBox = Math.min(96, gap - 5);
       var px = [];
+      ctx.save();
+      ctx.strokeStyle = C.line;
+      ctx.globalAlpha = 0.22;
+      ctx.lineWidth = 1;
+      for (var gl = 0; gl <= 4; gl++) {
+        var gy = 24 + gl * ((y - 58) / 4);
+        ctx.beginPath(); ctx.moveTo(12, gy); ctx.lineTo(w - 12, gy); ctx.stroke();
+      }
+      ctx.restore();
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ts.forEach(function (tok, i) {
-        var x = pad + gap * (i + 0.5);
-        var tw = ctx.measureText(tok).width;
-        var bw = Math.max(38, Math.min(maxBox, tw + 18));
-        px[i] = x;
-        var on = i === selected;
-        var wt = row[i] || 0;
-        var baseCol = on ? C.green : (i === 0 && context !== "none" ? C.gold : C.blue);
-        var alpha = on ? 0.92 : Math.min(0.78, 0.08 + wt * 0.95);
-        ctx.fillStyle = baseCol;
-        ctx.globalAlpha = alpha;
-        ctx.fillRect(x - bw / 2, y - 15, bw, 30);
-        ctx.globalAlpha = 1;
-        ctx.strokeStyle = on ? C.green : C.lineStrong;
-        ctx.lineWidth = on ? 2 : 1;
-        ctx.strokeRect(x - bw / 2, y - 15, bw, 30);
-        ctx.fillStyle = (on || (wt > 0.46 && i !== 0)) ? "#fff" : C.ink;
-        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText(tok, x, y + 3);
-        ctx.fillStyle = C.muted;
-        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-        ctx.fillText(Math.round(wt * 100) + "%", x, y + 26);
-        graphHits.push({ x: x - bw / 2, y: y - 15, w: bw, h: 30, i: i });
+        var label = tokenLabel(tok, i);
+        var tw = ctx.measureText(label).width;
+        var bw = Math.max(44, Math.min(maxBox, tw + 18));
+        px[i] = { x: pad + gap * (i + 0.5), w: bw };
       });
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
-      ctx.fillText(DE ? "Klicke ein Wort" : "click a word", pad, 16);
-      var selX = px[selected], y0 = y - 15;
-      row.forEach(function (wt, j) {
-        if (wt < 0.005) return;
-        if (j === selected) {
-          var lr = 9 + 16 * wt;
-          ctx.strokeStyle = C.blue;
-          ctx.globalAlpha = 0.24 + Math.min(0.62, wt);
-          ctx.lineWidth = 1.8 + wt * 6;
+      var y0 = y - 16;
+      for (var i = 0; i < n; i++) {
+        for (var j = i + 1; j < n; j++) {
+          var wt = (m[i][j] + m[j][i]) / 2;
+          if (wt < 0.005) continue;
+          var x1 = px[i].x, x2 = px[j].x;
+          var mid = (x1 + x2) / 2;
+          var lift = 26 + Math.abs(j - i) * 7 + wt * 42;
+          var cy = Math.max(22, y0 - lift);
+          ctx.strokeStyle = C.petrol;
+          ctx.globalAlpha = Math.min(0.22, 0.04 + wt * 0.55);
+          ctx.lineWidth = 0.55 + wt * 4.6;
+          ctx.lineCap = "round";
           ctx.beginPath();
-          ctx.arc(selX, y0 - 7, lr, Math.PI * 1.08, Math.PI * 1.92);
+          ctx.moveTo(x1, y0);
+          ctx.quadraticCurveTo(mid, cy, x2, y0);
           ctx.stroke();
-          ctx.globalAlpha = 1;
-          return;
         }
-        var x1 = px[j];
-        var mid = (selX + x1) / 2;
-        var cy = Math.max(30, y - 38 - 115 * wt);
-        var alpha = 0.20 + Math.min(0.68, wt);
-        ctx.strokeStyle = C.blue;
-        ctx.globalAlpha = alpha;
-        ctx.lineWidth = 2 + wt * 16;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(selX, y0);
-        ctx.quadraticCurveTo(mid, cy, x1, y0);
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-        var ang = Math.atan2(y0 - cy, x1 - mid);
-        var ah = 7 + wt * 10;
-        var aw = 5 + wt * 7;
-        ctx.beginPath();
-        ctx.moveTo(x1, y0);
-        ctx.lineTo(x1 - ah * Math.cos(ang) + aw * Math.sin(ang), y0 - ah * Math.sin(ang) - aw * Math.cos(ang));
-        ctx.lineTo(x1 - ah * Math.cos(ang) - aw * Math.sin(ang), y0 - ah * Math.sin(ang) + aw * Math.cos(ang));
-        ctx.closePath();
-        ctx.fillStyle = C.blue;
-        ctx.fill();
-        if (wt >= 0.02) {
+      }
+      ctx.globalAlpha = 1;
+      var sel = px[selected];
+      if (sel) {
+        row.forEach(function (wt, j) {
+          if (j === selected || wt < 0.005) return;
+          var x1 = sel.x, x2 = px[j].x;
+          var mid = (x1 + x2) / 2;
+          var lift = 34 + Math.abs(j - selected) * 9 + wt * 58;
+          var cy = Math.max(22, y0 - lift);
+          var on = wt >= 0.16;
+          ctx.strokeStyle = on ? C.blue : C.petrol;
+          ctx.globalAlpha = 0.24 + Math.min(0.66, wt * 0.9);
+          ctx.lineWidth = 1.6 + wt * 13;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(x1, y0);
+          ctx.quadraticCurveTo(mid, cy, x2, y0);
+          ctx.stroke();
+          var ang = Math.atan2(y0 - cy, x2 - mid);
+          var ah = 7 + wt * 8;
+          var aw = 4 + wt * 5;
+          ctx.beginPath();
+          ctx.moveTo(x2, y0);
+          ctx.lineTo(x2 - ah * Math.cos(ang) + aw * Math.sin(ang), y0 - ah * Math.sin(ang) - aw * Math.cos(ang));
+          ctx.lineTo(x2 - ah * Math.cos(ang) - aw * Math.sin(ang), y0 - ah * Math.sin(ang) + aw * Math.cos(ang));
+          ctx.closePath();
+          ctx.fillStyle = on ? C.blue : C.petrol;
+          ctx.globalAlpha = 0.35 + Math.min(0.55, wt);
+          ctx.fill();
           ctx.fillStyle = C.petrol;
+          ctx.globalAlpha = 0.8;
           ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
           ctx.textAlign = "center";
           ctx.fillText(Math.round(wt * 100) + "%", mid, Math.max(12, cy - 6));
+        });
+        ctx.strokeStyle = C.green;
+        ctx.globalAlpha = 0.35;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(sel.x, y0 - 4, Math.min(sel.w / 2 + 5, 26), Math.PI * 1.08, Math.PI * 1.92);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ts.forEach(function (tok, i) {
+        var x = px[i].x, bw = px[i].w;
+        var on = i === selected;
+        var wt = row[i] || 0;
+        var col = on ? C.green : (i === 0 && context !== "none" ? C.gold : C.blue);
+        if (on) {
+          ctx.beginPath();
+          ctx.ellipse(x, y, bw / 2 + 7, 22, 0, 0, Math.PI * 2);
+          ctx.fillStyle = C.green;
+          ctx.globalAlpha = 0.10;
+          ctx.fill();
         }
+        ctx.globalAlpha = on ? 0.96 : Math.min(0.72, 0.16 + wt * 0.85);
+        ctx.fillStyle = col;
+        roundRect(ctx, x - bw / 2, y - 16, bw, 32, 7);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = on ? C.green : C.lineStrong;
+        ctx.lineWidth = on ? 2 : 1;
+        roundRect(ctx, x - bw / 2, y - 16, bw, 32, 7);
+        ctx.stroke();
+        ctx.fillStyle = (on || (wt > 0.46 && i !== 0)) ? "#fff" : C.ink;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.fillText(tokenLabel(tok, i), x, y + 1);
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.fillText(Math.round(wt * 100) + "%", x, y + 27);
+        graphHits.push({ x: x - bw / 2, y: y - 16, w: bw, h: 32, i: i });
       });
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + (api.font("canvas-sm") * 0.82) + 'px "Open Sans", sans-serif';
+      ctx.fillText(DE ? "␣ = Leerzeichen · Kante = Attention-Gewicht" : "␣ = whitespace · edge = attention weight", pad, 8);
+      ctx.textAlign = "right";
+      ctx.fillStyle = C.petrol;
+      ctx.fillText((DE ? "Zeile " : "row ") + tokenLabel(ts[selected], selected), w - pad, 8);
+      ctx.textBaseline = "alphabetic";
       graph.setAttribute("aria-label", DE
-        ? "Attention-Graph. Zeile " + ts[selected] + "."
-        : "Attention graph. Row " + ts[selected] + ".");
+        ? "Vollverbundener Attention-Graph. Zeile " + tokenLabel(ts[selected], selected) + ". Kante = Gewicht."
+        : "Fully connected attention graph. Row " + tokenLabel(ts[selected], selected) + ". Edge = weight.");
     }
     function drawVector() {
       if (!vectorSize) return;
@@ -257,8 +312,15 @@
       var cx = w * 0.5, cy = h * 0.54;
       var scale = Math.min((w - 90) / 3, (h - 70) / 2.2);
       ctx.strokeStyle = C.line;
-      ctx.globalAlpha = 0.55;
+      ctx.globalAlpha = 0.18;
       ctx.lineWidth = 1;
+      for (var gi = -2; gi <= 2; gi++) {
+        var gy = cy + gi * scale * 0.45;
+        ctx.beginPath(); ctx.moveTo(cx - scale * 1.9, gy); ctx.lineTo(cx + scale * 1.9, gy); ctx.stroke();
+        var gx = cx + gi * scale * 0.65;
+        ctx.beginPath(); ctx.moveTo(gx, cy - scale * 1.15); ctx.lineTo(gx, cy + scale * 1.15); ctx.stroke();
+      }
+      ctx.globalAlpha = 0.55;
       ctx.beginPath(); ctx.moveTo(cx - scale * 1.9, cy); ctx.lineTo(cx + scale * 1.9, cy); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx, cy - scale * 1.15); ctx.lineTo(cx, cy + scale * 1.15); ctx.stroke();
       ctx.globalAlpha = 1;
@@ -268,7 +330,7 @@
         var e = EMB[tok] || [0, 0];
         var wt = row[j] || 0;
         sumX += e[0] * wt; sumY += e[1] * wt;
-        pts.push({ x: cx + e[0] * scale, y: cy - e[1] * scale, label: tok, wt: wt, j: j });
+        pts.push({ x: cx + e[0] * scale, y: cy - e[1] * scale, label: tokenLabel(tok, j), wt: wt, j: j });
       });
       var ex = cx + sumX * scale, ey = cy - sumY * scale;
       pts.forEach(function (pt) {
@@ -316,17 +378,22 @@
       ctx.textAlign = "left";
       ctx.fillText("r", ex + 7, ey - 6);
       ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.font = '600 ' + (api.font("canvas-sm") * 0.82) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "␣ = Leerzeichen" : "␣ = whitespace", 8, 12);
+      ctx.fillStyle = C.petrol;
+      ctx.textAlign = "right";
+      ctx.fillText("r = Σ w · v", w - 8, 12);
       ctx.textAlign = "left";
       vector.setAttribute("aria-label", DE
-        ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "; r = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
-        : "2-D embeddings. Weighted sum of the value vectors for " + ts[selected] + "; r = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ").");
+        ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + tokenLabel(ts[selected], selected) + "; r = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
+        : "2-D embeddings. Weighted sum of the value vectors for " + tokenLabel(ts[selected], selected) + "; r = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ").");
     }
     function renderTable() {
       var ts = tokens(), m = matrix();
-      var html = '<table><thead><tr><th></th>' + ts.map(function (t) { return '<th>' + api.esc(t) + '</th>'; }).join("") + '</tr></thead><tbody>';
+      var html = '<table><thead><tr><th></th>' + ts.map(function (t, j) { return '<th>' + api.esc(tokenLabel(t, j)) + '</th>'; }).join("") + '</tr></thead><tbody>';
       m.forEach(function (row, i) {
-        html += '<tr data-row="' + i + '"' + (i === selected ? ' class="is-on"' : '') + '><th>' + api.esc(ts[i]) + '</th>';
+        html += '<tr data-row="' + i + '"' + (i === selected ? ' class="is-on"' : '') + '><th>' + api.esc(tokenLabel(ts[i], i)) + '</th>';
         row.forEach(function (wt) {
           var pct = Math.round(wt * 100);
           var alpha = Math.min(0.80, 0.10 + wt * 0.95);
@@ -355,7 +422,7 @@
     }
     function renderReadout() {
       var ts = tokens(), row = matrix()[selected], key = topKey(row, selected);
-      readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(ts[selected]) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(ts[key]) + ' ' + Math.round(row[key] * 100) + '%</b></span><span><b>r</b> ' + 'r = Σ w · v</span>';
+      readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(tokenLabel(ts[selected], selected)) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(tokenLabel(ts[key], key)) + ' ' + Math.round(row[key] * 100) + '%</b></span><span><b>r</b> ' + 'r = Σ w · v</span>';
     }
     function animateRow(target) {
       if (animRaf) cancelAnimationFrame(animRaf);
