@@ -274,12 +274,15 @@
       cleanupHomeLaunch();
       var onSearch = !!(searchPhone && searchPhone.classList.contains("is-active"));
       if (reduce) {
+        if (onSearch) showPhoneNav();
+        setPhone("home");
         hidePhoneNav();
         setPhone("chat");
         startChat();
         launchingChat = false;
         return;
       }
+      if (onSearch) showPhoneNav();
       var base = onSearch ? 480 : 0;
       later(function () {
         setPhone("home");
@@ -317,12 +320,10 @@
         card.classList.add("on");
         typeAnswer();
         serp.classList.add("on");
-        showPhoneNav();
         if (view === "chat") startChat();
         if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
         return;
       }
-      later(showPhoneNav, 600);
       typeSearch(SATZ, function () {
         searchText.textContent = SATZ;
         setCentered(false);

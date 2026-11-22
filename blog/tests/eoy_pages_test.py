@@ -204,21 +204,13 @@ def check_media_launch(driver, results, page, lang):
         return
     bg = driver.execute_script("return getComputedStyle(document.querySelector('#ia-home')).backgroundImage")
     results.check(page, lang, "media home uses opera wallpaper", "opera.jpg" in (bg or ""), str(bg)[:120])
-    nav_on_search = driver.execute_async_script(
-        """
-var done = arguments[arguments.length - 1];
-var start = performance.now();
-function poll() {
-  var nav = document.querySelector('.ia-phone-navbar');
-  var search = document.querySelector('#ia-phone');
-  if (!nav.hidden && nav.classList.contains('is-up') && search.classList.contains('is-active')) { done(true); return; }
-  if (performance.now() - start > 3000) { done(false); return; }
-  setTimeout(poll, 50);
-}
-poll();
-"""
+    nav_before = driver.execute_script(
+        "return (function(){var n=document.querySelector('.ia-phone-navbar');"
+        "var s=document.querySelector('#ia-phone');"
+        "return {hidden:n.hidden,up:n.classList.contains('is-up'),search:s.classList.contains('is-active')};})()"
     )
-    results.check(page, lang, "media nav bar swipes up on the search page", nav_on_search, str(nav_on_search))
+    results.check(page, lang, "media nav bar is hidden before advancing",
+                  nav_before["hidden"] or not nav_before["up"], str(nav_before))
     nav_bottom = driver.execute_script("return parseFloat(getComputedStyle(document.querySelector('.ia-phone-navbar')).bottom)")
     results.check(page, lang, "media nav bar sits at the bottom of the phone", 0 < (nav_bottom or 0) < 300, str(nav_bottom))
     status = driver.execute_script(
@@ -279,7 +271,7 @@ requestAnimationFrame(sample);
     )
     detail = str(timing)
     results.check(page, lang, "media launch shows the phone home", timing["sawHome"], detail)
-    results.check(page, lang, "media launch keeps the nav bar on the search page", timing["sawNav"] and timing["navOnSearch"], detail)
+    results.check(page, lang, "media launch swipes the nav bar up on the search page", timing["sawNav"] and timing["navOnSearch"], detail)
     results.check(page, lang, "media launch keeps the nav bar on the desktop", timing["sawNav"] and timing["navOnHome"], detail)
     results.check(page, lang, "media launch opens KI-Chat", timing["sawChat"], detail)
     results.check(page, lang, "media launch takes between one and two seconds", 1200 <= timing["ms"] <= 2200, detail)
