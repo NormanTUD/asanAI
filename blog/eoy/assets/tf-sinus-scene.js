@@ -607,7 +607,7 @@
       matrixOverlay.hidden = true;
       matrixBtn.textContent = DE ? "Matrizen zeigen" : "Show matrices";
     });
-    function resize() { size = api.fit(canvas, stage); if (lossView) { if (lossApi) lossApi.resize(); } else { draw(); updateMatrixCanvases(); } }
+    function resize() { size = api.fit(canvas, canvas); if (lossView) { if (lossApi) lossApi.resize(); } else { draw(); updateMatrixCanvases(); } }
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
         visible = entries.some(function (en) { return en.isIntersecting; });
@@ -631,6 +631,8 @@
     }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); updateMatrixCanvases(); });
+    var stageObserver = null;
+    if (window.ResizeObserver) { stageObserver = new ResizeObserver(function () { resize(); }); stageObserver.observe(stage); }
     resize();
     if (window.tf) initTf(); else setTimeout(initTf, 300);
     return {
@@ -652,6 +654,7 @@
         timer = 0;
         gen++;
         if (lossApi) { try { lossApi.destroy(); } catch (e) {} lossApi = null; }
+        if (stageObserver) { stageObserver.disconnect(); stageObserver = null; }
         if (data.linear.model) data.linear.model.stopTraining = true;
         if (data.net.model) data.net.model.stopTraining = true;
         var lm = data.linear.model, nm = data.net.model, xs = xsTensor, ys = ysTensor;

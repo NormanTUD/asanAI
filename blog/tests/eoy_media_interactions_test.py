@@ -1567,6 +1567,201 @@ def test_nav_hint(browser, base, lang, results):
     context.close()
 
 
+def test_blocks_sequence(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/2.php", wait_media=False)
+    tag = f"blocks-seq-{lang}"
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(500)
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(120)
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(180)
+    rapid = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), title: document.querySelector('.ls-bs-title')?.textContent || '' })")
+    results.check(tag, "rapid next reaches the blocks demo", rapid["scene"] == "blocks", str(rapid))
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(1000)
+    expected = ["Tokenizer", "Embedding", "Positional Embedding",
+                "Transformer-Blöcke" if lang == "de" else "Transformer blocks", "Attention",
+                "Feed-Forward-Netzwerk (FFN)" if lang == "de" else "Feed-forward network (FFN)",
+                "LayerNorm", "Unembedding"]
+    seen = []
+    for _ in range(9):
+        seen.append(page.evaluate("() => document.querySelector('.ls-bs-title')?.textContent || ''"))
+        page.evaluate("() => LearnSys.next()")
+        page.wait_for_timeout(120)
+    results.check(tag, "all Transformer sub-slides appear in order", seen[:len(expected)] == expected, str(seen))
+    current = page.evaluate("() => ({ canNext: LearnSys.canNext(), overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
+    results.check(tag, "blocks sequence ends at Unembedding", current["canNext"] is False, str(current))
+    results.check(tag, "blocks sequence keeps the layout", current["overflow"] <= 2, str(current["overflow"]))
+    errors = logs.take()
+    results.check(tag, "blocks sequence has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
+def test_residual_layout(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/2.php", wait_media=False)
+    tag = f"residual-{lang}"
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(1000)
+    layout = page.evaluate(
+        r"""
+() => {
+  function rect(sel) {
+    var el = document.querySelector(sel);
+    if (!el) return null;
+    var r = el.getBoundingClientRect();
+    return { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height), bottom: Math.round(r.bottom) };
+  }
+  var res = document.querySelector('.ls-bs-residual');
+  return {
+    residual: rect('.ls-bs-residual'),
+    stack: rect('.ls-bs-stack'),
+    detail: rect('.ls-bs-detail'),
+    text: res ? res.innerText : '',
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+}
+"""
+    )
+    detail = str(layout)
+    res = layout["residual"]
+    stack = layout["stack"]
+    detail_rect = layout["detail"]
+    results.check(tag, "residual band is present", bool(res), detail)
+    results.check(tag, "residual band spans the top", res and stack and detail_rect and res["y"] <= stack["y"] and res["bottom"] <= stack["y"] + 1, detail)
+    results.check(tag, "residual band covers stack and detail width", res and stack and detail_rect and res["w"] >= stack["w"] + detail_rect["w"], detail)
+    text = layout["text"]
+    results.check(tag, "residual band explains the stream", all(token in text for token in ("x", "LN", "Attention", "FFN", "× N")), text[:240])
+    results.check(tag, "residual layout has no page overflow", layout["overflow"] <= 2, str(layout["overflow"]))
+    errors = logs.take()
+    results.check(tag, "residual layout has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
+def test_attention_layout(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path=INDEX)
+    tag = f"attention-layout-{lang}"
+    page.evaluate("() => LearnSys.go(0, 8, 0)")
+    page.wait_for_timeout(1200)
+    info = page.evaluate(
+        r"""
+() => {
+  function rect(sel) {
+    var el = document.querySelector(sel);
+    if (!el) return null;
+    var r = el.getBoundingClientRect();
+    var cs = getComputedStyle(el);
+    return { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height), bottom: Math.round(r.bottom), overflowY: cs.overflowY, scrollH: el.scrollHeight, clientH: el.clientHeight };
+  }
+  var matrix = document.querySelector('.ls-att-matrix');
+  var formula = document.querySelector('.ls-att-formula');
+  return {
+    title: document.querySelector('#ls-title') ? document.querySelector('#ls-title').textContent : '',
+    matrix: rect('.ls-att-matrix'),
+    formula: rect('.ls-att-formula'),
+    overlap: matrix && formula ? matrix.getBoundingClientRect().bottom > formula.getBoundingClientRect().top + 1 : null,
+    formulaText: formula ? formula.innerText : '',
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+}
+"""
+    )
+    detail = str(info)
+    results.check(tag, "attention demo is mounted", "Attention" in info["title"], detail[:200])
+    results.check(tag, "matrix and formula do not overlap", info["overlap"] is False, detail)
+    results.check(tag, "matrix is compact", info["matrix"] and info["matrix"]["h"] <= 210, detail)
+    results.check(tag, "matrix can scroll internally", info["matrix"] and info["matrix"]["overflowY"] == "auto", detail)
+    results.check(tag, "formula can scroll internally", info["formula"] and info["formula"]["overflowY"] == "auto", detail)
+    results.check(tag, "attention layout has no page overflow", info["overflow"] <= 2, str(info["overflow"]))
+    errors = logs.take()
+    results.check(tag, "attention layout has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
+def test_sinus_size(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path=INDEX)
+    tag = f"sinus-size-{lang}"
+    page.evaluate("() => LearnSys.go(0, 15, 0)")
+    page.wait_for_timeout(2200)
+    info = page.evaluate(
+        r"""
+() => {
+  function rect(sel) {
+    var el = document.querySelector(sel);
+    if (!el) return null;
+    var r = el.getBoundingClientRect();
+    return { w: Math.round(r.width), h: Math.round(r.height), bottom: Math.round(r.bottom) };
+  }
+  var canvas = document.querySelector('.ls-sinus-canvas');
+  var stage = document.querySelector('.ls-sinus-stage');
+  var scene = document.querySelector('.ls-sinus-scene');
+  var controls = document.querySelector('.ls-sinus-controls');
+  var readout = document.querySelector('.ls-sinus-readout');
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  return {
+    title: document.querySelector('#ls-title') ? document.querySelector('#ls-title').textContent : '',
+    stage: rect('.ls-sinus-stage'),
+    canvas: rect('.ls-sinus-canvas'),
+    canvasAttr: canvas ? { w: canvas.width, h: canvas.height } : null,
+    dpr: dpr,
+    scene: scene ? { scrollH: scene.scrollHeight, clientH: scene.clientHeight } : null,
+    controls: rect('.ls-sinus-controls'),
+    readout: rect('.ls-sinus-readout'),
+    sceneRect: rect('.ls-sinus-scene'),
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+}
+"""
+    )
+    detail = str(info)
+    results.check(tag, "sinus demo is mounted", "Deep networks" in info["title"] or "Tiefe Netze" in info["title"], detail[:200])
+    stage = info["stage"]
+    canvas = info["canvas"]
+    attr = info["canvasAttr"]
+    results.check(tag, "sinus stage has a wide aspect ratio", stage and abs(stage["w"] / stage["h"] - 16 / 9) < 0.06, str(stage))
+    results.check(tag, "sinus canvas matches its stage size", stage and canvas and abs(stage["w"] - canvas["w"]) <= 3 and abs(stage["h"] - canvas["h"]) <= 3, str({"stage": stage, "canvas": canvas}))
+    results.check(tag, "sinus canvas resolution matches its CSS size", canvas and attr and abs(attr["w"] - canvas["w"] * info["dpr"]) <= 3 and abs(attr["h"] - canvas["h"] * info["dpr"]) <= 3, str({"attr": attr, "canvas": canvas, "dpr": info["dpr"]}))
+    results.check(tag, "sinus controls stay inside the scene", info["sceneRect"] and info["readout"] and info["readout"]["bottom"] <= info["sceneRect"]["bottom"] + 2, detail)
+    results.check(tag, "sinus layout has no page overflow", info["overflow"] <= 2, str(info["overflow"]))
+    errors = logs.take()
+    results.check(tag, "sinus layout has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
+def test_gauss_slider(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/3.php", wait_media=False)
+    tag = f"gauss-slider-{lang}"
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 3)")
+    page.wait_for_timeout(1200)
+    info = page.evaluate(
+        r"""
+() => {
+  var slider = document.querySelector('.ls-gauss-quality');
+  var out = document.querySelector('.ls-gauss-telescope output');
+  return {
+    sub: LearnSys.state().substep,
+    slider: slider ? slider.value : null,
+    min: slider ? slider.min : null,
+    out: out ? out.textContent : '',
+    canNext: LearnSys.canNext(),
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+}
+"""
+    )
+    detail = str(info)
+    results.check(tag, "gauss reaches its last data slide", info["sub"] == 3, detail)
+    results.check(tag, "gauss slider reaches the minimum", info["slider"] == info["min"] == "0.1", detail)
+    results.check(tag, "gauss readout shows the minimum", "0.1" in info["out"], detail)
+    results.check(tag, "gauss layout has no page overflow", info["overflow"] <= 2, str(info["overflow"]))
+    errors = logs.take()
+    results.check(tag, "gauss slider has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
 def test_index_sprint(browser, base, lang, results):
     context = browser.new_context(viewport={"width": 1200, "height": 900})
     page = context.new_page()
@@ -1630,6 +1825,11 @@ def main():
                 test_launch(page, logs, results, tag)
                 test_text_blur_swap(browser, base, lang, results)
                 test_nav_hint(browser, base, lang, results)
+                test_blocks_sequence(browser, base, lang, results)
+                test_residual_layout(browser, base, lang, results)
+                test_attention_layout(browser, base, lang, results)
+                test_sinus_size(browser, base, lang, results)
+                test_gauss_slider(browser, base, lang, results)
                 test_tabs_and_code(page, logs, results, tag)
                 test_phone_screen_clicks(page, logs, results, tag)
                 test_hidden_media_buttons(page, logs, results, tag)
