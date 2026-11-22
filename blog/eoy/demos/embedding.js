@@ -38,11 +38,13 @@
       pair: ["cold", "lukewarm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false,
       vectorMode: false
     };
-    var planeRevealUntil = 0, planeTimer = 0;
-    function revealPlanes() {
-      planeRevealUntil = performance.now() + 3200;
-      if (planeTimer) clearTimeout(planeTimer);
-      planeTimer = setTimeout(function () { planeRevealUntil = 0; planeTimer = 0; ensureLoop(); draw(); }, 3200);
+    var planesVisible = true, vectorMix = 0, vectorTarget = 0;
+    function setVectorMode(on) {
+      st.vectorMode = !!on;
+      vectorTarget = st.vectorMode ? 1 : 0;
+      if (st.vectorMode) planesVisible = false;
+      else planesVisible = true;
+      ensureLoop();
     }
 
     function color(name) { return C[name] || C.ink; }
@@ -511,8 +513,7 @@
       var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) {
         drawRoomGrid(zMix);
-        var planeRemain = planeRevealUntil - performance.now();
-        if (planeRemain > 0) drawCategoryPlanes(zMix * Math.min(1, planeRemain / 450));
+        if (planesVisible && !st.vectorMode) drawCategoryPlanes(zMix);
       }
       var planeAlpha = smoothstep(0.18, 0.86, dimMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
@@ -569,14 +570,19 @@
       }
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
-      if (st.vectorMode && zMix > 0.5 && individualAlpha > 0.05) {
+      if (vectorMix > 0.01 && zMix > 0.5 && individualAlpha > 0.05) {
         drawList.forEach(function (item) {
           var itemAlpha = individualAlpha * (item.threeD ? threeDAlpha : 1);
           if (itemAlpha < 0.01) return;
           var selected = item.id === st.selected;
           var col = selected ? C.green : groupColor(WORDS[item.id].group);
-          ctx.globalAlpha = itemAlpha * (selected ? 0.92 : 0.30);
-          drawArrow(origin.x, origin.y, item.p.x, item.p.y, col, selected ? 2.2 : 1.0);
+          var ex = origin.x + (item.p.x - origin.x) * vectorMix;
+          var ey = origin.y + (item.p.y - origin.y) * vectorMix;
+          ctx.globalAlpha = itemAlpha * (selected ? 0.92 : 0.30) * Math.min(1, vectorMix * 1.4);
+          drawArrow(origin.x, origin.y, ex, ey, col, selected ? 2.2 : 1.0);
+          if (vectorMix > 0.45) {
+            hits.push({ id: item.id, x: (origin.x + ex) / 2, y: (origin.y + ey) / 2, r: 12, kind: "word" });
+          }
         });
         ctx.globalAlpha = 1;
         drawLabel(DE ? "Bedeutung ist Richtung" : "Meaning is direction", size.w / 2, size.h - 34, C.green, "center", 12);
@@ -738,10 +744,13 @@
           var selected = id === st.selected;
           var hovered = id === hover;
           var hit;
-          if (st.vectorMode && zMix > 0.5) {
+          var pointAlpha = itemAlpha * (1 - vectorMix);
+          if (pointAlpha < 0.01) {
             hit = { x: p.x, y: p.y, r: selected ? 12 : 9 };
           } else {
+            ctx.globalAlpha = pointAlpha;
             hit = drawPoint(p.x, p.y, id, selected, hovered);
+            ctx.globalAlpha = 1;
           }
           if (itemAlpha > 0.5) hits.push({ id: id, x: hit.x, y: hit.y, r: hit.r + 10, kind: "word" });
           var labelY = p.y - 12;
@@ -910,7 +919,7 @@
         ["1D", "2D", "3D"].forEach(function (label, i) {
           row1.appendChild(makeChip(label, st.dim === i, function () {
             st.dim = i; animateDimTo(i); st.group = null;
-            if (i === 2) revealPlanes();
+            if (i === 2) { planesVisible = true; }
             if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
             if (i !== 2 && st.arithmetic) {
               var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
@@ -934,8 +943,9 @@
         });
         row1.appendChild(reset);
         if (st.dim === 2) {
-          row1.appendChild(makeChip(DE ? "Pfeile" : "Arrows", st.vectorMode, function () {
-            st.vectorMode = !st.vectorMode; syncControls(); draw();
+          row1.appendChild(makeChip(DE ? "Richtungen" : "Directions", st.vectorMode, function () {
+            setVectorMode(!st.vectorMode);
+            syncControls();
           }));
           var tableBtn = document.createElement("button");
           tableBtn.type = "button";
@@ -1016,7 +1026,7 @@
         if (nextDim !== st.dim) animateDimTo(nextDim);
         else dimTarget = nextDim;
         st.dim = nextDim;
-        if (nextDim === 2) revealPlanes();
+        if (nextDim === 2) planesVisible = true;
       }
       if (s.selected) st.selected = s.selected;
       if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
@@ -1029,7 +1039,9 @@
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
       st.vectorMode = !!s.vectorMode;
-      if (st.arithmetic === "layers" && st.dim === 2) st.vectorMode = true;
+      vectorTarget = st.vectorMode ? 1 : 0;
+      if (!st.vectorMode) vectorMix = 0;
+      planesVisible = !st.vectorMode;
       st.showHighdim = !!s.showHighdim;
       if (st.dim !== 2) { st.showHighdim = false; st.vectorMode = false; }
       syncControls();
@@ -1264,6 +1276,11 @@
       if (now - last < 33) { ensureLoop(); return; }
       last = now;
       var changed = false;
+      if (Math.abs(vectorMix - vectorTarget) > 0.001) {
+        vectorMix += (vectorTarget - vectorMix) * 0.16;
+        if (Math.abs(vectorMix - vectorTarget) < 0.01) vectorMix = vectorTarget;
+        changed = true;
+      }
       if (dimAnim) {
         if (!dimAnim.last) dimAnim.last = now;
         // Clamp dt so a paused/throttled tab resumes smoothly instead of jumping.
@@ -1359,7 +1376,6 @@
       resize: resize,
       destroy: function () {
         if (raf) cancelAnimationFrame(raf);
-        if (planeTimer) clearTimeout(planeTimer);
         clearTimeout(reserveTimer);
         if (reserveIdle && window.cancelIdleCallback) { try { window.cancelIdleCallback(reserveIdle); } catch (e) {} }
         if (ro) ro.disconnect();

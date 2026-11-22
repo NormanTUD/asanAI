@@ -40,8 +40,7 @@
     { id: "power-dir", label: ["Machtrichtung", "Power direction"] },
     { id: "directions", label: ["Alle Richtungen", "All directions"] },
     { id: "dog-gender", expr: "MaleDog - Man + Woman", label: ["Rüde − Mann + Frau", "Male dog − Man + Woman"], only3d: true },
-    { id: "wizard-gender", expr: "Wizard - Man + Woman", label: ["Zauberer − Mann + Frau", "Wizard − Man + Woman"], only3d: true },
-    { id: "layers", label: ["Ebenen", "Layers"], only3d: true }
+    { id: "wizard-gender", expr: "Wizard - Man + Woman", label: ["Zauberer − Mann + Frau", "Wizard − Man + Woman"], only3d: true }
   ];
 
   var PAIRS = [
