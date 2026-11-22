@@ -163,6 +163,11 @@
       phoneNavbar.hidden = true;
       phoneNavbar.classList.remove("is-up");
     }
+    function dismissPhoneNav() {
+      if (!phoneNavbar) return;
+      phoneNavbar.classList.remove("is-up");
+      later(function () { if (phoneNavbar) phoneNavbar.hidden = true; }, 340);
+    }
     function reset() {
       clearTimers();
       setCentered(true);
@@ -299,9 +304,9 @@
           homeChatApp.classList.remove("is-tapped");
           homeChatApp.classList.add("is-opening");
         }
-        hidePhoneNav();
+        dismissPhoneNav();
         setPhone("chat");
-        later(startChat, 60);
+        later(startChat, 340);
       }, base + 900);
       later(function () {
         hidePhoneNav();
