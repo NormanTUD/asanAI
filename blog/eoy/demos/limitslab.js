@@ -35,7 +35,7 @@
         check: L("DOI nicht gefunden · Titel nicht gefunden", "DOI not found · title not found"),
         wait: L("Starte den Test: Das Modell soll eine Quelle nennen.", "Run the test: the model is asked for a source."),
         why: L("Das Modell hat die Form einer bibliografischen Angabe gelernt, keine Bibliothek. Es kann eine Quelle erfinden, die plausibel aussieht. Die Form ist kein Beweis.", "The model learned the shape of a bibliographic entry, not a library. It can invent a source that looks plausible. The shape is not proof."),
-        whyChecked: L("Die Prüfung entlarvt das Zitat, liefert aber keinen Ersatz. Ohne echte Quelle bleibt die Behauptung unbelegt.", "The check exposes the citation but supplies no replacement. Without a real source, the claim remains unsupported."),
+        whyChecked: L("Die Form ist kein Beweis: Die Prüfung entlarvt das Zitat, liefert aber keinen Ersatz. Ohne echte Quelle bleibt die Behauptung unbelegt.", "The shape is not proof: the check exposes the citation but supplies no replacement. Without a real source, the claim remains unsupported."),
         fix: L("RAG, DOI und Titel prüfen, nur belegte Sätze zitieren.", "RAG, check DOI and title, cite only supported sentences."),
         cite: "Walters & Wilder (2023); Ji et al. (2023)"
       },
