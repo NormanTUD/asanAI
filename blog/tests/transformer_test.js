@@ -447,6 +447,30 @@ function testTransformerStepsSource() {
 		'compact hyperparameter overlay has a close control');
 }
 
+function testInvalidConfigGuard() {
+	const php = fs.readFileSync(path.join(BLOG, 'transformer.php'), 'utf8');
+	const js = fs.readFileSync(path.join(BLOG, 'transformer.js'), 'utf8');
+	const css = fs.readFileSync(path.join(BLOG, 'transformer.css'), 'utf8');
+
+	for (const id of ['tm-hyper-invalid-dim', 'tm-hyper-invalid-heads']) {
+		check(new RegExp('class="tm-hyper-invalid" id="' + id + '" role="alert" hidden').test(php),
+			id + ' is an inline, hidden error slot');
+	}
+	check(php.includes('id="tm-hyper-close-hint"'), 'the panel header carries a close hint');
+	check(/tmArchitectureConfigValid\(\)[\s\S]{0,120}return;/.test(php),
+		'closing is blocked while the architecture is invalid');
+	check(php.includes('tmRevealArchitectureIssue'), 'a blocked close reveals the offending field');
+	check(js.includes('window.tmArchitectureConfigValid = tmArchitectureConfigValid'),
+		'the close guard reads the live slider values');
+	check(/function updateArchitectureInlineValidity[\s\S]*tm-hyper-invalid-dim[\s\S]*tm-hyper-invalid-heads/.test(js),
+		'inline notes are written for both offending sliders');
+	check(/if \(panelOpen\) \{[\s\S]*msgDiv\.style\.display = 'none'/.test(js),
+		'the background toast is suppressed while the panel is open');
+	check(css.includes('.tm-hyper-invalid') && css.includes('.tm-field-invalid'),
+		'inline invalid states are styled');
+	check(css.includes('.tm-hyper-invalid.tm-attention'), 'a blocked close can pulse the inline note');
+}
+
 function testTocSkipsHiddenOverlays() {
 	const toc = fs.readFileSync(path.join(BLOG, 'toc.js'), 'utf8');
 	check(/closest\(['"]\.tm-hyper-overlay/.test(toc),
@@ -687,6 +711,7 @@ function main() {
 	testLazyRenderableDefers(ctx);
 	testVectorPlaceholder(ctx);
 	testTransformerStepsSource();
+	testInvalidConfigGuard();
 	testTocSkipsHiddenOverlays();
 	testReadingAidSource();
 	testLessonSource();

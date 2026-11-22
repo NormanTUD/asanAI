@@ -405,12 +405,17 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	else window.addEventListener('load', revealRobot);
 	window.addEventListener('blogPostLoadComplete', revealRobot);
 	function setOpen(open) {
+		if (!open && typeof window.tmArchitectureConfigValid === 'function' && !window.tmArchitectureConfigValid()) {
+			if (typeof window.tmRevealArchitectureIssue === 'function') window.tmRevealArchitectureIssue();
+			return;
+		}
 		overlay.hidden = !open;
 		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
 		document.documentElement.classList.toggle('tm-hyper-open', open);
 		if (open) {
 			var adv = document.getElementById('transformer-advanced-config');
 			if (adv) adv.open = true;
+			if (typeof updateArchitectureValidityUI === 'function') updateArchitectureValidityUI();
 			if (window.TM && typeof TM.typesetMath === 'function') {
 				setTimeout(function () { TM.typesetMath(overlay); }, 60);
 			}

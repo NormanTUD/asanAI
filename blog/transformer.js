@@ -7340,6 +7340,7 @@ function updateArchitectureValidityUI() {
 	const h       = parseInt(document.getElementById('transformer-heads').value) || 1;
 	const isValid = (d_model % h === 0);
 	const isDe    = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const panelOpen = tmHyperOverlayOpen();
 
 	// ── Train button ──
 	const trainBtn = document.querySelector('.train-btn');
@@ -7366,6 +7367,11 @@ function updateArchitectureValidityUI() {
 		document.body.appendChild(msgDiv);
 	}
 
+	const validHeads = getValidHeads(d_model);
+	const validDims  = getValidDimensions(h);
+	const dkValue = (d_model / h).toFixed(2);
+	updateArchitectureInlineValidity({ isValid, d_model, h, validHeads, validDims, dkValue, isDe });
+
 	if (isValid) {
 		msgDiv.style.display = 'none';
 		msgDiv.innerHTML = '';
@@ -7374,14 +7380,17 @@ function updateArchitectureValidityUI() {
 		return;
 	}
 
-	// ── Invalid state: build the message ──
+	// ── Invalid state: mark the sliders ──
 	setSliderOutline('transformer-dimension-model', '2px solid var(--tm-coral, var(--mn-rose, #9185be))');
 	setSliderOutline('transformer-heads', '2px solid var(--tm-coral, var(--mn-rose, #9185be))');
 
-	const validHeads = getValidHeads(d_model);
-	const validDims  = getValidDimensions(h);
-
-	const dkValue = (d_model / h).toFixed(2);
+	// The panel shows the reason next to each offending slider, so the
+	// floating toast only speaks when the panel is closed.
+	if (panelOpen) {
+		msgDiv.style.display = 'none';
+		msgDiv.innerHTML = '';
+		return;
+	}
 
 	msgDiv.style.cssText = `
 	display: block;
@@ -7453,6 +7462,90 @@ function updateArchitectureValidityUI() {
     `;
 	if (msgDiv) _renderTemmlOnElements([msgDiv]);
 }
+
+function tmHyperOverlayOpen() {
+	const overlay = document.getElementById('transformer-hyper-overlay');
+	return !!overlay && !overlay.hidden;
+}
+
+function tmArchitectureConfigValid() {
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const headSlider = document.getElementById('transformer-heads');
+	if (!dimSlider || !headSlider) return true;
+	const d_model = parseInt(dimSlider.value, 10);
+	const h = parseInt(headSlider.value, 10);
+	return d_model > 0 && h > 0 && d_model % h === 0;
+}
+window.tmArchitectureConfigValid = tmArchitectureConfigValid;
+
+function _tmSetInlineValidityNote(note, field, html) {
+	if (!note) return;
+	note.innerHTML = html || '';
+	note.hidden = !html;
+	if (field) field.classList.toggle('tm-field-invalid', !!html);
+}
+
+function updateArchitectureInlineValidity(state) {
+	const dimNote = document.getElementById('tm-hyper-invalid-dim');
+	const headNote = document.getElementById('tm-hyper-invalid-heads');
+	const closeHint = document.getElementById('tm-hyper-close-hint');
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const headSlider = document.getElementById('transformer-heads');
+	const dimField = dimSlider ? dimSlider.closest('.transformer-config-field') : null;
+	const headField = headSlider ? headSlider.closest('.transformer-config-field') : null;
+
+	if (state.isValid) {
+		_tmSetInlineValidityNote(dimNote, dimField, '');
+		_tmSetInlineValidityNote(headNote, headField, '');
+		if (closeHint) {
+			closeHint.hidden = true;
+			closeHint.textContent = '';
+		}
+		return;
+	}
+
+	const dkText = state.isDe ? state.dkValue.replace('.', ',') : state.dkValue;
+	const dimChoices = state.validDims.length
+		? state.validDims.join(', ')
+		: (state.isDe ? 'keiner im Reglerbereich' : 'none in slider range');
+	const headChoices = state.validHeads.length
+		? state.validHeads.join(', ')
+		: (state.isDe ? 'keiner im Reglerbereich' : 'none in slider range');
+
+	_tmSetInlineValidityNote(dimNote, dimField, state.isDe
+		? `<strong>Warum das nicht geht:</strong> <code>d_model = ${state.d_model}</code> ist nicht durch <code>h = ${state.h}</code> teilbar. Jeder Attention-Kopf braucht eine ganze Anzahl von Dimensionen, aber <code>d_k = ${state.d_model} / ${state.h} = ${dkText}</code>. Setze <code>d_model</code> auf ${dimChoices} oder ändere die Heads.`
+		: `<strong>Why this cannot work:</strong> <code>d_model = ${state.d_model}</code> is not divisible by <code>h = ${state.h}</code>. Each attention head needs a whole number of dimensions, but <code>d_k = ${state.d_model} / ${state.h} = ${dkText}</code>. Set <code>d_model</code> to ${dimChoices} or change the heads.`);
+	_tmSetInlineValidityNote(headNote, headField, state.isDe
+		? `<strong>Warum das nicht geht:</strong> <code>h = ${state.h}</code> teilt <code>d_model = ${state.d_model}</code> nicht. Jeder Attention-Kopf braucht eine ganze Anzahl von Dimensionen, aber <code>d_k = ${state.d_model} / ${state.h} = ${dkText}</code>. Setze <code>h</code> auf ${headChoices} oder ändere d_model.`
+		: `<strong>Why this cannot work:</strong> <code>h = ${state.h}</code> does not divide <code>d_model = ${state.d_model}</code>. Each attention head needs a whole number of dimensions, but <code>d_k = ${state.d_model} / ${state.h} = ${dkText}</code>. Set <code>h</code> to ${headChoices} or change d_model.`);
+
+	if (closeHint) {
+		closeHint.hidden = false;
+		closeHint.textContent = state.isDe
+			? 'Behebe die markierten Werte, um das Fenster zu schließen.'
+			: 'Fix the highlighted values to close this window.';
+	}
+}
+
+function tmRevealArchitectureIssue() {
+	const overlay = document.getElementById('transformer-hyper-overlay');
+	if (!overlay || overlay.hidden) return;
+	const notes = Array.from(overlay.querySelectorAll('.tm-hyper-invalid')).filter(note => !note.hidden);
+	const target = notes[0] || overlay.querySelector('.tm-field-invalid');
+	if (!target) return;
+	const field = target.closest('.transformer-config-field') || target;
+	if (typeof field.scrollIntoView === 'function') {
+		field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+	}
+	notes.forEach(note => {
+		note.classList.remove('tm-attention');
+		void note.offsetWidth;
+		note.classList.add('tm-attention');
+	});
+	const slider = field.querySelector('input[type="range"]');
+	if (slider && typeof slider.focus === 'function') slider.focus({ preventScroll: true });
+}
+window.tmRevealArchitectureIssue = tmRevealArchitectureIssue;
 
 function getValidHeads(d_model) {
 	const maxHeads = parseInt(document.getElementById('transformer-heads').max) || 8;

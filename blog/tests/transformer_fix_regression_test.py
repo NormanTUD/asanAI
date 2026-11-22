@@ -140,6 +140,61 @@ def page_checks(page, port: int) -> None:
     page.evaluate("() => { const s=document.getElementById('transformer-dimension-model'); s.value='3'; s.dispatchEvent(new Event('input',{bubbles:true})); }")
     page.wait_for_timeout(1500)
 
+    page.evaluate("""() => {
+        window.toggleTransformerHyper(true);
+        const dim = document.getElementById('transformer-dimension-model');
+        const heads = document.getElementById('transformer-heads');
+        dim.value = '4'; dim.dispatchEvent(new Event('input', {bubbles: true}));
+        heads.value = '3'; heads.dispatchEvent(new Event('input', {bubbles: true}));
+    }""")
+    page.wait_for_timeout(400)
+    invalid = page.evaluate("""() => {
+        const overlay = document.getElementById('transformer-hyper-overlay');
+        const dim = document.getElementById('tm-hyper-invalid-dim');
+        const heads = document.getElementById('tm-hyper-invalid-heads');
+        const hint = document.getElementById('tm-hyper-close-hint');
+        const toast = document.getElementById('arch-validity-message');
+        return {
+            open: !!overlay && !overlay.hidden,
+            dimShown: !!dim && !dim.hidden,
+            headsShown: !!heads && !heads.hidden,
+            dimText: dim ? dim.textContent : '',
+            inPanel: !!dim && !!overlay && overlay.contains(dim),
+            hintShown: !!hint && !hint.hidden,
+            toastShown: !!toast && getComputedStyle(toast).display !== 'none'
+        };
+    }""")
+    check("invalid config explains the split at both offending sliders",
+          invalid["open"] and invalid["dimShown"] and invalid["headsShown"]
+          and invalid["inPanel"] and "d_k" in invalid["dimText"], json.dumps(invalid))
+    check("invalid config hides the background toast while the panel is open",
+          not invalid["toastShown"], json.dumps(invalid))
+    check("invalid config explains why the panel cannot close",
+          invalid["hintShown"], json.dumps(invalid))
+
+    page.evaluate("() => document.querySelector('#transformer-hyper-overlay .tm-hyper-close').click()")
+    page.wait_for_timeout(300)
+    check("invalid config blocks the close button",
+          not page.evaluate("() => document.getElementById('transformer-hyper-overlay').hidden"))
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(200)
+    check("invalid config blocks Escape",
+          not page.evaluate("() => document.getElementById('transformer-hyper-overlay').hidden"))
+
+    page.evaluate("() => { const s=document.getElementById('transformer-dimension-model'); s.value='3'; s.dispatchEvent(new Event('input',{bubbles:true})); }")
+    page.wait_for_timeout(300)
+    recovered = page.evaluate("""() => {
+        const dim = document.getElementById('tm-hyper-invalid-dim');
+        const heads = document.getElementById('tm-hyper-invalid-heads');
+        return {dimHidden: !dim || dim.hidden, headsHidden: !heads || heads.hidden};
+    }""")
+    check("fixing the model dimension clears the inline warnings",
+          recovered["dimHidden"] and recovered["headsHidden"], json.dumps(recovered))
+    page.evaluate("() => document.querySelector('#transformer-hyper-overlay .tm-hyper-close').click()")
+    page.wait_for_timeout(300)
+    check("a valid config closes the panel again",
+          page.evaluate("() => document.getElementById('transformer-hyper-overlay').hidden"))
+
     page.locator(".tm-transformer-formulas math").first.click(button="right")
     page.wait_for_timeout(300)
     check("right-click opens the LaTeX popup", page.evaluate("() => !!document.querySelector('.lp-overlay')"))

@@ -35,7 +35,7 @@
       {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert. Der Residualstrom läuft durch alle Blöcke; Attention und FFN addieren ihre Updates darauf. Dazu kommt LayerNorm, das die Aktivierungen in einer stabilen Skala hält. Die nächsten drei Seiten gehen Attention, FFN und LayerNorm einzeln durch.",
+        body: "Attention mischt Information zwischen Wörtern. Das Feed-Forward-Netzwerk (FFN) „denkt“, indem es die Tokens im hochdimensionalen Bedeutungsraum verschiebt. Es projiziert die durch Attention gemischten Punkte in noch höherdimensionale Räume, trennt sie dort einfacher und projiziert zurück, um Bedeutungszusammenhänge kontextabhängig zu isolieren und auf einzelne Bedeutungen reagieren zu können. GPT-2 small hat 12 Blöcke; große Modelle haben dutzende bis über hundert. Der Residualstrom läuft durch alle Blöcke; Attention und FFN addieren ihre Updates darauf. Dazu kommt LayerNorm, das die Aktivierungen in einer stabilen Skala hält. Der Transformer nutzt das Verschieben dieser Punkte zum Denken: Jede Schicht verschiebt den Punkt neu. Die nächsten drei Seiten gehen Attention, FFN und LayerNorm einzeln durch.",
         points: [],
         mini: "transformer",
         sub: [
@@ -79,7 +79,7 @@
       {
         id: "transformer", label: "Transformer blocks", short: "attention · FFN · LN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred. The residual stream runs through all blocks; attention and FFN add their updates to it. LayerNorm keeps the activations at a stable scale. The next three pages go through attention, FFN, and LayerNorm one by one.",
+        body: "Attention mixes information between words. The feed-forward network (FFN) “thinks” by shifting the tokens in the high-dimensional meaning space. It projects the points mixed by attention into even higher-dimensional spaces, separates them more easily there, and projects back to isolate meaning relations depending on context and to react to individual meanings. GPT-2 small has 12 blocks; large models have dozens to over a hundred. The residual stream runs through all blocks; attention and FFN add their updates to it. LayerNorm keeps the activations at a stable scale. The transformer uses moving these points to think: every layer moves the point again. The next three pages go through attention, FFN, and LayerNorm one by one.",
         points: [],
         mini: "transformer",
         sub: [
@@ -111,6 +111,7 @@
     var index = Math.max(0, Math.min(pages.length - 1, lastBlocksIndex));
     var resetKey = null;
     var positionDemo = null;
+    var trajCleanup = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
     el.innerHTML = '<div class="ls-bs-residual" role="img" aria-label="' + (DE ? "Residualstrom: x läuft durch die Blöcke; Attention und FFN addieren ihre Updates." : "Residual stream: x runs through the blocks; attention and FFN add their updates.") + '">' +
@@ -493,6 +494,143 @@
         block.classList.toggle("is-current", current);
       });
     }
+    function setupTrajectoryDemo() {
+      var host = detail.querySelector("[data-traj-host]");
+      if (!host) return null;
+      var stage = host.querySelector(".ls-bs-traj-stage");
+      var canvas = host.querySelector(".ls-bs-traj-canvas");
+      var stepBtn = host.querySelector(".ls-bs-traj-step");
+      var resetBtn = host.querySelector(".ls-bs-traj-reset");
+      var readout = host.querySelector(".ls-bs-traj-readout");
+      var traj = [
+        { label: DE ? "Katze" : "cat", col: "green", pts: [[-0.62, 0.18], [-0.40, 0.42], [-0.56, 0.66], [-0.76, 0.58]] },
+        { label: DE ? "Bank" : "bank", col: "gold", pts: [[0.48, -0.40], [0.30, -0.08], [0.08, 0.16], [-0.04, 0.34]] },
+        { label: DE ? "König" : "king", col: "lilac", pts: [[-0.08, -0.58], [0.12, -0.40], [0.30, -0.18], [0.46, -0.34]] }
+      ];
+      var state = { step: 0, from: 0, to: 0, t: 1 };
+      var raf = 0, size = null;
+      function project(p) {
+        var scale = Math.min(size.w * 0.34, size.h * 0.34);
+        return { x: size.w / 2 + p[0] * scale, y: size.h / 2 - p[1] * scale };
+      }
+      function arrow(g, a, b, col) {
+        var ang = Math.atan2(b.y - a.y, b.x - a.x);
+        g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 1.1;
+        g.setLineDash([3, 3]);
+        g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
+        g.setLineDash([]);
+        var head = 5;
+        g.beginPath();
+        g.moveTo(b.x, b.y);
+        g.lineTo(b.x - head * Math.cos(ang - 0.45), b.y - head * Math.sin(ang - 0.45));
+        g.lineTo(b.x - head * Math.cos(ang + 0.45), b.y - head * Math.sin(ang + 0.45));
+        g.closePath(); g.fill();
+      }
+      function draw() {
+        if (!size) return;
+        var g = size.ctx, w = size.w, h = size.h, C = api.colors();
+        g.clearRect(0, 0, w, h);
+        var bg = g.createLinearGradient(0, 0, 0, h);
+        bg.addColorStop(0, C.paper || "#fff");
+        bg.addColorStop(1, C.paper2 || C.paper || "#fff");
+        g.fillStyle = bg; g.fillRect(0, 0, w, h);
+        g.strokeStyle = C.line; g.globalAlpha = 0.24; g.lineWidth = 1;
+        for (var i = -2; i <= 2; i++) {
+          var gx = w / 2 + i * Math.min(w * 0.18, h * 0.22);
+          var gy = h / 2 + i * Math.min(w * 0.18, h * 0.22);
+          g.beginPath(); g.moveTo(gx, 12); g.lineTo(gx, h - 12); g.stroke();
+          g.beginPath(); g.moveTo(12, gy); g.lineTo(w - 12, gy); g.stroke();
+        }
+        g.globalAlpha = 0.6; g.strokeStyle = C.lineStrong;
+        g.beginPath(); g.moveTo(12, h / 2); g.lineTo(w - 12, h / 2); g.stroke();
+        g.beginPath(); g.moveTo(w / 2, 12); g.lineTo(w / 2, h - 12); g.stroke();
+        g.globalAlpha = 1;
+        g.fillStyle = C.muted;
+        g.font = '600 ' + Math.max(8, Math.min(10, w * 0.016)) + 'px "Open Sans", sans-serif';
+        g.textAlign = "left"; g.textBaseline = "alphabetic";
+        g.fillText(DE ? "Dimension 1" : "dimension 1", 12, h - 8);
+        g.save(); g.translate(12, 18); g.rotate(-Math.PI / 2); g.fillText(DE ? "Dimension 2" : "dimension 2", 0, 0); g.restore();
+        g.textAlign = "right";
+        g.fillStyle = C.petrol;
+        g.fillText((DE ? "Schicht " : "layer ") + state.to + " / 3", w - 12, 18);
+        g.textAlign = "left";
+        g.fillStyle = C.muted;
+        g.fillText(DE ? "L0 … L3 · fiktives Beispiel" : "L0 … L3 · fictional example", 12, 18);
+        var from = state.from, to = state.to, t = state.t;
+        traj.forEach(function (item) {
+          var col = C[item.col] || C.petrol;
+          var pts = item.pts.map(project);
+          g.strokeStyle = col; g.globalAlpha = 0.16; g.lineWidth = 1.2;
+          g.beginPath();
+          pts.forEach(function (p, i) { if (i === 0) g.moveTo(p.x, p.y); else g.lineTo(p.x, p.y); });
+          g.stroke();
+          g.globalAlpha = 1;
+          for (var s = 0; s < to; s++) {
+            g.strokeStyle = col; g.globalAlpha = 0.5; g.lineWidth = 1.4;
+            g.beginPath(); g.moveTo(pts[s].x, pts[s].y); g.lineTo(pts[s + 1].x, pts[s + 1].y); g.stroke();
+            g.globalAlpha = 0.65;
+            arrow(g, pts[s], pts[s + 1], col);
+            g.globalAlpha = 1;
+          }
+          for (var k = 0; k <= to; k++) {
+            var on = k === to;
+            g.beginPath();
+            g.arc(pts[k].x, pts[k].y, on ? 4 : 2.4, 0, Math.PI * 2);
+            g.fillStyle = on ? col : (C.paper || "#fff");
+            g.fill();
+            g.strokeStyle = col; g.lineWidth = on ? 1.6 : 1.1; g.stroke();
+          }
+          var a = pts[from], b = pts[to];
+          var cp = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+          if (t < 1) {
+            g.beginPath(); g.arc(cp.x, cp.y, 5, 0, Math.PI * 2);
+            g.fillStyle = col; g.globalAlpha = 0.9; g.fill(); g.globalAlpha = 1;
+          }
+          g.fillStyle = C.ink;
+          g.font = '700 ' + Math.max(8, Math.min(11, w * 0.018)) + 'px "Barlow", sans-serif';
+          g.textAlign = "center"; g.textBaseline = "bottom";
+          g.fillText(item.label, cp.x, cp.y - 8);
+        });
+        g.textAlign = "left"; g.textBaseline = "alphabetic";
+        g.fillStyle = C.muted;
+        g.font = '600 ' + Math.max(7, Math.min(9, w * 0.014)) + 'px "Open Sans", sans-serif';
+        g.fillText(DE ? "Start = hohler Punkt · aktuell = gefüllter Punkt · Linie = Weg durch die Schichten" : "start = hollow point · current = filled point · line = path through the layers", 12, h - 22);
+        canvas.setAttribute("aria-label", DE
+          ? "Vereinfachte 2D-Trajektorie von drei Token-Vektoren durch die Schichten. Aktuell: Schicht " + state.to + " von 3."
+          : "Simplified 2D trajectory of three token vectors through the layers. Current: layer " + state.to + " of 3.");
+      }
+      function updateReadout() {
+        if (readout) readout.textContent = state.to === 0
+          ? (DE ? "Start: die Punkte liegen an ihren Ausgangspositionen." : "Start: the points sit at their initial positions.")
+          : (DE ? "Schicht " + state.to + " / 3: die Punkte wurden neu verschoben." : "Layer " + state.to + " / 3: the points have moved again.");
+        if (stepBtn) stepBtn.disabled = state.step >= 3;
+        if (resetBtn) resetBtn.disabled = state.step <= 0;
+      }
+      function animate(to) {
+        if (raf) cancelAnimationFrame(raf);
+        if (state.step === to) { updateReadout(); return; }
+        state.from = state.step; state.to = to; state.t = 0;
+        var t0 = performance.now(), dur = 700;
+        function frame(now) {
+          var t = Math.max(0, Math.min(1, (now - t0) / dur));
+          state.t = 1 - Math.pow(1 - t, 3);
+          draw();
+          if (t < 1) raf = requestAnimationFrame(frame);
+          else { state.step = to; state.from = to; state.t = 1; raf = 0; updateReadout(); }
+        }
+        raf = requestAnimationFrame(frame);
+      }
+      function resize() { size = api.fit(canvas, stage); draw(); }
+      stepBtn.addEventListener("click", function () { animate(Math.min(3, state.step + 1)); });
+      resetBtn.addEventListener("click", function () { animate(0); });
+      window.addEventListener("resize", resize);
+      resize();
+      updateReadout();
+      return function cleanup() {
+        if (raf) cancelAnimationFrame(raf);
+        window.removeEventListener("resize", resize);
+      };
+    }
     function renderDetail() {
       var page = pages[index];
       var b = page.block;
@@ -508,6 +646,14 @@
         html += '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
           '<p class="ls-bs-body">' + inlineMathText(b.body) + '</p>' +
           '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
+        if (b.id === "transformer") {
+          html += '<div class="ls-bs-traj" data-traj-host>' +
+            '<div class="ls-bs-traj-head"><b>' + (DE ? "Denken = Punkte verschieben" : "Thinking = moving points") + '</b><span>' + (DE ? "Jede Schicht verschiebt den Token-Vektor neu." : "Every layer moves the token vector again.") + '</span></div>' +
+            '<div class="ls-bs-traj-stage"><canvas class="ls-bs-traj-canvas" role="img"></canvas></div>' +
+            '<div class="ls-bs-traj-bar"><button type="button" class="ls-btn ls-btn--tiny ls-bs-traj-step">' + (DE ? "Nächste Schicht" : "Next layer") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-bs-traj-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button><span class="ls-bs-traj-readout" aria-live="polite"></span></div>' +
+            '<p class="ls-bs-traj-note">' + (DE ? "Vereinfachte 2D-Trajektorie wie im Transformer-Labor: Jeder Punkt ist ein Token-Vektor; die Linie zeigt seinen Weg durch die Schichten. Fiktives Beispiel, keine Messung." : "Simplified 2D trajectory as in the transformer lab: each point is a token vector; the line shows its path through the layers. Fictional example, not a measurement.") + '</p>' +
+          '</div>';
+        }
       }
       if (sub) {
         // Sub-page detail is already rendered above.
@@ -552,8 +698,10 @@
           }).join(" · ") + '</p>';
       }
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
+      if (trajCleanup) { try { trajCleanup(); } catch (e) {} trajCleanup = null; }
       detail.innerHTML = html;
       if (window.TM && typeof window.TM.typesetMath === "function") { try { window.TM.typesetMath(detail); } catch (e) {} }
+      if (!sub && b.id === "transformer") trajCleanup = setupTrajectoryDemo();
       if (b.position) {
         var posHost = detail.querySelector("[data-position-host]");
         var posFactory = core.get("position");
@@ -611,7 +759,7 @@
       hasPrev: function () { return index > 0; },
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", onResize); el.remove(); }
+      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } if (trajCleanup) { try { trajCleanup(); } catch (e) {} trajCleanup = null; } window.removeEventListener("resize", onResize); el.remove(); }
     };
   }
 

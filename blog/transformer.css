@@ -810,6 +810,52 @@ html #contents .tm-hyper-body .md p {
 	font-size: 0.7rem;
 }
 
+/* Invalid architecture: the reason sits next to the slider that causes it,
+   and the close control explains why the panel stays open. */
+.tm-hyper-head-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
+.tm-hyper-close-hint {
+	max-width: 34ch;
+	text-align: right;
+	font: 600 0.78rem/1.35 var(--mn-font-heading, system-ui, sans-serif);
+	color: var(--tm-coral, var(--mn-rose, #9185be));
+}
+.tm-hyper-close-hint[hidden] { display: none; }
+.tm-hyper-invalid {
+	margin: 2px 0 0;
+	padding: 7px 9px;
+	border-left: 3px solid var(--tm-coral, var(--mn-rose, #9185be));
+	background: color-mix(in srgb, var(--tm-coral, var(--mn-rose, #9185be)) 10%, var(--mn-surface, #ffffff));
+	font: 600 0.76rem/1.45 var(--mn-font-heading, system-ui, sans-serif);
+	color: var(--mn-text, #1e293b);
+}
+.tm-hyper-invalid[hidden] { display: none; }
+.tm-hyper-invalid code {
+	font-family: var(--mn-font-mono, monospace);
+	font-weight: 700;
+}
+#transformer_config > .transformer-config-field.tm-field-invalid {
+	border-color: var(--tm-coral, var(--mn-rose, #9185be));
+	background: color-mix(in srgb, var(--tm-coral, var(--mn-rose, #9185be)) 7%, var(--mn-surface, #ffffff));
+}
+@keyframes tm-hyper-attention {
+	0%, 100% { box-shadow: 0 0 0 0 transparent; }
+	35% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--tm-coral, var(--mn-rose, #9185be)) 45%, transparent); }
+}
+.tm-hyper-invalid.tm-attention {
+	animation: tm-hyper-attention 0.9s ease-out 1;
+}
+@media (prefers-reduced-motion: reduce) {
+	.tm-hyper-invalid.tm-attention { animation: none; }
+}
+@media (max-width: 620px) {
+	.tm-hyper-close-hint { display: none; }
+}
+
 /* The concatenation formula is a wide display equation: centre it and let
    the wrapper, not the page, own any horizontal scrolling. */
 .tm-concat-formula {
