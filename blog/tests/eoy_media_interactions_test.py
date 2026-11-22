@@ -1585,19 +1585,22 @@ def test_blocks_sequence(browser, base, lang, results):
     overview = page.evaluate("() => ({ pills: document.querySelectorAll('.ls-bs-pill').length, current: document.querySelectorAll('.ls-bs-pill.is-current').length, subnav: !!document.querySelector('.ls-bs-subnav'), text: document.body.innerText })")
     results.check(tag, "transformer overview clears the current sub-marker", overview["pills"] == 3 and overview["current"] == 0, str(overview)[:200])
     results.check(tag, "architecture no longer repeats the next pages", not overview["subnav"] and "Die nächsten Seiten" not in overview["text"] and "The next pages" not in overview["text"], str(overview)[:200])
-    traj = page.evaluate("() => ({ host: !!document.querySelector('.ls-bs-traj'), canvas: !!document.querySelector('.ls-bs-traj-canvas'), step: !!document.querySelector('.ls-bs-traj-step'), text: document.querySelector('.ls-bs-traj')?.innerText || '' })")
-    results.check(tag, "transformer overview shows the trajectory plot", traj["host"] and traj["canvas"] and traj["step"], str(traj)[:200])
-    results.check(tag, "trajectory plot says thinking moves points", "Denken" in traj["text"] or "Thinking" in traj["text"], traj["text"][:200])
-    page.locator('.ls-bs-traj-step').click()
-    page.wait_for_timeout(850)
-    traj1 = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-traj-readout')?.textContent || '', reset: document.querySelector('.ls-bs-traj-reset')?.disabled })")
-    results.check(tag, "trajectory steps through a layer", "Schicht 1" in traj1["readout"] or "Layer 1" in traj1["readout"], str(traj1))
-    page.locator('.ls-bs-traj-step').click(); page.wait_for_timeout(850)
-    page.locator('.ls-bs-traj-step').click(); page.wait_for_timeout(850)
-    traj3 = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-traj-readout')?.textContent || '', step: document.querySelector('.ls-bs-traj-step')?.disabled, reset: document.querySelector('.ls-bs-traj-reset')?.disabled })")
-    results.check(tag, "trajectory reaches layer three", "Schicht 3" in traj3["readout"] or "Layer 3" in traj3["readout"], str(traj3))
-    results.check(tag, "trajectory stops at the last layer", traj3["step"], str(traj3))
-    page.locator('.ls-bs-traj-reset').click(); page.wait_for_timeout(850)
+    traj = page.evaluate(
+        r"""
+() => ({
+  host: !!document.querySelector('.ls-bs-traj'),
+  canvas: !!document.querySelector('.ls-bs-traj-canvas'),
+  static: !document.querySelector('.ls-bs-traj-step'),
+  legend: Array.from(document.querySelectorAll('.ls-bs-traj-legend i')).map(e => e.className),
+  text: document.querySelector('.ls-bs-traj')?.innerText || '',
+  aria: document.querySelector('.ls-bs-traj-canvas')?.getAttribute('aria-label') || ''
+})
+"""
+    )
+    results.check(tag, "transformer overview shows the static trajectory image", traj["host"] and traj["canvas"] and traj["static"], str(traj)[:240])
+    results.check(tag, "trajectory image shows input, hidden and output", all(token in traj["text"] for token in ("Input", "Hidden", "Output")), traj["text"][:240])
+    results.check(tag, "trajectory image shows separation and reassembly", ("isoliert" in traj["text"] or "isolated" in traj["text"]) and ("zusammengesetzt" in traj["text"] or "reassembled" in traj["text"]), traj["text"][:240])
+    results.check(tag, "trajectory image explains the regions", "trennt" in traj["aria"] or "separates" in traj["aria"], traj["aria"][:240])
     page.evaluate('() => LearnSys.next()')
     page.wait_for_timeout(250)
     attention = page.evaluate("() => ({ current: Array.from(document.querySelectorAll('.ls-bs-pill.is-current')).map(e => e.getAttribute('data-sub')), block: Array.from(document.querySelectorAll('.ls-bs-res-block.is-current')).map(e => e.textContent) })")
@@ -2069,7 +2072,7 @@ def test_qualia_and_takeaway(browser, base, lang, results):
 """
     )
     results.check(tag, "theory page starts with what consciousness is", "was Bewusstsein" in theories["sub"] or "what consciousness" in theories["sub"], theories["sub"][:160])
-    results.check(tag, "global workspace visual is mounted", theories["gw"] and "Workspace" in theories["stage"], str(theories))
+    results.check(tag, "global workspace visual is mounted", theories["gw"] and "workspace" in theories["stage"].lower(), str(theories))
     results.check(tag, "global workspace has no audience", "Zuschauer" in theories["audience"] or "audience" in theories["audience"], theories["audience"])
     results.check(tag, "theory page has no overflow", theories["overflow"] <= 2, str(theories["overflow"]))
     page.evaluate("() => LearnSys.go(0, 0, 2)")

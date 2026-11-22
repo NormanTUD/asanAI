@@ -495,7 +495,7 @@ scene.add(rimLight);
 const pixelMats = [];
 const fadeGroups = {};
 
-const REGION_LIST = ['tenets', 'research', 'concepts', 'topics', 'apex', 'positions', 'arguments', 'questions', 'voids', 'method', 'flow', 'taxonomy', 'convergence', 'growth', 'voidWhy', 'territory', 'signature', 'ratio', 'discipline', 'map', 'hardproblem', 'gap', 'cap'];
+const REGION_LIST = ['tenets', 'research', 'concepts', 'topics', 'apex', 'positions', 'arguments', 'questions', 'voids', 'method', 'flow', 'taxonomy', 'convergence', 'growth', 'voidWhy', 'territory', 'signature', 'ratio', 'discipline', 'map', 'hardproblem', 'gap', 'cap', 'voidPosition'];
 const regionWeights = {};
 const regionTargets = {};
 REGION_LIST.forEach(r => { regionWeights[r] = 0; regionTargets[r] = 0; });
@@ -764,14 +764,14 @@ function buildResearch() {
     const x = Math.cos(a) * r;
     const z = Math.sin(a) * r * 0.74;
     const y = 16 + rnd() * 18 + Math.sin(a * 2.1) * 2.2;
-    const idx = addNode(new V3(x, y, z), pick(tints), rr(0.65, 2.0), 'research', rr(0.35, 0.7));
+    const idx = addNode(new V3(x, y, z), pick(tints), rr(0.9, 2.6), 'research', rr(0.5, 0.9));
     if (i % 42 === 0) K.research.push(nodes[idx].p);
   }
   for (let i = 0; i < 22; i++) {
     const a = rnd() * TAU;
     const r = rr(28, 70);
     const p = new V3(Math.cos(a) * r, rr(18, 34), Math.sin(a) * r * 0.75);
-    const idx = addNode(p, 0xe6efff, rr(1.4, 2.6), 'research', 0.8);
+    const idx = addNode(p, 0xe6efff, rr(1.7, 3.0), 'research', 0.95);
     K.research.push(nodes[idx].p);
     if (i % 4 === 0) {
       const above = new V3(p.x * 0.9, rr(42, 52), p.z * 0.9);
@@ -2521,6 +2521,96 @@ function buildCap() {
 }
 buildCap();
 
+const voidPositionGroup = new THREE.Group();
+voidPositionGroup.position.copy(VOID_STAGE);
+const voidPositionSparks = [];
+function buildVoidPosition() {
+  const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(62, 42), additiveMaterial(0x1a2450, 0.06));
+  backdrop.position.z = -1.4;
+  voidPositionGroup.add(backdrop);
+  voidPositionGroup.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
+    new V3(-30, -20, -1.2), new V3(30, -20, -1.2), new V3(30, 20, -1.2), new V3(-30, 20, -1.2)
+  ]), lineMaterial(0xa5b4fc, 0.28)));
+  const rows = [
+    ['Explanatory gap', 'P-D2', 14],
+    ['Amplification', 'P-Q3', 7],
+    ['Agency void', 'P-A2', 0],
+    ['Indexical void', 'P-I1', -7],
+    ['Parsimony void', 'P-M2', -14]
+  ];
+  rows.forEach(([voidName, posName, y]) => {
+    const left = new V3(-24, y, 0);
+    const right = new V3(24, y, 0);
+    const orb = darkOrb(PALETTE.void, 2.2);
+    orb.position.copy(left);
+    voidPositionGroup.add(orb);
+    const hexFill = new THREE.Mesh(new THREE.CircleGeometry(1.7, 6), additiveMaterial(PALETTE.gold, 0.8));
+    hexFill.position.copy(right);
+    voidPositionGroup.add(hexFill);
+    const hexRing = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.65, 6), additiveMaterial(PALETTE.gold, 0.7));
+    hexRing.position.copy(right).add(new V3(0, 0, 0.02));
+    voidPositionGroup.add(hexRing);
+    const mid = new V3(0, y + 2.0, 0);
+    const curve = new THREE.QuadraticBezierCurve3(left, mid, right);
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(40)), lineMaterial(PALETTE.gold, 0.6));
+    voidPositionGroup.add(line);
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.25, 10), additiveMaterial(PALETTE.gold, 0.9));
+    cone.position.copy(right).add(new V3(-1.5, 0.2, 0));
+    cone.quaternion.setFromUnitVectors(new V3(0, 1, 0), curve.getTangent(1).normalize());
+    voidPositionGroup.add(cone);
+    for (let i = 0; i < 2; i++) {
+      const spark = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), additiveMaterial(0xffffff, 0.9));
+      voidPositionGroup.add(spark);
+      voidPositionSparks.push({ mesh: spark, curve, phase: i / 2 + rnd() * 0.25 });
+    }
+  });
+  voidPositionGroup.visible = false;
+  scene.add(voidPositionGroup);
+  registerFadeGroup('voidPosition', voidPositionGroup);
+}
+buildVoidPosition();
+
+const argumentsBlades = new THREE.Group();
+function buildArgumentBlades() {
+  ARGS.forEach(a => {
+    const target = K.rivals[a.target];
+    if (!target) return;
+    const dir = target.clone().sub(a.pos).normalize();
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(1.15, 8, 4), additiveMaterial(PALETTE.coral, 0.75));
+    cone.position.copy(a.pos);
+    cone.quaternion.setFromUnitVectors(new V3(0, 1, 0), dir);
+    argumentsBlades.add(cone);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(4.3, 0.05, 6, 40), additiveMaterial(PALETTE.coral, 0.4));
+    ring.position.copy(target);
+    argumentsBlades.add(ring);
+  });
+  argumentsBlades.visible = false;
+  scene.add(argumentsBlades);
+  registerFadeGroup('argumentsBlades', argumentsBlades);
+}
+buildArgumentBlades();
+
+const questionsHooks = new THREE.Group();
+function buildQuestionHooks() {
+  QUESTIONS.forEach(q => {
+    const hook = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.09, 6, 56, TAU * 0.68), additiveMaterial(PALETTE.ice, 0.8));
+    hook.position.copy(q.pos);
+    hook.rotation.z = -Math.PI * 0.35;
+    questionsHooks.add(hook);
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.28, 10, 8), additiveMaterial(0xffffff, 0.9));
+    const ang = -Math.PI * 0.35 + TAU * 0.68;
+    dot.position.copy(q.pos).add(new V3(Math.cos(ang) * 2.2, Math.sin(ang) * 2.2, 0));
+    questionsHooks.add(dot);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.035, 6, 40), additiveMaterial(PALETTE.ice, 0.2));
+    ring.position.copy(q.pos);
+    questionsHooks.add(ring);
+  });
+  questionsHooks.visible = false;
+  scene.add(questionsHooks);
+  registerFadeGroup('questionsHooks', questionsHooks);
+}
+buildQuestionHooks();
+
 const labels = [];
 function addLabel(text, pos, region, opts = {}) {
   const el = document.createElement('div');
@@ -2724,10 +2814,28 @@ addLabel('101 / 115', VOID_STAGE.clone().add(new V3(0, 37, 0.5)), 'cap', { cls: 
 addLabel('catalogue', VOID_STAGE.clone().add(new V3(0, -37, 0.5)), 'cap', { cls: 'void tiny', base: 0.48, minWeight: 0.3, kinds: ['taxonomy-cap'] });
 addLabel('absorption over proliferation', VOID_STAGE.clone().add(new V3(0, -41, 0.5)), 'cap', { cls: 'void tiny', base: 0.44, minWeight: 0.3, kinds: ['taxonomy-cap'] });
 
+const researchLabelNames = ['SEP', 'PhilPapers', 'IEP', 'Sources'];
+researchLabelNames.forEach((name, i) => {
+  const p = K.research[i];
+  if (p) addLabel(name, p.clone().add(new V3(0, 3.2, 0)), 'research', { cls: 'tiny', base: 0.5, minWeight: 0.3, kinds: ['research', 'research-method'] });
+});
+
+const voidPositionRows = [
+  ['Explanatory gap', 'P-D2', 14],
+  ['Amplification', 'P-Q3', 7],
+  ['Agency void', 'P-A2', 0],
+  ['Indexical void', 'P-I1', -7],
+  ['Parsimony void', 'P-M2', -14]
+];
+voidPositionRows.forEach(([voidName, posName, y]) => {
+  addLabel(voidName, VOID_STAGE.clone().add(new V3(-24, y + 2.6, 0.4)), 'voidPosition', { cls: 'void tiny', base: 0.5, minWeight: 0.3, kinds: ['void-position'] });
+  addLabel(posName, VOID_STAGE.clone().add(new V3(24, y + 2.6, 0.4)), 'voidPosition', { cls: 'gold tiny', base: 0.62, minWeight: 0.3, kinds: ['void-position'] });
+});
+
 const BASE_WEIGHTS = {
   tenets: 0.14, research: 0.1, concepts: 0.1, topics: 0.1, apex: 0.1, positions: 0.1,
   arguments: 0.06, questions: 0.06, voids: 0.1, method: 0, flow: 0, taxonomy: 0, convergence: 0, growth: 0,
-  voidWhy: 0, territory: 0, signature: 0, ratio: 0, discipline: 0, map: 0, hardproblem: 0, gap: 0, cap: 0
+  voidWhy: 0, territory: 0, signature: 0, ratio: 0, discipline: 0, map: 0, hardproblem: 0, gap: 0, cap: 0, voidPosition: 0
 };
 function W(overrides) {
   return Object.assign({}, BASE_WEIGHTS, overrides);
@@ -2783,6 +2891,7 @@ const SUB_SLIDES = {
   ],
   16: [
     { kind: 'void-why', label: 'Each tenet casts a shadow.', cam: new V3(0, -12, 118), look: new V3(0, -28, 54), fov: 50, drift: 0.35, weights: W({ voidWhy: 1, voids: 0.36, tenets: 0.34, concepts: 0.08, questions: 0.05 }), highlight: { pairs: [['tenets', 'voids']] } },
+    { kind: 'void-position', label: 'A void constrains a position.', cam: new V3(0, -12, 118), look: new V3(0, -28, 54), fov: 50, drift: 0.35, weights: W({ voidPosition: 1, voids: 0.26, positions: 0.2, tenets: 0.16, voidWhy: 0.04, concepts: 0.06 }) },
     { kind: 'void-territories', label: 'Three kinds of darkness.', cam: new V3(0, -12, 118), look: new V3(0, -28, 54), fov: 50, drift: 0.35, weights: W({ territory: 1, voids: 0.2, tenets: 0.12, questions: 0.06 }) }
   ],
   17: [
@@ -2940,6 +3049,8 @@ function goTo(index, durationOverride) {
     if (fadeGroups[r]) fadeGroups[r].target = regionTargets[r];
   });
   if (fadeGroups.radar) fadeGroups.radar.target = regionTargets.positions;
+  if (fadeGroups.argumentsBlades) fadeGroups.argumentsBlades.target = regionTargets.arguments;
+  if (fadeGroups.questionsHooks) fadeGroups.questionsHooks.target = regionTargets.questions;
   applyHighlight(scene.highlight);
   setCaption(scene.label, index);
   mouse.x = 0;
@@ -3223,6 +3334,15 @@ function updateCap(t) {
   capTickAttr.needsUpdate = true;
 }
 
+function updateVoidPosition(t) {
+  if (!voidPositionGroup.visible) return;
+  voidPositionSparks.forEach(s => {
+    const f = (s.phase + t * 0.17) % 1;
+    s.mesh.position.copy(s.curve.getPoint(f));
+    s.mesh.scale.setScalar(0.6 + 0.7 * Math.sin(f * Math.PI));
+  });
+}
+
 function updateLabels() {
   const w = window.innerWidth;
   const h = window.innerHeight;
@@ -3409,6 +3529,7 @@ function loop(now) {
   updateTaxonomy(time);
   updateConvergence(time);
   updateVoidWhy(time);
+  updateVoidPosition(time);
   updateTerritory(time);
   updateSignature(time);
   updateRatio(time);
@@ -3541,6 +3662,8 @@ window.__UFM__ = {
       if (fadeGroups[r]) { fadeGroups[r].weight = regionWeights[r]; fadeGroups[r].target = regionWeights[r]; }
     });
     if (fadeGroups.radar) { fadeGroups.radar.weight = regionWeights.positions; fadeGroups.radar.target = regionWeights.positions; }
+    if (fadeGroups.argumentsBlades) { fadeGroups.argumentsBlades.weight = regionWeights.arguments; fadeGroups.argumentsBlades.target = regionWeights.arguments; }
+    if (fadeGroups.questionsHooks) { fadeGroups.questionsHooks.weight = regionWeights.questions; fadeGroups.questionsHooks.target = regionWeights.questions; }
     for (let k = 0; k < 5; k++) {
       const tg = sc.focus === 'all' ? 1 : (sc.focus === k ? 1 : 0);
       fadeGroups['icon' + k].weight = tg;

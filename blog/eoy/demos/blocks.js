@@ -499,32 +499,30 @@
       if (!host) return null;
       var stage = host.querySelector(".ls-bs-traj-stage");
       var canvas = host.querySelector(".ls-bs-traj-canvas");
-      var stepBtn = host.querySelector(".ls-bs-traj-step");
-      var resetBtn = host.querySelector(".ls-bs-traj-reset");
-      var readout = host.querySelector(".ls-bs-traj-readout");
-      var traj = [
-        { label: DE ? "Katze" : "cat", col: "green", pts: [[-0.62, 0.18], [-0.40, 0.42], [-0.56, 0.66], [-0.76, 0.58]] },
-        { label: DE ? "Bank" : "bank", col: "gold", pts: [[0.48, -0.40], [0.30, -0.08], [0.08, 0.16], [-0.04, 0.34]] },
-        { label: DE ? "König" : "king", col: "lilac", pts: [[-0.08, -0.58], [0.12, -0.40], [0.30, -0.18], [0.46, -0.34]] }
+      var CATS = [
+        { label: DE ? "Katze" : "cat", col: "green",
+          input: [[0.42, 0.44], [0.50, 0.40], [0.46, 0.52], [0.54, 0.48], [0.40, 0.36], [0.52, 0.58]],
+          hidden: [[0.26, 0.28], [0.32, 0.24], [0.22, 0.34], [0.30, 0.36], [0.24, 0.20], [0.34, 0.30]],
+          output: [[0.22, 0.24], [0.28, 0.20], [0.18, 0.30], [0.26, 0.32], [0.20, 0.16], [0.30, 0.26]] },
+        { label: DE ? "Bank" : "bank", col: "gold",
+          input: [[0.48, 0.46], [0.56, 0.42], [0.52, 0.54], [0.44, 0.50], [0.58, 0.52], [0.46, 0.38]],
+          hidden: [[0.72, 0.70], [0.78, 0.64], [0.68, 0.76], [0.76, 0.78], [0.70, 0.62], [0.80, 0.72]],
+          output: [[0.76, 0.74], [0.82, 0.68], [0.72, 0.80], [0.80, 0.82], [0.74, 0.66], [0.84, 0.76]] },
+        { label: DE ? "König" : "king", col: "lilac",
+          input: [[0.50, 0.50], [0.42, 0.48], [0.56, 0.56], [0.48, 0.42], [0.54, 0.44], [0.44, 0.56]],
+          hidden: [[0.70, 0.28], [0.76, 0.24], [0.66, 0.34], [0.74, 0.36], [0.68, 0.20], [0.78, 0.30]],
+          output: [[0.74, 0.24], [0.80, 0.20], [0.70, 0.30], [0.78, 0.32], [0.72, 0.16], [0.82, 0.26]] }
       ];
-      var state = { step: 0, from: 0, to: 0, t: 1 };
-      var raf = 0, size = null;
-      function project(p) {
-        var scale = Math.min(size.w * 0.34, size.h * 0.34);
-        return { x: size.w / 2 + p[0] * scale, y: size.h / 2 - p[1] * scale };
-      }
-      function arrow(g, a, b, col) {
-        var ang = Math.atan2(b.y - a.y, b.x - a.x);
-        g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 1.1;
-        g.setLineDash([3, 3]);
-        g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
-        g.setLineDash([]);
-        var head = 5;
+      var size = null;
+      function rr(g, x, y, w, h, r) {
+        var rad = Math.min(r, w / 2, h / 2);
         g.beginPath();
-        g.moveTo(b.x, b.y);
-        g.lineTo(b.x - head * Math.cos(ang - 0.45), b.y - head * Math.sin(ang - 0.45));
-        g.lineTo(b.x - head * Math.cos(ang + 0.45), b.y - head * Math.sin(ang + 0.45));
-        g.closePath(); g.fill();
+        g.moveTo(x + rad, y);
+        g.arcTo(x + w, y, x + w, y + h, rad);
+        g.arcTo(x + w, y + h, x, y + h, rad);
+        g.arcTo(x, y + h, x, y, rad);
+        g.arcTo(x, y, x + w, y, rad);
+        g.closePath();
       }
       function draw() {
         if (!size) return;
@@ -534,102 +532,103 @@
         bg.addColorStop(0, C.paper || "#fff");
         bg.addColorStop(1, C.paper2 || C.paper || "#fff");
         g.fillStyle = bg; g.fillRect(0, 0, w, h);
-        g.strokeStyle = C.line; g.globalAlpha = 0.24; g.lineWidth = 1;
-        for (var i = -2; i <= 2; i++) {
-          var gx = w / 2 + i * Math.min(w * 0.18, h * 0.22);
-          var gy = h / 2 + i * Math.min(w * 0.18, h * 0.22);
-          g.beginPath(); g.moveTo(gx, 12); g.lineTo(gx, h - 12); g.stroke();
-          g.beginPath(); g.moveTo(12, gy); g.lineTo(w - 12, gy); g.stroke();
+        var pad = Math.max(10, Math.min(18, w * 0.02));
+        var gap = Math.max(10, Math.min(26, w * 0.03));
+        var top = 34, bottom = 34;
+        var panelW = (w - pad * 2 - gap * 2) / 3;
+        var panelH = h - top - bottom;
+        var titles = DE ? ["Input", "Hidden: trennen", "Output: isoliert"] : ["Input", "Hidden: separate", "Output: isolated"];
+        var subs = DE ? ["verworren", "Bereiche getrennt", "neu zusammengesetzt"] : ["tangled", "regions separated", "reassembled"];
+        function panelX(i) { return pad + i * (panelW + gap); }
+        function pt(i, p) { return { x: panelX(i) + p[0] * panelW, y: top + p[1] * panelH }; }
+        for (var pi = 0; pi < 3; pi++) {
+          g.fillStyle = pi === 0 ? "rgba(201,86,86,.035)" : pi === 1 ? "rgba(159,151,0,.045)" : "rgba(99,164,75,.055)";
+          rr(g, panelX(pi), top, panelW, panelH, 8);
+          g.fill();
+          g.strokeStyle = C.line; g.lineWidth = 1; g.stroke();
+          g.fillStyle = C.petrol;
+          g.font = '700 ' + Math.max(9, Math.min(12, panelW * 0.075)) + 'px "Barlow", sans-serif';
+          g.textAlign = "center"; g.textBaseline = "alphabetic";
+          g.fillText(titles[pi], panelX(pi) + panelW / 2, top - 12);
+          g.fillStyle = C.muted;
+          g.font = '600 ' + Math.max(7, Math.min(9, panelW * 0.055)) + 'px "Open Sans", sans-serif';
+          g.fillText(subs[pi], panelX(pi) + panelW / 2, top + panelH + 14);
         }
-        g.globalAlpha = 0.6; g.strokeStyle = C.lineStrong;
-        g.beginPath(); g.moveTo(12, h / 2); g.lineTo(w - 12, h / 2); g.stroke();
-        g.beginPath(); g.moveTo(w / 2, 12); g.lineTo(w / 2, h - 12); g.stroke();
-        g.globalAlpha = 1;
-        g.fillStyle = C.muted;
-        g.font = '600 ' + Math.max(8, Math.min(10, w * 0.016)) + 'px "Open Sans", sans-serif';
-        g.textAlign = "left"; g.textBaseline = "alphabetic";
-        g.fillText(DE ? "Dimension 1" : "dimension 1", 12, h - 8);
-        g.save(); g.translate(12, 18); g.rotate(-Math.PI / 2); g.fillText(DE ? "Dimension 2" : "dimension 2", 0, 0); g.restore();
-        g.textAlign = "right";
-        g.fillStyle = C.petrol;
-        g.fillText((DE ? "Schicht " : "layer ") + state.to + " / 3", w - 12, 18);
-        g.textAlign = "left";
-        g.fillStyle = C.muted;
-        g.fillText(DE ? "L0 … L3 · fiktives Beispiel" : "L0 … L3 · fictional example", 12, 18);
-        var from = state.from, to = state.to, t = state.t;
-        traj.forEach(function (item) {
-          var col = C[item.col] || C.petrol;
-          var pts = item.pts.map(project);
-          g.strokeStyle = col; g.globalAlpha = 0.16; g.lineWidth = 1.2;
+        function region(i, cx, cy, rx, ry, col, dash) {
+          var c = pt(i, [cx, cy]);
+          g.save();
+          g.setLineDash(dash || []);
+          g.strokeStyle = col;
+          g.globalAlpha = 0.55;
+          g.lineWidth = 1.6;
           g.beginPath();
-          pts.forEach(function (p, i) { if (i === 0) g.moveTo(p.x, p.y); else g.lineTo(p.x, p.y); });
+          g.ellipse(c.x, c.y, rx * panelW, ry * panelH, 0, 0, Math.PI * 2);
           g.stroke();
-          g.globalAlpha = 1;
-          for (var s = 0; s < to; s++) {
-            g.strokeStyle = col; g.globalAlpha = 0.5; g.lineWidth = 1.4;
-            g.beginPath(); g.moveTo(pts[s].x, pts[s].y); g.lineTo(pts[s + 1].x, pts[s + 1].y); g.stroke();
-            g.globalAlpha = 0.65;
-            arrow(g, pts[s], pts[s + 1], col);
-            g.globalAlpha = 1;
+          g.globalAlpha = 0.06;
+          g.fillStyle = col;
+          g.fill();
+          g.restore();
+        }
+        region(0, 0.50, 0.47, 0.20, 0.20, C.petrol, [4, 3]);
+        region(1, 0.28, 0.28, 0.15, 0.15, C.green, [4, 3]);
+        region(1, 0.74, 0.70, 0.15, 0.15, C.gold, [4, 3]);
+        region(1, 0.72, 0.28, 0.15, 0.15, C.lilac, [4, 3]);
+        region(2, 0.24, 0.24, 0.15, 0.15, C.green, []);
+        region(2, 0.78, 0.74, 0.15, 0.15, C.gold, []);
+        region(2, 0.76, 0.24, 0.15, 0.15, C.lilac, []);
+        function arrowPanel(x1, x2, y, label) {
+          g.strokeStyle = C.petrol; g.fillStyle = C.petrol; g.lineWidth = 1.8;
+          g.setLineDash([4, 3]);
+          g.beginPath(); g.moveTo(x1, y); g.lineTo(x2, y); g.stroke();
+          g.setLineDash([]);
+          var ang = Math.atan2(0, x2 - x1);
+          var head = 6;
+          g.beginPath();
+          g.moveTo(x2, y);
+          g.lineTo(x2 - head * Math.cos(ang - 0.5), y - head * Math.sin(ang - 0.5));
+          g.lineTo(x2 - head * Math.cos(ang + 0.5), y - head * Math.sin(ang + 0.5));
+          g.closePath(); g.fill();
+          g.fillStyle = C.petrol;
+          g.font = '700 ' + Math.max(7, Math.min(10, gap * 0.7)) + 'px "Open Sans", sans-serif';
+          g.textAlign = "center"; g.textBaseline = "alphabetic";
+          g.fillText(label, (x1 + x2) / 2, y - 8);
+        }
+        var midY = top + panelH * 0.5;
+        arrowPanel(panelX(0) + panelW + 2, panelX(1) - 2, midY, "W₁");
+        arrowPanel(panelX(1) + panelW + 2, panelX(2) - 2, midY, "W₂");
+        CATS.forEach(function (cat) {
+          var col = C[cat.col] || C.petrol;
+          for (var pi = 0; pi < 3; pi++) {
+            var pts = cat[pi === 0 ? "input" : pi === 1 ? "hidden" : "output"];
+            pts.forEach(function (p) {
+              var q = pt(pi, p);
+              g.beginPath();
+              g.arc(q.x, q.y, pi === 2 ? 3.8 : 3.2, 0, Math.PI * 2);
+              g.fillStyle = col;
+              g.globalAlpha = pi === 0 ? 0.72 : 0.95;
+              g.fill();
+              g.globalAlpha = 1;
+              g.strokeStyle = C.paper; g.lineWidth = 1.1; g.stroke();
+            });
           }
-          for (var k = 0; k <= to; k++) {
-            var on = k === to;
-            g.beginPath();
-            g.arc(pts[k].x, pts[k].y, on ? 4 : 2.4, 0, Math.PI * 2);
-            g.fillStyle = on ? col : (C.paper || "#fff");
-            g.fill();
-            g.strokeStyle = col; g.lineWidth = on ? 1.6 : 1.1; g.stroke();
-          }
-          var a = pts[from], b = pts[to];
-          var cp = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-          if (t < 1) {
-            g.beginPath(); g.arc(cp.x, cp.y, 5, 0, Math.PI * 2);
-            g.fillStyle = col; g.globalAlpha = 0.9; g.fill(); g.globalAlpha = 1;
-          }
-          g.fillStyle = C.ink;
-          g.font = '700 ' + Math.max(8, Math.min(11, w * 0.018)) + 'px "Barlow", sans-serif';
-          g.textAlign = "center"; g.textBaseline = "bottom";
-          g.fillText(item.label, cp.x, cp.y - 8);
+          var out = pt(2, cat.output[0]);
+          g.fillStyle = col;
+          g.font = '700 ' + Math.max(8, Math.min(10, panelW * 0.06)) + 'px "Barlow", sans-serif';
+          g.textAlign = "center"; g.textBaseline = "top";
+          g.fillText(cat.label, out.x, out.y + 10);
         });
-        g.textAlign = "left"; g.textBaseline = "alphabetic";
         g.fillStyle = C.muted;
         g.font = '600 ' + Math.max(7, Math.min(9, w * 0.014)) + 'px "Open Sans", sans-serif';
-        g.fillText(DE ? "Start = hohler Punkt · aktuell = gefüllter Punkt · Linie = Weg durch die Schichten" : "start = hollow point · current = filled point · line = path through the layers", 12, h - 22);
+        g.textAlign = "left"; g.textBaseline = "alphabetic";
+        g.fillText(DE ? "Punkte = Token-Vektoren · Ellipse = getrennter Bereich" : "points = token vectors · ellipse = separated region", pad, h - 8);
         canvas.setAttribute("aria-label", DE
-          ? "Vereinfachte 2D-Trajektorie von drei Token-Vektoren durch die Schichten. Aktuell: Schicht " + state.to + " von 3."
-          : "Simplified 2D trajectory of three token vectors through the layers. Current: layer " + state.to + " of 3.");
-      }
-      function updateReadout() {
-        if (readout) readout.textContent = state.to === 0
-          ? (DE ? "Start: die Punkte liegen an ihren Ausgangspositionen." : "Start: the points sit at their initial positions.")
-          : (DE ? "Schicht " + state.to + " / 3: die Punkte wurden neu verschoben." : "Layer " + state.to + " / 3: the points have moved again.");
-        if (stepBtn) stepBtn.disabled = state.step >= 3;
-        if (resetBtn) resetBtn.disabled = state.step <= 0;
-      }
-      function animate(to) {
-        if (raf) cancelAnimationFrame(raf);
-        if (state.step === to) { updateReadout(); return; }
-        state.from = state.step; state.to = to; state.t = 0;
-        var t0 = performance.now(), dur = 700;
-        function frame(now) {
-          var t = Math.max(0, Math.min(1, (now - t0) / dur));
-          state.t = 1 - Math.pow(1 - t, 3);
-          draw();
-          if (t < 1) raf = requestAnimationFrame(frame);
-          else { state.step = to; state.from = to; state.t = 1; raf = 0; updateReadout(); }
-        }
-        raf = requestAnimationFrame(frame);
+          ? "Statisches Drei-Stufen-Bild: Input ist verworren, Hidden trennt die Bereiche, Output isoliert und setzt sie wieder zusammen."
+          : "Static three-stage image: input is tangled, hidden separates the regions, output isolates and reassembles them.");
       }
       function resize() { size = api.fit(canvas, stage); draw(); }
-      stepBtn.addEventListener("click", function () { animate(Math.min(3, state.step + 1)); });
-      resetBtn.addEventListener("click", function () { animate(0); });
       window.addEventListener("resize", resize);
       resize();
-      updateReadout();
-      return function cleanup() {
-        if (raf) cancelAnimationFrame(raf);
-        window.removeEventListener("resize", resize);
-      };
+      return function cleanup() { window.removeEventListener("resize", resize); };
     }
     function renderDetail() {
       var page = pages[index];
@@ -650,8 +649,8 @@
           html += '<div class="ls-bs-traj" data-traj-host>' +
             '<div class="ls-bs-traj-head"><b>' + (DE ? "Denken = Punkte verschieben" : "Thinking = moving points") + '</b><span>' + (DE ? "Jede Schicht verschiebt den Token-Vektor neu." : "Every layer moves the token vector again.") + '</span></div>' +
             '<div class="ls-bs-traj-stage"><canvas class="ls-bs-traj-canvas" role="img"></canvas></div>' +
-            '<div class="ls-bs-traj-bar"><button type="button" class="ls-btn ls-btn--tiny ls-bs-traj-step">' + (DE ? "Nächste Schicht" : "Next layer") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-bs-traj-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button><span class="ls-bs-traj-readout" aria-live="polite"></span></div>' +
-            '<p class="ls-bs-traj-note">' + (DE ? "Vereinfachte 2D-Trajektorie wie im Transformer-Labor: Jeder Punkt ist ein Token-Vektor; die Linie zeigt seinen Weg durch die Schichten. Fiktives Beispiel, keine Messung." : "Simplified 2D trajectory as in the transformer lab: each point is a token vector; the line shows its path through the layers. Fictional example, not a measurement.") + '</p>' +
+            '<div class="ls-bs-traj-legend"><span><i class="is-green"></i>' + (DE ? "Katze" : "cat") + '</span><span><i class="is-gold"></i>' + (DE ? "Bank" : "bank") + '</span><span><i class="is-lilac"></i>' + (DE ? "König" : "king") + '</span><span class="ls-bs-traj-static">' + (DE ? "statisch · schematisch" : "static · schematic") + '</span></div>' +
+            '<p class="ls-bs-traj-note">' + (DE ? "Input: verworren. Hidden: das Netz trennt die Bereiche. Output: isoliert und wieder zusammengesetzt. Fiktives Beispiel, keine Messung." : "Input: tangled. Hidden: the network separates the regions. Output: isolated and reassembled. Fictional example, not a measurement.") + '</p>' +
           '</div>';
         }
       }
