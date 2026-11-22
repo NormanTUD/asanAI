@@ -39,15 +39,12 @@
       vectorMode: false
     };
     var vectorMix = 0, vectorTarget = 0;
-    // HARD RULE (1/5): 3D is arrow-only. Do not add category planes or point
-    // markers back to the 3D view; the final state must be bare arrows from
-    // (0, 0, 0) to each word position.
-    function forceDirectionView() {
-      if (st.dim === 2) {
-        st.vectorMode = true;
-        vectorMix = 1;
-        vectorTarget = 1;
-      }
+    // HARD RULE (1/5): 3D starts as points while the examples are explored.
+    // Only the end of the example sequence switches to arrow-only directions.
+    function resetDirectionView() {
+      st.vectorMode = false;
+      vectorMix = 0;
+      vectorTarget = 0;
     }
 
     function color(name) { return C[name] || C.ink; }
@@ -487,9 +484,12 @@
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) drawRoomGrid(zMix);
-      // HARD RULE (3/5): every draw re-forces the arrow-only 3D view, so a
-      // stale flag or a cached state cannot bring the points/planes back.
-      forceDirectionView();
+      // HARD RULE (3/5): if the final direction state is on, every draw forces
+      // arrow-only. There are no category planes in 3D.
+      if (st.dim === 2 && st.vectorMode) {
+        vectorMix = 1;
+        vectorTarget = 1;
+      }
       var planeAlpha = smoothstep(0.18, 0.86, dimMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
         ctx.globalAlpha = planeAlpha;
@@ -545,14 +545,15 @@
       }
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
-      // HARD RULE (5/5): 3D always draws the arrows from the origin.
-      if (st.dim === 2 || (vectorMix > 0.01 && zMix > 0.5 && individualAlpha > 0.05)) {
+      // HARD RULE (5/5): arrows appear only in the final direction state; no
+      // points or planes accompany them.
+      if (st.dim === 2 && st.vectorMode && vectorMix > 0.01 && zMix > 0.5 && individualAlpha > 0.05) {
         drawList.forEach(function (item) {
           var itemAlpha = individualAlpha * (item.threeD ? threeDAlpha : 1);
           if (itemAlpha < 0.01) return;
           var selected = item.id === st.selected;
           var col = selected ? C.green : groupColor(WORDS[item.id].group);
-          var arrowMix = st.dim === 2 ? 1 : vectorMix;
+          var arrowMix = vectorMix;
           var ex = origin.x + (item.p.x - origin.x) * arrowMix;
           var ey = origin.y + (item.p.y - origin.y) * arrowMix;
           ctx.globalAlpha = itemAlpha * (selected ? 0.92 : 0.30) * Math.min(1, arrowMix * 1.4);
@@ -721,9 +722,9 @@
           var selected = id === st.selected;
           var hovered = id === hover;
           var hit;
-          // HARD RULE (4/5): in 3D the point alpha is forced to zero; only the
-          // arrow tip/label remain.
-          var pointAlpha = st.dim === 2 ? 0 : itemAlpha * (1 - vectorMix);
+          // HARD RULE (4/5): in the final 3D direction state the point alpha is
+          // zero; only the arrow tip/label remain.
+          var pointAlpha = (st.dim === 2 && st.vectorMode) ? 0 : itemAlpha * (1 - vectorMix);
           if (pointAlpha < 0.01) {
             hit = { x: p.x, y: p.y, r: selected ? 12 : 9 };
           } else {
@@ -898,9 +899,8 @@
         ["1D", "2D", "3D"].forEach(function (label, i) {
           row1.appendChild(makeChip(label, st.dim === i, function () {
             st.dim = i; animateDimTo(i); st.group = null;
-            // HARD RULE (2/5): the 3D chip also forces arrow-only.
-            if (i === 2) { st.vectorMode = true; vectorMix = 1; vectorTarget = 1; }
-            else { st.vectorMode = false; vectorMix = 0; vectorTarget = 0; }
+            // HARD RULE (2/5): entering 3D starts with points, not arrows.
+            resetDirectionView();
             if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
             if (i !== 2 && st.arithmetic) {
               var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
@@ -954,10 +954,7 @@
         examplesForDim().forEach(function (ex) {
           row2.appendChild(makeChip(text(ex.label), st.arithmetic === ex.id, function () {
             st.arithmetic = st.arithmetic === ex.id ? null : ex.id;
-            if (ex.id === "layers") {
-              st.vectorMode = true;
-              if (st.dim !== 2) { st.dim = 2; animateDimTo(2); }
-            }
+            resetDirectionView();
             syncControls(); draw();
           }));
         });
@@ -1003,8 +1000,7 @@
         if (nextDim !== st.dim) animateDimTo(nextDim);
         else dimTarget = nextDim;
         st.dim = nextDim;
-        if (nextDim === 2) { st.vectorMode = true; vectorMix = 1; vectorTarget = 1; }
-        else { st.vectorMode = false; vectorMix = 0; vectorTarget = 0; }
+        resetDirectionView();
       }
       if (s.selected) st.selected = s.selected;
       if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
@@ -1016,15 +1012,7 @@
       if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
-      if (st.dim === 2) {
-        st.vectorMode = true;
-        vectorMix = 1;
-        vectorTarget = 1;
-      } else {
-        st.vectorMode = false;
-        vectorMix = 0;
-        vectorTarget = 0;
-      }
+      resetDirectionView();
       st.showHighdim = !!s.showHighdim;
       if (st.dim !== 2) { st.showHighdim = false; st.vectorMode = false; }
       syncControls();
@@ -1074,8 +1062,18 @@
       var list = examplesForDim();
       var idx = currentExampleIndex();
       if (idx < 0) idx = -1;
+      if (st.dim === 2 && st.vectorMode) return false;
+      if (st.dim === 2 && idx >= list.length - 1) {
+        // HARD RULE (1/5): after the last example (wizard − man + woman),
+        // the points become bare arrows from the origin.
+        st.vectorMode = true;
+        vectorTarget = 1;
+        ensureLoop();
+        return true;
+      }
       if (idx >= list.length - 1) return false;
       st.arithmetic = list[idx + 1].id;
+      resetDirectionView();
       syncControls();
       draw();
       ensureLoop();
@@ -1092,10 +1090,17 @@
         return true;
       }
       if (st.mode !== "space" || st.dim < 1) return false;
+      if (st.dim === 2 && st.vectorMode) {
+        st.vectorMode = false;
+        vectorTarget = 0;
+        ensureLoop();
+        return true;
+      }
       var list = examplesForDim();
       var idx = currentExampleIndex();
       if (idx <= 0) return false;
       st.arithmetic = list[idx - 1].id;
+      resetDirectionView();
       syncControls();
       draw();
       ensureLoop();
@@ -1347,11 +1352,13 @@
         var list = examplesForDim();
         var idx = currentExampleIndex();
         if (idx < 0) idx = -1;
-        return idx < list.length - 1;
+        if (st.dim === 2 && st.vectorMode) return false;
+        return idx < list.length - 1 || (st.dim === 2 && idx >= list.length - 1);
       },
       hasPrev: function () {
         if (st.mode === "temperature") return currentPairIndex() > 0;
         if (st.mode !== "space" || st.dim < 1) return false;
+        if (st.dim === 2 && st.vectorMode) return true;
         return currentExampleIndex() > 0;
       },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
