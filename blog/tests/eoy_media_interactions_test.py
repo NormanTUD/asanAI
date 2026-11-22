@@ -1425,11 +1425,17 @@ def test_text_blur_swap(browser, base, lang, results):
     result = page.evaluate(
         r"""
 () => new Promise((resolve) => {
-  var host = document.querySelector('#ls-text-body');
+  var body = document.querySelector('#ls-body');
+  var title = document.querySelector('#ls-title');
+  var kicker = document.querySelector('#ls-kicker');
   var nav = document.querySelector('#ls-navbar');
   var start = performance.now();
-  var minOpacity = 1;
-  var maxHostBlur = 0;
+  var minBodyOpacity = 1;
+  var maxBodyBlur = 0;
+  var minTitleOpacity = 1;
+  var maxTitleBlur = 0;
+  var minKickerOpacity = 1;
+  var maxKickerBlur = 0;
   var navMinOpacity = 1;
   var navMaxBlur = 0;
   var samples = 0;
@@ -1441,24 +1447,39 @@ def test_text_blur_swap(browser, base, lang, results):
   LearnSys.next();
   function sample() {
     samples++;
-    var opacity = parseFloat(getComputedStyle(host).opacity) || 0;
-    minOpacity = Math.min(minOpacity, opacity);
-    maxHostBlur = Math.max(maxHostBlur, blurOf(host));
+    var opacity = parseFloat(getComputedStyle(body).opacity) || 0;
+    minBodyOpacity = Math.min(minBodyOpacity, opacity);
+    maxBodyBlur = Math.max(maxBodyBlur, blurOf(body));
+    if (title) {
+      minTitleOpacity = Math.min(minTitleOpacity, parseFloat(getComputedStyle(title).opacity) || 0);
+      maxTitleBlur = Math.max(maxTitleBlur, blurOf(title));
+    }
+    if (kicker) {
+      minKickerOpacity = Math.min(minKickerOpacity, parseFloat(getComputedStyle(kicker).opacity) || 0);
+      maxKickerBlur = Math.max(maxKickerBlur, blurOf(kicker));
+    }
     if (nav) {
       navMinOpacity = Math.min(navMinOpacity, parseFloat(getComputedStyle(nav).opacity) || 0);
       navMaxBlur = Math.max(navMaxBlur, blurOf(nav));
     }
-    if ((opacity > 0.95 && blurOf(host) < 0.5 && performance.now() - start > 150) || performance.now() - start > 900) {
+    if ((opacity > 0.95 && blurOf(body) < 0.5 && performance.now() - start > 150) || performance.now() - start > 900) {
       resolve({
         ms: performance.now() - start,
-        minOpacity: minOpacity,
-        maxHostBlur: maxHostBlur,
+        minBodyOpacity: minBodyOpacity,
+        maxBodyBlur: maxBodyBlur,
+        minTitleOpacity: minTitleOpacity,
+        maxTitleBlur: maxTitleBlur,
+        minKickerOpacity: minKickerOpacity,
+        maxKickerBlur: maxKickerBlur,
         navMinOpacity: navMinOpacity,
         navMaxBlur: navMaxBlur,
+        titleSpans: title ? title.querySelectorAll('.ls-swap-char').length : -1,
+        kickerSpans: kicker ? kicker.querySelectorAll('.ls-swap-char').length : -1,
+        title: title ? title.textContent : '',
+        kicker: kicker ? kicker.textContent : '',
         samples: samples,
         step: LearnSys.state().step,
-        sub: LearnSys.state().substep,
-        title: document.querySelector('#ls-title').textContent
+        sub: LearnSys.state().substep
       });
       return;
     }
@@ -1469,11 +1490,15 @@ def test_text_blur_swap(browser, base, lang, results):
 """
     )
     detail = str(result)
-    results.check(tag, "old and new text blur", result.get("maxHostBlur", 0) > 1, detail)
-    results.check(tag, "text blends fully with the background", result.get("minOpacity", 1) < 0.1, detail)
-    results.check(tag, "blur swap finishes within 200ms plus scheduling slack", result.get("ms", 9999) <= 900, detail)
+    results.check(tag, "changed body text blurs out and in", result.get("maxBodyBlur", 0) > 1, detail)
+    results.check(tag, "body text blends with the background", result.get("minBodyOpacity", 1) < 0.1, detail)
+    results.check(tag, "unchanged headline stays sharp", result.get("maxTitleBlur", 1) < 0.5 and result.get("minTitleOpacity", 0) > 0.95, detail)
+    results.check(tag, "unchanged headline has no swap spans", result.get("titleSpans", -1) == 0, detail)
+    results.check(tag, "only changed kicker characters animate", result.get("kickerSpans", 0) > 0, detail)
+    results.check(tag, "unchanged kicker text stays sharp", result.get("maxKickerBlur", 1) < 0.5 and result.get("minKickerOpacity", 0) > 0.95, detail)
     results.check(tag, "top navbar never disappears", result.get("navMinOpacity", 0) > 0.95, detail)
     results.check(tag, "top navbar is never blurred", result.get("navMaxBlur", 1) < 0.5, detail)
+    results.check(tag, "text swap finishes within 200ms plus scheduling slack", result.get("ms", 9999) <= 900, detail)
     results.check(tag, "substep swap advances the page", result.get("sub") != before["sub"] or result.get("step") != before["step"], f"{before} -> {result}")
     results.check(tag, "blur swap keeps a title", bool(result.get("title")), detail)
     current = state(page)
