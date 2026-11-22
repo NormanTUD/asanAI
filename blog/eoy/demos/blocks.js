@@ -112,6 +112,7 @@
     var resetKey = null;
     var positionDemo = null;
     var trajCleanup = null;
+    var fxCleanup = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
     el.innerHTML = '<div class="ls-bs-residual" role="img" aria-label="' + (DE ? "Residualstrom: x läuft durch die Blöcke; Attention und FFN addieren ihre Updates." : "Residual stream: x runs through the blocks; attention and FFN add their updates.") + '">' +
@@ -494,6 +495,33 @@
         block.classList.toggle("is-current", current);
       });
     }
+    function setupFxDemo() {
+      var host = detail.querySelector("[data-fx]");
+      if (!host) return null;
+      var bars = host.querySelectorAll("[data-fx-bar]");
+      var pcts = host.querySelectorAll("[data-fx-pct]");
+      var readout = host.querySelector(".ls-bs-fx-readout");
+      var btn = host.querySelector(".ls-bs-fx-nudge");
+      var step = 0;
+      var values = [[45, 35, 8], [65, 25, 5], [82, 14, 2]];
+      function render() {
+        for (var i = 0; i < bars.length; i++) {
+          bars[i].style.width = values[step][i] + "%";
+          if (pcts[i]) pcts[i].textContent = values[step][i] + " %";
+        }
+        if (readout) readout.textContent = step === 0
+          ? (DE ? "Nudge 0 / 2: die Verteilung ist noch unsicher." : "Nudge 0 / 2: the distribution is still uncertain.")
+          : step === 1
+            ? (DE ? "Nudge 1 / 2: „Matte“ wird wahrscheinlicher." : "Nudge 1 / 2: “mat” becomes more likely.")
+            : (DE ? "Nudge 2 / 2: die Daten ziehen die Verteilung zu „Matte“." : "Nudge 2 / 2: the data pull the distribution toward “mat”.");
+        if (btn) btn.disabled = step >= 2;
+      }
+      if (btn) btn.addEventListener("click", function () {
+        if (step < 2) { step++; render(); }
+      });
+      render();
+      return function cleanup() {};
+    }
     function setupTrajectoryDemo() {
       var host = detail.querySelector("[data-traj-host]");
       if (!host) return null;
@@ -509,7 +537,7 @@
         { label: DE ? "Fluss" : "river", col: "sky", pts: [[0.46, 0.36], [0.28, 0.42], [0.10, 0.34], [-0.04, 0.44], [-0.18, 0.38]] }
       ];
       var state = { step: 0, from: 0, to: 0, t: 1 };
-      var raf = 0, size = null;
+      var raf = 0, size = null, trajHits = [], trajHover = -1;
       function project(p) {
         var scale = Math.min((size.w * 0.42) / 0.95, (size.h * 0.42) / 0.62);
         return { x: size.w / 2 + p[0] * scale, y: size.h / 2 - p[1] * scale };
@@ -561,6 +589,7 @@
         g.fillText(DE ? "L0 … L4 · fiktives Beispiel" : "L0 … L4 · fictional example", 16, 22);
 
         var from = state.from, to = state.to, t = state.t;
+        trajHits = [];
         traj.forEach(function (item) {
           var col = C[item.col] || C.petrol;
           var pts = item.pts.map(project);
@@ -577,18 +606,22 @@
             arrow(g, pts[s], pts[s + 1], col);
             g.globalAlpha = 1;
           }
-          for (var k = 0; k <= to; k++) {
+          for (var k = 0; k < pts.length; k++) {
             var on = k === to;
+            var reached = k <= to;
             if (on) {
               g.beginPath();
-              g.arc(pts[k].x, pts[k].y, 12, 0, Math.PI * 2);
-              g.fillStyle = col; g.globalAlpha = 0.13; g.fill(); g.globalAlpha = 1;
+              g.arc(pts[k].x, pts[k].y, 13, 0, Math.PI * 2);
+              g.fillStyle = col; g.globalAlpha = 0.14; g.fill(); g.globalAlpha = 1;
             }
+            g.globalAlpha = reached ? 1 : 0.30;
             g.beginPath();
-            g.arc(pts[k].x, pts[k].y, on ? 5.2 : 3.4, 0, Math.PI * 2);
+            g.arc(pts[k].x, pts[k].y, on ? 6 : (reached ? 4.2 : 3.4), 0, Math.PI * 2);
             g.fillStyle = on ? col : (C.paper || "#fff");
             g.fill();
-            g.strokeStyle = col; g.lineWidth = on ? 2.2 : 1.8; g.stroke();
+            g.strokeStyle = col; g.lineWidth = on ? 2.6 : 2.0; g.stroke();
+            g.globalAlpha = 1;
+            trajHits.push({ x: pts[k].x, y: pts[k].y, layer: k, label: item.label });
           }
           var a = pts[from], b = pts[to];
           var cp = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
@@ -601,6 +634,24 @@
           g.textAlign = "center"; g.textBaseline = "bottom";
           g.fillText(item.label, cp.x, cp.y - 10);
         });
+        if (trajHover >= 0 && trajHits[trajHover]) {
+          var hh = trajHits[trajHover];
+          g.beginPath();
+          g.arc(hh.x, hh.y, 9, 0, Math.PI * 2);
+          g.strokeStyle = C.petrol; g.lineWidth = 2.2; g.stroke();
+          var tip = hh.label + " · L" + hh.layer;
+          g.font = '700 ' + Math.max(8, Math.min(11, w * 0.017)) + 'px "Open Sans", sans-serif';
+          var tw = g.measureText(tip).width;
+          var tx = Math.max(8, Math.min(w - tw - 16, hh.x + 12));
+          var ty = Math.max(32, hh.y - 14);
+          g.fillStyle = C.paper || "#fff";
+          g.strokeStyle = C.lineStrong; g.lineWidth = 1;
+          g.fillRect(tx - 5, ty - 12, tw + 10, 17);
+          g.strokeRect(tx - 5, ty - 12, tw + 10, 17);
+          g.fillStyle = C.ink;
+          g.textAlign = "left"; g.textBaseline = "alphabetic";
+          g.fillText(tip, tx, ty);
+        }
         var ly = h - 28;
         g.font = '700 ' + Math.max(8, Math.min(10, w * 0.015)) + 'px "Barlow", sans-serif';
         g.textAlign = "center"; g.textBaseline = "alphabetic";
@@ -644,13 +695,35 @@
         raf = requestAnimationFrame(frame);
       }
       function resize() { size = api.fit(canvas, stage); draw(); }
+      function onMove(e) {
+        if (!size) return;
+        var r = canvas.getBoundingClientRect();
+        var x = e.clientX - r.left, y = e.clientY - r.top;
+        var next = -1, best = 16 * 16;
+        trajHits.forEach(function (hit, i) {
+          var d = (hit.x - x) * (hit.x - x) + (hit.y - y) * (hit.y - y);
+          if (d < best) { best = d; next = i; }
+        });
+        if (next !== trajHover) {
+          trajHover = next;
+          canvas.style.cursor = next >= 0 ? "pointer" : "default";
+          draw();
+        }
+      }
+      function onLeave() {
+        if (trajHover !== -1) { trajHover = -1; canvas.style.cursor = "default"; draw(); }
+      }
       stepBtn.addEventListener("click", function () { animate(Math.min(4, state.step + 1)); });
       resetBtn.addEventListener("click", function () { animate(0); });
+      canvas.addEventListener("pointermove", onMove);
+      canvas.addEventListener("pointerleave", onLeave);
       window.addEventListener("resize", resize);
       resize();
       updateReadout();
       return function cleanup() {
         if (raf) cancelAnimationFrame(raf);
+        canvas.removeEventListener("pointermove", onMove);
+        canvas.removeEventListener("pointerleave", onLeave);
         window.removeEventListener("resize", resize);
       };
     }
@@ -670,6 +743,29 @@
           '<p class="ls-bs-body">' + inlineMathText(b.body) + '</p>' +
           '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
         if (b.id === "transformer") {
+          html += '<div class="ls-bs-fx" data-fx>' +
+            '<div class="ls-bs-fx-head"><b>' + (DE ? "Die Architektur ist eine Funktion" : "The architecture is a function") + '</b><span>' + (DE ? "Daten rein, nächste Token-Wahrscheinlichkeit raus." : "Data in, next-token probability out.") + '</span></div>' +
+            '<div class="ls-bs-fx-flow">' +
+              '<span class="ls-bs-fx-node"><b>x</b><small>' + (DE ? "Daten" : "data") + '</small></span><i>→</i>' +
+              '<span class="ls-bs-fx-node is-main"><b>f(x)</b><small>Transformer</small></span><i>→</i>' +
+              '<span class="ls-bs-fx-node"><b>P</b><small>' + (DE ? "nächstes Token" : "next token") + '</small></span>' +
+            '</div>' +
+            '<div class="ls-bs-fx-loop">01 Input · 02 ' + (DE ? "Vorhersage" : "prediction") + ' · 03 ' + (DE ? "Vergleich mit dem nächsten Token in den Daten" : "compare with the next token in the data") + ' · 04 <b>Nudge</b>: ' + (DE ? "Gewichte ein wenig in die richtige Richtung" : "nudge the weights a little in the right direction") + '</div>' +
+            '<div class="ls-bs-fx-stages">' +
+              '<div class="ls-bs-fx-stage"><span>Pretraining</span><b>f(' + (DE ? "fast das ganze Internet" : "almost the whole internet") + ')</b><p>' + (DE ? "Der gewaltige Datensatz liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged die Gewichte." : "The huge dataset supplies billions of next tokens. Every comparison nudges the weights.") + '</p></div>' +
+              '<div class="ls-bs-fx-stage"><span>Fine-tuning</span><b>f(' + (DE ? "kleine Menge spezifischer Fragen" : "small set of specific questions") + ')</b><p>' + (DE ? "Wenige, gezielte Beispiele nudged dieselben Gewichte in Richtung hilfreicher Antworten." : "A few targeted examples nudge the same weights toward helpful answers.") + '</p></div>' +
+            '</div>' +
+            '<div class="ls-bs-fx-example">' +
+              '<div class="ls-bs-fx-prompt">' + (DE ? "Die Katze sitzt auf der " : "The cat sits on the ") + '<b>___</b></div>' +
+              '<div class="ls-bs-fx-cands">' +
+                '<div class="ls-bs-fx-cand is-good"><span>' + (DE ? "Matte" : "mat") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>45 %</em></div>' +
+                '<div class="ls-bs-fx-cand is-mid"><span>' + (DE ? "Heizung" : "heater") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>35 %</em></div>' +
+                '<div class="ls-bs-fx-cand is-bad"><span>' + (DE ? "Gleichung" : "equation") + '</span><i><b data-fx-bar></b></i><em data-fx-pct>8 %</em></div>' +
+              '</div>' +
+              '<p class="ls-bs-fx-note">' + (DE ? "In den Daten steht „Die Katze sitzt auf der Matte“. Das Netz bekommt „Die Katze sitzt auf der“ und soll „Matte“ vorhersagen. Jeder Nudge macht „Matte“ wahrscheinlicher. „Heizung“ ist auch plausibel, war in diesem Beispiel aber nicht der nächste Token; „Gleichung“ passt semantisch nicht und kommt in den Daten nicht vor." : "The data says “The cat sits on the mat”. The network gets “The cat sits on the” and should predict “mat”. Every nudge makes “mat” more likely. “Heater” is also plausible, but was not the next token in this example; “equation” does not fit semantically and is not in the data.") + '</p>' +
+            '</div>' +
+            '<div class="ls-bs-fx-bar"><button type="button" class="ls-btn ls-btn--tiny ls-bs-fx-nudge">' + (DE ? "Nudge (Gewichte anpassen)" : "Nudge (adjust weights)") + '</button><span class="ls-bs-fx-readout" aria-live="polite"></span></div>' +
+          '</div>';
           html += '<div class="ls-bs-traj" data-traj-host>' +
             '<div class="ls-bs-traj-head"><b>' + (DE ? "Denken = Punkte verschieben" : "Thinking = moving points") + '</b><span>' + (DE ? "Jede Schicht verschiebt den Token-Vektor neu." : "Every layer moves the token vector again.") + '</span></div>' +
             '<div class="ls-bs-traj-stage"><canvas class="ls-bs-traj-canvas" role="img"></canvas></div>' +
@@ -722,9 +818,13 @@
       }
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
       if (trajCleanup) { try { trajCleanup(); } catch (e) {} trajCleanup = null; }
+      if (fxCleanup) { try { fxCleanup(); } catch (e) {} fxCleanup = null; }
       detail.innerHTML = html;
       if (window.TM && typeof window.TM.typesetMath === "function") { try { window.TM.typesetMath(detail); } catch (e) {} }
-      if (!sub && b.id === "transformer") trajCleanup = setupTrajectoryDemo();
+      if (!sub && b.id === "transformer") {
+        fxCleanup = setupFxDemo();
+        trajCleanup = setupTrajectoryDemo();
+      }
       if (b.position) {
         var posHost = detail.querySelector("[data-position-host]");
         var posFactory = core.get("position");
@@ -782,7 +882,7 @@
       hasPrev: function () { return index > 0; },
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } if (trajCleanup) { try { trajCleanup(); } catch (e) {} trajCleanup = null; } window.removeEventListener("resize", onResize); el.remove(); }
+      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } if (trajCleanup) { try { trajCleanup(); } catch (e) {} trajCleanup = null; } if (fxCleanup) { try { fxCleanup(); } catch (e) {} fxCleanup = null; } window.removeEventListener("resize", onResize); el.remove(); }
     };
   }
 

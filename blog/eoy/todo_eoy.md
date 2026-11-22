@@ -48,7 +48,9 @@ this file before further edits.
 2. **"Drei Dimensionen"** — **done**
    - Human words now sit at z = 0, so the old power × gender plane is flat.
    - The category axis is human (z = 0) / animal (z = -1) / fiction (z = +1),
-     drawn as three labelled planes; rank stays on the power axis.
+     drawn as three planes; rank stays on the power axis.
+   - The layer text labels inside the 3D plot were removed; the planes are
+     visible without them.
    - Table header and 3D text updated; sources unchanged.
 3. **"Zwei Schichten, ein Trick"** — **done**
    - The text now says $A$ and $B$ are tokens and can be words, word pieces, or
@@ -98,11 +100,9 @@ this file before further edits.
    - The "Denken = Punkte verschieben" canvas is poorly upscaled; fit it to the
      available size and keep lines clearly visible.
    - Add mouseover per point with the layer index and token, e.g. "Katze · L1".
-14. **Architecture subpage order**
-   - The deck currently walks Attention → FFN → LayerNorm, but the architecture
-     display/text lists Attention → LayerNorm → FFN. Reorder the transformer
-     subpages and the prose to Attention → LayerNorm → FFN; update the blocks
-     test accordingly.
+14. **Architecture subpage order** — **done**
+   - Transformer subpages and prose now go Attention → LayerNorm → FFN, matching
+     the displayed pills and architecture list. The blocks test was updated.
 15. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.

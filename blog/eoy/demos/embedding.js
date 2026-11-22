@@ -496,15 +496,6 @@
           drawLine3D(project(-1, g, plane.z), project(1, g, plane.z), plane.grid);
         }
         ctx.restore();
-        var labelPoint = project(-1, -1, plane.z);
-        ctx.save();
-        ctx.globalAlpha = zMix;
-        ctx.fillStyle = plane.z === 0 ? C.petrol : plane.col;
-        ctx.font = '700 ' + Math.max(8, Math.min(10, api.font("canvas-sm"))) + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "left";
-        ctx.textBaseline = "bottom";
-        ctx.fillText(plane.label, labelPoint.x + 4, labelPoint.y - 4);
-        ctx.restore();
       });
     }
     function drawSpace() {
