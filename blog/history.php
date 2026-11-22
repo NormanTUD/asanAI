@@ -178,8 +178,6 @@ Not every ancestor of AI was meant to *think* or *speak*. In **132 CE**, the Chi
 Sensing is the first half of perception, and perception is the precondition for anything that *acts* in the world. Zhang Heng's bronze vessel, a “peripheral” of 132 CE, is the ancient root of the same idea that today lets a robot detect an obstacle, or a model ingest a signal from its environment, before it can do anything at all.
 </div>
 
-<div class="mn-quiz mn-quiz--checkpoint" data-quiz="history-cp1"><script type="application/json">{"title": "Checkpoint: ancient computing", "questions": [{"q": "Where was the Antikythera mechanism discovered?", "options": ["In a shipwreck off the Greek island of Antikythera, in 1901", "In a sunken Egyptian temple near Alexandria, in the year 1901", "In a Roman library buried under deep volcanic ash, in 1901", "In a medieval monastery in southern France, in 1901"], "answer": 0, "explain": "With at least 30 meshing bronze gears, it shows that computing has roots in mechanical simulation."}]}</script></div>
-
 <div class="optional md" data-headline="The Brazen Head: the first question-answering machine (c. 1125)">
 
 Before there were logic engines, there were *talking heads*. The **brazen head**, a bust of brass or bronze said to sit on the workbench of a medieval scholar, is the oldest known legend of a machine that *answers questions*, and it is a remarkably early sketch of the conversational machine we now call a chatbot.
