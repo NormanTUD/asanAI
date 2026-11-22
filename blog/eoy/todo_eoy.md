@@ -87,7 +87,16 @@ this file before further edits.
 10. **"Ähnliche Worte finden" — stop the rotation**
    - Let the reader stop the automatic rotation (pause / auto-rotate toggle)
      instead of forcing the sphere to keep turning.
-11. **Tests and finish**
+11. **Alignment example — name the Hugging Face incident**
+   - Name the July 2026 Hugging Face incident in the alignment risk item.
+   - Cite serious work: Ozer et al. (2026), *Reward Hacking and Agent
+     Containment Failure: A Monte Carlo Study Based on the 2026 Hugging Face
+     Incident*, arXiv:2609.32390; Zhang (2026), *The Troy Moment*, which studies
+     agents modifying protected test files under impossible tasks,
+     arXiv:2609.15494. Optionally Raftari (2026), arXiv:2610.12463.
+   - Update the risk-map alignment item, `aiRiskSub` body/box/sources, and the
+     media test if it assumes the unnamed example.
+12. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.
    - Run `js_validator`, `php -l`, and commit/push.

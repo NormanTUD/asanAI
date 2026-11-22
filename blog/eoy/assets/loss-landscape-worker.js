@@ -92,12 +92,20 @@ self.onmessage = function (e) {
   var adam = trajectory("adam", lr, startA, startB, steps);
   var momentum = trajectory("momentum", lr, startA, startB, steps);
   var opt = optimum();
-  var range = { a0: -2.2, a1: 2.2, b0: -2.2, b1: 2.2 };
-  // keep the optimum and both starts inside the slice
+  var range = { a0: -2.8, a1: 2.8, b0: -2.2, b1: 2.2 };
+  // keep the optimum, both starts and every trajectory point inside the slice
   range.a0 = Math.min(range.a0, opt.a - 0.4);
   range.a1 = Math.max(range.a1, opt.a + 0.4);
   range.b0 = Math.min(range.b0, opt.b - 0.4);
   range.b1 = Math.max(range.b1, opt.b + 0.4);
+  [sgd, adam, momentum].forEach(function (tr) {
+    tr.forEach(function (p) {
+      range.a0 = Math.min(range.a0, p.a - 0.35);
+      range.a1 = Math.max(range.a1, p.a + 0.35);
+      range.b0 = Math.min(range.b0, p.b - 0.35);
+      range.b1 = Math.max(range.b1, p.b + 0.35);
+    });
+  });
   var z = surface(25, range.a0, range.a1, range.b0, range.b1);
   self.postMessage({
     lr: lr,

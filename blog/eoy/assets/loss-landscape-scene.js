@@ -36,7 +36,7 @@
     var optOrder = ["sgd", "adam", "momentum"];
     var data = null, worker = null, workerFailed = false;
     var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
-    var yaw = 0.72, pitch = 0.95, zoom = 1, drag = null;
+    var yaw = 0.72 + Math.PI, pitch = 0.95, zoom = 1, drag = null;
     var size = null, minL = 0, maxL = 1;
 
     function mix(a, b, t) {
@@ -46,7 +46,9 @@
     }
     function lossColor(t) {
       t = Math.max(0, Math.min(1, t));
-      return t < 0.55 ? mix(C.green, C.gold, t / 0.55) : mix(C.gold, C.lilac, (t - 0.55) / 0.45);
+      if (t <= 0.10) return C.green;
+      if (t < 0.55) return mix(C.green, C.gold, (t - 0.10) / 0.45);
+      return mix(C.gold, "#c95656", (t - 0.55) / 0.45);
     }
     function optColor(name) { return name === "adam" ? C.gold : name === "momentum" ? C.lime : C.blue; }
     function trajectory() { return data && data.trajectories ? data.trajectories[optimizer] : []; }
@@ -61,7 +63,7 @@
       var y1 = x * sy + y * cy;
       var y2 = y1 * cp + z * 0.9 * sp;
       var z2 = -y1 * sp + z * 0.9 * cp;
-      var s = Math.min(size.w * 0.36, size.h * 0.44) * zoom / (1 + z2 * 0.18);
+      var s = Math.min(size.w * 0.42, size.h * 0.44) * zoom / (1 + z2 * 0.18);
       return { x: size.w * 0.5 + x1 * s, y: size.h * 0.56 - y2 * s, z: z2 };
     }
     function projectSafe(a, b, L) {
@@ -135,7 +137,7 @@
       cells.sort(function (a, b) { return a.z - b.z; });
       cells.forEach(function (c) {
         var t = (c.l - minL) / Math.max(1e-9, maxL - minL);
-        ctx.fillStyle = lossColor(t); ctx.globalAlpha = 0.84;
+        ctx.fillStyle = lossColor(t); ctx.globalAlpha = 0.94;
         ctx.beginPath(); ctx.moveTo(c.p[0].x, c.p[0].y); ctx.lineTo(c.p[1].x, c.p[1].y); ctx.lineTo(c.p[2].x, c.p[2].y); ctx.lineTo(c.p[3].x, c.p[3].y); ctx.closePath(); ctx.fill();
         ctx.globalAlpha = 0.14; ctx.strokeStyle = C.paper; ctx.lineWidth = 0.6; ctx.stroke();
       });
@@ -172,6 +174,10 @@
       ctx.fillStyle = C.petrol; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.fillText("w", ea.x + 4, ea.y); ctx.fillText("b", eb.x + 4, eb.y);
       ctx.fillStyle = C.muted; ctx.textAlign = "left"; ctx.fillText(DE ? "Loss" : "loss", 18, 20);
+      ctx.fillStyle = C.green; ctx.fillRect(18, 27, 8, 8);
+      ctx.fillStyle = C.muted; ctx.fillText(DE ? "niedrig" : "low", 30, 35);
+      ctx.fillStyle = "#c95656"; ctx.fillRect(78, 27, 8, 8);
+      ctx.fillStyle = C.muted; ctx.fillText(DE ? "hoch" : "high", 90, 35);
       ctx.textAlign = "right"; ctx.fillText(DE ? "Ziehen zum Drehen" : "drag to rotate", size.w - 18, 20);
       updateReadout(); drawExamples(); drawData(); renderFormula();
     }
@@ -193,7 +199,7 @@
       if (loaderEl) loaderEl.hidden = false;
       setStatus(DE ? "Berechne die Loss-Fläche …" : "Computing the loss surface …");
       readout.innerHTML = '<span>' + (DE ? "Die Fläche wird im Hintergrund berechnet." : "The surface is computed in the background.") + '</span>';
-      worker = new Worker("assets/loss-landscape-worker.js?v=5");
+      worker = new Worker("assets/loss-landscape-worker.js?v=6");
       worker.onmessage = function (e) {
         data = e.data;
         started = false;
