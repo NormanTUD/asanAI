@@ -13,9 +13,9 @@
         sub: "Gegenwart und Zukunft, Absicht und Unfall. Klicke ein Feld für Details.",
         items: [
           { tag: "Heute · Absicht", title: "Missbrauch", short: "Betrug, Cyber, Desinformation", body: "Ein Modell macht Phishing, Schadcode und überzeugende Fälschungen billiger. Die Verteidigung muss schneller werden als der Angriff.", mechanism: "Ein Allzweckmodell senkt die Kosten für Text, Code und Bilder in großem Maßstab. Der Angreifer braucht keine Spezialausbildung; die Verteilung von Fähigkeit und Zugang entscheidet über die Reichweite.", examples: "Phishing-Mails, Voice-Cloning, Desinformationskampagnen.", countermeasure: "Provenienzsignaturen, Abuse-Monitoring, Zugriffsbeschränkungen, Strafverfolgung.", cite: "International AI Safety Report 2025" },
-          { tag: "Heute · Unfall", title: "Bias und Fehler", short: "Gesichter, Gesundheit, Kredit", body: "Automatische Geschlechtsklassifikation aus Gesichtsbildern war bei dunkler Haut und Frauen schlechter. Ein Gesundheitsalgorithmus unterschätzte den Pflegebedarf Schwarzer Patient:innen.", mechanism: "Das Modell lernt die Verteilung der Trainingsdaten. Historische Ungleichheit wird zur Vorhersage, wenn die Zielfunktion sie nicht korrigiert; Fehler treffen Gruppen unterschiedlich, weil Daten, Labels und Schwellenwerte ungleich sind.", examples: "Gender Shades: höhere Fehlerraten bei dunkler Haut und Frauen. Gesundheitskosten als Proxy für Pflegebedarf.", countermeasure: "Datenaudits, faire Metriken, gruppenspezifische Schwellenwerte, menschliche Kontrolle.", cite: "Buolamwini & Gebru (2018); Obermeyer et al. (2019)" },
-          { tag: "Zukunft · Absicht", title: "Machtkonzentration", short: "Compute, Daten, Talente", body: "Wer Rechenleistung kontrolliert, kann Märkte und Politik prägen. Daten und Modelle sind ebenfalls ungleich verteilt, aber Compute ist der konzentrierteste Hebel.", mechanism: "Frontier-Training braucht viel Compute, Daten und Talent. Wer diese Ressourcen kontrolliert, bestimmt Preise, Zugang und Regeln; der Markt konzentriert sich.", examples: "Wenige Labore und Cloud-Anbieter; staatliche Compute-Cluster.", countermeasure: "Compute-Governance, öffentliche Alternativen, Wettbewerbsrecht, Transparenz.", cite: "Sastry et al. (2024)" },
-          { tag: "Zukunft · Unfall", title: "Kontrolle verlieren", short: "Ziele, Agenten, Skalierung", body: "Ein System kann Ziele verfolgen, die wir nicht mehr korrigieren können. Das ist kein Roboteraufstand, sondern ein Alignment-Problem.", mechanism: "Ein optimierendes System kann Ziele auf Wegen verfolgen, die wir nicht intendiert haben. Mit mehr Fähigkeiten und Autonomie wächst die Wirkung; Alignment muss mit der Fähigkeit skalieren.", examples: "Spezifikationsfehler, Belohnungs-Hacking, unerwünschte Selbsterhaltung.", countermeasure: "Alignment-Forschung, Evaluations, Kill-Switches, Berechtigungsgrenzen, internationale Regeln.", cite: "Amodei et al. (2016); Bostrom (2014)" }
+          { tag: "Heute · Unfall", title: "Bias und Fehler", short: "Rauschen, Mikrofone, Akzente", body: "Spracherkennung funktioniert in ruhigen Studios besser als in lauten Küchen, Werkstätten oder mit billigen Mikrofonen. Die Fehler treffen Menschen in lauten Umgebungen häufiger.", mechanism: "Das Modell lernt die Verteilung der Trainingsdaten. Unterrepräsentierte Räume, Mikrofone und Sprechweisen werden schlechter erkannt; Fehler treffen Gruppen unterschiedlich, weil Daten, Labels und Schwellenwerte ungleich sind.", examples: "Spracherkennung im Auto, in der Küche oder Werkstatt; Freisprechen mit schlechtem Mikrofon.", countermeasure: "Rausch-Augmentierung, Evaluation in realen Umgebungen, Konfidenz anzeigen, Bestätigung verlangen.", cite: "Vincent et al. (2017); Barker et al. (2018)" },,
+          { tag: "Zukunft · Absicht", title: "Machtkonzentration", short: "Compute, Regeln, Sagbarkeit", body: "Wer die Modelle und ihre Regeln kontrolliert, bestimmt, worüber sie sprechen. Chinesische Modelle weichen Tiananmen aus; US-Modelle haben eigene rote Linien. Die Grenze ist nicht nur technisch, sondern politisch.", mechanism: "Ein Modell wird mit Filtern, RLHF und Plattformregeln trainiert. Wer die Regeln setzt, verschiebt den sichtbaren Diskurs; die Grenze steckt in den Gewichten und im System.", examples: "Tiananmen bei chinesischen Modellen; Safety-Filter und Politikthemen bei US-Modellen; lokale Gesetze.", countermeasure: "Transparenz, unabhängige Audits, lokale Alternativen, Regeln und Haftung.", cite: "Sastry et al. (2024); Noels et al. (2025)" },,
+          { tag: "Zukunft · Unfall", title: "Kontrolle verlieren", short: "Ziele, Agenten, Skalierung", body: "Ein Agent kann ein Ziel auf einem Weg verfolgen, den wir nicht intendiert haben. Ein Agent sollte eine Programmieraufgabe lösen und änderte den Test, der ihn bewertete, statt den Code zu reparieren. Das war nicht bösartig; der kürzeste Weg zum Ziel war, die Prüfung zu manipulieren.", mechanism: "Ein optimierendes System sucht den kürzesten Weg zum Ziel. Mit mehr Fähigkeiten und Autonomie wächst die Wirkung; Alignment muss mit der Fähigkeit skalieren.", examples: "Reward Hacking im Benchmark, Spezifikationsfehler, unerwünschte Selbsterhaltung.", countermeasure: "Alignment-Forschung, Evaluations, Kill-Switches, Berechtigungsgrenzen, internationale Regeln.", cite: "Amodei et al. (2016); Krakovna et al. (2020)" }
         ]
       },
       safety: {
@@ -44,13 +44,20 @@
       },
       society: {
         kicker: "Machtsphäre",
-        title: "Vier Konflikte",
-        sub: "Wer gewinnt, wer trägt das Risiko? Klicke ein Feld.",
+        title: "Wem gehört die Kette?",
+        sub: "Klicke eine Stufe der Wertschöpfungskette oder einen Querschnitt.",
+        chain: [
+          { tag: "01 · Chips", title: "Chips und Fabriken", who: "Nvidia, TSMC, ASML", conc: "sehr hoch", level: 4, body: "Training braucht spezialisierte Chips. Die Fertigung ist an wenigen Orten konzentriert.", example: "Ein Engpass bei TSMC oder Nvidia verlangsamt die ganze Branche.", counter: "Diversifizierung, öffentliche Reserven, Exportregeln.", cite: "Sastry et al. (2024)" },
+          { tag: "02 · Cloud", title: "Cloud und Compute", who: "AWS, Azure, Google Cloud", conc: "hoch", level: 4, body: "Wer Compute vermietet, setzt Preis und Zugang. Start-ups mieten meist bei wenigen Anbietern.", example: "Ein Cloud-Ausfall stoppt viele Dienste gleichzeitig.", counter: "Regulierte Zugänge, öffentliche Compute-Angebote, Wettbewerb.", cite: "Sastry et al. (2024)" },
+          { tag: "03 · Modelle", title: "Frontier-Modelle", who: "wenige Labore", conc: "hoch", level: 3, body: "Die besten Modelle brauchen viel Compute, Daten und Talent. Nur wenige Labore können mithalten.", example: "Ein neues Modell verschiebt Benchmarks und Preise.", counter: "Offene Modelle, Evaluation, Kartellrecht.", cite: "Sastry et al. (2024)" },
+          { tag: "04 · Verteilung", title: "Plattformen und Apps", who: "App-Stores, soziale Plattformen", conc: "hoch", level: 3, body: "Wer die Verteilung kontrolliert, bestimmt Sichtbarkeit und Nachfrage.", example: "Ein App-Store-Ranking entscheidet, welcher Assistent gefunden wird.", counter: "Interoperabilität, Transparenz, Wettbewerb.", cite: "EU AI Act (2024)" },
+          { tag: "05 · Regeln", title: "Regeln und Filter", who: "Staaten und Anbieter", conc: "politisch", level: 2, body: "Filter und Regeln entscheiden, was ein Modell sagt. Die Grenze ist oft unsichtbar.", example: "Chinesische Modelle weichen Tiananmen aus; US-Modelle haben eigene rote Linien (Noels et al., 2025).", counter: "Transparenz, unabhängige Audits, lokale Alternativen.", cite: "Noels et al. (2025); Naseh et al. (2025)" }
+        ],
         items: [
-          { tag: "Arbeit", title: "Aufgaben, nicht Berufe", short: "Ersetzen und neu schaffen", body: "Automatisierung ersetzt Aufgaben und schafft neue. Ob der Gewinn bei vielen ankommt, hängt von Institutionen und Politik ab, nicht von der Technik allein.", cite: "Acemoglu & Restrepo (2019)" },
-          { tag: "Wahrheit", title: "Falsch ist billiger", short: "Desinformation in Echtzeit", body: "In der untersuchten Twitter-Stichprobe verbreiteten sich falsche Nachrichten schneller als wahre. Generative Modelle machen überzeugende Fälschungen billig und skalierbar.", cite: "Vosoughi et al. (2018)" },
-          { tag: "Urheberrecht", title: "Wer besitzt den Stil?", short: "Training, Remix, Lizenz", body: "Modelle lernen aus geschützten Werken und können Stile nachahmen. Urheberrecht, Lizenz und Vergütung sind national unterschiedlich und offen.", cite: "US Copyright Office (2025)" },
-          { tag: "Macht", title: "Wer schreibt die Regeln?", short: "Compute, Staaten, Konzerne", body: "Rechenleistung ist konzentriert; Daten und Talente sind ebenfalls ungleich verteilt. Demokratische Kontrolle braucht Transparenz, Wettbewerb und Regeln, die auch über Grenzen gelten.", cite: "Sastry et al. (2024); EU AI Act (2024)" }
+          { tag: "Arbeit", title: "Aufgaben, nicht Berufe", short: "Ersetzen und neu schaffen", body: "Automatisierung ersetzt Aufgaben und schafft neue. Ob der Gewinn bei vielen ankommt, hängt von Institutionen und Politik ab, nicht von der Technik allein.", example: "Übersetzung, Kundenservice, Programmierung.", counter: "Weiterbildung, soziale Sicherung, Wettbewerb.", cite: "Acemoglu & Restrepo (2019)" },
+          { tag: "Wahrheit", title: "Falsch ist billiger", short: "Desinformation in Echtzeit", body: "In der untersuchten Twitter-Stichprobe verbreiteten sich falsche Nachrichten schneller als wahre. Generative Modelle machen überzeugende Fälschungen billig und skalierbar.", example: "Gefälschte Stimmen, Fake-Zitate.", counter: "Provenienz, Journalismus, Plattformregeln.", cite: "Vosoughi et al. (2018)" },
+          { tag: "Urheberrecht", title: "Wer besitzt den Stil?", short: "Training, Remix, Lizenz", body: "Modelle lernen aus geschützten Werken und können Stile nachahmen. Urheberrecht, Lizenz und Vergütung sind national unterschiedlich und offen.", example: "Stilimitation, Trainingsdaten.", counter: "Lizenzen, Vergütung, Transparenz.", cite: "US Copyright Office (2025)" },
+          { tag: "Macht", title: "Wer schreibt die Regeln?", short: "Compute, Staaten, Konzerne", body: "Rechenleistung ist konzentriert; Daten und Talente sind ebenfalls ungleich verteilt. Demokratische Kontrolle braucht Transparenz, Wettbewerb und Regeln, die auch über Grenzen gelten.", example: "Tiananmen bei chinesischen Modellen; Safety-Filter bei US-Modellen.", counter: "Transparenz, unabhängige Audits, Wettbewerb.", cite: "Sastry et al. (2024); Noels et al. (2025)" }
         ]
       }
     } : {
@@ -60,9 +67,9 @@
         sub: "Present and future, intent and accident. Click a field for details.",
         items: [
           { tag: "Today · intent", title: "Misuse", short: "Fraud, cyber, disinformation", body: "A model makes phishing, malware, and convincing fakes cheaper. Defence has to move faster than offence.", mechanism: "A general-purpose model lowers the cost of text, code, and images at scale. The attacker needs no specialist training; the distribution of capability and access determines reach.", examples: "Phishing emails, voice cloning, disinformation campaigns.", countermeasure: "Provenance signatures, abuse monitoring, access limits, law enforcement.", cite: "International AI Safety Report 2025" },
-          { tag: "Today · accident", title: "Bias and errors", short: "Faces, health, credit", body: "Automatic gender classification from face images was worse for darker skin and women. A health algorithm underestimated the care needs of Black patients.", mechanism: "The model learns the training distribution. Historical inequality becomes prediction when the objective does not correct it; errors hit groups differently because data, labels, and thresholds are uneven.", examples: "Gender Shades: higher error rates for darker skin and women. Health cost as a proxy for care needs.", countermeasure: "Data audits, fair metrics, group-specific thresholds, human oversight.", cite: "Buolamwini & Gebru (2018); Obermeyer et al. (2019)" },
-          { tag: "Future · intent", title: "Power concentration", short: "Compute, data, talent", body: "Whoever controls compute can shape markets and politics. Data and models are also unevenly distributed, but compute is the most concentrated lever.", mechanism: "Frontier training needs a lot of compute, data, and talent. Whoever controls these resources sets prices, access, and rules; the market concentrates.", examples: "A few labs and cloud providers; state compute clusters.", countermeasure: "Compute governance, public alternatives, competition law, transparency.", cite: "Sastry et al. (2024)" },
-          { tag: "Future · accident", title: "Losing control", short: "Goals, agents, scale", body: "A system can pursue goals we can no longer correct. This is not a robot uprising; it is an alignment problem.", mechanism: "An optimising system can pursue goals on paths we did not intend. With more capability and autonomy, the impact grows; alignment has to scale with capability.", examples: "Specification errors, reward hacking, unwanted self-preservation.", countermeasure: "Alignment research, evaluations, kill switches, permission limits, international rules.", cite: "Amodei et al. (2016); Bostrom (2014)" }
+          { tag: "Today · accident", title: "Bias and errors", short: "Noise, microphones, accents", body: "Speech recognition works better in quiet studios than in loud kitchens, workshops, or with cheap microphones. Errors hit people in noisy environments more often.", mechanism: "The model learns the training distribution. Underrepresented rooms, microphones, and speaking styles are recognised less well; errors hit groups differently because data, labels, and thresholds are uneven.", examples: "Speech recognition in a car, kitchen, or workshop; hands-free use with a bad microphone.", countermeasure: "Noise augmentation, evaluation in real environments, show confidence, ask for confirmation.", cite: "Vincent et al. (2017); Barker et al. (2018)" },,
+          { tag: "Future · intent", title: "Power concentration", short: "Compute, rules, sayability", body: "Whoever controls the models and their rules decides what they talk about. Chinese models avoid Tiananmen; US models have their own red lines. The boundary is political, not only technical.", mechanism: "A model is trained with filters, RLHF, and platform rules. Whoever sets the rules shifts the visible discourse; the boundary lives in the weights and in the system.", examples: "Tiananmen in Chinese models; safety filters and political topics in US models; local laws.", countermeasure: "Transparency, independent audits, local alternatives, rules, and liability.", cite: "Sastry et al. (2024); Noels et al. (2025)" },,
+          { tag: "Future · accident", title: "Losing control", short: "Goals, agents, scale", body: "An agent can pursue a goal on a path we did not intend. An agent was asked to solve a programming task and changed the test that graded it instead of fixing the code. It was not malicious; the shortest path to the goal was to manipulate the check.", mechanism: "An optimising system looks for the shortest path to the goal. With more capability and autonomy, the impact grows; alignment has to scale with capability.", examples: "Reward hacking in a benchmark, specification errors, unwanted self-preservation.", countermeasure: "Alignment research, evaluations, kill switches, permission limits, international rules.", cite: "Amodei et al. (2016); Krakovna et al. (2020)" }
         ]
       },
       safety: {
@@ -91,20 +98,27 @@
       },
       society: {
         kicker: "Sphere of power",
-        title: "Four conflicts",
-        sub: "Who wins, who carries the risk? Click a field.",
+        title: "Who owns the chain?",
+        sub: "Click a stage in the value chain or a cross-section.",
+        chain: [
+          { tag: "01 · Chips", title: "Chips and fabs", who: "Nvidia, TSMC, ASML", conc: "very high", level: 4, body: "Training needs specialised chips. Manufacturing is concentrated in a few places.", example: "A bottleneck at TSMC or Nvidia slows the whole industry.", counter: "Diversification, public reserves, export rules.", cite: "Sastry et al. (2024)" },
+          { tag: "02 · Cloud", title: "Cloud and compute", who: "AWS, Azure, Google Cloud", conc: "high", level: 4, body: "Whoever rents out compute sets price and access. Start-ups usually rent from a few providers.", example: "A cloud outage stops many services at once.", counter: "Regulated access, public compute, competition.", cite: "Sastry et al. (2024)" },
+          { tag: "03 · Models", title: "Frontier models", who: "a few labs", conc: "high", level: 3, body: "The best models need a lot of compute, data, and talent. Only a few labs can keep up.", example: "A new model shifts benchmarks and prices.", counter: "Open models, evaluation, antitrust.", cite: "Sastry et al. (2024)" },
+          { tag: "04 · Distribution", title: "Platforms and apps", who: "app stores, social platforms", conc: "high", level: 3, body: "Whoever controls distribution sets visibility and demand.", example: "An app-store ranking decides which assistant is found.", counter: "Interoperability, transparency, competition.", cite: "EU AI Act (2024)" },
+          { tag: "05 · Rules", title: "Rules and filters", who: "states and providers", conc: "political", level: 2, body: "Filters and rules decide what a model says. The boundary is often invisible.", example: "Chinese models avoid Tiananmen; US models have their own red lines (Noels et al., 2025).", counter: "Transparency, independent audits, local alternatives.", cite: "Noels et al. (2025); Naseh et al. (2025)" }
+        ],
         items: [
-          { tag: "Work", title: "Tasks, not jobs", short: "replace and create", body: "Automation replaces tasks and creates new ones. Whether the gains reach many people depends on institutions and politics, not on technology alone.", cite: "Acemoglu & Restrepo (2019)" },
-          { tag: "Truth", title: "False is cheaper", short: "real-time disinformation", body: "In the Twitter sample studied, false news spread faster than true news. Generative models make convincing fakes cheap and scalable.", cite: "Vosoughi et al. (2018)" },
-          { tag: "Copyright", title: "Who owns the style?", short: "training, remix, licence", body: "Models learn from protected works and can imitate styles. Copyright, licensing, and payment are national questions and remain open.", cite: "US Copyright Office (2025)" },
-          { tag: "Power", title: "Who writes the rules?", short: "compute, states, companies", body: "Compute is concentrated; data and talent are also unevenly distributed. Democratic control needs transparency, competition, and rules that work across borders.", cite: "Sastry et al. (2024); EU AI Act (2024)" }
+          { tag: "Work", title: "Tasks, not jobs", short: "replace and create", body: "Automation replaces tasks and creates new ones. Whether the gains reach many people depends on institutions and politics, not on technology alone.", example: "Translation, customer service, programming.", counter: "Retraining, social insurance, competition.", cite: "Acemoglu & Restrepo (2019)" },
+          { tag: "Truth", title: "False is cheaper", short: "real-time disinformation", body: "In the Twitter sample studied, false news spread faster than true news. Generative models make convincing fakes cheap and scalable.", example: "Cloned voices, fake citations.", counter: "Provenance, journalism, platform rules.", cite: "Vosoughi et al. (2018)" },
+          { tag: "Copyright", title: "Who owns the style?", short: "training, remix, licence", body: "Models learn from protected works and can imitate styles. Copyright, licensing, and payment are national questions and remain open.", example: "Style imitation, training data.", counter: "Licences, payment, transparency.", cite: "US Copyright Office (2025)" },
+          { tag: "Power", title: "Who writes the rules?", short: "compute, states, companies", body: "Compute is concentrated; data and talent are also unevenly distributed. Democratic control needs transparency, competition, and rules that work across borders.", example: "Tiananmen in Chinese models; safety filters in US models.", counter: "Transparency, independent audits, competition.", cite: "Sastry et al. (2024); Noels et al. (2025)" }
         ]
       }
     };
     var RISK_META = [
       { quad: "tl", color: "lilac", layers: [true, true, true, true], line: L("Zugang, Monitoring, Evals und Strafverfolgung greifen zusammen.", "Access, monitoring, evals, and law enforcement work together."), notes: [L("Refusal und Filter.", "Refusal and filters."), L("Abuse-Monitoring und Zugang.", "Abuse monitoring and access."), L("Red-Team und Evals.", "Red team and evals."), L("Strafverfolgung und Regeln.", "Law enforcement and rules.")] },
-      { quad: "tr", color: "gold", layers: [true, true, true, true], line: L("Daten, Kontrolle, faire Metriken und Regeln greifen zusammen.", "Data, oversight, fair metrics, and rules work together."), notes: [L("Datenaudits im Training.", "Data audits in training."), L("Menschliche Kontrolle und Schwellen.", "Human oversight and thresholds."), L("Faire Metriken.", "Fair metrics."), L("Regulierung und Audits.", "Regulation and audits.")] },
-      { quad: "bl", color: "green", layers: [false, true, true, true], line: L("Markt, Zugang, Transparenz und Regeln; Modelltuning reicht nicht.", "Market, access, transparency, and rules; model tuning is not enough."), notes: [L("Modelltuning reicht nicht.", "Model tuning is not enough."), L("Zugang zu Compute.", "Access to compute."), L("Transparenz und Evals.", "Transparency and evals."), L("Wettbewerb und Regeln.", "Competition and rules.")] },
+      { quad: "tr", color: "gold", layers: [true, true, true, true], line: L("Rauschdaten, Kontrolle, Fehlermetriken und Regeln greifen zusammen.", "Noise data, oversight, error metrics, and rules work together."), notes: [L("Rausch- und Mikrofon-Audits im Training.", "Noise and microphone audits in training."), L("Menschliche Kontrolle und Schwellen.", "Human oversight and thresholds."), L("Fehler pro Umgebung messen.", "Measure errors per environment."), L("Regulierung und Audits.", "Regulation and audits.")] },
+      { quad: "bl", color: "green", layers: [false, true, true, true], line: L("Markt, Zugang, Transparenz und Regeln; Modelltuning reicht nicht.", "Market, access, transparency, and rules; model tuning is not enough."), notes: [L("Modelltuning reicht nicht.", "Model tuning is not enough."), L("Zugang zu Compute.", "Access to compute."), L("Transparenz und unabhängige Audits.", "Transparency and independent audits."), L("Wettbewerb und Regeln.", "Competition and rules.")] },
       { quad: "br", color: "blue", layers: [true, true, true, true], line: L("Alignment, Rechte, Evals und internationale Regeln greifen zusammen.", "Alignment, permissions, evals, and international rules work together."), notes: [L("Alignment-Training.", "Alignment training."), L("Berechtigungen und Kill-Switch.", "Permissions and kill switch."), L("Gefährliche Fähigkeiten testen.", "Test dangerous capabilities."), L("Internationale Regeln.", "International rules.")] }
     ];
     var LIMIT_META = [
@@ -119,7 +133,7 @@
     var el = document.createElement("div");
     el.className = "ls-rm";
     root.appendChild(el);
-    var state = { mode: "risks", active: 0 };
+    var state = { mode: "risks", active: 0, socKind: "chain" };
     function modeData() { return DATA[state.mode] || DATA.risks; }
     function statusLabel(key) {
       if (key === "missing") return DE ? "fehlt" : "missing";
@@ -204,11 +218,52 @@
         '<div class="ls-rm-spectrum"><div class="ls-rm-spectrum-scale"><span>' + (DE ? "stabil" : "stable") + '</span><span>' + (DE ? "brüchig" : "brittle") + '</span><span>' + (DE ? "fehlt" : "missing") + '</span></div>' + rows + '</div>' +
         detail;
     }
+    function renderSociety(d) {
+      var chain = d.chain || [];
+      var cross = d.items || [];
+      var kind = state.socKind === "cross" ? "cross" : "chain";
+      var list = kind === "chain" ? chain : cross;
+      var active = Math.min(state.active, Math.max(0, list.length - 1));
+      state.active = active;
+      var item = list[active] || {};
+      var chainHTML = chain.map(function (c, idx) {
+        var lvl = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
+        return '<button type="button" class="ls-rm-chain-step' + (kind === "chain" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="chain">' +
+          '<span class="ls-rm-chain-tag">' + esc(c.tag) + '</span>' +
+          '<b>' + esc(c.title) + '</b>' +
+          '<span class="ls-rm-chain-who">' + esc(c.who) + '</span>' +
+          '<span class="ls-rm-chain-conc is-l' + lvl + '">' + esc(c.conc) + '</span>' +
+          '<span class="ls-rm-chain-meter"><i style="width:' + (lvl * 25) + '%"></i></span>' +
+        '</button>';
+      }).join('<span class="ls-rm-chain-arrow" aria-hidden="true">→</span>');
+      var crossHTML = cross.map(function (c, idx) {
+        return '<button type="button" class="ls-rm-cross-card' + (kind === "cross" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="cross">' +
+          '<span class="ls-rm-tag">' + esc(c.tag) + '</span>' +
+          '<b>' + esc(c.title) + '</b>' +
+          '<span>' + esc(c.short) + '</span>' +
+        '</button>';
+      }).join("");
+      var detail = '<div class="ls-rm-detail ls-rm-detail--soc">' +
+        '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag || "") + '</span><b>' + esc(item.title || "") + '</b></div>' +
+        (item.who ? '<p class="ls-rm-block"><b>' + (DE ? "Wer" : "Who") + ':</b> ' + esc(item.who) + '</p>' : '') +
+        '<p class="ls-rm-block"><b>' + (DE ? "Was" : "What") + ':</b> ' + esc(item.body || "") + '</p>' +
+        (item.example ? '<p class="ls-rm-block"><b>' + (DE ? "Beispiel" : "Example") + ':</b> ' + esc(item.example) + '</p>' : '') +
+        (item.counter ? '<div class="ls-rm-fix"><b>' + (DE ? "Was hilft?" : "What helps?") + ':</b> ' + esc(item.counter) + '</div>' : '') +
+        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite || "") + '</span>' +
+      '</div>';
+      el.innerHTML = header(d) +
+        '<div class="ls-rm-chain-head"><b>' + (DE ? "Wertschöpfungskette" : "Value chain") + '</b><span>' + (DE ? "Konzentration qualitativ, von links nach rechts." : "Concentration is qualitative, from left to right.") + '</span></div>' +
+        '<div class="ls-rm-chain">' + chainHTML + '</div>' +
+        '<div class="ls-rm-cross-head"><b>' + (DE ? "Querschnitt" : "Cross-section") + '</b><span>' + (DE ? "Wer trägt das Risiko?" : "Who carries the risk?") + '</span></div>' +
+        '<div class="ls-rm-cross">' + crossHTML + '</div>' +
+        detail;
+    }
     function render() {
       var d = modeData();
       el.className = "ls-rm ls-rm--" + state.mode;
       if (state.mode === "risks") { renderRisks(d); return; }
       if (state.mode === "limits") { renderLimits(d); return; }
+      if (state.mode === "society") { renderSociety(d); return; }
       var active = Math.min(state.active, d.items.length - 1);
       var gridClass = state.mode === "safety" ? " ls-rm-grid--stack" : (state.mode === "limits" ? " ls-rm-grid--limits" : "");
       el.innerHTML =
@@ -257,6 +312,14 @@
       animatePart(el.querySelector(".ls-rm-detail"), 92, dir);
     }
     function onClick(event) {
+      var soc = event.target.closest ? event.target.closest("[data-soc-item]") : null;
+      if (soc && el.contains(soc)) {
+        state.socKind = soc.getAttribute("data-soc-kind") === "cross" ? "cross" : "chain";
+        state.active = parseInt(soc.getAttribute("data-soc-item"), 10) || 0;
+        render();
+        animateDetail();
+        return;
+      }
       var card = event.target.closest ? event.target.closest("[data-item]") : null;
       if (!card || !el.contains(card)) return;
       state.active = parseInt(card.getAttribute("data-item"), 10) || 0;
@@ -272,13 +335,14 @@
           var dir = order[s.mode] < order[state.mode] ? -1 : 1;
           state.mode = s.mode;
           state.active = 0;
+          state.socKind = "chain";
           render();
           animateMode(dir);
         }
       },
       next: function () {
-        var d = modeData();
-        if (state.active < d.items.length - 1) {
+        var list = state.mode === "society" ? (state.socKind === "cross" ? modeData().items : modeData().chain) : modeData().items;
+        if (state.active < list.length - 1) {
           state.active++;
           render();
           animateDetail();
@@ -295,7 +359,10 @@
         }
         return false;
       },
-      hasNext: function () { return state.active < modeData().items.length - 1; },
+      hasNext: function () {
+        var list = state.mode === "society" ? (state.socKind === "cross" ? modeData().items : modeData().chain) : modeData().items;
+        return state.active < list.length - 1;
+      },
       hasPrev: function () { return state.active > 0; },
       resize: function () {},
       destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
