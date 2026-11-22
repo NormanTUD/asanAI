@@ -76,6 +76,15 @@ for those two changes. The old slides were not changed for their own sake.
    - Explain that factuality is about the world, faithfulness about the source.
    - Keep the existing evidence inspector and countermeasures; add the source
      dimension to the claim readout.
+   - **RAG context position:** retrieved evidence is used better when it sits at
+     the beginning or end of the context; relevant information in the middle of
+     a long context is sometimes lost. This is the "lost in the middle" effect:
+     Nelson F. Liu et al. (2023), *Lost in the Middle: How Language Models Use
+     Long Contexts*, TACL, arXiv:2307.03172. Add the effect to the context /
+     RAG explanation (not as a separate hallucination type): it is a context
+     failure mode that RAG can trigger when it packs many chunks. Mitigations:
+     put the key evidence near the edges, rerank and trim chunks, cite the
+     source, and evaluate retrieval separately from generation.
 4. **Tests**
    - Update `blog/tests/eoy_media_interactions_test.py` for the residual,
      embedding and hallucination changes.
@@ -123,6 +132,9 @@ uv run blog/tests/js_validator.py blog/eoy
   Huang et al. (2023), Rawte et al. (2023), Walters & Wilder (2023), Min et al.
   (2023), and the RAG/CoVe/SelfCheckGPT/Semantic Entropy sources already used on
   the page.
+- RAG position effect: Liu et al. (2023), arXiv:2307.03172, finds performance is
+  often highest when relevant information is at the beginning or end of the
+  context and degrades when it is in the middle, even for long-context models.
 - The 3D embedding slide uses the existing `embedding` scene. Do not introduce a
   second scene just for arrows; add a phase/toggle inside the scene so the
   `demoState` contract stays stable.
