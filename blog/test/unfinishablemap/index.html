@@ -475,7 +475,7 @@ try {
   document.body.innerHTML = '<div style="color:#e8eefc;font:16px/1.6 Georgia,serif;display:grid;place-items:center;height:100%;padding:40px;text-align:center">This visual needs WebGL. Please open it in a current browser with hardware acceleration enabled.</div>';
   throw err;
 }
-renderer.setPixelRatio(FX_LOW ? 0.85 : Math.min(window.devicePixelRatio || 1, 2));
+renderer.setPixelRatio(FX_LOW ? 0.7 : Math.min(window.devicePixelRatio || 1, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.toneMapping = THREE.NoToneMapping;
@@ -2937,7 +2937,9 @@ function goTo(index, durationOverride) {
   }
   REGION_LIST.forEach(r => {
     regionTargets[r] = scene.weights[r] === undefined ? BASE_WEIGHTS[r] : scene.weights[r];
+    if (fadeGroups[r]) fadeGroups[r].target = regionTargets[r];
   });
+  if (fadeGroups.radar) fadeGroups.radar.target = regionTargets.positions;
   applyHighlight(scene.highlight);
   setCaption(scene.label, index);
   mouse.x = 0;
@@ -3274,6 +3276,15 @@ function updateLabels() {
 
 function setupComposer() {
   if (!(THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass)) return;
+  if (FX_LOW) {
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    composer = null;
+    bloom = null;
+    finalPass = null;
+    return;
+  }
   try {
     composer = new THREE.EffectComposer(renderer);
     composer.addPass(new THREE.RenderPass(scene, camera));
@@ -3367,7 +3378,7 @@ function hideHint() {
 function resize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  renderer.setPixelRatio(FX_LOW ? 0.85 : Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(FX_LOW ? 0.7 : Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -3515,6 +3526,36 @@ function init() {
 window.__UFM__ = {
   scenes: SCENES,
   goTo,
+  snapTo: (i) => {
+    goTo(i, 1);
+    sceneIndex = i;
+    targetIndex = i;
+    transitioning = false;
+    const sc = SCENES[i];
+    camPos.copy(sc.cam);
+    camLook.copy(sc.look);
+    camFov = sc.fov;
+    REGION_LIST.forEach(r => {
+      regionWeights[r] = sc.weights[r] === undefined ? BASE_WEIGHTS[r] : sc.weights[r];
+      regionTargets[r] = regionWeights[r];
+      if (fadeGroups[r]) { fadeGroups[r].weight = regionWeights[r]; fadeGroups[r].target = regionWeights[r]; }
+    });
+    if (fadeGroups.radar) { fadeGroups.radar.weight = regionWeights.positions; fadeGroups.radar.target = regionWeights.positions; }
+    for (let k = 0; k < 5; k++) {
+      const tg = sc.focus === 'all' ? 1 : (sc.focus === k ? 1 : 0);
+      fadeGroups['icon' + k].weight = tg;
+      fadeGroups['icon' + k].target = tg;
+    }
+    applyHighlight(sc.highlight);
+    if (nodeHlTarget) { nodeHl.set(nodeHlTarget); }
+    if (edgeHlTarget) { edgeHl.set(edgeHlTarget); }
+    updateCamera(0, time);
+    updateFadeGroups(1, time);
+    updateNodes(time);
+    updateEdges(0.016);
+    updateVoids(time);
+    updateLabels();
+  },
   labels,
   state: () => ({
     sceneIndex,
