@@ -871,7 +871,7 @@ function buildTopics() {
       }
     }
     addEdge(K.concepts['conceptroot|' + hub.key] || root, hub.center, hub.color, hub.color, 'concepts', 'topics', 0.12, { bow: 0.18 });
-    addEdge(hub.center, K.clusters[HUBS[(hi + 1) % HUBS.length].key], hub.color, hub.color, 'topics', 'topics', 0.08, { bow: 0.3, seg: 12 });
+    addEdge(hub.center, CLUSTERS[(hi + 1) % CLUSTERS.length].center, hub.color, hub.color, 'topics', 'concepts', 0.08, { bow: 0.3, seg: 12 });
   });
   addEdge(K.hubs.agency, K.hubs.quantum, PALETTE.rose, PALETTE.violet, 'topics', 'topics', 0.14, { bow: 0.25 });
   addEdge(K.hubs.machine, K.hubs.found, PALETTE.ice, PALETTE.sky, 'topics', 'topics', 0.14, { bow: 0.25 });
