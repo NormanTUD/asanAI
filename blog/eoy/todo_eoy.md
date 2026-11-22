@@ -84,7 +84,26 @@ this file before further edits.
    - The alignment item now names the July 2026 Hugging Face incident and cites
      Ozer et al. (2026), arXiv:2609.32390, and Zhang (2026), arXiv:2609.15494.
    - `aiRiskSub` body, box and sources updated; test checks the name.
-12. **Tests and finish**
+12. **Architecture slide — f(x), pretraining, fine-tuning, next-word nudge**
+   - Show the whole architecture as a function $f(x)$: data goes in, the
+     prediction is nudged in the direction of the next correct token.
+   - Show pretraining as $f(\text{almost the whole internet})$ and fine-tuning
+     as $f(\text{a small set of specific questions})$.
+   - Show the next-word mechanism with a few words: "Die Katze sitzt auf der
+     ___" → "Matte" (in the data, good), "Heizung" (plausible but not in the
+     example), "Gleichung" (nonsensical, not in the data). Explain above the
+     visual why data matters and why the nudge is the training signal.
+   - Build a compact, step-by-step visual on the architecture overview page.
+13. **Trajectory plot — crisp scaling and hover**
+   - The "Denken = Punkte verschieben" canvas is poorly upscaled; fit it to the
+     available size and keep lines clearly visible.
+   - Add mouseover per point with the layer index and token, e.g. "Katze · L1".
+14. **Architecture subpage order**
+   - The deck currently walks Attention → FFN → LayerNorm, but the architecture
+     display/text lists Attention → LayerNorm → FFN. Reorder the transformer
+     subpages and the prose to Attention → LayerNorm → FFN; update the blocks
+     test accordingly.
+15. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.
    - Run `js_validator`, `php -l`, and commit/push.
