@@ -1938,6 +1938,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     page.wait_for_timeout(200)
     align = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
     results.check(tag, "alignment risk shows an agent editing its test", "Test" in align or "test" in align, align[:200])
+    results.check(tag, "alignment risk names the Hugging Face incident", "Hugging" in align, align[:200])
     page.evaluate("() => LearnSys.go(0, 0, 1)")
     page.wait_for_timeout(800)
     bench = page.evaluate(

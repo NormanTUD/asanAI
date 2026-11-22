@@ -15,6 +15,7 @@
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
       '<div class="ls-sim-controls ls-sim-map-controls">' +
         '<label class="ls-sim-pick">' + (DE ? "Wort" : "Word") + ' <select class="ls-sim-select"></select></label>' +
+        '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sim-pause">' + (DE ? "Drehung stoppen" : "Stop rotation") + '</button>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
         '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.3" max="3" step="0.05" value="1.6"><output>1.60×</output></label>' +
@@ -28,6 +29,7 @@
     var select = el.querySelector(".ls-sim-select");
     var tabBtns = Array.prototype.slice.call(el.querySelectorAll(".ls-sim-tab"));
     var mapControls = el.querySelector(".ls-sim-map-controls");
+    var pauseBtn = el.querySelector(".ls-sim-pause");
     var angleControls = el.querySelector(".ls-sim-angle-controls");
     var scaleControls = el.querySelector(".ls-sim-scale-controls");
     var angleAInput = el.querySelector(".ls-sim-angle-a");
@@ -54,7 +56,7 @@
     var selected = 0;
     var mode = "directions";
     var yaw = -0.55, pitch = 0.33;
-    var dirRaf = 0, dirLast = 0;
+    var dirRaf = 0, dirLast = 0, dirPaused = false;
     var dragging = false, dragMoved = false, lastPX = 0, lastPY = 0;
     var angleA = 360, angleB = 90, scaleMag = 1.6;
     var scaleIndex = 3, scaleRaf = 0;
@@ -353,7 +355,7 @@
       caption.textContent = DE ? "Der Winkel ist die Ähnlichkeit der Richtungen. Dot nahe 1: ähnlich; nahe 0: neutral; negativ: entgegengesetzt. Das ist eine Interpretation der gezeigten Richtungen, kein Wahrheitsbeweis." : "The angle is the similarity of directions. Dot near 1: similar; near 0: neutral; negative: opposite. This is an interpretation of the shown directions, not a proof of truth.";
     }
     function dirLoop(now) {
-      if (mode !== "directions" || api.reducedMotion) { dirRaf = 0; return; }
+      if (mode !== "directions" || api.reducedMotion || dirPaused) { dirRaf = 0; return; }
       if (!dragging && now - dirLast > 40) {
         yaw += 0.006;
         drawDirections();
@@ -361,8 +363,13 @@
       }
       dirRaf = requestAnimationFrame(dirLoop);
     }
+    function syncPauseBtn() {
+      if (!pauseBtn) return;
+      pauseBtn.textContent = dirPaused ? (DE ? "Drehung starten" : "Start rotation") : (DE ? "Drehung stoppen" : "Stop rotation");
+      pauseBtn.setAttribute("aria-pressed", dirPaused ? "true" : "false");
+    }
     function ensureDirLoop() {
-      if (mode === "directions" && !dirRaf && !api.reducedMotion) {
+      if (mode === "directions" && !dirRaf && !api.reducedMotion && !dirPaused) {
         dirLast = performance.now();
         dirRaf = requestAnimationFrame(dirLoop);
       } else if (mode !== "directions" && dirRaf) {
@@ -638,12 +645,25 @@
       unembedPinned = unembedStep;
       setUnembedFocus(unembedStep);
     });
+    if (pauseBtn) pauseBtn.addEventListener("click", function () {
+      dirPaused = !dirPaused;
+      syncPauseBtn();
+      if (dirPaused) { if (dirRaf) { cancelAnimationFrame(dirRaf); dirRaf = 0; } }
+      else ensureDirLoop();
+      drawDirections();
+    });
+    syncPauseBtn();
     if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°";
     if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°";
     if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
     select.addEventListener("change", function () { choose(parseInt(select.value, 10)); });
     canvas.addEventListener("pointerdown", function (e) {
       if (mode !== "directions") return;
+      if (!dirPaused && mode === "directions") {
+        dirPaused = true;
+        syncPauseBtn();
+        if (dirRaf) { cancelAnimationFrame(dirRaf); dirRaf = 0; }
+      }
       dragging = true;
       dragMoved = false;
       lastPX = e.clientX;

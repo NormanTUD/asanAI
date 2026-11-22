@@ -181,7 +181,7 @@
       ctx = size.ctx;
       var w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
-      var cx = w * 0.5, cy = h * 0.58;
+      var cx = w * 0.5, cy = h * 0.63;
       var scale = Math.min(w * 0.38, h * 0.34);
       var bg = ctx.createLinearGradient(0, 0, 0, h);
       bg.addColorStop(0, C.paper || "#fff");
@@ -244,7 +244,7 @@
       ctx.fillStyle = activeColor;
       ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText(haloTag, center.x, center.y - haloR * 0.34 - 7);
+      ctx.fillText(haloTag, center.x, Math.max(14, center.y - haloR * 0.34 - 7));
       ctx.restore();
       ffnEdges.forEach(function (e) {
         var a = projected[e.a], b = projected[e.b];

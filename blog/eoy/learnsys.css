@@ -2895,7 +2895,7 @@ h1,h2,h3,h4{
 .ls-weekday-note{margin:0;font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
 
 /* Large network: keep the plotting area at a stable, native aspect ratio */
-.ls-sinus-scene.is-net .ls-sinus-stage{width:100%;max-width:900px;margin:0 auto;aspect-ratio:16/9;flex:0 0 auto;min-height:0}
+.ls-sinus-scene.is-net .ls-sinus-stage{width:100%;max-width:none;margin:0;aspect-ratio:auto;flex:1 1 auto;min-height:340px}
 
 /* Hidden controls must stay hidden even when their class sets display. */
 .ls-position-right .ls-range[hidden]{display:none}

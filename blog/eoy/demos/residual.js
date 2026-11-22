@@ -476,19 +476,18 @@
       var barY = panelY + riverH + 10;
       var barH = h - barY - pad;
       var wide = w >= 560;
-      var onDark = V.mix(C.paper, "#ffffff", 0.82);
-      var onDarkSoft = V.alpha(onDark, 0.68);
-      var onDarkFaint = V.alpha(onDark, 0.42);
+      var riverBg = V.mix(C.petrol, C.paper || "#ffffff", 0.86);
+      var onDark = C.ink;
+      var onDarkSoft = C.soft;
+      var onDarkFaint = C.muted;
       g.save();
-      g.shadowColor = V.alpha(C.petrol, 0.28);
+      g.shadowColor = V.alpha(C.petrol, 0.16);
       g.shadowBlur = 18;
       g.shadowOffsetY = 6;
-      g.fillStyle = C.petrol;
+      g.fillStyle = riverBg;
       g.fillRect(panelX, panelY, panelW, riverH);
       g.restore();
-      g.fillStyle = "rgba(0,0,0,.20)";
-      g.fillRect(panelX, panelY, panelW, riverH);
-      g.strokeStyle = V.alpha(C.paper, 0.16);
+      g.strokeStyle = V.alpha(C.petrol, 0.16);
       g.strokeRect(panelX + 0.5, panelY + 0.5, panelW - 1, riverH - 1);
       g.fillStyle = onDark;
       g.font = '700 ' + Math.max(12, Math.min(17, panelW * 0.022)) + 'px "Barlow", sans-serif';
@@ -510,9 +509,9 @@
         var x = sx + i * (sw + gap);
         var active = i === streamLayer;
         var col = streamPalette[i];
-        g.fillStyle = active ? V.alpha(onDark, 0.15) : "rgba(255,255,255,.055)";
+        g.fillStyle = active ? V.alpha(col, 0.10) : V.alpha(C.petrol, 0.035);
         g.fillRect(x, sy, sw, sh);
-        g.strokeStyle = active ? V.alpha(col, 0.95) : V.alpha(onDark, 0.19);
+        g.strokeStyle = active ? V.alpha(col, 0.95) : V.alpha(C.petrol, 0.16);
         g.lineWidth = active ? 1.8 : 1;
         g.strokeRect(x + 0.5, sy + 0.5, sw - 1, sh - 1);
         if (active) {

@@ -66,36 +66,24 @@ this file before further edits.
    - Each test now has a task, a real testing protocol, a clearly stamped
      simulated observation, and the countermeasure. A top disclaimer says the
      answers are constructed examples, not real model output.
-6. **"Wie findet man gute Punkte?" — loss-landscape plot**
-   - Extend the plot further left/right and make sure the momentum trajectory
-     always stays inside the plot instead of shooting past the edge.
-   - Default camera should look from the side that is currently the back, so the
-     reader looks "into the valley" by default.
-   - Colour the loss surface by height: the lowest/best 10% green, the rest
-     increasingly red, so the gradient is visible.
-7. **"Tiefe Netze biegen die Kurve" — full width**
-   - The plot is currently not using the full available width; make it size
-     dynamically to the container width.
-8. **"Die Rolle von neuronalen Netzen im Transformer" — clipped "Burg" label**
-   - In the bend plot, the text "Burg" at the top is slightly clipped. Shift the
-     canvas content down a little so no label crosses the top edge; there is
-     enough room below.
-9. **"Das gemeinsame Notizbuch wird zum Stream" — top background**
-   - The top panel background is blue and the text is blue; make the top
-     background much subtler/less saturated blue while keeping the text
-     readable.
-10. **"Ähnliche Worte finden" — stop the rotation**
-   - Let the reader stop the automatic rotation (pause / auto-rotate toggle)
-     instead of forcing the sphere to keep turning.
-11. **Alignment example — name the Hugging Face incident**
-   - Name the July 2026 Hugging Face incident in the alignment risk item.
-   - Cite serious work: Ozer et al. (2026), *Reward Hacking and Agent
-     Containment Failure: A Monte Carlo Study Based on the 2026 Hugging Face
-     Incident*, arXiv:2609.32390; Zhang (2026), *The Troy Moment*, which studies
-     agents modifying protected test files under impossible tasks,
-     arXiv:2609.15494. Optionally Raftari (2026), arXiv:2610.12463.
-   - Update the risk-map alignment item, `aiRiskSub` body/box/sources, and the
-     media test if it assumes the unnamed example.
+6. **"Wie findet man gute Punkte?" — loss-landscape plot** — **done**
+   - Surface range now includes all three optimiser trajectories with padding;
+     base range is wider; default camera is turned to look into the valley.
+   - Bottom 10% green, then green→gold→red; legend added.
+7. **"Tiefe Netze biegen die Kurve" — full width** — **done**
+   - Removed the 900 px cap and fixed 16:9 box; the stage now fills the available
+     width and uses the dynamic height.
+8. **"Die Rolle von neuronalen Netzen im Transformer" — clipped "Burg" label** — **done**
+   - Bend content shifted down and halo label clamped below the top edge.
+9. **"Das gemeinsame Notizbuch wird zum Stream" — top background** — **done**
+   - Stream panel is now a pale blue tint with dark text instead of saturated
+     petrol with white text.
+10. **"Ähnliche Worte finden" — stop the rotation** — **done**
+   - Added "Drehung stoppen / Drehung starten"; dragging also pauses the spin.
+11. **Alignment example — name the Hugging Face incident** — **done**
+   - The alignment item now names the July 2026 Hugging Face incident and cites
+     Ozer et al. (2026), arXiv:2609.32390, and Zhang (2026), arXiv:2609.15494.
+   - `aiRiskSub` body, box and sources updated; test checks the name.
 12. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.
