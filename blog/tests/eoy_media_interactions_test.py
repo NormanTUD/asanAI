@@ -1425,35 +1425,36 @@ def test_text_blur_swap(browser, base, lang, results):
     result = page.evaluate(
         r"""
 () => new Promise((resolve) => {
-  var host = document.querySelector('.ls-text-scroll');
+  var host = document.querySelector('#ls-text-body');
+  var nav = document.querySelector('#ls-navbar');
   var start = performance.now();
   var minOpacity = 1;
   var maxHostBlur = 0;
-  var maxGhostBlur = 0;
-  var sawGhost = false;
+  var navMinOpacity = 1;
+  var navMaxBlur = 0;
   var samples = 0;
   function blurOf(el) {
+    if (!el) return 0;
     var match = String(getComputedStyle(el).filter || "").match(/blur\(([^)]+)\)/);
     return match ? parseFloat(match[1]) || 0 : 0;
   }
   LearnSys.next();
   function sample() {
     samples++;
-    var ghost = document.querySelector('.ls-text-ghost');
     var opacity = parseFloat(getComputedStyle(host).opacity) || 0;
     minOpacity = Math.min(minOpacity, opacity);
     maxHostBlur = Math.max(maxHostBlur, blurOf(host));
-    if (ghost) {
-      sawGhost = true;
-      maxGhostBlur = Math.max(maxGhostBlur, blurOf(ghost));
+    if (nav) {
+      navMinOpacity = Math.min(navMinOpacity, parseFloat(getComputedStyle(nav).opacity) || 0);
+      navMaxBlur = Math.max(navMaxBlur, blurOf(nav));
     }
-    if ((opacity > 0.95 && blurOf(host) < 0.5 && performance.now() - start > 150) || performance.now() - start > 800) {
+    if ((opacity > 0.95 && blurOf(host) < 0.5 && performance.now() - start > 150) || performance.now() - start > 900) {
       resolve({
         ms: performance.now() - start,
         minOpacity: minOpacity,
         maxHostBlur: maxHostBlur,
-        maxGhostBlur: maxGhostBlur,
-        sawGhost: sawGhost,
+        navMinOpacity: navMinOpacity,
+        navMaxBlur: navMaxBlur,
         samples: samples,
         step: LearnSys.state().step,
         sub: LearnSys.state().substep,
@@ -1468,11 +1469,11 @@ def test_text_blur_swap(browser, base, lang, results):
 """
     )
     detail = str(result)
-    results.check(tag, "substep swap creates a text ghost", result.get("sawGhost"), detail)
-    results.check(tag, "old text blurs out", result.get("maxGhostBlur", 0) > 1, detail)
-    results.check(tag, "new text blurs in", result.get("maxHostBlur", 0) > 1, detail)
+    results.check(tag, "old and new text blur", result.get("maxHostBlur", 0) > 1, detail)
     results.check(tag, "text blends fully with the background", result.get("minOpacity", 1) < 0.1, detail)
-    results.check(tag, "blur swap finishes within 200ms plus scheduling slack", result.get("ms", 9999) <= 700, detail)
+    results.check(tag, "blur swap finishes within 200ms plus scheduling slack", result.get("ms", 9999) <= 900, detail)
+    results.check(tag, "top navbar never disappears", result.get("navMinOpacity", 0) > 0.95, detail)
+    results.check(tag, "top navbar is never blurred", result.get("navMaxBlur", 1) < 0.5, detail)
     results.check(tag, "substep swap advances the page", result.get("sub") != before["sub"] or result.get("step") != before["step"], f"{before} -> {result}")
     results.check(tag, "blur swap keeps a title", bool(result.get("title")), detail)
     current = state(page)

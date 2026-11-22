@@ -89,7 +89,6 @@ button{color:inherit}
 .ls-main{display:grid;grid-template-columns:minmax(330px,37%) minmax(0,1fr);min-height:0}
 .ls-text{position:relative;min-width:0;min-height:0;border-right:1px solid var(--ls-line);background:var(--ls-paper);overflow:hidden}
 .ls-text-scroll{height:100%;overflow-x:hidden;overflow-y:auto;scrollbar-gutter:stable;padding:clamp(24px,4.2vw,58px) clamp(22px,3.6vw,52px);max-width:680px}
-.ls-text-ghost{position:absolute;left:0;top:0;z-index:2;max-width:680px;background:var(--ls-paper);pointer-events:none;overflow:hidden;scrollbar-gutter:stable}
 .ls-kicker{font-size:var(--ls-fs-micro);text-transform:uppercase;letter-spacing:.13em;color:var(--ls-petrol);margin-bottom:10px}
 .ls-title{font-size:clamp(26px,2.9vw,42px);line-height:1.05;margin:0 0 16px;max-width:18ch}
 .ls-body{font-size:clamp(15px,1.15vw,18px);line-height:1.65;color:var(--ls-soft);max-width:64ch}

@@ -161,7 +161,7 @@
   var navHintHideTimer = 0;
   var substepAnims = [];
   var substepSafetyTimer = 0;
-  var activeTextGhost = null;
+  var textSwapTimer = 0;
 
   var FONT_LEVELS = [
     { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
@@ -882,15 +882,17 @@
             '<div class="ls-text-mobile-head"><button type="button" class="ls-btn ls-btn--tiny ls-text-close" id="ls-text-close" aria-label="' + (LANG === "de" ? "Zur Demo" : "Back to demo") + '">← Demo</button></div>' +
             '<div class="ls-text-scroll">' +
               (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny ls-cal-open" id="ls-calendar-btn" data-no-height-test="1" title="' + esc(t("calendarTitle")) + '" aria-label="' + esc(t("calendarTitle")) + '"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" fill="none" stroke="currentColor" stroke-width="1.2"></rect><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.2"></path></svg></button>' + '<button type="button" class="ls-btn ls-btn--tiny ls-local-only" data-ls-export data-no-height-test="1" title="' + esc(t("exportTitle")) + '" aria-label="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny ls-local-only" data-ls-import data-no-height-test="1" title="' + esc(t("importTitle")) + '" aria-label="' + esc(t("importTitle")) + '">' + esc(t("importJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-layout data-no-height-test="1" title="' + esc(t("layoutTitle")) + '" aria-label="' + esc(t("layoutTitle")) + '">' + esc(t("layoutSlides")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-link data-no-height-test="1" title="' + esc(t("copyLink")) + '" aria-label="' + esc(t("copyLink")) + '">' + esc(t("copyLink")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
-              '<div class="ls-kicker" id="ls-kicker"></div>' +
-              '<h1 class="ls-title" id="ls-title"></h1>' +
-              '<div class="ls-body" id="ls-body"></div>' +
-              '<div class="ls-watch" id="ls-watch"></div>' +
-              '<div class="ls-cues" id="ls-cues"></div>' +
-              '<div class="ls-extras" id="ls-extras"></div>' +
-              '<div class="ls-actions">' +
-                '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" id="ls-edit-btn" data-no-height-test="1">' + esc(t("edit")) + '</button>' +
-                (HIDE_EXPAND_ALL ? '' : '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" id="ls-open-all-boxes" data-no-height-test="1">' + esc(t("openAllBoxes")) + '</button>') +
+              '<div class="ls-text-body" id="ls-text-body">' +
+                '<div class="ls-kicker" id="ls-kicker"></div>' +
+                '<h1 class="ls-title" id="ls-title"></h1>' +
+                '<div class="ls-body" id="ls-body"></div>' +
+                '<div class="ls-watch" id="ls-watch"></div>' +
+                '<div class="ls-cues" id="ls-cues"></div>' +
+                '<div class="ls-extras" id="ls-extras"></div>' +
+                '<div class="ls-actions">' +
+                  '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" id="ls-edit-btn" data-no-height-test="1">' + esc(t("edit")) + '</button>' +
+                  (HIDE_EXPAND_ALL ? '' : '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" id="ls-open-all-boxes" data-no-height-test="1">' + esc(t("openAllBoxes")) + '</button>') +
+                '</div>' +
               '</div>' +
             '</div>' +
           '</section>' +
@@ -911,6 +913,7 @@
 
     els.app = root.querySelector(".ls-app");
     els.textScroll = root.querySelector(".ls-text-scroll");
+    els.textBody = root.querySelector("#ls-text-body");
     els.track = root.querySelector("#ls-track");
     els.depth = root.querySelector("#ls-depth");
     els.all = root.querySelector("#ls-all");
@@ -2737,31 +2740,12 @@
   function cancelTransitions() {
     clearTimeout(substepSafetyTimer);
     substepSafetyTimer = 0;
+    clearTimeout(textSwapTimer);
+    textSwapTimer = 0;
     substepAnims.slice().forEach(function (anim) {
       try { anim.cancel(); } catch (e) {}
     });
     substepAnims = [];
-    if (activeTextGhost && activeTextGhost.parentNode) activeTextGhost.parentNode.removeChild(activeTextGhost);
-    activeTextGhost = null;
-  }
-  function textGhost() {
-    if (!els.textScroll || !els.textScroll.parentNode) return null;
-    if (activeTextGhost && activeTextGhost.parentNode) activeTextGhost.parentNode.removeChild(activeTextGhost);
-    var ghost = els.textScroll.cloneNode(true);
-    ghost.removeAttribute("id");
-    ghost.querySelectorAll("[id]").forEach(function (node) { node.removeAttribute("id"); });
-    ghost.querySelectorAll("[aria-live]").forEach(function (node) { node.removeAttribute("aria-live"); });
-    ghost.classList.add("ls-text-ghost");
-    ghost.setAttribute("aria-hidden", "true");
-    try { ghost.inert = true; } catch (e) {}
-    ghost.style.width = els.textScroll.offsetWidth + "px";
-    ghost.style.top = "0px";
-    ghost.style.height = els.textScroll.clientHeight + "px";
-    ghost.style.paddingTop = getComputedStyle(els.textScroll).paddingTop;
-    ghost.scrollTop = els.textScroll.scrollTop;
-    els.textScroll.parentNode.appendChild(ghost);
-    activeTextGhost = ghost;
-    return ghost;
   }
   function animateStageTitles(dir) {
     var shift = dir < 0 ? -10 : 10;
@@ -2774,27 +2758,21 @@
     });
   }
   function animateTextSwap(renderFn) {
-    if (reducedMotion() || !els.textScroll) { renderFn(); return; }
+    var host = els.textBody;
+    if (reducedMotion() || !host) { renderFn(); return; }
     cancelTransitions();
-    var ghost = textGhost();
-    var host = els.textScroll;
-    function dropGhost() {
-      if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
-      if (activeTextGhost === ghost) activeTextGhost = null;
-    }
-    renderFn();
-    if (ghost) {
-      var out = playTransition(ghost, [
-        { opacity: 1, filter: "blur(0px)" },
-        { opacity: 0, filter: "blur(6px)" }
-      ], { duration: 100, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
-      if (out) out.addEventListener("finish", dropGhost);
-      setTimeout(dropGhost, 600);
-    }
     playTransition(host, [
-      { opacity: 0, filter: "blur(6px)" },
-      { opacity: 1, filter: "blur(0px)" }
-    ], { duration: 100, delay: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+      { opacity: 1, filter: "blur(0px)" },
+      { opacity: 0, filter: "blur(6px)" }
+    ], { duration: 100, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
+    textSwapTimer = setTimeout(function () {
+      textSwapTimer = 0;
+      renderFn();
+      playTransition(host, [
+        { opacity: 0, filter: "blur(6px)" },
+        { opacity: 1, filter: "blur(0px)" }
+      ], { duration: 100, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+    }, 100);
     clearTimeout(substepSafetyTimer);
     substepSafetyTimer = setTimeout(cancelTransitions, 700);
   }
