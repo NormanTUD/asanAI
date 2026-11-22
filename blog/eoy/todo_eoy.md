@@ -45,40 +45,49 @@ this file before further edits.
      purely visual: tangled input, separated hidden regions, isolated/reassembled
      output, with dashed region ellipses and W₁/W₂ arrows.
    - Update the FFN sub-slide body/watch text accordingly.
-2. **"Drei Dimensionen"**
-   - The old 2D plane must lie straight/flat in 3D, not skewed; when the new
-     plane is added, the old plane should sit completely flat in the middle.
-   - Add a categorical second plane: human / animal / (fairy tale or a better
-     fitting category). Use plausible analogies; they do not need to be exact.
-   - Make the categories visually clear and arrange the old plane between them.
+2. **"Drei Dimensionen"** — **done**
+   - Human words now sit at z = 0, so the old power × gender plane is flat.
+   - The category axis is human (z = 0) / animal (z = -1) / fiction (z = +1),
+     drawn as three labelled planes; rank stays on the power axis.
+   - Table header and 3D text updated; sources unchanged.
 3. **"Zwei Schichten, ein Trick"** — **done**
    - The text now says $A$ and $B$ are tokens and can be words, word pieces, or
      larger recurring units; in real text the pattern can span word groups or
      whole sub-sentences.
-4. **Bias example — rich/poor, access to knowledge**
-   - Replace the speech-recognition/noise example with one about **access to
-     knowledge**: models learn mostly from digitally abundant, wealthier,
-     English-speaking contexts; questions about low-income regions, local
-     legal/medical knowledge, or low-resource languages are answered worse.
-   - Find and cite the studies while implementing. Starting points:
-     Joshi et al. (2020), *The State and Fate of Linguistic Diversity and
-     Inclusion in the NLP World*; Gururangan et al. (2022), *Whose Language
-     Counts as High Quality?*; Dodge et al. (2021), *Documenting Large Webtext
-     Corpora*. Verify each source before using it.
-   - Update the risk-map bias item, `aiRiskSub` body/boxes/sources, and any test
-     that assumes the speech-recognition example.
-5. **Limits page — complete presentation rewrite**
-   - "Grenzen: Was LLMs nicht zuverlässig können" is currently the weakest page:
-     the questions are arbitrary, and the lab pretends to show real LLM output
-     when it does not. Keep the same content, but rebuild the presentation from
-     scratch with better, realistic examples.
-   - Do not fake model output. Label simulated examples clearly and explain what
-     is reconstructed vs measured. Use realistic failure cases and make the
-     reasoning visible.
-   - Keep the four failure modes (paraphrase brittleness, fabricated citations,
-     knowledge boundary, long-context position) and the countermeasures, but
-     present them as a credible test bench, not as arbitrary quiz questions.
-6. **Tests and finish**
+4. **Bias example — rich/poor, access to knowledge** — **done**
+   - The risk-map item is now "Ungleicher Zugang / Unequal access"; it uses the
+     quality-filter finding (Gururangan et al., 2022), language inequality
+     (Joshi et al., 2020), and webtext filtering (Dodge et al., 2021).
+   - Sources verified on arXiv; body, box and test updated.
+5. **Limits page — complete presentation rewrite** — **done**
+   - Four realistic test scenarios: support-ticket classification, source for an
+     article, current city-office hours, and a contract clause at different
+     positions.
+   - Each test now has a task, a real testing protocol, a clearly stamped
+     simulated observation, and the countermeasure. A top disclaimer says the
+     answers are constructed examples, not real model output.
+6. **"Wie findet man gute Punkte?" — loss-landscape plot**
+   - Extend the plot further left/right and make sure the momentum trajectory
+     always stays inside the plot instead of shooting past the edge.
+   - Default camera should look from the side that is currently the back, so the
+     reader looks "into the valley" by default.
+   - Colour the loss surface by height: the lowest/best 10% green, the rest
+     increasingly red, so the gradient is visible.
+7. **"Tiefe Netze biegen die Kurve" — full width**
+   - The plot is currently not using the full available width; make it size
+     dynamically to the container width.
+8. **"Die Rolle von neuronalen Netzen im Transformer" — clipped "Burg" label**
+   - In the bend plot, the text "Burg" at the top is slightly clipped. Shift the
+     canvas content down a little so no label crosses the top edge; there is
+     enough room below.
+9. **"Das gemeinsame Notizbuch wird zum Stream" — top background**
+   - The top panel background is blue and the text is blue; make the top
+     background much subtler/less saturated blue while keeping the text
+     readable.
+10. **"Ähnliche Worte finden" — stop the rotation**
+   - Let the reader stop the automatic rotation (pause / auto-rotate toggle)
+     instead of forcing the sphere to keep turning.
+11. **Tests and finish**
    - Run DE and EN media suites; investigate the performance flake if it repeats.
    - Run `eoy_pages_test` for 27/30/31 and the full suite.
    - Run `js_validator`, `php -l`, and commit/push.

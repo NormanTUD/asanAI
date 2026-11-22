@@ -1933,7 +1933,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     page.locator('.ls-rm-bubble[data-item="1"]').click()
     page.wait_for_timeout(200)
     bias = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
-    results.check(tag, "bias risk uses the speech-recognition example", "Spracherkennung" in bias or "Speech recognition" in bias, bias[:200])
+    results.check(tag, "bias risk uses the access-to-knowledge example", "Gururangan" in bias or "Zugang" in bias or "access" in bias, bias[:200])
     page.locator('.ls-rm-bubble[data-item="3"]').click()
     page.wait_for_timeout(200)
     align = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
@@ -1946,6 +1946,10 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
   mounted: !!document.querySelector('.ls-ll'),
   tabs: document.querySelectorAll('.ls-ll-tab').length,
   vars: document.querySelectorAll('.ls-ll-var').length,
+  disclaimer: !!document.querySelector('.ls-ll-disclaimer'),
+  disclaimerText: document.querySelector('.ls-ll-disclaimer')?.innerText || '',
+  protocol: document.querySelectorAll('.ls-ll-protocol li').length,
+  stamp: !!document.querySelector('.ls-ll-stamp'),
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
@@ -1953,6 +1957,9 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     results.check(tag, "limits test bench is mounted", bench["mounted"], str(bench))
     results.check(tag, "limits test bench has four tests", bench["tabs"] == 4, str(bench))
     results.check(tag, "paraphrase test shows three variants", bench["vars"] == 3, str(bench))
+    results.check(tag, "limits lab is labeled as a simulation", bench["disclaimer"] and ("SIMULATION" in bench["disclaimerText"] or "SIMULATED" in bench["disclaimerText"]), bench["disclaimerText"][:200])
+    results.check(tag, "limits lab shows a real test protocol", bench["protocol"] >= 3, str(bench["protocol"]))
+    results.check(tag, "limits lab stamps the observation as simulated", bench["stamp"], str(bench))
     page.locator('.ls-ll-run').click()
     page.wait_for_timeout(700)
     para = page.evaluate(
@@ -1967,6 +1974,8 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     results.check(tag, "paraphrase test reveals answers", para["badges"] == 3, str(para))
     results.check(tag, "paraphrase test shows inconsistency", para["consistency"] == "2 / 3", str(para))
     results.check(tag, "paraphrase test explains the failure", "Formulierung" in para["why"] or "wording" in para["why"], para["why"][:160])
+    observation = page.evaluate("() => document.querySelector('.ls-ll-observe-lead')?.textContent || ''")
+    results.check(tag, "paraphrase observation is explicit about the labels", "Storno" in observation or "Cancel" in observation, observation[:200])
     page.locator('.ls-ll-tab[data-test="citation"]').click()
     page.locator('.ls-ll-run').click()
     page.wait_for_timeout(700)
@@ -1982,7 +1991,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     page.wait_for_timeout(150)
     boundary = page.evaluate("() => ({ answer: document.querySelector('.ls-ll-answer b')?.textContent || '', asked: document.querySelector('.ls-ll-asked')?.textContent || '', conf: document.querySelector('.ls-ll-conf')?.textContent || '' })")
     results.check(tag, "boundary test gives a confident answer", bool(boundary["answer"]) and "91" in boundary["conf"], str(boundary))
-    results.check(tag, "boundary test keeps the answer on follow-up", "14" in boundary["asked"], str(boundary))
+    results.check(tag, "boundary test keeps the answer on follow-up", ("8–16" in boundary["asked"] or "8-16" in boundary["asked"]) and ("keine Unsicherheit" in boundary["asked"] or "no uncertainty" in boundary["asked"]), str(boundary))
     page.locator('.ls-ll-tab[data-test="context"]').click()
     page.locator('.ls-ll-run').click()
     page.wait_for_timeout(700)

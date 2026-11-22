@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#03040a">
 <title>The Unfinishable Map — A Visual Journey</title>
 <style>
+.noscript { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #03040a; color: #f4f1e8; font: 18px/1.6 Georgia, serif; padding: 40px; text-align: center; }
 :root {
   --ink: #f4f1e8;
   --ink-dim: rgba(244, 241, 232, 0.55);
@@ -159,7 +160,7 @@ canvas#stage {
   left: max(76px, calc(env(safe-area-inset-left) + 76px));
   top: 50%;
   transform: translateY(-50%);
-  width: min(460px, 36vw);
+  width: min(500px, 36vw);
   z-index: 6;
   pointer-events: none;
 }
@@ -180,7 +181,7 @@ canvas#stage {
   margin: 0;
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(23px, 2.55vw, 42px);
+  font-size: clamp(23px, 2.55vw, 48px);
   line-height: 1.08;
   letter-spacing: -0.015em;
   color: var(--ink);
@@ -360,6 +361,7 @@ canvas#stage {
 </style>
 </head>
 <body>
+<noscript><div class="noscript">This visual journey needs JavaScript. Please enable it and reload.</div></noscript>
 <canvas id="stage" aria-label="A three-dimensional interactive map of the Unfinishable Map philosophical framework"></canvas>
 <div class="labels" id="labelLayer"></div>
 <div class="vignette"></div>
@@ -395,13 +397,13 @@ canvas#stage {
 </div>
 
 <div class="counter" id="counter">01 / 20</div>
-<div class="source"><a href="https://unfinishablemap.org/" target="_blank" rel="noopener">unfinishablemap.org</a></div>
+<div class="source"><a href="https://unfinishablemap.org/" target="_blank" rel="noopener" title="The Unfinishable Map — source">unfinishablemap.org</a></div>
 <div class="hint" id="hint">press &rarr; to begin</div>
 
 <div class="help" id="help" aria-hidden="true">
   <div class="help-card">
     <div class="help-title">The Unfinishable Map</div>
-    <div class="help-sub">A visual journey through consciousness, its limits, and the ideas that can never be finished. Move through the map with the arrow keys. Everything is one connected structure.</div>
+    <div class="help-sub">An independent visual reading of consciousness, its limits, and the ideas that can never be finished. Move through the map with the arrow keys. Everything is one connected structure.</div>
     <div class="help-grid">
       <span>&larr; &rarr;</span><span>Move through the map</span>
       <span>Space</span><span>Next scene</span>
@@ -2996,6 +2998,7 @@ addLabel('framework-shaped', convergenceGroup.position.clone().add(new V3(32, -3
 addLabel('common-cause null', convergenceGroup.position.clone().add(new V3(0, 62, 0)), 'discipline', { cls: 'bright', base: 0.66, minWeight: 0.3, kinds: ['convergence-discipline'] });
 addLabel('coherence, not proof', convergenceGroup.position.clone().add(new V3(0, -64, 0)), 'discipline', { cls: 'tiny', base: 0.56, minWeight: 0.3, kinds: ['convergence-discipline'] });
 
+addLabel('consciousness, meaning, reality', BASIC_STAGE.clone().add(new V3(0, 18, 0.5)), 'map', { cls: 'bright tiny', base: 0.52, minWeight: 0.3, kinds: ['map'] });
 addLabel('map', BASIC_STAGE.clone().add(new V3(0, 13.5, 0.5)), 'map', { cls: 'bright', base: 0.62, minWeight: 0.3, kinds: ['map'] });
 addLabel('territory', BASIC_STAGE.clone().add(new V3(0, -14.5, 0.5)), 'map', { cls: 'void', base: 0.52, minWeight: 0.3, kinds: ['map'] });
 addLabel('edge of knowledge', BASIC_STAGE.clone().add(new V3(20, 0, 0.5)), 'map', { cls: 'void tiny', base: 0.5, minWeight: 0.3, kinds: ['map'] });
