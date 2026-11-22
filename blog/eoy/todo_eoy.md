@@ -51,10 +51,10 @@ this file before further edits.
    - Add a categorical second plane: human / animal / (fairy tale or a better
      fitting category). Use plausible analogies; they do not need to be exact.
    - Make the categories visually clear and arrange the old plane between them.
-3. **"Zwei Schichten, ein Trick"**
-   - Replace "„$A$ und $B$ sind Platzhalter für beliebige Wörter.“" with the
-     accurate statement that $A$ and $B$ can also be whole sub-sentences or
-     longer phrases the head reacts to.
+3. **"Zwei Schichten, ein Trick"** — **done**
+   - The text now says $A$ and $B$ are tokens and can be words, word pieces, or
+     larger recurring units; in real text the pattern can span word groups or
+     whole sub-sentences.
 4. **Bias example — rich/poor, access to knowledge**
    - Replace the speech-recognition/noise example with one about **access to
      knowledge**: models learn mostly from digitally abundant, wealthier,
