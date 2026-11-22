@@ -250,7 +250,10 @@ Long before the Transformer, sequence models were recurrent. An encoder read a s
 	<section class="tm-hyper-panel" role="dialog" aria-modal="true" aria-labelledby="tm-hyper-title">
 		<header class="tm-hyper-head">
 			<h2 id="tm-hyper-title">Hyperparameters</h2>
-			<button type="button" class="tm-hyper-close" data-tm-hyper-close aria-label="Close hyperparameters">×</button>
+			<div class="tm-hyper-head-actions">
+				<span id="tm-hyper-close-hint" class="tm-hyper-close-hint" role="status" hidden></span>
+				<button type="button" class="tm-hyper-close" data-tm-hyper-close aria-label="Close hyperparameters" aria-describedby="tm-hyper-close-hint">×</button>
+			</div>
 		</header>
 		<div class="tm-hyper-body">
 <div class="md">
@@ -284,6 +287,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
         </p></details>
 		<input type="range" id="transformer-dimension-model" min="2" max="64" step="1" value="3"
 			oninput="syncTransformerSettings('dim')">
+		<p class="tm-hyper-invalid" id="tm-hyper-invalid-dim" role="alert" hidden></p>
 	</div>
 
 	<div class="transformer-config-field">
@@ -295,6 +299,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
         </p></details>
 		<input type="range" id="transformer-heads" min="1" max="8" value="3"
 			oninput="syncTransformerSettings('heads')">
+		<p class="tm-hyper-invalid" id="tm-hyper-invalid-heads" role="alert" hidden></p>
 	</div>
 
 	<div class="transformer-config-field">

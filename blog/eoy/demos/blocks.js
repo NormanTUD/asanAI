@@ -154,7 +154,7 @@
         if (b.id === "transformer") {
           card.innerHTML = '<span class="ls-bs-group-head"><span class="ls-bs-icon">×N</span><span class="ls-bs-label"><b>' + esc(b.label) + '</b><small>' + esc(b.short) + '</small></span><span class="ls-bs-badge">' + (DE ? "diese n mal" : "these n times") + '</span></span>' +
             '<span class="ls-bs-brace" aria-hidden="true"></span>' +
-            '<span class="ls-bs-pills"><span class="ls-bs-pill">A · Attention</span><span class="ls-bs-pill">LN · LayerNorm</span><span class="ls-bs-pill">FFN</span></span>';
+            '<span class="ls-bs-pills"><span class="ls-bs-pill" data-sub="attention">A · Attention</span><span class="ls-bs-pill" data-sub="layernorm">LN · LayerNorm</span><span class="ls-bs-pill" data-sub="ffn">FFN</span></span>';
         } else {
           card.innerHTML = '<span class="ls-bs-icon">' + esc(b.icon) + '</span><span class="ls-bs-label"><b>' + esc(b.label) + '</b><small>' + esc(b.short) + '</small></span>';
         }
@@ -482,11 +482,23 @@
         return '<span class="ls-math ls-math--inline" data-tex="' + safe + '" data-tex-display="false"><code class="ls-tex-source">' + safe + '</code></span>';
       });
     }
+    function syncSubMarker(sub) {
+      var mini = sub ? (sub.mini || "ffn") : null;
+      el.querySelectorAll(".ls-bs-pill").forEach(function (pill) {
+        pill.classList.toggle("is-current", !!mini && pill.getAttribute("data-sub") === mini);
+      });
+      el.querySelectorAll(".ls-bs-res-block").forEach(function (block) {
+        var label = block.textContent.toLowerCase();
+        var current = !!mini && (mini === "attention" ? label.indexOf("attention") >= 0 : mini === "ffn" ? label.indexOf("ffn") >= 0 : label.indexOf("ln") >= 0);
+        block.classList.toggle("is-current", current);
+      });
+    }
     function renderDetail() {
       var page = pages[index];
       var b = page.block;
       var sub = page.sub;
       var stage = page.blockIndex + 1;
+      syncSubMarker(sub);
       var kicker = (DE ? "Station " : "Station ") + stage + " / " + blocks.length + (sub ? " · " + esc(sub.title) : "");
       var html = '<div class="ls-bs-kicker">' + kicker + '</div>';
       if (sub) {
@@ -496,10 +508,6 @@
         html += '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
           '<p class="ls-bs-body">' + inlineMathText(b.body) + '</p>' +
           '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
-        if (b.sub) {
-          html += '<div class="ls-bs-subnav">' + (DE ? "Die nächsten Seiten: " : "The next pages: ") +
-            b.sub.map(function (s) { return '<span class="ls-bs-subpill">' + esc(s.title) + '</span>'; }).join("") + '</div>';
-        }
       }
       if (sub) {
         // Sub-page detail is already rendered above.

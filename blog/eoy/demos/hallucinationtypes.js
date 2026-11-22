@@ -311,6 +311,11 @@
       }
     ];
 
+    var SOURCE_KIND = {
+      fact: "weights", citation: "weights", intrinsic: "context", extrinsic: "context",
+      context: "context", outdated: "weights", entity: "context", sampling: "weights", negation: "logic"
+    };
+
     var MEASURES = [
       { id: "source", label: L("Quelle (RAG)", "Source (RAG)"), icon: "S1" },
       { id: "verify", label: L("Gegenprüfung", "Verify"), icon: "✓" },
@@ -341,6 +346,19 @@
     el.className = "ls-hx-scene";
     el.innerHTML =
       '<div class="ls-hx-chips" role="tablist"></div>' +
+      '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
+        '<div class="ls-hx-source-card is-weights" data-source-kind="weights"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
+        '<div class="ls-hx-source-claim"><span>' + L("Behauptung", "Claim") + '</span></div>' +
+        '<div class="ls-hx-source-card is-context" data-source-kind="context"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
+      '</div>' +
+      '<div class="ls-hx-contextpos">' +
+        '<div class="ls-hx-contextpos-head"><b>' + L("RAG-Kontext", "RAG context") + '</b><span>' + L("Anfang und Ende werden besser genutzt als die Mitte.", "Beginning and end are used better than the middle.") + '</span></div>' +
+        '<div class="ls-hx-contextpos-bar" aria-hidden="true">' +
+          '<div class="ls-hx-contextpos-zones"><span class="is-edge">' + L("Anfang", "start") + '</span><span class="is-mid">' + L("Mitte", "middle") + '</span><span class="is-edge">' + L("Ende", "end") + '</span></div>' +
+          '<svg viewBox="0 0 200 28" preserveAspectRatio="none"><path d="M4 6 Q50 30 100 28 T196 6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/></svg>' +
+        '</div>' +
+        '<p class="ls-hx-contextpos-note">' + L("Liu et al. (2023): Relevante Information am Anfang oder Ende wird oft besser gefunden; in der Mitte langer Kontexte geht sie manchmal unter. RAG kann das verstärken, wenn es viele Chunks packt.", "Liu et al. (2023): relevant information at the beginning or end is often found better; in the middle of long contexts it is sometimes lost. RAG can amplify this when it packs many chunks.") + '</p>' +
+      '</div>' +
       '<div class="ls-hx-grid">' +
         '<section class="ls-hx-panel ls-hx-source"><div class="ls-hx-panel-head"></div><div class="ls-hx-source-body"></div><p class="ls-hx-source-note"></p><p class="ls-hx-cite"></p></section>' +
         '<section class="ls-hx-panel ls-hx-answer"><div class="ls-hx-question"><span></span><b></b></div><div class="ls-hx-claims"></div><div class="ls-hx-detail"></div><div class="ls-hx-score"><span>FActScore</span><div class="ls-hx-scorebar"><i></i></div><b></b></div></section>' +
@@ -431,11 +449,11 @@
       var claim = claims[activeClaim] || null;
       var head = '<span class="ls-hx-badge">' + esc(view.badge) + '</span><b>' + esc(view.head) + '</b>';
       if (view.kind !== "logic") {
-        head += '<span class="ls-hx-kind">' + (view.kind === "memory" ? L("Gedächtnis", "memory") : view.kind === "citation" ? L("Zitat", "citation") : view.kind === "dated" ? L("Datum", "date") : L("Quelle", "source")) + '</span>';
+        head += '<span class="ls-hx-kind">' + (view.kind === "memory" ? L("Trainingsdaten", "training data") : view.kind === "citation" ? L("Zitat", "citation") : view.kind === "dated" ? L("Datum", "date") : L("Kontext", "context")) + '</span>';
       }
       sourceHead.innerHTML = head;
       if (view.kind === "memory") {
-        sourceBody.innerHTML = '<div class="ls-hx-memory"><span class="ls-hx-memory-cloud"></span><b>' + L("Kein Dokument", "No document") + '</b><p>' + L("Die Antwort kommt aus dem Gedächtnis, nicht aus einer Quelle.", "The answer comes from memory, not from a source.") + '</p></div>';
+        sourceBody.innerHTML = '<div class="ls-hx-memory"><span class="ls-hx-memory-cloud"></span><b>' + L("Kein Dokument", "No document") + '</b><p>' + L("Die Antwort kommt aus den Trainingsdaten (Gewichte), nicht aus dem Kontext.", "The answer comes from training data (weights), not from the context.") + '</p></div>';
       } else if (view.kind === "logic") {
         sourceBody.innerHTML = '<div class="ls-hx-logic"><span>' + L("traurig", "sad") + '</span><i>¬</i><span>' + L("nicht traurig", "not sad") + '</span><b>≠</b><span>' + L("glücklich", "happy") + '</span></div><p class="ls-hx-logic-note">' + L("Abstufungen bleiben dazwischen.", "Degrees remain in between.") + '</p>';
       } else if (view.kind === "citation") {
@@ -518,6 +536,22 @@
         });
       });
     }
+    function renderSourceMap(t) {
+      var kind = SOURCE_KIND[t.id] || "weights";
+      if (activeMeasure.source && t.measures.source && t.measures.source.status === "fix" && t.retrieved) kind = "both";
+      var cards = el.querySelectorAll("[data-source-kind]");
+      Array.prototype.forEach.call(cards, function (card) {
+        var on = kind === "both" || kind === "logic" || card.getAttribute("data-source-kind") === kind;
+        card.classList.toggle("is-on", on);
+        card.classList.toggle("is-dim", !on);
+      });
+      var claim = el.querySelector(".ls-hx-source-claim");
+      if (claim) {
+        claim.classList.toggle("is-logic", kind === "logic");
+        claim.classList.toggle("is-both", kind === "both");
+        claim.querySelector("span").textContent = kind === "logic" ? L("Logik", "Logic") : kind === "both" ? L("Behauptung (RAG)", "Claim (RAG)") : L("Behauptung", "Claim");
+      }
+    }
     function renderMechanism(t) {
       mechanismEl.innerHTML = '<span class="ls-hx-mech-icon">' + esc(t.icon) + '</span><div><b>' + esc(t.mechanism) + '</b><p>' + esc(t.why) + '</p></div>';
     }
@@ -536,6 +570,7 @@
       lastSelected = selected;
       var t = type();
       renderChips();
+      renderSourceMap(t);
       renderSource(t);
       renderClaims(t);
       renderMechanism(t);

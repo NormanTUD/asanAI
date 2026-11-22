@@ -200,7 +200,8 @@ def open_page(browser, base, lang, viewport=None, reduced_motion="no-preference"
     page.set_default_timeout(6000)
     page.add_init_script(INIT_SCRIPT)
     logs = PageLog(page)
-    page.goto(f"{base}{path}?lang={lang}", wait_until="load", timeout=30000)
+    sep = "&" if "?" in path else "?"
+    page.goto(f"{base}{path}{sep}lang={lang}", wait_until="load", timeout=30000)
     if wait_media:
         wait_ready(page)
     else:
@@ -1579,6 +1580,26 @@ def test_blocks_sequence(browser, base, lang, results):
     page.wait_for_timeout(180)
     rapid = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), title: document.querySelector('.ls-bs-title')?.textContent || '' })")
     results.check(tag, "rapid next reaches the blocks demo", rapid["scene"] == "blocks", str(rapid))
+    page.locator('.ls-bs-card[data-index="3"]').click()
+    page.wait_for_timeout(250)
+    overview = page.evaluate("() => ({ pills: document.querySelectorAll('.ls-bs-pill').length, current: document.querySelectorAll('.ls-bs-pill.is-current').length, subnav: !!document.querySelector('.ls-bs-subnav'), text: document.body.innerText })")
+    results.check(tag, "transformer overview clears the current sub-marker", overview["pills"] == 3 and overview["current"] == 0, str(overview)[:200])
+    results.check(tag, "architecture no longer repeats the next pages", not overview["subnav"] and "Die nächsten Seiten" not in overview["text"] and "The next pages" not in overview["text"], str(overview)[:200])
+    page.locator('.ls-bs-next').click()
+    page.wait_for_timeout(250)
+    attention = page.evaluate("() => ({ current: Array.from(document.querySelectorAll('.ls-bs-pill.is-current')).map(e => e.getAttribute('data-sub')), block: Array.from(document.querySelectorAll('.ls-bs-res-block.is-current')).map(e => e.textContent) })")
+    results.check(tag, "attention sub-step is marked in the left stack", attention["current"] == ["attention"], str(attention))
+    results.check(tag, "attention sub-step is marked in the residual flow", any("Attention" in b for b in attention["block"]), str(attention))
+    page.locator('.ls-bs-next').click()
+    page.wait_for_timeout(250)
+    ffn = page.evaluate("() => ({ current: Array.from(document.querySelectorAll('.ls-bs-pill.is-current')).map(e => e.getAttribute('data-sub')), block: Array.from(document.querySelectorAll('.ls-bs-res-block.is-current')).map(e => e.textContent) })")
+    results.check(tag, "ffn sub-step is marked in the left stack", ffn["current"] == ["ffn"], str(ffn))
+    results.check(tag, "ffn sub-step is marked in the residual flow", any("FFN" in b for b in ffn["block"]), str(ffn))
+    page.locator('.ls-bs-next').click()
+    page.wait_for_timeout(250)
+    ln = page.evaluate("() => ({ current: Array.from(document.querySelectorAll('.ls-bs-pill.is-current')).map(e => e.getAttribute('data-sub')), blocks: document.querySelectorAll('.ls-bs-res-block.is-current').length })")
+    results.check(tag, "layernorm sub-step is marked in the left stack", ln["current"] == ["layernorm"], str(ln))
+    results.check(tag, "layernorm sub-step marks the LN blocks", ln["blocks"] >= 1, str(ln))
     errors = logs.take()
     results.check(tag, "blocks sequence has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
@@ -1619,6 +1640,8 @@ def test_residual_layout(browser, base, lang, results):
     results.check(tag, "residual band covers stack and detail width", res and stack and detail_rect and res["w"] >= stack["w"] + detail_rect["w"], detail)
     text = layout["text"]
     results.check(tag, "residual band explains the stream", all(token in text for token in ("x", "LN", "Attention", "FFN", "× N")), text[:240])
+    body_text = page.evaluate("() => document.body.innerText")
+    results.check(tag, "residual has no object text", "[object HTMLDivElement]" not in body_text, body_text[-240:])
     results.check(tag, "residual layout has no page overflow", layout["overflow"] <= 2, str(layout["overflow"]))
     errors = logs.take()
     results.check(tag, "residual layout has no console errors", not errors, " | ".join(errors)[:400])
@@ -1763,6 +1786,9 @@ def test_hallucination_lab(browser, base, lang, results):
   risk: !!document.querySelector('.ls-hx-risk-svg svg'),
   group: document.querySelector('.ls-hx-question span')?.textContent || '',
   source: document.querySelector('.ls-hx-source-body')?.innerText || '',
+  sourceCards: document.querySelectorAll('.ls-hx-source-card').length,
+  contextPos: !!document.querySelector('.ls-hx-contextpos'),
+  contextText: document.querySelector('.ls-hx-contextpos')?.innerText || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
@@ -1772,6 +1798,14 @@ def test_hallucination_lab(browser, base, lang, results):
     results.check(tag, "hallucination lab has claims and measures", info["claims"] > 0 and info["measures"] == 5, str(info))
     results.check(tag, "hallucination lab has a risk map", info["risk"], str(info))
     results.check(tag, "hallucination lab exposes the taxonomy group", "Faktizität" in info["group"] or "Factuality" in info["group"], info["group"])
+    results.check(tag, "hallucination lab distinguishes weights and context", info["sourceCards"] == 2, str(info)[:200])
+    results.check(tag, "hallucination lab shows the RAG context-position effect", info["contextPos"] and ("Liu" in info["contextText"]) and ("Mitte" in info["contextText"] or "middle" in info["contextText"]), info["contextText"][:240])
+    page.locator('.ls-hx-chip').nth(2).click()
+    page.wait_for_timeout(200)
+    intrinsic = page.evaluate("() => ({ weights: document.querySelector('.ls-hx-source-card.is-weights')?.className || '', context: document.querySelector('.ls-hx-source-card.is-context')?.className || '' })")
+    results.check(tag, "intrinsic hallucination highlights the context source", "is-on" in intrinsic["context"] and "is-dim" in intrinsic["weights"], str(intrinsic))
+    page.locator('.ls-hx-chip').nth(0).click()
+    page.wait_for_timeout(200)
     page.locator('.ls-hx-measure[data-measure="source"]').click()
     page.wait_for_timeout(400)
     after = page.evaluate(
@@ -1781,13 +1815,16 @@ def test_hallucination_lab(browser, base, lang, results):
   risk: document.querySelector('.ls-hx-risk-caption')?.textContent || '',
   takeaway: document.querySelector('.ls-hx-takeaway')?.innerText || '',
   active: document.querySelector('.ls-hx-measure.is-on')?.getAttribute('data-measure'),
-  source: document.querySelector('.ls-hx-source-body')?.innerText || ''
+  source: document.querySelector('.ls-hx-source-body')?.innerText || '',
+  weightsOn: document.querySelector('.ls-hx-source-card.is-weights')?.classList.contains('is-on'),
+  contextOn: document.querySelector('.ls-hx-source-card.is-context')?.classList.contains('is-on')
 })
 """
     )
     results.check(tag, "RAG grounds the first false fact", after["score"] == "100%" and after["active"] == "source", str(after))
     results.check(tag, "RAG moves the answer out of the hallucination zone", "gedeckt" in after["risk"] or "grounded" in after["risk"], after["risk"])
     results.check(tag, "takeaway names the active measure", "Gedeckt" in after["takeaway"] or "Grounded" in after["takeaway"], after["takeaway"][:120])
+    results.check(tag, "RAG shows both the weights and the context source", after["weightsOn"] and after["contextOn"], str(after)[:200])
     titles = []
     for _ in range(8):
         page.evaluate("() => LearnSys.next()")
@@ -1999,6 +2036,8 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     results.check(tag, "takeaway canvas has a real drawing buffer", takeaway["w"] > 200 and takeaway["h"] > 200, str(takeaway))
     results.check(tag, "takeaway summarises three moves", takeaway["summary"] == 3, str(takeaway))
     results.check(tag, "takeaway has no Prüffragen row", not takeaway["questions"], str(takeaway))
+    page_text = page.evaluate("() => document.body.innerText")
+    results.check(tag, "takeaway has no object text", "[object HTMLDivElement]" not in page_text, page_text[-240:])
     results.check(tag, "takeaway page has no overflow", takeaway["overflow"] <= 2, str(takeaway["overflow"]))
     errors = logs.take()
     results.check(tag, "qualia/takeaway pages have no console errors", not errors, " | ".join(errors)[:400])

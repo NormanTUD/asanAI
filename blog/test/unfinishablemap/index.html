@@ -495,7 +495,7 @@ scene.add(rimLight);
 const pixelMats = [];
 const fadeGroups = {};
 
-const REGION_LIST = ['tenets', 'research', 'concepts', 'topics', 'apex', 'positions', 'arguments', 'questions', 'voids', 'method', 'flow', 'taxonomy', 'convergence', 'growth', 'voidWhy', 'territory', 'signature', 'ratio', 'discipline'];
+const REGION_LIST = ['tenets', 'research', 'concepts', 'topics', 'apex', 'positions', 'arguments', 'questions', 'voids', 'method', 'flow', 'taxonomy', 'convergence', 'growth', 'voidWhy', 'territory', 'signature', 'ratio', 'discipline', 'map', 'hardproblem', 'gap', 'cap'];
 const regionWeights = {};
 const regionTargets = {};
 REGION_LIST.forEach(r => { regionWeights[r] = 0; regionTargets[r] = 0; });
@@ -1133,7 +1133,7 @@ function buildNodeGeometry() {
     pos[i * 3] = nd.p.x; pos[i * 3 + 1] = nd.p.y; pos[i * 3 + 2] = nd.p.z;
     const c = toArray(nd.c);
     col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
-    size[i] = nd.s;
+    size[i] = nd.s * 1.16;
     phase[i] = nd.phase;
   });
   const geo = new THREE.BufferGeometry();
@@ -1217,9 +1217,9 @@ function buildEdgeGeometry() {
       void main() {
         float pulse = pow(0.5 + 0.5 * sin((vProgress * 4.0 - uTime * 0.55 + vEdge * 0.61) * 6.28318), 9.0);
         float dash = vDash > 0.5 ? step(0.42, fract(vProgress * 11.0 + vEdge * 0.13)) : 1.0;
-        float a = vOpacity * dash * (0.13 + 0.95 * pulse);
+        float a = vOpacity * dash * (0.2 + 1.12 * pulse);
         if (a < 0.004) discard;
-        vec3 col = vColor * (0.7 + 1.5 * pulse);
+        vec3 col = vColor * (0.8 + 1.7 * pulse);
         gl_FragColor = vec4(col, a);
       }
     `,
@@ -1242,7 +1242,7 @@ function buildVoidGeometry() {
     voidPhases.push(rnd() * 6.283);
     const c = colorOf(i % 7 === 0 ? 0x7d6bff : 0x4f46a8);
     voidColors.push(c.r, c.g, c.b);
-    voidBase.push(isHero ? 0.75 : rr(0.25, 0.6));
+    voidBase.push(isHero ? 0.92 : rr(0.36, 0.78));
     voidOp.push(0);
   });
   const geo = new THREE.BufferGeometry();
@@ -1319,7 +1319,7 @@ function buildVoidGeometry() {
         float ring = smoothstep(0.5, 0.4, d) * (1.0 - smoothstep(0.4, 0.31, d));
         float inner = exp(-d * 13.0) * 0.12;
         float breathe = 0.72 + 0.28 * sin(uTime * 0.7 + vPhase * 6.283);
-        float a = (ring * 0.8 + inner) * vOp * breathe;
+        float a = (ring * 1.0 + inner) * vOp * breathe;
         if (a < 0.003) discard;
         vec3 col = vColor * (1.2 + ring * 1.4);
         gl_FragColor = vec4(col, a);
@@ -1363,7 +1363,7 @@ function lineMaterial(hex, opacity = 1) {
   return new THREE.LineBasicMaterial({
     color: hex,
     transparent: true,
-    opacity,
+    opacity: Math.min(1, opacity * 1.3),
     blending: THREE.AdditiveBlending,
     depthWrite: false
   });
@@ -1785,7 +1785,7 @@ function buildRadar() {
   const rings = [];
   for (let r = 0.25; r <= 1.0; r += 0.25) {
     const pts = outer.map(v => v.clone().multiplyScalar(r));
-    const ring = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(0xa5b4fc, 0.08));
+    const ring = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(0xa5b4fc, 0.14));
     radarGroup.add(ring);
     rings.push(ring);
   }
@@ -1835,19 +1835,19 @@ function buildTaxonomy() {
   const gridPts = [];
   cols.forEach(x => gridPts.push(new V3(x, -22, -0.2), new V3(x, 23, -0.2)));
   rows.forEach(y => gridPts.push(new V3(-27, y, -0.2), new V3(27, y, -0.2)));
-  taxonomyGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPts), lineMaterial(0xa5b4fc, 0.12)));
+  taxonomyGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPts), lineMaterial(0xa5b4fc, 0.2)));
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 3; c++) {
       const g = new THREE.Group();
       g.position.set(cols[c], rows[r], 0);
-      const disc = new THREE.Mesh(new THREE.CircleGeometry(3.0, 40), new THREE.MeshBasicMaterial({ color: 0x010208, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthWrite: false }));
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(3.5, 40), new THREE.MeshBasicMaterial({ color: 0x010208, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthWrite: false }));
       g.add(disc);
-      const ring = new THREE.Mesh(new THREE.RingGeometry(3.0, 3.75, 48), additiveMaterial(colColors[c], 0.75));
+      const ring = new THREE.Mesh(new THREE.RingGeometry(3.5, 4.35, 48), additiveMaterial(colColors[c], 1.0));
       g.add(ring);
-      const core = new THREE.Mesh(new THREE.CircleGeometry(0.8, 24), additiveMaterial(rowColors[r], 0.9));
+      const core = new THREE.Mesh(new THREE.CircleGeometry(1.0, 24), additiveMaterial(rowColors[r], 0.95));
       core.position.z = 0.01;
       g.add(core);
-      const halo = new THREE.Mesh(new THREE.RingGeometry(4.1, 5.6, 48), additiveMaterial(colColors[c], 0.05));
+      const halo = new THREE.Mesh(new THREE.RingGeometry(4.7, 6.4, 48), additiveMaterial(colColors[c], 0.1));
       g.add(halo);
       taxonomyGroup.add(g);
       taxonomyCells.push({ g, ring: ring.material, core: core.material, phase: rnd() * 6.283 });
@@ -1858,10 +1858,10 @@ function buildTaxonomy() {
     { x: 17, color: 0x34d399 }, { x: 34, color: 0xa78bfa }
   ];
   bandDefs.forEach(b => {
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(9, 52), additiveMaterial(b.color, 0.055));
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(9, 52), additiveMaterial(b.color, 0.09));
     plane.position.set(b.x, -1, -2);
     taxonomyGroup.add(plane);
-    const line = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 52), additiveMaterial(b.color, 0.22));
+    const line = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 52), additiveMaterial(b.color, 0.34));
     line.position.set(b.x, -1, -1.9);
     taxonomyGroup.add(line);
     taxonomyBands.push(plane.material);
@@ -1883,13 +1883,13 @@ convergenceGroup.position.set(0, -48, 0);
 const convSparks = [];
 const convRayPoints = [];
 function buildConvergence() {
-  const wire = new THREE.Mesh(new THREE.SphereGeometry(42, 26, 18), new THREE.MeshBasicMaterial({ color: 0x1e2a5a, wireframe: true, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false }));
+  const wire = new THREE.Mesh(new THREE.SphereGeometry(42, 26, 18), new THREE.MeshBasicMaterial({ color: 0x2a3a7a, wireframe: true, transparent: true, opacity: 0.24, blending: THREE.AdditiveBlending, depthWrite: false }));
   convergenceGroup.add(wire);
   const core = new THREE.Mesh(new THREE.SphereGeometry(4.2, 32, 24), additiveMaterial(0xffffff, 0.95));
   convergenceGroup.add(core);
-  const coreGlow = new THREE.Mesh(new THREE.SphereGeometry(7.2, 24, 16), additiveMaterial(0xffe6a3, 0.16));
+  const coreGlow = new THREE.Mesh(new THREE.SphereGeometry(9.2, 24, 16), additiveMaterial(0xffe6a3, 0.22));
   convergenceGroup.add(coreGlow);
-  const membrane = new THREE.Mesh(new THREE.SphereGeometry(18, 32, 24), new THREE.MeshBasicMaterial({ color: 0x9fd8ff, wireframe: true, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending, depthWrite: false }));
+  const membrane = new THREE.Mesh(new THREE.SphereGeometry(18, 32, 24), new THREE.MeshBasicMaterial({ color: 0x9fd8ff, wireframe: true, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false }));
   convergenceGroup.add(membrane);
   const count = 101;
   const pos = [];
@@ -1910,9 +1910,9 @@ function buildConvergence() {
     bright.push(isBright);
     const c = colorOf(isBright ? 0x9ff5ff : 0x5b4fd0);
     col.push(c.r, c.g, c.b);
-    size.push(isBright ? rr(7, 12) : rr(4, 8));
+    size.push(isBright ? rr(8, 14) : rr(5, 10));
     phase.push(rnd() * 6.283);
-    op.push(isBright ? 0.95 : rr(0.2, 0.5));
+    op.push(isBright ? 1.0 : rr(0.3, 0.65));
   }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
@@ -1937,7 +1937,7 @@ function buildConvergence() {
   const rayGeo = new THREE.BufferGeometry();
   rayGeo.setAttribute('position', new THREE.Float32BufferAttribute(rayVerts, 3));
   rayGeo.setAttribute('color', new THREE.Float32BufferAttribute(rayCols, 3));
-  convergenceGroup.add(new THREE.LineSegments(rayGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false })));
+  convergenceGroup.add(new THREE.LineSegments(rayGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending, depthWrite: false })));
   for (let i = 0; i < 40; i++) {
     const m = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), additiveMaterial(0x9ff5ff, 0.9));
     convergenceGroup.add(m);
@@ -1997,14 +1997,14 @@ function roundedPlate(w, h, color, fillOpacity) {
 const voidWhyGroup = new THREE.Group();
 voidWhyGroup.position.copy(VOID_STAGE);
 function buildVoidWhy() {
-  const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(64, 46), additiveMaterial(0x1a2450, 0.035));
+  const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(64, 46), additiveMaterial(0x1a2450, 0.065));
   backdrop.position.z = -1.4;
   voidWhyGroup.add(backdrop);
   const border = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
     new V3(-31, -22, -1.2), new V3(31, -22, -1.2), new V3(31, 22, -1.2), new V3(-31, 22, -1.2)
-  ]), lineMaterial(0xa5b4fc, 0.16));
+  ]), lineMaterial(0xa5b4fc, 0.28));
   voidWhyGroup.add(border);
-  const divider = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(0, -20, 0), new V3(0, 20, 0)]), lineMaterial(0xffffff, 0.12));
+  const divider = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(0, -20, 0), new V3(0, 20, 0)]), lineMaterial(0xffffff, 0.22));
   voidWhyGroup.add(divider);
   const rows = [
     { t: 0, name: 'Explanatory gap', y: 16 },
@@ -2026,7 +2026,7 @@ function buildVoidWhy() {
     const mid = new V3(0, row.y + 2.4, 0);
     const curve = new THREE.QuadraticBezierCurve3(left, mid, right);
     const pts = curve.getPoints(40);
-    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(tenet.color, 0.42));
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(tenet.color, 0.72));
     voidWhyGroup.add(line);
     const cone = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.3, 12), additiveMaterial(tenet.color, 0.9));
     cone.position.copy(right).add(new V3(-1.6, 0.2, 0));
@@ -2053,7 +2053,7 @@ function buildTerritory() {
     const plate = roundedPlate(19, 26, colors[i], 0.42);
     plate.position.set(x, 0, 0);
     territoryGroup.add(plate);
-    const divider = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(x - 8.2, -8.4, 0.05), new V3(x + 8.2, -8.4, 0.05)]), lineMaterial(colors[i], 0.28));
+    const divider = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(x - 8.2, -8.4, 0.05), new V3(x + 8.2, -8.4, 0.05)]), lineMaterial(colors[i], 0.46));
     territoryGroup.add(divider);
   });
   const gridPts = [];
@@ -2081,7 +2081,7 @@ function buildTerritory() {
   territoryGroup.add(unexplorable);
   for (let i = 0; i < 3; i++) {
     const r = 8 + i * 1.8;
-    const arc = new THREE.Mesh(new THREE.TorusGeometry(r, 0.045, 6, 96, TAU * (0.78 - i * 0.12)), additiveMaterial(PALETTE.violet, 0.25 - i * 0.05));
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(r, 0.045, 6, 96, TAU * (0.78 - i * 0.12)), additiveMaterial(PALETTE.violet, 0.42 - i * 0.07));
     arc.rotation.z = 0.5 + i * 0.7;
     territoryGroup.add(arc);
   }
@@ -2109,7 +2109,7 @@ function buildTerritory() {
         float n = sin(vUv.x * 22.0 + uTime * 0.7) * 0.5 + 0.5;
         float n2 = sin(vUv.y * 13.0 - uTime * 0.4) * 0.5 + 0.5;
         float grain = hash(floor(vUv * vec2(80.0, 40.0)) + floor(uTime * 2.0));
-        float a = 0.10 + 0.16 * n * n2 + 0.08 * grain;
+        float a = 0.16 + 0.22 * n * n2 + 0.10 * grain;
         vec3 col = mix(vec3(0.24, 0.12, 0.42), vec3(0.6, 0.3, 0.8), n);
         gl_FragColor = vec4(col, a * uOpacity);
       }
@@ -2224,7 +2224,7 @@ function buildSignature() {
         g.add(m);
       }
     }
-    const halo = new THREE.Mesh(new THREE.TorusGeometry(6.4, 0.03, 6, 64), additiveMaterial(col, 0.08));
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(6.4, 0.03, 6, 64), additiveMaterial(col, 0.14));
     g.add(halo);
     signatureGroup.add(g);
     signaturePulse.push({ group: g, phase: i * 0.79 });
@@ -2258,9 +2258,9 @@ buildRatio();
 const disciplineGroup = new THREE.Group();
 disciplineGroup.position.copy(convergenceGroup.position);
 function buildDiscipline() {
-  disciplineWire = new THREE.Mesh(new THREE.SphereGeometry(58, 22, 14), new THREE.MeshBasicMaterial({ color: 0x6d5dfc, wireframe: true, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false }));
+  disciplineWire = new THREE.Mesh(new THREE.SphereGeometry(58, 22, 14), new THREE.MeshBasicMaterial({ color: 0x6d5dfc, wireframe: true, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false }));
   disciplineGroup.add(disciplineWire);
-  const veil = new THREE.Mesh(new THREE.SphereGeometry(44, 32, 20), new THREE.MeshBasicMaterial({ color: 0x01020a, transparent: true, opacity: 0.22, side: THREE.FrontSide, depthWrite: false }));
+  const veil = new THREE.Mesh(new THREE.SphereGeometry(44, 32, 20), new THREE.MeshBasicMaterial({ color: 0x01020a, transparent: true, opacity: 0.3, side: THREE.FrontSide, depthWrite: false }));
   disciplineGroup.add(veil);
   const ringPts = [];
   for (let i = 0; i <= 120; i++) {
@@ -2268,7 +2268,7 @@ function buildDiscipline() {
     ringPts.push(new V3(Math.cos(a) * 52, Math.sin(a) * 52, 0));
   }
   const ringGeo = new THREE.BufferGeometry().setFromPoints(ringPts);
-  disciplineRing = new THREE.Line(ringGeo, new THREE.LineDashedMaterial({ color: 0xa5b4fc, dashSize: 1.4, gapSize: 1.2, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
+  disciplineRing = new THREE.Line(ringGeo, new THREE.LineDashedMaterial({ color: 0xa5b4fc, dashSize: 1.4, gapSize: 1.2, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false }));
   disciplineRing.computeLineDistances();
   disciplineGroup.add(disciplineRing);
   const gridPts = [];
@@ -2278,7 +2278,7 @@ function buildDiscipline() {
   for (let i = -4; i <= 4; i++) {
     gridPts.push(new V3(-42, i * 8, 50), new V3(42, i * 8, 50));
   }
-  disciplineGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPts), lineMaterial(0xa5b4fc, 0.08)));
+  disciplineGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPts), lineMaterial(0xa5b4fc, 0.14)));
   const border = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
     new V3(-45, -36, 50), new V3(45, -36, 50), new V3(45, 36, 50), new V3(-45, 36, 50)
   ]), lineMaterial(0xffffff, 0.12));
@@ -2288,6 +2288,238 @@ function buildDiscipline() {
   registerFadeGroup('discipline', disciplineGroup);
 }
 buildDiscipline();
+
+const BASIC_STAGE = new V3(0, 16, 42);
+const mapSparks = [];
+let mapCoastCurve = null;
+let hardPhysicalCloud = null;
+let hardExperienceOrb = null;
+let gapLattice = null;
+let gapWarm = null;
+let gapSeam = null;
+let capTickBase = null;
+let capTickAttr = null;
+let capTickLit = null;
+let capTickPhase = null;
+
+function makeCloud(count, radius, center, colorA, colorB, sizeScale = 1) {
+  const pos = new Float32Array(count * 3);
+  const col = new Float32Array(count * 3);
+  const size = new Float32Array(count);
+  const phase = new Float32Array(count);
+  const op = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    const u = rr(-1, 1);
+    const th = rnd() * TAU;
+    const s = Math.sqrt(Math.max(0, 1 - u * u));
+    const r = radius * Math.pow(rnd(), 0.5);
+    pos[i * 3] = center.x + Math.cos(th) * s * r;
+    pos[i * 3 + 1] = center.y + u * r;
+    pos[i * 3 + 2] = center.z + Math.sin(th) * s * r;
+    const c = mixColor(colorOf(colorA), colorOf(colorB), rnd());
+    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    size[i] = rr(0.7, 2.0) * sizeScale;
+    phase[i] = rnd() * 6.283;
+    op[i] = rr(0.4, 1.0);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aColor', new THREE.Float32BufferAttribute(col, 3));
+  geo.setAttribute('aSize', new THREE.Float32BufferAttribute(size, 1));
+  geo.setAttribute('aPhase', new THREE.Float32BufferAttribute(phase, 1));
+  geo.setAttribute('aOp', new THREE.Float32BufferAttribute(op, 1));
+  return new THREE.Points(geo, makePointsShader(false, 0xffffff));
+}
+
+const mapGroup = new THREE.Group();
+mapGroup.position.copy(BASIC_STAGE);
+function buildMapBasics() {
+  const unknown = new THREE.Mesh(new THREE.TorusGeometry(24, 0.04, 6, 120), additiveMaterial(0x2a3560, 0.35));
+  unknown.position.set(0, 0, -8);
+  mapGroup.add(unknown);
+  const plate = roundedPlate(32, 21, PALETTE.ice, 0.2);
+  mapGroup.add(plate);
+  const grid = [];
+  for (let i = -7; i <= 7; i++) grid.push(new V3(i * 2.2, -9.4, 0.04), new V3(i * 2.2, 9.4, 0.04));
+  for (let i = -4; i <= 4; i++) grid.push(new V3(-15.4, i * 2.2, 0.04), new V3(15.4, i * 2.2, 0.04));
+  mapGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(grid), lineMaterial(PALETTE.ice, 0.12)));
+  const spots = [
+    [-11, -5], [-5, 3], [0, -2], [6, 6], [11, 1], [3, -7], [9, -6], [-2, 7]
+  ];
+  const spotMeshes = [];
+  spots.forEach(([x, y], i) => {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.42, 10, 8), additiveMaterial(i === 2 ? 0xffffff : PALETTE.ice, 0.9));
+    m.position.set(x, y, 0.12);
+    mapGroup.add(m);
+    spotMeshes.push(m);
+  });
+  const links = [[0, 1], [1, 2], [2, 3], [2, 5], [3, 4], [5, 6], [1, 7], [3, 6]];
+  links.forEach(([a, b]) => {
+    const p0 = spotMeshes[a].position;
+    const p1 = spotMeshes[b].position;
+    mapGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([p0.clone(), p1.clone()]), lineMaterial(0xffffff, 0.22)));
+  });
+  mapCoastCurve = new THREE.CatmullRomCurve3([
+    new V3(14, -9, 0.2), new V3(16.5, -5, 0.2), new V3(14.6, 0, 0.2),
+    new V3(16.8, 4, 0.2), new V3(14.2, 9, 0.2)
+  ]);
+  mapGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(mapCoastCurve.getPoints(80)), lineMaterial(0xffffff, 0.7)));
+  for (let i = 0; i < 3; i++) {
+    const spark = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), additiveMaterial(PALETTE.gold, 0.9));
+    mapGroup.add(spark);
+    mapSparks.push({ mesh: spark, phase: i / 3 });
+  }
+  const frontier = new THREE.Line(new THREE.BufferGeometry().setFromPoints([
+    new V3(18, -10, 0), new V3(18, 10, 0)
+  ]), lineMaterial(0x5b4fd0, 0.25));
+  mapGroup.add(frontier);
+  mapGroup.visible = false;
+  scene.add(mapGroup);
+  registerFadeGroup('map', mapGroup);
+}
+buildMapBasics();
+
+const hardProblemGroup = new THREE.Group();
+hardProblemGroup.position.copy(BASIC_STAGE);
+function buildHardProblem() {
+  const physical = new THREE.Group();
+  physical.position.set(-9, 0, 0);
+  const cage = new THREE.Mesh(new THREE.IcosahedronGeometry(6.5, 1), new THREE.MeshBasicMaterial({ color: 0x6fb8ff, wireframe: true, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false }));
+  physical.add(cage);
+  hardPhysicalCloud = makeCloud(52, 6.4, new V3(0, 0, 0), 0x7dd3fc, 0x3457a8, 1.1);
+  physical.add(hardPhysicalCloud);
+  hardProblemGroup.add(physical);
+  hardProblemGroup.userData.physical = physical;
+  const exp = new THREE.Group();
+  exp.position.set(9, 0, 0);
+  hardExperienceOrb = new THREE.Mesh(new THREE.SphereGeometry(2.3, 28, 20), additiveMaterial(0xfff0c2, 0.95));
+  exp.add(hardExperienceOrb);
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(4.6, 24, 16), additiveMaterial(PALETTE.gold, 0.12));
+  exp.add(glow);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(5.6, 0.045, 6, 96), additiveMaterial(PALETTE.gold, 0.5));
+  exp.add(ring);
+  const cloud = makeCloud(26, 4.2, new V3(0, 0, 0), 0xffe6a3, 0xf472b6, 0.8);
+  exp.add(cloud);
+  exp.userData.cloud = cloud;
+  hardProblemGroup.add(exp);
+  hardProblemGroup.userData.experience = exp;
+  const dashPts = [new V3(-2.4, 0, 0.2), new V3(3.4, 0, 0.2)];
+  const dashGeo = new THREE.BufferGeometry().setFromPoints(dashPts);
+  const dash = new THREE.Line(dashGeo, new THREE.LineDashedMaterial({ color: 0xa5b4fc, dashSize: 0.6, gapSize: 0.45, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false }));
+  dash.computeLineDistances();
+  hardProblemGroup.add(dash);
+  const gapDot = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 8), additiveMaterial(0xffffff, 0.95));
+  gapDot.position.set(5.2, 0, 0.3);
+  hardProblemGroup.add(gapDot);
+  const questionArc = new THREE.Mesh(new THREE.TorusGeometry(7.2, 0.05, 6, 96, TAU * 0.52), additiveMaterial(0xffe6a3, 0.4));
+  questionArc.rotation.z = -Math.PI * 0.72;
+  questionArc.position.set(9, 0, 0);
+  hardProblemGroup.add(questionArc);
+  const questionDot = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 8), additiveMaterial(0xffe6a3, 0.9));
+  questionDot.position.set(9 + Math.cos(-Math.PI * 0.2) * 7.2, Math.sin(-Math.PI * 0.2) * 7.2, 0);
+  hardProblemGroup.add(questionDot);
+  hardProblemGroup.userData.questionArc = questionArc;
+  hardProblemGroup.visible = false;
+  scene.add(hardProblemGroup);
+  registerFadeGroup('hardproblem', hardProblemGroup);
+}
+buildHardProblem();
+
+const gapGroup = new THREE.Group();
+gapGroup.position.copy(BASIC_STAGE);
+function buildGap() {
+  gapLattice = new THREE.Group();
+  gapLattice.position.set(-9, 0, 0);
+  const latticePts = [];
+  for (let i = -5; i <= 5; i++) {
+    latticePts.push(new V3(i * 1.4, -7, 0), new V3(i * 1.4, 7, 0));
+    latticePts.push(new V3(-7, i * 1.4, 0), new V3(7, i * 1.4, 0));
+  }
+  gapLattice.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(latticePts), lineMaterial(0x6fb8ff, 0.22)));
+  for (let i = 0; i < 6; i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), additiveMaterial(0xffffff, 0.65));
+    m.position.set(rr(-5, 5), rr(-5, 5), 0.1);
+    gapLattice.add(m);
+  }
+  gapGroup.add(gapLattice);
+  gapWarm = new THREE.Group();
+  gapWarm.position.set(9, 0, 0);
+  for (let i = 0; i < 4; i++) {
+    const pts = [];
+    for (let k = 0; k <= 60; k++) {
+      const a = (k / 60) * TAU;
+      const r = 2.2 + i * 1.2 + Math.sin(a * 5 + i) * 0.25;
+      pts.push(new V3(Math.cos(a) * r, Math.sin(a) * r, 0));
+    }
+    gapWarm.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(i % 2 ? PALETTE.rose : PALETTE.gold, 0.3 - i * 0.04)));
+  }
+  const warmCloud = makeCloud(34, 6.2, new V3(0, 0, 0), 0xffe6a3, 0xf472b6, 0.9);
+  gapWarm.add(warmCloud);
+  gapWarm.userData.cloud = warmCloud;
+  gapGroup.add(gapWarm);
+  gapSeam = new THREE.Group();
+  const arcA = new THREE.Mesh(new THREE.TorusGeometry(4.2, 0.06, 6, 64, Math.PI * 0.62), additiveMaterial(0xffffff, 0.65));
+  arcA.rotation.z = Math.PI * 0.19;
+  arcA.position.x = -1.4;
+  gapSeam.add(arcA);
+  const arcB = new THREE.Mesh(new THREE.TorusGeometry(4.2, 0.06, 6, 64, Math.PI * 0.62), additiveMaterial(0xffffff, 0.65));
+  arcB.rotation.z = Math.PI * 0.19 + Math.PI;
+  arcB.position.x = 1.4;
+  gapSeam.add(arcB);
+  const gapLight = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 4.6), additiveMaterial(0xffffff, 0.7));
+  gapSeam.add(gapLight);
+  for (let i = 0; i < 2; i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.35, 10, 8), additiveMaterial(0xffffff, 0.9));
+    m.position.set(0, i === 0 ? 3.2 : -3.2, 0.1);
+    gapSeam.add(m);
+  }
+  gapGroup.add(gapSeam);
+  gapGroup.visible = false;
+  scene.add(gapGroup);
+  registerFadeGroup('gap', gapGroup);
+}
+buildGap();
+
+const capGroup = new THREE.Group();
+capGroup.position.copy(VOID_STAGE);
+function buildCap() {
+  const count = 115;
+  const positions = [];
+  const colors = [];
+  capTickLit = [];
+  capTickPhase = [];
+  for (let i = 0; i < count; i++) {
+    const a = -Math.PI / 2 + (i / count) * TAU;
+    const r0 = 30;
+    const r1 = 34;
+    positions.push(Math.cos(a) * r0, Math.sin(a) * r0, 0, Math.cos(a) * r1, Math.sin(a) * r1, 0);
+    const lit = i < 101;
+    capTickLit.push(lit);
+    capTickPhase.push(rnd() * 6.283);
+    const c = colorOf(lit ? (i % 5 === 0 ? 0x9ff5ff : 0x6d5dfc) : 0x2a3150);
+    colors.push(c.r, c.g, c.b, c.r, c.g, c.b);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  capTickBase = new Float32Array(colors);
+  capTickAttr = new THREE.Float32BufferAttribute(new Float32Array(colors), 3);
+  capTickAttr.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('color', capTickAttr);
+  const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+  capGroup.add(new THREE.LineSegments(geo, mat));
+  const inner = new THREE.Mesh(new THREE.TorusGeometry(27, 0.035, 6, 120), additiveMaterial(0x6d5dfc, 0.38));
+  capGroup.add(inner);
+  const outer = new THREE.Mesh(new THREE.TorusGeometry(37, 0.025, 6, 140), additiveMaterial(0xa5b4fc, 0.3));
+  capGroup.add(outer);
+  const core = darkOrb(PALETTE.void, 5.0);
+  capGroup.add(core);
+  const coreRing = new THREE.Mesh(new THREE.TorusGeometry(7.4, 0.04, 6, 80), additiveMaterial(0x9ff5ff, 0.55));
+  capGroup.add(coreRing);
+  capGroup.visible = false;
+  scene.add(capGroup);
+  registerFadeGroup('cap', capGroup);
+}
+buildCap();
 
 const labels = [];
 function addLabel(text, pos, region, opts = {}) {
@@ -2328,7 +2560,7 @@ HUBS.forEach(h => {
 
 ['Taxonomy of voids', 'Machine question', 'Post-decoherence', 'Attention as bridge', 'Living with the map', 'What consciousness tells physics'].forEach(name => {
   const p = K.apex[name];
-  if (p) addLabel(name, p.clone().add(new V3(0, 3, 0)), 'apex', { cls: name === 'Taxonomy of voids' ? 'gold bright' : 'gold', base: 0.66, minWeight: 0.3, kinds: ['apex'] });
+  if (p) addLabel(name, p.clone().add(new V3(0, 3, 0)), 'apex', { cls: name === 'Taxonomy of voids' ? 'gold bright' : 'gold', base: 0.66, minWeight: 0.3, kinds: ['apex', 'apex-weave'] });
 });
 
 ARGS.forEach(a => {
@@ -2385,7 +2617,7 @@ const radarLabels = [
 radarLabels.forEach(([name, i]) => {
   const a = -Math.PI / 2 + i * TAU / 6;
   const p = radarGroup.position.clone().add(new V3(Math.cos(a) * 15.2, Math.sin(a) * 15.2, 0));
-  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.46, minWeight: 0.35, kinds: ['positions'] });
+  addLabel(name, p, 'positions', { cls: 'tiny', base: 0.46, minWeight: 0.35, kinds: ['positions', 'positions-axes'] });
 });
 const positionDomains = ['Quantum', 'Agency', 'Voids', 'Value', 'Moral', 'Subjects', 'Scope', 'AI'];
 positionDomains.forEach((name, i) => {
@@ -2476,10 +2708,26 @@ addLabel('framework-shaped', convergenceGroup.position.clone().add(new V3(32, -3
 addLabel('common-cause null', convergenceGroup.position.clone().add(new V3(0, 62, 0)), 'discipline', { cls: 'bright', base: 0.66, minWeight: 0.3, kinds: ['convergence-discipline'] });
 addLabel('coherence, not proof', convergenceGroup.position.clone().add(new V3(0, -64, 0)), 'discipline', { cls: 'tiny', base: 0.56, minWeight: 0.3, kinds: ['convergence-discipline'] });
 
+addLabel('map', BASIC_STAGE.clone().add(new V3(0, 13.5, 0.5)), 'map', { cls: 'bright', base: 0.62, minWeight: 0.3, kinds: ['map'] });
+addLabel('territory', BASIC_STAGE.clone().add(new V3(0, -14.5, 0.5)), 'map', { cls: 'void', base: 0.52, minWeight: 0.3, kinds: ['map'] });
+addLabel('edge of knowledge', BASIC_STAGE.clone().add(new V3(20, 0, 0.5)), 'map', { cls: 'void tiny', base: 0.5, minWeight: 0.3, kinds: ['map'] });
+
+addLabel('physical process', BASIC_STAGE.clone().add(new V3(-9, 9.5, 0)), 'hardproblem', { cls: 'tiny', base: 0.56, minWeight: 0.3, kinds: ['hardproblem'] });
+addLabel('what it is like', BASIC_STAGE.clone().add(new V3(9, 9.5, 0)), 'hardproblem', { cls: 'gold tiny', base: 0.66, minWeight: 0.3, kinds: ['hardproblem'] });
+addLabel('the hard problem', BASIC_STAGE.clone().add(new V3(0, -10.5, 0)), 'hardproblem', { cls: 'bright', base: 0.62, minWeight: 0.3, kinds: ['hardproblem'] });
+
+addLabel('structure', BASIC_STAGE.clone().add(new V3(-9, 9.5, 0)), 'gap', { cls: 'tiny', base: 0.56, minWeight: 0.3, kinds: ['gap'] });
+addLabel('experience', BASIC_STAGE.clone().add(new V3(9, 9.5, 0)), 'gap', { cls: 'gold tiny', base: 0.66, minWeight: 0.3, kinds: ['gap'] });
+addLabel('explanatory gap', BASIC_STAGE.clone().add(new V3(0, -10.5, 0)), 'gap', { cls: 'bright', base: 0.62, minWeight: 0.3, kinds: ['gap'] });
+
+addLabel('101 / 115', VOID_STAGE.clone().add(new V3(0, 37, 0.5)), 'cap', { cls: 'bright', base: 0.68, minWeight: 0.3, kinds: ['taxonomy-cap'] });
+addLabel('catalogue', VOID_STAGE.clone().add(new V3(0, -37, 0.5)), 'cap', { cls: 'void tiny', base: 0.48, minWeight: 0.3, kinds: ['taxonomy-cap'] });
+addLabel('absorption over proliferation', VOID_STAGE.clone().add(new V3(0, -41, 0.5)), 'cap', { cls: 'void tiny', base: 0.44, minWeight: 0.3, kinds: ['taxonomy-cap'] });
+
 const BASE_WEIGHTS = {
   tenets: 0.14, research: 0.1, concepts: 0.1, topics: 0.1, apex: 0.1, positions: 0.1,
   arguments: 0.06, questions: 0.06, voids: 0.1, method: 0, flow: 0, taxonomy: 0, convergence: 0, growth: 0,
-  voidWhy: 0, territory: 0, signature: 0, ratio: 0, discipline: 0
+  voidWhy: 0, territory: 0, signature: 0, ratio: 0, discipline: 0, map: 0, hardproblem: 0, gap: 0, cap: 0
 };
 function W(overrides) {
   return Object.assign({}, BASE_WEIGHTS, overrides);
@@ -2509,14 +2757,26 @@ const MAIN_SCENES = [
 ];
 
 const SUB_SLIDES = {
+  0: [
+    { kind: 'map', label: 'The map is not the territory.', cam: new V3(0, 20, 118), look: new V3(0, 16, 42), fov: 50, drift: 0.5, weights: W({ map: 1, tenets: 0.15, concepts: 0.08, voids: 0.12 }) },
+    { kind: 'hardproblem', label: 'What is it like to be?', cam: new V3(0, 20, 118), look: new V3(0, 16, 42), fov: 50, drift: 0.45, weights: W({ hardproblem: 1, tenets: 0.18, concepts: 0.08, voids: 0.1 }) },
+    { kind: 'gap', label: 'Experience resists physical description.', cam: new V3(0, 20, 118), look: new V3(0, 16, 42), fov: 50, drift: 0.45, weights: W({ gap: 1, tenets: 0.18, concepts: 0.08, voids: 0.1 }) }
+  ],
   3: [
     { kind: 'flow-constrain', label: 'Tenets constrain every layer.', cam: new V3(0, 25, 118), look: new V3(0, 22, 50), fov: 50, drift: 0.4, weights: W({ flow: 1, tenets: 0.5, concepts: 0.35, topics: 0.35, apex: 0.35, positions: 0.35, arguments: 0.3, voids: 0.3 }), highlight: { pairs: [['tenets', 'concepts'], ['tenets', 'topics'], ['tenets', 'apex'], ['tenets', 'positions'], ['tenets', 'voids']] } }
   ],
+  10: [
+    { kind: 'research-method', label: 'Sources before conclusions.', cam: new V3(0, 20, 118), look: new V3(0, 26, 0), fov: 60, drift: 0.6, weights: W({ research: 1, concepts: 0.4, tenets: 0.2, topics: 0.1, apex: 0.06, voids: 0.1 }), highlight: { pairs: [['research', 'concepts']] } }
+  ],
   11: [
-    { kind: 'concepts-shape', label: 'The vocabulary is tenet-shaped.', cam: new V3(0, 38, 138), look: new V3(0, 32, 0), fov: 60, drift: 0.6, weights: W({ concepts: 1, tenets: 0.55, topics: 0.2, research: 0.1, apex: 0.08 }), highlight: { pairs: [['tenets', 'concepts']] } }
+    { kind: 'concepts-shape' , label: 'The vocabulary is tenet-shaped.', cam: new V3(0, 38, 138), look: new V3(0, 32, 0), fov: 60, drift: 0.6, weights: W({ concepts: 1, tenets: 0.55, topics: 0.2, research: 0.1, apex: 0.08 }), highlight: { pairs: [['tenets', 'concepts']] } }
+  ],
+  13: [
+    { kind: 'apex-weave', label: 'Synthesis is a weave, not a summary.', cam: new V3(0, 96, 55), look: new V3(0, 89, 0), fov: 50, drift: 0.45, weights: W({ apex: 1, topics: 0.5, positions: 0.2, tenets: 0.2 }), highlight: { pairs: [['topics', 'apex']] } }
   ],
   14: [
-    { kind: 'positions-dependency', label: 'Some positions hold up tenets.', cam: new V3(0, 92, 190), look: new V3(0, 55, 0), fov: 62, drift: 0.5, weights: W({ positions: 1, tenets: 0.6, apex: 0.2, topics: 0.08 }), highlight: { nodes: K.dependencyNodes || [], edgeIndices: K.dependencyEdges || [] } }
+    { kind: 'positions-axes', label: 'Six axes, not one score.', cam: new V3(0, 112, 55), look: new V3(0, 109, 10), fov: 45, drift: 0.3, weights: W({ positions: 1, apex: 0.15, tenets: 0.1 }) },
+    { kind: 'positions-dependency' , label: 'Some positions hold up tenets.', cam: new V3(0, 92, 190), look: new V3(0, 55, 0), fov: 62, drift: 0.5, weights: W({ positions: 1, tenets: 0.6, apex: 0.2, topics: 0.08 }), highlight: { nodes: K.dependencyNodes || [], edgeIndices: K.dependencyEdges || [] } }
   ],
   15: [
     { kind: 'arguments-steelman', label: 'Build the rival before the case.', cam: new V3(105, 40, 76), look: new V3(75, 37, 0), fov: 55, drift: 0.5, weights: W({ arguments: 1, concepts: 0.4, tenets: 0.25, topics: 0.06 }), highlight: { nodes: Object.values(K.rivals), pairs: [['arguments', 'concepts']] } }
@@ -2527,7 +2787,8 @@ const SUB_SLIDES = {
   ],
   17: [
     { kind: 'taxonomy-reasons', label: 'Four reasons, one seam.', cam: new V3(0, -6, 116), look: new V3(0, -28, 54), fov: 48, drift: 0.35, weights: W({ taxonomy: 1, voids: 0.32, questions: 0.12, tenets: 0.12 }) },
-    { kind: 'taxonomy-signatures', label: 'Failure has a structure.', cam: new V3(0, -8, 120), look: new V3(0, -28, 54), fov: 52, drift: 0.35, weights: W({ signature: 1, voids: 0.2, taxonomy: 0.05, tenets: 0.1 }) }
+    { kind: 'taxonomy-signatures', label: 'Failure has a structure.', cam: new V3(0, -8, 120), look: new V3(0, -28, 54), fov: 52, drift: 0.35, weights: W({ signature: 1, voids: 0.2, taxonomy: 0.05, tenets: 0.1 }) },
+    { kind: 'taxonomy-cap', label: 'The catalogue is bounded.', cam: new V3(0, -24, 155), look: new V3(0, -28, 54), fov: 56, drift: 0.35, weights: W({ cap: 1, voids: 0.2, taxonomy: 0.08, tenets: 0.1 }) }
   ],
   18: [
     { kind: 'convergence-independent', label: 'The convergence is not proof.', cam: new V3(0, -24, 128), look: new V3(0, -46, 0), fov: 55, drift: 0.4, weights: W({ convergence: 1, ratio: 1, voids: 0.12, tenets: 0.16, concepts: 0.08 }) },
@@ -2917,6 +3178,49 @@ function updateDiscipline(t) {
   if (disciplineRing) disciplineRing.material.opacity = fadeGroups.discipline.weight * (0.2 + 0.2 * (0.5 + 0.5 * Math.sin(t * 0.7)));
 }
 
+function updateBasics(t) {
+  if (mapGroup.visible && mapCoastCurve) {
+    mapSparks.forEach(s => {
+      const f = (s.phase + t * 0.06) % 1;
+      s.mesh.position.copy(mapCoastCurve.getPoint(f)).add(new V3(0, 0, 0.25));
+      s.mesh.scale.setScalar(0.6 + 0.6 * Math.sin(f * Math.PI));
+    });
+  }
+  if (hardProblemGroup.visible) {
+    const physical = hardProblemGroup.userData.physical;
+    if (physical) physical.rotation.y = t * 0.18;
+    if (hardPhysicalCloud) hardPhysicalCloud.rotation.y = -t * 0.12;
+    if (hardExperienceOrb) hardExperienceOrb.scale.setScalar(1 + 0.07 * Math.sin(t * 1.3));
+    const exp = hardProblemGroup.userData.experience;
+    if (exp && exp.userData.cloud) exp.userData.cloud.rotation.y = t * 0.25;
+    const qa = hardProblemGroup.userData.questionArc;
+    if (qa) qa.rotation.z = -Math.PI * 0.72 + Math.sin(t * 0.35) * 0.07;
+  }
+  if (gapGroup.visible) {
+    if (gapLattice) gapLattice.rotation.z = Math.sin(t * 0.12) * 0.03;
+    if (gapWarm) gapWarm.rotation.z = -t * 0.07;
+    if (gapSeam) gapSeam.scale.setScalar(1 + 0.035 * Math.sin(t * 1.6));
+  }
+}
+
+function updateCap(t) {
+  if (!capGroup.visible || !capTickAttr) return;
+  const arr = capTickAttr.array;
+  const base = capTickBase;
+  for (let i = 0; i < capTickLit.length; i++) {
+    const lit = capTickLit[i];
+    const f = lit ? 0.55 + 0.45 * Math.sin(t * 0.9 + capTickPhase[i]) : 0.1;
+    const o = i * 6;
+    arr[o] = base[o] * f;
+    arr[o + 1] = base[o + 1] * f;
+    arr[o + 2] = base[o + 2] * f;
+    arr[o + 3] = base[o + 3] * f;
+    arr[o + 4] = base[o + 4] * f;
+    arr[o + 5] = base[o + 5] * f;
+  }
+  capTickAttr.needsUpdate = true;
+}
+
 function updateLabels() {
   const w = window.innerWidth;
   const h = window.innerHeight;
@@ -2973,7 +3277,7 @@ function setupComposer() {
   try {
     composer = new THREE.EffectComposer(renderer);
     composer.addPass(new THREE.RenderPass(scene, camera));
-    bloom = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.95, 0.72, 0.16);
+    bloom = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.12, 0.78, 0.11);
     composer.addPass(bloom);
     const finalShader = {
       uniforms: { tDiffuse: { value: null }, uTime: { value: 0 } },
@@ -3002,7 +3306,7 @@ function setupComposer() {
         }
         void main() {
           vec3 col = texture2D(tDiffuse, vUv).rgb;
-          col = aces(col * 1.08);
+          col = aces(col * 1.2);
           col = pow(col, vec3(1.0 / 2.2));
           vec2 q = vUv - 0.5;
           float vig = smoothstep(0.92, 0.24, length(q));
@@ -3098,6 +3402,8 @@ function loop(now) {
   updateSignature(time);
   updateRatio(time);
   updateDiscipline(time);
+  updateBasics(time);
+  updateCap(time);
   updateLabels();
   bgMat.uniforms.uTime.value = time;
   starField.material.uniforms.uTime.value = time;
@@ -3109,7 +3415,7 @@ function loop(now) {
     if (m.uniforms && m.uniforms.uTime) m.uniforms.uTime.value = time;
   });
   bloomPulse = damp(bloomPulse, 0, 2.4, dt);
-  if (bloom) bloom.strength = 0.92 + bloomPulse * 0.6;
+  if (bloom) bloom.strength = 1.08 + bloomPulse * 0.65;
   if (finalPass && finalPass.uniforms.uTime) finalPass.uniforms.uTime.value = time;
   if (composer) composer.render(dt);
   else renderer.render(scene, camera);
