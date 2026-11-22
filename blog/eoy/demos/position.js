@@ -354,6 +354,14 @@
     return {
       update: function () {},
       busy: function () { return !!sweep; },
+      speedUp: function () {
+        if (!sweep) return false;
+        var now = performance.now();
+        sweep.from = pos;
+        sweep.start = now;
+        sweep.duration = 140;
+        return true;
+      },
       finish: finishSweep,
       next: next,
       prev: prev,

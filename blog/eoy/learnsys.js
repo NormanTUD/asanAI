@@ -113,6 +113,16 @@
   var root = null;
   var cfg = null;
   var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0, substep: 0, edit: false };
+  var lastNextAt = 0, motionSpeedTimer = 0;
+  function accelerateMotion() {
+    var now = performance.now();
+    if (lastNextAt && now - lastNextAt < 700) {
+      LS.motion.speed = 2.6;
+      clearTimeout(motionSpeedTimer);
+      motionSpeedTimer = setTimeout(function () { LS.motion.speed = 1; motionSpeedTimer = 0; }, 900);
+    }
+    lastNextAt = now;
+  }
   var LOCAL_EDITOR = false;
   var HIDE_EXPAND_ALL = false;
   var stepMemory = {};
@@ -2670,7 +2680,7 @@
       ctx.globalAlpha = 1;
     }
     var t0 = 0;
-    var dur = 180;
+    var dur = (LS.motion && LS.motion.scale) ? LS.motion.scale(180) : 180;
     function frame(now) {
       if (!t0) t0 = now;
       var t = clamp((now - t0) / dur, 0, 1);
@@ -2730,6 +2740,7 @@
   function playTransition(el, frames, opts) {
     if (!el || !el.animate) return null;
     try {
+      if (opts && typeof opts.duration === "number" && LS.motion && LS.motion.scale) opts.duration = LS.motion.scale(opts.duration);
       var anim = el.animate(frames, opts);
       substepAnims.push(anim);
       function forget() {
@@ -2926,11 +2937,13 @@
   function next() {
     navHintDismissed = true;
     renderNavHint();
+    accelerateMotion();
     // Single-entry eoy pages only walk their own substeps; never cross into
     // another step or entry, even if a layout overlay says otherwise.
     if (cfg.eoySingle) {
       var singleNext = activeStep();
       if (demo && typeof demo.busy === "function" && demo.busy()) {
+        if (typeof demo.speedUp === "function") { demo.speedUp(); return; }
         if (typeof demo.finish === "function") demo.finish();
         return;
       }
@@ -2945,6 +2958,7 @@
       return;
     }
     if (!cfg.eoySingle && demo && typeof demo.busy === "function" && demo.busy()) {
+      if (typeof demo.speedUp === "function") { demo.speedUp(); return; }
       if (typeof demo.finish === "function") demo.finish();
       return;
     }
@@ -5499,7 +5513,8 @@
   LS.version = "2.0";
   LS.lang = function () { return LANG; };
   LS.t = t;
-  LS.motion = { step: 180, day: 180, camera: 240, text: 70, enter: 160, exit: 120, stagger: 40, substep: 300, subStagger: 24, scene: 280 };
+  LS.motion = { step: 180, day: 180, camera: 240, text: 70, enter: 160, exit: 120, stagger: 40, substep: 300, subStagger: 24, scene: 280, speed: 1 };
+  LS.motion.scale = function (ms) { return Math.max(40, ms / (LS.motion.speed || 1)); };
   function smoothstep(a, b, x) {
     var t = clamp((x - a) / (b - a), 0, 1);
     return t * t * (3 - 2 * t);

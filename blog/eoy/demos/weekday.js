@@ -152,6 +152,7 @@
 
     function complete() {
       stopRaf();
+      fast = false;
       if (fallback) { clearTimeout(fallback); fallback = 0; }
       morph = targetMorph;
       transitioning = false;
@@ -160,20 +161,25 @@
       draw();
     }
 
+    var fastFrom = 0, fastT0 = 0, fast = false;
     function startTransition(to) {
       stopRaf();
       if (fallback) { clearTimeout(fallback); fallback = 0; }
       var from = morph;
       targetMorph = to;
       transitioning = true;
+      fast = false;
       phase = to === 1 ? "rolling" : "unrolling";
       var t0 = performance.now();
-      var duration = 1600;
+      var duration = (api.motion && api.motion.scale) ? api.motion.scale(1600) : 1600;
       function tick(now) {
         if (!transitioning) return;
-        var p = (now - t0) / duration;
+        var p;
+        if (fast) p = (now - fastT0) / 120;
+        else p = (now - t0) / duration;
         if (p < 1) {
-          morph = from + (to - from) * core.ease(Math.max(0, p));
+          var start = fast ? fastFrom : from;
+          morph = start + (to - start) * core.ease(Math.max(0, p));
           draw();
           raf = requestAnimationFrame(tick);
         } else {
@@ -189,10 +195,21 @@
       complete();
       return true;
     }
+    // Rapid Next: keep the rolling/unrolling visible, but finish the rest of
+    // the transition in ~120 ms instead of skipping it.
+    function speedUp() {
+      if (!transitioning) return false;
+      if (!fast) {
+        fast = true;
+        fastFrom = morph;
+        fastT0 = performance.now();
+      }
+      return true;
+    }
 
     function next() {
       if (api.reducedMotion) return false;
-      if (transitioning) { finish(); return true; }
+      if (transitioning) { speedUp(); return true; }
       if (phase === "line" && !shown) { startTransition(1); return true; }
       if (phase === "circle") { startTransition(0); return true; }
       return false;
@@ -225,6 +242,7 @@
       },
       hasPrev: function () { return false; },
       busy: function () { return transitioning; },
+      speedUp: speedUp,
       finish: finish,
       pause: pause,
       resume: resume,

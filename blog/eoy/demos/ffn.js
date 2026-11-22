@@ -331,7 +331,7 @@
     }
     function animateBend(target) {
       if (bendRaf) cancelAnimationFrame(bendRaf);
-      var from = bend, t0 = performance.now(), dur = 620;
+      var from = bend, t0 = performance.now(), dur = (api.motion && api.motion.scale) ? api.motion.scale(620) : 620;
       function frame(now) {
         var t = Math.max(0, Math.min(1, (now - t0) / dur));
         var e = 1 - Math.pow(1 - t, 3);

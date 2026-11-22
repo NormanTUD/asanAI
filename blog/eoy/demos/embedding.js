@@ -987,7 +987,7 @@
     function animateDimTo(target) {
       target = clamp(target, 0, 2);
       if (target === dimTarget && !dimAnim) return;
-      dimAnim = { from: dimMix, to: target, elapsed: 0, last: 0, duration: 1400 };
+      dimAnim = { from: dimMix, to: target, elapsed: 0, last: 0, duration: (api.motion && api.motion.scale) ? api.motion.scale(1400) : 1400 };
       dimTarget = target;
       ensureLoop();
     }

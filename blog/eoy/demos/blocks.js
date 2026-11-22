@@ -676,7 +676,7 @@
         if (raf) cancelAnimationFrame(raf);
         if (state.step === to) { updateReadout(); return; }
         state.from = state.step; state.to = to; state.t = 0;
-        var t0 = performance.now(), dur = 700;
+        var t0 = performance.now(), dur = (api.motion && api.motion.scale) ? api.motion.scale(700) : 700;
         function frame(now) {
           var t = Math.max(0, Math.min(1, (now - t0) / dur));
           state.t = 1 - Math.pow(1 - t, 3);

@@ -407,7 +407,7 @@
       }
       if (landCamTween) cancelAnimationFrame(landCamTween);
       var startP = landPitch, startY = landYaw, startZ = landZoom, start = performance.now();
-      var dur = (api.motion && api.motion.camera) || 280;
+      var dur = (api.motion && api.motion.scale) ? api.motion.scale((api.motion && api.motion.camera) || 280) : ((api.motion && api.motion.camera) || 280);
       function step(now) {
         var t = Math.min(1, (now - start) / dur);
         var e = t * t * (3 - 2 * t);

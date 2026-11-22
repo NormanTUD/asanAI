@@ -428,8 +428,9 @@
       if (animRaf) cancelAnimationFrame(animRaf);
       var old = animRow && animRow.length === target.length ? animRow.slice() : target.slice();
       animFrom = old; animTo = target.slice(); animStart = performance.now(); animRow = old;
+      var rowDur = (api.motion && api.motion.scale) ? api.motion.scale(320) : 320;
       function frame(now) {
-        var t = Math.min(1, (now - animStart) / 320);
+        var t = Math.min(1, (now - animStart) / rowDur);
         var e = 1 - Math.pow(1 - t, 3);
         animRow = animTo.map(function (v, j) { return animFrom[j] + (v - animFrom[j]) * e; });
         drawGraph(); drawVector();
