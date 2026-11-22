@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Unfinishable Map — A Visual Journey</title>
+<style>
+:root {
+  --ink: #f4f1e8;
+  --ink-dim: rgba(244, 241, 232, 0.55);
+  --ink-faint: rgba(244, 241, 232, 0.28);
+  --line: rgba(185, 205, 255, 0.18);
+  --glow: rgba(140, 180, 255, 0.45);
+  --sky: #7dd3fc;
+  --violet: #a78bfa;
+  --rose: #f472b6;
+  --amber: #fbbf24;
+  --emerald: #34d399;
+  --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #03040a;
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body { position: fixed; inset: 0; }
+canvas#stage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+.labels {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+.node-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate3d(-50%, -50%, 0);
+  color: rgba(223, 232, 255, 0.72);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  text-shadow: 0 0 12px rgba(90, 140, 255, 0.55), 0 0 2px rgba(0, 0, 0, 0.9);
+  will-change: transform, opacity;
+  transition: opacity 0.35s linear;
+}
+.node-label.bright { color: rgba(245, 248, 255, 0.9); font-size: 10px; letter-spacing: 0.14em; }
+.node-label.gold { color: rgba(255, 236, 186, 0.86); }
+.node-label.void { color: rgba(154, 142, 255, 0.62); }
+.node-label.tiny { font-size: 8px; letter-spacing: 0.12em; opacity: 0.8; }
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background:
+    radial-gradient(130% 105% at 50% 44%, rgba(0,0,0,0) 38%, rgba(0,0,0,0.34) 72%, rgba(0,0,0,0.72) 100%),
+    linear-gradient(90deg, rgba(1,2,7,0.72) 0%, rgba(1,2,7,0.12) 24%, rgba(1,2,7,0) 50%);
+}
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+.chrome {
+  position: fixed;
+  top: max(22px, env(safe-area-inset-top));
+  left: max(30px, env(safe-area-inset-left));
+  right: max(30px, env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 8;
+  pointer-events: none;
+}
+.brand {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.chrome-tools {
+  display: flex;
+  gap: 14px;
+  pointer-events: auto;
+}
+.icon-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  line-height: 0;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+.icon-btn:hover, .icon-btn:focus-visible { color: var(--ink); transform: translateY(-1px); outline: none; }
+.icon-btn svg { width: 15px; height: 15px; display: block; }
+.rail {
+  position: fixed;
+  left: max(30px, env(safe-area-inset-left));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  z-index: 7;
+}
+.tick {
+  width: 9px;
+  height: 1px;
+  background: rgba(180, 200, 255, 0.2);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.5s ease, box-shadow 0.5s ease;
+  pointer-events: auto;
+}
+.tick:hover { background: rgba(220, 235, 255, 0.55); }
+.tick.active {
+  width: 28px;
+  background: rgba(240, 246, 255, 0.95);
+  box-shadow: 0 0 14px rgba(150, 190, 255, 0.8);
+}
+.caption-wrap {
+  position: fixed;
+  left: max(76px, calc(env(safe-area-inset-left) + 76px));
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(460px, 36vw);
+  z-index: 6;
+  pointer-events: none;
+}
+.caption-index {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: rgba(170, 195, 255, 0.5);
+  margin-bottom: 15px;
+  transition: opacity 0.45s ease;
+}
+.captions { position: relative; min-height: 2.4em; }
+.caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(23px, 2.55vw, 42px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+  text-shadow: 0 0 34px rgba(120, 165, 255, 0.25), 0 1px 22px rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(7px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.caption.in { opacity: 1; transform: translateY(0); filter: blur(0); }
+.caption.out { opacity: 0; transform: translateY(-16px); filter: blur(7px); }
+.counter {
+  position: fixed;
+  left: max(30px, env(safe-area-inset-left));
+  bottom: max(26px, env(safe-area-inset-bottom));
+  z-index: 7;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+}
+.source {
+  position: fixed;
+  right: max(30px, env(safe-area-inset-right));
+  bottom: max(26px, env(safe-area-inset-bottom));
+  z-index: 8;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+.source a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(180, 200, 255, 0.18); padding-bottom: 2px; transition: color 0.25s ease, border-color 0.25s ease; }
+.source a:hover { color: var(--ink-dim); border-color: rgba(220, 235, 255, 0.5); }
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: max(30px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 8;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(190, 210, 255, 0.45);
+  opacity: 1;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+.hint.gone { opacity: 0; }
+.help {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 3, 9, 0.62);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.help.open { opacity: 1; pointer-events: auto; }
+.help-card {
+  width: min(480px, calc(100vw - 48px));
+  border: 1px solid rgba(175, 200, 255, 0.16);
+  background: linear-gradient(160deg, rgba(14, 19, 38, 0.82), rgba(5, 7, 16, 0.9));
+  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(200, 220, 255, 0.08);
+  padding: 30px 32px 26px;
+  border-radius: 3px;
+}
+.help-title {
+  font-family: var(--serif);
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.help-sub {
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ink-dim);
+  margin-bottom: 24px;
+  max-width: 42ch;
+}
+.help-grid {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 10px 16px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  border-top: 1px solid rgba(175, 200, 255, 0.12);
+  padding-top: 18px;
+}
+.help-grid span:nth-child(odd) {
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  color: rgba(210, 225, 255, 0.75);
+}
+.help-foot {
+  margin-top: 24px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: #03040a;
+  transition: opacity 1.4s ease, visibility 1.4s ease;
+}
+.loader.done { opacity: 0; visibility: hidden; }
+.loader-inner {
+  text-align: center;
+}
+.loader-mark {
+  font-family: var(--serif);
+  font-size: 21px;
+  color: rgba(240, 244, 255, 0.8);
+  letter-spacing: 0.01em;
+  animation: breathe 3.2s ease-in-out infinite;
+}
+.loader-sub {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(150, 175, 230, 0.4);
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; filter: blur(0.4px); }
+  50% { opacity: 1; filter: blur(0); }
+}
+@media (max-width: 760px) {
+  .chrome { top: max(16px, env(safe-area-inset-top)); left: 20px; right: 20px; }
+  .brand { font-size: 8px; letter-spacing: 0.25em; }
+  .rail {
+    left: 50%;
+    top: auto;
+    bottom: max(78px, calc(env(safe-area-inset-bottom) + 78px));
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 6px;
+    align-items: center;
+  }
+  .tick { width: 5px; height: 1px; }
+  .tick.active { width: 16px; }
+  .caption-wrap {
+    left: 22px;
+    right: 22px;
+    top: auto;
+    bottom: max(100px, calc(env(safe-area-inset-bottom) + 100px));
+    transform: none;
+    width: auto;
+  }
+  .caption { position: relative; font-size: clamp(23px, 7vw, 33px); line-height: 1.1; }
+  .caption.out { position: absolute; transform: translateY(-12px); }
+  .caption-index { font-size: 9px; margin-bottom: 10px; }
+  .counter { display: none; }
+  .source { right: 20px; bottom: max(18px, env(safe-area-inset-bottom)); font-size: 8px; }
+  .hint { bottom: max(18px, env(safe-area-inset-bottom)); font-size: 8px; }
+  .vignette { background: radial-gradient(140% 110% at 50% 40%, rgba(0,0,0,0) 32%, rgba(0,0,0,0.42) 76%, rgba(0,0,0,0.8) 100%); }
+  .node-label { font-size: 8px; letter-spacing: 0.12em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .caption, .tick, .hint, .help { transition-duration: 0.15s; }
+  .loader-mark { animation: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="stage" aria-label="A three-dimensional interactive map of the Unfinishable Map philosophical framework"></canvas>
+<div class="labels" id="labelLayer"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <div class="loader-mark">The Unfinishable Map</div>
+    <div class="loader-sub">A visual journey</div>
+  </div>
+</div>
+
+<header class="chrome">
+  <div class="brand">The Unfinishable Map</div>
+  <div class="chrome-tools">
+    <button class="icon-btn" id="helpBtn" aria-label="Open help" title="Help (H)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.6 2.6 0 1 1 3.4 2.5c-.7.3-1 .8-1 1.6v.4"/><circle cx="12" cy="17.1" r=".8" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <button class="icon-btn" id="fsBtn" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="rail" id="rail" aria-label="Scene progress"></div>
+
+<div class="caption-wrap">
+  <div class="caption-index" id="captionIndex">01</div>
+  <div class="captions" id="captions">
+    <div class="caption" id="capA"></div>
+    <div class="caption" id="capB"></div>
+  </div>
+</div>
+
+<div class="counter" id="counter">01 / 20</div>
+<div class="source"><a href="https://unfinishablemap.org/" target="_blank" rel="noopener">unfinishablemap.org</a></div>
+<div class="hint" id="hint">press &rarr; to begin</div>
+
+<div class="help" id="help" aria-hidden="true">
+  <div class="help-card">
+    <div class="help-title">The Unfinishable Map</div>
+    <div class="help-sub">A visual journey through consciousness, its limits, and the ideas that can never be finished. Move through the map with the arrow keys. Everything is one connected structure.</div>
+    <div class="help-grid">
+      <span>&larr; &rarr;</span><span>Move through the map</span>
+      <span>Space</span><span>Next scene</span>
+      <span>H</span><span>Show or hide this help</span>
+      <span>L</span><span>Toggle in-world labels</span>
+      <span>F</span><span>Fullscreen</span>
+      <span>R</span><span>Restart from the beginning</span>
+    </div>
+    <div class="help-foot">Content after unfinishablemap.org · Andy Southgate</div>
+  </div>
+</div>
+
+<script src="../../../libs/three.min.js"></script>
+<script src="../../../libs/CopyShader.js"></script>
+<script src="../../../libs/LuminosityHighPassShader.js"></script>
+<script src="../../../libs/EffectComposer.js"></script>
+<script src="../../../libs/RenderPass.js"></script>
+<script src="../../../libs/ShaderPass.js"></script>
+<script src="../../../libs/UnrealBloomPass.js"></script>
+<script>
+(() => {
+'use strict';
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, x) => {
+  const t = clamp((x - a) / (b - a), 0, 1);
+  return t * t * (3 - 2 * t);
+};
+const ease = t => t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+const damp = (a, b, lambda, dt) => lerp(a, b, 1 - Math.exp(-lambda * dt));
+const V3 = THREE.Vector3;
+const TAU = Math.PI * 2;
+
+function makeRng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rnd = makeRng(0x5eedcafe);
+const rr = (a, b) => a + (b - a) * rnd();
+const pick = arr => arr[Math.floor(rnd() * arr.length)];
+
+function colorOf(hex) {
+  return new THREE.Color(hex);
+}
+function toArray(c) {
+  return [c.r, c.g, c.b];
+}
+function mixColor(a, b, t) {
+  return a.clone().lerp(b, t);
+}
+
+const stage = document.getElementById('stage');
+const labelLayer = document.getElementById('labelLayer');
+const railEl = document.getElementById('rail');
+const capA = document.getElementById('capA');
+const capB = document.getElementById('capB');
+const capIndex = document.getElementById('captionIndex');
+const counterEl = document.getElementById('counter');
+const hintEl = document.getElementById('hint');
+const loaderEl = document.getElementById('loader');
+const helpEl = document.getElementById('help');
+
+let renderer, scene, camera, composer, bloom, finalPass;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas: stage, antialias: false, powerPreference: 'high-performance' });
+} catch (err) {
+  document.body.innerHTML = '<div style="color:#e8eefc;font:16px/1.6 Georgia,serif;display:grid;place-items:center;height:100%;padding:40px;text-align:center">This visual needs WebGL. Please open it in a current browser with hardware acceleration enabled.</div>';
+  throw err;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.setClearColor(0x03040a, 1);
+
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 1600);
+scene.add(camera);
+scene.add(new THREE.AmbientLight(0x4a5f9a, 1.2));
+const keyLight = new THREE.PointLight(0xbfd4ff, 2.0, 500, 2);
+keyLight.position.set(40, 90, 120);
+scene.add(keyLight);
+const rimLight = new THREE.PointLight(0x8a6cff, 1.4, 500, 2);
+rimLight.position.set(-90, -20, -80);
+scene.add(rimLight);
+
+const pixelMats = [];
+const fadeGroups = {};
+
+const REGION_LIST = ['tenets', 'research', 'concepts', 'topics', 'apex', 'positions', 'arguments', 'questions', 'voids', 'method', 'flow', 'taxonomy', 'convergence', 'growth'];
+const regionWeights = {};
+const regionTargets = {};
+REGION_LIST.forEach(r => { regionWeights[r] = 0; regionTargets[r] = 0; });
+
+const PALETTE = {
+  sky: 0x7dd3fc,
+  violet: 0xa78bfa,
+  rose: 0xf472b6,
+  amber: 0xfbbf24,
+  emerald: 0x34d399,
+  ice: 0x67e8f9,
+  coral: 0xfb7185,
+  white: 0xf4f1e8,
+  blue: 0x9fb4d8,
+  void: 0x6d5dfc,
+  gold: 0xffe6a3
+};
+
+function background() {
+  const mat = new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    depthWrite: false,
+    depthTest: false,
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      varying vec3 vDir;
+      void main() {
+        vDir = normalize(position);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      varying vec3 vDir;
+      uniform float uTime;
+      float hash(vec3 p) {
+        p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
+        p *= 17.0;
+        return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+      }
+      float noise(vec3 x) {
+        vec3 i = floor(x);
+        vec3 f = fract(x);
+        f = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),
+              mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+          mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
+              mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
+      }
+      void main() {
+        vec3 d = normalize(vDir);
+        float n1 = noise(d * 2.1 + vec3(0.0, 0.0, uTime * 0.004));
+        float n2 = noise(d * 5.2 + vec3(3.1, 1.7, -uTime * 0.003));
+        float n3 = noise(d * 3.4 + vec3(-7.0, 2.0, 1.0));
+        vec3 col = vec3(0.006, 0.008, 0.018);
+        col += vec3(0.012, 0.021, 0.062) * smoothstep(0.42, 0.92, n1) * 0.9;
+        col += vec3(0.030, 0.009, 0.052) * smoothstep(0.52, 1.0, n2) * 0.42;
+        col += vec3(0.000, 0.030, 0.040) * smoothstep(0.5, 0.92, n3) * 0.38;
+        float horizon = 0.5 + 0.5 * d.y;
+        col *= mix(0.55, 1.18, horizon);
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `
+  });
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(700, 48, 32), mat);
+  mesh.frustumCulled = false;
+  mesh.renderOrder = -10;
+  scene.add(mesh);
+  return mat;
+}
+const bgMat = background();
+
+function makePointsShader(star, tint) {
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uPixelRatio: { value: renderer.getPixelRatio() },
+      uTint: { value: colorOf(tint) }
+    },
+    vertexShader: `
+      attribute float aSize;
+      attribute float aPhase;
+      attribute vec3 aColor;
+      attribute float aOp;
+      uniform float uTime;
+      uniform float uPixelRatio;
+      varying vec3 vColor;
+      varying float vOp;
+      varying float vPhase;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = clamp(aSize * uPixelRatio * (280.0 / max(1.0, -mv.z)), 0.6, 72.0);
+        gl_Position = projectionMatrix * mv;
+        vColor = aColor;
+        vOp = aOp;
+        vPhase = aPhase;
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      uniform float uTime;
+      varying vec3 vColor;
+      varying float vOp;
+      varying float vPhase;
+      void main() {
+        vec2 p = gl_PointCoord - 0.5;
+        float d = length(p);
+        float core = smoothstep(0.18, 0.0, d);
+        float halo = exp(-d * 6.5) * 0.5;
+        float rim = smoothstep(0.5, 0.34, d) * 0.18;
+        float twinkle = 0.72 + 0.28 * sin(uTime * ${star ? '1.7' : '1.1'} + vPhase * 6.283);
+        float a = (core + halo + rim) * vOp * twinkle;
+        if (a < 0.003) discard;
+        vec3 col = vColor * (1.0 + core * 0.9);
+        gl_FragColor = vec4(col, a);
+      }
+    `,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    depthTest: true
+  });
+  pixelMats.push(mat);
+  return mat;
+}
+
+function buildStars() {
+  const isSmall = window.innerWidth < 760;
+  const count = isSmall ? 2200 : 3800;
+  const pos = new Float32Array(count * 3);
+  const col = new Float32Array(count * 3);
+  const size = new Float32Array(count);
+  const phase = new Float32Array(count);
+  const op = new Float32Array(count);
+  const tints = [0xdfe9ff, 0xa9c4ff, 0xfff1c9, 0x9fe8ff, 0xffffff];
+  for (let i = 0; i < count; i++) {
+    const u = rr(-1, 1);
+    const th = rnd() * TAU;
+    const r = rr(230, 560);
+    const s = Math.sqrt(1 - u * u);
+    pos[i * 3] = Math.cos(th) * s * r;
+    pos[i * 3 + 1] = u * r;
+    pos[i * 3 + 2] = Math.sin(th) * s * r;
+    const c = colorOf(pick(tints));
+    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    size[i] = rr(0.7, 2.9);
+    phase[i] = rnd() * 6.283;
+    op[i] = rr(0.35, 1.0);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aColor', new THREE.Float32BufferAttribute(col, 3));
+  geo.setAttribute('aSize', new THREE.Float32BufferAttribute(size, 1));
+  geo.setAttribute('aPhase', new THREE.Float32BufferAttribute(phase, 1));
+  geo.setAttribute('aOp', new THREE.Float32BufferAttribute(op, 1));
+  const pts = new THREE.Points(geo, makePointsShader(true, 0xffffff));
+  pts.frustumCulled = false;
+  pts.renderOrder = 0;
+  scene.add(pts);
+  return pts;
+}
+const starField = buildStars();
+
+function buildDust() {
+  const count = window.innerWidth < 760 ? 360 : 720;
+  const pos = new Float32Array(count * 3);
+  const col = new Float32Array(count * 3);
+  const size = new Float32Array(count);
+  const phase = new Float32Array(count);
+  const op = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    const a = rnd() * TAU;
+    const r = rr(10, 130);
+    pos[i * 3] = Math.cos(a) * r;
+    pos[i * 3 + 1] = rr(-70, 140);
+    pos[i * 3 + 2] = Math.sin(a) * r;
+    const c = colorOf(pick([0x7dd3fc, 0xa78bfa, 0xf4f1e8, 0x67e8f9]));
+    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    size[i] = rr(0.5, 1.8);
+    phase[i] = rnd() * 6.283;
+    op[i] = rr(0.06, 0.28);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aColor', new THREE.Float32BufferAttribute(col, 3));
+  geo.setAttribute('aSize', new THREE.Float32BufferAttribute(size, 1));
+  geo.setAttribute('aPhase', new THREE.Float32BufferAttribute(phase, 1));
+  geo.setAttribute('aOp', new THREE.Float32BufferAttribute(op, 1));
+  const pts = new THREE.Points(geo, makePointsShader(false, 0xffffff));
+  pts.frustumCulled = false;
+  pts.renderOrder = 1;
+  scene.add(pts);
+  return pts;
+}
+const dustField = buildDust();
+
+const nodes = [];
+const edges = [];
+const K = {
+  tenets: [],
+  clusters: {},
+  concepts: {},
+  hubs: {},
+  apex: {},
+  voids: [],
+  voidHero: {},
+  args: {},
+  rivals: {},
+  questions: {},
+  research: []
+};
+
+function addNode(pos, hex, size, region, base = 1) {
+  const n = {
+    p: pos.clone(),
+    c: colorOf(hex),
+    s: size,
+    region,
+    base,
+    phase: rnd() * 6.283
+  };
+  nodes.push(n);
+  return nodes.length - 1;
+}
+function addEdge(a, b, ca, cb, ra, rb, base = 0.3, opts = {}) {
+  edges.push({
+    a: a.clone(),
+    b: b.clone(),
+    ca: colorOf(ca),
+    cb: colorOf(cb),
+    ra, rb,
+    base,
+    dash: !!opts.dash,
+    bow: opts.bow || 0,
+    seg: opts.seg || (opts.bow ? 9 : 5)
+  });
+  return edges.length - 1;
+}
+
+const TENETS = [
+  { key: 'dualism', name: 'Dualism', color: PALETTE.sky, pos: new V3(-59, 0, 16) },
+  { key: 'quantum', name: 'Minimal quantum', color: PALETTE.violet, pos: new V3(-31, 0, 4.5) },
+  { key: 'bidirectional', name: 'Bidirectional', color: PALETTE.rose, pos: new V3(0, 0, 0) },
+  { key: 'manyworlds', name: 'No many worlds', color: PALETTE.amber, pos: new V3(31, 0, 4.5) },
+  { key: 'occam', name: "Occam's limits", color: PALETTE.emerald, pos: new V3(59, 0, 16) }
+];
+
+TENETS.forEach(t => {
+  const top = t.pos.clone().add(new V3(0, 27, 0));
+  addNode(top, t.color, 3.0, 'tenets', 0.95);
+  K.tenets.push(top);
+});
+
+function buildResearch() {
+  const tints = [0x9fb4d8, 0xcfe0ff, 0x7dd3fc, 0xa78bfa, 0xf4f1e8];
+  for (let i = 0; i < 270; i++) {
+    const arm = i % 4;
+    const a = (i / 270) * Math.PI * 7.2 + arm * Math.PI * 0.5 + rr(-0.35, 0.35);
+    const r = 18 + 46 * Math.pow(rnd(), 0.68);
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * r * 0.74;
+    const y = 16 + rnd() * 18 + Math.sin(a * 2.1) * 2.2;
+    const idx = addNode(new V3(x, y, z), pick(tints), rr(0.65, 2.0), 'research', rr(0.35, 0.7));
+    if (i % 42 === 0) K.research.push(nodes[idx].p);
+  }
+  for (let i = 0; i < 22; i++) {
+    const a = rnd() * TAU;
+    const r = rr(28, 70);
+    const p = new V3(Math.cos(a) * r, rr(18, 34), Math.sin(a) * r * 0.75);
+    const idx = addNode(p, 0xe6efff, rr(1.4, 2.6), 'research', 0.8);
+    K.research.push(nodes[idx].p);
+    if (i % 4 === 0) {
+      const above = new V3(p.x * 0.9, rr(42, 52), p.z * 0.9);
+      addEdge(p, above, 0x9fb4d8, PALETTE.sky, 'research', 'concepts', 0.15, { bow: 0.18 });
+    }
+  }
+}
+buildResearch();
+
+const CLUSTERS = [
+  {
+    key: 'dualism', name: 'Dualism & interaction', color: PALETTE.sky,
+    center: new V3(0, 46, 37),
+    names: ['Dualism', 'Interactionist dualism', 'Explanatory gap', 'Qualia', 'Knowledge argument', 'Philosophical zombies', 'Epiphenomenalism', 'Panpsychism', 'Causal closure', 'Substance & property', 'Mind–matter interface', 'Idealism']
+  },
+  {
+    key: 'quantum', name: 'Quantum interface', color: PALETTE.violet,
+    center: new V3(37, 46, 11),
+    names: ['Measurement problem', 'Decoherence', 'Post-decoherence selection', 'Born rule', 'Objective collapse', 'Quantum Zeno', 'Orch OR', 'QBism', 'Relational QM', 'Locality', 'Indeterminacy', 'Interface formalism']
+  },
+  {
+    key: 'agency', name: 'Agency & will', color: PALETTE.rose,
+    center: new V3(23, 46, -29),
+    names: ['Agent causation', 'Free will', 'Libet experiments', 'Volition', 'Moral responsibility', 'Reasons-responsiveness', 'Control theory', 'Luck objection', 'Compatibilism', 'Sourcehood', 'Attention', 'Selection']
+  },
+  {
+    key: 'phenom', name: 'Phenomenal consciousness', color: PALETTE.amber,
+    center: new V3(-23, 46, -29),
+    names: ['Phenomenal consciousness', 'Hard problem', 'Access consciousness', 'Qualia', 'Acquaintance', 'Intentionality', 'Binding', 'Mine-ness', 'Valence', 'Self', 'Temporal consciousness', 'Meta-problem']
+  },
+  {
+    key: 'reframe', name: 'Under dualism', color: PALETTE.emerald,
+    center: new V3(-37, 46, 11),
+    names: ['Evolution', 'Physics', 'Language', 'Mathematics', 'Ethics', 'Meaning', 'Death', 'Other minds', 'Memory', 'Perception', 'Emotion', 'Aesthetics']
+  }
+];
+
+function buildConcepts() {
+  CLUSTERS.forEach((cl, ci) => {
+    K.clusters[cl.key] = cl.center;
+    const hubIdx = addNode(cl.center, cl.color, 3.4, 'concepts', 0.9);
+    cl.names.forEach((name, i) => {
+      const a = (i / cl.names.length) * TAU + ci * 0.4;
+      const ring = 6.5 + (i % 3) * 3.1;
+      const p = cl.center.clone().add(new V3(
+        Math.cos(a) * ring + rr(-1.4, 1.4),
+        rr(-5.5, 6.5),
+        Math.sin(a) * ring + rr(-1.4, 1.4)
+      ));
+      const idx = addNode(p, mixColor(colorOf(cl.color), colorOf(0xffffff), rnd() * 0.35), rr(0.8, 1.8), 'concepts', rr(0.7, 1));
+      K.concepts[cl.key + '|' + name] = nodes[idx].p;
+      if (i < 10) {
+        addEdge(nodes[hubIdx].p, p, cl.color, cl.color, 'concepts', 'concepts', 0.18);
+      }
+      if (i > 0) {
+        const prev = K.concepts[cl.key + '|' + cl.names[i - 1]];
+        addEdge(prev, p, cl.color, cl.color, 'concepts', 'concepts', 0.1);
+      }
+    });
+    for (let i = 0; i < 17; i++) {
+      const a = rnd() * TAU;
+      const r = rr(2, 15);
+      const p = cl.center.clone().add(new V3(Math.cos(a) * r, rr(-7, 8), Math.sin(a) * r));
+      addNode(p, mixColor(colorOf(cl.color), colorOf(0x9fb4d8), rnd() * 0.5), rr(0.5, 1.1), 'concepts', rr(0.25, 0.6));
+    }
+  });
+  for (let i = 0; i < CLUSTERS.length; i++) {
+    const a = CLUSTERS[i];
+    const b = CLUSTERS[(i + 1) % CLUSTERS.length];
+    addEdge(a.center, b.center, a.color, b.color, 'concepts', 'concepts', 0.09, { bow: 0.18, seg: 10 });
+  }
+  addEdge(K.clusters.dualism, K.clusters.quantum, PALETTE.sky, PALETTE.violet, 'concepts', 'concepts', 0.16, { bow: 0.2 });
+  addEdge(K.clusters.phenom, K.clusters.agency, PALETTE.amber, PALETTE.rose, 'concepts', 'concepts', 0.16, { bow: 0.2 });
+  addEdge(K.clusters.reframe, K.clusters.dualism, PALETTE.emerald, PALETTE.sky, 'concepts', 'concepts', 0.12, { bow: 0.2 });
+}
+buildConcepts();
+
+const HUBS = [
+  { key: 'agency', name: 'Agency', color: PALETTE.rose, center: new V3(25, 69, -25), names: ['Consciousness & agency', 'Free will', 'Temporal consciousness', 'Moral responsibility', 'Attention & interface'] },
+  { key: 'quantum', name: 'Quantum interface', color: PALETTE.violet, center: new V3(39, 71, 12), names: ['Interface specification', 'Born rule', 'Post-decoherence', 'Quantum biology', 'Timing constraints'] },
+  { key: 'machine', name: 'Machine question', color: PALETTE.ice, center: new V3(0, 73, 43), names: ['Machine question', 'AI consciousness', 'Mind uploading', 'Moral status', 'Machine minds'] },
+  { key: 'found', name: 'Foundations', color: PALETTE.sky, center: new V3(-39, 71, 12), names: ['What consciousness tells physics', 'Hard problem', 'Interaction problem', 'Convergence argument', 'Dualism cartography'] },
+  { key: 'meaning', name: 'Meaning', color: PALETTE.emerald, center: new V3(-25, 69, -25), names: ['Living with the map', 'Meaning of life', 'Death & consciousness', 'Ethics under dualism', 'Buddhist meaning'] }
+];
+
+function buildTopics() {
+  HUBS.forEach((hub, hi) => {
+    const hubIdx = addNode(hub.center, hub.color, 3.8, 'topics', 0.95);
+    K.hubs[hub.key] = hub.center;
+    const root = CLUSTERS[(hi + 1) % CLUSTERS.length].center.clone().add(new V3(0, 9, 0));
+    const lift = new V3(
+      (root.x + hub.center.x) * 0.5 + Math.cos(hi * 1.7) * 15,
+      58,
+      (root.z + hub.center.z) * 0.5 + Math.sin(hi * 1.7) * 15
+    );
+    const curve = new THREE.CatmullRomCurve3([root, lift, hub.center.clone().add(new V3(0, -5, 0))]);
+    for (let i = 0; i < 8; i++) {
+      const t = i / 8;
+      const p = curve.getPoint(t).add(new V3(rr(-2.4, 2.4), rr(-1.4, 1.4), rr(-2.4, 2.4)));
+      const idx = addNode(p, mixColor(colorOf(hub.color), colorOf(0xffffff), rnd() * 0.3), rr(0.75, 1.7), 'topics', rr(0.5, 0.9));
+      if (i < hub.names.length) {
+        K.concepts['topic|' + hub.names[i]] = p;
+      }
+      if (i > 0) {
+        addEdge(nodes[idx - 1].p, p, hub.color, hub.color, 'topics', 'topics', 0.2);
+      }
+    }
+    addEdge(K.concepts['conceptroot|' + hub.key] || root, hub.center, hub.color, hub.color, 'concepts', 'topics', 0.12, { bow: 0.18 });
+    addEdge(hub.center, K.clusters[HUBS[(hi + 1) % HUBS.length].key], hub.color, hub.color, 'topics', 'topics', 0.08, { bow: 0.3, seg: 12 });
+  });
+  addEdge(K.hubs.agency, K.hubs.quantum, PALETTE.rose, PALETTE.violet, 'topics', 'topics', 0.14, { bow: 0.25 });
+  addEdge(K.hubs.machine, K.hubs.found, PALETTE.ice, PALETTE.sky, 'topics', 'topics', 0.14, { bow: 0.25 });
+  addEdge(K.hubs.meaning, K.hubs.agency, PALETTE.emerald, PALETTE.rose, 'topics', 'topics', 0.12, { bow: 0.25 });
+}
+buildTopics();
+
+const APEX = [
+  { name: 'Taxonomy of voids', pos: new V3(0, 90, 0), size: 5.2 },
+  { name: 'Machine question', pos: new V3(-20, 89, 17), size: 4.2 },
+  { name: 'Post-decoherence', pos: new V3(20, 89, 17), size: 3.8 },
+  { name: 'Born-preserving efficacy', pos: new V3(25, 88, -12), size: 3.4 },
+  { name: 'Attention as bridge', pos: new V3(0, 91, -25), size: 3.4 },
+  { name: 'Consciousness & agency', pos: new V3(-25, 88, -12), size: 3.4 },
+  { name: 'Interface specification', pos: new V3(11, 86, 25), size: 3.1 },
+  { name: 'What consciousness tells physics', pos: new V3(-11, 86, 25), size: 3.1 },
+  { name: 'Living with the map', pos: new V3(-8, 93, -31), size: 3.0 },
+  { name: 'Moral architecture', pos: new V3(8, 93, -31), size: 3.0 },
+  { name: 'Self-concealing interface', pos: new V3(31, 90, 0), size: 3.0 },
+  { name: 'One-world wager', pos: new V3(-31, 90, 0), size: 3.0 }
+];
+
+function buildApex() {
+  APEX.forEach((a, i) => {
+    addNode(a.pos, mixColor(colorOf(PALETTE.gold), colorOf(0xffffff), rnd() * 0.25), a.size, 'apex', 0.95);
+    K.apex[a.name] = a.pos;
+    if (i > 0) {
+      const prev = APEX[i - 1];
+      addEdge(prev.pos, a.pos, PALETTE.gold, PALETTE.gold, 'apex', 'apex', 0.12);
+    }
+  });
+  Object.keys(K.hubs).forEach((key, i) => {
+    const hub = K.hubs[key];
+    let best = null;
+    let bestD = Infinity;
+    APEX.forEach(a => {
+      const d = hub.distanceTo(a.pos);
+      if (d < bestD) { bestD = d; best = a; }
+    });
+    if (best) {
+      addEdge(hub, best.pos, HUBS[i].color, PALETTE.gold, 'topics', 'apex', 0.3, { bow: 0.16 });
+      const second = APEX[(i + 3) % APEX.length];
+      addEdge(hub, second.pos, HUBS[i].color, PALETTE.gold, 'topics', 'apex', 0.12, { bow: 0.25, seg: 10 });
+    }
+  });
+  addEdge(K.hubs.machine, K.apex['Machine question'], PALETTE.ice, PALETTE.gold, 'topics', 'apex', 0.4);
+  addEdge(K.hubs.quantum, K.apex['Post-decoherence'], PALETTE.violet, PALETTE.gold, 'topics', 'apex', 0.4);
+  addEdge(K.hubs.agency, K.apex['Consciousness & agency'], PALETTE.rose, PALETTE.gold, 'topics', 'apex', 0.4);
+  addEdge(K.hubs.found, K.apex['What consciousness tells physics'], PALETTE.sky, PALETTE.gold, 'topics', 'apex', 0.4);
+  addEdge(K.hubs.meaning, K.apex['Living with the map'], PALETTE.emerald, PALETTE.gold, 'topics', 'apex', 0.4);
+}
+buildApex();
+
+const POSITION_COLORS = [0x7dd3fc, 0xa78bfa, 0xf472b6, 0xfbbf24, 0x34d399, 0xfb7185, 0x67e8f9, 0xe2e8f0];
+const positionsCenter = new V3(0, 109, 0);
+const positionNodes = [];
+function buildPositions() {
+  addNode(positionsCenter, 0xffffff, 5.4, 'positions', 1);
+  for (let i = 0; i < 66; i++) {
+    const a = (i / 66) * TAU;
+    const cred = rnd();
+    const centrality = rnd();
+    const r = 32 + cred * 18;
+    const y = 104 + centrality * 10 + rr(-1, 1);
+    const p = new V3(Math.cos(a) * r, y, Math.sin(a) * r);
+    const idx = addNode(p, POSITION_COLORS[i % POSITION_COLORS.length], rr(0.9, 2.0), 'positions', rr(0.55, 0.95));
+    positionNodes.push(p);
+    addEdge(positionsCenter, p, 0xe2e8f0, POSITION_COLORS[i % POSITION_COLORS.length], 'positions', 'positions', 0.03);
+    if (i > 0) {
+      addEdge(positionNodes[i - 1], p, POSITION_COLORS[(i - 1) % POSITION_COLORS.length], POSITION_COLORS[i % POSITION_COLORS.length], 'positions', 'positions', 0.05);
+    }
+    if (i % 3 === 0) {
+      const ap = APEX[(i * 5) % APEX.length].pos;
+      addEdge(p, ap, POSITION_COLORS[i % POSITION_COLORS.length], PALETTE.gold, 'positions', 'apex', 0.045, { bow: 0.22, seg: 8 });
+    }
+  }
+}
+buildPositions();
+
+const RIVALS = [
+  { name: 'Materialism', pos: new V3(68, 38, 24), color: 0x94a3b8 },
+  { name: 'Functionalism', pos: new V3(74, 33, 8), color: 0x94a3b8 },
+  { name: 'Epiphenomenalism', pos: new V3(71, 29, -8), color: 0x94a3b8 },
+  { name: 'Many worlds', pos: new V3(63, 44, -24), color: 0x94a3b8 },
+  { name: 'Parsimony', pos: new V3(57, 47, 12), color: 0x94a3b8 }
+];
+const ARGS = [
+  { name: 'Against materialism', target: 'Materialism', pos: new V3(93, 38, 30), color: PALETTE.coral },
+  { name: 'Against functionalism', target: 'Functionalism', pos: new V3(99, 33, 10), color: PALETTE.coral },
+  { name: 'Against epiphenomenalism', target: 'Epiphenomenalism', pos: new V3(97, 27, -10), color: PALETTE.coral },
+  { name: 'Against many-worlds', target: 'Many worlds', pos: new V3(89, 45, -28), color: PALETTE.coral },
+  { name: 'Against parsimony', target: 'Parsimony', pos: new V3(84, 48, 14), color: PALETTE.coral }
+];
+function buildArguments() {
+  RIVALS.forEach(r => {
+    addNode(r.pos, r.color, 3.2, 'arguments', 0.8);
+    K.rivals[r.name] = r.pos;
+  });
+  ARGS.forEach((a, i) => {
+    addNode(a.pos, a.color, 3.2, 'arguments', 0.95);
+    K.args[a.name] = a.pos;
+    addEdge(a.pos, K.rivals[a.target], a.color, 0x94a3b8, 'arguments', 'arguments', 0.5, { bow: 0.16, seg: 8 });
+    addEdge(K.rivals[a.target], K.clusters.dualism, 0x94a3b8, PALETTE.sky, 'arguments', 'concepts', 0.06, { bow: 0.3, seg: 10 });
+  });
+  addEdge(K.args['Against materialism'], K.args['Against functionalism'], PALETTE.coral, PALETTE.coral, 'arguments', 'arguments', 0.12);
+  addEdge(K.args['Against epiphenomenalism'], K.args['Against many-worlds'], PALETTE.coral, PALETTE.coral, 'arguments', 'arguments', 0.12);
+}
+buildArguments();
+
+function buildVoids() {
+  const heroNames = ['Causal interface', 'Unobservable self', 'Other minds', 'Death', 'Vagueness', 'Binding', 'Agency', 'Erasure'];
+  for (let i = 0; i < 101; i++) {
+    const a = rnd() * TAU;
+    const r = 10 + 72 * Math.pow(rnd(), 0.62);
+    const y = -38 - 24 * (1 - r / 82) + rr(-5, 5);
+    const p = new V3(Math.cos(a) * r, y, Math.sin(a) * r);
+    K.voids.push(p);
+  }
+  const heroIdx = [7, 19, 33, 48, 61, 72, 84, 94];
+  heroIdx.forEach((idx, i) => {
+    const p = K.voids[idx].clone();
+    p.y += 2;
+    K.voidHero[heroNames[i]] = p;
+  });
+  const linkConcepts = [
+    K.concepts['dualism|Dualism'],
+    K.concepts['quantum|Decoherence'],
+    K.concepts['quantum|Post-decoherence selection'],
+    K.concepts['agency|Agent causation'],
+    K.concepts['agency|Free will'],
+    K.concepts['phenom|Phenomenal consciousness'],
+    K.concepts['phenom|Hard problem'],
+    K.concepts['phenom|Qualia'],
+    K.concepts['reframe|Other minds'],
+    K.concepts['reframe|Death'],
+    K.concepts['reframe|Meaning'],
+    K.concepts['dualism|Explanatory gap']
+  ].filter(Boolean);
+  linkConcepts.forEach((p, i) => {
+    const v = K.voids[(i * 13 + 17) % K.voids.length];
+    addEdge(p, v, PALETTE.violet, PALETTE.void, 'concepts', 'voids', 0.09, { dash: true, bow: 0.3, seg: 12 });
+  });
+  for (let i = 0; i < 82; i++) {
+    const a = Math.floor(rnd() * K.voids.length);
+    const b = Math.floor(rnd() * K.voids.length);
+    if (a !== b && K.voids[a].distanceTo(K.voids[b]) < 24) {
+      addEdge(K.voids[a], K.voids[b], PALETTE.void, PALETTE.void, 'voids', 'voids', 0.04);
+    }
+  }
+}
+buildVoids();
+
+const QUESTIONS = [
+  { name: 'Causal coherence?', pos: new V3(-78, 73, 20) },
+  { name: 'Quantum access?', pos: new V3(-91, 66, 2) },
+  { name: 'Epiphenomenal?', pos: new V3(-84, 60, -17) },
+  { name: 'Testable how?', pos: new V3(-70, 79, -28) }
+];
+function buildQuestions() {
+  QUESTIONS.forEach((q, i) => {
+    addNode(q.pos, PALETTE.ice, 3.4, 'questions', 0.95);
+    K.questions[q.name] = q.pos;
+    const v = K.voids[(i * 21 + 9) % K.voids.length];
+    addEdge(q.pos, v, PALETTE.ice, PALETTE.void, 'questions', 'voids', 0.16, { dash: true, bow: 0.35, seg: 14 });
+    addEdge(q.pos, K.hubs.agency, PALETTE.ice, PALETTE.rose, 'questions', 'topics', 0.08, { bow: 0.35, seg: 12 });
+  });
+}
+buildQuestions();
+
+function buildGrowth() {
+  const mainNodes = nodes.slice();
+  for (let i = 0; i < 120; i++) {
+    const u = rr(-0.9, 1);
+    const th = rnd() * TAU;
+    const r = rr(125, 195);
+    const s = Math.sqrt(1 - u * u);
+    const p = new V3(Math.cos(th) * s * r, 28 + u * r * 0.55, Math.sin(th) * s * r);
+    addNode(p, pick([0x7dd3fc, 0xa78bfa, 0xf4f1e8, 0x67e8f9, 0xffe6a3]), rr(0.7, 2.4), 'growth', rr(0.25, 0.8));
+    if (i < 90) {
+      const src = mainNodes[Math.floor(rnd() * mainNodes.length)];
+      addEdge(src.p, p, src.c.getHex(), 0x9fb4d8, src.region, 'growth', 0.08, { bow: 0.35, seg: 14 });
+    }
+  }
+  for (let i = 0; i < 34; i++) {
+    const src = mainNodes[Math.floor(rnd() * mainNodes.length)];
+    const p = src.p.clone().add(new V3(rr(-10, 10), rr(-6, 8), rr(-10, 10)));
+    addNode(p, src.c.getHex(), rr(0.5, 1.4), 'growth', 0.5);
+    addEdge(src.p, p, src.c.getHex(), src.c.getHex(), src.region, 'growth', 0.14, { bow: 0.1 });
+  }
+}
+buildGrowth();
+
+function edgePoint(e, t) {
+  if (!e.bow) return e.a.clone().lerp(e.b, t);
+  const mid = e.a.clone().add(e.b).multiplyScalar(0.5);
+  const radial = new V3(mid.x, 0, mid.z);
+  if (radial.lengthSq() < 0.01) radial.set(0, 0, 1);
+  radial.normalize();
+  const ctrl = mid.clone().addScaledVector(radial, e.bow * e.a.distanceTo(e.b) * 0.18).add(new V3(0, e.bow * 2.2, 0));
+  return new THREE.QuadraticBezierCurve3(e.a, ctrl, e.b).getPoint(t);
+}
+
+let nodePoints, nodeMat, nodeOpAttr;
+let edgeLines, edgeMat, edgeOpAttr;
+let voidShadow, voidRim, voidShadowMat, voidRimMat;
+const voidSizes = [];
+const voidPhases = [];
+const voidColors = [];
+const voidPositions = [];
+const voidBase = [];
+const voidOp = [];
+
+function buildNodeGeometry() {
+  const n = nodes.length;
+  const pos = new Float32Array(n * 3);
+  const col = new Float32Array(n * 3);
+  const size = new Float32Array(n);
+  const phase = new Float32Array(n);
+  const op = new Float32Array(n);
+  nodes.forEach((nd, i) => {
+    pos[i * 3] = nd.p.x; pos[i * 3 + 1] = nd.p.y; pos[i * 3 + 2] = nd.p.z;
+    const c = toArray(nd.c);
+    col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+    size[i] = nd.s;
+    phase[i] = nd.phase;
+  });
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aColor', new THREE.Float32BufferAttribute(col, 3));
+  geo.setAttribute('aSize', new THREE.Float32BufferAttribute(size, 1));
+  geo.setAttribute('aPhase', new THREE.Float32BufferAttribute(phase, 1));
+  nodeOpAttr = new THREE.Float32BufferAttribute(op, 1);
+  nodeOpAttr.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('aOp', nodeOpAttr);
+  nodeMat = makePointsShader(false, 0xffffff);
+  nodePoints = new THREE.Points(geo, nodeMat);
+  nodePoints.frustumCulled = false;
+  nodePoints.renderOrder = 5;
+  scene.add(nodePoints);
+}
+
+function buildEdgeGeometry() {
+  const verts = [];
+  const cols = [];
+  const progs = [];
+  const idxs = [];
+  const dashes = [];
+  const ops = [];
+  edges.forEach((e, ei) => {
+    const segs = e.seg;
+    for (let s = 0; s < segs; s++) {
+      const t0 = s / segs;
+      const t1 = (s + 1) / segs;
+      const p0 = edgePoint(e, t0);
+      const p1 = edgePoint(e, t1);
+      const c0 = mixColor(e.ca, e.cb, t0);
+      const c1 = mixColor(e.ca, e.cb, t1);
+      verts.push(p0.x, p0.y, p0.z, p1.x, p1.y, p1.z);
+      cols.push(c0.r, c0.g, c0.b, c1.r, c1.g, c1.b);
+      progs.push(t0, t1);
+      idxs.push(ei, ei);
+      dashes.push(e.dash ? 1 : 0, e.dash ? 1 : 0);
+      ops.push(0, 0);
+    }
+  });
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+  geo.setAttribute('aColor', new THREE.Float32BufferAttribute(cols, 3));
+  geo.setAttribute('aProgress', new THREE.Float32BufferAttribute(progs, 1));
+  geo.setAttribute('aEdge', new THREE.Float32BufferAttribute(idxs, 1));
+  geo.setAttribute('aDash', new THREE.Float32BufferAttribute(dashes, 1));
+  edgeOpAttr = new THREE.Float32BufferAttribute(ops, 1);
+  edgeOpAttr.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('aOpacity', edgeOpAttr);
+  edgeMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      attribute vec3 aColor;
+      attribute float aProgress;
+      attribute float aEdge;
+      attribute float aDash;
+      attribute float aOpacity;
+      varying vec3 vColor;
+      varying float vProgress;
+      varying float vEdge;
+      varying float vDash;
+      varying float vOpacity;
+      void main() {
+        vColor = aColor;
+        vProgress = aProgress;
+        vEdge = aEdge;
+        vDash = aDash;
+        vOpacity = aOpacity;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      uniform float uTime;
+      varying vec3 vColor;
+      varying float vProgress;
+      varying float vEdge;
+      varying float vDash;
+      varying float vOpacity;
+      void main() {
+        float pulse = pow(0.5 + 0.5 * sin((vProgress * 4.0 - uTime * 0.55 + vEdge * 0.61) * 6.28318), 9.0);
+        float dash = vDash > 0.5 ? step(0.42, fract(vProgress * 11.0 + vEdge * 0.13)) : 1.0;
+        float a = vOpacity * dash * (0.13 + 0.95 * pulse);
+        if (a < 0.004) discard;
+        vec3 col = vColor * (0.7 + 1.5 * pulse);
+        gl_FragColor = vec4(col, a);
+      }
+    `,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    depthTest: true
+  });
+  edgeLines = new THREE.LineSegments(geo, edgeMat);
+  edgeLines.frustumCulled = false;
+  edgeLines.renderOrder = 3;
+  scene.add(edgeLines);
+}
+
+function buildVoidGeometry() {
+  K.voids.forEach((p, i) => {
+    voidPositions.push(p.x, p.y, p.z);
+    const isHero = Object.values(K.voidHero).some(h => h.distanceTo(p) < 0.6);
+    voidSizes.push(isHero ? rr(28, 38) : rr(9, 22));
+    voidPhases.push(rnd() * 6.283);
+    const c = colorOf(i % 7 === 0 ? 0x7d6bff : 0x4f46a8);
+    voidColors.push(c.r, c.g, c.b);
+    voidBase.push(isHero ? 0.75 : rr(0.25, 0.6));
+    voidOp.push(0);
+  });
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(voidPositions, 3));
+  geo.setAttribute('aSize', new THREE.Float32BufferAttribute(voidSizes, 1));
+  geo.setAttribute('aPhase', new THREE.Float32BufferAttribute(voidPhases, 1));
+  geo.setAttribute('aColor', new THREE.Float32BufferAttribute(voidColors, 3));
+  const opAttr = new THREE.Float32BufferAttribute(voidOp, 1);
+  opAttr.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('aOp', opAttr);
+  voidShadowMat = new THREE.ShaderMaterial({
+    uniforms: { uPixelRatio: { value: renderer.getPixelRatio() } },
+    vertexShader: `
+      attribute float aSize;
+      uniform float uPixelRatio;
+      varying float vPhase;
+      attribute float aPhase;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = clamp(aSize * uPixelRatio * (300.0 / max(1.0, -mv.z)), 2.0, 130.0);
+        gl_Position = projectionMatrix * mv;
+        vPhase = aPhase;
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      varying float vPhase;
+      void main() {
+        vec2 p = gl_PointCoord - 0.5;
+        float d = length(p);
+        float a = smoothstep(0.5, 0.18, d) * 0.9;
+        if (a < 0.003) discard;
+        gl_FragColor = vec4(0.0, 0.0, 0.0, a);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    depthTest: true
+  });
+  pixelMats.push(voidShadowMat);
+  voidShadow = new THREE.Points(geo, voidShadowMat);
+  voidShadow.frustumCulled = false;
+  voidShadow.renderOrder = 1;
+  scene.add(voidShadow);
+  voidRimMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() } },
+    vertexShader: `
+      attribute float aSize;
+      attribute float aPhase;
+      attribute vec3 aColor;
+      attribute float aOp;
+      uniform float uPixelRatio;
+      varying vec3 vColor;
+      varying float vOp;
+      varying float vPhase;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = clamp(aSize * uPixelRatio * (300.0 / max(1.0, -mv.z)), 2.0, 130.0);
+        gl_Position = projectionMatrix * mv;
+        vColor = aColor;
+        vOp = aOp;
+        vPhase = aPhase;
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      uniform float uTime;
+      varying vec3 vColor;
+      varying float vOp;
+      varying float vPhase;
+      void main() {
+        vec2 p = gl_PointCoord - 0.5;
+        float d = length(p);
+        float ring = smoothstep(0.5, 0.4, d) * (1.0 - smoothstep(0.4, 0.31, d));
+        float inner = exp(-d * 13.0) * 0.12;
+        float breathe = 0.72 + 0.28 * sin(uTime * 0.7 + vPhase * 6.283);
+        float a = (ring * 0.8 + inner) * vOp * breathe;
+        if (a < 0.003) discard;
+        vec3 col = vColor * (1.2 + ring * 1.4);
+        gl_FragColor = vec4(col, a);
+      }
+    `,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    depthTest: true
+  });
+  pixelMats.push(voidRimMat);
+  voidRim = new THREE.Points(geo, voidRimMat);
+  voidRim.frustumCulled = false;
+  voidRim.renderOrder = 2;
+  scene.add(voidRim);
+}
+
+buildNodeGeometry();
+buildEdgeGeometry();
+buildVoidGeometry();
+
+const tenetRoot = new THREE.Group();
+const tenetBeams = [];
+const tenetCores = [];
+const tenetRings = [];
+const iconGroups = [];
+const iconWeights = [0, 0, 0, 0, 0];
+const iconTargets = [0, 0, 0, 0, 0];
+
+function additiveMaterial(hex, opacity = 1, side = THREE.DoubleSide) {
+  return new THREE.MeshBasicMaterial({
+    color: hex,
+    transparent: true,
+    opacity,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side
+  });
+}
+function lineMaterial(hex, opacity = 1) {
+  return new THREE.LineBasicMaterial({
+    color: hex,
+    transparent: true,
+    opacity,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+}
+function beamMaterial(hex) {
+  return new THREE.ShaderMaterial({
+    uniforms: { uColor: { value: colorOf(hex) }, uOpacity: { value: 0 }, uTime: { value: 0 } },
+    vertexShader: `
+      varying vec2 vUv;
+      varying vec3 vNormalW;
+      varying vec3 vViewDir;
+      void main() {
+        vUv = uv;
+        vNormalW = normalize(mat3(modelMatrix) * normal);
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vViewDir = normalize(cameraPosition - wp.xyz);
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      varying vec2 vUv;
+      varying vec3 vNormalW;
+      varying vec3 vViewDir;
+      uniform vec3 uColor;
+      uniform float uOpacity;
+      uniform float uTime;
+      void main() {
+        float edge = 1.0 - abs(dot(normalize(vNormalW), normalize(vViewDir)));
+        float body = pow(edge, 2.2);
+        float vertical = smoothstep(0.0, 0.85, vUv.y) * (0.35 + 0.65 * smoothstep(1.0, 0.3, vUv.y));
+        float pulse = 0.78 + 0.22 * sin(vUv.y * 22.0 - uTime * 1.6);
+        float a = uOpacity * body * vertical * pulse;
+        if (a < 0.003) discard;
+        gl_FragColor = vec4(uColor * (1.2 + body * 1.6), a);
+      }
+    `,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+}
+
+TENETS.forEach((t, i) => {
+  const g = new THREE.Group();
+  g.position.copy(t.pos);
+  const core = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.55, 0.85, 27, 14),
+    new THREE.MeshStandardMaterial({ color: 0x05070d, metalness: 0.75, roughness: 0.28, emissive: colorOf(t.color).multiplyScalar(0.08), emissiveIntensity: 1 })
+  );
+  core.position.y = 13.5;
+  g.add(core);
+  tenetCores.push(core.material);
+  const filament = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 27, 6), additiveMaterial(t.color, 0.75));
+  filament.position.y = 13.5;
+  g.add(filament);
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 0.95, 31, 26, 1, true), beamMaterial(t.color));
+  beam.position.y = 15.5;
+  g.add(beam);
+  tenetBeams.push(beam.material);
+  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(2.7, 0.06, 8, 64), additiveMaterial(t.color, 0.65));
+  baseRing.rotation.x = Math.PI / 2;
+  baseRing.position.y = 0.5;
+  g.add(baseRing);
+  const topRing = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.045, 8, 64), additiveMaterial(t.color, 0.85));
+  topRing.rotation.x = Math.PI / 2;
+  topRing.position.y = 26.5;
+  g.add(topRing);
+  tenetRings.push(baseRing.material, topRing.material);
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.85, 18, 12), additiveMaterial(t.color, 0.95));
+  cap.position.y = 26.5;
+  g.add(cap);
+  tenetRoot.add(g);
+  const icon = makeTenetIcon(i);
+  icon.position.copy(t.pos).add(new V3(0, 40, 0));
+  icon.visible = false;
+  scene.add(icon);
+  iconGroups.push(icon);
+  registerFadeGroup('icon' + i, icon);
+});
+scene.add(tenetRoot);
+
+function ringArc(radius, tube, color, opacity, arc = Math.PI * 1.45, segments = 64) {
+  const m = new THREE.Mesh(new THREE.TorusGeometry(radius, tube, 10, segments, arc), additiveMaterial(color, opacity));
+  m.rotation.z = Math.PI * 0.28;
+  return m;
+}
+
+function makeTenetIcon(index) {
+  const g = new THREE.Group();
+  const t = TENETS[index];
+  const c = t.color;
+  if (index === 0) {
+    const s1 = new THREE.Mesh(new THREE.IcosahedronGeometry(5.2, 1), new THREE.MeshBasicMaterial({ color: c, wireframe: true, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+    s1.position.x = -2.2;
+    g.add(s1);
+    const s2 = new THREE.Mesh(new THREE.IcosahedronGeometry(5.2, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false }));
+    s2.position.x = 2.2;
+    g.add(s2);
+    const spark = new THREE.Mesh(new THREE.SphereGeometry(1.1, 18, 12), additiveMaterial(0xffffff, 1));
+    g.add(spark);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(8.2, 0.045, 8, 96), additiveMaterial(c, 0.5));
+    ring.rotation.x = Math.PI * 0.5;
+    g.add(ring);
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(8.2, 0.03, 8, 96), additiveMaterial(0xffffff, 0.25));
+    ring2.rotation.y = Math.PI * 0.5;
+    g.add(ring2);
+  } else if (index === 1) {
+    const a = new THREE.Mesh(new THREE.SphereGeometry(3.2, 24, 16), new THREE.MeshBasicMaterial({ color: c, wireframe: true, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }));
+    a.position.x = -6.2;
+    g.add(a);
+    const b = a.clone();
+    b.position.x = 6.2;
+    g.add(b);
+    const corridor = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 12.4, 8), additiveMaterial(0xffffff, 0.55));
+    corridor.rotation.z = Math.PI / 2;
+    g.add(corridor);
+    const bead = new THREE.Mesh(new THREE.SphereGeometry(0.85, 16, 12), additiveMaterial(0xffffff, 1));
+    g.add(bead);
+    for (let i = 0; i < 34; i++) {
+      const p = new Float32Array([rr(-1.6, 1.6), rr(-1.6, 1.6), rr(-1.6, 1.6)]);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(p, 3));
+      const pt = new THREE.Points(geo, makePointsShader(false, 0xffffff));
+      pt.material.uniforms.uTint.value = colorOf(c);
+      g.add(pt);
+    }
+  } else if (index === 2) {
+    const up = new THREE.Mesh(new THREE.ConeGeometry(1.25, 5.5, 4), additiveMaterial(c, 0.9));
+    up.position.y = 4.2;
+    g.add(up);
+    const down = new THREE.Mesh(new THREE.ConeGeometry(1.25, 5.5, 4), additiveMaterial(0xffffff, 0.85));
+    down.position.y = -4.2;
+    down.rotation.x = Math.PI;
+    g.add(down);
+    const loop = new THREE.Mesh(new THREE.TorusGeometry(6.4, 0.05, 8, 96), additiveMaterial(c, 0.55));
+    loop.rotation.x = Math.PI * 0.5;
+    g.add(loop);
+    const loop2 = new THREE.Mesh(new THREE.TorusGeometry(4.8, 0.035, 8, 96), additiveMaterial(0xffffff, 0.3));
+    loop2.rotation.y = Math.PI * 0.5;
+    g.add(loop2);
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(0, -7.5, 0), new V3(0, 7.5, 0)]), lineMaterial(0xffffff, 0.3));
+    g.add(line);
+  } else if (index === 3) {
+    const pts = [];
+    const tips = [];
+    const addBranch = (x0, y0, x1, y1, bright) => {
+      pts.push(x0, y0, 0, x1, y1, 0);
+      tips.push({ x: x1, y: y1, bright });
+    };
+    addBranch(0, -7, 0, -1, false);
+    addBranch(0, -1, -6.4, 6, true);
+    addBranch(0, -1, -2.4, 7.2, false);
+    addBranch(0, -1, 1.6, 7.6, false);
+    addBranch(0, -1, 5.2, 6.6, false);
+    addBranch(0, -1, 7.2, 3.2, false);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+    const lines = new THREE.LineSegments(geo, lineMaterial(c, 0.55));
+    g.add(lines);
+    tips.forEach(tp => {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(tp.bright ? 0.9 : 0.55, 14, 10), additiveMaterial(tp.bright ? 0xffffff : c, tp.bright ? 1 : 0.4));
+      m.position.set(tp.x, tp.y, 0);
+      g.add(m);
+    });
+    const base = new THREE.Mesh(new THREE.RingGeometry(0.7, 1.5, 32), additiveMaterial(c, 0.4));
+    base.rotation.x = -Math.PI / 2;
+    base.position.y = -7.2;
+    g.add(base);
+  } else {
+    const razor = new THREE.Mesh(new THREE.BoxGeometry(14, 0.24, 2.2), new THREE.MeshStandardMaterial({ color: 0x1a2030, metalness: 0.9, roughness: 0.15, emissive: colorOf(c).multiplyScalar(0.25) }));
+    razor.position.y = 2.2;
+    razor.rotation.z = 0.2;
+    g.add(razor);
+    const edge = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(-6.8, 2.9, 0), new V3(6.8, 4.5, 0)]), lineMaterial(0xffffff, 0.9));
+    g.add(edge);
+    const geo = new THREE.PlaneGeometry(18, 10, 30, 14);
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i);
+      const y = p.getY(i);
+      p.setZ(i, Math.sin(x * 0.7) * 0.7 + Math.cos(y * 0.9) * 0.35);
+    }
+    geo.computeVertexNormals();
+    const waves = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: c, wireframe: true, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false }));
+    waves.position.y = -3.5;
+    g.add(waves);
+    for (let i = 0; i < 4; i++) {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 8), additiveMaterial([0xffffff, c, 0x9fb4d8, 0xffe6a3][i], 0.7));
+      m.position.set(-9 + i * 6, -6 + Math.sin(i * 1.8) * 1.2, 2.5);
+      g.add(m);
+    }
+  }
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(11.5, 0.025, 6, 120), additiveMaterial(c, 0.22));
+  halo.rotation.x = Math.PI * 0.5;
+  g.add(halo);
+  return g;
+}
+
+function registerFadeGroup(name, group) {
+  const mats = [];
+  group.traverse(o => {
+    if (o.material) {
+      const list = Array.isArray(o.material) ? o.material : [o.material];
+      list.forEach(m => {
+        if (m.userData.baseOpacity === undefined) m.userData.baseOpacity = m.opacity === undefined ? 1 : m.opacity;
+        if (!mats.includes(m)) mats.push(m);
+      });
+    }
+  });
+  fadeGroups[name] = { group, mats, weight: 0, target: 0 };
+  group.visible = false;
+}
+
+const methodGroup = new THREE.Group();
+methodGroup.position.set(0, 16, 38);
+const methodSparks = [];
+function buildMethod() {
+  const pageGeo = new THREE.PlaneGeometry(15, 21);
+  for (let i = 0; i < 7; i++) {
+    const page = new THREE.Mesh(pageGeo, new THREE.MeshBasicMaterial({ color: 0x07101f, transparent: true, opacity: 0.38, side: THREE.DoubleSide, depthWrite: false }));
+    page.position.set(0, i * 0.22, i * 0.55);
+    page.rotation.z = (i - 3) * 0.012;
+    methodGroup.add(page);
+    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(pageGeo), lineMaterial(i === 6 ? PALETTE.gold : 0x7dd3fc, i === 6 ? 0.6 : 0.2));
+    edge.position.copy(page.position);
+    edge.rotation.copy(page.rotation);
+    methodGroup.add(edge);
+  }
+  const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 22.5, 8), additiveMaterial(PALETTE.gold, 0.8));
+  spine.position.set(0, 0.8, 0.2);
+  methodGroup.add(spine);
+  const pivotHuman = new THREE.Group();
+  const human = new THREE.Mesh(new THREE.SphereGeometry(1.1, 20, 14), additiveMaterial(PALETTE.amber, 0.95));
+  human.position.set(13, 0, 0);
+  pivotHuman.add(human);
+  methodGroup.add(pivotHuman);
+  const pivotAI = new THREE.Group();
+  const ai = new THREE.Mesh(new THREE.SphereGeometry(1.1, 20, 14), additiveMaterial(PALETTE.ice, 0.95));
+  ai.position.set(13, 0, 0);
+  pivotAI.add(ai);
+  methodGroup.add(pivotAI);
+  const trailGeo = new THREE.BufferGeometry();
+  const trailPos = [];
+  for (let i = 0; i < 64; i++) {
+    const a = i / 64 * TAU;
+    trailPos.push(Math.cos(a) * 13, Math.sin(a) * 13, 0);
+  }
+  trailGeo.setAttribute('position', new THREE.Float32BufferAttribute(trailPos, 3));
+  const trail = new THREE.LineLoop(trailGeo, lineMaterial(0x9fb4d8, 0.14));
+  methodGroup.add(trail);
+  const reviewGeo = new THREE.BufferGeometry();
+  const reviewPos = [];
+  const reviewPhase = [];
+  for (let i = 0; i < 28; i++) {
+    const a = i / 28 * TAU;
+    reviewPos.push(Math.cos(a) * 18, Math.sin(a) * 18, 0);
+    reviewPhase.push(i / 28);
+  }
+  reviewGeo.setAttribute('position', new THREE.Float32BufferAttribute(reviewPos, 3));
+  reviewGeo.setAttribute('aPhase', new THREE.Float32BufferAttribute(reviewPhase, 1));
+  reviewGeo.setAttribute('aSize', new THREE.Float32BufferAttribute(new Array(28).fill(1.4), 1));
+  reviewGeo.setAttribute('aColor', new THREE.Float32BufferAttribute(new Array(28 * 3).fill(0.4), 3));
+  reviewGeo.setAttribute('aOp', new THREE.Float32BufferAttribute(new Array(28).fill(0.8), 1));
+  const review = new THREE.Points(reviewGeo, makePointsShader(false, 0xffffff));
+  methodGroup.add(review);
+  const helixPts = [];
+  for (let i = 0; i < 34; i++) {
+    const t = i / 34;
+    const a = t * Math.PI * 6;
+    const r = 10.5;
+    helixPts.push(new V3(Math.cos(a) * r, -10 + t * 23, -2.5 + Math.sin(a) * r));
+  }
+  const helixGeo = new THREE.BufferGeometry().setFromPoints(helixPts);
+  methodGroup.add(new THREE.Line(helixGeo, lineMaterial(PALETTE.violet, 0.25)));
+  for (let i = 0; i < 34; i += 3) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 8), additiveMaterial(i === 33 ? 0xffffff : PALETTE.violet, 0.6));
+    m.position.copy(helixPts[i]);
+    methodGroup.add(m);
+  }
+  for (let i = 0; i < 4; i++) {
+    const spark = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), additiveMaterial(PALETTE.gold, 0.7));
+    methodGroup.add(spark);
+    methodSparks.push({ mesh: spark, phase: i / 4 });
+  }
+  methodGroup.userData.pivotHuman = pivotHuman;
+  methodGroup.userData.pivotAI = pivotAI;
+  methodGroup.userData.review = review;
+  methodGroup.visible = false;
+  scene.add(methodGroup);
+  registerFadeGroup('method', methodGroup);
+}
+buildMethod();
+
+function roundedRectShape(w, h, r) {
+  const s = new THREE.Shape();
+  const x = -w / 2;
+  const y = -h / 2;
+  s.moveTo(x + r, y);
+  s.lineTo(x + w - r, y);
+  s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r);
+  s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h);
+  s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r);
+  s.quadraticCurveTo(x, y, x + r, y);
+  s.closePath();
+  return s;
+}
+
+const flowGroup = new THREE.Group();
+flowGroup.position.set(0, 22, 51);
+const flowSparks = [];
+const flowCards = {};
+function buildFlow() {
+  const defs = [
+    { key: 'research', x: 0, y: -14, w: 20, h: 7, color: 0x9fb4d8 },
+    { key: 'concepts', x: -16, y: -1, w: 20, h: 7, color: PALETTE.sky },
+    { key: 'topics', x: 16, y: -1, w: 20, h: 7, color: PALETTE.violet },
+    { key: 'apex', x: 0, y: 12, w: 20, h: 7, color: PALETTE.gold },
+    { key: 'positions', x: 0, y: 25, w: 22, h: 7, color: 0xffffff },
+    { key: 'tenets', x: -34, y: 10, w: 18, h: 7, color: PALETTE.emerald },
+    { key: 'voids', x: 34, y: -8, w: 18, h: 7, color: PALETTE.void }
+  ];
+  defs.forEach(d => {
+    const geo = new THREE.ShapeGeometry(roundedRectShape(d.w, d.h, 1.2), 6);
+    const fill = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x060b18, transparent: true, opacity: 0.6, side: THREE.DoubleSide, depthWrite: false }));
+    fill.position.set(d.x, d.y, 0);
+    flowGroup.add(fill);
+    const borderPts = [];
+    const shapePts = geo.attributes.position;
+    for (let i = 0; i < shapePts.count; i++) {
+      borderPts.push(new V3(shapePts.getX(i) + d.x, shapePts.getY(i) + d.y, 0.02));
+    }
+    const border = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(borderPts), lineMaterial(d.color, 0.55));
+    flowGroup.add(border);
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(d.w * 1.05, d.h * 1.8), additiveMaterial(d.color, 0.05));
+    glow.position.set(d.x, d.y, -0.4);
+    flowGroup.add(glow);
+    flowCards[d.key] = new V3(flowGroup.position.x + d.x, flowGroup.position.y + d.y, flowGroup.position.z + 0.2);
+  });
+  const arrow = (a, b, color, opacity) => {
+    const start = new THREE.Vector3(a[0], a[1], 0);
+    const end = new THREE.Vector3(b[0], b[1], 0);
+    const mid = start.clone().lerp(end, 0.5);
+    const dir = end.clone().sub(start);
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([start, mid, end]), lineMaterial(color, opacity));
+    flowGroup.add(line);
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.5, 12), additiveMaterial(color, opacity + 0.1));
+    cone.position.copy(end);
+    cone.quaternion.setFromUnitVectors(new V3(0, 1, 0), dir.clone().normalize());
+    flowGroup.add(cone);
+    for (let i = 0; i < 2; i++) {
+      const spark = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), additiveMaterial(color, 0.9));
+      flowGroup.add(spark);
+      flowSparks.push({ mesh: spark, a: start.clone(), b: end.clone(), phase: i / 2 + rnd() * 0.3, speed: rr(0.12, 0.22) });
+    }
+  };
+  arrow([0, -10.5], [-16, -4.5], 0x9fb4d8, 0.5);
+  arrow([0, -10.5], [16, -4.5], 0x9fb4d8, 0.5);
+  arrow([-16, 2.5], [0, 8.5], PALETTE.sky, 0.6);
+  arrow([16, 2.5], [0, 8.5], PALETTE.violet, 0.6);
+  arrow([0, 15.5], [0, 21.5], PALETTE.gold, 0.7);
+  arrow([-34, 13.5], [-16, 0.5], PALETTE.emerald, 0.28);
+  arrow([-34, 13.5], [16, 0.5], PALETTE.emerald, 0.28);
+  arrow([-34, 13.5], [0, 12], PALETTE.emerald, 0.28);
+  arrow([34, -4.5], [16, -1], PALETTE.void, 0.35);
+  const square = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
+    new V3(-26, -7, 0.01), new V3(26, -7, 0.01), new V3(26, 18, 0.01), new V3(-26, 18, 0.01)
+  ]), lineMaterial(0xffffff, 0.08));
+  flowGroup.add(square);
+  flowGroup.visible = false;
+  scene.add(flowGroup);
+  registerFadeGroup('flow', flowGroup);
+}
+buildFlow();
+
+const radarGroup = new THREE.Group();
+radarGroup.position.set(0, 109, 11);
+const radarValues = [0.86, 0.52, 0.92, 0.44, 0.3, 0.16];
+const radarFillPositions = [];
+let radarFillAttr, radarPolyAttr;
+function buildRadar() {
+  const outer = [];
+  const axes = [];
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + i * TAU / 6;
+    const x = Math.cos(a) * 12;
+    const y = Math.sin(a) * 12;
+    outer.push(new V3(x, y, 0));
+    axes.push(new V3(0, 0, 0), new V3(x, y, 0));
+  }
+  const border = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(outer), lineMaterial(0xa5b4fc, 0.35));
+  radarGroup.add(border);
+  const axisLines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(axes), lineMaterial(0xa5b4fc, 0.18));
+  radarGroup.add(axisLines);
+  const rings = [];
+  for (let r = 0.25; r <= 1.0; r += 0.25) {
+    const pts = outer.map(v => v.clone().multiplyScalar(r));
+    const ring = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), lineMaterial(0xa5b4fc, 0.08));
+    radarGroup.add(ring);
+    rings.push(ring);
+  }
+  const fillGeo = new THREE.BufferGeometry();
+  const verts = [];
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + i * TAU / 6;
+    const b = -Math.PI / 2 + (i + 1) * TAU / 6;
+    verts.push(0, 0, 0, Math.cos(a) * 12 * radarValues[i], Math.sin(a) * 12 * radarValues[i], 0, Math.cos(b) * 12 * radarValues[(i + 1) % 6], Math.sin(b) * 12 * radarValues[(i + 1) % 6], 0);
+  }
+  fillGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+  radarFillAttr = fillGeo.attributes.position;
+  const fill = new THREE.Mesh(fillGeo, new THREE.MeshBasicMaterial({ color: PALETTE.ice, transparent: true, opacity: 0.12, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+  radarGroup.add(fill);
+  const polyPts = [];
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + i * TAU / 6;
+    polyPts.push(new V3(Math.cos(a) * 12 * radarValues[i], Math.sin(a) * 12 * radarValues[i], 0.02));
+  }
+  const polyGeo = new THREE.BufferGeometry().setFromPoints(polyPts);
+  radarPolyAttr = polyGeo.attributes.position;
+  const poly = new THREE.LineLoop(polyGeo, lineMaterial(0xffffff, 0.85));
+  radarGroup.add(poly);
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + i * TAU / 6;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 8), additiveMaterial(0xffffff, 0.85));
+    m.position.set(Math.cos(a) * 12 * radarValues[i], Math.sin(a) * 12 * radarValues[i], 0.02);
+    radarGroup.add(m);
+  }
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.55, 16, 12), additiveMaterial(0xffffff, 0.9));
+  radarGroup.add(core);
+  radarGroup.visible = false;
+  scene.add(radarGroup);
+  registerFadeGroup('radar', radarGroup);
+}
+buildRadar();
+
+const taxonomyGroup = new THREE.Group();
+taxonomyGroup.position.set(0, -28, 54);
+const taxonomyCells = [];
+const taxonomyBands = [];
+function buildTaxonomy() {
+  const colColors = [0x67e8f9, 0xa78bfa, 0xf472b6];
+  const rowColors = [0x7dd3fc, 0x34d399, 0xfbbf24, 0xfb7185];
+  const cols = [-18, 0, 18];
+  const rows = [15, 5, -5, -15];
+  const gridPts = [];
+  cols.forEach(x => gridPts.push(new V3(x, -22, -0.2), new V3(x, 23, -0.2)));
+  rows.forEach(y => gridPts.push(new V3(-27, y, -0.2), new V3(27, y, -0.2)));
+  taxonomyGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPts), lineMaterial(0xa5b4fc, 0.12)));
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 3; c++) {
+      const g = new THREE.Group();
+      g.position.set(cols[c], rows[r], 0);
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(3.0, 40), new THREE.MeshBasicMaterial({ color: 0x010208, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthWrite: false }));
+      g.add(disc);
+      const ring = new THREE.Mesh(new THREE.RingGeometry(3.0, 3.75, 48), additiveMaterial(colColors[c], 0.75));
+      g.add(ring);
+      const core = new THREE.Mesh(new THREE.CircleGeometry(0.8, 24), additiveMaterial(rowColors[r], 0.9));
+      core.position.z = 0.01;
+      g.add(core);
+      const halo = new THREE.Mesh(new THREE.RingGeometry(4.1, 5.6, 48), additiveMaterial(colColors[c], 0.05));
+      g.add(halo);
+      taxonomyGroup.add(g);
+      taxonomyCells.push({ g, ring: ring.material, core: core.material, phase: rnd() * 6.283 });
+    }
+  }
+  const bandDefs = [
+    { x: -34, color: 0x7dd3fc }, { x: -17, color: 0xfbbf24 }, { x: 0, color: 0xf472b6 },
+    { x: 17, color: 0x34d399 }, { x: 34, color: 0xa78bfa }
+  ];
+  bandDefs.forEach(b => {
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(9, 52), additiveMaterial(b.color, 0.055));
+    plane.position.set(b.x, -1, -2);
+    taxonomyGroup.add(plane);
+    const line = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 52), additiveMaterial(b.color, 0.22));
+    line.position.set(b.x, -1, -1.9);
+    taxonomyGroup.add(line);
+    taxonomyBands.push(plane.material);
+  });
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * TAU;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), additiveMaterial(0x9fb4d8, 0.25));
+    m.position.set(Math.cos(a) * 35, Math.sin(a) * 28, -1);
+    taxonomyGroup.add(m);
+  }
+  taxonomyGroup.visible = false;
+  scene.add(taxonomyGroup);
+  registerFadeGroup('taxonomy', taxonomyGroup);
+}
+buildTaxonomy();
+
+const convergenceGroup = new THREE.Group();
+convergenceGroup.position.set(0, -48, 0);
+const convSparks = [];
+const convRayPoints = [];
+function buildConvergence() {
+  const wire = new THREE.Mesh(new THREE.SphereGeometry(42, 26, 18), new THREE.MeshBasicMaterial({ color: 0x1e2a5a, wireframe: true, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false }));
+  convergenceGroup.add(wire);
+  const core = new THREE.Mesh(new THREE.SphereGeometry(4.2, 32, 24), additiveMaterial(0xffffff, 0.95));
+  convergenceGroup.add(core);
+  const coreGlow = new THREE.Mesh(new THREE.SphereGeometry(7.2, 24, 16), additiveMaterial(0xffe6a3, 0.16));
+  convergenceGroup.add(coreGlow);
+  const membrane = new THREE.Mesh(new THREE.SphereGeometry(18, 32, 24), new THREE.MeshBasicMaterial({ color: 0x9fd8ff, wireframe: true, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending, depthWrite: false }));
+  convergenceGroup.add(membrane);
+  const count = 101;
+  const pos = [];
+  const col = [];
+  const size = [];
+  const phase = [];
+  const op = [];
+  const bright = [];
+  const dirs = [];
+  for (let i = 0; i < count; i++) {
+    const u = rr(-1, 1);
+    const th = rnd() * TAU;
+    const s = Math.sqrt(1 - u * u);
+    const d = new V3(Math.cos(th) * s, u, Math.sin(th) * s);
+    dirs.push(d.clone());
+    pos.push(d.x * 42, d.y * 42, d.z * 42);
+    const isBright = i < 26;
+    bright.push(isBright);
+    const c = colorOf(isBright ? 0x9ff5ff : 0x5b4fd0);
+    col.push(c.r, c.g, c.b);
+    size.push(isBright ? rr(7, 12) : rr(4, 8));
+    phase.push(rnd() * 6.283);
+    op.push(isBright ? 0.95 : rr(0.2, 0.5));
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aColor', new THREE.Float32BufferAttribute(col, 3));
+  geo.setAttribute('aSize', new THREE.Float32BufferAttribute(size, 1));
+  geo.setAttribute('aPhase', new THREE.Float32BufferAttribute(phase, 1));
+  geo.setAttribute('aOp', new THREE.Float32BufferAttribute(op, 1));
+  const shellMat = makePointsShader(false, 0xffffff);
+  const shell = new THREE.Points(geo, shellMat);
+  convergenceGroup.add(shell);
+  const rayVerts = [];
+  const rayCols = [];
+  for (let i = 0; i < 26; i++) {
+    const d = dirs[i];
+    const a = d.clone().multiplyScalar(41);
+    const b = d.clone().multiplyScalar(6);
+    rayVerts.push(a.x, a.y, a.z, b.x, b.y, b.z);
+    const c = colorOf(0x9ff5ff);
+    rayCols.push(c.r * 0.4, c.g * 0.4, c.b * 0.4, c.r, c.g, c.b);
+    convRayPoints.push({ a, b });
+  }
+  const rayGeo = new THREE.BufferGeometry();
+  rayGeo.setAttribute('position', new THREE.Float32BufferAttribute(rayVerts, 3));
+  rayGeo.setAttribute('color', new THREE.Float32BufferAttribute(rayCols, 3));
+  convergenceGroup.add(new THREE.LineSegments(rayGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false })));
+  for (let i = 0; i < 40; i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), additiveMaterial(0x9ff5ff, 0.9));
+    convergenceGroup.add(m);
+    convSparks.push({ mesh: m, ray: i % 26, phase: rnd() });
+  }
+  const families = [
+    { name: 'Phenomenal core', d: new V3(-0.4, 0.5, 0.76) },
+    { name: 'Self-knowledge', d: new V3(0.7, 0.55, 0.45) },
+    { name: 'Intersubjectivity', d: new V3(0.2, -0.7, 0.68) },
+    { name: 'Architecture', d: new V3(-0.75, -0.35, 0.55) },
+    { name: 'Reflexivity', d: new V3(0.8, -0.2, -0.55) }
+  ];
+  families.forEach(f => {
+    f.pos = convergenceGroup.position.clone().add(f.d.clone().normalize().multiplyScalar(44));
+  });
+  convergenceGroup.userData.families = families;
+  convergenceGroup.visible = false;
+  scene.add(convergenceGroup);
+  registerFadeGroup('convergence', convergenceGroup);
+}
+buildConvergence();
+
+/*__APP2__*/
+</script>
+</body>
+</html>
