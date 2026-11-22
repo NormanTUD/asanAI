@@ -44,7 +44,6 @@
         '<div class="ls-fx-core" aria-hidden="true">' +
           '<span class="ls-fx-core-ring"></span>' +
           '<span class="ls-fx-core-node"><b>f(x)</b><small>Transformer</small></span>' +
-          '<span class="ls-fx-packet p1"></span><span class="ls-fx-packet p2"></span><span class="ls-fx-packet p3"></span>' +
         '</div>' +
         '<div class="ls-fx-output">' +
           '<div class="ls-fx-output-head"><span>' + (DE ? "Ausgabe" : "Output") + '</span><b class="ls-fx-active-label">' + INPUTS.corpus.label + '</b></div>' +
