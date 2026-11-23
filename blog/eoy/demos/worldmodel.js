@@ -13,7 +13,7 @@
   if (!document.getElementById("ls-wm-style")) {
     var st = document.createElement("style");
     st.id = "ls-wm-style";
-    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:var(--tm-paper-2,#f7f9f8)}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:240px;padding:6px 8px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 11px/1.35 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none}.ls-wm-tip[hidden]{display:none}.ls-wm-play{position:absolute;right:12px;bottom:12px;z-index:9;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-green,#63a44b);color:#fff;padding:7px 11px;font:600 12px 'Open Sans',sans-serif;cursor:pointer}.ls-wm-play:hover{background:var(--tm-petrol,#004b6f)}.ls-wm-game-status{position:absolute;left:14px;bottom:14px;z-index:9;max-width:min(52%,420px);font:600 11px/1.4 'Open Sans',sans-serif;color:var(--tm-ink,#000);background:rgba(255,255,255,.92);border:1px solid var(--tm-line,#b9c8c3);padding:6px 8px}";
+    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:transparent}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:240px;padding:6px 8px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 11px/1.35 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none}.ls-wm-tip[hidden]{display:none}.ls-wm-play{position:absolute;right:12px;bottom:12px;z-index:9;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-green,#63a44b);color:#fff;padding:7px 11px;font:600 12px 'Open Sans',sans-serif;cursor:pointer}.ls-wm-play:hover{background:var(--tm-petrol,#004b6f)}.ls-wm-game-status{position:absolute;left:14px;bottom:14px;z-index:9;max-width:min(52%,420px);font:600 11px/1.4 'Open Sans',sans-serif;color:var(--tm-ink,#000);background:rgba(255,255,255,.92);border:1px solid var(--tm-line,#b9c8c3);padding:6px 8px}";
     document.head.appendChild(st);
   }
 
@@ -594,7 +594,7 @@
       for (var hi = 0; hi < n; hi += chunk) {
         var hend = Math.min(n - 1, hi + chunk - 1);
         var hmid = Math.floor((hi + hend) / 2);
-        var htext = (tip ? tip + " · " : "") + (DE ? "Dimension " : "dimension ") + hi + "–" + hend + ": " + V.fmt(values[hmid], 2);
+        var htext = (tip ? tip + " · " : "") + (DE ? "Dimension " : "dimension ") + hi + "–" + hend + ": " + V.fmt(values[hmid], 2) + (DE ? " · eine der 512 Zahlen pro Token; die Probe liest daraus das Brett." : " · one of the 512 numbers per token; the probe reads the board from it.");
         addHit(x + hi / n * w, y, Math.max(1, (hend - hi + 1) / n * w), h, htext);
       }
     }
@@ -620,7 +620,7 @@
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
       for (var gi = 0; gi < 512; gi++) {
         addHit(x + (gi % cols) * cw, y + Math.floor(gi / cols) * ch, cw, ch,
-          (DE ? "Aktivierung x[" : "activation x[") + gi + "] = " + V.fmt(X[gi], 2));
+          (DE ? "Aktivierung x[" : "activation x[") + gi + "] = " + V.fmt(X[gi], 2) + (DE ? " · eine von 512 Zahlen nach Schicht 6; die Probe bildet daraus die Brett-Logits." : " · one of 512 numbers after layer 6; the probe turns it into board logits."));
       }
     }
 
@@ -1111,7 +1111,7 @@
       if (!W || !H) return;
       playBtn.hidden = state.step !== 0;
       hoverHits = [];
-      V.aurora(ctx, W, H, C, { vignette: 0.08 });
+      ctx.clearRect(0, 0, W, H);
       if (state.step === 0) drawStep0(ctx);
       else if (state.step === 1) drawStep1(ctx);
       else drawStep3(ctx);
