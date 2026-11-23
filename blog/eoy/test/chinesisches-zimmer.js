@@ -38,32 +38,29 @@
     if (activeFly) { activeFly.remove(); activeFly = null; }
   }
 
-  var rounds = [
-    {
-      input: "今天天气怎么样？",
-      answer: "今天天气很冷。",
-      options: ["我喜欢喝茶。", "今天天气很冷。", "门是开着的。"],
-      rule: ["今天天气怎么样？", "今天天气很冷。"],
-      de: "Wie ist das Wetter heute? → Das Wetter ist heute kalt.",
-      en: "How is the weather today? → The weather is cold today."
-    },
-    {
-      input: "你叫什么名字？",
-      answer: "我叫小明。",
-      options: ["外面在下雨。", "我叫小明。", "他住在北京。"],
-      rule: ["你叫什么名字？", "我叫小明。"],
-      de: "Wie heißt du? → Ich heiße Xiaoming.",
-      en: "What is your name? → My name is Xiaoming."
-    },
-    {
-      input: "现在几点？",
-      answer: "现在三点。",
-      options: ["现在三点。", "我喜欢猫。", "窗户是关着的。"],
-      rule: ["现在几点？", "现在三点。"],
-      de: "Wie spät ist es? → Es ist drei Uhr.",
-      en: "What time is it? → It is three o'clock."
-    }
+  var RULES = [
+    { input: "今天天气怎么样？", answer: "今天天气很冷。", de: "Wie ist das Wetter heute? → Das Wetter ist heute kalt.", en: "How is the weather today? → The weather is cold today." },
+    { input: "你叫什么名字？", answer: "我叫小明。", de: "Wie heißt du? → Ich heiße Xiaoming.", en: "What is your name? → My name is Xiaoming." },
+    { input: "现在几点？", answer: "现在三点。", de: "Wie spät ist es? → Es ist drei Uhr.", en: "What time is it? → It is three o'clock." },
+    { input: "你从哪里来？", answer: "我从北京来。", de: "Woher kommst du? → Ich komme aus Peking.", en: "Where are you from? → I come from Beijing." },
+    { input: "你喜欢什么水果？", answer: "我喜欢苹果。", de: "Welches Obst magst du? → Ich mag Äpfel.", en: "Which fruit do you like? → I like apples." },
+    { input: "这本书多少钱？", answer: "这本书二十块。", de: "Wie viel kostet dieses Buch? → Dieses Buch kostet zwanzig Yuan.", en: "How much is this book? → This book costs twenty yuan." },
+    { input: "火车什么时候到？", answer: "火车九点到。", de: "Wann kommt der Zug an? → Der Zug kommt um neun an.", en: "When does the train arrive? → The train arrives at nine." },
+    { input: "洗手间在哪里？", answer: "洗手间在左边。", de: "Wo ist die Toilette? → Die Toilette ist links.", en: "Where is the restroom? → The restroom is on the left." }
   ];
+  var ROUND_ORDER = [0, 3, 6];
+  var rounds = ROUND_ORDER.map(function (ri) {
+    var rule = RULES[ri];
+    var pool = RULES.filter(function (_, i) { return i !== ri; }).map(function (r) { return r.answer; });
+    return {
+      input: rule.input,
+      answer: rule.answer,
+      options: [rule.answer, pool[(ri + 1) % pool.length], pool[(ri + 3) % pool.length]],
+      ruleIndex: ri,
+      de: rule.de,
+      en: rule.en
+    };
+  });
 
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {

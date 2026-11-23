@@ -3956,7 +3956,7 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
   align-items:stretch;
   transition:padding .26s cubic-bezier(.22,1,.36,1);
 }
-.ls-phone-scene .ia-chat-screen.is-keyboard{padding-bottom:196px}
+.ls-phone-scene .ia-phone-screen.ia-phone--chat.ia-chat-screen.is-keyboard{padding-bottom:150px}
 
 .ls-phone-scene .ia-eoy-status{
   align-self:stretch;

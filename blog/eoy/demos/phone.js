@@ -212,49 +212,104 @@
       kb.typed += ch;
       if (kb.input) kb.input.innerHTML = esc(kb.typed) + '<span class="ia-caret"></span>';
     }
-    function animateSwipe(kb, points, duration) {
+    function smoothPath(points) {
+      if (!points.length) return "";
+      if (points.length === 1) return "M" + points[0].x.toFixed(1) + " " + points[0].y.toFixed(1);
+      var d = "M" + points[0].x.toFixed(1) + " " + points[0].y.toFixed(1);
+      for (var i = 0; i < points.length - 1; i++) {
+        var p0 = points[i - 1] || points[i];
+        var p1 = points[i];
+        var p2 = points[i + 1];
+        var p3 = points[i + 2] || p2;
+        var c1x = p1.x + (p2.x - p0.x) / 6;
+        var c1y = p1.y + (p2.y - p0.y) / 6;
+        var c2x = p2.x - (p3.x - p1.x) / 6;
+        var c2y = p2.y - (p3.y - p1.y) / 6;
+        d += "C" + c1x.toFixed(1) + " " + c1y.toFixed(1) + " " + c2x.toFixed(1) + " " + c2y.toFixed(1) + " " + p2.x.toFixed(1) + " " + p2.y.toFixed(1);
+      }
+      return d;
+    }
+    function animateSwipe(kb, points, duration, onPass) {
       if (!kb || !kb.swipe || points.length < 2) return;
       clearSwipe(kb);
       var NS = "http://www.w3.org/2000/svg";
       var svg = document.createElementNS(NS, "svg");
       svg.setAttribute("viewBox", "0 0 " + kb.swipe.offsetWidth + " " + kb.swipe.offsetHeight);
       svg.setAttribute("preserveAspectRatio", "none");
-      var poly = document.createElementNS(NS, "polyline");
-      poly.setAttribute("points", points.map(function (p) { return p.x + "," + p.y; }).join(" "));
-      poly.setAttribute("fill", "none");
-      poly.setAttribute("stroke", "rgba(63,127,176,.62)");
-      poly.setAttribute("stroke-width", "6");
-      poly.setAttribute("stroke-linecap", "round");
-      poly.setAttribute("stroke-linejoin", "round");
+      var d = smoothPath(points);
+      var glow = document.createElementNS(NS, "path");
+      var line = document.createElementNS(NS, "path");
+      [glow, line].forEach(function (path) {
+        path.setAttribute("d", d);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("stroke-linejoin", "round");
+      });
+      glow.setAttribute("stroke", "rgba(63,127,176,.18)");
+      glow.setAttribute("stroke-width", "12");
+      line.setAttribute("stroke", "rgba(63,127,176,.70)");
+      line.setAttribute("stroke-width", "3.4");
+      var halo = document.createElementNS(NS, "circle");
+      halo.setAttribute("r", "14");
+      halo.setAttribute("fill", "rgba(63,127,176,.16)");
       var dot = document.createElementNS(NS, "circle");
-      dot.setAttribute("r", "7");
+      dot.setAttribute("r", "5.4");
       dot.setAttribute("fill", "#3f7fb0");
       dot.setAttribute("stroke", "#fff");
-      dot.setAttribute("stroke-width", "2");
-      svg.appendChild(poly);
+      dot.setAttribute("stroke-width", "1.8");
+      svg.appendChild(glow);
+      svg.appendChild(line);
+      svg.appendChild(halo);
       svg.appendChild(dot);
       kb.swipe.appendChild(svg);
-      var len = poly.getTotalLength();
-      poly.style.strokeDasharray = String(len);
-      poly.style.strokeDashoffset = String(len);
-      requestAnimationFrame(function () {
-        poly.style.transition = "stroke-dashoffset " + duration + "ms linear";
-        poly.style.strokeDashoffset = "0";
-      });
+      var len = line.getTotalLength();
+      if (!len) return;
+      glow.style.strokeDasharray = String(len);
+      glow.style.strokeDashoffset = String(len);
+      line.style.strokeDasharray = String(len);
+      line.style.strokeDashoffset = String(len);
+      var total = 0;
+      var cum = [0];
+      for (var i = 1; i < points.length; i++) {
+        total += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
+        cum.push(total);
+      }
+      var fracs = cum.map(function (value) { return total ? value / total : 1; });
+      var passed = -1;
+      function fireUpTo(frac) {
+        for (var k = passed + 1; k < fracs.length; k++) {
+          if (fracs[k] <= frac + 0.0001) {
+            passed = k;
+            if (onPass) onPass(k);
+          } else {
+            break;
+          }
+        }
+      }
       var start = performance.now();
       function tick(now) {
-        var t = Math.min(1, (now - start) / duration);
-        var pt = poly.getPointAtLength(len * t);
+        var raw = Math.min(1, (now - start) / duration);
+        var eased = raw * raw * raw * (raw * (raw * 6 - 15) + 10);
+        var drawn = len * eased;
+        var pt = line.getPointAtLength(drawn);
+        var offset = String(len - drawn);
+        glow.style.strokeDashoffset = offset;
+        line.style.strokeDashoffset = offset;
+        halo.setAttribute("cx", String(pt.x));
+        halo.setAttribute("cy", String(pt.y));
         dot.setAttribute("cx", String(pt.x));
         dot.setAttribute("cy", String(pt.y));
-        if (t < 1) kb.raf = requestAnimationFrame(tick);
+        fireUpTo(eased);
+        if (raw < 1) {
+          kb.raf = requestAnimationFrame(tick);
+        } else {
+          fireUpTo(1);
+          svg.style.transition = "opacity .38s ease";
+          svg.style.opacity = "0";
+          later(function () { if (svg.parentNode) svg.remove(); }, 420);
+        }
       }
       kb.raf = requestAnimationFrame(tick);
-      later(function () {
-        svg.style.transition = "opacity .24s ease";
-        svg.style.opacity = "0";
-        later(function () { if (svg.parentNode) svg.remove(); }, 260);
-      }, duration + 140);
     }
     function buildLogo() {
       var letters = (DE ? "Suchmaschine" : "Search Engine").split("");
@@ -354,13 +409,18 @@
         }
         var letters = chunk.split("");
         var points = letters.map(function (ch) { return keyCenter(kb, ch); }).filter(Boolean);
+        if (points.length < 2) {
+          letters.forEach(function (ch) { pressKey(kb, ch); appendTyped(kb, ch); });
+          later(nextChunk, 140);
+          return;
+        }
         var per = Math.max(perMin, Math.min(perMax, perBudget / Math.max(1, letters.length)));
         var dur = letters.length * per;
-        animateSwipe(kb, points, dur);
-        letters.forEach(function (ch, i) {
-          later(function () { pressKey(kb, ch); appendTyped(kb, ch); }, i * per);
+        animateSwipe(kb, points, dur, function (i) {
+          pressKey(kb, letters[i]);
+          appendTyped(kb, letters[i]);
         });
-        later(nextChunk, dur + 80);
+        later(nextChunk, dur + 140);
       }
       nextChunk();
     }
@@ -373,12 +433,12 @@
         searchText.textContent = text;
         showKeyboard(SEARCH_KB, false);
         later(function () { if (done) done(); }, 220);
-      }, 50, 88, 520);
+      }, 64, 110, 820);
     }
     function typeChatInput(text, done) {
       if (reduce) { chatInputEl.textContent = text; if (done) done(); return; }
       chatInputEl.innerHTML = '<span class="ia-caret"></span>';
-      typeInto(CHAT_KB, text, done, 46, 80, 460);
+      typeInto(CHAT_KB, text, done, 58, 100, 760);
     }
     function typeAnswer() {
       var spans = AI.map(function (seg) {
