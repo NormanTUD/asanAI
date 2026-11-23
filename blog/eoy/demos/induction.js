@@ -114,7 +114,7 @@
       arrowHead(c, pts[3][0], pts[3][1], pts[3][0] - pts[2][0], pts[3][1] - pts[2][1], 7, color);
     }
 
-    function chipBox(c, text, cx, cy, w, h, color, filled) {
+    function chipBox(c, text, cx, cy, w, h, color, filled, fontSize) {
       c.save();
       c.fillStyle = filled ? V.alpha(color, 0.12) : C.paper;
       c.fillRect(cx - w / 2, cy - h / 2, w, h);
@@ -122,7 +122,8 @@
       c.lineWidth = filled ? 1.8 : 1;
       c.strokeRect(cx - w / 2 + 0.5, cy - h / 2 + 0.5, w - 1, h - 1);
       c.fillStyle = C.ink;
-      c.font = '700 ' + Math.round(h * 0.5) + 'px "Barlow", "Open Sans", sans-serif';
+      var fs = fontSize || h * 0.5;
+      c.font = '700 ' + Math.round(fs) + 'px "Barlow", "Open Sans", sans-serif';
       c.textAlign = "center";
       c.textBaseline = "middle";
       c.fillText(text, cx, cy + 1);
@@ -219,7 +220,7 @@
     function drawLegend(c, x, y, small) {
       var items = [
         [C.green, DE ? "früheres Vorkommen" : "earlier occurrence"],
-        [C.sky, DE ? "was danach kam" : "what followed"],
+        [C.lilac, DE ? "was danach kam" : "what followed"],
         [C.gold, DE ? "aktuelles Vorkommen" : "current occurrence"]
       ];
       var cx = x;
@@ -256,14 +257,14 @@
 
       var segs = DE ? [
         { t: "Auf" }, { t: "dem" }, { t: "Hof" }, { t: "ist" }, { t: "es" }, { t: "ruhig." },
-        { t: "Der" }, { t: "Hund", c: C.green }, { t: "bellt,", c: C.sky },
+        { t: "Der" }, { t: "Hund", c: C.green }, { t: "bellt,", c: C.lilac },
         { t: "sobald" }, { t: "die" }, { t: "Katze" }, { t: "den" }, { t: "Hof" }, { t: "betritt." },
         { t: "Die" }, { t: "Katze" }, { t: "erschrickt" }, { t: "und" }, { t: "läuft" }, { t: "davon." },
         { t: "Am" }, { t: "nächsten" }, { t: "Tag" }, { t: "kommt" }, { t: "die" }, { t: "Katze" }, { t: "wieder," },
         { t: "und" }, { t: "der" }, { t: "Hund", c: C.gold }, { t: "…" }
       ] : [
         { t: "The" }, { t: "yard" }, { t: "is" }, { t: "quiet." },
-        { t: "The" }, { t: "dog", c: C.green }, { t: "barks", c: C.sky },
+        { t: "The" }, { t: "dog", c: C.green }, { t: "barks", c: C.lilac },
         { t: "whenever" }, { t: "the" }, { t: "cat" }, { t: "enters" }, { t: "the" }, { t: "yard." },
         { t: "The" }, { t: "cat" }, { t: "gets" }, { t: "scared" }, { t: "and" }, { t: "runs" }, { t: "away." },
         { t: "The" }, { t: "next" }, { t: "day" }, { t: "the" }, { t: "cat" }, { t: "comes" }, { t: "back," },
@@ -402,7 +403,7 @@
       var px = tx + tw / 2 + gap + pw / 2;
       var chipH = size * 1.9;
       textPill(c, tok, tx, rowY, C.green, true, size);
-      textPill(c, pred, px, rowY, C.sky, true, size);
+      textPill(c, pred, px, rowY, C.lilac, true, size);
       textPill(c, (DE ? "Key: davor " : "key: before ") + tok, px, rowY - chipH / 2 - 12, C.sky, false, small ? 8 : 9);
       attnArc(c, px, rowY + chipH / 2, tx, rowY + chipH / 2, C.blue, pred + " → " + tok, small, small ? 16 : 22);
       txt(c, DE ? "Key = gelernte Info, kein Text. Er steht an „" + pred + "“." : "Key = learned info, not text. It sits at “" + pred + "”.", x + 10, y + h - 10, {
@@ -464,35 +465,33 @@
 
 
     function drawTogetherPanel(c, x, y, w, h, tok, pred, small) {
-      var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "Gewicht addieren & kopieren" : "add weight & copy", C.petrol, small);
+      var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "Wert kopieren" : "copy the value", C.petrol, small);
       wrapText(c, DE
-        ? "Schicht 1 baut den Key, Schicht 2 findet ihn. Das Gewicht addiert den Wert dort; der OV-Teil kopiert ihn."
-        : "Layer 1 builds the key, layer 2 finds it. The weight adds the value there; the OV part copies it.",
+        ? "Die Attention findet über „" + tok + "“ die Stelle von „" + pred + "“. Der OV-Teil schreibt den Wert dort an die aktuelle Stelle."
+        : "The attention finds the “" + pred + "” position via “" + tok + "”. The OV part writes the value there to the current position.",
         x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
-      var rowY = y + h * 0.56;
-      var size = small ? 9.5 : 11;
-      var pw = pillWidth(c, pred, size);
-      var gap = Math.max(44, w * 0.22);
-      var pairW = pw * 2 + gap;
-      var pCx = x + (w - pairW) / 2 + pw / 2;
-      var oCx = pCx + pw / 2 + gap + pw / 2;
-      var chipH = size * 1.9;
-      textPill(c, pred, pCx, rowY, C.sky, true, size);
-      textPill(c, pred, oCx, rowY, C.gold, true, size);
-      txt(c, DE ? "Wert dort · 82 %" : "value there · 82 %", pCx, rowY - chipH / 2 - 12, {
-        align: "center", size: small ? 7.6 : 8.4, color: C.sky,
-        font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
+      var tokens = [tok, pred, "…", DE ? "der" : "the", tok];
+      var n = tokens.length;
+      var colW = Math.min(78, (w - 20) / n);
+      var startX = x + (w - n * colW) / 2;
+      var tokenY = y + h * 0.52;
+      var chipSize = small ? 8.5 : 9.5;
+      var cx1 = startX + 1 * colW + colW / 2;
+      var cx4 = startX + 4 * colW + colW / 2;
+      for (var i = 0; i < n; i++) {
+        var cx = startX + i * colW + colW / 2;
+        var col = i === 4 ? C.gold : i === 1 ? C.lilac : i === 0 ? C.green : C.lineStrong;
+        textPill(c, tokens[i], cx, tokenY, col, i === 0 || i === 1 || i === 4, chipSize);
+      }
+      txt(c, (DE ? "Wert: " : "value: ") + pred, cx1, tokenY - chipSize * 0.95 - 9, {
+        align: "center", size: small ? 7.4 : 8.2, color: C.lilac,
+        font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif'
       });
-      txt(c, DE ? "Vorhersage" : "prediction", oCx, rowY - chipH / 2 - 12, {
-        align: "center", size: small ? 7.6 : 8.4, color: C.gold,
-        font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
+      txt(c, DE ? "aktuell" : "current", cx4, tokenY - chipSize * 0.95 - 9, {
+        align: "center", size: small ? 7.4 : 8.2, color: C.gold,
+        font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif'
       });
-      V.arrow(c, pCx + pw / 2 + 4, rowY, oCx - pw / 2 - 4, rowY, V.alpha(C.gold, 0.9), 1.6, 6);
-      txt(c, DE ? "OV kopiert" : "OV copies", (pCx + pw / 2 + oCx - pw / 2) / 2, rowY - 10, {
-        align: "center", size: small ? 7 : 7.8, color: C.gold,
-        font: '700 ' + (small ? 7 : 7.8) + 'px "Open Sans", sans-serif',
-        bg: C.paper2, bgAlpha: 0.9
-      });
+      attnArc(c, cx1, tokenY + chipSize * 0.95, cx4, tokenY + chipSize * 0.95, C.lilac, DE ? "OV kopiert den Wert" : "OV copies the value", small, small ? 16 : 22);
       txt(c, DE ? "Nächstes Token: " + pred : "next token: " + pred, x + w / 2, y + h - 12, {
         align: "center", size: small ? 10 : 11.5, color: C.petrol,
         font: '700 ' + (small ? 10 : 11.5) + 'px "Barlow", "Open Sans", sans-serif'
@@ -528,9 +527,11 @@
       return yy + lineH;
     }
 
-    function drawMiniTokens(c, tokens, cx, cy, color, from, to, outText) {
+    function drawMiniTokens(c, tokens, cx, cy, color, from, to, outText, maxW) {
       var gap = 4;
-      var cw = Math.max(22, Math.min(34, (W * 0.22) / Math.max(3, tokens.length)));
+      var avail = maxW || (W * 0.22);
+      var cap = maxW ? 48 : 34;
+      var cw = Math.max(22, Math.min(cap, (avail - (tokens.length - 1) * gap) / Math.max(1, tokens.length)));
       var ch = Math.round(cw * 0.94);
       var total = tokens.length * cw + (tokens.length - 1) * gap;
       var x0 = cx - total / 2;
@@ -539,7 +540,8 @@
         var x = x0 + i * (cw + gap) + cw / 2;
         xs.push(x);
         var on = i === from || i === to;
-        chipBox(c, tokens[i], x, cy, cw, ch, on ? color : C.lineStrong, on);
+        var fs = Math.min(ch * 0.5, (cw - 6) / (Math.max(2, tokens[i].length) * 0.6));
+        chipBox(c, tokens[i], x, cy, cw, ch, on ? color : C.lineStrong, on, fs);
       }
       if (from >= 0 && to >= 0 && xs[from] != null && xs[to] != null) {
         var ax = xs[from], bx = xs[to], ay = cy - ch / 2 - 3, by = ay;
@@ -554,7 +556,8 @@
         c.restore();
         arrowHead(c, bx, by, bx - ax, 0, 5.5, color);
         if (outText) {
-          txt(c, outText, Math.max(ax, bx) + 5, ay - 12, {
+          txt(c, outText, (ax + bx) / 2, ay - 24, {
+            align: "center",
             size: 8.4,
             color: C.petrol,
             font: '700 8.4px "Barlow", "Open Sans", sans-serif'
@@ -690,7 +693,7 @@
         size: w < 230 ? 7.8 : 8.6,
         color: C.muted
       });
-      drawMiniTokens(c, item.tokens, x + w / 2, y + h - 22, item.color, item.from, item.to, item.out);
+      drawMiniTokens(c, item.tokens, x + w / 2, y + h - 26, item.color, item.from, item.to, "", w - 20);
     }
 
     function drawHeads(c) {
@@ -702,34 +705,38 @@
       var items = [
         {
           title: "Induction",
-          sub: DE ? "A B … A → B" : "A B … A → B",
+          sub: DE ? "Hund bellt … Hund → bellt" : "dog barks … dog → barks",
           color: C.gold,
-          tokens: ["A", "B", "A"],
-          from: 2, to: 1, out: "B",
-          body: DE ? "Der Kopf sucht ein früheres A und schaut auf das B, das darauf folgte. Die OV-Matrix kopiert B. Das ist ein Sequenzmuster, kein Faktenwissen." : "The head finds an earlier A and looks at the B that followed it. The OV matrix copies B. This is a sequence pattern, not factual knowledge."
+          tokens: [DE ? "Hund" : "dog", DE ? "bellt" : "barks", DE ? "Hund" : "dog"],
+          from: 2, to: 1,
+          qkv: DE ? "Query: Hund · Key: davor Hund bei bellt · Value: bellt" : "Query: dog · Key: before dog at barks · Value: barks",
+          body: DE ? "Sucht ein früheres Hund und schaut auf das bellt danach. Das ist ein Sequenzmuster, kein Faktenwissen." : "Finds an earlier dog and looks at the barks that followed. This is a sequence pattern, not factual knowledge."
         },
         {
           title: DE ? "Duplicate" : "Duplicate",
-          sub: DE ? "A … A → Position" : "A … A → position",
+          sub: DE ? "Anna … Anna → Position" : "Anna … Anna → position",
           color: C.green,
-          tokens: ["A", "B", "A"],
-          from: 2, to: 0, out: DE ? "Pos." : "pos.",
-          body: DE ? "Der Kopf schaut auf ein früheres Vorkommen desselben Tokens und kopiert dessen Position. Im IOI-Schaltkreis signalisiert das, dass ein Name wiederholt wurde." : "The head looks at an earlier occurrence of the same token and copies its position. In the IOI circuit this signals that a name was repeated."
+          tokens: ["Anna", "…", "Anna"],
+          from: 2, to: 0,
+          qkv: DE ? "Query: Anna · Key: Anna · Value: Position des früheren Anna" : "Query: Anna · Key: Anna · Value: position of the earlier Anna",
+          body: DE ? "Schaut auf ein früheres Vorkommen desselben Tokens und gibt dessen Position weiter. Im IOI-Schaltkreis signalisiert das einen wiederholten Namen." : "Looks at an earlier occurrence of the same token and passes on its position. In the IOI circuit this signals that a name was repeated."
         },
         {
           title: "Successor",
-          sub: DE ? "4 → 5, Montag → Dienstag" : "4 → 5, Monday → Tuesday",
+          sub: DE ? "Montag → Dienstag" : "Monday → Tuesday",
           color: C.sky,
-          tokens: ["4", "5", "6"],
-          from: 0, to: 1, out: "+1",
-          body: DE ? "Der Kopf erhöht ein geordnetes Token über eine gelernte Richtung. Die Ordnung steht nicht im Kontext; sie ist im Gewicht gelernt. Bei Zahlen, Monaten und Wochentagen funktioniert dieselbe Struktur." : "The head increments an ordered token through a learned direction. The order is not in the context; it is learned in the weights. The same structure works for numbers, months, and weekdays."
+          tokens: [DE ? "Mo" : "Mon", DE ? "Di" : "Tue"],
+          from: 0, to: 1,
+          qkv: DE ? "Query: Montag · Key/Value: gelernte Ordnung +1 → Dienstag" : "Query: Monday · Key/Value: learned order +1 → Tuesday",
+          body: DE ? "Erhöht ein geordnetes Token über eine gelernte Richtung. Die Ordnung steht nicht im Text; sie ist im Gewicht gelernt. Bei Zahlen, Monaten und Wochentagen funktioniert dieselbe Struktur." : "Increments an ordered token through a learned direction. The order is not in the text; it is learned in the weights. The same structure works for numbers, months, and weekdays."
         },
         {
           title: "Name-Mover",
-          sub: DE ? "Mary … John … Mary" : "Mary … John … Mary",
+          sub: "Mary … John … Mary → Mary",
           color: C.petrol,
           tokens: ["Mary", "John", "Mary"],
-          from: 2, to: 0, out: "Mary",
+          from: 2, to: 0,
+          qkv: DE ? "Query: Frage nach Mary · Key: Mary im Text · Value: Mary" : "Query: question about Mary · Key: Mary in the text · Value: Mary",
           body: DE ? "Im IOI-Satz schaut der Name-Mover-Head auf Mary und kopiert sie in die Antwort. S-Inhibition-Heads unterdrücken den wiederholten John. Das ist faktenbezogenes Kopieren, kein Sequenzmuster." : "In the IOI sentence the name-mover head looks at Mary and copies her into the answer. S-inhibition heads suppress the repeated John. This is fact-like copying, not a sequence pattern."
         }
       ];
@@ -763,7 +770,12 @@
         font: '700 ' + (small ? 11 : 12.5) + 'px "Barlow", "Open Sans", sans-serif',
         color: C.petrol
       });
-      wrapText(c, item.body, detX + 10, detY + 31, detW - 20, small ? 12 : 13, {
+      var qkvEnd = wrapText(c, item.qkv, detX + 10, detY + 30, detW - 20, small ? 10 : 11, {
+        size: small ? 7.6 : 8.4,
+        color: item.color,
+        font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
+      });
+      wrapText(c, item.body, detX + 10, qkvEnd + 4, detW - 20, small ? 12 : 13, {
         size: small ? 8.2 : 9.2,
         color: C.soft
       });

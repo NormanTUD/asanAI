@@ -2187,8 +2187,8 @@
     kicker: DE ? "Induction" : "Induction",
     title: DE ? "Was folgt auf „Hund“?" : "What follows “dog”?",
     teaser: DE
-      ? "Das Netzwerk lernt, wann es auf früher Geschriebenes zurückgreifen und es einfach kopieren kann. Im Beispiel folgte auf das erste „Hund“ ein „bellt“; steht später wieder „Hund“, kann das Modell „bellt“ von dort übernehmen."
-      : "The network learns when to fall back on earlier text and simply copy it. In the example, the first “dog” was followed by “barks”; when “dog” appears again later, the model can take “barks” from there.",
+      ? "Das Netzwerk lernt, wann es auf früher Geschriebenes zurückgreifen und es einfach kopieren kann. Im Beispiel folgte auf das erste „Hund“ ein „bellt“; steht später wieder „Hund“, kann das Modell „bellt“ von dort übernehmen.\n\nDas braucht zwei Schichten. Ein Attention-Head ist ein kleiner Baustein, der Vektoren vergleicht. Er hat drei gelernte Teile: Query (Q, die Frage), Key (K, das Angebot) und Value (V, der Inhalt). Schicht 1 (Previous-Token-Head) schreibt an jede Stelle den Vorgänger als Key: An der Stelle von „bellt“ steht „davor: Hund“. Schicht 2 (Induction-Head) vergleicht die Query des aktuellen „Hund“ mit diesen Keys; der Key passt, und die Attention-Gewichte geben der Stelle hohes Gewicht. Der OV-Teil, der Kopierer, schreibt den Value dort („bellt“) an die aktuelle Stelle; deshalb steigt die Wahrscheinlichkeit für „bellt“.\n\nQK ist der Query-Key-Vergleich: Er bestimmt die Attention-Gewichte, also wohin geschaut wird. OV ist die Value-Output-Abbildung: Sie bestimmt, was an der Zielstelle ankommt. Beide sind gelernte Matrizen, keine Tabelle. Schicht 1 baut den Key, Schicht 2 findet ihn, OV kopiert den Value. Wofür? Um ein Muster aus dem Text fortzusetzen, ohne Tabelle: ein Baustein des In-Context-Lernens."
+      : "The network learns when to fall back on earlier text and simply copy it. In the example, the first “dog” was followed by “barks”; when “dog” appears again later, the model can take “barks” from there.\n\nThis takes two layers. An attention head is a small building block that compares vectors. It has three learned parts: query (Q, the question), key (K, what is offered), and value (V, the content). Layer 1 (previous-token head) writes the predecessor as a key at each position: at the position of “barks” it says “before: dog”. Layer 2 (induction head) compares the query of the current “dog” with these keys; the key matches, and the attention weights give that position a high weight. The OV part, the copier, writes the value there (“barks”) to the current position; that is why “barks” becomes more likely.\n\nQK is the query-key comparison: it determines the attention weights, that is, where to look. OV is the value-output map: it determines what arrives at the target position. Both are learned matrices, not a table. Layer 1 builds the key, layer 2 finds it, OV copies the value. Why? To continue a pattern from the text without a table: a building block of in-context learning.",
     watch: DE ? "Lies den Beispieltext links. Verfolge, was Schicht 1 allein macht, was Schicht 2 allein, und was beide zusammen vorhersagen." : "Read the example text on the left. Follow what layer 1 does alone, what layer 2 does alone, and what both predict together.",
     demoState: { scene: "induction", mode: "sequence" },
     context: DE ? "Der Kopf liest keine Bedeutung. Er vergleicht gelernte Vektoren: Wenn zwei Stellen ähnlich genug sind, schaut er dorthin." : "The head does not read meaning. It compares learned vectors: when two places are similar enough, it looks there.",
@@ -2202,30 +2202,6 @@
       { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Induktionsköpfe, Zwei-Head-Schaltkreis und Phase Change.", en: "Induction heads, the two-head circuit, and the phase change." } },
       { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK/OV-Zerlegung, Copying Heads und K-Composition.", en: "QK/OV decomposition, copying heads, and K-composition." } }
     ]
-  };
-
-  var inductionCopySources = [
-    { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Prefix-Matching, Copying und der Zwei-Head-Schaltkreis.", en: "Prefix matching, copying, and the two-head circuit." } },
-    { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK/OV-Zerlegung und K-Composition.", en: "QK/OV decomposition and K-composition." } },
-    { label: "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models", url: "https://arxiv.org/abs/2405.00208", why: { de: "Mechanismen von Previous-Token- und Induktionsköpfen.", en: "Mechanisms of previous-token and induction heads." } }
-  ];
-
-  var inductionCopy = {
-    kicker: DE ? "Mechanik" : "Mechanics",
-    title: DE ? "Wie wird kopiert?" : "How is copying done?",
-    teaser: DE
-      ? "Jetzt die Mechanik in drei Schritten. A und B sind Platzhalter für Tokens: Wörter, Wortteile oder größere wiederkehrende Muster. Erst merkt sich ein Hilfskopf den Vorgänger: Nach dem früheren „Hund“ steht die Information „davor war Hund“. Dann sucht der Induktionskopf das frühere „Hund“ und schaut auf das Token danach: „bellt“. Zuletzt kopiert die OV-Matrix „bellt“ an die neue Stelle. Es gibt viele verschiedene Arten von Attention Heads; wir sehen hier nur einige.\n\nQK entscheidet, wohin geschaut wird. OV entscheidet, was kopiert wird. Die OV-Matrix ist also der Kopierer, die Attention der Sucher. Kein Schritt liest eine Tabelle: Beide Teile sind gelernte Abbildungen auf Vektoren."
-      : "Now the mechanics in three steps. A and B are placeholders for tokens: words, word pieces, or larger recurring patterns. First a helper head remembers the predecessor: after the earlier “dog” it stores the information “the token before me was dog”. Then the induction head finds the earlier “dog” and looks at the token after it: “barks”. Finally the OV matrix copies “barks” to the new place. There are many different kinds of attention heads; we look at only a few here.\n\nQK decides where to look. OV decides what is copied. So the OV matrix is the copier and attention is the searcher. No step reads a table: both parts are learned maps on vectors.",
-    watch: DE ? "Klicke die drei Schritte: Vorgänger merken, Stelle finden, kopieren." : "Click the three steps: remember the predecessor, find the place, copy.",
-    demoState: { scene: "induction", mode: "copy" },
-    context: DE ? "Der Hilfskopf ist ein eigener Kopf in einer früheren Schicht. Er merkt sich nur, welches Token vorher kam." : "The helper head is a separate head in an earlier layer. It only remembers which token came before.",
-    deep: DE ? "Formal ist der Key des Induktionskopfs $k_j = W_K x_j$, wobei $x_j$ den Output des Previous-Token-Heads enthält. Der QK-Score vergleicht $q_i$ mit $k_j$; die OV-Matrix schreibt $W_O W_V x_j$. Das ist K-Composition, keine V- oder Q-Composition." : "Formally, the induction head's key is $k_j = W_K x_j$, where $x_j$ contains the output of the previous-token head. The QK score compares $q_i$ with $k_j$; the OV matrix writes $W_O W_V x_j$. This is K-composition, not V- or Q-composition.",
-    boxes: [
-      box("copy-1", DE ? "Mathematik" : "Mathematics", DE ? "Drei Matrizen" : "Three matrices", DE ? "Die Query kommt aus $W_Q$, der Key aus $W_K$, der Value aus $W_V$. Zusammen mit $W_O$ ergibt das zwei Schaltkreise: QK wählt die Quelle, OV schreibt ihren Inhalt." : "The query comes from $W_Q$, the key from $W_K$, the value from $W_V$. Together with $W_O$ this gives two circuits: QK selects the source, OV writes its content.", DE ? "\\underbrace{\\underbrace{\\operatorname{score}(i,j)}_{\\text{wen besuchen?}} = \\underbrace{\\mathbf{q}_i^\\top \\mathbf{k}_j}_{\\text{QK}}}_{\\text{Aufmerksamkeit}} \\qquad \\underbrace{\\underbrace{\\Delta \\mathbf{x}_i}_{\\text{was ankommt?}} = \\underbrace{W_O}_{\\text{OV}} \\mathbf{v}_j}_{\\text{Kopie}}" : "\\underbrace{\\underbrace{\\operatorname{score}(i,j)}_{\\text{where to attend?}} = \\underbrace{\\mathbf{q}_i^\\top \\mathbf{k}_j}_{\\text{QK}}}_{\\text{attention}} \\qquad \\underbrace{\\underbrace{\\Delta \\mathbf{x}_i}_{\\text{what arrives?}} = \\underbrace{W_O}_{\\text{OV}} \\mathbf{v}_j}_{\\text{copy}}"),
-      box("copy-2", DE ? "Schaltkreis" : "Circuit", DE ? "K-Composition" : "K-composition", DE ? "Der Key des Induktionskopfs liest einen Unterraum, den der Previous-Token-Head geschrieben hat. Deshalb braucht der Schaltkreis zwei Schichten: Ein einzelner Head kann seinen Key nicht von einem anderen Head abhängig machen." : "The induction head's key reads a subspace written by the previous-token head. That is why the circuit needs two layers: a single head cannot make its key depend on another head."),
-      box("copy-3", DE ? "Grenze" : "Limit", DE ? "Kopieren ist relativ" : "Copying is relative", DE ? "Die Kopie hängt davon ab, wohin die Attention fällt. Fällt sie auf eine andere Stelle, kopiert derselbe OV-Schaltkreis etwas anderes. Deshalb ist die Attention der Teil, der die Regel trägt; die OV-Matrix ist der Teil, der den Inhalt überträgt." : "The copy depends on where attention lands. If it lands elsewhere, the same OV circuit copies something else. Attention carries the rule; the OV matrix carries the content.")
-    ],
-    sources: inductionCopySources
   };
 
   var inductionHeads = {
@@ -2252,21 +2228,6 @@
     ]
   };
 
-  var inductionCircuit = Object.assign({}, inductionSequence, {
-    kicker: DE ? "Schaltkreis" : "Circuit",
-    title: DE ? "Zwei Schichten, ein Trick" : "Two layers, one trick",
-    teaser: DE
-      ? "Zwei Schichten, ein Trick. Der Previous-Token-Head in Schicht 1 merkt sich für jede Position, welches Token davor stand. Der Induktionskopf in Schicht 2 fragt mit dem aktuellen $A$. Sein Key enthält das vorherige Token; deshalb passt er an der Stelle, an der davor $A$ stand, also bei $B$. Dorthin schaut der Kopf und kopiert $B$.\n\n$A$ und $B$ sind Platzhalter für Tokens: Das können Wörter, Wortteile oder größere wiederkehrende Einheiten sein. In echten Texten reagiert der Kopf auf Muster, die sich auch über Wortgruppen oder ganze Teilsätze erstrecken können. Das ist K-Composition: Der Key hängt vom vorherigen Token ab. Deshalb braucht der Schaltkreis mindestens zwei Schichten."
-      : "Two layers, one trick. The previous-token head in layer 1 remembers, for every position, which token came before it. The induction head in layer 2 queries with the current $A$. Its key contains the previous token; so it matches the position where $A$ came before, which is the position of $B$. The head looks there and copies $B$.\n\n$A$ and $B$ are placeholders for tokens: they can be words, word pieces, or larger recurring units. In real text the head reacts to patterns that can also span word groups or whole sub-sentences. This is K-composition: the key depends on the previous token. That is why the circuit needs at least two layers.",
-    watch: DE ? "Klicke Weiter. Verfolge den Weg vom Previous-Token-Head zum Induktionskopf." : "Click Next. Follow the path from the previous-token head to the induction head.",
-    demoState: { scene: "induction", mode: "circuit" },
-    boxes: [
-      box("circ-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Key ist verschoben" : "The key is shifted", DE ? "Der Induktionskopf liest einen Key, der aus Token plus Vorgänger besteht. Deshalb kann seine Query mit dem aktuellen $A$ eine Stelle treffen, an der vorher $A$ stand, obwohl dort jetzt $B$ steht." : "The induction head reads a key made of token plus predecessor. That is how its query with the current $A$ can hit a position where $A$ stood before, even though $B$ stands there now.", DE ? "\\underbrace{\\underbrace{\\mathbf{k}_j}_{\\text{Key}} = \\underbrace{W_K}_{\\text{gelernt}}\\,\\underbrace{(\\mathbf{x}_j + \\mathbf{h}^{\\mathrm{prev}}_j)}_{\\text{Token + Previous-Token-Head}}}_{\\text{Key mit Vorgänger}}" : "\\underbrace{\\underbrace{\\mathbf{k}_j}_{\\text{key}} = \\underbrace{W_K}_{\\text{learned}}\\,\\underbrace{(\\mathbf{x}_j + \\mathbf{h}^{\\mathrm{prev}}_j)}_{\\text{token + previous-token head}}}_{\\text{key with predecessor}}"),
-      box("circ-2", DE ? "Schaltkreis" : "Circuit", DE ? "Zwei Schichten minimum" : "Two layers minimum", DE ? "Der Previous-Token-Head muss seinen Output in den Residualstrom schreiben, bevor der Induktionskopf ihn lesen kann. Ein einzelner Head hat keinen früheren Head, dessen Output er in seinen Key aufnehmen könnte." : "The previous-token head must write its output into the residual stream before the induction head can read it. A single head has no earlier head whose output it could include in its key.")
-    ],
-    sources: inductionCopySources
-  });
-
   var inductionEmergence = Object.assign({}, inductionSequence, {
     kicker: DE ? "Emergenz" : "Emergence",
     title: DE ? "Der Phase Change" : "The phase change",
@@ -2282,7 +2243,7 @@
   var inductionStep = {
     kicker: DE ? "In-Context" : "In-context",
     title: DE ? "Induktionsköpfe" : "Induction heads",
-    substeps: [inductionSequence, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence, headConcatSubstep]
+    substeps: [inductionSequence, inductionHeads, inductionEmergence, headConcatSubstep]
   };
 
   var spacetimeSpace = {
