@@ -34,10 +34,6 @@
                 '<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true"><span></span><span></span><span></span></div>' +
               '</div>' +
               '<div class="ia-serp" id="ia-serp"></div>' +
-              '<div class="ia-eoy-keyboard" id="ia-eoy-keyboard" aria-hidden="true">' +
-                '<div class="ia-eoy-swipe" id="ia-eoy-swipe"></div>' +
-                '<div class="ia-eoy-keys" id="ia-eoy-keys"></div>' +
-              '</div>' +
             '</div>' +
             '<div class="ia-phone-screen ia-screen-layer ia-phone--chat ia-chat-screen" id="ia-chat-phone">' +
               '<div class="ia-chat-appbar"><span>' + (DE ? "KI-Chat" : "AI chat") + '</span><i class="ia-chat-live" aria-hidden="true"></i></div>' +
@@ -46,7 +42,6 @@
                 '<div class="ia-chat-msg is-ai"><span class="ia-chat-role">LLM</span><span class="ia-chat-bubble ia-chat-answer"></span><span class="ia-chat-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '</div>' +
               '<div class="ia-chat-compose"><span class="ia-chat-placeholder">' + (DE ? "Nachricht" : "Message") + '</span><span class="ia-chat-input"></span><i class="ia-chat-send" aria-hidden="true"></i></div>' +
-              '<div class="ia-eoy-keyboard" id="ia-chat-keyboard" aria-hidden="true"><div class="ia-eoy-swipe" id="ia-chat-swipe"></div><div class="ia-eoy-keys" id="ia-chat-keys"></div></div>' +
             '</div>' +
             '<div class="ia-phone-screen ia-screen-layer ia-home-screen" id="ia-home">' +
               '<div class="ia-home-status"><span class="ia-home-time"></span><span class="ia-home-status-icons" aria-hidden="true">' +
@@ -78,15 +73,6 @@
     var chatPhone = el.querySelector("#ia-chat-phone");
     var chatScreen = el.querySelector(".ia-chat-screen");
     var searchPhone = el.querySelector("#ia-phone");
-    var keyboardEl = el.querySelector("#ia-eoy-keyboard");
-    var keysEl = el.querySelector("#ia-eoy-keys");
-    var swipeLayer = el.querySelector("#ia-eoy-swipe");
-    var chatKeyboardEl = el.querySelector("#ia-chat-keyboard");
-    var chatKeysEl = el.querySelector("#ia-chat-keys");
-    var chatSwipeLayer = el.querySelector("#ia-chat-swipe");
-    var keyEls = {};
-    var swipeRaf = 0;
-    var typedText = "";
     var homeScreen = el.querySelector("#ia-home");
     var homeChatApp = el.querySelector('[data-home-app="chat"]');
     var homeTimeEl = el.querySelector(".ia-home-time");
@@ -152,185 +138,6 @@
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
     function clearTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
-    function makeKeyboard(screen, keys, swipe, input) {
-      return { screen: screen, keys: keys, swipe: swipe, input: input, keyEls: {}, raf: 0, typed: "" };
-    }
-    var SEARCH_KB = makeKeyboard(searchPhone, keysEl, swipeLayer, searchText);
-    var CHAT_KB = makeKeyboard(chatPhone, chatKeysEl, chatSwipeLayer, chatInputEl);
-    function buildKeyboard(kb) {
-      if (!kb || !kb.keys || kb.keys.getAttribute("data-built")) return;
-      var rows = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
-      var html = "";
-      rows.forEach(function (row, ri) {
-        html += '<div class="ia-eoy-krow">';
-        if (ri === 2) html += '<span class="ia-eoy-key ia-eoy-key--wide" data-k="shift">⇧</span>';
-        row.split("").forEach(function (ch) {
-          html += '<span class="ia-eoy-key" data-k="' + ch + '">' + ch + '</span>';
-        });
-        if (ri === 2) html += '<span class="ia-eoy-key ia-eoy-key--wide" data-k="back">⌫</span>';
-        html += "</div>";
-      });
-      html += '<div class="ia-eoy-krow"><span class="ia-eoy-key ia-eoy-key--wide" data-k="sym">?123</span><span class="ia-eoy-key ia-eoy-key--space" data-k=" "></span><span class="ia-eoy-key ia-eoy-key--wide" data-k="enter">↵</span></div>';
-      kb.keys.innerHTML = html;
-      kb.keys.setAttribute("data-built", "1");
-      kb.keyEls = {};
-      Array.prototype.forEach.call(kb.keys.querySelectorAll("[data-k]"), function (key) {
-        kb.keyEls[key.getAttribute("data-k")] = key;
-      });
-    }
-    function clearSwipe(kb) {
-      if (!kb) return;
-      if (kb.raf) { cancelAnimationFrame(kb.raf); kb.raf = 0; }
-      if (kb.swipe) kb.swipe.innerHTML = "";
-    }
-    function clearPressed(kb) {
-      if (!kb || !kb.keys) return;
-      Array.prototype.forEach.call(kb.keys.querySelectorAll(".is-pressed"), function (key) {
-        key.classList.remove("is-pressed");
-      });
-    }
-    function showKeyboard(kb, on) {
-      if (!kb || !kb.screen) return;
-      kb.screen.classList.toggle("is-keyboard", !!on);
-      if (!on) { clearSwipe(kb); clearPressed(kb); }
-    }
-    function pressKey(kb, ch) {
-      var key = kb.keyEls[(ch || " ").toLowerCase()] || kb.keyEls[" "];
-      if (!key) return;
-      key.classList.add("is-pressed");
-      later(function () { key.classList.remove("is-pressed"); }, 90);
-    }
-    function keyCenter(kb, ch) {
-      var key = kb.keyEls[(ch || " ").toLowerCase()];
-      if (!key) return null;
-      return { x: key.offsetLeft + key.offsetWidth / 2, y: key.offsetTop + key.offsetHeight / 2 };
-    }
-    function appendTyped(kb, ch) {
-      kb.typed += ch;
-      if (kb.input) kb.input.innerHTML = esc(kb.typed) + '<span class="ia-caret"></span>';
-    }
-    function smoothPath(points) {
-      if (!points.length) return "";
-      if (points.length === 1) return "M" + points[0].x.toFixed(1) + " " + points[0].y.toFixed(1);
-      var d = "M" + points[0].x.toFixed(1) + " " + points[0].y.toFixed(1);
-      for (var i = 0; i < points.length - 1; i++) {
-        var p0 = points[i - 1] || points[i];
-        var p1 = points[i];
-        var p2 = points[i + 1];
-        var p3 = points[i + 2] || p2;
-        var c1x = p1.x + (p2.x - p0.x) / 6;
-        var c1y = p1.y + (p2.y - p0.y) / 6;
-        var c2x = p2.x - (p3.x - p1.x) / 6;
-        var c2y = p2.y - (p3.y - p1.y) / 6;
-        d += "C" + c1x.toFixed(1) + " " + c1y.toFixed(1) + " " + c2x.toFixed(1) + " " + c2y.toFixed(1) + " " + p2.x.toFixed(1) + " " + p2.y.toFixed(1);
-      }
-      return d;
-    }
-    function animateSwipe(kb, points, duration, onPass, label) {
-      if (!kb || !kb.swipe || points.length < 2) return;
-      clearSwipe(kb);
-      var NS = "http://www.w3.org/2000/svg";
-      var svg = document.createElementNS(NS, "svg");
-      svg.setAttribute("viewBox", "0 0 " + kb.swipe.offsetWidth + " " + kb.swipe.offsetHeight);
-      svg.setAttribute("preserveAspectRatio", "none");
-      var d = smoothPath(points);
-      function makePath(stroke, width, opacity) {
-        var path = document.createElementNS(NS, "path");
-        path.setAttribute("d", d);
-        path.setAttribute("fill", "none");
-        path.setAttribute("stroke", stroke);
-        path.setAttribute("stroke-width", String(width));
-        path.setAttribute("stroke-opacity", String(opacity));
-        path.setAttribute("stroke-linecap", "round");
-        path.setAttribute("stroke-linejoin", "round");
-        return path;
-      }
-      var line = makePath("#3f7fb0", 2.4, 0.10);
-      var wordBg = document.createElementNS(NS, "rect");
-      wordBg.setAttribute("rx", "5");
-      wordBg.setAttribute("fill", "rgba(247,250,253,.92)");
-      wordBg.setAttribute("stroke", "rgba(15,23,42,.08)");
-      wordBg.setAttribute("height", "15");
-      wordBg.setAttribute("visibility", "hidden");
-      var wordText = document.createElementNS(NS, "text");
-      wordText.setAttribute("text-anchor", "middle");
-      wordText.setAttribute("font-family", "Open Sans, sans-serif");
-      wordText.setAttribute("font-size", "10");
-      wordText.setAttribute("font-weight", "700");
-      wordText.setAttribute("fill", "rgba(27,42,43,.78)");
-      var halo = document.createElementNS(NS, "circle");
-      halo.setAttribute("r", "12");
-      halo.setAttribute("fill", "rgba(63,127,176,.12)");
-      var dot = document.createElementNS(NS, "circle");
-      dot.setAttribute("r", "5");
-      dot.setAttribute("fill", "#3f7fb0");
-      dot.setAttribute("stroke", "#fff");
-      dot.setAttribute("stroke-width", "1.6");
-      svg.appendChild(line);
-      svg.appendChild(halo);
-      svg.appendChild(dot);
-      svg.appendChild(wordBg);
-      svg.appendChild(wordText);
-      kb.swipe.appendChild(svg);
-      var len = line.getTotalLength();
-      if (!len) return;
-      line.style.strokeDasharray = String(len);
-      line.style.strokeDashoffset = String(len);
-      var total = 0;
-      var cum = [0];
-      for (var i = 1; i < points.length; i++) {
-        total += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
-        cum.push(total);
-      }
-      var fracs = cum.map(function (value) { return total ? value / total : 1; });
-      var passed = -1;
-      function updateWord(x, y) {
-        if (!label || passed < 0) return;
-        var ty = Math.max(16, y - 22);
-        wordText.setAttribute("x", String(x));
-        wordText.setAttribute("y", String(ty));
-        wordText.textContent = label.slice(0, passed + 1);
-        var width = wordText.getComputedTextLength();
-        wordBg.setAttribute("x", String(x - width / 2 - 5));
-        wordBg.setAttribute("y", String(ty - 11));
-        wordBg.setAttribute("width", String(width + 10));
-        wordBg.setAttribute("visibility", "visible");
-      }
-      function fireUpTo(frac) {
-        for (var k = passed + 1; k < fracs.length; k++) {
-          if (fracs[k] <= frac + 0.0001) {
-            passed = k;
-            if (onPass) onPass(k);
-          } else {
-            break;
-          }
-        }
-      }
-      var start = performance.now();
-      function tick(now) {
-        var raw = Math.min(1, (now - start) / duration);
-        var eased = raw < 0.5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
-        var drawn = len * eased;
-        var pt = line.getPointAtLength(drawn);
-        line.style.strokeDashoffset = String(len - drawn);
-        halo.setAttribute("cx", String(pt.x));
-        halo.setAttribute("cy", String(pt.y));
-        dot.setAttribute("cx", String(pt.x));
-        dot.setAttribute("cy", String(pt.y));
-        fireUpTo(eased);
-        updateWord(pt.x, pt.y);
-        if (raw < 1) {
-          kb.raf = requestAnimationFrame(tick);
-        } else {
-          fireUpTo(1);
-          updateWord(pt.x, pt.y);
-          svg.style.transition = "opacity .42s ease";
-          svg.style.opacity = "0";
-          later(function () { if (svg.parentNode) svg.remove(); }, 460);
-        }
-      }
-      kb.raf = requestAnimationFrame(tick);
-    }
     function buildLogo() {
       var letters = (DE ? "Suchmaschine" : "Search Engine").split("");
       var palette = ["#1a73e8", "#e53935", "#f57c00", "#0f9d58", "#8e24aa", "#00acc1"];
@@ -350,7 +157,6 @@
     }
     function setCentered(on) { searchBar.classList.toggle("centered", !!on); }
     function resetChatVisuals() {
-      showKeyboard(CHAT_KB, false);
       if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
       if (chatScreen) chatScreen.classList.remove("is-answering", "is-composing", "is-sent");
       if (chatQuestionEl) chatQuestionEl.textContent = "";
@@ -388,9 +194,6 @@
     }
     function reset() {
       clearTimers();
-      typedText = "";
-      showKeyboard(SEARCH_KB, false);
-      showKeyboard(CHAT_KB, false);
       setCentered(true);
       searchText.textContent = "";
       searchText.classList.remove("typing");
@@ -413,70 +216,23 @@
       }, speed);
       timers.push(timer);
     }
-    function pressEnter(kb) {
-      var key = kb.keyEls.enter;
-      if (!key) return;
-      key.classList.add("is-pressed");
-      later(function () { key.classList.remove("is-pressed"); }, 150);
-    }
-    function typeInto(kb, text, done, perMin, perMax, perBudget) {
-      if (reduce) { if (kb.input) kb.input.textContent = text; if (done) done(); return; }
-      kb.typed = "";
-      var chunks = text.split(/(\s+)/).filter(function (part) { return part.length; });
-      var ci = 0;
-      function nextChunk() {
-        if (ci >= chunks.length) {
-          pressEnter(kb);
-          later(function () { if (done) done(); }, 150);
-          return;
-        }
-        var chunk = chunks[ci++];
-        if (/^\s+$/.test(chunk)) {
-          pressKey(kb, " ");
-          appendTyped(kb, chunk);
-          later(nextChunk, 150);
-          return;
-        }
-        var letters = chunk.split("");
-        var prevPoint = null;
-        var points = letters.map(function (ch) {
-          var point = /[a-z]/i.test(ch) ? keyCenter(kb, ch) : (prevPoint || keyCenter(kb, ch));
-          prevPoint = point;
-          return point;
-        }).filter(Boolean);
-        if (points.length < 2) {
-          letters.forEach(function (ch) {
-            if (/[a-z]/i.test(ch)) pressKey(kb, ch);
-            appendTyped(kb, ch);
-          });
-          later(nextChunk, 140);
-          return;
-        }
-        var per = Math.max(perMin, Math.min(perMax, perBudget / Math.max(1, letters.length)));
-        var dur = letters.length * per;
-        animateSwipe(kb, points, dur, function (i) {
-          if (/[a-z]/i.test(letters[i])) pressKey(kb, letters[i]);
-          appendTyped(kb, letters[i]);
-        }, chunk);
-        later(nextChunk, dur + 140);
-      }
-      nextChunk();
-    }
     function typeSearch(text, done) {
       if (reduce) { searchText.textContent = text; if (done) done(); return; }
       searchText.classList.add("typing");
       searchText.innerHTML = '<span class="ia-caret"></span>';
-      typeInto(SEARCH_KB, text, function () {
-        searchText.classList.remove("typing");
-        searchText.textContent = text;
-        showKeyboard(SEARCH_KB, false);
-        later(function () { if (done) done(); }, 220);
-      }, 56, 96, 700);
-    }
-    function typeChatInput(text, done) {
-      if (reduce) { chatInputEl.textContent = text; if (done) done(); return; }
-      chatInputEl.innerHTML = '<span class="ia-caret"></span>';
-      typeInto(CHAT_KB, text, done, 52, 88, 660);
+      var i = 0;
+      var timer = setInterval(function () {
+        if (i < text.length) {
+          i += 1;
+          searchText.innerHTML = esc(text.slice(0, i)) + '<span class="ia-caret"></span>';
+        } else {
+          clearInterval(timer);
+          searchText.classList.remove("typing");
+          searchText.textContent = text;
+          later(function () { if (done) done(); }, 160);
+        }
+      }, 34);
+      timers.push(timer);
     }
     function typeAnswer() {
       var spans = AI.map(function (seg) {
@@ -520,24 +276,20 @@
         if (sequenceDone) later(function () { sequenceDone(); }, 900);
         return;
       }
-      showKeyboard(CHAT_KB, true);
-      later(function () {
-        typeChatInput(CHAT_Q, function () {
-          if (chatInputEl) chatInputEl.textContent = "";
-          if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
-          if (chatScreen) { chatScreen.classList.remove("is-composing"); chatScreen.classList.add("is-sent"); }
+      typeChat(chatInputEl, CHAT_Q, 24, function () {
+        if (chatInputEl) chatInputEl.textContent = "";
+        if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
+        if (chatScreen) { chatScreen.classList.remove("is-composing"); chatScreen.classList.add("is-sent"); }
+        later(function () {
+          if (chatPhone) chatPhone.classList.add("is-thinking");
           later(function () {
-            if (chatPhone) chatPhone.classList.add("is-thinking");
-            later(function () {
-              if (chatPhone) chatPhone.classList.remove("is-thinking");
-              if (chatPhone) chatPhone.classList.add("is-answered");
-              if (chatScreen) chatScreen.classList.add("is-answering");
-              showKeyboard(CHAT_KB, false);
-              typeChat(chatAnswerEl, CHAT_A, 5, function () { if (sequenceDone) sequenceDone(); });
-            }, 360);
-          }, 260);
-        });
-      }, 320);
+            if (chatPhone) chatPhone.classList.remove("is-thinking");
+            if (chatPhone) chatPhone.classList.add("is-answered");
+            if (chatScreen) chatScreen.classList.add("is-answering");
+            typeChat(chatAnswerEl, CHAT_A, 5, function () { if (sequenceDone) sequenceDone(); });
+          }, 360);
+        }, 260);
+      });
     }
     function cleanupHomeLaunch() {
       if (homeChatApp) homeChatApp.classList.remove("is-target", "is-tapped", "is-opening");
@@ -601,23 +353,20 @@
         if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
         return;
       }
-      showKeyboard(SEARCH_KB, true);
-      later(function () {
-        typeSearch(SATZ, function () {
-          searchText.textContent = SATZ;
-          setCentered(false);
+      typeSearch(SATZ, function () {
+        searchText.textContent = SATZ;
+        setCentered(false);
+        later(function () {
+          card.classList.add("on");
+          thinking.classList.add("on");
           later(function () {
-            card.classList.add("on");
-            thinking.classList.add("on");
-            later(function () {
-              thinking.classList.remove("on");
-              typeAnswer();
-              serp.classList.add("on");
-              if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1500);
-            }, 240);
-          }, 320);
-        });
-      }, 320);
+            thinking.classList.remove("on");
+            typeAnswer();
+            serp.classList.add("on");
+            if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1500);
+          }, 240);
+        }, 320);
+      });
     }
     function fit() {
       var r = stage.getBoundingClientRect();
@@ -626,8 +375,6 @@
     }
     buildLogo();
     buildSerp();
-    buildKeyboard(SEARCH_KB);
-    buildKeyboard(CHAT_KB);
     reset();
     var started = false, shownOnce = false;
     function startOnce() { if (started) return; started = true; play(); }
@@ -687,8 +434,6 @@
       onAdvance: function (fn) { advance = fn; },
       pause: function () {
         clearTimers();
-        showKeyboard(SEARCH_KB, false);
-        showKeyboard(CHAT_KB, false);
         launchingChat = false;
         cleanupHomeLaunch();
         hidePhoneNav();
@@ -697,8 +442,6 @@
       resize: fit,
       destroy: function () {
         clearTimers();
-        clearSwipe(SEARCH_KB);
-        clearSwipe(CHAT_KB);
         clearNavHideTimer();
         if (ro) ro.disconnect();
         window.removeEventListener("resize", fit);
