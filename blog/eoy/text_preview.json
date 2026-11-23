@@ -126,9 +126,9 @@
       "body": ""
     },
     "26": {
-      "kicker": "Agent",
-      "title": "Ein Agent ist dasselbe Modell mit Werkzeugen",
-      "body": "Ein Agent ist kein neues Modell. Er kann dasselbe Basismodell verwenden; die Browser-Demo ist kein Agent. Der Unterschied ist der Loop: Das Modell sagt „führe das als Programm aus“, die Runtime tut es, und der Output kommt in den Kontext. So arbeiten opencode, Claude Code und Cursor: Sie lesen Dateien, führen Befehle aus und sehen die Ergebnisse. Multimodale Modelle bekommen zusätzlich Screenshots und können darauf sehen, was auf dem Bildschirm ist."
+      "kicker": "Agent · RAG",
+      "title": "Der Agent liest Buch-Chunks in den Kontext",
+      "body": "RAG heißt: Das Modell holt sich Ausschnitte aus einer Quelle, bevor es antwortet, statt nur aus dem Gedächtnis zu raten. Ein Agent kann dafür ein Buch öffnen. Er zerlegt den Text in Chunks, bewertet sie kurz (passt / nicht relevant) und gibt jedem Chunk einen Vektor. Dann vergleicht er den Winkel mit dem aktuellen Kontext, aus dem er gerade generieren soll. Chunks unter dem Grenzwinkel kommen in den unsichtbaren Kontext; dort liest sie das Modell beim nächsten Token. So kann es aus dem Buch weitererzählen, ohne den ganzen Text im Prompt zu haben."
     },
     "27": {
       "kicker": "Grenze",
@@ -142,8 +142,8 @@
     },
     "29": {
       "kicker": "Philosophie",
-      "title": "Hat eine KI Bewusstsein?",
-      "body": "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein. Auf der nächsten Folie wird daraus die Frage, ob Regeln allein schon Verstehen sind."
+      "title": "Das Chinesische Zimmer",
+      "body": "Das Chinesische Zimmer ist Searles Gedankenexperiment: Du bekommst chinesische Zeichen, ein Regelbuch und gibst passende Zeichen zurück. Von außen wirkt das wie Verstehen; innen bleiben es Regeln. Searle (1980) unterscheidet Symbolmanipulation von Bedeutung. Ob das ganze System versteht, ist umstritten."
     },
     "30": {
       "kicker": "KI und Gesellschaft",
@@ -151,9 +151,9 @@
       "body": ""
     },
     "31": {
-      "kicker": "Bewusstsein",
-      "title": "Bewusstsein: die offene Frage",
-      "body": ""
+      "kicker": "Philosophie",
+      "title": "Hat eine KI Bewusstsein?",
+      "body": "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein. Auf der nächsten Folie wird daraus die Frage, ob Regeln allein schon Verstehen sind."
     }
   },
   "en": {
@@ -283,9 +283,9 @@
       "body": ""
     },
     "26": {
-      "kicker": "Agent",
-      "title": "An agent is the same model with tools",
-      "body": "An agent is not a new model. It can use the same base model; the browser demo is not an agent. The difference is the loop: the model says “run this as a program”, the runtime does it, and the output goes into the context. That is how opencode, Claude Code, and Cursor work: they read files, run commands, and see the results. Multimodal models also receive screenshots and can see what is on the screen."
+      "kicker": "Agent · RAG",
+      "title": "The agent reads book chunks into the context",
+      "body": "RAG means the model retrieves excerpts from a source before answering instead of guessing only from memory. For this, an agent can open a book. It splits the text into chunks, scores them briefly (fits / not relevant), and gives each chunk a vector. Then it compares the angle with the current context from which it is about to generate. Chunks below the threshold enter the invisible context; the model reads them at the next token. That is how it continues from the book without putting the whole text into the prompt."
     },
     "27": {
       "kicker": "Limit",
@@ -299,8 +299,8 @@
     },
     "29": {
       "kicker": "Philosophy",
-      "title": "Does an AI have consciousness?",
-      "body": "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is. The next slide turns this into the question of whether rules alone are already understanding."
+      "title": "The Chinese room",
+      "body": "The Chinese room is Searle's thought experiment: you receive Chinese characters, a rule book, and return matching characters. From outside it looks like understanding; inside it remains rule-following. Searle (1980) distinguishes symbol manipulation from meaning. Whether the whole system understands is disputed."
     },
     "30": {
       "kicker": "AI and society",
@@ -308,9 +308,9 @@
       "body": ""
     },
     "31": {
-      "kicker": "Consciousness",
-      "title": "Consciousness: the open question",
-      "body": ""
+      "kicker": "Philosophy",
+      "title": "Does an AI have consciousness?",
+      "body": "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is. The next slide turns this into the question of whether rules alone are already understanding."
     }
   }
 }

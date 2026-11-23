@@ -68,11 +68,11 @@ eingesetzt; die App ersetzt sie beim Mounten.
 
 ## Layout-Sprünge prüfen
 
-`blog/tests/eoy_layout_shift_test.py` lädt jede der 31 Seiten, geht alle
-Unterfolien durch, klickt die Demo-Bedienelemente und misst, ob dabei Inhalte
-springen (Chromium-Layout-Shift plus Höhen- und Positionsdifferenzen). Ein
-Treffer heißt: Die Demo soll ihre endgültige Größe reservieren oder den
-wechselnden Teil aus dem Layout nehmen.
+`blog/tests/eoy_layout_shift_test.py` lädt jede vorhandene Tagesseite
+(`eoy/<n>.php`), geht alle Unterfolien durch, klickt die Demo-Bedienelemente
+und misst, ob dabei Inhalte springen (Chromium-Layout-Shift plus Höhen- und
+Positionsdifferenzen). Ein Treffer heißt: Die Demo soll ihre endgültige
+Größe reservieren oder den wechselnden Teil aus dem Layout nehmen.
 
 ```bash
 uv run blog/tests/eoy_layout_shift_test.py

@@ -2103,6 +2103,12 @@
     ]
   };
 
+  var agentsCombinedStep = {
+    kicker: DE ? "Agenten" : "Agents",
+    title: DE ? "Wie Modelle zu Agenten werden" : "How models become agents",
+    substeps: [agentRagStep, agentsStep]
+  };
+
   var wmSources = [
     { label: "Li et al. (2023), Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task", url: "https://arxiv.org/abs/2210.13382", why: { de: "Othello-GPT: ein Brettzustand entsteht aus reiner Zugvorhersage.", en: "Othello-GPT: a board state emerges from next-move prediction alone." } },
     { label: "Nanda, Lee & Wattenberg (2023), Emergent Linear Representations in World Models of Self-Supervised Sequence Models", url: "https://arxiv.org/abs/2309.00941", why: { de: "Der Brettzustand ist linear aus dem Residualstrom lesbar; lineare Probes und Interventionen.", en: "The board state is linearly readable from the residual stream; linear probes and interventions." } },
@@ -2284,7 +2290,7 @@
     substeps: [spacetimeSpace, spacetimeTime]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnStep, residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentRagStep, agentsStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnStep, residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsCombinedStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
 
   var day = {
     id: "intuition",

@@ -228,7 +228,9 @@ def main() -> None:
     parser.add_argument("--no-fail", action="store_true", help="report findings but exit 0")
     args = parser.parse_args()
 
-    days = [int(d) for d in args.only] if args.only else list(range(1, 32))
+    days = [int(d) for d in args.only] if args.only else sorted(
+        int(path.stem) for path in (BLOG / "eoy").glob("[0-9]*.php") if path.stem.isdigit()
+    )
     langs = ["de", "en"] if args.lang == "both" else [args.lang]
     port = free_port()
     server = serve(port)
