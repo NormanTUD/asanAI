@@ -19,6 +19,11 @@
             '<div class="ia-phone-frame"></div>' +
             '<div class="ia-phone-notch"></div>' +
             '<div class="ia-phone-screen ia-screen-layer ia-search-screen is-active" id="ia-phone">' +
+              '<div class="ia-eoy-status" aria-hidden="true"><span class="ia-eoy-time">9:41</span><span class="ia-home-status-icons">' +
+                '<span class="ia-status-signal"><i></i><i></i><i></i><i></i></span>' +
+                '<svg class="ia-status-wifi" viewBox="0 0 18 14"><path d="M2 5.5c4-3.8 10-3.8 14 0M4.6 8.2c2.5-2.3 6.3-2.3 8.8 0M7.2 10.9c1-.9 2.6-.9 3.6 0M9 13h.01" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+                '<svg class="ia-status-battery" viewBox="0 0 20 11"><rect x="0.75" y="0.75" width="15.5" height="9.5" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="2.6" y="2.6" width="10" height="5.8" rx="1.2" fill="currentColor"/><path d="M18 3.6v3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' +
+              '</span></div>' +
               '<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>' +
               '<div class="ia-search-bar" id="ia-search-bar">' +
                 '<div class="ia-search-icon" aria-hidden="true"></div>' +
@@ -29,6 +34,10 @@
                 '<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true"><span></span><span></span><span></span></div>' +
               '</div>' +
               '<div class="ia-serp" id="ia-serp"></div>' +
+              '<div class="ia-eoy-keyboard" id="ia-eoy-keyboard" aria-hidden="true">' +
+                '<div class="ia-eoy-swipe" id="ia-eoy-swipe"></div>' +
+                '<div class="ia-eoy-keys" id="ia-eoy-keys"></div>' +
+              '</div>' +
             '</div>' +
             '<div class="ia-phone-screen ia-screen-layer ia-phone--chat ia-chat-screen" id="ia-chat-phone">' +
               '<div class="ia-chat-appbar"><span>' + (DE ? "KI-Chat" : "AI chat") + '</span><i class="ia-chat-live" aria-hidden="true"></i></div>' +
@@ -68,6 +77,12 @@
     var chatPhone = el.querySelector("#ia-chat-phone");
     var chatScreen = el.querySelector(".ia-chat-screen");
     var searchPhone = el.querySelector("#ia-phone");
+    var keyboardEl = el.querySelector("#ia-eoy-keyboard");
+    var keysEl = el.querySelector("#ia-eoy-keys");
+    var swipeLayer = el.querySelector("#ia-eoy-swipe");
+    var keyEls = {};
+    var swipeRaf = 0;
+    var typedText = "";
     var homeScreen = el.querySelector("#ia-home");
     var homeChatApp = el.querySelector('[data-home-app="chat"]');
     var homeTimeEl = el.querySelector(".ia-home-time");
@@ -133,6 +148,105 @@
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
     function clearTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
+    function buildKeyboard() {
+      if (!keysEl || keysEl.getAttribute("data-built")) return;
+      var rows = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
+      var html = "";
+      rows.forEach(function (row, ri) {
+        html += '<div class="ia-eoy-krow">';
+        if (ri === 2) html += '<span class="ia-eoy-key ia-eoy-key--wide" data-k="shift">⇧</span>';
+        row.split("").forEach(function (ch) {
+          html += '<span class="ia-eoy-key" data-k="' + ch + '">' + ch + '</span>';
+        });
+        if (ri === 2) html += '<span class="ia-eoy-key ia-eoy-key--wide" data-k="back">⌫</span>';
+        html += "</div>";
+      });
+      html += '<div class="ia-eoy-krow"><span class="ia-eoy-key ia-eoy-key--wide" data-k="sym">?123</span><span class="ia-eoy-key ia-eoy-key--space" data-k=" "></span><span class="ia-eoy-key ia-eoy-key--wide" data-k="enter">↵</span></div>';
+      keysEl.innerHTML = html;
+      keysEl.setAttribute("data-built", "1");
+      keyEls = {};
+      Array.prototype.forEach.call(keysEl.querySelectorAll("[data-k]"), function (key) {
+        keyEls[key.getAttribute("data-k")] = key;
+      });
+      keyEls["?"] = keyEls.sym;
+      keyEls["!"] = keyEls.sym;
+      keyEls["."] = keyEls.sym;
+    }
+    function clearSwipe() {
+      if (swipeRaf) { cancelAnimationFrame(swipeRaf); swipeRaf = 0; }
+      if (swipeLayer) swipeLayer.innerHTML = "";
+    }
+    function clearPressed() {
+      if (!keysEl) return;
+      Array.prototype.forEach.call(keysEl.querySelectorAll(".is-pressed"), function (key) {
+        key.classList.remove("is-pressed");
+      });
+    }
+    function showKeyboard(on) {
+      if (!searchPhone) return;
+      searchPhone.classList.toggle("is-keyboard", !!on);
+      if (!on) { clearSwipe(); clearPressed(); }
+    }
+    function pressKey(ch) {
+      var key = keyEls[(ch || " ").toLowerCase()];
+      if (!key) key = keyEls[" "];
+      if (!key) return;
+      key.classList.add("is-pressed");
+      later(function () { key.classList.remove("is-pressed"); }, 90);
+    }
+    function keyCenter(ch) {
+      var key = keyEls[(ch || " ").toLowerCase()];
+      if (!key) return null;
+      return { x: key.offsetLeft + key.offsetWidth / 2, y: key.offsetTop + key.offsetHeight / 2 };
+    }
+    function appendTyped(ch) {
+      typedText += ch;
+      searchText.innerHTML = api.esc(typedText) + '<span class="ia-caret"></span>';
+    }
+    function animateSwipe(points, duration) {
+      if (!swipeLayer || !keyboardEl || points.length < 2) return;
+      clearSwipe();
+      var NS = "http://www.w3.org/2000/svg";
+      var svg = document.createElementNS(NS, "svg");
+      svg.setAttribute("viewBox", "0 0 " + keyboardEl.offsetWidth + " " + keyboardEl.offsetHeight);
+      svg.setAttribute("preserveAspectRatio", "none");
+      var poly = document.createElementNS(NS, "polyline");
+      poly.setAttribute("points", points.map(function (p) { return p.x + "," + p.y; }).join(" "));
+      poly.setAttribute("fill", "none");
+      poly.setAttribute("stroke", "rgba(63,127,176,.62)");
+      poly.setAttribute("stroke-width", "6");
+      poly.setAttribute("stroke-linecap", "round");
+      poly.setAttribute("stroke-linejoin", "round");
+      var dot = document.createElementNS(NS, "circle");
+      dot.setAttribute("r", "7");
+      dot.setAttribute("fill", "#3f7fb0");
+      dot.setAttribute("stroke", "#fff");
+      dot.setAttribute("stroke-width", "2");
+      svg.appendChild(poly);
+      svg.appendChild(dot);
+      swipeLayer.appendChild(svg);
+      var len = poly.getTotalLength();
+      poly.style.strokeDasharray = String(len);
+      poly.style.strokeDashoffset = String(len);
+      requestAnimationFrame(function () {
+        poly.style.transition = "stroke-dashoffset " + duration + "ms linear";
+        poly.style.strokeDashoffset = "0";
+      });
+      var start = performance.now();
+      function tick(now) {
+        var t = Math.min(1, (now - start) / duration);
+        var pt = poly.getPointAtLength(len * t);
+        dot.setAttribute("cx", String(pt.x));
+        dot.setAttribute("cy", String(pt.y));
+        if (t < 1) swipeRaf = requestAnimationFrame(tick);
+      }
+      swipeRaf = requestAnimationFrame(tick);
+      later(function () {
+        svg.style.transition = "opacity .24s ease";
+        svg.style.opacity = "0";
+        later(function () { if (svg.parentNode) svg.remove(); }, 260);
+      }, duration + 140);
+    }
     function buildLogo() {
       var letters = (DE ? "Suchmaschine" : "Search Engine").split("");
       var palette = ["#1a73e8", "#e53935", "#f57c00", "#0f9d58", "#8e24aa", "#00acc1"];
@@ -189,6 +303,8 @@
     }
     function reset() {
       clearTimers();
+      typedText = "";
+      showKeyboard(false);
       setCentered(true);
       searchText.textContent = "";
       searchText.classList.remove("typing");

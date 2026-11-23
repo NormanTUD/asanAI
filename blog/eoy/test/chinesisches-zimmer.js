@@ -20,6 +20,8 @@
   var timers = [];
   var activeFly = null;
   var activeAnim = null;
+  var page = 0;
+  var turning = false;
 
   function clearTimers() {
     timers.forEach(function (id) { clearTimeout(id); });
@@ -77,17 +79,73 @@
       '<span class="crz-hud-chip"><span>' + T("Regeln befolgt", "Rules followed") + ' <b>' + score + '</b></span></span>';
   }
 
-  function renderBook() {
-    var r = rounds[idx];
-    var other = rounds[(idx + 1) % rounds.length];
-    book.innerHTML =
-      '<div class="crz-book-title">' + T("Regelbuch", "Rulebook") + '</div>' +
-      '<table><tbody>' +
-        '<tr><td lang="zh">' + esc(r.rule[0]) + '</td><td lang="zh">' + esc(r.rule[1]) + '</td></tr>' +
-        '<tr><td lang="zh">' + esc(other.rule[0]) + '</td><td lang="zh">' + esc(other.rule[1]) + '</td></tr>' +
-      '</tbody></table>' +
-      '<p class="crz-book-hint">' + T("Suche die Eingabe und lies die passende Ausgabe ab. Du musst die Zeichen nicht verstehen.", "Find the input and read off the matching output. You do not need to understand the characters.") + '</p>';
+  function rulePageHTML(p) {
+    if (p == null) {
+      return '<div class="crz-book-title">' + T("Regelbuch", "Rulebook") + '</div>' +
+        '<p class="crz-book-hint">' + T("Blättere, bis du die Eingabe findest. Du musst die Zeichen nicht verstehen.", "Flip until you find the input. You do not need to understand the characters.") + '</p>';
+    }
+    var r = rounds[p];
+    return '<span class="crz-book-kicker">' + T("Regel", "Rule") + ' ' + (p + 1) + '</span>' +
+      '<div class="crz-rule">' +
+        '<span class="crz-rule-label">' + T("Eingabe", "Input") + '</span>' +
+        '<p class="crz-rule-zh" lang="zh">' + esc(r.rule[0]) + '</p>' +
+        '<span class="crz-rule-arrow" aria-hidden="true">↓</span>' +
+        '<span class="crz-rule-label">' + T("Ausgabe", "Output") + '</span>' +
+        '<p class="crz-rule-zh" lang="zh">' + esc(r.rule[1]) + '</p>' +
+      '</div>';
   }
+
+  function renderBook() {
+    var left = page === 0 ? rulePageHTML(null) : rulePageHTML(page - 1);
+    var right = rulePageHTML(page);
+    book.innerHTML =
+      '<div class="crz-book-cover" aria-hidden="true"></div>' +
+      '<div class="crz-book-stack" aria-hidden="true"></div>' +
+      '<div class="crz-book-spread">' +
+        '<div class="crz-book-page crz-book-page--left">' + left + '</div>' +
+        '<div class="crz-book-page crz-book-page--right" data-crz-right>' + right + '</div>' +
+        '<span class="crz-book-spine" aria-hidden="true"></span>' +
+        '<button type="button" class="crz-book-turn" data-crz-turn aria-label="' + T("Seite umblättern", "Turn page") + '">' +
+          '<span>' + T("Seite", "Page") + '</span>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>' +
+        '</button>' +
+        '<span class="crz-book-pageno">' + T("Regel", "Rule") + ' ' + (page + 1) + ' / ' + rounds.length + '</span>' +
+      '</div>';
+  }
+
+  function turnBook() {
+    if (turning) return;
+    var next = (page + 1) % rounds.length;
+    var oldRight = book.querySelector("[data-crz-right]");
+    if (!oldRight || !oldRight.animate || !window.Proto || Proto.reduceMotion()) {
+      page = next;
+      renderBook();
+      return;
+    }
+    var oldHTML = oldRight.innerHTML;
+    page = next;
+    renderBook();
+    var spread = book.querySelector(".crz-book-spread");
+    if (!spread) return;
+    var flip = document.createElement("div");
+    flip.className = "crz-page-flip is-turning";
+    flip.innerHTML = '<div class="crz-flip-face">' + oldHTML + '</div>' +
+      '<div class="crz-flip-face crz-flip-face--back">' + oldHTML + '</div>';
+    spread.appendChild(flip);
+    turning = true;
+    flip.addEventListener("animationend", function () {
+      flip.remove();
+      turning = false;
+    }, { once: true });
+  }
+
+  book.addEventListener("click", function (e) {
+    var target = e.target;
+    var btn = target && target.closest ? target.closest("[data-crz-turn]") : null;
+    if (!btn) return;
+    e.preventDefault();
+    turnBook();
+  });
 
   function slipMarkup(text) {
     return '<span class="crz-slip-label">' + T("Von draußen", "From outside") + '</span>' +
@@ -219,6 +277,8 @@
   function renderRound() {
     clearFly();
     busy = true;
+    turning = false;
+    page = idx;
     if (feedbackEl) feedbackEl.textContent = "";
     renderHud();
     renderBook();
@@ -289,8 +349,10 @@
     clearFly();
     done = false;
     busy = false;
+    turning = false;
     idx = 0;
     score = 0;
+    page = 0;
     hideReveal();
     renderRound();
   }
