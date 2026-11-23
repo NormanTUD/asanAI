@@ -11,7 +11,7 @@
       '<div class="ls-hg-question"><span>' + (DE ? "Frage" : "Question") + '</span><b>' + (DE ? "Wie hoch ist der Eiffelturm mit Antenne?" : "How tall is the Eiffel Tower with its antenna?") + '</b></div>' +
       '<div class="ls-hg-toggles" role="group">' +
         '<button type="button" class="ls-chip" data-hg="rag" aria-pressed="false">' + (DE ? "Quellen (RAG)" : "Sources (RAG)") + '</button>' +
-        '<button type="button" class="ls-chip" data-hg="cot" aria-pressed="false">' + (DE ? "Schrittweise" : "Step by step") + '</button>' +
+        '<button type="button" class="ls-chip" data-hg="cot" aria-pressed="false">' + (DE ? "Schrittweise denken" : "Think step by step") + '</button>' +
         '<button type="button" class="ls-chip" data-hg="verify" aria-pressed="false">' + (DE ? "Gegenprüfung" : "Verification") + '</button>' +
       '</div>' +
       '<div class="ls-hg-grid">' +
@@ -37,9 +37,12 @@
         b.classList.toggle("is-on", on);
         b.setAttribute("aria-pressed", String(on));
       });
-      sourceEl.innerHTML = rag
+      var prompt = cot
+        ? '<div class="ls-hg-prompt"><b>' + (DE ? "Denke schrittweise" : "Think step by step") + '</b><span>' + (DE ? "Frage → Quelle → Schluss" : "question → source → conclusion") + '</span></div>'
+        : '';
+      sourceEl.innerHTML = prompt + (rag
         ? '<article class="ls-hg-doc"><div class="ls-hg-doc-head"><b>S1</b><span>' + (DE ? "vertrauenswürdig" : "trusted") + '</span></div><p><b>Wikipedia</b> · ' + (DE ? "Eiffelturm" : "Eiffel Tower") + '</p><p>' + (DE ? "Der Eiffelturm ist mit Antenne 330 Meter hoch." : "The Eiffel Tower is 330 metres tall including its antenna.") + '</p></article>'
-        : '<div class="ls-hg-empty">' + (DE ? "Keine Quelle im Kontext. Das Modell antwortet aus dem Gedächtnis." : "No source in the context. The model answers from memory.") + '</div>';
+        : '<div class="ls-hg-empty">' + (DE ? "Keine Quelle im Kontext. Das Modell antwortet aus dem Gedächtnis." : "No source in the context. The model answers from memory.") + '</div>');
       var answer, cite, risk, htmlSteps = "";
       if (verify && !rag) {
         answer = DE ? "Keine Quelle im Kontext. Ich rate nicht." : "No source in the context. I will not guess.";
@@ -55,6 +58,7 @@
         risk = 86;
       }
       if (cot) {
+        htmlSteps += '<div class="ls-hg-steps-head"><b>' + (DE ? "Denkweg" : "Reasoning path") + '</b><span>' + (DE ? "Frage → Quelle → Schluss" : "question → source → conclusion") + '</span></div>';
         htmlSteps += '<div class="ls-hg-step"><b>1</b><span>' + (DE ? "Frage: Wie hoch ist der Eiffelturm mit Antenne?" : "Question: how tall is the Eiffel Tower with its antenna?") + '</span></div>';
         htmlSteps += '<div class="ls-hg-step"><b>2</b><span>' + (rag ? (DE ? "S1 sagt: 330 m mit Antenne." : "S1 says: 330 m with antenna.") : (DE ? "Ich erinnere mich an 300 m; das ist zu niedrig, aber keine Quelle im Kontext." : "I recall 300 m; that is too low, but no source is in the context.")) + '</span></div>';
         htmlSteps += '<div class="ls-hg-step"><b>3</b><span>' + (DE ? "Schluss: " : "Conclusion: ") + answer + '</span></div>';
@@ -71,13 +75,21 @@
       riskBar.style.width = risk + "%";
       riskBar.style.background = risk < 30 ? "var(--ls-green)" : risk < 60 ? "var(--ls-gold)" : "var(--ls-lilac)";
       riskEl.className = "ls-hg-risk " + (risk < 30 ? "is-low" : risk < 60 ? "is-mid" : "is-high");
-      readout.textContent = !rag && !cot && !verify
-        ? (DE ? "Ohne Quelle, ohne Zwischenschritte und ohne Prüfung bleibt die Antwort eine selbstsichere Vermutung." : "Without a source, steps, or verification, the answer is a confident guess.")
-        : rag && verify
-          ? (DE ? "Quelle plus Gegenprüfung: Die Antwort ist gedeckt oder das Modell sagt, dass die Deckung fehlt." : "Source plus verification: the answer is grounded, or the model says support is missing.")
-          : cot && !rag
-            ? (DE ? "Schrittweise allein macht die Lücke sichtbar, aber es fehlt weiterhin die Quelle." : "Step by step alone makes the gap visible, but the source is still missing.")
-            : (DE ? "Die Schalter verändern, was das Modell im Kontext hat und wie es prüft." : "The toggles change what the model has in context and how it checks.");
+      var readoutText;
+      if (!rag && !cot && !verify) {
+        readoutText = DE ? "Ohne Quelle, ohne Zwischenschritte und ohne Prüfung bleibt die Antwort eine selbstsichere Vermutung." : "Without a source, steps, or verification, the answer is a confident guess.";
+      } else if (rag && verify) {
+        readoutText = DE ? "Quelle plus Gegenprüfung: Die Antwort ist gedeckt oder das Modell sagt, dass die Deckung fehlt." : "Source plus verification: the answer is grounded, or the model says support is missing.";
+      } else if (rag && cot) {
+        readoutText = DE ? "Quelle plus Denkweg: Frage, Quelle und Schluss stehen sichtbar da; die Gegenprüfung fehlt noch." : "Source plus reasoning path: question, source, and conclusion are visible; verification is still missing.";
+      } else if (rag) {
+        readoutText = DE ? "Quelle allein: Die Antwort ist gedeckt, aber der Denkweg bleibt unsichtbar." : "Source alone: the answer is grounded, but the reasoning path stays invisible.";
+      } else if (cot) {
+        readoutText = DE ? "Schrittweise denken macht die Lücke sichtbar, aber es fehlt weiterhin die Quelle." : "Thinking step by step makes the gap visible, but the source is still missing.";
+      } else {
+        readoutText = DE ? "Die Schalter verändern, was das Modell im Kontext hat und wie es prüft." : "The toggles change what the model has in context and how it checks.";
+      }
+      readout.textContent = readoutText;
     }
     btns.forEach(function (b) {
       b.addEventListener("click", function () {

@@ -2725,6 +2725,9 @@ h1,h2,h3,h4{
 .ls-hg-head span{font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-hg-source{padding:7px;min-height:0;overflow:auto}
 .ls-hg-doc{border:1px solid var(--ls-green);background:rgba(99,164,75,.06);padding:7px 8px}
+.ls-hg-prompt{display:flex;flex-direction:column;gap:1px;padding:5px 7px;margin-bottom:6px;border:1px dashed var(--ls-lilac);background:rgba(145,133,190,.07)}
+.ls-hg-prompt b{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-lilac)}
+.ls-hg-prompt span{font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-hg-doc-head{display:flex;justify-content:space-between;gap:8px;font:700 8px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-green)}
 .ls-hg-doc p{margin:4px 0 0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-hg-doc p b{color:var(--ls-ink)}
@@ -2732,6 +2735,9 @@ h1,h2,h3,h4{
 .ls-hg-answer{padding:9px 10px;font:600 var(--ls-fs-ui)/1.45 "Open Sans",sans-serif;color:var(--ls-ink)}
 .ls-hg-cite{padding:0 10px 8px;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-petrol)}
 .ls-hg-steps{display:flex;flex-direction:column;gap:4px;border:1px solid var(--ls-line);background:var(--ls-paper-2);padding:6px 8px;min-height:112px}
+.ls-hg-steps-head{display:flex;align-items:baseline;justify-content:space-between;gap:6px;padding-bottom:3px;border-bottom:1px dashed var(--ls-line);font:600 7px/1 "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.05em}
+.ls-hg-steps-head b{color:var(--ls-lilac)}
+.ls-hg-steps-head span{color:var(--ls-muted)}
 .ls-hg-step{display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px;align-items:baseline;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-hg-step b{display:grid;place-items:center;width:16px;height:16px;border:1px solid var(--ls-line-strong);background:#fff;font:700 8px "Open Sans",sans-serif;color:var(--ls-petrol)}
 .ls-hg-step.is-check b{border-color:var(--ls-green);color:var(--ls-green)}
