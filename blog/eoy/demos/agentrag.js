@@ -142,10 +142,10 @@
         text = L("C1 liegt unsichtbar vor. Der nächste Token kann daraus lesen.", "C1 is in the invisible context. The next token can read it.");
       } else if (target.length && other.length) {
         cls = "is-warn"; head = L("Gemischte Chunks", "Mixed chunks");
-        text = L("C1 nennt drei Herzen; " + ids(other) + " ist nur teilweise relevant. Der Agent sollte ihn verwerfen.", "C1 names three hearts; " + ids(other) + " is only partly relevant. The agent should discard it.");
+        text = L("C1 nennt drei Herzen; weitere Chunks (" + ids(other) + ") sind zu schwach relevant. Der Agent sollte sie verwerfen.", "C1 names three hearts; further chunks (" + ids(other) + ") are too weakly relevant. The agent should discard them.");
       } else if (other.length) {
         cls = "is-warn"; head = L("Falscher Chunk", "Wrong chunk");
-        text = L(ids(other) + " spricht von Armen oder Farbe, nicht von Herzen. Das beantwortet die Frage nicht.", ids(other) + " is about arms or colour, not hearts. That does not answer the question.");
+        text = L(ids(other) + " beantwortet die Herzen-Frage nicht. Der Chunk ist zu schwach relevant.", ids(other) + " does not answer the question about hearts. The chunk is too weakly relevant.");
       }
       answerEl.className = "ls-ar-answer " + cls;
       answerEl.innerHTML = '<div><span>' + L("Generierung", "Generation") + '</span><b>' + esc(head) + '</b></div><p>' + esc(text) + '</p>';
