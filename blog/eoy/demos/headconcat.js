@@ -30,7 +30,7 @@
 
   function concatHtml(DE) {
     var colors = ["sky", "green", "gold", "lilac"];
-    var toks = DE ? ["Der", "Hund", "läuft"] : ["The", "dog", "runs"];
+    var toks = DE ? ["Der", "Hund", "läuft", "."] : ["The", "dog", "runs", "."];
     var out = "";
     toks.forEach(function (t) {
       var cells = "";
@@ -55,8 +55,10 @@
     var notes = concat
       ? [
           DE ? "Jeder Head liefert pro Token einen Vektor." : "Each head produces one vector per token.",
-          DE ? "Concat hängt pro Token die vier Head-Vektoren aneinander. Für ein Token ist das ein langer Vektor; für die Sequenz eine Matrix mit einem Token pro Zeile und den Head-Blöcken als Spalten." : "Concat joins the four head vectors for each token. For one token that is one long vector; for the sequence it is a matrix with one token per row and the head blocks as columns.",
-          DE ? "Die Matrix <b>W<sub>O</sub></b> projiziert jede Zeile auf <b>d<sub>model</sub></b>. Das FFN liest danach pro Token einen Vektor, nicht die einzelnen Heads." : "The matrix <b>W<sub>O</sub></b> projects each row onto <b>d<sub>model</sub></b>. The FFN then reads one vector per token, not the individual heads."
+          DE ? "Concat hängt pro Token die vier Head-Vektoren aneinander. Für ein Token ist das ein langer Vektor; für die Sequenz eine Matrix mit einem Token pro Zeile." : "Concat joins the four head vectors for each token. For one token that is one long vector; for the sequence it is a matrix with one token per row.",
+          DE ? "<b>W<sub>O</sub></b> ist die gelernte Ausgabematrix: Sie projiziert jede Zeile von <b>H·d<sub>v</sub></b> auf <b>d<sub>model</sub></b>." : "<b>W<sub>O</sub></b> is the learned output matrix: it projects each row from <b>H·d<sub>v</sub></b> to <b>d<sub>model</sub></b>.",
+          DE ? "Danach hat jedes Token wieder einen Vektor der festen Breite <b>d<sub>model</sub></b>." : "After that, each token again has a vector of the fixed width <b>d<sub>model</sub></b>.",
+          DE ? "Das FFN liest jeden Token-Vektor einzeln; es sieht nicht die einzelnen Heads." : "The FFN reads each token vector individually; it does not see the individual heads."
         ]
       : [
           DE ? "Das FFN bekommt einen einzigen Vektor pro Token, nicht die einzelnen Heads." : "The FFN receives a single vector per token, not the individual heads.",
@@ -69,15 +71,11 @@
     var stageHtml;
     if (concat) {
       stageHtml =
-        group(0, DE ? "Heads" : "heads", headsHtml()) +
-        '<span class="ls-hc-arrow">→</span>' +
-        group(1, "Concat", concatHtml(DE)) +
-        '<span class="ls-hc-arrow">→</span>' +
-        group(2, "W_O", matrix(4, 4)) +
-        '<span class="ls-hc-arrow">→</span>' +
-        group(2, DE ? "Token-Vektoren" : "token vectors", tokensHtml(DE)) +
-        '<span class="ls-hc-arrow">→</span>' +
-        group(2, "FFN", '<span class="ls-hc-box">FFN</span>');
+        group(0, DE ? "1 · Heads" : "1 · heads", headsHtml()) +
+        group(1, DE ? "2 · Concat" : "2 · concat", concatHtml(DE)) +
+        group(2, "3 · W_O", matrix(4, 4) + '<span class="ls-hc-dim">H·d_v → d_model</span>') +
+        group(3, DE ? "4 · Token-Vektoren" : "4 · token vectors", tokensHtml(DE)) +
+        group(4, "5 · FFN", '<span class="ls-hc-box">FFN</span>');
     } else {
       stageHtml =
         group(0, DE ? "Token-Vektor" : "token vector", bars(5, "ls-hc-vector")) +
@@ -95,7 +93,7 @@
         group(3, DE ? "zurück zu den Tokens" : "back to the tokens", tokensHtml(DE));
     }
     var el = document.createElement("div");
-    el.className = "ls-hc-scene";
+    el.className = concat ? "ls-hc-scene ls-hc-scene--concat" : "ls-hc-scene";
     var flowHtml =
       '<div class="ls-hc-stage">' + stageHtml + '</div>' +
       '<p class="ls-hc-note"></p>' +

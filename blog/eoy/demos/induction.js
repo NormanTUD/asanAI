@@ -707,8 +707,9 @@
           title: "Induction",
           sub: DE ? "Hund bellt … Hund → bellt" : "dog barks … dog → barks",
           color: C.gold,
-          tokens: [DE ? "Hund" : "dog", DE ? "bellt" : "barks", DE ? "Hund" : "dog"],
-          from: 2, to: 1, out: DE ? "bellt" : "barks",
+          tokens: [DE ? "Hund" : "dog", DE ? "bellt" : "barks", "…", DE ? "Hund" : "dog"],
+          from: 3, to: 1, out: "",
+          pred: DE ? "bellt" : "barks",
           qkv: DE ? "Query: Hund · Key: davor Hund bei bellt · Value: bellt" : "Query: dog · Key: before dog at barks · Value: barks",
           body: DE ? "Sucht ein früheres Hund und schaut auf das bellt danach. Das ist ein Sequenzmuster, kein Faktenwissen." : "Finds an earlier dog and looks at the barks that followed. This is a sequence pattern, not factual knowledge."
         },
@@ -780,8 +781,14 @@
       var exY = qkvEnd + (small ? 66 : 70);
       var exMax = Math.min(detW - 40, 460);
       drawMiniTokens(c, item.tokens, detX + detW / 2, exY, item.color, item.from, item.to, item.out, exMax);
+      var bodyY = exY + (small ? 48 : 54);
+      if (item.pred) {
+        var predY = exY + (small ? 52 : 56);
+        textPill(c, (DE ? "Nächstes Token: " : "next token: ") + item.pred, detX + detW / 2, predY, C.gold, true, small ? 10.5 : 12);
+        bodyY = predY + (small ? 26 : 30);
+      }
       var bsz = small ? 11 : 12;
-      wrapText(c, item.body, detX + 12, exY + (small ? 48 : 54), detW - 24, small ? 13.5 : 14.5, {
+      wrapText(c, item.body, detX + 12, bodyY, detW - 24, small ? 13.5 : 14.5, {
         size: bsz, color: C.soft
       });
       txt(c, "Olsson et al. (2022) · Ferrando et al. (2024) · Gould et al. (2023) · Wang et al. (2022)",
