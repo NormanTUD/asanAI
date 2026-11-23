@@ -10,50 +10,66 @@
       corpus: {
         label: DE ? "f(Daten)" : "f(data)",
         tag: DE ? "Pretraining" : "Pretraining",
-        sub: DE ? "das ganze Korpus" : "the whole corpus",
-        prompt: DE ? "Meine Bestellung ist seit zwei Wochen nicht da. Ich möchte sie ___." : "My order has not arrived for two weeks. I want to ___ it.",
-        target: DE ? "stornieren" : "cancel",
+        sub: DE ? "Vervollständigen" : "completion",
+        prompt: DE ? "Die Hauptstadt von Frankreich ist ___." : "The capital of France is ___.",
+        target: "Paris",
+        targetIdx: 0,
+        startStep: 2,
+        levels: [[20, 55, 25], [30, 50, 20], [45, 42, 13], [62, 30, 8], [76, 18, 6], [90, 8, 2], [98.5, 1, 0.5]],
+        cands: [
+          { name: "Paris", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
+          { name: "Rom", cls: "is-mid", status: DE ? "plausibel, falsch" : "plausible, wrong" },
+          { name: "Seine", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+        ],
+        note: DE ? "Pretraining: Im Rohkorpus steht „Die Hauptstadt von Frankreich ist Paris“. Die Vervollständigung funktioniert, weil das Modell diese Fortsetzung gesehen hat." : "Pretraining: the raw corpus contains “The capital of France is Paris”. Completion works because the model has seen this continuation."
+      },
+      rawq: {
+        label: DE ? "f(Frage an Rohdaten)" : "f(question on raw data)",
+        tag: DE ? "vor dem Fine-tuning" : "before fine-tuning",
+        sub: DE ? "Wikipedia-Stil" : "Wikipedia style",
+        prompt: DE ? "Was ist die Hauptstadt von Frankreich? ___" : "What is the capital of France? ___",
+        target: "Paris",
         targetIdx: 1,
         startStep: 0,
         levels: [[55, 30, 15], [50, 38, 12], [42, 48, 10], [30, 62, 8], [18, 76, 6], [8, 90, 2], [1, 98.5, 0.5]],
         cands: [
-          { name: DE ? "verschieben" : "delay", cls: "is-mid", status: DE ? "häufig in den Daten" : "frequent in the data" },
-          { name: DE ? "stornieren" : "cancel", cls: "is-good", status: DE ? "richtig, aber unsicher" : "right, but uncertain" },
-          { name: DE ? "drucken" : "print", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+          { name: DE ? "Die" : "The", cls: "is-mid", status: DE ? "Wikipedia-Stil, keine direkte Antwort" : "Wikipedia style, not a direct answer" },
+          { name: "Paris", cls: "is-good", status: DE ? "richtige Antwort, aber unsicher" : "right answer, but uncertain" },
+          { name: "Frankreich", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
         ],
-        note: DE ? "Pretraining: Die Verteilung ist breit. „verschieben“ ist häufig, „stornieren“ nur möglich. Das Modell hat die Aufgabe noch nicht gelernt." : "Pretraining: the distribution is broad. “delay” is frequent, “cancel” only possible. The model has not learned the task yet."
+        note: DE ? "Vor dem Fine-tuning setzt das Modell die Frage wie einen Wikipedia-Artikel fort: „Die Hauptstadt von Frankreich ist Paris.“ Es antwortet nicht direkt." : "Before fine-tuning the model continues the question like a Wikipedia article: “The capital of France is Paris.” It does not answer directly."
       },
       first: {
         label: DE ? "f(1. Trainingsdatensatz)" : "f(first training example)",
         tag: DE ? "Fine-tuning" : "Fine-tuning",
-        sub: DE ? "Storno-Beispiel" : "cancel example",
-        prompt: DE ? "Meine Bestellung ist seit zwei Wochen nicht da. Ich möchte sie ___." : "My order has not arrived for two weeks. I want to ___ it.",
-        target: DE ? "stornieren" : "cancel",
+        sub: DE ? "Frage → Antwort" : "question → answer",
+        prompt: DE ? "Was ist die Hauptstadt von Frankreich? ___" : "What is the capital of France? ___",
+        target: "Paris",
         targetIdx: 0,
         startStep: 4,
         levels: [[30, 55, 15], [38, 50, 12], [48, 42, 10], [62, 30, 8], [76, 18, 6], [90, 8, 2], [98.5, 1, 0.5]],
         cands: [
-          { name: DE ? "stornieren" : "cancel", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
-          { name: DE ? "verschieben" : "delay", cls: "is-mid", status: DE ? "plausibel, falsch" : "plausible, wrong" },
-          { name: DE ? "drucken" : "print", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+          { name: "Paris", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
+          { name: DE ? "Die" : "The", cls: "is-mid", status: DE ? "Wikipedia-Stil, nicht mehr nötig" : "Wikipedia style, no longer needed" },
+          { name: "Frankreich", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
         ],
-        note: DE ? "Fine-tuning-Beispiel 1: Im Datensatz steht „stornieren“. Der Nudge zieht die Verteilung dorthin; das Modell reagiert jetzt auf die Absicht." : "Fine-tuning example 1: the dataset says “cancel”. The nudge pulls the distribution there; the model now reacts to the intent."
+        note: DE ? "Fine-tuning-Beispiel 1: Im Datensatz steht das Frage-Antwort-Paar. Das Modell antwortet jetzt direkt mit „Paris“." : "Fine-tuning example 1: the dataset contains the question-answer pair. The model now answers directly with “Paris”."
       },
       second: {
         label: DE ? "f(2. Trainingsdatensatz)" : "f(second training example)",
         tag: DE ? "Fine-tuning" : "Fine-tuning",
-        sub: DE ? "Reklamations-Beispiel" : "complaint example",
-        prompt: DE ? "Das Paket kam beschädigt an. Ich möchte es ___." : "The parcel arrived damaged. I want to ___ it.",
-        target: DE ? "zurückschicken" : "return",
+        sub: DE ? "zweite Frage" : "second question",
+        prompt: DE ? "Was ist die Hauptstadt von Italien? ___" : "What is the capital of Italy? ___",
+        target: "Rom",
         targetIdx: 0,
         startStep: 4,
         levels: [[25, 60, 15], [35, 52, 13], [48, 40, 12], [62, 30, 8], [78, 18, 4], [92, 6, 2], [98.5, 1, 0.5]],
         cands: [
-          { name: DE ? "zurückschicken" : "return", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
-          { name: DE ? "behalten" : "keep", cls: "is-mid", status: DE ? "plausibel, falsch" : "plausible, wrong" },
-          { name: DE ? "falten" : "fold", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+          { name: "Rom", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
+          { name: DE ? "Die" : "The", cls: "is-mid", status: DE ? "Wikipedia-Stil, nicht mehr nötig" : "Wikipedia style, no longer needed" },
+          { name: "Italien", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
         ],
-        note: DE ? "Fine-tuning-Beispiel 2: Im Datensatz steht „zurückschicken“. Dieselbe Funktion, ein anderes Beispiel, ein anderes Ziel." : "Fine-tuning example 2: the dataset says “return”. The same function, another example, another target."
+        note: DE ? "Fine-tuning-Beispiel 2: Im Datensatz steht die zweite Frage-Antwort-Paarung. Dieselbe Funktion, anderes Land, direkte Antwort." : "Fine-tuning example 2: the dataset contains the second question-answer pair. The same function, another country, a direct answer."
       }
     };
     el.innerHTML =
@@ -65,6 +81,7 @@
       '<div class="ls-fx-stage">' +
         '<div class="ls-fx-inputs" role="group" aria-label="' + (DE ? "Eingaben für f" : "Inputs to f") + '">' +
           '<button type="button" class="ls-fx-input is-on" data-fx-input="corpus"><span class="ls-fx-input-label">' + INPUTS.corpus.label + '</span><b>' + INPUTS.corpus.tag + '</b><small>' + INPUTS.corpus.sub + '</small></button>' +
+          '<button type="button" class="ls-fx-input" data-fx-input="rawq"><span class="ls-fx-input-label">' + INPUTS.rawq.label + '</span><b>' + INPUTS.rawq.tag + '</b><small>' + INPUTS.rawq.sub + '</small></button>' +
           '<button type="button" class="ls-fx-input" data-fx-input="first"><span class="ls-fx-input-label">' + INPUTS.first.label + '</span><b>' + INPUTS.first.tag + '</b><small>' + INPUTS.first.sub + '</small></button>' +
           '<button type="button" class="ls-fx-input" data-fx-input="second"><span class="ls-fx-input-label">' + INPUTS.second.label + '</span><b>' + INPUTS.second.tag + '</b><small>' + INPUTS.second.sub + '</small></button>' +
         '</div>' +
@@ -152,8 +169,9 @@
     function manualNudge() { stopAuto(); if (step < INPUTS[active].levels.length - 1) { step++; render(); } }
     if (btn) btn.addEventListener("click", manualNudge);
     setActive("corpus");
-    autoTimers.push(setTimeout(function () { if (step === 0) { step = 1; render(); } }, 700));
-    autoTimers.push(setTimeout(function () { if (step === 1) { step = 2; render(); } }, 1400));
+    var autoStart = INPUTS.corpus.startStep;
+    autoTimers.push(setTimeout(function () { if (step === autoStart) { step++; render(); } }, 700));
+    autoTimers.push(setTimeout(function () { if (step === autoStart + 1) { step++; render(); } }, 1400));
     return {
       update: function () {},
       next: function () { stopAuto(); if (step < INPUTS[active].levels.length - 1) { step++; render(); return true; } return false; },

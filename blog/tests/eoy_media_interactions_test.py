@@ -1614,13 +1614,19 @@ def test_blocks_sequence(browser, base, lang, results):
     page.wait_for_timeout(1800)
     fx = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), card: !!document.querySelector('.ls-bs-fx'), prompt: document.querySelector('.ls-bs-fx-prompt')?.textContent || '', cands: document.querySelectorAll('.ls-bs-fx-cand').length, status: Array.from(document.querySelectorAll('.ls-bs-fx-cand small')).map(e => e.textContent), nudge: !!document.querySelector('.ls-bs-fx-nudge'), inputs: Array.from(document.querySelectorAll('.ls-fx-input-label')).map(e => e.textContent), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
     results.check(tag, "function slide follows the architecture overview", fx["scene"] == "fx" and fx["card"], str(fx)[:240])
-    input_ok = len(fx["inputs"]) == 3 and (("Daten" in fx["inputs"][0] and "1. Trainingsdatensatz" in fx["inputs"][1] and "2. Trainingsdatensatz" in fx["inputs"][2]) if lang == "de" else ("data" in fx["inputs"][0] and "first training example" in fx["inputs"][1] and "second training example" in fx["inputs"][2]))
-    results.check(tag, "function slide shows f(data), f(first) and f(second)", input_ok, str(fx["inputs"]))
+    if lang == "de":
+        input_ok = len(fx["inputs"]) == 4 and "Daten" in fx["inputs"][0] and "Frage an Rohdaten" in fx["inputs"][1] and "1. Trainingsdatensatz" in fx["inputs"][2] and "2. Trainingsdatensatz" in fx["inputs"][3]
+    else:
+        input_ok = len(fx["inputs"]) == 4 and "data" in fx["inputs"][0] and "question on raw data" in fx["inputs"][1] and "first training example" in fx["inputs"][2] and "second training example" in fx["inputs"][3]
+    results.check(tag, "function slide shows data, raw-question, first and second examples", input_ok, str(fx["inputs"]))
     results.check(tag, "function slide shows the next-token options", "___" in fx["prompt"] and fx["cands"] == 3 and len(fx["status"]) == 3, str(fx)[:240])
     results.check(tag, "function slide labels the option status", any("Daten" in st or "data" in st for st in fx["status"]) and any("passt" in st or "fit" in st for st in fx["status"]), str(fx["status"]))
-    results.check(tag, "function slide nudges itself twice", "Nudge 2" in fx["readout"], fx["readout"])
+    results.check(tag, "function slide nudges itself twice", "Nudge 4" in fx["readout"], fx["readout"])
     for _ in range(4):
-        page.locator('.ls-bs-fx-nudge').click(); page.wait_for_timeout(250)
+        nudge = page.locator('.ls-bs-fx-nudge')
+        if nudge.is_disabled():
+            break
+        nudge.click(); page.wait_for_timeout(250)
     fx_done = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '', disabled: document.querySelector('.ls-bs-fx-nudge')?.disabled, widths: Array.from(document.querySelectorAll('.ls-bs-fx-cand i b')).map(e => e.style.width), pcts: Array.from(document.querySelectorAll('.ls-bs-fx-cand em')).map(e => e.textContent) })")
     results.check(tag, "function slide nudges to 99 percent", ("99" in fx_done["readout"] or "99" in fx_done["pcts"][0]) and fx_done["disabled"], str(fx_done))
     page.wait_for_timeout(700)
