@@ -20,12 +20,12 @@
         startStep: 2,
         levels: [[20, 55, 25], [30, 50, 20], [45, 42, 13], [62, 30, 8], [76, 18, 6], [90, 8, 2], [98.5, 1, 0.5]],
         cands: [
-          { name: "Paris", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
-          { name: "Rom", cls: "is-mid", status: DE ? "plausibel, falsch" : "plausible, wrong" },
-          { name: "Seine", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+          { name: "Paris", cls: "is-good", status: DE ? "richtig, aber am Anfang unsicher" : "right, but uncertain at first" },
+          { name: "Hund", cls: "is-bad", status: DE ? "zufälliges Wort" : "random word" },
+          { name: "Wolke", cls: "is-bad", status: DE ? "zufälliges Wort" : "random word" }
         ],
         sample: DE ? "Daten: Milliarden von Paaren (x, nächstes Token). Beispiel: „Die Hauptstadt von Frankreich ist Paris.“" : "Data: billions of pairs (x, next token). Example: “The capital of France is Paris.”",
-        note: DE ? "Pretraining: Im Rohkorpus steht „Die Hauptstadt von Frankreich ist Paris“. Die Vervollständigung funktioniert, weil das Modell diese Fortsetzung gesehen hat." : "Pretraining: the raw corpus contains “The capital of France is Paris”. Completion works because the model has seen this continuation."
+        note: DE ? "Pretraining: Im Rohkorpus steht „Die Hauptstadt von Frankreich ist Paris“. Am Anfang sind die Alternativen zufällige Wörter; erst mit den Daten wird „Paris“ wahrscheinlich." : "Pretraining: the raw corpus contains “The capital of France is Paris”. At first the alternatives are random words; only with the data does “Paris” become likely."
       },
       rawq: {
         label: DE ? "f_θ(Frage an Rohdaten)" : "f_θ(question on raw data)",
@@ -35,17 +35,17 @@
         size: 8,
         sizeLabel: DE ? "1 Frage" : "1 question",
         prompt: DE ? "Was ist die Hauptstadt von Frankreich? ___" : "What is the capital of France? ___",
-        target: "Paris",
-        targetIdx: 1,
+        target: "Die",
+        targetIdx: 0,
         startStep: 0,
         levels: [[55, 30, 15], [50, 38, 12], [42, 48, 10], [30, 62, 8], [18, 76, 6], [8, 90, 2], [1, 98.5, 0.5]],
         cands: [
-          { name: DE ? "Die" : "The", cls: "is-mid", status: DE ? "Wikipedia-Stil, keine direkte Antwort" : "Wikipedia style, not a direct answer" },
-          { name: "Paris", cls: "is-good", status: DE ? "richtige Antwort, aber unsicher" : "right answer, but uncertain" },
+          { name: DE ? "Die" : "The", cls: "is-good", status: DE ? "nächster Token im Wikipedia-Stil" : "next token, Wikipedia style" },
+          { name: "Paris", cls: "is-mid", status: DE ? "richtige Antwort, aber nicht der nächste Token" : "right answer, but not the next token" },
           { name: "Frankreich", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
         ],
-        sample: DE ? "Nur die Frage. Im Rohkorpus steht kein Frage-Antwort-Paar, nur Artikeltext." : "Only the question. The raw corpus has no question-answer pair, only article text.",
-        note: DE ? "Vor dem Fine-tuning setzt das Modell die Frage wie einen Wikipedia-Artikel fort: „Die Hauptstadt von Frankreich ist Paris.“ Es antwortet nicht direkt." : "Before fine-tuning the model continues the question like a Wikipedia article: “The capital of France is Paris.” It does not answer directly."
+        sample: DE ? "Vollständige Fortsetzung: „Die Hauptstadt von Frankreich ist Paris.“ Wir betrachten nur das nächste Token." : "Full continuation: “The capital of France is Paris.” We only look at the next token.",
+        note: DE ? "Vor dem Fine-tuning setzt das Modell die Frage wie einen Wikipedia-Artikel fort: „Die Hauptstadt von Frankreich ist Paris.“ Es antwortet nicht direkt; das nächste Token ist „Die“." : "Before fine-tuning the model continues the question like a Wikipedia article: “The capital of France is Paris.” It does not answer directly; the next token is “The”."
       },
       first: {
         label: DE ? "f_θ(1. Trainingsdatensatz)" : "f_θ(first training example)",
@@ -60,12 +60,13 @@
         startStep: 4,
         levels: [[30, 55, 15], [38, 50, 12], [48, 42, 10], [62, 30, 8], [76, 18, 6], [90, 8, 2], [98.5, 1, 0.5]],
         cands: [
-          { name: "Paris", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
-          { name: DE ? "Die" : "The", cls: "is-mid", status: DE ? "Wikipedia-Stil, nicht mehr nötig" : "Wikipedia style, no longer needed" },
-          { name: "Frankreich", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+          { name: "Paris", cls: "is-good", status: DE ? "Antwort aus dem Datensatz" : "answer in the dataset" },
+          { name: "Rom", cls: "is-mid", status: DE ? "aus dem Pretraining, falsches Land" : "from pretraining, wrong country" },
+          { name: "Frankreich", cls: "is-bad", status: DE ? "kein Antwort-Token" : "not an answer token" }
         ],
         sample: DE ? "x: „Was ist die Hauptstadt von Frankreich?“  ·  y: „Paris“" : "x: “What is the capital of France?”  ·  y: “Paris”",
-        note: DE ? "Fine-tuning-Beispiel 1: Im Datensatz steht das Frage-Antwort-Paar. Das Modell antwortet jetzt direkt mit „Paris“." : "Fine-tuning example 1: the dataset contains the question-answer pair. The model now answers directly with “Paris”."
+        note: DE ? "Fine-tuning-Beispiel 1: Im Datensatz steht das Frage-Antwort-Paar. Das Modell lernt die Form Frage → Antwort und nutzt das Wissen aus dem Pretraining." : "Fine-tuning example 1: the dataset contains the question-answer pair. The model learns the question → answer form and uses knowledge from pretraining.",
+        dataset: true
       },
       second: {
         label: DE ? "f_θ(2. Trainingsdatensatz)" : "f_θ(second training example)",
@@ -80,12 +81,13 @@
         startStep: 4,
         levels: [[25, 60, 15], [35, 52, 13], [48, 40, 12], [62, 30, 8], [78, 18, 4], [92, 6, 2], [98.5, 1, 0.5]],
         cands: [
-          { name: "Rom", cls: "is-good", status: DE ? "in den Daten" : "in the data" },
-          { name: DE ? "Die" : "The", cls: "is-mid", status: DE ? "Wikipedia-Stil, nicht mehr nötig" : "Wikipedia style, no longer needed" },
-          { name: "Italien", cls: "is-bad", status: DE ? "passt nicht" : "does not fit" }
+          { name: "Rom", cls: "is-good", status: DE ? "Antwort aus dem Datensatz" : "answer in the dataset" },
+          { name: "Paris", cls: "is-mid", status: DE ? "aus dem Pretraining, falsches Land" : "from pretraining, wrong country" },
+          { name: "Italien", cls: "is-bad", status: DE ? "kein Antwort-Token" : "not an answer token" }
         ],
         sample: DE ? "x: „Was ist die Hauptstadt von Italien?“  ·  y: „Rom“" : "x: “What is the capital of Italy?”  ·  y: “Rome”",
-        note: DE ? "Fine-tuning-Beispiel 2: Im Datensatz steht die zweite Frage-Antwort-Paarung. Dieselbe Funktion, anderes Land, direkte Antwort." : "Fine-tuning example 2: the dataset contains the second question-answer pair. The same function, another country, a direct answer."
+        note: DE ? "Fine-tuning-Beispiel 2: Dieselbe Frageform, anderes Land. Das Wissen „Rom“ steht schon aus dem Pretraining in den Gewichten; das Modell lernt, es als direkte Antwort zu nutzen." : "Fine-tuning example 2: the same question form, another country. The knowledge “Rome” is already in the weights from pretraining; the model learns to use it as a direct answer.",
+        dataset: true
       }
     };
     var ORDER = ["corpus", "rawq", "first", "second"];
@@ -116,11 +118,13 @@
           '<div class="ls-fx-start"><span>' + (DE ? "Anfang" : "start") + '</span><span class="ls-fx-startbars"><i><b data-fx-start></b></i><i><b data-fx-start></b></i><i><b data-fx-start></b></i></span><small>' + (DE ? "was zuerst rauskommt" : "what comes out first") + '</small></div>' +
           '<div class="ls-bs-fx-prompt"></div>' +
           '<div class="ls-fx-sample"></div>' +
+          '<div class="ls-fx-dataset" hidden><b>' + (DE ? "Fine-tuning-Datensatz" : "fine-tuning dataset") + '</b><span data-fx-pair="first">' + (DE ? "Was ist die Hauptstadt von Frankreich?" : "What is the capital of France?") + ' → Paris</span><span data-fx-pair="second">' + (DE ? "Was ist die Hauptstadt von Italien?" : "What is the capital of Italy?") + ' → Rom</span><small>' + (DE ? "Das Wissen kommt aus dem Pretraining; Fine-tuning lernt die Frageform." : "The knowledge comes from pretraining; fine-tuning learns the question form.") + '</small></div>' +
           '<div class="ls-bs-fx-cands"></div>' +
           '<p class="ls-bs-fx-note"></p>' +
           '<div class="ls-fx-summary" hidden><b>Fine-tuning</b><span><i>1</i>' + (DE ? "Fakten: Paris, Rom" : "facts: Paris, Rome") + '</span><span><i>2</i>' + (DE ? "Gespräch: direkte Antworten" : "conversation: direct answers") + '</span></div>' +
         '</div>' +
       '</div>' +
+      '<div class="ls-fx-two"><span><b>1</b>' + (DE ? "Pretraining: Milliarden Tokens → Muster, Sprache, Fakten" : "pretraining: billions of tokens → patterns, language, facts") + '</span><i>+</i><span><b>2</b>' + (DE ? "Fine-tuning: Frage-Antwort-Paare → Form" : "fine-tuning: question-answer pairs → form") + '</span><em>=</em><strong>' + (DE ? "beide nötig" : "both needed") + '</strong></div>' +
       '<div class="ls-fx-loop"><span>' + (DE ? "Vergleich mit dem nächsten Token in den Daten" : "compare with the next token in the data") + '</span><i>→</i><b>Nudge</b><span>' + (DE ? "θ = Gewichte: gilt für alle Beispiele" : "θ = weights: applies to all examples") + '</span></div>' +
       '<div class="ls-bs-fx-bar"><button type="button" class="ls-btn ls-bs-fx-nudge">' + (DE ? "Nudge (Gewichte anpassen)" : "Nudge (adjust weights)") + '</button><span class="ls-bs-fx-readout" aria-live="polite"></span></div>';
     root.appendChild(el);
@@ -132,13 +136,13 @@
     var startBars = el.querySelectorAll("[data-fx-start]");
     var activeLabel = el.querySelector(".ls-fx-active-label");
     var summaryEl = el.querySelector(".ls-fx-summary");
+    var datasetEl = el.querySelector(".ls-fx-dataset");
     var readout = el.querySelector(".ls-bs-fx-readout");
     var btn = el.querySelector(".ls-bs-fx-nudge");
     var active = "corpus";
     var step = 0;
     var bars = [], pcts = [];
-    var jitterTimer = 0, autoTimers = [];
-    function stopJitter() { if (jitterTimer) { clearInterval(jitterTimer); jitterTimer = 0; } }
+    var autoTimers = [];
     function stopAuto() { autoTimers.forEach(function (t) { clearTimeout(t); }); autoTimers = []; }
     function typeset(node) { if (api.typeset) { try { api.typeset(node || el); } catch (e) {} } }
     function renderStart() {
@@ -164,13 +168,19 @@
         if (pcts[i]) pcts[i].textContent = vals[i].toFixed(1) + " %";
       }
     }
-    function startJitter() { stopJitter(); renderJitter(); jitterTimer = setInterval(renderJitter, 240); }
     function renderSummary() {
       if (!summaryEl) return;
       summaryEl.hidden = !(visited.first && visited.second);
     }
+    function renderDataset() {
+      if (!datasetEl) return;
+      datasetEl.hidden = !INPUTS[active].dataset;
+      if (datasetEl.hidden) return;
+      datasetEl.querySelectorAll("[data-fx-pair]").forEach(function (row) {
+        row.classList.toggle("is-on", row.getAttribute("data-fx-pair") === active);
+      });
+    }
     function render() {
-      stopJitter();
       var data = INPUTS[active];
       var vals = data.levels[step] || data.levels[data.levels.length - 1];
       for (var i = 0; i < bars.length; i++) {
@@ -181,9 +191,8 @@
         ? (DE ? "Nudge 0 / 6: die Verteilung ist noch unsicher." : "Nudge 0 / 6: the distribution is still uncertain.")
         : step < 6
           ? (DE ? "Nudge " + step + " / 6: „" + data.target + "“ wird wahrscheinlicher." : "Nudge " + step + " / 6: “" + data.target + "” becomes more likely.")
-          : (DE ? "99 %: „" + data.target + "“ ist fast sicher; die Werte fluktuieren leicht." : "99 %: “" + data.target + "” is almost certain; the values fluctuate slightly.");
-      if (btn) btn.disabled = step >= data.levels.length - 1;
-      if (step >= data.levels.length - 1) startJitter();
+          : (DE ? "99 %: „" + data.target + "“ ist fast sicher. Nudge zeigt die Fluktuation." : "99 %: “" + data.target + "” is almost certain. Nudge shows the fluctuation.");
+      if (btn) btn.disabled = false;
     }
     function setActive(name) {
       if (!INPUTS[name]) return;
@@ -195,6 +204,7 @@
       promptEl.textContent = data.prompt;
       sampleEl.textContent = data.sample;
       noteEl.textContent = data.note;
+      renderDataset();
       activeLabel.removeAttribute("data-tex-rendered");
       activeLabel.setAttribute("data-tex", data.tex);
       activeLabel.textContent = data.label;
@@ -208,7 +218,11 @@
     inputs.forEach(function (b) {
       b.addEventListener("click", function () { setActive(b.getAttribute("data-fx-input")); });
     });
-    function manualNudge() { stopAuto(); if (step < INPUTS[active].levels.length - 1) { step++; render(); } }
+    function manualNudge() {
+      stopAuto();
+      if (step < INPUTS[active].levels.length - 1) { step++; render(); }
+      else renderJitter();
+    }
     if (btn) btn.addEventListener("click", manualNudge);
     typeset(el);
     function startAuto() {
@@ -217,7 +231,6 @@
       autoTimers.push(setTimeout(function () { if (step === autoStart + 1) { step++; render(); } }, 1400));
     }
     function reset() {
-      stopJitter();
       stopAuto();
       visited = {};
       setActive("corpus");
@@ -241,7 +254,7 @@
       hasNext: function () { return step < INPUTS[active].levels.length - 1 || ORDER.indexOf(active) < ORDER.length - 1; },
       hasPrev: function () { return false; },
       resize: function () {},
-      destroy: function () { stopJitter(); stopAuto(); el.remove(); }
+      destroy: function () { stopAuto(); el.remove(); }
     };
   }
   core.register("fx", fxScene);

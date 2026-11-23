@@ -728,34 +728,6 @@
     }
   ];
 
-  var bausteineData = {
-    kicker: DE ? "Daten" : "Data",
-    title: DE ? "Daten" : "Data",
-    body: DE
-      ? "Beim klassischen Programmieren gibt man dem Computer genau vor, wie er sich zu verhalten hat.\n\nBei Machine Learning dagegen gibt man dem Computer viele Beispiele, wie er reagieren soll, und er lernt daraus, die gezeigten Verhaltensweisen zu imitieren.\n\nDer erste Schritt, den man dafür tun muss ist es, diese Beispiele zu sammeln. Das sind die Daten, auf denen man diese Netzwerke trainiert.\n\nDas Training passiert zweistufig. In der ersten Stufe gibt man dem Computer mehr oder weniger das ganze Internet, was er lesen soll, um daraus grobe Muster zu lernen. Der gefilterte Trainingskorpus ist hunderte Gigabyte bis wenige Terabyte groß. GPT-3 trainierte auf 300 Milliarden Tokens; allein der gefilterte Common-Crawl-Teil umfasste etwa 570 GB, rund 400 Milliarden Tokens.\n\nIn der zweiten Stufe folgen Instruction-Tuning, Präferenzdaten und RLHF; Frage-Antwort-Paare sind ein Teil davon."
-      : "In classical programming, you tell the computer exactly how to behave.\n\nIn machine learning, by contrast, you give the computer many examples of how it should react, and it learns from them to imitate the behaviours it was shown.\n\nThe first step is to collect these examples. That is the data on which these networks are trained.\n\nTraining happens in two stages. In the first stage, you give the computer more or less the entire internet to read so that it learns rough patterns. The filtered training corpus is hundreds of gigabytes to a few terabytes. GPT-3 trained on 300 billion tokens; the filtered Common Crawl portion alone was about 570 GB, roughly 400 billion tokens.\n\nIn the second stage, instruction tuning, preference data, and RLHF follow; question-answer pairs are one part of that.",
-    teaser: DE
-      ? "Beim klassischen Programmieren gibt man dem Computer genau vor, wie er sich zu verhalten hat.\n\nBei Machine Learning dagegen gibt man dem Computer viele Beispiele, wie er reagieren soll, und er lernt daraus, die gezeigten Verhaltensweisen zu imitieren.\n\nDer erste Schritt, den man dafür tun muss ist es, diese Beispiele zu sammeln. Das sind die Daten, auf denen man diese Netzwerke trainiert.\n\nDas Training passiert zweistufig. In der ersten Stufe gibt man dem Computer mehr oder weniger das ganze Internet, was er lesen soll, um daraus grobe Muster zu lernen. Der gefilterte Trainingskorpus ist hunderte Gigabyte bis wenige Terabyte groß. GPT-3 trainierte auf 300 Milliarden Tokens; allein der gefilterte Common-Crawl-Teil umfasste etwa 570 GB, rund 400 Milliarden Tokens.\n\nIn der zweiten Stufe folgen Instruction-Tuning, Präferenzdaten und RLHF; Frage-Antwort-Paare sind ein Teil davon."
-      : "In classical programming, you tell the computer exactly how to behave.\n\nIn machine learning, by contrast, you give the computer many examples of how it should react, and it learns from them to imitate the behaviours it was shown.\n\nThe first step is to collect these examples. That is the data on which these networks are trained.\n\nTraining happens in two stages. In the first stage, you give the computer more or less the entire internet to read so that it learns rough patterns. The filtered training corpus is hundreds of gigabytes to a few terabytes. GPT-3 trained on 300 billion tokens; the filtered Common Crawl portion alone was about 570 GB, roughly 400 billion tokens.\n\nIn the second stage, instruction tuning, preference data, and RLHF follow; question-answer pairs are one part of that.",
-    watch: "",
-    demoState: { scene: "langdata", mode: "scale", summary: true },
-    inherit: false,
-    questionGroups: [
-      {
-        id: "g-sources",
-        title: DE ? "Quellen" : "Sources",
-        sources: [
-          { label: "Wikipedia: Paris", url: "https://de.wikipedia.org/wiki/Paris", why: { de: "Erster Absatz des Artikels; die Demo zeigt den HTML-Ausschnitt.", en: "First paragraph of the article; the demo shows the HTML excerpt." } },
-          { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
-          { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
-          { label: "Köpf et al. (2023), OpenAssistant Conversations", url: "https://arxiv.org/abs/2304.07327", why: { de: "Offener Datensatz menschlicher Frage-Antwort-Konversationen.", en: "Open dataset of human question-answer conversations." } },
-          { label: "Zhou et al. (2023), LIMA: Less Is More for Alignment", url: "https://arxiv.org/abs/2305.11206", why: { de: "Wenige, hochwertige Instruktionsdaten für Alignment.", en: "A small, high-quality instruction set for alignment." } },
-          { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } },
-          { label: "Ouyang et al. (2022), Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning mit menschlichem Feedback nach dem Vortraining.", en: "Instruction tuning with human feedback after pretraining." } }
-        ]
-      }
-    ]
-  };
   var bausteineIntro = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Die Architektur von LLMs" : "The architecture of LLMs",
@@ -786,16 +758,16 @@
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Die Architektur als Funktion" : "The architecture as a function",
     body: DE
-      ? "Die ganze Architektur ist eine Funktion $f_\\theta(x)$: Daten rein, eine Verteilung über das nächste Token raus. Pretraining nutzt fast das ganze Internet; Fine-tuning nutzt wenige, spezifische Fragen. Die Beispiele zeigen, warum die Daten den Unterschied machen.\n\nDie Form der Funktion bleibt beim Training gleich. Ein einfaches Beispiel ist $f_\\theta(x) = ax + b$. Hier sind $a$ und $b$ die gelernten Gewichte, also $\\theta$; das Training ändert nur diese Werte, nicht die Form der Funktion."
-      : "The whole architecture is a function $f_\\theta(x)$: data in, a distribution over the next token out. Pretraining uses almost the whole internet; fine-tuning uses a few specific questions. The examples show why the data make the difference.\n\nThe form of the function stays the same during training. A simple example is $f_\\theta(x) = ax + b$. Here $a$ and $b$ are the learned weights, that is $\\theta$; training changes only these values, not the form of the function.",
-    watch: DE ? "Drücke Weiter: Daten, Frage an Rohdaten, 1. Trainingsdatensatz, 2. Trainingsdatensatz. Bei jedem Beispiel zeigt der Nudge, wie sich die Kandidaten verschieben; welche Option in den Daten steht, welche nur plausibel ist und welche nicht passt." : "Press Next: data, question on raw data, first training example, second training example. At each example the nudge shows how the candidates shift; which option is in the data, which is merely plausible, and which does not fit.",
+      ? "Die Architektur ist eine Funktion $f_\\theta(x)$: Daten rein, eine Verteilung über das nächste Token raus.\n\nDie Form bleibt gleich, etwa $f_\\theta(x) = ax + b$. $\\theta$ sind die gelernten Werte von $a$ und $b$. Training ändert $\\theta$, nicht die Form von $f$.\n\nPretraining liest fast das ganze Internet und lernt Muster, Sprache und Fakten. Fine-tuning zeigt wenige Frage-Antwort-Paare. Es lehrt keine neuen Fakten, sondern die Form: Frage, Antwort, direkte Reaktion. Das Wissen (Paris, Rom) steckt schon in den Gewichten; das Netz lernt, es als Antwort zu nutzen. Darin liegt das Potenzial."
+      : "The architecture is a function $f_\\theta(x)$: data in, a distribution over the next token out.\n\nThe form stays the same, for example $f_\\theta(x) = ax + b$. $\\theta$ are the learned values of $a$ and $b$. Training changes $\\theta$, not the form of $f$.\n\nPretraining reads almost the whole internet and learns patterns, language, and facts. Fine-tuning shows a few question-answer pairs. It does not teach new facts; it teaches the form: question, answer, direct reaction. The knowledge (Paris, Rome) is already in the weights; the network learns to use it as an answer. That is where the potential lies.",
+    watch: DE ? "Weiter: Daten, Frage an Rohdaten, 1. Trainingsdatensatz, 2. Trainingsdatensatz. Achte darauf, wie dieselbe Frageform auf das Wissen aus dem Pretraining zugreift." : "Next: data, question on raw data, first training example, second training example. Watch how the same question form draws on knowledge from pretraining.",
     demoState: { scene: "fx" },
-    context: DE ? "In den Daten steht „Die Katze sitzt auf der Matte“. Das Netz bekommt den Anfang und soll „Matte“ vorhersagen. „Heizung“ ist auch plausibel, war aber in diesem Beispiel nicht der nächste Token; „Gleichung“ passt semantisch nicht." : "The data says “The cat sits on the mat”. The network gets the beginning and should predict “mat”. “Heater” is also plausible, but was not the next token in this example; “equation” does not fit semantically.",
-    deep: DE ? "Der Nudge ist der Trainingsschritt: Vergleiche die Vorhersage mit dem nächsten Token in den Daten und verschiebe die Gewichte ein wenig in die Richtung, die den Fehler senkt. Ohne Daten gibt es kein Ziel und keinen Nudge." : "The nudge is the training step: compare the prediction with the next token in the data and move the weights a little in the direction that lowers the error. Without data there is no target and no nudge.",
+    context: DE ? "Im Rohkorpus steht „Die Hauptstadt von Frankreich ist Paris“. Das Modell setzt den Satz fort; die Frage allein ist noch kein Frage-Antwort-Paar. Fine-tuning zeigt ihm genau solche Paare." : "The raw corpus contains “The capital of France is Paris”. The model continues the sentence; the question alone is not yet a question-answer pair. Fine-tuning shows it exactly such pairs.",
+    deep: DE ? "Der Nudge ist der Trainingsschritt: Vergleiche die Vorhersage mit dem nächsten Token in den Daten und verschiebe die Gewichte ein wenig in die Richtung, die den Fehler senkt. Pretraining lernt die Fakten; Fine-tuning lernt die Form, in der das Wissen als Antwort erscheint. Ohne Daten gibt es kein Ziel und keinen Nudge." : "The nudge is the training step: compare the prediction with the next token in the data and move the weights a little in the direction that lowers the error. Pretraining learns the facts; fine-tuning learns the form in which the knowledge appears as an answer. Without data there is no target and no nudge.",
     boxes: [
       box("fx-1", DE ? "Mathematik" : "Mathematics", DE ? "Die Funktion" : "The function", DE ? "$f_\\theta(x)$ nimmt Daten und gibt eine Verteilung über das nächste Token aus. Die Form bleibt gleich, etwa $f_\\theta(x)=ax+b$; $\\theta$ sind die Gewichte, die das Training verändert." : "$f_\\theta(x)$ takes data and returns a distribution over the next token. The form stays the same, for example $f_\\theta(x)=ax+b$; $\\theta$ are the weights that training changes."),
       box("fx-2", DE ? "Training" : "Training", DE ? "Pretraining" : "Pretraining", DE ? "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged dieselben Gewichte." : "Almost the whole internet supplies billions of next tokens. Every comparison nudges the same weights."),
-      box("fx-3", DE ? "Training" : "Training", DE ? "Fine-tuning" : "Fine-tuning", DE ? "Wenige, gezielte Fragen nudged dieselben Gewichte in Richtung hilfreicher Antworten." : "A few targeted questions nudge the same weights toward helpful answers."),
+      box("fx-3", DE ? "Training" : "Training", DE ? "Fine-tuning" : "Fine-tuning", DE ? "Wenige Frage-Antwort-Paare zeigen die Form. Das Wissen kommt aus dem Pretraining; das Netz lernt, es als direkte Antwort zu nutzen. Darin liegt das Potenzial." : "A few question-answer pairs show the form. The knowledge comes from pretraining; the network learns to use it as a direct answer. That is where the potential lies."),
       box("fx-4", DE ? "Grenze" : "Limit", DE ? "Warum sind Daten so wichtig?" : "Why are data so important?", DE ? "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Nudge; das Modell kann nur raten." : "The next token in the data is the target. Without it there is no comparison and no nudge; the model can only guess.")
     ],
     sources: [
@@ -808,7 +780,7 @@
   var bausteineStep = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
-    substeps: [bausteineIntro, bausteineFunctionStep, bausteineData]
+    substeps: [bausteineIntro, bausteineFunctionStep]
   };
 
   var manifoldSteps = DE ? [
@@ -1323,41 +1295,6 @@
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Giuseppe Piazzi entdeckte 1801 den Himmelskörper <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die er nach eigener Angabe schon vor 1801 besaß und die Legendre 1805 publizierte; er trug zu ihrer Verbreitung bei. MSE ist der gemittelte quadratische Fehler, ein einfacher Spezialfall; viele Loss-Funktionen verallgemeinern dieselbe Idee. LLM nutzen Cross-Entropy statt MSE.\n\nWir werden später genau zeigen, wie MSE zum Training genutzt wird.",
-        teaser: "Giuseppe Piazzi entdeckte 1801 den Himmelskörper <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die er nach eigener Angabe schon vor 1801 besaß und die Legendre 1805 publizierte; er trug zu ihrer Verbreitung bei. MSE ist der gemittelte quadratische Fehler, ein einfacher Spezialfall; viele Loss-Funktionen verallgemeinern dieselbe Idee. LLM nutzen Cross-Entropy statt MSE.\n\nWir werden später genau zeigen, wie MSE zum Training genutzt wird.",
-        watch: "",
-        demoState: { scene: "gauss", phase: "intro" },
-        inherit: false,
-        questionGroups: [
-          {
-            id: "g-basics",
-            title: "Eine Ebene tiefer",
-            questions: []
-          },
-          {
-            id: "g-lens-mathematik",
-            title: "Mathematik",
-            questions: [
-              { id: "q-box-gauss-2", title: "Was macht die Methode?", body: "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell. MSE ist der gemittelte quadratische Fehler. Große Abweichungen zählen quadratisch, kleine kaum.", tex: "", kind: "question" }
-            ]
-          },
-          {
-            id: "g-lens-daten",
-            title: "Daten",
-            questions: [
-              { id: "q-box-gauss-3", title: "Warum im Schnitt richtig?", body: "Einzelne Messungen können, genauso wie einzelne Texte, falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist die Auswahl wichtig.", tex: "", kind: "question" }
-            ]
-          },
-          {
-            id: "g-sources",
-            title: "Quellen",
-            sources: gaussSteps[0].sources
-          }
-        ]
-      },
-      {
-        kicker: "Daten",
-        title: "Gauß, Ceres und die Daten",
         body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
         teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
         watch: "",
@@ -1390,47 +1327,47 @@
         teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body + "\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
         watch: "",
         demoState: dataTruthStep.demoState,
-      }
-    ]
-  } : {
-    title: "Gauss, Ceres, and the data",
-    kicker: "Ceres",
-    substeps: [
+      },
       {
-        kicker: "Data",
-        title: "Gauss, Ceres, and the data",
-        body: "Giuseppe Piazzi discovered the celestial body <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which he said he already possessed before 1801 and which Legendre published in 1805; he helped spread the method. MSE is the averaged squared error, a simple special case; many loss functions generalise the same idea. LLMs use cross-entropy instead of MSE.\n\nWe will show later exactly how MSE is used for training.",
-        teaser: "Giuseppe Piazzi discovered the celestial body <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which he said he already possessed before 1801 and which Legendre published in 1805; he helped spread the method. MSE is the averaged squared error, a simple special case; many loss functions generalise the same idea. LLMs use cross-entropy instead of MSE.\n\nWe will show later exactly how MSE is used for training.",
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Giuseppe Piazzi entdeckte 1801 den Himmelskörper <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die er nach eigener Angabe schon vor 1801 besaß und die Legendre 1805 publizierte; er trug zu ihrer Verbreitung bei. MSE ist der gemittelte quadratische Fehler, ein einfacher Spezialfall; viele Loss-Funktionen verallgemeinern dieselbe Idee. LLM nutzen Cross-Entropy statt MSE.\n\nWir werden später genau zeigen, wie MSE zum Training genutzt wird.",
+        teaser: "Giuseppe Piazzi entdeckte 1801 den Himmelskörper <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die er nach eigener Angabe schon vor 1801 besaß und die Legendre 1805 publizierte; er trug zu ihrer Verbreitung bei. MSE ist der gemittelte quadratische Fehler, ein einfacher Spezialfall; viele Loss-Funktionen verallgemeinern dieselbe Idee. LLM nutzen Cross-Entropy statt MSE.\n\nWir werden später genau zeigen, wie MSE zum Training genutzt wird.",
         watch: "",
         demoState: { scene: "gauss", phase: "intro" },
         inherit: false,
         questionGroups: [
           {
             id: "g-basics",
-            title: "One level deeper",
+            title: "Eine Ebene tiefer",
             questions: []
           },
           {
             id: "g-lens-mathematik",
-            title: "Mathematics",
+            title: "Mathematik",
             questions: [
-              { id: "q-box-gauss-2", title: "What does the method do?", body: "It minimises the sum of squared distances between observations and model. MSE is the averaged squared error. Large deviations count squared, small ones barely.", tex: "", kind: "question" }
+              { id: "q-box-gauss-2", title: "Was macht die Methode?", body: "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell. MSE ist der gemittelte quadratische Fehler. Große Abweichungen zählen quadratisch, kleine kaum.", tex: "", kind: "question" }
             ]
           },
           {
             id: "g-lens-daten",
-            title: "Data",
+            title: "Daten",
             questions: [
-              { id: "q-box-gauss-3", title: "Why right on average?", body: "Individual measurements, just like individual texts, can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why selection matters.", tex: "", kind: "question" }
+              { id: "q-box-gauss-3", title: "Warum im Schnitt richtig?", body: "Einzelne Messungen können, genauso wie einzelne Texte, falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist die Auswahl wichtig.", tex: "", kind: "question" }
             ]
           },
           {
             id: "g-sources",
-            title: "Sources",
+            title: "Quellen",
             sources: gaussSteps[0].sources
           }
         ]
-      },
+      }
+    ]
+  } : {
+    title: "Gauss, Ceres, and the data",
+    kicker: "Ceres",
+    substeps: [
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
@@ -1466,6 +1403,41 @@
         teaser: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body + "\n\nThe figure is symbolic and not a real measurement. It is meant to show that some sentences lie closer to the truth than others and some far away from it, similar to the measurements from astronomy.",
         watch: "",
         demoState: dataTruthStep.demoState,
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Giuseppe Piazzi discovered the celestial body <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which he said he already possessed before 1801 and which Legendre published in 1805; he helped spread the method. MSE is the averaged squared error, a simple special case; many loss functions generalise the same idea. LLMs use cross-entropy instead of MSE.\n\nWe will show later exactly how MSE is used for training.",
+        teaser: "Giuseppe Piazzi discovered the celestial body <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used least squares, which he said he already possessed before 1801 and which Legendre published in 1805; he helped spread the method. MSE is the averaged squared error, a simple special case; many loss functions generalise the same idea. LLMs use cross-entropy instead of MSE.\n\nWe will show later exactly how MSE is used for training.",
+        watch: "",
+        demoState: { scene: "gauss", phase: "intro" },
+        inherit: false,
+        questionGroups: [
+          {
+            id: "g-basics",
+            title: "One level deeper",
+            questions: []
+          },
+          {
+            id: "g-lens-mathematik",
+            title: "Mathematics",
+            questions: [
+              { id: "q-box-gauss-2", title: "What does the method do?", body: "It minimises the sum of squared distances between observations and model. MSE is the averaged squared error. Large deviations count squared, small ones barely.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-daten",
+            title: "Data",
+            questions: [
+              { id: "q-box-gauss-3", title: "Why right on average?", body: "Individual measurements, just like individual texts, can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why selection matters.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-sources",
+            title: "Sources",
+            sources: gaussSteps[0].sources
+          }
+        ]
       }
     ]
   };

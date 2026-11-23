@@ -1622,7 +1622,7 @@ def test_blocks_sequence(browser, base, lang, results):
     results.check(tag, "ffn sub-step is marked in the residual flow", any("FFN" in b for b in ffn["block"]), str(ffn))
     page.evaluate("() => LearnSys.go(0, 0, 1)")
     page.wait_for_timeout(1800)
-    fx = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), card: !!document.querySelector('.ls-bs-fx'), prompt: document.querySelector('.ls-bs-fx-prompt')?.textContent || '', cands: document.querySelectorAll('.ls-bs-fx-cand').length, status: Array.from(document.querySelectorAll('.ls-bs-fx-cand small')).map(e => e.textContent), nudge: !!document.querySelector('.ls-bs-fx-nudge'), inputs: Array.from(document.querySelectorAll('[data-fx-input]')).map(e => e.getAttribute('aria-label') || e.textContent), tex: Array.from(document.querySelectorAll('.ls-fx-input-label')).map(e => e.getAttribute('data-tex') || ''), inline: Array.from(document.querySelectorAll('.ls-fx-input-label')).every(e => e.getAttribute('data-tex-display') === 'false'), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
+    fx = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), card: !!document.querySelector('.ls-bs-fx'), prompt: document.querySelector('.ls-bs-fx-prompt')?.textContent || '', cands: document.querySelectorAll('.ls-bs-fx-cand').length, status: Array.from(document.querySelectorAll('.ls-bs-fx-cand small')).map(e => e.textContent), nudge: !!document.querySelector('.ls-bs-fx-nudge'), inputs: Array.from(document.querySelectorAll('[data-fx-input]')).map(e => e.getAttribute('aria-label') || e.textContent), tex: Array.from(document.querySelectorAll('.ls-fx-input-label')).map(e => e.getAttribute('data-tex') || ''), inline: Array.from(document.querySelectorAll('.ls-fx-input-label')).every(e => e.getAttribute('data-tex-display') === 'false'), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '', two: document.querySelector('.ls-fx-two')?.textContent || '' })")
     results.check(tag, "function slide follows the architecture overview", fx["scene"] == "fx" and fx["card"], str(fx)[:240])
     if lang == "de":
         input_ok = len(fx["inputs"]) == 4 and "Daten" in fx["inputs"][0] and "Frage an Rohdaten" in fx["inputs"][1] and "1. Trainingsdatensatz" in fx["inputs"][2] and "2. Trainingsdatensatz" in fx["inputs"][3]
@@ -1631,7 +1631,8 @@ def test_blocks_sequence(browser, base, lang, results):
     results.check(tag, "function slide shows data, raw-question, first and second examples", input_ok, str(fx["inputs"]))
     results.check(tag, "function slide renders f-theta in the input boxes", fx["inline"] and all("theta" in t for t in fx["tex"]), str(fx["tex"]))
     results.check(tag, "function slide shows the next-token options", "___" in fx["prompt"] and fx["cands"] == 3 and len(fx["status"]) == 3, str(fx)[:240])
-    results.check(tag, "function slide labels the option status", any("Daten" in st or "data" in st for st in fx["status"]) and any("passt" in st or "fit" in st for st in fx["status"]), str(fx["status"]))
+    results.check(tag, "function slide starts with random alternative words", any("zufällig" in st or "random" in st for st in fx["status"]) and any("richtig" in st or "right" in st for st in fx["status"]), str(fx["status"]))
+    results.check(tag, "function slide shows the two datasets as a chain", ("Pretraining" in fx["two"] and "Fine-tuning" in fx["two"]) or ("pretraining" in fx["two"] and "fine-tuning" in fx["two"]), fx["two"][:240])
     results.check(tag, "function slide nudges itself twice", "Nudge 4" in fx["readout"], fx["readout"])
     for _ in range(4):
         nudge = page.locator('.ls-bs-fx-nudge')
@@ -1639,14 +1640,21 @@ def test_blocks_sequence(browser, base, lang, results):
             break
         nudge.click(); page.wait_for_timeout(250)
     fx_done = page.evaluate("() => ({ readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '', disabled: document.querySelector('.ls-bs-fx-nudge')?.disabled, widths: Array.from(document.querySelectorAll('.ls-bs-fx-cand i b')).map(e => e.style.width), pcts: Array.from(document.querySelectorAll('.ls-bs-fx-cand em')).map(e => e.textContent) })")
-    results.check(tag, "function slide nudges to 99 percent", ("99" in fx_done["readout"] or "99" in fx_done["pcts"][0]) and fx_done["disabled"], str(fx_done))
+    results.check(tag, "function slide nudges to 99 percent with an active button", ("99" in fx_done["readout"] or "99" in fx_done["pcts"][0]) and not fx_done["disabled"], str(fx_done))
     page.wait_for_timeout(700)
-    fx_second = page.evaluate("() => Array.from(document.querySelectorAll('.ls-bs-fx-cand em')).map(e => e.textContent).join('|')")
-    results.check(tag, "function slide fluctuates at the top", fx_second != "|".join(fx_done["pcts"]), str(fx_second))
+    fx_stable = page.evaluate("() => Array.from(document.querySelectorAll('.ls-bs-fx-cand em')).map(e => e.textContent).join('|')")
+    results.check(tag, "function slide stays still at 99 percent without input", fx_stable == "|".join(fx_done["pcts"]), str(fx_stable))
+    page.locator('.ls-bs-fx-nudge').click()
+    page.wait_for_timeout(350)
+    fx_jitter = page.evaluate("() => Array.from(document.querySelectorAll('.ls-bs-fx-cand em')).map(e => e.textContent).join('|')")
+    results.check(tag, "nudge at 99 percent fluctuates once", fx_jitter != fx_stable, str(fx_jitter))
     page.evaluate("() => LearnSys.next()")
     page.wait_for_timeout(300)
-    fx_next = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
+    fx_next = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '', note: document.querySelector('.ls-bs-fx-note')?.textContent || '', status: Array.from(document.querySelectorAll('.ls-bs-fx-cand small')).map(e => e.textContent) })")
     results.check(tag, "next moves from data to the raw question", fx_next["active"] == "rawq", str(fx_next))
+    raw_wiki = "Die Hauptstadt von Frankreich ist Paris" in fx_next["note"] if lang == "de" else "The capital of France is Paris" in fx_next["note"]
+    raw_status = any("nächster Token" in st or "next token" in st for st in fx_next["status"])
+    results.check(tag, "raw question continues Wikipedia style at the next token", raw_wiki and raw_status, str(fx_next))
     page.evaluate("() => LearnSys.next()")
     page.wait_for_timeout(300)
     fx_nudge = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
@@ -1656,28 +1664,30 @@ def test_blocks_sequence(browser, base, lang, results):
             break
         page.evaluate("() => LearnSys.next()")
         page.wait_for_timeout(120)
-    fx_first = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), sample: document.querySelector('.ls-fx-sample')?.textContent || '', summary: !document.querySelector('.ls-fx-summary')?.hidden })")
+    fx_first = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), sample: document.querySelector('.ls-fx-sample')?.textContent || '', summary: !document.querySelector('.ls-fx-summary')?.hidden, dataset: !document.querySelector('.ls-fx-dataset')?.hidden, pairs: document.querySelector('.ls-fx-dataset')?.textContent || '', activePair: document.querySelector('.ls-fx-dataset span.is-on')?.getAttribute('data-fx-pair') })")
     results.check(tag, "first training example shows its data pair", fx_first["active"] == "first" and "x:" in fx_first["sample"] and "Paris" in fx_first["sample"], str(fx_first))
+    results.check(tag, "fine-tuning dataset shows the matching question-answer pairs", fx_first["dataset"] and fx_first["activePair"] == "first" and ("Frankreich" in fx_first["pairs"] or "France" in fx_first["pairs"]) and "Paris" in fx_first["pairs"], str(fx_first))
     results.check(tag, "fine-tuning summary waits for the second example", not fx_first["summary"], str(fx_first))
     for _ in range(14):
         if page.evaluate("() => document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input')") == "second":
             break
         page.evaluate("() => LearnSys.next()")
         page.wait_for_timeout(120)
-    fx_summary = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), sample: document.querySelector('.ls-fx-sample')?.textContent || '', summary: !document.querySelector('.ls-fx-summary')?.hidden, text: document.querySelector('.ls-fx-summary')?.textContent || '' })")
+    fx_summary = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), sample: document.querySelector('.ls-fx-sample')?.textContent || '', summary: !document.querySelector('.ls-fx-summary')?.hidden, text: document.querySelector('.ls-fx-summary')?.textContent || '', pairs: document.querySelector('.ls-fx-dataset')?.textContent || '', activePair: document.querySelector('.ls-fx-dataset span.is-on')?.getAttribute('data-fx-pair') })")
     results.check(tag, "second example shows its data pair", fx_summary["active"] == "second" and "x:" in fx_summary["sample"] and "Rom" in fx_summary["sample"], str(fx_summary))
-    results.check(tag, "fine-tuning summary explains facts then conversation", fx_summary["summary"] and "Fakten" in fx_summary["text"] and "Gespräch" in fx_summary["text"], str(fx_summary))
-    for _ in range(5):
-        page.evaluate("() => LearnSys.next()")
-        page.wait_for_timeout(250)
-        if page.evaluate("() => document.querySelector('#ls-demo')?.getAttribute('data-scene')") == "langdata":
-            break
+    results.check(tag, "second example uses pretraining knowledge for another country", fx_summary["activePair"] == "second" and ("Italien" in fx_summary["pairs"] or "Italy" in fx_summary["pairs"]) and "Rom" in fx_summary["pairs"], str(fx_summary))
+    summary_ok = ("Fakten" in fx_summary["text"] and "Gespräch" in fx_summary["text"]) if lang == "de" else ("facts" in fx_summary["text"] and "conversation" in fx_summary["text"])
+    results.check(tag, "fine-tuning summary explains facts then conversation", fx_summary["summary"] and summary_ok, str(fx_summary))
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(300)
     scene_after = page.evaluate("() => document.querySelector('#ls-demo')?.getAttribute('data-scene')")
-    results.check(tag, "next leaves the function slide after the last example", scene_after == "langdata", str(scene_after))
+    results.check(tag, "function slide is the last substep", scene_after == "fx", str(scene_after))
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(300)
     page.evaluate("() => LearnSys.go(0, 0, 1)")
     page.wait_for_timeout(900)
-    fx_reset = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), summary: !document.querySelector('.ls-fx-summary')?.hidden, readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
-    results.check(tag, "returning to the function slide starts from the beginning", fx_reset["active"] == "corpus" and not fx_reset["summary"], str(fx_reset))
+    fx_reset = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), summary: !document.querySelector('.ls-fx-summary')?.hidden, dataset: !document.querySelector('.ls-fx-dataset')?.hidden, readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
+    results.check(tag, "returning to the function slide starts from the beginning", fx_reset["active"] == "corpus" and not fx_reset["summary"] and not fx_reset["dataset"], str(fx_reset))
     errors = logs.take()
     results.check(tag, "blocks sequence has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
@@ -1896,7 +1906,7 @@ def test_gauss_slider(browser, base, lang, results):
     context, page, logs = open_page(browser, base, lang, path="/eoy/3.php", wait_media=False)
     tag = f"gauss-slider-{lang}"
     page.wait_for_timeout(700)
-    page.evaluate("() => LearnSys.go(0, 0, 3)")
+    page.evaluate("() => LearnSys.go(0, 0, 2)")
     page.wait_for_timeout(1200)
     info = page.evaluate(
         r"""
@@ -1915,7 +1925,7 @@ def test_gauss_slider(browser, base, lang, results):
 """
     )
     detail = str(info)
-    results.check(tag, "gauss reaches its last data slide", info["sub"] == 3, detail)
+    results.check(tag, "gauss reaches the sigma 0.1 data slide", info["sub"] == 2, detail)
     results.check(tag, "gauss slider reaches the minimum", info["slider"] == info["min"] == "0.1", detail)
     results.check(tag, "gauss readout shows the minimum", "0.1" in info["out"], detail)
     results.check(tag, "gauss layout has no page overflow", info["overflow"] <= 2, str(info["overflow"]))

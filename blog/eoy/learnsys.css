@@ -3566,6 +3566,18 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-fx-summary b{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol)}
 .ls-fx-summary span{display:flex;align-items:center;gap:6px;font:600 var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-fx-summary i{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--ls-green);color:#fff;font:700 8px/1 "Open Sans",sans-serif;font-style:normal}
+.ls-fx-dataset{display:grid;gap:2px;padding:5px 7px;border:1px dashed rgba(0,75,111,.25);background:rgba(0,75,111,.035)}
+.ls-fx-dataset[hidden]{display:none}
+.ls-fx-dataset b{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol)}
+.ls-fx-dataset span{padding:2px 4px;border-left:2px solid transparent;font:600 var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-fx-dataset span.is-on{border-left-color:var(--ls-green);background:rgba(99,164,75,.10);color:var(--ls-ink)}
+.ls-fx-dataset small{font:var(--ls-fs-micro)/1.3 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-fx-two{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:5px 8px;border:1px solid var(--ls-line);background:rgba(255,255,255,.5);font:600 var(--ls-fs-micro)/1.3 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-fx-two span{display:flex;align-items:center;gap:5px}
+.ls-fx-two b{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--ls-petrol);color:#fff;font:700 8px/1 "Open Sans",sans-serif}
+.ls-fx-two i{font-style:normal;color:var(--ls-petrol);font-weight:700}
+.ls-fx-two em{font-style:normal;color:var(--ls-muted);font-weight:700}
+.ls-fx-two strong{color:var(--ls-green);font:700 var(--ls-fs-micro)/1.2 "Barlow",sans-serif}
 .ls-fx-stage{display:grid;grid-template-columns:minmax(0,1fr) 30px 166px 30px minmax(0,1.25fr);gap:14px;align-items:center;min-height:300px}
 .ls-fx-inputs{display:flex;flex-direction:column;gap:8px;min-width:0}
 .ls-fx-input{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:baseline;text-align:left;border:1px solid var(--ls-line);background:rgba(255,255,255,.54);padding:9px 11px;cursor:pointer;color:inherit;font:inherit;overflow:hidden;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease}
