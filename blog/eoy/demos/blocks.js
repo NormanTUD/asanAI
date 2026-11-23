@@ -536,10 +536,7 @@
       }
       function arrow(g, a, b, col) {
         var ang = Math.atan2(b.y - a.y, b.x - a.x);
-        g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 1.6;
-        g.setLineDash([5, 4]);
-        g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
-        g.setLineDash([]);
+        g.fillStyle = col;
         var head = 7;
         g.beginPath();
         g.moveTo(b.x, b.y);
@@ -585,34 +582,25 @@
         traj.forEach(function (item) {
           var col = C[item.col] || C.petrol;
           var pts = item.pts.map(project);
-          g.strokeStyle = col; g.globalAlpha = 0.48; g.lineWidth = 1.8; g.setLineDash([5, 4]);
-          g.beginPath();
-          pts.forEach(function (p, i) { if (i === 0) g.moveTo(p.x, p.y); else g.lineTo(p.x, p.y); });
-          g.stroke();
-          g.setLineDash([]);
-          g.globalAlpha = 1;
           for (var s = 0; s < to; s++) {
-            g.strokeStyle = col; g.globalAlpha = 0.92; g.lineWidth = 2.6;
+            g.strokeStyle = col; g.globalAlpha = 0.96; g.lineWidth = 2.8;
             g.beginPath(); g.moveTo(pts[s].x, pts[s].y); g.lineTo(pts[s + 1].x, pts[s + 1].y); g.stroke();
-            g.globalAlpha = 0.72;
+            g.globalAlpha = 0.9;
             arrow(g, pts[s], pts[s + 1], col);
             g.globalAlpha = 1;
           }
-          for (var k = 0; k < pts.length; k++) {
+          for (var k = 0; k <= to; k++) {
             var on = k === to;
-            var reached = k <= to;
             if (on) {
               g.beginPath();
               g.arc(pts[k].x, pts[k].y, 13, 0, Math.PI * 2);
               g.fillStyle = col; g.globalAlpha = 0.14; g.fill(); g.globalAlpha = 1;
             }
-            g.globalAlpha = reached ? 1 : 0.30;
             g.beginPath();
-            g.arc(pts[k].x, pts[k].y, on ? 6 : (reached ? 4.2 : 3.4), 0, Math.PI * 2);
+            g.arc(pts[k].x, pts[k].y, on ? 6 : 4.2, 0, Math.PI * 2);
             g.fillStyle = on ? col : (C.paper || "#fff");
             g.fill();
             g.strokeStyle = col; g.lineWidth = on ? 2.6 : 2.0; g.stroke();
-            g.globalAlpha = 1;
             trajHits.push({ x: pts[k].x, y: pts[k].y, layer: k, label: item.label });
           }
           var a = pts[from], b = pts[to];

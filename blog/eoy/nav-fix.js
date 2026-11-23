@@ -79,6 +79,7 @@
     // our own, independent of the server-rendered markup.
     var prev = document.getElementById("ls-quick-prev");
     var next = document.getElementById("ls-quick-next");
+    var ownedPrev = !prev, ownedNext = !next;
     if (!prev) {
       prev = document.createElement("button");
       prev.type = "button"; prev.id = "navfix-prev";
@@ -96,8 +97,8 @@
     prev.textContent = de ? "← Zurück" : "← Back";
     next.textContent = de ? "Weiter →" : "Next →";
 
-    prev.addEventListener("click", function () { goPrev(); setTimeout(update, 120); });
-    next.addEventListener("click", function () { goNext(); setTimeout(update, 120); });
+    if (ownedPrev) prev.addEventListener("click", function () { goPrev(); setTimeout(update, 120); });
+    if (ownedNext) next.addEventListener("click", function () { goNext(); setTimeout(update, 120); });
 
     function update() {
       removeStray();
