@@ -11,12 +11,13 @@ item.
   landscape, deep-network width, rotation pause, word-map hover bars.
 - 3D embedding: points first; after the last example (Zauberer − Mann + Frau),
   Next turns them into arrows from (0, 0, 0); no category planes.
-- f(x) slide is its own substep after the architecture overview and before the
-  data slide. It is now a visual data → f(x) → output flow with
-  `f(Daten)`, `f(1. Trainingsdatensatz)`, `f(2. Trainingsdatensatz)`, a rotating
-  f(x) core, data packets, candidate bars, and the Nudge loop.
-- Nudge: green, auto-nudges twice, user can go to 99 %, then percentages
-  fluctuate.
+- f(x) slide is its own substep after the architecture overview; the old data
+  slide is removed. It is a visual data → f_θ(x) → output flow with LaTeX
+  `f_\theta(\text{Daten})`, `f_\theta(\text{Frage an Rohdaten})`, the two
+  training examples, a static f_θ(x) core, dataset pairs, candidate bars, and
+  the Nudge loop.
+- Nudge: green, auto-nudges twice; at 99 % the numbers stay still. The button
+  stays active and shows one fluctuation; Next advances the examples.
 
 ## Open
 

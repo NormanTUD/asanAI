@@ -1688,6 +1688,15 @@ def test_blocks_sequence(browser, base, lang, results):
     page.wait_for_timeout(900)
     fx_reset = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), summary: !document.querySelector('.ls-fx-summary')?.hidden, dataset: !document.querySelector('.ls-fx-dataset')?.hidden, readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
     results.check(tag, "returning to the function slide starts from the beginning", fx_reset["active"] == "corpus" and not fx_reset["summary"] and not fx_reset["dataset"], str(fx_reset))
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(400)
+    for _ in range(20):
+        if page.evaluate("() => document.querySelector('#ls-demo')?.getAttribute('data-scene')") == "fx":
+            break
+        page.evaluate("() => LearnSys.next()")
+        page.wait_for_timeout(150)
+    fx_forward = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), dataset: !document.querySelector('.ls-fx-dataset')?.hidden })")
+    results.check(tag, "forward from the overview returns to the reset function slide", fx_forward["scene"] == "fx" and fx_forward["active"] == "corpus" and not fx_forward["dataset"], str(fx_forward))
     errors = logs.take()
     results.check(tag, "blocks sequence has no console errors", not errors, " | ".join(errors)[:400])
     context.close()

@@ -53,8 +53,8 @@ file after every completed item.
      (advance the steps) before leaving the slide.
 6. **f(x) Nudge behavior** — **done**
    - Nudge itself twice automatically; the reader can continue to 99%.
-   - At 99% the percentages fluctuate slightly; the green button and comments
-     document the behavior.
+   - At 99% the percentages stay still; the green button stays active and
+     shows one fluctuation when pressed. Next advances the examples.
 7. **3D: planes out, arrows guaranteed**
    - Remove the category planes from the 3D view completely.
    - In 3D, every word must be a bare arrow from (0, 0, 0) to the word position;
@@ -68,7 +68,7 @@ file after every completed item.
 
 ## Notes
 
-- f(x) slide order: `bausteineIntro` → new function sub-slide → `bausteineData`.
+- f(x) slide order: `bausteineIntro` → function sub-slide. The old `bausteineData` slide is removed.
 - Do not fake LLM output; the limits page keeps its simulation labels.
 - Sources used in this pass: Liu et al. 2023; Gururangan et al. 2022; Joshi et al.
   2020; Dodge et al. 2021; Ozer et al. 2026; Zhang 2026.

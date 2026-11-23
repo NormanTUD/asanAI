@@ -968,7 +968,11 @@
     window.addEventListener("resize", onResize);
     window.addEventListener("tm:theme", function () { C = api.colors(); renderDetail(); });
     return {
-      update: function (s) {
+      update: function (s, meta) {
+        if (meta && meta.subDir && meta.subDir !== 0) {
+          lastBlocksIndex = 0;
+          setIndex(0);
+        }
         if (!s || s.resetKey === undefined || s.resetKey === resetKey) return;
         resetKey = s.resetKey;
         setIndex(typeof s.start === "number" ? blockStartPage(s.start) : 0);
