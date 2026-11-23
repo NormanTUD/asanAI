@@ -8,9 +8,11 @@
     el.className = "ls-bs-fx ls-fx";
     var INPUTS = {
       corpus: {
-        label: DE ? "f(Daten)" : "f(data)",
+        label: DE ? "f_θ(Daten)" : "f_θ(data)",
         tag: DE ? "Pretraining" : "Pretraining",
         sub: DE ? "Vervollständigen" : "completion",
+        size: 100,
+        sizeLabel: DE ? "≈ 10⁹ Beispiele" : "≈ 10⁹ examples",
         prompt: DE ? "Die Hauptstadt von Frankreich ist ___." : "The capital of France is ___.",
         target: "Paris",
         targetIdx: 0,
@@ -24,9 +26,11 @@
         note: DE ? "Pretraining: Im Rohkorpus steht „Die Hauptstadt von Frankreich ist Paris“. Die Vervollständigung funktioniert, weil das Modell diese Fortsetzung gesehen hat." : "Pretraining: the raw corpus contains “The capital of France is Paris”. Completion works because the model has seen this continuation."
       },
       rawq: {
-        label: DE ? "f(Frage an Rohdaten)" : "f(question on raw data)",
+        label: DE ? "f_θ(Frage an Rohdaten)" : "f_θ(question on raw data)",
         tag: DE ? "vor dem Fine-tuning" : "before fine-tuning",
         sub: DE ? "Wikipedia-Stil" : "Wikipedia style",
+        size: 8,
+        sizeLabel: DE ? "1 Frage" : "1 question",
         prompt: DE ? "Was ist die Hauptstadt von Frankreich? ___" : "What is the capital of France? ___",
         target: "Paris",
         targetIdx: 1,
@@ -40,9 +44,11 @@
         note: DE ? "Vor dem Fine-tuning setzt das Modell die Frage wie einen Wikipedia-Artikel fort: „Die Hauptstadt von Frankreich ist Paris.“ Es antwortet nicht direkt." : "Before fine-tuning the model continues the question like a Wikipedia article: “The capital of France is Paris.” It does not answer directly."
       },
       first: {
-        label: DE ? "f(1. Trainingsdatensatz)" : "f(first training example)",
+        label: DE ? "f_θ(1. Trainingsdatensatz)" : "f_θ(first training example)",
         tag: DE ? "Fine-tuning" : "Fine-tuning",
         sub: DE ? "Frage → Antwort" : "question → answer",
+        size: 8,
+        sizeLabel: DE ? "1 Beispiel" : "1 example",
         prompt: DE ? "Was ist die Hauptstadt von Frankreich? ___" : "What is the capital of France? ___",
         target: "Paris",
         targetIdx: 0,
@@ -56,9 +62,11 @@
         note: DE ? "Fine-tuning-Beispiel 1: Im Datensatz steht das Frage-Antwort-Paar. Das Modell antwortet jetzt direkt mit „Paris“." : "Fine-tuning example 1: the dataset contains the question-answer pair. The model now answers directly with “Paris”."
       },
       second: {
-        label: DE ? "f(2. Trainingsdatensatz)" : "f(second training example)",
+        label: DE ? "f_θ(2. Trainingsdatensatz)" : "f_θ(second training example)",
         tag: DE ? "Fine-tuning" : "Fine-tuning",
         sub: DE ? "zweite Frage" : "second question",
+        size: 8,
+        sizeLabel: DE ? "1 Beispiel" : "1 example",
         prompt: DE ? "Was ist die Hauptstadt von Italien? ___" : "What is the capital of Italy? ___",
         target: "Rom",
         targetIdx: 0,
@@ -75,37 +83,42 @@
     el.innerHTML =
       '<div class="ls-fx-hero">' +
         '<span class="ls-fx-kicker">' + (DE ? "Die Architektur als Funktion" : "The architecture as a function") + '</span>' +
-        '<h2>f(x) ' + (DE ? "lernt aus Daten" : "learns from data") + '</h2>' +
-        '<p>' + (DE ? "Daten rein, nächste Token-Wahrscheinlichkeit raus. Jeder Vergleich mit dem nächsten Token nudged dieselben Gewichte." : "Data in, next-token probability out. Every comparison with the next token nudges the same weights.") + '</p>' +
+        '<h2>f<sub>θ</sub>(x) ' + (DE ? "lernt aus Daten" : "learns from data") + '</h2>' +
+        '<p>' + (DE ? "Daten rein, nächste Token-Wahrscheinlichkeit raus. θ sind die Gewichte; der Nudge verändert θ für alle Beispiele." : "Data in, next-token probability out. θ are the weights; the nudge changes θ for all examples.") + '</p>' +
       '</div>' +
+      '<div class="ls-fx-batch"><b>' + (DE ? "alle Beispiele" : "all examples") + '</b><span class="ls-fx-batch-dots">' +
+        '<i></i><i></i><i></i><i></i><i></i><i class="is-on"></i><i></i><i></i><i></i><i></i><i></i><i></i>' +
+      '</span><small>' + (DE ? "jedes Paar (x, nächstes Token) zieht θ ein wenig" : "every pair (x, next token) pulls θ a little") + '</small></div>' +
       '<div class="ls-fx-stage">' +
         '<div class="ls-fx-inputs" role="group" aria-label="' + (DE ? "Eingaben für f" : "Inputs to f") + '">' +
-          '<button type="button" class="ls-fx-input is-on" data-fx-input="corpus"><span class="ls-fx-input-label">' + INPUTS.corpus.label + '</span><b>' + INPUTS.corpus.tag + '</b><small>' + INPUTS.corpus.sub + '</small></button>' +
-          '<button type="button" class="ls-fx-input" data-fx-input="rawq"><span class="ls-fx-input-label">' + INPUTS.rawq.label + '</span><b>' + INPUTS.rawq.tag + '</b><small>' + INPUTS.rawq.sub + '</small></button>' +
-          '<button type="button" class="ls-fx-input" data-fx-input="first"><span class="ls-fx-input-label">' + INPUTS.first.label + '</span><b>' + INPUTS.first.tag + '</b><small>' + INPUTS.first.sub + '</small></button>' +
-          '<button type="button" class="ls-fx-input" data-fx-input="second"><span class="ls-fx-input-label">' + INPUTS.second.label + '</span><b>' + INPUTS.second.tag + '</b><small>' + INPUTS.second.sub + '</small></button>' +
+          '<button type="button" class="ls-fx-input is-on" data-fx-input="corpus"><span class="ls-fx-input-label">' + INPUTS.corpus.label + '</span><b>' + INPUTS.corpus.tag + '</b><small>' + INPUTS.corpus.sub + '</small><span class="ls-fx-size"><i style="width:' + INPUTS.corpus.size + '%"></i></span><small class="ls-fx-size-label">' + INPUTS.corpus.sizeLabel + '</small></button>' +
+          '<button type="button" class="ls-fx-input" data-fx-input="rawq"><span class="ls-fx-input-label">' + INPUTS.rawq.label + '</span><b>' + INPUTS.rawq.tag + '</b><small>' + INPUTS.rawq.sub + '</small><span class="ls-fx-size"><i style="width:' + INPUTS.rawq.size + '%"></i></span><small class="ls-fx-size-label">' + INPUTS.rawq.sizeLabel + '</small></button>' +
+          '<button type="button" class="ls-fx-input" data-fx-input="first"><span class="ls-fx-input-label">' + INPUTS.first.label + '</span><b>' + INPUTS.first.tag + '</b><small>' + INPUTS.first.sub + '</small><span class="ls-fx-size"><i style="width:' + INPUTS.first.size + '%"></i></span><small class="ls-fx-size-label">' + INPUTS.first.sizeLabel + '</small></button>' +
+          '<button type="button" class="ls-fx-input" data-fx-input="second"><span class="ls-fx-input-label">' + INPUTS.second.label + '</span><b>' + INPUTS.second.tag + '</b><small>' + INPUTS.second.sub + '</small><span class="ls-fx-size"><i style="width:' + INPUTS.second.size + '%"></i></span><small class="ls-fx-size-label">' + INPUTS.second.sizeLabel + '</small></button>' +
         '</div>' +
         '<span class="ls-fx-link" aria-hidden="true">→</span>' +
         '<div class="ls-fx-core" aria-hidden="true">' +
           '<span class="ls-fx-core-ring"></span>' +
-          '<span class="ls-fx-core-node"><b>f(x)</b><small>Transformer</small></span>' +
-          '<span class="ls-fx-core-caption">' + (DE ? "dieselbe Funktion" : "the same function") + '</span>' +
+          '<span class="ls-fx-core-node"><b>f<sub>θ</sub>(x)</b><small>Transformer</small></span>' +
+          '<span class="ls-fx-core-caption">' + (DE ? "θ = Gewichte" : "θ = weights") + '</span>' +
         '</div>' +
         '<span class="ls-fx-link" aria-hidden="true">→</span>' +
         '<div class="ls-fx-output">' +
           '<div class="ls-fx-output-head"><span>' + (DE ? "P(nächstes Token)" : "P(next token)") + '</span><b class="ls-fx-active-label">' + INPUTS.corpus.label + '</b></div>' +
+          '<div class="ls-fx-start"><span>' + (DE ? "Anfang" : "start") + '</span><span class="ls-fx-startbars"><i><b data-fx-start></b></i><i><b data-fx-start></b></i><i><b data-fx-start></b></i></span><small>' + (DE ? "was zuerst rauskommt" : "what comes out first") + '</small></div>' +
           '<div class="ls-bs-fx-prompt"></div>' +
           '<div class="ls-bs-fx-cands"></div>' +
           '<p class="ls-bs-fx-note"></p>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-fx-loop"><span>' + (DE ? "Vergleich mit dem nächsten Token in den Daten" : "compare with the next token in the data") + '</span><i>→</i><b>Nudge</b><span>' + (DE ? "Gewichte ein wenig in die richtige Richtung" : "move the weights a little in the right direction") + '</span></div>' +
+      '<div class="ls-fx-loop"><span>' + (DE ? "Vergleich mit dem nächsten Token in den Daten" : "compare with the next token in the data") + '</span><i>→</i><b>Nudge</b><span>' + (DE ? "θ = Gewichte: gilt für alle Beispiele" : "θ = weights: applies to all examples") + '</span></div>' +
       '<div class="ls-bs-fx-bar"><button type="button" class="ls-btn ls-bs-fx-nudge">' + (DE ? "Nudge (Gewichte anpassen)" : "Nudge (adjust weights)") + '</button><span class="ls-bs-fx-readout" aria-live="polite"></span></div>';
     root.appendChild(el);
     var inputs = el.querySelectorAll("[data-fx-input]");
     var promptEl = el.querySelector(".ls-bs-fx-prompt");
     var noteEl = el.querySelector(".ls-bs-fx-note");
     var candsEl = el.querySelector(".ls-bs-fx-cands");
+    var startBars = el.querySelectorAll("[data-fx-start]");
     var activeLabel = el.querySelector(".ls-fx-active-label");
     var readout = el.querySelector(".ls-bs-fx-readout");
     var btn = el.querySelector(".ls-bs-fx-nudge");
@@ -115,6 +128,13 @@
     var jitterTimer = 0, autoTimers = [];
     function stopJitter() { if (jitterTimer) { clearInterval(jitterTimer); jitterTimer = 0; } }
     function stopAuto() { autoTimers.forEach(function (t) { clearTimeout(t); }); autoTimers = []; }
+    function renderStart() {
+      var data = INPUTS[active];
+      var vals = data.levels[0];
+      for (var i = 0; i < startBars.length; i++) {
+        startBars[i].style.height = (vals[i] || 0) + "%";
+      }
+    }
     function renderCandidates() {
       var data = INPUTS[active];
       candsEl.innerHTML = data.cands.map(function (c) {
@@ -161,6 +181,7 @@
       activeLabel.textContent = INPUTS[name].label;
       step = INPUTS[name].startStep;
       renderCandidates();
+      renderStart();
       render();
     }
     inputs.forEach(function (b) {
