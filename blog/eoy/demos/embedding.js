@@ -963,27 +963,6 @@
             syncControls(); draw();
           }));
         });
-        var select = document.createElement("select");
-        select.className = "ls-word-select";
-        select.setAttribute("aria-label", DE ? "Wort auswählen" : "Select a word");
-        var opt0 = document.createElement("option");
-        opt0.value = "";
-        opt0.textContent = DE ? "Wort …" : "Word …";
-        select.appendChild(opt0);
-        var selectIds = st.dim === 2 ? WORD_IDS.concat(WORD_IDS_3D) : WORD_IDS;
-        selectIds.forEach(function (id) {
-          var opt = document.createElement("option");
-          opt.value = id;
-          opt.textContent = wordLabel(id);
-          select.appendChild(opt);
-        });
-        select.value = st.selected || "";
-        select.addEventListener("change", function () {
-          st.selected = select.value || null;
-          st.group = null;
-          draw();
-        });
-        row2.appendChild(select);
         if (st.dim === 2) {
           row2.appendChild(makeChip(DE ? "Richtungen" : "Directions", st.vectorMode, function () {
             st.vectorMode = !st.vectorMode;
@@ -1080,6 +1059,18 @@
       var idx = currentExampleIndex();
       if (idx < 0) idx = -1;
       if (st.dim === 2 && st.vectorMode) return false;
+      if (st.dim === 2 && idx >= list.length - 1) {
+        st.vectorMode = true;
+        st.arithmetic = null;
+        st.group = null;
+        st.tables = false;
+        st.showHighdim = false;
+        vectorTarget = 1;
+        syncControls();
+        draw();
+        ensureLoop();
+        return true;
+      }
       if (idx >= list.length - 1) return false;
       st.arithmetic = list[idx + 1].id;
       resetDirectionView();
@@ -1362,7 +1353,7 @@
         var idx = currentExampleIndex();
         if (idx < 0) idx = -1;
         if (st.dim === 2 && st.vectorMode) return false;
-        return idx < list.length - 1;
+        return idx < list.length - 1 || st.dim === 2;
       },
       hasPrev: function () {
         if (st.mode === "temperature") return currentPairIndex() > 0;

@@ -3891,3 +3891,5 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
   .ls-history-body{grid-template-columns:1fr}
   .ls-history-media{order:2}
 }
+.ls-ar-next{padding:5px 8px;border:1px solid var(--ls-green);background:var(--ls-green);color:#fff;font:700 var(--ls-fs-micro) "Open Sans",sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
+.ls-ar-next:hover{background:#558c3f;border-color:#558c3f}

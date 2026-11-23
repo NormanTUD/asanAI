@@ -90,6 +90,7 @@
       '</div>' +
       '<div class="ls-ar-status" aria-live="polite"></div>' +
       '<div class="ls-ar-bottom">' +
+        '<button type="button" class="ls-ar-next"></button>' +
         '<div class="ls-ar-loop"><span>' + L("Datei", "file") + '</span><i>→</i><span>' + L("Chunks", "chunks") + '</span><i>→</i><span>' + L("Winkel", "angle") + '</span><i>→</i><span>' + L("unsichtbarer Kontext", "invisible context") + '</span><i>→</i><span>' + L("Antwort", "answer") + '</span></div>' +
         '<button type="button" class="ls-ar-reset">' + L("Zurücksetzen", "Reset") + '</button>' +
       '</div>';
@@ -104,6 +105,7 @@
     var measureEl = el.querySelector(".ls-ar-measure");
     var guideEl = el.querySelector(".ls-ar-guide");
     var statusEl = el.querySelector(".ls-ar-status");
+    var nextBtn = el.querySelector(".ls-ar-next");
     var loopEl = el.querySelector(".ls-ar-loop");
     var phoneEl = el.querySelector(".ls-ar-phone-screen");
     var emptyEl = el.querySelector(".ls-ar-chat-empty");
@@ -292,9 +294,33 @@
         return '<div class="ls-ar-ctx-card"><div><b>' + c.id + '</b><span>' + L("kraken.pdf", "kraken.pdf") + '</span></div><p>' + esc(c.short) + '</p></div>';
       }).join("");
     }
+    function renderNext() {
+      nextBtn.textContent = state.step < 0
+        ? L("Weiter: kraken.pdf hochladen", "Next: upload kraken.pdf")
+        : state.step === 0
+          ? L("Weiter: Chunks erkennen", "Next: detect chunks")
+          : state.step === 1
+            ? L("Weiter: Chunks bewerten", "Next: score chunks")
+            : state.step === 2
+              ? L("Weiter: C1 in den Kontext", "Next: put C1 in context")
+              : state.step === 3
+                ? L("Weiter: Antwort", "Next: answer")
+                : L("Neu starten", "Restart");
+    }
+    function advance() {
+      if (state.step < 0) { startUpload(); return; }
+      clearTimers();
+      if (state.step < 4) {
+        state.step++;
+        if (state.step >= 3) state.selected.C1 = true;
+        render();
+        return;
+      }
+      reset();
+    }
     function renderStatus() {
       var text = state.step < 0
-        ? L("Warte auf kraken.pdf.", "Waiting for kraken.pdf.")
+        ? L("Warte auf kraken.pdf. Klicke „Weiter“ oder „Hochladen“; danach erklärt jeder Schritt, was im Hintergrund passiert.", "Waiting for kraken.pdf. Click “Next” or “Upload”; after that, each step explains what happens in the background.")
         : state.step === 0
           ? L("Der Agent liest die Datei außerhalb des LLM.", "The agent reads the file outside the LLM.")
           : state.step === 1
@@ -325,11 +351,13 @@
       renderAngles();
       renderChat();
       renderContext();
+      renderNext();
       renderStatus();
       renderLoop();
       renderGuide();
     }
     uploadBtns.forEach(function (b) { b.addEventListener("click", startUpload); });
+    nextBtn.addEventListener("click", advance);
     el.querySelector(".ls-ar-reset").addEventListener("click", reset);
     render();
     return {
