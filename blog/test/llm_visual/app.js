@@ -115,10 +115,16 @@ const nebulaMaterial = new THREE.ShaderMaterial({
 	depthWrite: false,
 	depthTest: false
 });
-const nebula = new THREE.Mesh(new THREE.PlaneGeometry(320, 210), nebulaMaterial);
+const nebulaGeometry = new THREE.PlaneGeometry(320, 210);
+const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
 nebula.position.set(0, -3, -94);
 nebula.renderOrder = -100;
 scene.add(nebula);
+const nebulaBack = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+nebulaBack.position.set(0, -3, 92);
+nebulaBack.rotation.y = Math.PI;
+nebulaBack.renderOrder = -100;
+scene.add(nebulaBack);
 
 function makeGlowTexture() {
 	const size = 256;
@@ -319,10 +325,11 @@ const SHEET_U = 88;
 const SHEET_V = 48;
 
 function sheetBaseY(x, z, t) {
-	return -3.7 +
-		1.15 * Math.sin(x * 0.13 + t * 0.24) +
-		0.85 * Math.cos(z * 0.18 - t * 0.2) +
-		0.52 * Math.sin((x + z) * 0.095 + t * 0.31);
+	return -3.9 +
+		1.5 * Math.sin(x * 0.12 + t * 0.23) +
+		1.15 * Math.cos(z * 0.16 - t * 0.2) +
+		0.72 * Math.sin((x + z) * 0.09 + t * 0.3) +
+		0.38 * Math.sin(x * 0.29 - z * 0.22 + t * 0.17);
 }
 
 const sheetX = new Float32Array((SHEET_U + 1) * (SHEET_V + 1));
@@ -1358,10 +1365,14 @@ for (let i = 0; i < 3; i += 1) {
 }
 
 const hyperProjections = [];
+const hyperBaseProjections = [];
 for (let i = 0; i < TOKEN_COUNT; i += 1) {
 	const sprite = glowSprite(TOKEN_PALETTE[i], 2.9 * TOKEN_SIZES[i], 0);
 	dirGroup.add(sprite);
 	hyperProjections.push(sprite);
+	const baseSprite = glowSprite(TOKEN_PALETTE[i], 1.6 * TOKEN_SIZES[i], 0);
+	dirGroup.add(baseSprite);
+	hyperBaseProjections.push(baseSprite);
 }
 
 const pathArcs = [];
@@ -1439,6 +1450,36 @@ angleDotGeometry.setAttribute("aAlpha", new THREE.BufferAttribute(angleDotAlphas
 const angleDots = new THREE.Points(angleDotGeometry, sparkleMaterial);
 angleDots.renderOrder = 7;
 dirGroup.add(angleDots);
+
+const ANGLE_FAN_SEGMENTS = 8;
+const angleFanPositions = new Float32Array(angleDotCount * ANGLE_FAN_SEGMENTS * 6);
+const angleFanColors = new Float32Array(angleDotCount * ANGLE_FAN_SEGMENTS * 6);
+for (let i = 0; i < angleDotCount; i += 1) {
+	const item = angleItems[i];
+	const color = item.cluster.isTarget ? new THREE.Color(0xffe7ae) : item.cluster.color;
+	for (let k = 0; k < ANGLE_FAN_SEGMENTS; k += 1) {
+		const fade = 0.14 + 0.7 * (k / ANGLE_FAN_SEGMENTS);
+		const index = (i * ANGLE_FAN_SEGMENTS + k) * 6;
+		angleFanColors[index] = color.r * fade;
+		angleFanColors[index + 1] = color.g * fade;
+		angleFanColors[index + 2] = color.b * fade;
+		angleFanColors[index + 3] = color.r * fade;
+		angleFanColors[index + 4] = color.g * fade;
+		angleFanColors[index + 5] = color.b * fade;
+	}
+}
+const angleFanGeometry = new THREE.BufferGeometry();
+angleFanGeometry.setAttribute("position", new THREE.BufferAttribute(angleFanPositions, 3));
+angleFanGeometry.setAttribute("color", new THREE.BufferAttribute(angleFanColors, 3));
+const angleFanMaterial = new THREE.LineBasicMaterial({
+	vertexColors: true,
+	transparent: true,
+	opacity: 0,
+	blending: THREE.AdditiveBlending,
+	depthWrite: false
+});
+const angleFan = new THREE.LineSegments(angleFanGeometry, angleFanMaterial);
+dirGroup.add(angleFan);
 
 const predictGroup = new THREE.Group();
 scene.add(predictGroup);
@@ -1545,25 +1586,25 @@ const STEPS = [
 		params: { cloud: 0.34, regions: 0.38, tokens: 1, base: 0.18, residual: 0.66, rays: 0.4, manifold: 0.9, shell: 0.5, subspaces: 0.38, ffn: 0.2, fibers: 1, layers: 1 }
 	},
 	{
-		cam: [16, 11, 44],
-		look: [4, -1, -4],
+		cam: [15, 10, 47],
+		look: [0, 0, -2],
 		fov: 50,
 		orbit: 1.0,
-		params: { cloud: 0.44, regions: 0.55, tokens: 1, base: 0.12, residual: 0.3, rays: 0.18, manifold: 0.76, shell: 0.78, subspaces: 0.45, attention: 0.08, fibers: 0.55, layers: 0.55, dirs: 1, hyper: 1 }
+		params: { cloud: 0.46, regions: 0.55, tokens: 1, base: 0.14, residual: 0.2, rays: 0.18, manifold: 0.34, shell: 0.82, subspaces: 0.3, attention: 0.06, fibers: 0.34, layers: 0.3, dirs: 1, hyper: 1 }
 	},
 	{
 		cam: [0, 8, 44],
 		look: [5, -0.5, -2],
 		fov: 48,
 		orbit: 0.4,
-		params: { cloud: 0.54, regions: 0.55, tokens: 1, base: 0.1, residual: 0.3, rays: 0.18, manifold: 0.7, shell: 0.56, subspaces: 0.34, fibers: 0.5, layers: 0.4, dirs: 0.45, hyper: 0.66, pred: 1 }
+		params: { cloud: 0.56, regions: 0.55, tokens: 1, base: 0.1, residual: 0.2, rays: 0.18, manifold: 0.3, shell: 0.6, subspaces: 0.2, fibers: 0.3, layers: 0.25, dirs: 0.45, hyper: 0.7, pred: 1 }
 	},
 	{
 		cam: [0, 21, 64],
 		look: [0, -1.5, -5],
 		fov: 55,
 		orbit: 1.8,
-		params: { cloud: 0.95, regions: 0.85, tokens: 0.9, base: 0.2, residual: 0.35, rays: 0.23, manifold: 0.95, shell: 0.95, subspaces: 0.28, attention: 0.12, ffn: 0.08, fibers: 0.65, layers: 0.55, dirs: 0.5, hyper: 0.88, pred: 0.3 }
+		params: { cloud: 0.95, regions: 0.85, tokens: 0.9, base: 0.22, residual: 0.3, rays: 0.25, manifold: 0.55, shell: 0.95, subspaces: 0.25, attention: 0.12, ffn: 0.08, fibers: 0.45, layers: 0.45, dirs: 0.5, hyper: 0.9, pred: 0.3 }
 	}
 ];
 
@@ -1882,7 +1923,8 @@ function updateTokens(dt, now) {
 			if (tmpDir.lengthSq() < 0.0001) tmpDir.copy(baseDir);
 			tmpDir.normalize();
 			const pulse = 0.58 + 0.42 * Math.sin(now * 0.85 + token.rayPhases[k]);
-			const length = token.rayLengths[k] * pulse * token.size * (0.8 + current.rays * 0.6);
+			const globalMorph = 0.62 + 0.38 * Math.sin(now * 0.42 + token.phase * 0.35);
+			const length = token.rayLengths[k] * pulse * globalMorph * token.size * (0.8 + current.rays * 0.6);
 			rayPositions.setXYZ(k * 2, 0, 0, 0);
 			rayPositions.setXYZ(k * 2 + 1, tmpDir.x * length, tmpDir.y * length, tmpDir.z * length);
 		}
@@ -2197,7 +2239,7 @@ function updateDirs(now, cycle) {
 		const direction = tmpDir.copy(token.pos).sub(dirOrigin);
 		const distance = direction.length();
 		direction.normalize();
-		const end = Math.max(17, distance * 1.8);
+		const end = current.hyper > 0.4 ? HYPER_RADIUS : Math.max(17, distance * 1.8);
 		const positions = tokenDirRays[i].geometry.getAttribute("position");
 		for (let k = 0; k < 10; k += 1) {
 			const t = k / 9;
@@ -2216,7 +2258,7 @@ function updateDirs(now, cycle) {
 		const candidate = candidateRays[i];
 		const direction = tmpA.copy(candidate.item.cluster.group.position).sub(dirOrigin);
 		direction.normalize();
-		const end = 22;
+		const end = current.hyper > 0.4 ? HYPER_RADIUS : 22;
 		const positions = candidate.geometry.getAttribute("position");
 		positions.setXYZ(0, dirOrigin.x, dirOrigin.y, dirOrigin.z);
 		positions.setXYZ(1, dirOrigin.x + direction.x * end, dirOrigin.y + direction.y * end, dirOrigin.z + direction.z * end);
@@ -2271,9 +2313,11 @@ function updateHypersphere(now) {
 	const visible = amount > 0.002;
 	hyperSphere.visible = visible;
 	angleDots.visible = visible;
+	angleFan.visible = visible;
 	for (let i = 0; i < hyperRings.length; i += 1) hyperRings[i].visible = visible;
 	for (let i = 0; i < angleRings.length; i += 1) angleRings[i].line.visible = visible;
 	for (let i = 0; i < hyperProjections.length; i += 1) hyperProjections[i].visible = visible;
+	for (let i = 0; i < hyperBaseProjections.length; i += 1) hyperBaseProjections[i].visible = visible;
 	for (let i = 0; i < pathArcs.length; i += 1) pathArcs[i].line.visible = visible;
 	if (!visible) return;
 
@@ -2332,6 +2376,35 @@ function updateHypersphere(now) {
 	dotPositions.needsUpdate = true;
 	dotAlphas.needsUpdate = true;
 
+	const fanPositions = angleFanGeometry.getAttribute("position");
+	angleFanMaterial.opacity = amount * 0.16;
+	for (let i = 0; i < angleDotCount; i += 1) {
+		const item = angleItems[i];
+		hypA.copy(item.cluster.group.position).sub(dirOrigin);
+		if (hypA.lengthSq() < 0.0001) hypA.copy(hypQuery);
+		hypA.normalize();
+		for (let k = 0; k < ANGLE_FAN_SEGMENTS; k += 1) {
+			const t1 = k / ANGLE_FAN_SEGMENTS;
+			const t2 = (k + 1) / ANGLE_FAN_SEGMENTS;
+			slerpDirection(hypQuery, hypA, t1, hypC).normalize();
+			slerpDirection(hypQuery, hypA, t2, hypD).normalize();
+			const index = (i * ANGLE_FAN_SEGMENTS + k) * 2;
+			fanPositions.setXYZ(
+				index,
+				dirOrigin.x + hypC.x * HYPER_RADIUS,
+				dirOrigin.y + hypC.y * HYPER_RADIUS,
+				dirOrigin.z + hypC.z * HYPER_RADIUS
+			);
+			fanPositions.setXYZ(
+				index + 1,
+				dirOrigin.x + hypD.x * HYPER_RADIUS,
+				dirOrigin.y + hypD.y * HYPER_RADIUS,
+				dirOrigin.z + hypD.z * HYPER_RADIUS
+			);
+		}
+	}
+	fanPositions.needsUpdate = true;
+
 	for (let i = 0; i < tokens.length; i += 1) {
 		const token = tokens[i];
 		hypA.copy(token.pos).sub(dirOrigin);
@@ -2345,6 +2418,17 @@ function updateHypersphere(now) {
 		);
 		projection.material.opacity = amount * (0.38 + 0.1 * Math.sin(now * 1.3 + token.phase));
 		projection.scale.setScalar(2.9 * token.size * (1 + 0.06 * Math.sin(now * 1.1 + token.phase)));
+		const base = hyperBaseProjections[i];
+		hypB.copy(token.cluster.group.position).sub(dirOrigin);
+		if (hypB.lengthSq() < 0.0001) hypB.copy(hypA);
+		hypB.normalize();
+		base.position.set(
+			dirOrigin.x + hypB.x * HYPER_RADIUS,
+			dirOrigin.y + hypB.y * HYPER_RADIUS,
+			dirOrigin.z + hypB.z * HYPER_RADIUS
+		);
+		base.material.opacity = amount * (0.14 + 0.04 * Math.sin(now * 1.1 + token.phase));
+		base.scale.setScalar(1.6 * token.size * (1 + 0.05 * Math.sin(now * 0.9 + token.phase)));
 	}
 
 	for (let i = 0; i < tokens.length; i += 1) {
@@ -2544,6 +2628,13 @@ const rawStep = Number.parseInt(params.get("step") || "0", 10);
 const requestedStep = Number.isFinite(rawStep) ? clamp(rawStep, 0, STEPS.length - 1) : 0;
 applyStep(requestedStep, true);
 window.__llmStep = (index) => applyStep(index, false);
+window.__llmCamera = () => ({
+	position: camera.position.toArray(),
+	look: camLook.toArray(),
+	yaw: userOrbit.yaw,
+	pitch: userOrbit.pitch,
+	step: stepIndex
+});
 requestAnimationFrame(frame);
 
 })();
