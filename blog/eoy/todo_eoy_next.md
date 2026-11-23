@@ -30,10 +30,10 @@ file after every completed item.
 
 1. **3D "Drei Dimensionen" — examples, then directions** — **done**
    - No category planes in 3D.
-   - 3D starts with points while all examples from König − Mann + Frau through
-     Zauberer − Mann + Frau are explored.
-   - After the last example, Next switches to bare arrows from (0, 0, 0) to the
-     word positions; points disappear. Five guards/comments protect this.
+   - 3D starts with points while the examples through Rüde − Mann + Frau are
+     explored; the Zauberer − Mann + Frau example is gone.
+   - A separate Richtungen button switches to bare arrows from the origin; the
+     points disappear and the formula/table are hidden.
 2. **"Die Architektur als Funktion" — move to its own sub-slide** — **done**
    - New `demos/fx.js` scene and `bausteineFunctionStep`; order is now
      architecture overview → function sub-slide → data slide.

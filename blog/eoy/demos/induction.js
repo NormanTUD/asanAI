@@ -48,8 +48,8 @@
         ? "Vier Attention-Head-Typen: Induktion, Duplicate, Successor und Name-Mover."
         : "Four attention-head types: induction, duplicate, successor, and name-mover.",
       emergence: DE
-        ? "Schematischer Trainingsverlauf mit drei Kurven und einem Phasenfenster zwischen 2,5 und 5 Milliarden Tokens."
-        : "Schematic training curves with a phase window between 2.5 and 5 billion tokens."
+        ? "Schematischer Trainingsverlauf mit drei Kurven und einem Phasenfenster zwischen 2,5 und 5 Milliarden Tokens. Fahre über die Kurven für Werte und Erklärungen."
+        : "Schematic training curves with three curves and a phase window between 2.5 and 5 billion tokens. Hover the curves for values and explanations."
     };
 
     function txt(c, s, x, y, o) {
@@ -296,11 +296,11 @@
         size: small ? 11 : 12.5, color: C.petrol,
         font: '700 ' + (small ? 11 : 12.5) + 'px "Barlow", "Open Sans", sans-serif'
       });
-      txt(c, DE ? "Suche das frühere „" + tok + "“ und kopiere, was danach kam." : "Find the earlier “" + tok + "” and copy what followed.", x + 12, y + yOff + 34, {
+      txt(c, DE ? "Vervollständige diesen Kontext." : "Complete this context.", x + 12, y + yOff + 34, {
         size: small ? 9 : 10.5, color: C.petrol,
         font: '600 ' + (small ? 9 : 10.5) + 'px "Open Sans", sans-serif'
       });
-      addHover(x + 12, y + yOff + 26, w - 24, 16, DE ? "Die Idee: Suche das frühere „" + tok + "“ und kopiere, was danach kam." : "The idea: find the earlier “" + tok + "” and copy what followed.");
+      addHover(x + 12, y + yOff + 26, w - 24, 16, DE ? "Aufgabe: Vervollständige diesen Kontext." : "Task: complete this context.");
 
       var segs = DE ? [
         { t: "Auf" }, { t: "dem" }, { t: "Hof" }, { t: "ist" }, { t: "es" }, { t: "ruhig." },
@@ -344,8 +344,8 @@
         font: '700 13px "Barlow", "Open Sans", sans-serif'
       });
       wrapText(c, DE
-        ? "Das Modell setzt ein Muster aus dem Text fort, ohne eine Tabelle. Das ist ein Baustein des In-Context-Lernens."
-        : "The model continues a pattern from the text without a table. That is a building block of in-context learning.",
+        ? "In-Context-Learning: auf früher im Chat Gesagtes verweisen und daraus lernen, ohne die Gewichte neu zu trainieren. Nicht nur Wörter wiederholen, sondern früher genannte Konzepte wieder aufgreifen; der Name ist nur der offensichtlichste Fall."
+        : "In-context learning: refer back to what was said earlier in the chat and learn from it without retraining the weights. Not just repeating words, but picking up concepts mentioned earlier; the name is only the most obvious case.",
         x + 12, y + yOff + 38, w - 24, 16, { size: 11, color: C.soft });
     }
 
@@ -416,7 +416,7 @@
       textPill(c, qText, qx + qW / 2, qy, C.gold, true, qkvSize);
       textPill(c, kText, qx + qW + qGap + kW / 2, qy, C.sky, true, qkvSize);
       textPill(c, vText, qx + qW + kW + 2 * qGap + vW / 2, qy, C.lilac, true, qkvSize);
-      txt(c, DE ? "Query fragt, Key bietet, Value wird kopiert. Wofür? Muster fortsetzen." : "Query asks, key offers, value is copied. Why? Continue a pattern.", pad, 66, { size: small ? 9 : 10.5, color: C.petrol });
+      txt(c, DE ? "Query fragt, Key bietet, Value wird kopiert." : "Query asks, key offers, value is copied.", pad, 66, { size: small ? 9 : 10.5, color: C.petrol });
       addHover(qx, qy - 11, qW, 22, DE ? "Query (Frage): Was sucht das aktuelle Token? Hier fragt „" + tok + "“." : "Query (question): what does the current token look for? Here “" + tok + "” asks.");
       addHover(qx + qW + qGap, qy - 11, kW, 22, DE ? "Key (Angebot): Was steht an einer Stelle? An der „" + pred + "“-Stelle: davor " + tok + "." : "Key (offer): what does a position hold? At “" + pred + "”: before " + tok + ".");
       addHover(qx + qW + kW + 2 * qGap, qy - 11, vW, 22, DE ? "Value (Inhalt): Was wird bei einem Treffer kopiert? Hier „" + pred + "“." : "Value (content): what is copied on a match? Here “" + pred + "”.");
@@ -1112,8 +1112,12 @@
         var t = i / N;
         induction.push(0.10 + 0.70 * sigmoid((t - 0.50) / 0.055));
         icl.push(0.10 + 0.32 * sigmoid((t - 0.56) / 0.065));
-        loss.push(3.00 - 0.65 * smooth((t - 0.05) / 0.95) + 0.10 * Math.exp(-Math.pow((t - 0.56) / 0.06, 2)));
-        oneLoss.push(3.00 - 0.65 * smooth((t - 0.05) / 0.95));
+        var base = 3.00 - 0.65 * smooth((t - 0.05) / 0.95);
+        var flatten = 0.030 * Math.exp(-Math.pow((t - 0.49) / 0.045, 2));
+        var steep = 0.050 * Math.exp(-Math.pow((t - 0.56) / 0.05, 2));
+        var after = 0.045 * smooth((t - 0.54) / 0.12);
+        loss.push(base + flatten - steep - after);
+        oneLoss.push(base);
       }
       var lossBump = loss[Math.round(0.56 * N)];
       function panel(title, color, ticks, unit, py0) {
@@ -1241,6 +1245,96 @@
       txt(c, "Olsson et al. (2022), In-context Learning and Induction Heads", pad, H - 10, {
         size: small ? 7 : 7.8, color: C.muted
       });
+
+      function num(v, digits) {
+        var str = v.toFixed(digits);
+        return DE ? str.replace(".", ",") : str;
+      }
+      function tokenText(t) {
+        var v = Math.pow(10, t);
+        return num(v, 1) + (DE ? " Mrd. Tokens" : "B tokens");
+      }
+      function addSeriesHovers(values, py0, min, max, textFn) {
+        for (var i = 0; i <= N; i += 3) {
+          var x = x0 + (i / N) * pw;
+          var v = (values[i] - min) / (max - min);
+          var y = py0 + (1 - v) * panelH;
+          addHover(x - 13, y - 9, 26, 18, textFn(values[i], i / N));
+        }
+      }
+      var windowText = DE
+        ? "Phase-Change-Fenster: etwa 2,5–5 Mrd. Tokens. Hier bilden sich Induktionsköpfe, der ICL-Score springt und die Loss-Steigung ändert sich."
+        : "Phase-change window: about 2.5–5B tokens. Induction heads form, the ICL score jumps, and the loss slope changes.";
+      var bumpText = DE
+        ? "Buckel: Die Loss-Steigung wird kurz flacher, dann sichtbar steiler, dann wieder flacher. Olsson et al. (2022) nennen das die einzige nicht-konvexe Stelle der Loss-Kurve und eine Phase sichtbar stärkerer Verbesserung. Ein lokales Minimum nennen sie nicht; die Kurve mittelt über viele Tokens, von denen einige besser und andere schlechter werden. Eine mögliche Lesart ist ein kurzes Verharren in einem flacheren Bereich, aus dem das Training wieder herausfindet."
+        : "Bump: the loss slope flattens briefly, then becomes visibly steeper, then flattens again. Olsson et al. (2022) call it the only non-convex place in the loss curve and a period of visibly steeper improvement. They do not call it a local minimum; the curve averages over many tokens, some getting better and some worse. One possible reading is a brief pause in a flatter region from which training escapes again.";
+
+      addHover(x0, py[0], pw, panelH, DE
+        ? "Induktionskopf: schematischer Score dafür, wie stark der Kopf an der Vorhersage beteiligt ist. Grau gestrichelt: 1-Schicht-Modell ohne Induktionsköpfe."
+        : "Induction head: schematic score for how much the head contributes to prediction. Grey dashed: one-layer model without induction heads.");
+      addHover(x0, py[1], pw, panelH, DE
+        ? "In-Context-Learning-Score: Loss-Unterschied zwischen frühen und späten Tokens im selben Kontext. Unter 0,15 nats vor dem Fenster, etwa 0,4 nats danach."
+        : "In-context-learning score: loss difference between early and late tokens in the same context. Below 0.15 nats before the window, about 0.4 nats after.");
+      addHover(x0, py[2], pw, panelH, DE
+        ? "Trainings-Loss in nats, gemittelt über viele Tokens. Grün: mehrschichtiges Modell. Grau gestrichelt: 1-Schicht-Modell. Im Fenster wird die Steigung erst flacher, dann steiler, dann wieder flacher."
+        : "Training loss in nats, averaged over many tokens. Green: multi-layer model. Grey dashed: one-layer model. In the window the slope flattens, then steepens, then flattens again.");
+      addHover(wa, yTop, wb - wa, yBottom - yTop, windowText);
+      addHover(wc - 95, yTop - 24, 190, 22, windowText);
+      addHover(x0 + 0.43 * pw, py[2] + panelH * 0.08, 0.28 * pw, panelH * 0.62, bumpText);
+
+      addSeriesHovers(oneLoss, py[2], 2.2, 3.0, function (v, t) {
+        return DE ? "1-Schicht-Modell: Loss " + num(v, 2) + " nats bei " + tokenText(t) + "; kein Phase Change."
+                  : "One-layer model: loss " + num(v, 2) + " nats at " + tokenText(t) + "; no phase change.";
+      });
+      addSeriesHovers(loss, py[2], 2.2, 3.0, function (v, t) {
+        return DE ? "Mehrschichtiges Modell: Loss " + num(v, 2) + " nats bei " + tokenText(t) + "."
+                  : "Multi-layer model: loss " + num(v, 2) + " nats at " + tokenText(t) + ".";
+      });
+      addSeriesHovers(new Array(N + 1).fill(0.05), py[0], 0, 1, function (v, t) {
+        return DE ? "1-Schicht-Modell: Induktionskopf-Score bleibt bei " + num(v, 2) + " (" + tokenText(t) + ")."
+                  : "One-layer model: induction-head score stays at " + num(v, 2) + " (" + tokenText(t) + ").";
+      });
+      addSeriesHovers(induction, py[0], 0, 1, function (v, t) {
+        return DE ? "Induktionskopf-Score: " + num(v, 2) + " bei " + tokenText(t) + " (schematisch)."
+                  : "Induction-head score: " + num(v, 2) + " at " + tokenText(t) + " (schematic).";
+      });
+      addSeriesHovers(new Array(N + 1).fill(0.12), py[1], 0, 0.5, function (v, t) {
+        return DE ? "1-Schicht-Modell: ICL-Score bleibt bei " + num(v, 2) + " nats (" + tokenText(t) + ")."
+                  : "One-layer model: ICL score stays at " + num(v, 2) + " nats (" + tokenText(t) + ").";
+      });
+      addSeriesHovers(icl, py[1], 0, 0.5, function (v, t) {
+        return DE ? "ICL-Score: " + num(v, 2) + " nats bei " + tokenText(t) + "; höher heißt besser."
+                  : "ICL score: " + num(v, 2) + " nats at " + tokenText(t) + "; higher is better.";
+      });
+
+      var bumpX = x0 + 0.56 * pw;
+      var bumpY = py[2] + panelH - ((lossBump - 2.2) / 0.8) * panelH - 10;
+      addHover(bumpX - 36, bumpY - 10, 72, 16, bumpText);
+      for (var ti = 0; ti < ticks.length; ti++) {
+        var tx = x0 + tokenFrac(ticks[ti].v) * pw;
+        addHover(tx - 22, baseY + 10, 44, 14, DE
+          ? "Trainingsdaten in Tokens (log-Skala): " + ticks[ti].l + "."
+          : "Training data in tokens (log scale): " + ticks[ti].l + ".");
+      }
+      var axisTicks = [
+        { py: py[0], labels: ["0", DE ? "0,5" : "0.5", "1"], text: DE ? "Induktionskopf-Score: 0 bis 1 (schematisch)." : "Induction-head score: 0 to 1 (schematic)." },
+        { py: py[1], labels: ["0", DE ? "0,25" : "0.25", DE ? "0,5" : "0.5"], text: DE ? "ICL-Score in nats: 0 bis 0,5." : "ICL score in nats: 0 to 0.5." },
+        { py: py[2], labels: [DE ? "2,2" : "2.2", DE ? "2,6" : "2.6", DE ? "3,0" : "3.0"], text: DE ? "Trainings-Loss in nats: 2,2 bis 3,0." : "Training loss in nats: 2.2 to 3.0." }
+      ];
+      axisTicks.forEach(function (axis) {
+        axis.labels.forEach(function (label, i) {
+          var gy = axis.py + panelH - (i / (axis.labels.length - 1)) * panelH;
+          addHover(x0 - 34, gy - 7, 30, 14, axis.text + " " + label);
+        });
+      });
+      addHover(x0, ly - 7, adv, 14, DE ? "Durchgezogene Linie: mehrschichtiges Modell mit Induktionsköpfen." : "Solid line: multi-layer model with induction heads.");
+      addHover(lx2, ly - 7, 17 + legendWidth(c, l2, small ? 7.8 : 8.6), 14, DE ? "Gestrichelte Linie: 1-Schicht-Modell ohne Phase Change." : "Dashed line: one-layer model without a phase change.");
+      addHover(pad, ly + 10, x1 - pad, 20, DE
+        ? "Kurzfassung: Vor dem Fenster ICL < 0,15 nats; im Fenster Induktionskopf, ICL-Sprung und nicht-konvekter Loss; danach ICL ~0,4 nats."
+        : "Summary: before the window ICL < 0.15 nats; in the window induction head, ICL jump, and non-convex loss; after it ICL ~0.4 nats.");
+      addHover(pad, 70, x1 - pad, 18, DE
+        ? "Die Kurven sind schematisch. Die Arbeit zeigt ähnliche Verläufe für kleine mehrschichtige Modelle; ein 1-Schicht-Modell zeigt den Sprung nicht."
+        : "The curves are schematic. The paper shows similar behaviour for small multi-layer models; a one-layer model does not show the jump.");
     }
     function addHover(x, y, w, h, text) {
       if (!text) return;
@@ -1257,8 +1351,10 @@
       tipEl.textContent = hit.text;
       tipEl.classList.add("is-on");
       var left = Math.max(8, Math.min(x + 14, W - 270));
-      var top = Math.max(8, Math.min(y + 14, H - 64));
       tipEl.style.left = left + "px";
+      tipEl.style.top = "0px";
+      var tipH = tipEl.offsetHeight || 0;
+      var top = Math.max(8, Math.min(y + 14, H - tipH - 8));
       tipEl.style.top = top + "px";
     }
 

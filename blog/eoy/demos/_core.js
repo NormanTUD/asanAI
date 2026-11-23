@@ -23,11 +23,21 @@
     princess: { v: [15, 10], z: 0, label: ["Prinzessin", "Princess"], group: "rank" },
     king: { v: [25, -10], z: 0, label: ["König", "King"], group: "rank" },
     queen: { v: [25, 10], z: 0, label: ["Königin", "Queen"], group: "rank" },
+    duke: { v: [20, -10], z: 0, label: ["Herzog", "Duke"], group: "rank", only3d: true },
+    duchess: { v: [20, 10], z: 0, label: ["Herzogin", "Duchess"], group: "rank", only3d: true },
     power: { v: [10, 0], z: 0, label: ["Macht", "Power"], group: "power" },
     maleDog: { v: [5, -10], z: -1.0, label: ["Rüde", "Male dog"], group: "animal", only3d: true },
     femaleDog: { v: [5, 10], z: -1.0, label: ["Hündin", "Female dog"], group: "animal", only3d: true },
+    maleCat: { v: [15, -10], z: -1.0, label: ["Kater", "Male cat"], group: "animal", only3d: true },
+    femaleCat: { v: [15, 10], z: -1.0, label: ["Katze", "Female cat"], group: "animal", only3d: true },
+    lion: { v: [25, -10], z: -1.0, label: ["Löwe", "Lion"], group: "animal", only3d: true },
+    lioness: { v: [25, 10], z: -1.0, label: ["Löwin", "Lioness"], group: "animal", only3d: true },
+    elf: { v: [5, -10], z: 1.0, label: ["Elb", "Elf"], group: "fiction", only3d: true },
+    elven: { v: [5, 10], z: 1.0, label: ["Elbin", "Elf woman"], group: "fiction", only3d: true },
     wizard: { v: [15, -10], z: 1.0, label: ["Zauberer", "Wizard"], group: "fiction", only3d: true },
-    sorceress: { v: [15, 10], z: 1.0, label: ["Zauberin", "Sorceress"], group: "fiction", only3d: true }
+    sorceress: { v: [15, 10], z: 1.0, label: ["Zauberin", "Sorceress"], group: "fiction", only3d: true },
+    fairyKing: { v: [25, -10], z: 1.0, label: ["Feenkönig", "Fairy king"], group: "fiction", only3d: true },
+    fairyQueen: { v: [25, 10], z: 1.0, label: ["Feenkönigin", "Fairy queen"], group: "fiction", only3d: true }
   };
   var WORD_IDS = Object.keys(WORDS).filter(function (id) { return !WORDS[id].only3d; });
   var WORD_IDS_3D = Object.keys(WORDS).filter(function (id) { return WORDS[id].only3d; });
@@ -38,9 +48,8 @@
     { id: "prince-power", expr: "Prince + Power", label: ["Prinz + Macht", "Prince + Power"] },
     { id: "gender", label: ["Geschlecht", "Gender"] },
     { id: "power-dir", label: ["Machtrichtung", "Power direction"] },
-    { id: "directions", label: ["Alle Richtungen", "All directions"] },
-    { id: "dog-gender", expr: "MaleDog - Man + Woman", label: ["Rüde − Mann + Frau", "Male dog − Man + Woman"], only3d: true },
-    { id: "wizard-gender", expr: "Wizard - Man + Woman", label: ["Zauberer − Mann + Frau", "Wizard − Man + Woman"], only3d: true }
+    { id: "directions", label: ["Paarrichtungen", "Pair directions"] },
+    { id: "dog-gender", expr: "MaleDog - Man + Woman", label: ["Rüde − Mann + Frau", "Male dog − Man + Woman"], only3d: true }
   ];
 
   var PAIRS = [

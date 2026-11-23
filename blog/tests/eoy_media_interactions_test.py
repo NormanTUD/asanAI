@@ -1702,6 +1702,33 @@ def test_blocks_sequence(browser, base, lang, results):
     context.close()
 
 
+def test_phase_change_hovers(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, path="/eoy/12.php", wait_media=False)
+    tag = f"phase-change-hovers-{lang}"
+    page.wait_for_timeout(700)
+    page.evaluate("() => LearnSys.go(0, 0, 2)")
+    page.wait_for_timeout(1200)
+    box = page.evaluate(
+        "() => { const c = document.querySelector('.ls-ind-canvas'); const r = c.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; }"
+    )
+    texts = set()
+    for iy in range(3, 24):
+        for ix in range(3, 30):
+            page.mouse.move(box["x"] + box["w"] * ix / 32, box["y"] + box["h"] * iy / 26)
+            page.wait_for_timeout(4)
+            tip = page.evaluate(
+                "() => { const t = document.querySelector('.ls-ind-tip'); return t && t.classList.contains('is-on') ? t.textContent : ''; }"
+            )
+            if tip:
+                texts.add(tip)
+    results.check(tag, "emergence graph exposes hover details", len(texts) >= 10, f"{len(texts)} unique tooltips")
+    needed = ("Buckel", "Phase-Change-Fenster") if lang == "de" else ("Bump", "Phase-change window")
+    results.check(tag, "bump and window hovers exist", all(any(word in text for text in texts) for word in needed), str(list(texts)[:4]))
+    errors = logs.take()
+    results.check(tag, "emergence hovers have no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
 def test_ffn_separation(browser, base, lang, results):
     context, page, logs = open_page(browser, base, lang, path="/eoy/18.php", wait_media=False)
     tag = f"ffn-sep-{lang}"
@@ -1740,12 +1767,12 @@ def test_embedding_arrows(browser, base, lang, results):
     page.get_by_role("button", name="3D", exact=True).click()
     page.wait_for_timeout(900)
     before = page.evaluate("() => document.querySelector('.ls-canvas')?.getAttribute('aria-label') || ''")
-    results.check(tag, "3D starts with points before the direction end", "Bedeutung ist Richtung" not in before and "Meaning is direction" not in before, before[:240])
-    last = page.get_by_role("button", name=("Zauberer − Mann + Frau" if lang == "de" else "Wizard − Man + Woman"), exact=True)
-    results.check(tag, "last 3D example is available", last.count() == 1, "missing last example")
-    last.click()
-    page.wait_for_timeout(500)
-    page.evaluate("() => LearnSys.next()")
+    results.check(tag, "3D starts with points before the direction view", "Bedeutung ist Richtung" not in before and "Meaning is direction" not in before, before[:240])
+    legacy = page.get_by_role("button", name=("Zauberer − Mann + Frau" if lang == "de" else "Wizard − Man + Woman"), exact=True)
+    results.check(tag, "wizard gender calculation is gone", legacy.count() == 0, "legacy example still present")
+    directions = page.get_by_role("button", name=("Richtungen" if lang == "de" else "Directions"), exact=True)
+    results.check(tag, "separate directions button is available", directions.count() == 1, "missing directions button")
+    directions.click()
     page.wait_for_timeout(900)
     aria = page.evaluate("() => document.querySelector('.ls-canvas')?.getAttribute('aria-label') || ''")
     results.check(tag, "3D embedding explains arrows from the origin", "Pfeile" in aria or "arrow" in aria, aria[:240])
@@ -2291,6 +2318,7 @@ def main():
                 test_text_blur_swap(browser, base, lang, results)
                 test_nav_hint(browser, base, lang, results)
                 test_blocks_sequence(browser, base, lang, results)
+                test_phase_change_hovers(browser, base, lang, results)
                 test_ffn_separation(browser, base, lang, results)
                 test_embedding_arrows(browser, base, lang, results)
                 test_unembed_pause(browser, base, lang, results)

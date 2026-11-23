@@ -735,15 +735,31 @@
 		ctx.globalAlpha = 1;
 	}
 
+	function withAlpha(color, a) {
+		const value = String(color || "").trim();
+		if (value.charAt(0) === "#") {
+			let h = value.slice(1);
+			if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+			if (h.length === 6) {
+				const n = parseInt(h, 16);
+				return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+			}
+		}
+		if (value.indexOf("rgb(") === 0) return value.replace("rgb(", "rgba(").replace(")", "," + a + ")");
+		return value;
+	}
+
 	function gridSegments(lift, project) {
-		const N = 14, EXT = 1.12, RES = 64;
+		const ext = 1.12 + (1 - clamp(project, 0, 1)) * 0.78 * clamp(lift, 0, 1);
+		const n = Math.max(14, Math.round(14 * ext / 1.12));
+		const RES = 56;
 		const out = [];
-		for (let i = 0; i <= N; i++) {
-			const v = -EXT + 2 * EXT * i / N;
+		for (let i = 0; i <= n; i++) {
+			const v = -ext + 2 * ext * i / n;
 			for (const swap of [0, 1]) {
 				const pts = [];
 				for (let j = 0; j <= RES; j++) {
-					const u = -EXT + 2 * EXT * j / RES;
+					const u = -ext + 2 * ext * j / RES;
 					pts.push(warp(swap ? v : u, swap ? u : v, lift, project));
 				}
 				out.push(pts);
@@ -895,9 +911,15 @@
 
 		const gridAlpha = (0.22 + 0.24 * lift) * (1 - project * 0.35);
 		ctx.lineWidth = 1;
-		ctx.strokeStyle = C.grid;
 		ctx.globalAlpha = gridAlpha;
 		gridSegments(lift, project).forEach(segment => {
+			const a = segment[0], b = segment[segment.length - 1];
+			const fade = ctx.createLinearGradient(a.X, a.Y, b.X, b.Y);
+			fade.addColorStop(0, withAlpha(C.grid, 0));
+			fade.addColorStop(0.30, withAlpha(C.grid, 1));
+			fade.addColorStop(0.70, withAlpha(C.grid, 1));
+			fade.addColorStop(1, withAlpha(C.grid, 0));
+			ctx.strokeStyle = fade;
 			ctx.beginPath();
 			segment.forEach((p, i) => i ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y));
 			ctx.stroke();

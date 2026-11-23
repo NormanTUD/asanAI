@@ -9,8 +9,9 @@ item.
   risk/limits/society, Mary's Room, architecture marker and trajectory hover,
   FFN separation on the sub-slide, Drei Dimensionen planes/categories, loss
   landscape, deep-network width, rotation pause, word-map hover bars.
-- 3D embedding: points first; after the last example (Zauberer − Mann + Frau),
-  Next turns them into arrows from (0, 0, 0); no category planes.
+- 3D embedding: points first; a separate Richtungen button turns them into
+  arrows from the origin. The Zauberer − Mann + Frau example was removed and
+  the 3D space was filled with more words; no category planes.
 - f(x) slide is its own substep after the architecture overview; the old data
   slide is removed. It is a visual data → f_θ(x) → output flow with LaTeX
   `f_\theta(\text{Daten})`, `f_\theta(\text{Frage an Rohdaten})`, the two

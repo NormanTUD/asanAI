@@ -39,8 +39,8 @@
       vectorMode: false
     };
     var vectorMix = 0, vectorTarget = 0;
-    // HARD RULE (1/5): 3D starts as points while the examples are explored.
-    // Only the end of the example sequence switches to arrow-only directions.
+    // 3D starts as points; the separate Richtungen control switches to the
+    // arrow-only view. Entering 3D or picking an example resets back to points.
     function resetDirectionView() {
       st.vectorMode = false;
       vectorMix = 0;
@@ -84,7 +84,7 @@
       }).join("");
       miniTable.setAttribute("role", "group");
       miniTable.setAttribute("aria-label", DE ? "Tabelle der drei Dimensionen" : "Table of the three dimensions");
-      miniTable.innerHTML = '<div class="ls-embed-mini-head">' + (DE ? "Die drei Dimensionen, die du siehst" : "The three dimensions you see") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+      miniTable.innerHTML = '<div class="ls-embed-mini-head">' + (DE ? "Beispiele in den drei Dimensionen" : "Examples in the three dimensions") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
     }
     function syncMiniSelection() {
       if (!miniTable) return;
@@ -557,7 +557,7 @@
           var ex = origin.x + (item.p.x - origin.x) * arrowMix;
           var ey = origin.y + (item.p.y - origin.y) * arrowMix;
           ctx.globalAlpha = itemAlpha * (selected ? 0.92 : 0.30) * Math.min(1, arrowMix * 1.4);
-          drawArrow(origin.x, origin.y, ex, ey, col, selected ? 2.2 : 1.0);
+          drawArrow(origin.x, origin.y, ex, ey, col, selected ? 3.0 : 1.7);
           if (arrowMix > 0.45) {
             hits.push({ id: item.id, x: (origin.x + ex) / 2, y: (origin.y + ey) / 2, r: 12, kind: "word" });
           }
@@ -806,6 +806,11 @@
         setTex("\\underbrace{" + texNum(a.value) + "}_{\\text{" + aLabel + "}} + \\underbrace{" + texNum(b.value) + "}_{\\text{" + bLabel + "}} = \\underbrace{" + texNum(target.value) + "}_{\\text{" + targetLabel + "}}");
         return;
       }
+      if (st.dim === 2 && st.vectorMode) {
+        readout.innerHTML = DE ? "Jedes Wort ist ein Pfeil vom Ursprung. Bedeutung ist Richtung." : "Every word is an arrow from the origin. Meaning is direction.";
+        setTex("");
+        return;
+      }
       var cr = currentResult();
       var result = cr.result, dirMode = cr.dirMode, example = cr.example;
       if (dirMode) {
@@ -979,6 +984,18 @@
           draw();
         });
         row2.appendChild(select);
+        if (st.dim === 2) {
+          row2.appendChild(makeChip(DE ? "Richtungen" : "Directions", st.vectorMode, function () {
+            st.vectorMode = !st.vectorMode;
+            st.arithmetic = null;
+            st.group = null;
+            st.showHighdim = false;
+            st.tables = !st.vectorMode;
+            vectorTarget = st.vectorMode ? 1 : 0;
+            if (!st.vectorMode) vectorMix = 0;
+            syncControls(); draw(); ensureLoop();
+          }));
+        }
       }
       controls.appendChild(row2);
     }
@@ -1063,14 +1080,6 @@
       var idx = currentExampleIndex();
       if (idx < 0) idx = -1;
       if (st.dim === 2 && st.vectorMode) return false;
-      if (st.dim === 2 && idx >= list.length - 1) {
-        // HARD RULE (1/5): after the last example (wizard − man + woman),
-        // the points become bare arrows from the origin.
-        st.vectorMode = true;
-        vectorTarget = 1;
-        ensureLoop();
-        return true;
-      }
       if (idx >= list.length - 1) return false;
       st.arithmetic = list[idx + 1].id;
       resetDirectionView();
@@ -1353,7 +1362,7 @@
         var idx = currentExampleIndex();
         if (idx < 0) idx = -1;
         if (st.dim === 2 && st.vectorMode) return false;
-        return idx < list.length - 1 || (st.dim === 2 && idx >= list.length - 1);
+        return idx < list.length - 1;
       },
       hasPrev: function () {
         if (st.mode === "temperature") return currentPairIndex() > 0;
