@@ -46,6 +46,7 @@
                 '<div class="ia-chat-msg is-ai"><span class="ia-chat-role">LLM</span><span class="ia-chat-bubble ia-chat-answer"></span><span class="ia-chat-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '</div>' +
               '<div class="ia-chat-compose"><span class="ia-chat-placeholder">' + (DE ? "Nachricht" : "Message") + '</span><span class="ia-chat-input"></span><i class="ia-chat-send" aria-hidden="true"></i></div>' +
+              '<div class="ia-eoy-keyboard" id="ia-chat-keyboard" aria-hidden="true"><div class="ia-eoy-swipe" id="ia-chat-swipe"></div><div class="ia-eoy-keys" id="ia-chat-keys"></div></div>' +
             '</div>' +
             '<div class="ia-phone-screen ia-screen-layer ia-home-screen" id="ia-home">' +
               '<div class="ia-home-status"><span class="ia-home-time"></span><span class="ia-home-status-icons" aria-hidden="true">' +
@@ -80,6 +81,9 @@
     var keyboardEl = el.querySelector("#ia-eoy-keyboard");
     var keysEl = el.querySelector("#ia-eoy-keys");
     var swipeLayer = el.querySelector("#ia-eoy-swipe");
+    var chatKeyboardEl = el.querySelector("#ia-chat-keyboard");
+    var chatKeysEl = el.querySelector("#ia-chat-keys");
+    var chatSwipeLayer = el.querySelector("#ia-chat-swipe");
     var keyEls = {};
     var swipeRaf = 0;
     var typedText = "";
@@ -328,22 +332,38 @@
       timers.push(timer);
     }
     function typeSearch(text, done) {
-      if (reduce) { searchText.textContent = text; done(); return; }
+      if (reduce) { searchText.textContent = text; if (done) done(); return; }
+      typedText = "";
       searchText.classList.add("typing");
       searchText.innerHTML = '<span class="ia-caret"></span>';
-      var i = 0;
-      var timer = setInterval(function () {
-        if (i < text.length) {
-          i += 1;
-          searchText.innerHTML = text.slice(0, i) + '<span class="ia-caret"></span>';
-        } else {
-          clearInterval(timer);
+      var chunks = text.split(/(\s+)/).filter(function (part) { return part.length; });
+      var ci = 0;
+      function nextChunk() {
+        if (ci >= chunks.length) {
           searchText.classList.remove("typing");
           searchText.textContent = text;
-          later(done, 120);
+          showKeyboard(false);
+          later(function () { if (done) done(); }, 220);
+          return;
         }
-      }, 13);
-      timers.push(timer);
+        var chunk = chunks[ci++];
+        if (/^\s+$/.test(chunk)) {
+          pressKey(" ");
+          appendTyped(chunk);
+          later(nextChunk, 170);
+          return;
+        }
+        var letters = chunk.split("");
+        var points = letters.map(keyCenter).filter(Boolean);
+        var per = Math.max(50, Math.min(88, 520 / Math.max(1, letters.length)));
+        var dur = letters.length * per;
+        animateSwipe(points, dur);
+        letters.forEach(function (ch, i) {
+          later(function () { pressKey(ch); appendTyped(ch); }, i * per);
+        });
+        later(nextChunk, dur + 90);
+      }
+      nextChunk();
     }
     function typeAnswer() {
       var spans = AI.map(function (seg) {
@@ -464,20 +484,23 @@
         if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
         return;
       }
-      typeSearch(SATZ, function () {
-        searchText.textContent = SATZ;
-        setCentered(false);
-        later(function () {
-          card.classList.add("on");
-          thinking.classList.add("on");
+      showKeyboard(true);
+      later(function () {
+        typeSearch(SATZ, function () {
+          searchText.textContent = SATZ;
+          setCentered(false);
           later(function () {
-            thinking.classList.remove("on");
-            typeAnswer();
-            serp.classList.add("on");
-            if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1500);
-          }, 240);
-        }, 320);
-      });
+            card.classList.add("on");
+            thinking.classList.add("on");
+            later(function () {
+              thinking.classList.remove("on");
+              typeAnswer();
+              serp.classList.add("on");
+              if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1500);
+            }, 240);
+          }, 320);
+        });
+      }, 320);
     }
     function fit() {
       var r = stage.getBoundingClientRect();
@@ -545,6 +568,7 @@
       onAdvance: function (fn) { advance = fn; },
       pause: function () {
         clearTimers();
+        showKeyboard(false);
         launchingChat = false;
         cleanupHomeLaunch();
         hidePhoneNav();
@@ -553,6 +577,7 @@
       resize: fit,
       destroy: function () {
         clearTimers();
+        clearSwipe();
         clearNavHideTimer();
         if (ro) ro.disconnect();
         window.removeEventListener("resize", fit);

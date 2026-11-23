@@ -3909,3 +3909,150 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-agents-compose{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 8px 8px;padding:6px 9px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px #dfe1e5;font:10px "Open Sans",sans-serif;color:#9aa0a6}
 .ls-agents-compose i{display:block;width:14px;height:14px;border-radius:50%;background:var(--ls-blue);opacity:.6}
 @media (max-width:640px){.ls-agents-col.is-chat{min-height:300px}}
+
+/* ── EOY phone redesign (slide 1): unembedding-style device on a white stage ── */
+.ls-media-stage{background:#ffffff}
+.ls-media-stage .ia-stage{background:#ffffff}
+
+.ls-phone-scene .ia-phone-frame{
+  border-radius:42px;
+  background:linear-gradient(160deg,#2a3033 0%,#141819 58%,#07090a 100%);
+  box-shadow:
+    0 0 0 2px #2a2f33,
+    0 30px 60px rgba(0,0,0,.26),
+    0 0 0 9px rgba(0,0,0,.05),
+    inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.ls-phone-scene .ia-phone-notch{
+  top:9px;
+  width:118px;
+  height:23px;
+  border-radius:999px;
+  background:#0b0e0f;
+  z-index:6;
+}
+.ls-phone-scene .ia-phone-screen.ia-search-screen,
+.ls-phone-scene .ia-phone-screen.ia-phone--chat.ia-chat-screen{
+  top:10px;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  border-radius:33px;
+  background-color:#f7fafd;
+  background-image:
+    linear-gradient(180deg,rgba(247,250,253,.84) 0%,rgba(242,247,252,.92) 42%,rgba(236,243,250,.97) 100%),
+    url(opera.jpg);
+  background-size:cover;
+  background-position:center 30%;
+  background-repeat:no-repeat;
+}
+.ls-phone-scene .ia-phone-screen.ia-search-screen{
+  padding:0 14px;
+  align-items:center;
+  justify-content:flex-start;
+}
+.ls-phone-scene .ia-phone-screen.ia-phone--chat.ia-chat-screen{
+  padding:40px 12px 12px;
+  align-items:stretch;
+  transition:padding .26s cubic-bezier(.22,1,.36,1);
+}
+.ls-phone-scene .ia-chat-screen.is-keyboard{padding-bottom:196px}
+
+.ls-phone-scene .ia-eoy-status{
+  align-self:stretch;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:34px;
+  padding:12px 8px 0;
+  font:700 10.5px/1 "Open Sans",sans-serif;
+  color:#3a4f51;
+  position:relative;
+  z-index:3;
+}
+.ls-phone-scene .ia-eoy-status .ia-home-status-icons{gap:5px;color:#3a4f51}
+.ls-phone-scene .ia-eoy-status .ia-status-signal i{box-shadow:none}
+.ls-phone-scene .ia-eoy-status .ia-status-wifi{width:14px;height:11px}
+.ls-phone-scene .ia-eoy-status .ia-status-battery{width:17px;height:9px}
+
+.ls-phone-scene .ia-search-screen .ia-app-logo{
+  margin-top:4px;
+  margin-bottom:10px;
+  font-size:19px;
+  letter-spacing:-.5px;
+}
+.ls-phone-scene .ia-search-screen .ia-search-bar{
+  height:42px;
+  border-radius:21px;
+  background:#fff;
+  box-shadow:0 2px 10px rgba(15,23,42,.10),inset 0 0 0 1px #e2e6eb;
+}
+.ls-phone-scene .ia-search-screen .ia-search-bar.centered{transform:none}
+.ls-phone-scene .ia-search-screen .ia-search-text .ia-caret{background:#3f7fb0}
+.ls-phone-scene .ia-search-screen .ia-search-icon{border-color:#9fb0be}
+.ls-phone-scene .ia-search-screen .ia-search-icon::after{background:#9fb0be}
+.ls-phone-scene .ia-search-screen .ia-ai-card{
+  margin-top:12px;
+  border-radius:14px;
+  box-shadow:0 4px 16px rgba(15,23,42,.10),inset 0 0 0 1px rgba(63,127,176,.16);
+}
+.ls-phone-scene .ia-chat-screen .ia-chat-appbar{
+  border-bottom-color:rgba(15,23,42,.08);
+  color:#1b2a2b;
+}
+.ls-phone-scene .ia-chat-screen .ia-chat-msg.is-ai .ia-chat-bubble{
+  background:rgba(255,255,255,.94);
+  box-shadow:0 2px 8px rgba(15,23,42,.08);
+}
+.ls-phone-scene .ia-chat-screen .ia-chat-msg.is-user .ia-chat-bubble{
+  background:linear-gradient(180deg,#3f7fb0,#2f6a97);
+  color:#fff;
+}
+.ls-phone-scene .ia-chat-screen .ia-chat-compose{
+  background:rgba(255,255,255,.94);
+  box-shadow:0 2px 10px rgba(15,23,42,.10),inset 0 0 0 1px #dfe1e5;
+}
+.ls-phone-scene .ia-chat-screen .ia-chat-send{background:#3f7fb0}
+
+.ls-phone-scene .ia-eoy-keyboard{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:7;
+  padding:6px 5px 10px;
+  background:rgba(238,244,250,.94);
+  border-top:1px solid rgba(15,23,42,.10);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  transform:translateY(112%);
+  transition:transform .28s cubic-bezier(.22,1,.36,1);
+}
+.ls-phone-scene .ia-search-screen.is-keyboard .ia-eoy-keyboard,
+.ls-phone-scene .ia-chat-screen.is-keyboard .ia-eoy-keyboard{transform:none}
+.ls-phone-scene .ia-eoy-krow{display:flex;justify-content:center;gap:3px;margin-bottom:4px}
+.ls-phone-scene .ia-eoy-key{
+  flex:1 1 0;
+  min-width:0;
+  height:29px;
+  border-radius:5px;
+  background:#fff;
+  border:1px solid rgba(15,23,42,.10);
+  box-shadow:0 1px 0 rgba(0,0,0,.10);
+  display:grid;
+  place-items:center;
+  font:500 11px/1 "Open Sans",sans-serif;
+  color:#3a4f51;
+  transition:background .1s ease,transform .1s ease,box-shadow .1s ease,color .1s ease;
+}
+.ls-phone-scene .ia-eoy-key.is-pressed{
+  background:#3f7fb0;
+  border-color:#3f7fb0;
+  color:#fff;
+  transform:scale(.9);
+  box-shadow:0 0 0 3px rgba(63,127,176,.18);
+}
+.ls-phone-scene .ia-eoy-key--wide{flex:2.2 1 0;font-size:9px}
+.ls-phone-scene .ia-eoy-key--space{flex:5 1 0}
+.ls-phone-scene .ia-eoy-swipe{position:absolute;inset:0;pointer-events:none;z-index:2}
+.ls-phone-scene .ia-eoy-swipe svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 5px rgba(63,127,176,.55))}
