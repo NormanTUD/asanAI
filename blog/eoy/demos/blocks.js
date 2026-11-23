@@ -111,7 +111,7 @@
     var index = Math.max(0, Math.min(pages.length - 1, lastBlocksIndex));
     var resetKey = null;
     var positionDemo = null;
-    var trajCleanup = null;
+    var trajApi = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
     el.innerHTML = '<div class="ls-bs-residual" aria-label="' + (DE ? "Residualstrom: x läuft durch die Blöcke; Attention und FFN addieren ihre Updates." : "Residual stream: x runs through the blocks; attention and FFN add their updates.") + '">' +
@@ -569,7 +569,7 @@
         g.fillStyle = C.muted;
         g.font = '600 ' + Math.max(8, Math.min(10, w * 0.016)) + 'px "Open Sans", sans-serif';
         g.textAlign = "left"; g.textBaseline = "alphabetic";
-        g.fillText(DE ? "Dimension 1" : "dimension 1", 16, h - 14);
+        g.fillText(DE ? "Dimension 1" : "dimension 1", 16, h - 34);
         g.save(); g.translate(16, 30); g.rotate(-Math.PI / 2); g.fillText(DE ? "Dimension 2" : "dimension 2", 0, 0); g.restore();
         g.textAlign = "right";
         g.fillStyle = C.petrol;
@@ -709,14 +709,16 @@
       function onLeave() {
         if (trajHover !== -1) { trajHover = -1; canvas.style.cursor = "default"; draw(); }
       }
-      stepBtn.addEventListener("click", function () {
+      function nextLayer() {
         var base = raf ? (queue.length ? queue[queue.length - 1] : state.to) : state.step;
         var next = Math.min(4, base + 1);
-        if (next <= base) return;
+        if (next <= base) return false;
         if (raf) queue.push(next);
         else animate(next);
         updateReadout();
-      });
+        return true;
+      }
+      stepBtn.addEventListener("click", nextLayer);
       resetBtn.addEventListener("click", function () {
         queue = [];
         if (raf) cancelAnimationFrame(raf);
@@ -734,12 +736,20 @@
       resize();
       requestAnimationFrame(function () { if (size && size.w > 1) resize(); });
       updateReadout();
-      return function cleanup() {
-        if (raf) cancelAnimationFrame(raf);
-        if (ro) ro.disconnect();
-        canvas.removeEventListener("pointermove", onMove);
-        canvas.removeEventListener("pointerleave", onLeave);
-        window.removeEventListener("resize", resize);
+      return {
+        cleanup: function () {
+          if (raf) cancelAnimationFrame(raf);
+          if (ro) ro.disconnect();
+          canvas.removeEventListener("pointermove", onMove);
+          canvas.removeEventListener("pointerleave", onLeave);
+          window.removeEventListener("resize", resize);
+        },
+        next: nextLayer,
+        hasNext: function () {
+          var end = raf ? (queue.length ? queue[queue.length - 1] : state.to) : state.step;
+          return end < 4;
+        },
+        reset: function () { queue = []; if (raf) cancelAnimationFrame(raf); raf = 0; animate(0); }
       };
     }
     function renderDetail() {
@@ -809,10 +819,10 @@
           }).join(" · ") + '</p>';
       }
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
-      if (trajCleanup) { try { trajCleanup(); } catch (e) {} trajCleanup = null; }
+      if (trajApi) { try { trajApi.cleanup(); } catch (e) {} trajApi = null; }
       detail.innerHTML = html;
       if (window.TM && typeof window.TM.typesetMath === "function") { try { window.TM.typesetMath(detail); } catch (e) {} }
-      if (!sub && b.id === "transformer") trajCleanup = setupTrajectoryDemo();
+      if (!sub && b.id === "transformer") trajApi = setupTrajectoryDemo();
       if (b.position) {
         var posHost = detail.querySelector("[data-position-host]");
         var posFactory = core.get("position");
@@ -864,13 +874,24 @@
         resetKey = s.resetKey;
         setIndex(typeof s.start === "number" ? blockStartPage(s.start) : 0);
       },
-      next: nextInternal,
+      next: function () {
+        var page = pages[index];
+        if (trajApi && page && !page.sub && page.block && page.block.id === "transformer" && trajApi.hasNext()) {
+          trajApi.next();
+          return true;
+        }
+        return nextInternal();
+      },
       prev: prevInternal,
-      hasNext: function () { return index < pages.length - 1; },
+      hasNext: function () {
+        var page = pages[index];
+        if (trajApi && page && !page.sub && page.block && page.block.id === "transformer" && trajApi.hasNext()) return true;
+        return index < pages.length - 1;
+      },
       hasPrev: function () { return index > 0; },
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } if (trajCleanup) { try { trajCleanup(); } catch (e) {} trajCleanup = null; } window.removeEventListener("resize", onResize); el.remove(); }
+      destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } if (trajApi) { try { trajApi.cleanup(); } catch (e) {} trajApi = null; } window.removeEventListener("resize", onResize); el.remove(); }
     };
   }
 

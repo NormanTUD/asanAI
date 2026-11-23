@@ -1787,6 +1787,9 @@ h1,h2,h3,h4{
 .ls-bs-traj-legend i.is-lilac{background:var(--ls-lilac)}
 .ls-bs-traj-static{margin-left:auto;color:var(--ls-muted);font-weight:600}
 .ls-bs-traj-bar .ls-btn[disabled]{opacity:.4;cursor:default}
+.ls-bs-traj-step{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
+.ls-bs-traj-step:hover{filter:brightness(.95);color:#fff}
+.ls-bs-traj-step[disabled]{background:var(--ls-green);border-color:var(--ls-green);color:#fff;opacity:.45}
 .ls-bs-traj-readout{color:var(--ls-soft)}
 .ls-bs-traj-note{margin:0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-bs-fx{display:grid;gap:6px;border:1px solid var(--ls-line);background:rgba(255,255,255,.72);padding:7px 8px}

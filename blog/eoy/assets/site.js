@@ -653,7 +653,8 @@
 	};
 
 	TM.roundRect = function (ctx, x, y, w, h, r) {
-		var rr = Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2);
+		if (!(w > 0) || !(h > 0)) return;
+		var rr = Math.max(0, Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2));
 		ctx.beginPath();
 		ctx.moveTo(x + rr, y);
 		ctx.arcTo(x + w, y, x + w, y + h, rr);
