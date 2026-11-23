@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test 3 · Gradienten-Labor</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="../test2/kit.css">
+<link rel="stylesheet" href="backprop.css?v=20261123a">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="14 · Training" data-en="14 · training">14 · Training</span>
+      <h1 class="proto-title" data-de="Gradienten-Labor" data-en="Gradient lab">Gradienten-Labor</h1>
+      <p class="proto-lead" data-de="Ein echtes 2-2-1-Netz auf XOR. Gewichte editieren, Forward und Backward rechnen, analytische gegen numerische Gradienten prüfen und einen Schritt trainieren. Jede Zahl wird live berechnet." data-en="A real 2-2-1 network on XOR. Edit weights, run forward and backward, compare analytic and numerical gradients, and take a training step. Every number is computed live.">Ein echtes 2-2-1-Netz auf XOR. Gewichte editieren, Forward und Backward rechnen, analytische gegen numerische Gradienten prüfen und einen Schritt trainieren. Jede Zahl wird live berechnet.</p>
+    </header>
+
+    <section class="proto-stage t2-stage bp-stage" aria-label="Gradienten-Labor">
+      <div class="t2-hud">
+        <span class="t2-kicker" data-de="Backpropagation · 2-2-1" data-en="Backpropagation · 2-2-1">Backpropagation · 2-2-1</span>
+        <h2 class="t2-hud-title" data-de="Ein Netz, ein Gradient" data-en="One network, one gradient">Ein Netz, ein Gradient</h2>
+        <span class="t2-hud-spacer"></span>
+        <span class="bp-badge" data-de="4 XOR-Beispiele · tanh · MSE" data-en="4 XOR examples · tanh · MSE">4 XOR-Beispiele · tanh · MSE</span>
+      </div>
+
+      <div class="bp-main">
+        <div class="bp-left">
+          <div class="bp-panel bp-net-panel">
+            <div class="bp-panel-head">
+              <span data-de="Netz · ausgewähltes Beispiel" data-en="Network · selected example">Netz · ausgewähltes Beispiel</span>
+              <span id="bp-example-label"></span>
+            </div>
+            <svg id="bp-net" class="bp-net" viewBox="0 0 560 340" role="img" aria-label="2-2-1-Netz mit Eingaben, zwei versteckten Neuronen und einer Ausgabe"></svg>
+            <div class="bp-net-legend">
+              <span><i class="pos"></i> positives Gewicht</span>
+              <span><i class="neg"></i> negatives Gewicht</span>
+              <span><i class="sel"></i> ausgewählt</span>
+            </div>
+          </div>
+
+          <div class="bp-panel bp-table-panel">
+            <div class="bp-panel-head">
+              <span data-de="Parameter · Gradienten über alle 4 Beispiele" data-en="Parameters · gradients over all 4 examples">Parameter · Gradienten über alle 4 Beispiele</span>
+              <span id="bp-check"></span>
+            </div>
+            <div class="bp-table-wrap"><table class="bp-table" id="bp-table"></table></div>
+          </div>
+        </div>
+
+        <aside class="bp-right">
+          <div class="bp-panel bp-selected-panel">
+            <div class="bp-panel-head">
+              <span data-de="Ausgewählter Parameter" data-en="Selected parameter">Ausgewählter Parameter</span>
+              <b id="bp-param-name">W1₀₀</b>
+            </div>
+            <div class="bp-value-row">
+              <input type="range" id="bp-param-slider" min="-3" max="3" step="0.01" value="0">
+              <output id="bp-param-value">0.000</output>
+            </div>
+            <div class="bp-grad-grid">
+              <div><span data-de="Analytisch" data-en="Analytic">Analytisch</span><b id="bp-grad-analytic">—</b></div>
+              <div><span data-de="Numerisch" data-en="Numerical">Numerisch</span><b id="bp-grad-numeric">—</b></div>
+              <div><span data-de="Differenz" data-en="Difference">Differenz</span><b id="bp-grad-diff">—</b></div>
+              <div><span data-de="Update" data-en="Update">Update</span><b id="bp-grad-update">—</b></div>
+            </div>
+            <p class="bp-chain" id="bp-chain"></p>
+          </div>
+
+          <div class="bp-panel bp-loss-panel">
+            <div class="bp-panel-head"><span data-de="Loss über Schritte" data-en="Loss over steps">Loss über Schritte</span><span id="bp-steps">0</span></div>
+            <canvas id="bp-loss" class="bp-loss" role="img" aria-label="Loss-Kurve über die Trainingsschritte"></canvas>
+          </div>
+
+          <div class="bp-panel bp-data-panel">
+            <div class="bp-panel-head"><span data-de="XOR-Beispiele" data-en="XOR examples">XOR-Beispiele</span><span id="bp-data-loss"></span></div>
+            <canvas id="bp-boundary" class="bp-boundary" role="img" aria-label="XOR-Punkte und aktuelle Entscheidungsgrenze"></canvas>
+            <div class="bp-example-row" id="bp-examples" role="group" aria-label="Beispiel wählen"></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="t2-bottom">
+        <div class="t2-readout" id="bp-readout" aria-live="polite"></div>
+        <div class="t2-controls" id="bp-controls"></div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Das Netz ist echt: 2 Eingänge, 2 tanh-Neuronen, lineare Ausgabe, MSE über vier XOR-Beispiele. Der analytische Gradient kommt aus Backpropagation, der numerische aus zentralen Differenzen. Beide werden pro Parameter verglichen. Keine Modellinferenz." data-en-html="The network is real: 2 inputs, 2 tanh neurons, linear output, MSE over four XOR examples. The analytic gradient comes from backpropagation, the numerical one from central differences. Both are compared per parameter. No model inference.">Das Netz ist echt: 2 Eingänge, 2 tanh-Neuronen, lineare Ausgabe, MSE über vier XOR-Beispiele. Der analytische Gradient kommt aus Backpropagation, der numerische aus zentralen Differenzen. Beide werden pro Parameter verglichen. Keine Modellinferenz.</p>
+
+    <footer class="proto-foot">
+      <span>14 / 31</span>
+      <span><a href="index.html" data-de="Alle Test-3-Seiten" data-en="All test 3 pages">Alle Test-3-Seiten</a> · <a href="rope.html" data-de="Vorher: RoPE-Inspector" data-en="Previous: RoPE inspector">Vorher: RoPE-Inspector</a></span>
+    </footer>
+  </main>
+  <script src="../test2/kit.js"></script>
+  <script src="backprop.js?v=20261123a"></script>
+</body>
+</html>
