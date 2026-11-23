@@ -224,7 +224,7 @@
         [C.gold, DE ? "aktuelles Vorkommen" : "current occurrence"]
       ];
       var cx = x;
-      var size = small ? 8 : 9;
+      var size = small ? 9 : 10;
       for (var i = 0; i < items.length; i++) {
         c.save();
         c.fillStyle = items[i][0];
@@ -251,8 +251,8 @@
       c.restore();
       var yOff = small ? 0 : Math.max(0, (h - 200) / 2);
       txt(c, DE ? "Beispieltext" : "Example text", x + 12, y + yOff + 18, {
-        size: small ? 10 : 11.5, color: C.petrol,
-        font: '700 ' + (small ? 10 : 11.5) + 'px "Barlow", "Open Sans", sans-serif'
+        size: small ? 11 : 12.5, color: C.petrol,
+        font: '700 ' + (small ? 11 : 12.5) + 'px "Barlow", "Open Sans", sans-serif'
       });
 
       var segs = DE ? [
@@ -270,12 +270,12 @@
         { t: "The" }, { t: "next" }, { t: "day" }, { t: "the" }, { t: "cat" }, { t: "comes" }, { t: "back," },
         { t: "and" }, { t: "the" }, { t: "dog", c: C.gold }, { t: "…" }
       ];
-      var size = small ? 9.5 : 12;
+      var size = small ? 10 : 13.5;
       var lineH = size * 1.5;
       var textEnd = drawPassage(c, segs, x + 12, y + yOff + 38, w - 24, size, lineH);
       drawLegend(c, x + 12, textEnd + 12, small);
       var py = textEnd + (small ? 30 : 38);
-      textPill(c, (DE ? "Nächstes Token: " : "next token: ") + pred, x + w / 2, py, C.gold, true, small ? 9.5 : 11.5);
+      textPill(c, (DE ? "Nächstes Token: " : "next token: ") + pred, x + w / 2, py, C.gold, true, small ? 10.5 : 13);
     }
 
     function drawPurposeCard(c, x, y, w, h) {
@@ -288,13 +288,13 @@
       c.restore();
       var yOff = Math.max(0, (h - 110) / 2);
       txt(c, DE ? "Wofür überhaupt?" : "Why at all?", x + 12, y + yOff + 18, {
-        size: 11.5, color: C.petrol,
-        font: '700 11.5px "Barlow", "Open Sans", sans-serif'
+        size: 13, color: C.petrol,
+        font: '700 13px "Barlow", "Open Sans", sans-serif'
       });
       wrapText(c, DE
         ? "Das Modell setzt ein Muster aus dem Text fort, ohne eine Tabelle. Das ist ein Baustein des In-Context-Lernens."
         : "The model continues a pattern from the text without a table. That is a building block of in-context learning.",
-        x + 12, y + yOff + 38, w - 24, 15, { size: 10, color: C.soft });
+        x + 12, y + yOff + 38, w - 24, 16, { size: 11, color: C.soft });
     }
 
     function infoPanel(c, x, y, w, h, title, sub, color, small) {
@@ -308,13 +308,13 @@
       c.fillRect(x, y, w, 3);
       c.restore();
       txt(c, title, x + 10, y + 16, {
-        size: small ? 9.6 : 10.8, color: C.petrol,
-        font: '700 ' + (small ? 9.6 : 10.8) + 'px "Barlow", "Open Sans", sans-serif'
+        size: small ? 11 : 12.5, color: C.petrol,
+        font: '700 ' + (small ? 11 : 12.5) + 'px "Barlow", "Open Sans", sans-serif'
       });
       if (sub) {
         txt(c, sub, x + w - 10, y + 16, {
-          align: "right", size: small ? 7.2 : 8, color: color,
-          font: '700 ' + (small ? 7.2 : 8) + 'px "Open Sans", sans-serif'
+          align: "right", size: small ? 8 : 9, color: color,
+          font: '700 ' + (small ? 8 : 9) + 'px "Open Sans", sans-serif'
         });
       }
       return y + (small ? 28 : 32);
@@ -335,8 +335,8 @@
       arrowHead(c, x2, y2, x2 - midx, y2 - midy, 6, color);
       if (label) {
         txt(c, label, midx, midy + 11, {
-          align: "center", size: small ? 7 : 7.8, color: color,
-          font: '700 ' + (small ? 7 : 7.8) + 'px "Open Sans", sans-serif',
+          align: "center", size: small ? 8.5 : 9.5, color: color,
+          font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif',
           bg: C.paper2, bgAlpha: 0.9
         });
       }
@@ -350,7 +350,7 @@
       seqGeo = { xs: [], chipW: 0, chipH: 0, cy: 0 };
 
       head(c, DE ? "Induktion" : "Induction", pad, 26, { size: small ? 18 : 22 });
-      var qkvSize = small ? 8.5 : 9.5;
+      var qkvSize = small ? 9.5 : 11;
       var qText = (DE ? "Query: " : "query: ") + tok;
       var kText = (DE ? "Key: davor " : "key: before ") + tok;
       var vText = (DE ? "Value: " : "value: ") + pred;
@@ -364,7 +364,7 @@
       textPill(c, qText, qx + qW / 2, qy, C.gold, true, qkvSize);
       textPill(c, kText, qx + qW + qGap + kW / 2, qy, C.sky, true, qkvSize);
       textPill(c, vText, qx + qW + kW + 2 * qGap + vW / 2, qy, C.lilac, true, qkvSize);
-      txt(c, DE ? "Query fragt, Key bietet, Value wird kopiert. Wofür? Muster fortsetzen." : "Query asks, key offers, value is copied. Why? Continue a pattern.", pad, 66, { size: small ? 8 : 9, color: C.petrol });
+      txt(c, DE ? "Query fragt, Key bietet, Value wird kopiert. Wofür? Muster fortsetzen." : "Query asks, key offers, value is copied. Why? Continue a pattern.", pad, 66, { size: small ? 9 : 10.5, color: C.petrol });
       accent(c, pad, 80, 38);
 
       var contentTop = 94;
@@ -392,9 +392,9 @@
 
     function drawLayer1Panel(c, x, y, w, h, tok, pred, small) {
       var top = infoPanel(c, x, y, w, h, DE ? "Schicht 1 allein" : "Layer 1 alone", "Previous-Token-Head", C.blue, small);
-      wrapText(c, DE ? "Der Head schaut auf das Token davor und schreibt es als Key." : "The head looks at the token before it and writes it as a key.", x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
-      var rowY = y + h * 0.48;
-      var size = small ? 9.5 : 11;
+      wrapText(c, DE ? "Der Head schaut auf das Token davor und schreibt es als Key." : "The head looks at the token before it and writes it as a key.", x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 9.5 : 10.5, color: C.soft });
+      var rowY = y + h * 0.54;
+      var size = small ? 10.5 : 12;
       var tw = pillWidth(c, tok, size);
       var pw = pillWidth(c, pred, size);
       var gap = Math.max(34, w * 0.18);
@@ -404,17 +404,17 @@
       var chipH = size * 1.9;
       textPill(c, tok, tx, rowY, C.green, true, size);
       textPill(c, pred, px, rowY, C.lilac, true, size);
-      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, px, rowY - chipH / 2 - 12, C.sky, false, small ? 8 : 9);
+      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, px, rowY - chipH / 2 - 12, C.sky, false, small ? 9 : 10);
       attnArc(c, px, rowY + chipH / 2, tx, rowY + chipH / 2, C.blue, pred + " → " + tok, small, small ? 16 : 22);
       txt(c, DE ? "Key = gelernte Info, kein Text. Er steht an „" + pred + "“." : "Key = learned info, not text. It sits at “" + pred + "”.", x + 10, y + h - 10, {
-        size: small ? 7.2 : 8, color: C.muted
+        size: small ? 8.5 : 9.5, color: C.muted
       });
     }
 
     function drawLayer2PanelAlone(c, x, y, w, h, tok, pred, small) {
       var top = infoPanel(c, x, y, w, h, DE ? "Schicht 2 allein" : "Layer 2 alone", "Induction-Head", C.gold, small);
       txt(c, DE ? "Query „" + tok + "“ liest die Keys." : "Query “" + tok + "” reads the keys.", x + 10, top + 8, {
-        size: small ? 8 : 8.8, color: C.soft
+        size: small ? 9.5 : 10.5, color: C.soft
       });
       var tokens = [tok, pred, "…", DE ? "der" : "the", tok];
       var keys = ["–", tok, pred, "…", DE ? "der" : "the"];
@@ -422,10 +422,10 @@
       var n = tokens.length;
       var colW = Math.min(78, (w - 20) / n);
       var startX = x + (w - n * colW) / 2;
-      var tokenY = y + h * 0.44;
+      var tokenY = y + h * 0.46;
       var keyY = y + h * 0.62;
       var weightY = y + h * 0.80;
-      var chipSize = small ? 8.5 : 9.5;
+      var chipSize = small ? 9.5 : 10.5;
       var cx4 = startX + 4 * colW + colW / 2;
       for (var i = 0; i < n; i++) {
         var cx = startX + i * colW + colW / 2;
@@ -433,30 +433,30 @@
         textPill(c, tokens[i], cx, tokenY, col, i === 0 || i === 1 || i === 4, chipSize);
       }
       txt(c, "Key", x + 10, keyY - 9, {
-        size: small ? 6.4 : 7, color: C.sky,
-        font: '700 ' + (small ? 6.4 : 7) + 'px "Open Sans", sans-serif'
+        size: small ? 8 : 9, color: C.sky,
+        font: '700 ' + (small ? 8 : 9) + 'px "Open Sans", sans-serif'
       });
       for (var i = 0; i < n; i++) {
         var cx = startX + i * colW + colW / 2;
         txt(c, keys[i], cx, keyY, {
-          align: "center", size: small ? 7.2 : 8, color: i === 1 ? C.sky : C.muted,
-          font: '700 ' + (small ? 7.2 : 8) + 'px "Open Sans", sans-serif'
+          align: "center", size: small ? 8.5 : 9.5, color: i === 1 ? C.sky : C.muted,
+          font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
         });
       }
       txt(c, "Gewicht", x + 10, weightY - 9, {
-        size: small ? 6.4 : 7, color: C.muted,
-        font: '700 ' + (small ? 6.4 : 7) + 'px "Open Sans", sans-serif'
+        size: small ? 8 : 9, color: C.muted,
+        font: '700 ' + (small ? 8 : 9) + 'px "Open Sans", sans-serif'
       });
       for (var i = 0; i < n; i++) {
         var cx = startX + i * colW + colW / 2;
         txt(c, Math.round(weights[i] * 100) + "%", cx, weightY, {
-          align: "center", size: small ? 7 : 7.8, color: i === 1 ? C.gold : C.muted,
-          font: '700 ' + (small ? 7 : 7.8) + 'px "Open Sans", sans-serif'
+          align: "center", size: small ? 8.5 : 9.5, color: i === 1 ? C.gold : C.muted,
+          font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
         });
       }
       txt(c, (DE ? "Query: " : "query: ") + tok, cx4, tokenY - chipSize * 0.95 - 9, {
-        align: "center", size: small ? 7.4 : 8.2, color: C.gold,
-        font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif', bg: C.paper2, bgAlpha: 0.85
+        align: "center", size: small ? 8.5 : 9.5, color: C.gold,
+        font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif', bg: C.paper2, bgAlpha: 0.85
       });
       txt(c, DE ? "Zeile summiert zu 100 %. Der Key bei „" + pred + "“ passt." : "Row sums to 100 %. The key at “" + pred + "” matches.", x + 10, y + h - 10, {
         size: small ? 7 : 7.8, color: C.muted
@@ -469,13 +469,13 @@
       wrapText(c, DE
         ? "Die Attention findet über „" + tok + "“ die Stelle von „" + pred + "“. Der OV-Teil schreibt den Wert dort an die aktuelle Stelle."
         : "The attention finds the “" + pred + "” position via “" + tok + "”. The OV part writes the value there to the current position.",
-        x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
+        x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 9.5 : 10.5, color: C.soft });
       var tokens = [tok, pred, "…", DE ? "der" : "the", tok];
       var n = tokens.length;
       var colW = Math.min(78, (w - 20) / n);
       var startX = x + (w - n * colW) / 2;
       var tokenY = y + h * 0.52;
-      var chipSize = small ? 8.5 : 9.5;
+      var chipSize = small ? 9.5 : 10.5;
       var cx1 = startX + 1 * colW + colW / 2;
       var cx4 = startX + 4 * colW + colW / 2;
       for (var i = 0; i < n; i++) {
@@ -484,17 +484,17 @@
         textPill(c, tokens[i], cx, tokenY, col, i === 0 || i === 1 || i === 4, chipSize);
       }
       txt(c, (DE ? "Wert: " : "value: ") + pred, cx1, tokenY - chipSize * 0.95 - 9, {
-        align: "center", size: small ? 7.4 : 8.2, color: C.lilac,
-        font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif'
+        align: "center", size: small ? 8.5 : 9.5, color: C.lilac,
+        font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
       });
       txt(c, DE ? "aktuell" : "current", cx4, tokenY - chipSize * 0.95 - 9, {
-        align: "center", size: small ? 7.4 : 8.2, color: C.gold,
-        font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif'
+        align: "center", size: small ? 8.5 : 9.5, color: C.gold,
+        font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
       });
       attnArc(c, cx1, tokenY + chipSize * 0.95, cx4, tokenY + chipSize * 0.95, C.lilac, DE ? "OV kopiert den Wert" : "OV copies the value", small, small ? 16 : 22);
       txt(c, DE ? "Nächstes Token: " + pred : "next token: " + pred, x + w / 2, y + h - 12, {
-        align: "center", size: small ? 10 : 11.5, color: C.petrol,
-        font: '700 ' + (small ? 10 : 11.5) + 'px "Barlow", "Open Sans", sans-serif'
+        align: "center", size: small ? 12 : 14, color: C.petrol,
+        font: '700 ' + (small ? 12 : 14) + 'px "Barlow", "Open Sans", sans-serif'
       });
     }
 
@@ -530,7 +530,7 @@
     function drawMiniTokens(c, tokens, cx, cy, color, from, to, outText, maxW) {
       var gap = 4;
       var avail = maxW || (W * 0.22);
-      var cap = maxW ? 48 : 34;
+      var cap = maxW ? 72 : 34;
       var cw = Math.max(22, Math.min(cap, (avail - (tokens.length - 1) * gap) / Math.max(1, tokens.length)));
       var ch = Math.round(cw * 0.94);
       var total = tokens.length * cw + (tokens.length - 1) * gap;
@@ -661,9 +661,9 @@
           "");
         txt(c, row.matrix, W - pad - 4, y + rowH - 42, {
           align: "right",
-          size: small ? 7.4 : 8.2,
+          size: small ? 8.5 : 9.5,
           color: C.petrol,
-          font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif'
+          font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
         });
       }
       txt(c, DE
@@ -684,16 +684,16 @@
         c.fillStyle = item.color;
         c.fillRect(x, y, w, 3);
       }
-      txt(c, item.title, x + 10, y + 16, {
-        size: w < 230 ? 11 : 12.5,
-        font: '700 ' + (w < 230 ? 11 : 12.5) + 'px "Barlow", "Open Sans", sans-serif',
+      var ts = w < 230 ? 14 : 15.5;
+      txt(c, item.title, x + 10, y + h * 0.36, {
+        size: ts,
+        font: '700 ' + ts + 'px "Barlow", "Open Sans", sans-serif',
         color: C.ink
       });
-      txt(c, item.sub, x + 10, y + 31, {
-        size: w < 230 ? 7.8 : 8.6,
-        color: C.muted
+      var ss = w < 230 ? 10 : 11;
+      wrapText(c, item.sub, x + 10, y + h * 0.60, w - 20, ss * 1.3, {
+        size: ss, color: C.muted
       });
-      drawMiniTokens(c, item.tokens, x + w / 2, y + h - 26, item.color, item.from, item.to, "", w - 20);
     }
 
     function drawHeads(c) {
@@ -708,17 +708,17 @@
           sub: DE ? "Hund bellt … Hund → bellt" : "dog barks … dog → barks",
           color: C.gold,
           tokens: [DE ? "Hund" : "dog", DE ? "bellt" : "barks", DE ? "Hund" : "dog"],
-          from: 2, to: 1,
+          from: 2, to: 1, out: DE ? "bellt" : "barks",
           qkv: DE ? "Query: Hund · Key: davor Hund bei bellt · Value: bellt" : "Query: dog · Key: before dog at barks · Value: barks",
           body: DE ? "Sucht ein früheres Hund und schaut auf das bellt danach. Das ist ein Sequenzmuster, kein Faktenwissen." : "Finds an earlier dog and looks at the barks that followed. This is a sequence pattern, not factual knowledge."
         },
         {
           title: DE ? "Duplicate" : "Duplicate",
-          sub: DE ? "Anna … Anna → Position" : "Anna … Anna → position",
+          sub: DE ? "Lena … Lena → Position" : "Lena … Lena → position",
           color: C.green,
-          tokens: ["Anna", "…", "Anna"],
-          from: 2, to: 0,
-          qkv: DE ? "Query: Anna · Key: Anna · Value: Position des früheren Anna" : "Query: Anna · Key: Anna · Value: position of the earlier Anna",
+          tokens: ["Lena", "…", "Lena"],
+          from: 2, to: 0, out: DE ? "Position" : "position",
+          qkv: DE ? "Query: Lena · Key: Lena · Value: Position des früheren Lena" : "Query: Lena · Key: Lena · Value: position of the earlier Lena",
           body: DE ? "Schaut auf ein früheres Vorkommen desselben Tokens und gibt dessen Position weiter. Im IOI-Schaltkreis signalisiert das einen wiederholten Namen." : "Looks at an earlier occurrence of the same token and passes on its position. In the IOI circuit this signals that a name was repeated."
         },
         {
@@ -726,7 +726,7 @@
           sub: DE ? "Montag → Dienstag" : "Monday → Tuesday",
           color: C.sky,
           tokens: [DE ? "Mo" : "Mon", DE ? "Di" : "Tue"],
-          from: 0, to: 1,
+          from: 0, to: 1, out: "+1",
           qkv: DE ? "Query: Montag · Key/Value: gelernte Ordnung +1 → Dienstag" : "Query: Monday · Key/Value: learned order +1 → Tuesday",
           body: DE ? "Erhöht ein geordnetes Token über eine gelernte Richtung. Die Ordnung steht nicht im Text; sie ist im Gewicht gelernt. Bei Zahlen, Monaten und Wochentagen funktioniert dieselbe Struktur." : "Increments an ordered token through a learned direction. The order is not in the text; it is learned in the weights. The same structure works for numbers, months, and weekdays."
         },
@@ -735,7 +735,7 @@
           sub: "Mary … John … Mary → Mary",
           color: C.petrol,
           tokens: ["Mary", "John", "Mary"],
-          from: 2, to: 0,
+          from: 2, to: 0, out: "Mary",
           qkv: DE ? "Query: Frage nach Mary · Key: Mary im Text · Value: Mary" : "Query: question about Mary · Key: Mary in the text · Value: Mary",
           body: DE ? "Im IOI-Satz schaut der Name-Mover-Head auf Mary und kopiert sie in die Antwort. S-Inhibition-Heads unterdrücken den wiederholten John. Das ist faktenbezogenes Kopieren, kein Sequenzmuster." : "In the IOI sentence the name-mover head looks at Mary and copies her into the answer. S-inhibition heads suppress the repeated John. This is fact-like copying, not a sequence pattern."
         }
@@ -765,19 +765,24 @@
       c.lineWidth = 1;
       c.strokeRect(detX + 0.5, detY + 0.5, detW - 1, H - detY - 13);
       c.restore();
-      txt(c, item.title, detX + 10, detY + 14, {
-        size: small ? 11 : 12.5,
-        font: '700 ' + (small ? 11 : 12.5) + 'px "Barlow", "Open Sans", sans-serif',
+      var tsz = small ? 15 : 17;
+      txt(c, item.title, detX + 12, detY + 24, {
+        size: tsz,
+        font: '700 ' + tsz + 'px "Barlow", "Open Sans", sans-serif',
         color: C.petrol
       });
-      var qkvEnd = wrapText(c, item.qkv, detX + 10, detY + 30, detW - 20, small ? 10 : 11, {
-        size: small ? 7.6 : 8.4,
+      var qsz = small ? 10 : 11;
+      var qkvEnd = wrapText(c, item.qkv, detX + 12, detY + 48, detW - 24, small ? 12 : 13, {
+        size: qsz,
         color: item.color,
-        font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
+        font: '700 ' + qsz + 'px "Open Sans", sans-serif'
       });
-      wrapText(c, item.body, detX + 10, qkvEnd + 4, detW - 20, small ? 12 : 13, {
-        size: small ? 8.2 : 9.2,
-        color: C.soft
+      var exY = qkvEnd + (small ? 66 : 70);
+      var exMax = Math.min(detW - 40, 460);
+      drawMiniTokens(c, item.tokens, detX + detW / 2, exY, item.color, item.from, item.to, item.out, exMax);
+      var bsz = small ? 11 : 12;
+      wrapText(c, item.body, detX + 12, exY + (small ? 48 : 54), detW - 24, small ? 13.5 : 14.5, {
+        size: bsz, color: C.soft
       });
       txt(c, "Olsson et al. (2022) · Ferrando et al. (2024) · Gould et al. (2023) · Wang et al. (2022)",
         W - pad - 10, H - 18, {
