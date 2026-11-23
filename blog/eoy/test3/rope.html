@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test 3 · RoPE-Inspector</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="../test2/kit.css">
+<link rel="stylesheet" href="rope.css?v=20261123a">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="8 · Position" data-en="8 · position">8 · Position</span>
+      <h1 class="proto-title" data-de="RoPE-Inspector" data-en="RoPE inspector">RoPE-Inspector</h1>
+      <p class="proto-lead" data-de="Rotary Position Embedding dreht Query und Key pro 2D-Paar um einen positionsabhängigen Winkel. Dadurch hängt das Skalarprodukt vom relativen Abstand ab. Hier sind die Rotation, die Frequenzpaare und die Score-Matrix direkt sichtbar." data-en="Rotary position embedding rotates query and key per 2D pair by a position-dependent angle. The dot product then depends on relative distance. Here the rotation, the frequency pairs, and the score matrix are directly visible.">Rotary Position Embedding dreht Query und Key pro 2D-Paar um einen positionsabhängigen Winkel. Dadurch hängt das Skalarprodukt vom relativen Abstand ab. Hier sind die Rotation, die Frequenzpaare und die Score-Matrix direkt sichtbar.</p>
+    </header>
+
+    <section class="proto-stage t2-stage rope-stage" aria-label="RoPE-Inspector">
+      <div class="t2-hud">
+        <span class="t2-kicker" data-de="Rotary Position Embedding" data-en="Rotary position embedding">Rotary Position Embedding</span>
+        <h2 class="t2-hud-title" data-de="Relative Position als Rotation" data-en="Relative position as rotation">Relative Position als Rotation</h2>
+        <span class="t2-hud-spacer"></span>
+        <span class="rope-badge" data-de="exakte Mathematik" data-en="exact math">exakte Mathematik</span>
+      </div>
+
+      <div class="rope-main">
+        <div class="rope-left">
+          <div class="rope-panel rope-panel--dial">
+            <div class="rope-panel-head">
+              <span><span data-de="Frequenzpaar" data-en="Frequency pair">Frequenzpaar</span> <b id="rope-pair-label">1</b> / <b id="rope-pair-count">4</b></span>
+              <span id="rope-theta"></span>
+            </div>
+            <canvas id="rope-dial" class="rope-dial" role="img" aria-label="Zwei Vektoren q und k auf dem Einheitskreis, um ihre Positionen gedreht"></canvas>
+            <div class="rope-dial-readout" id="rope-dial-readout" aria-live="polite"></div>
+          </div>
+
+          <div class="rope-panel rope-panel--freq">
+            <span class="t2-meta" data-de="Frequenzen θᵢ = 10000^(−2i/d)" data-en="Frequencies θᵢ = 10000^(−2i/d)">Frequenzen θᵢ = 10000^(−2i/d)</span>
+            <div class="rope-freqs" id="rope-freqs" role="group" aria-label="Frequenzpaare"></div>
+          </div>
+        </div>
+
+        <div class="rope-right">
+          <div class="rope-panel rope-panel--curve">
+            <div class="rope-panel-head">
+              <span data-de="Dot-Produkt qₘ · kₙ" data-en="Dot product qₘ · kₙ">Dot-Produkt qₘ · kₙ</span>
+              <span id="rope-current"></span>
+            </div>
+            <canvas id="rope-curve" class="rope-curve" role="img" aria-label="Dot-Produkt als Funktion des relativen Abstands"></canvas>
+          </div>
+
+          <div class="rope-panel rope-panel--heat">
+            <div class="rope-panel-head">
+              <span data-de="Score-Matrix über Positionen" data-en="Score matrix across positions">Score-Matrix über Positionen</span>
+              <span id="rope-heat-readout"></span>
+            </div>
+            <canvas id="rope-heat" class="rope-heat" role="img" aria-label="Heatmap der Scores zwischen allen Positionen"></canvas>
+            <div class="rope-legend"><span>−1</span><i></i><span>+1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="t2-bottom">
+        <div class="t2-readout" id="rope-readout" aria-live="polite"></div>
+        <div class="t2-controls" id="rope-controls"></div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Rechnung ist exakt: q und k sind pro Frequenzpaar feste 2D-Vektoren, ihre Basen sind ausgerichtet. Ein echtes Modell hat viele Dimensionen und gelernte q/k. Die Frequenzformel folgt RoFormer (Su et al., 2021); Llama 2 nutzt RoPE (Touvron et al., 2023)." data-en-html="The calculation is exact: q and k are fixed 2D vectors per frequency pair, with aligned bases. A real model has many dimensions and learned q/k. The frequency formula follows RoFormer (Su et al., 2021); Llama 2 uses RoPE (Touvron et al., 2023).">Die Rechnung ist exakt: q und k sind pro Frequenzpaar feste 2D-Vektoren, ihre Basen sind ausgerichtet. Ein echtes Modell hat viele Dimensionen und gelernte q/k. Die Frequenzformel folgt RoFormer (Su et al., 2021); Llama 2 nutzt RoPE (Touvron et al., 2023).</p>
+
+    <footer class="proto-foot">
+      <span>8 / 31</span>
+      <span><a href="index.html" data-de="Alle Test-3-Seiten" data-en="All test 3 pages">Alle Test-3-Seiten</a> · <a href="backprop.html" data-de="Weiter: Gradienten-Labor" data-en="Next: gradient lab">Weiter: Gradienten-Labor</a></span>
+    </footer>
+  </main>
+  <script src="../test2/kit.js"></script>
+  <script src="rope.js?v=20261123a"></script>
+</body>
+</html>

@@ -27,7 +27,7 @@
       {
         id: "position", label: "Positional Embedding", short: "Position → Vektor", icon: "P", color: "blue",
         title: "Positional Embedding",
-        body: "Ein Token allein weiß nicht, ob es an erster oder dritter Stelle steht. Deshalb wird seine Position als spezielle Kodierung ergänzt. Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Katze) an einer anderen Position. Die sinusförmige Positionskodierung hat eine konstante Norm und liegt damit auf einer Kugel. Die Darstellung enthält Positionen bis 100.000.",
+        body: "Ein Token allein weiß nicht, ob es an erster oder dritter Stelle steht. Deshalb wird seine Position als spezielle Kodierung ergänzt. Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Katze) an einer anderen Position. Die sinusförmige Positionskodierung hat eine konstante Norm und liegt damit auf einer Kugel. Die Darstellung enthält Positionen bis 100.000. Das ist die klassische absolute Variante; moderne Modelle nutzen oft RoPE (Rotation von Query und Key) oder andere relative Verfahren.",
         points: [],
         mini: "position",
         position: true
@@ -71,7 +71,7 @@
       {
         id: "position", label: "Positional Embedding", short: "position → vector", icon: "P", color: "blue",
         title: "Positional Embedding",
-        body: "A token alone does not know whether it stands first or third. That is why its position is added as a special encoding. Waves on circular orbits are added in different dimensions; each dimension has a different frequency, and together they form the fingerprint of the position. Every green point is the same word (cat) at a different position. The sinusoidal position encoding has a constant norm and therefore lies on a sphere. The view contains positions up to 100,000.",
+        body: "A token alone does not know whether it stands first or third. That is why its position is added as a special encoding. Waves on circular orbits are added in different dimensions; each dimension has a different frequency, and together they form the fingerprint of the position. Every green point is the same word (cat) at a different position. The sinusoidal position encoding has a constant norm and therefore lies on a sphere. The view contains positions up to 100,000. This is the classic absolute variant; modern models often use RoPE (rotation of query and key) or other relative schemes.",
         points: [],
         mini: "position",
         position: true
