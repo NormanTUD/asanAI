@@ -233,11 +233,9 @@
       outputEl.style.minHeight = "";
       parts.forEach(function (node) { if (node) node.style.minHeight = ""; });
       visited = {};
-      var max = 0;
       var partMax = [0, 0, 0, 0, 0, 0];
       ORDER.forEach(function (name) {
         paintInput(name);
-        max = Math.max(max, outputEl.offsetHeight);
         parts.forEach(function (node, i) {
           if (node) partMax[i] = Math.max(partMax[i], node.offsetHeight);
         });
@@ -245,7 +243,7 @@
       parts.forEach(function (node, i) {
         if (node && partMax[i] > 0) node.style.minHeight = partMax[i] + "px";
       });
-      max = 0;
+      var max = 0;
       ORDER.forEach(function (name) {
         paintInput(name);
         max = Math.max(max, outputEl.offsetHeight);

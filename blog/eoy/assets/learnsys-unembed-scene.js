@@ -627,7 +627,47 @@
         reveal(caption, 60);
       }
     }
-    function resize() { size = api.fit(canvas, stage); draw(); }
+    /* Reserve the tallest height of the controls, readout and caption rows once
+       per width. The stage fills the remaining space, so without this reserve a
+       tab switch would resize the canvas and move everything below it. */
+    var reservedWidth = 0;
+    function reserveRows() {
+      var width = Math.round(el.getBoundingClientRect().width);
+      if (!width || width === reservedWidth || !size) return;
+      var groups = [mapControls, angleControls, scaleControls, unembedControls];
+      var rows = [mapControls, angleControls, scaleControls, unembedControls, readout, caption];
+      rows.forEach(function (node) { if (node) node.style.minHeight = ""; });
+      var saved = { mode: mode, scale: scaleMag, index: scaleIndex, paused: dirPaused, step: unembedStep, pinned: unembedPinned, focus: unembedFocus, animating: !!unembedRaf };
+      var max = [0, 0, 0, 0, 0, 0];
+      function controlFor(name) {
+        return name === "scale" ? scaleControls : name === "unembed" ? unembedControls : mapControls;
+      }
+      ["directions", "scale", "unembed"].forEach(function (name) {
+        mode = name;
+        el.classList.toggle("is-unembed", name === "unembed");
+        groups.forEach(function (node) { if (node) node.hidden = node !== controlFor(name); });
+        if (name === "scale") drawScale();
+        else if (name === "unembed") { unembedFocus = -1; unembedPinned = -1; unembedStep = -1; drawUnembed(1e9); }
+        else drawDirections();
+        if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
+        rows.forEach(function (node, i) { if (node) max[i] = Math.max(max[i], node.offsetHeight); });
+      });
+      mode = saved.mode;
+      scaleMag = saved.scale;
+      scaleIndex = saved.index;
+      dirPaused = saved.paused;
+      unembedStep = saved.step;
+      unembedPinned = saved.pinned;
+      unembedFocus = saved.focus;
+      el.classList.toggle("is-unembed", mode === "unembed");
+      groups.forEach(function (node) { if (node) node.hidden = node !== controlFor(mode); });
+      rows.forEach(function (node, i) { if (node && max[i] > 0) node.style.minHeight = max[i] + "px"; });
+      reservedWidth = width;
+      size = api.fit(canvas, stage);
+      draw();
+      if (mode === "unembed" && saved.animating) startUnembed();
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); reserveRows(); }
     function choose(i) {
       selected = clamp(i, 0, WORDS.length - 1);
       select.value = String(selected);

@@ -65,3 +65,17 @@ Einbettung vorgesehen, weil die Lesson feste IDs und globale Zustände nutzt.
 der Text schon vor dem Mounten der App sichtbar ist. Die Datei wird aus den
 Schritt-Daten in `data.js` erzeugt (DE/EN) und von `_page.php` in `#learnsys`
 eingesetzt; die App ersetzt sie beim Mounten.
+
+## Layout-Sprünge prüfen
+
+`blog/tests/eoy_layout_shift_test.py` lädt jede der 31 Seiten, geht alle
+Unterfolien durch, klickt die Demo-Bedienelemente und misst, ob dabei Inhalte
+springen (Chromium-Layout-Shift plus Höhen- und Positionsdifferenzen). Ein
+Treffer heißt: Die Demo soll ihre endgültige Größe reservieren oder den
+wechselnden Teil aus dem Layout nehmen.
+
+```bash
+uv run blog/tests/eoy_layout_shift_test.py
+uv run blog/tests/eoy_layout_shift_test.py --only 2 --verbose
+uv run blog/tests/eoy_layout_shift_test.py --lang both --no-fail
+```

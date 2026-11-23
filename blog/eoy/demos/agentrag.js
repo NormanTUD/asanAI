@@ -96,7 +96,7 @@
       if (!hasBook()) {
         listEl.innerHTML = '<div class="ls-ar-empty">' + L("Öffne links das Buch. Der Agent teilt den Text dann in Chunks.", "Open the book on the left. The agent then splits the text into chunks.") + '</div>';
         measureEl.innerHTML = "";
-        anglesEl.innerHTML = "";
+        renderAngles(false);
         return;
       }
       var evaluated = showEvaluation();
@@ -125,7 +125,6 @@
       renderAngles(angled);
     }
     function renderAngles(show) {
-      if (!show) { anglesEl.innerHTML = ""; return; }
       var ox = 42, oy = 132, r = 96, qr = 112;
       var pts = [[ox, oy]];
       for (var a = 0; a <= ANGLE_LIMIT; a += 2) pts.push([ox + Math.cos(a * Math.PI / 180) * r, oy - Math.sin(a * Math.PI / 180) * r]);
@@ -150,6 +149,7 @@
           '<text class="ls-ar-vec-label' + (on ? " is-in" : "") + (picked ? " is-picked" : "") + '" x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + anchor + '">' + c.id + '</text>';
       });
       anglesEl.innerHTML = '<div class="ls-ar-angles-head"><b>' + L("Winkel zum Kontext", "angles to the context") + '</b><span>' + L("unter 35° → Kontext", "below 35° → context") + '</span></div>' + svg + '</svg>';
+      anglesEl.classList.toggle("is-reserved", !show);
     }
     function renderContext() {
       currentEl.innerHTML = '<span>' + L("Aktueller Kontext", "Current context") + '</span>' +

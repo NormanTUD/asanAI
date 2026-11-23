@@ -19,7 +19,7 @@ Run from the repository root:
     uv run blog/tests/eoy_layout_shift_test.py
     uv run blog/tests/eoy_layout_shift_test.py --only 2 --verbose
     uv run blog/tests/eoy_layout_shift_test.py --lang both --max-controls 4
-    uv run blog/tests/eoy_layout_shift_test.py --threshold 0.005 --fail-on-finding
+    uv run blog/tests/eoy_layout_shift_test.py --threshold 0.005 --no-fail
 """
 
 from __future__ import annotations
@@ -209,7 +209,7 @@ def describe(entry) -> str:
         if source.get("id"):
             name += "#" + source["id"]
         elif source.get("cls"):
-            name += "." + source["cls"].replace(".", ".")
+            name += "." + source["cls"]
         if source.get("y") is not None:
             name += "@" + str(source["y"])
         parts.append(name)
@@ -225,7 +225,7 @@ def main() -> None:
     parser.add_argument("--height-delta", type=int, default=8, help="demo height change in px that counts as a jump")
     parser.add_argument("--settle", type=int, default=500, help="ms to wait after a control click")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--fail-on-finding", action="store_true", help="exit 1 when anything is found")
+    parser.add_argument("--no-fail", action="store_true", help="report findings but exit 0")
     args = parser.parse_args()
 
     days = [int(d) for d in args.only] if args.only else list(range(1, 32))
@@ -259,7 +259,6 @@ def main() -> None:
                         if args.verbose:
                             print(f"  substep {substep}: {title} ({len(controls)} controls)")
                         page.evaluate(RESET)
-                        base = page.evaluate(READ)
                         for position, control in enumerate(controls[: args.max_controls]):
                             page.evaluate(RESET)
                             before = page.evaluate(READ)
@@ -319,7 +318,7 @@ def main() -> None:
     print(f"\n{checked} control clicks checked, {len(findings)} jump finding(s).")
     if findings:
         print("Reserve the final size of the changing block, or keep the change out of layout (visibility/absolute), then re-run.")
-        if args.fail_on_finding:
+        if not args.no_fail:
             raise SystemExit(1)
 
 
