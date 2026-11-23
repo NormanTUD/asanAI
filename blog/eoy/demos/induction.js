@@ -349,11 +349,24 @@
       seqGeo = { xs: [], chipW: 0, chipH: 0, cy: 0 };
 
       head(c, DE ? "Induktion" : "Induction", pad, 26, { size: small ? 18 : 22 });
-      txt(c, DE ? "Was die beiden Schichten einzeln und zusammen tun, an einem echten Beispiel." : "What the two layers do on their own and together, on a real example.", pad, 46, { size: small ? 8.6 : 9.8, color: C.muted });
-      txt(c, DE ? "Wofür? Um Muster aus dem Text fortzusetzen (In-Context-Lernen)." : "Why? To continue patterns from the text (in-context learning).", pad, 62, { size: small ? 8.4 : 9.4, color: C.petrol });
-      accent(c, pad, 76, 38);
+      var qkvSize = small ? 8.5 : 9.5;
+      var qText = (DE ? "Query: " : "query: ") + tok;
+      var kText = (DE ? "Key: davor " : "key: before ") + tok;
+      var vText = (DE ? "Value: " : "value: ") + pred;
+      var qW = pillWidth(c, qText, qkvSize);
+      var kW = pillWidth(c, kText, qkvSize);
+      var vW = pillWidth(c, vText, qkvSize);
+      var qGap = small ? 8 : 12;
+      var qTotal = qW + kW + vW + 2 * qGap;
+      var qx = (W - qTotal) / 2;
+      var qy = 50;
+      textPill(c, qText, qx + qW / 2, qy, C.gold, true, qkvSize);
+      textPill(c, kText, qx + qW + qGap + kW / 2, qy, C.sky, true, qkvSize);
+      textPill(c, vText, qx + qW + kW + 2 * qGap + vW / 2, qy, C.lilac, true, qkvSize);
+      txt(c, DE ? "Query fragt, Key bietet, Value wird kopiert. Wofür? Muster fortsetzen." : "Query asks, key offers, value is copied. Why? Continue a pattern.", pad, 66, { size: small ? 8 : 9, color: C.petrol });
+      accent(c, pad, 80, 38);
 
-      var contentTop = 92;
+      var contentTop = 94;
       var contentBottom = H - 16;
       var gap = small ? 10 : 16;
       if (small) {
@@ -399,45 +412,52 @@
 
     function drawLayer2PanelAlone(c, x, y, w, h, tok, pred, small) {
       var top = infoPanel(c, x, y, w, h, DE ? "Schicht 2 allein" : "Layer 2 alone", "Induction-Head", C.gold, small);
-      txt(c, DE ? "Query „" + tok + "“ (6) liest die Keys." : "Query “" + tok + "” (6) reads the keys.", x + 10, top + 9, {
+      txt(c, DE ? "Query „" + tok + "“ liest die Keys." : "Query “" + tok + "” reads the keys.", x + 10, top + 8, {
         size: small ? 8 : 8.8, color: C.soft
       });
-      var tokens = ["A", "B", "C", "A", "B", "C", "A"];
-      var weights = [0.01, 0.06, 0.01, 0.03, 0.82, 0.01, 0.06];
+      var tokens = [tok, pred, "…", DE ? "der" : "the", tok];
+      var keys = ["–", tok, pred, "…", DE ? "der" : "the"];
+      var weights = [0.03, 0.82, 0.04, 0.02, 0.09];
       var n = tokens.length;
-      var colW = Math.min(52, (w - 20) / n);
+      var colW = Math.min(78, (w - 20) / n);
       var startX = x + (w - n * colW) / 2;
-      var rowY = y + h * 0.46;
+      var tokenY = y + h * 0.44;
+      var keyY = y + h * 0.62;
+      var weightY = y + h * 0.80;
       var chipSize = small ? 8.5 : 9.5;
-      var chipTop = rowY - chipSize * 0.95;
+      var cx4 = startX + 4 * colW + colW / 2;
       for (var i = 0; i < n; i++) {
         var cx = startX + i * colW + colW / 2;
-        var col = i === 6 ? C.gold : i === 4 ? C.sky : i === 3 ? C.green : C.lineStrong;
-        textPill(c, tokens[i], cx, rowY, col, i === 6 || i === 4 || i === 3, chipSize);
+        var col = i === 4 ? C.gold : i === 1 ? C.lilac : i === 0 ? C.green : C.lineStrong;
+        textPill(c, tokens[i], cx, tokenY, col, i === 0 || i === 1 || i === 4, chipSize);
       }
-      var cx4 = startX + 4 * colW + colW / 2;
-      var cx6 = startX + 6 * colW + colW / 2;
-      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, cx4, chipTop - 11, C.sky, false, small ? 7.4 : 8.2);
-      txt(c, (DE ? "Query: " : "query: ") + tok, cx6, chipTop - 11, {
+      txt(c, "Key", x + 10, keyY - 9, {
+        size: small ? 6.4 : 7, color: C.sky,
+        font: '700 ' + (small ? 6.4 : 7) + 'px "Open Sans", sans-serif'
+      });
+      for (var i = 0; i < n; i++) {
+        var cx = startX + i * colW + colW / 2;
+        txt(c, keys[i], cx, keyY, {
+          align: "center", size: small ? 7.2 : 8, color: i === 1 ? C.sky : C.muted,
+          font: '700 ' + (small ? 7.2 : 8) + 'px "Open Sans", sans-serif'
+        });
+      }
+      txt(c, "Gewicht", x + 10, weightY - 9, {
+        size: small ? 6.4 : 7, color: C.muted,
+        font: '700 ' + (small ? 6.4 : 7) + 'px "Open Sans", sans-serif'
+      });
+      for (var i = 0; i < n; i++) {
+        var cx = startX + i * colW + colW / 2;
+        txt(c, Math.round(weights[i] * 100) + "%", cx, weightY, {
+          align: "center", size: small ? 7 : 7.8, color: i === 1 ? C.gold : C.muted,
+          font: '700 ' + (small ? 7 : 7.8) + 'px "Open Sans", sans-serif'
+        });
+      }
+      txt(c, (DE ? "Query: " : "query: ") + tok, cx4, tokenY - chipSize * 0.95 - 9, {
         align: "center", size: small ? 7.4 : 8.2, color: C.gold,
         font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif', bg: C.paper2, bgAlpha: 0.85
       });
-      var barTop = rowY + chipSize * 0.95 + 7;
-      var barMax = Math.max(14, h * 0.16);
-      var labelY = barTop + barMax + 9;
-      for (var i = 0; i < n; i++) {
-        var bx = startX + i * colW + colW / 2;
-        var bh = Math.max(2, weights[i] / 0.82 * barMax);
-        c.save();
-        c.fillStyle = i === 4 ? C.gold : V.alpha(C.sky, i === 3 ? 0.35 : 0.5);
-        c.fillRect(bx - 3.5, barTop, 7, bh);
-        c.restore();
-        txt(c, Math.round(weights[i] * 100) + "%", bx, labelY, {
-          align: "center", size: small ? 6.4 : 7.2, color: i === 4 ? C.gold : C.muted,
-          font: '700 ' + (small ? 6.4 : 7.2) + 'px "Open Sans", sans-serif'
-        });
-      }
-      txt(c, DE ? "Die Zeile summiert zu 100 %. QK wählt Position 4." : "The row sums to 100 %. QK selects position 4.", x + 10, y + h - 10, {
+      txt(c, DE ? "Zeile summiert zu 100 %. Der Key bei „" + pred + "“ passt." : "Row sums to 100 %. The key at “" + pred + "” matches.", x + 10, y + h - 10, {
         size: small ? 7 : 7.8, color: C.muted
       });
     }
