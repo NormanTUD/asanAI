@@ -4016,7 +4016,7 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 
 /* ── EOY Chinese room (new immersive scene) ─────────────────── */
 .ls-cr2-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:8px;padding:2px;overflow-y:auto}
-.ls-cr2-note{margin:0;font:12.5px/1.45 "Open Sans",sans-serif;color:var(--ls-muted);max-width:82ch}
+.ls-cr2-note{margin:0;font:12.5px/1.45 "Open Sans",sans-serif;color:var(--ls-muted);width:100%}
 
 .ls-cr2-room {
   position: relative;

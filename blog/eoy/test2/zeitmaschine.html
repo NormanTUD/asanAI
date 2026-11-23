@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 28 · Die Zeitmaschine</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="zeitmaschine.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="28 · Geschichte" data-en="28 · history">28 · Geschichte</span>
+      <h1 class="proto-title" data-de="Die Zeitmaschine" data-en="The time machine">Die Zeitmaschine</h1>
+      <p class="proto-lead" data-de="Sieben Stationen von den Kerben im Wolfsknochen bis zum Transformer. Dreh am Jahresrad, nimm ein Artefakt in die Hand und sieh, welcher Faden weiterläuft." data-en="Seven stations from the notches in a wolf bone to the transformer. Turn the year wheel, pick up an artefact, and see which thread continues.">Sieben Stationen von den Kerben im Wolfsknochen bis zum Transformer. Dreh am Jahresrad, nimm ein Artefakt in die Hand und sieh, welcher Faden weiterläuft.</p>
+    </header>
+
+    <section class="proto-stage t2-stage zm-stage" aria-label="Geschichte als Zeitmaschine">
+      <div class="t2-hud">
+        <span class="t2-kicker" data-de="Geschichte · Zeitmaschine" data-en="History · time machine">Geschichte · Zeitmaschine</span>
+        <h2 class="t2-hud-title" data-de="Die Zeitmaschine" data-en="The time machine">Die Zeitmaschine</h2>
+        <span class="t2-hud-spacer"></span>
+        <div class="t2-pillrow" id="zm-tabs" role="tablist" aria-label="Stationen"></div>
+      </div>
+
+      <div class="zm-main">
+        <div class="zm-wheel-wrap">
+          <svg id="zm-wheel" class="zm-wheel" viewBox="0 0 220 220" role="slider" tabindex="0" aria-label="Jahresrad" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1">
+            <circle class="zm-wheel-face" cx="110" cy="110" r="92"></circle>
+            <circle class="zm-wheel-face zm-wheel-face--inner" cx="110" cy="110" r="68"></circle>
+            <g id="zm-wheel-marks"></g>
+            <line id="zm-wheel-hand" class="zm-wheel-hand" x1="110" y1="110" x2="110" y2="34"></line>
+            <circle cx="110" cy="110" r="5" class="zm-wheel-hub"></circle>
+          </svg>
+          <div class="zm-wheel-center">
+            <span id="zm-year" class="zm-year">ca. 30.000 BP</span>
+            <span id="zm-wheel-count" class="zm-wheel-count">01 / 07</span>
+          </div>
+          <div class="zm-wheel-controls">
+            <button type="button" class="proto-btn proto-btn--ghost" data-zm-prev aria-label="Vorherige Station">←</button>
+            <button type="button" class="proto-btn proto-btn--ghost" data-zm-next aria-label="Nächste Station">→</button>
+          </div>
+        </div>
+
+        <article class="zm-card">
+          <div class="zm-card-head">
+            <span class="zm-era" id="zm-era"></span>
+            <h3 class="zm-title" id="zm-title"></h3>
+          </div>
+          <p class="zm-text" id="zm-text"></p>
+          <div class="zm-art-wrap" id="zm-art"></div>
+          <div class="zm-thread" id="zm-thread"></div>
+          <p class="zm-source" id="zm-source"></p>
+        </article>
+      </div>
+
+      <div class="t2-bottom">
+        <div class="t2-readout" id="zm-readout" aria-live="polite"></div>
+        <div class="t2-controls"><span class="t2-meta" id="zm-count">Station 1 / 7</span></div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Artefakte sind schematische Nachbauten, keine Messungen. Die Texte folgen den im Geschichtsabschnitt zitierten Quellen. Die Jahreszahlen stehen jeweils an der Station." data-en-html="The artefacts are schematic reconstructions, not measurements. The texts follow the sources cited in the history section. The years are shown at each station.">Die Artefakte sind schematische Nachbauten, keine Messungen. Die Texte folgen den im Geschichtsabschnitt zitierten Quellen. Die Jahreszahlen stehen jeweils an der Station.</p>
+
+    <footer class="proto-foot">
+      <span>28 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="theater.html" data-de="Weiter: Theater des Geistes" data-en="Next: theatre of mind">Weiter: Theater des Geistes</a></span>
+    </footer>
+  </main>
+  <script src="kit.js"></script>
+  <script src="zeitmaschine.js"></script>
+</body>
+</html>

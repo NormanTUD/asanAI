@@ -594,4 +594,4 @@ html[data-theme="dark"] .crz-room {
   .crz-hud { top: 10px; left: 10px; right: auto; align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
 }
 
-.crz-above-note { margin: 0 0 14px; max-width: 72ch; }
+.crz-above-note { margin: 0 0 14px; width: 100%; }
