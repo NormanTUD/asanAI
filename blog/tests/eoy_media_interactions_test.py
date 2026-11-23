@@ -1661,11 +1661,14 @@ def test_ffn_separation(browser, base, lang, results):
   buttons: document.querySelectorAll('.ls-hc-sep button').length,
   note: document.querySelector('.ls-hc-sep')?.innerText || '',
   aria: document.querySelector('.ls-hc-sep-canvas')?.getAttribute('aria-label') || '',
+  width: document.querySelector('.ls-hc-sep-canvas')?.getBoundingClientRect().width || 0,
+  height: document.querySelector('.ls-hc-sep-canvas')?.getBoundingClientRect().height || 0,
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
     results.check(tag, "FFN subdivision shows the separation visual", info["card"] and info["canvas"], str(info)[:240])
+    results.check(tag, "FFN separation canvas is visible next to the graph", info["width"] > 120 and info["height"] > 120, str(info)[:240])
     results.check(tag, "FFN separation is purely visual", info["buttons"] == 0, str(info)[:240])
     results.check(tag, "FFN separation shows input, hidden and output", all(token in info["note"] for token in ("Input", "Hidden", "Output")), info["note"][:240])
     results.check(tag, "FFN separation explains the regions", "trennt" in info["aria"] or "separates" in info["aria"], info["aria"][:240])

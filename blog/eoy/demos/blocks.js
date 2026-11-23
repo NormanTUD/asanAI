@@ -579,18 +579,40 @@
 
         var from = state.from, to = state.to, t = state.t;
         trajHits = [];
-        traj.forEach(function (item) {
-          var col = C[item.col] || C.petrol;
-          var pts = item.pts.map(project);
+        var rendered = traj.map(function (item) {
+          return { item: item, col: C[item.col] || C.petrol, pts: item.pts.map(project) };
+        });
+        // First pass: travelled lines only, shortened at both ends so a line
+        // never touches a point marker.
+        rendered.forEach(function (r) {
           for (var s = 0; s < to; s++) {
-            g.strokeStyle = col; g.globalAlpha = 0.96; g.lineWidth = 2.8;
-            g.beginPath(); g.moveTo(pts[s].x, pts[s].y); g.lineTo(pts[s + 1].x, pts[s + 1].y); g.stroke();
+            var a = r.pts[s], b = r.pts[s + 1];
+            var dx = b.x - a.x, dy = b.y - a.y;
+            var len = Math.hypot(dx, dy) || 1;
+            var gap = 10;
+            if (len <= gap * 2.2) continue;
+            var ux = dx / len, uy = dy / len;
+            var a2 = { x: a.x + ux * gap, y: a.y + uy * gap };
+            var b2 = { x: b.x - ux * gap, y: b.y - uy * gap };
+            g.strokeStyle = r.col; g.globalAlpha = 0.96; g.lineWidth = 2.8;
+            g.beginPath(); g.moveTo(a2.x, a2.y); g.lineTo(b2.x, b2.y); g.stroke();
             g.globalAlpha = 0.9;
-            arrow(g, pts[s], pts[s + 1], col);
+            arrow(g, a2, b2, r.col);
             g.globalAlpha = 1;
           }
+        });
+        // Second pass: points on top with a paper halo, so crossing lines are
+        // masked and the markers stay visually separate.
+        rendered.forEach(function (r) {
+          var item = r.item, pts = r.pts, col = r.col;
           for (var k = 0; k <= to; k++) {
             var on = k === to;
+            g.beginPath();
+            g.arc(pts[k].x, pts[k].y, 10.5, 0, Math.PI * 2);
+            g.fillStyle = C.paper || "#fff";
+            g.globalAlpha = 0.94;
+            g.fill();
+            g.globalAlpha = 1;
             if (on) {
               g.beginPath();
               g.arc(pts[k].x, pts[k].y, 13, 0, Math.PI * 2);
@@ -606,13 +628,15 @@
           var a = pts[from], b = pts[to];
           var cp = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
           if (t < 1) {
+            g.beginPath(); g.arc(cp.x, cp.y, 10.5, 0, Math.PI * 2);
+            g.fillStyle = C.paper || "#fff"; g.globalAlpha = 0.94; g.fill(); g.globalAlpha = 1;
             g.beginPath(); g.arc(cp.x, cp.y, 6, 0, Math.PI * 2);
             g.fillStyle = col; g.globalAlpha = 0.95; g.fill(); g.globalAlpha = 1;
           }
           g.fillStyle = C.ink;
           g.font = '700 ' + Math.max(9, Math.min(12, w * 0.019)) + 'px "Barlow", sans-serif';
           g.textAlign = "center"; g.textBaseline = "bottom";
-          g.fillText(item.label, cp.x, cp.y - 10);
+          g.fillText(item.label, cp.x, cp.y - 12);
         });
         if (trajHover >= 0 && trajHits[trajHover]) {
           var hh = trajHits[trajHover];

@@ -109,6 +109,7 @@
       if (!sepCanvas || !sepStage) return;
       sepSize = api.fit(sepCanvas, sepStage);
       var g = sepSize.ctx, w = sepSize.w, h = sepSize.h, C = api.colors();
+      if (w < 80 || h < 80) return;
       g.clearRect(0, 0, w, h);
       var bg = g.createLinearGradient(0, 0, 0, h);
       bg.addColorStop(0, C.paper || "#fff");
@@ -124,7 +125,8 @@
       function panelX(i) { return pad + i * (panelW + gap); }
       function pt(i, p) { return { x: panelX(i) + p[0] * panelW, y: top + p[1] * panelH }; }
       function rr(x, y, ww, hh, r) {
-        var rad = Math.min(r, ww / 2, hh / 2);
+        if (!(ww > 0) || !(hh > 0)) return;
+        var rad = Math.max(0, Math.min(r, ww / 2, hh / 2));
         g.beginPath();
         g.moveTo(x + rad, y);
         g.arcTo(x + ww, y, x + ww, y + hh, rad);
