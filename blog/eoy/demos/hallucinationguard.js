@@ -5,44 +5,88 @@
   function hallucinationGuardScene(root, api) {
     var DE = api.lang === "de";
     var rag = false, cot = false, verify = false;
+    var question = DE ? "Wie hoch ist der Eiffelturm mit Antenne?" : "How tall is the Eiffel Tower with its antenna?";
     var el = document.createElement("div");
     el.className = "ls-hg-scene";
     el.innerHTML =
-      '<div class="ls-hg-question"><span>' + (DE ? "Frage" : "Question") + '</span><b>' + (DE ? "Wie hoch ist der Eiffelturm mit Antenne?" : "How tall is the Eiffel Tower with its antenna?") + '</b></div>' +
-      '<div class="ls-hg-toggles" role="group">' +
-        '<button type="button" class="ls-chip" data-hg="rag" aria-pressed="false">' + (DE ? "Quellen (RAG)" : "Sources (RAG)") + '</button>' +
-        '<button type="button" class="ls-chip" data-hg="cot" aria-pressed="false">' + (DE ? "Schrittweise denken" : "Think step by step") + '</button>' +
-        '<button type="button" class="ls-chip" data-hg="verify" aria-pressed="false">' + (DE ? "Gegenprüfung" : "Verification") + '</button>' +
-      '</div>' +
-      '<div class="ls-hg-grid">' +
-        '<section class="ls-hg-panel"><div class="ls-hg-head"><b>' + (DE ? "Kontext" : "Context") + '</b><span>' + (DE ? "was das Modell sieht" : "what the model sees") + '</span></div><div class="ls-hg-source"></div></section>' +
-        '<section class="ls-hg-panel"><div class="ls-hg-head"><b>' + (DE ? "Antwort" : "Answer") + '</b><span>' + (DE ? "mit oder ohne Deckung" : "with or without support") + '</span></div><div class="ls-hg-answer"></div><div class="ls-hg-cite"></div></section>' +
-      '</div>' +
-      '<div class="ls-hg-steps"></div>' +
-      '<div class="ls-hg-risk"><span>' + (DE ? "Halluzinationsrisiko" : "hallucination risk") + '</span><div class="ls-hg-bar"><i></i></div><b class="ls-hg-risk-val"></b></div>' +
-      '<p class="ls-hg-readout"></p>';
+      '<div class="ls-hg-win">' +
+        '<div class="ls-hg-winbar">' +
+          '<span class="ls-hg-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
+          '<span class="ls-hg-addr">' + (DE ? "guard · Eiffelturm" : "guard · Eiffel Tower") + '</span>' +
+          '<span class="ls-hg-status"></span>' +
+        '</div>' +
+        '<div class="ls-hg-controls" role="group" aria-label="' + (DE ? "Schutzmaßnahmen" : "Guardrails") + '">' +
+          '<button type="button" class="ls-hg-toggle" data-hg="rag" aria-pressed="false"><span class="ls-hg-toggle-ico">S1</span><span>' + (DE ? "Quellen (RAG)" : "Sources (RAG)") + '</span></button>' +
+          '<button type="button" class="ls-hg-toggle" data-hg="cot" aria-pressed="false"><span class="ls-hg-toggle-ico">1→3</span><span>' + (DE ? "Schrittweise denken" : "Think step by step") + '</span></button>' +
+          '<button type="button" class="ls-hg-toggle" data-hg="verify" aria-pressed="false"><span class="ls-hg-toggle-ico">✓</span><span>' + (DE ? "Gegenprüfung" : "Verification") + '</span></button>' +
+        '</div>' +
+        '<div class="ls-hg-body">' +
+          '<div class="ls-hg-chat">' +
+            '<div class="ls-hg-msg is-user"><span class="ls-hg-role">' + (DE ? "Du" : "You") + '</span><div class="ls-hg-bubble ls-hg-bubble--user"><div class="ls-hg-question"><span>' + (DE ? "Frage" : "Question") + '</span><b>' + question + '</b></div></div></div>' +
+            '<div class="ls-hg-msg is-ai"><span class="ls-hg-role">LLM</span><div class="ls-hg-bubble ls-hg-bubble--ai">' +
+              '<div class="ls-hg-context-label">' + (DE ? "Kontext" : "Context") + '</div>' +
+              '<div class="ls-hg-source"></div>' +
+              '<div class="ls-hg-answer"></div>' +
+              '<div class="ls-hg-cite"></div>' +
+            '</div></div>' +
+            '<div class="ls-hg-steps"></div>' +
+          '</div>' +
+          '<aside class="ls-hg-check">' +
+            '<div class="ls-hg-check-head">' + (DE ? "Prüfung" : "Check") + '</div>' +
+            '<div class="ls-hg-gauge"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ls-hg-gauge-track" cx="60" cy="60" r="48"/><circle class="ls-hg-gauge-fill" cx="60" cy="60" r="48"/></svg><div class="ls-hg-gauge-val"><b class="ls-hg-risk-val"></b><span>%</span></div></div>' +
+            '<p class="ls-hg-gauge-cap">' + (DE ? "Halluzinationsrisiko" : "Hallucination risk") + '</p>' +
+            '<div class="ls-hg-checks">' +
+              '<div class="ls-hg-checkrow" data-check="rag"><i></i><b>' + (DE ? "Quelle im Kontext" : "Source in context") + '</b><span></span></div>' +
+              '<div class="ls-hg-checkrow" data-check="cot"><i></i><b>' + (DE ? "Sichtbarer Denkweg" : "Visible reasoning") + '</b><span></span></div>' +
+              '<div class="ls-hg-checkrow" data-check="verify"><i></i><b>' + (DE ? "Gegenprüfung" : "Verification") + '</b><span></span></div>' +
+            '</div>' +
+            '<div class="ls-hg-readout"></div>' +
+          '</aside>' +
+        '</div>' +
+      '</div>';
     root.appendChild(el);
+
     var sourceEl = el.querySelector(".ls-hg-source");
     var answerEl = el.querySelector(".ls-hg-answer");
     var citeEl = el.querySelector(".ls-hg-cite");
     var stepsEl = el.querySelector(".ls-hg-steps");
-    var riskEl = el.querySelector(".ls-hg-risk");
-    var riskBar = el.querySelector(".ls-hg-bar i");
-    var riskVal = el.querySelector(".ls-hg-risk-val");
     var readout = el.querySelector(".ls-hg-readout");
+    var riskVal = el.querySelector(".ls-hg-risk-val");
+    var gaugeFill = el.querySelector(".ls-hg-gauge-fill");
+    var statusEl = el.querySelector(".ls-hg-status");
     var btns = Array.prototype.slice.call(el.querySelectorAll("[data-hg]"));
+    var checkRows = {};
+    Array.prototype.forEach.call(el.querySelectorAll("[data-check]"), function (row) {
+      checkRows[row.getAttribute("data-check")] = row;
+    });
+    var CIRC = 2 * Math.PI * 48;
+    if (gaugeFill) {
+      gaugeFill.style.strokeDasharray = String(CIRC);
+      gaugeFill.style.strokeDashoffset = String(CIRC);
+    }
+
+    function setCheck(key, on, stateText) {
+      var row = checkRows[key];
+      if (!row) return;
+      row.classList.toggle("is-on", on);
+      row.classList.toggle("is-off", !on);
+      var ico = row.querySelector("i");
+      if (ico) ico.textContent = on ? "✓" : "–";
+      var state = row.querySelector("span");
+      if (state) state.textContent = stateText || "";
+    }
+
     function render() {
       btns.forEach(function (b) {
-        var on = b.getAttribute("data-hg") === "rag" ? rag : b.getAttribute("data-hg") === "cot" ? cot : verify;
+        var key = b.getAttribute("data-hg");
+        var on = key === "rag" ? rag : key === "cot" ? cot : verify;
         b.classList.toggle("is-on", on);
         b.setAttribute("aria-pressed", String(on));
       });
-      var prompt = cot
-        ? '<div class="ls-hg-prompt"><b>' + (DE ? "Denke schrittweise" : "Think step by step") + '</b><span>' + (DE ? "Frage → Quelle → Schluss" : "question → source → conclusion") + '</span></div>'
-        : '';
-      sourceEl.innerHTML = prompt + (rag
+      sourceEl.innerHTML = rag
         ? '<article class="ls-hg-doc"><div class="ls-hg-doc-head"><b>S1</b><span>' + (DE ? "vertrauenswürdig" : "trusted") + '</span></div><p><b>Wikipedia</b> · ' + (DE ? "Eiffelturm" : "Eiffel Tower") + '</p><p>' + (DE ? "Der Eiffelturm ist mit Antenne 330 Meter hoch." : "The Eiffel Tower is 330 metres tall including its antenna.") + '</p></article>'
-        : '<div class="ls-hg-empty">' + (DE ? "Keine Quelle im Kontext. Das Modell antwortet aus dem Gedächtnis." : "No source in the context. The model answers from memory.") + '</div>');
+        : '<div class="ls-hg-empty">' + (DE ? "Keine Quelle im Kontext. Das Modell antwortet aus dem Gedächtnis." : "No source in the context. The model answers from memory.") + '</div>';
+
       var answer, cite, risk, htmlSteps = "";
       if (verify && !rag) {
         answer = DE ? "Keine Quelle im Kontext. Ich rate nicht." : "No source in the context. I will not guess.";
@@ -57,6 +101,7 @@
         cite = DE ? "Keine Quelle · aus dem Gedächtnis · falsch (330 m mit Antenne)" : "No source · from memory · wrong (330 m with antenna)";
         risk = 86;
       }
+
       if (cot) {
         htmlSteps += '<div class="ls-hg-steps-head"><b>' + (DE ? "Denkweg" : "Reasoning path") + '</b><span>' + (DE ? "Frage → Quelle → Schluss" : "question → source → conclusion") + '</span></div>';
         htmlSteps += '<div class="ls-hg-step"><b>1</b><span>' + (DE ? "Frage: Wie hoch ist der Eiffelturm mit Antenne?" : "Question: how tall is the Eiffel Tower with its antenna?") + '</span></div>';
@@ -66,31 +111,56 @@
       if (verify) {
         htmlSteps += '<div class="ls-hg-step is-check"><b>✓</b><span>' + (rag ? (DE ? "Gegenprüfung: Steht 330 in S1? Ja. Antwort bleibt gedeckt." : "Check: does S1 say 330? Yes. The answer stays grounded.") : (DE ? "Gegenprüfung: Keine Quelle. Also keine Behauptung." : "Check: no source. So no claim.")) + '</span></div>';
       }
+      stepsEl.className = "ls-hg-steps" + (cot ? " is-on" : "");
       stepsEl.innerHTML = htmlSteps;
       answerEl.textContent = answer;
       citeEl.textContent = cite;
-      riskVal.textContent = "";
-      riskVal.hidden = true;
-      riskEl.setAttribute("aria-label", (DE ? "Halluzinationsrisiko: " : "Hallucination risk: ") + (risk < 30 ? (DE ? "niedrig" : "low") : risk < 60 ? (DE ? "mittel" : "medium") : (DE ? "hoch" : "high")));
-      riskBar.style.width = risk + "%";
-      riskBar.style.background = risk < 30 ? "var(--ls-green)" : risk < 60 ? "var(--ls-gold)" : "var(--ls-lilac)";
-      riskEl.className = "ls-hg-risk " + (risk < 30 ? "is-low" : risk < 60 ? "is-mid" : "is-high");
-      var readoutText;
-      if (!rag && !cot && !verify) {
-        readoutText = DE ? "Ohne Quelle, ohne Zwischenschritte und ohne Prüfung bleibt die Antwort eine selbstsichere Vermutung." : "Without a source, steps, or verification, the answer is a confident guess.";
-      } else if (rag && verify) {
-        readoutText = DE ? "Quelle plus Gegenprüfung: Die Antwort ist gedeckt oder das Modell sagt, dass die Deckung fehlt." : "Source plus verification: the answer is grounded, or the model says support is missing.";
-      } else if (rag && cot) {
-        readoutText = DE ? "Quelle plus Denkweg: Frage, Quelle und Schluss stehen sichtbar da; die Gegenprüfung fehlt noch." : "Source plus reasoning path: question, source, and conclusion are visible; verification is still missing.";
-      } else if (rag) {
-        readoutText = DE ? "Quelle allein: Die Antwort ist gedeckt, aber der Denkweg bleibt unsichtbar." : "Source alone: the answer is grounded, but the reasoning path stays invisible.";
-      } else if (cot) {
-        readoutText = DE ? "Schrittweise denken macht die Lücke sichtbar, aber es fehlt weiterhin die Quelle." : "Thinking step by step makes the gap visible, but the source is still missing.";
-      } else {
-        readoutText = DE ? "Die Schalter verändern, was das Modell im Kontext hat und wie es prüft." : "The toggles change what the model has in context and how it checks.";
+
+      riskVal.textContent = String(risk);
+      var riskClass = risk < 30 ? "is-low" : risk < 60 ? "is-mid" : "is-high";
+      if (gaugeFill) {
+        gaugeFill.style.strokeDashoffset = String(CIRC * (1 - risk / 100));
+        gaugeFill.setAttribute("class", "ls-hg-gauge-fill " + riskClass);
       }
-      readout.textContent = readoutText;
+      statusEl.className = "ls-hg-status " + riskClass;
+      statusEl.textContent = rag ? (DE ? "gedeckt" : "grounded") : verify ? (DE ? "ehrlich" : "honest") : (DE ? "ungedeckt" : "ungrounded");
+
+      setCheck("rag", rag, rag ? "S1 · 330 m" : (DE ? "keine" : "none"));
+      setCheck("cot", cot, cot ? (DE ? "Frage → Quelle → Schluss" : "question → source → conclusion") : (DE ? "unsichtbar" : "invisible"));
+      setCheck("verify", verify, verify ? (DE ? "geprüft" : "checked") : (DE ? "aus" : "off"));
+
+      var title, text, vclass;
+      if (!rag && !cot && !verify) {
+        title = DE ? "Die Form ist kein Beweis." : "The shape is not proof.";
+        text = DE ? "Ohne Quelle, ohne Zwischenschritte und ohne Prüfung bleibt die Antwort eine selbstsichere Vermutung." : "Without a source, steps, or verification, the answer is a confident guess.";
+        vclass = "is-bad";
+      } else if (rag && verify) {
+        title = DE ? "Gedeckt und geprüft." : "Grounded and checked.";
+        text = DE ? "Quelle plus Gegenprüfung: Die Antwort ist gedeckt oder das Modell sagt, dass die Deckung fehlt." : "Source plus verification: the answer is grounded, or the model says support is missing.";
+        vclass = "is-good";
+      } else if (rag) {
+        title = DE ? "Gedeckt, aber ungeprüft." : "Grounded but unchecked.";
+        text = cot
+          ? (DE ? "Quelle plus Denkweg: Frage, Quelle und Schluss stehen sichtbar da; die Gegenprüfung fehlt noch." : "Source plus reasoning path: question, source, and conclusion are visible; verification is still missing.")
+          : (DE ? "Quelle allein: Die Antwort ist gedeckt, aber der Denkweg bleibt unsichtbar." : "Source alone: the answer is grounded, but the reasoning path stays invisible.");
+        vclass = "is-warn";
+      } else if (verify) {
+        title = DE ? "Ehrlich: keine Quelle, keine Behauptung." : "Honest: no source, no claim.";
+        text = DE ? "Die Gegenprüfung greift, weil das Modell ohne Deckung schweigt statt zu raten." : "Verification works because the model stays silent without support instead of guessing.";
+        vclass = "is-good";
+      } else if (cot) {
+        title = DE ? "Lücke sichtbar, Quelle fehlt." : "Gap visible, source missing.";
+        text = DE ? "Schrittweise denken macht die Lücke sichtbar, aber es fehlt weiterhin die Quelle." : "Thinking step by step makes the gap visible, but the source is still missing.";
+        vclass = "is-bad";
+      } else {
+        title = DE ? "Die Hebel verändern die Prüfung." : "The levers change the check.";
+        text = DE ? "Die Schalter verändern, was das Modell im Kontext hat und wie es prüft." : "The toggles change what the model has in context and how it checks.";
+        vclass = "is-warn";
+      }
+      readout.className = "ls-hg-readout " + vclass;
+      readout.innerHTML = '<b>' + title + '</b><p>' + text + '</p>';
     }
+
     btns.forEach(function (b) {
       b.addEventListener("click", function () {
         var key = b.getAttribute("data-hg");
@@ -101,6 +171,7 @@
       });
     });
     render();
+
     return {
       update: function () {},
       next: function () {

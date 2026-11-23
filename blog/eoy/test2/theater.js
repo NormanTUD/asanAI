@@ -57,6 +57,8 @@
     state.theory = name;
     scene = SCENES[name];
     world.setAttribute("data-theory", name);
+    var metricEl = document.querySelector(".th-metric");
+    if (metricEl) metricEl.style.display = scene.hideMetric ? "none" : "";
     renderTheoryChrome();
     renderControls();
     resizeCanvas();
@@ -67,58 +69,20 @@
   }
 
   /* =====================================================================
-     Global Workspace: competition, broadcast, empty auditorium
+     Global Workspace: one module broadcasts into the stage
      ===================================================================== */
 
   var WORKSPACE = (function () {
     var MODULES = ["vision", "language", "memory", "emotion", "motor"];
-    var STIMULI = {
-      apple: {
-        label: ["Roter Apfel", "red apple"],
-        glyph: "●",
-        boosts: { vision: 0.72, emotion: 0.38, memory: 0.16 },
-        reports: {
-          vision: ["ein roter Apfel", "a red apple"],
-          emotion: ["angenehm", "pleasant"],
-          memory: ["Erinnerung an Obst", "a memory of fruit"],
-          language: ["„Apfel“", "“apple”"],
-          motor: ["greifen", "reach"]
-        }
-      },
-      word: {
-        label: ["Das Wort", "the word"],
-        glyph: "A",
-        boosts: { language: 0.75, memory: 0.46, vision: 0.1 },
-        reports: {
-          language: ["das Wort „Apfel“", "the word “apple”"],
-          memory: ["Bedeutung von „Apfel“", "the meaning of “apple”"],
-          vision: ["ein Schriftbild", "a written shape"],
-          emotion: ["neutral", "neutral"],
-          motor: ["nichts tun", "do nothing"]
-        }
-      },
-      pain: {
-        label: ["Schmerz", "pain"],
-        glyph: "!",
-        boosts: { emotion: 0.8, motor: 0.62, vision: 0.18 },
-        reports: {
-          emotion: ["Alarm", "alarm"],
-          motor: ["wegziehen", "pull away"],
-          vision: ["eine Gefahr", "a danger"],
-          language: ["„au!“", "“ow!”"],
-          memory: ["früherer Schmerz", "earlier pain"]
-        }
-      }
+    var CONTENT = {
+      vision: ["ein roter Apfel", "a red apple"],
+      language: ["das Wort „Apfel“", "the word “apple”"],
+      memory: ["Erinnerung an Obst", "a memory of fruit"],
+      emotion: ["angenehm", "pleasant"],
+      motor: ["greifen", "reach"]
     };
-    var local = {
-      mode: "access",
-      stimulus: "apple",
-      live: { vision: true, language: true, memory: true, emotion: true, motor: true },
-      sal: { vision: 0.2, language: 0.2, memory: 0.2, emotion: 0.2, motor: 0.2 },
-      broadcasted: false,
-      winner: "vision"
-    };
-    var moduleEls = {}, cutEls = {}, centers = {}, wsCenter = { x: 0, y: 0 };
+    var local = { mode: "access", active: null };
+    var moduleEls = {}, centers = {}, wsCenter = { x: 0, y: 0 };
     var ambient = {}, pulses = [], rings = [], dust = [];
     var sceneEl = document.querySelector(".th-scene--workspace");
     var wsEl = document.getElementById("th-workspace");
@@ -141,134 +105,37 @@
     function initWorkspace() {
       MODULES.forEach(function (m) {
         moduleEls[m] = sceneEl.querySelector('[data-module="' + m + '"]');
-        moduleEls[m].addEventListener("click", function () { boost(m); });
-        var cut = document.createElement("button");
-        cut.type = "button";
-        cut.className = "th-cut";
-        cut.setAttribute("data-cut", m);
-        cut.setAttribute("aria-pressed", "false");
-        cut.addEventListener("click", function (e) {
-          e.stopPropagation();
-          toggleCut(m);
-        });
-        sceneEl.appendChild(cut);
-        cutEls[m] = cut;
+        moduleEls[m].addEventListener("click", function () { broadcast(m); });
       });
       for (var i = 0; i < 26; i++) {
         dust.push({ x: (i * 0.37 + 0.11) % 1, y: (i * 0.73 + 0.07) % 1, s: 0.004 + (i % 5) * 0.002, size: 0.7 + (i % 4) * 0.5, a: 0.08 + (i % 6) * 0.02 });
       }
-      applyStimulus("apple", true);
-    }
-
-    function baseSalience() {
-      var base = { vision: 0.18, language: 0.18, memory: 0.18, emotion: 0.18, motor: 0.18 };
-      var s = STIMULI[local.stimulus];
-      Object.keys(s.boosts).forEach(function (m) { base[m] += s.boosts[m]; });
-      return base;
-    }
-
-    function winnerNow() {
-      var best = null, bestV = -1;
-      MODULES.forEach(function (m) {
-        if (!local.live[m]) return;
-        var v = local.sal[m] || 0;
-        if (v > bestV) { bestV = v; best = m; }
-      });
-      return best;
-    }
-
-    function updateSalBars() {
-      MODULES.forEach(function (m) {
-        var bar = moduleEls[m].querySelector(".th-sal i");
-        if (bar) bar.style.width = Math.round(clamp(local.live[m] ? local.sal[m] : 0, 0, 1) * 100) + "%";
-      });
-      MODULES.forEach(function (m) {
-        moduleEls[m].classList.toggle("is-on", local.broadcasted && local.winner === m);
-      });
-    }
-
-    function applyStimulus(name, silent) {
-      if (!STIMULI[name]) return;
-      local.stimulus = name;
-      local.sal = baseSalience();
-      local.broadcasted = false;
-      local.winner = winnerNow() || "vision";
-      updateSalBars();
       syncText();
-      updateMetric();
-      if (!silent) {
-        narrate(L(
-          "Reiz: " + L(STIMULI[name].label[0], STIMULI[name].label[1]) + ". Die beteiligten Module steigen in der Salienz. Drücke Broadcast, damit der Gewinner in den Workspace kommt.",
-          "Stimulus: " + L(STIMULI[name].label[0], STIMULI[name].label[1]) + ". The involved modules rise in salience. Press Broadcast so the winner enters the workspace."
-        ));
-      }
-      renderControls();
     }
 
-    function boost(m) {
-      if (!local.live[m]) {
-        narrate(L(moduleName(m) + " ist gekappt und kann nicht konkurrieren.", moduleName(m) + " is cut and cannot compete."));
-        return;
-      }
-      local.sal[m] = clamp((local.sal[m] || 0) + 0.16, 0, 1);
-      local.winner = winnerNow() || local.winner;
-      updateSalBars();
-      updateMetric();
-      narrate(L(
-        moduleName(m) + " erhöht seine Salienz auf " + Math.round(local.sal[m] * 100) + " %. Der Wettbewerb entscheidet, was in den Workspace kommt.",
-        moduleName(m) + " raises its salience to " + Math.round(local.sal[m] * 100) + "%. The competition decides what enters the workspace."
-      ));
-    }
-
-    function toggleCut(m) {
-      local.live[m] = !local.live[m];
-      moduleEls[m].classList.toggle("is-cut", !local.live[m]);
-      cutEls[m].setAttribute("aria-pressed", local.live[m] ? "false" : "true");
-      if (!local.live[m]) local.sal[m] = 0;
-      else local.sal[m] = Math.max(local.sal[m], baseSalience()[m]);
-      local.winner = winnerNow();
-      if (!local.winner) {
-        local.broadcasted = false;
-        local.winner = "vision";
-      }
-      updateSalBars();
+    function setActive(m) {
+      local.active = m;
+      MODULES.forEach(function (k) {
+        moduleEls[k].classList.toggle("is-on", k === m);
+        moduleEls[k].classList.toggle("is-dim", k !== m);
+      });
       syncText();
-      updateMetric();
-      narrate(L(
-        local.live[m]
-          ? "Die Leitung zu " + moduleName(m) + " ist wieder offen."
-          : "Die Leitung zu " + moduleName(m) + " ist gekappt. Sein Inhalt erreicht den Workspace nicht mehr.",
-        local.live[m]
-          ? "The line to " + moduleName(m) + " is open again."
-          : "The line to " + moduleName(m) + " is cut. Its content no longer reaches the workspace."
-      ));
     }
 
-    function broadcast() {
-      var w = winnerNow();
-      if (!w) {
-        narrate(L("Keine Leitung ist offen. Der Workspace bleibt dunkel.", "No line is open. The workspace stays dark."));
-        syncText();
-        return;
-      }
-      local.winner = w;
-      local.broadcasted = true;
-      pulses.push({ m: w, t: 0, fired: false });
+    function broadcast(m) {
+      setActive(m);
+      pulses.push({ m: m, t: 0, fired: false });
       rings.push({ r: 26, alpha: 0.55 });
-      updateSalBars();
-      syncText();
-      updateMetric();
-      var s = STIMULI[local.stimulus];
-      var report = L(s.reports[w][0], s.reports[w][1]);
+      var text = L(CONTENT[m][0], CONTENT[m][1]);
       if (local.mode === "experience") {
         narrate(L(
-          moduleName(w) + " gewinnt und meldet: " + report + ". Der Bericht ist da. Ob er sich von innen wie etwas anfühlt, zeigt diese Bühne nicht.",
-          moduleName(w) + " wins and reports: " + report + ". The report is there. Whether it feels like anything from the inside is not shown by this stage."
+          moduleName(m) + " meldet: " + text + ". Der Bericht ist da. Ob er sich von innen wie etwas anfühlt, zeigt diese Bühne nicht.",
+          moduleName(m) + " reports: " + text + ". The report is there. Whether it feels like anything from the inside is not shown by this stage."
         ));
       } else {
         narrate(L(
-          moduleName(w) + " gewinnt und broadcastet: " + report + ". Nur dieses Ergebnis ist global verfügbar. Die anderen Module rechnen weiter, aber ihr Inhalt bleibt lokal.",
-          moduleName(w) + " wins and broadcasts: " + report + ". Only this result is globally available. The other modules keep computing, but their content stays local."
+          moduleName(m) + " broadcastet: " + text + ". Nur dieser Inhalt ist global verfügbar; die anderen Module rechnen lokal weiter.",
+          moduleName(m) + " broadcasts: " + text + ". Only this content is globally available; the other modules keep computing locally."
         ));
       }
     }
@@ -277,70 +144,47 @@
       local.mode = mode === "experience" ? "experience" : "access";
       world.setAttribute("data-mode", local.mode);
       syncText();
-      updateMetric();
       renderControls();
       narrate(L(
         local.mode === "experience"
           ? "Erleben: Der Bericht ist messbar, die gefühlte Qualität nicht. Die Bühne zeigt den Zugang; das Erleben bleibt offen."
-          : "Zugang: Information ist für Bericht, Kontrolle und Schlussfolgerungen verfügbar. Klicke einen Reiz, erhöhe Salienz und starte den Broadcast.",
+          : "Zugang: Was im Workspace ankommt, steht für Bericht, Kontrolle und Schlussfolgerungen bereit. Klick ein Modul.",
         local.mode === "experience"
           ? "Experience: the report is measurable, the felt quality is not. The stage shows access; experience remains open."
-          : "Access: information is available for report, control, and inference. Choose a stimulus, raise salience, and start the broadcast."
+          : "Access: what arrives in the workspace is available for report, control, and inference. Click a module."
       ));
     }
 
     function reset() {
-      MODULES.forEach(function (m) {
-        local.live[m] = true;
-        local.sal[m] = baseSalience()[m];
-        moduleEls[m].classList.remove("is-cut");
-        cutEls[m].setAttribute("aria-pressed", "false");
-      });
+      local.active = null;
       local.mode = "access";
-      local.broadcasted = false;
-      local.winner = winnerNow() || "vision";
+      world.setAttribute("data-mode", "access");
+      MODULES.forEach(function (m) {
+        moduleEls[m].classList.remove("is-on", "is-dim");
+      });
       pulses = [];
       rings = [];
-      world.setAttribute("data-mode", "access");
-      updateSalBars();
       syncText();
-      updateMetric();
       renderControls();
-      narrate(L(
-        "Zurückgesetzt. Fünf Module konkurrieren; der Workspace ist bereit.",
-        "Reset. Five modules compete; the workspace is ready."
-      ));
+      narrate(L("Zurückgesetzt. Klick ein Modul, um seinen Inhalt zu broadcasten.", "Reset. Click a module to broadcast its content."));
     }
 
     function syncText() {
-      var t = local.broadcasted ? L("Broadcast", "Broadcast") : L("Global Workspace", "Global workspace");
-      kickerEl.textContent = t + (local.mode === "experience" ? L(" · Erleben", " · experience") : L(" · Zugang", " · access"));
+      kickerEl.textContent = "Global Workspace" + (local.mode === "experience" ? L(" · Erleben", " · experience") : L(" · Zugang", " · access"));
       noteEl.textContent = local.mode === "experience"
         ? L("der Bericht ist da, das Erleben bleibt offen", "the report is there, experience remains open")
         : L("die Bühne ist das Bewusstsein", "the stage is consciousness");
-      if (local.broadcasted && winnerNow()) {
-        var s = STIMULI[local.stimulus];
-        var w = local.winner;
-        reportEl.textContent = moduleName(w) + ": " + L(s.reports[w][0], s.reports[w][1]);
+      if (local.active) {
+        reportEl.textContent = moduleName(local.active) + ": " + L(CONTENT[local.active][0], CONTENT[local.active][1]);
         reportEl.classList.add("is-on");
         wsEl.classList.add("is-live");
-        coreEl.textContent = local.mode === "experience" ? "?" : s.glyph;
+        coreEl.textContent = local.mode === "experience" ? "?" : "●";
       } else {
         reportEl.textContent = "";
         reportEl.classList.remove("is-on");
         wsEl.classList.remove("is-live");
-        coreEl.textContent = winnerNow() ? "●" : "—";
+        coreEl.textContent = "●";
       }
-      updateCutLabels();
-    }
-
-    function updateCutLabels() {
-      MODULES.forEach(function (m) {
-        var b = cutEls[m];
-        if (!b) return;
-        b.setAttribute("aria-label", (local.live[m] ? L("Verbindung kappen: ", "Cut connection: ") : L("Verbindung öffnen: ", "Open connection: ")) + moduleName(m));
-        b.title = b.getAttribute("aria-label");
-      });
     }
 
     function layout() {
@@ -352,12 +196,6 @@
       });
       var ws = wsEl.getBoundingClientRect();
       wsCenter = { x: ws.left - wr.left + ws.width / 2, y: ws.top - wr.top + ws.height / 2 };
-      MODULES.forEach(function (m) {
-        var b = cutEls[m];
-        if (!b || !centers[m]) return;
-        b.style.left = ((centers[m].x + wsCenter.x) / 2 - 10) + "px";
-        b.style.top = ((centers[m].y + wsCenter.y) / 2 - 10) + "px";
-      });
     }
 
     function drawWorkspace(ctx, w, h, dt, now) {
@@ -381,17 +219,17 @@
       MODULES.forEach(function (m) {
         var c = centers[m];
         if (!c) return;
-        if (local.live[m]) {
-          var win = local.broadcasted && local.winner === m;
-          ctx.beginPath();
-          ctx.moveTo(c.x, c.y);
-          ctx.lineTo(wsCenter.x, wsCenter.y);
-          ctx.strokeStyle = win ? gold : line;
-          ctx.globalAlpha = win ? 0.75 : 0.5;
-          ctx.lineWidth = win ? 1.8 : 1;
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-          if (!ambient[m]) ambient[m] = T2.particles(5, MODULES.indexOf(m) + 4);
+        var on = local.active === m;
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y);
+        ctx.lineTo(wsCenter.x, wsCenter.y);
+        ctx.strokeStyle = on ? gold : line;
+        ctx.globalAlpha = on ? 0.8 : 0.22;
+        ctx.lineWidth = on ? 1.8 : 1;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        if (on) {
+          if (!ambient[m]) ambient[m] = T2.particles(6, MODULES.indexOf(m) + 4);
           ambient[m].forEach(function (p) {
             p.t += dt * p.speed * (local.mode === "experience" ? 0.55 : 1);
             if (p.t > 1) p.t -= 1;
@@ -399,21 +237,11 @@
             var y = T2.lerp(c.y, wsCenter.y, p.t) + p.jitter * 6 * Math.cos(p.t * 7);
             ctx.beginPath();
             ctx.arc(x, y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = win ? gold : accent;
+            ctx.fillStyle = gold;
             ctx.globalAlpha = 0.18 + 0.26 * Math.sin(p.t * Math.PI);
             ctx.fill();
             ctx.globalAlpha = 1;
           });
-        } else {
-          ctx.beginPath();
-          ctx.moveTo(c.x, c.y);
-          ctx.lineTo(wsCenter.x, wsCenter.y);
-          ctx.strokeStyle = line;
-          ctx.globalAlpha = 0.12;
-          ctx.setLineDash([3, 5]);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.globalAlpha = 1;
         }
       });
 
@@ -467,48 +295,34 @@
 
     function controlsWorkspace(el) {
       el.innerHTML =
-        '<div class="th-stimuli" role="group" aria-label="' + L("Reiz wählen", "Choose a stimulus") + '">' +
-          Object.keys(STIMULI).map(function (k) {
-            return '<button type="button" class="proto-chip' + (local.stimulus === k ? ' is-on' : '') + '" data-stim="' + k + '">' + L(STIMULI[k].label[0], STIMULI[k].label[1]) + '</button>';
-          }).join("") +
-        '</div>' +
-        '<button type="button" class="proto-btn proto-btn--primary" data-th-broadcast>' + L("Broadcast", "Broadcast") + '</button>' +
-        '<button type="button" class="proto-btn proto-btn--ghost" data-th-reset>' + L("Reset", "Reset") + '</button>' +
-        '<span class="t2-sep" aria-hidden="true"></span>' +
         '<div class="th-switchrow" role="tablist" aria-label="' + L("Zugang oder Erleben", "Access or experience") + '">' +
           '<button type="button" class="proto-chip' + (local.mode === "access" ? ' is-on' : '') + '" data-th-mode="access" role="tab" aria-selected="' + (local.mode === "access" ? "true" : "false") + '">' + L("Zugang", "Access") + '</button>' +
           '<button type="button" class="proto-chip' + (local.mode === "experience" ? ' is-on' : '') + '" data-th-mode="experience" role="tab" aria-selected="' + (local.mode === "experience" ? "true" : "false") + '">' + L("Erleben", "Experience") + '</button>' +
-        '</div>';
-      el.querySelectorAll("[data-stim]").forEach(function (b) {
-        b.addEventListener("click", function () { applyStimulus(b.getAttribute("data-stim")); });
-      });
-      el.querySelector("[data-th-broadcast]").addEventListener("click", broadcast);
-      el.querySelector("[data-th-reset]").addEventListener("click", reset);
+        '</div>' +
+        '<button type="button" class="proto-btn proto-btn--ghost" data-th-reset>' + L("Reset", "Reset") + '</button>';
       el.querySelectorAll("[data-th-mode]").forEach(function (b) {
         b.addEventListener("click", function () { setMode(b.getAttribute("data-th-mode")); });
       });
+      el.querySelector("[data-th-reset]").addEventListener("click", reset);
     }
 
     return {
       init: initWorkspace,
+      hideMetric: true,
       name: function () { return L("Global Workspace", "Global workspace"); },
       about: function () {
         return L(
-          "Viele Subsysteme rechnen getrennt. Nur der Gewinner des Wettbewerbs kommt in den globalen Arbeitsraum, und nur was dort ankommt, steht für Bericht, Kontrolle und Schlussfolgerungen bereit. Der Raum zeigt das Ergebnis, nicht den Weg. Die Bühne selbst ist das Bewusstsein.",
-          "Many subsystems compute separately. Only the winner of the competition enters the global workspace, and only what arrives there is available for report, control, and inference. The workspace shows the result, not the path. The stage itself is consciousness."
+          "Fünf Module rechnen getrennt. Klick eines an: sein Inhalt erscheint im Workspace. Nur was dort ankommt, ist global verfügbar. Die Bühne selbst ist das Bewusstsein.",
+          "Five modules compute separately. Click one: its content enters the workspace. Only what arrives there is globally available. The stage itself is consciousness."
         );
       },
       defaultText: function () {
         return L(
-          "Wähle einen Reiz. Die Module konkurrieren um Salienz; der Gewinner broadcastet in den Workspace. Nur dieses Ergebnis ist global verfügbar.",
-          "Choose a stimulus. The modules compete for salience; the winner broadcasts into the workspace. Only that result is globally available."
+          "Klick ein Modul. Sein Inhalt erscheint im Workspace; die anderen bleiben lokal.",
+          "Click a module. Its content enters the workspace; the others stay local."
         );
       },
-      metric: function () {
-        var w = winnerNow();
-        var v = w ? local.sal[w] : 0;
-        return { label: ["Salienz", "salience"], value: v.toFixed(2), ratio: v };
-      },
+      metric: function () { return { label: ["Broadcast", "broadcast"], value: local.active ? "1" : "0", ratio: local.active ? 1 : 0 }; },
       controls: controlsWorkspace,
       layout: layout,
       enter: function () { syncText(); layout(); },
@@ -517,9 +331,6 @@
     };
   })();
 
-  /* =====================================================================
-     IIT: recurrent crystal, Phi, feedforward collapse, cut
-     ===================================================================== */
 
   var IIT = (function () {
     var local = { feedforward: false, cut: 0, phi: 0, activeEdges: [], pulseStart: 0, dist: [], maxDist: 0 };
@@ -980,13 +791,13 @@
      ===================================================================== */
 
   var IDEALISM = (function () {
-    var local = { diss: 18, view: "inside", selected: 0, count: 2 };
+    var local = { diss: 70, count: 3, view: "ocean", selected: 0, sense: "eye", freq: 50 };
     var bubbleEls = [];
     var geom = [];
     var stars = [];
+    var particles = [];
+    var sceneEl = document.querySelector(".th-scene--idealism");
     var host = document.getElementById("th-ideal-bubbles");
-
-    function countFor(v) { return 1 + Math.round((v / 100) * 4); }
 
     function initIdealism() {
       for (var i = 0; i < 5; i++) {
@@ -996,34 +807,50 @@
         b.setAttribute("data-bubble", String(i));
         b.innerHTML = '<span><b></b><small></small></span>';
         b.addEventListener("click", function (e) {
-          var idx = parseInt(e.currentTarget.getAttribute("data-bubble"), 10);
-          selectBubble(idx);
+          selectBubble(parseInt(e.currentTarget.getAttribute("data-bubble"), 10));
         });
         host.appendChild(b);
         bubbleEls.push(b);
       }
-      for (var s = 0; s < 46; s++) {
-        stars.push({ x: (s * 0.37 + 0.05) % 1, y: (s * 0.67 + 0.09) % 1, r: 0.6 + (s % 3) * 0.5, a: 0.06 + (s % 6) * 0.025 });
+      for (var s = 0; s < 64; s++) {
+        stars.push({ x: (s * 0.37 + 0.05) % 1, y: (s * 0.67 + 0.09) % 1, r: 0.6 + (s % 3) * 0.5, a: 0.05 + (s % 6) * 0.022 });
+      }
+      for (var p = 0; p < 230; p++) {
+        particles.push({
+          x: Math.random(),
+          y: Math.random(),
+          px: 0,
+          py: 0,
+          vx: 0,
+          vy: 0,
+          age: Math.random() * 200
+        });
       }
       renderBubbles();
     }
 
+    function viewName() {
+      return local.view === "dashboard"
+        ? L("Dashboard", "Dashboard")
+        : L("Ozean", "Ocean");
+    }
+
     function renderBubbles() {
-      local.count = countFor(local.diss);
+      host.hidden = local.view !== "ocean";
       local.selected = clamp(local.selected, 0, local.count - 1);
       bubbleEls.forEach(function (b, i) {
-        var on = i < local.count;
+        var on = local.view === "ocean" && i < local.count;
         b.hidden = !on;
         b.classList.toggle("is-on", on && i === local.selected);
         if (on) {
           var label = local.count === 1
-            ? L("Ein Feld", "One field")
-            : L("Geist " + String.fromCharCode(65 + i), "Mind " + String.fromCharCode(65 + i));
+            ? L("Ein Ozean", "One ocean")
+            : L("Strudel " + String.fromCharCode(65 + i), "Vortex " + String.fromCharCode(65 + i));
           b.querySelector("b").textContent = label;
           b.querySelector("small").textContent = local.count === 1
             ? L("nicht dissoziiert", "not dissociated")
-            : L("Perspektive", "perspective");
-          b.setAttribute("aria-label", label + (local.count === 1 ? "" : L(", Perspektive", ", perspective")));
+            : L("Geist", "mind");
+          b.setAttribute("aria-label", label + (local.count > 1 ? L(", ein Strudel im Ozean", ", a vortex in the ocean") : ""));
         }
       });
       layoutIdealism();
@@ -1032,7 +859,7 @@
     function layoutIdealism() {
       if (state.theory !== "idealism") return;
       var w = world.clientWidth, h = world.clientHeight;
-      var cx = w / 2, cy = h * 0.46;
+      var cx = w / 2, cy = h * 0.47;
       var min = Math.min(w, h);
       var count = local.count;
       geom = [];
@@ -1041,7 +868,7 @@
         var x = cx, y = cy;
         if (count > 1) {
           var angle = -Math.PI / 2 + i * Math.PI * 2 / count;
-          var radius = min * (0.14 + (local.diss / 100) * 0.17);
+          var radius = min * (0.075 + (local.diss / 100) * 0.21);
           x = cx + Math.cos(angle) * radius;
           y = cy + Math.sin(angle) * radius;
         }
@@ -1055,166 +882,337 @@
       if (i >= local.count) return;
       local.selected = i;
       renderBubbles();
-      var label = local.count === 1 ? L("das eine Feld", "the one field") : L("Geist " + String.fromCharCode(65 + i), "Mind " + String.fromCharCode(65 + i));
+      var label = local.count === 1 ? L("der eine Ozean", "the one ocean") : L("Strudel " + String.fromCharCode(65 + i), "Vortex " + String.fromCharCode(65 + i));
       narrate(L(
-        "Du betrachtest " + label + ". Jede Perspektive sieht einen Ausschnitt des Feldes; die Trennung ist eine Dissoziation, keine getrennte Substanz.",
-        "You are looking at " + label + ". Each perspective sees a slice of the field; the separation is a dissociation, not a separate substance."
+        "Du betrachtest " + label + ". Der Strudel besteht aus demselben Wasser wie der Ozean. Von innen wirkt er getrennt; von außen ist er eine lokale Bewegung des einen Feldes.",
+        "You are looking at " + label + ". The vortex consists of the same water as the ocean. From inside it seems separate; from outside it is a local movement of the one field."
       ));
     }
 
     function setDiss(v) {
       local.diss = parseInt(v, 10) || 0;
-      local.count = countFor(local.diss);
-      local.selected = clamp(local.selected, 0, local.count - 1);
       renderBubbles();
       updateMetric();
       narrate(L(
-        "Dissoziation " + local.diss + " %: " + (local.diss < 10 ? "Ein Feld. Die Perspektiven sind noch nicht getrennt." : local.diss < 55 ? "Das Feld beginnt, sich in Perspektiven zu teilen. Die Fäden bleiben sichtbar." : "Das Feld ist in mehrere Geister dissoziiert. Die Fäden reißen, das Feld bleibt der Grund."),
-        "Dissociation " + local.diss + "%: " + (local.diss < 10 ? "One field. The perspectives are not yet separated." : local.diss < 55 ? "The field begins to split into perspectives. The filaments remain visible." : "The field is dissociated into several minds. The filaments tear, the field remains the ground.")
+        "Dissoziation " + local.diss + " %: " + (local.diss < 12 ? "Der Ozean fließt frei; die Strudel sind kaum abgegrenzt." : local.diss < 55 ? "Die Strudel bilden sich. Das Wasser zwischen ihnen bleibt verbunden." : "Die Strudel sind stark abgegrenzt. Von innen sieht jeder wie ein eigenes Bewusstsein aus."),
+        "Dissociation " + local.diss + "%: " + (local.diss < 12 ? "The ocean flows freely; the vortices are barely separated." : local.diss < 55 ? "The vortices form. The water between them stays connected." : "The vortices are strongly separated. From inside, each looks like its own consciousness.")
+      ));
+    }
+
+    function setCount(v) {
+      local.count = clamp(parseInt(v, 10) || 1, 1, 5);
+      local.selected = clamp(local.selected, 0, local.count - 1);
+      renderBubbles();
+      narrate(L(
+        local.count === 1
+          ? "Ein Strudel: der Ozean bewegt sich an einer Stelle. Ein einzelnes Bewusstsein."
+          : local.count + " Strudel: derselbe Ozean bewegt sich an mehreren Stellen. Jeder Strudel ist ein Geist.",
+        local.count === 1
+          ? "One vortex: the ocean moves in one place. A single consciousness."
+          : local.count + " vortices: the same ocean moves in several places. Each vortex is a mind."
       ));
     }
 
     function setView(view) {
-      local.view = view === "outside" ? "outside" : "inside";
-      renderControls();
-      narrate(L(
-        local.view === "outside"
-          ? "Von außen: ein Netzwerk aus Knoten und Kanten. Das ist die Beschreibung eines Gehirns, nicht die Innenansicht."
-          : "Von innen: ein Feld aus Licht und Fäden. Das ist die Perspektive des Erlebens, nicht die Messung von außen.",
-        local.view === "outside"
-          ? "From outside: a network of nodes and edges. That is the description of a brain, not the inside view."
-          : "From inside: a field of light and filaments. That is the perspective of experience, not the measurement from outside."
-      ));
-    }
-
-    function resetIdeal() {
-      local.diss = 18;
-      local.view = "inside";
-      local.selected = 0;
+      local.view = view === "dashboard" ? "dashboard" : "ocean";
+      sceneEl.classList.toggle("is-dashboard", local.view === "dashboard");
       renderBubbles();
       renderControls();
       updateMetric();
-      narrate(L("Zurückgesetzt: ein Feld, zwei Perspektiven, Innenansicht.", "Reset: one field, two perspectives, inside view."));
+      narrate(L(
+        local.view === "dashboard"
+          ? "Dashboard: Die Sinne zeigen komprimierte Icons, keine Fenster zur Welt. Dieselbe Frequenz wird je nach Sinnesorgan zu Farbe, Ton, Wärme oder Geruch."
+          : "Ozean: Ein Bewusstsein, viele lokale Strudel. Ziehe an der Dissoziation und ändere die Zahl der Geister.",
+        local.view === "dashboard"
+          ? "Dashboard: the senses show compressed icons, not windows onto the world. The same frequency becomes colour, tone, warmth, or smell depending on the sense organ."
+          : "Ocean: one consciousness, many local vortices. Pull dissociation and change the number of minds."
+      ));
+    }
+
+    function setFreq(v) {
+      local.freq = parseInt(v, 10) || 0;
+      updateMetric();
+      narrate(L(
+        "Realitäts-Frequenz " + local.freq + ": Dasselbe Signal erzeugt je nach Sinnesorgan eine andere Qualia. Die Farbe ist ein Icon, nicht die Wellenlänge selbst.",
+        "Reality frequency " + local.freq + ": the same signal produces a different quale depending on the sense organ. Colour is an icon, not the wavelength itself."
+      ));
+    }
+
+    function setSense(k) {
+      local.sense = k;
+      narrate(L(
+        "Sinnesorgan: " + L(senseLabel(k)[0], senseLabel(k)[1]) + ". Die Frequenz bleibt dieselbe; die empfundene Qualia wechselt.",
+        "Sense organ: " + L(senseLabel(k)[0], senseLabel(k)[1]) + ". The frequency stays the same; the felt quale changes."
+      ));
+    }
+
+    function senseLabel(k) {
+      return {
+        eye: ["Auge", "eye"],
+        ear: ["Ohr", "ear"],
+        skin: ["Haut", "skin"],
+        nose: ["Nase", "nose"]
+      }[k] || ["Auge", "eye"];
+    }
+
+    function resetIdeal() {
+      local.diss = 70;
+      local.count = 3;
+      local.view = "ocean";
+      local.selected = 0;
+      local.sense = "eye";
+      local.freq = 50;
+      sceneEl.classList.remove("is-dashboard");
+      renderBubbles();
+      renderControls();
+      updateMetric();
+      narrate(L("Zurückgesetzt: Ozean, drei Strudel, starke Dissoziation.", "Reset: ocean, three vortices, strong dissociation."));
     }
 
     function controlsIdeal(el) {
-      el.innerHTML =
-        '<div class="th-switchrow" role="tablist" aria-label="' + L("Perspektive", "Perspective") + '">' +
-          '<button type="button" class="proto-chip' + (local.view === "inside" ? ' is-on' : '') + '" data-ideal-view="inside" role="tab" aria-selected="' + (local.view === "inside" ? "true" : "false") + '">' + L("Von innen", "From inside") + '</button>' +
-          '<button type="button" class="proto-chip' + (local.view === "outside" ? ' is-on' : '') + '" data-ideal-view="outside" role="tab" aria-selected="' + (local.view === "outside" ? "true" : "false") + '">' + L("Von außen", "From outside") + '</button>' +
-        '</div>' +
-        '<label class="t2-range th-range"><span>' + L("Dissoziation", "Dissociation") + '</span><input type="range" id="ideal-diss" min="0" max="100" step="1" value="' + local.diss + '"><output>' + local.diss + ' %</output></label>' +
-        '<button type="button" class="proto-btn proto-btn--ghost" data-ideal-reset>' + L("Reset", "Reset") + '</button>';
+      var viewChips =
+        '<div class="th-switchrow" role="tablist" aria-label="' + L("Ansicht", "View") + '">' +
+          '<button type="button" class="proto-chip' + (local.view === "ocean" ? ' is-on' : '') + '" data-ideal-view="ocean" role="tab" aria-selected="' + (local.view === "ocean" ? "true" : "false") + '">' + L("Ozean", "Ocean") + '</button>' +
+          '<button type="button" class="proto-chip' + (local.view === "dashboard" ? ' is-on' : '') + '" data-ideal-view="dashboard" role="tab" aria-selected="' + (local.view === "dashboard" ? "true" : "false") + '">' + L("Dashboard", "Dashboard") + '</button>' +
+        '</div>';
+      var extra;
+      if (local.view === "ocean") {
+        extra =
+          '<label class="t2-range th-range"><span>' + L("Dissoziation", "Dissociation") + '</span><input type="range" id="ideal-diss" min="0" max="100" step="1" value="' + local.diss + '"><output>' + local.diss + ' %</output></label>' +
+          '<label class="t2-range th-range"><span>' + L("Anzahl Strudel", "Vortices") + '</span><input type="range" id="ideal-count" min="1" max="5" step="1" value="' + local.count + '"><output>' + local.count + '</output></label>';
+      } else {
+        extra =
+          '<label class="t2-range th-range"><span>' + L("Realitäts-Frequenz", "Reality frequency") + '</span><input type="range" id="ideal-freq" min="0" max="100" step="1" value="' + local.freq + '"><output>' + local.freq + '</output></label>' +
+          '<label class="th-range"><span class="t2-meta">' + L("Sinnesorgan", "Sense organ") + '</span><select id="ideal-sense" class="th-select">' +
+            ['eye', 'ear', 'skin', 'nose'].map(function (k) {
+              return '<option value="' + k + '"' + (local.sense === k ? ' selected' : '') + '>' + L(senseLabel(k)[0], senseLabel(k)[1]) + '</option>';
+            }).join('') +
+          '</select></label>';
+      }
+      el.innerHTML = viewChips + extra + '<button type="button" class="proto-btn proto-btn--ghost" data-ideal-reset>' + L("Reset", "Reset") + '</button>';
       el.querySelectorAll("[data-ideal-view]").forEach(function (b) {
         b.addEventListener("click", function () { setView(b.getAttribute("data-ideal-view")); });
       });
-      var slider = el.querySelector("#ideal-diss");
-      slider.addEventListener("input", function () {
-        el.querySelector("#ideal-diss + output").textContent = slider.value + " %";
-        setDiss(slider.value);
+      var diss = el.querySelector("#ideal-diss");
+      if (diss) diss.addEventListener("input", function () {
+        el.querySelector("#ideal-diss + output").textContent = diss.value + " %";
+        setDiss(diss.value);
       });
+      var count = el.querySelector("#ideal-count");
+      if (count) count.addEventListener("input", function () {
+        el.querySelector("#ideal-count + output").textContent = count.value;
+        setCount(count.value);
+      });
+      var freq = el.querySelector("#ideal-freq");
+      if (freq) freq.addEventListener("input", function () {
+        el.querySelector("#ideal-freq + output").textContent = freq.value;
+        setFreq(freq.value);
+      });
+      var sense = el.querySelector("#ideal-sense");
+      if (sense) sense.addEventListener("change", function () { setSense(sense.value); });
       el.querySelector("[data-ideal-reset]").addEventListener("click", resetIdeal);
     }
 
     function drawIdealism(ctx, w, h, dt, now) {
+      if (local.view === "dashboard") drawDashboard(ctx, w, h, dt, now);
+      else drawOcean(ctx, w, h, dt, now);
+    }
+
+    function drawOcean(ctx, w, h, dt, now) {
       var rose = color("--rose", "#e3898c");
       var lilac = color("--lilac", "#b3a8e6");
-      var sky = color("--sky", "#7fb4e6");
-      var cx = w / 2, cy = h * 0.46;
-      var min = Math.min(w, h);
+      var gold = color("--gold", "#e3be62");
+      var bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#0a1024");
+      bg.addColorStop(0.55, "#071428");
+      bg.addColorStop(1, "#030812");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
       stars.forEach(function (s) {
         ctx.beginPath();
         ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,235,245,0.9)";
+        ctx.fillStyle = "rgba(235,238,255,0.9)";
         ctx.globalAlpha = s.a;
         ctx.fill();
         ctx.globalAlpha = 1;
       });
-      if (local.view === "inside") {
-        var field = ctx.createRadialGradient(cx, cy, 8, cx, cy, min * 0.52);
-        field.addColorStop(0, "rgba(227,137,140,0.24)");
-        field.addColorStop(0.45, "rgba(179,168,230,0.12)");
-        field.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = field;
-        ctx.fillRect(0, 0, w, h);
-        for (var r = 1; r <= 3; r++) {
-          ctx.beginPath();
-          ctx.arc(cx, cy, min * (0.1 + r * 0.055), 0, Math.PI * 2);
-          ctx.strokeStyle = r === 1 ? rose : lilac;
-          ctx.globalAlpha = 0.08 + 0.03 * (3 - r);
-          ctx.lineWidth = 1;
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-        geom.forEach(function (g) {
-          var mx = (cx + g.x) / 2 + (g.y - cy) * 0.18;
-          var my = (cy + g.y) / 2 - (g.x - cx) * 0.18;
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.quadraticCurveTo(mx, my, g.x, g.y);
-          ctx.strokeStyle = g.i === local.selected ? rose : lilac;
-          ctx.globalAlpha = (1 - local.diss / 130) * (g.i === local.selected ? 0.5 : 0.22);
-          ctx.lineWidth = g.i === local.selected ? 1.6 : 1;
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-          var t = (now * 0.00012 + g.i * 0.17) % 1;
-          var px = (1 - t) * (1 - t) * cx + 2 * (1 - t) * t * mx + t * t * g.x;
-          var py = (1 - t) * (1 - t) * cy + 2 * (1 - t) * t * my + t * t * g.y;
-          ctx.beginPath();
-          ctx.arc(px, py, 2.2, 0, Math.PI * 2);
-          ctx.fillStyle = rose;
-          ctx.globalAlpha = 0.5;
-          ctx.fill();
-          ctx.globalAlpha = 1;
+      var time = now * 0.00045;
+      var strength = local.diss / 100;
+      var centers = geom.length ? geom : [{ x: w / 2, y: h * 0.47, i: 0 }];
+      particles.forEach(function (p) {
+        p.px = p.x * w;
+        p.py = p.y * h;
+        var fx = Math.sin(p.y * 6 + time) * 0.16;
+        var fy = Math.cos(p.x * 6 + time) * 0.16;
+        centers.forEach(function (a) {
+          var dx = p.x * w - a.x, dy = p.y * h - a.y;
+          var dist = Math.sqrt(dx * dx + dy * dy) + 8;
+          var influence = Math.min(48, 3000 / (dist * dist)) * strength;
+          fx += -dy / dist * influence;
+          fy += dx / dist * influence;
+          fx += -dx / dist * influence * 0.3;
+          fy += -dy / dist * influence * 0.3;
         });
+        p.vx = p.vx * 0.9 + fx * 0.1;
+        p.vy = p.vy * 0.9 + fy * 0.1;
+        p.x += p.vx / w;
+        p.y += p.vy / h;
+        p.age += 1;
+        if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.age > 260) {
+          p.x = Math.random();
+          p.y = Math.random();
+          p.vx = 0;
+          p.vy = 0;
+          p.age = 0;
+        }
+        var speed = Math.hypot(p.vx, p.vy);
+        var hue = 196 + speed * 18;
+        var alpha = Math.min(0.82, speed * 0.28 + 0.16);
+        ctx.strokeStyle = "hsla(" + hue + ",72%,68%," + alpha + ")";
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
-        ctx.arc(cx, cy, 7, 0, Math.PI * 2);
-        ctx.fillStyle = rose;
-        ctx.shadowColor = rose;
-        ctx.shadowBlur = 28;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      } else {
-        var nodes = [];
-        for (var i = 0; i < 20; i++) {
-          var a = i * 2.39996;
-          var rr = min * (0.08 + (i % 5) * 0.035);
-          nodes.push({ x: cx + Math.cos(a) * rr, y: cy + Math.sin(a) * rr * 0.72 });
-        }
-        for (var m = 0; m < nodes.length; m++) {
-          for (var n = m + 1; n < nodes.length; n++) {
-            var dx = nodes[m].x - nodes[n].x, dy = nodes[m].y - nodes[n].y;
-            if (Math.hypot(dx, dy) > min * 0.18) continue;
-            ctx.beginPath();
-            ctx.moveTo(nodes[m].x, nodes[m].y);
-            ctx.lineTo(nodes[n].x, nodes[n].y);
-            ctx.strokeStyle = sky;
-            ctx.globalAlpha = 0.14;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            ctx.globalAlpha = 1;
-          }
-        }
-        nodes.forEach(function (p, i) {
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x * w, p.y * h);
+        ctx.stroke();
+      });
+      if (centers.length > 1) {
+        ctx.strokeStyle = lilac;
+        ctx.globalAlpha = (1 - strength) * 0.22;
+        ctx.lineWidth = 1;
+        for (var i = 0; i < centers.length; i++) {
+          var a = centers[i], b = centers[(i + 1) % centers.length];
           ctx.beginPath();
-          ctx.arc(p.x, p.y, i === 0 ? 4 : 2.6, 0, Math.PI * 2);
-          ctx.fillStyle = i === 0 ? rose : sky;
-          ctx.globalAlpha = 0.8;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        });
-        geom.forEach(function (g) {
-          ctx.beginPath();
-          ctx.setLineDash([3, 5]);
-          ctx.moveTo(cx, cy);
-          ctx.lineTo(g.x, g.y);
-          ctx.strokeStyle = sky;
-          ctx.globalAlpha = 0.14;
+          ctx.moveTo(a.x, a.y);
+          ctx.quadraticCurveTo(w / 2, h * 0.47, b.x, b.y);
           ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.globalAlpha = 1;
-        });
+        }
+        ctx.globalAlpha = 1;
       }
+      centers.forEach(function (a, i) {
+        var pulse = 0.75 + 0.25 * Math.sin(time * 4 + i);
+        var r = Math.min(w, h) * (0.05 + strength * 0.1);
+        var grad = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, r * 2.4);
+        grad.addColorStop(0, "rgba(227,137,140," + (0.38 * strength * pulse).toFixed(3) + ")");
+        grad.addColorStop(0.55, "rgba(179,168,230," + (0.12 * strength).toFixed(3) + ")");
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, r * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(a.x, a.y);
+        ctx.rotate(time * 1.6 + i);
+        ctx.strokeStyle = rose;
+        ctx.globalAlpha = 0.2 + 0.35 * strength;
+        ctx.lineWidth = 1.2;
+        for (var k = 0; k < 3; k++) {
+          ctx.beginPath();
+          ctx.arc(0, 0, r * (0.55 + k * 0.24), k * 1.1, k * 1.1 + 2.1);
+          ctx.stroke();
+        }
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      });
+      ctx.fillStyle = "rgba(244,230,242,0.55)";
+      ctx.font = '600 10px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(L("Ozean = Bewusstsein · Strudel = Geister", "Ocean = consciousness · vortices = minds"), 18, 22);
+    }
+
+    function drawDashboard(ctx, w, h, dt, now) {
+      var rose = color("--rose", "#e3898c");
+      var lilac = color("--lilac", "#b3a8e6");
+      var sky = color("--sky", "#7fb4e6");
+      var gold = color("--gold", "#e3be62");
+      var f = local.freq / 100;
+      var time = now * 0.001;
+      var topH = h * 0.34;
+      ctx.fillStyle = "#0a0f22";
+      ctx.fillRect(0, 0, w, topH);
+      ctx.strokeStyle = lilac;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      for (var x = 0; x < w; x += 2) {
+        var phase = x * 0.02 * (0.5 + f * 2.2) + time * 2.4;
+        var y = topH / 2 + Math.sin(phase) * topH * 0.28 * (0.3 + f * 0.7);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.fillStyle = "rgba(179,168,230,0.85)";
+      ctx.font = '600 10px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(L("mentale Welt da draußen", "mental world out there"), 16, 18);
+      ctx.strokeStyle = gold;
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath();
+      ctx.moveTo(0, topH);
+      ctx.lineTo(w, topH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = gold;
+      ctx.textAlign = "center";
+      ctx.fillText(L("↓ Sinnesorgan kodiert ↓", "↓ sense organ encodes ↓"), w / 2, topH + 16);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#0b1020";
+      ctx.fillRect(0, topH + 22, w, h - topH - 22);
+      var bcy = topH + 22 + (h - topH - 22) / 2;
+      var radius = Math.min(w, h) * 0.16;
+      if (local.sense === "eye") {
+        var hue = f * 300;
+        var grad = ctx.createRadialGradient(w / 2, bcy, 0, w / 2, bcy, radius);
+        grad.addColorStop(0, "hsl(" + hue + ",90%,66%)");
+        grad.addColorStop(1, "hsl(" + hue + ",90%,20%)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(w / 2, bcy, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = '700 14px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(L("FARBE", "COLOUR"), w / 2, bcy + radius + 26);
+      } else if (local.sense === "ear") {
+        ctx.strokeStyle = sky;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (var ex = 0; ex < w; ex += 2) {
+          var yy = bcy + Math.sin(ex * 0.04 * (0.4 + f * 2.6) + time * 6) * radius * 0.55;
+          if (ex === 0) ctx.moveTo(ex, yy); else ctx.lineTo(ex, yy);
+        }
+        ctx.stroke();
+        ctx.fillStyle = "#fff";
+        ctx.font = '700 14px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(L("TON", "TONE"), w / 2, bcy + radius + 26);
+      } else if (local.sense === "skin") {
+        var warm = ctx.createRadialGradient(w / 2, bcy, 0, w / 2, bcy, radius);
+        warm.addColorStop(0, "rgba(255,196,120,0.95)");
+        warm.addColorStop(1, "rgba(120,40,30,0.2)");
+        ctx.fillStyle = warm;
+        ctx.beginPath();
+        ctx.arc(w / 2, bcy, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = '700 14px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(L("WÄRME", "WARMTH"), w / 2, bcy + radius + 26);
+      } else {
+        for (var n = 0; n < 18; n++) {
+          var a = n * 2.39996 + time * 0.5;
+          var r = radius * (0.25 + (n % 5) * 0.13);
+          ctx.beginPath();
+          ctx.arc(w / 2 + Math.cos(a) * r, bcy + Math.sin(a) * r, 3 + (n % 3), 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(179,168,230,0.55)";
+          ctx.fill();
+        }
+        ctx.fillStyle = "#fff";
+        ctx.font = '700 14px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(L("GERUCH", "SMELL"), w / 2, bcy + radius + 26);
+      }
+      ctx.textAlign = "left";
+      ctx.fillStyle = "rgba(244,230,242,0.55)";
+      ctx.font = '600 10px "Open Sans", sans-serif';
+      ctx.fillText(L("dieselbe Frequenz, verschiedene Qualia", "the same frequency, different qualia"), 16, h - 16);
     }
 
     return {
@@ -1222,17 +1220,21 @@
       name: function () { return L("Analytischer Idealismus", "Analytic idealism"); },
       about: function () {
         return L(
-          "Bewusstsein ist fundamental; Materie ist die Außenseite mentaler Prozesse. Individuelle Geister sind dissoziierte Teile eines universalen Bewusstseins. Von außen sieht das wie ein Netzwerk aus, von innen wie ein Feld. Die Perspektiven sind Ausschnitte, nicht getrennte Substanzen.",
-          "Consciousness is fundamental; matter is the outside view of mental processes. Individual minds are dissociated parts of a universal consciousness. From outside it looks like a network, from inside like a field. The perspectives are slices, not separate substances."
+          "Bewusstsein ist fundamental; Materie ist die Außenseite mentaler Prozesse. Im Ozean ist jeder Geist ein Strudel aus demselben Wasser: von innen getrennt, von außen eine lokale Bewegung des einen Feldes. Die Dashboard-Ansicht zeigt, dass die Sinne komprimierte Icons liefern, keine Fenster zur Welt.",
+          "Consciousness is fundamental; matter is the outside view of mental processes. In the ocean, each mind is a vortex made of the same water: separate from inside, a local movement of the one field from outside. The dashboard view shows that the senses deliver compressed icons, not windows onto the world."
         );
       },
       defaultText: function () {
         return L(
-          "Ein Feld, viele Perspektiven. Ziehe an der Dissoziation, um das Feld in einzelne Geister zu teilen. Wechsle zwischen der Außenansicht und der Innenansicht.",
-          "One field, many perspectives. Pull dissociation to split the field into individual minds. Switch between the outside view and the inside view."
+          "Ozean: ein Bewusstsein, viele Strudel. Ziehe an der Dissoziation und ändere die Zahl der Geister. Wechsle zum Dashboard und sieh, wie dieselbe Frequenz zu Farbe, Ton, Wärme oder Geruch wird.",
+          "Ocean: one consciousness, many vortices. Pull dissociation and change the number of minds. Switch to the dashboard and see how the same frequency becomes colour, tone, warmth, or smell."
         );
       },
-      metric: function () { return { label: ["Dissoziation", "dissociation"], value: local.diss + " %", ratio: local.diss / 100 }; },
+      metric: function () {
+        return local.view === "dashboard"
+          ? { label: ["Frequenz", "frequency"], value: local.freq + " %", ratio: local.freq / 100 }
+          : { label: ["Dissoziation", "dissociation"], value: local.diss + " %", ratio: local.diss / 100 };
+      },
       controls: controlsIdeal,
       layout: layoutIdealism,
       enter: function () { renderBubbles(); },
@@ -1241,64 +1243,61 @@
     };
   })();
 
-  /* =====================================================================
-     Mysterianism: the cognitive horizon
-     ===================================================================== */
 
   var MYSTERIAN = (function () {
-    var local = { probe: 16, pushing: 0, reach: 100 };
-    var maze = [];
-    for (var i = 0; i < 48; i++) {
-      maze.push({ x: ((i * 0.37 + 0.05) % 1), y: ((i * 0.61 + 0.08) % 1), len: 0.04 + (i % 5) * 0.025, horiz: i % 2 === 0 });
+    var local = { probe: 18, pushing: 0, reach: 100 };
+    var stars = [];
+    for (var i = 0; i < 54; i++) {
+      stars.push({ x: (i * 0.37 + 0.05) % 1, y: (i * 0.31 + 0.04) % 0.55, r: 0.5 + (i % 3) * 0.5, a: 0.05 + (i % 6) * 0.025 });
     }
 
-    function wallX(w) { return w * 0.79; }
-    function probeX(w) { return w * 0.11 + (local.probe / 100) * (wallX(w) - w * 0.13); }
+    function fogX(w) { return w * 0.78; }
+    function probeX(w) { return w * 0.12 + (local.probe / 100) * (fogX(w) - w * 0.18); }
 
     function updateReach(w) {
-      local.reach = clamp(((wallX(w) - probeX(w)) / (wallX(w) - w * 0.11)) * 100, 0, 100);
+      local.reach = clamp(((fogX(w) - probeX(w)) / (fogX(w) - w * 0.12)) * 100, 0, 100);
     }
 
     function setProbe(v) {
-      local.probe = parseInt(v, 10) || 0;
+      local.probe = clamp(parseInt(v, 10) || 0, 0, 100);
       local.pushing = 0;
       updateReach(world.clientWidth);
       updateMetric();
       narrate(L(
-        local.probe < 30
-          ? "Der Strahl ist weit von der Wand entfernt. Die Erklärung wirkt vollständig."
-          : local.probe < 70
-            ? "Der Strahl kommt näher. Die Auflösung sinkt; die Frage wird größer als die Antwort."
-            : "Der Strahl erreicht die Wand. Dahinter bleibt ein Fragezeichen. Die Wand ist keine empirische Grenze, sondern eine kognitive.",
-        local.probe < 30
-          ? "The beam is far from the wall. The explanation looks complete."
-          : local.probe < 70
-            ? "The beam gets closer. Resolution drops; the question grows larger than the answer."
-            : "The beam reaches the wall. Beyond it, a question mark remains. The wall is not an empirical limit but a cognitive one."
+        local.probe < 35
+          ? "Das Boot ist weit von der Nebelgrenze entfernt. Die Erklärung wirkt vollständig."
+          : local.probe < 72
+            ? "Das Boot kommt näher. Der Scheinwerfer verliert Auflösung; die Frage wird größer als die Antwort."
+            : "Das Boot liegt an der Nebelgrenze. Der Scheinwerfer wird geschluckt. Dahinter bleibt ein Fragezeichen: keine empirische Grenze, sondern eine kognitive.",
+        local.probe < 35
+          ? "The boat is far from the fog boundary. The explanation looks complete."
+          : local.probe < 72
+            ? "The boat gets closer. The searchlight loses resolution; the question grows larger than the answer."
+            : "The boat is at the fog boundary. The searchlight is swallowed. Beyond it, a question mark remains: not an empirical limit but a cognitive one."
       ));
     }
 
     function tryExplain() {
       local.pushing = performance.now();
       narrate(L(
-        "Der Strahl wird zur Wand geschickt. Er wird feiner, dann dünner, dann undeutlich. Die Wand bleibt.",
-        "The beam is sent toward the wall. It gets finer, then thinner, then indistinct. The wall stays."
+        "Das Boot fährt zur Grenze. Der Scheinwerfer wird feiner, dann dünner, dann undeutlich. Die Nebelwand bleibt.",
+        "The boat moves toward the boundary. The searchlight gets finer, then thinner, then indistinct. The fog wall stays."
       ));
     }
 
     function resetMyst() {
-      local.probe = 16;
+      local.probe = 18;
       local.pushing = 0;
       updateReach(world.clientWidth);
       updateMetric();
       renderControls();
-      narrate(L("Zurückgesetzt: der Strahl steht wieder weit vor der Grenze.", "Reset: the beam is far from the limit again."));
+      narrate(L("Zurückgesetzt: das Boot steht wieder weit vor der Nebelgrenze.", "Reset: the boat is far from the fog boundary again."));
     }
 
     function controlsMyst(el) {
       el.innerHTML =
-        '<label class="t2-range th-range"><span>' + L("Strahl", "Beam") + '</span><input type="range" id="myst-probe" min="0" max="100" step="1" value="' + local.probe + '"><output>' + local.probe + ' %</output></label>' +
-        '<button type="button" class="proto-btn proto-btn--primary" data-myst-try>' + L("Erklärung versuchen", "Try an explanation") + '</button>' +
+        '<label class="t2-range th-range"><span>' + L("Nähe zur Grenze", "Proximity to the limit") + '</span><input type="range" id="myst-probe" min="0" max="100" step="1" value="' + local.probe + '"><output>' + local.probe + ' %</output></label>' +
+        '<button type="button" class="proto-btn proto-btn--primary" data-myst-try>' + L("Zur Grenze fahren", "Sail to the boundary") + '</button>' +
         '<button type="button" class="proto-btn proto-btn--ghost" data-myst-reset>' + L("Reset", "Reset") + '</button>';
       var slider = el.querySelector("#myst-probe");
       slider.addEventListener("input", function () {
@@ -1311,127 +1310,188 @@
 
     function drawMysterian(ctx, w, h, dt, now) {
       var accent = css("--th-accent", "#9fb0b8");
+      var gold = color("--gold", "#e3be62");
       var rose = color("--rose", "#e3898c");
-      var horizon = h * 0.72;
-      var wx = wallX(w);
-      maze.forEach(function (m) {
+      var sky = color("--sky", "#7fb4e6");
+      var horizon = h * 0.64;
+      var fx = fogX(w);
+      var time = now * 0.001;
+
+      var skyGrad = ctx.createLinearGradient(0, 0, 0, horizon);
+      skyGrad.addColorStop(0, "#071018");
+      skyGrad.addColorStop(1, "#10242c");
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, horizon);
+      stars.forEach(function (s) {
         ctx.beginPath();
-        if (m.horiz) {
-          ctx.moveTo(m.x * w, m.y * h);
-          ctx.lineTo(m.x * w + m.len * w, m.y * h);
-        } else {
-          ctx.moveTo(m.x * w, m.y * h);
-          ctx.lineTo(m.x * w, m.y * h + m.len * h);
+        ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(223,231,233,0.85)";
+        ctx.globalAlpha = s.a * (0.65 + 0.35 * Math.sin(time * 1.4 + s.x * 12));
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      var sea = ctx.createLinearGradient(0, horizon, 0, h);
+      sea.addColorStop(0, "#0d2630");
+      sea.addColorStop(1, "#040c10");
+      ctx.fillStyle = sea;
+      ctx.fillRect(0, horizon, w, h - horizon);
+
+      for (var band = 0; band < 9; band++) {
+        var y = horizon + (h - horizon) * (band / 9) * 1.05;
+        ctx.beginPath();
+        for (var x = 0; x <= w; x += 8) {
+          var yy = y + Math.sin(x * 0.012 + time * (0.7 + band * 0.08) + band) * (1.2 + band * 0.5);
+          if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
         }
-        ctx.strokeStyle = accent;
-        ctx.globalAlpha = 0.08;
+        ctx.strokeStyle = sky;
+        ctx.globalAlpha = 0.05 + band * 0.012;
         ctx.lineWidth = 1;
         ctx.stroke();
         ctx.globalAlpha = 1;
-      });
-      ctx.beginPath();
-      ctx.moveTo(0, horizon);
-      ctx.lineTo(w, horizon);
-      ctx.strokeStyle = accent;
-      ctx.globalAlpha = 0.25;
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-      var wallTop = h * 0.16, wallBottom = h * 0.88;
-      var wallGrad = ctx.createLinearGradient(wx, 0, wx + 40, 0);
-      wallGrad.addColorStop(0, "rgba(159,176,184,0.32)");
-      wallGrad.addColorStop(1, "rgba(159,176,184,0.02)");
-      ctx.fillStyle = wallGrad;
-      ctx.fillRect(wx, wallTop, 40, wallBottom - wallTop);
-      ctx.beginPath();
-      ctx.moveTo(wx, wallTop);
-      ctx.lineTo(wx, wallBottom);
-      ctx.strokeStyle = accent;
-      ctx.globalAlpha = 0.65;
-      ctx.lineWidth = 2;
-      ctx.shadowColor = accent;
-      ctx.shadowBlur = 18;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 1;
+      }
+
       if (local.pushing) {
-        var p = clamp((now - local.pushing) / 1500, 0, 1);
-        local.probe = T2.lerp(local.probe, 96, Math.min(1, dt * 1.7));
+        local.probe = T2.lerp(local.probe, 94, Math.min(1, dt * 1.5));
         var slider = document.getElementById("myst-probe");
         if (slider) {
           slider.value = String(Math.round(local.probe));
           var out = slider.nextElementSibling;
           if (out) out.textContent = Math.round(local.probe) + " %";
         }
-        if (p >= 1) {
-          local.probe = 96;
+        if ((now - local.pushing) / 1800 >= 1) {
+          local.probe = 94;
           local.pushing = 0;
           narrate(L(
-            "Die Wand bleibt. Der Strahl verliert an Auflösung, je näher er kommt. Der Mysterianismus ist keine Erklärung; er behauptet, dass die Erklärung außerhalb unserer kognitiven Reichweite liegt.",
-            "The wall stays. The beam loses resolution as it gets closer. Mysterianism is not an explanation; it claims that the explanation lies beyond our cognitive reach."
+            "Die Nebelwand bleibt. Der Scheinwerfer verliert an Auflösung, je näher das Boot kommt. Der Mysterianismus ist keine Erklärung; er behauptet, dass die Erklärung außerhalb unserer kognitiven Reichweite liegt.",
+            "The fog wall stays. The searchlight loses resolution as the boat gets closer. Mysterianism is not an explanation; it claims that the explanation lies beyond our cognitive reach."
           ));
         }
       }
       updateReach(w);
-      var px = probeX(w);
+      var bx = probeX(w);
+      var by = horizon + 10;
+
+      ctx.fillStyle = "rgba(227,137,140,0.10)";
       ctx.beginPath();
-      ctx.moveTo(w * 0.11, horizon);
-      ctx.lineTo(px, horizon);
+      ctx.ellipse(bx, horizon + 7, 42, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(bx, by);
+      ctx.fillStyle = "#0a161b";
       ctx.strokeStyle = accent;
-      ctx.globalAlpha = 0.25;
-      ctx.setLineDash([3, 5]);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(-30, 0);
+      ctx.quadraticCurveTo(0, 13, 30, 0);
+      ctx.lineTo(22, 7);
+      ctx.quadraticCurveTo(0, 16, -22, 7);
+      ctx.closePath();
+      ctx.fill();
       ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.globalAlpha = 1;
-      var res = 1 - local.probe / 100 * 0.82;
-      var steps = Math.max(6, Math.round(38 * res));
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -34);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, -34);
+      ctx.lineTo(17, -24);
+      ctx.lineTo(0, -14);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(227,190,98,0.2)";
+      ctx.fill();
+      ctx.strokeStyle = gold;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, -40, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = gold;
+      ctx.shadowColor = gold;
+      ctx.shadowBlur = 22;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      var beamAlpha = clamp(1 - local.probe / 135, 0.12, 0.9);
+      var spread = h * 0.12;
+      var beam = ctx.createLinearGradient(bx, by - 40, fx, by - 40);
+      beam.addColorStop(0, "rgba(227,190,98," + (0.24 * beamAlpha).toFixed(3) + ")");
+      beam.addColorStop(0.7, "rgba(227,190,98," + (0.08 * beamAlpha).toFixed(3) + ")");
+      beam.addColorStop(1, "rgba(227,190,98,0)");
+      ctx.fillStyle = beam;
+      ctx.beginPath();
+      ctx.moveTo(bx, by - 40);
+      ctx.lineTo(fx, by - 40 - spread);
+      ctx.lineTo(fx, by - 40 + spread);
+      ctx.closePath();
+      ctx.fill();
+
+      var res = clamp(1 - local.probe / 100 * 0.8, 0.15, 1);
+      var steps = Math.max(5, Math.round(34 * res));
       for (var i = 0; i < steps; i++) {
         var t = i / (steps - 1);
-        var x = T2.lerp(px, wx, t);
-        var jitter = (1 - res) * Math.sin(t * 30 + now * 0.01) * 6 * t;
+        var x = T2.lerp(bx, fx, t);
+        var y = by - 40 + (1 - res) * Math.sin(t * 31 + now * 0.009) * 9 * t;
         ctx.beginPath();
-        ctx.arc(x, horizon + jitter, 1.8, 0, Math.PI * 2);
-        ctx.fillStyle = i === steps - 1 ? rose : accent;
-        ctx.globalAlpha = 0.18 + 0.55 * (1 - t * 0.7);
+        ctx.arc(x, y, 1.7, 0, Math.PI * 2);
+        ctx.fillStyle = i === steps - 1 ? rose : gold;
+        ctx.globalAlpha = 0.12 + 0.5 * (1 - t * 0.65) * beamAlpha;
         ctx.fill();
         ctx.globalAlpha = 1;
       }
+
+      var fog = ctx.createLinearGradient(fx - 70, 0, fx + 90, 0);
+      fog.addColorStop(0, "rgba(159,176,184,0)");
+      fog.addColorStop(0.45, "rgba(159,176,184,0.14)");
+      fog.addColorStop(1, "rgba(159,176,184,0.3)");
+      ctx.fillStyle = fog;
+      ctx.fillRect(fx - 70, 0, 160, h);
+      for (var f = 0; f < 9; f++) {
+        ctx.beginPath();
+        ctx.arc(fx - 10 + (f % 3) * 22, horizon - 40 + f * 18 + Math.sin(time + f) * 6, 40 + (f % 4) * 14, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(159,176,184,0.035)";
+        ctx.fill();
+      }
       ctx.beginPath();
-      ctx.arc(px, horizon, 7, 0, Math.PI * 2);
-      ctx.fillStyle = rose;
-      ctx.shadowColor = rose;
-      ctx.shadowBlur = 24;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.strokeStyle = "rgba(255,255,255,.75)";
+      ctx.moveTo(fx, h * 0.12);
+      ctx.lineTo(fx, h * 0.9);
+      ctx.strokeStyle = accent;
+      ctx.globalAlpha = 0.18;
       ctx.lineWidth = 1.2;
+      ctx.setLineDash([2, 8]);
       ctx.stroke();
-      ctx.fillStyle = "rgba(223,231,233,0.65)";
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+
+      var q = document.querySelector(".th-myst-question");
+      if (q) q.style.opacity = String(0.32 + local.probe / 100 * 0.5);
+      ctx.fillStyle = "rgba(223,231,233,0.55)";
       ctx.font = '600 10px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(L("Erklärung", "explanation"), px + 12, horizon - 12);
+      ctx.fillText(L("Erklärung", "explanation"), bx - 26, by - 58);
     }
 
     return {
       name: function () { return L("Mysterianismus", "Mysterianism"); },
       about: function () {
         return L(
-          "Bewusstsein könnte eine kognitive Grenze sein: Ratten lernen ein Labyrinth, aber keine Gleichungen. Die Wand markiert die Grenze unserer Erklärbarkeit, nicht eine Antwort. Der Mysterianismus ist nicht falsifizierbar und liefert keine Erklärung; er verschiebt die Frage in unsere Erkenntnisgrenzen.",
-          "Consciousness may be a cognitive limit: rats learn a maze but not equations. The wall marks the limit of our explainability, not an answer. Mysterianism is not falsifiable and offers no explanation; it moves the question into our cognitive limits."
+          "Bewusstsein könnte eine kognitive Grenze sein: Ratten lernen ein Labyrinth, aber keine Gleichungen. Das Boot fährt mit seinem Scheinwerfer bis zur Nebelgrenze; je näher es kommt, desto weniger Auflösung bleibt. Die Grenze ist keine empirische Wand, sondern die Grenze unserer Erklärbarkeit.",
+          "Consciousness may be a cognitive limit: rats learn a maze but not equations. The boat sails with its searchlight to the fog boundary; the closer it gets, the less resolution remains. The limit is not an empirical wall but the limit of our explainability."
         );
       },
       defaultText: function () {
         return L(
-          "Der Strahl kommt näher und verliert Auflösung. Die Wand bleibt. Versuche, sie zu verschieben, und beobachte, was mit der Erklärung passiert.",
-          "The beam gets closer and loses resolution. The wall stays. Try to move it and watch what happens to the explanation."
+          "Das Boot fährt zur Nebelgrenze. Der Scheinwerfer verliert Auflösung, die Frage bleibt. Versuche, näher zu kommen, und beobachte, was mit der Erklärung passiert.",
+          "The boat moves to the fog boundary. The searchlight loses resolution, the question remains. Try to get closer and watch what happens to the explanation."
         );
       },
       metric: function () { return { label: ["Erreichbarkeit", "reachability"], value: Math.round(local.reach) + " %", ratio: local.reach / 100 }; },
       controls: controlsMyst,
-      enter: function () { updateMetric(); },
+      enter: function () { updateReach(world.clientWidth); updateMetric(); },
       draw: drawMysterian
     };
   })();
+
 
   /* =====================================================================
      Shared shell
