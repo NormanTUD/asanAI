@@ -385,7 +385,7 @@
       ctx.fillText(nodeSub, nodeX, nodeY + 13);
       V.label(ctx, nodeAbove, nodeX, nodeY - nodeR - 24, { font: '700 ' + fontPx(1.05, 10) + 'px "Barlow", sans-serif', color: C.petrol, align: "center" });
       V.label(ctx, nodeBelow, nodeX, nodeY + nodeR + 22, { font: '600 ' + fontPx(0.95, 9) + 'px "Open Sans", sans-serif', color: C.petrol, align: "center" });
-      V.label(ctx, DE ? "lila = Rauschen" : "lilac = noise", w - 14, h - 12, { font: '600 ' + fontPx(0.9, 9) + 'px "Open Sans", sans-serif', color: C.lilac, align: "right", bg: false });
+      V.label(ctx, DE ? (isLang ? "lila = Rauschen (Aufgabe: Bedeutung)" : "lila = Rauschen (Aufgabe: Algorithmus)") : (isLang ? "lilac = noise (task: meaning)" : "lilac = noise (task: algorithm)"), w - 14, h - 12, { font: '600 ' + fontPx(0.9, 9) + 'px "Open Sans", sans-serif', color: C.lilac, align: "right", bg: false });
       var headingSize = Math.max(10, Math.min(12, w * 0.016));
       var spaceTitle = w < 520
         ? (DE ? "Embedding-Raum" : "Embedding space")
