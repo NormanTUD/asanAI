@@ -75,15 +75,19 @@ file after every completed item.
      ends on the slide (IBM 704, Mark I, Charles Wightman, R. D. Joseph, 1971).
    - Facts and legally usable images were pulled from `../history.php`; credits
      stay in the captions.
-10. **Agent-RAG onboarding** — open
-    - Make it much clearer that the reader must click Next to advance; the
-      current state can look stuck.
-    - Show and briefly explain each background step as it happens (upload,
-      chunking, scoring, invisible context, answer) without overloading the
-      slide.
-11. **Agent tools window** — open
-    - Make “Ein Agent ist dasselbe Modell mit Werkzeugen” immersive again, using
-      the agent window from slide 1.
+10. **Agent-RAG onboarding** — done
+    - The slide now has a local “Weiter” button that starts the upload and names
+      the next background step; the status line explains each step in place.
+11. **Agent tools window** — done
+    - “Ein Agent ist dasselbe Modell mit Werkzeugen” now uses the chat-window
+      look from slide 1 (bubbles, app bar, compose field).
+12. **learnsys-texts — remaining groups** — open
+    - The 16 DE/EN prose bodies are translated and applied; the group/source
+      trees and the ambiguous 2.3, 8.1, 9.0, 11.3–11.6 entries remain.
+13. **Drei Dimensionen — Next to Richtungen** — done
+    - Next walks the examples and ends in the bare-arrow “Richtungen” view.
+    - The word `<select>` was removed; words are chosen by clicking the canvas
+      or the mini table.
 
 ## Notes
 

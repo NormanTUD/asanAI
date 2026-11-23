@@ -3893,3 +3893,19 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 }
 .ls-ar-next{padding:5px 8px;border:1px solid var(--ls-green);background:var(--ls-green);color:#fff;font:700 var(--ls-fs-micro) "Open Sans",sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
 .ls-ar-next:hover{background:#558c3f;border-color:#558c3f}
+/* Agent tools: context as a chat window like slide 1 */
+.ls-agents-col.is-chat{border-radius:18px;background:linear-gradient(180deg,#fbfcfe,#eef2f8);box-shadow:0 14px 34px rgba(0,30,40,.08);overflow:hidden}
+.ls-agents-col.is-chat .ls-agents-col-head{background:rgba(255,255,255,.72);padding:8px 12px}
+.ls-agents-col.is-chat .ls-agents-col-head b{font-size:var(--ls-fs-ui-sm)}
+.ls-agents-col.is-chat .ls-agents-context{padding:10px;gap:8px}
+.ls-agents-col.is-chat .ls-agents-msg{max-width:94%;border:0;border-radius:12px;background:#fff;box-shadow:0 1px 4px rgba(15,23,42,.08);padding:7px 9px}
+.ls-agents-col.is-chat .ls-agents-msg.is-user{align-self:flex-end;background:var(--ls-blue);color:#fff;border-bottom-right-radius:3px}
+.ls-agents-col.is-chat .ls-agents-msg.is-user b{color:rgba(255,255,255,.72)}
+.ls-agents-col.is-chat .ls-agents-msg.is-model{align-self:flex-start;border-bottom-left-radius:3px}
+.ls-agents-col.is-chat .ls-agents-msg.is-final{align-self:flex-start;border-bottom-left-radius:3px;background:rgba(99,164,75,.10);border-left:0;border-bottom:2px solid var(--ls-green)}
+.ls-agents-col.is-chat .ls-agents-msg .ls-agents-tool{display:block;margin-top:3px;padding:3px 5px;border-radius:6px;background:rgba(0,75,111,.06);font:600 8px/1.35 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;color:var(--ls-petrol);overflow-wrap:anywhere}
+.ls-agents-col.is-chat .ls-agents-msg.is-user .ls-agents-tool{background:rgba(255,255,255,.16);color:#fff}
+.ls-agents-col.is-chat .ls-agents-image{display:inline-block;margin-top:3px;padding:2px 5px;border:1px solid rgba(0,75,111,.18);border-radius:6px;background:rgba(255,255,255,.7);font:600 8px/1.3 "Open Sans",sans-serif;color:var(--ls-petrol)}
+.ls-agents-compose{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 8px 8px;padding:6px 9px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px #dfe1e5;font:10px "Open Sans",sans-serif;color:#9aa0a6}
+.ls-agents-compose i{display:block;width:14px;height:14px;border-radius:50%;background:var(--ls-blue);opacity:.6}
+@media (max-width:640px){.ls-agents-col.is-chat{min-height:300px}}
