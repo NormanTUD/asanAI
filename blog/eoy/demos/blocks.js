@@ -523,10 +523,10 @@
       var resetBtn = host.querySelector(".ls-bs-traj-reset");
       var readout = host.querySelector(".ls-bs-traj-readout");
       var traj = [
-        { label: DE ? "Katze" : "cat", col: "green", pts: [[-0.86, 0.28], [-0.66, 0.44], [-0.48, 0.50], [-0.30, 0.40], [-0.14, 0.52]] },
-        { label: DE ? "Bank" : "bank", col: "gold", pts: [[0.82, -0.32], [0.60, -0.10], [0.40, 0.10], [0.22, 0.24], [0.06, 0.14]] },
-        { label: DE ? "König" : "king", col: "lilac", pts: [[-0.04, -0.50], [0.14, -0.36], [0.32, -0.22], [0.50, -0.30], [0.64, -0.16]] },
-        { label: DE ? "Fluss" : "river", col: "sky", pts: [[0.46, 0.36], [0.28, 0.42], [0.10, 0.34], [-0.04, 0.44], [-0.18, 0.38]] }
+        { label: DE ? "Katze" : "cat", col: "green", pts: [[-0.80, 0.16], [-0.70, 0.34], [-0.62, 0.50], [-0.76, 0.54], [-0.60, 0.48]] },
+        { label: DE ? "Bank" : "bank", col: "gold", pts: [[0.86, -0.34], [0.86, -0.14], [0.84, 0.02], [0.76, 0.08], [0.66, 0.06]] },
+        { label: DE ? "König" : "king", col: "lilac", pts: [[-0.04, -0.50], [-0.16, -0.42], [-0.32, -0.44], [-0.48, -0.52], [-0.64, -0.44]] },
+        { label: DE ? "Fluss" : "river", col: "sky", pts: [[0.44, 0.30], [0.50, 0.42], [0.58, 0.48], [0.64, 0.42], [0.72, 0.44]] }
       ];
       var state = { step: 0, from: 0, to: 0, t: 1 };
       var raf = 0, size = null, trajHits = [], trajHover = -1, queue = [];
