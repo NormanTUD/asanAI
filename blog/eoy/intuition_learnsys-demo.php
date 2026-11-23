@@ -30,7 +30,7 @@ $labels = [
 	'gradient' => 'Gradient', 'riskmap' => 'AI and society', 'limitslab' => 'Grenzen-Prüfstand',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room',
 	'consciousness' => 'Bewusstsein',
-	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz', 'takeaway' => 'Takeaway', 'inductionmatrix' => 'Induktions-Tabelle', 'weekday' => 'Wochentage', 'mindintro' => 'Bewusstseinsfrage', 'roadmap' => 'Roadmap', 'spacetime' => 'Raum und Zeit', 'worldmodel' => 'Weltmodell',
+	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz', 'takeaway' => 'Takeaway', 'weekday' => 'Wochentage', 'mindintro' => 'Bewusstseinsfrage', 'roadmap' => 'Roadmap', 'spacetime' => 'Raum und Zeit', 'worldmodel' => 'Weltmodell',
 ];
 function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 ?>

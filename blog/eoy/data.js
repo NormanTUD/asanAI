@@ -2187,8 +2187,8 @@
     kicker: DE ? "Induction" : "Induction",
     title: DE ? "Was folgt auf „Hund“?" : "What follows “dog”?",
     teaser: DE
-      ? "Das Netzwerk lernt, wann es auf früher Geschriebenes zurückgreifen und es einfach kopieren kann. Im Beispiel: Auf das erste „Hund“ folgte „bellt“; steht später wieder „Hund“, kann das Modell „bellt“ von dort übernehmen.\n\nSchicht 1 (Previous-Token-Head) legt dafür eine Art Adressetikett an. An der Stelle von „bellt“ steht danach der Key „davor: Hund“. Das ist kein geschriebener Text, sondern eine gelernte Richtung im Vektor: „Mein Vorgänger war Hund“.\n\nSchicht 2 (Induction-Head) vergleicht die Query des aktuellen „Hund“ mit diesen Keys. „davor: Hund“ passt. Diese Stelle bekommt dadurch ein hohes Attention-Gewicht, im Bild 74 %. Das Gewicht addiert den Wert an dieser Stelle, also „bellt“, in den aktuellen Vektor. Dadurch verschiebt sich der Gedanke in Richtung „bellt“, und dessen Prozentzahl steigt.\n\nDer OV-Teil des Heads ist der Kopierer: OV ist die gelernte Abbildung vom besuchten Wert zum Output. QK entscheidet, wohin geschaut wird; OV entscheidet, was übernommen wird. Schicht 1 baut den Key, Schicht 2 findet ihn, OV kopiert den Wert. Allein geht das nicht: Schicht 1 sagt noch nichts voraus, und Schicht 2 hätte ohne die Keys aus Schicht 1 nichts zu vergleichen.\n\nWofür? So kann das Modell ein Muster aus dem Text fortsetzen, ohne eine Tabelle; das ist ein Baustein des In-Context-Lernens."
-      : "The network learns when to fall back on earlier text and simply copy it. Example: the first “dog” was followed by “barks”; when “dog” appears again later, the model can take “barks” from there.\n\nLayer 1 (previous-token head) writes a kind of address label. At the position of “barks” the key then says “before: dog”. That is not written text but a learned direction in the vector: “my predecessor was dog”.\n\nLayer 2 (induction head) compares the query of the current “dog” with these keys. “before: dog” matches. That position therefore gets a high attention weight, 74 % in the picture. The weight adds the value at that position, “barks”, into the current vector. This shifts the thought toward “barks”, and its probability rises.\n\nThe OV part of the head is the copier: OV is the learned map from the attended value to the output. QK decides where to look; OV decides what is taken. Layer 1 builds the key, layer 2 finds it, OV copies the value. Neither works alone: layer 1 does not predict anything yet, and layer 2 would have nothing to compare without the keys from layer 1.\n\nWhy? This lets the model continue a pattern from the text without a table; it is a building block of in-context learning.",
+      ? "Das Netzwerk lernt, wann es auf früher Geschriebenes zurückgreifen und es einfach kopieren kann. Im Beispiel folgte auf das erste „Hund“ ein „bellt“; steht später wieder „Hund“, kann das Modell „bellt“ von dort übernehmen."
+      : "The network learns when to fall back on earlier text and simply copy it. In the example, the first “dog” was followed by “barks”; when “dog” appears again later, the model can take “barks” from there.",
     watch: DE ? "Lies den Beispieltext links. Verfolge, was Schicht 1 allein macht, was Schicht 2 allein, und was beide zusammen vorhersagen." : "Read the example text on the left. Follow what layer 1 does alone, what layer 2 does alone, and what both predict together.",
     demoState: { scene: "induction", mode: "sequence" },
     context: DE ? "Der Kopf liest keine Bedeutung. Er vergleicht gelernte Vektoren: Wenn zwei Stellen ähnlich genug sind, schaut er dorthin." : "The head does not read meaning. It compares learned vectors: when two places are similar enough, it looks there.",
@@ -2209,24 +2209,6 @@
     { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK/OV-Zerlegung und K-Composition.", en: "QK/OV decomposition and K-composition." } },
     { label: "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models", url: "https://arxiv.org/abs/2405.00208", why: { de: "Mechanismen von Previous-Token- und Induktionsköpfen.", en: "Mechanisms of previous-token and induction heads." } }
   ];
-
-  var inductionMatrix = {
-    kicker: DE ? "Attention-Matrix" : "Attention matrix",
-    title: DE ? "Attention-Gewichte: Wo liest A?" : "Attention weights: where does A read?",
-    body: DE
-      ? "Die Tabelle zeigt dieselbe Sequenz als Attention-Matrix. Jede Zeile ist ein Token, das fragt; jede Spalte ein Token, das gelesen wird. Zeile 6 ist das aktuelle A: Es liest 82 % von B an Position 4. Genau dieses B kopiert der OV-Schaltkreis. Klicke eine Zeile, um die Perspektive zu wechseln.\n\nA und B sind Tokens, keine Zahlen mit Bedeutung. Ihre IDs sind nur Indizes in die gelernte Embedding-Tabelle; QK und OV sind gelernte Matrizen auf den Vektoren."
-      : "The table shows the same sequence as an attention matrix. Each row is a token asking; each column is a token being read. Row 6 is the current A: it reads 82% from B at position 4. That is exactly the B the OV circuit copies. Click a row to change the perspective.\n\nA and B are tokens, not numbers with meaning. Their IDs are only indices into the learned embedding table; QK and OV are learned matrices on the vectors.",
-    watch: "",
-    demoState: { scene: "inductionmatrix" },
-    context: DE ? "Hohe Werte sind gelernte Aufmerksamkeitsgewichte, keine statistische Korrelation. Sie zeigen, wohin der Kopf liest." : "High values are learned attention weights, not statistical correlation. They show where the head reads.",
-    deep: DE ? "QK berechnet die Scores; Softmax normiert jede Zeile auf 100 %. OV kopiert den Value der gewählten Spalte. Die Tabelle ist illustrativ; echte Modelle haben viele Heads und tausende Dimensionen." : "QK computes the scores; softmax normalises each row to 100%. OV copies the value of the chosen column. The table is illustrative; real models have many heads and thousands of dimensions.",
-    boxes: [
-      box("ix-1", DE ? "Lesen" : "Reading", DE ? "Zeile fragt, Spalte antwortet" : "Row asks, column answers", DE ? "Die Zeile gehört zum aktuellen Token, die Spalte zu dem Token, das es liest. Die Summe jeder Zeile ist 100 %." : "The row belongs to the current token, the column to the token it reads. Each row sums to 100%."),
-      box("ix-2", DE ? "Kopieren" : "Copying", DE ? "Hohe α bei B" : "High α at B", DE ? "Eine hohe Aufmerksamkeit bei B heißt: Der OV-Schaltkreis kopiert den Value von B an die neue Stelle. Es heißt nicht, dass B wahr ist." : "High attention at B means the OV circuit copies B's value to the new position. It does not mean B is true."),
-      box("ix-3", DE ? "Grenze" : "Limit", DE ? "Was ist illustrativ?" : "What is illustrative?", DE ? "Die konkreten Prozentwerte sind didaktisch. Entscheidend ist die Struktur: Zeile 6 liest die Stelle, an der nach dem früheren A das B stand." : "The concrete percentages are didactic. What matters is the structure: row 6 reads the position where B stood after the earlier A.")
-    ],
-    sources: inductionSequence.sources
-  };
 
   var inductionCopy = {
     kicker: DE ? "Mechanik" : "Mechanics",
@@ -2300,7 +2282,7 @@
   var inductionStep = {
     kicker: DE ? "In-Context" : "In-context",
     title: DE ? "Induktionsköpfe" : "Induction heads",
-    substeps: [inductionSequence, inductionMatrix, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence, headConcatSubstep]
+    substeps: [inductionSequence, inductionCopy, inductionCircuit, inductionHeads, inductionEmergence, headConcatSubstep]
   };
 
   var spacetimeSpace = {

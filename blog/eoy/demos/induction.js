@@ -291,8 +291,8 @@
         font: '700 11.5px "Barlow", "Open Sans", sans-serif'
       });
       wrapText(c, DE
-        ? "Das Modell schaut nach, was beim letzten Mal nach „Hund“ kam, und setzt das Muster fort. Es braucht dafür keine Tabelle, nur diese zwei Schritte. Das ist ein Baustein des In-Context-Lernens."
-        : "The model looks up what followed “dog” last time and continues the pattern. It needs no table for this, only these two steps. That is a building block of in-context learning.",
+        ? "Das Modell setzt ein Muster aus dem Text fort, ohne eine Tabelle. Das ist ein Baustein des In-Context-Lernens."
+        : "The model continues a pattern from the text without a table. That is a building block of in-context learning.",
         x + 12, y + yOff + 38, w - 24, 15, { size: 10, color: C.soft });
     }
 
@@ -399,34 +399,55 @@
 
     function drawLayer2PanelAlone(c, x, y, w, h, tok, pred, small) {
       var top = infoPanel(c, x, y, w, h, DE ? "Schicht 2 allein" : "Layer 2 alone", "Induction-Head", C.gold, small);
-      wrapText(c, DE ? "Vergleicht die Query mit den Keys. Der passende Key bekommt hohes Gewicht." : "Compares the query with the keys. The matching key gets a high weight.", x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
-      var rowY = y + h * 0.48;
-      var size = small ? 9.5 : 11;
-      var chipH = size * 1.9;
-      var eCx = x + w * 0.16;
-      var pCx = x + w * 0.44;
-      var ellCx = x + w * 0.62;
-      var cCx = x + w * 0.83;
-      textPill(c, tok, eCx, rowY, C.green, true, size);
-      textPill(c, pred, pCx, rowY, C.sky, true, size);
-      txt(c, "…", ellCx, rowY, { align: "center", size: size, color: C.muted });
-      textPill(c, tok, cCx, rowY, C.gold, true, size);
-      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, pCx, rowY - chipH / 2 - 12, C.sky, false, small ? 8 : 9);
-      txt(c, (DE ? "Query: " : "query: ") + tok, cCx, rowY - chipH / 2 - 12, {
-        align: "center", size: small ? 8 : 9, color: C.gold,
-        font: '700 ' + (small ? 8 : 9) + 'px "Open Sans", sans-serif', bg: C.paper2, bgAlpha: 0.85
+      txt(c, DE ? "Query „" + tok + "“ (6) liest die Keys." : "Query “" + tok + "” (6) reads the keys.", x + 10, top + 9, {
+        size: small ? 8 : 8.8, color: C.soft
       });
-      attnArc(c, cCx, rowY + chipH / 2, pCx, rowY + chipH / 2, C.gold, DE ? "trifft den Key · 74 %" : "meets key · 74 %", small, small ? 16 : 22);
-      txt(c, DE ? "Hohes Gewicht heißt: Diese Stelle zählt jetzt stark." : "High weight means: this position now counts strongly.", x + 10, y + h - 10, {
-        size: small ? 7.2 : 8, color: C.muted
+      var tokens = ["A", "B", "C", "A", "B", "C", "A"];
+      var weights = [0.01, 0.06, 0.01, 0.03, 0.82, 0.01, 0.06];
+      var n = tokens.length;
+      var colW = Math.min(52, (w - 20) / n);
+      var startX = x + (w - n * colW) / 2;
+      var rowY = y + h * 0.46;
+      var chipSize = small ? 8.5 : 9.5;
+      var chipTop = rowY - chipSize * 0.95;
+      for (var i = 0; i < n; i++) {
+        var cx = startX + i * colW + colW / 2;
+        var col = i === 6 ? C.gold : i === 4 ? C.sky : i === 3 ? C.green : C.lineStrong;
+        textPill(c, tokens[i], cx, rowY, col, i === 6 || i === 4 || i === 3, chipSize);
+      }
+      var cx4 = startX + 4 * colW + colW / 2;
+      var cx6 = startX + 6 * colW + colW / 2;
+      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, cx4, chipTop - 11, C.sky, false, small ? 7.4 : 8.2);
+      txt(c, (DE ? "Query: " : "query: ") + tok, cx6, chipTop - 11, {
+        align: "center", size: small ? 7.4 : 8.2, color: C.gold,
+        font: '700 ' + (small ? 7.4 : 8.2) + 'px "Open Sans", sans-serif', bg: C.paper2, bgAlpha: 0.85
+      });
+      var barTop = rowY + chipSize * 0.95 + 7;
+      var barMax = Math.max(14, h * 0.16);
+      var labelY = barTop + barMax + 9;
+      for (var i = 0; i < n; i++) {
+        var bx = startX + i * colW + colW / 2;
+        var bh = Math.max(2, weights[i] / 0.82 * barMax);
+        c.save();
+        c.fillStyle = i === 4 ? C.gold : V.alpha(C.sky, i === 3 ? 0.35 : 0.5);
+        c.fillRect(bx - 3.5, barTop, 7, bh);
+        c.restore();
+        txt(c, Math.round(weights[i] * 100) + "%", bx, labelY, {
+          align: "center", size: small ? 6.4 : 7.2, color: i === 4 ? C.gold : C.muted,
+          font: '700 ' + (small ? 6.4 : 7.2) + 'px "Open Sans", sans-serif'
+        });
+      }
+      txt(c, DE ? "Die Zeile summiert zu 100 %. QK wählt Position 4." : "The row sums to 100 %. QK selects position 4.", x + 10, y + h - 10, {
+        size: small ? 7 : 7.8, color: C.muted
       });
     }
+
 
     function drawTogetherPanel(c, x, y, w, h, tok, pred, small) {
       var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "Gewicht addieren & kopieren" : "add weight & copy", C.petrol, small);
       wrapText(c, DE
-        ? "Das Gewicht addiert den Wert der Trefferstelle zum aktuellen Vektor. Der OV-Teil kopiert ihn."
-        : "The weight adds the value at the match to the current vector. The OV part copies it.",
+        ? "Schicht 1 baut den Key, Schicht 2 findet ihn. Das Gewicht addiert den Wert dort; der OV-Teil kopiert ihn."
+        : "Layer 1 builds the key, layer 2 finds it. The weight adds the value there; the OV part copies it.",
         x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
       var rowY = y + h * 0.56;
       var size = small ? 9.5 : 11;
@@ -438,7 +459,7 @@
       var chipH = size * 1.9;
       textPill(c, pred, pCx, rowY, C.sky, true, size);
       textPill(c, pred, oCx, rowY, C.gold, true, size);
-      txt(c, DE ? "Wert dort · 74 %" : "value there · 74 %", pCx, rowY - chipH / 2 - 12, {
+      txt(c, DE ? "Wert dort · 82 %" : "value there · 82 %", pCx, rowY - chipH / 2 - 12, {
         align: "center", size: small ? 7.6 : 8.4, color: C.sky,
         font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
       });
