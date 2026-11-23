@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 21 · Die Überraschungsmaschine</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="ueberraschung.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="21 · Cross-Entropy" data-en="21 · cross-entropy">21 · Cross-Entropy</span>
+      <h1 class="proto-title" data-de="Die Überraschungsmaschine" data-en="The surprise machine">Die Überraschungsmaschine</h1>
+      <p class="proto-lead" data-de="Das wahre nächste Token ist eine Kugel. Die Verteilung des Modells sind Rampen. Je schmaler die Rampe des Ziels, desto größer die Überraschung. Trainieren formt die Rampen um." data-en="The true next token is a ball. The model's distribution is a set of ramps. The narrower the target ramp, the greater the surprise. Training reshapes the ramps.">Das wahre nächste Token ist eine Kugel. Die Verteilung des Modells sind Rampen. Je schmaler die Rampe des Ziels, desto größer die Überraschung. Trainieren formt die Rampen um.</p>
+    </header>
+
+    <section class="proto-stage t2-stage ce-stage" aria-label="Cross-Entropy als Maschine">
+      <div class="t2-hud">
+        <span class="t2-kicker" data-de="Cross-Entropy · Versuch 01" data-en="Cross-entropy · trial 01">Cross-Entropy · Versuch 01</span>
+        <h2 class="t2-hud-title" data-de="Die Überraschungsmaschine" data-en="The surprise machine">Die Überraschungsmaschine</h2>
+        <span class="t2-hud-spacer"></span>
+        <span class="ce-target-label" data-de="Wahres Token" data-en="True token">Wahres Token</span>
+        <div class="t2-pillrow" id="ce-targets" role="group" aria-label="Wahres nächstes Token"></div>
+      </div>
+
+      <div class="ce-main">
+        <div class="ce-machine-wrap">
+          <canvas id="ce-canvas" class="ce-canvas" role="img" aria-label="Fünf Rampen für fünf Kandidaten, eine Kugel fällt in die Rampe des Ziels"></canvas>
+          <div class="ce-machine-caption">
+            <span data-de="Modell: Verteilung über das nächste Token" data-en="Model: distribution over the next token">Modell: Verteilung über das nächste Token</span>
+            <span id="ce-sentence">Die Hauptstadt von Frankreich ist ___</span>
+          </div>
+        </div>
+
+        <aside class="ce-side">
+          <div class="t2-panel ce-gauge">
+            <span class="t2-meta" data-de="Überraschung" data-en="Surprise">Überraschung</span>
+            <div class="ce-gauge-face">
+              <div class="ce-gauge-arc" aria-hidden="true"></div>
+              <div class="ce-needle" id="ce-needle" aria-hidden="true"></div>
+              <span class="ce-gauge-value"><b id="ce-loss">1.90</b><small>nats</small></span>
+            </div>
+            <div class="ce-gauge-scale" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span></div>
+          </div>
+
+          <div class="t2-panel ce-stats">
+            <div><span data-de="p(Ziel)" data-en="p(target)">p(Ziel)</span><b id="ce-p">15 %</b></div>
+            <div><span data-de="Top-Token" data-en="top token">Top-Token</span><b id="ce-top">London</b></div>
+            <div><span data-de="Dein Tipp" data-en="your guess">Dein Tipp</span><b id="ce-guess">—</b></div>
+            <div><span data-de="Ergebnis" data-en="result">Ergebnis</span><b id="ce-guess-result">—</b></div>
+          </div>
+
+          <div class="t2-panel ce-curve-panel">
+            <div class="ce-curve-head"><span class="t2-meta" data-de="Loss-Verlauf" data-en="Loss history">Loss-Verlauf</span><b id="ce-steps">0</b></div>
+            <canvas id="ce-curve" class="ce-curve" role="img" aria-label="Verlauf des Loss über die Trainingsschritte"></canvas>
+          </div>
+        </aside>
+      </div>
+
+      <div class="t2-bottom">
+        <div class="t2-readout" id="ce-readout" aria-live="polite"></div>
+        <div class="t2-controls">
+          <div class="ce-guess-box">
+            <span class="t2-meta" data-de="Dein Tipp für das Top-Token" data-en="Your guess for the top token">Dein Tipp für das Top-Token</span>
+            <div class="t2-pillrow" id="ce-guess-btns" role="group" aria-label="Tipp abgeben"></div>
+          </div>
+          <label class="t2-range ce-temp">
+            <span data-de="Temperatur" data-en="Temperature">Temperatur</span>
+            <input type="range" id="ce-temp" min="0.3" max="2" step="0.1" value="1">
+            <output id="ce-temp-out">1.0</output>
+          </label>
+          <button type="button" class="proto-btn proto-btn--primary" data-ce-drop data-de="Kugel fallen lassen" data-en="Drop the ball">Kugel fallen lassen</button>
+          <button type="button" class="proto-btn" data-ce-train data-de="Trainingsschritt" data-en="Training step">Trainingsschritt</button>
+          <button type="button" class="proto-btn proto-btn--ghost" data-ce-reset data-de="Reset" data-en="Reset">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Zahlen sind illustrativ. Cross-Entropy misst die Überraschung über das wahre Token: <b>−log p(Ziel)</b>. Training verschiebt die Logits in Richtung Ziel; die Rampen werden breiter. Die Maschine ist eine Metapher, keine Messung eines echten Modells." data-en-html="The numbers are illustrative. Cross-entropy measures surprise about the true token: <b>−log p(target)</b>. Training shifts the logits toward the target; the ramps widen. The machine is a metaphor, not a measurement of a real model.">Die Zahlen sind illustrativ. Cross-Entropy misst die Überraschung über das wahre Token: <b>−log p(Ziel)</b>. Training verschiebt die Logits in Richtung Ziel; die Rampen werden breiter. Die Maschine ist eine Metapher, keine Messung eines echten Modells.</p>
+
+    <footer class="proto-foot">
+      <span>21 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="zeitmaschine.html" data-de="Weiter: Zeitmaschine" data-en="Next: time machine">Weiter: Zeitmaschine</a></span>
+    </footer>
+  </main>
+  <script src="kit.js"></script>
+  <script src="ueberraschung.js"></script>
+</body>
+</html>

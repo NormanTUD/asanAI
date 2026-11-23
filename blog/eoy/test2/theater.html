@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 31 · Das Theater des Geistes</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="theater.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="31 · Philosophie" data-en="31 · philosophy">31 · Philosophie</span>
+      <h1 class="proto-title" data-de="Das Theater des Geistes" data-en="The theatre of mind">Das Theater des Geistes</h1>
+      <p class="proto-lead" data-de="Fünf Spezialisten rechnen getrennt. Nur was in den Workspace kommt, wird berichtet, kontrolliert und weiterverarbeitet. Kappe die Leitungen und sieh, was von Zugang und Erleben übrig bleibt." data-en="Five specialists compute separately. Only what reaches the workspace can be reported, controlled, and used downstream. Cut the lines and see what remains of access and experience.">Fünf Spezialisten rechnen getrennt. Nur was in den Workspace kommt, wird berichtet, kontrolliert und weiterverarbeitet. Kappe die Leitungen und sieh, was von Zugang und Erleben übrig bleibt.</p>
+    </header>
+
+    <section class="proto-stage t2-stage theater-stage" aria-label="Das Theater des Geistes">
+      <div class="t2-hud th-hud">
+        <span class="t2-kicker" data-de="Bewusstsein · Versuch 01" data-en="Consciousness · trial 01">Bewusstsein · Versuch 01</span>
+        <h2 class="t2-hud-title" id="th-theory-name" data-de="Global Workspace" data-en="Global workspace">Global Workspace</h2>
+        <span class="t2-hud-spacer"></span>
+        <div class="t2-pillrow" role="tablist" aria-label="Zugang oder Erleben">
+          <button type="button" class="proto-chip is-on" data-th-mode="access" role="tab" aria-selected="true" data-de="Zugang" data-en="Access">Zugang</button>
+          <button type="button" class="proto-chip" data-th-mode="experience" role="tab" aria-selected="false" data-de="Erleben" data-en="Experience">Erleben</button>
+        </div>
+        <span class="t2-sep" aria-hidden="true"></span>
+        <div class="th-phi" title="Phi misst, wie irreduzibel die Ursache-Wirkungs-Struktur ist. Schematisch.">
+          <span class="t2-meta">Phi</span>
+          <b id="th-phi">0.82</b>
+          <div class="t2-meter"><i id="th-phi-bar" style="width:82%"></i></div>
+        </div>
+      </div>
+
+      <div class="th-world" id="th-world" data-theory="workspace" data-mode="access">
+        <canvas id="th-canvas" class="th-canvas" aria-hidden="true"></canvas>
+        <div class="th-vignette" aria-hidden="true"></div>
+
+        <div class="th-workspace" id="th-workspace">
+          <span class="th-ws-kicker" id="th-ws-kicker">Global Workspace</span>
+          <div class="th-ws-ring" aria-hidden="true"></div>
+          <div class="th-ws-core" id="th-ws-core">?</div>
+          <span class="th-ws-note" id="th-ws-note" data-de="niemand sitzt im Zuschauerraum" data-en="no one sits in the audience">niemand sitzt im Zuschauerraum</span>
+        </div>
+
+        <div class="th-modules" aria-label="Spezialisierte Module">
+          <button type="button" class="th-module" data-module="vision">
+            <span class="th-mod-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.8"/></svg>
+            </span>
+            <b data-de="Sehen" data-en="Vision">Sehen</b>
+            <small data-de="visueller Cortex" data-en="visual cortex">visueller Cortex</small>
+          </button>
+
+          <button type="button" class="th-module" data-module="language">
+            <span class="th-mod-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg>
+            </span>
+            <b data-de="Sprache" data-en="Language">Sprache</b>
+            <small data-de="Bericht und Begriff" data-en="report and concept">Bericht und Begriff</small>
+          </button>
+
+          <button type="button" class="th-module" data-module="memory">
+            <span class="th-mod-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h4"/></svg>
+            </span>
+            <b data-de="Gedächtnis" data-en="Memory">Gedächtnis</b>
+            <small data-de="Erinnerung und Erwartung" data-en="recall and expectation">Erinnerung und Erwartung</small>
+          </button>
+
+          <button type="button" class="th-module" data-module="emotion">
+            <span class="th-mod-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20c4-3.2 7-6.1 7-9.5A4.5 4.5 0 0 0 12 7a4.5 4.5 0 0 0-7 3.5C5 13.9 8 16.8 12 20Z"/></svg>
+            </span>
+            <b data-de="Emotion" data-en="Emotion">Emotion</b>
+            <small data-de="Bewertung und Alarm" data-en="valuation and alarm">Bewertung und Alarm</small>
+          </button>
+
+          <button type="button" class="th-module" data-module="motor">
+            <span class="th-mod-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 20v-5a6 6 0 0 1 12 0v5"/><path d="M9 20v-3M15 20v-3"/><circle cx="12" cy="5.5" r="2.2"/></svg>
+            </span>
+            <b data-de="Motor" data-en="Motor">Motor</b>
+            <small data-de="Handlung und Kontrolle" data-en="action and control">Handlung und Kontrolle</small>
+          </button>
+        </div>
+
+        <div class="th-seats" id="th-seats" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <span class="th-seat-label" data-de="Publikum" data-en="audience">Publikum</span>
+        </div>
+
+        <div class="th-art" id="th-art" aria-hidden="true"></div>
+        <p class="th-hint" id="th-hint" data-de="Klick auf ein Modul oder einen Reiz. Der kleine Punkt auf der Leitung kappt sie." data-en="Click a module or a stimulus. The small dot on the line cuts it.">Klick auf ein Modul oder einen Reiz. Der kleine Punkt auf der Leitung kappt sie.</p>
+      </div>
+
+      <div class="t2-bottom">
+        <div class="t2-readout" id="th-readout" aria-live="polite"></div>
+        <div class="t2-controls">
+          <div class="th-stimuli" role="group" aria-label="Reiz wählen">
+            <button type="button" class="proto-chip" data-stim="apple" data-de="Roter Apfel" data-en="Red apple">Roter Apfel</button>
+            <button type="button" class="proto-chip" data-stim="word" data-de="Das Wort" data-en="The word">Das Wort</button>
+            <button type="button" class="proto-chip" data-stim="pain" data-de="Schmerz" data-en="Pain">Schmerz</button>
+          </div>
+          <button type="button" class="proto-btn proto-btn--primary" data-th-broadcast data-de="Broadcast" data-en="Broadcast">Broadcast</button>
+          <button type="button" class="proto-btn proto-btn--ghost" data-th-reset data-de="Reset" data-en="Reset">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="th-theorybar">
+      <div class="th-theory-pills" role="tablist" aria-label="Bewusstseinstheorien">
+        <button type="button" class="proto-chip is-on" data-theory="workspace" role="tab" aria-selected="true">Global Workspace</button>
+        <button type="button" class="proto-chip" data-theory="iit" role="tab" aria-selected="false">IIT · Phi</button>
+        <button type="button" class="proto-chip" data-theory="predictive" role="tab" aria-selected="false" data-de="Predictive Processing" data-en="Predictive processing">Predictive Processing</button>
+        <button type="button" class="proto-chip" data-theory="idealism" role="tab" aria-selected="false" data-de="Analytischer Idealismus" data-en="Analytic idealism">Analytischer Idealismus</button>
+        <button type="button" class="proto-chip" data-theory="mysterian" role="tab" aria-selected="false" data-de="Mysterianismus" data-en="Mysterianism">Mysterianismus</button>
+      </div>
+      <p class="th-theory-about" id="th-theory-about" aria-live="polite"></p>
+    </div>
+
+    <p class="proto-note" data-de-html="Die Bühne ist eine Metapher, keine Messung. Phi ist hier eine schematische Anzeige, kein berechneter Wert. Die Texte folgen den im Kurs zitierten Arbeiten: Baars (1988), Dehaene &amp; Naccache (2001), Tononi (2004/2016), Clark (2013), Friston (2010), Kastrup (2018/2019), McGinn (1989), Chalmers (1995), Nagel (1974), Block (1995)." data-en-html="The stage is a metaphor, not a measurement. Phi is a schematic display here, not a computed value. The texts follow the works cited in the course: Baars (1988), Dehaene &amp; Naccache (2001), Tononi (2004/2016), Clark (2013), Friston (2010), Kastrup (2018/2019), McGinn (1989), Chalmers (1995), Nagel (1974), Block (1995).">Die Bühne ist eine Metapher, keine Messung. Phi ist hier eine schematische Anzeige, kein berechneter Wert. Die Texte folgen den im Kurs zitierten Arbeiten: Baars (1988), Dehaene &amp; Naccache (2001), Tononi (2004/2016), Clark (2013), Friston (2010), Kastrup (2018/2019), McGinn (1989), Chalmers (1995), Nagel (1974), Block (1995).</p>
+
+    <footer class="proto-foot">
+      <span>31 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="zeitmaschine.html" data-de="Weiter: Zeitmaschine" data-en="Next: time machine">Weiter: Zeitmaschine</a></span>
+    </footer>
+  </main>
+  <script src="kit.js"></script>
+  <script src="theater.js"></script>
+</body>
+</html>

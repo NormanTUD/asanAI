@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EOY Prototypen 2</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="kit.css">
+<script src="../test/proto.js"></script>
+<style>
+  .t2-index { max-width: 1180px; margin: 0 auto; }
+  .t2-index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: clamp(14px, 2vw, 22px);
+    margin-top: 8px;
+  }
+  .t2-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 20px 18px;
+    border-radius: calc(var(--radius) + 4px);
+    border: 1px solid var(--line);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease), border-color 0.22s var(--ease);
+  }
+  .t2-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--accent, var(--green));
+  }
+  .t2-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--line-strong); }
+  .t2-card:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+  .t2-card-canvas {
+    height: 112px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(120% 120% at 20% 0%, color-mix(in srgb, var(--accent, var(--green)) 20%, transparent), transparent 62%),
+      color-mix(in srgb, var(--paper) 55%, var(--card));
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .t2-card-canvas svg { width: 84%; height: 84%; display: block; }
+  .t2-card-num {
+    font: 700 11px/1 var(--sans);
+    letter-spacing: 0.16em;
+    color: var(--muted);
+  }
+  .t2-card-title { font-family: var(--serif); font-size: 21px; line-height: 1.2; margin: 0; }
+  .t2-card-desc { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+  .t2-card-go { margin-top: auto; display: inline-flex; align-items: center; gap: 7px; font: 700 12.5px/1 var(--sans); color: var(--petrol); }
+  .t2-card-go::after { content: "→"; transition: transform 0.18s ease; }
+  .t2-card:hover .t2-card-go::after { transform: translateX(3px); }
+</style>
+</head>
+<body>
+  <main class="proto-page t2-index">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="EOY · Prototypen 2" data-en="EOY · prototypes 2">EOY · Prototypen 2</span>
+      <h1 class="proto-title" data-de="Fünf Folien, die man betreten kann" data-en="Five slides you can walk into">Fünf Folien, die man betreten kann</h1>
+      <p class="proto-lead" data-de="Fünf eigenständige Bühnen für die Stellen, an denen der Kurs bisher vor allem liest: Bewusstsein, Überraschung, Geschichte, Macht und hohe Dimensionen. Jede Seite läuft allein, in Hell und Dunkel, auf Deutsch und Englisch." data-en="Five standalone stages for the places where the course currently asks you mostly to read: consciousness, surprise, history, power, and high dimensions. Each page runs on its own, light and dark, in German and English.">Fünf eigenständige Bühnen für die Stellen, an denen der Kurs bisher vor allem liest: Bewusstsein, Überraschung, Geschichte, Macht und hohe Dimensionen. Jede Seite läuft allein, in Hell und Dunkel, auf Deutsch und Englisch.</p>
+    </header>
+
+    <div class="t2-index-grid">
+      <a class="t2-card" href="theater.html" style="--accent: var(--lilac)">
+        <div class="t2-card-canvas" aria-hidden="true">
+          <svg viewBox="0 0 200 96" fill="none">
+            <ellipse cx="100" cy="70" rx="66" ry="16" stroke="var(--line-strong)" stroke-width="1.4"/>
+            <circle cx="100" cy="47" r="19" stroke="var(--lilac)" stroke-width="1.8"/>
+            <circle cx="100" cy="47" r="7" fill="var(--lilac)" opacity=".7"/>
+            <g stroke="var(--lilac)" stroke-width="1.4" opacity=".65">
+              <path d="M62 38c8 2 14 6 19 12M138 38c-8 2-14 6-19 12M74 68c7-3 13-4 20-4M126 68c-7-3-13-4-20-4"/>
+            </g>
+            <g fill="var(--ink-soft)" opacity=".6">
+              <circle cx="55" cy="35" r="3"/><circle cx="145" cy="35" r="3"/><circle cx="66" cy="69" r="3"/><circle cx="134" cy="69" r="3"/>
+            </g>
+            <g fill="var(--line-strong)" opacity=".55">
+              <circle cx="62" cy="86" r="4"/><circle cx="82" cy="88" r="4"/><circle cx="102" cy="89" r="4"/><circle cx="122" cy="88" r="4"/><circle cx="142" cy="86" r="4"/>
+            </g>
+          </svg>
+        </div>
+        <span class="t2-card-num">31 · Bewusstsein</span>
+        <h2 class="t2-card-title" data-de="Das Theater des Geistes" data-en="The theatre of mind">Das Theater des Geistes</h2>
+        <p class="t2-card-desc" data-de="Module senden in einen Workspace. Kappe Verbindungen, leere die Ränge und wechsle zwischen Zugang und Erleben." data-en="Modules broadcast into a workspace. Cut connections, empty the seats, and switch between access and experience.">Module senden in einen Workspace. Kappe Verbindungen, leere die Ränge und wechsle zwischen Zugang und Erleben.</p>
+        <span class="t2-card-go" data-de="Öffnen" data-en="Open">Öffnen</span>
+      </a>
+
+      <a class="t2-card" href="ueberraschung.html" style="--accent: var(--gold)">
+        <div class="t2-card-canvas" aria-hidden="true">
+          <svg viewBox="0 0 200 96" fill="none">
+            <path d="M30 20h140" stroke="var(--line-strong)" stroke-width="1.4"/>
+            <g stroke="var(--gold)" stroke-width="1.6">
+              <path d="M40 28l-10 38h20L40 28ZM76 28L62 66h28L76 28ZM112 28L96 66h32L112 28ZM148 28l-18 38h36L148 28Z"/>
+            </g>
+            <circle cx="76" cy="19" r="5" fill="var(--gold)"/>
+            <path d="M76 24v8" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="2 3"/>
+            <path d="M18 80h164" stroke="var(--line-strong)" stroke-width="1.4"/>
+            <g fill="var(--ink-soft)" opacity=".5"><rect x="34" y="82" width="12" height="3" rx="1.5"/><rect x="70" y="82" width="12" height="3" rx="1.5"/><rect x="106" y="82" width="12" height="3" rx="1.5"/><rect x="142" y="82" width="12" height="3" rx="1.5"/></g>
+          </svg>
+        </div>
+        <span class="t2-card-num">21 · Cross-Entropy</span>
+        <h2 class="t2-card-title" data-de="Die Überraschungsmaschine" data-en="The surprise machine">Die Überraschungsmaschine</h2>
+        <p class="t2-card-desc" data-de="Die Verteilung als Rampen, der Loss als Nadel, das Training als Umformung. Tippe, trainiere, dreh an der Temperatur." data-en="The distribution as ramps, the loss as a needle, training as reshaping. Guess, train, turn the temperature.">Die Verteilung als Rampen, der Loss als Nadel, das Training als Umformung. Tippe, trainiere, dreh an der Temperatur.</p>
+        <span class="t2-card-go" data-de="Öffnen" data-en="Open">Öffnen</span>
+      </a>
+
+      <a class="t2-card" href="zeitmaschine.html" style="--accent: var(--rose)">
+        <div class="t2-card-canvas" aria-hidden="true">
+          <svg viewBox="0 0 200 96" fill="none">
+            <path d="M18 72h164" stroke="var(--line-strong)" stroke-width="1.4"/>
+            <g stroke="var(--rose)" stroke-width="1.6">
+              <circle cx="48" cy="44" r="17"/><circle cx="100" cy="34" r="12"/><rect x="137" y="26" width="26" height="30" rx="3"/>
+            </g>
+            <g stroke="var(--line-strong)" stroke-width="1.2">
+              <path d="M48 27v34M31 44h34M100 22v24M88 34h24M137 34h26M137 42h26M137 50h26"/>
+            </g>
+            <g fill="var(--rose)" opacity=".7"><circle cx="48" cy="44" r="3"/><circle cx="100" cy="34" r="3"/><circle cx="150" cy="34" r="3"/></g>
+            <path d="M18 80h164" stroke="var(--line-strong)" stroke-width="1.2" stroke-dasharray="3 4"/>
+          </svg>
+        </div>
+        <span class="t2-card-num">28 · Geschichte</span>
+        <h2 class="t2-card-title" data-de="Die Zeitmaschine" data-en="The time machine">Die Zeitmaschine</h2>
+        <p class="t2-card-desc" data-de="Ein Jahresrad, sieben Stationen, sieben Artefakte: Kerben, Llull-Scheiben, Leibniz, Boole, Neuron, Perzeptron, Transformer." data-en="A year wheel, seven stations, seven artefacts: notches, Llull discs, Leibniz, Boole, neuron, perceptron, transformer.">Ein Jahresrad, sieben Stationen, sieben Artefakte: Kerben, Llull-Scheiben, Leibniz, Boole, Neuron, Perzeptron, Transformer.</p>
+        <span class="t2-card-go" data-de="Öffnen" data-en="Open">Öffnen</span>
+      </a>
+
+      <a class="t2-card" href="kontrollzentrum.html" style="--accent: var(--sky)">
+        <div class="t2-card-canvas" aria-hidden="true">
+          <svg viewBox="0 0 200 96" fill="none">
+            <g stroke="var(--sky)" stroke-width="1.5">
+              <rect x="24" y="20" width="24" height="56" rx="4" opacity=".8"/>
+              <rect x="62" y="12" width="24" height="64" rx="4" opacity=".65"/>
+              <rect x="100" y="26" width="24" height="50" rx="4" opacity=".8"/>
+              <rect x="138" y="18" width="24" height="58" rx="4" opacity=".65"/>
+            </g>
+            <g fill="var(--sky)" opacity=".45">
+              <rect x="30" y="54" width="12" height="18" rx="2"/><rect x="68" y="42" width="12" height="30" rx="2"/><rect x="106" y="48" width="12" height="24" rx="2"/><rect x="144" y="36" width="12" height="36" rx="2"/>
+            </g>
+            <path d="M18 82h164" stroke="var(--line-strong)" stroke-width="1.4"/>
+            <g stroke="var(--gold)" stroke-width="1.4" opacity=".8"><path d="M18 82l16-10 16 10 16-10 16 10 16-10 16 10 16-10 16 10 16-10 16 10"/></g>
+          </svg>
+        </div>
+        <span class="t2-card-num">30 · Gesellschaft</span>
+        <h2 class="t2-card-title" data-de="Das Kontrollzentrum" data-en="The control room">Das Kontrollzentrum</h2>
+        <p class="t2-card-desc" data-de="Chips, Cloud, Modelle, Verteilung, Regeln. Ziehe an Konzentration, Regulierung und Datenvielfalt und sieh, was kippt." data-en="Chips, cloud, models, distribution, rules. Pull concentration, regulation, and data diversity and watch what tips.">Chips, Cloud, Modelle, Verteilung, Regeln. Ziehe an Konzentration, Regulierung und Datenvielfalt und sieh, was kippt.</p>
+        <span class="t2-card-go" data-de="Öffnen" data-en="Open">Öffnen</span>
+      </a>
+
+      <a class="t2-card" href="dimensionsaufzug.html" style="--accent: var(--green)">
+        <div class="t2-card-canvas" aria-hidden="true">
+          <svg viewBox="0 0 200 96" fill="none">
+            <rect x="72" y="8" width="56" height="80" rx="8" stroke="var(--line-strong)" stroke-width="1.5"/>
+            <g stroke="var(--green)" stroke-width="1.4" opacity=".7">
+              <path d="M80 22h40M80 32h40M80 42h40M80 52h40M80 62h40M80 72h40"/>
+            </g>
+            <g fill="var(--green)">
+              <rect x="84" y="20" width="3" height="4" rx="1"/><rect x="84" y="30" width="9" height="4" rx="1"/><rect x="84" y="40" width="6" height="4" rx="1"/><rect x="84" y="50" width="14" height="4" rx="1"/><rect x="84" y="60" width="5" height="4" rx="1"/><rect x="84" y="70" width="11" height="4" rx="1"/>
+            </g>
+            <g stroke="var(--sky)" stroke-width="1.2" opacity=".8">
+              <path d="M140 40h44M140 52h44"/>
+            </g>
+            <circle cx="162" cy="46" r="4" fill="var(--sky)"/>
+            <path d="M140 70c12-8 24-8 44 0" stroke="var(--line-strong)" stroke-width="1.2" stroke-dasharray="2 3"/>
+          </svg>
+        </div>
+        <span class="t2-card-num">6 · Hohe Dimensionen</span>
+        <h2 class="t2-card-title" data-de="Der Dimensionsaufzug" data-en="The dimension elevator">Der Dimensionsaufzug</h2>
+        <p class="t2-card-desc" data-de="Ein Vektor als Schacht, zwei Tokens im Vergleich, eine Projektion als Schatten. Reise durch 8, 64, 768 oder 4096 Dimensionen." data-en="A vector as a shaft, two tokens compared, a projection as a shadow. Travel through 8, 64, 768, or 4096 dimensions.">Ein Vektor als Schacht, zwei Tokens im Vergleich, eine Projektion als Schatten. Reise durch 8, 64, 768 oder 4096 Dimensionen.</p>
+        <span class="t2-card-go" data-de="Öffnen" data-en="Open">Öffnen</span>
+      </a>
+    </div>
+
+    <p class="proto-note" data-de-html="Diese Seiten liegen unter <code>blog/eoy/test2/</code> und sind <b>nicht</b> Teil des Kurses. Sie laden keine externen Bibliotheken und speichern nur Theme und Sprache im localStorage." data-en-html="These pages live under <code>blog/eoy/test2/</code> and are <b>not</b> part of the course. They load no external libraries and only store theme and language in localStorage.">Diese Seiten liegen unter <code>blog/eoy/test2/</code> und sind <b>nicht</b> Teil des Kurses. Sie laden keine externen Bibliotheken und speichern nur Theme und Sprache im localStorage.</p>
+
+    <footer class="proto-foot">
+      <span data-de="Prototypen zur Ansicht, keine Kursfolien." data-en="View prototypes, not course slides.">Prototypen zur Ansicht, keine Kursfolien.</span>
+      <span><a href="../test/index.html" data-de="Alte Prototypen" data-en="Older prototypes">Alte Prototypen</a> · <a href="../index" data-de="Zur EOY-Übersicht" data-en="Back to the EOY overview">Zur EOY-Übersicht</a></span>
+    </footer>
+  </main>
+</body>
+</html>
