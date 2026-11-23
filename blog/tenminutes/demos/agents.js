@@ -12,9 +12,9 @@
       { kind: "tool", who: "Runtime", text: "Der Browser liefert den HTML-Code der Seite.", tool: "browser.html()", result: "HTML · 4,2 KB · Tabelle mit Produkten" },
       { kind: "user", who: "Du", text: "Mach jetzt einen Screenshot." },
       { kind: "shot", who: "Runtime", text: "Screenshot der Seite", tool: "screenshot()", result: "Seite geladen · 1280 × 800" },
-      { kind: "tool", who: "Modell", text: "Die Kaffeemaschine kostet 42 €. Ich schreibe den Preis in price.txt.", tool: "write_file(\"price.txt\", \"42 €\")" },
-      { kind: "tool", who: "Runtime", text: "Datei geschrieben", result: "ok · 4 Bytes" },
-      { kind: "final", who: "Modell", text: "Fertig. 1³ + 12³ = 1729, und der Preis steht in price.txt." }
+      { kind: "tool", who: "Modell", text: "Ich schreibe die Rechnung und den Preis in result.txt.", tool: "write_file(\"result.txt\", \"1³ + 12³ = 1729; Kaffeemaschine: 42 €\")" },
+      { kind: "tool", who: "Runtime", text: "Datei geschrieben", result: "ok · 41 Bytes" },
+      { kind: "final", who: "Modell", text: "Fertig. 1³ + 12³ = 1729, und Rechnung plus Preis stehen in result.txt." }
     ] : [
       { kind: "user", who: "You", text: "Compute 1³ + 12³ and find the price of the coffee machine in the shop." },
       { kind: "tool", who: "Model", text: "First I compute the Hardy–Ramanujan number.", tool: "bc <<< \"1^3 + 12^3\"" },
@@ -23,9 +23,9 @@
       { kind: "tool", who: "Runtime", text: "The browser returns the page HTML.", tool: "browser.html()", result: "HTML · 4.2 KB · table with products" },
       { kind: "user", who: "You", text: "Now take a screenshot." },
       { kind: "shot", who: "Runtime", text: "Screenshot of the page", tool: "screenshot()", result: "page loaded · 1280 × 800" },
-      { kind: "tool", who: "Model", text: "The coffee machine costs 42 €. I will write the price to price.txt.", tool: "write_file(\"price.txt\", \"42 €\")" },
-      { kind: "tool", who: "Runtime", text: "File written", result: "ok · 4 bytes" },
-      { kind: "final", who: "Model", text: "Done. 1³ + 12³ = 1729, and the price is in price.txt." }
+      { kind: "tool", who: "Model", text: "I will write the calculation and the price to result.txt.", tool: "write_file(\"result.txt\", \"1³ + 12³ = 1729; coffee machine: 42 €\")" },
+      { kind: "tool", who: "Runtime", text: "File written", result: "ok · 41 bytes" },
+      { kind: "final", who: "Model", text: "Done. 1³ + 12³ = 1729, and the calculation plus the price are in result.txt." }
     ];
     var READ = DE ? [
       "Der Auftrag steht im Kontext. Das Modell hat neue Werkzeuge, aber dieselbe Art von Loop.",
@@ -35,9 +35,9 @@
       "Der Browser gibt HTML zurück, noch keinen Screenshot. Das Modell liest die Produkttabelle.",
       "Du entscheidest, wann ein Screenshot gemacht wird. Erst jetzt kommt das Bild.",
       "Die Runtime gibt den Screenshot zurück. Ein multimodales Modell kann ihn als Tokens sehen.",
-      "Das Modell liest den Preis und schreibt ihn in die Datei.",
+      "Das Modell schreibt Rechnung und Preis in result.txt.",
       "Die Runtime bestätigt: Die Datei ist geschrieben.",
-      "Das Modell antwortet mit Rechnung und Preis. Dazwischen lief ein normaler LLM-Loop."
+      "Das Modell antwortet mit Rechnung und Preis; die Datei enthält beides. Dazwischen lief ein normaler LLM-Loop."
     ] : [
       "The task is in the context. The model has new tools but the same kind of loop.",
       "The model has no hands. It writes a tool call for the console.",
@@ -46,9 +46,9 @@
       "The browser returns HTML, not a screenshot. The model reads the product table.",
       "You decide when a screenshot is taken. Only now does the image arrive.",
       "The runtime returns the screenshot. A multimodal model can see it as tokens.",
-      "The model reads the price and writes it to the file.",
+      "The model writes the calculation and the price to result.txt.",
       "The runtime confirms: the file is written.",
-      "The model answers with the calculation and the price. A normal LLM loop ran in between."
+      "The model answers with the calculation and the price; the file contains both. A normal LLM loop ran in between."
     ];
     var step = 0;
     var el = document.createElement("div");
