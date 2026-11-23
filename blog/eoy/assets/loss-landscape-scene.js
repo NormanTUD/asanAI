@@ -36,7 +36,7 @@
     var optOrder = ["sgd", "adam", "momentum"];
     var data = null, worker = null, workerFailed = false;
     var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
-    var yaw = 0.72 + Math.PI, pitch = 0.95, zoom = 1, drag = null;
+    var yaw = 5.021592653589794, pitch = 1.234, zoom = 1, drag = null;
     function lossCamera(next) {
       if (next && typeof next === "object") {
         if (isFinite(next.yaw)) yaw = next.yaw;
