@@ -5884,6 +5884,8 @@
   LS.go = go;
   LS.next = next;
   LS.prev = prev;
+  LS.nextFull = nextFull;
+  LS.prevFull = prevFull;
   LS.canNext = hasNextPage;
   LS.canPrev = hasPrevPage;
   LS.goView = function (day, step, substep) { go(day, step, substep); };
