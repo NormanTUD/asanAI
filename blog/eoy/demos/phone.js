@@ -152,8 +152,13 @@
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
     function clearTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
-    function buildKeyboard() {
-      if (!keysEl || keysEl.getAttribute("data-built")) return;
+    function makeKeyboard(screen, keys, swipe, input) {
+      return { screen: screen, keys: keys, swipe: swipe, input: input, keyEls: {}, raf: 0, typed: "" };
+    }
+    var SEARCH_KB = makeKeyboard(searchPhone, keysEl, swipeLayer, searchText);
+    var CHAT_KB = makeKeyboard(chatPhone, chatKeysEl, chatSwipeLayer, chatInputEl);
+    function buildKeyboard(kb) {
+      if (!kb || !kb.keys || kb.keys.getAttribute("data-built")) return;
       var rows = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
       var html = "";
       rows.forEach(function (row, ri) {
@@ -166,53 +171,53 @@
         html += "</div>";
       });
       html += '<div class="ia-eoy-krow"><span class="ia-eoy-key ia-eoy-key--wide" data-k="sym">?123</span><span class="ia-eoy-key ia-eoy-key--space" data-k=" "></span><span class="ia-eoy-key ia-eoy-key--wide" data-k="enter">↵</span></div>';
-      keysEl.innerHTML = html;
-      keysEl.setAttribute("data-built", "1");
-      keyEls = {};
-      Array.prototype.forEach.call(keysEl.querySelectorAll("[data-k]"), function (key) {
-        keyEls[key.getAttribute("data-k")] = key;
+      kb.keys.innerHTML = html;
+      kb.keys.setAttribute("data-built", "1");
+      kb.keyEls = {};
+      Array.prototype.forEach.call(kb.keys.querySelectorAll("[data-k]"), function (key) {
+        kb.keyEls[key.getAttribute("data-k")] = key;
       });
-      keyEls["?"] = keyEls.sym;
-      keyEls["!"] = keyEls.sym;
-      keyEls["."] = keyEls.sym;
+      kb.keyEls["?"] = kb.keyEls.sym;
+      kb.keyEls["!"] = kb.keyEls.sym;
+      kb.keyEls["."] = kb.keyEls.sym;
     }
-    function clearSwipe() {
-      if (swipeRaf) { cancelAnimationFrame(swipeRaf); swipeRaf = 0; }
-      if (swipeLayer) swipeLayer.innerHTML = "";
+    function clearSwipe(kb) {
+      if (!kb) return;
+      if (kb.raf) { cancelAnimationFrame(kb.raf); kb.raf = 0; }
+      if (kb.swipe) kb.swipe.innerHTML = "";
     }
-    function clearPressed() {
-      if (!keysEl) return;
-      Array.prototype.forEach.call(keysEl.querySelectorAll(".is-pressed"), function (key) {
+    function clearPressed(kb) {
+      if (!kb || !kb.keys) return;
+      Array.prototype.forEach.call(kb.keys.querySelectorAll(".is-pressed"), function (key) {
         key.classList.remove("is-pressed");
       });
     }
-    function showKeyboard(on) {
-      if (!searchPhone) return;
-      searchPhone.classList.toggle("is-keyboard", !!on);
-      if (!on) { clearSwipe(); clearPressed(); }
+    function showKeyboard(kb, on) {
+      if (!kb || !kb.screen) return;
+      kb.screen.classList.toggle("is-keyboard", !!on);
+      if (!on) { clearSwipe(kb); clearPressed(kb); }
     }
-    function pressKey(ch) {
-      var key = keyEls[(ch || " ").toLowerCase()];
-      if (!key) key = keyEls[" "];
+    function pressKey(kb, ch) {
+      var key = kb.keyEls[(ch || " ").toLowerCase()] || kb.keyEls[" "];
       if (!key) return;
       key.classList.add("is-pressed");
       later(function () { key.classList.remove("is-pressed"); }, 90);
     }
-    function keyCenter(ch) {
-      var key = keyEls[(ch || " ").toLowerCase()];
+    function keyCenter(kb, ch) {
+      var key = kb.keyEls[(ch || " ").toLowerCase()];
       if (!key) return null;
       return { x: key.offsetLeft + key.offsetWidth / 2, y: key.offsetTop + key.offsetHeight / 2 };
     }
-    function appendTyped(ch) {
-      typedText += ch;
-      searchText.innerHTML = api.esc(typedText) + '<span class="ia-caret"></span>';
+    function appendTyped(kb, ch) {
+      kb.typed += ch;
+      if (kb.input) kb.input.innerHTML = esc(kb.typed) + '<span class="ia-caret"></span>';
     }
-    function animateSwipe(points, duration) {
-      if (!swipeLayer || !keyboardEl || points.length < 2) return;
-      clearSwipe();
+    function animateSwipe(kb, points, duration) {
+      if (!kb || !kb.swipe || points.length < 2) return;
+      clearSwipe(kb);
       var NS = "http://www.w3.org/2000/svg";
       var svg = document.createElementNS(NS, "svg");
-      svg.setAttribute("viewBox", "0 0 " + keyboardEl.offsetWidth + " " + keyboardEl.offsetHeight);
+      svg.setAttribute("viewBox", "0 0 " + kb.swipe.offsetWidth + " " + kb.swipe.offsetHeight);
       svg.setAttribute("preserveAspectRatio", "none");
       var poly = document.createElementNS(NS, "polyline");
       poly.setAttribute("points", points.map(function (p) { return p.x + "," + p.y; }).join(" "));
@@ -228,7 +233,7 @@
       dot.setAttribute("stroke-width", "2");
       svg.appendChild(poly);
       svg.appendChild(dot);
-      swipeLayer.appendChild(svg);
+      kb.swipe.appendChild(svg);
       var len = poly.getTotalLength();
       poly.style.strokeDasharray = String(len);
       poly.style.strokeDashoffset = String(len);
@@ -242,9 +247,9 @@
         var pt = poly.getPointAtLength(len * t);
         dot.setAttribute("cx", String(pt.x));
         dot.setAttribute("cy", String(pt.y));
-        if (t < 1) swipeRaf = requestAnimationFrame(tick);
+        if (t < 1) kb.raf = requestAnimationFrame(tick);
       }
-      swipeRaf = requestAnimationFrame(tick);
+      kb.raf = requestAnimationFrame(tick);
       later(function () {
         svg.style.transition = "opacity .24s ease";
         svg.style.opacity = "0";
@@ -270,6 +275,7 @@
     }
     function setCentered(on) { searchBar.classList.toggle("centered", !!on); }
     function resetChatVisuals() {
+      showKeyboard(CHAT_KB, false);
       if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
       if (chatScreen) chatScreen.classList.remove("is-answering", "is-composing", "is-sent");
       if (chatQuestionEl) chatQuestionEl.textContent = "";
@@ -308,7 +314,8 @@
     function reset() {
       clearTimers();
       typedText = "";
-      showKeyboard(false);
+      showKeyboard(SEARCH_KB, false);
+      showKeyboard(CHAT_KB, false);
       setCentered(true);
       searchText.textContent = "";
       searchText.classList.remove("typing");
@@ -331,39 +338,47 @@
       }, speed);
       timers.push(timer);
     }
-    function typeSearch(text, done) {
-      if (reduce) { searchText.textContent = text; if (done) done(); return; }
-      typedText = "";
-      searchText.classList.add("typing");
-      searchText.innerHTML = '<span class="ia-caret"></span>';
+    function typeInto(kb, text, done, perMin, perMax, perBudget) {
+      if (reduce) { if (kb.input) kb.input.textContent = text; if (done) done(); return; }
+      kb.typed = "";
       var chunks = text.split(/(\s+)/).filter(function (part) { return part.length; });
       var ci = 0;
       function nextChunk() {
-        if (ci >= chunks.length) {
-          searchText.classList.remove("typing");
-          searchText.textContent = text;
-          showKeyboard(false);
-          later(function () { if (done) done(); }, 220);
-          return;
-        }
+        if (ci >= chunks.length) { if (done) done(); return; }
         var chunk = chunks[ci++];
         if (/^\s+$/.test(chunk)) {
-          pressKey(" ");
-          appendTyped(chunk);
-          later(nextChunk, 170);
+          pressKey(kb, " ");
+          appendTyped(kb, chunk);
+          later(nextChunk, 150);
           return;
         }
         var letters = chunk.split("");
-        var points = letters.map(keyCenter).filter(Boolean);
-        var per = Math.max(50, Math.min(88, 520 / Math.max(1, letters.length)));
+        var points = letters.map(function (ch) { return keyCenter(kb, ch); }).filter(Boolean);
+        var per = Math.max(perMin, Math.min(perMax, perBudget / Math.max(1, letters.length)));
         var dur = letters.length * per;
-        animateSwipe(points, dur);
+        animateSwipe(kb, points, dur);
         letters.forEach(function (ch, i) {
-          later(function () { pressKey(ch); appendTyped(ch); }, i * per);
+          later(function () { pressKey(kb, ch); appendTyped(kb, ch); }, i * per);
         });
-        later(nextChunk, dur + 90);
+        later(nextChunk, dur + 80);
       }
       nextChunk();
+    }
+    function typeSearch(text, done) {
+      if (reduce) { searchText.textContent = text; if (done) done(); return; }
+      searchText.classList.add("typing");
+      searchText.innerHTML = '<span class="ia-caret"></span>';
+      typeInto(SEARCH_KB, text, function () {
+        searchText.classList.remove("typing");
+        searchText.textContent = text;
+        showKeyboard(SEARCH_KB, false);
+        later(function () { if (done) done(); }, 220);
+      }, 50, 88, 520);
+    }
+    function typeChatInput(text, done) {
+      if (reduce) { chatInputEl.textContent = text; if (done) done(); return; }
+      chatInputEl.innerHTML = '<span class="ia-caret"></span>';
+      typeInto(CHAT_KB, text, done, 46, 80, 460);
     }
     function typeAnswer() {
       var spans = AI.map(function (seg) {
@@ -407,20 +422,24 @@
         if (sequenceDone) later(function () { sequenceDone(); }, 900);
         return;
       }
-      typeChat(chatInputEl, CHAT_Q, 24, function () {
-        if (chatInputEl) chatInputEl.textContent = "";
-        if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
-        if (chatScreen) { chatScreen.classList.remove("is-composing"); chatScreen.classList.add("is-sent"); }
-        later(function () {
-          if (chatPhone) chatPhone.classList.add("is-thinking");
+      showKeyboard(CHAT_KB, true);
+      later(function () {
+        typeChatInput(CHAT_Q, function () {
+          if (chatInputEl) chatInputEl.textContent = "";
+          if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
+          if (chatScreen) { chatScreen.classList.remove("is-composing"); chatScreen.classList.add("is-sent"); }
           later(function () {
-            if (chatPhone) chatPhone.classList.remove("is-thinking");
-            if (chatPhone) chatPhone.classList.add("is-answered");
-            if (chatScreen) chatScreen.classList.add("is-answering");
-            typeChat(chatAnswerEl, CHAT_A, 5, function () { if (sequenceDone) sequenceDone(); });
-          }, 360);
-        }, 260);
-      });
+            if (chatPhone) chatPhone.classList.add("is-thinking");
+            later(function () {
+              if (chatPhone) chatPhone.classList.remove("is-thinking");
+              if (chatPhone) chatPhone.classList.add("is-answered");
+              if (chatScreen) chatScreen.classList.add("is-answering");
+              showKeyboard(CHAT_KB, false);
+              typeChat(chatAnswerEl, CHAT_A, 5, function () { if (sequenceDone) sequenceDone(); });
+            }, 360);
+          }, 260);
+        });
+      }, 320);
     }
     function cleanupHomeLaunch() {
       if (homeChatApp) homeChatApp.classList.remove("is-target", "is-tapped", "is-opening");
@@ -484,7 +503,7 @@
         if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
         return;
       }
-      showKeyboard(true);
+      showKeyboard(SEARCH_KB, true);
       later(function () {
         typeSearch(SATZ, function () {
           searchText.textContent = SATZ;
@@ -509,6 +528,8 @@
     }
     buildLogo();
     buildSerp();
+    buildKeyboard(SEARCH_KB);
+    buildKeyboard(CHAT_KB);
     reset();
     var started = false, shownOnce = false;
     function startOnce() { if (started) return; started = true; play(); }
@@ -568,7 +589,8 @@
       onAdvance: function (fn) { advance = fn; },
       pause: function () {
         clearTimers();
-        showKeyboard(false);
+        showKeyboard(SEARCH_KB, false);
+        showKeyboard(CHAT_KB, false);
         launchingChat = false;
         cleanupHomeLaunch();
         hidePhoneNav();
@@ -577,7 +599,8 @@
       resize: fit,
       destroy: function () {
         clearTimers();
-        clearSwipe();
+        clearSwipe(SEARCH_KB);
+        clearSwipe(CHAT_KB);
         clearNavHideTimer();
         if (ro) ro.disconnect();
         window.removeEventListener("resize", fit);

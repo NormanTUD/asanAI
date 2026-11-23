@@ -4056,3 +4056,12 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-phone-scene .ia-eoy-key--space{flex:5 1 0}
 .ls-phone-scene .ia-eoy-swipe{position:absolute;inset:0;pointer-events:none;z-index:2}
 .ls-phone-scene .ia-eoy-swipe svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 5px rgba(63,127,176,.55))}
+.ls-phone-scene .ia-chat-input .ia-caret{
+  display:inline-block;
+  width:2px;
+  height:1em;
+  margin-left:1px;
+  vertical-align:-.15em;
+  background:#3f7fb0;
+  animation:ia-blink 1s step-end infinite;
+}
