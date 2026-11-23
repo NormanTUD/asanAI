@@ -24,7 +24,13 @@
       layer.setAttribute("data-scene", next);
       layer.hidden = true;
       host.appendChild(layer);
-      var inst = SCENES[next] ? SCENES[next](layer, api) : null;
+      var inst = null;
+      try {
+        inst = SCENES[next] ? SCENES[next](layer, api) : null;
+      } catch (err) {
+        window.__lsMakeError = window.__lsMakeError || [];
+        window.__lsMakeError.push({ scene: next, error: String(err && err.stack || err) });
+      }
       return { layer: layer, api: inst };
     }
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
