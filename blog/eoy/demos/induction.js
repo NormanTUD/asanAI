@@ -423,10 +423,10 @@
     }
 
     function drawTogetherPanel(c, x, y, w, h, tok, pred, small) {
-      var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "kopieren & vorhersagen" : "copy & predict", C.petrol, small);
+      var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "Gewicht addieren & kopieren" : "add weight & copy", C.petrol, small);
       wrapText(c, DE
-        ? "Die Attention findet über „" + tok + "“ die Stelle von „" + pred + "“. Kopiert wird der Wert dort."
-        : "The attention finds the “" + pred + "” position via “" + tok + "”. The value there is copied.",
+        ? "Das Gewicht addiert den Wert der Trefferstelle zum aktuellen Vektor. Der OV-Teil kopiert ihn."
+        : "The weight adds the value at the match to the current vector. The OV part copies it.",
         x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
       var rowY = y + h * 0.56;
       var size = small ? 9.5 : 11;
@@ -438,7 +438,7 @@
       var chipH = size * 1.9;
       textPill(c, pred, pCx, rowY, C.sky, true, size);
       textPill(c, pred, oCx, rowY, C.gold, true, size);
-      txt(c, DE ? "Wert dort" : "value there", pCx, rowY - chipH / 2 - 12, {
+      txt(c, DE ? "Wert dort · 74 %" : "value there · 74 %", pCx, rowY - chipH / 2 - 12, {
         align: "center", size: small ? 7.6 : 8.4, color: C.sky,
         font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
       });
