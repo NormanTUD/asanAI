@@ -264,6 +264,7 @@
   }
 
   function renderFreqs() {
+    if (state.selected >= state.pairs) state.selected = state.pairs - 1;
     freqEl.innerHTML = "";
     for (var i = 0; i < state.pairs; i++) {
       var b = document.createElement("button");
@@ -279,7 +280,6 @@
       }(i));
       freqEl.appendChild(b);
     }
-    if (state.selected >= state.pairs) state.selected = state.pairs - 1;
   }
 
   function renderControls() {
