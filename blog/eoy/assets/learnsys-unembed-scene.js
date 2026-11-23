@@ -154,8 +154,8 @@
           p = proj3(pts[i], cx, cy, R);
           if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
         }
-        ctx.strokeStyle = V.alpha(color, lat === 0 ? 0.26 : 0.13);
-        ctx.lineWidth = lat === 0 ? 1.1 : 0.8;
+        ctx.strokeStyle = V.alpha(color, lat === 0 ? 0.34 : 0.2);
+        ctx.lineWidth = lat === 0 ? 1.3 : 0.9;
         ctx.stroke();
       }
       for (lon = 0; lon < 180; lon += 30) {
@@ -169,8 +169,8 @@
           p = proj3(pts[i], cx, cy, R);
           if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
         }
-        ctx.strokeStyle = V.alpha(color, 0.12);
-        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = V.alpha(color, 0.18);
+        ctx.lineWidth = 0.9;
         ctx.stroke();
       }
     }
@@ -178,7 +178,7 @@
       if (!size) return;
       C = api.colors();
       var ctx = size.ctx, w = size.w, h = size.h;
-      V.aurora(ctx, w, h, C, { vignette: 0.06 });
+      ctx.clearRect(0, 0, w, h);
       var cx = w * 0.33, cy = h * 0.53, R = Math.min(w * 0.235, h * 0.33);
       if (R < 30) return;
       var q = WORDS[selected];
@@ -195,19 +195,13 @@
       var top = rows.slice(0, 5);
       var topIds = top.map(function (t) { return t.i; });
 
-      var halo = ctx.createRadialGradient(cx - R * 0.32, cy - R * 0.36, R * 0.08, cx, cy, R * 1.18);
-      halo.addColorStop(0, V.alpha(C.paper, 0.92));
-      halo.addColorStop(0.55, V.alpha(C.paper2, 0.42));
-      halo.addColorStop(1, V.alpha(C.paper, 0));
-      ctx.fillStyle = halo;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R * 1.18, 0, Math.PI * 2);
-      ctx.fill();
       sphereWire(ctx, cx, cy, R, C.petrol);
 
       var pts = WORDS.map(function (ww, i) {
         var p = proj3(unit3(vec(ww)), cx, cy, R);
         return { i: i, w: ww, x: p.x, y: p.y, z: p.z };
+      }).filter(function (pt) {
+        return pt.i === selected || topIds.indexOf(pt.i) >= 0;
       }).sort(function (a, b) { return a.z - b.z; });
 
       hits = [];
@@ -215,17 +209,17 @@
         var isSel = pt.i === selected;
         var isTop = topIds.indexOf(pt.i) >= 0;
         ctx.save();
-        ctx.globalAlpha = isSel ? 0.95 : isTop ? 0.72 : 0.34;
-        ctx.strokeStyle = isSel ? C.green : isTop ? C.gold : C.lineStrong;
-        ctx.lineWidth = isSel ? 2.2 : isTop ? 1.3 : 0.8;
+        ctx.globalAlpha = isSel ? 1 : 0.9;
+        ctx.strokeStyle = isSel ? C.green : C.gold;
+        ctx.lineWidth = isSel ? 2.8 : 1.7;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(pt.x, pt.y);
         ctx.stroke();
         ctx.restore();
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, isSel ? 4.4 : isTop ? 3.1 : 2.1, 0, Math.PI * 2);
-        ctx.fillStyle = isSel ? C.green : isTop ? C.gold : C.muted;
+        ctx.arc(pt.x, pt.y, isSel ? 5.0 : 3.6, 0, Math.PI * 2);
+        ctx.fillStyle = isSel ? C.green : C.gold;
         ctx.fill();
         if (isSel || isTop) {
           ctx.strokeStyle = C.paper;
@@ -264,8 +258,8 @@
         }
         ctx.beginPath();
         ptsArc.forEach(function (p, i) { if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y); });
-        ctx.strokeStyle = V.alpha(C.gold, k === 0 ? 0.78 : 0.45);
-        ctx.lineWidth = k === 0 ? 1.8 : 1.1;
+        ctx.strokeStyle = V.alpha(C.gold, k === 0 ? 0.9 : 0.62);
+        ctx.lineWidth = k === 0 ? 2.1 : 1.4;
         ctx.stroke();
         var mid = proj3(slerp3(qv, t.v, 0.5), cx, cy, R);
         ctx.fillStyle = C.gold;
