@@ -13,7 +13,7 @@
     <header class="proto-head">
       <span class="proto-eyebrow" data-de="2 · Architektur" data-en="2 · architecture">2 · Architektur</span>
       <h1 class="proto-title" data-de="Die Fabrik im Modell" data-en="The factory inside the model">Die Fabrik im Modell</h1>
-      <p class="proto-lead" data-de="Ein Satz läuft als Paket über ein Fließband. An jeder Station wird aus ihm etwas anderes: Tokens, Vektoren, Kontext, eine Verteilung." data-en="A sentence runs as a parcel along a line. At each station it becomes something else: tokens, vectors, context, a distribution.">Ein Satz läuft als Paket über ein Fließband. An jeder Station wird aus ihm etwas anderes: Tokens, Vektoren, Kontext, eine Verteilung.</p>
+      <p class="proto-lead" data-de="Ein Satz läuft als Paket über den Residualstrom. An sieben Stationen wird aus ihm etwas anderes: Tokens, Vektoren, Kontext, eine Verteilung." data-en="A sentence runs as a parcel along the residual stream. At seven stations it becomes something else: tokens, vectors, context, a distribution.">Ein Satz läuft als Paket über den Residualstrom. An sieben Stationen wird aus ihm etwas anderes: Tokens, Vektoren, Kontext, eine Verteilung.</p>
     </header>
 
     <section class="proto-stage baust-stage" aria-label="Fünf Stationen eines LLM">
@@ -26,7 +26,9 @@
         </div>
       </div>
 
-      <div class="baust-line" id="baust-line"></div>
+      <div class="baust-line-scroll">
+        <div class="baust-line" id="baust-line"></div>
+      </div>
 
       <div class="baust-inspect" id="baust-inspect" aria-live="polite"></div>
 
@@ -36,7 +38,7 @@
       </div>
     </section>
 
-    <p class="proto-note" data-de-html="Die Zahlen und Vektoren sind schematisch. Das Modell rechnet mit hunderten oder tausenden Dimensionen; hier siehst du vierzehn Kästchen als Stellvertreter. Die Reihenfolge folgt dem Pipeline-Bild der EOY-Reihe." data-en-html="The numbers and vectors are schematic. The model works with hundreds or thousands of dimensions; here you see fourteen cells as a stand-in. The order follows the pipeline picture from the EOY series.">Die Zahlen und Vektoren sind schematisch. Das Modell rechnet mit hunderten oder tausenden Dimensionen; hier siehst du vierzehn Kästchen als Stellvertreter. Die Reihenfolge folgt dem Pipeline-Bild der EOY-Reihe.</p>
+    <p class="proto-note" data-de-html="Die Zahlen und Vektoren sind schematisch. Das Modell rechnet mit hunderten oder tausenden Dimensionen. Die sieben Stationen folgen der Architektur-Folie: Tokenizer, Embedding, Position, Attention, LayerNorm, FFN, Unembedding. Das Fließband ist der Residualstrom." data-en-html="The numbers and vectors are schematic. The model works with hundreds or thousands of dimensions. The seven stations follow the architecture slide: tokenizer, embedding, position, attention, LayerNorm, FFN, unembedding. The belt is the residual stream.">Die Zahlen und Vektoren sind schematisch. Das Modell rechnet mit hunderten oder tausenden Dimensionen. Die sieben Stationen folgen der Architektur-Folie: Tokenizer, Embedding, Position, Attention, LayerNorm, FFN, Unembedding. Das Fließband ist der Residualstrom.</p>
 
     <footer class="proto-foot">
       <span>2 / 31</span>

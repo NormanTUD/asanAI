@@ -12,7 +12,6 @@
   var mode = "memory";
   var verified = false;
   var checking = false;
-  var chunkOpen = false;
   var timers = [];
 
   function clearTimers() {
@@ -115,11 +114,12 @@
   function checkRow(c, state) {
     var cls = "check" + (state === "pending" ? " is-pending" : state === "bad" ? " is-bad" : state === "good" ? " is-good" : "");
     var ico = state === "bad" ? "✗" : state === "good" ? "✓" : "";
+    var res = (state === "bad" || state === "good") ? (c.res || "") : "";
     return '<div class="' + cls + '">' +
       '<span class="check-ico" aria-hidden="true">' + ico + '</span>' +
       '<span class="check-body"><span class="check-name">' + esc(c.name) + '</span>' +
       '<span class="check-q">' + esc(c.q) + '</span>' +
-      (state === "pending" ? '' : '<span class="check-res">' + esc(c.res || "") + '</span>') +
+      '<span class="check-res">' + (res ? esc(res) : "&nbsp;") + '</span>' +
       '</span></div>';
   }
 
@@ -130,27 +130,29 @@
         "Das Modell antwortet aus seinem Gedächtnis. Die Quelle sieht echt aus. Prüfe sie Schritt für Schritt.",
         "The model answers from memory. The source looks real. Check it step by step."
       ) + '</p>';
-      if (!verified && !checking) {
-        html += '<div class="hall-actions"><button type="button" class="proto-btn proto-btn--primary" data-hall-check>' + T("Quelle prüfen", "Check source") + '</button></div>';
-        html += '<div class="side-metric"><span>' + T("Quellen im Kontext", "Sources in context") + '</span><b>0</b></div>';
-      } else {
-        MEM_CHECKS.forEach(function (c, i) {
-          var state = "pending";
-          if (verified) state = "bad";
-          else if (checking && i < checking.index) state = "bad";
-          html += checkRow(c, state);
-        });
-        if ((checking && checking.index >= MEM_CHECKS.length) || verified) {
-          html += '<div class="verdict is-bad"><b>' + T("Die Form ist kein Beweis.", "The shape is not proof.") + '</b><p>' + T(
-            "Die Quelle ist erfunden. Das Modell optimiert plausiblen Text, nicht Wahrheit. Die Sicherheitsanzeige bleibt trotzdem hoch.",
-            "The source is invented. The model optimises plausible text, not truth. The confidence display stays high anyway."
-          ) + '</p></div>';
-        }
-        if (verified) {
-          html += '<div class="side-metric"><span>' + T("Gefundene Quellen", "Sources found") + '</span><b>0 / 4</b></div>';
-          html += '<div class="hall-actions"><button type="button" class="proto-btn" data-hall-reset>' + T("Nochmal", "Again") + '</button></div>';
-        }
+      var allChecked = verified || (checking && checking.index >= MEM_CHECKS.length);
+      MEM_CHECKS.forEach(function (c, i) {
+        var state = "neutral";
+        if (verified) state = "bad";
+        else if (checking) state = i < checking.index ? "bad" : "pending";
+        html += checkRow(c, state);
+      });
+      html += '<div class="verdict-slot">';
+      if (allChecked) {
+        html += '<div class="verdict is-bad"><b>' + T("Die Form ist kein Beweis.", "The shape is not proof.") + '</b><p>' + T(
+          "Die Quelle ist erfunden. Das Modell optimiert plausiblen Text, nicht Wahrheit. Die Sicherheitsanzeige bleibt trotzdem hoch.",
+          "The source is invented. The model optimises plausible text, not truth. The confidence display stays high anyway."
+        ) + '</p></div>';
       }
+      html += '</div>';
+      if (verified) {
+        html += '<div class="hall-actions"><button type="button" class="proto-btn" data-hall-reset>' + T("Nochmal", "Again") + '</button></div>';
+      } else if (checking) {
+        html += '<div class="hall-actions"><button type="button" class="proto-btn proto-btn--primary" disabled>' + T("Prüfe …", "Checking …") + '</button></div>';
+      } else {
+        html += '<div class="hall-actions"><button type="button" class="proto-btn proto-btn--primary" data-hall-check>' + T("Quelle prüfen", "Check source") + '</button></div>';
+      }
+      html += '<div class="side-metric"><span>' + (verified ? T("Gefundene Quellen", "Sources found") : T("Quellen im Kontext", "Sources in context")) + '</span><b>' + (verified ? "0 / 4" : "0") + '</b></div>';
     } else {
       html += '<p class="side-intro">' + T(
         "Jetzt liest der Agent zuerst ein Dokument. Er zerlegt es in Chunks, vergleicht sie mit der Frage und legt nur den passenden Chunk in den Kontext.",
@@ -166,14 +168,11 @@
           '<span class="check-res">' + (c.ok ? T("passt, kommt in den Kontext", "fits, goes into the context") : T("zu weit weg, wird verworfen", "too far away, discarded")) + '</span>' +
           '</span></div>';
       });
-      html += '<div class="verdict is-good"><b>' + T("Im Dokument belegt.", "Grounded in the document.") + '</b><p>' + T(
+      html += '<div class="verdict-slot"><div class="verdict is-good"><b>' + T("Im Dokument belegt.", "Grounded in the document.") + '</b><p>' + T(
         "Die Antwort stützt sich sichtbar auf C1. Das garantiert keine Wahrheit, aber die Quelle ist prüfbar und der Weg dorthin ist offen.",
         "The answer visibly rests on C1. That does not guarantee truth, but the source is checkable and the path to it is open."
-      ) + '</p></div>';
-      html += '<div class="hall-actions"><button type="button" class="proto-btn" data-hall-chunk>' + (chunkOpen ? T("Chunk verbergen", "Hide chunk") : T("Chunk ansehen", "Show chunk")) + '</button><button type="button" class="proto-btn proto-btn--ghost" data-hall-reset>' + T("Nochmal", "Again") + '</button></div>';
-      if (chunkOpen) {
-        html += '<div class="check is-good"><span class="check-ico" aria-hidden="true">✓</span><span class="check-body"><span class="check-name">studie.pdf · C1</span><span class="check-q">' + esc(RAG_QUOTE) + '</span></span></div>';
-      }
+      ) + '</p></div></div>';
+      html += '<div class="hall-actions"><button type="button" class="proto-btn" data-hall-reset>' + T("Nochmal", "Again") + '</button></div>';
       html += '<div class="side-metric"><span>' + T("Quellen im Kontext", "Sources in context") + '</span><b>1</b></div>';
     }
     sideBody.innerHTML = html;
@@ -185,8 +184,6 @@
     if (check) check.addEventListener("click", startCheck);
     var reset = sideBody.querySelector("[data-hall-reset]");
     if (reset) reset.addEventListener("click", resetAll);
-    var chunk = sideBody.querySelector("[data-hall-chunk]");
-    if (chunk) chunk.addEventListener("click", function () { chunkOpen = !chunkOpen; renderSide(); });
   }
 
   function startCheck() {
@@ -215,7 +212,6 @@
     clearTimers();
     checking = false;
     verified = false;
-    chunkOpen = false;
     renderAll();
   }
 
@@ -245,7 +241,6 @@
       mode = next;
       checking = false;
       verified = false;
-      chunkOpen = false;
       renderAll();
     });
   });
@@ -255,7 +250,6 @@
       clearTimers();
       checking = false;
       verified = false;
-      chunkOpen = false;
       Q = Proto.t(
         "Nenne eine Studie, die zeigt, dass Koffein die Reaktionszeit verbessert.",
         "Name a study showing that caffeine improves reaction time."
