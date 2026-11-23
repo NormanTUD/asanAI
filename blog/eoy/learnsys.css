@@ -2101,8 +2101,24 @@ h1,h2,h3,h4{
 }
 
 /* Abstract representation: surface forms → shared meaning */
-.ls-codesem-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(210px,1fr)}
+.ls-codesem-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(210px,1fr);gap:6px}
+.ls-codesem-top{display:flex;flex-direction:column;gap:5px;min-width:0}
 .ls-codesem-stage{position:relative;border:1px solid var(--ls-line);background:#fff;overflow:hidden;min-height:210px}
+.ls-codesem-compare{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;align-items:baseline;border:1px solid var(--ls-line);background:var(--ls-paper-2);padding:6px 8px;font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-codesem-compare .cc-head{grid-column:1/-1;font-weight:700;color:var(--ls-petrol)}
+.ls-codesem-compare .cc-row{display:contents}
+.ls-codesem-compare .cc-sentence,.ls-codesem-compare code{color:var(--ls-ink);font-weight:600;overflow-wrap:anywhere}
+.ls-codesem-compare code{font-family:ui-monospace,"Cascadia Code",Menlo,Consolas,monospace}
+.ls-codesem-compare .cc-verdict{justify-self:end;font-weight:700;white-space:nowrap}
+.ls-codesem-compare .cc-verdict.is-good{color:var(--ls-green)}
+.ls-codesem-compare .cc-verdict.is-detail{color:var(--ls-gold)}
+.ls-codesem-compare .cc-verdict.is-warn{color:var(--ls-petrol)}
+.ls-codesem-tip{position:absolute;z-index:10;max-width:300px;padding:6px 8px;border:1px solid var(--ls-line-strong);background:var(--ls-paper);color:var(--ls-ink);font:12px/1.35 "Open Sans",sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.12);pointer-events:none;opacity:0;transition:opacity .12s;border-radius:4px;white-space:pre-line}
+.ls-codesem-tip.is-on{opacity:1}
+.ls-codesem-tasks{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:1px 0}
+.ls-codesem-tasks>span{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-codesem-task{border:1px solid var(--ls-line-strong);background:var(--ls-paper);color:var(--ls-soft);font:600 var(--ls-fs-micro) "Open Sans",sans-serif;padding:4px 9px;border-radius:999px;cursor:pointer}
+.ls-codesem-task.is-on{border-color:var(--ls-gold);background:rgba(159,151,0,.12);color:var(--ls-ink)}
 .ls-codesem-stage canvas{position:absolute;inset:0;width:100%;height:100%}
 
 .ls-sinus-matrix-grid figure[hidden]{display:none}
