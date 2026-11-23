@@ -43,88 +43,151 @@
     heatBox = T2.fit(heat, heat);
   }
 
+  var disp = { q: 0, k: 0 };
+
+  function targetAngles() {
+    return {
+      q: state.rope ? state.m * selectedTheta() : 0,
+      k: state.rope ? state.n * selectedTheta() : 0
+    };
+  }
+
   function drawAll() {
     if (!dialBox) fitAll();
-    drawDial();
     drawCurve();
     drawHeat();
     syncText();
   }
 
-  function drawDial() {
+  function drawDial(now) {
     var ctx = dialBox.ctx, w = dialBox.w, h = dialBox.h;
     ctx.clearRect(0, 0, w, h);
-    var ink = "#e6f2f6", muted = "rgba(143,170,180,0.9)";
+    var ink = "#e9f5f8", muted = "rgba(143,170,180,0.9)";
     var gold = css("--gold", "#e3be62");
+    var goldBright = "#ffefbf";
     var sky = css("--sky", "#7fb4e6");
+    var skyBright = "#c9f3ff";
     var rose = css("--rose", "#e3898c");
-    var line = "rgba(150,210,230,0.18)";
-    var cx = w / 2, cy = h * 0.52, R = Math.min(w, h) * 0.33;
+    var line = "rgba(150,210,230,0.16)";
+    var cx = w / 2, cy = h * 0.5, R = Math.min(w, h) * 0.32;
+    var pulse = 0.86 + 0.14 * Math.sin(now * 0.0024);
+
+    var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.55);
+    glow.addColorStop(0, "rgba(126,200,239,0.10)");
+    glow.addColorStop(0.55, "rgba(126,200,239,0.035)");
+    glow.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
 
     ctx.strokeStyle = line;
     ctx.lineWidth = 1;
     ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx - R - 12, cy); ctx.lineTo(cx + R + 12, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx, cy - R - 12); ctx.lineTo(cx, cy + R + 12); ctx.stroke();
-    for (var k = 0; k < 12; k++) {
-      var a = k * Math.PI / 6;
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath(); ctx.arc(cx, cy, R * 0.72, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.moveTo(cx - R - 14, cy); ctx.lineTo(cx + R + 14, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy - R - 14); ctx.lineTo(cx, cy + R + 14); ctx.stroke();
+
+    for (var k = 0; k < 24; k++) {
+      var a = k * Math.PI / 12;
+      var len = k % 3 === 0 ? 8 : 4;
       ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(a) * (R - 4), cy + Math.sin(a) * (R - 4));
+      ctx.moveTo(cx + Math.cos(a) * (R - len), cy + Math.sin(a) * (R - len));
       ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+      ctx.strokeStyle = k % 3 === 0 ? "rgba(180,232,248,0.34)" : line;
       ctx.stroke();
     }
-    ctx.fillStyle = muted;
-    ctx.font = '600 9px "Open Sans", sans-serif';
+    ctx.fillStyle = "rgba(143,170,180,0.7)";
+    ctx.font = '600 8px "Open Sans", sans-serif';
     ctx.textAlign = "center";
     ctx.fillText("0°", cx + R + 20, cy + 3);
+    ctx.fillText("90°", cx, cy - R - 19);
+    ctx.fillText("180°", cx - R - 22, cy + 3);
+    ctx.fillText("270°", cx, cy + R + 22);
 
-    var aq = state.rope ? state.m * selectedTheta() : 0;
-    var ak = state.rope ? state.n * selectedTheta() : 0;
-    function arrow(angle, len, color, dashed, width) {
+    function arrow(angle, len, colorA, colorB, dashed, width) {
       var x = cx + Math.cos(angle) * len;
       var y = cy + Math.sin(angle) * len;
+      var grad = ctx.createLinearGradient(cx, cy, x, y);
+      grad.addColorStop(0, colorA);
+      grad.addColorStop(1, colorB);
       ctx.save();
-      if (dashed) ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = color;
+      if (dashed) ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = grad;
       ctx.lineWidth = width || 2;
       ctx.lineCap = "round";
+      ctx.shadowColor = colorB;
+      ctx.shadowBlur = 16 * pulse;
       ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke();
       ctx.setLineDash([]);
-      var ah = 7;
+      var ah = 8;
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x - Math.cos(angle - 0.4) * ah, y - Math.sin(angle - 0.4) * ah);
-      ctx.lineTo(x - Math.cos(angle + 0.4) * ah, y - Math.sin(angle + 0.4) * ah);
+      ctx.lineTo(x - Math.cos(angle - 0.42) * ah, y - Math.sin(angle - 0.42) * ah);
+      ctx.lineTo(x - Math.cos(angle + 0.42) * ah, y - Math.sin(angle + 0.42) * ah);
       ctx.closePath();
-      ctx.fillStyle = color;
+      ctx.fillStyle = colorB;
+      ctx.shadowBlur = 18 * pulse;
       ctx.fill();
       ctx.restore();
+      ctx.beginPath();
+      ctx.arc(x, y, dashed ? 3 : 3.6, 0, Math.PI * 2);
+      ctx.fillStyle = colorB;
+      ctx.globalAlpha = 0.9;
+      ctx.fill();
+      ctx.globalAlpha = 1;
       return { x: x, y: y };
     }
-    var q = arrow(aq, R, gold, false, 2.4);
-    var kk = arrow(ak, R, sky, true, 2);
+
+    var aq = disp.q, ak = disp.k;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R, cy);
+    ctx.strokeStyle = "rgba(143,170,180,0.22)";
+    ctx.setLineDash([2, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    var q = arrow(aq, R, gold, goldBright, false, 2.6);
+    var kk = arrow(ak, R, sky, skyBright, true, 2.1);
     var delta = Math.atan2(Math.sin(ak - aq), Math.cos(ak - aq));
     if (Math.abs(delta) > 0.02) {
-      ctx.beginPath();
+      var start = aq, end = aq + delta;
+      ctx.save();
       ctx.strokeStyle = rose;
-      ctx.lineWidth = 1.4;
-      ctx.setLineDash([2, 3]);
-      ctx.arc(cx, cy, R * 0.62, Math.min(aq, aq + delta), Math.max(aq, aq + delta));
+      ctx.lineWidth = 2;
+      ctx.shadowColor = rose;
+      ctx.shadowBlur = 12 * pulse;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.62, Math.min(start, end), Math.max(start, end));
       ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.restore();
+      var mid = aq + delta / 2;
+      ctx.fillStyle = rose;
+      ctx.font = '700 10px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText("Δ", cx + Math.cos(mid) * R * 0.72, cy + Math.sin(mid) * R * 0.72 + 3);
     }
 
-    ctx.fillStyle = gold;
-    ctx.font = '700 10px "Open Sans", sans-serif';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3.4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(233,245,248,0.9)";
+    ctx.shadowColor = "rgba(233,245,248,0.7)";
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle = goldBright;
+    ctx.font = '700 11px "Open Sans", sans-serif';
     ctx.textAlign = "left";
-    ctx.fillText("q", q.x + 8, q.y - 4);
-    ctx.fillStyle = sky;
-    ctx.fillText("k", kk.x + 8, kk.y + 12);
+    ctx.fillText("q", q.x + 9, q.y - 4);
+    ctx.fillStyle = skyBright;
+    ctx.fillText("k", kk.x + 9, kk.y + 13);
 
     ctx.fillStyle = ink;
-    ctx.font = '700 16px "Open Sans", sans-serif';
+    ctx.font = '700 17px "Open Sans", sans-serif';
     ctx.textAlign = "center";
-    ctx.fillText("q · k = " + pairDot().toFixed(3), cx, h - 14);
+    ctx.fillText("q · k = " + pairDot().toFixed(3), cx, h - 13);
     ctx.fillStyle = muted;
     ctx.font = '600 10px "Open Sans", sans-serif';
     ctx.fillText(L("Paar ", "pair ") + (state.selected + 1) + " · Δ = " + (delta * 180 / Math.PI).toFixed(1) + "°", cx, h - 32);
@@ -270,7 +333,8 @@
       var b = document.createElement("button");
       b.type = "button";
       b.className = "rope-freq" + (i === state.selected ? " is-on" : "");
-      b.textContent = (i + 1) + "  θ " + theta(i).toFixed(3);
+      b.innerHTML = '<span>' + L("Paar ", "pair ") + (i + 1) + '</span><b>θ ' + theta(i).toFixed(3) + '</b><i class="rope-freq-bar" style="width:' + Math.max(6, theta(i) * 100).toFixed(1) + '%"></i>';
+      b.setAttribute("title", L("Frequenzpaar ", "frequency pair ") + (i + 1) + ": θ = " + theta(i).toFixed(5));
       b.addEventListener("click", function (idx) {
         return function () {
           state.selected = idx;
@@ -342,6 +406,19 @@
     });
   }
 
+  var dialLoop = T2.loop(function (now) {
+    if (!dialBox) return;
+    var t = targetAngles();
+    if (T2.reduced()) {
+      disp.q = t.q;
+      disp.k = t.k;
+    } else {
+      disp.q += (t.q - disp.q) * 0.16;
+      disp.k += (t.k - disp.k) * 0.16;
+    }
+    drawDial(now);
+  });
+
   T2.onResize(stage, function () { fitAll(); drawAll(); });
   T2.onTheme(function () { drawAll(); });
   T2.onLang(function () {
@@ -354,6 +431,8 @@
   renderFreqs();
   requestAnimationFrame(function () {
     fitAll();
+    disp = targetAngles();
     drawAll();
+    dialLoop.start();
   });
 })();
