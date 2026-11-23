@@ -61,11 +61,12 @@ html[data-theme="dark"] .crz-room {
 .crz-moon {
   position: absolute;
   right: 20%;
-  top: 16%;
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 32%, #f6fbfd, #cddbe4 62%, #9fb3bf);
-  box-shadow: 0 0 22px rgba(210, 232, 244, 0.55);
+  top: 12%;
+  font-size: clamp(20px, 2.4vw, 30px);
+  line-height: 1;
+  filter: grayscale(1) brightness(1.12) drop-shadow(0 0 10px rgba(210, 232, 244, 0.45));
+  transform: rotate(-12deg);
+  user-select: none;
 }
 .crz-stars {
   position: absolute;
@@ -368,6 +369,42 @@ html[data-theme="dark"] .crz-room {
 }
 .crz-hud-chip b { font-family: var(--mono); color: #ffe7b2; }
 .crz-hud-dot { width: 6px; height: 6px; border-radius: 50%; background: #7cc264; box-shadow: 0 0 8px rgba(124, 194, 100, 0.8); }
+
+.crz-slip.is-waiting { opacity: 0; }
+
+.crz-fly {
+  position: absolute;
+  z-index: 8;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.crz-fly-paper {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  padding: 15px 17px 16px;
+  background:
+    repeating-linear-gradient(0deg, rgba(120, 96, 60, 0.05) 0 1px, transparent 1px 22px),
+    linear-gradient(180deg, #fbf5e4, #efe5cd);
+  color: #2a241c;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(120, 96, 60, 0.18);
+  overflow: hidden;
+}
+.crz-fly-label {
+  display: block;
+  font: 700 8.5px/1 var(--sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a6a3f;
+  margin-bottom: 9px;
+}
+.crz-fly-paper p {
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", "Noto Sans CJK SC", serif;
+  font-size: clamp(18px, 1.9vw, 24px);
+  line-height: 1.35;
+  margin: 0;
+  color: #241d15;
+}
 
 /* reveal overlay */
 .crz-reveal {

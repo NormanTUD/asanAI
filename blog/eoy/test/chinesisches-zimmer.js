@@ -18,12 +18,23 @@
   var done = false;
   var busy = false;
   var timers = [];
+  var activeFly = null;
+  var activeAnim = null;
 
   function clearTimers() {
     timers.forEach(function (id) { clearTimeout(id); });
     timers = [];
   }
   function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
+
+  function clearFly() {
+    if (activeAnim) {
+      activeAnim.onfinish = null;
+      try { activeAnim.cancel(); } catch (e) {}
+      activeAnim = null;
+    }
+    if (activeFly) { activeFly.remove(); activeFly = null; }
+  }
 
   var rounds = [
     {
@@ -78,21 +89,11 @@
       '<p class="crz-book-hint">' + T("Suche die Eingabe und lies die passende Ausgabe ab. Du musst die Zeichen nicht verstehen.", "Find the input and read off the matching output. You do not need to understand the characters.") + '</p>';
   }
 
-  function renderSlip() {
-    var r = rounds[idx];
-    slip.className = "crz-slip is-arriving";
-    slip.innerHTML =
-      '<span class="crz-slip-label">' + T("Von draußen", "From outside") + '</span>' +
-      '<p class="crz-slip-text" lang="zh">' + esc(r.input) + '</p>' +
+  function slipMarkup(text) {
+    return '<span class="crz-slip-label">' + T("Von draußen", "From outside") + '</span>' +
+      '<p class="crz-slip-text" lang="zh">' + esc(text) + '</p>' +
       '<p class="crz-slip-sub">' + T("Du verstehst die Zeichen nicht. Wenn du zufällig Chinesisch kannst, tue so, als könntest du es nicht.", "You do not understand the characters. If you happen to know Chinese, pretend you do not.") + '</p>' +
       '<span class="crz-seal" lang="zh" aria-hidden="true">入</span>';
-    if (slot) {
-      slot.classList.add("is-flash");
-      later(function () { slot.classList.remove("is-flash"); }, 520);
-    }
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { slip.classList.remove("is-arriving"); });
-    });
   }
 
   function renderOptions() {
@@ -105,18 +106,132 @@
       b.className = "crz-choice";
       b.lang = "zh";
       b.textContent = opt;
+      b.disabled = busy;
       b.addEventListener("click", function () { choose(opt, b); });
       optionsEl.appendChild(b);
     });
   }
 
+  function setOptionsEnabled(on) {
+    Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) {
+      if (!b.classList.contains("is-wrong")) b.disabled = !on;
+    });
+  }
+
+  function relRect(el, rr) {
+    var r = el.getBoundingClientRect();
+    return { left: r.left - rr.left, top: r.top - rr.top, width: r.width, height: r.height };
+  }
+
+  function makeFly(text, left, top, width, height) {
+    var fly = document.createElement("div");
+    fly.className = "crz-fly";
+    fly.style.left = left + "px";
+    fly.style.top = top + "px";
+    fly.style.width = width + "px";
+    fly.style.height = height + "px";
+    fly.innerHTML = '<div class="crz-fly-paper"><span class="crz-fly-label">' + T("Von draußen", "From outside") + '</span><p lang="zh">' + esc(text) + '</p></div>';
+    room.appendChild(fly);
+    return fly;
+  }
+
+  function scrollNeeded() {
+    return window.matchMedia && window.matchMedia("(max-width: 780px)").matches;
+  }
+
+  function flyIn() {
+    var r = rounds[idx];
+    if (scrollNeeded() || !slip.animate) {
+      slip.classList.remove("is-waiting");
+      busy = false;
+      setOptionsEnabled(true);
+      if (slot) {
+        slot.classList.add("is-flash");
+        later(function () { slot.classList.remove("is-flash"); }, 520);
+      }
+      return;
+    }
+    var rr = room.getBoundingClientRect();
+    var sr = slot.getBoundingClientRect();
+    var pr = slip.getBoundingClientRect();
+    var w = pr.width, h = pr.height;
+    var startLeft = (sr.left + sr.width / 2 - rr.left) - w / 2;
+    var startTop = (sr.top + sr.height / 2 - rr.top) - h / 2;
+    var endLeft = pr.left - rr.left;
+    var endTop = pr.top - rr.top;
+    var dx = endLeft - startLeft, dy = endTop - startTop;
+
+    activeFly = makeFly(r.input, startLeft, startTop, w, h);
+    if (slot) {
+      slot.classList.add("is-flash");
+      later(function () { slot.classList.remove("is-flash"); }, 620);
+    }
+    var frames = [
+      { transform: "translate(0,0) rotate(-15deg) scale(.55)", opacity: 0, offset: 0 },
+      { transform: "translate(" + (dx * 0.10) + "px," + (dy * 0.08) + "px) rotate(11deg) scale(.7)", opacity: 1, offset: 0.16 },
+      { transform: "translate(" + (dx * 0.32 - 9) + "px," + (dy * 0.34) + "px) rotate(-9deg) scale(.83)", opacity: 1, offset: 0.38 },
+      { transform: "translate(" + (dx * 0.60 + 8) + "px," + (dy * 0.60) + "px) rotate(7deg) scale(.92)", opacity: 1, offset: 0.62 },
+      { transform: "translate(" + (dx * 0.85 - 4) + "px," + (dy * 0.84) + "px) rotate(-4deg) scale(.98)", opacity: 1, offset: 0.84 },
+      { transform: "translate(" + dx + "px," + dy + "px) rotate(-1.4deg) scale(1)", opacity: 1, offset: 1 }
+    ];
+    activeAnim = activeFly.animate(frames, { duration: 1000, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" });
+    activeAnim.onfinish = function () {
+      clearFly();
+      slip.classList.remove("is-waiting");
+      busy = false;
+      setOptionsEnabled(true);
+    };
+  }
+
+  function flyOut(text, after) {
+    if (scrollNeeded() || !slip.animate) {
+      if (after) after();
+      return;
+    }
+    var rr = room.getBoundingClientRect();
+    var sr = slot.getBoundingClientRect();
+    var pr = slip.getBoundingClientRect();
+    var w = pr.width, h = pr.height;
+    var startLeft = pr.left - rr.left;
+    var startTop = pr.top - rr.top;
+    var dx = (sr.left + sr.width / 2 - rr.left) - (startLeft + w / 2);
+    var dy = (sr.top + sr.height / 2 - rr.top) - (startTop + h / 2) - 60;
+
+    activeFly = makeFly(text, startLeft, startTop, w, h);
+    slip.classList.add("is-waiting");
+    var frames = [
+      { transform: "translate(0,0) rotate(-1.4deg) scale(1)", opacity: 1, offset: 0 },
+      { transform: "translate(" + (dx * 0.3) + "px," + (dy * 0.34) + "px) rotate(-7deg) scale(.86)", opacity: 1, offset: 0.45 },
+      { transform: "translate(" + (dx * 0.78) + "px," + (dy * 0.82) + "px) rotate(8deg) scale(.55)", opacity: 1, offset: 0.8 },
+      { transform: "translate(" + dx + "px," + dy + "px) rotate(14deg) scale(.2)", opacity: 0, offset: 1 }
+    ];
+    activeAnim = activeFly.animate(frames, { duration: 820, easing: "cubic-bezier(.4,.1,.6,1)", fill: "forwards" });
+    if (slot) {
+      later(function () { slot.classList.add("is-flash"); }, 260);
+      later(function () { slot.classList.remove("is-flash"); }, 760);
+    }
+    activeAnim.onfinish = function () {
+      clearFly();
+      if (after) after();
+    };
+  }
+
   function renderRound() {
-    busy = false;
+    clearFly();
+    busy = true;
     if (feedbackEl) feedbackEl.textContent = "";
     renderHud();
     renderBook();
-    renderSlip();
+    slip.className = "crz-slip is-waiting";
+    slip.innerHTML = slipMarkup(rounds[idx].input);
     renderOptions();
+    flyIn();
+  }
+
+  function advance() {
+    idx++;
+    if (idx < rounds.length) renderRound();
+    else showReveal();
   }
 
   function choose(opt, btn) {
@@ -131,10 +246,8 @@
       if (feedbackEl) feedbackEl.textContent = T("Richtig. Du hast die Regel befolgt, ohne die Zeichen zu verstehen.", "Correct. You followed the rule without understanding the characters.");
       renderHud();
       later(function () {
-        idx++;
-        if (idx < rounds.length) renderRound();
-        else showReveal();
-      }, 1000);
+        flyOut(r.answer, function () { advance(); });
+      }, 520);
     } else {
       btn.classList.add("is-wrong");
       btn.disabled = true;
@@ -173,6 +286,7 @@
 
   function restartAll() {
     clearTimers();
+    clearFly();
     done = false;
     busy = false;
     idx = 0;
@@ -190,6 +304,7 @@
       var keep = idx;
       var keepScore = score;
       clearTimers();
+      clearFly();
       idx = keep;
       score = keepScore;
       renderRound();
