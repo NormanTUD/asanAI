@@ -4613,7 +4613,7 @@ html.dark .ls-cr2-room {
   .ls-cr2-hud { top: 10px; left: 10px; right: auto; align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
 }
 
-.ls-cr2-note { margin: 0 0 14px; max-width: 72ch; }
+.ls-cr2-note { margin: 0 0 14px; width: 100%; max-width: none; }
 
 @media (max-width: 780px) {
   .ls-cr2-room { min-height: 0; }

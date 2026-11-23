@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 30 · Das Kontrollzentrum</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="kontrollzentrum.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="30 · Gesellschaft" data-en="30 · society">30 · Gesellschaft</span>
+      <h1 class="proto-title" data-de="Das Kontrollzentrum" data-en="The control room">Das Kontrollzentrum</h1>
+      <p class="proto-lead" data-de="Fünf Stufen tragen ein Modell: Chips, Cloud, Modelle, Verteilung, Regeln. Ziehe an Konzentration, Regulierung, Datenvielfalt und Autonomie und sieh, welche Risiken kippen." data-en="Five stages carry a model: chips, cloud, models, distribution, rules. Pull concentration, regulation, data diversity, and autonomy and see which risks tip.">Fünf Stufen tragen ein Modell: Chips, Cloud, Modelle, Verteilung, Regeln. Ziehe an Konzentration, Regulierung, Datenvielfalt und Autonomie und sieh, welche Risiken kippen.</p>
+    </header>
+
+    <section class="proto-stage t2-stage kz-stage" aria-label="Kontrollzentrum der Modellkette">
+      <div class="t2-hud">
+        <span class="t2-kicker" data-de="Macht · Wertschöpfungskette" data-en="Power · value chain">Macht · Wertschöpfungskette</span>
+        <h2 class="t2-hud-title" data-de="Das Kontrollzentrum" data-en="The control room">Das Kontrollzentrum</h2>
+        <span class="t2-hud-spacer"></span>
+        <div class="t2-pillrow" role="group" aria-label="Szenario">
+          <button type="button" class="proto-chip is-on" data-kz-preset="open" data-de="Offen" data-en="Open">Offen</button>
+          <button type="button" class="proto-chip" data-kz-preset="regulated" data-de="Reguliert" data-en="Regulated">Reguliert</button>
+          <button type="button" class="proto-chip" data-kz-preset="concentrated" data-de="Konzentriert" data-en="Concentrated">Konzentriert</button>
+        </div>
+      </div>
+
+      <div class="kz-main">
+        <div class="kz-chamber" id="kz-chamber">
+          <canvas id="kz-canvas" class="kz-canvas" aria-hidden="true"></canvas>
+          <div class="kz-silos" id="kz-silos" role="group" aria-label="Stufen der Wertschöpfungskette"></div>
+          <div class="kz-chamber-label">
+            <span data-de="Wertschöpfungskette" data-en="Value chain">Wertschöpfungskette</span>
+            <span id="kz-flow-label" class="kz-flow-label"></span>
+          </div>
+        </div>
+        <aside class="kz-detail t2-panel" id="kz-detail" aria-live="polite"></aside>
+      </div>
+
+      <div class="kz-bottom">
+        <div class="kz-risk-wrap">
+          <div class="kz-risk-head"><span class="t2-meta" data-de="Risiko-Raum" data-en="Risk space">Risiko-Raum</span><b data-de="schematisch" data-en="schematic">schematisch</b></div>
+          <div class="kz-risk" id="kz-risk"></div>
+          <div class="kz-benefit">
+            <div class="kz-benefit-head"><span data-de="Wer bekommt den Gewinn?" data-en="Who captures the value?">Wer bekommt den Gewinn?</span><b data-de="schematisch" data-en="schematic">schematisch</b></div>
+            <div class="kz-benefit-bar" id="kz-benefit"></div>
+            <div class="kz-benefit-legend" id="kz-benefit-legend"></div>
+          </div>
+        </div>
+        <div class="kz-controls">
+          <label class="t2-range"><span data-de="Compute-Konzentration" data-en="Compute concentration">Compute-Konzentration</span><input type="range" id="kz-compute" min="0" max="100" step="1" value="85"><output></output></label>
+          <label class="t2-range"><span data-de="Regulierung" data-en="Regulation">Regulierung</span><input type="range" id="kz-regulation" min="0" max="100" step="1" value="35"><output></output></label>
+          <label class="t2-range"><span data-de="Datenvielfalt" data-en="Data diversity">Datenvielfalt</span><input type="range" id="kz-data" min="0" max="100" step="1" value="45"><output></output></label>
+          <label class="t2-range"><span data-de="Agenten-Autonomie" data-en="Agent autonomy">Agenten-Autonomie</span><input type="range" id="kz-autonomy" min="0" max="100" step="1" value="60"><output></output></label>
+          <button type="button" class="proto-btn proto-btn--ghost" data-kz-reset data-de="Reset" data-en="Reset">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Regler und Risikowerte sind eine schematische Politiksimulation, keine Messung. Die Inhalte der Stufen folgen den im Kurs zitierten Quellen: Sastry et al. (2024), Gururangan et al. (2022), Joshi et al. (2020), Liu et al. (2023), Ozer et al. (2026), Zhang (2026), EU AI Act (2024), NIST AI RMF (2023)." data-en-html="The sliders and risk values are a schematic policy simulation, not a measurement. The stage content follows the sources cited in the course: Sastry et al. (2024), Gururangan et al. (2022), Joshi et al. (2020), Liu et al. (2023), Ozer et al. (2026), Zhang (2026), EU AI Act (2024), NIST AI RMF (2023).">Die Regler und Risikowerte sind eine schematische Politiksimulation, keine Messung. Die Inhalte der Stufen folgen den im Kurs zitierten Quellen: Sastry et al. (2024), Gururangan et al. (2022), Joshi et al. (2020), Liu et al. (2023), Ozer et al. (2026), Zhang (2026), EU AI Act (2024), NIST AI RMF (2023).</p>
+
+    <footer class="proto-foot">
+      <span>30 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="theater.html" data-de="Weiter: Theater des Geistes" data-en="Next: theatre of mind">Weiter: Theater des Geistes</a></span>
+    </footer>
+  </main>
+  <script src="kit.js"></script>
+  <script src="kontrollzentrum.js"></script>
+</body>
+</html>

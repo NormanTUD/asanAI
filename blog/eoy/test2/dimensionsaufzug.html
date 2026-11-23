@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 6 · Der Dimensionsaufzug</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="dimensionsaufzug.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="6 · Hohe Dimensionen" data-en="6 · high dimensions">6 · Hohe Dimensionen</span>
+      <h1 class="proto-title" data-de="Der Dimensionsaufzug" data-en="The dimension elevator">Der Dimensionsaufzug</h1>
+      <p class="proto-lead" data-de="Ein Token-Vektor ist ein Schacht aus Zahlen. Zwei Tokens können sich im Vollen sehr ähnlich sein und im zweidimensionalen Schatten weit auseinanderliegen. Fahr durch die Dimensionen und sieh beides zugleich." data-en="A token vector is a shaft of numbers. Two tokens can be very similar in the full space and far apart in the two-dimensional shadow. Travel through the dimensions and see both at once.">Ein Token-Vektor ist ein Schacht aus Zahlen. Zwei Tokens können sich im Vollen sehr ähnlich sein und im zweidimensionalen Schatten weit auseinanderliegen. Fahr durch die Dimensionen und sieh beides zugleich.</p>
+    </header>
+
+    <section class="proto-stage t2-stage da-stage" aria-label="Dimensionsaufzug">
+      <div class="t2-hud">
+        <span class="t2-kicker" data-de="Embedding · Vektor" data-en="Embedding · vector">Embedding · Vektor</span>
+        <h2 class="t2-hud-title" data-de="Der Dimensionsaufzug" data-en="The dimension elevator">Der Dimensionsaufzug</h2>
+        <span class="t2-hud-spacer"></span>
+        <div class="t2-pillrow" id="da-pairs" role="group" aria-label="Token-Paar"></div>
+        <span class="t2-sep" aria-hidden="true"></span>
+        <div class="t2-pillrow" id="da-dims" role="group" aria-label="Dimensionen"></div>
+      </div>
+
+      <div class="da-main">
+        <div class="da-shaft-wrap">
+          <div class="da-shaft-head">
+            <span class="t2-meta" data-de="Vektor-Schacht" data-en="Vector shaft">Vektor-Schacht</span>
+            <span id="da-shown" class="da-shown"></span>
+          </div>
+          <div class="da-shaft" id="da-shaft" role="listbox" aria-label="Dimensionen des Vektors" tabindex="0"></div>
+          <div class="da-legend t2-legend">
+            <span><i style="background:var(--sky)"></i><b id="da-token-a">Katze</b></span>
+            <span><i style="background:var(--green)"></i><b id="da-token-b">Hund</b></span>
+            <span class="da-legend-note" data-de="Werte schematisch, −1 bis +1" data-en="values schematic, −1 to +1">Werte schematisch, −1 bis +1</span>
+          </div>
+        </div>
+
+        <aside class="da-side">
+          <div class="t2-panel da-proj-panel">
+            <div class="da-panel-head"><span class="t2-meta" data-de="Projektion" data-en="Projection">Projektion</span><span class="da-panel-sub" data-de="nur d1 und d2" data-en="only d1 and d2">nur d1 und d2</span></div>
+            <canvas id="da-proj" class="da-proj" role="img" aria-label="Zweidimensionale Projektion der beiden Token-Vektoren"></canvas>
+            <p class="da-proj-note" data-de="Der Schatten zeigt zwei Achsen. Der Rest des Vektors fehlt." data-en="The shadow shows two axes. The rest of the vector is missing.">Der Schatten zeigt zwei Achsen. Der Rest des Vektors fehlt.</p>
+          </div>
+
+          <div class="t2-panel da-meter-panel">
+            <div class="da-meter-row"><span data-de="Kosinus im Vollen" data-en="cosine in the full space">Kosinus im Vollen</span><b id="da-cos">—</b></div>
+            <div class="t2-meter"><i id="da-cos-bar" style="width:0%"></i></div>
+            <div class="da-meter-row"><span data-de="Abstand im Schatten" data-en="distance in the shadow">Abstand im Schatten</span><b id="da-dist">—</b></div>
+            <div class="t2-meter da-meter-dist"><i id="da-dist-bar" style="width:0%"></i></div>
+            <p class="da-readout" id="da-readout" aria-live="polite"></p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="t2-bottom">
+        <div class="t2-readout" id="da-info" aria-live="polite"></div>
+        <div class="t2-controls">
+          <button type="button" class="proto-btn proto-btn--ghost" data-da-prev data-de="← Dimension" data-en="← dimension">← Dimension</button>
+          <button type="button" class="proto-btn proto-btn--ghost" data-da-next data-de="Dimension →" data-en="dimension →">Dimension →</button>
+          <button type="button" class="proto-btn proto-btn--primary" data-da-travel data-de="Reise" data-en="Travel">Reise</button>
+          <button type="button" class="proto-btn proto-btn--ghost" data-da-reset data-de="Reset" data-en="Reset">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Vektoren sind erzeugte Beispieldaten, keine GPT-2-Messung. GPT-2 small hat 768 Dimensionen; größere Modelle haben mehr. Die 2D-Projektion ist ein Schatten und verliert fast alle Informationen. Genau deshalb ist Nähe im Vollen nicht dasselbe wie Nähe im Bild." data-en-html="The vectors are generated example data, not a GPT-2 measurement. GPT-2 small has 768 dimensions; larger models have more. The 2D projection is a shadow and loses almost all information. That is exactly why closeness in the full space is not the same as closeness in the picture.">Die Vektoren sind erzeugte Beispieldaten, keine GPT-2-Messung. GPT-2 small hat 768 Dimensionen; größere Modelle haben mehr. Die 2D-Projektion ist ein Schatten und verliert fast alle Informationen. Genau deshalb ist Nähe im Vollen nicht dasselbe wie Nähe im Bild.</p>
+
+    <footer class="proto-foot">
+      <span>6 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="ueberraschung.html" data-de="Weiter: Überraschungsmaschine" data-en="Next: surprise machine">Weiter: Überraschungsmaschine</a></span>
+    </footer>
+  </main>
+  <script src="kit.js"></script>
+  <script src="dimensionsaufzug.js"></script>
+</body>
+</html>
