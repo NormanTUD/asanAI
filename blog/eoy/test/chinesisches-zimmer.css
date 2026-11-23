@@ -272,7 +272,7 @@ html[data-theme="dark"] .crz-room {
   left: 2px;
   right: -3px;
   bottom: -9px;
-  height: 13px;
+  height: 16px;
   border-radius: 2px 2px 8px 8px;
   background: repeating-linear-gradient(0deg, #efe5cd 0 2px, #d8c7a3 2px 3px);
   box-shadow: 0 8px 14px rgba(0, 0, 0, 0.3);
@@ -356,7 +356,7 @@ html[data-theme="dark"] .crz-room {
 .crz-book-turn:hover { background: linear-gradient(180deg, #fff9ea, #efe2c4); }
 .crz-book-turn:focus-visible { outline: 2px solid #ffd98a; outline-offset: 2px; }
 .crz-book-turn svg { width: 12px; height: 12px; }
-.crz-book-pageno {
+.crz-page-no {
   position: absolute;
   left: 50%;
   bottom: 8px;
@@ -365,6 +365,8 @@ html[data-theme="dark"] .crz-room {
   color: #9a7a4f;
   z-index: 6;
 }
+.crz-book-turn--prev { left: 8px; right: auto; }
+.crz-book-turn:disabled { opacity: .42; cursor: default; box-shadow: none; }
 .crz-page-flip {
   position: absolute;
   top: 0;
@@ -387,9 +389,15 @@ html[data-theme="dark"] .crz-room {
 }
 .crz-flip-face--back { transform: rotateY(180deg); }
 .crz-page-flip.is-turning { animation: crzPageTurn 620ms cubic-bezier(.3, 0.1, 0.2, 1) forwards; }
+.crz-page-flip--back { left: 0; right: auto; transform-origin: right center; }
+.crz-page-flip--back.is-turning { animation: crzPageTurnBack 620ms cubic-bezier(.3, 0.1, 0.2, 1) forwards; }
 @keyframes crzPageTurn {
   from { transform: rotateY(0deg); }
   to { transform: rotateY(-180deg); }
+}
+@keyframes crzPageTurnBack {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(180deg); }
 }
 
 .crz-options {
@@ -585,3 +593,5 @@ html[data-theme="dark"] .crz-room {
   .crz-feedback { min-height: 0; }
   .crz-hud { top: 10px; left: 10px; right: auto; align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
 }
+
+.crz-above-note { margin: 0 0 14px; max-width: 72ch; }

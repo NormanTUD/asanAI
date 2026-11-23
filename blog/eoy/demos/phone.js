@@ -177,9 +177,6 @@
       Array.prototype.forEach.call(kb.keys.querySelectorAll("[data-k]"), function (key) {
         kb.keyEls[key.getAttribute("data-k")] = key;
       });
-      kb.keyEls["?"] = kb.keyEls.sym;
-      kb.keyEls["!"] = kb.keyEls.sym;
-      kb.keyEls["."] = kb.keyEls.sym;
     }
     function clearSwipe(kb) {
       if (!kb) return;
@@ -229,7 +226,7 @@
       }
       return d;
     }
-    function animateSwipe(kb, points, duration, onPass) {
+    function animateSwipe(kb, points, duration, onPass, label) {
       if (!kb || !kb.swipe || points.length < 2) return;
       clearSwipe(kb);
       var NS = "http://www.w3.org/2000/svg";
@@ -237,35 +234,46 @@
       svg.setAttribute("viewBox", "0 0 " + kb.swipe.offsetWidth + " " + kb.swipe.offsetHeight);
       svg.setAttribute("preserveAspectRatio", "none");
       var d = smoothPath(points);
-      var glow = document.createElementNS(NS, "path");
-      var line = document.createElementNS(NS, "path");
-      [glow, line].forEach(function (path) {
+      function makePath(stroke, width, opacity) {
+        var path = document.createElementNS(NS, "path");
         path.setAttribute("d", d);
         path.setAttribute("fill", "none");
+        path.setAttribute("stroke", stroke);
+        path.setAttribute("stroke-width", String(width));
+        path.setAttribute("stroke-opacity", String(opacity));
         path.setAttribute("stroke-linecap", "round");
         path.setAttribute("stroke-linejoin", "round");
-      });
-      glow.setAttribute("stroke", "rgba(63,127,176,.18)");
-      glow.setAttribute("stroke-width", "12");
-      line.setAttribute("stroke", "rgba(63,127,176,.70)");
-      line.setAttribute("stroke-width", "3.4");
+        return path;
+      }
+      var line = makePath("#3f7fb0", 2.4, 0.10);
+      var wordBg = document.createElementNS(NS, "rect");
+      wordBg.setAttribute("rx", "5");
+      wordBg.setAttribute("fill", "rgba(247,250,253,.92)");
+      wordBg.setAttribute("stroke", "rgba(15,23,42,.08)");
+      wordBg.setAttribute("height", "15");
+      wordBg.setAttribute("visibility", "hidden");
+      var wordText = document.createElementNS(NS, "text");
+      wordText.setAttribute("text-anchor", "middle");
+      wordText.setAttribute("font-family", "Open Sans, sans-serif");
+      wordText.setAttribute("font-size", "10");
+      wordText.setAttribute("font-weight", "700");
+      wordText.setAttribute("fill", "rgba(27,42,43,.78)");
       var halo = document.createElementNS(NS, "circle");
-      halo.setAttribute("r", "14");
-      halo.setAttribute("fill", "rgba(63,127,176,.16)");
+      halo.setAttribute("r", "12");
+      halo.setAttribute("fill", "rgba(63,127,176,.12)");
       var dot = document.createElementNS(NS, "circle");
-      dot.setAttribute("r", "5.4");
+      dot.setAttribute("r", "5");
       dot.setAttribute("fill", "#3f7fb0");
       dot.setAttribute("stroke", "#fff");
-      dot.setAttribute("stroke-width", "1.8");
-      svg.appendChild(glow);
+      dot.setAttribute("stroke-width", "1.6");
       svg.appendChild(line);
       svg.appendChild(halo);
       svg.appendChild(dot);
+      svg.appendChild(wordBg);
+      svg.appendChild(wordText);
       kb.swipe.appendChild(svg);
       var len = line.getTotalLength();
       if (!len) return;
-      glow.style.strokeDasharray = String(len);
-      glow.style.strokeDashoffset = String(len);
       line.style.strokeDasharray = String(len);
       line.style.strokeDashoffset = String(len);
       var total = 0;
@@ -276,6 +284,18 @@
       }
       var fracs = cum.map(function (value) { return total ? value / total : 1; });
       var passed = -1;
+      function updateWord(x, y) {
+        if (!label || passed < 0) return;
+        var ty = Math.max(16, y - 22);
+        wordText.setAttribute("x", String(x));
+        wordText.setAttribute("y", String(ty));
+        wordText.textContent = label.slice(0, passed + 1);
+        var width = wordText.getComputedTextLength();
+        wordBg.setAttribute("x", String(x - width / 2 - 5));
+        wordBg.setAttribute("y", String(ty - 11));
+        wordBg.setAttribute("width", String(width + 10));
+        wordBg.setAttribute("visibility", "visible");
+      }
       function fireUpTo(frac) {
         for (var k = passed + 1; k < fracs.length; k++) {
           if (fracs[k] <= frac + 0.0001) {
@@ -289,24 +309,24 @@
       var start = performance.now();
       function tick(now) {
         var raw = Math.min(1, (now - start) / duration);
-        var eased = raw * raw * raw * (raw * (raw * 6 - 15) + 10);
+        var eased = raw < 0.5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
         var drawn = len * eased;
         var pt = line.getPointAtLength(drawn);
-        var offset = String(len - drawn);
-        glow.style.strokeDashoffset = offset;
-        line.style.strokeDashoffset = offset;
+        line.style.strokeDashoffset = String(len - drawn);
         halo.setAttribute("cx", String(pt.x));
         halo.setAttribute("cy", String(pt.y));
         dot.setAttribute("cx", String(pt.x));
         dot.setAttribute("cy", String(pt.y));
         fireUpTo(eased);
+        updateWord(pt.x, pt.y);
         if (raw < 1) {
           kb.raf = requestAnimationFrame(tick);
         } else {
           fireUpTo(1);
-          svg.style.transition = "opacity .38s ease";
+          updateWord(pt.x, pt.y);
+          svg.style.transition = "opacity .42s ease";
           svg.style.opacity = "0";
-          later(function () { if (svg.parentNode) svg.remove(); }, 420);
+          later(function () { if (svg.parentNode) svg.remove(); }, 460);
         }
       }
       kb.raf = requestAnimationFrame(tick);
@@ -393,13 +413,23 @@
       }, speed);
       timers.push(timer);
     }
+    function pressEnter(kb) {
+      var key = kb.keyEls.enter;
+      if (!key) return;
+      key.classList.add("is-pressed");
+      later(function () { key.classList.remove("is-pressed"); }, 150);
+    }
     function typeInto(kb, text, done, perMin, perMax, perBudget) {
       if (reduce) { if (kb.input) kb.input.textContent = text; if (done) done(); return; }
       kb.typed = "";
       var chunks = text.split(/(\s+)/).filter(function (part) { return part.length; });
       var ci = 0;
       function nextChunk() {
-        if (ci >= chunks.length) { if (done) done(); return; }
+        if (ci >= chunks.length) {
+          pressEnter(kb);
+          later(function () { if (done) done(); }, 150);
+          return;
+        }
         var chunk = chunks[ci++];
         if (/^\s+$/.test(chunk)) {
           pressKey(kb, " ");
@@ -415,16 +445,19 @@
           return point;
         }).filter(Boolean);
         if (points.length < 2) {
-          letters.forEach(function (ch) { pressKey(kb, ch); appendTyped(kb, ch); });
+          letters.forEach(function (ch) {
+            if (/[a-z]/i.test(ch)) pressKey(kb, ch);
+            appendTyped(kb, ch);
+          });
           later(nextChunk, 140);
           return;
         }
         var per = Math.max(perMin, Math.min(perMax, perBudget / Math.max(1, letters.length)));
         var dur = letters.length * per;
         animateSwipe(kb, points, dur, function (i) {
-          pressKey(kb, letters[i]);
+          if (/[a-z]/i.test(letters[i])) pressKey(kb, letters[i]);
           appendTyped(kb, letters[i]);
-        });
+        }, chunk);
         later(nextChunk, dur + 140);
       }
       nextChunk();
@@ -438,12 +471,12 @@
         searchText.textContent = text;
         showKeyboard(SEARCH_KB, false);
         later(function () { if (done) done(); }, 220);
-      }, 64, 110, 820);
+      }, 56, 96, 700);
     }
     function typeChatInput(text, done) {
       if (reduce) { chatInputEl.textContent = text; if (done) done(); return; }
       chatInputEl.innerHTML = '<span class="ia-caret"></span>';
-      typeInto(CHAT_KB, text, done, 58, 100, 760);
+      typeInto(CHAT_KB, text, done, 52, 88, 660);
     }
     function typeAnswer() {
       var spans = AI.map(function (seg) {
