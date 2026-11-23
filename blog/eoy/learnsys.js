@@ -3031,6 +3031,43 @@
     }
   }
 
+  function fullEntryStep(d, from, dir) {
+    var list = visibleEntries(d);
+    for (var i = from; i >= 0 && i < list.length; i += dir) {
+      if (String(list[i]).indexOf(".") < 0) return i;
+    }
+    return -1;
+  }
+  function nextFull() {
+    navHintDismissed = true;
+    renderNavHint();
+    accelerateMotion();
+    if (demo && typeof demo.nextFull === "function" && demo.nextFull()) { updateBottomNav(); return; }
+    var d = activeDay();
+    var at = fullEntryStep(d, state.step + 1, 1);
+    if (at >= 0) { go(state.day, at, 0); return; }
+    var list = cfg.days;
+    var pos = list.indexOf(d);
+    if (pos >= 0 && pos < list.length - 1) {
+      var nextDayFull = fullEntryStep(list[pos + 1], 0, 1);
+      go(pos + 1, nextDayFull < 0 ? 0 : nextDayFull, 0);
+    }
+  }
+  function prevFull() {
+    navHintDismissed = true;
+    renderNavHint();
+    if (demo && typeof demo.prevFull === "function" && demo.prevFull()) { updateBottomNav(); return; }
+    var d = activeDay();
+    var at = fullEntryStep(d, state.step - 1, -1);
+    if (at >= 0) { go(state.day, at, 0); return; }
+    var list = cfg.days;
+    var pos = list.indexOf(d);
+    if (pos > 0) {
+      var prevDayFull = fullEntryStep(list[pos - 1], visibleCount(list[pos - 1]) - 1, -1);
+      go(pos - 1, prevDayFull < 0 ? 0 : prevDayFull, 0);
+    }
+  }
+
   function shuffle() {
     if (!cfg.days.length) return;
     if (cfg.singleDay) {
@@ -3429,6 +3466,10 @@
         renderNavHint();
       }
       resetPositionBuffer();
+      if (!cfg.eoySingle && e.ctrlKey && !e.altKey && !e.shiftKey) {
+        if (e.key === "ArrowRight") { e.preventDefault(); nextFull(); return; }
+        if (e.key === "ArrowLeft") { e.preventDefault(); prevFull(); return; }
+      }
       var keyBase = activeStep();
       var substepKeys = cfg.eoySingle && keyBase && keyBase.substeps;
       if (!substepKeys && demo && demo.onKey && demo.onKey(e)) { updateBottomNav(); e.preventDefault(); return; }

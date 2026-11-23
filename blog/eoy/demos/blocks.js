@@ -949,6 +949,18 @@
       if (index > 0) { setIndex(index - 1); return true; }
       return false;
     }
+    function nextBlock() {
+      var cur = pages[index] ? pages[index].blockIndex : 0;
+      if (cur >= blocks.length - 1) return false;
+      setIndex(blockStartPage(cur + 1));
+      return true;
+    }
+    function prevBlock() {
+      var cur = pages[index] ? pages[index].blockIndex : 0;
+      if (cur <= 0) return false;
+      setIndex(blockStartPage(cur - 1));
+      return true;
+    }
     buildStack();
     renderDetail();
     prevBtn.addEventListener("click", function () { if (!prevInternal()) api.goPrev(); });
@@ -974,6 +986,8 @@
         return index < pages.length - 1;
       },
       hasPrev: function () { return index > 0; },
+      nextFull: nextBlock,
+      prevFull: prevBlock,
       onKey: function (e) {
         // HARD RULE (5/5): right arrow uses the same guarded path as Next.
         return api.util.arrowKey(e, function () {
