@@ -94,6 +94,8 @@
       finish: function () { if (scene && scene.finish) scene.finish(); },
       next: function () { return scene && scene.next ? scene.next() : false; },
       prev: function () { return scene && scene.prev ? scene.prev() : false; },
+      nextFull: function () { return scene && scene.nextFull ? scene.nextFull() : false; },
+      prevFull: function () { return scene && scene.prevFull ? scene.prevFull() : false; },
       hasNext: function () {
         if (!scene) return false;
         if (typeof scene.hasNext === "function") return !!scene.hasNext();

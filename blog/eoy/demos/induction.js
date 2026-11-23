@@ -32,8 +32,8 @@
     var copyHits = [];
     var ARIA = {
       sequence: DE
-        ? "Token-Reihe A B C A B C A; das letzte A beachtet das frühere B und sagt B voraus."
-        : "Token strip A B C A B C A; the final A attends to the earlier B and predicts B.",
+        ? "Echter Beispieltext mit Hund und bellt. Links der Text; rechts drei Schritte: Schicht 1 merkt den Vorgänger, Schicht 2 findet den Key, zusammen wird bellt kopiert und vorhergesagt."
+        : "Real example text with dog and barks. On the left the text; on the right three steps: layer 1 remembers the predecessor, layer 2 finds the key, together barks is copied and predicted.",
       copy: DE
         ? "Drei Schritte des Kopierens: Vorgänger merken, Stelle finden, kopieren."
         : "Three copying steps: remember the predecessor, find the place, copy.",
@@ -129,6 +129,33 @@
       c.restore();
     }
 
+    function pillWidth(c, text, size) {
+      c.save();
+      c.font = '700 ' + size + 'px "Barlow", "Open Sans", sans-serif';
+      var w = c.measureText(text).width + size * 1.5;
+      c.restore();
+      return w;
+    }
+
+    function textPill(c, text, cx, cy, color, filled, size) {
+      var sz = size || 10;
+      var w = pillWidth(c, text, sz);
+      var h = sz * 1.9;
+      c.save();
+      c.fillStyle = filled ? V.alpha(color, 0.15) : C.paper;
+      c.fillRect(cx - w / 2, cy - h / 2, w, h);
+      c.strokeStyle = color;
+      c.lineWidth = filled ? 1.6 : 1;
+      c.strokeRect(cx - w / 2 + 0.5, cy - h / 2 + 0.5, w - 1, h - 1);
+      c.fillStyle = filled ? C.ink : C.soft;
+      c.font = '700 ' + sz + 'px "Barlow", "Open Sans", sans-serif';
+      c.textAlign = "center";
+      c.textBaseline = "middle";
+      c.fillText(text, cx, cy + 1);
+      c.restore();
+      return w;
+    }
+
     function glowNode(c, x, y, r, color) {
       var g = c.createRadialGradient(x, y, r * 0.25, x, y, r * 2.7);
       g.addColorStop(0, V.alpha(color, 0.32));
@@ -153,117 +180,283 @@
       c.restore();
     }
 
-    function drawSequence(c) {
-      var pad = Math.max(16, Math.min(28, W * 0.04));
-      var small = W < 560;
-      head(c, DE ? "Induktion" : "Induction", pad, 30, { size: small ? 18 : 22 });
-      txt(c, DE ? "Ein Muster setzt sich fort. Klicke ein Token." : "A pattern continues. Click a token.", pad, 50, { size: 10.5, color: C.muted });
-      accent(c, pad, 64, 38);
-      var tokens = ["A", "B", "C", "A", "B", "C", "A"];
-      var tok = tokens[current];
-      var prev = -1;
-      for (var q = current - 1; q >= 0; q--) {
-        if (tokens[q] === tok) { prev = q; break; }
-      }
-      var source = prev >= 0 ? prev + 1 : -1;
-      var gap = Math.max(5, Math.min(12, W * 0.015));
-      var chipW = Math.min(46, (W - 2 * pad - 6 * gap) / 7);
-      chipW = Math.max(26, chipW);
-      var chipH = Math.min(44, chipW * 1.02);
-      var total = 7 * chipW + 6 * gap;
-      var start = (W - total) / 2;
-      var cy = H * 0.42;
-      var xs = [];
-      for (var i = 0; i < tokens.length; i++) {
-        var cx = start + i * (chipW + gap) + chipW / 2;
-        xs.push(cx);
-        var filled = i === current || i === source;
-        var color = i === current ? C.gold : i === source ? C.sky : C.lineStrong;
-        chipBox(c, tokens[i], cx, cy, chipW, chipH, color, filled);
-      }
-      seqGeo = { xs: xs, chipW: chipW, chipH: chipH, cy: cy };
-      var yTop = cy - chipH / 2;
-      var a0x = xs[current], a1x = source >= 0 ? xs[source] : xs[current], ay0 = yTop - 2, ay1 = yTop - 4;
-      if (source >= 0 && source !== current) {
+    function drawPassage(c, segs, x, y, maxW, size, lineH) {
+      var lx = x, ly = y + size;
+      for (var i = 0; i < segs.length; i++) {
+        var seg = segs[i];
+        var bold = !!seg.c;
+        var font = (bold ? '700 ' : '400 ') + size + 'px "Open Sans", "Segoe UI", sans-serif';
         c.save();
-        c.strokeStyle = V.alpha(C.gold, 0.16);
-        c.lineWidth = 6;
-        c.lineCap = "round";
-        c.beginPath();
-        c.moveTo(a0x, ay0);
-        c.bezierCurveTo(a0x, ay0 - 42, a1x, ay1 - 42, a1x, ay1);
-        c.stroke();
+        c.font = font;
+        var w = c.measureText(seg.t).width;
+        var sp = c.measureText(" ").width;
         c.restore();
+        var need = (lx > x ? sp : 0) + w;
+        if (lx > x && lx + need > x + maxW) {
+          ly += lineH;
+          lx = x;
+        } else if (lx > x) {
+          lx += sp;
+        }
+        if (bold) {
+          c.save();
+          c.fillStyle = V.alpha(seg.c, 0.16);
+          c.fillRect(lx - 1.5, ly - size * 0.92, w + 3, size * 1.2);
+          c.restore();
+        }
         c.save();
-        c.strokeStyle = C.gold;
-        c.lineWidth = 1.8;
-        c.lineCap = "round";
-        c.beginPath();
-        c.moveTo(a0x, ay0);
-        c.bezierCurveTo(a0x, ay0 - 42, a1x, ay1 - 42, a1x, ay1);
-        c.stroke();
+        c.font = font;
+        c.fillStyle = bold ? seg.c : C.ink;
+        c.textAlign = "left";
+        c.textBaseline = "alphabetic";
+        c.fillText(seg.t, lx, ly);
         c.restore();
-        arrowHead(c, a1x, ay1, 0, 1, 7, C.gold);
+        lx += w;
+      }
+      return ly + lineH * 0.3;
+    }
+
+    function drawLegend(c, x, y, small) {
+      var items = [
+        [C.green, DE ? "früheres Vorkommen" : "earlier occurrence"],
+        [C.sky, DE ? "was danach kam" : "what followed"],
+        [C.gold, DE ? "aktuelles Vorkommen" : "current occurrence"]
+      ];
+      var cx = x;
+      var size = small ? 8 : 9;
+      for (var i = 0; i < items.length; i++) {
         c.save();
-        c.fillStyle = C.gold;
+        c.fillStyle = items[i][0];
         c.beginPath();
-        c.arc(a0x, ay0, 2.3, 0, Math.PI * 2);
+        c.arc(cx + 4, y, 3.6, 0, Math.PI * 2);
         c.fill();
         c.restore();
-      }
-
-      var py = cy + chipH / 2 + (small ? 52 : 64);
-      var panelW = Math.min(W - 2 * pad, 430);
-      var px = (W - panelW) / 2;
-      txt(c, "A B … A → B", px, py - 16, {
-        size: small ? 13 : 15,
-        font: '700 ' + (small ? 13 : 15) + 'px "Barlow", "Open Sans", sans-serif',
-        color: C.ink
-      });
-      txt(c, DE ? "nächstes Token" : "next token", px + panelW, py - 16, {
-        align: "right",
-        size: 8.5,
-        color: C.muted
-      });
-      var target = source >= 0 ? tokens[source] : "";
-      var probs = ["A", "B", "C"].map(function (t) {
-        if (!target) return { t: t, p: 1 / 3, col: C.lineStrong };
-        return { t: t, p: t === target ? 0.74 : 0.13, col: t === target ? C.gold : C.sky };
-      });
-      var rowH = small ? 22 : 26;
-      var trackX = px + 24;
-      var trackW = panelW - 62;
-      for (var k = 0; k < probs.length; k++) {
-        var ry = py + k * rowH + 8;
-        var item = probs[k];
-        txt(c, item.t, px + 8, ry, {
-          size: small ? 11 : 12,
-          font: '700 ' + (small ? 11 : 12) + 'px "Barlow", "Open Sans", sans-serif',
-          color: item.col === C.lineStrong ? C.muted : item.col
-        });
         c.save();
-        c.fillStyle = V.alpha(C.line, 0.35);
-        c.fillRect(trackX, ry - 4, trackW, 8);
-        c.fillStyle = V.alpha(item.col, 0.9);
-        c.fillRect(trackX, ry - 4, trackW * item.p, 8);
+        c.font = '600 ' + size + 'px "Open Sans", sans-serif';
+        var tw = c.measureText(items[i][1]).width;
         c.restore();
-        txt(c, Math.round(item.p * 100) + " %", px + panelW, ry, {
-          align: "right",
-          size: 8.5,
-          color: item.col === C.gold ? C.gold : C.muted
+        txt(c, items[i][1], cx + 11, y, { size: size, color: C.soft, font: '600 ' + size + 'px "Open Sans", sans-serif' });
+        cx += 11 + tw + (small ? 10 : 16);
+      }
+    }
+
+    function drawExampleCard(c, x, y, w, h, pred, small) {
+      c.save();
+      c.fillStyle = V.alpha(C.paper2, 0.9);
+      c.fillRect(x, y, w, h);
+      c.strokeStyle = V.alpha(C.line, 0.95);
+      c.lineWidth = 1;
+      c.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+      c.restore();
+      var yOff = small ? 0 : Math.max(0, (h - 200) / 2);
+      txt(c, DE ? "Beispieltext" : "Example text", x + 12, y + yOff + 18, {
+        size: small ? 10 : 11.5, color: C.petrol,
+        font: '700 ' + (small ? 10 : 11.5) + 'px "Barlow", "Open Sans", sans-serif'
+      });
+
+      var segs = DE ? [
+        { t: "Auf" }, { t: "dem" }, { t: "Hof" }, { t: "ist" }, { t: "es" }, { t: "ruhig." },
+        { t: "Der" }, { t: "Hund", c: C.green }, { t: "bellt,", c: C.sky },
+        { t: "sobald" }, { t: "die" }, { t: "Katze" }, { t: "den" }, { t: "Hof" }, { t: "betritt." },
+        { t: "Die" }, { t: "Katze" }, { t: "erschrickt" }, { t: "und" }, { t: "läuft" }, { t: "davon." },
+        { t: "Am" }, { t: "nächsten" }, { t: "Tag" }, { t: "kommt" }, { t: "die" }, { t: "Katze" }, { t: "wieder," },
+        { t: "und" }, { t: "der" }, { t: "Hund", c: C.gold }, { t: "…" }
+      ] : [
+        { t: "The" }, { t: "yard" }, { t: "is" }, { t: "quiet." },
+        { t: "The" }, { t: "dog", c: C.green }, { t: "barks", c: C.sky },
+        { t: "whenever" }, { t: "the" }, { t: "cat" }, { t: "enters" }, { t: "the" }, { t: "yard." },
+        { t: "The" }, { t: "cat" }, { t: "gets" }, { t: "scared" }, { t: "and" }, { t: "runs" }, { t: "away." },
+        { t: "The" }, { t: "next" }, { t: "day" }, { t: "the" }, { t: "cat" }, { t: "comes" }, { t: "back," },
+        { t: "and" }, { t: "the" }, { t: "dog", c: C.gold }, { t: "…" }
+      ];
+      var size = small ? 9.5 : 12;
+      var lineH = size * 1.5;
+      var textEnd = drawPassage(c, segs, x + 12, y + yOff + 38, w - 24, size, lineH);
+      drawLegend(c, x + 12, textEnd + 12, small);
+      var py = textEnd + (small ? 30 : 38);
+      textPill(c, (DE ? "Nächstes Token: " : "next token: ") + pred, x + w / 2, py, C.gold, true, small ? 9.5 : 11.5);
+    }
+
+    function drawPurposeCard(c, x, y, w, h) {
+      c.save();
+      c.fillStyle = V.alpha(C.paper2, 0.65);
+      c.fillRect(x, y, w, h);
+      c.strokeStyle = V.alpha(C.line, 0.95);
+      c.lineWidth = 1;
+      c.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+      c.restore();
+      var yOff = Math.max(0, (h - 110) / 2);
+      txt(c, DE ? "Wofür überhaupt?" : "Why at all?", x + 12, y + yOff + 18, {
+        size: 11.5, color: C.petrol,
+        font: '700 11.5px "Barlow", "Open Sans", sans-serif'
+      });
+      wrapText(c, DE
+        ? "Das Modell schaut nach, was beim letzten Mal nach „Hund“ kam, und setzt das Muster fort. Es braucht dafür keine Tabelle, nur diese zwei Schritte. Das ist ein Baustein des In-Context-Lernens."
+        : "The model looks up what followed “dog” last time and continues the pattern. It needs no table for this, only these two steps. That is a building block of in-context learning.",
+        x + 12, y + yOff + 38, w - 24, 15, { size: 10, color: C.soft });
+    }
+
+    function infoPanel(c, x, y, w, h, title, sub, color, small) {
+      c.save();
+      c.fillStyle = V.alpha(C.paper2, 0.85);
+      c.fillRect(x, y, w, h);
+      c.strokeStyle = V.alpha(C.line, 0.9);
+      c.lineWidth = 1;
+      c.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+      c.fillStyle = color;
+      c.fillRect(x, y, w, 3);
+      c.restore();
+      txt(c, title, x + 10, y + 16, {
+        size: small ? 9.6 : 10.8, color: C.petrol,
+        font: '700 ' + (small ? 9.6 : 10.8) + 'px "Barlow", "Open Sans", sans-serif'
+      });
+      if (sub) {
+        txt(c, sub, x + w - 10, y + 16, {
+          align: "right", size: small ? 7.2 : 8, color: color,
+          font: '700 ' + (small ? 7.2 : 8) + 'px "Open Sans", sans-serif'
         });
       }
-      var note = source >= 0
-        ? (DE ? "Token " + tok + " → " + target + " (nach dem früheren " + tok + ")" : "token " + tok + " → " + target + " (after the earlier " + tok + ")")
-        : (DE ? "Kein früheres " + tok + " → keine Induktion" : "no earlier " + tok + " → no induction");
-      txt(c, note, px, py + probs.length * rowH + 14, { size: 9.5, color: C.ink });
-      txt(c, DE ? "Beispiel: „Hund bellt … Hund“ → „bellt“" : "Example: “dog barks … dog” → “barks”", px, py + probs.length * rowH + 30, {
-        size: small ? 8.4 : 9.2,
-        color: C.petrol,
-        font: '600 ' + (small ? 8.4 : 9.2) + 'px "Open Sans", sans-serif'
+      return y + (small ? 28 : 32);
+    }
+
+    function attnArc(c, x1, y1, x2, y2, color, label, small, bow) {
+      var midx = (x1 + x2) / 2;
+      var midy = Math.max(y1, y2) + (bow || 20);
+      c.save();
+      c.strokeStyle = color;
+      c.lineWidth = 1.6;
+      c.lineCap = "round";
+      c.beginPath();
+      c.moveTo(x1, y1);
+      c.quadraticCurveTo(midx, midy, x2, y2);
+      c.stroke();
+      c.restore();
+      arrowHead(c, x2, y2, x2 - midx, y2 - midy, 6, color);
+      if (label) {
+        txt(c, label, midx, midy + 11, {
+          align: "center", size: small ? 7 : 7.8, color: color,
+          font: '700 ' + (small ? 7 : 7.8) + 'px "Open Sans", sans-serif',
+          bg: C.paper2, bgAlpha: 0.9
+        });
+      }
+    }
+
+    function drawSequence(c) {
+      var pad = Math.max(16, Math.min(28, W * 0.04));
+      var small = W < 680;
+      var tok = DE ? "Hund" : "dog";
+      var pred = DE ? "bellt" : "barks";
+      seqGeo = { xs: [], chipW: 0, chipH: 0, cy: 0 };
+
+      head(c, DE ? "Induktion" : "Induction", pad, 26, { size: small ? 18 : 22 });
+      txt(c, DE ? "Was die beiden Schichten einzeln und zusammen tun, an einem echten Beispiel." : "What the two layers do on their own and together, on a real example.", pad, 46, { size: small ? 8.6 : 9.8, color: C.muted });
+      txt(c, DE ? "Wofür? Um Muster aus dem Text fortzusetzen (In-Context-Lernen)." : "Why? To continue patterns from the text (in-context learning).", pad, 62, { size: small ? 8.4 : 9.4, color: C.petrol });
+      accent(c, pad, 76, 38);
+
+      var contentTop = 92;
+      var contentBottom = H - 16;
+      var gap = small ? 10 : 16;
+      if (small) {
+        var ph = (contentBottom - contentTop - 2 * gap) / 3;
+        drawLayer1Panel(c, pad, contentTop, W - 2 * pad, ph, tok, pred, true);
+        drawLayer2PanelAlone(c, pad, contentTop + ph + gap, W - 2 * pad, ph, tok, pred, true);
+        drawTogetherPanel(c, pad, contentTop + 2 * (ph + gap), W - 2 * pad, ph, tok, pred, true);
+      } else {
+        var leftW = (W - 2 * pad - gap) * 0.44;
+        var rightX = pad + leftW + gap;
+        var rightW = W - 2 * pad - gap - leftW;
+        var leftH = contentBottom - contentTop;
+        var exH = Math.min(300, leftH * 0.56);
+        drawExampleCard(c, pad, contentTop, leftW, exH, pred, false);
+        drawPurposeCard(c, pad, contentTop + exH + gap, leftW, leftH - exH - gap);
+        var panelH = (contentBottom - contentTop - 2 * gap) / 3;
+        drawLayer1Panel(c, rightX, contentTop, rightW, panelH, tok, pred, false);
+        drawLayer2PanelAlone(c, rightX, contentTop + panelH + gap, rightW, panelH, tok, pred, false);
+        drawTogetherPanel(c, rightX, contentTop + 2 * (panelH + gap), rightW, panelH, tok, pred, false);
+      }
+    }
+
+    function drawLayer1Panel(c, x, y, w, h, tok, pred, small) {
+      var top = infoPanel(c, x, y, w, h, DE ? "Schicht 1 allein" : "Layer 1 alone", "Previous-Token-Head", C.blue, small);
+      wrapText(c, DE ? "Der Head schaut auf das Token davor und schreibt es als Key." : "The head looks at the token before it and writes it as a key.", x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
+      var rowY = y + h * 0.48;
+      var size = small ? 9.5 : 11;
+      var tw = pillWidth(c, tok, size);
+      var pw = pillWidth(c, pred, size);
+      var gap = Math.max(34, w * 0.18);
+      var pairW = tw + pw + gap;
+      var tx = x + (w - pairW) / 2 + tw / 2;
+      var px = tx + tw / 2 + gap + pw / 2;
+      var chipH = size * 1.9;
+      textPill(c, tok, tx, rowY, C.green, true, size);
+      textPill(c, pred, px, rowY, C.sky, true, size);
+      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, px, rowY - chipH / 2 - 12, C.sky, false, small ? 8 : 9);
+      attnArc(c, px, rowY + chipH / 2, tx, rowY + chipH / 2, C.blue, pred + " → " + tok, small, small ? 16 : 22);
+      txt(c, DE ? "Key = gelernte Info, kein Text. Er steht an „" + pred + "“." : "Key = learned info, not text. It sits at “" + pred + "”.", x + 10, y + h - 10, {
+        size: small ? 7.2 : 8, color: C.muted
       });
     }
 
+    function drawLayer2PanelAlone(c, x, y, w, h, tok, pred, small) {
+      var top = infoPanel(c, x, y, w, h, DE ? "Schicht 2 allein" : "Layer 2 alone", "Induction-Head", C.gold, small);
+      wrapText(c, DE ? "Vergleicht die Query mit den Keys. Der passende Key bekommt hohes Gewicht." : "Compares the query with the keys. The matching key gets a high weight.", x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
+      var rowY = y + h * 0.48;
+      var size = small ? 9.5 : 11;
+      var chipH = size * 1.9;
+      var eCx = x + w * 0.16;
+      var pCx = x + w * 0.44;
+      var ellCx = x + w * 0.62;
+      var cCx = x + w * 0.83;
+      textPill(c, tok, eCx, rowY, C.green, true, size);
+      textPill(c, pred, pCx, rowY, C.sky, true, size);
+      txt(c, "…", ellCx, rowY, { align: "center", size: size, color: C.muted });
+      textPill(c, tok, cCx, rowY, C.gold, true, size);
+      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, pCx, rowY - chipH / 2 - 12, C.sky, false, small ? 8 : 9);
+      txt(c, (DE ? "Query: " : "query: ") + tok, cCx, rowY - chipH / 2 - 12, {
+        align: "center", size: small ? 8 : 9, color: C.gold,
+        font: '700 ' + (small ? 8 : 9) + 'px "Open Sans", sans-serif', bg: C.paper2, bgAlpha: 0.85
+      });
+      attnArc(c, cCx, rowY + chipH / 2, pCx, rowY + chipH / 2, C.gold, DE ? "trifft den Key · 74 %" : "meets key · 74 %", small, small ? 16 : 22);
+      txt(c, DE ? "Hohes Gewicht heißt: Diese Stelle zählt jetzt stark." : "High weight means: this position now counts strongly.", x + 10, y + h - 10, {
+        size: small ? 7.2 : 8, color: C.muted
+      });
+    }
+
+    function drawTogetherPanel(c, x, y, w, h, tok, pred, small) {
+      var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "kopieren & vorhersagen" : "copy & predict", C.petrol, small);
+      wrapText(c, DE
+        ? "Die Attention findet über „" + tok + "“ die Stelle von „" + pred + "“. Kopiert wird der Wert dort."
+        : "The attention finds the “" + pred + "” position via “" + tok + "”. The value there is copied.",
+        x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 8 : 8.8, color: C.soft });
+      var rowY = y + h * 0.56;
+      var size = small ? 9.5 : 11;
+      var pw = pillWidth(c, pred, size);
+      var gap = Math.max(44, w * 0.22);
+      var pairW = pw * 2 + gap;
+      var pCx = x + (w - pairW) / 2 + pw / 2;
+      var oCx = pCx + pw / 2 + gap + pw / 2;
+      var chipH = size * 1.9;
+      textPill(c, pred, pCx, rowY, C.sky, true, size);
+      textPill(c, pred, oCx, rowY, C.gold, true, size);
+      txt(c, DE ? "Wert dort" : "value there", pCx, rowY - chipH / 2 - 12, {
+        align: "center", size: small ? 7.6 : 8.4, color: C.sky,
+        font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
+      });
+      txt(c, DE ? "Vorhersage" : "prediction", oCx, rowY - chipH / 2 - 12, {
+        align: "center", size: small ? 7.6 : 8.4, color: C.gold,
+        font: '700 ' + (small ? 7.6 : 8.4) + 'px "Open Sans", sans-serif'
+      });
+      V.arrow(c, pCx + pw / 2 + 4, rowY, oCx - pw / 2 - 4, rowY, V.alpha(C.gold, 0.9), 1.6, 6);
+      txt(c, DE ? "OV kopiert" : "OV copies", (pCx + pw / 2 + oCx - pw / 2) / 2, rowY - 10, {
+        align: "center", size: small ? 7 : 7.8, color: C.gold,
+        font: '700 ' + (small ? 7 : 7.8) + 'px "Open Sans", sans-serif',
+        bg: C.paper2, bgAlpha: 0.9
+      });
+      txt(c, DE ? "Nächstes Token: " + pred : "next token: " + pred, x + w / 2, y + h - 12, {
+        align: "center", size: small ? 10 : 11.5, color: C.petrol,
+        font: '700 ' + (small ? 10 : 11.5) + 'px "Barlow", "Open Sans", sans-serif'
+      });
+    }
 
     function drawStage(c) {
       V.aurora(c, W, H, C, { vignette: 0.10 });
