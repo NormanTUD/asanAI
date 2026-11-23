@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 2 · Bausteine eines LLM</title>
+<link rel="stylesheet" href="proto.css">
+<link rel="stylesheet" href="bausteine.css">
+<script src="proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="2 · Architektur" data-en="2 · architecture">2 · Architektur</span>
+      <h1 class="proto-title" data-de="Die Fabrik im Modell" data-en="The factory inside the model">Die Fabrik im Modell</h1>
+      <p class="proto-lead" data-de="Ein Satz läuft als Paket über ein Fließband. An jeder Station wird aus ihm etwas anderes: Tokens, Vektoren, Kontext, eine Verteilung." data-en="A sentence runs as a parcel along a line. At each station it becomes something else: tokens, vectors, context, a distribution.">Ein Satz läuft als Paket über ein Fließband. An jeder Station wird aus ihm etwas anderes: Tokens, Vektoren, Kontext, eine Verteilung.</p>
+    </header>
+
+    <section class="proto-stage baust-stage" aria-label="Fünf Stationen eines LLM">
+      <div class="baust-top">
+        <div class="baust-sentence">Die Katze sitzt auf der Matte</div>
+        <div class="baust-controls">
+          <button type="button" class="proto-btn proto-btn--primary" data-baust-step>Schritt</button>
+          <button type="button" class="proto-btn" data-baust-play>Play</button>
+          <button type="button" class="proto-btn proto-btn--ghost" data-baust-reset>Zurücksetzen</button>
+        </div>
+      </div>
+
+      <div class="baust-line" id="baust-line"></div>
+
+      <div class="baust-inspect" id="baust-inspect" aria-live="polite"></div>
+
+      <div class="baust-progressbar">
+        <span data-baust-progress-label>Start</span>
+        <span class="baust-progress-track"><span class="baust-progress-fill" data-baust-progress></span></span>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Zahlen und Vektoren sind schematisch. Das Modell rechnet mit hunderten oder tausenden Dimensionen; hier siehst du vierzehn Kästchen als Stellvertreter. Die Reihenfolge folgt dem Pipeline-Bild der EOY-Reihe." data-en-html="The numbers and vectors are schematic. The model works with hundreds or thousands of dimensions; here you see fourteen cells as a stand-in. The order follows the pipeline picture from the EOY series.">Die Zahlen und Vektoren sind schematisch. Das Modell rechnet mit hunderten oder tausenden Dimensionen; hier siehst du vierzehn Kästchen als Stellvertreter. Die Reihenfolge folgt dem Pipeline-Bild der EOY-Reihe.</p>
+
+    <footer class="proto-foot">
+      <span>2 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="hallucination.html" data-de="Vorher: Halluzination" data-en="Previous: hallucination">Vorher: Halluzination</a> · <a href="chinesisches-zimmer.html" data-de="Nächster: Chinesisches Zimmer" data-en="Next: Chinese room">Nächster: Chinesisches Zimmer</a></span>
+    </footer>
+  </main>
+  <script src="bausteine.js"></script>
+</body>
+</html>

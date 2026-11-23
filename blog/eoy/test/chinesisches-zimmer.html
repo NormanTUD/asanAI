@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 29 · Das Chinesische Zimmer</title>
+<link rel="stylesheet" href="proto.css">
+<link rel="stylesheet" href="chinesisches-zimmer.css">
+<script src="proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="29 · Philosophie" data-en="29 · philosophy">29 · Philosophie</span>
+      <h1 class="proto-title" data-de="Der Raum ohne Verstehen" data-en="The room without understanding">Der Raum ohne Verstehen</h1>
+      <p class="proto-lead" data-de="Du sitzt in einem Zimmer. Zettel mit chinesischen Zeichen kommen durch einen Schlitz. Ein Regelbuch sagt dir, was du zurückschieben sollst." data-en="You sit in a room. Slips with Chinese characters come through a slot. A rulebook tells you what to send back.">Du sitzt in einem Zimmer. Zettel mit chinesischen Zeichen kommen durch einen Schlitz. Ein Regelbuch sagt dir, was du zurückschieben sollst.</p>
+    </header>
+
+    <section class="proto-stage crz-stage" aria-label="Das Chinesische Zimmer">
+      <div class="crz-wrap">
+        <div class="crz-room" id="crz-room">
+          <div class="crz-wall" aria-hidden="true"></div>
+          <div class="crz-window" aria-hidden="true"><span class="crz-stars"></span><span class="crz-moon"></span></div>
+          <div class="crz-slot" id="crz-slot">
+            <span class="crz-slot-label" data-de="Einwurf" data-en="Slot">Einwurf</span>
+            <span class="crz-slot-slit" aria-hidden="true"></span>
+          </div>
+          <div class="crz-lamp" aria-hidden="true"><span class="crz-cord"></span><span class="crz-shade"></span><span class="crz-light"></span></div>
+          <div class="crz-floor" aria-hidden="true"></div>
+
+          <div class="crz-desk">
+            <div class="crz-slip" id="crz-slip"></div>
+            <div class="crz-book" id="crz-book"></div>
+            <div class="crz-options" id="crz-options" role="group" aria-label="Antwort wählen"></div>
+            <p class="crz-feedback" id="crz-feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="crz-hud" id="crz-hud"></div>
+
+          <div class="crz-reveal" id="crz-reveal" aria-hidden="true">
+            <div class="crz-reveal-card" id="crz-reveal-card"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Zimmer-Darstellung ist eine Bühne, keine Messung. Die chinesischen Sätze sind echte, einfache Beispielsätze. Der Punkt ist Searles Gedankenexperiment von 1980: Regeln befolgen ist nicht dasselbe wie Bedeutung verstehen." data-en-html="The room is a stage, not a measurement. The Chinese sentences are real, simple examples. The point is Searle's 1980 thought experiment: following rules is not the same as understanding meaning.">Die Zimmer-Darstellung ist eine Bühne, keine Messung. Die chinesischen Sätze sind echte, einfache Beispielsätze. Der Punkt ist Searles Gedankenexperiment von 1980: Regeln befolgen ist nicht dasselbe wie Bedeutung verstehen.</p>
+
+    <footer class="proto-foot">
+      <span>29 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="bausteine.html" data-de="Vorher: Bausteine" data-en="Previous: building blocks">Vorher: Bausteine</a> · <a href="unembedding.html" data-de="Nächster: Unembedding" data-en="Next: unembedding">Nächster: Unembedding</a></span>
+    </footer>
+  </main>
+  <script src="chinesisches-zimmer.js"></script>
+</body>
+</html>

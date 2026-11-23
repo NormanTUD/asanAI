@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 27 · Halluzination</title>
+<link rel="stylesheet" href="proto.css">
+<link rel="stylesheet" href="hallucination.css">
+<script src="proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="27 · Grenze" data-en="27 · boundary">27 · Grenze</span>
+      <h1 class="proto-title" data-de="Der Chat, der lügt" data-en="The chat that lies">Der Chat, der lügt</h1>
+      <p class="proto-lead" data-de="Ein Modell antwortet selbstsicher und erfindet eine Quelle. Schalte zwischen Gedächtnis und RAG um und prüfe die Belege." data-en="A model answers confidently and invents a source. Switch between memory and RAG and check the evidence.">Ein Modell antwortet selbstsicher und erfindet eine Quelle. Schalte zwischen Gedächtnis und RAG um und prüfe die Belege.</p>
+    </header>
+
+    <section class="proto-stage hall-stage">
+      <div class="hall-topbar">
+        <div class="hall-mode" role="tablist" aria-label="Antwortquelle">
+          <button type="button" class="is-on" data-hall-mode="memory" role="tab" aria-selected="true" data-de="Aus dem Gedächtnis" data-en="From memory">Aus dem Gedächtnis</button>
+          <button type="button" data-hall-mode="rag" role="tab" aria-selected="false" data-de="Mit RAG" data-en="With RAG">Mit RAG</button>
+        </div>
+        <span class="hall-legend">
+          <span class="legend-item"><span class="dot dot--mem" aria-hidden="true"></span><span data-de="Gedächtnis: plausibel, ungeprüft" data-en="Memory: plausible, unchecked">Gedächtnis: plausibel, ungeprüft</span></span>
+          <span class="legend-item"><span class="dot dot--rag" aria-hidden="true"></span><span data-de="RAG: im Dokument belegt" data-en="RAG: grounded in the document">RAG: im Dokument belegt</span></span>
+        </span>
+      </div>
+
+      <div class="win hall-window">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-addr" id="hall-addr">https://chat.example.com</span>
+          <span class="hall-badge" id="hall-badge">Aus dem Gedächtnis</span>
+        </div>
+        <div class="hall-body">
+          <div class="hall-chat">
+            <div class="hall-thread" id="hall-thread" aria-live="polite"></div>
+            <div class="hall-composer" aria-hidden="true">
+              <span class="hall-input" data-de="Nachricht schreiben …" data-en="Write a message …">Nachricht schreiben …</span>
+              <span class="hall-send">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12l15-7-5.2 15-3.1-6.1L4 12z" fill="currentColor"/></svg>
+              </span>
+            </div>
+          </div>
+          <aside class="hall-side">
+            <div class="hall-side-head" data-de="Quellenprüfung" data-en="Source check">Quellenprüfung</div>
+            <div class="hall-side-body" id="hall-side-body" aria-live="polite"></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <p class="proto-note" data-de-html="Die erfundene Quelle und die Prüfschritte sind ein konstruiertes Beispiel, keine echte Datenbankabfrage. Der Punkt ist die Form: DOI, Journal und Seitenzahlen können korrekt aussehen und trotzdem zu keiner Arbeit gehören." data-en-html="The invented source and the checks are a constructed example, not a real database query. The point is the shape: a DOI, journal, and page numbers can look correct and still belong to no paper.">Die erfundene Quelle und die Prüfschritte sind ein konstruiertes Beispiel, keine echte Datenbankabfrage. Der Punkt ist die Form: DOI, Journal und Seitenzahlen können korrekt aussehen und trotzdem zu keiner Arbeit gehören.</p>
+
+    <footer class="proto-foot">
+      <span>27 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="unembedding.html" data-de="Nächster: Unembedding" data-en="Next: unembedding">Nächster: Unembedding</a></span>
+    </footer>
+  </main>
+  <script src="hallucination.js"></script>
+</body>
+</html>

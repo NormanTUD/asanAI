@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp 20 · Unembedding</title>
+<link rel="stylesheet" href="proto.css">
+<link rel="stylesheet" href="unembedding.css">
+<script src="proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="20 · Unembedding" data-en="20 · unembedding">20 · Unembedding</span>
+      <h1 class="proto-title" data-de="Die Tastatur rät mit" data-en="The keyboard guesses along">Die Tastatur rät mit</h1>
+      <p class="proto-lead" data-de="Der letzte Vektor wird wieder zu Wörtern. Die Vorschlagsleiste zeigt die Verteilung über das nächste Token, als wäre sie eine Tastatur." data-en="The final vector becomes words again. The suggestion bar shows the distribution over the next token, as if it were a keyboard.">Der letzte Vektor wird wieder zu Wörtern. Die Vorschlagsleiste zeigt die Verteilung über das nächste Token, als wäre sie eine Tastatur.</p>
+    </header>
+
+    <section class="proto-stage um-stage">
+      <div class="um-phone-wrap">
+        <div class="um-phone" role="img" aria-label="Smartphone mit Vorschlagsleiste">
+          <div class="um-notch" aria-hidden="true"></div>
+          <div class="um-screen">
+            <div class="um-status" aria-hidden="true">
+              <span>9:41</span>
+              <span class="um-status-icons">
+                <svg viewBox="0 0 18 12" aria-hidden="true"><path d="M1 10V7M5 10V5M9 10V3M13 10V1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <svg viewBox="0 0 18 14" aria-hidden="true"><path d="M2 5.5c4-3.8 10-3.8 14 0M4.6 8.2c2.5-2.3 6.3-2.3 8.8 0M7.2 10.9c1-.9 2.6-.9 3.6 0M9 13h.01" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <svg viewBox="0 0 22 11" aria-hidden="true"><rect x="0.75" y="0.75" width="17" height="9.5" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="2.6" y="2.6" width="12" height="5.8" rx="1.2" fill="currentColor"/><path d="M20 3.6v3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
+            </div>
+            <div class="um-appbar"><span data-de="KI-Chat" data-en="AI chat">KI-Chat</span><i class="um-live" aria-hidden="true"></i></div>
+            <div class="um-thread">
+              <div class="um-bubble" id="um-bubble">Die Katze sitzt auf der <span class="um-blank" id="um-blank">___</span></div>
+              <div class="um-result" id="um-result" aria-live="polite"></div>
+            </div>
+            <div class="um-predict">
+              <div class="um-predict-label" id="um-predict-label"><span>Nächstes Token</span><b>Top 3</b></div>
+              <div class="um-suggest" id="um-suggest"></div>
+            </div>
+            <div class="um-keyboard" id="um-keyboard" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="um-aside">
+        <div class="um-aside-card">
+          <div class="proto-row" role="tablist" aria-label="Ansicht">
+            <button type="button" class="proto-chip is-on" data-um-mode="predict" role="tab" aria-selected="true" data-de="Nächstes Wort" data-en="Next word">Nächstes Wort</button>
+            <button type="button" class="proto-chip" data-um-mode="similar" role="tab" aria-selected="false" data-de="Ähnliche Worte" data-en="Similar words">Ähnliche Worte</button>
+          </div>
+          <span class="um-aside-kicker" id="um-kicker" style="display:block;margin-top:16px">Unembedding · Nächstes Token</span>
+          <h2 class="um-aside-title" id="um-title">Aus einem Vektor wird eine Verteilung</h2>
+          <p class="um-aside-text" id="um-text"></p>
+          <div class="um-flow" id="um-flow"></div>
+          <div class="um-vecviz" id="um-vecviz"></div>
+          <div class="um-tip" id="um-tip"></div>
+          <div class="proto-row" style="margin-top:14px">
+            <button type="button" class="proto-btn proto-btn--ghost" data-um-reset data-de="Nochmal" data-en="Again">Nochmal</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <p class="proto-note" data-de-html="Die Telefon-Oberfläche ist nachgebaut, keine echte App. Die Wahrscheinlichkeiten sind illustrativ. Der Punkt: Dieselbe Verteilung, die das nächste Token wählt, macht aus einem Vektor wieder Wörter." data-en-html="The phone interface is a reconstruction, not a real app. The probabilities are illustrative. The point: the same distribution that picks the next token turns a vector back into words.">Die Telefon-Oberfläche ist nachgebaut, keine echte App. Die Wahrscheinlichkeiten sind illustrativ. Der Punkt: Dieselbe Verteilung, die das nächste Token wählt, macht aus einem Vektor wieder Wörter.</p>
+
+    <footer class="proto-foot">
+      <span>20 / 31</span>
+      <span><a href="index.html" data-de="Alle Prototypen" data-en="All prototypes">Alle Prototypen</a> · <a href="chinesisches-zimmer.html" data-de="Vorher: Chinesisches Zimmer" data-en="Previous: Chinese room">Vorher: Chinesisches Zimmer</a> · <a href="hallucination.html" data-de="Nächster: Halluzination" data-en="Next: hallucination">Nächster: Halluzination</a></span>
+    </footer>
+  </main>
+  <script src="unembedding.js"></script>
+</body>
+</html>
