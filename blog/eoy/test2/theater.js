@@ -490,7 +490,7 @@
     }
 
     return {
-      init: init,
+      init: initWorkspace,
       name: function () { return L("Global Workspace", "Global workspace"); },
       about: function () {
         return L(
@@ -800,10 +800,11 @@
     function syncPredText() {
       if (!noteEl) return;
       var p = Math.round(local.precision);
-      noteEl.textContent = L(
+      var text = L(
         "Präzision " + p + " %: " + (p > 74 ? "Die Vorhersage dominiert. Das System kann am Eingang vorbeisehen." : p < 26 ? "Der Eingang dominiert. Das System folgt der Evidenz." : "Die Wahrnehmung liegt zwischen Vorhersage und Eingang.") + " Überraschung " + Math.round(local.surprise) + " %.",
         "Precision " + p + "%: " + (p > 74 ? "The prediction dominates. The system can look past the input." : p < 26 ? "The input dominates. The system follows the evidence." : "The percept lies between prediction and input.") + " Surprise " + Math.round(local.surprise) + "%."
       );
+      if (noteEl.textContent !== text) noteEl.textContent = text;
     }
 
     function setPrecision(v) {

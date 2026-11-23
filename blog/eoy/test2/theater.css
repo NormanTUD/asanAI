@@ -377,6 +377,7 @@
   box-shadow: 0 0 34px rgba(227, 137, 140, 0.18), inset 0 0 24px rgba(227, 137, 140, 0.18);
   transition: transform 0.25s var(--ease), opacity 0.3s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.th-bubble[hidden] { display: none; }
 .th-bubble:hover { transform: scale(1.05); border-color: #f0b5b9; }
 .th-bubble:focus-visible { outline: 2px solid #f0b5b9; outline-offset: 3px; }
 .th-bubble.is-on { border-color: #f0b5b9; box-shadow: 0 0 0 6px rgba(227, 137, 140, 0.14), 0 0 44px rgba(227, 137, 140, 0.35); }

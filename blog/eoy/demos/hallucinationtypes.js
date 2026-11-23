@@ -398,6 +398,7 @@
           '</div>' +
         '</div>' +
       '</div>' +
+      '<div class="ls-hx-lab-head"><b>' + L("Labor", "Lab") + '</b><span>' + L("Typen, Evidenz und Gegenmaßnahmen", "types, evidence, and countermeasures") + '</span></div>' +
       '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
         '<div class="ls-hx-source-card is-weights" data-source-kind="weights"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
         '<div class="ls-hx-source-claim"><span>' + L("Behauptung", "Claim") + '</span></div>' +
