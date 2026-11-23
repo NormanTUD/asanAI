@@ -188,18 +188,33 @@
       g.quadraticCurveTo(x, y, x + rad, y);
       g.closePath();
     }
-    function wordRects(g, x0, y0, maxWidth, fs) {
+    function wordRects(g, x0, yTop, maxWidth, fs, yBottom) {
       var words = SENTENCE.split(" ");
-      var lineH = fs * 1.7;
-      var x = x0;
-      var y = y0;
-      var rects = [];
+      var lineH = Math.max(fs * 1.7, 56);
       var space = g.measureText(" ").width;
+      var lines = [];
+      var line = { words: [], width: 0 };
       words.forEach(function (word) {
         var wordW = g.measureText(word).width;
-        if (x + wordW > x0 + maxWidth && x > x0) { x = x0; y += lineH; }
-        rects.push({ word: word, x: x, y: y, w: wordW, i: rects.length });
-        x += wordW + space;
+        if (line.words.length && line.width + space + wordW > maxWidth) {
+          lines.push(line);
+          line = { words: [], width: 0 };
+        }
+        if (line.words.length) line.width += space;
+        line.words.push({ word: word, w: wordW });
+        line.width += wordW;
+      });
+      if (line.words.length) lines.push(line);
+      var rects = [];
+      var blockH = (lines.length - 1) * lineH + fs;
+      var y = (yTop + yBottom) / 2 - blockH / 2 + fs * 0.8;
+      lines.forEach(function (ln) {
+        var x = x0 + Math.max(0, (maxWidth - ln.width) / 2);
+        ln.words.forEach(function (item) {
+          rects.push({ word: item.word, x: x, y: y, w: item.w, i: rects.length });
+          x += item.w + space;
+        });
+        y += lineH;
       });
       return rects;
     }
@@ -381,7 +396,7 @@
       }
       var fs = Math.max(15, Math.min(29, cardW * 0.038));
       g.font = '600 ' + fs + 'px Georgia, serif';
-      var rects = wordRects(g, cardX + 50, cardY + 96, cardW - 100, fs);
+      var rects = wordRects(g, cardX + 50, cardY + 76, cardW - 100, fs, cardY + cardH - 40);
       g.fillStyle = C.ink;
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       rects.forEach(function (q) { g.fillText(q.word, q.x, q.y); });
