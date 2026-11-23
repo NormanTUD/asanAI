@@ -461,13 +461,13 @@
           title: "Quellen",
           sources: [
             { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
-            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }, { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Höherdimensionales Falten macht die Klassen trennbar.", en: "Higher-dimensional folding makes the classes separable." } }, { label: "Olah (2014), Neural Networks, Manifolds, and Topology", url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/", why: { de: "Daten liegen auf gekrümmten Mannigfaltigkeiten; Schichten entwirren sie.", en: "Data lies on curved manifolds; layers untangle it." } }
           ]
         }
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
-        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }, { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Höherdimensionales Falten macht die Klassen trennbar.", en: "Higher-dimensional folding makes the classes separable." } }, { label: "Olah (2014), Neural Networks, Manifolds, and Topology", url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/", why: { de: "Daten liegen auf gekrümmten Mannigfaltigkeiten; Schichten entwirren sie.", en: "Data lies on curved manifolds; layers untangle it." } }
       ]
     }
   ] : [
@@ -512,13 +512,13 @@
           title: "Sources",
           sources: [
             { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
-            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }, { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Höherdimensionales Falten macht die Klassen trennbar.", en: "Higher-dimensional folding makes the classes separable." } }, { label: "Olah (2014), Neural Networks, Manifolds, and Topology", url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/", why: { de: "Daten liegen auf gekrümmten Mannigfaltigkeiten; Schichten entwirren sie.", en: "Data lies on curved manifolds; layers untangle it." } }
           ]
         }
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
-        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }, { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Höherdimensionales Falten macht die Klassen trennbar.", en: "Higher-dimensional folding makes the classes separable." } }, { label: "Olah (2014), Neural Networks, Manifolds, and Topology", url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/", why: { de: "Daten liegen auf gekrümmten Mannigfaltigkeiten; Schichten entwirren sie.", en: "Data lies on curved manifolds; layers untangle it." } }
       ]
     }
   ];
@@ -541,7 +541,7 @@
     boxes: [],
     sources: [
       { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Das FFN als zwei lineare Projektionen mit Aktivierung dazwischen.", en: "The FFN as two linear projections with an activation in between." } },
-      { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+      { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }, { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Höherdimensionales Falten macht die Klassen trennbar.", en: "Higher-dimensional folding makes the classes separable." } }, { label: "Olah (2014), Neural Networks, Manifolds, and Topology", url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/", why: { de: "Daten liegen auf gekrümmten Mannigfaltigkeiten; Schichten entwirren sie.", en: "Data lies on curved manifolds; layers untangle it." } }
     ]
   };
 
