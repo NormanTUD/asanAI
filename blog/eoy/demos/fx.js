@@ -137,12 +137,15 @@
     var activeLabel = el.querySelector(".ls-fx-active-label");
     var summaryEl = el.querySelector(".ls-fx-summary");
     var datasetEl = el.querySelector(".ls-fx-dataset");
+    var outputEl = el.querySelector(".ls-fx-output");
+    var headEl = el.querySelector(".ls-fx-output-head");
     var readout = el.querySelector(".ls-bs-fx-readout");
     var btn = el.querySelector(".ls-bs-fx-nudge");
     var active = "corpus";
     var step = 0;
     var bars = [], pcts = [];
     var autoTimers = [];
+    var lastMeasureWidth = 0;
     function stopAuto() { autoTimers.forEach(function (t) { clearTimeout(t); }); autoTimers = []; }
     function typeset(node) { if (api.typeset) { try { api.typeset(node || el); } catch (e) {} } }
     function renderStart() {
@@ -194,13 +197,10 @@
           : (DE ? "99 %: „" + data.target + "“ ist fast sicher. Nudge zeigt die Fluktuation." : "99 %: “" + data.target + "” is almost certain. Nudge shows the fluctuation.");
       if (btn) btn.disabled = false;
     }
-    function setActive(name) {
-      if (!INPUTS[name]) return;
-      stopAuto();
+    function paintInput(name) {
       active = name;
-      visited[name] = true;
-      inputs.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-fx-input") === name); });
       var data = INPUTS[name];
+      inputs.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-fx-input") === name); });
       promptEl.textContent = data.prompt;
       sampleEl.textContent = data.sample;
       noteEl.textContent = data.note;
@@ -209,11 +209,53 @@
       activeLabel.setAttribute("data-tex", data.tex);
       activeLabel.textContent = data.label;
       typeset(activeLabel.parentNode);
-      step = data.startStep;
       renderCandidates();
       renderStart();
       render();
       renderSummary();
+    }
+    function setActive(name) {
+      if (!INPUTS[name]) return;
+      stopAuto();
+      visited[name] = true;
+      step = INPUTS[name].startStep;
+      paintInput(name);
+    }
+    /* Measure every example once and reserve the tallest slot for each variable
+       part, so switching examples or revealing the fine-tuning dataset never
+       changes the slide height or pushes the rows below it. */
+    function measureOutputMax() {
+      if (!outputEl) return;
+      var width = Math.round(outputEl.getBoundingClientRect().width);
+      if (!width || width === lastMeasureWidth) return;
+      var savedActive = active, savedStep = step, savedVisited = visited;
+      var parts = [headEl, promptEl, sampleEl, noteEl, candsEl, summaryEl];
+      outputEl.style.minHeight = "";
+      parts.forEach(function (node) { if (node) node.style.minHeight = ""; });
+      visited = {};
+      var max = 0;
+      var partMax = [0, 0, 0, 0, 0, 0];
+      ORDER.forEach(function (name) {
+        paintInput(name);
+        max = Math.max(max, outputEl.offsetHeight);
+        parts.forEach(function (node, i) {
+          if (node) partMax[i] = Math.max(partMax[i], node.offsetHeight);
+        });
+      });
+      parts.forEach(function (node, i) {
+        if (node && partMax[i] > 0) node.style.minHeight = partMax[i] + "px";
+      });
+      max = 0;
+      ORDER.forEach(function (name) {
+        paintInput(name);
+        max = Math.max(max, outputEl.offsetHeight);
+      });
+      visited = savedVisited;
+      active = savedActive;
+      step = savedStep;
+      paintInput(savedActive);
+      if (max > 0) outputEl.style.minHeight = Math.ceil(max) + "px";
+      lastMeasureWidth = width;
     }
     inputs.forEach(function (b) {
       b.addEventListener("click", function () { setActive(b.getAttribute("data-fx-input")); });
@@ -236,8 +278,12 @@
       setActive("corpus");
       startAuto();
     }
+    measureOutputMax();
     setActive("corpus");
     startAuto();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { lastMeasureWidth = 0; measureOutputMax(); }).catch(function () {});
+    }
     return {
       update: function (state, meta) {
         if (meta && (meta.revisit || meta.subDir === 0)) return;
@@ -253,7 +299,7 @@
       prev: function () { return false; },
       hasNext: function () { return step < INPUTS[active].levels.length - 1 || ORDER.indexOf(active) < ORDER.length - 1; },
       hasPrev: function () { return false; },
-      resize: function () {},
+      resize: function () { measureOutputMax(); },
       destroy: function () { stopAuto(); el.remove(); }
     };
   }
