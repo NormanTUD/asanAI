@@ -211,12 +211,25 @@
     function manualNudge() { stopAuto(); if (step < INPUTS[active].levels.length - 1) { step++; render(); } }
     if (btn) btn.addEventListener("click", manualNudge);
     typeset(el);
+    function startAuto() {
+      var autoStart = INPUTS.corpus.startStep;
+      autoTimers.push(setTimeout(function () { if (step === autoStart) { step++; render(); } }, 700));
+      autoTimers.push(setTimeout(function () { if (step === autoStart + 1) { step++; render(); } }, 1400));
+    }
+    function reset() {
+      stopJitter();
+      stopAuto();
+      visited = {};
+      setActive("corpus");
+      startAuto();
+    }
     setActive("corpus");
-    var autoStart = INPUTS.corpus.startStep;
-    autoTimers.push(setTimeout(function () { if (step === autoStart) { step++; render(); } }, 700));
-    autoTimers.push(setTimeout(function () { if (step === autoStart + 1) { step++; render(); } }, 1400));
+    startAuto();
     return {
-      update: function () {},
+      update: function (state, meta) {
+        if (meta && (meta.revisit || meta.subDir === 0)) return;
+        reset();
+      },
       next: function () {
         stopAuto();
         if (step < INPUTS[active].levels.length - 1) { step++; render(); return true; }

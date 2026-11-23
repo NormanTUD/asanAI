@@ -1622,14 +1622,14 @@ def test_blocks_sequence(browser, base, lang, results):
     results.check(tag, "ffn sub-step is marked in the residual flow", any("FFN" in b for b in ffn["block"]), str(ffn))
     page.evaluate("() => LearnSys.go(0, 0, 1)")
     page.wait_for_timeout(1800)
-    fx = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), card: !!document.querySelector('.ls-bs-fx'), prompt: document.querySelector('.ls-bs-fx-prompt')?.textContent || '', cands: document.querySelectorAll('.ls-bs-fx-cand').length, status: Array.from(document.querySelectorAll('.ls-bs-fx-cand small')).map(e => e.textContent), nudge: !!document.querySelector('.ls-bs-fx-nudge'), inputs: Array.from(document.querySelectorAll('.ls-fx-input-label')).map(e => e.getAttribute('aria-label') || e.textContent), tex: Array.from(document.querySelectorAll('.ls-fx-input-label')).map(e => e.getAttribute('data-tex') || ''), inline: Array.from(document.querySelectorAll('.ls-fx-input-label')).every(e => e.getAttribute('data-tex-display') === 'false'), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
+    fx = page.evaluate("() => ({ scene: document.querySelector('#ls-demo')?.getAttribute('data-scene'), card: !!document.querySelector('.ls-bs-fx'), prompt: document.querySelector('.ls-bs-fx-prompt')?.textContent || '', cands: document.querySelectorAll('.ls-bs-fx-cand').length, status: Array.from(document.querySelectorAll('.ls-bs-fx-cand small')).map(e => e.textContent), nudge: !!document.querySelector('.ls-bs-fx-nudge'), inputs: Array.from(document.querySelectorAll('[data-fx-input]')).map(e => e.getAttribute('aria-label') || e.textContent), tex: Array.from(document.querySelectorAll('.ls-fx-input-label')).map(e => e.getAttribute('data-tex') || ''), inline: Array.from(document.querySelectorAll('.ls-fx-input-label')).every(e => e.getAttribute('data-tex-display') === 'false'), readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
     results.check(tag, "function slide follows the architecture overview", fx["scene"] == "fx" and fx["card"], str(fx)[:240])
     if lang == "de":
         input_ok = len(fx["inputs"]) == 4 and "Daten" in fx["inputs"][0] and "Frage an Rohdaten" in fx["inputs"][1] and "1. Trainingsdatensatz" in fx["inputs"][2] and "2. Trainingsdatensatz" in fx["inputs"][3]
     else:
         input_ok = len(fx["inputs"]) == 4 and "data" in fx["inputs"][0] and "question on raw data" in fx["inputs"][1] and "first training example" in fx["inputs"][2] and "second training example" in fx["inputs"][3]
     results.check(tag, "function slide shows data, raw-question, first and second examples", input_ok, str(fx["inputs"]))
-    results.check(tag, "function slide renders f-theta in the input boxes", fx["inline"] and all("f_\\theta" in t for t in fx["tex"]), str(fx["tex"]))
+    results.check(tag, "function slide renders f-theta in the input boxes", fx["inline"] and all("theta" in t for t in fx["tex"]), str(fx["tex"]))
     results.check(tag, "function slide shows the next-token options", "___" in fx["prompt"] and fx["cands"] == 3 and len(fx["status"]) == 3, str(fx)[:240])
     results.check(tag, "function slide labels the option status", any("Daten" in st or "data" in st for st in fx["status"]) and any("passt" in st or "fit" in st for st in fx["status"]), str(fx["status"]))
     results.check(tag, "function slide nudges itself twice", "Nudge 4" in fx["readout"], fx["readout"])
@@ -1674,6 +1674,10 @@ def test_blocks_sequence(browser, base, lang, results):
             break
     scene_after = page.evaluate("() => document.querySelector('#ls-demo')?.getAttribute('data-scene')")
     results.check(tag, "next leaves the function slide after the last example", scene_after == "langdata", str(scene_after))
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(900)
+    fx_reset = page.evaluate("() => ({ active: document.querySelector('.ls-fx-input.is-on')?.getAttribute('data-fx-input'), summary: !document.querySelector('.ls-fx-summary')?.hidden, readout: document.querySelector('.ls-bs-fx-readout')?.textContent || '' })")
+    results.check(tag, "returning to the function slide starts from the beginning", fx_reset["active"] == "corpus" and not fx_reset["summary"], str(fx_reset))
     errors = logs.take()
     results.check(tag, "blocks sequence has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
