@@ -7,7 +7,7 @@
   if (!document.getElementById("ls-induction-style")) {
     var st = document.createElement("style");
     st.id = "ls-induction-style";
-    st.textContent = '.ls-ind-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-ind-scene .ls-ind-canvas{display:block;width:100%;height:100%;min-height:360px}';
+    st.textContent = '.ls-ind-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:var(--tm-paper,#fff)}.ls-ind-scene .ls-ind-canvas{display:block;width:100%;height:100%;min-height:360px}.ls-ind-tip{position:absolute;z-index:20;max-width:260px;padding:6px 8px;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-paper,#fff);color:var(--tm-ink,#000);font:12px/1.35 "Open Sans",sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.12);pointer-events:none;opacity:0;transition:opacity .12s;border-radius:4px}.ls-ind-tip.is-on{opacity:1}';
     document.head.appendChild(st);
   }
 
@@ -20,6 +20,9 @@
     canvas.className = "ls-ind-canvas";
     canvas.setAttribute("role", "img");
     host.appendChild(canvas);
+    var tipEl = document.createElement("div");
+    tipEl.className = "ls-ind-tip";
+    host.appendChild(tipEl);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var W = 1, H = 1;
@@ -27,6 +30,7 @@
     var current = 6;
     var seqGeo = { xs: [], chipW: 0, chipH: 0, cy: 0 };
     var headsSel = 0;
+    var hoverHits = [];
     var headsHits = [];
     var copyStep = 2;
     var copyHits = [];
@@ -241,7 +245,45 @@
       }
     }
 
-    function drawExampleCard(c, x, y, w, h, pred, small) {
+    function drawPatternRow(c, x, w, y, tok, pred, small) {
+      var sz = small ? 9 : 10;
+      var tokW = pillWidth(c, tok, sz);
+      var predW = pillWidth(c, pred, sz);
+      var arrowW = 18;
+      var gap = 6;
+      var ellW = 12;
+      var total = 2 * tokW + 2 * predW + 2 * arrowW + ellW + 4 * gap;
+      var cx = x + (w - total) / 2;
+      function chip(text, width, color, filled, tip) {
+        textPill(c, text, cx + width / 2, y, color, filled, sz);
+        addHover(cx, y - sz - 3, width, sz * 2 + 6, tip);
+        cx += width;
+      }
+      chip(tok, tokW, C.green, true, DE ? "Früheres „" + tok + "“: Danach kam „" + pred + "“." : "Earlier “" + tok + "”: it was followed by “" + pred + "”.");
+      cx += gap;
+      var ax0 = cx;
+      cx += arrowW;
+      V.arrow(c, ax0, y, cx - 2, y, V.alpha(C.green, 0.85), 1.3, 5);
+      cx += gap;
+      chip(pred, predW, C.lilac, true, DE ? "„" + pred + "“ folgte auf das frühere „" + tok + "“." : "“" + pred + "” followed the earlier “" + tok + "”.");
+      cx += gap;
+      addHover(cx, y - sz - 3, ellW, sz * 2 + 6, DE ? "Ausgelassene Wörter. Das Muster wiederholt sich." : "Omitted words. The pattern repeats.");
+      txt(c, "…", cx + ellW / 2, y, { align: "center", size: sz + 1, color: C.muted });
+      cx += ellW + gap;
+      chip(tok, tokW, C.gold, true, DE ? "Aktuelles „" + tok + "“." : "Current “" + tok + "”.");
+      cx += gap;
+      ax0 = cx;
+      cx += arrowW;
+      V.arrow(c, ax0, y, cx - 2, y, V.alpha(C.gold, 0.85), 1.3, 5);
+      cx += gap;
+      chip(pred, predW, C.lilac, false, DE ? "Vorhersage: „" + pred + "“, weil das Muster sich wiederholt." : "Prediction: “" + pred + "”, because the pattern repeats.");
+      txt(c, DE ? "Muster" : "pattern", x, y - 14, {
+        size: small ? 8 : 9, color: C.petrol,
+        font: '700 ' + (small ? 8 : 9) + 'px "Open Sans", sans-serif'
+      });
+    }
+
+    function drawExampleCard(c, x, y, w, h, tok, pred, small) {
       c.save();
       c.fillStyle = V.alpha(C.paper2, 0.9);
       c.fillRect(x, y, w, h);
@@ -254,6 +296,11 @@
         size: small ? 11 : 12.5, color: C.petrol,
         font: '700 ' + (small ? 11 : 12.5) + 'px "Barlow", "Open Sans", sans-serif'
       });
+      txt(c, DE ? "Suche das frühere „" + tok + "“ und kopiere, was danach kam." : "Find the earlier “" + tok + "” and copy what followed.", x + 12, y + yOff + 34, {
+        size: small ? 9 : 10.5, color: C.petrol,
+        font: '600 ' + (small ? 9 : 10.5) + 'px "Open Sans", sans-serif'
+      });
+      addHover(x + 12, y + yOff + 26, w - 24, 16, DE ? "Die Idee: Suche das frühere „" + tok + "“ und kopiere, was danach kam." : "The idea: find the earlier “" + tok + "” and copy what followed.");
 
       var segs = DE ? [
         { t: "Auf" }, { t: "dem" }, { t: "Hof" }, { t: "ist" }, { t: "es" }, { t: "ruhig." },
@@ -272,10 +319,15 @@
       ];
       var size = small ? 10 : 13.5;
       var lineH = size * 1.5;
-      var textEnd = drawPassage(c, segs, x + 12, y + yOff + 38, w - 24, size, lineH);
+      var textEnd = drawPassage(c, segs, x + 12, y + yOff + 56, w - 24, size, lineH);
       drawLegend(c, x + 12, textEnd + 12, small);
       var py = textEnd + (small ? 30 : 38);
-      textPill(c, (DE ? "Nächstes Token: " : "next token: ") + pred, x + w / 2, py, C.gold, true, small ? 10.5 : 13);
+      var nextText = (DE ? "Nächstes Token: " : "next token: ") + pred;
+      var nextW = pillWidth(c, nextText, small ? 10.5 : 13) + 8;
+      textPill(c, nextText, x + w / 2, py, C.gold, true, small ? 10.5 : 13);
+      addHover(x + w / 2 - nextW / 2, py - 12, nextW, 24, DE ? "Vorhersage: „" + pred + "“, weil das Muster sich wiederholt." : "Prediction: “" + pred + "”, because the pattern repeats.");
+      addHover(x + 12, y + yOff + 48, w - 24, textEnd - (y + yOff + 48), DE ? "Der Text enthält das Muster: früheres „" + tok + "“ → „" + pred + "“, später wieder „" + tok + "“." : "The text contains the pattern: earlier “" + tok + "” → “" + pred + "”, later “" + tok + "” again.");
+      drawPatternRow(c, x + 12, w - 24, py + (small ? 26 : 34), tok, pred, small);
     }
 
     function drawPurposeCard(c, x, y, w, h) {
@@ -365,6 +417,11 @@
       textPill(c, kText, qx + qW + qGap + kW / 2, qy, C.sky, true, qkvSize);
       textPill(c, vText, qx + qW + kW + 2 * qGap + vW / 2, qy, C.lilac, true, qkvSize);
       txt(c, DE ? "Query fragt, Key bietet, Value wird kopiert. Wofür? Muster fortsetzen." : "Query asks, key offers, value is copied. Why? Continue a pattern.", pad, 66, { size: small ? 9 : 10.5, color: C.petrol });
+      addHover(qx, qy - 11, qW, 22, DE ? "Query (Frage): Was sucht das aktuelle Token? Hier fragt „" + tok + "“." : "Query (question): what does the current token look for? Here “" + tok + "” asks.");
+      addHover(qx + qW + qGap, qy - 11, kW, 22, DE ? "Key (Angebot): Was steht an einer Stelle? An der „" + pred + "“-Stelle: davor " + tok + "." : "Key (offer): what does a position hold? At “" + pred + "”: before " + tok + ".");
+      addHover(qx + qW + kW + 2 * qGap, qy - 11, vW, 22, DE ? "Value (Inhalt): Was wird bei einem Treffer kopiert? Hier „" + pred + "“." : "Value (content): what is copied on a match? Here “" + pred + "”.");
+      addHover(pad, 58, W - 2 * pad, 16, DE ? "Query fragt, Key bietet, Value wird kopiert. QK wählt die Stelle, OV übernimmt den Inhalt." : "Query asks, key offers, value is copied. QK picks the place, OV takes the content.");
+      txt(c, DE ? "Hover für Details" : "hover for details", W - pad, 30, { align: "right", size: small ? 8 : 9, color: C.muted });
       accent(c, pad, 80, 38);
 
       var contentTop = 94;
@@ -381,7 +438,7 @@
         var rightW = W - 2 * pad - gap - leftW;
         var leftH = contentBottom - contentTop;
         var exH = Math.min(300, leftH * 0.56);
-        drawExampleCard(c, pad, contentTop, leftW, exH, pred, false);
+        drawExampleCard(c, pad, contentTop, leftW, exH, tok, pred, false);
         drawPurposeCard(c, pad, contentTop + exH + gap, leftW, leftH - exH - gap);
         var panelH = (contentBottom - contentTop - 2 * gap) / 3;
         drawLayer1Panel(c, rightX, contentTop, rightW, panelH, tok, pred, false);
@@ -392,7 +449,9 @@
 
     function drawLayer1Panel(c, x, y, w, h, tok, pred, small) {
       var top = infoPanel(c, x, y, w, h, DE ? "Schicht 1 allein" : "Layer 1 alone", "Previous-Token-Head", C.blue, small);
+      addHover(x, y, w, 30, DE ? "Schicht 1: Previous-Token-Head. Sie merkt sich für jede Stelle, welches Token davor kam." : "Layer 1: previous-token head. It records, for each position, which token came before it.");
       wrapText(c, DE ? "Der Head schaut auf das Token davor und schreibt es als Key." : "The head looks at the token before it and writes it as a key.", x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 9.5 : 10.5, color: C.soft });
+      addHover(x + 10, top + 2, w - 20, 26, DE ? "Sie liest das Token davor und schreibt daraus den Key an die nächste Stelle." : "It reads the previous token and writes it as a key at the next position.");
       var rowY = y + h * 0.54;
       var size = small ? 10.5 : 12;
       var tw = pillWidth(c, tok, size);
@@ -404,8 +463,15 @@
       var chipH = size * 1.9;
       textPill(c, tok, tx, rowY, C.green, true, size);
       textPill(c, pred, px, rowY, C.lilac, true, size);
-      textPill(c, (DE ? "Key: davor " : "key: before ") + tok, px, rowY - chipH / 2 - 12, C.sky, false, small ? 9 : 10);
+      addHover(tx - tw / 2, rowY - chipH / 2, tw, chipH, DE ? "Früheres " + tok + ": das Token davor." : "Earlier " + tok + ": the token before.");
+      addHover(px - pw / 2, rowY - chipH / 2, pw, chipH, DE ? "Stelle von „" + pred + "“. Hier entsteht der Key." : "Position of “" + pred + "”. The key is created here.");
+      var keyText = (DE ? "Key: davor " : "key: before ") + tok;
+      var keySize = small ? 9 : 10;
+      var keyW = pillWidth(c, keyText, keySize) + 4;
+      textPill(c, keyText, px, rowY - chipH / 2 - 12, C.sky, false, keySize);
+      addHover(px - keyW / 2, rowY - chipH / 2 - 12 - keySize * 0.95 - 2, keyW, keySize * 2, DE ? "Key = gelernte Info, kein Text: „Mein Vorgänger war " + tok + "“." : "Key = learned info, not text: “my predecessor was " + tok + "”.");
       attnArc(c, px, rowY + chipH / 2, tx, rowY + chipH / 2, C.blue, pred + " → " + tok, small, small ? 16 : 22);
+      addHover(Math.min(tx, px), rowY + chipH / 2, Math.abs(px - tx), 38, DE ? "Attention der Schicht 1: „" + pred + "“ liest das Token davor, „" + tok + "“." : "Layer-1 attention: “" + pred + "” reads the previous token, “" + tok + "”.");
       txt(c, DE ? "Key = gelernte Info, kein Text. Er steht an „" + pred + "“." : "Key = learned info, not text. It sits at “" + pred + "”.", x + 10, y + h - 10, {
         size: small ? 8.5 : 9.5, color: C.muted
       });
@@ -413,9 +479,11 @@
 
     function drawLayer2PanelAlone(c, x, y, w, h, tok, pred, small) {
       var top = infoPanel(c, x, y, w, h, DE ? "Schicht 2 allein" : "Layer 2 alone", "Induction-Head", C.gold, small);
+      addHover(x, y, w, 30, DE ? "Schicht 2: Induction-Head. Sie vergleicht die Query des aktuellen Tokens mit den Keys." : "Layer 2: induction head. It compares the query of the current token with the keys.");
       txt(c, DE ? "Query „" + tok + "“ liest die Keys." : "Query “" + tok + "” reads the keys.", x + 10, top + 8, {
         size: small ? 9.5 : 10.5, color: C.soft
       });
+      addHover(x + 10, top + 2, w - 20, 24, DE ? "Die Query fragt: Wo stand davor dasselbe Token? Die Keys antworten mit ihren Vorgängern." : "The query asks: where did the same token stand before? The keys answer with their predecessors.");
       var tokens = [tok, pred, "…", DE ? "der" : "the", tok];
       var keys = ["–", tok, pred, "…", DE ? "der" : "the"];
       var weights = [0.03, 0.82, 0.04, 0.02, 0.09];
@@ -431,6 +499,11 @@
         var cx = startX + i * colW + colW / 2;
         var col = i === 4 ? C.gold : i === 1 ? C.lilac : i === 0 ? C.green : C.lineStrong;
         textPill(c, tokens[i], cx, tokenY, col, i === 0 || i === 1 || i === 4, chipSize);
+        var ttip = i === 4 ? (DE ? "Aktuelles " + tok + ": seine Query fragt nach dem früheren Vorkommen." : "Current " + tok + ": its query asks for the earlier occurrence.")
+          : i === 1 ? (DE ? pred + ": das Token, das auf das frühere " + tok + " folgte." : pred + ": the token that followed the earlier " + tok + ".")
+          : i === 0 ? (DE ? "Früheres " + tok + "." : "Earlier " + tok + ".")
+          : (DE ? "Token " + tokens[i] + "." : "Token " + tokens[i] + ".");
+        addHover(cx - colW / 2, tokenY - chipSize * 0.95, colW, chipSize * 1.9, ttip);
       }
       txt(c, "Key", x + 10, keyY - 9, {
         size: small ? 8 : 9, color: C.sky,
@@ -442,6 +515,9 @@
           align: "center", size: small ? 8.5 : 9.5, color: i === 1 ? C.sky : C.muted,
           font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
         });
+        addHover(cx - colW / 2, keyY - 9, colW, 18, i === 1
+          ? (DE ? "Key bei „" + pred + "“: davor war „" + tok + "“. Deshalb passt die Query." : "Key at “" + pred + "”: before it was “" + tok + "”. That is why the query matches.")
+          : (DE ? "Key bei „" + tokens[i] + "“: davor war „" + keys[i] + "“." : "Key at “" + tokens[i] + "”: before it was “" + keys[i] + "”."));
       }
       txt(c, "Gewicht", x + 10, weightY - 9, {
         size: small ? 8 : 9, color: C.muted,
@@ -449,27 +525,32 @@
       });
       for (var i = 0; i < n; i++) {
         var cx = startX + i * colW + colW / 2;
-        txt(c, Math.round(weights[i] * 100) + "%", cx, weightY, {
+        var pct = Math.round(weights[i] * 100) + "%";
+        txt(c, pct, cx, weightY, {
           align: "center", size: small ? 8.5 : 9.5, color: i === 1 ? C.gold : C.muted,
           font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
         });
+        addHover(cx - colW / 2, weightY - 9, colW, 18, DE ? "Attention-Gewicht für „" + tokens[i] + "“: " + pct + (i === 1 ? ". Das ist der höchste Wert." : ".") : "Attention weight for “" + tokens[i] + "”: " + pct + (i === 1 ? ". This is the highest value." : "."));
       }
       txt(c, (DE ? "Query: " : "query: ") + tok, cx4, tokenY - chipSize * 0.95 - 9, {
         align: "center", size: small ? 8.5 : 9.5, color: C.gold,
         font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif', bg: C.paper2, bgAlpha: 0.85
       });
-      txt(c, DE ? "Zeile summiert zu 100 %. Der Key bei „" + pred + "“ passt." : "Row sums to 100 %. The key at “" + pred + "” matches.", x + 10, y + h - 10, {
-        size: small ? 7 : 7.8, color: C.muted
+      addHover(cx4 - 44, tokenY - chipSize * 0.95 - 20, 88, 18, DE ? "Query des aktuellen „" + tok + "“." : "Query of the current “" + tok + "”.");
+      txt(c, DE ? "QK wählt die Stelle von „" + pred + "“; die Zeile summiert zu 100 % (illustrativ)." : "QK selects the “" + pred + "” position; the row sums to 100 % (illustrative).", x + 10, y + h - 10, {
+        size: small ? 8.5 : 9.5, color: C.muted
       });
+      addHover(x + 10, y + h - 20, w - 20, 18, DE ? "QK berechnet die Scores; Softmax normiert jede Zeile auf 100 %. Die konkreten Zahlen sind illustrativ." : "QK computes the scores; softmax normalises each row to 100 %. The concrete numbers are illustrative.");
     }
 
-
     function drawTogetherPanel(c, x, y, w, h, tok, pred, small) {
-      var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "Wert kopieren" : "copy the value", C.petrol, small);
+      var top = infoPanel(c, x, y, w, h, DE ? "Zusammen" : "Together", DE ? "Warum " + pred + "?" : "why " + pred + "?", C.petrol, small);
+      addHover(x, y, w, 30, DE ? "Zusammen: Die Attention wählt die Stelle; der OV-Teil addiert den Value." : "Together: attention selects the position; the OV part adds the value.");
       wrapText(c, DE
-        ? "Die Attention findet über „" + tok + "“ die Stelle von „" + pred + "“. Der OV-Teil schreibt den Wert dort an die aktuelle Stelle."
-        : "The attention finds the “" + pred + "” position via “" + tok + "”. The OV part writes the value there to the current position.",
+        ? "Warum „" + pred + "“? Auf das frühere „" + tok + "“ folgte „" + pred + "“. Der OV-Teil addiert diesen Wert an der aktuellen Stelle."
+        : "Why “" + pred + "”? The earlier “" + tok + "” was followed by “" + pred + "”. The OV part adds that value at the current position.",
         x + 10, top + 8, w - 20, small ? 11 : 12, { size: small ? 9.5 : 10.5, color: C.soft });
+      addHover(x + 10, top + 2, w - 20, 34, DE ? "Grund: Das Muster war früher " + tok + " → " + pred + ". Deshalb wird der Wert " + pred + " kopiert." : "Reason: the pattern was " + tok + " → " + pred + " earlier. That is why the value " + pred + " is copied.");
       var tokens = [tok, pred, "…", DE ? "der" : "the", tok];
       var n = tokens.length;
       var colW = Math.min(78, (w - 20) / n);
@@ -483,19 +564,23 @@
         var col = i === 4 ? C.gold : i === 1 ? C.lilac : i === 0 ? C.green : C.lineStrong;
         textPill(c, tokens[i], cx, tokenY, col, i === 0 || i === 1 || i === 4, chipSize);
       }
+      addHover(cx1 - colW / 2, tokenY - chipSize * 0.95, colW, chipSize * 1.9, DE ? "Value an der Trefferstelle: „" + pred + "“." : "Value at the match: “" + pred + "”.");
+      addHover(cx4 - colW / 2, tokenY - chipSize * 0.95, colW, chipSize * 1.9, DE ? "Aktuelle Stelle: Hier wird der Value „" + pred + "“ addiert." : "Current position: the value “" + pred + "” is added here.");
       txt(c, (DE ? "Wert: " : "value: ") + pred, cx1, tokenY - chipSize * 0.95 - 9, {
         align: "center", size: small ? 8.5 : 9.5, color: C.lilac,
         font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
       });
-      txt(c, DE ? "aktuell" : "current", cx4, tokenY - chipSize * 0.95 - 9, {
+      txt(c, DE ? "aktuell + " + pred : "current + " + pred, cx4, tokenY - chipSize * 0.95 - 9, {
         align: "center", size: small ? 8.5 : 9.5, color: C.gold,
         font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
       });
-      attnArc(c, cx1, tokenY + chipSize * 0.95, cx4, tokenY + chipSize * 0.95, C.lilac, DE ? "OV kopiert den Wert" : "OV copies the value", small, small ? 16 : 22);
+      attnArc(c, cx1, tokenY + chipSize * 0.95, cx4, tokenY + chipSize * 0.95, C.lilac, DE ? "OV addiert den Wert" : "OV adds the value", small, small ? 16 : 22);
+      addHover(Math.min(cx1, cx4), tokenY + chipSize * 0.95, Math.abs(cx4 - cx1), 40, DE ? "OV addiert den Value „" + pred + "“ zum aktuellen Vektor. Dadurch steigt die Wahrscheinlichkeit für „" + pred + "“." : "OV adds the value “" + pred + "” to the current vector. That raises the probability of “" + pred + "”.");
       txt(c, DE ? "Nächstes Token: " + pred : "next token: " + pred, x + w / 2, y + h - 12, {
         align: "center", size: small ? 12 : 14, color: C.petrol,
         font: '700 ' + (small ? 12 : 14) + 'px "Barlow", "Open Sans", sans-serif'
       });
+      addHover(x + 20, y + h - 28, w - 40, 24, DE ? "Nächstes Token: „" + pred + "“. Der kopierte Value macht dieses Token wahrscheinlicher." : "Next token: “" + pred + "”. The copied value makes this token more likely.");
     }
 
     function drawStage(c) {
@@ -753,6 +838,7 @@
         var x = pad + col * (cardW + gap);
         var y = top + row * (cardH + gap);
         headsHits.push({ x: x, y: y, w: cardW, h: cardH, i: i });
+        addHover(x, y, cardW, cardH, items[i].title + ": " + items[i].sub + ". " + items[i].qkv);
         drawHeadCard(c, x, y, cardW, cardH, items[i], i === headsSel);
       }
       var detY = top + 2 * cardH + gap + 6;
@@ -778,6 +864,7 @@
         color: item.color,
         font: '700 ' + qsz + 'px "Open Sans", sans-serif'
       });
+      addHover(detX + 10, detY + 38, detW - 20, qkvEnd - detY - 38 + 8, item.qkv);
       var exY = qkvEnd + (small ? 66 : 70);
       var exMax = Math.min(detW - 40, 460);
       drawMiniTokens(c, item.tokens, detX + detW / 2, exY, item.color, item.from, item.to, item.out, exMax);
@@ -1125,8 +1212,29 @@
         pad, y1 + 49, { size: 8, color: C.muted });
     }
 
+    function addHover(x, y, w, h, text) {
+      if (!text) return;
+      hoverHits.push({ x: x, y: y, w: w, h: h, text: text });
+    }
+
+    function updateTip(x, y) {
+      var hit = null;
+      for (var i = hoverHits.length - 1; i >= 0; i--) {
+        var h = hoverHits[i];
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) { hit = h; break; }
+      }
+      if (!hit) { tipEl.classList.remove("is-on"); return; }
+      tipEl.textContent = hit.text;
+      tipEl.classList.add("is-on");
+      var left = Math.max(8, Math.min(x + 14, W - 270));
+      var top = Math.max(8, Math.min(y + 14, H - 64));
+      tipEl.style.left = left + "px";
+      tipEl.style.top = top + "px";
+    }
+
     function draw() {
       if (!W || !H) return;
+      hoverHits = [];
       drawStage(ctx);
       if (mode === "copy") drawCopy(ctx);
       else if (mode === "circuit") drawCircuit(ctx);
@@ -1234,12 +1342,27 @@
       }
       canvas.style.cursor = hit ? "pointer" : "";
     });
+    canvas.addEventListener("pointermove", function (e) {
+      var r = canvas.getBoundingClientRect();
+      updateTip(e.clientX - r.left, e.clientY - r.top);
+    });
+    canvas.addEventListener("pointerleave", function () { tipEl.classList.remove("is-on"); });
     fit();
 
     return {
       update: function (s) {
         if (s && s.mode) setMode(s.mode);
       },
+      next: function () {
+        if (mode === "heads" && headsSel < 3) { headsSel += 1; draw(); return true; }
+        return false;
+      },
+      prev: function () {
+        if (mode === "heads" && headsSel > 0) { headsSel -= 1; draw(); return true; }
+        return false;
+      },
+      hasNext: function () { return mode === "heads" && headsSel < 3; },
+      hasPrev: function () { return mode === "heads" && headsSel > 0; },
       resize: fit,
       destroy: function () {
         window.removeEventListener("tm:theme", onTheme);

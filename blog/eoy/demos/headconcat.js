@@ -23,7 +23,7 @@
   function headsHtml() {
     var out = "";
     for (var i = 1; i <= 4; i++) {
-      out += '<span class="ls-hc-head"><b>H' + i + "</b>" + bars(4, "ls-hc-bars") + "</span>";
+      out += '<span class="ls-hc-head" title="Head ' + i + ': ein Vektor pro Token"><b>H' + i + "</b>" + bars(4, "ls-hc-bars") + "</span>";
     }
     return '<span class="ls-hc-heads">' + out + "</span>";
   }
@@ -35,9 +35,9 @@
     toks.forEach(function (t) {
       var cells = "";
       colors.forEach(function (col, i) {
-        cells += '<span class="ls-hc-concat-cell" style="--hc-color:var(--ls-' + col + ')"><b>H' + (i + 1) + "</b><i></i><i></i></span>";
+        cells += '<span class="ls-hc-concat-cell" style="--hc-color:var(--ls-' + col + ')" title="Head ' + (i + 1) + '-Block an dieser Token-Zeile"><b>H' + (i + 1) + "</b><i></i><i></i></span>";
       });
-      out += '<span class="ls-hc-concat-token-row"><b class="ls-hc-concat-token">' + t + "</b>" + cells + "</span>";
+      out += '<span class="ls-hc-concat-token-row" title="Token ' + t + ': eine Zeile des konkatenierten Vektors"><b class="ls-hc-concat-token">' + t + "</b>" + cells + "</span>";
     });
     return '<span class="ls-hc-concat-matrix">' + out + "</span>";
   }
@@ -45,7 +45,7 @@
   function tokensHtml(DE) {
     var toks = DE ? ["Der", "Hund", "läuft", "."] : ["The", "dog", "runs", "."];
     return '<span class="ls-hc-tokens">' + toks.map(function (t) {
-      return '<span class="ls-hc-token"><b>' + t + "</b>" + bars(3, "ls-hc-token-bars") + "</span>";
+      return '<span class="ls-hc-token" title="Token ' + t + ': ein Vektor pro Token"><b>' + t + "</b>" + bars(3, "ls-hc-token-bars") + "</span>";
     }).join("") + "</span>";
   }
 
@@ -56,9 +56,9 @@
       ? [
           DE ? "Jeder Head liefert pro Token einen Vektor." : "Each head produces one vector per token.",
           DE ? "Concat hängt pro Token die vier Head-Vektoren aneinander. Für ein Token ist das ein langer Vektor; für die Sequenz eine Matrix mit einem Token pro Zeile." : "Concat joins the four head vectors for each token. For one token that is one long vector; for the sequence it is a matrix with one token per row.",
-          DE ? "<b>W<sub>O</sub></b> ist die gelernte Ausgabematrix: Sie projiziert jede Zeile von <b>H·d<sub>v</sub></b> auf <b>d<sub>model</sub></b>." : "<b>W<sub>O</sub></b> is the learned output matrix: it projects each row from <b>H·d<sub>v</sub></b> to <b>d<sub>model</sub></b>.",
-          DE ? "Danach hat jedes Token wieder einen Vektor der festen Breite <b>d<sub>model</sub></b>." : "After that, each token again has a vector of the fixed width <b>d<sub>model</sub></b>.",
-          DE ? "Das FFN liest jeden Token-Vektor einzeln; es sieht nicht die einzelnen Heads." : "The FFN reads each token vector individually; it does not see the individual heads."
+          DE ? "<b>W<sub>O</sub></b> mischt die Head-Blöcke zu einem Vektor pro Token. Äquivalent: die Head-Beiträge werden addiert." : "<b>W<sub>O</sub></b> mixes the head blocks into one vector per token. Equivalently: the head contributions are added.",
+          DE ? "Ein Vektor pro Token (<b>d<sub>model</sub></b>). Die Heads sind darin gemischt, nicht mehr getrennt." : "One vector per token (<b>d<sub>model</sub></b>). The heads are mixed inside it, no longer separate.",
+          DE ? "Das FFN liest jeden Token-Vektor als Ganzes; es bekommt nicht die einzelnen Heads." : "The FFN reads each token vector as a whole; it does not receive the individual heads."
         ]
       : [
           DE ? "Das FFN bekommt einen einzigen Vektor pro Token, nicht die einzelnen Heads." : "The FFN receives a single vector per token, not the individual heads.",
@@ -73,9 +73,9 @@
       stageHtml =
         group(0, DE ? "1 · Heads" : "1 · heads", headsHtml()) +
         group(1, DE ? "2 · Concat" : "2 · concat", concatHtml(DE)) +
-        group(2, "3 · W_O", matrix(4, 4) + '<span class="ls-hc-dim">H·d_v → d_model</span>') +
+        group(2, "3 · W_O", matrix(4, 4) + '<span class="ls-hc-dim">H·d_v → d_model · mischt</span>') +
         group(3, DE ? "4 · Token-Vektoren" : "4 · token vectors", tokensHtml(DE)) +
-        group(4, "5 · FFN", '<span class="ls-hc-box">FFN</span>');
+        group(4, "5 · FFN", '<span class="ls-hc-box" title="Das FFN liest einen Token-Vektor pro Token, nicht die einzelnen Heads">FFN</span>');
     } else {
       stageHtml =
         group(0, DE ? "Token-Vektor" : "token vector", bars(5, "ls-hc-vector")) +
@@ -98,7 +98,7 @@
       '<div class="ls-hc-stage">' + stageHtml + '</div>' +
       '<p class="ls-hc-note"></p>' +
       '<p class="ls-hc-footer">' + (concat
-        ? (DE ? "Wichtig: Pro Token entsteht ein langer Vektor; über alle Tokens steht er als Zeile in einer Matrix (Tokens × H·d_v). Das FFN sieht einen Token-Vektor pro Zeile, keine einzelnen Heads." : "Important: each token becomes one long vector; across all tokens it stands as a row in a matrix (tokens × H·d_v). The FFN sees one token vector per row, not the individual heads.")
+        ? (DE ? "Wichtig: Pro Token entsteht ein langer Vektor; über alle Tokens steht er als Zeile in einer Matrix (Tokens × H·d_v). W_O mischt die Head-Blöcke zu einem Token-Vektor; das FFN liest diesen als Ganzes, keine einzelnen Heads." : "Important: each token becomes one long vector; across all tokens it stands as a row in a matrix (tokens × H·d_v). W_O mixes the head blocks into one token vector; the FFN reads that as a whole, not the individual heads.")
         : (DE ? "Wichtig: Das FFN läuft für jedes Token einzeln. Es trennt nicht wieder nach Heads; es gibt jedem Token seinen neuen Vektor zurück." : "Important: the FFN runs separately for each token. It does not split the heads again; it gives each token its new vector back.")) + '</p>';
     var sepHtml = concat ? '' : '<div class="ls-hc-sep"><div class="ls-hc-sep-head"><b>' + (DE ? "Trennen und isolieren" : "Separate and isolate") + '</b><span>' + (DE ? "Input → Hidden → Output: Bereiche werden getrennt und wieder zusammengesetzt." : "Input → Hidden → Output: regions are separated and reassembled.") + '</span></div><div class="ls-hc-sep-stage"><canvas class="ls-hc-sep-canvas" role="img" aria-label="' + (DE ? "Statisches Drei-Stufen-Bild: Input ist verworren, Hidden trennt die Bereiche, Output isoliert und setzt sie wieder zusammen." : "Static three-stage image: input is tangled, hidden separates the regions, output isolates and reassembles them.") + '"></canvas></div><p class="ls-hc-sep-note">' + (DE ? "Statisch, schematisch: Input ist verworren, Hidden trennt die Bereiche, Output isoliert sie und setzt sie wieder zusammen. Fiktives Beispiel, keine Messung." : "Static, schematic: input is tangled, hidden separates the regions, output isolates them and reassembles them. Fictional example, not a measurement.") + '</p></div>';
     el.innerHTML = concat ? flowHtml : '<div class="ls-hc-split"><div class="ls-hc-flow-col">' + flowHtml + '</div>' + sepHtml + '</div>';
@@ -233,6 +233,11 @@
     function render() {
       el.setAttribute("data-stage", String(stage));
       note.innerHTML = notes[stage] || "";
+      if (concat) {
+        el.querySelectorAll(".ls-hc-group").forEach(function (g, i) {
+          if (notes[i]) g.setAttribute("title", notes[i].replace(/<[^>]+>/g, ""));
+        });
+      }
       el.querySelectorAll("[data-hc-step]").forEach(function (node) {
         var s = parseInt(node.getAttribute("data-hc-step"), 10);
         node.classList.toggle("is-on", s === stage);
