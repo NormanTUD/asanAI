@@ -37,6 +37,21 @@
     var data = null, worker = null, workerFailed = false;
     var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
     var yaw = 0.72 + Math.PI, pitch = 0.95, zoom = 1, drag = null;
+    function lossCamera(next) {
+      if (next && typeof next === "object") {
+        if (isFinite(next.yaw)) yaw = next.yaw;
+        if (isFinite(next.pitch)) pitch = Math.max(0.25, Math.min(1.3, next.pitch));
+        if (isFinite(next.zoom)) zoom = Math.max(0.6, Math.min(2.2, next.zoom));
+        if (data) draw();
+      }
+      var state = { yaw: yaw, pitch: pitch, zoom: zoom };
+      if (window.console && console.log) {
+        console.log("[loss camera] yaw=" + state.yaw.toFixed(3) + " pitch=" + state.pitch.toFixed(3) + " zoom=" + state.zoom.toFixed(3));
+        console.log("window.lossCamera(" + JSON.stringify(state) + ")");
+      }
+      return state;
+    }
+    window.lossCamera = lossCamera;
     var size = null, minL = 0, maxL = 1;
 
     function mix(a, b, t) {
@@ -178,7 +193,7 @@
       ctx.fillStyle = C.muted; ctx.fillText(DE ? "niedrig" : "low", 30, 35);
       ctx.fillStyle = "#c95656"; ctx.fillRect(78, 27, 8, 8);
       ctx.fillStyle = C.muted; ctx.fillText(DE ? "hoch" : "high", 90, 35);
-      ctx.textAlign = "right"; ctx.fillText(DE ? "Ziehen zum Drehen" : "drag to rotate", size.w - 18, 20);
+      ctx.textAlign = "right"; ctx.fillText(DE ? "Ziehen: drehen · Rad: zoomen" : "drag: rotate · wheel: zoom", size.w - 18, 20);
       updateReadout(); drawExamples(); drawData(); renderFormula();
     }
     function updateReadout() {
@@ -280,6 +295,12 @@
       drag.x = e.clientX; drag.y = e.clientY; draw();
     });
     window.addEventListener("pointerup", function () { drag = null; });
+    canvas.addEventListener("wheel", function (e) {
+      if (!data) return;
+      e.preventDefault();
+      zoom = Math.max(0.6, Math.min(2.2, zoom * Math.exp(-e.deltaY * 0.0012)));
+      draw();
+    }, { passive: false });
     function resize() { size = api.fit(canvas, stage); if (data) draw(); else drawData(); }
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
@@ -327,7 +348,15 @@
       pause: pause,
       resume: function () { visible = true; if (data) draw(); },
       resize: resize,
-      destroy: function () { playing = false; clearTimeout(timer); if (worker) worker.terminate(); worker = null; window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () {
+        playing = false;
+        clearTimeout(timer);
+        if (worker) worker.terminate();
+        worker = null;
+        if (window.lossCamera === lossCamera) { try { delete window.lossCamera; } catch (e) { window.lossCamera = null; } }
+        window.removeEventListener("resize", resize);
+        el.remove();
+      }
     };
   };
 })();
