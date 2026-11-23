@@ -123,14 +123,14 @@
     return { left: r.left - rr.left, top: r.top - rr.top, width: r.width, height: r.height };
   }
 
-  function makeFly(text, left, top, width, height) {
+  function makeFly(text, left, top, width, height, label) {
     var fly = document.createElement("div");
     fly.className = "crz-fly";
     fly.style.left = left + "px";
     fly.style.top = top + "px";
     fly.style.width = width + "px";
     fly.style.height = height + "px";
-    fly.innerHTML = '<div class="crz-fly-paper"><span class="crz-fly-label">' + T("Von draußen", "From outside") + '</span><p lang="zh">' + esc(text) + '</p></div>';
+    fly.innerHTML = '<div class="crz-fly-paper"><span class="crz-fly-label">' + label + '</span><p lang="zh">' + esc(text) + '</p></div>';
     room.appendChild(fly);
     return fly;
   }
@@ -161,7 +161,7 @@
     var endTop = pr.top - rr.top;
     var dx = endLeft - startLeft, dy = endTop - startTop;
 
-    activeFly = makeFly(r.input, startLeft, startTop, w, h);
+    activeFly = makeFly(r.input, startLeft, startTop, w, h, T("Von draußen", "From outside"));
     if (slot) {
       slot.classList.add("is-flash");
       later(function () { slot.classList.remove("is-flash"); }, 620);
@@ -174,7 +174,7 @@
       { transform: "translate(" + (dx * 0.85 - 4) + "px," + (dy * 0.84) + "px) rotate(-4deg) scale(.98)", opacity: 1, offset: 0.84 },
       { transform: "translate(" + dx + "px," + dy + "px) rotate(-1.4deg) scale(1)", opacity: 1, offset: 1 }
     ];
-    activeAnim = activeFly.animate(frames, { duration: 1000, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" });
+    activeAnim = activeFly.animate(frames, { duration: 860, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" });
     activeAnim.onfinish = function () {
       clearFly();
       slip.classList.remove("is-waiting");
@@ -197,7 +197,7 @@
     var dx = (sr.left + sr.width / 2 - rr.left) - (startLeft + w / 2);
     var dy = (sr.top + sr.height / 2 - rr.top) - (startTop + h / 2) - 60;
 
-    activeFly = makeFly(text, startLeft, startTop, w, h);
+    activeFly = makeFly(text, startLeft, startTop, w, h, T("Deine Antwort", "Your answer"));
     slip.classList.add("is-waiting");
     var frames = [
       { transform: "translate(0,0) rotate(-1.4deg) scale(1)", opacity: 1, offset: 0 },
@@ -205,7 +205,7 @@
       { transform: "translate(" + (dx * 0.78) + "px," + (dy * 0.82) + "px) rotate(8deg) scale(.55)", opacity: 1, offset: 0.8 },
       { transform: "translate(" + dx + "px," + dy + "px) rotate(14deg) scale(.2)", opacity: 0, offset: 1 }
     ];
-    activeAnim = activeFly.animate(frames, { duration: 820, easing: "cubic-bezier(.4,.1,.6,1)", fill: "forwards" });
+    activeAnim = activeFly.animate(frames, { duration: 700, easing: "cubic-bezier(.4,.1,.6,1)", fill: "forwards" });
     if (slot) {
       later(function () { slot.classList.add("is-flash"); }, 260);
       later(function () { slot.classList.remove("is-flash"); }, 760);
@@ -247,7 +247,7 @@
       renderHud();
       later(function () {
         flyOut(r.answer, function () { advance(); });
-      }, 520);
+      }, 340);
     } else {
       btn.classList.add("is-wrong");
       btn.disabled = true;
