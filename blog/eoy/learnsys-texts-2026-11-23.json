@@ -1,0 +1,3087 @@
+{
+  "version": 2,
+  "schema": "learnsys-changes/v2",
+  "kind": "learnsys-changes",
+  "data_file": "intuition_learnsys-data.js",
+  "generated_at": "2026-11-23T19:12:34.439Z",
+  "overlay_revision": "2026-11-17-spacetime-after-worldmodel-9",
+  "pages": [
+    "intuition"
+  ],
+  "apply_to": [
+    "de",
+    "en"
+  ],
+  "changes": [
+    {
+      "id": "de:intuition:1.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 1,
+      "substep": 0,
+      "substep_count": 2,
+      "text_key": "1.0",
+      "slide_title": "Daten",
+      "slide_kicker": "Daten",
+      "changed_fields": [
+        "title",
+        "kicker",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Die Architektur von LLMs",
+        "kicker": "Architektur",
+        "watch": "",
+        "body": "Neuronale Netze, eine Methode zum Machine Learning, funktionieren, indem sie Daten in mehreren Schichten nacheinander bearbeiten, etwa wie wenn man Funktionen schachtelt:\n\n$$\\text{Schicht}_3\\left(\\text{Schicht}_2\\left(\\text{Schicht}_1\\left(\\text{Daten}\\right)\\right)\\right)$$\n\nDie Schichten können dabei verschiedene Aufgaben übernehmen. \n\nBei LLM sind es vor allem 5 Stufen der Pipeline: Tokenizer (Vorverarbeitung), Embedding, Positional Embedding, Transformer (Attention, LayerNorm, Residualverbindungen und Feed-Forward-Netzwerk) und Unembedding.\n\nDie meisten Modellschichten haben lernbare Gewichte, die der Computer während eines Trainingsprozesses anpasst, um das Ergebnis Schritt für Schritt zu verbessern; der Tokenizer wird nicht mit Gradienten trainiert; die BPE-Merges werden aber aus den Daten gelernt.\n\nDie nächsten Tage werden wir uns diese Bausteine nacheinander systematisch anschauen, wie sie funktionieren und warum, um LLM wirklich greifen zu können.",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.",
+                  "en": "Transformer blocks, residual connections, and layer normalisation."
+                }
+              },
+              {
+                "label": "Ba, Kiros & Hinton (2016), Layer Normalization",
+                "url": "https://arxiv.org/abs/1607.06450",
+                "why": {
+                  "de": "LayerNorm: Mittelwert und Varianz pro Token, danach gelerntes γ/β.",
+                  "en": "LayerNorm: per-token mean and variance, then learned γ/β."
+                }
+              },
+              {
+                "label": "Xiong et al. (2020), On Layer Normalization in the Transformer Architecture",
+                "url": "https://arxiv.org/abs/2002.04745",
+                "why": {
+                  "de": "Pre-LN ist stabiler als Post-LN und erlaubt Training ohne Warm-up.",
+                  "en": "Pre-LN is more stable than Post-LN and allows training without warm-up."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), Language Models are Unsupervised Multitask Learners",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: LayerNorm vor den Subblöcken und final nach dem letzten Block.",
+                  "en": "GPT-2: LayerNorm before the sub-blocks and a final one after the last block."
+                }
+              },
+              {
+                "label": "He et al. (2016), Deep Residual Learning",
+                "url": "https://arxiv.org/abs/1512.03385",
+                "why": {
+                  "de": "Residualverbindungen: Updates werden addiert, nicht überschrieben.",
+                  "en": "Residual connections: updates are added, not overwritten."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Beim klassischen Programmieren gibt man dem Computer genau vor, wie er sich zu verhalten hat.\n\nBei Machine Learning dagegen gibt man dem Computer viele Beispiele, wie er reagieren soll, und er lernt daraus, die gezeigten Verhaltensweisen zu imitieren.\n\nDer erste Schritt, den man dafür tun muss ist es, diese Beispiele zu sammeln. Das sind die Daten, auf denen man diese Netzwerke trainiert.\n\nDas Training passiert zweistufig. In der ersten Stufe gibt man dem Computer mehr oder weniger das ganze Internet, was er lesen soll, um daraus grobe Muster zu lernen. Der gefilterte Trainingskorpus ist hunderte Gigabyte bis wenige Terabyte groß. GPT-3 trainierte auf 300 Milliarden Tokens; allein der gefilterte Common-Crawl-Teil umfasste etwa 570 GB, rund 400 Milliarden Tokens.\n\nIn der zweiten Stufe folgen Instruction-Tuning, Präferenzdaten und RLHF; Frage-Antwort-Paare sind ein Teil davon.",
+        "title": "Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Wikipedia: Paris",
+                "url": "https://de.wikipedia.org/wiki/Paris",
+                "why": {
+                  "de": "Erster Absatz des Artikels; die Demo zeigt den HTML-Ausschnitt.",
+                  "en": "First paragraph of the article; the demo shows the HTML excerpt."
+                }
+              },
+              {
+                "label": "Cisco (2016), The Zettabyte Era Officially Begins",
+                "url": "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that",
+                "why": {
+                  "de": "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.",
+                  "en": "Zettabyte era since 2016 and the 10²¹-byte scale."
+                }
+              },
+              {
+                "label": "Brown et al. (2020), Language Models are Few-Shot Learners",
+                "url": "https://arxiv.org/abs/2005.14165",
+                "why": {
+                  "de": "GPT-3-Datenmischung und Few-Shot-Ergebnisse.",
+                  "en": "GPT-3 data mix and few-shot results."
+                }
+              },
+              {
+                "label": "Köpf et al. (2023), OpenAssistant Conversations",
+                "url": "https://arxiv.org/abs/2304.07327",
+                "why": {
+                  "de": "Offener Datensatz menschlicher Frage-Antwort-Konversationen.",
+                  "en": "Open dataset of human question-answer conversations."
+                }
+              },
+              {
+                "label": "Zhou et al. (2023), LIMA: Less Is More for Alignment",
+                "url": "https://arxiv.org/abs/2305.11206",
+                "why": {
+                  "de": "Wenige, hochwertige Instruktionsdaten für Alignment.",
+                  "en": "A small, high-quality instruction set for alignment."
+                }
+              },
+              {
+                "label": "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better",
+                "url": "https://arxiv.org/abs/2107.06499",
+                "why": {
+                  "de": "Deduplizierung verbessert Sprachmodelle.",
+                  "en": "Deduplication improves language models."
+                }
+              },
+              {
+                "label": "Ouyang et al. (2022), Training language models to follow instructions with human feedback",
+                "url": "https://arxiv.org/abs/2203.02155",
+                "why": {
+                  "de": "Instruction-Tuning mit menschlichem Feedback nach dem Vortraining.",
+                  "en": "Instruction tuning with human feedback after pretraining."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:1.1",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 1,
+      "substep": 1,
+      "substep_count": 2,
+      "text_key": "1.1",
+      "slide_title": "Die Architektur als Funktion",
+      "slide_kicker": "Architektur",
+      "changed_fields": [
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Die Architektur als Funktion",
+        "kicker": "Architektur",
+        "watch": "Weiter: Daten, Frage an Rohdaten, 1. Trainingsdatensatz, 2. Trainingsdatensatz. Achte darauf, wie dieselbe Frageform auf das Wissen aus dem Pretraining zugreift.",
+        "body": "Die Architektur ist eine Funktion $f_\\theta(x)$: Daten rein, eine Verteilung über das nächste Token raus.\n\nDie Form bleibt gleich, etwa $f_\\theta(x) = ax + b$. $\\theta$ sind die gelernten Werte von $a$ und $b$. Training ändert $\\theta$, nicht die Form von $f$.\n\nPretraining liest fast das ganze Internet und lernt Muster, Sprache und Fakten. Fine-tuning zeigt wenige Frage-Antwort-Paare. Es lehrt keine neuen Fakten, sondern die Form: Frage, Antwort, direkte Reaktion. Das Wissen (Paris, Rom) steckt schon in den Gewichten; das Netz lernt, es als Antwort zu nutzen. Darin liegt das Potenzial.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Im Rohkorpus steht „Die Hauptstadt von Frankreich ist Paris“. Das Modell setzt den Satz fort; die Frage allein ist noch kein Frage-Antwort-Paar. Fine-tuning zeigt ihm genau solche Paare.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Der Nudge ist der Trainingsschritt: Vergleiche die Vorhersage mit dem nächsten Token in den Daten und verschiebe die Gewichte ein wenig in die Richtung, die den Fehler senkt. Pretraining lernt die Fakten; Fine-tuning lernt die Form, in der das Wissen als Antwort erscheint. Ohne Daten gibt es kein Ziel und keinen Nudge.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-fx-1",
+                "title": "Die Funktion",
+                "body": "$f_\\theta(x)$ nimmt Daten und gibt eine Verteilung über das nächste Token aus. Die Form bleibt gleich, etwa $f_\\theta(x)=ax+b$; $\\theta$ sind die Gewichte, die das Training verändert.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-training",
+            "title": "Training",
+            "questions": [
+              {
+                "id": "q-box-fx-2",
+                "title": "Pretraining",
+                "body": "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged dieselben Gewichte.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-fx-3",
+                "title": "Fine-tuning",
+                "body": "Wenige Frage-Antwort-Paare zeigen die Form. Das Wissen kommt aus dem Pretraining; das Netz lernt, es als direkte Antwort zu nutzen. Darin liegt das Potenzial.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-fx-4",
+                "title": "Warum sind Daten so wichtig?",
+                "body": "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Nudge; das Modell kann nur raten.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Der Transformer als Architektur.",
+                  "en": "The transformer as an architecture."
+                }
+              },
+              {
+                "label": "Brown et al. (2020), Language Models are Few-Shot Learners",
+                "url": "https://arxiv.org/abs/2005.14165",
+                "why": {
+                  "de": "Großes Pretraining und Few-Shot-Verhalten.",
+                  "en": "Large-scale pretraining and few-shot behaviour."
+                }
+              },
+              {
+                "label": "Ouyang et al. (2022), Training language models to follow instructions with human feedback",
+                "url": "https://arxiv.org/abs/2203.02155",
+                "why": {
+                  "de": "Fine-tuning mit menschlichem Feedback.",
+                  "en": "Fine-tuning with human feedback."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Die ganze Architektur ist eine Funktion $f_\theta(x)$: Daten rein, eine Verteilung über das nächste Token raus. Pretraining nutzt fast das ganze Internet; Fine-tuning nutzt wenige, spezifische Fragen. Die Beispiele zeigen, warum die Daten den Unterschied machen.\n\nDie Form der Funktion bleibt beim Training gleich. Ein einfaches Beispiel ist $f_\theta(x) = ax + b$. Hier sind $a$ und $b$ die gelernten Gewichte, also $\theta$; das Training ändert nur diese Werte, nicht die Form der Funktion.",
+        "title": "Die Architektur als Funktion",
+        "kicker": "Architektur",
+        "watch": "Drücke Weiter: Daten, Frage an Rohdaten, 1. Trainingsdatensatz, 2. Trainingsdatensatz. Bei jedem Beispiel zeigt der Nudge, wie sich die Kandidaten verschieben; welche Option in den Daten steht, welche nur plausibel ist und welche nicht passt.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "In den Daten steht „Die Katze sitzt auf der Matte“. Das Netz bekommt den Anfang und soll „Matte“ vorhersagen. „Heizung“ ist auch plausibel, war aber in diesem Beispiel nicht der nächste Token; „Gleichung“ passt semantisch nicht.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Der Nudge ist der Trainingsschritt: Vergleiche die Vorhersage mit dem nächsten Token in den Daten und verschiebe die Gewichte ein wenig in die Richtung, die den Fehler senkt. Ohne Daten gibt es kein Ziel und keinen Nudge.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-fx-1",
+                "title": "Die Funktion",
+                "body": "$f_\theta(x)$ nimmt Daten und gibt eine Verteilung über das nächste Token aus. Die Form bleibt gleich, etwa $f_\theta(x)=ax+b$; $\theta$ sind die Gewichte, die das Training verändert.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-training",
+            "title": "Training",
+            "questions": [
+              {
+                "id": "q-box-fx-2",
+                "title": "Pretraining",
+                "body": "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged dieselben Gewichte.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-fx-3",
+                "title": "Fine-tuning",
+                "body": "Wenige, gezielte Fragen nudged dieselben Gewichte in Richtung hilfreicher Antworten.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-fx-4",
+                "title": "Warum sind Daten so wichtig?",
+                "body": "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Nudge; das Modell kann nur raten.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Der Transformer als Architektur.",
+                  "en": "The transformer as an architecture."
+                }
+              },
+              {
+                "label": "Brown et al. (2020), Language Models are Few-Shot Learners",
+                "url": "https://arxiv.org/abs/2005.14165",
+                "why": {
+                  "de": "Großes Pretraining und Few-Shot-Verhalten.",
+                  "en": "Large-scale pretraining and few-shot behaviour."
+                }
+              },
+              {
+                "label": "Ouyang et al. (2022), Training language models to follow instructions with human feedback",
+                "url": "https://arxiv.org/abs/2203.02155",
+                "why": {
+                  "de": "Fine-tuning mit menschlichem Feedback.",
+                  "en": "Fine-tuning with human feedback."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:11.3",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 11,
+      "substep": 3,
+      "substep_count": 4,
+      "text_key": "11.3",
+      "slide_title": "Zwei Schichten, ein Trick",
+      "slide_kicker": "Schaltkreis",
+      "changed_fields": [
+        "title",
+        "kicker",
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Heads zusammenfügen",
+        "kicker": "Concat",
+        "watch": "Drücke Weiter: Heads, Concat, W_O, Token-Vektor.",
+        "body": "Jeder Head liefert pro Token einen Vektor. Die Heads gehen aber nicht einzeln ins FFN: Concat hängt für jeden Token die Head-Vektoren aneinander, und die gelernte Matrix $W_O$ mischt sie zu einem Vektor pro Token (äquivalent: jede Head-Ausgabe mit ihrem $W_O$-Block multiplizieren und addieren). Für die ganze Sequenz ist das eine Matrix mit einem Token pro Zeile und $d_{\\text{model}}$ Spalten. Das FFN liest jeden Token-Vektor als Ganzes; es verarbeitet Tokens einzeln, nicht Heads.\n\n$$\\underbrace{\\underbrace{\\begin{pmatrix} \\text{Token 1} & h_{1,1} & \\cdots & h_{1,H d_v} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ \\text{Token } n & h_{n,1} & \\cdots & h_{n,H d_v} \\end{pmatrix}}_{\\substack{n \\text{ Tokens (Zeilen)} \\\\ H d_v \\text{ Werte pro Zeile}}}}_{\\text{Concat: pro Token ein langer Vektor, Tokens als Zeilen}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\underbrace{\\begin{pmatrix} \\text{Token 1} & u_{1,1} & \\cdots & u_{1,d_{\\text{model}}} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ \\text{Token } n & u_{n,1} & \\cdots & u_{n,d_{\\text{model}}} \\end{pmatrix}}_{\\substack{n \\text{ Tokens (Zeilen)} \\\\ d_{\\text{model}} \\text{ Werte pro Zeile}}}}_{\\text{pro Token ein Vektor fürs FFN}}$$",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die Heads sind keine getrennten Eingänge ins FFN. Concat + $W_O$ (oder die Summe der Head-Beiträge) ergeben pro Token einen gemeinsamen Vektor; für die Sequenz steht ein Token pro Zeile. Das FFN arbeitet position-wise: ein Vektor pro Token, nicht ein Vektor pro Head.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Formal: Jeder Head liefert für $n$ Tokens eine Matrix $n \\times d_v$. Concat ergibt $n \\times H d_v$; $W_O$ ($H d_v \\times d_{\\text{model}}$) projiziert auf $n \\times d_{\\text{model}}$. Wegen $W_O [h_1;\\dots;h_H] = \\sum_i W_O^{(i)} h_i$ kann man die Heads auch als unabhängige Beiträge lesen, die in den Residualstrom addiert werden. Danach sind sie keine getrennten Kanäle mehr; das FFN sieht nur den gemischten Token-Vektor.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Multi-Head-Attention: Concat der Heads und Ausgabeprojektion W_O.",
+                  "en": "Multi-head attention: concat of the heads and output projection W_O."
+                }
+              },
+              {
+                "label": "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits",
+                "url": "https://transformer-circuits.pub/2021/framework/index.html",
+                "why": {
+                  "de": "QK- und OV-Schaltkreise; die Head-Ausgabe wird in den Residualstrom geschrieben.",
+                  "en": "QK and OV circuits; the head output is written into the residual stream."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Zwei Schichten, ein Trick. Der Previous-Token-Head in Schicht 1 merkt sich für jede Position, welches Token davor stand. Der Induktionskopf in Schicht 2 fragt mit dem aktuellen $A$. Sein Key enthält das vorherige Token; deshalb trifft er die frühere Stelle, an der vor $A$ ebenfalls $A$ stand. Von dort kopiert er $B$.\n\n$A$ und $B$ sind Platzhalter für beliebige Wörter. Das ist K-Composition: Der Key hängt vom vorherigen Token ab. Deshalb braucht der Schaltkreis mindestens zwei Schichten.",
+        "title": "Zwei Schichten, ein Trick",
+        "kicker": "Schaltkreis",
+        "watch": "Klicke Weiter. Verfolge den Weg vom Previous-Token-Head zum Induktionskopf.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Der Kopf liest keine Bedeutung. Er vergleicht gelernte Vektoren: Wenn zwei Stellen ähnlich genug sind, schaut er dorthin.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Mechanisch ist der Schaltkreis eine K-Composition: Der Key des Induktionskopfs liest einen Unterraum, den der Previous-Token-Head geschrieben hat. Die OV-Matrix kopiert den Value des besuchten Tokens. Olsson et al. (2022) definieren Induktionsköpfe empirisch über Prefix-Matching und Copying; die Definition ist eine klare Teilmenge, keine perfekte Beschreibung jedes Heads.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-circ-1",
+                "title": "Der Key ist verschoben",
+                "body": "Der Induktionskopf liest einen Key, der aus Token plus Vorgänger besteht. Deshalb kann seine Query mit dem aktuellen $A$ eine Stelle treffen, an der vorher $A$ stand, obwohl dort jetzt $B$ steht.",
+                "tex": "\\underbrace{\\underbrace{\\mathbf{k}_j}_{\\text{Key}} = \\underbrace{W_K}_{\\text{gelernt}}\\,\\underbrace{(\\mathbf{x}_j + \\mathbf{h}^{\\mathrm{prev}}_j)}_{\\text{Token + Previous-Token-Head}}}_{\\text{Key mit Vorgänger}}",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-schaltkreis",
+            "title": "Schaltkreis",
+            "questions": [
+              {
+                "id": "q-box-circ-2",
+                "title": "Zwei Schichten minimum",
+                "body": "Der Previous-Token-Head muss seinen Output in den Residualstrom schreiben, bevor der Induktionskopf ihn lesen kann. Ein einzelner Head hat keinen früheren Head, dessen Output er in seinen Key aufnehmen könnte.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Olsson et al. (2022), In-context Learning and Induction Heads",
+                "url": "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html",
+                "why": {
+                  "de": "Prefix-Matching, Copying und der Zwei-Head-Schaltkreis.",
+                  "en": "Prefix matching, copying, and the two-head circuit."
+                }
+              },
+              {
+                "label": "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits",
+                "url": "https://transformer-circuits.pub/2021/framework/index.html",
+                "why": {
+                  "de": "QK/OV-Zerlegung und K-Composition.",
+                  "en": "QK/OV decomposition and K-composition."
+                }
+              },
+              {
+                "label": "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models",
+                "url": "https://arxiv.org/abs/2405.00208",
+                "why": {
+                  "de": "Mechanismen von Previous-Token- und Induktionsköpfen.",
+                  "en": "Mechanisms of previous-token and induction heads."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:11.4",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 11,
+      "substep": 4,
+      "substep_count": 4,
+      "text_key": "11.4",
+      "slide_title": "Vier Köpfe, vier Regeln",
+      "slide_kicker": "Familie",
+      "changed_fields": [
+        "title",
+        "kicker",
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Induktionsköpfe",
+        "kicker": "In-Context",
+        "watch": "",
+        "body": "",
+        "groups": []
+      },
+      "edit": {
+        "body": "Induktion ist ein Mitglied einer Familie von Copy-Heads. Ein Duplicate-Token-Head schaut auf ein früheres Vorkommen desselben Tokens und kopiert dessen Position. Ein Successor-Head erhöht ein geordnetes Token (Montag → Dienstag) über eine gelernte Richtung. Ein Name-Mover-Head kopiert einen Namen aus dem Kontext in die Antwort. Alle teilen denselben Kern: Attention wählt eine Quelle, OV schreibt ihren Inhalt. Was sie unterscheidet, ist die Regel, die die Quelle wählt.\n\nDie vier Köpfe sind keine vier Etiketten für dieselbe Sache. Induktion und Duplicate arbeiten über Wiederholung im Kontext; Successor über eine gelernte Ordnung; Name-Mover über eine Aufgabe mit zwei Kandidaten. Klicke die Karten.",
+        "title": "Vier Köpfe, vier Regeln",
+        "kicker": "Familie",
+        "watch": "Klicke eine Karte. Vergleiche, welche Quelle die Attention wählt und was kopiert wird.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die vier Köpfe sind keine vier Namen für dieselbe Schaltung. Sie teilen die Aufmerksamkeits-/OV-Struktur, aber die Quelle wird nach unterschiedlichen Regeln gewählt.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Duplicate- und Successor-Heads sind in der Primer-Literatur beschrieben; Name-Mover stammt aus dem IOI-Schaltkreis von GPT-2 small. Die Einordnung als Head-Typ ist eine funktionale Beschreibung, keine feste anatomische Kategorie: Ein Head kann mehrere Rollen tragen, und dieselbe Rolle kann über mehrere Heads verteilt sein.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-gemeinsam",
+            "title": "Gemeinsam",
+            "questions": [
+              {
+                "id": "q-box-heads-1",
+                "title": "Der Kern",
+                "body": "Alle vier benutzen Attention, um eine Quelle zu wählen, und eine OV-Matrix, um deren Inhalt in den Residualstrom zu schreiben. Der Unterschied liegt in der Query-Key-Regel.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-duplicate",
+            "title": "Duplicate",
+            "questions": [
+              {
+                "id": "q-box-heads-2",
+                "title": "Gleiches Token, frühere Stelle",
+                "body": "Der Kopf schaut auf ein früheres Vorkommen desselben Tokens. Im IOI-Schaltkreis signalisiert das, dass ein Name wiederholt wurde; die Position des früheren Vorkommens wird weitergegeben.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-successor",
+            "title": "Successor",
+            "questions": [
+              {
+                "id": "q-box-heads-3",
+                "title": "Nächstes in der Ordnung",
+                "body": "Der Kopf erhöht ein Token aus einer geordneten Folge: Montag → Dienstag, 4 → 5, März → April. Die Ordnung ist gelernt, nicht im Kontext nachgeschlagen; die OV-Matrix verschiebt die Aktivierung entlang einer Richtung.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-name-mover",
+            "title": "Name-Mover",
+            "questions": [
+              {
+                "id": "q-box-heads-4",
+                "title": "Kopiere den richtigen Namen",
+                "body": "Im Satz „Als Mary und John ... John gab ...“ schaut der Name-Mover-Head auf Mary und kopiert sie in die Antwort. S-Inhibition-Heads unterdrücken dabei den wiederholten John. Das ist kein Sequenzmuster, sondern faktenbezogenes Kopieren.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Olsson et al. (2022), In-context Learning and Induction Heads",
+                "url": "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html",
+                "why": {
+                  "de": "Induktionsköpfe und Copying-Heads im Kontext.",
+                  "en": "Induction heads and copying heads in context."
+                }
+              },
+              {
+                "label": "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models",
+                "url": "https://arxiv.org/abs/2405.00208",
+                "why": {
+                  "de": "Überblick über Duplicate-, Successor- und Name-Mover-Heads.",
+                  "en": "Overview of duplicate, successor, and name-mover heads."
+                }
+              },
+              {
+                "label": "Gould et al. (2023), Successor Heads",
+                "url": "https://arxiv.org/abs/2312.09230",
+                "why": {
+                  "de": "Successor-Heads erhöhen geordnete Tokens wie Montag → Dienstag.",
+                  "en": "Successor heads increment ordered tokens such as Monday → Tuesday."
+                }
+              },
+              {
+                "label": "Wang et al. (2022), Interpretability in the Wild",
+                "url": "https://arxiv.org/abs/2211.00593",
+                "why": {
+                  "de": "Der IOI-Schaltkreis mit Name-Mover- und S-Inhibition-Heads.",
+                  "en": "The IOI circuit with name-mover and S-inhibition heads."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:11.5",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 11,
+      "substep": 5,
+      "substep_count": 4,
+      "text_key": "11.5",
+      "slide_title": "Der Phase Change",
+      "slide_kicker": "Emergenz",
+      "changed_fields": [
+        "title",
+        "kicker",
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Induktionsköpfe",
+        "kicker": "In-Context",
+        "watch": "",
+        "body": "",
+        "groups": []
+      },
+      "edit": {
+        "body": "Induktionsköpfe entstehen nicht von Anfang an. In kleinen Modellen bilden sie sich in einem schmalen Trainingsfenster, etwa zwischen 2,5 und 5 Milliarden Tokens. Im selben Fenster springt der In-Context-Learning-Score von unter 0,15 auf etwa 0,4 Nats. Die Loss-Kurve bekommt dort einen kleinen Buckel. Ein einlagiges Modell ohne Induktionsköpfe zeigt keinen solchen Sprung.\n\nDas ist Evidenz für einen Zusammenhang, nicht für einen Beweis. Andere Mechanismen könnten im selben Fenster entstehen; die Ablationen betreffen kleine Modelle. Für die Folie reicht: Ein gelerntes Muster und eine messbare Fähigkeit tauchen zusammen auf.",
+        "title": "Der Phase Change",
+        "kicker": "Emergenz",
+        "watch": "Klicke Weiter. Sieh, wie die Kurven im selben Fenster springen.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Der Kopf liest keine Bedeutung. Er vergleicht gelernte Vektoren: Wenn zwei Stellen ähnlich genug sind, schaut er dorthin.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Mechanisch ist der Schaltkreis eine K-Composition: Der Key des Induktionskopfs liest einen Unterraum, den der Previous-Token-Head geschrieben hat. Die OV-Matrix kopiert den Value des besuchten Tokens. Olsson et al. (2022) definieren Induktionsköpfe empirisch über Prefix-Matching und Copying; die Definition ist eine klare Teilmenge, keine perfekte Beschreibung jedes Heads.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Olsson et al. (2022), In-context Learning and Induction Heads",
+                "url": "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html",
+                "why": {
+                  "de": "Induktionsköpfe, Zwei-Head-Schaltkreis und Phase Change.",
+                  "en": "Induction heads, the two-head circuit, and the phase change."
+                }
+              },
+              {
+                "label": "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits",
+                "url": "https://transformer-circuits.pub/2021/framework/index.html",
+                "why": {
+                  "de": "QK/OV-Zerlegung, Copying Heads und K-Composition.",
+                  "en": "QK/OV decomposition, copying heads, and K-composition."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:11.6",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 11,
+      "substep": 6,
+      "substep_count": 4,
+      "text_key": "11.6",
+      "slide_title": "Heads zusammenfügen",
+      "slide_kicker": "Concat",
+      "changed_fields": [
+        "title",
+        "kicker",
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Induktionsköpfe",
+        "kicker": "In-Context",
+        "watch": "",
+        "body": "",
+        "groups": []
+      },
+      "edit": {
+        "body": "Jeder Head liefert pro Token einen eigenen Vektor. Concat hängt die Vektoren hintereinander. Die gelernte Matrix $W_O$ fasst sie danach zu einem gemeinsamen Token-Vektor zusammen. Diesen einen Vektor liest das FFN.\n\n$$\\underbrace{\\underbrace{\\begin{pmatrix} h_{1,1} & h_{2,1} & \\cdots & h_{H,1} \\\\ h_{1,2} & h_{2,2} & \\cdots & h_{H,2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ h_{1,d_v} & h_{2,d_v} & \\cdots & h_{H,d_v} \\end{pmatrix}}_{\\text{Heads: }d_v\\text{ Zeilen, }H\\text{ Spalten}} \\;\\longrightarrow\\; \\underbrace{\\begin{pmatrix} h_1 \\\\ h_2 \\\\ \\vdots \\\\ h_H \\end{pmatrix}}_{\\text{Concat: }H d_v\\text{ Werte}}}_{\\text{aus vielen Heads wird ein langer Vektor}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} u_1 \\\\ u_2 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor fürs FFN}}$$",
+        "title": "Heads zusammenfügen",
+        "kicker": "Concat",
+        "watch": "Drücke Weiter: Heads, Concat, W_O, Token-Vektor.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die Heads sind keine getrennten Ströme, die ins FFN wandern. Concat hängt ihre Vektoren aneinander; $W_O$ macht daraus einen gemeinsamen Token-Vektor. Das FFN bekommt also einen einzigen Vektor pro Token, nicht vier getrennte Eingänge.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Formal: Jeder Head liefert $d_v$ Werte; zusammen sind das $H d_v$ Werte. Die gelernte Matrix $W_O$ rechnet diese $H d_v$ Werte auf $d_{\\text{model}}$ Werte herunter. $d_{\\text{model}}$ ist die feste Vektorbreite, mit der der übrige Transformer arbeitet. Danach bleiben die Heads nicht als getrennte Kanäle erhalten.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Multi-Head-Attention: Concat der Heads und Ausgabeprojektion W_O.",
+                  "en": "Multi-head attention: concat of the heads and output projection W_O."
+                }
+              },
+              {
+                "label": "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits",
+                "url": "https://transformer-circuits.pub/2021/framework/index.html",
+                "why": {
+                  "de": "QK- und OV-Schaltkreise; die Head-Ausgabe wird in den Residualstrom geschrieben.",
+                  "en": "QK and OV circuits; the head output is written into the residual stream."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:13.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 13,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "13.0",
+      "slide_title": "Wie findet man gute Punkte?",
+      "slide_kicker": "Optimizer",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Wie findet man gute Punkte?",
+        "kicker": "Optimizer",
+        "watch": "",
+        "body": "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, $f(x) = w\\cdot x + b$. Der Plot hat 3 Achsen: $w$, $b$ und $Loss$. Für jeden Parameterpunkt in diesem Raum gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre. Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nHier sind es zwei Parameter und damit zwei Dimensionen. Ein großes Sprachmodell hat Milliarden davon, zu viele, um es sich vorzustellen, aber die Idee ist die gleiche.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Wie wird der Loss bestimmt?",
+                "body": "Der Loss wird über die Trainingsdaten bestimmt: sie werden einmal komplett durchgetestet und für jedes gespeichert, was aus dem Netz rauskommt, und was rauskommen sollte. ",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-grad-1",
+                "title": "Wie wird bestimmt, in welche Richtung gegangen werden muss?",
+                "body": "Durch tape-basiertes Ableiten. Neuronale Netze sind verschachtelte Funktionen, was bedeutet, dass man beim testen (\"Forward-Pass\") der Daten speichern kann, welche Operationen ausgeführt werden, und dann für jede diese Operationen ihre Ableitungen definiert und sie beim Rückrechnen der Gewichte (\"Backward-Pass\") mit ihrer Ableitung ersetzen kann. Dann kriegt man für jeden Parameter die Steigung an der Stelle, mit der man die Richtung bestimmen kann, in welcher der Fehler niedriger wird. Für Softmax plus Cross-Entropy ist der Gradient nach den Logits $p-y$; für andere Losses gilt das nicht automatisch.",
+                "tex": "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-grad-loss",
+                "title": "Andere Loss-Funktionen",
+                "body": "Dieses Modell nutzt <b>MSE</b>, um den Fehler zu bestimmen. Andere Lossfunktionen wie <b>C</b>ategorical <b>Cross</b> <b>E</b>ntropy (<b>CCE</b>) sind besser geeignet für zum Beispiel kategorielle Klassifikationen, funktionieren im Loss etwas anders, aber der Optimizer zieht nicht, wie der Loss zustande kam, sondern nur ihr Ergebnis.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-grad-saddle",
+                "title": "Sattelpunkte statt Minima",
+                "body": "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Viele Sattelpunkte haben eine Abstiegsrichtung; lokale Minima bleiben trotzdem möglich. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-edit-1794810324364-2",
+                "title": "Wie funktioniert Backpropagation?",
+                "body": "Man wusste lange nicht, wie man die Gewichte der inneren Layer trainieren soll. Sagen wir wir haben $\\text{Output} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Daten})))$. Dann können wir sagen, wie groß die Differenz ist zwischen dem Output und den Daten, die wir wollen, aber wie kommt man an die Differenz zwischen dem, was aus Layer 2 und 1 rauskommt und dem was wir wollen? \n\nWir bestimmen dafür die Differenz zwischen Output und Trainingsziel, und berechnen die Gewichte des letzten Layers, indem wir sagen \"es wäre gut, wenn dieser Wert etwas größer gewesen wäre, und dieser etwas kleiner\". Dann sagen wir, dass der letzte Layer nun der \"Output\"-Layer ist. Damit kriegen wir genau die gleiche Struktur wie vorher: wir können Output und Differenz usw. betrachten und berechnen, dann definieren wir den Layer als Letzten und sagen, dass wir die Differenz berechnen usw. So können wir uns Layer für Layer durch das Netzwerk hangeln, und immer wieder die Änderungen des vorherigen nehmen und als letzten Layer definieren, und so den davor anpassen. Das ist die Idee von Backpropagation.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Cauchy (1847), Méthode générale",
+                "url": "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item",
+                "why": {
+                  "de": "Frühe Beschreibung des steilsten Abstiegs.",
+                  "en": "Early description of steepest descent."
+                }
+              },
+              {
+                "label": "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors",
+                "url": "https://doi.org/10.1038/323533a0",
+                "why": {
+                  "de": "Gradienten für mehrschichtige Netze.",
+                  "en": "Gradients for multilayer networks."
+                }
+              },
+              {
+                "label": "Li et al. (2018), Visualizing the Loss Landscape",
+                "url": "https://arxiv.org/abs/1712.09913",
+                "why": {
+                  "de": "Zweidimensionale Schnitte durch Loss-Landschaften.",
+                  "en": "Two-dimensional slices through loss landscapes."
+                }
+              },
+              {
+                "label": "Dauphin et al. (2014), Saddle Point Problem",
+                "url": "https://arxiv.org/abs/1406.2572",
+                "why": {
+                  "de": "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.",
+                  "en": "Saddle points as an obstacle in high-dimensional optimization."
+                }
+              },
+              {
+                "label": "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks",
+                "url": "https://arxiv.org/abs/1412.0233",
+                "why": {
+                  "de": "Kritische Punkte und lokale Minima in tiefen Netzen.",
+                  "en": "Critical points and local minima in deep networks."
+                }
+              },
+              {
+                "label": "Goodfellow, Bengio & Courville (2016), Deep Learning",
+                "url": "https://www.deeplearningbook.org/",
+                "why": {
+                  "de": "Loss-Funktionen für Regression und Klassifikation.",
+                  "en": "Loss functions for regression and classification."
+                }
+              },
+              {
+                "label": "PyTorch, CrossEntropyLoss",
+                "url": "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html",
+                "why": {
+                  "de": "Cross-Entropy für Klassifikation.",
+                  "en": "Cross-entropy for classification."
+                }
+              },
+              {
+                "label": "Seppo Linnainmaa (1970), The representation of the cumulative rounding error of an algorithm as a Taylor expansion of the local rounding errors",
+                "url": "https://people.idsia.ch/~juergen/linnainmaa1970thesis.pdf",
+                "why": {
+                  "de": "Tapebasiertes Ableiten.",
+                  "en": "Tape-based differentiation."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, $a$ und $b$. Seine gesamte Formel lautet:\n\n$f(x) = w\\cdot x + b$. Der Plot hat 3 Achsen: $w$, $b$ und $Loss$. Für jeden Parameterpunkt auf der Fläche zwische $x$ und $y$ gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre (die die Höhe und Farbe). Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nBeim Training über Backprop hat man einen Forward- und einen Backward-Pass. Beim Forward-Pass schaut man, wie das Netzwerk jetzt gerade ist, beim Backward-Pass bestimmt man, die es sich ändern muss, damit es besser wird. Der Forward-Pass ist einfach nur das Ausführen der Funktion des Netzes mit realen Daten und das Holen das Ergebnisses. \n\nBeim Forward-Pass speichert in einem sogenannten *Gradiententape* als Graph alle mathematischen Funktionen wie sie ausgeführt werden. Nehmen wir $f(x) = a\\cdot x + b$, dann wird zuerst $r = a\\cdot x$ ausgeführt, und das Ergebnis dann $r + b$ addiert. Dadurch können wir es umschreiben: $g(q, p) = p\\cdot b$, $h(q, p) = q + p$, und $f$ wird zu $f(x) = h(g(a, x), b)$. Dadurch können wir die Kettenregel anwenden: $f'(x) = u'(v(x)) \\cdot v'(x)$, und haben die lokale Ableitung an der Stelle, wenn wir dem nur für jede Grundoperation sagen, was ihr Ableitung ist. Die Ableitung zeigt an, ob die Funktion gerade im Steigen oder im Fallen ist an dem Punkt in eine gewisse Richtung, und das nutzen neuronale Netze beim Forward-Pass, damit sie herausfindet, in welche Richtung für jedes Neuron man gehen muss, damit das Ergebnis besser wird. Man kriegt dann für jedes Gewicht im Netzwerk die Info, ob man es größer oder kleiner machen muss, das nennt man den Gradient.\n\nDiesen Gradienten gibt man dann einem Optimizer, z.B. SGD oder Adam. Dieser bestimmt dann für jeden Parameter in Abhängigkeit von einer Schrittgröße (\"Learning Rate\"), wie weit die Parameter geändert werden sollen.\n\n *S*tochastic *G*radient *D*escent (*SGD*) wurde, basierend auf Arbeiten von *Gauß* und *Legendre*, von Augustin-Louis *Cauchy* 1841 entwickelt und und  folgt für jedem Punkt einfach der Richtung in fester Schrittgröße.\n\n*Adam* (*Ada*ptive *M*oment Estimation) wurde von *Kingma* and *Ba* basierend auf früheren Arbeiten wie *SGD* und den *RMSProb* (einem ähnlichen Optimizer). Adam merkt sich für jeden Parameter den gleitenden Durchschnitt der vergangenen Gradienten sowie deren Quadrate, um die Lernrate individuell anzupassen: Häufig stark ausschlagende Parameter werden durch Teilen durch die Wurzel ihrer quadrierten Historie abgebremst, während seltene oder schwache Signale dadurch relativ verstärkt werden. Dadurch kann man durch eine kleine Lernrate schnell gut konvergieren.",
+        "title": "Wie findet man gute Punkte?",
+        "kicker": "Optimizer",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Wie wird der Loss bestimmt?",
+                "body": "Der Loss wird über die Trainingsdaten bestimmt: sie werden einmal komplett durchgetestet und für jedes gespeichert, was aus dem Netz rauskommt, und was rauskommen sollte. \n\nEine Möglichkeit für den Loss ist der Mean-Squared-Error, den wir hier benutzen, den wir vorher bei Gauß gesehen haben.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": []
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-grad-loss",
+                "title": "Andere Loss-Funktionen",
+                "body": "Dieses Modell nutzt <b>MSE</b>, um den Fehler zu bestimmen. Andere Lossfunktionen wie <b>C</b>ategorical <b>Cross</b> <b>E</b>ntropy (<b>CCE</b>) sind besser geeignet für zum Beispiel kategorielle Klassifikationen, funktionieren im Loss etwas anders, aber der Optimizer zieht nicht, wie der Loss zustande kam, sondern nur ihr Ergebnis.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-grad-saddle",
+                "title": "Sattelpunkte statt Minima",
+                "body": "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Viele Sattelpunkte haben eine Abstiegsrichtung; lokale Minima bleiben trotzdem möglich. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-edit-1794810324364-2",
+                "title": "Wie funktioniert Backpropagation?",
+                "body": "Man wusste lange nicht, wie man die Gewichte der inneren Layer trainieren soll. Sagen wir wir haben $\\text{Output} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Daten})))$. Dann können wir sagen, wie groß die Differenz ist zwischen dem Output und den Daten, die wir wollen, aber wie kommt man an die Differenz zwischen dem, was aus Layer 2 und 1 rauskommt und dem was wir wollen? \n\nWir bestimmen dafür die Differenz zwischen Output und Trainingsziel, und berechnen die Gewichte des letzten Layers, indem wir sagen \"es wäre gut, wenn dieser Wert etwas größer gewesen wäre, und dieser etwas kleiner\". Dann sagen wir, dass der letzte Layer nun der \"Output\"-Layer ist. Damit kriegen wir genau die gleiche Struktur wie vorher: wir können Output und Differenz usw. betrachten und berechnen, dann definieren wir den Layer als Letzten und sagen, dass wir die Differenz berechnen usw. So können wir uns Layer für Layer durch das Netzwerk hangeln, und immer wieder die Änderungen des vorherigen nehmen und als letzten Layer definieren, und so den davor anpassen. Das ist die Idee von Backpropagation.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Cauchy (1847), Méthode générale",
+                "url": "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item",
+                "why": {
+                  "de": "Frühe Beschreibung des steilsten Abstiegs.",
+                  "en": "Early description of steepest descent."
+                }
+              },
+              {
+                "label": "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors",
+                "url": "https://doi.org/10.1038/323533a0",
+                "why": {
+                  "de": "Gradienten für mehrschichtige Netze.",
+                  "en": "Gradients for multilayer networks."
+                }
+              },
+              {
+                "label": "Li et al. (2018), Visualizing the Loss Landscape",
+                "url": "https://arxiv.org/abs/1712.09913",
+                "why": {
+                  "de": "Zweidimensionale Schnitte durch Loss-Landschaften.",
+                  "en": "Two-dimensional slices through loss landscapes."
+                }
+              },
+              {
+                "label": "Dauphin et al. (2014), Saddle Point Problem",
+                "url": "https://arxiv.org/abs/1406.2572",
+                "why": {
+                  "de": "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.",
+                  "en": "Saddle points as an obstacle in high-dimensional optimization."
+                }
+              },
+              {
+                "label": "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks",
+                "url": "https://arxiv.org/abs/1412.0233",
+                "why": {
+                  "de": "Kritische Punkte und lokale Minima in tiefen Netzen.",
+                  "en": "Critical points and local minima in deep networks."
+                }
+              },
+              {
+                "label": "Goodfellow, Bengio & Courville (2016), Deep Learning",
+                "url": "https://www.deeplearningbook.org/",
+                "why": {
+                  "de": "Loss-Funktionen für Regression und Klassifikation.",
+                  "en": "Loss functions for regression and classification."
+                }
+              },
+              {
+                "label": "PyTorch, CrossEntropyLoss",
+                "url": "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html",
+                "why": {
+                  "de": "Cross-Entropy für Klassifikation.",
+                  "en": "Cross-entropy for classification."
+                }
+              },
+              {
+                "label": "Seppo Linnainmaa (1970), The representation of the cumulative rounding error of an algorithm as a Taylor expansion of the local rounding errors",
+                "url": "https://people.idsia.ch/~juergen/linnainmaa1970thesis.pdf",
+                "why": {
+                  "de": "Tapebasiertes Ableiten.",
+                  "en": "Tape-based differentiation."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:2.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 2,
+      "substep": 0,
+      "substep_count": 5,
+      "text_key": "2.0",
+      "slide_title": "Gauß, Ceres und die Daten",
+      "slide_kicker": "Daten",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "body": "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Ceres-Bild: NASA-Material gemeinfrei; Bildbearbeitung Justin Cowart, CC BY 2.0.",
+                  "en": "Ceres image: NASA material public domain; processing by Justin Cowart, CC BY 2.0."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis. \n\nWir werden später genau zeigen, wie MSE zum Training genutzt wird.",
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": []
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-gauss-2",
+                "title": "Was macht die Methode?",
+                "body": "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell, den mittleren quadratischen Fehler (MSE). Große Abweichungen zählen quadratisch, kleine kaum.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-gauss-3",
+                "title": "Warum im Schnitt richtig?",
+                "body": "Einzelne Messungen können, genauso wie einzelne Texte, falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist die Auswahl wichtig.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Bild von Ceres, Public Domain.",
+                  "en": "Image of Ceres, public domain."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:2.1",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 2,
+      "substep": 1,
+      "substep_count": 5,
+      "text_key": "2.1",
+      "slide_title": "Gauß, Ceres und die Daten",
+      "slide_kicker": "Daten",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "body": "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskope besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein neuronales Netz auf seinen Daten ist und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Ceres-Bild: NASA-Material gemeinfrei; Bildbearbeitung Justin Cowart, CC BY 2.0.",
+                  "en": "Ceres image: NASA material public domain; processing by Justin Cowart, CC BY 2.0."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Bild von Ceres, Public Domain.",
+                  "en": "Image of Ceres, public domain."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:2.2",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 2,
+      "substep": 2,
+      "substep_count": 5,
+      "text_key": "2.2",
+      "slide_title": "Gauß, Ceres und die Daten",
+      "slide_kicker": "Daten",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "body": "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung entscheidet allein.",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Ceres-Bild: NASA-Material gemeinfrei; Bildbearbeitung Justin Cowart, CC BY 2.0.",
+                  "en": "Ceres image: NASA material public domain; processing by Justin Cowart, CC BY 2.0."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskop besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein Neuronales Netz ist auf seinen Daten und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Bild von Ceres, Public Domain.",
+                  "en": "Image of Ceres, public domain."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:2.3",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 2,
+      "substep": 3,
+      "substep_count": 5,
+      "text_key": "2.3",
+      "slide_title": "Gauß, Ceres und die Daten",
+      "slide_kicker": "Daten",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "body": "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. Eine Wahrheit ist eine Kurve, viele Beschreibungen liegen darum. Je näher ein Satz an der Kurve liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
+        "groups": []
+      },
+      "edit": {
+        "body": "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt.",
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Bild von Ceres, Public Domain.",
+                  "en": "Image of Ceres, public domain."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:2.4",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 2,
+      "substep": 4,
+      "substep_count": 5,
+      "text_key": "2.4",
+      "slide_title": "Gauß, Ceres und die Daten",
+      "slide_kicker": "Daten",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "body": "Giuseppe Piazzi entdeckte 1801 den Himmelskörper <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate, die er nach eigener Angabe schon vor 1801 besaß und die Legendre 1805 publizierte; er trug zu ihrer Verbreitung bei. MSE ist der gemittelte quadratische Fehler, ein einfacher Spezialfall; viele Loss-Funktionen verallgemeinern dieselbe Idee. LLM nutzen Cross-Entropy statt MSE.\n\nWir werden später genau zeigen, wie MSE zum Training genutzt wird.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": []
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-gauss-2",
+                "title": "Was macht die Methode?",
+                "body": "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell. MSE ist der gemittelte quadratische Fehler. Große Abweichungen zählen quadratisch, kleine kaum.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-gauss-3",
+                "title": "Warum im Schnitt richtig?",
+                "body": "Einzelne Messungen können, genauso wie einzelne Texte, falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist die Auswahl wichtig.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Stigler (1981), Gauss and the Invention of Least Squares",
+                "url": "https://doi.org/10.1214/aos/1176345451",
+                "why": {
+                  "de": "Gauß, Ceres und die Methode der kleinsten Quadrate.",
+                  "en": "Gauss, Ceres, and the method of least squares."
+                }
+              },
+              {
+                "label": "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+                "why": {
+                  "de": "Ceres-Bild: NASA-Material gemeinfrei; Bildbearbeitung Justin Cowart, CC BY 2.0.",
+                  "en": "Ceres image: NASA material public domain; processing by Justin Cowart, CC BY 2.0."
+                }
+              },
+              {
+                "label": "The Flammarion Engraving (1888), via Wikimedia Commons",
+                "url": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+                "why": {
+                  "de": "Kolorierter Flammarion-Holzschnitt, Public Domain.",
+                  "en": "Coloured Flammarion engraving, public domain."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. Eine Wahrheit ist eine Kurve, viele Beschreibungen liegen darum. Je näher ein Satz an der Kurve liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich, wie die Messungen aus der Astronomie.",
+        "title": "Gauß, Ceres und die Daten",
+        "kicker": "Daten",
+        "watch": "",
+        "groups": []
+      }
+    },
+    {
+      "id": "de:intuition:3.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 3,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "3.0",
+      "slide_title": "Text wird zu IDs",
+      "slide_kicker": "Tokenize",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Text wird zu IDs",
+        "kicker": "Tokenize",
+        "watch": "",
+        "body": "Der Tokenizer trennt Texte in kleinere Bestandteile (sogenannte Tokens) auf, sodass diese Bestandteile möglichst viel Text mit möglichst wenig Tokens darstellen können. Diese Tokens können ganze Wörter sein, aber auch Leerzeichen, Satzzeichen oder Teile von Wörtern.\n\nDafür wird ein Algorithmus wie <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>) benutzt. Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus.\n\nDas basiert auf zwei Gedanken: der erste ist Kompression: es sollen so wenig wie möglich Tokens benutzt werden müssen, um so viel wie möglich zu sagen.\n\nDer zweite ist, dass das Netzwerk so auch Worte bearbeiten kann, die es vorher nie gesehen hat, indem es sie in Bestandteile trennt und lernt, wie man Worte aus ihren Bestandteilen heraus versteht, auch wenn man das konkrete Wort vielleicht nie gesehen hat.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": []
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-tok-1",
+                "title": "Wie geht es mit unbekannten Zeichen um?",
+                "body": "Bei Encodings wie UTF8 kann ein Zeichen mehrere Byte lang sein. Was, wenn ein Zeichen nicht ein einziges Mal im Kontext war, wie zum Beispiel neue Emojis, die nicht in den Trainingsdaten waren? Die sind aufgebaut aus zwei oder mehr Bestandteilen, so besteht 🐈‍⬛ aus 🐈, dem \"zero-width-joiner\"-Charakter (ZWJ) und danach dem ⬛. Stehen die drei hintereinander, wird es als 🐈‍⬛ angezeigt. Man sagt dem Tokenizer nun auch alle 256 Möglichkeiten, die 8 Bit haben können. Damit kann es unbekannte Charakter trotzdem klassifizieren und nach Kontext in gewisse Richtungen schieben, so zum Beispiel die Richtung für \"Emoji\", wo unter Anderem auch 🐈 bereits ist. So kann es lernen, dass es 🐈‍⬛ eine schwarze Katze ist, ohne dass es das Zeichen je gesehen haben muss, nur weil es weiß, dass es aus einem schwarzen Block, dem ZWJ und einer Katze besteht.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": []
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-tok-bpe-data",
+                "title": "Warum ist die Tokenisierung datenabhängig?",
+                "body": "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften werden schlechter komprimiert und verbrauchen damit mehr Tokens und sind teurer, weil sie im Trainingskorpus seltener vorkommen und der Tokenizer sie nicht oft genug sieht, um sie abkürzend zu speichern (Petrov et al., 2023).",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909",
+                "why": {
+                  "de": "BPE als Subword-Kompression für seltene Wörter.",
+                  "en": "BPE as subword compression for rare words."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), GPT-2",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: byte-level BPE und die hier gezeigten Hidden States.",
+                  "en": "GPT-2: byte-level BPE and the hidden states shown here."
+                }
+              },
+              {
+                "label": "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages",
+                "url": "https://arxiv.org/abs/2305.15425",
+                "why": {
+                  "de": "Tokenizer machen manche Sprachen teurer.",
+                  "en": "Tokenizers make some languages more expensive."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Der Tokenizer trennt Texte in kleinere Bestandteile (sogenannte Tokens) auf, so, dass diese Bestandteile möglichst viel Text mit möglichst wenig Tokens darstellen können. Diese Tokens können ganze Wörter sein, aber auch Leerzeichen, Satzzeichen oder Teile von Wörtern.\n\nDafür wirdein Algorithmus wie <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>) benutzt. Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus.\n\nDas basiert auf zwei Gedanken: der erste ist Kompression: es sollen so wenig wie möglich Tokens benutzt werden müssen, um so viel wie möglich zu sagen.\n\nDer zweite ist, dass das Netzwerk so auch Worte bearbeiten kann, die es vorher nie gesehen hat, indem es sie in Bestandteile trennt und lernt, wie man Worte aus ihren Bestandteilen heraus versteht, auch wenn man das konkrete Wort vielleicht nie gesehen hat.",
+        "title": "Text wird zu IDs",
+        "kicker": "Tokenize",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": []
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-tok-1",
+                "title": "Wie geht es mit unbekannten Zeichen um?",
+                "body": "Bei Encodings wie UTF8 kann ein Zeichen mehrere Byte lang sein. Was, wenn ein Zeichen nicht ein einziges Mal im Kontext war, wie zum Beispiel neue Emojis, die nicht in den Trainingsdaten waren? Die sind aufgebaut aus zwei oder mehr Bestandteilen, so besteht 🐈‍⬛ aus 🐈, dem \"zero-width-joiner\"-Charakter (ZWJ) und danach dem ⬛. Stehen die drei hintereinander, wird es als 🐈‍⬛ angezeigt. Man sagt dem Tokenizer nun auch alle 256 Möglichkeiten, die 8 Bit haben können. Damit kann es unbekannte Charakter trotzdem klassifizieren und nach Kontext in gewisse Richtungen schieben, so zum Beispiel die Richtung für \"Emoji\", wo unter Anderem auch 🐈 bereits ist. So kann es lernen, dass es 🐈‍⬛ eine schwarze Katze ist, ohne dass es das Zeichen je gesehen haben muss, nur weil es weiß, dass es aus einem schwarzen Block, dem ZWJ und eine Katzer besteht.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": []
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-tok-bpe-data",
+                "title": "Warum ist die Tokenisierung datenabhängig?",
+                "body": "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften werden schlechter komprimiert und verbrauchen damit mehr Tokens und sind teurer, weil sie im Trainingskorpus seltener vorkommen und der Tokenizer sie nicht oft genug sieht, um sie abkürzend zu speichern (Petrov et al., 2023).",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909",
+                "why": {
+                  "de": "BPE als Subword-Kompression für seltene Wörter.",
+                  "en": "BPE as subword compression for rare words."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), GPT-2",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: byte-level BPE und die hier gezeigten Hidden States.",
+                  "en": "GPT-2: byte-level BPE and the hidden states shown here."
+                }
+              },
+              {
+                "label": "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages",
+                "url": "https://arxiv.org/abs/2305.15425",
+                "why": {
+                  "de": "Tokenizer machen manche Sprachen teurer.",
+                  "en": "Tokenizers make some languages more expensive."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:30.2",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 30,
+      "substep": 2,
+      "substep_count": 3,
+      "text_key": "30.2",
+      "slide_title": "Was du mitnimmst",
+      "slide_kicker": "Mitnehmen",
+      "changed_fields": [
+        "body"
+      ],
+      "source": {
+        "title": "Was du mitnimmst",
+        "kicker": "Mitnehmen",
+        "watch": "Beobachte die sechs Stationen: Text, Tokens, Vektoren, Attention, FFN, Verteilung. Welche Station trägt Bedeutung, welche mischt Kontext, welche erzeugt die Ausgabe?",
+        "body": "Die Animation zeigt den ganzen Weg in sechs Stationen: Text wird zu Tokens, Tokens werden zu Vektoren, Attention mischt den Kontext, das FFN verschiebt die Punkte, und am Ende steht eine Verteilung über das nächste Token. Der Residualstrom trägt dabei den laufenden Vektor durch alle Blöcke.\n\nDrei Bewegungen fassen das Deck zusammen: Aus Zeichen wird Bedeutung. Aus Bedeutung wird Kontext. Aus Kontext wird Wirkung. Der rote Faden bleibt derselbe: Das Modell optimiert eine Wahrscheinlichkeit, nicht die Wahrheit.\n\nOb es erlebt, bleibt offen. Was du daraus machst, bleibt deine Entscheidung."
+      },
+      "edit": {
+        "body": "igeDie Animation zeigt den ganzen Weg in sechs Stationen: Text wird zu Tokens, Tokens werden zu Vektoren, Attention mischt den Kontext, das FFN verschiebt die Punkte, und am Ende steht eine Verteilung über das nächste Token. Der Residualstrom trägt dabei den laufenden Vektor durch alle Blöcke.\n\nDrei Bewegungen fassen das Deck zusammen: Aus Zeichen wird Bedeutung. Aus Bedeutung wird Kontext. Aus Kontext wird Wirkung. Der rote Faden bleibt derselbe: Das Modell optimiert eine Wahrscheinlichkeit, nicht die Wahrheit.\n\nOb es erlebt, bleibt offen. Was du daraus machst, bleibt deine Entscheidung.",
+        "title": "Was du mitnimmst",
+        "kicker": "Mitnehmen",
+        "watch": "Beobachte die sechs Stationen: Text, Tokens, Vektoren, Attention, FFN, Verteilung. Welche Station trägt Bedeutung, welche mischt Kontext, welche erzeugt die Ausgabe?",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die drei Karten fassen eine Bewegung zusammen: von Daten zu Bedeutung, von Bedeutung zu Kontext und von Kontext zu Wirkung.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Die Prüffragen am Ende passen auf jede dieser Ebenen: Daten, Aufgabe, Evidenz, Verantwortung. Sie machen aus einem Eindruck eine Behauptung, die man prüfen oder verwerfen kann.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-tk-chain",
+                "title": "Die Kette",
+                "body": "Text → Tokens → Vektoren → Attention → FFN → Verteilung → nächstes Token. Jede Station verändert die Darstellung, aber die Schleife bleibt dieselbe; der KV-Cache spart nur die Wiederholung.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-struktur",
+            "title": "Struktur",
+            "questions": [
+              {
+                "id": "q-box-tk-moves",
+                "title": "Drei Bewegungen",
+                "body": "Zeichen werden Bedeutung, Bedeutung wird Kontext, Kontext wird Wirkung. Die erste Bewegung ist Geometrie, die zweite ist Mischung und Verschiebung, die dritte ist eine Entscheidung über das nächste Token.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-pruefen",
+            "title": "Prüfen",
+            "questions": [
+              {
+                "id": "q-box-tk-questions",
+                "title": "Vier Fragen",
+                "body": "Welche Daten? Welche Aufgabe? Welche Evidenz? Wer haftet? Die Fragen passen auf jede Station: auf das Training, auf die Antwort, auf den Agenten und auf die Gesellschaft.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-tk-limit",
+                "title": "Wahrscheinlichkeit ist nicht Wahrheit",
+                "body": "Das Modell optimiert die Wahrscheinlichkeit des nächsten Tokens. Das erklärt seine Fähigkeiten und seine Fehler. Ob es erlebt, ist eine andere Frage, die der Output nicht beantwortet.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Der Transformer als Kette aus Attention und Vorhersage.",
+                  "en": "The transformer as a chain of attention and prediction."
+                }
+              },
+              {
+                "label": "Bender et al. (2021), On the Dangers of Stochastic Parrots",
+                "url": "https://doi.org/10.1145/3442188.3445922",
+                "why": {
+                  "de": "Sprachmodelle als Musterfortsetzung, nicht als Wahrheitsgarantie.",
+                  "en": "Language models as pattern continuation, not a guarantee of truth."
+                }
+              },
+              {
+                "label": "Chalmers (1995), Facing Up to the Problem of Consciousness",
+                "url": "https://consc.net/papers/facing.pdf",
+                "why": {
+                  "de": "Funktion erklärt nicht automatisch Erleben.",
+                  "en": "Function does not automatically explain experience."
+                }
+              },
+              {
+                "label": "Southgate (2026, AI-generated), AI Consciousness — The Unfinishable Map",
+                "url": "https://unfinishablemap.org/topics/ai-consciousness/",
+                "why": {
+                  "de": "Die offene Frage nach Typen von KI-Bewusstsein.",
+                  "en": "The open question about types of AI consciousness."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:4.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 4,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "4.0",
+      "slide_title": "BPE: Bytes/Zeichen → Paare → Merges",
+      "slide_kicker": "BPE",
+      "changed_fields": [
+        "body"
+      ],
+      "source": {
+        "title": "BPE: Bytes/Zeichen → Paare → Merges",
+        "kicker": "BPE",
+        "watch": "",
+        "body": "<b>BPE</b> beginnt je nach Variante bei Zeichen oder Bytes. Bei Zeichen-BPE startet es mit den Zeichen des Trainingskorpus; bei Byte-BPE (z. B. GPT-2) mit den 256 möglichen Byte-Werten, damit sich jedes Unicode-Zeichen aus Byte-Folgen darstellen lässt. Jeder Starteinheit wird eine ID zugewiesen. Dann beginnt der Algorithmus, benachbarte Paare dieser Starteinheiten zu zählen und ersetzt das häufigste Paar durch ein Token, das beide Starteinheiten repräsentiert. Nach jedem Merge werden die Paare neu gezählt; ersetzt wird jeweils das aktuell häufigste Paar, bis man die Vokabulargröße erreicht hat, die man als sogenannten Hyperparameter (das ist ein Parameter, den man wählen muss, bevor man das Training startet), vorgegeben hat.\n\nNach einigen Merges werden häufige Wörter und Kombinationen sehr viel kürzer.\n\n<b>Hapax Legomena</b> (Wörter, die im Korpus nur einmal vorkommen) oder seltenere Wörter bekommen in der Regel keinen eigenen Merge für das ganze Wort, sondern werden aus den anderen, bereits existierenden Tokens, notfalls den Start-Tokens, zusammengesetzt."
+      },
+      "edit": {
+        "body": "<b>BPE</b> beginnt normalerweise mit einer Liste von 256 fest definierten Zeichen, das sind alle Kombinationen, die in einem Byte ($2^8 = 256$) vorkommen können. Jeder davon wird eine ID zugewiesen, damit jedes Zeichen darstellbar ist. Dann beginnt der Algorithmus, benachbarte Paare dieser Zeichen zu zählen und ersetzt das häufigste Paar durch ein Token, das beide dieser Zeichen repräsentiert. Dann das zweithäufigste usw., bis man die Vokabulargröße erreicht hat, die man als sogenannten Hyperparameter (das ist ein Parameter, den man wählen muss, bevor man das Training startet), vorgegeben hat.\n\nNach einigen Merges werden häufige Wörter und Kombinationen sehr viel kürzer.\n\n<b>Hapax Legomena</b> (Wörter, die im Korpus nur einmal vorkommen) oder seltenere Wörter bekommen in der Regel keinen eigenen Merge für das ganze Wort, sondern werden aus den anderen, bereits existierenden Tokens, notfalls den 256 Tokens vom Anfang, zusammengesetzt.",
+        "title": "BPE: Bytes/Zeichen → Paare → Merges",
+        "kicker": "BPE",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909",
+                "why": {
+                  "de": "BPE als Subword-Kompression für seltene Wörter.",
+                  "en": "BPE as subword compression for rare words."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), GPT-2",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: byte-level BPE und die hier gezeigten Hidden States.",
+                  "en": "GPT-2: byte-level BPE and the hidden states shown here."
+                }
+              },
+              {
+                "label": "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages",
+                "url": "https://arxiv.org/abs/2305.15425",
+                "why": {
+                  "de": "Tokenizer machen manche Sprachen teurer.",
+                  "en": "Tokenizers make some languages more expensive."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:5.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 5,
+      "substep": 0,
+      "substep_count": 5,
+      "text_key": "5.0",
+      "slide_title": "Bedeutung wird eine Zahl",
+      "slide_kicker": "Die Linie",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Bedeutung wird eine Zahl",
+        "kicker": "Die Linie",
+        "watch": "",
+        "body": "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei $15$, Lauwarm bei $45$. Nun kann man $\\text{Kalt} + \\text{Lauwarm}$ rechnen und landet bei 60, also bei Warm.\n\nDas ist bewusst ein Spielzeug mit genau einer Achse: Die Zahlen sind von Hand gewählt, damit die Addition aufgeht. Es zeigt die Idee, nicht wie echte Embeddings rechnen. In einem echten Modell liegen Wörter in vielen Dimensionen; Addition bewegt dort entlang gelernter Richtungen und trifft nicht automatisch ein Wort.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Einschränkungen hier",
+                "body": "Die Positionen sind hier von Hand gewählt, damit die Rechnungen aufgehen. In einem Modell werden sie aus vielen Beispielen gelernt.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": []
+          },
+          {
+            "id": "g-lens-geschichte",
+            "title": "Geschichte",
+            "questions": [
+              {
+                "id": "q-box-emb-2",
+                "title": "Woher kommt die Idee?",
+                "body": "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) formulierte die distributionelle Idee einflussreich, dass man Wörter danach gruppieren kann, wie oft sie in der Nähe voneinander vorkommen; frühere Ansätze existieren.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-emb-clean",
+                "title": "Sind echte Embeddings so sauber?",
+                "body": "Nein. Die Demo trennt die Begriffe sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Wahl, keine reale Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Harris (1954), Distributional Structure",
+                "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+                "why": {
+                  "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
+                  "en": "Grounds meaning in linguistic context."
+                }
+              },
+              {
+                "label": "Firth (1957), A Synopsis of Linguistic Theory",
+                "url": "https://archive.org/details/studiesinlinguis0000vari",
+                "why": {
+                  "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
+                  "en": "Classic formula: meaning shows in a word's company."
+                }
+              },
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Das Wort Kalt liegt bei $15$, Lauwarm bei $45$. Nun kann man $\\text{Kalt} + \\text{Lauwarm}$ rechnen und  landet bei 60, also bei Warm.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
+        "title": "Bedeutung wird eine Zahl",
+        "kicker": "Die Linie",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Einschränkungen hier",
+                "body": "Die Positionen sind hier von Hand gewählt, damit die Rechnungen aufgehen. In einem Modell werden sie aus vielen Beispielen gelernt.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": []
+          },
+          {
+            "id": "g-lens-geschichte",
+            "title": "Geschichte",
+            "questions": [
+              {
+                "id": "q-box-emb-2",
+                "title": "Woher kommt die Idee?",
+                "body": "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee, dass man Wörter danach gruppieren kann, wie oft sie in der Nähe voneinander vorkommen, als Erster formuliert.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-emb-clean",
+                "title": "Sind echte Embeddings so sauber?",
+                "body": "Nein. Die Demo trennt die Begriffe sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Wahl, keine reale Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Harris (1954), Distributional Structure",
+                "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+                "why": {
+                  "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
+                  "en": "Grounds meaning in linguistic context."
+                }
+              },
+              {
+                "label": "Firth (1957), A Synopsis of Linguistic Theory",
+                "url": "https://archive.org/details/papersinlinguist0000firt",
+                "why": {
+                  "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
+                  "en": "Classic formula: meaning shows in a word's company."
+                }
+              },
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:5.1",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 5,
+      "substep": 1,
+      "substep_count": 5,
+      "text_key": "5.1",
+      "slide_title": "Wochentage auf einer Linie",
+      "slide_kicker": "Wochentage",
+      "changed_fields": [
+        "body"
+      ],
+      "source": {
+        "title": "Wochentage auf einer Linie",
+        "kicker": "Wochentage",
+        "watch": "",
+        "body": "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Der Winkelschritt von einem Tag zum nächsten ist überall derselbe. Da auf Sonntag wieder Montag folgt, bilden sie einen Kreis. Der Kreis ist keine Gerade, sondern eine zyklische Ordnung: Der Winkelschritt bleibt derselbe, aber die Reihe kehrt am Ende zu ihrem Anfang zurück."
+      },
+      "edit": {
+        "body": "Montag, Dienstag, Mittwoch und die weiteren Tage liegen auf einer Linie. Die Richtung von einem Tag zum nächsten ist überall dieselbe. Da Auf Sonntag wieder Montag folgt, bilden sie einen Kreis. Dieser Kreis ist ein Beispiel für einen sogenannten Unterraum, ein Raum, der eingebettet ist in einen höheren Raum aber in-sich abgeschlossen.",
+        "title": "Wochentage auf einer Linie",
+        "kicker": "Wochentage",
+        "watch": "",
+        "groups": []
+      }
+    },
+    {
+      "id": "de:intuition:5.2",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 5,
+      "substep": 2,
+      "substep_count": 5,
+      "text_key": "5.2",
+      "slide_title": "Bedeutung bekommt eine zweite Achse",
+      "slide_kicker": "Die Ebene",
+      "changed_fields": [
+        "body"
+      ],
+      "source": {
+        "title": "Bedeutung bekommt eine zweite Achse",
+        "kicker": "Die Ebene",
+        "watch": "",
+        "body": "Eine Dimension kann Wörter nach einer einzigen Relation ordnen, aber Wörter stehen in vielen Relationen zueinander. Daher braucht man mehr Dimensionen, in denen man mehr Relationen darstellen kann. Jede Richtung kann nun eine Eigenschaft darstellen. Es entstehen Nachbarschaften von Punkten anhand ihrer Relationen und Nähe, und auch mit diesen Punkten kann man rechnen.\n\n$\\text{Mann} \\rightarrow \\text{Frau}$ und $\\text{König} \\rightarrow \\text{Königin}$ sind parallel: Die Bedeutung, die diese Richtung symbolisiert, ist dieselbe, auch wenn die konkreten Punkte anders sind. Jede Relation wird zu einem Vektor, zu einer Richtung."
+      },
+      "edit": {
+        "body": "Eine Dimension kann Worte nach einer einzigen Relation ordnen, aber Worte stehen in vielen Relationen zueinander. Daher braucht man mehr Dimensionen, in denen man mehr Relationen darstellen kann. Jede Richtung kann hier nun eine Eigenschaft darstellen. Es entstehen Nachbarschaften von Punkten anhand ihrer Relationen und Nähe, und mit auch mit diesen Punkten kann man rechnen.\n\n$\\text{Mann} \\rightarrow \\text{Frau}$ und $\\text{König} \\rightarrow \\text{Königin}$ sind parallel, die Bedeutung, die durch diese Richtung symbolisiert wird, ist die Gleiche, auch wenn die konkreten Punkte anders sind. Jede Relation wird zu einem Vektor, zu einer Richtung.",
+        "title": "Bedeutung bekommt eine zweite Achse",
+        "kicker": "Die Ebene",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:5.3",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 5,
+      "substep": 3,
+      "substep_count": 5,
+      "text_key": "5.3",
+      "slide_title": "Drei Dimensionen",
+      "slide_kicker": "Der Raum",
+      "changed_fields": [
+        "watch",
+        "body"
+      ],
+      "source": {
+        "title": "Drei Dimensionen",
+        "kicker": "Der Raum",
+        "watch": "Drehe die Ansicht. Schalte dann auf „Richtungen“: Jedes Wort wird zum Vektor vom Ursprung. Welche Richtung bleibt für alle Paare gleich? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
+        "body": "Eine dritte Achse hebt die Ebene in einen Raum. Die alte 2D-Ebene aus Macht und Geschlecht liegt jetzt flach in der Mitte: Mensch. Darunter liegt die Ebene der Tiere, darüber die Ebene der Fiktion. Die Kategorie ist eine eigene Achse; Rang bleibt in der Macht-Achse, nicht in der Höhe. Jede Ebene hat dieselben Machtstufen: unten Rüde/Hündin, Kater/Katze, Löwe/Löwin; oben Elb/Elbin, Zauberer/Zauberin, Feenkönig/Feenkönigin; in der Mitte die Menschenebene: Mann/Frau, Herzog/Herzogin, Prinz/Prinzessin, König/Königin. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Zuerst siehst du Punkte; mit „Richtungen“ werden dieselben Wörter zu Vektoren vom Ursprung. Dann werden die Punkte unsichtbar: Jedes Wort wird zu einem Pfeil vom Ursprung. Bedeutung ist Richtung; für den Winkel trägt die Richtung die Bedeutung, im Logit zählt auch die Länge. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst Beispiele in den drei Dimensionen; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle."
+      },
+      "edit": {
+        "body": "Eine dritte Achse hebt die Ebene in einen Raum. Die alte 2D-Ebene aus Macht und Geschlecht liegt jetzt flach in der Mitte: Mensch. Darunter liegt die Ebene der Tiere, darüber die Ebene der Fiktion. Die Kategorie ist eine eigene Achse; Rang bleibt in der Macht-Achse, nicht in der Höhe. Dieselben Verhältnisse wiederholen sich: Rüde/Hündin und Zauberer/Zauberin liegen in denselben Geschlechterrichtungen. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Zuerst siehst du Punkte; mit „Pfeile“ werden dieselben Wörter zu Vektoren vom Ursprung. Am Ende werden die Punkte unsichtbar: Jedes Wort wird zu einem Pfeil vom Ursprung. Bedeutung ist Richtung; für den Winkel trägt die Richtung die Bedeutung, im Logit zählt auch die Länge. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
+        "title": "Drei Dimensionen",
+        "kicker": "Der Raum",
+        "watch": "Drehe die Ansicht. Schalte dann auf „Pfeile“: Jedes Wort wird zum Vektor vom Ursprung. Welche Richtung bleibt für alle Paare gleich? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Ein echtes Modell arbeitet in Tausenden Dimensionen. Die drei Achsen sind eine Projektion, kein vollständiges Bild. Die menschliche 2D-Ebene aus Macht und Geschlecht liegt flach bei z = 0; darunter liegen die Tiere (z = -1), darüber die Fiktion (z = +1). Rang ist die Macht-Achse, nicht die Höhe. Die Beispiele zeigen, dass dieselbe Geschlechtsrichtung in jeder Ebene wiederverwendet wird. Mehr Dimensionen tragen mehr unabhängige Beziehungen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Superposition und Polysemantik erklären, warum ein Neuron mehrere Bedeutungen tragen kann. Die Karte ist nützlich, aber sie ist statistisch. Sie zeigt, was im Training häufig war, nicht was wahr ist. Die Zahlen der 4096-Tabelle sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-emb-10",
+                "title": "Warum sieht man das im LLM nicht?",
+                "body": "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Eine Kreuzung auf dem Bildschirm bedeutet nicht, dass die Punkte im vollen Raum zusammenfallen.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-hd-1",
+                "title": "Warum so viele Dimensionen?",
+                "body": "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, auch wenn sie sich bei wenigen Dimensionen überlagern (Superposition).",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-geschichte",
+            "title": "Geschichte",
+            "questions": [
+              {
+                "id": "q-box-emb-11",
+                "title": "Woher kommt das Bild?",
+                "body": "Die Idee, Bedeutung als Geometrie zu lesen, verbindet distributionelle Semantik mit Conceptual Spaces. Die konkrete Demo ist eine Vereinfachung, keine Messung eines echten Modells.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-hd-2",
+                "title": "Kann man das noch sehen?",
+                "body": "Nein. Menschen sehen höchstens drei Achsen. Die Tabelle ist die ehrliche Darstellung für den Rechner; die 3D-Demos sind Projektionen für uns.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Harris (1954), Distributional Structure",
+                "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+                "why": {
+                  "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
+                  "en": "Grounds meaning in linguistic context."
+                }
+              },
+              {
+                "label": "Firth (1957), A Synopsis of Linguistic Theory",
+                "url": "https://archive.org/details/studiesinlinguis0000vari",
+                "why": {
+                  "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
+                  "en": "Classic formula: meaning shows in a word's company."
+                }
+              },
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:6.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 6,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "6.0",
+      "slide_title": "Von Beziehungen zur Übersetzung",
+      "slide_kicker": "Mannigfaltigkeiten",
+      "changed_fields": [
+        "kicker",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Von Beziehungen zur Übersetzung",
+        "kicker": "Geometrie",
+        "watch": "",
+        "body": "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Die Worträume verschiedener Sprachen lassen sich oft angenähert ineinander abbilden; die Relationen sind ähnlich, aber nicht identisch. Diese Punktwolke sieht lokal wie eine niedrigdimensionale Struktur aus; ob sie global eine einfache Struktur hat, wäre eine eigene Frage. Die Übersetzung ist hier eine didaktische Abbildung: Die japanische Wolke wird gedreht und verschoben, bis sie auf der englischen liegt.\n\nDiese Demo ist stark vereinfacht. Reale Modelle haben tausende Dimensionen, und die Relationen sind nicht so ähnlich wie hier; die Idee einer genäherten Abbildung bleibt.\n\nWichtig sind nicht die konkreten Punkte, sondern ihre Nachbarschaften.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Die Demo zeigt eine Ähnlichkeitstransformation aus Rotation und Translation. Das ist eine didaktische Übersetzung, keine Aussage über alle Sprachen oder über die globale Struktur des Wortraums.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-man-4",
+                "title": "Was zeigt die Demo?",
+                "body": "Zwei Punktwolken mit ähnlichen Nachbarschaften. Die Demo dreht und verschiebt die japanische Wolke, bis sie auf der englischen liegt. Das ist eine didaktische Übersetzung, keine Aussage über alle Sprachen.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              },
+              {
+                "label": "Conneau et al. (2018), Word Translation Without Parallel Data",
+                "url": "https://arxiv.org/abs/1710.04087",
+                "why": {
+                  "de": "Übertragung zwischen Worträumen ohne parallele Daten.",
+                  "en": "Transport between word spaces without parallel data."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Worten. Man nennt solche Gebilde Mannigfaltigkeit, etwas, das lokal einem klassisch-euklidischem Raum ähnelt, aber global eine ganz andere Struktur haben kann. Übersetzung ist dann das Gleiche wie Verschieben, Skalieren und Drehen dieser Mannigfaltigkeit.\n\nDiese Demo ist stark vereinfacht. Es sind in realen Modellen tausende Dimensionen und die Relationen sind nicht so ähnlich wie hier, aber es ist das gleiche Prinzip. \n\nWas wichtig ist sind nicht die konkreten Punkte, sondern ihre Nachbarschaften. ",
+        "title": "Von Beziehungen zur Übersetzung",
+        "kicker": "Mannigfaltigkeiten",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Eine Mannigfaltigkeit sieht lokal wie ein euklidischer Raum aus; global kann sie gekrümmt sein, muss es aber nicht. Die Übersetzung entspricht hier einer Abbildung zwischen zwei Punktwolken, einer Kombination aus Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-man-4",
+                "title": "Was ist eine Mannigfaltigkeit?",
+                "body": "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              },
+              {
+                "label": "Conneau et al. (2018), Word Translation Without Parallel Data",
+                "url": "https://arxiv.org/abs/1710.04087",
+                "why": {
+                  "de": "Übertragung zwischen Worträumen ohne parallele Daten.",
+                  "en": "Transport between word spaces without parallel data."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:7.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 7,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "7.0",
+      "slide_title": "Jeder Platz bekommt einen Fingerabdruck",
+      "slide_kicker": "Position",
+      "changed_fields": [
+        "body"
+      ],
+      "source": {
+        "title": "Jeder Platz bekommt einen Fingerabdruck",
+        "kicker": "Position",
+        "watch": "",
+        "body": "Für einen Transformer sind die Sätze „Der Mann beißt den Hund“ und „Der Hund beißt den Mann“ ohne Positionsinformation nicht zuverlässig unterscheidbar, weil er keine Information über die Position der Tokens bekommt. Um dieses Problem zu lösen, kodiert man die Position mit einem Positional Embedding. Die klassische absolute Variante addiert für jede Dimension unterschiedlich schnelle Sinus- und Cosinuswellen; moderne Modelle nutzen oft RoPE (Llama) oder ALiBi.\n\nDiese schnellen und langsamen Wellen wirken ähnlich wie das Stellenwertsystem bei Zahlen mit Einern, Zehnern, Hundertern, Tausendern usw., womit die Position kodiert werden kann.\n\nLinks sieht man dieses Muster über mehrere Dimensionen, rechts eine Projektion der Positionsvektoren. In Wahrheit sind es nicht drei, sondern tausende Dimensionen, aber die Idee ist ähnlich. Durch diese Kodierung werden relative Abstände von Tokens zueinander sichtbar, und das Netz kann die Reihenfolge der Tokens unterscheiden.\n\nGelernte Positions-Embeddings und relative Verfahren wie ALiBi werden hier nicht im Detail behandelt."
+      },
+      "edit": {
+        "body": "Für den Transformer wären die Sätze \"Der Mann beißt den Hund\" und \"Der Hund beißt den Mann\" identisch, weil er keine Informationen bekommt über die Position der Tokens. Um dieses Problem zu lösen kodiert man mit Positional Embedding in den Token selbst seine Position rein, in dem man für jede Dimension je nach Position verschieden schnelle Sinus- und Cosinuswellen addiert. \n\nDiese schnellen und langsamen Rotationen agieren ähnlich wie das Stellenwertsystem bei Zahlen mit Einern, Zehnern, Hundertern, Tausendern usw., womit die Position kodiert werden kann.\n\nLinks sieht man dieses Muster über mehrere Dimensionen, rechts sieht man, wie die Positionen sich je nach Position auf einer Kugeloberfläche anordnen. In Wahrheit sind es nicht drei, sondern tausende Dimensionen, aber die Idee ist ähnlich. Durch diese Kodierung werden relative Abstände von Tokens zueinander sichtbar, und das Netz kann unterscheiden zwischen \"der Mann beißt den Hund\" und \"der Hund beißt den Mann\".\n\nEs gibt andere Verfahren wie gelernte Positionsembeddings, die hier aber nicht behandelt werden sollen.",
+        "title": "Jeder Platz bekommt einen Fingerabdruck",
+        "kicker": "Position",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Führt Self-Attention und den Transformer-Block ein.",
+                  "en": "Introduces self-attention and the transformer block."
+                }
+              },
+              {
+                "label": "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding",
+                "url": "https://arxiv.org/abs/2104.09864",
+                "why": {
+                  "de": "RoPE: Positionskodierung als Rotation von Query und Key.",
+                  "en": "RoPE: position encoding as a rotation of query and key."
+                }
+              },
+              {
+                "label": "Touvron et al. (2023), Llama 2",
+                "url": "https://arxiv.org/abs/2307.09288",
+                "why": {
+                  "de": "Llama 2 nutzt RoPE; Beispiel für ein modernes Modell.",
+                  "en": "Llama 2 uses RoPE; an example of a modern model."
+                }
+              },
+              {
+                "label": "Press et al. (2021), Attention with Linear Biases (ALiBi)",
+                "url": "https://arxiv.org/abs/2108.12409",
+                "why": {
+                  "de": "ALiBi: linearer Distanz-Bias statt Positions-Embedding.",
+                  "en": "ALiBi: a linear distance bias instead of position embeddings."
+                }
+              },
+              {
+                "label": "Raffel et al. (2020), T5",
+                "url": "https://arxiv.org/abs/1910.10683",
+                "why": {
+                  "de": "T5: relative Position Bias als Alternative.",
+                  "en": "T5: relative position bias as an alternative."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:8.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 8,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "8.0",
+      "slide_title": "Attention bewegt Punkte anhand des Kontextes",
+      "slide_kicker": "Attention",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Attention bewegt Punkte anhand des Kontextes",
+        "kicker": "Attention",
+        "watch": "",
+        "body": "Mit Attention kann jedes Token an alle anderen Tokens im Kontext die Frage stellen, wie wichtig sie unter einem gewissen Aspekt für das aktuelle Token sind. Man bekommt für jedes Token ein Gewicht, das angibt, wie viel sein Value zum aktuellen Token beiträgt. Dadurch ist es möglich, den Vektor eines Tokens neu zu berechnen, indem man die Value-Vektoren aller Tokens mit diesen Gewichten addiert. Bei generativen Modellen wie LLM fügt man noch eine sogenannte Causal Mask ein, die dafür sorgt, dass jedes Token nur auf seine eigene Vergangenheit sehen kann (dadurch sind zukünftige Tokens auf 0), damit das nächste Token generiert werden kann, ohne dass man bereits weiß, welches es ist.\n\nDieses System erlaubt es, Tokens flexibel anhand des Kontextes zu verschieben, ohne sich völlig festzulegen.\n\nDie Gewichte jedes Attention-Heads summieren für jedes Token zu 1, also 100 %. Entscheidet er sich, auf ein Token 80% Aufmerksamkeit zu richten, bleiben für alle anderen Tokens nur noch 20% übrig.\n\nMan schaltet viele dieser Attention-Heads parallel, wobei jeder auf andere Dinge achten kann. Jeder verschiebt die Tokens so, dass sie einer bestimmten Fragestellung entsprechen, die nicht menschenlesbar oder verständlich sein muss. Der Computer wählt sie, um den Loss zu reduzieren und näher an die gewollten Ergebnisse zu gelangen, nicht, damit sie für uns Menschen lesbar sind.",
+        "groups": [
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-att-5",
+                "title": "Die Formel",
+                "body": "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 1 (100 %). Die Summe geht über alle Tokens, die durch die Laufvariable $j$ iteriert werden.",
+                "tex": "\\underbrace{r_i}_{\\substack{\\text{Mischung} \\\\ \\text{für Position } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j \\\\ \\text{für } i}} \\cdot \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe} \\\\ \\sum_j \\alpha_{ij} = 1}}",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Führt Self-Attention und den Transformer-Block ein.",
+                  "en": "Introduces self-attention and the transformer block."
+                }
+              },
+              {
+                "label": "Bahdanau et al. (2014), Neural Machine Translation",
+                "url": "https://arxiv.org/abs/1409.0473",
+                "why": {
+                  "de": "Attention in der neuronalen Übersetzung vor dem Transformer.",
+                  "en": "Attention in neural translation before the transformer."
+                }
+              },
+              {
+                "label": "Shazeer (2019), Fast Transformer Decoding",
+                "url": "https://arxiv.org/abs/1911.02150",
+                "why": {
+                  "de": "Inkrementelles Decoding mit gespeicherten Keys und Values.",
+                  "en": "Incremental decoding with cached keys and values."
+                }
+              },
+              {
+                "label": "Attention als Graph (interaktive Zusatzseite)",
+                "url": "../test/attention_as_graph.html",
+                "why": {
+                  "de": "Interaktive Zusatzseite zur Attention-Grafik.",
+                  "en": "Interactive companion page for the attention graph."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Mit Attention kann jedes Token an alle anderen Tokens im Kontext die Frage stellen, wie wichtig sie unter einem gewissen Aspekt für das aktuelle Token sind. Man bekommt für jedes Token eine Prozentzahl, wie viel es zum aktuellen Token beiträgt. Dadurch ist es möglich, jedes Token neu zu berechnen, indem man es prozentual mit allen anderen Tokens addiert. Bei generativen Modellen wie LLM fügt man noch eine sogenannte Causal-Mask ein, die dafür sorgt, dass jedes Token nur auf seine eigene Vergangenheit sehen kann (dadurch sind zukünftige Tokens auf 0), damit das nächste Token generiert werden kann, ohne dass man bereits weiß, welches es ist. \n\nDieses System erlaubt es, Tokens flexibel anhand des Kontextes zu verschieben, ohne sich völlig festzulegen. \n\nIn Summe hat jeder Attention Head für jedes Token genau 100% Attention. Entscheidet er sich, auf ein Token 80% Aufmerksamkeit zu richten, bleiben für alle anderen Tokens nur noch 20% übrig. \n\nMan schaltet viele dieser Attention Heads parallel, wobei jeder auf andere Dinge achten kann. Jeder verschiebt die Tokens so, dass sie einer bestimmten Fragestellung entsprechen, die nicht menschenlesbar oder verständlich sein muss. Der Computer wählt sie, um den Loss zu reduzieren und näher an die gewollten Ergebnisse zu gelangen, nicht, damit sie für uns Menschen lesbar sind.",
+        "title": "Attention bewegt Punkte anhand des Kontextes",
+        "kicker": "Attention",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-att-5",
+                "title": "Die Formel",
+                "body": "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100%. Die Summe geht über alle Tokens, die durch die Laufvariable $j$ iteriert werden.",
+                "tex": "\\underbrace{x'_i}_{\\substack{\\text{neuer Vektor} \\\\ \\text{für Position } i}} \n\\;=\\; \n\\underbrace{\n  \\sum_j \n  \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j \\\\ \\text{für } i}} \n  \\;\\cdot\\; \n  \\underbrace{v_j}_{\\text{Value von } j}\n}_{\n  \\substack{\\text{gewichtete Summe} \\\\ \\sum_j \\alpha_{ij} = 100\\%}\n}",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Führt Self-Attention und den Transformer-Block ein.",
+                  "en": "Introduces self-attention and the transformer block."
+                }
+              },
+              {
+                "label": "Bahdanau et al. (2014), Neural Machine Translation",
+                "url": "https://arxiv.org/abs/1409.0473",
+                "why": {
+                  "de": "Attention in der neuronalen Übersetzung vor dem Transformer.",
+                  "en": "Attention in neural translation before the transformer."
+                }
+              },
+              {
+                "label": "Shazeer (2019), Fast Transformer Decoding",
+                "url": "https://arxiv.org/abs/1911.02150",
+                "why": {
+                  "de": "Inkrementelles Decoding mit gespeicherten Keys und Values.",
+                  "en": "Incremental decoding with cached keys and values."
+                }
+              },
+              {
+                "label": "Attention als Graph (interaktive Zusatzseite)",
+                "url": "../test/attention_as_graph.html",
+                "why": {
+                  "de": "Interaktive Zusatzseite zur Attention-Grafik.",
+                  "en": "Interactive companion page for the attention graph."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:8.1",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 8,
+      "substep": 1,
+      "substep_count": 1,
+      "text_key": "8.1",
+      "slide_title": "Heads zusammenfügen",
+      "slide_kicker": "Concat",
+      "changed_fields": [
+        "title",
+        "kicker",
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Attention: Kontext und Matrix",
+        "kicker": "Attention",
+        "watch": "",
+        "body": "",
+        "groups": []
+      },
+      "edit": {
+        "body": "Jeder Head liefert pro Token einen Vektor. Multi-Head-Attention legt diese Vektoren nebeneinander (Concat) und projiziert sie mit $W_O$ auf einen Token-Vektor der Modellbreite. Erst dieser eine Vektor geht pro Token ins FFN.",
+        "title": "Heads zusammenfügen",
+        "kicker": "Concat",
+        "watch": "Drücke Weiter: Heads, Concat, W_O, Token-Vektor.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die Heads sind keine getrennten Ströme, die ins FFN wandern. Concat macht aus ihnen einen breiten Vektor; $W_O$ mischt ihn auf $d_{\\text{model}}$. Das FFN sieht danach einen Vektor pro Token.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Formal: $H$ Heads mit je $d_v$ Werten ergeben nach Concat $H d_v$ Werte. $W_O \\in \\mathbb{R}^{d_{\\text{model}}\\times H d_v}$ mischt sie zum Token-Vektor. Die einzelnen Heads bleiben danach nicht als getrennte Kanäle erhalten.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-hc-formula",
+                "title": "Concat und $W_O$",
+                "body": "Die Head-Ausgaben stehen als Spalten; Concat stapelt sie; $W_O$ mischt sie zum Token-Vektor.",
+                "tex": "\\underbrace{\\underbrace{\\begin{pmatrix} h_{1,1} & h_{2,1} & \\cdots & h_{H,1} \\\\ h_{1,2} & h_{2,2} & \\cdots & h_{H,2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ h_{1,d_v} & h_{2,d_v} & \\cdots & h_{H,d_v} \\end{pmatrix}}_{\\text{Heads: }d_v\\text{ Zeilen, }H\\text{ Spalten}} \\;\\longrightarrow\\; \\underbrace{\\begin{pmatrix} h_1 \\\\ h_2 \\\\ \\vdots \\\\ h_H \\end{pmatrix}}_{\\text{Concat: }H d_v\\text{ Werte}}}_{\\text{aus vielen Heads wird ein breiter Vektor}} \\;\\overset{W_O}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} u_1 \\\\ u_2 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor fürs FFN}}",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Multi-Head-Attention: Concat der Heads und Ausgabeprojektion W_O.",
+                  "en": "Multi-head attention: concat of the heads and output projection W_O."
+                }
+              },
+              {
+                "label": "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits",
+                "url": "https://transformer-circuits.pub/2021/framework/index.html",
+                "why": {
+                  "de": "QK- und OV-Schaltkreise; die Head-Ausgabe wird in den Residualstrom geschrieben.",
+                  "en": "QK and OV circuits; the head output is written into the residual stream."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:9.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 9,
+      "substep": 0,
+      "substep_count": 6,
+      "text_key": "9.0",
+      "slide_title": "Wie Attention rechnet",
+      "slide_kicker": "Q · K · V",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Wie Attention rechnet",
+        "kicker": "Q · K · V",
+        "watch": "",
+        "body": "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort.\n\nDie Formel dafür ist:\n\n$$ \\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}}\\right) V $$\n\nOder, aus Sicht eines einzelnen Tokens:\n\n$$\\underbrace{r_i}_{\\substack{\\text{Mischung} \\\\ \\text{für Position } i}} \\;=\\; \\sum_j \\underbrace{\\frac{\\exp\\left( \\frac{q_i \\cdot k_j}{\\sqrt{d_k}} \\right)}{\\sum_k \\exp\\left( \\frac{q_i \\cdot k_k}{\\sqrt{d_k}} \\right)}}_{\\alpha_{ij}} \\;\\cdot\\; \\underbrace{v_j}_{\\text{Value von } j}$$\n\nDie Head-Ausgabe ist danach $y_i = W_O r_i$.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Warum $\\sqrt{d_k}$?",
+                "body": "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Woher kommen Q, K und V?",
+                "body": "$Q$, $K$ und $V$ sind berechnete Vektoren. Sie entstehen durch gelernte Projektionen: $q_i = W_Q x_i$, $k_j = W_K x_j$ und $v_j = W_V x_j$. Gelernt werden die Matrizen $W_Q$, $W_K$ und $W_V$, nicht die Vektoren selbst. Der Computer passt sie im Training an, um den Loss zu reduzieren.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Q/K/V, Multi-Head-Attention und Softmax-Gewichte.",
+                  "en": "Q/K/V, multi-head attention, and softmax weights."
+                }
+              },
+              {
+                "label": "Dosovitskiy et al. (2021), An Image is Worth 16x16 Words",
+                "url": "https://arxiv.org/abs/2010.11929",
+                "why": {
+                  "de": "Vision Transformer: Bild-Patches mit Self-Attention.",
+                  "en": "Vision transformer: image patches with self-attention."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort.\n\nDie Formel dafür ist:\n\n$$ \\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}}\\right) V $$\n\nOder, aus Sicht eines einzelnen Tokens:\n\n$$\\underbrace{x'_i}_{\\substack{\\text{neuer Vektor} \\\\ \\text{für Position } i}} \n\\;=\\; \n\\sum_j \n\\underbrace{\n  \\frac{\\exp\\left( \\frac{q_i \\cdot k_j}{\\sqrt{d_k}} \\right)}{\\sum_k \\exp\\left( \\frac{q_i \\cdot k_k}{\\sqrt{d_k}} \\right)}\n}_{\\alpha_{ij}} \n\\;\\cdot\\; \n\\underbrace{v_j}_{\\text{Value von } j}$$",
+        "title": "Wie Attention rechnet",
+        "kicker": "Q · K · V",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Warum $\\sqrt{d_k}$?",
+                "body": "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Woher kommen Q, K und V?",
+                "body": "$Q$, $K$ und $V$ sind gelernte Gewichte, die der Computer sich selbst beibringt wie er sich andere Gewichte beibringt, um den Loss zu reduzieren am Ende. Wir werden auf später auf den Prozess des Trainings eingehen.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Q/K/V, Multi-Head-Attention und Softmax-Gewichte.",
+                  "en": "Q/K/V, multi-head attention, and softmax weights."
+                }
+              },
+              {
+                "label": "Dosovitskiy et al. (2021), An Image is Worth 16x16 Words",
+                "url": "https://arxiv.org/abs/2010.11929",
+                "why": {
+                  "de": "Vision Transformer: Bild-Patches mit Self-Attention.",
+                  "en": "Vision transformer: image patches with self-attention."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
