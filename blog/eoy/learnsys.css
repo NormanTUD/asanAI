@@ -2140,14 +2140,17 @@ h1,h2,h3,h4{
 
 .ls-res-scene{grid-template-rows:minmax(0,1fr) auto auto auto}
 .ls-res-stage{min-height:240px}
-.ls-res-caption{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-res-caption{display:grid;margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-res-caption-view{grid-area:1/1}
+.ls-res-caption-view.is-ghost{visibility:hidden}
 .ls-res-layers .ls-chip.is-done{border-color:rgba(99,164,75,.32);color:var(--ls-ink)}
-.ls-res-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.ls-res-layers{flex-wrap:nowrap}
+.ls-res-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;min-width:0}
 .ls-res-phases{display:flex;gap:4px;align-items:center;padding-right:8px;border-right:1px solid var(--ls-line);flex-shrink:0}
 .ls-res-phase{border:1px solid var(--ls-line-strong);background:var(--ls-paper);color:var(--ls-soft);font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;padding:5px 9px;cursor:pointer;white-space:nowrap}
 .ls-res-phase:hover{border-color:var(--ls-blue);color:var(--ls-petrol)}
 .ls-res-phase.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
-.ls-res-readout{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:3.4em;text-transform:none;letter-spacing:0}
+.ls-res-readout{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:4.6em;text-transform:none;letter-spacing:0}
 .ls-res-phase-label{font:700 8px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol)}
 .ls-res-eq-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;min-width:0}
 .ls-res-eq{font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -2163,6 +2166,7 @@ h1,h2,h3,h4{
 .ls-res-dim .is-ffn{color:var(--ls-gold)}
 .ls-res-hint{font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-muted)}
 @media (max-width:640px){.ls-res-toolbar{align-items:flex-start}.ls-res-phases{border-right:0;padding-right:0}.ls-res-readout{min-height:4.6em}}
+@media (max-width:480px){.ls-res-readout{min-height:6em}}
 
 .ls-sim-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;gap:7px;padding:2px}
 .ls-sim-stage{position:relative;min-height:260px;border:0;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}

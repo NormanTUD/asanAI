@@ -720,22 +720,33 @@
         });
       }
     }
+    function setCaptions(noteText, streamText) {
+      caption.innerHTML = '<span class="ls-res-caption-view"></span><span class="ls-res-caption-view"></span>';
+      var views = caption.children;
+      views[0].textContent = noteText;
+      views[1].textContent = streamText;
+      views[0].classList.toggle("is-ghost", phase !== "notebook");
+      views[1].classList.toggle("is-ghost", phase !== "stream");
+      views[0].setAttribute("aria-hidden", phase === "notebook" ? "false" : "true");
+      views[1].setAttribute("aria-hidden", phase === "stream" ? "false" : "true");
+    }
     function sync() {
       var C = pal();
       syncPhaseButtons(C);
       syncLayerButtons(C);
+      var noteCaption = DE ? "Jede Schicht liest das Notizbuch und schreibt ihre Erkenntnis dazu; nichts wird gelöscht. Die Rollen der Schichten sind eine didaktische Erzählung, keine Messung." : "Every layer reads the notebook and writes its insight into it; nothing is deleted. The layer roles are a didactic story, not a measurement.";
+      var streamCaption = DE ? "Attention und FFN lesen den Stream, berechnen getrennte Updates und addieren beide. Die Dimension bleibt gleich; jede Schicht trägt den alten Stand weiter." : "Attention and the FFN read the stream, compute separate updates, and add both. The dimension stays the same; every layer carries the old state forward.";
       if (phase === "notebook") {
         var colors = noteColors(C);
         var info = layer ? NOTE_LAYERS[layer - 1] : null;
         readout.innerHTML = '<span class="ls-res-phase-label">' + (DE ? "Notizbuch" : "Notebook") + '</span>' +
           '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Tokens stehen" : "Tokens are here")) + '</b>' +
           '<span>' + (info ? info.desc : (DE ? "Die Tokens stehen im Notizbuch. Drücke Weiter, um die erste Schicht zu öffnen." : "The tokens are in the notebook. Press Next to open the first layer.")) + '</span>';
-        caption.textContent = DE ? "Jede Schicht liest das Notizbuch und schreibt ihre Erkenntnis dazu; nichts wird gelöscht. Die Rollen der Schichten sind eine didaktische Erzählung, keine Messung." : "Every layer reads the notebook and writes its insight into it; nothing is deleted. The layer roles are a didactic story, not a measurement.";
       } else {
         readout.innerHTML = '<div class="ls-res-eq-row">' + equationHTML(streamLayer) + dimDetailHTML(streamLayer) + '</div>' +
           '<span class="ls-res-hint">' + (DE ? "Ziehe über eine Dimension oder klicke sie an." : "Hover a dimension or click it.") + '</span>';
-        caption.textContent = DE ? "Attention und FFN lesen den Stream, berechnen getrennte Updates und addieren beide. Die Dimension bleibt gleich; jede Schicht trägt den alten Stand weiter." : "Attention and the FFN read the stream, compute separate updates, and add both. The dimension stays the same; every layer carries the old state forward.";
       }
+      setCaptions(noteCaption, streamCaption);
       var aria = phase === "notebook"
         ? (layer ? (DE ? "Notizbuch mit fünf Schichten. Schicht " + layer + " von 5." : "Notebook with five layers. Layer " + layer + " of 5.") : (DE ? "Notizbuch mit den Tokens und fünf Schichten. Noch keine Schicht geöffnet." : "Notebook with the tokens and five layers. No layer opened yet."))
         : (DE ? "Residual Stream x " + streamLayer + " mit sechs Dimensionen: getragen plus Attention plus FFN." : "Residual stream x " + streamLayer + " with six dimensions: carried plus attention plus FFN.");

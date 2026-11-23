@@ -18,7 +18,7 @@
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sim-pause">' + (DE ? "Drehung stoppen" : "Stop rotation") + '</button>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
-        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.3" max="3" step="0.05" value="1.6"><output>1.60×</output></label>' +
+        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.1" max="2" step="0.05" value="0.15"><output>0.15×</output></label>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
@@ -58,9 +58,9 @@
     var yaw = -0.55, pitch = 0.33;
     var dirRaf = 0, dirLast = 0, dirPaused = false;
     var dragging = false, dragMoved = false, lastPX = 0, lastPY = 0;
-    var angleA = 360, angleB = 90, scaleMag = 1.6;
-    var scaleIndex = 3, scaleRaf = 0;
-    var SCALE_VALUES = [0.7, 1.0, 1.3, 1.6, 2.0];
+    var angleA = 360, angleB = 90, scaleMag = 0.15;
+    var scaleIndex = 0, scaleRaf = 0;
+    var SCALE_VALUES = [0.15, 0.35, 0.7, 1.0, 1.4, 2.0];
     var hits = [];
     var C = api.colors();
     var clamp = api.util.clamp;
@@ -608,6 +608,12 @@
         if (mode === "unembed") renderUnembedList();
       }
       if (mode === "unembed") startUnembed(); else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
+      if (mode === "scale" && modeChanged) {
+        scaleMag = SCALE_VALUES[0];
+        scaleIndex = 0;
+        if (scaleInput) scaleInput.value = String(scaleMag);
+        if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
+      }
       function apply() { draw(); }
       if (modeChanged && size && V && V.crossfadeCanvas) V.crossfadeCanvas(canvas, apply, { dir: dir, duration: 280 });
       else apply();
