@@ -529,7 +529,7 @@
         { label: DE ? "Fluss" : "river", col: "sky", pts: [[0.46, 0.36], [0.28, 0.42], [0.10, 0.34], [-0.04, 0.44], [-0.18, 0.38]] }
       ];
       var state = { step: 0, from: 0, to: 0, t: 1 };
-      var raf = 0, size = null, trajHits = [], trajHover = -1;
+      var raf = 0, size = null, trajHits = [], trajHover = -1, queue = [];
       function project(p) {
         var scale = Math.min((size.w * 0.42) / 0.95, (size.h * 0.42) / 0.62);
         return { x: size.w / 2 + p[0] * scale, y: size.h / 2 - p[1] * scale };
@@ -548,7 +548,7 @@
         g.closePath(); g.fill();
       }
       function draw() {
-        if (!size) return;
+        if (!size || size.w < 40 || size.h < 40) return;
         var g = size.ctx, w = size.w, h = size.h, C = api.colors();
         g.clearRect(0, 0, w, h);
         var bg = g.createLinearGradient(0, 0, 0, h);
@@ -669,8 +669,9 @@
         if (readout) readout.textContent = state.to === 0
           ? (DE ? "Start: die Punkte liegen an ihren Ausgangspositionen." : "Start: the points sit at their initial positions.")
           : (DE ? "Schicht " + state.to + " / 4: die Punkte wurden neu verschoben." : "Layer " + state.to + " / 4: the points have moved again.");
-        if (stepBtn) stepBtn.disabled = state.step >= 4;
-        if (resetBtn) resetBtn.disabled = state.step <= 0;
+        var end = raf ? (queue.length ? queue[queue.length - 1] : state.to) : state.step;
+        if (stepBtn) stepBtn.disabled = end >= 4;
+        if (resetBtn) resetBtn.disabled = !raf && state.step <= 0;
       }
       function animate(to) {
         if (raf) cancelAnimationFrame(raf);
@@ -682,7 +683,10 @@
           state.t = 1 - Math.pow(1 - t, 3);
           draw();
           if (t < 1) raf = requestAnimationFrame(frame);
-          else { state.step = to; state.from = to; state.t = 1; raf = 0; updateReadout(); }
+          else {
+            state.step = to; state.from = to; state.t = 1; raf = 0; updateReadout();
+            if (queue.length) { var q = queue.shift(); animate(q); }
+          }
         }
         raf = requestAnimationFrame(frame);
       }
@@ -705,15 +709,34 @@
       function onLeave() {
         if (trajHover !== -1) { trajHover = -1; canvas.style.cursor = "default"; draw(); }
       }
-      stepBtn.addEventListener("click", function () { animate(Math.min(4, state.step + 1)); });
-      resetBtn.addEventListener("click", function () { animate(0); });
+      stepBtn.addEventListener("click", function () {
+        var base = raf ? (queue.length ? queue[queue.length - 1] : state.to) : state.step;
+        var next = Math.min(4, base + 1);
+        if (next <= base) return;
+        if (raf) queue.push(next);
+        else animate(next);
+        updateReadout();
+      });
+      resetBtn.addEventListener("click", function () {
+        queue = [];
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        animate(0);
+      });
       canvas.addEventListener("pointermove", onMove);
       canvas.addEventListener("pointerleave", onLeave);
       window.addEventListener("resize", resize);
+      var ro = null;
+      if (window.ResizeObserver) {
+        ro = new ResizeObserver(function () { resize(); });
+        ro.observe(stage);
+      }
       resize();
+      requestAnimationFrame(function () { if (size && size.w > 1) resize(); });
       updateReadout();
       return function cleanup() {
         if (raf) cancelAnimationFrame(raf);
+        if (ro) ro.disconnect();
         canvas.removeEventListener("pointermove", onMove);
         canvas.removeEventListener("pointerleave", onLeave);
         window.removeEventListener("resize", resize);
