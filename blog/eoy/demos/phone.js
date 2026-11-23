@@ -408,7 +408,12 @@
           return;
         }
         var letters = chunk.split("");
-        var points = letters.map(function (ch) { return keyCenter(kb, ch); }).filter(Boolean);
+        var prevPoint = null;
+        var points = letters.map(function (ch) {
+          var point = /[a-z]/i.test(ch) ? keyCenter(kb, ch) : (prevPoint || keyCenter(kb, ch));
+          prevPoint = point;
+          return point;
+        }).filter(Boolean);
         if (points.length < 2) {
           letters.forEach(function (ch) { pressKey(kb, ch); appendTyped(kb, ch); });
           later(nextChunk, 140);
