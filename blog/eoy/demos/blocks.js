@@ -356,25 +356,79 @@
       V.heading(ctx, "Attention: wer liest wen?", 12, 16, C.petrol, 10, 1);
     }
     function miniFFN(ctx, w, h) {
-      var top = 42, bottom = h - 22;
+      var top = Math.min(52, Math.max(40, h * 0.16));
+      var bottom = h - Math.max(20, h * 0.09);
+      var midY = (top + bottom) / 2;
+      var leftX = w * 0.035, panelW = w * 0.245;
+      var rightX = w * 0.72;
+      var inputX = w * 0.355, hiddenX = w * 0.50, outputX = w * 0.645;
       function FY(t) { return top + t * (bottom - top); }
-      var left = [{ x: w * 0.12, y: FY(0.34) }, { x: w * 0.12, y: FY(0.66) }];
-      var mid = [{ x: w * 0.38, y: FY(0.12) }, { x: w * 0.38, y: FY(0.37) }, { x: w * 0.38, y: FY(0.63) }, { x: w * 0.38, y: FY(0.88) }];
-      var right = [{ x: w * 0.64, y: FY(0.34) }, { x: w * 0.64, y: FY(0.66) }];
+      V.arrow(ctx, leftX + panelW + 6, midY, inputX - 10, midY, C.petrol, 2, 7);
+      V.arrow(ctx, outputX + 10, midY, rightX - 6, midY, C.petrol, 2, 7);
+      function scatter(panelX, gold, blue, separated) {
+        ctx.save();
+        ctx.strokeStyle = V.alpha(C.lineStrong, 0.8);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(panelX + 0.5, top + 0.5, panelW - 1, (bottom - top) - 1);
+        if (separated) {
+          ctx.setLineDash([5, 4]);
+          ctx.strokeStyle = V.alpha(C.petrol, 0.7);
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          ctx.moveTo(panelX + panelW * 0.04, FY(0.13));
+          ctx.lineTo(panelX + panelW * 0.96, FY(0.87));
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        ctx.restore();
+        function dots(points, color) {
+          points.forEach(function (p) {
+            ctx.beginPath();
+            ctx.arc(panelX + p[0] * panelW, FY(p[1]), 4.6, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.strokeStyle = C.paper;
+            ctx.lineWidth = 1.4;
+            ctx.stroke();
+          });
+        }
+        dots(blue, C.blue);
+        dots(gold, C.gold);
+      }
+      var mixedGold = [[0.34, 0.40], [0.55, 0.30], [0.46, 0.60], [0.66, 0.46], [0.40, 0.52], [0.60, 0.66], [0.50, 0.35]];
+      var mixedBlue = [[0.38, 0.53], [0.58, 0.42], [0.44, 0.28], [0.62, 0.58], [0.52, 0.49], [0.68, 0.34], [0.30, 0.45]];
+      var sortedGold = [[0.65, 0.18], [0.73, 0.14], [0.68, 0.27], [0.78, 0.22], [0.60, 0.24], [0.75, 0.10], [0.70, 0.20]];
+      var sortedBlue = [[0.24, 0.74], [0.33, 0.80], [0.28, 0.66], [0.37, 0.72], [0.20, 0.82], [0.34, 0.60], [0.30, 0.76]];
+      scatter(leftX, mixedGold, mixedBlue, false);
+      scatter(rightX, sortedGold, sortedBlue, true);
+      var input = [0.30, 0.50, 0.70].map(function (t) { return { x: inputX, y: FY(t) }; });
+      var hidden = [0.10, 0.30, 0.50, 0.70, 0.90].map(function (t) { return { x: hiddenX, y: FY(t) }; });
+      var output = [0.30, 0.50, 0.70].map(function (t) { return { x: outputX, y: FY(t) }; });
       ctx.save();
-      ctx.strokeStyle = V.alpha(C.line, 0.95);
-      ctx.lineWidth = 1;
-      left.forEach(function (a) { mid.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
-      mid.forEach(function (a) { right.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
+      ctx.strokeStyle = V.alpha(C.lineStrong, 0.85);
+      ctx.lineWidth = 0.9;
+      input.forEach(function (a) { hidden.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
+      hidden.forEach(function (a) { output.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
       ctx.restore();
-      left.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.sky; ctx.fill(); });
-      mid.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); });
-      right.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.gold; ctx.fill(); });
-      V.tokenChip(ctx, DE ? "Muster" : "pattern", w * 0.03, 30, C.blue, C, { size: 8 });
-      V.tokenChip(ctx, DE ? "Bestandteile" : "components", w * 0.34, 30, C.blue, C, { size: 8 });
-      V.tokenChip(ctx, DE ? "neu geordnet" : "reordered", w * 0.68, 30, C.green, C, { size: 8 });
-      V.heading(ctx, DE ? "FFN: erkennen · trennen · neu ordnen" : "FFN: recognise · separate · reorder", 12, 14, C.petrol, 10, 1);
-      V.label(ctx, DE ? "pro Token" : "per token", w * 0.50, h - 8, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
+      function nodes(list, color) {
+        list.forEach(function (p) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.fill();
+          ctx.strokeStyle = C.paper;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        });
+      }
+      nodes(input, C.sky);
+      nodes(hidden, C.green);
+      nodes(output, C.gold);
+      V.tokenChip(ctx, DE ? "ungeordnet" : "unordered", leftX, 30, C.blue, C, { size: 9 });
+      V.tokenChip(ctx, DE ? "Neuronales Netz" : "neural network", w * 0.5, 30, C.green, C, { size: 9, align: "center" });
+      V.tokenChip(ctx, DE ? "neu geordnet" : "reordered", rightX + panelW, 30, C.gold, C, { size: 9, align: "right" });
+      V.heading(ctx, DE ? "FFN: Daten entwirren und neu ordnen" : "FFN: untangle and reorder data", 12, 14, C.petrol, 10, 1);
+      V.label(ctx, DE ? "symbolisch: zwei Datengruppen (Farben); links gemischt, rechts nach dem FFN getrennt" : "symbolic: two data groups (colours); mixed on the left, separated by the FFN on the right", w * 0.5, h - 8, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
     }
     function miniLayerNorm(ctx, w, h) {
       var values = [1, 2, 3, 4, 5];
