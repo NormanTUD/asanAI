@@ -15,7 +15,8 @@ file after every completed item.
 - Mary's Room: grayscale world, no S/W/Rot labels.
 - Architecture: current sub-step marker, next-pages subnav removed, animated
   5-layer trajectory with hover, f(x) card, Attention → LayerNorm → FFN order.
-- FFN: static separation diagram on the FFN sub-slide (`ffnsplit`).
+- FFN: the "Im FFN: auffächern und zurück" sub-slide was removed on request;
+  the role slide is the only FFN substep.
 - "Zwei Schichten, ein Trick": A/B can span word groups/sub-sentences.
 - "Drei Dimensionen": human plane flat, category planes, layer text labels gone.
 - "Wie findet man gute Punkte?": wider surface, valley camera, momentum inside,

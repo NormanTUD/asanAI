@@ -423,7 +423,7 @@
     {
       kicker: "Feed-Forward-Netzwerk (FFN)",
       title: "Die Rolle von neuronalen Netzen im Transformer",
-      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.\n\nJedes Token wird nach jeder Attention durch dasselbe neuronale Netz geschickt, das dann die kontextualisierten Tokens unabhängig voneinander verschiebt. Die Rolle im LLM: verworrene Muster trennbar machen. Die nächste Folie zeigt, wie das FFN die Bereiche trennt und isoliert: Input ist verworren, Hidden trennt die Cluster, Output setzt sie wieder zusammen.",
+      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.\n\nJedes Token wird nach jeder Attention durch dasselbe neuronale Netz geschickt, das dann die kontextualisierten Tokens unabhängig voneinander verschiebt. Die Rolle im LLM: verworrene Muster trennbar machen.",
       watch: "",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
@@ -474,7 +474,7 @@
     {
       kicker: "Feed-forward network (FFN)",
       title: "The role of neural networks in the transformer",
-      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.\n\nAfter every attention step, each token is passed through the same neural network, which then shifts the contextualised tokens independently of one another. The role in the LLM: make entangled patterns separable. The next slide shows how the FFN separates and isolates the regions: input is tangled, hidden separates the clusters, and output reassembles them.",
+      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.\n\nAfter every attention step, each token is passed through the same neural network, which then shifts the contextualised tokens independently of one another. The role in the LLM: make entangled patterns separable.",
       watch: "",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
@@ -523,33 +523,7 @@
     }
   ];
 
-  var ffnSplitTex = DE ? "\\underbrace{\\underbrace{\\begin{pmatrix} u_1 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{ein Token-Vektor}} \\;\\overset{W_1,\\,b_1}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} z_1 \\\\ \\vdots \\\\ z_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{Hidden: }d_{\\text{ff}}\\gg d_{\\text{model}}} \\;\\overset{\\operatorname{act}}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} a_1 \\\\ \\vdots \\\\ a_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{aktiviert}} \\;\\overset{W_2,\\,b_2}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} y_1 \\\\ \\vdots \\\\ y_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{zurück}}}_{\\text{das FFN fächert den Token-Vektor auf und projiziert ihn zurück}}" : "\\underbrace{\\underbrace{\\begin{pmatrix} u_1 \\\\ \\vdots \\\\ u_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{one token vector}} \\;\\overset{W_1,\\,b_1}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} z_1 \\\\ \\vdots \\\\ z_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{hidden: }d_{\\text{ff}}\\gg d_{\\text{model}}} \\;\\overset{\\operatorname{act}}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} a_1 \\\\ \\vdots \\\\ a_{d_{\\text{ff}}} \\end{pmatrix}}_{\\text{activated}} \\;\\overset{W_2,\\,b_2}{\\longrightarrow}\\; \\underbrace{\\begin{pmatrix} y_1 \\\\ \\vdots \\\\ y_{d_{\\text{model}}} \\end{pmatrix}}_{\\text{back}}}_{\\text{the FFN fans the token vector out and projects it back}}";
-  var ffnSplitSubstep = {
-    kicker: "FFN",
-    title: DE ? "Im FFN: auffächern und zurück" : "Inside the FFN: expand and project back",
-    body: (DE
-      ? "Das FFN bekommt pro Token einen einzigen Vektor, nicht die einzelnen Heads. Es rechnet ihn mit $W_1$ auf viele Hidden-Werte hoch, aktiviert sie und rechnet sie mit $W_2$ wieder auf die ursprüngliche Breite herunter. Die Aufspaltung im FFN ist also keine Head-Trennung, sondern die Aufspaltung in Hidden-Neuronen. Am Ende liegt wieder ein Vektor pro Token vor; das FFN läuft für jedes Token einzeln."
-      : "The FFN receives a single vector per token, not the individual heads. It expands it with $W_1$ into many hidden values, activates them, and reduces them back with $W_2$ to the original width. The split inside the FFN is therefore not a split by head, but a split into hidden neurons. At the end there is again one vector per token; the FFN runs separately for each token.") + "\n\n$$" + ffnSplitTex + "$$",
-    watch: DE ? "Drücke Weiter: Token-Vektor, W_1, Hidden, Aktivierung, W_2." : "Press Next: token vector, W_1, hidden, activation, W_2.",
-    demoState: { scene: "ffnsplit" },
-    context: DE
-      ? "Wichtig: Die Heads werden nicht erneut getrennt. Concat und $W_O$ haben sie bereits gemischt; das FFN arbeitet auf dem einen Token-Vektor. Danach bekommt jeder Token seinen eigenen neuen Vektor zurück."
-      : "Important: the heads are not split again. Concat and $W_O$ have already mixed them; the FFN works on the one token vector. Afterwards each token gets its own new vector back.",
-    deep: DE
-      ? "Typisch ist die Zwischenschicht etwa viermal so breit wie der Token-Vektor. $W_1$ fächert ihn auf, die Aktivierung macht ihn nichtlinear, $W_2$ rechnet zurück. Das FFN arbeitet pro Token, nicht pro Head."
-      : "Typically the intermediate layer is about four times as wide as the token vector. $W_1$ fans it out, the activation makes it nonlinear, and $W_2$ reduces it back. The FFN works per token, not per head.",
-    boxes: [],
-    sources: [
-      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Das FFN als zwei lineare Projektionen mit Aktivierung dazwischen.", en: "The FFN as two linear projections with an activation in between." } },
-      { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }, { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Höherdimensionales Falten macht die Klassen trennbar.", en: "Higher-dimensional folding makes the classes separable." } }, { label: "Olah (2014), Neural Networks, Manifolds, and Topology", url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/", why: { de: "Daten liegen auf gekrümmten Mannigfaltigkeiten; Schichten entwirren sie.", en: "Data lies on curved manifolds; layers untangle it." } }
-    ]
-  };
-
-  var ffnStep = {
-    title: DE ? "Feed-Forward-Netzwerk (FFN)" : "Feed-forward network (FFN)",
-    kicker: "FFN",
-    substeps: [ffnSteps[0], ffnSplitSubstep]
-  };
+  var ffnStep = ffnSteps[0];
 
   var residualSteps = DE ? [
     {

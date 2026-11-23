@@ -36,15 +36,10 @@ this file before further edits.
 
 **Open tasks (work stepwise)**
 
-1. **FFN sub-slide placement / main FFN cleanup**
-   - Remove the extra "2D-Bewegung / Eine Schicht verschiebt die Punkte im Raum.
-     Vorher → nachher." card from the main FFN role slide ("Die Rolle von
-     neuronalen Netzen im Transformer") so the top has enough space.
-   - Put the static "Input / Hidden / Output" separation diagram on the FFN
-     sub-slide (`ffnSplitSubstep`, scene `ffnsplit`) instead. Keep it static and
-     purely visual: tangled input, separated hidden regions, isolated/reassembled
-     output, with dashed region ellipses and W₁/W₂ arrows.
-   - Update the FFN sub-slide body/watch text accordingly.
+1. **FFN sub-slide placement / main FFN cleanup** — **removed on request**
+   - The "Im FFN: auffächern und zurück" sub-slide and its `ffnSplitSubstep`
+     data are removed; `ffnStep` now has one substep. The `ffnsplit` scene
+     registration stays for the standalone demo.
 2. **"Drei Dimensionen"** — **done**
    - Human words now sit at z = 0, so the old power × gender plane is flat.
    - The category axis is human (z = 0) / animal (z = -1) / fiction (z = +1),
