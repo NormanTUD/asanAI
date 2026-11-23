@@ -198,3 +198,10 @@
   .rope-heat { height: 214px; }
   .rope-freq { font-size: 9px; padding: 6px 7px 5px; }
 }
+
+.rope-freq-note {
+  margin: 8px 0 0;
+  font: 500 10px/1.45 var(--sans);
+  color: var(--rope-muted);
+  opacity: 0.9;
+}
