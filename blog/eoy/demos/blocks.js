@@ -733,6 +733,9 @@
           window.removeEventListener("resize", resize);
         },
         next: nextLayer,
+        // HARD RULE (4/5): done only after layer 4 with no running animation
+        // and no queued layer left.
+        isDone: function () { return !raf && queue.length === 0 && state.step >= 4; },
         hasNext: function () {
           var end = raf ? (queue.length ? queue[queue.length - 1] : state.to) : state.step;
           return end < 4;
@@ -842,7 +845,22 @@
       index = Math.max(0, Math.min(pages.length - 1, i));
       renderDetail();
     }
+    function onTransformerOverview() {
+      var page = pages[index];
+      return !!(page && !page.sub && page.block && page.block.id === "transformer");
+    }
+    function trajectoryBlocking() {
+      // HARD RULE (3/5): the visible step button is authoritative. While it is
+      // enabled, Next must step the trajectory, never leave the page.
+      if (!trajApi || !onTransformerOverview()) return false;
+      var btn = detail.querySelector(".ls-bs-traj-step");
+      if (btn && !btn.disabled) return true;
+      return !trajApi.isDone();
+    }
     function nextInternal() {
+      // HARD RULE (1/5): a direct internal advance is also blocked until the
+      // trajectory has reached the last layer and the button is greyed out.
+      if (trajectoryBlocking()) { trajApi.next(); return true; }
       if (index < pages.length - 1) { setIndex(index + 1); return true; }
       return false;
     }
@@ -863,21 +881,25 @@
         setIndex(typeof s.start === "number" ? blockStartPage(s.start) : 0);
       },
       next: function () {
-        var page = pages[index];
-        if (trajApi && page && !page.sub && page.block && page.block.id === "transformer" && trajApi.hasNext()) {
-          trajApi.next();
-          return true;
-        }
+        // HARD RULE (2/5): the public Next (button, arrow key, LearnSys.next)
+        // uses this guard, so it cannot bypass the step button.
+        if (trajectoryBlocking()) { trajApi.next(); return true; }
         return nextInternal();
       },
       prev: prevInternal,
       hasNext: function () {
-        var page = pages[index];
-        if (trajApi && page && !page.sub && page.block && page.block.id === "transformer" && trajApi.hasNext()) return true;
+        // HARD RULE (3/5): keep Next enabled while the trajectory is unfinished.
+        if (trajectoryBlocking()) return true;
         return index < pages.length - 1;
       },
       hasPrev: function () { return index > 0; },
-      onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
+      onKey: function (e) {
+        // HARD RULE (5/5): right arrow uses the same guarded path as Next.
+        return api.util.arrowKey(e, function () {
+          if (trajectoryBlocking()) { trajApi.next(); return true; }
+          return nextInternal();
+        }, prevInternal);
+      },
       resize: function () { drawMinis(); },
       destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } if (trajApi) { try { trajApi.cleanup(); } catch (e) {} trajApi = null; } window.removeEventListener("resize", onResize); el.remove(); }
     };

@@ -3087,6 +3087,14 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 
 /* Head concat / FFN split */
 .ls-hc-scene{display:flex;flex-direction:column;gap:12px;justify-content:center;min-height:360px;padding:10px 4px;overflow-y:auto}
+.ls-hc-split{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:12px;align-items:start;width:100%}
+.ls-hc-flow-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ls-hc-flow-col .ls-hc-stage{justify-content:flex-start}
+.ls-hc-flow-col .ls-hc-note,.ls-hc-flow-col .ls-hc-footer{text-align:left;margin:0}
+.ls-hc-split .ls-hc-sep{min-width:0}
+@media (max-width:980px){
+  .ls-hc-split{grid-template-columns:1fr}
+}
 .ls-hc-stage{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
 .ls-hc-group{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;border:1px solid var(--ls-line);background:var(--ls-paper);outline:2px solid transparent;outline-offset:2px;transition:opacity .18s ease,outline-color .18s ease}
 .ls-hc-group.is-on{outline-color:var(--ls-green)}

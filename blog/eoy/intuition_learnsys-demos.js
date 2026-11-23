@@ -29,6 +29,7 @@
     }
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     function mount(next, dir) {
+      try { (window.__lsMountDebug = window.__lsMountDebug || []).push({ start: next }); } catch (e) {}
       if (!scenes[next]) scenes[next] = makeLayer(next);
       var stepDir = dir < 0 ? "prev" : "next";
       Object.keys(scenes).forEach(function (key) {
@@ -47,11 +48,13 @@
         }
       });
       var entry = scenes[next];
+      try { (window.__lsMountDebug = window.__lsMountDebug || []).push({ next: next, layerScene: entry.layer.getAttribute("data-scene"), before: entry.layer.className, other: Object.keys(scenes).map(function (k) { return { k: k, hidden: scenes[k].layer.hidden, cls: scenes[k].layer.className, ds: scenes[k].layer.getAttribute("data-scene") }; }) }); } catch (e) {}
       entry.layer.hidden = false;
       entry.layer.classList.remove("is-leaving-next", "is-leaving-prev");
       entry.layer.classList.add("is-entering-" + stepDir);
       void entry.layer.offsetWidth;
       entry.layer.classList.add("is-active");
+      try { (window.__lsMountDebug = window.__lsMountDebug || []).push({ after: entry.layer.className, ds: entry.layer.getAttribute("data-scene") }); } catch (e) {}
       setTimeout(function () {
         entry.layer.classList.remove("is-entering-next", "is-entering-prev");
       }, reduced ? 0 : 300);
@@ -73,7 +76,11 @@
     return {
       update: function (s, meta) {
         var next = (s && s.scene) || "embedding";
-        if (next !== name) {
+        var active = host.querySelector(".ls-scene-layer.is-active");
+        try {
+          (window.__lsDemoDebug = window.__lsDemoDebug || []).push({ next: next, name: name, active: active ? active.getAttribute("data-scene") : null, activeChild: active && active.firstElementChild ? active.firstElementChild.className : null });
+        } catch (e) {}
+        if (next !== name || !active || active.getAttribute("data-scene") !== next) {
           var dir = meta && (meta.subDir || meta.dir) ? (meta.subDir || meta.dir) : 1;
           mount(next, dir);
         }
