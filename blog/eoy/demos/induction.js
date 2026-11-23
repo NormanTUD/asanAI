@@ -1087,131 +1087,161 @@
       var pad = Math.max(16, Math.min(28, W * 0.04));
       var small = W < 620;
       head(c, DE ? "Emergenz" : "Emergence", pad, 30, { size: small ? 18 : 22 });
-      txt(c, DE ? "Drei Signale, ein Fenster." : "Three signals, one window.", pad, 50, { size: 10.5, color: C.muted });
+      txt(c, DE ? "Drei Signale, ein Fenster." : "Three signals, one window.", pad, 50, { size: small ? 9.5 : 10.5, color: C.muted });
       accent(c, pad, 64, 38);
       txt(c, DE ? "schematisch" : "schematic", W - pad, 30, { align: "right", size: 8.5, color: C.muted });
+      txt(c, DE ? "Alle drei Signale ändern sich im selben Trainingsfenster." : "All three signals change in the same training window.", pad, 80, {
+        size: small ? 9 : 10, color: C.soft
+      });
 
-      var x0 = pad + 2;
-      var x1 = W - pad - 4;
-      var y0 = 92;
-      var y1 = H - 84;
+      var x0 = pad + (small ? 40 : 54);
+      var x1 = W - pad - 10;
+      var yTop = 104;
+      var yBottom = H - (small ? 78 : 86);
+      var gap = small ? 8 : 12;
+      var panelH = Math.max(64, (yBottom - yTop - 2 * gap) / 3);
       var pw = x1 - x0;
-      var ph = y1 - y0;
-      if (ph < 90) ph = 90;
-
-      c.save();
-      c.fillStyle = V.alpha(C.paper2, 0.5);
-      c.fillRect(x0, y0, pw, ph);
-      c.strokeStyle = V.alpha(C.line, 0.95);
-      c.lineWidth = 1;
-      c.strokeRect(x0 + 0.5, y0 + 0.5, pw - 1, ph - 1);
-      c.restore();
-      c.save();
-      c.strokeStyle = V.alpha(C.line, 0.7);
-      c.lineWidth = 1;
-      c.setLineDash([2, 5]);
-      for (var g = 1; g <= 3; g++) {
-        var gy = y0 + ph * g / 4;
-        c.beginPath();
-        c.moveTo(x0, gy);
-        c.lineTo(x1, gy);
-        c.stroke();
-      }
-      c.restore();
-
-      var aFrac = tokenFrac(2.5);
-      var bFrac = tokenFrac(5);
-      var wa = x0 + aFrac * pw;
-      var wb = x0 + bFrac * pw;
-      c.save();
-      c.fillStyle = V.alpha(C.lilac, 0.12);
-      c.fillRect(wa, y0, wb - wa, ph);
-      c.strokeStyle = V.alpha(C.lilac, 0.55);
-      c.lineWidth = 1;
-      c.setLineDash([4, 4]);
-      c.beginPath();
-      c.moveTo(wa, y0);
-      c.lineTo(wa, y1);
-      c.moveTo(wb, y0);
-      c.lineTo(wb, y1);
-      c.stroke();
-      c.restore();
-
+      var py = [yTop, yTop + panelH + gap, yTop + 2 * (panelH + gap)];
+      var wa = x0 + tokenFrac(2.5) * pw;
+      var wb = x0 + tokenFrac(5) * pw;
       var wc = (wa + wb) / 2;
-      txt(c, "Phase Change", wc, y0 - 27, {
-        align: "center",
-        size: small ? 9 : 10.5,
-        font: '700 ' + (small ? 9 : 10.5) + 'px "Barlow", "Open Sans", sans-serif',
-        color: C.gold
-      });
-      txt(c, DE ? "~2,5–5B Tokens" : "~2.5–5B Tokens", wc, y0 - 13, {
-        align: "center",
-        size: small ? 8.5 : 9.5,
-        color: C.gold
-      });
-
       var N = 90;
-      var induction = [], icl = [], loss = [];
+      var induction = [], icl = [], loss = [], oneLoss = [];
+      function smooth(t) { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); }
       for (var i = 0; i <= N; i++) {
         var t = i / N;
-        induction.push(0.12 + 0.72 * sigmoid((t - 0.50) / 0.055));
-        icl.push(0.10 + 0.64 * sigmoid((t - 0.56) / 0.065));
-        var lossFrac = 0.30 + 0.48 * Math.min(1, Math.max(0, (t - 0.05) / 0.95)) +
-          0.055 * Math.exp(-Math.pow((t - 0.56) / 0.055, 2));
-        loss.push(lossFrac);
+        induction.push(0.10 + 0.70 * sigmoid((t - 0.50) / 0.055));
+        icl.push(0.10 + 0.32 * sigmoid((t - 0.56) / 0.065));
+        loss.push(3.00 - 0.65 * smooth((t - 0.05) / 0.95) + 0.10 * Math.exp(-Math.pow((t - 0.56) / 0.06, 2)));
+        oneLoss.push(3.00 - 0.65 * smooth((t - 0.05) / 0.95));
       }
+      var lossBump = loss[Math.round(0.56 * N)];
+      function panel(title, color, ticks, unit, py0) {
+        c.save();
+        c.fillStyle = V.alpha(C.paper2, 0.55);
+        c.fillRect(x0, py0, pw, panelH);
+        c.strokeStyle = V.alpha(C.line, 0.9);
+        c.lineWidth = 1;
+        c.strokeRect(x0 + 0.5, py0 + 0.5, pw - 1, panelH - 1);
+        c.fillStyle = V.alpha(C.lilac, 0.12);
+        c.fillRect(wa, py0, wb - wa, panelH);
+        c.strokeStyle = V.alpha(C.lilac, 0.55);
+        c.setLineDash([4, 4]);
+        c.beginPath();
+        c.moveTo(wa, py0);
+        c.lineTo(wa, py0 + panelH);
+        c.moveTo(wb, py0);
+        c.lineTo(wb, py0 + panelH);
+        c.stroke();
+        c.restore();
+        for (var k = 0; k < ticks.length; k++) {
+          var gy = py0 + panelH - (k / (ticks.length - 1)) * panelH;
+          c.save();
+          c.strokeStyle = V.alpha(C.line, 0.5);
+          c.setLineDash([2, 5]);
+          c.beginPath();
+          c.moveTo(x0, gy);
+          c.lineTo(x1, gy);
+          c.stroke();
+          c.restore();
+          txt(c, ticks[k], x0 - 7, gy, { align: "right", size: small ? 7.6 : 8.6, color: C.muted });
+        }
+        txt(c, title, x0 + 8, py0 + 13, {
+          size: small ? 9.5 : 11, color: color,
+          font: '700 ' + (small ? 9.5 : 11) + 'px "Barlow", "Open Sans", sans-serif',
+          bg: C.paper2, bgAlpha: 0.85
+        });
+        if (unit) txt(c, unit, x1 - 8, py0 + 13, { align: "right", size: small ? 8 : 9, color: C.muted, bg: C.paper2, bgAlpha: 0.85 });
+      }
+      function line(values, color, width, dashed, py0, min, max) {
+        c.save();
+        c.strokeStyle = color;
+        c.lineWidth = width;
+        if (dashed) c.setLineDash([4, 4]);
+        c.lineJoin = "round";
+        c.lineCap = "round";
+        c.beginPath();
+        for (var i = 0; i <= N; i++) {
+          var x = x0 + (i / N) * pw;
+          var v = (values[i] - min) / (max - min);
+          var y = py0 + (1 - v) * panelH;
+          if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
+        }
+        c.stroke();
+        c.restore();
+      }
+      panel(DE ? "Induktionskopf" : "Induction head", C.blue, ["0", DE ? "0,5" : "0.5", "1"], DE ? "Score" : "score", py[0]);
+      line(induction, C.blue, 2.4, false, py[0], 0, 1);
+      line(new Array(N + 1).fill(0.05), C.muted, 1.2, true, py[0], 0, 1);
+      panel(DE ? "In-Context-Learning" : "In-context learning", C.gold, ["0", DE ? "0,25" : "0.25", DE ? "0,5" : "0.5"], "nats", py[1]);
+      line(icl, C.gold, 2.4, false, py[1], 0, 0.5);
+      line(new Array(N + 1).fill(0.12), C.muted, 1.2, true, py[1], 0, 0.5);
+      panel(DE ? "Trainings-Loss" : "Training loss", C.green, [DE ? "2,2" : "2.2", DE ? "2,6" : "2.6", DE ? "3,0" : "3.0"], "nats", py[2]);
+      line(loss, C.green, 2.4, false, py[2], 2.2, 3.0);
+      line(oneLoss, C.muted, 1.2, true, py[2], 2.2, 3.0);
 
-      plotLine(c, induction.map(function (v) { return 1 - v; }), C.blue, 1.8, x0, y0, pw, ph);
-      plotLine(c, icl.map(function (v) { return 1 - v; }), C.gold, 1.8, x0, y0, pw, ph);
-      plotLine(c, loss, C.green, 1.8, x0, y0, pw, ph);
+      txt(c, DE ? "Phase Change · ~2,5–5B Tokens" : "phase change · ~2.5–5B tokens", wc, yTop - 10, {
+        align: "center", size: small ? 9 : 10.5, color: C.gold,
+        font: '700 ' + (small ? 9 : 10.5) + 'px "Barlow", "Open Sans", sans-serif',
+        bg: C.paper, bgAlpha: 0.9
+      });
+      txt(c, DE ? "< 0,15 nats" : "< 0.15 nats", x0 + 8, py[1] + panelH - (0.15 / 0.5) * panelH - 8, {
+        size: small ? 7.6 : 8.6, color: C.gold
+      });
+      txt(c, DE ? "~0,4 nats" : "~0.4 nats", x1 - 8, py[1] + panelH - (0.40 / 0.5) * panelH - 8, {
+        align: "right", size: small ? 7.6 : 8.6, color: C.gold
+      });
+      txt(c, DE ? "Buckel" : "bump", x0 + 0.56 * pw, py[2] + panelH - ((lossBump - 2.2) / 0.8) * panelH - 10, {
+        align: "center", size: small ? 7.6 : 8.6, color: C.green
+      });
 
-      var ticks = [
-        { v: 1, l: "1B" },
-        { v: 2.5, l: DE ? "2,5B" : "2.5B" },
-        { v: 5, l: "5B" },
-        { v: 10, l: "10B" }
-      ];
+      var baseY = py[2] + panelH;
+      c.save();
+      c.strokeStyle = V.alpha(C.lineStrong, 0.9);
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(x0, baseY + 4);
+      c.lineTo(x1, baseY + 4);
+      c.stroke();
+      c.restore();
+      var ticks = [{ v: 1, l: "1B" }, { v: 2.5, l: DE ? "2,5B" : "2.5B" }, { v: 5, l: "5B" }, { v: 10, l: "10B" }];
       for (var k = 0; k < ticks.length; k++) {
         var tx = x0 + tokenFrac(ticks[k].v) * pw;
         c.save();
         c.strokeStyle = V.alpha(C.lineStrong, 0.8);
         c.lineWidth = 1;
         c.beginPath();
-        c.moveTo(tx, y1);
-        c.lineTo(tx, y1 + 4);
+        c.moveTo(tx, baseY + 4);
+        c.lineTo(tx, baseY + 8);
         c.stroke();
         c.restore();
-        txt(c, ticks[k].l, tx, y1 + 15, { align: "center", size: 8, color: C.muted });
+        txt(c, ticks[k].l, tx, baseY + 18, { align: "center", size: small ? 7.6 : 8.4, color: C.muted });
       }
 
-      var items = small ? [
-        [C.blue, "Induction"],
-        [C.gold, "ICL"],
-        [C.green, DE ? "Loss" : "loss"]
-      ] : [
-        [C.blue, DE ? "Induction-Kopf" : "Induction head"],
-        [C.gold, DE ? "In-Context-Learning" : "In-context learning"],
-        [C.green, DE ? "Trainings-Loss" : "Training loss"]
-      ];
-      var lx = x0 + 8, ly = y0 + 14;
-      for (var m = 0; m < items.length; m++) {
-        var adv = legendWidth(c, items[m][1], 8.2);
-        if (lx + adv > x1 - 4) {
-          lx = x0 + 8;
-          ly += 15;
-        }
-        legendItem(c, lx, ly, items[m][0], items[m][1], 8.2);
-        lx += adv + 14;
-      }
-
+      var ly = baseY + 34;
+      var l1 = DE ? "mehrschichtiges Modell" : "multi-layer model";
+      var l2 = DE ? "1-Schicht-Modell" : "1-layer model";
+      var adv = legendWidth(c, l1, small ? 7.8 : 8.6);
+      legendItem(c, x0, ly, C.soft, l1, small ? 7.8 : 8.6);
+      var lx2 = x0 + adv + 8;
+      c.save();
+      c.strokeStyle = C.muted;
+      c.lineWidth = 1.4;
+      c.setLineDash([4, 4]);
+      c.beginPath();
+      c.moveTo(lx2, ly);
+      c.lineTo(lx2 + 13, ly);
+      c.stroke();
+      c.restore();
+      txt(c, l2, lx2 + 17, ly, { size: small ? 7.8 : 8.6, color: C.soft });
       txt(c, DE
-        ? "ICL <0,15 → ~0,4 nats · >75 % des finalen ICL im Fenster"
-        : "ICL <0.15 → ~0.4 nats · >75 % of final ICL in window",
-        pad, y1 + 33, { size: 8.2, color: C.muted });
-      txt(c, "Olsson et al. (2022), In-context Learning and Induction Heads",
-        pad, y1 + 49, { size: 8, color: C.muted });
+        ? "Vorher: ICL < 0,15 · Im Fenster: Induktionskopf, ICL-Sprung, Loss-Buckel · Nachher: ICL ~0,4 nats."
+        : "Before: ICL < 0.15 · In the window: induction head, ICL jump, loss bump · After: ICL ~0.4 nats.",
+        pad, ly + 18, { size: small ? 7.2 : 8.2, color: C.muted });
+      txt(c, "Olsson et al. (2022), In-context Learning and Induction Heads", pad, H - 10, {
+        size: small ? 7 : 7.8, color: C.muted
+      });
     }
-
     function addHover(x, y, w, h, text) {
       if (!text) return;
       hoverHits.push({ x: x, y: y, w: w, h: h, text: text });
