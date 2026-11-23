@@ -266,10 +266,15 @@
         ctx.strokeRect(x, baseY - ph, tw, ph);
         var capY = baseY - ph;
         ctx.shadowColor = col;
-        ctx.shadowBlur = isTarget ? 14 : 6;
-        ctx.fillStyle = isTarget ? C.gold : col;
-        ctx.beginPath(); ctx.arc(x + tw / 2, capY, isTarget ? 4 : 2.6, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = isTarget ? 10 : 4;
+        ctx.fillStyle = C.paper;
+        ctx.strokeStyle = isTarget ? C.gold : col;
+        ctx.lineWidth = isTarget ? 1.8 : 1.3;
+        ctx.beginPath(); ctx.arc(x + tw / 2, capY, isTarget ? 7 : 5.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         ctx.shadowBlur = 0;
+        ctx.strokeStyle = isTarget ? C.gold : col;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(x + tw / 2 - 3, capY); ctx.lineTo(x + tw / 2 + 3, capY); ctx.stroke();
         ctx.fillStyle = isTarget ? C.green : C.inkSoft || C.soft || C.ink;
         ctx.font = (isTarget ? '700 ' : '600 ') + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center"; ctx.textBaseline = "bottom";
@@ -360,6 +365,7 @@
         readout.innerHTML = '<span><b>' + (DE ? "Ziel" : "target") + ' ' + (target + 1) + '/' + tokens.length + ' · ' + tokens[target] + '</b></span>' +
           '<span><b>Loss</b> ' + loss.toFixed(4) + '</span>' +
           '<span><b>p(' + tokens[target] + ')</b> ' + (p[target] * 100).toFixed(1) + '%</span>' +
+          '<span><b>Σ</b> ' + (p.reduce(function (a, b) { return a + b; }, 0) * 100).toFixed(1) + '%</span>' +
           '<span><b>∇ ' + tokens[target] + '</b> ' + (g[target] >= 0 ? "+" : "") + g[target].toFixed(3) + '</span>' + batchInfo;
       }
       // sparkline
@@ -437,6 +443,11 @@
       var i = barAt(x, y);
       if (i < 0) return;
       cancelBatch(false);
+      if (i !== target) {
+        target = i;
+        sequenceDone = false;
+        buildTargets();
+      }
       dragBar = i;
       prevProbs = softmax(logits).slice();
       history = [lossOf(softmax(logits))];

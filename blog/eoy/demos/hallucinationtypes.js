@@ -338,6 +338,12 @@
       none: { label: L("hilft nicht", "does not help"), cls: "is-none" }
     };
 
+    var RAG_DOCS = [
+      { id: "D1", angle: 12, answer: true, text: L("Berlin liegt an der Spree.", "Berlin lies on the Spree.") },
+      { id: "D2", angle: 28, text: L("Die Spree mündet in die Havel.", "The Spree flows into the Havel.") },
+      { id: "D3", angle: 61, text: L("Berlin ist die Hauptstadt von Deutschland.", "Berlin is the capital of Germany.") },
+      { id: "D4", angle: 84, text: L("Die Elbe fließt durch Dresden.", "The Elbe flows through Dresden.") }
+    ];
     var selected = Math.max(0, Math.min(TYPES.length - 1, lastSelected));
     var activeMeasure = {};
     var activeClaim = 0;
@@ -351,14 +357,6 @@
         '<div class="ls-hx-source-claim"><span>' + L("Behauptung", "Claim") + '</span></div>' +
         '<div class="ls-hx-source-card is-context" data-source-kind="context"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
       '</div>' +
-      '<div class="ls-hx-contextpos">' +
-        '<div class="ls-hx-contextpos-head"><b>' + L("RAG-Kontext", "RAG context") + '</b><span>' + L("Anfang und Ende werden besser genutzt als die Mitte.", "Beginning and end are used better than the middle.") + '</span></div>' +
-        '<div class="ls-hx-contextpos-bar" aria-hidden="true">' +
-          '<div class="ls-hx-contextpos-zones"><span class="is-edge">' + L("Anfang", "start") + '</span><span class="is-mid">' + L("Mitte", "middle") + '</span><span class="is-edge">' + L("Ende", "end") + '</span></div>' +
-          '<svg viewBox="0 0 200 28" preserveAspectRatio="none"><path d="M4 6 Q50 30 100 28 T196 6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/></svg>' +
-        '</div>' +
-        '<p class="ls-hx-contextpos-note">' + L("Liu et al. (2023): Relevante Information am Anfang oder Ende wird oft besser gefunden; in der Mitte langer Kontexte geht sie manchmal unter. RAG kann das verstärken, wenn es viele Chunks packt.", "Liu et al. (2023): relevant information at the beginning or end is often found better; in the middle of long contexts it is sometimes lost. RAG can amplify this when it packs many chunks.") + '</p>' +
-      '</div>' +
       '<div class="ls-hx-grid">' +
         '<section class="ls-hx-panel ls-hx-source"><div class="ls-hx-panel-head"></div><div class="ls-hx-source-body"></div><p class="ls-hx-source-note"></p><p class="ls-hx-cite"></p></section>' +
         '<section class="ls-hx-panel ls-hx-answer"><div class="ls-hx-question"><span></span><b></b></div><div class="ls-hx-claims"></div><div class="ls-hx-detail"></div><div class="ls-hx-score"><span>FActScore</span><div class="ls-hx-scorebar"><i></i></div><b></b></div></section>' +
@@ -368,7 +366,28 @@
         '<div class="ls-hx-risk"><div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("rechts = plausibel · oben = gedeckt", "right = plausible · top = grounded") + '</span></div><div class="ls-hx-risk-svg"></div></div>' +
         '<div class="ls-hx-measures"></div>' +
       '</div>' +
-      '<div class="ls-hx-takeaway"></div>';
+      '<div class="ls-hx-takeaway"></div>' +
+      '<details class="ls-hx-ragbox">' +
+        '<summary><span class="ls-hx-ragbox-mark">↗</span><b>' + L("RAG in 30 Sekunden", "RAG in 30 seconds") + '</b><span>' + L("So kommen passende Sätze in den Kontext", "How fitting sentences enter the context") + '</span></summary>' +
+        '<div class="ls-hx-ragbox-body">' +
+          '<p class="ls-hx-rag-query"><b>' + L("Frage", "Question") + ':</b> ' + L("An welchem Fluss liegt Berlin?", "Which river is Berlin on?") + '</p>' +
+          '<div class="ls-hx-rag-steps">' +
+            '<div><b>1</b><span>' + L("Sätze vektorisieren", "Embed sentences") + '</span></div>' +
+            '<div><b>2</b><span>' + L("Winkel zur Frage messen", "Measure the angle to the question") + '</span></div>' +
+            '<div><b>3</b><span>' + L("Treffer in den Kontext legen", "Put hits into the context") + '</span></div>' +
+            '<div><b>4</b><span>' + L("Beim Generieren mitlesen", "Read along while generating") + '</span></div>' +
+          '</div>' +
+          '<div class="ls-hx-rag-lab">' +
+            '<div class="ls-hx-rag-viz"><svg class="ls-hx-rag-svg" viewBox="0 0 280 160" role="img"></svg></div>' +
+            '<div class="ls-hx-rag-side">' +
+              '<label class="ls-hx-rag-threshold"><span>' + L("Grenzwinkel", "Angle threshold") + '</span><input type="range" class="ls-hx-rag-range" min="10" max="85" step="1" value="35"><output class="ls-hx-rag-angle">35°</output></label>' +
+              '<div class="ls-hx-rag-context"><div class="ls-hx-rag-context-head"><b>' + L("Im Kontext", "In the context") + '</b><span class="ls-hx-rag-count"></span></div><div class="ls-hx-rag-list"></div></div>' +
+              '<p class="ls-hx-rag-hint" aria-live="polite"></p>' +
+            '</div>' +
+          '</div>' +
+          '<p class="ls-hx-rag-note">' + L("Der Grenzwinkel ist der einzige Regler. Zu klein: die richtige Quelle fehlt. Zu groß: irrelevante Sätze kommen mit. Retrieval ist Suche nach Richtung, kein Verstehen. Wichtig: Anfang und Ende eines langen Kontexts werden besser genutzt als die Mitte; pack die wichtigste Quelle an den Rand.", "The threshold is the only control. Too small: the right source is missing. Too large: irrelevant sentences come along. Retrieval is a search for direction, not understanding. Important: the beginning and end of a long context are used better than the middle, so put the key source at the edge.") + '</p>' +
+        '</div>' +
+      '</details>';
     root.appendChild(el);
 
     var chips = el.querySelector(".ls-hx-chips");
@@ -387,6 +406,12 @@
     var riskSvg = el.querySelector(".ls-hx-risk-svg");
     var measuresEl = el.querySelector(".ls-hx-measures");
     var takeawayEl = el.querySelector(".ls-hx-takeaway");
+    var ragRange = el.querySelector(".ls-hx-rag-range");
+    var ragAngle = el.querySelector(".ls-hx-rag-angle");
+    var ragList = el.querySelector(".ls-hx-rag-list");
+    var ragCount = el.querySelector(".ls-hx-rag-count");
+    var ragHint = el.querySelector(".ls-hx-rag-hint");
+    var ragSvgEl = el.querySelector(".ls-hx-rag-svg");
 
     function type() { return TYPES[selected]; }
     function simMode(t) {
@@ -566,6 +591,58 @@
       else lead = L("Dieser Schalter ändert hier nichts: ", "This switch does nothing here: ") + (notes[0] || L("die Ursache liegt anderswo.", "the cause is elsewhere."));
       takeawayEl.innerHTML = '<b>' + L("Zum Mitnehmen", "Takeaway") + '</b><p>' + esc(lead) + '</p><p>' + L("Kein Schalter heilt alles: kombiniere Quelle + Gegenprüfung und ergänze Datum oder Zitatprüfung, wo nötig.", "No single switch heals everything: combine source + verification and add date or citation checks where needed.") + '</p>';
     }
+    function renderRagSvg(thr) {
+      var ox = 42, oy = 132, r = 100, qr = 118;
+      var sector = [];
+      for (var a = 0; a <= thr; a += 2) {
+        sector.push([ox + Math.cos(a * Math.PI / 180) * r, oy - Math.sin(a * Math.PI / 180) * r]);
+      }
+      var d = "M" + ox + " " + oy + " L" + sector.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" L") + " Z";
+      var out = '<path class="ls-hx-rag-sector" d="' + d + '"/>' +
+        '<line class="ls-hx-rag-axis" x1="' + ox + '" y1="' + (oy + 8) + '" x2="' + (ox + qr + 8) + '" y2="' + (oy + 8) + '"/>' +
+        '<line class="ls-hx-rag-axis" x1="' + ox + '" y1="' + (oy + 8) + '" x2="' + ox + '" y2="' + (oy - r - 4) + '"/>' +
+        '<line class="ls-hx-rag-query" x1="' + ox + '" y1="' + oy + '" x2="' + (ox + qr) + '" y2="' + oy + '"/>' +
+        '<path class="ls-hx-rag-arrowhead" d="M' + (ox + qr) + ' ' + oy + ' l -9 -4 l 0 8 z"/>' +
+        '<text class="ls-hx-rag-label is-query" x="' + (ox + qr - 10) + '" y="' + (oy + 17) + '" text-anchor="end">' + L("Frage", "question") + '</text>';
+      RAG_DOCS.forEach(function (doc) {
+        var ang = doc.angle * Math.PI / 180;
+        var x = ox + Math.cos(ang) * r, y = oy - Math.sin(ang) * r;
+        var on = doc.angle <= thr;
+        var anchor = Math.cos(ang) >= 0 ? "start" : "end";
+        var lx = x + (Math.cos(ang) >= 0 ? 7 : -7);
+        out += '<line class="ls-hx-rag-doc' + (on ? " is-in" : "") + '" x1="' + ox + '" y1="' + oy + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' +
+          '<circle class="ls-hx-rag-dot' + (on ? " is-in" : "") + (doc.answer ? " is-answer" : "") + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (doc.answer ? 4.5 : 3) + '"/>' +
+          '<text class="ls-hx-rag-label' + (on ? " is-in" : "") + (doc.answer ? " is-answer" : "") + '" x="' + lx.toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" text-anchor="' + anchor + '">' + doc.id + '</text>';
+      });
+      return out;
+    }
+    function renderRag() {
+      if (!ragRange) return;
+      var thr = parseInt(ragRange.value, 10) || 35;
+      var inCtx = RAG_DOCS.filter(function (d) { return d.angle <= thr; });
+      var hasAnswer = inCtx.some(function (d) { return d.answer; });
+      var hasNoise = inCtx.some(function (d) { return !d.answer && d.angle > 70; });
+      ragAngle.textContent = thr + "°";
+      ragCount.textContent = inCtx.length + " / " + RAG_DOCS.length;
+      ragList.innerHTML = RAG_DOCS.map(function (d) {
+        var on = d.angle <= thr;
+        return '<div class="ls-hx-rag-row' + (on ? " is-in" : "") + (d.answer ? " is-answer" : "") + '">' +
+          '<b>' + d.id + '</b><span>' + esc(d.text) + '</span><em>' + d.angle + '°</em>' +
+          '<i>' + (on ? L("im Kontext", "in context") : L("nicht abgerufen", "not retrieved")) + '</i></div>';
+      }).join("");
+      var hint = hasNoise
+        ? L("Zu breit: D1 ist dabei, aber D4 ist irrelevant. Mehr Kontext kann ablenken.", "Too broad: D1 is included, but D4 is irrelevant. More context can distract.")
+        : hasAnswer
+          ? L("D1 ist im Kontext: Das Modell kann die Antwort daraus lesen.", "D1 is in the context: the model can read the answer from it.")
+          : L("Die richtige Quelle D1 fehlt. RAG kann die Antwort nicht stützen.", "The right source D1 is missing. RAG cannot support the answer.");
+      ragHint.textContent = hint;
+      ragHint.className = "ls-hx-rag-hint " + (hasNoise ? "is-warn" : hasAnswer ? "is-good" : "is-bad");
+      ragSvgEl.innerHTML = renderRagSvg(thr);
+      ragSvgEl.setAttribute("aria-label", L("Frage und vier Satzrichtungen; ") + InCtxLabel(inCtx.length) + ". " + hint, "Question and four sentence directions; " + InCtxLabel(inCtx.length) + ". " + hint);
+    }
+    function InCtxLabel(n) {
+      return L(n + " Sätze im Kontext", n + " sentences in context");
+    }
     function render() {
       lastSelected = selected;
       var t = type();
@@ -578,7 +655,9 @@
       renderMeasures(t);
       renderTakeaway(t);
     }
+    if (ragRange) ragRange.addEventListener("input", renderRag);
     render();
+    renderRag();
     return {
       update: function () {},
       next: function () {

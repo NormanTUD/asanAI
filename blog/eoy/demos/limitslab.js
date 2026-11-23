@@ -112,13 +112,13 @@
     function isRun(id) { return !!state.run[id]; }
     function test() { return TESTS[state.test] || TESTS.paraphrase; }
     function head() {
-      return '<div class="ls-ll-head"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><b>' + L("Vier Bruchstellen, kein Benchmark", "Four failure points, not a benchmark") + '</b><p>' + L("Simulierte Beobachtungen, keine echte Modellausgabe. Jeder Test nennt das reale Protokoll.", "Simulated observations, not real model output. Every test states the real protocol.") + '</p></div>' +
-        '<div class="ls-ll-disclaimer"><b>' + L("SIMULATION", "SIMULATED") + '</b><span>' + L("Die Antworten sind konstruierte Beispiele. Sie zeigen den Fehlermodus, nicht die Leistung eines bestimmten Modells. Die Protokolle sind real.", "The answers are constructed examples. They show the failure mode, not the performance of a particular model. The protocols are real.") + '</span></div>';
+      return '<div class="ls-ll-head"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><b>' + L("Vier Bruchstellen, kein Benchmark", "Four failure points, not a benchmark") + '</b><p>' + L("Ein Prompt ist eine Stichprobe. Wähle einen Test, starte die Simulation und lies das reale Protokoll. Antworten sind konstruiert, Protokolle echt.", "One prompt is one sample. Choose a test, run the simulation, and read the real protocol. Answers are constructed, protocols are real.") + '</p></div>';
     }
     function tabs() {
       return '<div class="ls-ll-tabs" role="tablist">' + ORDER.map(function (id) {
         var t = TESTS[id];
-        return '<button type="button" role="tab" class="ls-ll-tab' + (state.test === id ? ' is-active' : '') + '" data-test="' + id + '" aria-selected="' + (state.test === id ? "true" : "false") + '">' + esc(t.label) + '</button>';
+        var done = isRun(id);
+        return '<button type="button" role="tab" class="ls-ll-tab' + (state.test === id ? ' is-active' : '') + (done ? ' is-done' : '') + '" data-test="' + id + '" aria-selected="' + (state.test === id ? "true" : "false") + '">' + (done ? '<span class="ls-ll-tab-check">✓</span> ' : '') + esc(t.label) + '</button>';
       }).join("") + '</div>';
     }
     function visualHead(t) {
@@ -219,7 +219,7 @@
     }
     function summary() {
       var count = ORDER.filter(isRun).length;
-      return '<div class="ls-ll-summary"><span>' + count + ' / 4 ' + L("Tests gelaufen", "tests run") + '</span><div class="ls-ll-summary-track"><i style="width:' + (count * 25) + '%"></i></div><span>' + L("Simulationen, keine Benchmark-Werte.", "Simulations, not benchmark scores.") + '</span></div>';
+      return '<div class="ls-ll-summary"><span>' + count + ' / 4 ' + L("Tests gelaufen", "tests run") + '</span><div class="ls-ll-summary-track"><i style="width:' + (count * 25) + '%"></i></div> <span>' + L("Kein Test beweist Zuverlässigkeit; erst Variationen zeigen, wo sie bricht.", "No single test proves reliability; only variations show where it breaks.") + '</span></div>';
     }
     function render() {
       var t = test();
