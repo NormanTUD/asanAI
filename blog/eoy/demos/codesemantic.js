@@ -20,6 +20,7 @@
     var tipEl = el.querySelector(".ls-codesem-tip");
     var C = api.colors();
     var size = null, kind = "language", task = "meaning", raf = 0, running = true;
+    var hoverHits = [];
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var CARDS = [
       {
@@ -145,6 +146,30 @@
       });
       renderCompare();
     }
+    function addPointHit(x, y, text, r) {
+      hoverHits.push({ x: x, y: y, r: r, text: text });
+    }
+    function addRectHit(x, y, w, h, text) {
+      hoverHits.push({ x: x, y: y, w: w, h: h, text: text });
+    }
+    function updateTip(x, y) {
+      var hit = null;
+      for (var i = hoverHits.length - 1; i >= 0; i--) {
+        var h = hoverHits[i];
+        if (h.r != null) {
+          if (Math.hypot(x - h.x, y - h.y) <= h.r + 4) { hit = h; break; }
+        } else if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
+          hit = h; break;
+        }
+      }
+      if (!hit) { tipEl.classList.remove("is-on"); return; }
+      tipEl.textContent = hit.text;
+      tipEl.classList.add("is-on");
+      var left = Math.max(8, Math.min(x + 14, size.w - 310));
+      var top = Math.max(8, Math.min(y + 14, size.h - 84));
+      tipEl.style.left = left + "px";
+      tipEl.style.top = top + "px";
+    }
     function drawCard(ctx, card, x, y, cw, ch, active, featureColor) {
       var col = cardColor(card);
       var noisePoints = [];
@@ -175,7 +200,7 @@
         var nw = ctx.measureText(noiseText).width;
         ctx.fillStyle = V.alpha(featureColor, 0.22);
         ctx.fillRect(nx - 2, codeY - codeFont * 0.8, nw + 4, codeFont * 1.15);
-        noisePoints.push({ x: nx + nw / 2, y: codeY, noise: true, color: col, i: noisePoints.length });
+        noisePoints.push({ x: nx + nw / 2, y: codeY, noise: true, color: col, i: noisePoints.length, text: noiseText, cardTitle: card.title, cardKey: card.key });
       });
       ctx.fillStyle = C.ink;
       ctx.fillText(card.code, codeX, codeY);
@@ -249,7 +274,7 @@
             if (variant.noise.indexOf(key) >= 0) {
               ctx.fillStyle = V.alpha(featureColor, 0.22);
               ctx.fillRect(lx - 1, lineY - sentenceFont * 0.82, ww + 2, sentenceFont * 1.12);
-              noisePoints.push({ x: lx + ww / 2, y: lineY, noise: true, color: col, i: noisePoints.length });
+              noisePoints.push({ x: lx + ww / 2, y: lineY, noise: true, color: col, i: noisePoints.length, text: key, label: variant.label, sentence: variant.sentence });
             }
             ctx.fillStyle = C.ink;
             ctx.fillText(word, lx, lineY);
@@ -264,6 +289,7 @@
     }
     function draw(now) {
       if (!size) return;
+      hoverHits = [];
       now = now || performance.now();
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
@@ -307,6 +333,33 @@
       var nodeX = spaceX + spaceW * 0.74;
       var nodeY = spaceTop + spaceH * 0.52;
       var filterX = spaceX - Math.max(8, w * 0.012);
+      var targets = null;
+      if (detail) {
+        var targetR = Math.min(nodeR * 0.72, spaceW * 0.12, 34);
+        var rightRoom = spaceRight - nodeX - targetR - 4;
+        var leftRoom = nodeX - spaceX - targetR - 4;
+        var half = Math.min(Math.max(targetR * 1.5, 30), Math.max(20, Math.min(rightRoom, leftRoom)));
+        var cleanCount = 0, badCount = 0;
+        if (isLang) {
+          LANG_CARDS.forEach(function (card) {
+            card.variants.forEach(function (v) { if (v.noise.length) badCount += 1; else cleanCount += 1; });
+          });
+        } else {
+          CARDS.forEach(function (card) { if (card.key === "js") cleanCount += 1; else badCount += 1; });
+        }
+        function countLabel(n, one, many) { return n + " " + (n === 1 ? one : many); }
+        var okSub = isLang ? countLabel(cleanCount, DE ? "Satz" : "sentence", DE ? "Sätze" : "sentences") : countLabel(cleanCount, DE ? "Block" : "block", DE ? "Blöcke" : "blocks");
+        var badSub = isLang ? countLabel(badCount, DE ? "Satz" : "sentence", DE ? "Sätze" : "sentences") : countLabel(badCount, DE ? "Block" : "block", DE ? "Blöcke" : "blocks");
+        targets = {
+          clean: { x: nodeX - half, y: nodeY, r: targetR, color: C.green, main: isLang ? (DE ? "korrekt" : "correct") : (DE ? "schon JS" : "already JS"), sub: okSub },
+          bad: { x: nodeX + half, y: nodeY, r: targetR, color: C.gold, main: isLang ? (DE ? "Fehler" : "errors") : (DE ? "nach JS" : "needs JS"), sub: badSub }
+        };
+      }
+      function targetFor(start) {
+        if (!detail) return { x: nodeX, y: nodeY, r: nodeR };
+        if (isLang) return start.variant && start.variant.noise.length ? targets.bad : targets.clean;
+        return start.card.key === "js" ? targets.clean : targets.bad;
+      }
       var positions = list.map(function (card, idx) {
         return isLang
           ? drawLangCard(ctx, card, cardX, starts[idx], cardW, cardH, true, feat)
@@ -372,30 +425,42 @@
         var spread = count > 1 ? 9 : 0;
         var entries = [];
         for (var j = 0; j < count; j++) {
-          entries.push({ x: baseX + (j - (count - 1) / 2) * spread, y: baseY, card: card });
+          entries.push({ x: baseX + (j - (count - 1) / 2) * spread, y: baseY, card: card, variant: card.variants ? card.variants[j] : null });
         }
         return { card: card, baseX: baseX, baseY: baseY, entries: entries };
       });
       var startEntries = [];
       startGroups.forEach(function (group) { startEntries = startEntries.concat(group.entries); });
-      function drawMovingPoints(start, card, idx, total, isDetail) {
-        var col = cardColor(card);
-        var dx = nodeX - start.x, dy = nodeY - start.y;
-        var len = Math.hypot(dx, dy) || 1;
-        var ex, ey;
-        if (isDetail) {
-          var ringR = nodeR + 15;
-          var ang = -Math.PI / 2 + (idx / Math.max(1, total)) * Math.PI * 2;
-          ex = nodeX + Math.cos(ang) * ringR;
-          ey = nodeY + Math.sin(ang) * ringR;
+      startEntries.forEach(function (start) {
+        var text;
+        if (isLang) {
+          var variant = start.variant;
+          var verdict = detail
+            ? (variant && variant.noise.length ? (DE ? "Signal: Tippfehler/Schreibweise zählt." : "signal: typo/spelling counts.") : (DE ? "Signal: korrekt." : "signal: correct."))
+            : (DE ? "Rauschen: gleiche Bedeutung." : "noise: same meaning.");
+          text = (variant ? variant.sentence + " — " + variant.label : start.card.title) + "\n" +
+            (DE ? "Aufgabe: " : "task: ") + (detail ? (DE ? "Rechtschreibung" : "spelling") : (DE ? "Bedeutung" : "meaning")) + " · " + verdict;
         } else {
-          ex = nodeX - dx / len * (nodeR + 2);
-          ey = nodeY - dy / len * (nodeR + 2);
+          var c = start.card;
+          var cv = detail ? (c.key === "js" ? (DE ? "ist schon JS." : "is already JS.") : (DE ? "muss nach JS." : "must become JS.")) : "Quicksort.";
+          text = c.code + " — " + c.title + "\n" +
+            (DE ? "Aufgabe: " : "task: ") + (detail ? (DE ? "In JS umschreiben" : "rewrite in JS") : (DE ? "Algorithmus" : "algorithm")) + " · " + cv;
         }
+        start.tip = text;
+        addPointHit(start.x, start.y, text, 10);
+      });
+      function drawMovingPoints(start, card, idx) {
+        var col = cardColor(card);
+        var tgt = targetFor(start);
+        var dx = tgt.x - start.x, dy = tgt.y - start.y;
+        var len = Math.hypot(dx, dy) || 1;
+        var ex = tgt.x - dx / len * (tgt.r + 2);
+        var ey = tgt.y - dy / len * (tgt.r + 2);
         var u = reduced ? 0.72 : ((now / 1700) + idx * 0.23) % 1;
         var e = V.ease(u);
         var px = start.x + (ex - start.x) * e;
         var py = start.y + (ey - start.y) * e;
+        addPointHit(px, py, start.tip || start.card.title, 7);
         ctx.save();
         ctx.globalAlpha = reduced ? 0.55 : 0.10 + 0.82 * Math.sin(Math.PI * u);
         ctx.fillStyle = col;
@@ -420,97 +485,97 @@
         V.label(ctx, group.card.key.toUpperCase(), group.baseX, group.baseY - 15, { font: '700 ' + fontPx(0.92, 9) + 'px "Open Sans", sans-serif', color: cardColor(group.card), align: "center", bg: false });
       }
       list.forEach(function (card, idx) { drawNoiseDots(positions[idx], feat, detail); });
+      list.forEach(function (card, idx) {
+        positions[idx].forEach(function (pos) {
+          if (!pos.noise) return;
+          var t;
+          if (isLang) {
+            t = "„" + pos.text + "“ in „" + pos.sentence + "“\n" + (DE ? "In dieser Aufgabe: " : "in this task: ") +
+              (detail ? (DE ? "Signal (zählt)." : "signal (it counts).") : (DE ? "Rauschen (wird gefiltert)." : "noise (it is filtered)."));
+          } else {
+            t = "„" + pos.text + "“ in „" + pos.cardTitle + "“\n" + (DE ? "In dieser Aufgabe: " : "in this task: ") +
+              (detail ? (DE ? "Signal (Syntax zählt)." : "signal (syntax counts).") : (DE ? "Rauschen (wird gefiltert)." : "noise (it is filtered)."));
+          }
+          addRectHit(pos.x - 14, pos.y - 10, 28, 20, t);
+        });
+      });
       startEntries.forEach(function (start, idx) {
-        drawMovingPoints(start, start.card, idx, startEntries.length, detail);
+        drawMovingPoints(start, start.card, idx);
         drawStartPoint(start);
       });
       startGroups.forEach(drawStartGroup);
-      var nodeColor = detail ? C.gold : C.petrol;
-      var nodeMain, nodeSub, nodeAbove, nodeBelow;
-      if (isLang) {
-        if (detail) {
-          nodeMain = DE ? "Rechtschreibung" : "spelling";
-          nodeSub = DE ? "korrekt / fehlerhaft" : "correct / wrong";
-          nodeAbove = DE ? "Details zählen" : "details matter";
-          nodeBelow = DE ? "Formen bleiben getrennt" : "forms stay separate";
-        } else {
-          nodeMain = DE ? "Bedeutung" : "meaning";
-          nodeSub = DE ? "Hund läuft Straße" : "dog runs street";
-          nodeAbove = DE ? "sprachübergreifend" : "cross-lingual";
-          nodeBelow = DE ? "neun Sätze, ein Punkt" : "nine sentences, one point";
-        }
-      } else {
-        if (detail) {
-          nodeMain = "JS-Rewrite";
-          nodeSub = DE ? "Syntax / Idiome" : "syntax / idioms";
-          nodeAbove = DE ? "Details zählen" : "details matter";
-          nodeBelow = DE ? "Formen bleiben getrennt" : "forms stay separate";
-        } else {
-          nodeMain = "Quicksort";
-          nodeSub = DE ? "Funktion" : "function";
-          nodeAbove = DE ? "abstrakte Bedeutung" : "abstract meaning";
-          nodeBelow = DE ? "fünf landen hier" : "five land here";
-        }
-      }
-      var pulse = 0.5 + 0.5 * Math.sin(now / 430);
-      if (detail) {
+      function drawNode(t, color, main, sub, above, below) {
+        var pulse = 0.5 + 0.5 * Math.sin(now / 430);
         ctx.save();
-        ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = V.alpha(C.gold, 0.55);
+        var glow = ctx.createRadialGradient(t.x, t.y, 2, t.x, t.y, t.r * 2.1);
+        glow.addColorStop(0, V.alpha(color, 0.22));
+        glow.addColorStop(1, V.alpha(C.paper, 0));
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, t.r * 2.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = V.alpha(color, 0.18 + pulse * 0.20);
         ctx.lineWidth = 1.2;
         ctx.beginPath();
-        ctx.arc(nodeX, nodeY, nodeR + 15, 0, Math.PI * 2);
+        ctx.arc(t.x, t.y, t.r + 5 + pulse * 5, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
+        ctx.fillStyle = V.alpha(color, 0.13);
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.font = '700 ' + fontPx(1.18, 11) + 'px "Barlow", sans-serif';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(main, t.x, t.y - 5);
+        ctx.fillStyle = C.soft;
+        ctx.font = '600 ' + fontPx(0.98, 9) + 'px "Open Sans", sans-serif';
+        ctx.fillText(sub, t.x, t.y + 11);
+        if (above) V.label(ctx, above, t.x, t.y - t.r - 18, { font: '700 ' + fontPx(1.05, 10) + 'px "Barlow", sans-serif', color: color, align: "center" });
+        if (below) V.label(ctx, below, t.x, t.y + t.r + 18, { font: '600 ' + fontPx(0.95, 9) + 'px "Open Sans", sans-serif', color: color, align: "center" });
       }
-      ctx.save();
-      var glow = ctx.createRadialGradient(nodeX, nodeY, 2, nodeX, nodeY, nodeR * 2.1);
-      glow.addColorStop(0, V.alpha(nodeColor, 0.22));
-      glow.addColorStop(1, V.alpha(C.paper, 0));
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(nodeX, nodeY, nodeR * 2.1, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = V.alpha(nodeColor, 0.18 + pulse * 0.20);
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.arc(nodeX, nodeY, nodeR + 6 + pulse * 6, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-      ctx.beginPath();
-      ctx.arc(nodeX, nodeY, nodeR, 0, Math.PI * 2);
-      ctx.fillStyle = V.alpha(nodeColor, 0.13);
-      ctx.fill();
-      ctx.strokeStyle = nodeColor;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.fillStyle = nodeColor;
-      ctx.font = '700 ' + fontPx(1.18, 11) + 'px "Barlow", sans-serif';
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(nodeMain, nodeX, nodeY - 6);
-      ctx.fillStyle = C.soft;
-      ctx.font = '600 ' + fontPx(0.98, 9) + 'px "Open Sans", sans-serif';
-      ctx.fillText(nodeSub, nodeX, nodeY + 13);
-      V.label(ctx, nodeAbove, nodeX, nodeY - nodeR - 24, { font: '700 ' + fontPx(1.05, 10) + 'px "Barlow", sans-serif', color: nodeColor, align: "center" });
-      V.label(ctx, nodeBelow, nodeX, nodeY + nodeR + 22, { font: '600 ' + fontPx(0.95, 9) + 'px "Open Sans", sans-serif', color: nodeColor, align: "center" });
+      var nodeText;
+      if (detail) {
+        drawNode(targets.clean, targets.clean.color, targets.clean.main, targets.clean.sub, null, null);
+        drawNode(targets.bad, targets.bad.color, targets.bad.main, targets.bad.sub, null, null);
+        var cleanText = isLang ? (DE ? "korrekt: saubere Sätze." : "correct: clean sentences.") : (DE ? "schon JS: bereits JavaScript." : "already JS: it is JavaScript.");
+        var badText = isLang ? (DE ? "Fehler: Sätze mit Tippfehlern oder Schreibvarianten." : "errors: sentences with typos or spelling variants.") : (DE ? "muss nach JS: noch keine JavaScript-Version." : "needs JS: not JavaScript yet.");
+        addPointHit(targets.clean.x, targets.clean.y, cleanText + "\n" + (DE ? "Knoten: " : "node: ") + targets.clean.sub, targets.clean.r);
+        addPointHit(targets.bad.x, targets.bad.y, badText + "\n" + (DE ? "Knoten: " : "node: ") + targets.bad.sub, targets.bad.r);
+      } else {
+        var nodeMain = isLang ? (DE ? "Bedeutung" : "meaning") : "Quicksort";
+        var nodeSub = isLang ? (DE ? "Hund läuft Straße" : "dog runs street") : (DE ? "Funktion" : "function");
+        var nodeAbove = isLang ? (DE ? "sprachübergreifend" : "cross-lingual") : (DE ? "abstrakte Bedeutung" : "abstract meaning");
+        var nodeBelow = isLang ? (DE ? "neun Sätze, ein Punkt" : "nine sentences, one point") : (DE ? "fünf landen hier" : "five land here");
+        drawNode({ x: nodeX, y: nodeY, r: nodeR }, C.petrol, nodeMain, nodeSub, nodeAbove, nodeBelow);
+        nodeText = isLang ? (DE ? "Bedeutung: Alle Varianten landen hier." : "meaning: all variants land here.") : (DE ? "Quicksort: Alle Varianten landen hier." : "Quicksort: all variants land here.");
+        addPointHit(nodeX, nodeY, nodeText, nodeR);
+      }
       var legend = detail
-        ? (isLang ? (DE ? "gold = Signal (Aufgabe: Rechtschreibung)" : "gold = signal (task: spelling)") : (DE ? "gold = Signal (Aufgabe: In JS umschreiben)" : "gold = signal (task: rewrite in JS)"))
-        : (isLang ? (DE ? "lila = Rauschen (Aufgabe: Bedeutung)" : "lilac = noise (task: meaning)") : (DE ? "lila = Rauschen (Aufgabe: Algorithmus)" : "lilac = noise (task: algorithm)"));
+        ? (isLang
+          ? (DE ? "grün = korrekt · gold = Fehler (Aufgabe: Rechtschreibung)" : "green = correct · gold = error (task: spelling)")
+          : (DE ? "grün = schon JS · gold = muss nach JS (Aufgabe: In JS umschreiben)" : "green = already JS · gold = needs JS (task: rewrite in JS)"))
+        : (isLang
+          ? (DE ? "lila = Rauschen (Aufgabe: Bedeutung)" : "lilac = noise (task: meaning)")
+          : (DE ? "lila = Rauschen (Aufgabe: Algorithmus)" : "lilac = noise (task: algorithm)"));
       V.label(ctx, legend, w - 14, h - 12, { font: '600 ' + fontPx(0.9, 9) + 'px "Open Sans", sans-serif', color: feat, align: "right", bg: false });
       var headingSize = Math.max(10, Math.min(12, w * 0.016));
       var spaceTitle = w < 520
         ? (DE ? "Embedding-Raum" : "Embedding space")
         : (DE ? "Fiktiver Embedding-Raum" : "Fictional embedding space");
       var heading = isLang
-        ? (detail ? (DE ? "Drei Sprachen, Formen zählen" : "Three languages, form matters") : (DE ? "Drei Sprachen, eine Bedeutung" : "Three languages, one meaning"))
-        : (detail ? (DE ? "Verschiedene Oberflächen, Syntax zählt" : "Different surfaces, syntax matters") : (DE ? "Verschiedene Oberflächen, ein Punkt" : "Different surfaces, one point"));
+        ? (detail ? (DE ? "Drei Sprachen, zwei Urteile" : "Three languages, two verdicts") : (DE ? "Drei Sprachen, eine Bedeutung" : "Three languages, one meaning"))
+        : (detail ? (DE ? "Verschiedene Oberflächen, zwei Urteile" : "Different surfaces, two verdicts") : (DE ? "Verschiedene Oberflächen, ein Punkt" : "Different surfaces, one point"));
       V.heading(ctx, heading, 14, 16, C.petrol, headingSize, 1);
       V.label(ctx, spaceTitle, w - 14, 16, { font: '700 ' + headingSize + 'px "Barlow", sans-serif', color: C.muted, align: "right", alpha: 1 });
       canvas.setAttribute("aria-label", detail
         ? (isLang
-          ? (DE ? "Neun Sätze, Aufgabe Rechtschreibung: Tippfehler und Schreibweisen sind Signal; die Formen bleiben getrennt um den Details-Knoten." : "Nine sentences, task spelling: typos and spellings are signal; the forms stay separate around the detail node.")
-          : (DE ? "Fünf Codeblöcke, Aufgabe In JavaScript umschreiben: Syntax und Idiome sind Signal; die Formen bleiben getrennt um den Details-Knoten." : "Five code blocks, task rewrite in JavaScript: syntax and idioms are signal; the forms stay separate around the detail node."))
+          ? (DE ? "Neun Sätze, Aufgabe Rechtschreibung: saubere Sätze landen beim korrekt-Knoten, fehlerhafte beim Fehler-Knoten." : "Nine sentences, task spelling: clean sentences land at the correct node, faulty ones at the error node.")
+          : (DE ? "Fünf Codeblöcke, Aufgabe In JavaScript umschreiben: JavaScript landet bei schon JS, die anderen bei muss nach JS." : "Five code blocks, task rewrite in JavaScript: JavaScript lands at already JS, the others at needs JS."))
         : (isLang
           ? (DE ? "Neun Sätze in drei Sprachen, Aufgabe Bedeutung: Tippfehler, Schreibweise und Sprache werden für diese Aufgabe gefiltert; die Bedeutung landet auf demselben Punkt." : "Nine sentences in three languages, task meaning: typos, spelling, and language are filtered for this task; the meaning lands on the same point.")
           : (DE ? "Fünf Codeblöcke in Python, JavaScript, Java, Rust und Go, Aufgabe Algorithmus: Syntax wird für diese Aufgabe gefiltert; die Bedeutung landet auf demselben Punkt." : "Five code blocks in Python, JavaScript, Java, Rust, and Go, task algorithm: syntax is filtered for this task; the meaning lands on the same point.")));
@@ -539,16 +604,33 @@
     }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); renderTasks(); draw(); });
+    canvas.addEventListener("pointermove", function (e) {
+      var r = canvas.getBoundingClientRect();
+      updateTip(e.clientX - r.left, e.clientY - r.top);
+    });
+    canvas.addEventListener("pointerleave", function () { tipEl.classList.remove("is-on"); });
     renderTasks();
     resize();
     if (!reduced) raf = requestAnimationFrame(loop);
     return {
       update: function (s) { if (s && s.kind) setKind(s.kind); },
       setKind: setKind,
-      next: function () { return false; },
-      prev: function () { return false; },
-      hasNext: function () { return false; },
-      hasPrev: function () { return false; },
+      next: function () {
+        if (isDetailTask()) return false;
+        task = kind === "language" ? "spelling" : "rewrite";
+        renderTasks();
+        draw();
+        return true;
+      },
+      prev: function () {
+        if (!isDetailTask()) return false;
+        task = kind === "language" ? "meaning" : "algorithm";
+        renderTasks();
+        draw();
+        return true;
+      },
+      hasNext: function () { return !isDetailTask(); },
+      hasPrev: function () { return isDetailTask(); },
       resize: resize,
       pause: function () { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; },
       resume: function () { if (!running && !reduced) { running = true; raf = requestAnimationFrame(loop); } else { running = true; draw(); } },
