@@ -197,9 +197,9 @@
     var ctx = curveBox.ctx, w = curveBox.w, h = curveBox.h;
     ctx.clearRect(0, 0, w, h);
     var gold = css("--gold", "#e3be62");
-    var line = "rgba(150,210,230,0.18)";
+    var line = "rgba(150,210,230,0.16)";
     var muted = "rgba(143,170,180,0.9)";
-    var padL = 44, padR = 18, padT = 18, padB = 32;
+    var padL = 48, padR = 20, padT = 20, padB = 36;
     var x0 = padL, x1 = w - padR, y0 = h - padB, y1 = padT;
     var maxRel = Math.max(1, state.maxPos - 1);
     function X(rel) { return x0 + (rel / maxRel) * (x1 - x0); }
@@ -208,51 +208,88 @@
     ctx.strokeStyle = line;
     ctx.lineWidth = 1;
     for (var g = -1; g <= 1; g++) {
-      ctx.globalAlpha = g === 0 ? 0.45 : 0.22;
+      ctx.globalAlpha = g === 0 ? 0.5 : 0.2;
       ctx.beginPath(); ctx.moveTo(x0, Y(g)); ctx.lineTo(x1, Y(g)); ctx.stroke();
     }
     ctx.globalAlpha = 1;
     ctx.fillStyle = muted;
     ctx.font = '600 9px "Open Sans", sans-serif';
     ctx.textAlign = "right";
-    ctx.fillText("+1", x0 - 6, Y(1) + 3);
-    ctx.fillText("0", x0 - 6, Y(0) + 3);
-    ctx.fillText("−1", x0 - 6, Y(-1) + 3);
+    ctx.fillText("+1", x0 - 7, Y(1) + 3);
+    ctx.fillText("0", x0 - 7, Y(0) + 3);
+    ctx.fillText("−1", x0 - 7, Y(-1) + 3);
     ctx.textAlign = "center";
-    ctx.fillText(L("relativer Abstand |m − n|", "relative distance |m − n|"), (x0 + x1) / 2, h - 8);
-    ctx.textAlign = "left";
-    ctx.fillText("0", x0, h - 12);
-    ctx.textAlign = "right";
-    ctx.fillText(String(maxRel), x1, h - 12);
-
-    var step = 0.05;
-    ctx.beginPath();
-    for (var rel = 0; rel <= maxRel + 1e-6; rel += step) {
-      var x = X(rel), y = Y(dotAt(rel));
-      if (rel === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    ctx.fillText(L("relativer Abstand |m − n|", "relative distance |m − n|"), (x0 + x1) / 2, h - 9);
+    for (var t = 0; t <= 4; t++) {
+      var rv = Math.round(maxRel * t / 4);
+      var xx = X(rv);
+      ctx.strokeStyle = line;
+      ctx.beginPath(); ctx.moveTo(xx, y0); ctx.lineTo(xx, y0 + 4); ctx.stroke();
+      ctx.fillStyle = "rgba(143,170,180,0.72)";
+      ctx.textAlign = "center";
+      ctx.fillText(String(rv), xx, h - 19);
     }
+
+    if (state.rope) {
+      ctx.save();
+      ctx.setLineDash([4, 6]);
+      ctx.strokeStyle = "rgba(143,170,180,0.34)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(x0, Y(1)); ctx.lineTo(x1, Y(1)); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = "rgba(143,170,180,0.65)";
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textAlign = "right";
+      ctx.fillText(L("ohne RoPE", "without RoPE"), x1 - 4, Y(1) - 6);
+    }
+
+    var pts = [];
+    for (var rel = 0; rel <= maxRel + 1e-6; rel += 0.04) {
+      pts.push({ x: X(rel), y: Y(dotAt(rel)) });
+    }
+    if (pts.length) {
+      var fill = ctx.createLinearGradient(0, y1, 0, y0);
+      fill.addColorStop(0, "rgba(227,190,98,0.22)");
+      fill.addColorStop(0.55, "rgba(227,190,98,0.07)");
+      fill.addColorStop(1, "rgba(227,190,98,0)");
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, Y(0));
+      pts.forEach(function (p) { ctx.lineTo(p.x, p.y); });
+      ctx.lineTo(pts[pts.length - 1].x, Y(0));
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    pts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
     ctx.strokeStyle = gold;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.2;
     ctx.shadowColor = gold;
-    ctx.shadowBlur = 12;
+    ctx.shadowBlur = 16;
     ctx.stroke();
     ctx.shadowBlur = 0;
 
     var rd = relativeDistance();
     var v = dotAt(rd);
-    ctx.strokeStyle = "rgba(227,190,98,0.55)";
+    var cx = X(rd), cy = Y(v);
+    ctx.strokeStyle = "rgba(227,190,98,0.5)";
     ctx.setLineDash([3, 4]);
-    ctx.beginPath(); ctx.moveTo(X(rd), Y(-1)); ctx.lineTo(X(rd), Y(1)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, Y(-1)); ctx.lineTo(cx, Y(1)); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.beginPath(); ctx.arc(X(rd), Y(v), 4.2, 0, Math.PI * 2); ctx.fillStyle = gold; ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.65)"; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 5.2, 0, Math.PI * 2); ctx.fillStyle = gold; ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.8)"; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.fillStyle = "#e9f5f8";
+    ctx.font = '700 10px "JetBrains Mono", ui-monospace, monospace';
+    ctx.textAlign = cx > w - 70 ? "right" : "left";
+    ctx.fillText(v.toFixed(3), cx + (cx > w - 70 ? -9 : 9), cy - 8);
   }
 
   function heatColor(v) {
     var t = clamp(v, -1, 1);
-    var base = [11, 28, 38];
-    var target = t >= 0 ? [227, 190, 98] : [227, 137, 140];
-    var a = Math.sqrt(Math.abs(t));
+    var base = [7, 22, 30];
+    var target = t >= 0 ? [255, 231, 171] : [242, 145, 150];
+    var a = Math.pow(Math.abs(t), 0.62);
     var r = Math.round(base[0] + (target[0] - base[0]) * a);
     var g = Math.round(base[1] + (target[1] - base[1]) * a);
     var b = Math.round(base[2] + (target[2] - base[2]) * a);
@@ -263,43 +300,65 @@
     var ctx = heatBox.ctx, w = heatBox.w, h = heatBox.h;
     ctx.clearRect(0, 0, w, h);
     var N = state.maxPos;
-    var size = Math.max(60, Math.min(w - 50, h - 42));
+    var size = Math.max(60, Math.min(w - 62, h - 54));
     var cell = size / N;
     var ox = (w - size) / 2, oy = (h - size) / 2 + 2;
     for (var m = 0; m < N; m++) {
       for (var n = 0; n < N; n++) {
         var v = state.rope ? dotAt(Math.abs(m - n)) : 1;
         ctx.fillStyle = heatColor(v);
-        ctx.fillRect(ox + n * cell, oy + m * cell, Math.ceil(cell) + 0.4, Math.ceil(cell) + 0.4);
+        ctx.fillRect(ox + n * cell, oy + m * cell, Math.ceil(cell) + 0.5, Math.ceil(cell) + 0.5);
       }
     }
     if (N <= 32) {
-      ctx.strokeStyle = "rgba(0,0,0,0.18)";
-      ctx.lineWidth = 0.6;
+      ctx.strokeStyle = "rgba(0,0,0,0.2)";
+      ctx.lineWidth = 0.55;
       for (var i = 0; i <= N; i++) {
         ctx.beginPath(); ctx.moveTo(ox + i * cell, oy); ctx.lineTo(ox + i * cell, oy + size); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(ox, oy + i * cell); ctx.lineTo(ox + size, oy + i * cell); ctx.stroke();
       }
     }
-    ctx.strokeStyle = "rgba(230,242,246,0.55)";
+    ctx.strokeStyle = "rgba(230,242,246,0.4)";
     ctx.lineWidth = 1;
     ctx.strokeRect(ox, oy, size, size);
+
+    var ccx = ox + state.n * cell + cell / 2;
+    var ccy = oy + state.m * cell + cell / 2;
+    ctx.save();
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = "rgba(227,190,98,0.55)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(ox, ccy); ctx.lineTo(ox + size, ccy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ccx, oy); ctx.lineTo(ccx, oy + size); ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 1.6;
+    ctx.shadowColor = "#ffe6a0";
+    ctx.shadowBlur = 12;
     ctx.strokeRect(ox + state.n * cell, oy + state.m * cell, cell, cell);
+    ctx.restore();
+
     ctx.fillStyle = "rgba(143,170,180,0.95)";
     ctx.font = '600 9px "Open Sans", sans-serif';
     ctx.textAlign = "center";
-    ctx.fillText("n →", ox + size / 2, oy + size + 14);
+    ctx.fillText("n →", ox + size / 2, oy + size + 15);
     ctx.save();
-    ctx.translate(ox - 16, oy + size / 2);
+    ctx.translate(ox - 18, oy + size / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText("m →", 0, 0);
     ctx.restore();
     ctx.textAlign = "left";
-    ctx.fillText("0", ox, oy - 4);
+    ctx.fillText("0", ox, oy - 6);
+    ctx.textAlign = "center";
+    ctx.fillText(String(Math.floor((N - 1) / 2)), ox + size / 2, oy - 6);
     ctx.textAlign = "right";
-    ctx.fillText(String(N - 1), ox + size, oy - 4);
+    ctx.fillText(String(N - 1), ox + size, oy - 6);
+    ctx.textAlign = "left";
+    ctx.fillText("0", ox - 5, oy + 8);
+    ctx.textAlign = "right";
+    ctx.fillText(String(N - 1), ox - 5, oy + size - 2);
   }
 
   function syncText() {
