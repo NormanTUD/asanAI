@@ -65,9 +65,9 @@
         title: "Deutsch",
         color: "green",
         variants: [
-          { label: DE ? "mit Tippfehlern" : "with typos", sentence: "Der Hundt läuft die Strasse.", noise: ["Hundt", "Strasse"] },
-          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "Der Hund läuft die Strase.", noise: ["Strase"] },
-          { label: DE ? "sauber" : "clean", sentence: "Der Hund läuft die Straße.", noise: [] }
+          { label: DE ? "mit Tippfehlern" : "with typos", sentence: "Der Hundt läuft auf der Strasse.", noise: ["Hundt", "Strasse"] },
+          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "Der Hund läuft auf der Strase.", noise: ["Strase"] },
+          { label: DE ? "sauber" : "clean", sentence: "Der Hund läuft auf der Straße.", noise: [] }
         ]
       },
       {
@@ -75,9 +75,9 @@
         title: "English",
         color: "blue",
         variants: [
-          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "The dgo runs the street.", noise: ["dgo"] },
-          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "The dog runz the street.", noise: ["runz"] },
-          { label: DE ? "sauber" : "clean", sentence: "The dog runs the street.", noise: [] }
+          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "The dgo runs on the street.", noise: ["dgo"] },
+          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "The dog runz on the street.", noise: ["runz"] },
+          { label: DE ? "sauber" : "clean", sentence: "The dog runs on the street.", noise: [] }
         ]
       },
       {
@@ -85,9 +85,9 @@
         title: "Français",
         color: "gold",
         variants: [
-          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "Le chienn court la rue.", noise: ["chienn"] },
-          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "Le chien court la ruee.", noise: ["ruee"] },
-          { label: DE ? "sauber" : "clean", sentence: "Le chien court la rue.", noise: [] }
+          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "Le chienn court dans la rue.", noise: ["chienn"] },
+          { label: DE ? "mit Tippfehler" : "with a typo", sentence: "Le chien court dans la ruee.", noise: ["ruee"] },
+          { label: DE ? "sauber" : "clean", sentence: "Le chien court dans la rue.", noise: [] }
         ]
       }
     ];
@@ -107,8 +107,8 @@
       var lang = kind === "language";
       var detail = isDetailTask();
       if (lang) {
-        var a = DE ? "Der Hundt läuft die Strasse." : "The dgo runs the strasse.";
-        var b = DE ? "Der Hund läuft die Straße." : "The dog runs the street.";
+        var a = DE ? "Der Hundt läuft auf der Strasse." : "The dgo runs on the strasse.";
+        var b = DE ? "Der Hund läuft auf der Straße." : "The dog runs on the street.";
         var head = detail ? (DE ? "Kontext: Rechtschreibtest" : "context: spelling test") : (DE ? "Kontext: Bedeutung" : "context: meaning");
         var va = detail ? (DE ? "2 Fehler" : "2 errors") : (DE ? "gleiche Bedeutung" : "same meaning");
         var vb = detail ? (DE ? "korrekt" : "correct") : (DE ? "gleiche Bedeutung" : "same meaning");
