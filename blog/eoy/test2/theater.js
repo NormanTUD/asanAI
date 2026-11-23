@@ -797,7 +797,7 @@
       return { xs: xs, input: input, prior: prior, percept: percept };
     }
 
-    function syncText() {
+    function syncPredText() {
       if (!noteEl) return;
       var p = Math.round(local.precision);
       noteEl.textContent = L(
@@ -810,7 +810,7 @@
       local.precision = parseFloat(v) || 0;
       calc();
       updateMetric();
-      syncText();
+      syncPredText();
       narrate(L(
         "Präzision " + Math.round(local.precision) + " %: " + (local.precision > 74 ? "Die Vorhersage wiegt schwerer als der Eingang. Bei hoher Präzision wird Wahrnehmung zur kontrollierten Halluzination." : local.precision < 26 ? "Der Eingang wiegt schwerer. Das System korrigiert seine Vorhersage am Signal." : "Vorhersage und Eingang halten sich ungefähr die Waage."),
         "Precision " + Math.round(local.precision) + "%: " + (local.precision > 74 ? "The prediction outweighs the input. At high precision, perception becomes controlled hallucination." : local.precision < 26 ? "The input outweighs the prediction. The system corrects its prediction against the signal." : "Prediction and input are roughly balanced.")
@@ -822,7 +822,7 @@
       local.priorTarget = null;
       calc();
       updateMetric();
-      syncText();
+      syncPredText();
       renderControls();
       narrate(L(
         "Der Eingang wechselt zu " + L(STIM[k].label[0], STIM[k].label[1]) + ". Die Vorhersage bleibt zunächst, wo sie war. Genau daraus entsteht der Fehler.",
@@ -845,7 +845,7 @@
       local.priorTarget = null;
       calc();
       updateMetric();
-      syncText();
+      syncPredText();
       renderControls();
       narrate(L("Zurückgesetzt: mittlere Präzision, Vorhersage in der Mitte, Eingang beim Apfel.", "Reset: medium precision, prediction in the middle, input at the apple."));
     }
@@ -948,7 +948,7 @@
       ctx.shadowBlur = 18;
       ctx.fill();
       ctx.shadowBlur = 0;
-      syncText();
+      syncPredText();
     }
 
     return {
@@ -968,8 +968,8 @@
       },
       metric: function () { return { label: ["Überraschung", "surprise"], value: Math.round(local.surprise) + " %", ratio: local.surprise / 100 }; },
       controls: controlsPred,
-      enter: function () { calc(); syncText(); },
-      onLang: function () { syncText(); },
+      enter: function () { calc(); syncPredText(); },
+      onLang: function () { syncPredText(); },
       draw: drawPredictive
     };
   })();
@@ -987,7 +987,7 @@
 
     function countFor(v) { return 1 + Math.round((v / 100) * 4); }
 
-    function init() {
+    function initIdealism() {
       for (var i = 0; i < 5; i++) {
         var b = document.createElement("button");
         b.type = "button";
@@ -1025,10 +1025,10 @@
           b.setAttribute("aria-label", label + (local.count === 1 ? "" : L(", Perspektive", ", perspective")));
         }
       });
-      layout();
+      layoutIdealism();
     }
 
-    function layout() {
+    function layoutIdealism() {
       if (state.theory !== "idealism") return;
       var w = world.clientWidth, h = world.clientHeight;
       var cx = w / 2, cy = h * 0.46;
@@ -1217,7 +1217,7 @@
     }
 
     return {
-      init: init,
+      init: initIdealism,
       name: function () { return L("Analytischer Idealismus", "Analytic idealism"); },
       about: function () {
         return L(
@@ -1233,7 +1233,7 @@
       },
       metric: function () { return { label: ["Dissoziation", "dissociation"], value: local.diss + " %", ratio: local.diss / 100 }; },
       controls: controlsIdeal,
-      layout: layout,
+      layout: layoutIdealism,
       enter: function () { renderBubbles(); },
       onLang: function () { renderBubbles(); },
       draw: drawIdealism
@@ -1261,6 +1261,7 @@
     function setProbe(v) {
       local.probe = parseInt(v, 10) || 0;
       local.pushing = 0;
+      updateReach(world.clientWidth);
       updateMetric();
       narrate(L(
         local.probe < 30
@@ -1287,6 +1288,7 @@
     function resetMyst() {
       local.probe = 16;
       local.pushing = 0;
+      updateReach(world.clientWidth);
       updateMetric();
       renderControls();
       narrate(L("Zurückgesetzt: der Strahl steht wieder weit vor der Grenze.", "Reset: the beam is far from the limit again."));
@@ -1354,6 +1356,12 @@
       if (local.pushing) {
         var p = clamp((now - local.pushing) / 1500, 0, 1);
         local.probe = T2.lerp(local.probe, 96, Math.min(1, dt * 1.7));
+        var slider = document.getElementById("myst-probe");
+        if (slider) {
+          slider.value = String(Math.round(local.probe));
+          var out = slider.nextElementSibling;
+          if (out) out.textContent = Math.round(local.probe) + " %";
+        }
         if (p >= 1) {
           local.probe = 96;
           local.pushing = 0;

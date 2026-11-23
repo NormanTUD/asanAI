@@ -351,17 +351,58 @@
     var el = document.createElement("div");
     el.className = "ls-hx-scene";
     el.innerHTML =
-      '<div class="ls-hx-chips" role="tablist"></div>' +
+      '<div class="ls-hx-top">' +
+        '<div class="ls-hx-chips" role="tablist"></div>' +
+        '<div class="ls-hx-mode" role="group" aria-label="' + L("Antwortquelle", "Answer source") + '">' +
+          '<button type="button" class="is-on" data-hx-mode="memory">' + L("Aus dem Gedächtnis", "From memory") + '</button>' +
+          '<button type="button" data-hx-mode="rag">' + L("Mit RAG", "With RAG") + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ls-hx-hero">' +
+        '<div class="ls-hx-win">' +
+          '<div class="ls-hx-winbar">' +
+            '<span class="ls-hx-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
+            '<span class="ls-hx-addr">chat.example.com</span>' +
+            '<span class="ls-hx-mode-badge"></span>' +
+          '</div>' +
+          '<div class="ls-hx-winbody">' +
+            '<div class="ls-hx-chatcol">' +
+              '<div class="ls-hx-thread">' +
+                '<div class="ls-hx-msg is-user">' +
+                  '<span class="ls-hx-role">' + L("Du", "You") + '</span>' +
+                  '<div class="ls-hx-bubble ls-hx-bubble--user">' +
+                    '<div class="ls-hx-question"><span></span><b></b></div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="ls-hx-msg is-ai">' +
+                  '<span class="ls-hx-role">LLM</span>' +
+                  '<div class="ls-hx-bubble ls-hx-bubble--ai">' +
+                    '<div class="ls-hx-answer-text"></div>' +
+                    '<div class="ls-hx-cite-card"></div>' +
+                    '<div class="ls-hx-conf"><span>' + L("Sicherheit", "Confidence") + '</span><span class="ls-hx-conf-track"><i></i></span><b class="ls-hx-conf-val"></b></div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="ls-hx-mechanism"></div>' +
+            '</div>' +
+            '<aside class="ls-hx-verifycol">' +
+              '<div class="ls-hx-verify-head"><span>' + L("Quellenprüfung", "Source check") + '</span><i class="ls-hx-verify-dot" aria-hidden="true"></i></div>' +
+              '<div class="ls-hx-verify-body">' +
+                '<section class="ls-hx-panel ls-hx-source"><div class="ls-hx-panel-head"></div><div class="ls-hx-source-body"></div><p class="ls-hx-source-note"></p><p class="ls-hx-cite"></p></section>' +
+                '<div class="ls-hx-claims"></div>' +
+                '<div class="ls-hx-detail"></div>' +
+                '<div class="ls-hx-score"><span>FActScore</span><div class="ls-hx-scorebar"><i></i></div><b></b></div>' +
+                '<div class="ls-hx-verdict"></div>' +
+              '</div>' +
+            '</aside>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
         '<div class="ls-hx-source-card is-weights" data-source-kind="weights"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
         '<div class="ls-hx-source-claim"><span>' + L("Behauptung", "Claim") + '</span></div>' +
         '<div class="ls-hx-source-card is-context" data-source-kind="context"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
       '</div>' +
-      '<div class="ls-hx-grid">' +
-        '<section class="ls-hx-panel ls-hx-source"><div class="ls-hx-panel-head"></div><div class="ls-hx-source-body"></div><p class="ls-hx-source-note"></p><p class="ls-hx-cite"></p></section>' +
-        '<section class="ls-hx-panel ls-hx-answer"><div class="ls-hx-question"><span></span><b></b></div><div class="ls-hx-claims"></div><div class="ls-hx-detail"></div><div class="ls-hx-score"><span>FActScore</span><div class="ls-hx-scorebar"><i></i></div><b></b></div></section>' +
-      '</div>' +
-      '<div class="ls-hx-mechanism"></div>' +
       '<div class="ls-hx-bottom">' +
         '<div class="ls-hx-risk"><div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("rechts = plausibel · oben = gedeckt", "right = plausible · top = grounded") + '</span></div><div class="ls-hx-risk-svg"></div></div>' +
         '<div class="ls-hx-measures"></div>' +
@@ -418,6 +459,13 @@
     var riskSvg = el.querySelector(".ls-hx-risk-svg");
     var measuresEl = el.querySelector(".ls-hx-measures");
     var takeawayEl = el.querySelector(".ls-hx-takeaway");
+    var answerTextEl = el.querySelector(".ls-hx-answer-text");
+    var citeCardEl = el.querySelector(".ls-hx-cite-card");
+    var confFill = el.querySelector(".ls-hx-conf-track i");
+    var confVal = el.querySelector(".ls-hx-conf-val");
+    var verdictEl = el.querySelector(".ls-hx-verdict");
+    var modeBtns = el.querySelectorAll("[data-hx-mode]");
+    var modeBadge = el.querySelector(".ls-hx-mode-badge");
     var ragRange = el.querySelector(".ls-hx-rag-range");
     var ragAngle = el.querySelector(".ls-hx-rag-angle");
     var ragList = el.querySelector(".ls-hx-rag-list");
@@ -474,7 +522,9 @@
           var next = parseInt(b.getAttribute("data-type"), 10);
           if (next === selected) return;
           selected = next;
+          var keepRag = !!activeMeasure.source;
           activeMeasure = {};
+          if (keepRag) activeMeasure.source = true;
           activeClaim = 0;
           render();
         });
@@ -655,6 +705,56 @@
     function InCtxLabel(n) {
       return L(n + " Sätze im Kontext", n + " sentences in context");
     }
+    function renderChat(t) {
+      var claims = currentClaims(t);
+      if (answerTextEl) answerTextEl.textContent = claims.map(function (c) { return c.text; }).join(" ");
+      var view = currentSource(t);
+      if (citeCardEl) {
+        var badge = view.kind === "memory" ? "∅" : view.kind === "logic" ? "¬" : view.kind === "citation" ? "❞" : view.kind === "dated" ? "◷" : "S1";
+        var label = view.head || "";
+        var quote = (view.parts || []).map(function (part) { return part.text; }).join("");
+        var note;
+        if (view.kind === "memory") note = L("Kein Dokument, nur Trainingsdaten.", "No document, only training data.");
+        else if (view.kind === "citation") note = activeMeasure.source ? L("Geprüfte Quelle S1 ist im Kontext.", "Checked source S1 is in the context.") : L("DOI-Resolver: nicht gefunden.", "DOI resolver: not found.");
+        else if (view.kind === "logic") note = L("Logik statt Quelle.", "Logic, not a source.");
+        else note = quote ? "„" + quote + "“" : view.note;
+        citeCardEl.className = "ls-hx-cite-card" +
+          (activeMeasure.source && t.measures.source && t.measures.source.status === "fix" ? " is-rag" : view.kind === "citation" ? " is-cite" : "");
+        citeCardEl.innerHTML = '<span class="ls-hx-cite-badge">' + esc(badge) + '</span><div><b>' + esc(label) + '</b><p>' + esc(note) + '</p></div>';
+      }
+      var conf = Math.round((t.plausibility || 0) * 100);
+      if (confFill) {
+        confFill.style.width = conf + "%";
+        confFill.className = conf >= 70 ? "is-high" : "is-mid";
+      }
+      if (confVal) confVal.textContent = conf + " %";
+      if (modeBadge) {
+        modeBadge.textContent = activeMeasure.source ? L("Mit RAG", "With RAG") : L("Aus dem Gedächtnis", "From memory");
+        modeBadge.className = "ls-hx-mode-badge" + (activeMeasure.source ? " is-rag" : "");
+      }
+      Array.prototype.forEach.call(modeBtns, function (b) {
+        var on = (b.getAttribute("data-hx-mode") === "rag") === !!activeMeasure.source;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+    }
+    function renderVerdict(t) {
+      if (!verdictEl) return;
+      var mode = simMode(t);
+      var active = MEASURES.filter(function (m) { return activeMeasure[m.id]; });
+      var notes = active.map(function (m) { return t.measures[m.id] && t.measures[m.id].note; }).filter(Boolean);
+      var html;
+      if (!active.length) {
+        html = '<div class="ls-hx-verdict-card is-bad"><b>' + L("Die Form ist kein Beweis.", "The shape is not proof.") + '</b><p>' + L("Die Antwort klingt sicher, ist aber nicht gegen eine Quelle geprüft. Schalte eine Gegenmaßnahme ein.", "The answer sounds confident but is not checked against a source. Switch on a countermeasure.") + '</p></div>';
+      } else if (mode === "fixed") {
+        html = '<div class="ls-hx-verdict-card is-good"><b>' + L("Gedeckt.", "Grounded.") + '</b><p>' + esc(notes[0] || L("Eine passende Prüfung greift.", "A suitable check applies.")) + '</p></div>';
+      } else if (mode === "partial") {
+        html = '<div class="ls-hx-verdict-card is-warn"><b>' + L("Teilweise gedeckt.", "Partly grounded.") + '</b><p>' + esc(notes[0] || L("Die Lücke bleibt sichtbar.", "The gap remains visible.")) + '</p></div>';
+      } else {
+        html = '<div class="ls-hx-verdict-card is-bad"><b>' + L("Dieser Schalter hilft hier nicht.", "This switch does not help here.") + '</b><p>' + esc(notes[0] || L("Die Ursache liegt anderswo.", "The cause is elsewhere.")) + '</p></div>';
+      }
+      verdictEl.innerHTML = html;
+    }
     function render() {
       lastSelected = selected;
       var t = type();
@@ -662,22 +762,49 @@
       renderSourceMap(t);
       renderSource(t);
       renderClaims(t);
+      renderChat(t);
+      renderVerdict(t);
       renderMechanism(t);
       renderRisk(t);
       renderMeasures(t);
       renderTakeaway(t);
     }
+    Array.prototype.forEach.call(modeBtns, function (b) {
+      b.addEventListener("click", function () {
+        var wantRag = b.getAttribute("data-hx-mode") === "rag";
+        if (!!activeMeasure.source === wantRag) return;
+        activeMeasure.source = wantRag;
+        activeClaim = 0;
+        render();
+      });
+    });
     if (ragRange) ragRange.addEventListener("input", renderRag);
     render();
     renderRag();
     return {
       update: function () {},
       next: function () {
-        if (selected < TYPES.length - 1) { selected++; activeMeasure = {}; activeClaim = 0; render(); return true; }
+        if (selected < TYPES.length - 1) {
+          var keepRag = !!activeMeasure.source;
+          selected++;
+          activeMeasure = {};
+          if (keepRag) activeMeasure.source = true;
+          activeClaim = 0;
+          render();
+          return true;
+        }
         return false;
       },
       prev: function () {
-        if (selected > 0) { selected--; activeMeasure = {}; activeClaim = 0; render(); return true; }
+        if (selected > 0) {
+          var keepRag = !!activeMeasure.source;
+          selected--;
+          activeMeasure = {};
+          if (keepRag) activeMeasure.source = true;
+          activeClaim = 0;
+          render();
+          return true;
+        }
         return false;
       },
       hasNext: function () { return selected < TYPES.length - 1; },
