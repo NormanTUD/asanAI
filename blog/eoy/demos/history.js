@@ -9,69 +9,110 @@
     var tabs = DE ? [
       {
         year: "ca. 30.000 BP", label: "Ganz früh", title: "Kerben im Wolfsknochen",
-        text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben. Die Kerben sind keine Schrift; sie werden als Zählmarken gedeutet, die Deutung ist aber umstritten. Die Datierung schwankt in der Literatur zwischen etwa 26.000 und 30.000 Jahren vor heute. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
-        images: [{ src: "../vestonice_wolf_bone.jpg", alt: "Der Wolfsknochen von Dolní Věstonice mit 55 Kerben", cap: "Der Wolfsknochen von Dolní Věstonice. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
-        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }, { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick" }]
+        text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben, in zwei Gruppen von 30 und 25; die Datierung liegt bei etwa 27.000 Jahren vor heute. Die Kerben sind keine Schrift, sondern wahrscheinlich Zählmarken, und die Deutung ist umstritten. Der Ishango-Knochen aus dem Kongo, rund 20.000 Jahre alt, zeigt ebenfalls Gruppen von Kerben; manche lesen darin Primzahlen oder einen Mondkalender. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
+        images: [
+          { src: "../vestonice_wolf_bone.jpg", alt: "Der Wolfsknochen von Dolní Věstonice mit 55 Kerben", cap: "Der Wolfsknochen von Dolní Věstonice. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" },
+          { src: "../ishango.jpg", alt: "Der Ishango-Knochen mit gruppierten Kerben", cap: "Ishango-Knochen, etwa 20.000 Jahre alt. Ben2, CC BY-SA 3.0.", href: "https://de.wikipedia.org/wiki/Datei:Os_d%27Ishango_IRSNB.JPG" }
+        ],
+        sources: [
+          { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" },
+          { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick" },
+          { label: "Wikipedia: Ishango bone", url: "https://en.wikipedia.org/wiki/Ishango_bone" }
+        ]
       },
       {
-        year: "~300 v. Chr.", label: "Antike", title: "Tafeln und Zählbretter",
-        text: "Die Salamis-Tafel gilt als eines der ältesten erhaltenen Zählbretter, etwa 300 v. Chr. Der Abakus macht Stellenwerte körperlich: Steine auf Linien, nicht Ziffern auf Papier. Rechnen wird ein Verfahren mit Regeln.",
-        images: [{ src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, eines der ältesten erhaltenen Zählbretter", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
-        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
+        year: "~300 v. Chr.", label: "Antike", title: "Tafeln, Zählbretter und Zahnräder",
+        text: "Die Salamis-Tafel gilt als eines der ältesten erhaltenen Zählbretter, etwa 300 v. Chr.; Steine auf Linien machen Stellenwerte körperlich. Der Mechanismus von Antikythera, um 100 v. Chr. aus einem Schiffswrack geborgen, ist ein analoger Zahnradrechner mit mindestens 30 Bronzezahnrädern; er sagte Sonnen- und Mondpositionen sowie Finsternisse voraus. Rechnen wird ein Verfahren mit Regeln und Mechanismen.",
+        images: [
+          { src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, eines der ältesten erhaltenen Zählbretter", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" },
+          { src: "../antikythera.jpg", alt: "Fragmente des Mechanismus von Antikythera", cap: "Fragmente des Mechanismus von Antikythera. Therese Clutario, CC BY 2.0.", href: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fragments_of_the_Antikythera_Mechanism.jpg" }
+        ],
+        sources: [
+          { label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" },
+          { label: "Wikipedia: Antikythera mechanism", url: "https://en.wikipedia.org/wiki/Antikythera_mechanism" }
+        ]
       },
       {
         year: "Antike–1305", label: "Logik · Llull 1305", title: "Denken als Regelwerk",
-        text: "Aristoteles ordnet Schlüsse in Formen. Pāṇini beschreibt Sanskrit-Grammatik als Regelsystem. Llull kombiniert Begriffe auf drehenden Scheiben. Die Idee dahinter: Denken lässt sich als Regelwerk schreiben, nicht nur als Erfahrung.",
+        text: "Aristoteles ordnet Schlüsse in Formen; Pāṇini beschreibt Sanskrit-Grammatik als Regelsystem. Llull kombiniert auf den drehenden Scheiben seiner Ars Magna (1305) Begriffe mechanisch. Die Idee: Denken lässt sich als Regelwerk schreiben und mit einer Maschine kombinieren, nicht nur als Erfahrung.",
         images: [{ src: "../FigurScheiben.jpg", alt: "Llulls Ars Magna mit drehenden Begriffsscheiben", cap: "Llulls Ars Magna, 1305. Ramon Llull, Public Domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
-        sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }]
+        sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }, { label: "Wikipedia: Ramon Llull", url: "https://en.wikipedia.org/wiki/Ramon_Llull" }]
       },
       {
         year: "1673–1854", label: "Maschinen", title: "Rechnen wird mechanisch",
-        text: "Leibniz beginnt 1673 mit einer Rechenmaschine für alle vier Grundrechenarten; fertig wird sie 1694, arbeitet aber unzuverlässig. Er träumt von einer universalen Zeichensprache. Babbage entwirft die Analytical Engine. Boole schreibt Logik als Algebra. Mechanik und formale Regeln rücken zusammen.",
-        images: [{ src: "../Leibnizrechenmaschine.jpg", alt: "Nachbau der Leibniz-Rechenmaschine", cap: "Leibniz-Rechenmaschine, Nachbau. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }],
-        sources: [{ label: "Eremeev (2016), Leibniz Rechenmaschine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }, { label: "Wikipedia: Stepped reckoner", url: "https://en.wikipedia.org/wiki/Stepped_reckoner" }]
+        text: "Leibniz beginnt 1673 mit einer Rechenmaschine für alle vier Grundrechenarten; fertig wird sie 1694, arbeitet aber unzuverlässig. Babbage entwirft ab 1837 die Analytical Engine mit getrenntem Store und Mill; Ada Lovelace beschreibt 1843, wie darauf algorithmisch gerechnet werden kann. Boole schreibt 1854 die Logik als Algebra. Mechanik und formale Regeln rücken zusammen.",
+        images: [
+          { src: "../Leibnizrechenmaschine.jpg", alt: "Nachbau der Leibniz-Rechenmaschine", cap: "Leibniz-Rechenmaschine, Nachbau. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
+          { src: "../charles_babbage_portrait.jpg", alt: "Charles Babbage", cap: "Charles Babbage, Anonymous (The Illustrated London News), Public Domain.", href: "https://commons.wikimedia.org/wiki/File:Charles_Babbage_1860.jpg" }
+        ],
+        sources: [
+          { label: "Eremeev (2016), Leibniz Rechenmaschine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
+          { label: "Wikipedia: Analytical Engine", url: "https://en.wikipedia.org/wiki/Analytical_Engine" },
+          { label: "Wikipedia: George Boole", url: "https://en.wikipedia.org/wiki/George_Boole" }
+        ]
       },
       {
         year: "1943–1958", label: "Neuron", title: "Das Neuron als Recheneinheit",
-        text: "McCulloch und Pitts modellieren 1943 ein Neuron als logische Schwelle. Hebb formuliert 1949, dass gemeinsames Feuern Verbindungen stärkt. 1958 baut Rosenblatt das Perzeptron, das Gewichte aus Fehlern anpasst. Das Gehirn wird zum Vorbild für lernende Maschinen.",
-        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts an einer Tafel, 1954", cap: "Walter Pitts, 1954. Francis Bello, Public Domain. Die ursprüngliche Commons-Datei ist derzeit nicht erreichbar.", href: "https://en.wikipedia.org/wiki/Walter_Pitts" }],
-        sources: [{ label: "HNF (2023), McCulloch und Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }]
+        text: "McCulloch und Pitts modellieren 1943 ein Neuron als logische Schwelle: ein Netz aus Alles-oder-nichts-Zellen, das Boolesche Funktionen berechnet. Pitts war ein autodidaktischer Logiker aus Detroit, der mit zwölf die Principia Mathematica las und mit fünfzehn von zu Hause weglief, um in Chicago Bertrand Russell zu hören; bei McCulloch fand er ein Zuhause und lieferte die Logik für das Neuron. Hebb formuliert 1949 in The Organization of Behavior die erste einflussreiche Lernregel: Wenn Zelle A Zelle B wiederholt feuert, wächst die Verbindung. Die später geprägte Kurzformel „neurons that fire together, wire together“ fasst das zusammen; sie steht so nicht in Hebbs Buch. 1958 baut Rosenblatt das Perzeptron, das Gewichte aus Fehlern anpasst. Pitts zog sich nach dem Bruch mit Wiener zurück, verbrannte seine Dissertation und starb 1969 mit 46.",
+        images: [
+          { src: "../walter_pitts_1954.jpg", alt: "Walter Pitts an einer Tafel, 1954", cap: "Walter Pitts, 1954. Francis Bello, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" },
+          { src: "../mcculloch_pitts_neuron.png", alt: "Diagramm einer McCulloch-Pitts-Zelle", cap: "McCulloch-Pitts-Zelle. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" }
+        ],
+        sources: [
+          { label: "McCulloch & Pitts (1943), A Logical Calculus of the Ideas Immanent in Nervous Activity", url: "https://doi.org/10.1007/BF02478259" },
+          { label: "Hebb (1949), The Organization of Behavior", url: "https://archive.org/details/organizationofbe0000hebb" },
+          { label: "Gefter (2015), The Man Who Tried to Redeem the World with Logic", url: "https://nautil.us/the-man-who-tried-to-redeem-the-world-with-logic-235253/" },
+          { label: "Smalheiser (2000), Walter Pitts", url: "https://doi.org/10.1353/pbm.2000.0009" },
+          { label: "HNF (2023), McCulloch und Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }
+        ]
       },
       {
         year: "1958–1973", label: "Perzeptron", title: "Eine Linie reicht nicht",
-        text: "1958 präsentiert Rosenblatt das Perzeptron; die Mark-I-Maschine liest 400 Photozellen und lernt linear trennbare Muster. 1969 zeigen Minsky und Papert, dass eine einzelne Schicht XOR nicht lösen kann: Die vier Punkte lassen sich nicht mit einer Geraden trennen. Sie wissen, dass ein mehrschichtiges Netz das könnte; offen ist das Training. 1973 verstärkt der Lighthill-Bericht den ersten KI-Winter.",
+        text: "1958 präsentiert Rosenblatt das Perzeptron; die erste Software lief 1957 auf einer IBM 704, die Mark-I-Hardware baute sein Team um den Projektingenieur Charles Wightman zwischen 1959 und 1960. Die Maschine liest 400 Photozellen und lernt linear trennbare Muster. Rosenblatt, 1928 in New Rochelle geboren und 1956 in Cornell promoviert, veröffentlichte 1962 Principles of Neurodynamics; zu seinen Doktoranden gehörten George Nagy und R. D. Joseph, der die Theorie 1961 probabilistisch fundierte. 1969 zeigen Minsky und Papert, dass eine einzelne Schicht XOR nicht lösen kann; 1973 verstärkt der Lighthill-Bericht den ersten KI-Winter. Rosenblatt starb 1971 mit 43 bei einem Segelunfall auf der Chesapeake Bay.",
         images: [
-          { src: "../mark_i_perceptron_manual.png", alt: "Mark I Perceptron, Figur 2 aus dem Bedienhandbuch", cap: "Mark I Perceptron, Figur 2 aus dem Bedienhandbuch. John C. Hay und Albert E. Murray, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" },
-          { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" }
+          { src: "../perceptron2.jpg", alt: "Mark I Perceptron, ausgestellt im Smithsonian", cap: "Mark I Perceptron. U.S. Navy, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg" },
+          { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" },
+          { src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }
         ],
         diagram: "xor",
         sources: [
-          { label: "HNF (2019), Frank Rosenblatt und das Perzeptron", url: "https://blog.hnf.de/frank-rosenblatt/" },
+          { label: "Rosenblatt (1958), The Perceptron", url: "https://psycnet.apa.org/record/1959-09865-001" },
+          { label: "Rosenblatt (1962), Principles of Neurodynamics", url: "https://archive.org/details/principlesofneur0000rose" },
           { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins" },
-          { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" }
+          { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" },
+          { label: "Lefkowitz (2019), Professor's Perceptron Paved the Way for AI", url: "https://news.cornell.edu/stories/2019/09/professors-perceptron-paved-way-ai-60-years-too-soon" },
+          { label: "Cornell memorial statement for Frank Rosenblatt (1971)", url: "https://ecommons.cornell.edu/bitstream/handle/1813/18965/Rosenblatt_Frank_1971.pdf" }
         ]
       },
       {
         year: "1961–1986", label: "Backprop", title: "Fehler rückwärts",
-        text: "Rosenblatt beschreibt 1961 eine rückwärts gerichtete Fehlerkorrektur, aber ohne Gradient und Kettenregel. Linnainmaa entwickelt 1970 die reverse mode der automatischen Differentiation. 1986 popularisieren Rumelhart, Hinton und Williams Backpropagation; verborgene Schichten werden trainierbar.",
-        images: [{ src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }],
+        text: "Rosenblatt beschreibt 1961 eine rückwärts gerichtete Fehlerkorrektur, aber ohne Gradient und Kettenregel. Linnainmaa entwickelt 1970 den Reverse Mode der automatischen Differentiation; Werbos formuliert 1974 Backpropagation für neuronale Netze. 1986 popularisieren Rumelhart, Hinton und Williams Backpropagation; verborgene Schichten werden trainierbar.",
         diagram: "backprop",
         sources: [
           { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up" },
           { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf" },
+          { label: "Werbos (1974), Beyond Regression", url: "https://www.semanticscholar.org/paper/Beyond-Regression%3A-New-Tools-for-Prediction-and-in-Werbos/8f2b4f7f0f1f6f7c" },
           { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0" }
         ]
       },
       {
         year: "1989–2012", label: "Deep Learning", title: "Bilder, GPUs, tiefe Netze",
-        text: "LeCun kombiniert 1989 Backpropagation mit Faltungen für handgeschriebene Postleitzahlen. 2012 gewinnt AlexNet mit tiefen CNNs und GPUs die ImageNet-Challenge. Tiefe Netze werden praktisch.",
-        sources: [{ label: "LeCun et al. (1989), Backpropagation Applied to Handwritten Zip Code Recognition", url: "https://doi.org/10.1162/neco.1989.1.4.541" }, { label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
+        text: "LeCun kombiniert 1989 Backpropagation mit Faltungen für handgeschriebene Postleitzahlen; LeNet-5 (1998) wird zum Standard für Ziffernerkennung. 2012 gewinnt AlexNet mit tiefen CNNs und GPUs die ImageNet-Challenge und senkt die Fehlerrate deutlich. 2016 gewinnt AlphaGo gegen Lee Sedol; tiefe Netze werden praktisch.",
+        images: [{ src: "../alphago_leesedol.jpg", alt: "Lee Sedol und AlphaGo, 2016", cap: "Lee Sedol und AlphaGo, 2016. Korea Baduk Association, CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg" }],
+        sources: [
+          { label: "LeCun et al. (1989), Backpropagation Applied to Handwritten Zip Code Recognition", url: "https://doi.org/10.1162/neco.1989.1.4.541" },
+          { label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" },
+          { label: "Silver et al. (2016), Mastering the game of Go with deep neural networks", url: "https://doi.org/10.1038/nature16961" }
+        ]
       },
       {
         year: "2014–2017", label: "Transformer", title: "Attention ersetzt die Schleife",
-        text: "Bahdanau, Cho und Bengio lassen 2014 den Decoder auf die Eingabewörter zurückblicken. 2017 ersetzt der Transformer die wiederkehrende Verarbeitung durch Self-Attention und fügt Positionsinformation hinzu. Sätze lassen sich parallel verarbeiten, ohne die Wortreihenfolge zu verlieren.",
+        text: "Bahdanau, Cho und Bengio lassen 2014 den Decoder auf die Eingabewörter zurückblicken. 2017 ersetzt der Transformer die wiederkehrende Verarbeitung durch Self-Attention und fügt Positionsinformation hinzu. Sätze lassen sich parallel verarbeiten, ohne die Wortreihenfolge zu verlieren; BERT und GPT bauen 2018 direkt darauf auf.",
         images: [{ src: "../transformer_architecture.png", alt: "Die Encoder-Decoder-Architektur des Transformers", cap: "Transformer-Architektur, Figur 1 aus Attention Is All You Need. Ashish Vaswani et al. (Google), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png" }],
-        sources: [{ label: "Bahdanau et al. (2014), Neural Machine Translation by Jointly Learning to Align and Translate", url: "https://arxiv.org/abs/1409.0473" }, { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+        sources: [
+          { label: "Bahdanau et al. (2014), Neural Machine Translation by Jointly Learning to Align and Translate", url: "https://arxiv.org/abs/1409.0473" },
+          { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }
+        ]
       },
       {
         year: "2018–2022", label: "GPT", title: "Vorhersage wird Dialog",
@@ -87,69 +128,110 @@
     ] : [
       {
         year: "ca. 30,000 BP", label: "Deep past", title: "Notches in a wolf bone",
-        text: "The wolf bone from Dolní Věstonice carries 55 notches. The notches are not writing; they are interpreted as tally marks, but that interpretation is disputed. Dating in the literature ranges from about 26,000 to 30,000 years before present. Arithmetic begins as embodied counting, long before computers.",
-        images: [{ src: "../vestonice_wolf_bone.jpg", alt: "The Dolní Věstonice wolf bone with 55 notches", cap: "The Dolní Věstonice wolf bone. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
-        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }, { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick" }]
+        text: "The wolf bone from Dolní Věstonice carries 55 notches in two groups of 30 and 25; it is about 27,000 years old. The notches are not writing; they are probably tally marks, and the interpretation is disputed. The Ishango bone from the Congo, about 20,000 years old, also carries grouped notches; some read primes or a lunar calendar into them. Arithmetic begins as embodied counting, long before computers.",
+        images: [
+          { src: "../vestonice_wolf_bone.jpg", alt: "The Dolní Věstonice wolf bone with 55 notches", cap: "The Dolní Věstonice wolf bone. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" },
+          { src: "../ishango.jpg", alt: "The Ishango bone with grouped notches", cap: "Ishango bone, about 20,000 years old. Ben2, CC BY-SA 3.0.", href: "https://de.wikipedia.org/wiki/Datei:Os_d%27Ishango_IRSNB.JPG" }
+        ],
+        sources: [
+          { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" },
+          { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick" },
+          { label: "Wikipedia: Ishango bone", url: "https://en.wikipedia.org/wiki/Ishango_bone" }
+        ]
       },
       {
-        year: "~300 BCE", label: "Antiquity", title: "Tablets and counting boards",
-        text: "The Salamis tablet is regarded as one of the oldest surviving counting boards, from about 300 BCE. The abacus makes place value physical: stones on lines, not digits on paper. Calculation becomes a procedure with rules.",
-        images: [{ src: "../salamic_table.jpg", alt: "The Salamis tablet, one of the oldest surviving counting boards", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
-        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }, { label: "Wikipedia: Salamis Tablet", url: "https://en.wikipedia.org/wiki/Salamis_Tablet" }]
+        year: "~300 BCE", label: "Antiquity", title: "Tablets, counting boards, gears",
+        text: "The Salamis tablet is one of the oldest surviving counting boards, from about 300 BCE; stones on lines make place value physical. The Antikythera mechanism, recovered from a shipwreck and built around 100 BCE, is an analog gear computer with at least 30 bronze gears; it predicted solar and lunar positions and eclipses. Calculation becomes a procedure with rules and mechanisms.",
+        images: [
+          { src: "../salamic_table.jpg", alt: "The Salamis tablet, one of the oldest surviving counting boards", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" },
+          { src: "../antikythera.jpg", alt: "Fragments of the Antikythera mechanism", cap: "Fragments of the Antikythera mechanism. Therese Clutario, CC BY 2.0.", href: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fragments_of_the_Antikythera_Mechanism.jpg" }
+        ],
+        sources: [
+          { label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" },
+          { label: "Wikipedia: Antikythera mechanism", url: "https://en.wikipedia.org/wiki/Antikythera_mechanism" }
+        ]
       },
       {
         year: "Antiquity–1305", label: "Logic · Llull 1305", title: "Thought as a rulebook",
-        text: "Aristotle arranges inferences into forms. Pāṇini describes Sanskrit grammar as a rule system. Llull combines concepts on rotating wheels. The idea: thought can be written as a rulebook, not only lived as experience.",
+        text: "Aristotle arranges inferences into forms; Pāṇini describes Sanskrit grammar as a rule system. Llull combines concepts mechanically on the rotating wheels of his Ars Magna (1305). The idea: thought can be written as a rulebook and combined by a machine, not only lived as experience.",
         images: [{ src: "../FigurScheiben.jpg", alt: "Llull's Ars Magna with rotating concept wheels", cap: "Llull's Ars Magna, 1305. Ramon Llull, public domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
-        sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }]
+        sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }, { label: "Wikipedia: Ramon Llull", url: "https://en.wikipedia.org/wiki/Ramon_Llull" }]
       },
       {
         year: "1673–1854", label: "Machines", title: "Calculation becomes mechanical",
-        text: "Leibniz starts a calculator for all four arithmetic operations in 1673; it is finished in 1694 but works unreliably. He dreams of a universal symbol language. Babbage designs the Analytical Engine. Boole writes logic as algebra. Mechanism and formal rules move closer together.",
-        images: [{ src: "../Leibnizrechenmaschine.jpg", alt: "A replica of Leibniz's calculating machine", cap: "Leibniz calculating machine, replica. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }],
-        sources: [{ label: "Eremeev (2016), Leibniz Calculating Machine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }]
+        text: "Leibniz starts a calculator for all four arithmetic operations in 1673; it is finished in 1694 but works unreliably. Babbage designs the Analytical Engine from 1837 with separate store and mill; Ada Lovelace describes in 1843 how algorithms can run on it. Boole writes logic as algebra in 1854. Mechanism and formal rules move closer together.",
+        images: [
+          { src: "../Leibnizrechenmaschine.jpg", alt: "A replica of Leibniz's calculating machine", cap: "Leibniz calculating machine, replica. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
+          { src: "../charles_babbage_portrait.jpg", alt: "Charles Babbage", cap: "Charles Babbage, Anonymous (The Illustrated London News), public domain.", href: "https://commons.wikimedia.org/wiki/File:Charles_Babbage_1860.jpg" }
+        ],
+        sources: [
+          { label: "Eremeev (2016), Leibniz Calculating Machine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
+          { label: "Wikipedia: Analytical Engine", url: "https://en.wikipedia.org/wiki/Analytical_Engine" },
+          { label: "Wikipedia: George Boole", url: "https://en.wikipedia.org/wiki/George_Boole" }
+        ]
       },
       {
         year: "1943–1958", label: "Neuron", title: "The neuron as a computing unit",
-        text: "McCulloch and Pitts model a neuron as a logical threshold in 1943. Hebb formulates in 1949 that neurons that fire together strengthen their connection. In 1958 Rosenblatt builds the perceptron, which adjusts weights from errors. The brain becomes the model for learning machines.",
-        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts at a blackboard, 1954", cap: "Walter Pitts, 1954. Francis Bello, public domain. The original Commons file is currently unavailable.", href: "https://en.wikipedia.org/wiki/Walter_Pitts" }],
-        sources: [{ label: "HNF (2023), McCulloch and Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }]
+        text: "McCulloch and Pitts model a neuron as a logical threshold in 1943: a network of all-or-none cells that computes Boolean functions. Pitts was a self-taught logician from Detroit who read Principia Mathematica at twelve and ran away from home at fifteen to hear Bertrand Russell in Chicago; McCulloch gave him a home, and Pitts supplied the logic for the neuron. Hebb formulates in 1949 in The Organization of Behavior the first influential learning rule: when cell A repeatedly fires cell B, the connection grows. The later slogan “neurons that fire together, wire together” summarises this; it is not Hebb's own wording. In 1958 Rosenblatt builds the perceptron, which adjusts weights from errors. Pitts withdrew after a break with Wiener, burned his dissertation, and died in 1969 at 46.",
+        images: [
+          { src: "../walter_pitts_1954.jpg", alt: "Walter Pitts at a blackboard, 1954", cap: "Walter Pitts, 1954. Francis Bello, public domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" },
+          { src: "../mcculloch_pitts_neuron.png", alt: "Diagram of a McCulloch-Pitts cell", cap: "McCulloch-Pitts cell. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" }
+        ],
+        sources: [
+          { label: "McCulloch & Pitts (1943), A Logical Calculus of the Ideas Immanent in Nervous Activity", url: "https://doi.org/10.1007/BF02478259" },
+          { label: "Hebb (1949), The Organization of Behavior", url: "https://archive.org/details/organizationofbe0000hebb" },
+          { label: "Gefter (2015), The Man Who Tried to Redeem the World with Logic", url: "https://nautil.us/the-man-who-tried-to-redeem-the-world-with-logic-235253/" },
+          { label: "Smalheiser (2000), Walter Pitts", url: "https://doi.org/10.1353/pbm.2000.0009" },
+          { label: "HNF (2023), McCulloch and Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }
+        ]
       },
       {
         year: "1958–1973", label: "Perceptron", title: "One line is not enough",
-        text: "In 1958 Rosenblatt presents the perceptron; the Mark I machine reads 400 photocells and learns linearly separable patterns. In 1969 Minsky and Papert show that a single layer cannot solve XOR: the four points cannot be separated by a straight line. They know a multilayer network could; what is missing is training. In 1973 the Lighthill report deepens the first AI winter.",
+        text: "In 1958 Rosenblatt presents the perceptron; the first software ran in 1957 on an IBM 704, and his team built the Mark I hardware around project engineer Charles Wightman between 1959 and 1960. The machine reads 400 photocells and learns linearly separable patterns. Rosenblatt, born in New Rochelle in 1928 and awarded a Cornell PhD in 1956, published Principles of Neurodynamics in 1962; his students included George Nagy and R. D. Joseph, who put the theory on a probabilistic footing in 1961. In 1969 Minsky and Papert show that a single layer cannot solve XOR; in 1973 the Lighthill report deepens the first AI winter. Rosenblatt died in 1971 at 43 in a sailing accident on Chesapeake Bay.",
         images: [
-          { src: "../mark_i_perceptron_manual.png", alt: "Mark I Perceptron, figure 2 from the operator's manual", cap: "Mark I Perceptron, figure 2 from the operator's manual. John C. Hay and Albert E. Murray, public domain.", href: "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" },
-          { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" }
+          { src: "../perceptron2.jpg", alt: "Mark I Perceptron on display at the Smithsonian", cap: "Mark I Perceptron. U.S. Navy, public domain.", href: "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg" },
+          { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" },
+          { src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }
         ],
         diagram: "xor",
         sources: [
-          { label: "HNF (2019), Frank Rosenblatt and the Perceptron", url: "https://blog.hnf.de/frank-rosenblatt/" },
+          { label: "Rosenblatt (1958), The Perceptron", url: "https://psycnet.apa.org/record/1959-09865-001" },
+          { label: "Rosenblatt (1962), Principles of Neurodynamics", url: "https://archive.org/details/principlesofneur0000rose" },
           { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins" },
-          { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" }
+          { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" },
+          { label: "Lefkowitz (2019), Professor's Perceptron Paved the Way for AI", url: "https://news.cornell.edu/stories/2019/09/professors-perceptron-paved-way-ai-60-years-too-soon" },
+          { label: "Cornell memorial statement for Frank Rosenblatt (1971)", url: "https://ecommons.cornell.edu/bitstream/handle/1813/18965/Rosenblatt_Frank_1971.pdf" }
         ]
       },
       {
         year: "1961–1986", label: "Backprop", title: "Errors backward",
-        text: "Rosenblatt describes a backward error correction in 1961, but without a gradient and chain rule. Linnainmaa develops reverse-mode automatic differentiation in 1970. In 1986 Rumelhart, Hinton, and Williams popularise backpropagation; hidden layers become trainable.",
-        images: [{ src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }],
+        text: "Rosenblatt describes a backward error correction in 1961, but without a gradient and chain rule. Linnainmaa develops reverse-mode automatic differentiation in 1970; Werbos formulates backpropagation for neural networks in 1974. In 1986 Rumelhart, Hinton, and Williams popularise backpropagation; hidden layers become trainable.",
         diagram: "backprop",
         sources: [
           { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up" },
           { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf" },
+          { label: "Werbos (1974), Beyond Regression", url: "https://www.semanticscholar.org/paper/Beyond-Regression%3A-New-Tools-for-Prediction-and-in-Werbos/8f2b4f7f0f1f6f7c" },
           { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0" }
         ]
       },
       {
         year: "1989–2012", label: "Deep Learning", title: "Images, GPUs, deep networks",
-        text: "LeCun combines backpropagation with convolutions in 1989 for handwritten ZIP codes. In 2012 AlexNet wins ImageNet with deep CNNs and GPUs. Deep networks become practical.",
-        sources: [{ label: "LeCun et al. (1989), Backpropagation Applied to Handwritten Zip Code Recognition", url: "https://doi.org/10.1162/neco.1989.1.4.541" }, { label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
+        text: "LeCun combines backpropagation with convolutions in 1989 for handwritten ZIP codes; LeNet-5 (1998) becomes the standard for digit recognition. In 2012 AlexNet wins ImageNet with deep CNNs and GPUs and sharply lowers the error rate. In 2016 AlphaGo beats Lee Sedol; deep networks become practical.",
+        images: [{ src: "../alphago_leesedol.jpg", alt: "Lee Sedol and AlphaGo, 2016", cap: "Lee Sedol and AlphaGo, 2016. Korea Baduk Association, CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg" }],
+        sources: [
+          { label: "LeCun et al. (1989), Backpropagation Applied to Handwritten Zip Code Recognition", url: "https://doi.org/10.1162/neco.1989.1.4.541" },
+          { label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" },
+          { label: "Silver et al. (2016), Mastering the game of Go with deep neural networks", url: "https://doi.org/10.1038/nature16961" }
+        ]
       },
       {
         year: "2014–2017", label: "Transformer", title: "Attention replaces the loop",
-        text: "Bahdanau, Cho, and Bengio let the decoder look back at the input words in 2014. In 2017 the transformer replaces recurrent processing with self-attention and adds positional information. Sentences can be processed in parallel without losing word order.",
+        text: "Bahdanau, Cho, and Bengio let the decoder look back at the input words in 2014. In 2017 the transformer replaces recurrent processing with self-attention and adds positional information. Sentences can be processed in parallel without losing word order; BERT and GPT build directly on it in 2018.",
         images: [{ src: "../transformer_architecture.png", alt: "The transformer encoder-decoder architecture", cap: "Transformer architecture, figure 1 from Attention Is All You Need. Ashish Vaswani et al. (Google), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png" }],
-        sources: [{ label: "Bahdanau et al. (2014), Neural Machine Translation by Jointly Learning to Align and Translate", url: "https://arxiv.org/abs/1409.0473" }, { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+        sources: [
+          { label: "Bahdanau et al. (2014), Neural Machine Translation by Jointly Learning to Align and Translate", url: "https://arxiv.org/abs/1409.0473" },
+          { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }
+        ]
       },
       {
         year: "2018–2022", label: "GPT", title: "Prediction becomes dialogue",
@@ -163,6 +245,7 @@
         ]
       }
     ];
+
     var STRANDS = [
       { label: DE ? "Zählen" : "Counting", color: "#5c9baf" },
       { label: DE ? "Logik" : "Logic", color: "#9f9700" },
@@ -238,11 +321,15 @@
         b.addEventListener("click", function () { setIndex(parseInt(b.getAttribute("data-history"), 10)); });
       });
       var e = tabs[index];
-      panel.innerHTML = '<div class="ls-history-year">' + api.esc(e.year) + '</div>' +
-        '<h3 class="ls-history-title">' + api.esc(e.title) + '</h3>' +
-        '<p class="ls-history-text">' + api.esc(e.text) + '</p>' +
-        figuresHTML(e) +
-        (e.diagram ? '<div class="ls-history-diagram">' + diagramHTML(e.diagram) + '</div>' : '') +
+      var hasMedia = (e.images && e.images.length) || e.diagram;
+      panel.innerHTML = '<div class="ls-history-body' + (hasMedia ? '' : ' is-single') + '">' +
+        '<div class="ls-history-textcol">' +
+          '<div class="ls-history-year">' + api.esc(e.year) + '</div>' +
+          '<h3 class="ls-history-title">' + api.esc(e.title) + '</h3>' +
+          '<p class="ls-history-text">' + api.esc(e.text) + '</p>' +
+        '</div>' +
+        (hasMedia ? '<div class="ls-history-media">' + figuresHTML(e) + (e.diagram ? '<div class="ls-history-diagram">' + diagramHTML(e.diagram) + '</div>' : '') + '</div>' : '') +
+        '</div>' +
         sourcesHTML(e);
       progress.textContent = (index + 1) + ' / ' + tabs.length;
       prevBtn.disabled = index === 0;

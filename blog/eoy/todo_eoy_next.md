@@ -65,6 +65,25 @@ file after every completed item.
    - DE + EN media suite.
    - `eoy_pages_test` 27/30/31 and the full suite.
    - `js_validator`, `php -l`, commit/push.
+9. **History slides — detail pass** — done
+   - Text now uses the left column; figures and diagrams sit on the right.
+   - Rosenblatt portrait moved from “Fehler rückwärts” to the perceptron tab.
+   - Hebb (1949), The Organization of Behavior, is cited for the first
+     influential learning rule; the note says “neurons that fire together, wire
+     together” is a later slogan, not Hebb's wording.
+   - Walter Pitts and Frank Rosenblatt now have their early lives, work, and
+     ends on the slide (IBM 704, Mark I, Charles Wightman, R. D. Joseph, 1971).
+   - Facts and legally usable images were pulled from `../history.php`; credits
+     stay in the captions.
+10. **Agent-RAG onboarding** — open
+    - Make it much clearer that the reader must click Next to advance; the
+      current state can look stuck.
+    - Show and briefly explain each background step as it happens (upload,
+      chunking, scoring, invisible context, answer) without overloading the
+      slide.
+11. **Agent tools window** — open
+    - Make “Ein Agent ist dasselbe Modell mit Werkzeugen” immersive again, using
+      the agent window from slide 1.
 
 ## Notes
 

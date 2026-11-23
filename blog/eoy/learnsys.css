@@ -3879,3 +3879,15 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-ar-grid{flex:1 1 0;min-height:0}
 .ls-ar-phone,.ls-ar-phone-frame{min-height:0}
 @media (max-width:760px){.ls-ar-head{flex-wrap:wrap}.ls-ar-head .ls-ar-sub{white-space:normal}}
+/* History: text on the left, media on the right */
+.ls-history-panel{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:auto}
+.ls-history-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.42fr);gap:12px;align-items:start;width:100%}
+.ls-history-body.is-single{grid-template-columns:1fr}
+.ls-history-textcol{display:grid;gap:7px;min-width:0}
+.ls-history-media{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ls-history-media .ls-history-figure{max-width:100%}
+.ls-history-media .ls-history-diagram{max-width:100%}
+@media (max-width:720px){
+  .ls-history-body{grid-template-columns:1fr}
+  .ls-history-media{order:2}
+}
