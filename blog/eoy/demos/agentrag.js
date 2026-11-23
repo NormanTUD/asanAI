@@ -35,20 +35,21 @@
       cmd: 'book.open("kraken.txt")'
     };
     var GUIDE = [
-      { measured: false, selected: [], stage: 1, final: false, label: L("Buch öffnen: Text in vier Chunks teilen", "Open the book: split the text into four chunks") },
-      { measured: true, selected: [], stage: 2, final: false, label: L("Winkel zum aktuellen Kontext messen", "Measure angles against the current context") },
-      { measured: true, selected: ["C1"], stage: 3, final: false, label: L("C1 (14°) in den unsichtbaren Kontext", "Put C1 (14°) into the invisible context") },
-      { measured: true, selected: ["C1"], stage: 4, final: true, label: L("Weiter generieren: „drei Herzen“", "Generate on: “three hearts”") }
+      { evaluated: false, angles: false, selected: [], stage: 1, final: false, label: L("Buch öffnen und den Text in vier Chunks teilen", "Open the book and split the text into four chunks") },
+      { evaluated: true, angles: false, selected: [], stage: 1, final: false, label: L("Chunks bewerten: passt / nicht relevant", "Score the chunks: fits / not relevant") },
+      { evaluated: true, angles: true, selected: [], stage: 2, final: false, label: L("Jeden Chunk zum Winkel machen: C1 14°, C2 69°, C3 46°, C4 72°", "Turn each chunk into an angle: C1 14°, C2 69°, C3 46°, C4 72°") },
+      { evaluated: true, angles: true, selected: ["C1"], stage: 3, final: false, label: L("C1 (14° < 35°) in den unsichtbaren Kontext", "Put C1 (14° < 35°) into the invisible context") },
+      { evaluated: true, angles: true, selected: ["C1"], stage: 4, final: true, label: L("Weiter generieren: „drei Herzen“", "Generate on: “three hearts”") }
     ];
     var state = { tool: "", selected: {}, step: -1 };
     var el = document.createElement("div");
     el.className = "ls-ar-scene";
     el.innerHTML =
       '<div class="ls-ar-head"><span class="ls-ar-badge">' + L("Dynamisches RAG", "Dynamic RAG") + '</span><span class="ls-ar-sub">' + L("Der Agent liest ein Buch, teilt es in Chunks und fügt nur passende Chunks in den Kontext.", "The agent reads a book, splits it into chunks, and puts only fitting chunks into the context.") + '</span><span class="ls-ar-guide"></span></div>' +
-      '<div class="ls-ar-query"><span>' + L("Auftrag", "Task") + '</span><b>' + L("Beantworte die Frage aus dem Buch.", "Answer the question from the book.") + '</b></div>' +
+      '<div class="ls-ar-query"><span>' + L("Frage", "Question") + '</span><b>' + L("Wie viele Herzen hat ein Krake?", "How many hearts does an octopus have?") + '</b><em>' + L("Beantworte sie aus dem Buch.", "Answer it from the book.") + '</em></div>' +
       '<div class="ls-ar-grid">' +
         '<section class="ls-ar-col"><div class="ls-ar-col-head"><b>' + L("Buch", "Book") + '</b><span>' + L("Text → Chunks", "text → chunks") + '</span></div><div class="ls-ar-tools"></div><code class="ls-ar-cmd"></code><div class="ls-ar-book"></div></section>' +
-        '<section class="ls-ar-col"><div class="ls-ar-col-head"><b>' + L("Chunks", "Chunks") + '</b><span>' + L("Winkel < 35°", "angle < 35°") + '</span></div><div class="ls-ar-list"></div><div class="ls-ar-measure"></div></section>' +
+        '<section class="ls-ar-col"><div class="ls-ar-col-head"><b>' + L("Chunks", "Chunks") + '</b><span>' + L("Winkel < 35°", "angle < 35°") + '</span></div><div class="ls-ar-angles"></div><div class="ls-ar-list"></div><div class="ls-ar-measure"></div></section>' +
         '<section class="ls-ar-col"><div class="ls-ar-col-head"><b>' + L("Kontext", "Context") + '</b><span>' + L("unsichtbar", "invisible") + '</span></div><div class="ls-ar-current"></div><div class="ls-ar-stack"></div><p class="ls-ar-note">' + L("Das Modell liest den unsichtbaren Stapel beim nächsten Token. Du siehst nur, welche Chunks hineinwandern.", "The model reads the invisible stack at the next token. You only see which chunks go in.") + '</p></section>' +
       '</div>' +
       '<div class="ls-ar-answer" aria-live="polite"></div>' +
@@ -67,12 +68,16 @@
     var loopEl = el.querySelector(".ls-ar-loop");
     var guideEl = el.querySelector(".ls-ar-guide");
     var measureEl = el.querySelector(".ls-ar-measure");
+    var anglesEl = el.querySelector(".ls-ar-angles");
     function hasBook() { return state.tool === "book"; }
     function selectedChunks() {
       return CHUNKS.filter(function (c) { return !!state.selected[c.id]; });
     }
-    function measured() {
-      return state.step < 0 || (state.step >= 0 && GUIDE[state.step].measured);
+    function showEvaluation() {
+      return state.step < 0 || (state.step >= 0 && GUIDE[state.step].evaluated);
+    }
+    function showAngles() {
+      return state.step < 0 || (state.step >= 0 && GUIDE[state.step].angles);
     }
     function finalAnswer() {
       return state.step >= 0 && GUIDE[state.step].final;
@@ -91,27 +96,60 @@
       if (!hasBook()) {
         listEl.innerHTML = '<div class="ls-ar-empty">' + L("Öffne links das Buch. Der Agent teilt den Text dann in Chunks.", "Open the book on the left. The agent then splits the text into chunks.") + '</div>';
         measureEl.innerHTML = "";
+        anglesEl.innerHTML = "";
         return;
       }
-      var showMeasurement = measured();
+      var evaluated = showEvaluation();
+      var angled = showAngles();
       listEl.innerHTML = CHUNKS.map(function (c) {
         var on = !!state.selected[c.id];
         var head = '<div class="ls-ar-snip-head"><b>' + c.id + '</b><span>' + L("Buch", "book") + '</span>' +
-          (showMeasurement ? '<em class="is-' + c.kind + '">' + esc(c.verdict) + '</em>' : '') + '</div>';
+          (evaluated ? '<em class="is-' + c.kind + '">' + esc(c.verdict) + '</em>' : '') + '</div>';
         var body = head + '<p>' + esc(c.text) + '</p>';
-        if (!showMeasurement) return '<div class="ls-ar-snip">' + body + '<span class="ls-ar-pending">' + L("Winkel noch nicht gemessen", "angle not measured yet") + '</span></div>';
+        if (!evaluated) return '<div class="ls-ar-snip">' + body + '<span class="ls-ar-pending">' + L("Noch nicht bewertet", "not scored yet") + '</span></div>';
+        if (!angled) return '<div class="ls-ar-snip">' + body +
+          '<div class="ls-ar-score"><span class="ls-ar-track"><i class="' + (c.score >= 0.7 ? "is-high" : c.score >= 0.4 ? "is-mid" : "is-low") + '" style="width:' + Math.round(c.score * 100) + '%"></i></span><span>' + c.score.toFixed(2) + '</span></div>' +
+          '<span class="ls-ar-pending">' + L("Winkel noch nicht gemessen", "angle not measured yet") + '</span></div>';
         return '<div class="ls-ar-snip' + (on ? " is-in" : "") + '">' + body +
           '<div class="ls-ar-score"><span class="ls-ar-track"><i class="' + (c.score >= 0.7 ? "is-high" : c.score >= 0.4 ? "is-mid" : "is-low") + '" style="width:' + Math.round(c.score * 100) + '%"></i></span><b class="ls-ar-angle">∠ ' + c.angle + '°</b><span>' + c.score.toFixed(2) + '</span></div>' +
           '<button type="button" class="ls-ar-add' + (on ? " is-on" : "") + '" data-snip="' + c.id + '">' + (on ? L("Im Kontext", "In context") : L("In Kontext legen", "Put in context")) + '</button>' +
         '</div>';
       }).join("");
-      measureEl.innerHTML = showMeasurement
+      measureEl.innerHTML = angled
         ? '<span class="ls-ar-limit">' + L("Grenzwinkel 35°", "threshold 35°") + '</span>' +
           CHUNKS.map(function (c) {
             var fit = c.angle <= ANGLE_LIMIT;
             return '<b class="' + (fit ? "is-fit" : "is-out") + '">' + c.id + ' ' + c.angle + '° ' + (fit ? "✓" : "✗") + '</b>';
           }).join("")
         : "";
+      renderAngles(angled);
+    }
+    function renderAngles(show) {
+      if (!show) { anglesEl.innerHTML = ""; return; }
+      var ox = 42, oy = 132, r = 96, qr = 112;
+      var pts = [[ox, oy]];
+      for (var a = 0; a <= ANGLE_LIMIT; a += 2) pts.push([ox + Math.cos(a * Math.PI / 180) * r, oy - Math.sin(a * Math.PI / 180) * r]);
+      var sector = "M" + pts.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" L") + " Z";
+      var svg = '<svg class="ls-ar-vectors" viewBox="0 0 280 160" role="img">' +
+        '<path class="ls-ar-sector" d="' + sector + '"/>' +
+        '<line class="ls-ar-axis" x1="' + ox + '" y1="' + (oy + 7) + '" x2="' + (ox + qr + 8) + '" y2="' + (oy + 7) + '"/>' +
+        '<line class="ls-ar-axis" x1="' + ox + '" y1="' + (oy + 7) + '" x2="' + ox + '" y2="' + (oy - r - 2) + '"/>' +
+        '<line class="ls-ar-query-vec" x1="' + ox + '" y1="' + oy + '" x2="' + (ox + qr) + '" y2="' + oy + '"/>' +
+        '<path class="ls-ar-query-head" d="M' + (ox + qr) + ' ' + oy + ' l -9 -4 l 0 8 z"/>' +
+        '<text class="ls-ar-vec-label is-query" x="' + (ox + qr - 8) + '" y="' + (oy + 17) + '" text-anchor="end">' + L("Kontext", "context") + '</text>';
+      CHUNKS.forEach(function (c) {
+        var ang = c.angle * Math.PI / 180;
+        var x = ox + Math.cos(ang) * r, y = oy - Math.sin(ang) * r;
+        var on = c.angle <= ANGLE_LIMIT;
+        var picked = !!state.selected[c.id];
+        var anchor = Math.cos(ang) >= 0 ? "start" : "end";
+        var lx = x + (Math.cos(ang) >= 0 ? 7 : -7);
+        var ly = y - 5 + (c.id === "C4" ? 12 : 0);
+        svg += '<line class="ls-ar-chunk-vec' + (on ? " is-in" : "") + (picked ? " is-picked" : "") + '" x1="' + ox + '" y1="' + oy + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' +
+          '<circle class="ls-ar-vec-dot' + (on ? " is-in" : "") + (picked ? " is-picked" : "") + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (picked ? 4.2 : 3) + '"/>' +
+          '<text class="ls-ar-vec-label' + (on ? " is-in" : "") + (picked ? " is-picked" : "") + '" x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + anchor + '">' + c.id + '</text>';
+      });
+      anglesEl.innerHTML = '<div class="ls-ar-angles-head"><b>' + L("Winkel zum Kontext", "angles to the context") + '</b><span>' + L("unter 35° → Kontext", "below 35° → context") + '</span></div>' + svg + '</svg>';
     }
     function renderContext() {
       currentEl.innerHTML = '<span>' + L("Aktueller Kontext", "Current context") + '</span>' +
@@ -158,7 +196,7 @@
     }
     function renderGuide() {
       if (state.step < 0) {
-        guideEl.textContent = L("Drücke Weiter: Buch → Chunks → Winkel → Kontext → generieren", "Press Next: book → chunks → angle → context → generate");
+        guideEl.textContent = L("Drücke Weiter: Buch → Chunks → bewerten → Winkel → Kontext → generieren", "Press Next: book → chunks → score → angle → context → generate");
       } else {
         guideEl.textContent = L("Schritt " + (state.step + 1) + " / " + GUIDE.length + " · ", "Step " + (state.step + 1) + " / " + GUIDE.length + " · ") + GUIDE[state.step].label;
       }
