@@ -276,7 +276,6 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
         )
 
     hash_before = plot_hash(driver)
-    loss_before_pause = loss_count(driver)
     driver.execute_script("""
       const el = document.getElementById('unified-layer-1-feature-arrows');
       const canvas = el.querySelector('canvas') || el;
@@ -287,6 +286,10 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
     """)
     time.sleep(0.1)
     drag_active = bool(driver.execute_script("return !!window.__tmPlotDragging;"))
+    # The epoch that was already running when the pointer went down cannot be
+    # interrupted; measure the pause after that epoch has drained.
+    time.sleep(0.5)
+    loss_before_pause = loss_count(driver)
     time.sleep(2.0)
     paused_gain = loss_count(driver) - loss_before_pause
     still_active = bool(driver.execute_script("return !!window.__tmPlotDragging;"))

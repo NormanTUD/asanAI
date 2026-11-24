@@ -117,6 +117,7 @@ window.__tmFullVizObserver = null;
    interaction events, so a training epoch cannot snap the view back. */
 (function () {
 	var cameraStore = Object.create(null);
+	var cameraTargets = Object.create(null);
 	var axisViewStore = Object.create(null);
 	var dragTracker = null;
 	var deferredCatchUp = null;
@@ -163,10 +164,24 @@ window.__tmFullVizObserver = null;
 		return normCamera(camera);
 	}
 
+	function cameraMatches(a, b) {
+		if (!a || !b) return false;
+		return ["eye", "center", "up"].every(function (key) {
+			return ["x", "y", "z"].every(function (axis) {
+				return Math.abs((a[key] && a[key][axis] || 0) - (b[key] && b[key][axis] || 0)) <= 0.0005;
+			});
+		});
+	}
+
 	function saveCamera(el) {
 		el = resolveEl(el);
 		if (!el || !el.id) return;
 		var camera = readCamera(el);
+		var target = cameraTargets[el.id];
+		if (target) {
+			if (!cameraMatches(camera, target)) return;
+			delete cameraTargets[el.id];
+		}
 		if (camera) cameraStore[el.id] = camera;
 	}
 
@@ -176,8 +191,31 @@ window.__tmFullVizObserver = null;
 		var raw = event["scene.camera"] || (event.scene && event.scene.camera);
 		var camera = normCamera(raw, readCamera(el));
 		if (!camera) return false;
+		var target = cameraTargets[el.id];
+		if (target && !cameraMatches(camera, target)) return false;
+		delete cameraTargets[el.id];
 		cameraStore[el.id] = camera;
 		return true;
+	}
+
+	function saveCameraUpdate(el, update) {
+		el = resolveEl(el);
+		if (!el || !el.id || !update) return;
+		var raw = update["scene.camera"] || (update.scene && update.scene.camera);
+		var eye = raw && raw.eye;
+		var center = raw && raw.center;
+		var up = raw && raw.up;
+		if (update["scene.camera.eye"]) {
+			eye = update["scene.camera.eye"];
+			center = update["scene.camera.center"] || center;
+			up = update["scene.camera.up"] || up;
+		}
+		if (!eye) return;
+		var camera = normCamera({ eye: eye, center: center, up: up }, readCamera(el));
+		if (camera) {
+			cameraStore[el.id] = camera;
+			cameraTargets[el.id] = camera;
+		}
 	}
 
 	function saveAxisView(el, event) {
@@ -334,14 +372,23 @@ window.__tmFullVizObserver = null;
 		}
 		if (typeof originalRelayout === "function") {
 			Plotly.relayout = function (el, update) {
-				return rememberAfter(runProgrammatic(function () {
+				saveCameraUpdate(el, update);
+				var result = runProgrammatic(function () {
 					return originalRelayout.call(this, el, update);
-				}.bind(this)), el, function () { syncAxisView(el); });
+				}.bind(this));
+				saveCameraLoop(el, 300);
+				return rememberAfter(result, el, function () { syncAxisView(el); });
 			};
 		}
 
 		var onRelayout = function (ev) {
-			if (programmatic || !ev || !ev.target) return;
+			if (!ev || !ev.target) return;
+			if (programmatic) {
+				/* A programmatic camera change must still enter the store;
+				   otherwise the next react() resets the reader's new view. */
+				if (ev["scene.camera"] || (ev.scene && ev.scene.camera)) saveCameraEvent(ev.target, ev);
+				return;
+			}
 			if (!saveCameraEvent(ev.target, ev)) saveCamera(ev.target);
 			saveAxisView(ev.target, ev);
 		};
