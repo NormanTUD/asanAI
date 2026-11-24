@@ -3212,7 +3212,7 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 .ls-con2[data-theory="myst"] .ls-con2-stage{background:#04070d;border-color:rgba(0,75,111,.35)}
 .ls-con2[data-theory="workspace"] .ls-con2-stage{height:clamp(320px,44vh,460px)}
 .ls-con2-canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
-.ls-con2-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;border:1px solid var(--ls-line);border-radius:14px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:9px 12px;box-shadow:0 8px 22px rgba(0,35,50,.05)}
+.ls-con2-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;border:1px solid var(--ls-line);border-radius:14px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:9px 12px;box-shadow:0 8px 22px rgba(0,35,50,.05);flex:0 0 auto}
 .ls-con2-row{display:flex;flex-wrap:wrap;gap:5px}
 .ls-con2-chip{appearance:none;border:1px solid var(--ls-line);background:rgba(255,255,255,.82);color:var(--ls-petrol);font:700 var(--ls-fs-micro)/1 "Open Sans",sans-serif;padding:7px 10px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s ease,border-color .15s ease,color .15s ease}
 .ls-con2-chip:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--chip,var(--con-accent,var(--ls-petrol)));flex:0 0 auto}
@@ -3226,8 +3226,8 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 .ls-con2-range input{flex:1 1 auto;min-width:90px;accent-color:var(--con-accent,var(--ls-petrol))}
 .ls-con2-range output{font:700 11px/1 "Barlow",sans-serif;color:var(--con-accent,var(--ls-petrol));min-width:3.8ch;text-align:right}
 .ls-con2-range.is-disabled{opacity:.42}
-.ls-con2-status{margin:0;min-height:0;font:600 var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft);padding:0 2px}
-.ls-con2-detail{min-width:0;border:1px solid var(--ls-line);border-top:4px solid var(--con-accent,var(--ls-petrol));border-radius:16px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:8px 10px;box-shadow:0 12px 30px rgba(0,35,50,.06);display:flex;flex-direction:column;gap:4px}
+.ls-con2-status{margin:0;flex:0 0 auto;min-height:1.4em;font:600 var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft);padding:1px 2px 0}
+.ls-con2-detail{min-width:0;flex:0 0 auto;border:1px solid var(--ls-line);border-top:4px solid var(--con-accent,var(--ls-petrol));border-radius:16px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:8px 10px;box-shadow:0 12px 30px rgba(0,35,50,.06);display:flex;flex-direction:column;gap:4px}
 .ls-con2-detail-head span{font:700 9px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--con-accent,var(--ls-petrol))}
 .ls-con2-detail-head b{display:block;font:700 17px/1.15 "Barlow",sans-serif;color:var(--ls-ink);margin-top:2px}
 .ls-con2-detail-body{display:block;column-count:1;column-gap:0;max-width:80ch}
@@ -5722,3 +5722,27 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-con2-q.is-on{background:var(--con-accent,var(--ls-petrol));border-color:var(--con-accent,var(--ls-petrol));color:#fff}
 .ls-con2-a{margin:0;padding:6px 9px;border-left:2px solid var(--con-accent,var(--ls-petrol));background:linear-gradient(90deg,rgba(255,255,255,.8),rgba(255,255,255,.3));font:600 11px/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
 @media (max-width:640px){.ls-con2-qa-questions{grid-template-columns:1fr}.ls-con2-q{font-size:8.5px}}
+/* Intro question deck */
+.ls-mi2-qa{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"head questions" "answer answer";gap:7px 14px;border:1px solid var(--ls-line);border-left:4px solid var(--ls-gold);border-radius:14px;background:linear-gradient(90deg,rgba(201,162,39,.09),rgba(201,162,39,.02));padding:10px 14px}
+.ls-mi2-qa-head{grid-area:head;display:flex;flex-direction:column;gap:2px;white-space:nowrap}
+.ls-mi2-qa-head span{font:700 9px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-gold)}
+.ls-mi2-qa-head b{font:700 15px/1.1 "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-mi2-qa-questions{grid-area:questions;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.ls-mi2-q{appearance:none;border:1px solid var(--ls-line);border-radius:999px;background:rgba(255,255,255,.78);padding:5px 8px;font:700 9px/1.2 "Open Sans",sans-serif;color:var(--ls-petrol);cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.ls-mi2-q:hover{border-color:var(--ls-gold);background:#fff}
+.ls-mi2-q.is-on{background:var(--ls-gold);border-color:var(--ls-gold);color:#fff}
+.ls-mi2-qa-answer{grid-area:answer;margin:0;padding:6px 0 0;border-top:1px dashed var(--ls-line);font:600 12.5px/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+@media (max-width:640px){.ls-mi2-qa{grid-template-columns:1fr;grid-template-areas:"head" "questions" "answer"}.ls-mi2-qa-head{white-space:normal}}
+/* Final status question deck */
+.ls-cn-bottom.ls-cn-qa{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"head list" "answer answer";align-items:start;border-left-color:var(--ls-gold);background:linear-gradient(90deg,rgba(201,162,39,.10),rgba(201,162,39,.02))}
+.ls-cn-qa>b{grid-area:head;color:var(--ls-gold)}
+.ls-cn-qa-list{grid-area:list;display:flex;flex-wrap:wrap;gap:5px}
+.ls-cn-q{appearance:none;border:1px solid var(--ls-line);border-radius:999px;background:rgba(255,255,255,.78);padding:5px 8px;font:700 9px/1.2 "Open Sans",sans-serif;color:var(--ls-petrol);cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.ls-cn-q:hover{border-color:var(--ls-gold);background:#fff}
+.ls-cn-q.is-on{background:var(--ls-gold);border-color:var(--ls-gold);color:#fff}
+.ls-cn-qa-answer{grid-area:answer;margin:0;padding:6px 0 0;border-top:1px dashed var(--ls-line);font:600 12px/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-cn-qa-answer a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}
+@media (max-width:640px){.ls-cn-bottom.ls-cn-qa{grid-template-columns:1fr;grid-template-areas:"head" "list" "answer"}.ls-cn-qa-list{max-height:120px;overflow:auto}}
+/* The QKV stage has a fixed minimum canvas height; let the scene scroll instead of letting it spill into the next rows. */
+.ls-qkv-scene{grid-template-rows:minmax(300px,1fr) auto auto auto auto auto}
+@media (max-width:720px){.ls-loss-scene{grid-template-rows:minmax(300px,1fr) auto auto auto auto}}

@@ -666,37 +666,33 @@
     function fourBody(cx, cy, r, t) {
       var pulse = 0.5 + 0.5 * Math.sin(t * 1.7);
       var aura = ctx.createRadialGradient(cx, cy, 2, cx, cy, r * 2.3);
-      aura.addColorStop(0, "rgba(127,215,239,.18)");
-      aura.addColorStop(0.55, "rgba(0,146,153,.08)");
+      aura.addColorStop(0, "rgba(127,215,239,.20)");
+      aura.addColorStop(0.55, "rgba(0,146,153,.09)");
       aura.addColorStop(1, "rgba(0,146,153,0)");
       ctx.fillStyle = aura;
       ctx.beginPath(); ctx.arc(cx, cy, r * 2.3, 0, Math.PI * 2); ctx.fill();
-      ctx.save(); ctx.translate(cx, cy);
       for (var ri = 0; ri < 3; ri++) {
         ctx.beginPath();
-        ctx.ellipse(0, 0, r * (0.86 + ri * 0.24), r * (0.46 + ri * 0.12), -0.16, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(127,215,239," + (0.19 - ri * 0.045) + ")";
+        ctx.ellipse(cx, cy - r * 0.08, r * (0.84 + ri * 0.22), r * (0.58 + ri * 0.13), -0.10, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(127,215,239," + (0.24 - ri * 0.055) + ")";
         ctx.lineWidth = 1; ctx.stroke();
       }
-      ctx.strokeStyle = "#9fe7f5"; ctx.lineWidth = 2; ctx.lineCap = "round";
-      ctx.shadowColor = "rgba(127,215,239,.75)"; ctx.shadowBlur = 10;
-      ctx.beginPath(); ctx.arc(0, -r * 0.62, r * 0.24, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.38);
-      ctx.quadraticCurveTo(-r * 0.28, -r * 0.20, -r * 0.20, r * 0.20);
-      ctx.moveTo(0, -r * 0.38);
-      ctx.quadraticCurveTo(r * 0.28, -r * 0.20, r * 0.20, r * 0.20);
-      ctx.moveTo(-r * 0.16, -r * 0.18); ctx.lineTo(-r * 0.62, r * 0.02);
-      ctx.moveTo(r * 0.16, -r * 0.18); ctx.lineTo(r * 0.62, r * 0.02);
-      ctx.moveTo(-r * 0.14, r * 0.20); ctx.lineTo(-r * 0.26, r * 0.72);
-      ctx.moveTo(r * 0.14, r * 0.20); ctx.lineTo(r * 0.26, r * 0.72);
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = "#ff8b6b";
-      ctx.beginPath(); ctx.arc(0, -r * 0.04, 3 + pulse * 2.2, 0, Math.PI * 2); ctx.fill();
+      var med = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.35, 2, cx, cy, r * 0.82);
+      med.addColorStop(0, "rgba(255,255,255,.16)");
+      med.addColorStop(0.55, "rgba(0,146,153,.16)");
+      med.addColorStop(1, "rgba(3,24,32,.62)");
+      ctx.beginPath(); ctx.arc(cx, cy - r * 0.04, r * 0.78, 0, Math.PI * 2);
+      ctx.fillStyle = med; ctx.fill();
+      ctx.strokeStyle = "rgba(201,243,255,.36)"; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.save();
+      ctx.font = Math.round(r * 1.25) + 'px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("🧍", cx, cy - r * 0.03);
       ctx.restore();
-      ctx.fillStyle = "rgba(201,243,255,.64)"; ctx.font = font(9, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
-      ctx.fillText(L("Mensch · 4/4", "human · 4/4"), cx, cy + r * 1.02);
+      ctx.fillStyle = "#ff8b6b";
+      ctx.beginPath(); ctx.arc(cx + r * 0.40, cy - r * 0.58, 2.6 + pulse * 1.6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(201,243,255,.70)"; ctx.font = font(9, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText(L("Mensch · 4/4", "human · 4/4"), cx, cy + r * 1.00);
     }
     function fourTokenCore(cx, cy, r, t) {
       ctx.save(); ctx.translate(cx, cy);

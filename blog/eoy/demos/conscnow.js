@@ -92,6 +92,20 @@
         cite: '<a href="https://doi.org/10.1038/s41583-022-00587-4" target="_blank" rel="noopener">Seth &amp; Bayne (2022)</a>'
       }
     ];
+    var QA = DE ? [
+      { q: "Ist heute ein KI-System bewusst?", a: "Es gibt keinen überzeugenden Nachweis; eine prinzipielle Barriere ist nicht gezeigt (<a href=\"https://arxiv.org/abs/2308.08708\" target=\"_blank\" rel=\"noopener\">Butlin et al., 2023</a>)." },
+      { q: "Was zeigt der J-Space?", a: "Etwas wie einen globalen Arbeitsraum; Zugang, nicht phänomenales Erleben." },
+      { q: "Reicht Verhalten als Test?", a: "Nein; wir sehen nur Berichte, nicht das Erleben. Das ist das Other-Minds-Problem." },
+      { q: "Was fehlt nach 4E?", a: "Körper, geteilte Welt und Handlung; LLMs leben nur im Extended-Modus." },
+      { q: "Was folgt aus der Unsicherheit?", a: "Ethische Vorsicht: Nichtwissen ist kein Freibrief." }
+    ] : [
+      { q: "Is any AI system conscious today?", a: "There is no convincing evidence; no conclusive barrier has been shown (<a href=\"https://arxiv.org/abs/2308.08708\" target=\"_blank\" rel=\"noopener\">Butlin et al., 2023</a>)." },
+      { q: "What does the J-space show?", a: "Something like a global workspace; access, not phenomenal experience." },
+      { q: "Is behaviour enough as a test?", a: "No; we see reports, not experience. That is the other-minds problem." },
+      { q: "What is missing after 4E?", a: "Body, shared world, and action; LLMs live only in the extended mode." },
+      { q: "What follows from the uncertainty?", a: "Ethical caution: not knowing is not a licence." }
+    ];
+    var cnQa = 0;
     var active = 0;
     var el = document.createElement("div");
     el.className = "ls-cn";
@@ -110,7 +124,13 @@
       '</header>' +
       '<div class="ls-cn-grid" role="tablist" aria-label="' + L("Ansätze", "Approaches") + '">' + cards + '</div>' +
       '<section class="ls-cn-detail" data-cn-detail aria-live="polite"></section>' +
-      '<div class="ls-cn-bottom"><b>' + L("Konsens", "Consensus") + '</b><p>' + L("Butlin et al. (2023): Kein aktuelles System ist überzeugend bewusst; es gibt aber keine prinzipielle Barriere. Die Frage bleibt offen, und die Unsicherheit ist ethisch relevant.", "Butlin et al. (2023): no current system is convincingly conscious, but there is no conclusive barrier. The question remains open, and the uncertainty is ethically relevant.") + '</p><a href="https://arxiv.org/abs/2308.08708" target="_blank" rel="noopener">' + L("Butlin et al. (2023)", "Butlin et al. (2023)") + ' →</a></div>';
+      '<div class="ls-cn-bottom ls-cn-qa">' +
+        '<b>' + L("Fragen", "Questions") + '</b>' +
+        '<div class="ls-cn-qa-list">' + QA.map(function (item, i) {
+          return '<button type="button" class="ls-cn-q' + (i === 0 ? " is-on" : "") + '" data-cn-q="' + i + '">' + item.q + '</button>';
+        }).join("") + '</div>' +
+        '<p class="ls-cn-qa-answer" data-cn-qa-answer>' + QA[0].a + '</p>' +
+      '</div>';
     root.appendChild(el);
 
     var grid = el.querySelector(".ls-cn-grid");
@@ -134,7 +154,17 @@
     cardEls.forEach(function (b) {
       b.addEventListener("click", function () { active = parseInt(b.getAttribute("data-cn"), 10) || 0; render(); });
     });
+    var qaButtons = Array.prototype.slice.call(el.querySelectorAll("[data-cn-q]"));
+    var qaAnswer = el.querySelector("[data-cn-qa-answer]");
+    function renderQA() {
+      qaButtons.forEach(function (b, i) { b.classList.toggle("is-on", i === cnQa); });
+      if (qaAnswer) qaAnswer.innerHTML = QA[cnQa].a;
+    }
+    qaButtons.forEach(function (b) {
+      b.addEventListener("click", function () { cnQa = parseInt(b.getAttribute("data-cn-q"), 10) || 0; renderQA(); });
+    });
     render();
+    renderQA();
     return {
       update: function () {},
       next: function () { if (active < APPROACHES.length - 1) { active++; render(); return true; } return false; },

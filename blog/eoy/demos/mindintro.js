@@ -4,7 +4,16 @@
   if (!core) return;
   function mindIntroScene(root, api) {
     var DE = api.lang === "de";
+    var esc = api.esc || function (s) { return String(s == null ? "" : s); };
     function L(de, en) { return DE ? de : en; }
+    var QA = [
+      { q: L("Was ist ein Quale?", "What is a quale?"), a: L("Die gefühlte Eigenschaft einer Erfahrung, etwa die Röte des Roten.", "The felt quality of an experience, such as the redness of red.") },
+      { q: L("Warum ist Bewusstsein nicht binär?", "Why is consciousness not binary?"), a: L("Es gibt phänomenale Typen und Stufen, keine einfache Ja/Nein-Achse.", "There are phenomenal types and levels, not a simple yes/no axis.") },
+      { q: L("Was zeigt Marys Zimmer?", "What does Mary's room show?"), a: L("Wissen über Farben ist nicht dasselbe wie das Erleben von Rot.", "Knowledge about colours is not the same as experiencing red.") },
+      { q: L("Was ist das Other-Minds-Problem?", "What is the other-minds problem?"), a: L("Wir sehen nur Worte und Verhalten, nicht das Erleben anderer.", "We see only words and behaviour, not the experience of others.") },
+      { q: L("Kann man Bewusstsein messen?", "Can consciousness be measured?"), a: L("Messbar sind Bedingungen und Berichte; das Erleben selbst bleibt indirekt.", "Conditions and reports are measurable; experience itself remains indirect.") }
+    ];
+    var miQa = 0;
     var el = document.createElement("div");
     el.className = "ls-mi2";
     el.innerHTML =
@@ -32,7 +41,7 @@
               '<b>' + L("Von innen", "From inside") + '</b><p>' + L("Wie sich das Rot anfühlt", "what the red feels like") + '</p>' +
             '</div>' +
           '</div>' +
-          '<p class="ls-mi2-def">' + L("Qualia (Singular Quale) sind die gefühlten Eigenschaften einer Erfahrung: die Röte des Roten, der Schmerz des Schmerzes, der Klang einer Geige. Messungen beschreiben die Bedingungen, nicht das Erleben. Diese Lücke heißt das harte Problem (Chalmers, 1995).", "Qualia (singular quale) are the felt qualities of an experience: the redness of red, the painfulness of pain, the sound of a violin. Measurements describe the conditions, not the experience. This gap is the hard problem (Chalmers, 1995).") + '</p>' +
+          '<p class="ls-mi2-def">' + L("Qualia sind die gefühlten Eigenschaften einer Erfahrung: die Röte des Roten, der Schmerz des Schmerzes, der Klang einer Geige. Messungen beschreiben die Bedingungen, nicht das Erleben. Diese Lücke heißt das harte Problem (Chalmers, 1995).", "Qualia are the felt qualities of an experience: the redness of red, the painfulness of pain, the sound of a violin. Measurements describe the conditions, not the experience. This gap is the hard problem (Chalmers, 1995).") + '</p>' +
           '<div class="ls-mi2-examples"><span>' + L("Rot", "red") + '</span><span>' + L("Schmerz", "pain") + '</span><span>' + L("Kaffee", "coffee") + '</span><span>' + L("ein Akkord", "a chord") + '</span></div>' +
         '</section>' +
         '<aside class="ls-mi2-right">' +
@@ -61,9 +70,12 @@
           '</section>' +
         '</aside>' +
       '</div>' +
-      '<div class="ls-mi2-bottom">' +
-        '<article class="ls-mi2-bottom-card" data-tip="' + L("Prüfbar sind Aufgaben und Berichte; das zeigt Zugang, nicht Erleben.", "Tasks and reports are testable; that shows access, not experience.") + '"><span>01</span><b>' + L("Was prüfbar ist", "What can be tested") + '</b><p>' + L("Aufgaben, Verhalten, Selbstbericht und globale Verfügbarkeit. Das zeigt Zugang, nicht Qualia.", "Tasks, behaviour, self-report, and global availability. That shows access, not qualia.") + '</p></article>' +
-        '<article class="ls-mi2-bottom-card" data-tip="' + L("Bewusstsein hat Typen und Stufen, nicht nur Ja oder Nein.", "Consciousness has types and levels, not just yes or no.") + '"><span>02</span><b>' + L("Nicht binär", "Not binary") + '</b><p>' + L("Bewusstsein ist nicht nur Ja oder Nein: phänomenale Typen und Tulvings anoetisch-noetisch-autonoetische Stufen.", "Consciousness is not only yes or no: phenomenal types and Tulving's anoetic-noetic-autonoetic levels.") + '</p></article>' +
+      '<div class="ls-mi2-qa">' +
+        '<div class="ls-mi2-qa-head"><span>' + L("Fragen", "Questions") + '</span><b>' + L("Kurz beantwortet", "Brief answers") + '</b></div>' +
+        '<div class="ls-mi2-qa-questions">' + QA.map(function (item, i) {
+          return '<button type="button" class="ls-mi2-q' + (i === 0 ? " is-on" : "") + '" data-mi-q="' + i + '">' + esc(item.q) + '</button>';
+        }).join("") + '</div>' +
+        '<p class="ls-mi2-qa-answer" data-mi-qa-answer>' + esc(QA[0].a) + '</p>' +
       '</div>';
     root.appendChild(el);
 
@@ -104,6 +116,16 @@
     }
     if (swap) swap.addEventListener("click", function () { swapped = !swapped; renderSpectrum(); });
     renderSpectrum();
+    var qaAnswer = el.querySelector("[data-mi-qa-answer]");
+    var qaButtons = Array.prototype.slice.call(el.querySelectorAll("[data-mi-q]"));
+    function renderQA() {
+      qaButtons.forEach(function (b, i) { b.classList.toggle("is-on", i === miQa); });
+      if (qaAnswer) qaAnswer.textContent = QA[miQa].a;
+    }
+    qaButtons.forEach(function (b) {
+      b.addEventListener("click", function () { miQa = parseInt(b.getAttribute("data-mi-q"), 10) || 0; renderQA(); });
+    });
+    renderQA();
     return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
   }
   core.register("mindintro", mindIntroScene);
