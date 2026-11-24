@@ -218,6 +218,25 @@
         '<div class="ls-rm-spectrum" data-tip="' + L("Fähigkeiten von stabil bis fehlend; die Farbe des Punktes markiert den Status.", "Capabilities from stable to missing; the dot colour marks the status.") + '"><div class="ls-rm-spectrum-scale"><span>' + (DE ? "stabil" : "stable") + '</span><span>' + (DE ? "brüchig" : "brittle") + '</span><span>' + (DE ? "fehlt" : "missing") + '</span></div>' + rows + '</div>' +
         detail;
     }
+    function socIcon(idx) {
+      var paths = [
+        '<rect x="7" y="7" width="10" height="10" rx="1.6"></rect><path d="M9.5 4v3M12 4v3M14.5 4v3M9.5 17v3M12 17v3M14.5 17v3M4 9.5h3M4 12h3M4 14.5h3M17 9.5h3M17 12h3M17 14.5h3"></path>',
+        '<path d="M7 17.5h10a4 4 0 0 0 .4-7.98A5.2 5.2 0 0 0 7.6 8.1 3.7 3.7 0 0 0 7 17.5Z"></path>',
+        '<circle cx="6" cy="8" r="2"></circle><circle cx="6" cy="16" r="2"></circle><circle cx="12" cy="12" r="2.2"></circle><circle cx="18" cy="8" r="2"></circle><circle cx="18" cy="16" r="2"></circle><path d="M8 8l2.2 2.5M8 16l2.2-2.5M14.2 11l2-2M14.2 13l2 2"></path>',
+        '<rect x="4" y="4" width="6.5" height="6.5" rx="1"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"></rect>',
+        '<path d="M12 4v16M5 8h14M7.5 8l-3 6h6l-3-6ZM16.5 8l-3 6h6l-3-6Z"></path>'
+      ];
+      return '<svg class="ls-rm-soc-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' + paths[idx] + '</svg>';
+    }
+    function crossIcon(idx) {
+      var paths = [
+        '<path d="M4 8h16v10H4zM9 8V6h6v2"></path>',
+        '<circle cx="12" cy="12" r="3"></circle><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12Z"></path>',
+        '<circle cx="12" cy="12" r="8"></circle><path d="M14.5 9.5a3 3 0 1 0 0 5"></path>',
+        '<path d="M4 18h16M6 18l1-7 5-3 5 3 1 7M9 11h6"></path>'
+      ];
+      return '<svg class="ls-rm-soc-cross-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' + paths[idx] + '</svg>';
+    }
     function renderSociety(d) {
       var chain = d.chain || [];
       var cross = d.items || [];
@@ -226,37 +245,67 @@
       var active = Math.min(state.active, Math.max(0, list.length - 1));
       state.active = active;
       var item = list[active] || {};
-      var chainHTML = chain.map(function (c, idx) {
-        var lvl = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
-        return '<button type="button" class="ls-rm-chain-step' + (kind === "chain" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="chain" data-tip="' + L("Eine Stufe der Wertschöpfungskette; der Balken zeigt die Konzentration.", "One stage of the value chain; the bar shows concentration.") + '">' +
-          '<span class="ls-rm-chain-tag">' + esc(c.tag) + '</span>' +
-          '<b>' + esc(c.title) + '</b>' +
-          '<span class="ls-rm-chain-who">' + esc(c.who) + '</span>' +
-          '<span class="ls-rm-chain-conc is-l' + lvl + '">' + esc(c.conc) + '</span>' +
-          '<span class="ls-rm-chain-meter"><i style="width:' + (lvl * 25) + '%"></i></span>' +
-        '</button>';
-      }).join('<span class="ls-rm-chain-arrow" aria-hidden="true">→</span>');
-      var crossHTML = cross.map(function (c, idx) {
-        return '<button type="button" class="ls-rm-cross-card' + (kind === "cross" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="cross" data-tip="' + L("Ein Querschnittsthema; Klick zeigt, wer das Risiko trägt.", "A cross-cutting topic; click shows who carries the risk.") + '">' +
-          '<span class="ls-rm-tag">' + esc(c.tag) + '</span>' +
-          '<b>' + esc(c.title) + '</b>' +
-          '<span>' + esc(c.short) + '</span>' +
-        '</button>';
-      }).join("");
-      var detail = '<div class="ls-rm-detail ls-rm-detail--soc" data-tip="' + L("Details zur gewählten Stufe oder zum Querschnitt.", "Details on the selected stage or cross-section.") + '">' +
-        '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag || "") + '</span><b>' + esc(item.title || "") + '</b></div>' +
-        (item.who ? '<p class="ls-rm-block"><b>' + (DE ? "Wer" : "Who") + ':</b> ' + esc(item.who) + '</p>' : '') +
-        '<p class="ls-rm-block"><b>' + (DE ? "Was" : "What") + ':</b> ' + esc(item.body || "") + '</p>' +
-        (item.example ? '<p class="ls-rm-block"><b>' + (DE ? "Beispiel" : "Example") + ':</b> ' + esc(item.example) + '</p>' : '') +
-        (item.counter ? '<div class="ls-rm-fix"><b>' + (DE ? "Was hilft?" : "What helps?") + ':</b> ' + esc(item.counter) + '</div>' : '') +
-        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite || "") + '</span>' +
+      var lvl = Math.max(1, Math.min(4, parseInt(item.level, 10) || 1));
+      var switchHTML = '<div class="ls-rm-soc-switch" role="tablist" aria-label="' + L("Ansicht", "View") + '">' +
+        '<button type="button" class="' + (kind === "chain" ? "is-on" : "") + '" data-soc-mode="chain" role="tab" aria-selected="' + (kind === "chain") + '" data-tip="' + L("Zeigt die fünf Stufen vom Chip bis zur Regel.", "Shows the five stages from chip to rule.") + '">' + L("Wertschöpfungskette", "Value chain") + '</button>' +
+        '<button type="button" class="' + (kind === "cross" ? "is-on" : "") + '" data-soc-mode="cross" role="tab" aria-selected="' + (kind === "cross") + '" data-tip="' + L("Zeigt vier Querschnittsthemen: Arbeit, Wahrheit, Urheberrecht, Macht.", "Shows four cross-cutting topics: work, truth, copyright, power.") + '">' + L("Querschnitt", "Cross-section") + '</button>' +
       '</div>';
-      el.innerHTML = header(d) +
-        '<div class="ls-rm-chain-head"><b>' + (DE ? "Wertschöpfungskette" : "Value chain") + '</b><span>' + (DE ? "Konzentration qualitativ, von links nach rechts." : "Concentration is qualitative, from left to right.") + '</span></div>' +
-        '<div class="ls-rm-chain">' + chainHTML + '</div>' +
-        '<div class="ls-rm-cross-head"><b>' + (DE ? "Querschnitt" : "Cross-section") + '</b><span>' + (DE ? "Wer trägt das Risiko?" : "Who carries the risk?") + '</span></div>' +
-        '<div class="ls-rm-cross">' + crossHTML + '</div>' +
-        detail;
+      var power = "";
+      var hero = "";
+      if (kind === "chain") {
+        power = '<div class="ls-rm-soc-power" data-tip="' + L("Fünf Stufen; die Füllung zeigt, wie stark die Konzentration ist.", "Five stages; the fill shows how strong the concentration is.") + '">' +
+          '<div class="ls-rm-soc-power-head"><span>' + L("Konzentration in der Kette", "Concentration in the chain") + '</span><em>' + L("klick eine Stufe", "click a stage") + '</em></div>' +
+          '<div class="ls-rm-soc-power-track">' + chain.map(function (c, idx) {
+            var l = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
+            return '<i class="is-l' + l + (idx === active ? ' is-on' : '') + '" style="--fill:' + (l * 25) + '%"></i>';
+          }).join("") + '</div>' +
+          '<div class="ls-rm-soc-power-legend"><span><i class="is-l4"></i>' + L("sehr hoch", "very high") + '</span><span><i class="is-l3"></i>' + L("hoch", "high") + '</span><span><i class="is-l2"></i>' + L("politisch", "political") + '</span></div>' +
+        '</div>';
+        hero = '<div class="ls-rm-soc-hero">' + power +
+          '<div class="ls-rm-soc-chain" role="list">' + chain.map(function (c, idx) {
+            var l = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
+            var num = (idx + 1 < 10 ? "0" : "") + (idx + 1);
+            return '<button type="button" class="ls-rm-soc-node is-l' + l + (idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="chain" role="listitem" data-tip="' + L("Eine Stufe der Kette. Klick zeigt, wer sie kontrolliert und was hilft.", "One stage of the chain. Click shows who controls it and what helps.") + '">' +
+              '<span class="ls-rm-soc-num">' + num + '</span>' +
+              socIcon(idx) +
+              '<b>' + esc(c.title) + '</b>' +
+              '<span class="ls-rm-soc-who">' + esc(c.who) + '</span>' +
+              '<span class="ls-rm-soc-meter"><i style="width:' + (l * 25) + '%"></i></span>' +
+              '<span class="ls-rm-soc-conc">' + esc(c.conc) + '</span>' +
+            '</button>';
+          }).join("") + '</div>' +
+        '</div>';
+      } else {
+        hero = '<div class="ls-rm-soc-hero ls-rm-soc-hero--cross">' +
+          '<div class="ls-rm-soc-cross" role="list">' + cross.map(function (c, idx) {
+            return '<button type="button" class="ls-rm-soc-cross-card' + (idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="cross" role="listitem" data-tip="' + L("Ein Querschnittsthema. Klick zeigt, wer das Risiko trägt.", "A cross-cutting topic. Click shows who carries the risk.") + '">' +
+              crossIcon(idx) +
+              '<span class="ls-rm-tag">' + esc(c.tag) + '</span>' +
+              '<b>' + esc(c.title) + '</b>' +
+              '<span class="ls-rm-soc-cross-short">' + esc(c.short) + '</span>' +
+            '</button>';
+          }).join("") + '</div>' +
+        '</div>';
+      }
+      var detail = '<div class="ls-rm-soc-detail" data-tip="' + L("Was diese Stufe bedeutet, ein Beispiel und was hilft.", "What this stage means, an example, and what helps.") + '">' +
+        '<div class="ls-rm-soc-detail-top">' +
+          '<span class="ls-rm-soc-detail-id' + (kind === "cross" ? " is-cross" : "") + '">' + esc(item.tag || "") + '</span>' +
+          '<div class="ls-rm-soc-detail-title"><b>' + esc(item.title || "") + '</b>' + (item.who ? '<span>' + esc(item.who) + '</span>' : '') + '</div>' +
+          (kind === "chain" ? '<div class="ls-rm-soc-detail-meter"><span>' + L("Konzentration", "Concentration") + '</span><b>' + esc(item.conc || "") + '</b><i><em style="width:' + (lvl * 25) + '%"></em></i></div>' : '') +
+        '</div>' +
+        '<div class="ls-rm-soc-blocks">' +
+          '<div class="ls-rm-soc-block"><b>' + L("Was", "What") + '</b><p>' + esc(item.body || "") + '</p></div>' +
+          '<div class="ls-rm-soc-block"><b>' + L("Beispiel", "Example") + '</b><p>' + esc(item.example || "") + '</p></div>' +
+          '<div class="ls-rm-soc-block is-fix"><b>' + L("Was hilft?", "What helps?") + '</b><p>' + esc(item.counter || "") + '</p></div>' +
+        '</div>' +
+        '<span class="ls-rm-cite"><b>' + L("Quelle", "Source") + ':</b> ' + esc(item.cite || "") + '</span>' +
+      '</div>';
+      var takeaway = '<div class="ls-rm-soc-takeaway"><b>' + L("Merksatz", "Takeaway") + '</b><p>' +
+        (kind === "chain"
+          ? L("Wer eine Stufe kontrolliert, setzt die Bedingungen für alle darunter.", "Whoever controls one stage sets the terms for everyone below.")
+          : L("Macht ist nicht nur Compute: Arbeit, Wahrheit, Urheberrecht und Regeln verteilen die Risiken.", "Power is not only compute: work, truth, copyright, and rules distribute the risks.")) +
+        '</p></div>';
+      el.innerHTML = header(d) + switchHTML + hero + detail + takeaway;
     }
     function render() {
       var d = modeData();
@@ -296,7 +345,7 @@
     }
     function animateDetail() {
       animatePart(el.querySelector(".ls-rm-detail"), 0, 1);
-      var active = el.querySelector(".ls-rm-card.is-active");
+      var active = el.querySelector(".ls-rm-card.is-active, .ls-rm-soc-node.is-active, .ls-rm-soc-cross-card.is-active");
       if (active && active.animate && !reduced) {
         try {
           active.animate([{ transform: "translateY(1px)" }, { transform: "none" }], { duration: 220, easing: "ease-out" });
@@ -312,6 +361,17 @@
       animatePart(el.querySelector(".ls-rm-detail"), 92, dir);
     }
     function onClick(event) {
+      var modeBtn = event.target.closest ? event.target.closest("[data-soc-mode]") : null;
+      if (modeBtn && el.contains(modeBtn)) {
+        var nextKind = modeBtn.getAttribute("data-soc-mode") === "cross" ? "cross" : "chain";
+        if (nextKind !== state.socKind) {
+          state.socKind = nextKind;
+          state.active = 0;
+          render();
+          animateDetail();
+        }
+        return;
+      }
       var soc = event.target.closest ? event.target.closest("[data-soc-item]") : null;
       if (soc && el.contains(soc)) {
         state.socKind = soc.getAttribute("data-soc-kind") === "cross" ? "cross" : "chain";

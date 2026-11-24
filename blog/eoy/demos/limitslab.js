@@ -105,9 +105,47 @@
       return '<div class="ls-ll-seven"><div class="ls-ll-seven-row"><span>' + L("Frage", "Question") + '</span><b>' + esc(t.question) + '</b></div><div class="ls-ll-seven-row"><span>' + L("Antwort", "Answer") + '</span><b>' + (isRun() ? esc(t.answer) : "?") + '</b></div><div class="ls-ll-seven-row"><span>' + L("Konfidenz", "Confidence") + '</span><b>' + (isRun() ? t.conf + " %" : "?") + '</b></div><div class="ls-ll-seven-row"><span>' + L("Quelle", "Source") + '</span><b class="is-bad">' + L("keine", "none") + '</b></div></div>';
     }
     function contextDemo(t) {
-      return '<div class="ls-ll-cases ls-ll-cases--rows">' + t.cases.map(function (c) {
-        return '<div class="ls-ll-case' + (isRun() && !c.ok ? ' is-bad' : '') + '"><span>' + esc(c.label) + '</span><div class="ls-ll-case-out"><span>' + L("Antwort", "Answer") + '</span><b>' + answer(t, c.answer) + '</b></div></div>';
-      }).join("") + '</div>';
+      function xp(p) { return 44 + p * 296; }
+      function acc(p) { return 0.55 + 0.45 * (1 - Math.exp(-Math.pow((p - 0.5) / 0.28, 2))); }
+      function yp(a) { return 132 - (a - 0.4) / 0.6 * 114; }
+      var pts = [];
+      for (var i = 0; i <= 48; i++) {
+        var p = i / 48;
+        pts.push((i ? "L" : "M") + xp(p).toFixed(1) + " " + yp(acc(p)).toFixed(1));
+      }
+      var line = pts.join(" ");
+      var area = "M " + xp(0).toFixed(1) + " " + yp(0.4).toFixed(1) + " " + line + " L " + xp(1).toFixed(1) + " " + yp(0.4).toFixed(1) + " Z";
+      var pos = [0.08, 0.5, 0.92];
+      var posLabel = [L("Anfang", "Start"), L("Mitte", "Middle"), L("Ende", "End")];
+      var marks = t.cases.map(function (c, idx) {
+        var cx = xp(pos[idx]), cy = yp(acc(pos[idx]));
+        var cls = c.ok ? " is-ok" : " is-bad";
+        return '<g class="ls-ll-mark' + cls + '" style="animation-delay:' + (0.42 + idx * 0.16) + 's">' +
+          '<circle class="ls-ll-mark-halo" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="9"></circle>' +
+          '<circle class="ls-ll-mark-dot" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="5"></circle>' +
+          '<text class="ls-ll-mark-answer" x="' + cx.toFixed(1) + '" y="' + (cy - 14).toFixed(1) + '" text-anchor="middle">' + (isRun() ? esc(c.answer) : "?") + '</text>' +
+          '<text class="ls-ll-mark-label" x="' + cx.toFixed(1) + '" y="150" text-anchor="middle">' + esc(posLabel[idx]) + '</text>' +
+        '</g>';
+      }).join("");
+      var grid = [0.5, 0.75, 1.0].map(function (a) {
+        var y = yp(a);
+        return '<line class="ls-ll-curve-grid" x1="44" y1="' + y.toFixed(1) + '" x2="340" y2="' + y.toFixed(1) + '"></line>' +
+          '<text class="ls-ll-curve-axis" x="39" y="' + (y + 3).toFixed(1) + '" text-anchor="end">' + Math.round(a * 100) + '%</text>';
+      }).join("");
+      return '<div class="ls-ll-ctxplot" data-tip="' + L("U-Kurve: an den Rändern hoch, in der Mitte niedrig. Die Punkte zeigen die drei Testfälle.", "U-curve: high at the edges, low in the middle. The dots show the three test cases.") + '">' +
+        '<div class="ls-ll-ctxplot-head"><span>' + L("Genauigkeit nach Position", "Accuracy by position") + '</span><b>' + L("U-förmig", "U-shaped") + '</b><span class="ls-ll-ctxplot-legend"><i class="is-ok"></i>' + L("richtig", "correct") + '<i class="is-bad"></i>' + L("falsch", "wrong") + '</span></div>' +
+        '<svg class="ls-ll-curve" viewBox="0 0 360 168" role="img" aria-label="' + L("Schematische U-Kurve: am Anfang und Ende hoch, in der Mitte niedrig.", "Schematic U-curve: high at the start and end, low in the middle.") + '">' +
+          '<defs><linearGradient id="ls-ll-ctx-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--ls-gold)" stop-opacity=".26"></stop><stop offset="1" stop-color="var(--ls-gold)" stop-opacity="0"></stop></linearGradient></defs>' +
+          '<rect class="ls-ll-curve-plot" x="44" y="18" width="296" height="114"></rect>' +
+          '<rect class="ls-ll-curve-band" x="' + xp(0.33).toFixed(1) + '" y="18" width="' + (xp(0.67) - xp(0.33)).toFixed(1) + '" height="114"></rect>' +
+          '<text class="ls-ll-curve-band-label" x="' + xp(0.5).toFixed(1) + '" y="30" text-anchor="middle">' + L("Mitte: wird übersehen", "middle: overlooked") + '</text>' +
+          grid +
+          '<path class="ls-ll-curve-area" d="' + area + '"></path>' +
+          '<path class="ls-ll-curve-line" d="' + line + '"></path>' +
+          marks +
+        '</svg>' +
+        '<p class="ls-ll-ctxplot-note">' + L("Schematisch nach Liu et al. (2023): Information in der Mitte langer Kontexte wird schlechter genutzt.", "Schematic after Liu et al. (2023): information in the middle of long contexts is used less well.") + '</p>' +
+      '</div>';
     }
     function demo(t) {
       var html;
@@ -126,10 +164,16 @@
     }
     function render() {
       var t = type();
+      el.className = "ls-ll" + (isRun() ? " is-run" : "");
       el.style.setProperty("--ll-accent", ["var(--ls-blue)", "var(--ls-gold)", "#c95656", "var(--ls-green)"][index()] || "var(--ls-petrol)");
-      el.innerHTML = top(t) + question(t) + demo(t) + result(t) + practice(t) + '<div class="ls-ll-footer"><button type="button" class="ls-ll-run" data-run>' + (isRun() ? L("Ergebnis erneut zeigen", "Show result again") : L("Prüfstand starten", "Start check")) + '</button><span>' + L("Weiter mit ← → oder Next", "Continue with ← → or Next") + '</span></div>';
+      el.innerHTML = top(t) + question(t) + demo(t) + result(t) + practice(t) + '<div class="ls-ll-footer"><button type="button" class="ls-ll-run" data-run>' + (isRun() ? L("Nochmal abspielen", "Replay") : L("Prüfstand starten", "Start check")) + '</button><span>' + L("Weiter mit ← → oder Next", "Continue with ← → or Next") + '</span></div>';
     }
-    function runCurrent() { state.run[state.test] = true; state.checked = false; render(); }
+    function runCurrent() {
+      state.run[state.test] = true;
+      state.checked = false;
+      state.replay = (state.replay || 0) + 1;
+      render();
+    }
     el.addEventListener("click", function (event) {
       if (event.target.closest && event.target.closest("[data-run]")) { runCurrent(); return; }
       if (event.target.closest && event.target.closest("[data-check]")) { state.checked = true; render(); }
