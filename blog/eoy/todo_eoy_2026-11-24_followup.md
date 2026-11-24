@@ -19,10 +19,10 @@ list in sync and exactly one item `[in work]`.
   Position canvas: 2 lines; worldmodel: global hidden, custom tip multiline.
 - [done] "Vom Zug zum Brett": hovering the three 8×8 probability fields names
   the matching 64×3 row/column and highlights that 64×3 cell.
-- [done] "Wie ein LLM sein Weltmodell aufbaut": hovering a 64×3 cell
-  highlights the matching field live in all three 8×8 maps; hovering a map
-  cell keeps the same link. Tooltip names the 64×3 row/column and the source
-  activation/probe row.
+- [in work] "Wie ein LLM sein Weltmodell aufbaut": hovering a 64×3 cell
+  highlights the matching field only in the map for that state (leer, mein
+  Spieler, Gegner), not in all three; hovering a map cell keeps the link.
+  Tooltip names the 64×3 row/column and the source activation/probe row.
 - [done] Run eoy media interactions + JS validator and record raw output.
   `eoy_media_interactions_test.py`: 2168 checks, 0 failures (DE+EN), including
   the new live 64×3 / 8×8 linkage. `js_validator.py`: 0 errors, 236 existing
