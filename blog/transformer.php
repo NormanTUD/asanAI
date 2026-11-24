@@ -498,9 +498,14 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 			document.body.appendChild(s);
 		});
 	}
+	var visibilityTimer = null;
 	function loadDeps() {
 		if (loading) return;
 		loading = true;
+		if (visibilityTimer) {
+			clearInterval(visibilityTimer);
+			visibilityTimer = null;
+		}
 		files.reduce(function (p, file) { return p.then(function () { return load(file); }); }, Promise.resolve())
 			.then(function () {
 				window.__tmStepDepsReady = true;
@@ -508,6 +513,11 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 				if (window.ensureFullTransformerVisualization) window.ensureFullTransformerVisualization(true);
 			})
 			.catch(function (err) { console.error('Transformer step dependencies failed to load', err); });
+	}
+	function loadDepsIfNear() {
+		if (loading || window.__tmStepDepsReady || !anchor) return;
+		var rect = anchor.getBoundingClientRect();
+		if (rect.width > 10 && rect.height > 10 && rect.top < window.innerHeight + 800 && rect.bottom > -800) loadDeps();
 	}
 	var anchor = document.getElementById('transformer-step-visuals');
 	if ('IntersectionObserver' in window && anchor) {
@@ -521,6 +531,9 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	} else {
 		loadDeps();
 	}
+	window.addEventListener('scroll', loadDepsIfNear, { passive: true });
+	window.addEventListener('resize', loadDepsIfNear);
+	visibilityTimer = setInterval(loadDepsIfNear, 500);
 })();
 </script>
 

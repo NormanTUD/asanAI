@@ -81,6 +81,12 @@ def make_driver() -> webdriver.Chrome:
     binary = shutil.which("chromium-browser") or shutil.which("chromium") or shutil.which("google-chrome")
     if binary:
         options.binary_location = binary
+    cached = sorted(
+        Path.home().glob(".cache/selenium/chromedriver/*/*/chromedriver"),
+        key=lambda path: path.stat().st_mtime,
+    )
+    if cached:
+        return webdriver.Chrome(service=Service(str(cached[-1])), options=options)
     try:
         return webdriver.Chrome(
             service=Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()),
@@ -144,13 +150,20 @@ def loss_count(driver: webdriver.Chrome) -> int:
 
 def load_page(driver: webdriver.Chrome, base: str, path: str) -> None:
     driver.get(base + path)
-    time.sleep(2)
+    wait_until(
+        driver,
+        "const el=document.getElementById('transformer-step-visuals');"
+        "const r=el && el.getBoundingClientRect();"
+        "return !!(r && r.width > 20 && r.height > 100);",
+        30,
+    )
     driver.execute_script("const el=document.getElementById('transformer-step-visuals'); if(el) el.scrollIntoView({block:'center'});")
     check(wait_until(driver, "return !!window.__tmStepDepsReady", 120), "step dependencies load")
     check(wait_until(driver, "return document.querySelectorAll('.tm-layer-card').length > 1", 60), "layer cards are generated")
     wait_until(driver, "return !!window.__tmFullVizLoaded;", 60)
     driver.execute_script("if (typeof window.run_transformer_demo === 'function') window.run_transformer_demo();")
     driver.execute_script("const d=document.getElementById('tm-detail-position'); if(d) d.open=true;")
+    open_feature_migration(driver)
     time.sleep(0.6)
 
 
@@ -178,12 +191,44 @@ def set_metric(driver: webdriver.Chrome, metric: str) -> None:
     time.sleep(1.4)
 
 
-def set_camera(driver: webdriver.Chrome, plot_id: str) -> None:
+def open_feature_migration(driver: webdriver.Chrome) -> None:
     driver.execute_script(
-        "const el=document.getElementById(arguments[0]); if(el && el._fullLayout && el._fullLayout.scene) Plotly.relayout(el, {'scene.camera.eye': arguments[1]});",
-        plot_id,
-        TARGET_EYE,
+        """
+        const el = document.getElementById('unified-layer-1-feature-arrows');
+        if (!el) return;
+        const card = el.closest('.tm-layer-card');
+        const body = card && card.querySelector('.tm-layer-body');
+        if (body && body.hidden) {
+            const head = card.querySelector('.tm-layer-head');
+            if (head) head.click();
+        }
+        const sub = el.closest('.tm-layer-subbox');
+        if (sub) sub.open = true;
+        el.scrollIntoView({block: 'center'});
+        """
     )
+    wait_until(
+        driver,
+        "const e=document.getElementById('unified-layer-1-feature-arrows');"
+        "return !!(e && e.getBoundingClientRect().height > 20);",
+        30,
+    )
+
+
+def set_camera(driver: webdriver.Chrome, plot_id: str) -> None:
+    script = (
+        "const el=document.getElementById(arguments[0]);"
+        "if(!el || !el._fullLayout || !el._fullLayout.scene) return false;"
+        "try { Plotly.relayout(el, {'scene.camera.eye': arguments[1]}); return true; }"
+        "catch (error) { return false; }"
+    )
+    for _ in range(30):
+        try:
+            if driver.execute_script(script, plot_id, TARGET_EYE):
+                return
+        except Exception:
+            pass
+        time.sleep(0.1)
 
 
 def stop_training(driver: webdriver.Chrome) -> None:
@@ -205,6 +250,8 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
 
     prepared = []
     for plot_id, plot_label in CAMERA_PLOTS:
+        if plot_id == FEATURE_ID:
+            open_feature_migration(driver)
         ok = prepare_plot(driver, plot_id)
         check(ok, f"{label}: {plot_label} 3D plot is ready")
         if ok:

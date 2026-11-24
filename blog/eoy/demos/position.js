@@ -11,12 +11,13 @@
     el.className = "ls-position-scene";
     el.innerHTML =
       '<div class="ls-position-grid">' +
-        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Positionen 0–100000 (256 Zeilen gesampelt) · 3D = Projektion" : "High-dimensional space · positions 0–100000 (256 sampled rows) · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
+        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Positionen 0–100000 (256 Zeilen gesampelt) · 3D = Projektion" : "High-dimensional space · positions 0–100000 (256 sampled rows) · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-heat-cursor" aria-hidden="true"><span></span></div><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
         '<div class="ls-position-right"><div class="ls-position-metric"><span>' + (DE ? "Metrik" : "Metric") + '</span><div class="ls-position-metric-btns" role="group" aria-label="' + (DE ? "Metrik der Positionsdarstellung" : "Position visualisation metric") + '"><button type="button" data-pos-metric="greatcircle" class="is-on">' + (DE ? "Großkreis (Winkel)" : "Great circle (angle)") + '</button><button type="button" data-pos-metric="euclid">' + (DE ? "Euklid (Distanz)" : "Euclidean (distance)") + '</button></div></div><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range" hidden>Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
+    var heatCursor = el.querySelector(".ls-position-heat-cursor");
     var curve = el.querySelector(".ls-position-curve");
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
@@ -52,6 +53,18 @@
       var pair = Math.floor(i / 2);
       var freq = Math.pow(10000, (2 * pair) / Math.max(2, d));
       return i % 2 === 0 ? Math.sin(p / freq) : Math.cos(p / freq);
+    }
+    function updateHeatCursor() {
+      if (!heatCursor || !heatSize) return;
+      var padL = 34, padB = 22, padT = 8, padR = 8;
+      var rows = Math.min(context, 256);
+      var ch = (heatSize.h - padT - padB) / rows;
+      var row = Math.max(0, Math.min(rows - 1, Math.round(posAnim / Math.max(1, context - 1) * (rows - 1))));
+      heatCursor.style.left = padL + "px";
+      heatCursor.style.width = Math.max(0, heatSize.w - padL - padR) + "px";
+      heatCursor.style.top = (padT + row * ch + ch / 2) + "px";
+      var label = heatCursor.querySelector("span");
+      if (label) label.textContent = "p " + Math.round(posAnim);
     }
     function drawHeat() {
       if (!heatSize) return;
@@ -324,9 +337,9 @@
       }
     }
     function draw() {
-      drawHeat(); drawCurve();
+      drawHeat(); drawCurve(); updateHeatCursor();
     }
-    function resizeHeat() { heatSize = api.fit(heat, heat); drawHeat(); }
+    function resizeHeat() { heatSize = api.fit(heat, heat); drawHeat(); updateHeatCursor(); }
     function resizeCurve() { curveSize = api.fit(curve, curve); drawCurve(); }
     function resize() { resizeHeat(); resizeCurve(); draw(); }
     function loop(now) {
@@ -350,6 +363,7 @@
           if (posEl) { posEl.value = String(pos); posEl.nextElementSibling.textContent = String(pos); }
         }
         drawCurve();
+        updateHeatCursor();
         return;
       }
       var moving = Math.abs(posAnim - pos) > 0.01;
@@ -360,6 +374,7 @@
       if (moving || (rotate && !drag)) {
         if (rotate && !drag) yaw += 0.003;
         drawCurve();
+        updateHeatCursor();
       }
     }
     heat.addEventListener("pointermove", function (e) {
