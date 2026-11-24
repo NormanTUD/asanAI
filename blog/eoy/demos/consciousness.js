@@ -69,8 +69,8 @@
         ],
         open: L("Metaphysisch und schwer falsifizierbar; erklärt konkrete neuronale Mechanismen weniger direkt.", "Metaphysical and hard to falsify; it explains concrete neural mechanisms less directly."),
         cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>',
-        hint: L("Zieh an der Dissoziation: Die Wirbel werden klarer oder durchlässiger. Klick einen Wirbel.", "Drag dissociation: the vortices become clearer or more permeable. Click a vortex."),
-        status: L("Drei Wirbel, stark dissoziiert. Weiter trennt stärker und fügt einen Wirbel hinzu.", "Three vortices, strongly dissociated. Next separates more and adds a vortex.")
+        hint: L("Zieh an der Dissoziation. Weiter: Der Tod beendet die Dissoziation, die Wirbel lösen sich auf.", "Drag dissociation. Next: death ends the dissociation, the vortices dissolve."),
+        status: L("Drei Wirbel, stark dissoziiert. Weiter beendet die Dissoziation: Der Tod löst die Wirbel auf.", "Three vortices, strongly dissociated. Next ends the dissociation: death dissolves the vortices.")
       },
       {
         key: "myst", tone: "lilac",
@@ -123,7 +123,7 @@
     var ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 };
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 };
-    var kast = { diss: 70, count: 3, selected: 0 };
+    var kast = { diss: 70, count: 3, selected: 0, dissolved: false };
     var myst = { marks: [] };
 
     var PRED_STIM = {
@@ -188,7 +188,7 @@
       if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 }; setStatus(THEORIES[2].status); }
-      if (active === 3) { kast = { diss: 70, count: 3, selected: 0 }; setStatus(THEORIES[3].status); }
+      if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false }; setStatus(THEORIES[3].status); }
       if (active === 4) { initMyst(); setStatus(THEORIES[4].status); }
       renderControls(); draw(performance.now());
     }
@@ -520,6 +520,19 @@
         dot(x, y, 1 + (p % 3) * 0.35, p % 3 === 0 ? "#c9f3ff" : "#7ec8ef");
       }
       ctx.globalAlpha = 1;
+      if (kast.dissolved) {
+        var cy = h * 0.52;
+        for (var ri = 0; ri < 4; ri++) {
+          var rr = 26 + ri * 21 + Math.sin(t * 0.8 + ri) * 3;
+          ctx.beginPath();
+          ctx.ellipse(w * 0.5, cy, rr, rr * 0.42, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(201,243,255," + (0.24 - ri * 0.045) + ")";
+          ctx.lineWidth = 1; ctx.stroke();
+        }
+        ctx.fillStyle = "rgba(201,243,255,.62)"; ctx.font = font(10.5, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+        ctx.fillText(L("Der Tod beendet die Dissoziation. Das eine Bewusstsein bleibt.", "Death ends the dissociation. The one consciousness remains."), w / 2, h - 14);
+        return;
+      }
       centers.forEach(function (c) { drawVortex(c, c.i === kast.selected, diss, t); });
       ctx.fillStyle = "rgba(201,243,255,.62)"; ctx.font = font(10.5, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillText(L("Ein Ozean. Viele Wirbel. Dasselbe Wasser.", "One ocean. Many vortices. The same water."), w / 2, h - 14);
@@ -633,6 +646,7 @@
       return true;
     }
     function setKastDiss(v) {
+      kast.dissolved = false;
       kast.diss = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
       var inp = el.querySelector("[data-con-diss]");
       if (inp) { inp.value = String(kast.diss); if (inp.nextElementSibling) inp.nextElementSibling.textContent = kast.diss + " %"; }
@@ -640,6 +654,7 @@
       draw(performance.now());
     }
     function setKastCount(v) {
+      kast.dissolved = false;
       kast.count = Math.max(1, Math.min(5, parseInt(v, 10) || 1));
       kast.selected = Math.min(kast.selected, kast.count - 1);
       var inp = el.querySelector("[data-con-count]");
@@ -648,9 +663,18 @@
       draw(performance.now());
     }
     function kastNextAction() {
-      if (kast.diss < 95) { setKastDiss(95); return true; }
-      if (kast.count < 4) { setKastCount(4); return true; }
-      return false;
+      if (kast.dissolved) return false;
+      kast.dissolved = true;
+      kast.diss = 0;
+      kast.count = 1;
+      kast.selected = 0;
+      var dinp = el.querySelector("[data-con-diss]");
+      if (dinp) { dinp.value = "0"; if (dinp.nextElementSibling) dinp.nextElementSibling.textContent = "0 %"; }
+      var cinp = el.querySelector("[data-con-count]");
+      if (cinp) { cinp.value = "1"; if (cinp.nextElementSibling) cinp.nextElementSibling.textContent = "1"; }
+      setStatus(L("Der Tod beendet die Dissoziation: Die Wirbel lösen sich auf; das eine Bewusstsein bleibt.", "Death ends the dissociation: the vortices dissolve; the one consciousness remains."));
+      draw(performance.now());
+      return true;
     }
     function mystNextAction() {
       if (myst.marks.length < 16) {
@@ -792,6 +816,11 @@
         return;
       }
       if (active !== 3) return;
+      if (kast.dissolved) {
+        setStatus(L("Die Dissoziation ist aufgelöst. Es gibt keinen einzelnen Wirbel mehr.", "The dissociation is dissolved. There is no individual vortex anymore."));
+        draw(performance.now());
+        return;
+      }
       var r = canvas.getBoundingClientRect();
       var mx = e.clientX - r.left, my = e.clientY - r.top;
       var w = r.width, h = r.height;
