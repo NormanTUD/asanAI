@@ -10,15 +10,17 @@
     el.className = "ls-position-scene";
     el.innerHTML =
       '<div class="ls-position-grid">' +
-        '<div class="ls-position-panel"><div class="ls-position-space-note" data-tip="' + (DE ? "Richtungen leben auf der Hyperkugel; die 3D-Ansicht ist nur eine Projektion." : "Directions live on the hypersphere; the 3D view is only a projection.") + '">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat" data-tip="' + (DE ? "Wärmekarte der Positionskodierung: Zeilen sind Positionen, Spalten Dimensionen." : "Heatmap of the position encoding: rows are positions, columns are dimensions.") + '"></canvas><div class="ls-position-legend" data-tip="' + (DE ? "Farbskala von −1 (kühl) bis +1 (warm)." : "Color scale from −1 (cool) to +1 (warm).") + '"><span>−1</span><i></i><span>+1</span></div></div>' +
-        '<div class="ls-position-right"><div class="ls-position-panel"><canvas class="ls-position-curve" data-tip="' + (DE ? "Positionsvektoren auf der Einheitskugel; der Bogen zeigt die Drehung." : "Position vectors on the unit sphere; the arc shows the rotation.") + '"></canvas></div><label class="ls-range" hidden data-tip="' + (DE ? "Scrubbe durch Positionen und beobachte, wie sich die Kodierung dreht." : "Scrub through positions and watch the encoding rotate.") + '">Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
+        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
+        '<div class="ls-position-right"><div class="ls-position-metric"><span>' + (DE ? "Metrik" : "Metric") + '</span><div class="ls-position-metric-btns" role="group" aria-label="' + (DE ? "Metrik der Positionsdarstellung" : "Position visualisation metric") + '"><button type="button" data-pos-metric="greatcircle" class="is-on">' + (DE ? "Großkreis (Winkel)" : "Great circle (angle)") + '</button><button type="button" data-pos-metric="euclid">' + (DE ? "Euklid (Distanz)" : "Euclidean (distance)") + '</button></div></div><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range" hidden>Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
-      '<div class="ls-position-readout" aria-live="polite" data-tip="' + (DE ? "Fahre über einen Spurpunkt, um Position, Vektor, Bogenlänge und Winkel zu sehen." : "Hover a trail point to see its position, vector, arc length, and angle.") + '"></div>';
+      '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
     var curve = el.querySelector(".ls-position-curve");
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
+    var metricBtns = Array.prototype.slice.call(el.querySelectorAll("[data-pos-metric]"));
+    var metric = "greatcircle";
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var context = 128, dims = 64, pos = 7, rotate = !reducedMotion;
     var posAnim = pos;
@@ -92,6 +94,17 @@
       var n = Math.hypot(v[0], v[1], v[2]) || 1;
       return [v[0] / n, v[1] / n, v[2] / n];
     }
+    function posVec(t) {
+      var v = curvePoint(t);
+      return metric === "euclid" ? v : unit3(v);
+    }
+    function syncMetric() {
+      metricBtns.forEach(function (b) {
+        var on = b.getAttribute("data-pos-metric") === metric;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+    }
     function drawCurve() {
       if (!curveSize) return;
       var ctx = curveSize.ctx, w = curveSize.w, h = curveSize.h;
@@ -108,30 +121,32 @@
         ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
         ctx.restore();
       }
-      var lat, lon, k, a, p;
-      ctx.strokeStyle = Cc.line;
-      ctx.globalAlpha = 0.32;
-      ctx.lineWidth = 0.8;
-      for (lat = -60; lat <= 60; lat += 30) {
-        var yy = Math.sin(lat * Math.PI / 180), rr = Math.cos(lat * Math.PI / 180);
-        ctx.beginPath();
-        for (k = 0; k <= 60; k++) {
-          a = k / 60 * Math.PI * 2;
-          p = P([Math.cos(a) * rr, yy, Math.sin(a) * rr]);
-          if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+      if (metric !== "euclid") {
+        var lat, lon, k, a, p;
+        ctx.strokeStyle = Cc.line;
+        ctx.globalAlpha = 0.32;
+        ctx.lineWidth = 0.8;
+        for (lat = -60; lat <= 60; lat += 30) {
+          var yy = Math.sin(lat * Math.PI / 180), rr = Math.cos(lat * Math.PI / 180);
+          ctx.beginPath();
+          for (k = 0; k <= 60; k++) {
+            a = k / 60 * Math.PI * 2;
+            p = P([Math.cos(a) * rr, yy, Math.sin(a) * rr]);
+            if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+          }
+          ctx.stroke();
         }
-        ctx.stroke();
-      }
-      for (lon = 0; lon < 180; lon += 30) {
-        var lr = lon * Math.PI / 180;
-        ctx.beginPath();
-        for (k = 0; k <= 60; k++) {
-          a = k / 60 * Math.PI * 2;
-          p = P([Math.cos(a) * Math.cos(lr), Math.sin(a), Math.cos(a) * Math.sin(lr)]);
-          if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        for (lon = 0; lon < 180; lon += 30) {
+          var lr = lon * Math.PI / 180;
+          ctx.beginPath();
+          for (k = 0; k <= 60; k++) {
+            a = k / 60 * Math.PI * 2;
+            p = P([Math.cos(a) * Math.cos(lr), Math.sin(a), Math.cos(a) * Math.sin(lr)]);
+            if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+          }
+          ctx.stroke();
         }
-        ctx.stroke();
-      }
+        }
       ctx.globalAlpha = 1;
       line([0, 0, 0], [1.25, 0, 0], Cc.blue, 0.65, 1.2);
       line([0, 0, 0], [0, 1.25, 0], Cc.green, 0.65, 1.2);
@@ -163,17 +178,29 @@
       }
       if (!reveal) {
         drawToken();
-        curve.__lsPosition = { pos: pos, trail: [], sweeping: false, metric: "angle", start: curvePoint(0), current: curvePoint(posAnim), distance: 0, angle: 0 };
+        curve.__lsPosition = { pos: pos, trail: [], sweeping: false, metric: metric, start: posVec(0), current: posVec(posAnim), distance: 0, angle: 0 };
         readout.innerHTML = "";
         return;
       }
       trailPoints = [];
       trail.forEach(function (p) {
-        var pp = P(unit3(curvePoint(p)));
-        ctx.beginPath(); ctx.arc(pp.x, pp.y, 2.1, 0, Math.PI * 2);
+        var pp = P(posVec(p));
+        trailPoints.push({ value: p, x: pp.x, y: pp.y });
+      });
+      if (trailPoints.length > 1) {
+        ctx.save();
+        ctx.strokeStyle = Cc.green;
+        ctx.globalAlpha = 0.38;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        trailPoints.forEach(function (tp, i) { if (i === 0) ctx.moveTo(tp.x, tp.y); else ctx.lineTo(tp.x, tp.y); });
+        ctx.stroke();
+        ctx.restore();
+      }
+      trailPoints.forEach(function (tp) {
+        ctx.beginPath(); ctx.arc(tp.x, tp.y, 2.1, 0, Math.PI * 2);
         ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.62; ctx.fill();
         ctx.globalAlpha = 1;
-        trailPoints.push({ value: p, x: pp.x, y: pp.y });
       });
       if (hoverTrail >= 0 && !trailPoints[hoverTrail]) hoverTrail = -1;
       if (hoverTrail >= 0) {
@@ -194,35 +221,46 @@
       }
       ctx.globalAlpha = 1;
       ctx.textBaseline = "alphabetic";
-      var startVec = curvePoint(0);
-      var curVec = curvePoint(posAnim);
-      var startP = unit3(startVec);
-      var curP = unit3(curVec);
+      var startP = posVec(0);
+      var curP = posVec(posAnim);
       var sp = P(startP), cp = P(curP);
-      ctx.save();
-      ctx.setLineDash([3, 4]);
-      ctx.strokeStyle = Cc.petrol;
-      ctx.globalAlpha = 0.32;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(origin.x, origin.y);
-      ctx.lineTo(cp.x, cp.y);
-      ctx.stroke();
-      ctx.restore();
+      var isEuclid = metric === "euclid";
+      var dot = 0, theta = 0, dist = 0;
       drawToken();
-      var dot = Math.max(-1, Math.min(1, startP[0] * curP[0] + startP[1] * curP[1] + startP[2] * curP[2]));
-      var theta = Math.acos(dot);
-      ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      for (k = 0; k <= 64; k++) {
-        var tt = k / 64;
-        var s0 = theta < 1e-6 ? 1 : Math.sin((1 - tt) * theta) / Math.sin(theta);
-        var s1 = theta < 1e-6 ? 0 : Math.sin(tt * theta) / Math.sin(theta);
-        var vv = [startP[0] * s0 + curP[0] * s1, startP[1] * s0 + curP[1] * s1, startP[2] * s0 + curP[2] * s1];
-        var pp = P(vv);
-        if (k === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
+      if (!isEuclid) {
+        ctx.save();
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = Cc.petrol;
+        ctx.globalAlpha = 0.32;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(cp.x, cp.y);
+        ctx.stroke();
+        ctx.restore();
+        dot = Math.max(-1, Math.min(1, startP[0] * curP[0] + startP[1] * curP[1] + startP[2] * curP[2]));
+        theta = Math.acos(dot);
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        for (k = 0; k <= 64; k++) {
+          var tt = k / 64;
+          var s0 = theta < 1e-6 ? 1 : Math.sin((1 - tt) * theta) / Math.sin(theta);
+          var s1 = theta < 1e-6 ? 0 : Math.sin(tt * theta) / Math.sin(theta);
+          var vv = [startP[0] * s0 + curP[0] * s1, startP[1] * s0 + curP[1] * s1, startP[2] * s0 + curP[2] * s1];
+          var pp = P(vv);
+          if (k === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
+        }
+        ctx.stroke(); ctx.restore();
+        dist = theta;
+      } else {
+        dist = Math.hypot(startP[0] - curP[0], startP[1] - curP[1], startP[2] - curP[2]);
+        ctx.save();
+        ctx.strokeStyle = Cc.gold;
+        ctx.lineWidth = 2.4;
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath(); ctx.moveTo(sp.x, sp.y); ctx.lineTo(cp.x, cp.y); ctx.stroke();
+        ctx.restore();
       }
-      ctx.stroke(); ctx.restore();
       ctx.beginPath(); ctx.arc(sp.x, sp.y, 4, 0, Math.PI * 2); ctx.fillStyle = Cc.blue; ctx.fill();
       ctx.fillStyle = Cc.blue; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText(DE ? "Start" : "start", sp.x + 7, sp.y - 5);
@@ -231,21 +269,30 @@
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = Cc.green; ctx.fill();
       ctx.restore();
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
-      var geoLen = theta;
+      var geoLen = dist;
       var angleDeg = theta * 180 / Math.PI;
-      curve.__lsPosition = { pos: pos, trail: trail.slice(), sweeping: !!sweep, metric: "angle", start: startVec, current: curVec, distance: geoLen, angle: theta };
+      curve.__lsPosition = { pos: pos, trail: trail.slice(), sweeping: !!sweep, metric: metric, start: posVec(0), current: posVec(posAnim), distance: geoLen, angle: theta };
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + Math.round(posAnim), 12, 18);
+      ctx.textAlign = "right";
+      ctx.fillStyle = isEuclid ? Cc.gold : Cc.petrol;
+      ctx.fillText(isEuclid ? (DE ? "Euklidische Spirale" : "Euclidean spiral") : (DE ? "Kugel · Großkreis" : "sphere · great circle"), w - 12, 18);
       ctx.textAlign = "left";
       if (hoverTrail >= 0 && trailPoints[hoverTrail]) {
         var hpv = trailPoints[hoverTrail].value;
-        var hv = curvePoint(hpv);
-        var hu = unit3(hv);
-        var hdot = Math.max(-1, Math.min(1, startP[0] * hu[0] + startP[1] * hu[1] + startP[2] * hu[2]));
-        var htheta = Math.acos(hdot);
-        readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(hpv) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + hv.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + htheta.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (htheta * 180 / Math.PI).toFixed(1) + '°</b></span>';
+        var hv = posVec(hpv);
+        if (isEuclid) {
+          var hdist = Math.hypot(startP[0] - hv[0], startP[1] - hv[1], startP[2] - hv[2]);
+          readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(hpv) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + hv.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Euklid-Distanz" : "Euclidean distance") + ' <b>' + hdist.toFixed(3) + '</b></span>';
+        } else {
+          var hdot = Math.max(-1, Math.min(1, startP[0] * hv[0] + startP[1] * hv[1] + startP[2] * hv[2]));
+          var htheta = Math.acos(hdot);
+          readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(hpv) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + hv.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + htheta.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (htheta * 180 / Math.PI).toFixed(1) + '°</b></span>';
+        }
       } else {
-        readout.innerHTML = "";
+        readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Metrik" : "Metric") + ' <b>' + (isEuclid ? (DE ? "Euklid" : "Euclidean") : (DE ? "Großkreis" : "Great circle")) + '</b></span>' + (isEuclid
+          ? '<span>' + (DE ? "Euklid-Distanz" : "Euclidean distance") + ' <b>' + dist.toFixed(3) + '</b></span>'
+          : '<span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + theta.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (theta * 180 / Math.PI).toFixed(1) + '°</b></span>');
       }
     }
     function draw() {
@@ -320,6 +367,14 @@
     });
     window.addEventListener("pointerup", function () { drag = null; });
     posEl.addEventListener("input", function () { reveal = true; sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; addTrailTo(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
+    metricBtns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        metric = b.getAttribute("data-pos-metric") === "euclid" ? "euclid" : "greatcircle";
+        syncMetric();
+        drawCurve();
+      });
+    });
+    syncMetric();
     window.addEventListener("resize", resize);
     function onTheme() { C = api.colors(); draw(); }
     window.addEventListener("tm:theme", onTheme);

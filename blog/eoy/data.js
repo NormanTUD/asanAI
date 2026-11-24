@@ -305,13 +305,16 @@
     {
       kicker: "Position",
       title: "Jeder Platz bekommt einen Fingerabdruck",
-      body: "Für einen Transformer sind die Sätze „Der Mann beißt den Hund“ und „Der Hund beißt den Mann“ ohne Positionsinformation nicht zuverlässig unterscheidbar, weil er keine Information über die Position der Tokens bekommt. Die klassische absolute Variante aus dem Original-Transformer addiert für jede Dimension unterschiedlich schnelle Sinus- und Cosinuswellen zum Token-Embedding. Diese schnellen und langsamen Wellen wirken wie ein Stellenwertsystem mit Einern, Zehnern, Hundertern und Tausendern.\n\nLinks siehst du das Muster über mehrere Dimensionen, rechts eine Projektion der Positionsvektoren auf eine Kugel. In Wahrheit sind es Tausende Dimensionen; die drei Achsen sind eine Visualisierung. Durch die Kodierung werden relative Abstände sichtbar, und das Netz kann die Reihenfolge der Tokens unterscheiden.\n\nDie Demo zeigt also die klassische absolute Sinus-/Cosinus-Kodierung. Moderne offene LLMs nutzen überwiegend RoPE: Llama 2/3, Qwen2, Mistral, Gemma und DeepSeek sind Beispiele. Für lange Kontexte wird RoPE oft erweitert, etwa mit YaRN oder Positionsinterpolation. BLOOM und MPT nutzen ALiBi, T5 einen relativen Positions-Bias, GPT-2 und GPT-3 gelernte absolute Vektoren. Für GPT-4, Claude und Gemini ist das Verfahren nicht offengelegt. Bei RoPE wird nichts zum Token-Embedding addiert; die Rotation macht den Attention-Score von der relativen Position abhängig.",
-      watch: "",
+      body: "Für einen Transformer sind „Der Mann beißt den Hund“ und „Der Hund beißt den Mann“ ohne Positionsinformation nicht zuverlässig unterscheidbar. Die klassische absolute Kodierung addiert für jede Dimension Sinus-/Cosinuswellen unterschiedlicher Frequenz; die schnellen und langsamen Wellen wirken wie ein Stellenwertsystem. Links siehst du das Muster über die Dimensionen, rechts die Projektion der Positionsvektoren. In Wahrheit sind es Tausende Dimensionen; die drei Achsen sind eine Visualisierung. Die Kugel erscheint hier, weil die Demo die Großkreismetrik verwendet; der Schalter wechselt zu Euklid und zeigt dieselben Positionen als Spirale im freien Raum. Durch die Kodierung werden relative Abstände sichtbar, und das Netz kann die Reihenfolge unterscheiden. Moderne offene LLMs nutzen überwiegend RoPE (Llama, Qwen, Mistral); für lange Kontexte wird es skaliert oder interpoliert (YaRN, LongRoPE). BLOOM/MPT nutzen ALiBi, T5 relative Biases, GPT-2/3 gelernte absolute Vektoren; für GPT-4, Claude und Gemini ist das Verfahren nicht offengelegt. Bei RoPE wird nichts addiert: q und k werden gedreht, im Score bleibt nur n−m. Details stehen in den optionalen Boxen.",
+      watch: "Die Demo zeigt die klassische absolute Kodierung. Öffne unten die optionalen Boxen für RoPE: relative Position und warum es heute Standard ist.",
       demoState: { scene: "position" },
       context: "",
       deep: "",
       boxes: [
-        box("pos-1", "Technik", "Additiv oder rotierend?", "Heute dominiert RoPE in offenen LLMs. Die klassische Kodierung addiert einen festen Sinus-/Cosinus-Vektor; RoPE rotiert Query und Key mit einer positionsabhängigen Matrix. ALiBi und T5 setzen stattdessen einen Bias in den Attention-Score.")
+        box("pos-1", "Optional", "Additiv oder rotierend?", "Die klassische Kodierung addiert einen festen Sinus-/Cosinus-Vektor zum Token. RoPE addiert nichts: Es dreht Query und Key mit einer positionsabhängigen Matrix. Deshalb bleibt die Länge erhalten und der Score hängt nur vom relativen Abstand ab."),
+        box("pos-2", "Optional", "RoPE in 30 Sekunden", "Jedes Token behält seine absolute Position: q sitzt an m, k an n. RoPE dreht q um mθ und k um nθ. Im Skalarprodukt heben sich die absoluten Winkel auf; nur (n−m)θ bleibt. Die Rotation ist orthogonal, die Vektorlänge bleibt, und es gibt keine zusätzlichen gelernten Positionsparameter.", "\\underbrace{q_m\\cdot k_n}_{\\text{Score}} = \\underbrace{q^{\\top}R((n-m)\\theta)k}_{\\text{nur Abstand } n-m}"),
+        box("pos-3", "Optional", "Warum RoPE heute?", "Relative Scores, Normerhalt und keine gelernten Positionsparameter passen gut zu KV-Cache und linearer Attention. Deshalb nutzen Llama, Qwen und Mistral RoPE; ALiBi und relative Biases sind Alternativen. Für lange Kontexte braucht RoPE Skalierung oder Interpolation (YaRN, LongRoPE)."),
+        box("pos-4", "Optional", "Großkreis oder Euklid?", "Die Kugel ist eine Darstellungswahl: Die Großkreismetrik misst Winkel entlang der Kugel, Euklid die gerade Distanz im Raum. Für das Netzwerk zählt am Ende vor allem die Richtung, also der Winkel; dennoch gibt es hier keine einzige „valide“ Metrik. Der Schalter zeigt dieselben Positionen als Spirale auf der Kugel oder im Rohraum; beides sind didaktische Projektionen, keine Messung des Modells.")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention, den Transformer-Block und die absolute Sinus-/Cosinus-Positionskodierung ein.", en: "Introduces self-attention, the transformer block, and absolute sine/cosine position encoding." } },
@@ -321,6 +324,7 @@
         { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409", why: { de: "ALiBi: linearer Distanz-Bias statt Positions-Embedding.", en: "ALiBi: a linear distance bias instead of position embeddings." } },
         { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683", why: { de: "T5: relative Position Bias als Alternative.", en: "T5: relative position bias as an alternative." } },
         { label: "Peng et al. (2023), YaRN: Efficient Context Window Extension of Large Language Models", url: "https://arxiv.org/abs/2309.00071", why: { de: "YaRN erweitert RoPE auf lange Kontexte.", en: "YaRN extends RoPE to long contexts." } },
+      { label: "Ding et al. (2024), LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens", url: "https://arxiv.org/abs/2402.13753", why: { de: "LongRoPE: lange Kontexte mit angepassten RoPE-Frequenzen.", en: "LongRoPE: long contexts with adjusted RoPE frequencies." } },
         { label: "Yang et al. (2024), Qwen2 Technical Report", url: "https://arxiv.org/abs/2407.10671", why: { de: "Qwen2 nutzt RoPE; Long-Context mit YaRN.", en: "Qwen2 uses RoPE; long context with YaRN." } },
         { label: "Scao et al. (2022), BLOOM: A 176B-Parameter Open-Access Multilingual Language Model", url: "https://arxiv.org/abs/2211.05100", why: { de: "BLOOM nutzt ALiBi.", en: "BLOOM uses ALiBi." } }
       ]
@@ -329,13 +333,16 @@
     {
       kicker: "Position",
       title: "Every place gets a fingerprint",
-      body: "For a transformer, the sentences \"The man bites the dog\" and \"The dog bites the man\" cannot be reliably distinguished without positional information, because it receives no information about the position of the tokens. The classic absolute variant from the original transformer adds sine and cosine waves of different speeds for each dimension to the token embedding. These fast and slow waves act like a place-value system with ones, tens, hundreds, and thousands.\n\nOn the left you see the pattern across several dimensions; on the right, a projection of the position vectors onto a sphere. In truth there are thousands of dimensions; the three axes are a visualisation. The encoding makes relative distances visible, and the network can distinguish the token order.\n\nThe demo therefore shows the classic absolute sine/cosine encoding. Modern open LLMs mostly use RoPE: Llama 2/3, Qwen2, Mistral, Gemma, and DeepSeek are examples. For long contexts, RoPE is often extended, for example with YaRN or position interpolation. BLOOM and MPT use ALiBi, T5 a relative position bias, and GPT-2 and GPT-3 learned absolute vectors. For GPT-4, Claude, and Gemini the method is not disclosed. With RoPE nothing is added to the token embedding; the rotation makes the attention score depend on the relative position.",
-      watch: "",
+      body: "For a transformer, “The man bites the dog” and “The dog bites the man” cannot be reliably distinguished without positional information. The classic absolute encoding adds sine/cosine waves of different frequencies per dimension; the fast and slow waves act like a place-value system. On the left you see the pattern across dimensions, on the right the projection of the position vectors. In truth there are thousands of dimensions; the three axes are a visualisation. The sphere appears here because the demo uses the great-circle metric; the switch changes to Euclidean and shows the same positions as a spiral in free space. The encoding makes relative distances visible, and the network can distinguish token order. Modern open LLMs mostly use RoPE (Llama, Qwen, Mistral); long contexts scale or interpolate it (YaRN, LongRoPE). BLOOM/MPT use ALiBi, T5 relative biases, GPT-2/3 learned absolute vectors; for GPT-4, Claude, and Gemini the method is not disclosed. With RoPE nothing is added: q and k rotate, and only n−m remains in the score. Details are in the optional boxes.",
+      watch: "The demo shows the classic absolute encoding. Open the optional boxes below for RoPE: relative position and why it is standard today.",
       demoState: { scene: "position" },
       context: "",
       deep: "",
       boxes: [
-        box("pos-1", "Technique", "Additive or rotary?", "RoPE dominates modern open LLMs. The classic encoding adds a fixed sine/cosine vector; RoPE rotates query and key with a position-dependent matrix. ALiBi and T5 instead add a bias to the attention score.")
+        box("pos-1", "Optional", "Additive or rotary?", "The classic encoding adds a fixed sine/cosine vector to the token. RoPE adds nothing: it rotates query and key with a position-dependent matrix. Lengths are preserved and the score depends only on the relative distance."),
+        box("pos-2", "Optional", "RoPE in 30 seconds", "Each token keeps its absolute position: q sits at m, k at n. RoPE rotates q by mθ and k by nθ. In the dot product the absolute angles cancel; only (n−m)θ remains. The rotation is orthogonal, vector length is preserved, and there are no extra learned position parameters.", "\\underbrace{q_m\\cdot k_n}_{\\text{score}} = \\underbrace{q^{\\top}R((n-m)\\theta)k}_{\\text{only distance } n-m}"),
+        box("pos-3", "Optional", "Why RoPE today?", "Relative scores, norm preservation, and no learned position parameters fit well with the KV cache and linear attention. That is why Llama, Qwen, and Mistral use RoPE; ALiBi and relative biases are alternatives. For long contexts RoPE needs scaling or interpolation (YaRN, LongRoPE)."),
+        box("pos-4", "Optional", "Great circle or Euclidean?", "The sphere is a visualisation choice: the great-circle metric measures angles along the sphere, while Euclidean measures straight distance in space. What matters to the network in the end is mostly direction, hence the angle; still, there is no single “valid” metric here. The switch shows the same positions as a spiral on the sphere or in raw space; both are didactic projections, not measurements of the model.")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention, den Transformer-Block und die absolute Sinus-/Cosinus-Positionskodierung ein.", en: "Introduces self-attention, the transformer block, and absolute sine/cosine position encoding." } },
@@ -345,57 +352,14 @@
         { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409", why: { de: "ALiBi: linearer Distanz-Bias statt Positions-Embedding.", en: "ALiBi: a linear distance bias instead of position embeddings." } },
         { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683", why: { de: "T5: relative Position Bias als Alternative.", en: "T5: relative position bias as an alternative." } },
         { label: "Peng et al. (2023), YaRN: Efficient Context Window Extension of Large Language Models", url: "https://arxiv.org/abs/2309.00071", why: { de: "YaRN erweitert RoPE auf lange Kontexte.", en: "YaRN extends RoPE to long contexts." } },
+      { label: "Ding et al. (2024), LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens", url: "https://arxiv.org/abs/2402.13753", why: { de: "LongRoPE: lange Kontexte mit angepassten RoPE-Frequenzen.", en: "LongRoPE: long contexts with adjusted RoPE frequencies." } },
         { label: "Yang et al. (2024), Qwen2 Technical Report", url: "https://arxiv.org/abs/2407.10671", why: { de: "Qwen2 nutzt RoPE; Long-Context mit YaRN.", en: "Qwen2 uses RoPE; long context with YaRN." } },
         { label: "Scao et al. (2022), BLOOM: A 176B-Parameter Open-Access Multilingual Language Model", url: "https://arxiv.org/abs/2211.05100", why: { de: "BLOOM nutzt ALiBi.", en: "BLOOM uses ALiBi." } }
       ]
     }
   ];
 
-  var ropeStep = DE ? {
-    kicker: "RoPE",
-    title: "RoPE: relative Position als Rotation",
-    body: "RoPE dreht Query und Key pro 2D-Paar um einen positionsabhängigen Winkel: $q_m = R(m\\theta)q$ und $k_n = R(n\\theta)k$. Das Skalarprodukt hängt dann nur noch vom relativen Abstand $n-m$ ab, nicht von den absoluten Positionen. Links steht die Formel; rechts wechselst du zwischen 2D-Paar, 3D-Helix, Dot-Produkt-Kurve und Score-Matrix.\n\nVorteile: Die Rotation ist orthogonal, die Länge der Vektoren bleibt gleich; relative Abstände stecken direkt im Score; es gibt keine zusätzlichen gelernten Positionsparameter; die Frequenzen lassen die Ähnlichkeit mit dem Abstand abklingen; RoPE passt auch zu linearer Attention.\n\nGrenzen: Die Anzahl der Dimensionen muss gerade sein, weil paarweise gedreht wird; Basisfrequenz und Paarbelegung sind Designentscheidungen; für Kontexte länger als das Training braucht RoPE eine Skalierung oder Interpolation (YaRN, NTK, LongRoPE); die Rotation muss in jeder Attention-Schicht und im KV-Cache konsistent angewendet werden.",
-    watch: "Bewege m und n, schalte RoPE aus und wechsle zwischen 2D, 3D, Kurve und Matrix. Im 2D-Paar drehen sich q und k; in 3D siehst du dieselbe Drehung über die Position als Helix; Kurve und Matrix zeigen, dass der Score nur von n−m abhängt.",
-    demoState: { scene: "rope" },
-    context: "Für ein einzelnes Paar gilt $q_m \\cdot k_n = q \\cdot R((n-m)\\theta)k$. Die Rotation ist orthogonal; die Norm bleibt. Der Score hängt nur von $n-m$ ab.",
-    deep: "Kurve und Score-Matrix zeigen dieselbe Sache: Der Score hängt nur von $n-m$ ab; deshalb ist die Matrix entlang der Diagonalen konstant. Die Summe über die Paare bildet den Fingerabdruck. Für lange Kontexte werden die Frequenzen skaliert oder interpoliert; die Wahl der Basis und der Interpolation entscheidet über die Extrapolation. Quellen: Su et al. (2021), Peng et al. (2023), Ding et al. (2024).",
-    boxes: [
-      box("rope-1", "Vorteile", "Was RoPE gut macht", "Relative Position ohne zusätzliche gelernte Parameter. Die Rotation ist orthogonal, also bleibt die Länge der Vektoren erhalten. Die Frequenzen erzeugen eine langfristige Abnahme der Ähnlichkeit mit dem Abstand; RoPE ist auch mit linearer Attention kompatibel."),
-      box("rope-2", "Grenzen", "Was RoPE nicht löst", "Die Dimensionenzahl muss gerade sein, weil paarweise gedreht wird. Basisfrequenz und Paarbelegung sind Designentscheidungen. Kontexte länger als das Training brauchen eine Skalierung oder Interpolation (YaRN, NTK, LongRoPE). Die Rotation muss in jeder Schicht und im KV-Cache konsistent angewendet werden."),
-      box("rope-3", "Dimensionen", "Ein Paar = zwei Dimensionen", "RoPE dreht immer zwei Dimensionen gemeinsam: $(d_{2i+1}, d_{2i+2})$. Ein Head mit $d = 64$ hat 32 solcher Paare; jedes Paar hat seine eigene Frequenz $\\theta_i = 10000^{-2i/d}$. Die Demo zeigt Paar 1 mit $\\theta = 1$.")
-    ],
-    sources: [
-      { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Rotation von Query und Key; relative Position im Skalarprodukt.", en: "RoPE: rotation of query and key; relative position in the dot product." } },
-      { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE in den Attention-Schichten.", en: "Llama 2 uses RoPE in its attention layers." } },
-      { label: "Peng et al. (2023), YaRN: Efficient Context Window Extension of Large Language Models", url: "https://arxiv.org/abs/2309.00071", why: { de: "YaRN erweitert RoPE auf lange Kontexte.", en: "YaRN extends RoPE to long contexts." } },
-      { label: "Ding et al. (2024), LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens", url: "https://arxiv.org/abs/2402.13753", why: { de: "LongRoPE: lange Kontexte mit angepassten RoPE-Frequenzen.", en: "LongRoPE: long contexts with adjusted RoPE frequencies." } }
-    ]
-  } : {
-    kicker: "RoPE",
-    title: "RoPE: relative position as rotation",
-    body: "RoPE rotates query and key per 2D pair by a position-dependent angle: $q_m = R(m\\theta)q$ and $k_n = R(n\\theta)k$. The dot product then depends only on the relative distance $n-m$, not on the absolute positions. On the left is the formula; on the right you switch between the 2D pair, the 3D helix, the dot-product curve, and the score matrix.\n\nAdvantages: the rotation is orthogonal, so the vector lengths stay the same; relative distances sit directly in the score; there are no additional learned position parameters; the frequencies make similarity decay with distance; RoPE also works with linear attention.\n\nLimits: the number of dimensions must be even because dimensions rotate in pairs; the base frequency and the pairing are design choices; contexts longer than training need scaling or interpolation (YaRN, NTK, LongRoPE); the rotation must be applied consistently in every attention layer and in the KV cache.",
-    watch: "Move m and n, switch RoPE off, and toggle between 2D, 3D, curve, and matrix. In the 2D pair q and k rotate; in 3D you see the same rotation across positions as a helix; the curve and matrix show that the score depends only on n−m.",
-    demoState: { scene: "rope" },
-    context: "For a single pair, $q_m \\cdot k_n = q \\cdot R((n-m)\\theta)k$. The rotation is orthogonal; the norm stays. The score depends only on $n-m$.",
-    deep: "The curve and the score matrix show the same thing: the score depends only on $n-m$; that is why the matrix is constant along diagonals. The sum over the pairs forms the fingerprint. For long contexts the frequencies are scaled or interpolated; the choice of base and interpolation decides extrapolation. Sources: Su et al. (2021), Peng et al. (2023), Ding et al. (2024).",
-    boxes: [
-      box("rope-1", "Advantages", "What RoPE does well", "Relative position without additional learned parameters. The rotation is orthogonal, so vector lengths are preserved. The frequencies make similarity decay with distance; RoPE is also compatible with linear attention."),
-      box("rope-2", "Limits", "What RoPE does not solve", "The number of dimensions must be even because dimensions rotate in pairs. Base frequency and pairing are design choices. Contexts longer than training need scaling or interpolation (YaRN, NTK, LongRoPE). The rotation must be applied consistently in every layer and in the KV cache."),
-      box("rope-3", "Dimensions", "One pair = two dimensions", "RoPE always rotates two dimensions together: $(d_{2i+1}, d_{2i+2})$. A head with $d = 64$ has 32 such pairs; each pair has its own frequency $\\theta_i = 10000^{-2i/d}$. The demo shows pair 1 with $\\theta = 1$.")
-    ],
-    sources: [
-      { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Rotation von Query und Key; relative Position im Skalarprodukt.", en: "RoPE: rotation of query and key; relative position in the dot product." } },
-      { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE in den Attention-Schichten.", en: "Llama 2 uses RoPE in its attention layers." } },
-      { label: "Peng et al. (2023), YaRN: Efficient Context Window Extension of Large Language Models", url: "https://arxiv.org/abs/2309.00071", why: { de: "YaRN erweitert RoPE auf lange Kontexte.", en: "YaRN extends RoPE to long contexts." } },
-      { label: "Ding et al. (2024), LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens", url: "https://arxiv.org/abs/2402.13753", why: { de: "LongRoPE: lange Kontexte mit angepassten RoPE-Frequenzen.", en: "LongRoPE: long contexts with adjusted RoPE frequencies." } }
-    ]
-  };
-
-  var positionStep = {
-    kicker: DE ? "Position" : "Position",
-    title: DE ? "Jeder Platz bekommt einen Fingerabdruck" : "Every place gets a fingerprint",
-    substeps: [positionSteps[0], ropeStep]
-  };
+  var positionStep = positionSteps[0];
 
   var attentionSteps = DE ? [
     {
