@@ -85,8 +85,8 @@
 
     function top(t) {
       var dots = ORDER.map(function (id, i) { return '<i class="' + (i === index() ? 'is-on' : i < index() ? 'is-done' : '') + '"></i>'; }).join("");
-      return '<div class="ls-ll-top"><span class="ls-ll-step">' + L("Test ", "Test ") + (index() + 1) + ' / ' + ORDER.length + '</span><span class="ls-ll-kind">' + esc(t.label) + '</span><span class="ls-ll-dots" aria-hidden="true">' + dots + '</span></div>' +
-        '<b class="ls-ll-title">' + esc(t.title) + '</b><p class="ls-ll-lead">' + esc(t.lead) + '</p>';
+      return '<div class="ls-ll-intro"><div class="ls-ll-top"><span class="ls-ll-step">' + L("Test ", "Test ") + (index() + 1) + ' / ' + ORDER.length + '</span><span class="ls-ll-kind">' + esc(t.label) + '</span><span class="ls-ll-dots" aria-hidden="true">' + dots + '</span></div>' +
+        '<b class="ls-ll-title">' + esc(t.title) + '</b><p class="ls-ll-lead">' + esc(t.lead) + '</p></div>';
     }
     function question(t) {
       if (!t.question) return "";
@@ -181,7 +181,7 @@
     render();
     return {
       update: function (s) {
-        if (s && s.test && TESTS[s.test] && s.test !== state.test) { state.test = s.test; state.checked = false; render(); }
+        if (s && s.test && TESTS[s.test] && s.test !== state.test) { state.test = s.test; state.checked = false; render(); el.scrollTop = 0; }
       },
       next: function () {
         if (!isRun()) { runCurrent(); return true; }
@@ -190,6 +190,7 @@
         state.checked = false;
         state.run[state.test] = true;
         render();
+        el.scrollTop = 0;
         return true;
       },
       prev: function () {
@@ -198,6 +199,7 @@
         state.checked = false;
         state.run[state.test] = true;
         render();
+        el.scrollTop = 0;
         return true;
       },
       hasNext: function () { return !isRun() || index() < ORDER.length - 1; },

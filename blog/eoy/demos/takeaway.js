@@ -59,13 +59,12 @@
     }).join("");
     el.innerHTML =
       '<div class="ls-tk2-hero">' +
-        '<div class="ls-tk2-head"><span class="ls-tk2-kicker">' + L("Die ganze Reise", "The whole journey") + '</span><b>' + L("Vom Zeichen zur Wirkung", "From sign to impact") + '</b><span class="ls-tk2-sub">' + L("Klick eine Station, zieh an der Temperatur und prüfe die Antwort.", "Click a station, drag the temperature, and verify the answer.") + '</span></div>' +
+        '<div class="ls-tk2-head"><span class="ls-tk2-kicker">' + L("Die ganze Reise", "The whole journey") + '</span><b>' + L("Vom Zeichen zur Wirkung", "From sign to impact") + '</b><span class="ls-tk2-sub">' + L("Klick eine Station oder geh mit Weiter durch die Reise; zieh an der Temperatur.", "Click a station or walk through with Next; drag the temperature.") + '</span></div>' +
         '<div class="ls-tk2-stage"><canvas class="ls-tk2-canvas" role="img" data-tip="' + L("Die sechs Stationen und der Residualstrom; klick eine Station für die Erklärung.", "The six stations and the residual stream; click a station for the explanation.") + '"></canvas></div>' +
         '<div class="ls-tk2-chips" role="tablist" aria-label="' + L("Stationen", "Stations") + '">' + chips + '</div>' +
         '<div class="ls-tk2-controls">' +
           '<label class="ls-tk2-temp"><span>' + L("Temperatur", "Temperature") + '</span><input type="range" data-tk2-temp min="0.2" max="1.8" step="0.1" value="0.8"><output>0.8</output></label>' +
-          '<button type="button" class="ls-tk2-verify" data-tk2-verify aria-pressed="false">' + L("Antwort prüfen", "Verify answer") + '</button>' +
-          '<span class="ls-tk2-state" data-tk2-state>' + L("ungeprüft", "unverified") + '</span>' +
+          '<span class="ls-tk2-hint">' + L("Weiter → nächste Station", "Next → next station") + '</span>' +
         '</div>' +
       '</div>' +
       '<div class="ls-tk2-detail" data-tk2-detail></div>';
@@ -77,11 +76,9 @@
     var detailEl = el.querySelector("[data-tk2-detail]");
     var tempEl = el.querySelector("[data-tk2-temp]");
     var tempOut = tempEl ? tempEl.nextElementSibling : null;
-    var verifyEl = el.querySelector("[data-tk2-verify]");
-    var stateEl = el.querySelector("[data-tk2-state]");
     var C = api.colors();
     var reduce = !!api.reducedMotion;
-    var active = 0, temp = 0.8, verified = false, activeSince = performance.now();
+    var active = 0, temp = 0.8, activeSince = performance.now();
     var size = null, ctx = null, raf = 0, start = performance.now(), paused = false;
     var particles = [];
     for (var p = 0; p < 34; p++) {
@@ -309,14 +306,9 @@
       ctx.textAlign = "right"; ctx.textBaseline = "middle";
       ctx.fillStyle = C.gold;
       ctx.fillText(badge, p.x + p.w - pad, p.y + 24);
+      ctx.fillStyle = C.muted;
       ctx.textAlign = "left";
-      if (verified) {
-        ctx.fillStyle = C.green;
-        ctx.fillText("✓ " + L("geprüft", "verified"), p.x + pad, p.y + 24);
-      } else {
-        ctx.fillStyle = C.muted;
-        ctx.fillText("○ " + L("ungeprüft", "unverified"), p.x + pad, p.y + 24);
-      }
+      ctx.fillText(L("nächstes Token", "next token"), p.x + pad, p.y + 24);
     }
     var VISUALS = [drawText, drawTokens, drawVectors, drawAttention, drawFFN, drawDistribution];
 
@@ -441,15 +433,6 @@
       renderDetail();
       draw(performance.now());
     }
-    function setVerified(next) {
-      verified = !!next;
-      verifyEl.classList.toggle("is-on", verified);
-      verifyEl.setAttribute("aria-pressed", String(verified));
-      verifyEl.textContent = verified ? L("Geprüft", "Verified") : L("Antwort prüfen", "Verify answer");
-      stateEl.textContent = verified ? L("geprüft", "verified") : L("ungeprüft", "unverified");
-      stateEl.classList.toggle("is-on", verified);
-      draw(performance.now());
-    }
     chipEls.forEach(function (b) {
       b.addEventListener("click", function () { selectStation(parseInt(b.getAttribute("data-tk2-station"), 10) || 0); });
     });
@@ -479,10 +462,6 @@
       if (active !== 5) selectStation(5);
       draw(performance.now());
     });
-    if (verifyEl) verifyEl.addEventListener("click", function () {
-      if (active !== 5) selectStation(5);
-      setVerified(!verified);
-    });
 
     var ro = null;
     if (window.ResizeObserver) { ro = new ResizeObserver(function () { fit(); }); ro.observe(stage); }
@@ -494,6 +473,10 @@
     startLoop();
     return {
       update: function () {},
+      next: function () { if (active < STATIONS.length - 1) { selectStation(active + 1); return true; } return false; },
+      prev: function () { if (active > 0) { selectStation(active - 1); return true; } return false; },
+      hasNext: function () { return active < STATIONS.length - 1; },
+      hasPrev: function () { return active > 0; },
       resize: fit,
       pause: function () { paused = true; if (raf) cancelAnimationFrame(raf); raf = 0; },
       resume: function () { paused = false; startLoop(); },

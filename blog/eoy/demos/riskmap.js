@@ -130,6 +130,44 @@
       { position: 62, why: L("Werkzeuge und Autonomie vergrößern die Wirkung von Fehlern.", "Tools and autonomy increase the impact of errors."), fix: L("Berechtigungen, Sandbox und Monitoring.", "Permissions, sandboxing, and monitoring.") }
     ];
     function L(de, en) { return DE ? de : en; }
+    var CITE_URLS = {
+      "International AI Safety Report 2025": "https://arxiv.org/abs/2501.17805",
+      "Gururangan et al. (2022)": "https://arxiv.org/abs/2201.10474",
+      "Joshi et al. (2020)": "https://arxiv.org/abs/2004.09095",
+      "Dodge et al. (2021)": "https://arxiv.org/abs/2104.08758",
+      "Sastry et al. (2024)": "https://arxiv.org/abs/2402.08797",
+      "Noels et al. (2025)": "https://arxiv.org/abs/2504.03803",
+      "Naseh et al. (2025)": "https://arxiv.org/abs/2505.12625",
+      "Ozer et al. (2026)": "https://arxiv.org/abs/2609.32390",
+      "Zhang (2026)": "https://arxiv.org/abs/2609.15494",
+      "Amodei et al. (2016)": "https://arxiv.org/abs/1606.06565",
+      "Krakovna et al. (2020)": "https://deepmind.google/discover/blog/specification-gaming-the-flip-side-of-ai-ingenuity/",
+      "Ouyang et al. (2022)": "https://arxiv.org/abs/2203.02155",
+      "Bai et al. (2022)": "https://arxiv.org/abs/2212.08073",
+      "NIST AI RMF (2023)": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "Perez et al. (2022)": "https://arxiv.org/abs/2202.03286",
+      "EU AI Act (2024)": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "Bender & Koller (2020)": "https://aclanthology.org/2020.acl-main.463/",
+      "LeCun (2022)": "https://openreview.net/forum?id=BZ5a1r-kVsf",
+      "Bisk et al. (2020)": "https://arxiv.org/abs/2004.10151",
+      "Liu et al. (2023)": "https://arxiv.org/abs/2307.03172",
+      "Dziri et al. (2023)": "https://arxiv.org/abs/2305.18654",
+      "Ji et al. (2023)": "https://arxiv.org/abs/2202.03629",
+      "Acemoglu & Restrepo (2019)": "https://doi.org/10.1257/jep.33.2.3",
+      "Vosoughi et al. (2018)": "https://doi.org/10.1126/science.aap9559",
+      "Wineburg & McGrew (2019)": "https://doi.org/10.1177/016146811912101102",
+      "Caulfield (2019)": "https://hapgood.us/2019/06/19/sift-the-four-moves/",
+      "ACRL (2015)": "https://www.ala.org/acrl/standards/ilframework",
+      "US Copyright Office (2025)": "https://www.copyright.gov/ai/"
+    };
+    function linkCites(text) {
+      if (!text) return "";
+      return String(text).split(";").map(function (part) {
+        var t = part.trim();
+        var url = CITE_URLS[t];
+        return url ? '<a href="' + url + '" target="_blank" rel="noopener">' + esc(t) + '</a>' : esc(t);
+      }).join("; ");
+    }
     var el = document.createElement("div");
     el.className = "ls-rm";
     root.appendChild(el);
@@ -178,7 +216,7 @@
         '<p class="ls-rm-block"><b>' + (DE ? "Gefahr" : "Danger") + ':</b> ' + esc(item.body) + '</p>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Warum" : "Why") + ':</b> ' + esc(item.mechanism) + '</p>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Beispiel" : "Example") + ':</b> ' + esc(item.examples) + '</p>' +
-        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite) + '</span>' +
+        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + linkCites(item.cite) + '</span>' +
       '</div>';
       var layers = DATA.safety.items.map(function (layer, idx) {
         var on = !!meta.layers[idx];
@@ -212,7 +250,7 @@
         '<p class="ls-rm-block">' + esc(item.body) + '</p>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Warum strukturell?" : "Why structural?") + ':</b> ' + esc(meta.why) + '</p>' +
         '<div class="ls-rm-fix"><b>' + (DE ? "Was hilft?" : "What helps?") + ':</b> ' + esc(meta.fix) + '</div>' +
-        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite) + '</span>' +
+        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + linkCites(item.cite) + '</span>' +
       '</div>';
       el.innerHTML = header(d) +
         '<div class="ls-rm-spectrum" data-tip="' + L("Fähigkeiten von stabil bis fehlend; die Farbe des Punktes markiert den Status.", "Capabilities from stable to missing; the dot colour marks the status.") + '"><div class="ls-rm-spectrum-scale"><span>' + (DE ? "stabil" : "stable") + '</span><span>' + (DE ? "brüchig" : "brittle") + '</span><span>' + (DE ? "fehlt" : "missing") + '</span></div>' + rows + '</div>' +
@@ -249,7 +287,7 @@
         '<div class="ls-rm-soc-block"><b>' + L("Beispiel", "Example") + '</b><p>' + esc(item.example || "") + '</p></div>' +
         '<div class="ls-rm-soc-block is-fix"><b>' + L("Was hilft?", "What helps?") + '</b><p>' + esc(item.counter || "") + '</p></div>' +
       '</div>' +
-      '<span class="ls-rm-cite"><b>' + L("Quelle", "Source") + ':</b> ' + esc(item.cite || "") + '</span>';
+      '<span class="ls-rm-cite"><b>' + L("Quelle", "Source") + ':</b> ' + linkCites(item.cite || "") + '</span>';
     }
     function measureSocDetail() {
       if (state.mode !== "society") return;
@@ -350,7 +388,7 @@
         '<div class="ls-rm-detail" data-tip="' + L("Erklärung des gewählten Eintrags mit Quellenangabe.", "Explanation of the selected entry with its source.") + '">' +
           '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(d.items[active].tag) + '</span><b>' + esc(d.items[active].title) + '</b></div>' +
           '<p>' + esc(d.items[active].body) + '</p>' +
-          '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(d.items[active].cite) + '</span>' +
+          '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + linkCites(d.items[active].cite) + '</span>' +
         '</div>';
     }
     function animatePart(node, delay, dir) {
