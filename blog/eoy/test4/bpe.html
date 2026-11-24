@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test 4 · Der Sparzwang</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="../test2/kit.css">
+<link rel="stylesheet" href="games.css">
+<link rel="stylesheet" href="bpe.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="03 · Tokenisierung" data-en="03 · tokenization">03 · Tokenisierung</span>
+      <h1 class="proto-title" data-de="Der Sparzwang" data-en="The compression budget">Der Sparzwang</h1>
+      <p class="proto-lead" data-de="Vier Merges, ein Korpus, ein Vokabular-Budget. Wähle die Reihenfolge selbst. Am Ende siehst du, ob dein Vokabular den Korpus genauso gut komprimiert wie der Standard, und wie es ein neues Wort zerlegt." data-en="Four merges, one corpus, one vocabulary budget. Choose the order yourself. At the end you see whether your vocabulary compresses the corpus as well as the standard, and how it splits a new word.">Vier Merges, ein Korpus, ein Vokabular-Budget. Wähle die Reihenfolge selbst. Am Ende siehst du, ob dein Vokabular den Korpus genauso gut komprimiert wie der Standard, und wie es ein neues Wort zerlegt.</p>
+    </header>
+
+    <section class="proto-stage g-stage bp2-stage" aria-label="Der Sparzwang">
+      <div class="g-hud">
+        <span class="g-kicker" data-de="BPE · Kompression" data-en="BPE · compression">BPE · Kompression</span>
+        <h2 class="g-hud-title" data-de="Ein Korpus, vier Entscheidungen" data-en="One corpus, four decisions">Ein Korpus, vier Entscheidungen</h2>
+        <span class="g-spacer"></span>
+        <span class="g-badge" id="bp2-badge" data-de="4 Merges" data-en="4 merges">4 Merges</span>
+      </div>
+
+      <div class="g-main">
+        <div class="g-col">
+          <div class="g-panel bp2-corpus-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Der Korpus" data-en="The corpus">Der Korpus</span>
+              <span id="bp2-corpus-note" data-de="Zeichen-BPE · Start" data-en="character BPE · start">Zeichen-BPE · Start</span>
+            </div>
+            <div class="bp2-words" id="bp2-words" aria-live="polite"></div>
+            <div class="bp2-legend">
+              <span><i class="bp2-legend-char"></i> Zeichen</span>
+              <span><i class="bp2-legend-merge"></i> gelernter Merge</span>
+              <span><i class="bp2-legend-new"></i> gerade entstanden</span>
+            </div>
+          </div>
+
+          <div class="g-panel bp2-new-panel" id="bp2-new-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Ein neues Wort" data-en="A new word">Ein neues Wort</span>
+              <label class="bp2-input-wrap">
+                <span class="bp2-input-label" data-de="probe" data-en="probe">probe</span>
+                <input id="bp2-new-input" type="text" value="lowest" maxlength="24" spellcheck="false" autocomplete="off" aria-label="Neues Wort">
+              </label>
+            </div>
+            <div class="bp2-split-compare" id="bp2-split-compare"></div>
+            <p class="bp2-new-note" id="bp2-new-note"></p>
+          </div>
+        </div>
+
+        <aside class="g-col">
+          <div class="g-panel bp2-budget-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Dein Budget" data-en="Your budget">Dein Budget</span>
+              <b id="bp2-budget-label">4 / 4</b>
+            </div>
+            <div class="bp2-pips" id="bp2-pips" aria-hidden="true"></div>
+            <div class="bp2-stats">
+              <div class="g-stat"><span data-de="Tokens" data-en="tokens">Tokens</span><b id="bp2-tokens">79</b></div>
+              <div class="g-stat"><span data-de="Vokabular" data-en="vocabulary">Vokabular</span><b id="bp2-vocab">10</b></div>
+              <div class="g-stat"><span data-de="Standard" data-en="standard">Standard</span><b id="bp2-standard">47</b></div>
+            </div>
+            <div class="bp2-pressure">
+              <div class="bp2-pressure-head"><span data-de="Kompression" data-en="compression">Kompression</span><span id="bp2-saved">0 gespart</span></div>
+              <div class="g-meter bp2-meter"><i id="bp2-meter"></i></div>
+              <div class="bp2-pressure-foot"><span>79</span><span>47</span></div>
+            </div>
+          </div>
+
+          <div class="g-panel bp2-candidates-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Der nächste Merge" data-en="The next merge">Der nächste Merge</span>
+              <span id="bp2-candidate-hint" data-de="wähle ein Paar" data-en="pick a pair">wähle ein Paar</span>
+            </div>
+            <div class="bp2-candidates" id="bp2-candidates" role="group"></div>
+            <p class="bp2-candidate-note" data-de="Der häufigste Merge ist die Standard-Wahl. Du darfst anders wählen. Genau darum geht es." data-en="The most frequent merge is the standard choice. You may choose differently. That is the point.">Der häufigste Merge ist die Standard-Wahl. Du darfst anders wählen. Genau darum geht es.</p>
+          </div>
+
+          <div class="g-panel bp2-compare-panel" id="bp2-compare-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Dein Lauf" data-en="Your run">Dein Lauf</span>
+              <b id="bp2-stars">—</b>
+            </div>
+            <div class="bp2-compare" id="bp2-compare"></div>
+            <p class="bp2-compare-note" id="bp2-compare-note"></p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="g-bottom">
+        <div class="g-readout" id="bp2-readout" aria-live="polite"></div>
+        <div class="g-controls">
+          <button type="button" class="g-btn" id="bp2-reset" data-de="Nochmal" data-en="Reset">Nochmal</button>
+          <button type="button" class="g-btn g-btn--primary" id="bp2-standard-btn" data-de="Standard nachspielen" data-en="Replay the standard">Standard nachspielen</button>
+        </div>
+      </div>
+      <div class="g-toast" id="bp2-toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <p class="proto-note" data-de-html="BPE startet mit einzelnen Zeichen und ersetzt vier Mal das gewählte Paar durch ein neues Symbol. Die Tokenzahl zählt Symbole im ganzen Korpus, gewichtet mit der Worthäufigkeit. Der Standard ist der Greedy-Lauf (immer das häufigste Paar). Dein Lauf darf anders wählen. Das neue Wort wird mit deinem Vokabular und mit dem Standard-Vokabular zerlegt, damit du die Entscheidung nicht nur am Trainingskorpus siehst." data-en-html="BPE starts with individual characters and replaces the chosen pair with a new symbol four times. The token count counts symbols across the corpus, weighted by word frequency. The standard is the greedy run (always the most frequent pair). Your run may choose differently. The new word is split with your vocabulary and with the standard vocabulary, so you see the decision beyond the training corpus.">BPE startet mit einzelnen Zeichen und ersetzt vier Mal das gewählte Paar durch ein neues Symbol. Die Tokenzahl zählt Symbole im ganzen Korpus, gewichtet mit der Worthäufigkeit. Der Standard ist der Greedy-Lauf (immer das häufigste Paar). Dein Lauf darf anders wählen. Das neue Wort wird mit deinem Vokabular und mit dem Standard-Vokabular zerlegt, damit du die Entscheidung nicht nur am Trainingskorpus siehst.</p>
+
+    <footer class="proto-foot">
+      <span>03 / 03</span>
+      <span><a href="index.html" data-de="Alle Test-4-Seiten" data-en="All test 4 pages">Alle Test-4-Seiten</a> · <a href="circuit.html" data-de="Vorher: Kopierautomat" data-en="Previous: copy machine">Vorher: Kopierautomat</a></span>
+    </footer>
+  </main>
+  <script src="bpe.js"></script>
+</body>
+</html>

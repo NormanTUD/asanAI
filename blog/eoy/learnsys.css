@@ -5714,3 +5714,11 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-con2-quote cite{position:relative;display:block;margin-top:5px;font:600 10.5px/1.4 "Open Sans",sans-serif;font-style:normal;color:var(--ls-muted)}
 .ls-con2-quote cite a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}
 @media (max-width:640px){.ls-con2-quote p{font-size:14px}.ls-con2[data-theory="fourE"] .ls-con2-stage{height:320px}}
+/* Compact question deck inside each consciousness theory */
+.ls-con2-qa{display:flex;flex-direction:column;gap:5px;margin:1px 0 0}
+.ls-con2-qa-questions{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.ls-con2-q{appearance:none;border:1px solid var(--ls-line);border-radius:8px;background:rgba(255,255,255,.74);padding:5px 7px;font:700 9px/1.25 "Open Sans",sans-serif;color:var(--ls-petrol);text-align:left;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.ls-con2-q:hover{border-color:var(--con-accent,var(--ls-petrol));background:#fff}
+.ls-con2-q.is-on{background:var(--con-accent,var(--ls-petrol));border-color:var(--con-accent,var(--ls-petrol));color:#fff}
+.ls-con2-a{margin:0;padding:6px 9px;border-left:2px solid var(--con-accent,var(--ls-petrol));background:linear-gradient(90deg,rgba(255,255,255,.8),rgba(255,255,255,.3));font:600 11px/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+@media (max-width:640px){.ls-con2-qa-questions{grid-template-columns:1fr}.ls-con2-q{font-size:8.5px}}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test 4 · Baue den Kopierautomaten</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="../test2/kit.css">
+<link rel="stylesheet" href="games.css">
+<link rel="stylesheet" href="circuit.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="02 · In-Context-Learning" data-en="02 · in-context learning">02 · In-Context-Learning</span>
+      <h1 class="proto-title" data-de="Baue den Kopierautomaten" data-en="Build the copy machine">Baue den Kopierautomaten</h1>
+      <p class="proto-lead" data-de="Zwei Heads, zwei Schichten, fünf Muster. Setze sie richtig zusammen, teste den Schaltkreis und schalte ihn danach gezielt kaputt. Das Muster steht im Kontext, nicht in den Gewichten." data-en="Two heads, two layers, five patterns. Assemble them correctly, test the circuit, then break it on purpose. The pattern lives in the context, not in the weights.">Zwei Heads, zwei Schichten, fünf Muster. Setze sie richtig zusammen, teste den Schaltkreis und schalte ihn danach gezielt kaputt. Das Muster steht im Kontext, nicht in den Gewichten.</p>
+    </header>
+
+    <section class="proto-stage g-stage ct-stage" aria-label="Baue den Kopierautomaten">
+      <div class="g-hud">
+        <span class="g-kicker" data-de="Induction · Zwei Schichten" data-en="Induction · two layers">Induction · Zwei Schichten</span>
+        <h2 class="g-hud-title" data-de="Ein Muster, zwei Heads" data-en="One pattern, two heads">Ein Muster, zwei Heads</h2>
+        <span class="g-spacer"></span>
+        <span class="g-badge" id="ct-order-badge" data-de="noch nicht gebaut" data-en="not built yet">noch nicht gebaut</span>
+      </div>
+
+      <div class="g-main">
+        <div class="g-col">
+          <div class="g-panel ct-seq-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Das Muster" data-en="The pattern">Das Muster</span>
+              <span id="ct-round-label">1 / 5</span>
+            </div>
+            <div class="ct-sequence" id="ct-sequence" aria-live="polite"></div>
+            <div class="ct-prediction" id="ct-prediction"></div>
+            <p class="ct-pattern-note" id="ct-pattern-note"></p>
+          </div>
+
+          <div class="g-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Die fünf Muster" data-en="The five patterns">Die fünf Muster</span>
+              <b id="ct-score">0 / 5</b>
+            </div>
+            <div class="ct-rounds" id="ct-rounds"></div>
+            <div class="ct-baseline" id="ct-baseline"></div>
+          </div>
+        </div>
+
+        <aside class="g-col">
+          <div class="g-panel ct-bench-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Die Werkbank" data-en="The workbench">Die Werkbank</span>
+              <span id="ct-bench-hint" data-de="Head wählen, dann Schicht" data-en="pick a head, then a layer">Head wählen, dann Schicht</span>
+            </div>
+
+            <div class="ct-bench">
+              <div class="ct-layer">
+                <div class="ct-layer-head">
+                  <span class="ct-layer-num">1</span>
+                  <span class="ct-layer-name" data-de="Schicht 1" data-en="Layer 1">Schicht 1</span>
+                  <span class="ct-layer-what" data-de="schreibt Keys" data-en="writes keys">schreibt Keys</span>
+                </div>
+                <button type="button" class="ct-slot" data-slot="0" aria-label="Schicht 1 Slot">
+                  <span class="ct-slot-empty" data-de="Head hier einsetzen" data-en="place a head here">Head hier einsetzen</span>
+                  <span class="ct-slot-filled"></span>
+                </button>
+              </div>
+
+              <div class="ct-connector" id="ct-connector" aria-hidden="true">
+                <i></i><b></b>
+              </div>
+
+              <div class="ct-layer">
+                <div class="ct-layer-head">
+                  <span class="ct-layer-num">2</span>
+                  <span class="ct-layer-name" data-de="Schicht 2" data-en="Layer 2">Schicht 2</span>
+                  <span class="ct-layer-what" data-de="findet und kopiert" data-en="finds and copies">findet und kopiert</span>
+                </div>
+                <button type="button" class="ct-slot" data-slot="1" aria-label="Schicht 2 Slot">
+                  <span class="ct-slot-empty" data-de="Head hier einsetzen" data-en="place a head here">Head hier einsetzen</span>
+                  <span class="ct-slot-filled"></span>
+                </button>
+              </div>
+
+              <div class="ct-heads" id="ct-heads">
+                <button type="button" class="ct-head" data-head="prev">
+                  <span class="ct-head-ico">↩</span>
+                  <span class="ct-head-name">Previous-Token-Head</span>
+                  <span class="ct-head-what" data-de="merkt sich, was vor einem Token stand" data-en="remembers what came before a token">merkt sich, was vor einem Token stand</span>
+                  <span class="ct-head-where"></span>
+                </button>
+                <button type="button" class="ct-head" data-head="ind">
+                  <span class="ct-head-ico">⧉</span>
+                  <span class="ct-head-name">Induction-Head</span>
+                  <span class="ct-head-what" data-de="findet die frühere Stelle und kopiert, was folgte" data-en="finds the earlier spot and copies what followed">findet die frühere Stelle und kopiert, was folgte</span>
+                  <span class="ct-head-where"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="ct-actions">
+              <button type="button" class="g-btn g-btn--primary" id="ct-run" data-de="Schaltkreis testen" data-en="Test the circuit">Schaltkreis testen</button>
+              <button type="button" class="g-btn" id="ct-clear" data-de="Leeren" data-en="Clear">Leeren</button>
+            </div>
+          </div>
+
+          <div class="g-panel ct-score-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Trefferquote" data-en="Accuracy">Trefferquote</span>
+              <b id="ct-score-big">0 / 5</b>
+            </div>
+            <div class="g-meter ct-meter"><i id="ct-meter"></i></div>
+            <p class="ct-hint" id="ct-hint"></p>
+          </div>
+
+          <div class="g-panel ct-ablate-panel" id="ct-ablate-panel" hidden>
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Jetzt kaputt machen" data-en="Now break it">Jetzt kaputt machen</span>
+              <b data-de="Ablation" data-en="ablation">Ablation</b>
+            </div>
+            <label class="ct-switch"><input type="checkbox" id="ct-abl-prev"><span class="ct-switch-track"><i></i></span><span data-de="Previous-Token-Head aus" data-en="Previous-token head off">Previous-Token-Head aus</span></label>
+            <label class="ct-switch"><input type="checkbox" id="ct-abl-ind"><span class="ct-switch-track"><i></i></span><span data-de="Induction-Head aus" data-en="Induction head off">Induction-Head aus</span></label>
+            <div class="ct-ablate-score" id="ct-ablate-score"></div>
+            <p class="ct-ablate-note" data-de="Die Ablation ist der Beweis: Ohne einen der beiden Heads bricht die Trefferquote ein. Beide sind kausal nötig, nicht nur korreliert." data-en="The ablation is the proof: without either head, accuracy collapses. Both are causally necessary, not merely correlated.">Die Ablation ist der Beweis: Ohne einen der beiden Heads bricht die Trefferquote ein. Beide sind kausal nötig, nicht nur korreliert.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="g-bottom">
+        <div class="g-readout" id="ct-readout" aria-live="polite"></div>
+        <div class="g-controls">
+          <button type="button" class="g-btn" id="ct-reset" data-de="Alles zurücksetzen" data-en="Reset everything">Alles zurücksetzen</button>
+        </div>
+      </div>
+      <div class="g-toast" id="ct-toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <p class="proto-note" data-de-html="Der Schaltkreis ist der Zwei-Head-Schaltkreis aus der Induktionskopf-Literatur, schematisch: Schicht 1 schreibt den Vorgänger als Key, Schicht 2 matcht die aktuelle Query gegen diese Keys und kopiert den Value der früheren Stelle. Die fünf Muster sind konstruiert, damit kein Faktenwissen hilft. Die Ablation ist eine echte Neuberechnung, kein eingefrorener Text." data-en-html="The circuit is the two-head circuit from the induction-head literature, schematic: layer 1 writes the predecessor as a key, layer 2 matches the current query against those keys and copies the value from the earlier spot. The five patterns are constructed so that no factual knowledge helps. The ablation is a real recomputation, not frozen text.">Der Schaltkreis ist der Zwei-Head-Schaltkreis aus der Induktionskopf-Literatur, schematisch: Schicht 1 schreibt den Vorgänger als Key, Schicht 2 matcht die aktuelle Query gegen diese Keys und kopiert den Value der früheren Stelle. Die fünf Muster sind konstruiert, damit kein Faktenwissen hilft. Die Ablation ist eine echte Neuberechnung, kein eingefrorener Text.</p>
+
+    <footer class="proto-foot">
+      <span>02 / 03</span>
+      <span><a href="index.html" data-de="Alle Test-4-Seiten" data-en="All test 4 pages">Alle Test-4-Seiten</a> · <a href="heads.html" data-de="Vorher: Zwei Köpfe" data-en="Previous: two heads">Vorher: Zwei Köpfe</a> · <a href="bpe.html" data-de="Weiter: Sparzwang" data-en="Next: compression budget">Weiter: Sparzwang</a></span>
+    </footer>
+  </main>
+  <script src="circuit.js"></script>
+</body>
+</html>
