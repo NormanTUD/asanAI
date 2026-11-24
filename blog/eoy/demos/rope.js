@@ -21,22 +21,22 @@
       dot: ["Springt direkt zu diesem Schritt.", "Jumps straight to this step."],
       m: ["Position m: Stelle des Query-Tokens. q wird um m·θ gedreht.", "Position m: place of the query token. q is rotated by m·θ."],
       n: ["Position n: Stelle des Key-Tokens. k wird um n·θ gedreht.", "Position n: place of the key token. k is rotated by n·θ."],
-      pairs: ["Dimensionspaare: jedes Paar sind 2 Dimensionen (cos, sin). Bei P Paaren werden 2P Dimensionen gedreht; die übrigen bleiben unverändert.", "Dimension pairs: each pair is 2 dimensions (cos, sin). With P pairs, 2P dimensions rotate; the rest stay unchanged."],
-      readout: ["q·k ist der Mittelwert der Cosinus-Scores aller P Paare. Nur der relative Abstand n−m zählt.", "q·k is the mean of the cosine scores over all P pairs. Only the relative distance n−m matters."],
+      pairs: ["Dimensionspaare: jedes Paar sind 2 Dimensionen ($\\cos$, $\\sin$). Bei $P$ Paaren werden $2P$ Dimensionen gedreht; die übrigen bleiben unverändert.", "Dimension pairs: each pair is 2 dimensions ($\\cos$, $\\sin$). With $P$ pairs, $2P$ dimensions rotate; the rest stay unchanged."],
+      readout: ["$q\\cdot k$ ist der Mittelwert der Cosinus-Scores aller $P$ Paare. Nur der relative Abstand $n-m$ zählt.", "$q\\cdot k$ is the mean of the cosine scores over all $P$ pairs. Only the relative distance $n-m$ matters."],
       viewTitle: ["Was die Visualisierung gerade zeigt.", "What the visualisation currently shows."],
       viewFoot: ["Details zur aktuellen Ansicht. In 3D steht hier auch der Abstand zwischen q- und k-Richtung.", "Details of the current view. In 3D this also shows the distance between the q and k directions."],
-      dial: ["2D: ein Frequenzpaar. q und k sind um mθ bzw. nθ gedreht; der Winkel zwischen ihnen ist (n−m)θ.", "2D: one frequency pair. q and k are rotated by mθ and nθ; the angle between them is (n−m)θ."],
+      dial: ["2D: ein Frequenzpaar. $q$ und $k$ sind um $m\\theta$ bzw. $n\\theta$ gedreht; der Winkel zwischen ihnen ist $(n-m)\\theta$.", "2D: one frequency pair. $q$ and $k$ are rotated by $m\\theta$ and $n\\theta$; the angle between them is $(n-m)\\theta$."],
       helix: ["3D: Position als dritte Achse. Jedes Paar beschreibt eine Helix; hell das gewählte Paar, blass die anderen. Ziehen dreht.", "3D: position as the third axis. Each pair traces a helix; the selected pair is bright, the others faint. Drag rotates."],
-      curve: ["Score über den Abstand |m−n|. Dick: Mittelwert über alle P Paare; dünn: das gewählte Paar. Gleicher Abstand → gleicher Score.", "Score over the distance |m−n|. Thick: mean over all P pairs; thin: the selected pair. Same distance → same score."],
-      matrix: ["Score-Matrix: Farbe = kombinierter Score für jedes (m,n). Gleiche Farbe entlang der Diagonalen, weil nur n−m zählt.", "Score matrix: colour = combined score for each (m,n). Equal colour along diagonals because only n−m matters."],
-      metric: ["Abstand zwischen q- und k-Richtung: Euklid = gerade Sehne, Großkreis = Bogen auf dem Einheitskreis.", "Distance between the q and k directions: Euclidean = straight chord, great circle = arc on the unit circle."],
-      chip: ["Paar i mit θ_i = 10000^(−2i/d). Klick zeigt dieses Paar im 2D-Rad, in der Kurve und in 3D.", "Pair i with θ_i = 10000^(−2i/d). Click to show this pair in the 2D dial, the curve and 3D."],
-      rot: ["R(φ) dreht zwei Dimensionen um φ.\nφ = Position × θ_i.\ncos/sin bilden die Rotation; die Matrix ist orthogonal, also bleibt die Länge.", "R(φ) rotates two dimensions by φ.\nφ = position × θ_i.\ncos/sin form the rotation; the matrix is orthogonal, so lengths are preserved."],
-      score: ["q_m und k_n sind dieselben Vektoren, nur gedreht.\nR((n−m)θ_i) ist die Relativdrehung: qᵀ R k.\nDeshalb zählt nur die Differenz n−m.", "q_m and k_n are the same vectors, only rotated.\nR((n−m)θ_i) is the relative rotation: qᵀ R k.\nThat is why only the difference n−m matters."],
-      sum: ["Jedes Paar liefert cos((n−m)θ_i).\nScore = Mittelwert über P Paare.\nP = Anzahl der Dimensionspaare.", "Each pair contributes cos((n−m)θ_i).\nScore = mean over P pairs.\nP = number of dimension pairs."],
-      freq: ["θ_i fällt geometrisch mit i.\nBasis 10000 und d/2 Paare sind die RoPE-Konstruktion.\nKleine i drehen schnell, große i langsam.", "θ_i falls geometrically with i.\nBase 10000 and d/2 pairs are the RoPE construction.\nSmall i rotate fast, large i slowly."],
+      curve: ["Score über den Abstand $|m-n|$. Dick: Mittelwert über alle $P$ Paare; dünn: das gewählte Paar. Gleicher Abstand → gleicher Score.", "Score over the distance $|m-n|$. Thick: mean over all $P$ pairs; thin: the selected pair. Same distance → same score."],
+      matrix: ["Score-Matrix: Farbe = kombinierter Score für jedes $(m,n)$. Gleiche Farbe entlang der Diagonalen, weil nur $n-m$ zählt.", "Score matrix: colour = combined score for each $(m,n)$. Equal colour along diagonals because only $n-m$ matters."],
+      metric: ["Euklid: gerade Sehne zwischen $q$ und $k$. Großkreis: Bogen entlang der Helix, also Position plus Drehung.", "Euclidean: straight chord between $q$ and $k$. Great circle: arc along the helix, so position plus rotation."],
+      chip: ["Paar $i$ mit $\\theta_i = 10000^{-2i/d}$. Klick zeigt dieses Paar im 2D-Rad, in der Kurve und in 3D.", "Pair $i$ with $\\theta_i = 10000^{-2i/d}$. Click to show this pair in the 2D dial, the curve and 3D."],
+      rot: ["$R(\\varphi)$ dreht zwei Dimensionen um $\\varphi$.\n$\\varphi = m\\cdot\\theta_i$.\n$\\cos$ und $\\sin$ bilden die Rotation; die Matrix ist orthogonal, also bleibt die Länge.", "$R(\\varphi)$ rotates two dimensions by $\\varphi$.\n$\\varphi = m\\cdot\\theta_i$.\n$\\cos$ and $\\sin$ form the rotation; the matrix is orthogonal, so lengths are preserved."],
+      score: ["$q_m$ und $k_n$ sind dieselben Vektoren, nur gedreht.\n$R((n-m)\\theta_i)$ ist die Relativdrehung: $q^{\\top} R\\,k$.\nDeshalb zählt nur die Differenz $n-m$.", "$q_m$ and $k_n$ are the same vectors, only rotated.\n$R((n-m)\\theta_i)$ is the relative rotation: $q^{\\top} R\\,k$.\nThat is why only the difference $n-m$ matters."],
+      sum: ["Jedes Paar liefert $\\cos((n-m)\\theta_i)$.\nScore = Mittelwert über $P$ Paare.\n$P$ = Anzahl der Dimensionspaare.", "Each pair contributes $\\cos((n-m)\\theta_i)$.\nScore = mean over $P$ pairs.\n$P$ = number of dimension pairs."],
+      freq: ["$\\theta_i$ fällt geometrisch mit $i$.\nBasis 10000 und $d/2$ Paare sind die RoPE-Konstruktion.\nKleine $i$ drehen schnell, große $i$ langsam.", "$\\theta_i$ falls geometrically with $i$.\nBase 10000 and $d/2$ pairs are the RoPE construction.\nSmall $i$ rotate fast, large $i$ slowly."],
       formulaHead: ["RoPE in vier Zeilen: Drehung, Score pro Paar, Summe über P Paare, Frequenz. Fahre über eine Zeile, um jeden Teil zu lesen.", "RoPE in four lines: rotation, score per pair, sum over P pairs, frequency. Hover a line to read every part."],
-      meta: ["d = Modellbreite (hier 64). d/2 = 32 mögliche Paare. P = wie viele Paare die Demo nutzt.", "d = model width (here 64). d/2 = 32 possible pairs. P = how many pairs the demo uses."]
+      meta: ["$d$ = Modellbreite (hier 64). $d/2 = 32$ mögliche Paare. $P$ = wie viele Paare die Demo nutzt.", "$d$ = model width (here 64). $d/2 = 32$ possible pairs. $P$ = how many pairs the demo uses."]
     };
     function tip(k) { var t = TIPS[k]; return t ? L(t[0], t[1]) : ""; }
 
@@ -47,6 +47,7 @@
         '<div class="ls-rope-guide-top">' +
           '<span class="ls-rope-guide-step" data-rope-guide-step data-tip="' + esc(tip("step")) + '"></span>' +
           '<div class="ls-rope-guide-dots" data-rope-guide-dots></div>' +
+          '<span class="ls-rope-guide-hint">← / →</span>' +
           '<div class="ls-rope-guide-nav" data-tip="' + esc(tip("nav")) + '">' +
             '<button type="button" data-rope-guide-prev aria-label="' + L("Vorheriger Schritt", "Previous step") + '">←</button>' +
             '<button type="button" data-rope-guide-next aria-label="' + L("Nächster Schritt", "Next step") + '">→</button>' +
@@ -54,7 +55,6 @@
         '</div>' +
         '<h3 class="ls-rope-guide-title" data-rope-guide-title data-tip="' + esc(tip("title")) + '"></h3>' +
         '<p class="ls-rope-guide-body" data-rope-guide-body data-tip="' + esc(tip("body")) + '"></p>' +
-        '<span class="ls-rope-guide-hint">← / →</span>' +
       '</div>' +
       '<div class="ls-rope-left">' +
         '<div class="ls-rope-formula" data-tip="' + esc(tip("formulaHead")) + '">' +
@@ -81,6 +81,7 @@
           '<label class="ls-rope-range" data-tip="' + esc(tip("m")) + '"><span>' + L("Position m", "Position m") + '</span><input type="range" data-rope="m" min="0" max="31" value="3"><output>3</output></label>' +
           '<label class="ls-rope-range" data-tip="' + esc(tip("n")) + '"><span>' + L("Position n", "Position n") + '</span><input type="range" data-rope="n" min="0" max="31" value="10"><output>10</output></label>' +
           '<label class="ls-rope-range ls-rope-range--pairs" data-tip="' + esc(tip("pairs")) + '"><span>' + L("Dimensionspaare", "Dimension pairs") + ' <em>' + L("(2 Dim. pro Paar)", "(2 dims per pair)") + '</em></span><input type="range" data-rope="pairs" min="1" max="8" step="1" value="4"><output>4</output></label>' +
+          '<div class="ls-rope-kbdhint">' + L("Slider anklicken, dann ← →", "Click a slider, then ← →") + '</div>' +
           '<div class="ls-rope-freqs" data-rope-freqs role="group" aria-label="' + L("Frequenzpaare", "Frequency pairs") + '"></div>' +
         '</div>' +
         '<p class="ls-rope-readout" aria-live="polite" data-tip="' + esc(tip("readout")) + '"></p>' +
@@ -191,7 +192,7 @@
       {
         view: "3d", rope: true,
         title: "Die Geometrie: die Helix",
-        body: "Die Position als dritte Achse: die Rotation wird zur Helix. Hell ist das gewählte Paar, blass die anderen drei; die Steigung hängt von θ ab. Die zwei Dimensionen drehen sich um die Positionsachse. Unten schaltest du zwischen Euklid (Sehne) und Großkreis (Bogen); Ziehen dreht die Ansicht."
+        body: "Die Position als dritte Achse: die Rotation wird zur Helix. Hell ist das gewählte Paar, blass die anderen; die Steigung hängt von θ ab. Die zwei Dimensionen drehen sich um die Positionsachse. Oben rechts schaltest du zwischen Euklid (gerade Sehne) und Großkreis (Bogen entlang der Helix); Ziehen dreht die Ansicht."
       },
       {
         view: "3d", rope: true,
@@ -222,7 +223,7 @@
       {
         view: "3d", rope: true,
         title: "The geometry: the helix",
-        body: "Position as the third axis: the rotation becomes a helix. The selected pair is bright, the other three faint; the pitch depends on θ. The two dimensions rotate around the position axis. Below you switch between Euclidean (chord) and great circle (arc); drag rotates the view."
+        body: "Position as the third axis: the rotation becomes a helix. The selected pair is bright, the others faint; the pitch depends on θ. The two dimensions rotate around the position axis. Top right you switch between Euclidean (straight chord) and great circle (arc along the helix); drag rotates the view."
       },
       {
         view: "3d", rope: true,
@@ -542,43 +543,52 @@
       marker(state.n, C.sky, "k");
 
       if (state.rope) {
-        var aq = state.m * selTheta();
-        var ak = state.n * selTheta();
-        var delta = Math.atan2(Math.sin(ak - aq), Math.cos(ak - aq));
-        var baseZ = -1.3;
+        var th = selTheta();
+        var zp = 2.6 / (state.maxPos - 1);
+        var p0 = Math.min(state.m, state.n), p1 = Math.max(state.m, state.n);
         var isArc = state.metric === "greatcircle";
+        function hpt(p, rad) {
+          var a = p * th;
+          return project(Math.cos(a) * rad, Math.sin(a) * rad, zAt(p));
+        }
         ctx.save();
         ctx.strokeStyle = C.rose;
-        ctx.lineWidth = 1.7;
-        ctx.globalAlpha = 0.8;
-        ctx.shadowColor = C.rose;
-        ctx.shadowBlur = 9;
+        ctx.lineCap = "round";
+        if (isArc) { ctx.lineWidth = 3; ctx.globalAlpha = 0.95; ctx.shadowColor = C.rose; ctx.shadowBlur = 12; }
+        else { ctx.lineWidth = 1.2; ctx.globalAlpha = 0.35; ctx.setLineDash([4, 4]); ctx.shadowBlur = 0; }
         ctx.beginPath();
-        if (isArc) {
-          for (var si = 0; si <= 32; si++) {
-            var aa = aq + delta * (si / 32);
-            var ap = project(Math.cos(aa), Math.sin(aa), baseZ);
-            if (si === 0) ctx.moveTo(ap.x, ap.y); else ctx.lineTo(ap.x, ap.y);
-          }
-        } else {
-          var ap1 = project(Math.cos(aq), Math.sin(aq), baseZ);
-          var ap2 = project(Math.cos(ak), Math.sin(ak), baseZ);
-          ctx.moveTo(ap1.x, ap1.y); ctx.lineTo(ap2.x, ap2.y);
+        var nseg = Math.max(16, Math.round((p1 - p0) * 10));
+        for (var si = 0; si <= nseg; si++) {
+          var pp = p0 + (p1 - p0) * si / nseg;
+          var sp = hpt(pp, 1.06);
+          if (si === 0) ctx.moveTo(sp.x, sp.y); else ctx.lineTo(sp.x, sp.y);
         }
         ctx.stroke();
         ctx.restore();
-        var midA = aq + delta / 2;
-        var lab = project(Math.cos(midA) * 1.18, Math.sin(midA) * 1.18, baseZ);
-        ctx.fillStyle = C.rose;
+
+        var qa = project(Math.cos(state.m * th), Math.sin(state.m * th), zAt(state.m));
+        var qb = project(Math.cos(state.n * th), Math.sin(state.n * th), zAt(state.n));
+        ctx.save();
+        ctx.strokeStyle = C.rose;
+        ctx.lineCap = "round";
+        if (!isArc) { ctx.lineWidth = 3; ctx.globalAlpha = 0.95; ctx.shadowColor = C.rose; ctx.shadowBlur = 12; }
+        else { ctx.lineWidth = 1.2; ctx.globalAlpha = 0.35; ctx.setLineDash([4, 4]); ctx.shadowBlur = 0; }
+        ctx.beginPath(); ctx.moveTo(qa.x, qa.y); ctx.lineTo(qb.x, qb.y); ctx.stroke();
+        ctx.restore();
+
+        var ap = hpt((p0 + p1) / 2, 1.24);
+        ctx.fillStyle = isArc ? C.rose : C.muted;
         ctx.font = '700 8px "Open Sans", sans-serif';
         ctx.textAlign = "center";
-        ctx.fillText(isArc ? L("Großkreis", "great circle") : L("Sehne", "chord"), lab.x, lab.y - 4);
+        ctx.fillText(L("Bogen", "arc"), ap.x, ap.y - 4);
+        ctx.fillStyle = !isArc ? C.rose : C.muted;
+        ctx.fillText(L("Sehne", "chord"), (qa.x + qb.x) / 2, (qa.y + qb.y) / 2 + 13);
       }
 
       ctx.fillStyle = C.muted;
       ctx.font = '600 8px "Open Sans", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText(L("Gold: q · Blau: k · blass: andere Paare", "gold: q · blue: k · faint: other pairs"), w / 2, h - 9);
+      ctx.fillText(L("Gold: q · Blau: k · Rot: Bogen/Sehne der Metrik", "gold: q · blue: k · rose: metric arc/chord"), w / 2, h - 9);
     }
 
     function drawCurve() {
@@ -766,10 +776,18 @@
       } else if (state.view === "3d") {
         viewTitle.textContent = L("3. Achse: Position · Paar ", "3rd axis: position · pair ") + p + " / " + state.pairs;
         viewSub.textContent = L("dieselbe Drehung als Helix", "same rotation as a helix");
-        var minorAbs = Math.abs(minor);
-        var metricText = state.metric === "greatcircle"
-          ? L("Großkreis Δ = ", "great circle Δ = ") + (minorAbs * 180 / Math.PI).toFixed(1) + "° = " + minorAbs.toFixed(2) + " rad"
-          : L("Sehne |q−k| = ", "chord |q−k| = ") + (2 * Math.sin(minorAbs / 2)).toFixed(3) + L(" · Δ = ", " · Δ = ") + (minorAbs * 180 / Math.PI).toFixed(1) + "°";
+        var th3 = selTheta();
+        var zp3 = 2.6 / (state.maxPos - 1);
+        var dm3 = Math.abs(state.n - state.m);
+        var arcLen = Math.sqrt(th3 * th3 + zp3 * zp3) * dm3;
+        var aq3 = state.m * th3, ak3 = state.n * th3;
+        var dx3 = Math.cos(aq3) - Math.cos(ak3);
+        var dy3 = Math.sin(aq3) - Math.sin(ak3);
+        var dz3 = dm3 * zp3;
+        var chordLen = Math.sqrt(dx3 * dx3 + dy3 * dy3 + dz3 * dz3);
+        var metricText = L("Euklid (Sehne) = ", "Euclidean (chord) = ") + chordLen.toFixed(3)
+          + L(" · Großkreis (Bogen) = ", " · great circle (arc) = ") + arcLen.toFixed(3)
+          + L(" · aktiv: ", " · active: ") + (state.metric === "greatcircle" ? L("Bogen", "arc") : L("Sehne", "chord"));
         viewFoot.textContent = state.rope
           ? metricText + L(" · Paar hell; andere blass · Ziehen dreht", " · selected pair bright; others faint · drag rotates")
           : L("ohne RoPE: gerade Linie · Ziehen dreht", "without RoPE: straight line · drag rotates");
@@ -895,11 +913,29 @@
       tipEl.style.left = Math.max(8, left) + "px";
       tipEl.style.top = Math.max(8, top) + "px";
     }
+    function tipHtml(text) {
+      var parts = String(text).split("$");
+      var html = "";
+      for (var i = 0; i < parts.length; i++) {
+        if (i % 2 === 1 && parts[i]) {
+          if (window.temml && window.temml.renderToString) {
+            try {
+              html += window.temml.renderToString(parts[i], { displayMode: false, throwOnError: false });
+              continue;
+            } catch (err) {}
+          }
+          html += esc(parts[i]);
+        } else {
+          html += esc(parts[i]);
+        }
+      }
+      return html;
+    }
     function showTip(node, x, y) {
       var text = node.getAttribute("data-tip");
       if (!text) return;
       tipTarget = node;
-      tipEl.textContent = text;
+      tipEl.innerHTML = tipHtml(text);
       tipEl.hidden = false;
       placeTip(x, y);
     }
