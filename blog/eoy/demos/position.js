@@ -359,9 +359,7 @@
     posEl.addEventListener("input", function () { reveal = true; sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; addTrailTo(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
     metricBtns.forEach(function (b) {
       b.addEventListener("click", function () {
-        metric = b.getAttribute("data-pos-metric") === "euclid" ? "euclid" : "greatcircle";
-        syncMetric();
-        drawCurve();
+        setMetric(b.getAttribute("data-pos-metric") === "euclid" ? "euclid" : "greatcircle");
       });
     });
     syncMetric();
@@ -383,13 +381,43 @@
       if (posEl) { posEl.value = "100000"; posEl.nextElementSibling.textContent = "100000"; }
       draw();
     }
-    function next() {
-      if (sweep) { finishSweep(); return true; }
+    function setMetric(nextMetric) {
+      metric = nextMetric === "euclid" ? "euclid" : "greatcircle";
+      syncMetric();
+      drawCurve();
+    }
+    function resetToStart() {
+      sweep = null;
+      reveal = true;
+      pos = 0;
+      posAnim = 0;
+      hoverTrail = -1;
+      trail = [];
+      addTrailTo(0);
+      if (posEl) { posEl.value = "0"; posEl.nextElementSibling.textContent = "0"; }
+      draw();
+    }
+    function startSweep() {
       if (pos >= 100000) return false;
       reveal = true;
       sweep = { from: pos, to: 100000, start: performance.now(), duration: 5000 };
       drawCurve();
       return true;
+    }
+    function next() {
+      if (sweep) { finishSweep(); return true; }
+      if (!reveal) {
+        resetToStart();
+        return startSweep();
+      }
+      if (metric === "greatcircle") {
+        if (pos < 100000) return startSweep();
+        setMetric("euclid");
+        resetToStart();
+        return startSweep();
+      }
+      if (pos < 100000) return startSweep();
+      return false;
     }
     function prev() {
       if (sweep) { sweep = null; return true; }
@@ -408,9 +436,9 @@
         return true;
       },
       finish: finishSweep,
-      next: function () { return false; },
+      next: next,
       prev: function () { return false; },
-      hasNext: function () { return false; },
+      hasNext: function () { return !(metric === "euclid" && pos >= 100000); },
       hasPrev: function () { return false; },
       onKey: function (e) { return api.util.arrowKey(e, next, prev); },
       pause: function () { cancelAnimationFrame(raf); raf = 0; },
