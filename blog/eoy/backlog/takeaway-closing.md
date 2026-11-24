@@ -1,0 +1,30 @@
+# Backlog: Was du mitnimmst
+
+Moved out of the active course flow. The demo lives in `backlog/takeaway.js`.
+
+```js
+  var takeawayClosing = {
+    kicker: DE ? "Mitnehmen" : "Takeaway",
+    title: DE ? "Was du mitnimmst" : "What you take with you",
+    body: DE
+      ? "Die Animation zeigt den ganzen Weg in sechs Stationen: Text wird zu Tokens, Tokens werden zu Vektoren, Attention mischt den Kontext, das FFN verschiebt die Punkte, und am Ende steht eine Verteilung über das nächste Token. Der Residualstrom trägt dabei den laufenden Vektor durch alle Blöcke.\n\nDrei Bewegungen fassen das Deck zusammen: Aus Zeichen wird Bedeutung. Aus Bedeutung wird Kontext. Aus Kontext wird Wirkung. Vier Takes bleiben: Vorhersage ist der Motor, Kontext ist kein Gedächtnis, Wahrscheinlichkeit ist nicht Wahrheit, und Macht konzentriert sich. Die Temperatur zeigt, wie aus Logits eine Verteilung wird; Prüfen zeigt, dass eine gute Wahrscheinlichkeit noch kein Beleg ist.\n\nOb es erlebt, bleibt offen. Was du daraus machst, bleibt deine Entscheidung."
+      : "The animation shows the whole path in six stations: text becomes tokens, tokens become vectors, attention mixes the context, the FFN shifts the points, and at the end there is a distribution over the next token. The residual stream carries the running vector through all blocks.\n\nThree movements summarise the deck: signs become meaning. Meaning becomes context. Context becomes impact. Four takes remain: prediction is the engine, context is not memory, probability is not truth, and power concentrates. Temperature shows how logits become a distribution; verification shows that a good probability is still not evidence.\n\nWhether it experiences anything remains open. What you make of it remains your decision.",
+    watch: DE ? "Klick die sechs Stationen, zieh an der Temperatur und prüfe die Antwort. Was bleibt von jeder Station hängen?" : "Click the six stations, drag the temperature, and verify the answer. What sticks from each station?",
+    demoState: { scene: "takeaway" },
+    context: DE ? "Die vier Takes: Vorhersage, Kontext, Wahrheit, Macht. Die vier Fragen passen auf jede Ebene: Daten, Aufgabe, Evidenz, Verantwortung." : "The four takes: prediction, context, truth, power. The four questions apply at every level: data, task, evidence, accountability.",
+    deep: DE ? "Die vier Prüffragen passen auf jede dieser Ebenen: Daten, Aufgabe, Evidenz, Verantwortung. Sie machen aus einem Eindruck eine Behauptung, die man prüfen oder verwerfen kann." : "The four questions apply at every level: data, task, evidence, accountability. They turn an impression into a claim that can be tested or rejected.",
+    boxes: [
+      box("tk-chain", DE ? "Technik" : "Technique", DE ? "Die Kette" : "The chain", DE ? "Text → Tokens → Vektoren → Attention → FFN → Verteilung → nächstes Token. Jede Station verändert die Darstellung, aber die Schleife bleibt dieselbe; der Residualstrom trägt x weiter, der KV-Cache spart nur die Wiederholung." : "Text → tokens → vectors → attention → FFN → distribution → next token. Each station changes the representation, but the loop stays the same; the residual stream carries x forward, and the KV cache only saves recomputation."),
+      box("tk-moves", DE ? "Struktur" : "Structure", DE ? "Vier Takes" : "Four takes", DE ? "Vorhersage, Kontext, Wahrheit, Macht. Vorhersage ist der Motor; Kontext ist kein Gedächtnis; Wahrscheinlichkeit ist nicht Wahrheit; Training braucht Compute und Kapital, also konzentriert sich Macht." : "Prediction, context, truth, power. Prediction is the engine; context is not memory; probability is not truth; training needs compute and capital, so power concentrates."),
+      box("tk-questions", DE ? "Prüfen" : "Check", DE ? "Vier Fragen" : "Four questions", DE ? "Welche Daten? Welche Aufgabe? Welche Evidenz? Wer haftet? Die Fragen passen auf jede Station: auf das Training, auf die Antwort, auf den Agenten und auf die Gesellschaft." : "Which data? Which task? Which evidence? Who is accountable? The questions apply at every station: to training, to the answer, to the agent, and to society."),
+      box("tk-temp", DE ? "Regler" : "Control", DE ? "Was macht Temperatur?" : "What does temperature do?", DE ? "Temperatur formt nur die Verteilung über das nächste Token: niedrig macht sie schärfer, hoch flacher. Sie macht die Antwort nicht wahr und ersetzt keine Prüfung." : "Temperature only shapes the distribution over the next token: low makes it sharper, high flatter. It does not make the answer true and does not replace verification."),
+      box("tk-limit", DE ? "Grenze" : "Limit", DE ? "Wahrscheinlichkeit ist nicht Wahrheit" : "Probability is not truth", DE ? "Das Modell optimiert die Wahrscheinlichkeit des nächsten Tokens. Das erklärt seine Fähigkeiten und seine Fehler. Ob es erlebt, ist eine andere Frage, die der Output nicht beantwortet." : "The model optimises the probability of the next token. That explains its abilities and its errors. Whether it experiences anything is a different question the output does not answer.")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Kette aus Attention und Vorhersage.", en: "The transformer as a chain of attention and prediction." } },
+      { label: "Bender et al. (2021), On the Dangers of Stochastic Parrots", url: "https://doi.org/10.1145/3442188.3445922", why: { de: "Sprachmodelle als Musterfortsetzung, nicht als Wahrheitsgarantie.", en: "Language models as pattern continuation, not a guarantee of truth." } },
+      { label: "Chalmers (1995), Facing Up to the Problem of Consciousness", url: "https://consc.net/papers/facing.pdf", why: { de: "Funktion erklärt nicht automatisch Erleben.", en: "Function does not automatically explain experience." } },
+      { label: "Southgate (2026, AI-generated), AI Consciousness", url: "https://unfinishablemap.org/topics/ai-consciousness/", why: { de: "Die offene Frage nach Typen von KI-Bewusstsein.", en: "The open question about types of AI consciousness." } }
+    ]
+  };
+```
