@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test 4 · Zwei Köpfe, ein Budget</title>
+<link rel="stylesheet" href="../test/proto.css">
+<link rel="stylesheet" href="../test2/kit.css">
+<link rel="stylesheet" href="games.css">
+<link rel="stylesheet" href="heads.css">
+<script src="../test/proto.js"></script>
+</head>
+<body>
+  <main class="proto-page">
+    <header class="proto-head">
+      <span class="proto-eyebrow" data-de="01 · Attention" data-en="01 · attention">01 · Attention</span>
+      <h1 class="proto-title" data-de="Zwei Köpfe, ein Budget" data-en="Two heads, one budget">Zwei Köpfe, ein Budget</h1>
+      <p class="proto-lead" data-de="Ein Kopf ist ein Punkt im Simplex. Er kann nicht gleichzeitig auf „Tier“ und auf „Straße“ zeigen. Bewege den Punkt, erlebe die Grenze und löse sie mit einem zweiten Kopf." data-en="A head is one point in the simplex. It cannot point at “animal” and at “street” at the same time. Move the point, feel the limit, and solve it with a second head.">Ein Kopf ist ein Punkt im Simplex. Er kann nicht gleichzeitig auf „Tier“ und auf „Straße“ zeigen. Bewege den Punkt, erlebe die Grenze und löse sie mit einem zweiten Kopf.</p>
+    </header>
+
+    <section class="proto-stage g-stage hd-stage" aria-label="Zwei Köpfe, ein Budget">
+      <div class="g-hud">
+        <span class="g-kicker" data-de="Attention · Simplex" data-en="Attention · simplex">Attention · Simplex</span>
+        <h2 class="g-hud-title" data-de="Ein Budget, zwei Fragen" data-en="One budget, two questions">Ein Budget, zwei Fragen</h2>
+        <span class="g-spacer"></span>
+        <span class="g-badge" id="hd-phase-badge">01 / 02</span>
+      </div>
+
+      <div class="g-main">
+        <div class="g-col">
+          <div class="g-panel hd-board-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Der Simplex · ziehe den Punkt" data-en="The simplex · drag the point">Der Simplex · ziehe den Punkt</span>
+              <span id="hd-board-hint" data-de="Σ α = 1" data-en="Σ α = 1">Σ α = 1</span>
+            </div>
+            <div class="hd-board">
+              <svg id="hd-simplex" class="hd-simplex" viewBox="0 0 700 560" role="application" tabindex="0"
+                   aria-label="Attention-Simplex mit drei Ecken. Ziehe den Punkt oder nutze die Pfeiltasten.">
+                <defs>
+                  <linearGradient id="hd-tri" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="rgba(126,200,239,.20)"/>
+                    <stop offset=".55" stop-color="rgba(126,200,239,.07)"/>
+                    <stop offset="1" stop-color="rgba(0,75,111,.02)"/>
+                  </linearGradient>
+                  <radialGradient id="hd-glow-gold" cx="50%" cy="50%" r="50%">
+                    <stop offset="0" stop-color="rgba(227,190,98,.65)"/>
+                    <stop offset="1" stop-color="rgba(227,190,98,0)"/>
+                  </radialGradient>
+                  <radialGradient id="hd-glow-sky" cx="50%" cy="50%" r="50%">
+                    <stop offset="0" stop-color="rgba(126,200,239,.6)"/>
+                    <stop offset="1" stop-color="rgba(126,200,239,0)"/>
+                  </radialGradient>
+                  <filter id="hd-soft" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="5"/>
+                  </filter>
+                </defs>
+
+                <g class="hd-ambient" aria-hidden="true">
+                  <circle cx="350" cy="330" r="238" class="hd-ring"/>
+                  <circle cx="350" cy="330" r="186" class="hd-ring hd-ring--inner"/>
+                  <path d="M350 80V470M120 470 580 80M120 470h460" class="hd-axes"/>
+                </g>
+
+                <path d="M350 80 120 470 580 470Z" class="hd-tri"/>
+                <path d="M350 80 120 470 580 470Z" class="hd-tri-edge"/>
+
+                <g class="hd-grid" aria-hidden="true">
+                  <path d="M350 210 197 470M350 210 503 470"/>
+                  <path d="M235 275 465 275"/>
+                  <path d="M350 340 273 470M350 340 427 470"/>
+                  <path d="M196 380 504 380"/>
+                </g>
+
+                <circle id="hd-target-0" cx="350" cy="80" r="34" class="hd-target hd-target--gold" aria-hidden="true"/>
+                <circle id="hd-target-1" cx="120" cy="470" r="34" class="hd-target hd-target--sky" aria-hidden="true"/>
+
+                <g class="hd-corners">
+                  <g class="hd-corner">
+                    <circle cx="350" cy="80" r="8" class="hd-corner-dot hd-corner-dot--gold"/>
+                    <text x="350" y="52" text-anchor="middle" class="hd-corner-name">Tier</text>
+                    <text x="350" y="112" text-anchor="middle" id="hd-pct-0" class="hd-corner-pct">33%</text>
+                  </g>
+                  <g class="hd-corner">
+                    <circle cx="120" cy="470" r="8" class="hd-corner-dot hd-corner-dot--sky"/>
+                    <text x="120" y="504" text-anchor="middle" class="hd-corner-name">Straße</text>
+                    <text x="120" y="446" text-anchor="middle" id="hd-pct-1" class="hd-corner-pct">33%</text>
+                  </g>
+                  <g class="hd-corner">
+                    <circle cx="580" cy="470" r="8" class="hd-corner-dot hd-corner-dot--lilac"/>
+                    <text x="580" y="504" text-anchor="middle" class="hd-corner-name">es</text>
+                    <text x="580" y="446" text-anchor="middle" id="hd-pct-2" class="hd-corner-pct">33%</text>
+                  </g>
+                </g>
+
+                <g id="hd-p1" class="hd-point hd-point--gold" tabindex="-1" role="button" aria-label="Head 1 Punkt">
+                  <circle r="26" class="hd-point-halo"/>
+                  <circle r="10" class="hd-point-dot"/>
+                  <circle r="17" class="hd-point-ring"/>
+                  <text y="-20" text-anchor="middle" class="hd-point-label">H1</text>
+                </g>
+                <g id="hd-p2" class="hd-point hd-point--sky" tabindex="-1" role="button" aria-label="Head 2 Punkt" hidden>
+                  <circle r="26" class="hd-point-halo"/>
+                  <circle r="10" class="hd-point-dot"/>
+                  <circle r="17" class="hd-point-ring"/>
+                  <text y="-20" text-anchor="middle" class="hd-point-label">H2</text>
+                </g>
+
+                <g id="hd-learned-0" class="hd-learned" hidden aria-hidden="true">
+                  <path d="M0 -9 9 0 0 9 -9 0Z"/>
+                  <text y="26" text-anchor="middle">Modell</text>
+                </g>
+                <g id="hd-learned-1" class="hd-learned hd-learned--sky" hidden aria-hidden="true">
+                  <path d="M0 -9 9 0 0 9 -9 0Z"/>
+                  <text y="26" text-anchor="middle">Modell</text>
+                </g>
+
+                <text x="350" y="538" text-anchor="middle" id="hd-svg-caption" class="hd-svg-caption">Σ α = 1 · ein Punkt, ein Budget</text>
+              </svg>
+              <div class="hd-float" id="hd-float" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="g-col">
+          <div class="g-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Der Auftrag" data-en="The task">Der Auftrag</span>
+              <b id="hd-phase-title">1 / 2</b>
+            </div>
+            <p class="hd-goal" id="hd-goal"></p>
+            <div class="hd-heads" id="hd-heads" role="group">
+              <button type="button" class="g-chip is-on" data-head="0">
+                <span data-de="Head 1 · Wer?" data-en="Head 1 · who?">Head 1 · Wer?</span>
+                <em id="hd-goal-0">Tier</em>
+              </button>
+              <button type="button" class="g-chip" data-head="1" disabled>
+                <span data-de="Head 2 · Wo?" data-en="Head 2 · where?">Head 2 · Wo?</span>
+                <em id="hd-goal-1">Straße</em>
+              </button>
+            </div>
+            <div class="hd-presets" id="hd-presets" role="group">
+              <button type="button" class="g-btn hd-preset" data-corner="0" data-de="Tier 70%" data-en="Animal 70%">Tier 70%</button>
+              <button type="button" class="g-btn hd-preset" data-corner="1" data-de="Straße 70%" data-en="Street 70%">Straße 70%</button>
+              <button type="button" class="g-btn hd-preset" data-corner="2" data-de="es 70%" data-en="it 70%">es 70%</button>
+            </div>
+          </div>
+
+          <div class="g-panel hd-score-panel">
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Der Score" data-en="The score">Der Score</span>
+              <b id="hd-score">0.00</b>
+            </div>
+            <div class="hd-bars" id="hd-bars"></div>
+            <div class="g-meter hd-meter"><i id="hd-meter"></i></div>
+            <p class="hd-hint" id="hd-hint"></p>
+          </div>
+
+          <div class="g-panel hd-learned-panel" id="hd-learned-panel" hidden>
+            <div class="g-panel-head">
+              <span class="g-panel-title" data-de="Das Modell" data-en="The model">Das Modell</span>
+              <b data-de="gelernt" data-en="learned">gelernt</b>
+            </div>
+            <div class="hd-learned-rows" id="hd-learned-rows"></div>
+            <p class="hd-learned-note" data-de="Die gelernten Köpfe sind zwei Punkte im selben Dreieck. Sie sind nicht magisch, sie sind eine gelernte Allokation." data-en="The learned heads are two points in the same triangle. They are not magic, they are a learned allocation.">Die gelernten Köpfe sind zwei Punkte im selben Dreieck. Sie sind nicht magisch, sie sind eine gelernte Allokation.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="g-bottom">
+        <div class="g-readout" id="hd-readout" aria-live="polite"></div>
+        <div class="g-controls">
+          <button type="button" class="g-btn g-btn--primary" id="hd-unlock" data-de="Zweiten Kopf freischalten" data-en="Unlock the second head">Zweiten Kopf freischalten</button>
+          <button type="button" class="g-btn" id="hd-reset" data-de="Nochmal" data-en="Reset">Nochmal</button>
+        </div>
+      </div>
+      <div class="g-toast" id="hd-toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <p class="proto-note" data-de-html="Der Simplex ist die Menge aller Aufteilungen eines Budgets auf drei Werte: <b>α<sub>Tier</sub> + α<sub>Straße</sub> + α<sub>es</sub> = 1</b>. Ein Punkt ist eine Aufteilung. Ein Kopf ist ein Punkt. Zwei Fragen brauchen zwei Punkte. Die Zahlen 67 % und 75 % sind die auf drei Ecken normierten gelernten Gewichte aus der Demo, keine Messung." data-en-html="The simplex is the set of all ways to split one budget over three values: <b>α<sub>animal</sub> + α<sub>street</sub> + α<sub>it</sub> = 1</b>. One point is one allocation. One head is one point. Two questions need two points. The 67% and 75% are the learned weights from the demo normalised over three corners, not a measurement.">Der Simplex ist die Menge aller Aufteilungen eines Budgets auf drei Werte: <b>α<sub>Tier</sub> + α<sub>Straße</sub> + α<sub>es</sub> = 1</b>. Ein Punkt ist eine Aufteilung. Ein Kopf ist ein Punkt. Zwei Fragen brauchen zwei Punkte. Die Zahlen 67 % und 75 % sind die auf drei Ecken normierten gelernten Gewichte aus der Demo, keine Messung.</p>
+
+    <footer class="proto-foot">
+      <span>01 / 03</span>
+      <span><a href="index.html" data-de="Alle Test-4-Seiten" data-en="All test 4 pages">Alle Test-4-Seiten</a> · <a href="circuit.html" data-de="Weiter: Kopierautomat" data-en="Next: copy machine">Weiter: Kopierautomat</a></span>
+    </footer>
+  </main>
+  <script src="heads.js"></script>
+</body>
+</html>

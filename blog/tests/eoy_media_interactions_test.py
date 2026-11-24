@@ -2320,6 +2320,52 @@ def test_qualia_and_final_status(browser, base, lang, results):
     results.check(tag, "Kastrup death leaves one consciousness", kast_after["count"] == "1", str(kast_after)[:220])
     results.check(tag, "Kastrup death is explained", ("Tod" in kast_after["status"] or "death" in kast_after["status"].lower()) and ("Dissoziation" in kast_after["status"] or "dissociation" in kast_after["status"].lower()), kast_after["status"][:220])
     results.check(tag, "Kastrup page has no overflow", kast_after["overflow"] <= 2, str(kast_after["overflow"]))
+    page.evaluate(
+        r"""
+() => {
+  for (var i = 0; i < 40; i++) {
+    if (document.querySelector('.ls-con2')?.getAttribute('data-theory') === 'fourE') break;
+    LearnSys.next();
+  }
+}
+"""
+    )
+    page.wait_for_timeout(500)
+    four = page.evaluate(
+        r"""
+() => ({
+  theory: document.querySelector('.ls-con2')?.getAttribute('data-theory') || '',
+  title: document.querySelector('[data-con2-title]')?.textContent || '',
+  status: document.querySelector('[data-con2-status]')?.textContent || '',
+  canvas: !!document.querySelector('.ls-con2-canvas'),
+  canvasW: document.querySelector('.ls-con2-canvas')?.width || 0,
+  canvasH: document.querySelector('.ls-con2-canvas')?.height || 0,
+  controls: document.querySelectorAll('[data-four-mode]').length + document.querySelectorAll('[data-four-focus]').length + document.querySelectorAll('[data-four-word]').length,
+  quote: document.querySelector('.ls-con2-quote')?.innerText || '',
+  quoteLink: document.querySelector('.ls-con2-quote a')?.href || '',
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "4E theory is before Mysterianism", four["theory"] == "fourE" and four["title"] == "4E Cognition", str(four)[:220])
+    results.check(tag, "4E offers mode, four E and word controls", four["controls"] == 10, str(four["controls"]))
+    results.check(tag, "4E canvas is mounted", four["canvas"] and four["canvasW"] > 200 and four["canvasH"] > 200, str(four)[:220])
+    results.check(tag, "4E starts as coupled human", "4 von 4" in four["status"] or "4 of 4" in four["status"], four["status"][:220])
+    results.check(tag, "4E includes the Noë quote", "Consciousness is not something that happens" in four["quote"] and "Alva No" in four["quote"], four["quote"][:240])
+    results.check(tag, "4E links the Noë source", "OL12000405W" in four["quoteLink"], four["quoteLink"])
+    results.check(tag, "4E page has no overflow", four["overflow"] <= 2, str(four["overflow"]))
+    page.locator('[data-four-mode="ai"]').click()
+    page.wait_for_timeout(250)
+    ai = page.evaluate("() => ({ status: document.querySelector('[data-con2-status]')?.textContent || '', on: document.querySelector('[data-four-mode].is-on')?.getAttribute('data-four-mode') || '' })")
+    results.check(tag, "4E AI mode leaves only Extended", ai["on"] == "ai" and ("1 von 4" in ai["status"] or "1 of 4" in ai["status"]), str(ai)[:220])
+    page.locator('[data-four-word="heavy"]').click()
+    page.wait_for_timeout(250)
+    heavy = page.evaluate("() => document.querySelector('[data-con2-status]')?.textContent || ''")
+    results.check(tag, "4E grounds the selected word in token neighbours", ("Token" in heavy or "token" in heavy) and ("Gewicht" in heavy or "weight" in heavy), heavy[:220])
+    page.locator('[data-four-focus="1"]').click()
+    page.wait_for_timeout(250)
+    missing = page.evaluate("() => document.querySelector('[data-con2-status]')?.textContent || ''")
+    results.check(tag, "4E names the missing embedded world", ("keine geteilte" in missing or "no shared" in missing), missing[:220])
     page.evaluate("() => LearnSys.go(0, 0, 2)")
     page.wait_for_timeout(900)
     final = page.evaluate(
