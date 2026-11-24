@@ -10,10 +10,10 @@
     el.className = "ls-position-scene";
     el.innerHTML =
       '<div class="ls-position-grid">' +
-        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
-        '<div class="ls-position-right"><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range" hidden>Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
+        '<div class="ls-position-panel"><div class="ls-position-space-note" data-tip="' + (DE ? "Richtungen leben auf der Hyperkugel; die 3D-Ansicht ist nur eine Projektion." : "Directions live on the hypersphere; the 3D view is only a projection.") + '">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat" data-tip="' + (DE ? "Wärmekarte der Positionskodierung: Zeilen sind Positionen, Spalten Dimensionen." : "Heatmap of the position encoding: rows are positions, columns are dimensions.") + '"></canvas><div class="ls-position-legend" data-tip="' + (DE ? "Farbskala von −1 (kühl) bis +1 (warm)." : "Color scale from −1 (cool) to +1 (warm).") + '"><span>−1</span><i></i><span>+1</span></div></div>' +
+        '<div class="ls-position-right"><div class="ls-position-panel"><canvas class="ls-position-curve" data-tip="' + (DE ? "Positionsvektoren auf der Einheitskugel; der Bogen zeigt die Drehung." : "Position vectors on the unit sphere; the arc shows the rotation.") + '"></canvas></div><label class="ls-range" hidden data-tip="' + (DE ? "Scrubbe durch Positionen und beobachte, wie sich die Kodierung dreht." : "Scrub through positions and watch the encoding rotate.") + '">Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
-      '<div class="ls-position-readout" aria-live="polite"></div>';
+      '<div class="ls-position-readout" aria-live="polite" data-tip="' + (DE ? "Fahre über einen Spurpunkt, um Position, Vektor, Bogenlänge und Winkel zu sehen." : "Hover a trail point to see its position, vector, arc length, and angle.") + '"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
     var curve = el.querySelector(".ls-position-curve");

@@ -58,44 +58,44 @@
     el.className = "ls-lang-scene";
     el.innerHTML =
       '<div class="ls-lang-tabs" role="group" aria-label="' + (DE ? "Sprachen" : "Languages") + '"></div>' +
-      '<div class="ls-lang-sample">' +
+      '<div class="ls-lang-sample" data-tip="' + (DE ? "Derselbe Satz in verschiedenen Schriften; die Glosse übersetzt ihn." : "The same sentence in different scripts; the gloss translates it.") + '">' +
         '<span class="ls-lang-tag"></span>' +
         '<p class="ls-lang-text" lang="de"></p>' +
         '<p class="ls-lang-gloss"></p>' +
         '<div class="ls-lang-all" hidden></div>' +
       '</div>' +
-      '<div class="ls-lang-truth">' +
+      '<div class="ls-lang-truth" data-tip="' + (DE ? "Sätze als Punkte: nah an der Wahrheit oder weit daneben." : "Sentences as points: near the truth or far off.") + '">' +
         '<div class="ls-lang-truth-head"></div>' +
-        '<div class="ls-lang-truth-grid"><div class="ls-lang-truth-plot"><canvas class="ls-lang-truth-canvas" role="img"></canvas></div><ol class="ls-lang-truth-list"></ol></div>' +
+        '<div class="ls-lang-truth-grid"><div class="ls-lang-truth-plot"><canvas class="ls-lang-truth-canvas" data-tip="' + (DE ? "Das grüne Band ist die Wahrheitsregion; Punkte darin sind nah, das Kreuz ist falsch." : "The green band is the truth region; points inside are near, the cross is false.") + '" role="img"></canvas></div><ol class="ls-lang-truth-list"></ol></div>' +
         '<p class="ls-lang-truth-note"></p>' +
       '</div>' +
       '<div class="ls-lang-mix">' +
         '<div class="ls-lang-data-summary" hidden>' +
-          '<div class="ls-lang-data-stage">' +
+          '<div class="ls-lang-data-stage" data-tip="' + (DE ? "Vortraining: das Modell lernt aus einem großen, breiten Textkorpus." : "Pretraining: the model learns from a large, broad text corpus.") + '">' +
             '<div class="ls-lang-data-stage-head"><span class="ls-lang-data-num">1</span><b>' + (DE ? "Vortraining" : "Pretraining") + '</b><span>' + (DE ? "großer Datensatz" : "large dataset") + '</span></div>' +
             '<p class="ls-lang-data-stage-data">' + (DE ? "Großer, gefilterter Textkorpus: Webseiten, Bücher, Wikipedia." : "A large, filtered text corpus: websites, books, Wikipedia.") + '</p>' +
             '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz lernt Muster, Sprache und Fakten und setzt rohe Daten fort." : "The net learns patterns, language, and facts, and continues raw data.") + '</p>' +
             '<p class="ls-lang-data-stage-source">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p>' +
-            '<pre class="ls-lang-data-code"><code>' + wikiHtml + '</code></pre>' +
+            '<pre class="ls-lang-data-code" data-tip="' + (DE ? "Roher Wikipedia-Text mit Markup: genau solche Daten setzt das Pretraining fort." : "Raw Wikipedia text with markup: pretraining continues data exactly like this.") + '"><code>' + wikiHtml + '</code></pre>' +
           '</div>' +
-          '<div class="ls-lang-data-bridge">' + (DE ? "Erst die Breite des Internets, dann die Richtung der Fragen." : "First the breadth of the internet, then the direction of the questions.") + '</div>' +
-          '<div class="ls-lang-data-stage ls-lang-data-stage--fine">' +
+          '<div class="ls-lang-data-bridge" data-tip="' + (DE ? "Der Übergang von breitem Wissen zu gezielten Frage-Antwort-Paaren." : "The shift from broad knowledge to targeted question-answer pairs.") + '">' + (DE ? "Erst die Breite des Internets, dann die Richtung der Fragen." : "First the breadth of the internet, then the direction of the questions.") + '</div>' +
+          '<div class="ls-lang-data-stage ls-lang-data-stage--fine" data-tip="' + (DE ? "Fine-Tuning: kleinere, kuratierte Frage-Antwort-Daten richten die Form aus." : "Fine-tuning: smaller, curated question-answer data shapes the form.") + '">' +
             '<div class="ls-lang-data-stage-head"><span class="ls-lang-data-num">2</span><b>' + (DE ? "Fine-Tuning" : "Fine-tuning") + '</b><span>' + (DE ? "kleiner Datensatz" : "small dataset") + '</span></div>' +
             '<p class="ls-lang-data-stage-data">' + (DE ? "Menschenfragen, auch mit Tippfehlern und Unklarheiten, plus nützliche Antworten." : "Human questions, including typos and unclear wording, plus useful answers.") + '</p>' +
             '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz antwortet als Gesprächspartner und geht auf konkrete Fragen detaillierter ein." : "The net answers as a conversation partner and goes into more detail on concrete questions.") + '</p>' +
             '<div class="ls-lang-data-chat"><div class="ls-lang-bubble ls-lang-bubble--user">' + (DE ? "Wie heißt die Hauptstadt von Frankreich?" : "What is the capital of France?") + '</div><div class="ls-lang-bubble ls-lang-bubble--agent">' + (DE ? "Die Hauptstadt von Frankreich ist Paris." : "The capital of France is Paris.") + '</div></div>' +
           '</div>' +
         '</div>' +
-        '<div class="ls-lang-mix-detail">' +
+        '<div class="ls-lang-mix-detail" data-tip="' + (DE ? "Die Datenmischung des Pretrainings und die Skala des gesamten digitalen Datenvolumens." : "The pretraining data mix and the scale of all digital data.") + '">' +
         '<div class="ls-lang-mix-head">' + (DE ? "Die Datenmischung" : "The data mix") + '</div>' +
-        '<div class="ls-lang-scale"><span class="ls-lang-scale-label">' + (DE ? "Datenmenge" : "data scale") + '</span><span class="ls-lang-scale-unit">KB</span><span class="ls-lang-scale-unit">MB</span><span class="ls-lang-scale-unit">GB</span><span class="ls-lang-scale-unit">TB</span><span class="ls-lang-scale-unit">PB</span><span class="ls-lang-scale-unit">EB</span><span class="ls-lang-scale-unit is-on">ZB</span><span class="ls-lang-scale-year">2016</span></div>' +
-        '<div class="ls-lang-scale-note">' + (DE ? "1 ZB = 10²¹ Byte. Die Zettabyte-Ära beschreibt das gesamte digitale Datenvolumen, nicht den Trainingskorpus; GPT-3 trainierte auf 300 Mrd. Tokens; allein der gefilterte Common-Crawl-Teil war etwa 570 GB groß (rund 400 Mrd. Tokens)." : "1 ZB = 10²¹ bytes. The zettabyte era describes total digital data, not the training corpus; GPT-3 trained on 300 billion tokens; the filtered Common Crawl portion alone was about 570 GB (roughly 400 billion tokens).") + '</div>' +
+        '<div class="ls-lang-scale" data-tip="' + (DE ? "Größenordnung von Kilobyte bis Zettabyte; die markierte Stufe ist die Zettabyte-Ära." : "Orders of magnitude from kilobyte to zettabyte; the marked step is the zettabyte era.") + '"><span class="ls-lang-scale-label">' + (DE ? "Datenmenge" : "data scale") + '</span><span class="ls-lang-scale-unit">KB</span><span class="ls-lang-scale-unit">MB</span><span class="ls-lang-scale-unit">GB</span><span class="ls-lang-scale-unit">TB</span><span class="ls-lang-scale-unit">PB</span><span class="ls-lang-scale-unit">EB</span><span class="ls-lang-scale-unit is-on">ZB</span><span class="ls-lang-scale-year">2016</span></div>' +
+        '<div class="ls-lang-scale-note" data-tip="' + (DE ? "Die Zettabyte-Zahl meint alles digitale Datenvolumen, nicht den Trainingskorpus." : "The zettabyte figure means all digital data, not the training corpus.") + '">' + (DE ? "1 ZB = 10²¹ Byte. Die Zettabyte-Ära beschreibt das gesamte digitale Datenvolumen, nicht den Trainingskorpus; GPT-3 trainierte auf 300 Mrd. Tokens; allein der gefilterte Common-Crawl-Teil war etwa 570 GB groß (rund 400 Mrd. Tokens)." : "1 ZB = 10²¹ bytes. The zettabyte era describes total digital data, not the training corpus; GPT-3 trained on 300 billion tokens; the filtered Common Crawl portion alone was about 570 GB (roughly 400 billion tokens).") + '</div>' +
         '<div class="ls-lang-bars"></div>' +
         '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
         '</div>' +
       '</div>' +
       '<p class="ls-lang-caveat">' + (DE ? "Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023)." : "The same loop, the same weights: the script changes the tokens, not the task. Some languages need more tokens for the same content, so the tokenizer can make them more expensive (Petrov et al., 2023).") + '</p>' +
-      '<div class="ls-tokenize-nav ls-lang-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-lang-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-lang-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-lang-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+      '<div class="ls-tokenize-nav ls-lang-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-lang-prev" data-tip="' + (DE ? "Zur vorherigen Sprache oder Folie." : "Go to the previous language or slide.") + '">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-lang-progress" data-tip="' + (DE ? "Aktuelle Sprache innerhalb der Auswahl." : "Current language within the selection.") + '"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-lang-next" data-tip="' + (DE ? "Zur nächsten Sprache oder Folie." : "Go to the next language or slide.") + '">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var tabs = el.querySelector(".ls-lang-tabs");
     var sampleEl = el.querySelector(".ls-lang-sample");
@@ -148,17 +148,18 @@
       b.type = "button";
       b.className = "ls-chip" + (l.id === active ? " is-on" : "");
       b.setAttribute("data-lang", l.id);
+      b.setAttribute("data-tip", DE ? "Beispielsatz auf " + l.label + " anzeigen." : "Show the example sentence in " + l.label + ".");
       b.textContent = l.label;
       b.addEventListener("click", function () { show(l.id); });
       tabs.appendChild(b);
     });
     bars.innerHTML = mix.map(function (m) {
-      return '<div class="ls-lang-bar"><span class="ls-lang-bar-label">' + api.esc(m.label) + '</span>' +
+      return '<div class="ls-lang-bar" data-tip="' + (DE ? "Anteil an der GPT-3-Datenmischung: " + m.pct + " Prozent." : "Share of the GPT-3 data mix: " + m.pct + " percent.") + '"><span class="ls-lang-bar-label">' + api.esc(m.label) + '</span>' +
         '<span class="ls-lang-bar-track"><i style="width:' + m.pct + '%;background:' + m.color + '"></i></span>' +
         '<span class="ls-lang-bar-val">' + m.pct + '%</span></div>';
     }).join("");
     if (allEl) allEl.innerHTML = langs.map(function (l) {
-      return '<p class="ls-lang-all-row"><b>' + api.esc(l.label) + '</b><span lang="' + l.id + '" dir="' + (l.rtl ? "rtl" : "ltr") + '">' + api.esc(l.text) + '</span></p>';
+      return '<p class="ls-lang-all-row" data-tip="' + (DE ? "Derselbe Inhalt in einer weiteren Schrift; Tokens unterscheiden sich, die Aufgabe bleibt." : "The same content in another script; tokens differ, the task stays the same.") + '"><b>' + api.esc(l.label) + '</b><span lang="' + l.id + '" dir="' + (l.rtl ? "rtl" : "ltr") + '">' + api.esc(l.text) + '</span></p>';
     }).join("");
     function setSummaryStep(step) {
       summaryStep = step ? 1 : 0;
@@ -203,7 +204,7 @@
     if (truthHead) truthHead.textContent = TRUTH.title;
     if (truthNote) truthNote.textContent = TRUTH.note;
     if (truthList) truthList.innerHTML = TRUTH.items.map(function (item, i) {
-      return '<li class="' + (item.ok ? "is-near" : "is-false") + '"><span class="ls-lang-truth-dot">' + (i + 1) + '</span><span>' + api.esc(item.t) + '</span><b>' + (item.label || (item.ok ? (DE ? "nah" : "near") : (DE ? "falsch" : "false"))) + '</b></li>';
+      return '<li class="' + (item.ok ? "is-near" : "is-false") + '" data-tip="' + (item.ok ? (DE ? "Dieser Satz liegt nah an der Wahrheit." : "This sentence sits near the truth.") : (DE ? "Dieser Satz widerspricht der Wahrheit und liegt weit daneben." : "This sentence contradicts the truth and lies far away.")) + '"><span class="ls-lang-truth-dot">' + (i + 1) + '</span><span>' + api.esc(item.t) + '</span><b>' + (item.label || (item.ok ? (DE ? "nah" : "near") : (DE ? "falsch" : "false"))) + '</b></li>';
     }).join("");
     function drawTruth() {
       if (!truthCanvas) return;

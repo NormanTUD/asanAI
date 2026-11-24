@@ -9,38 +9,38 @@
     var el = document.createElement("div");
     el.className = "ls-hg-scene";
     el.innerHTML =
-      '<div class="ls-hg-win">' +
+      '<div class="ls-hg-win" data-tip="' + (DE ? "Ein Chat mit drei Schaltern, die Quellen, Denkweg und Prüfung steuern." : "A chat with three switches that control sources, reasoning, and verification.") + '">' +
         '<div class="ls-hg-winbar">' +
           '<span class="ls-hg-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
           '<span class="ls-hg-addr">' + (DE ? "guard · Eiffelturm" : "guard · Eiffel Tower") + '</span>' +
-          '<span class="ls-hg-status"></span>' +
+          '<span class="ls-hg-status" data-tip="' + (DE ? "Kurzurteil: gedeckt, ehrlich oder ungedeckt." : "Short verdict: grounded, honest, or ungrounded.") + '"></span>' +
         '</div>' +
         '<div class="ls-hg-controls" role="group" aria-label="' + (DE ? "Schutzmaßnahmen" : "Guardrails") + '">' +
-          '<button type="button" class="ls-hg-toggle" data-hg="rag" aria-pressed="false"><span class="ls-hg-toggle-ico">S1</span><span>' + (DE ? "Quellen (RAG)" : "Sources (RAG)") + '</span></button>' +
-          '<button type="button" class="ls-hg-toggle" data-hg="cot" aria-pressed="false"><span class="ls-hg-toggle-ico">1→3</span><span>' + (DE ? "Schrittweise denken" : "Think step by step") + '</span></button>' +
-          '<button type="button" class="ls-hg-toggle" data-hg="verify" aria-pressed="false"><span class="ls-hg-toggle-ico">✓</span><span>' + (DE ? "Gegenprüfung" : "Verification") + '</span></button>' +
+          '<button type="button" class="ls-hg-toggle" data-hg="rag" aria-pressed="false" data-tip="' + (DE ? "Legt eine geprüfte Quelle S1 in den Kontext." : "Puts a checked source S1 into the context.") + '"><span class="ls-hg-toggle-ico">S1</span><span>' + (DE ? "Quellen (RAG)" : "Sources (RAG)") + '</span></button>' +
+          '<button type="button" class="ls-hg-toggle" data-hg="cot" aria-pressed="false" data-tip="' + (DE ? "Macht die Zwischenschritte von Frage bis Schluss sichtbar." : "Makes the steps from question to conclusion visible.") + '"><span class="ls-hg-toggle-ico">1→3</span><span>' + (DE ? "Schrittweise denken" : "Think step by step") + '</span></button>' +
+          '<button type="button" class="ls-hg-toggle" data-hg="verify" aria-pressed="false" data-tip="' + (DE ? "Prüft die Antwort gegen den Kontext oder verweigert sie." : "Checks the answer against the context or refuses it.") + '"><span class="ls-hg-toggle-ico">✓</span><span>' + (DE ? "Gegenprüfung" : "Verification") + '</span></button>' +
         '</div>' +
         '<div class="ls-hg-body">' +
-          '<div class="ls-hg-chat">' +
+          '<div class="ls-hg-chat" data-tip="' + (DE ? "Der Chat zeigt Frage, Antwort und je nach Schalter den Denkweg." : "The chat shows the question, answer, and, depending on the switch, the reasoning.") + '">' +
             '<div class="ls-hg-msg is-user"><span class="ls-hg-role">' + (DE ? "Du" : "You") + '</span><div class="ls-hg-bubble ls-hg-bubble--user"><div class="ls-hg-question"><span>' + (DE ? "Frage" : "Question") + '</span><b>' + question + '</b></div></div></div>' +
             '<div class="ls-hg-msg is-ai"><span class="ls-hg-role">LLM</span><div class="ls-hg-bubble ls-hg-bubble--ai">' +
               '<div class="ls-hg-context-label">' + (DE ? "Kontext" : "Context") + '</div>' +
-              '<div class="ls-hg-source"></div>' +
-              '<div class="ls-hg-answer"></div>' +
-              '<div class="ls-hg-cite"></div>' +
+              '<div class="ls-hg-source" data-tip="' + (DE ? "Was das Modell als Quelle sieht; leer heißt Antwort aus dem Gedächtnis." : "What the model sees as a source; empty means an answer from memory.") + '"></div>' +
+              '<div class="ls-hg-answer" data-tip="' + (DE ? "Die Antwort des Modells mit oder ohne Deckung." : "The model answer with or without grounding.") + '"></div>' +
+              '<div class="ls-hg-cite" data-tip="' + (DE ? "Belegt die Antwort oder benennt die fehlende Quelle." : "Supports the answer or names the missing source.") + '"></div>' +
             '</div></div>' +
-            '<div class="ls-hg-steps"></div>' +
+            '<div class="ls-hg-steps" data-tip="' + (DE ? "Der sichtbare Denkweg, wenn schrittweises Denken an ist." : "The visible reasoning path when step-by-step thinking is on.") + '"></div>' +
           '</div>' +
-          '<aside class="ls-hg-check">' +
+          '<aside class="ls-hg-check" data-tip="' + (DE ? "Die Prüfseite schätzt das Risiko und listet die aktiven Schutzmaßnahmen." : "The check panel estimates risk and lists the active guardrails.") + '">' +
             '<div class="ls-hg-check-head">' + (DE ? "Prüfung" : "Check") + '</div>' +
-            '<div class="ls-hg-gauge"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ls-hg-gauge-track" cx="60" cy="60" r="48"/><circle class="ls-hg-gauge-fill" cx="60" cy="60" r="48"/></svg><div class="ls-hg-gauge-val"><b class="ls-hg-risk-val"></b><span>%</span></div></div>' +
+            '<div class="ls-hg-gauge" data-tip="' + (DE ? "Der Ring zeigt das Halluzinationsrisiko von 0 bis 100 Prozent." : "The ring shows hallucination risk from 0 to 100 percent.") + '"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ls-hg-gauge-track" cx="60" cy="60" r="48"/><circle class="ls-hg-gauge-fill" cx="60" cy="60" r="48"/></svg><div class="ls-hg-gauge-val"><b class="ls-hg-risk-val"></b><span>%</span></div></div>' +
             '<p class="ls-hg-gauge-cap">' + (DE ? "Halluzinationsrisiko" : "Hallucination risk") + '</p>' +
             '<div class="ls-hg-checks">' +
-              '<div class="ls-hg-checkrow" data-check="rag"><i></i><b>' + (DE ? "Quelle im Kontext" : "Source in context") + '</b><span></span></div>' +
-              '<div class="ls-hg-checkrow" data-check="cot"><i></i><b>' + (DE ? "Sichtbarer Denkweg" : "Visible reasoning") + '</b><span></span></div>' +
-              '<div class="ls-hg-checkrow" data-check="verify"><i></i><b>' + (DE ? "Gegenprüfung" : "Verification") + '</b><span></span></div>' +
+              '<div class="ls-hg-checkrow" data-check="rag" data-tip="' + (DE ? "Zeigt, ob eine Quelle im Kontext liegt." : "Shows whether a source is in the context.") + '"><i></i><b>' + (DE ? "Quelle im Kontext" : "Source in context") + '</b><span></span></div>' +
+              '<div class="ls-hg-checkrow" data-check="cot" data-tip="' + (DE ? "Zeigt, ob der Denkweg sichtbar ist." : "Shows whether the reasoning is visible.") + '"><i></i><b>' + (DE ? "Sichtbarer Denkweg" : "Visible reasoning") + '</b><span></span></div>' +
+              '<div class="ls-hg-checkrow" data-check="verify" data-tip="' + (DE ? "Zeigt, ob die Antwort gegengeprüft wird." : "Shows whether the answer is checked.") + '"><i></i><b>' + (DE ? "Gegenprüfung" : "Verification") + '</b><span></span></div>' +
             '</div>' +
-            '<div class="ls-hg-readout"></div>' +
+            '<div class="ls-hg-readout" data-tip="' + (DE ? "Fasst zusammen, was die Schalterkombination bedeutet." : "Summarises what the switch combination means.") + '"></div>' +
           '</aside>' +
         '</div>' +
       '</div>';

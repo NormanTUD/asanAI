@@ -560,8 +560,8 @@
         var nseg = Math.max(16, Math.round((p1 - p0) * 10));
         for (var si = 0; si <= nseg; si++) {
           var pp = p0 + (p1 - p0) * si / nseg;
-          var sp = hpt(pp, 1.06);
-          if (si === 0) ctx.moveTo(sp.x, sp.y); else ctx.lineTo(sp.x, sp.y);
+          var segPt = hpt(pp, 1.06);
+          if (si === 0) ctx.moveTo(segPt.x, segPt.y); else ctx.lineTo(segPt.x, segPt.y);
         }
         ctx.stroke();
         ctx.restore();

@@ -79,6 +79,11 @@
     var matrixEl = el.querySelector(".ls-att-matrix");
     var formulaEl = el.querySelector(".ls-att-formula");
     var readout = el.querySelector(".ls-att-readout");
+    graph.setAttribute("data-tip", DE ? "Kanten zeigen Attention-Gewichte; klicke ein Token, um seine Zeile zu sehen." : "Edges show attention weights; click a token to see its row.");
+    vector.setAttribute("data-tip", DE ? "Gewichtete Summe der Value-Vektoren; der Pfeil r ist die Mischung." : "Weighted sum of the value vectors; the arrow r is the mixture.");
+    matrixEl.setAttribute("data-tip", DE ? "Tabelle aller Attention-Gewichte; eine Zeile zeigt die Verteilung eines Tokens." : "Table of all attention weights; one row shows a token's distribution.");
+    formulaEl.setAttribute("data-tip", DE ? "Die Formel zeigt r als gewichtete Summe der Values." : "The formula shows r as a weighted sum of the values.");
+    readout.setAttribute("data-tip", DE ? "Nennt die aktive Zeile und den stärksten Key." : "Names the active row and the strongest key.");
     var C = api.colors();
     var graphSize = null, vectorSize = null, graphHits = [];
     var animRow = null, animFrom = null, animTo = null, animStart = 0, animRaf = 0;
@@ -153,7 +158,7 @@
     }
     function renderSentences() {
       sentEl.innerHTML = contexts.map(function (c, i) {
-        return '<button type="button" class="ls-att-sentence' + (c.id === context ? ' is-on' : '') + '" data-ctx="' + c.id + '">' +
+        return '<button type="button" class="ls-att-sentence' + (c.id === context ? ' is-on' : '') + '" data-ctx="' + c.id + '" data-tip="' + (DE ? "Wechselt den Satz und damit die Bedeutung von Bank." : "Switches the sentence and with it the meaning of bank.") + '">' +
           api.esc(c.sentence) + '</button>';
       }).join("");
       sentEl.querySelectorAll("[data-ctx]").forEach(function (b) {
@@ -393,7 +398,7 @@
       var ts = tokens(), m = matrix();
       var html = '<table><thead><tr><th></th>' + ts.map(function (t, j) { return '<th>' + api.esc(tokenLabel(t, j)) + '</th>'; }).join("") + '</tr></thead><tbody>';
       m.forEach(function (row, i) {
-        html += '<tr data-row="' + i + '"' + (i === selected ? ' class="is-on"' : '') + '><th>' + api.esc(tokenLabel(ts[i], i)) + '</th>';
+        html += '<tr data-row="' + i + '"' + (i === selected ? ' class="is-on"' : '') + ' data-tip="' + (DE ? "Zeigt die Gewichte dieser Token-Zeile; klicken wählt sie." : "Shows the weights for this token row; clicking selects it.") + '"><th>' + api.esc(tokenLabel(ts[i], i)) + '</th>';
         row.forEach(function (wt) {
           var pct = Math.round(wt * 100);
           var alpha = Math.min(0.80, 0.10 + wt * 0.95);

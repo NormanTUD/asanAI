@@ -68,21 +68,21 @@
     el.className = "ls-ffn-scene";
     el.innerHTML =
       '<div class="ls-ffn-stepper">' +
-        '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-prev" aria-label="' + api.esc(labels.prev) + '">←</button>' +
-        '<span class="ls-ffn-step-label" aria-live="polite"></span>' +
-        '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-next" aria-label="' + api.esc(labels.next) + '">→</button>' +
+        '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-prev" aria-label="' + api.esc(labels.prev) + '" data-tip-de="Zeigt den vorigen Beispielkontext." data-tip-en="Shows the previous example context.">←</button>' +
+        '<span class="ls-ffn-step-label" aria-live="polite" data-tip-de="Zeigt, welcher Kontext gerade aktiv ist." data-tip-en="Shows which context is currently active."></span>' +
+        '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-next" aria-label="' + api.esc(labels.next) + '" data-tip-de="Zeigt den nächsten Beispielkontext." data-tip-en="Shows the next example context.">→</button>' +
       '</div>' +
       '<div class="ls-ffn-contexts"></div>' +
       '<div class="ls-ffn-bend">' +
-        '<div class="ls-ffn-bend-legend"><span><i class="is-core"></i>' + labels.core + '</span><span><i class="is-ring"></i>' + labels.ring + '</span></div>' +
-        '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img"></canvas></div>' +
+        '<div class="ls-ffn-bend-legend" data-tip-de="Legende: Kernmuster gegen Ringmuster." data-tip-en="Legend: core pattern versus ring pattern."><span><i class="is-core"></i>' + labels.core + '</span><span><i class="is-ring"></i>' + labels.ring + '</span></div>' +
+        '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img" data-tip-de="Punktwolke im FFN-Raum; beobachte, wie die Biegung Kern und Ring trennt." data-tip-en="Point cloud in FFN space; watch how the bend separates core and ring."></canvas></div>' +
         '<div class="ls-ffn-bend-bar">' +
-          '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0"><output>0.00</output></label>' +
-          '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-bend-toggle">' + labels.bendButton + '</button>' +
-          '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
+          '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0" data-tip-de="Hebt den Kernbereich an; höhere Werte machen die Trennebene sichtbar." data-tip-en="Lifts the core region; higher values reveal the separating plane."><output>0.00</output></label>' +
+          '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-bend-toggle" data-tip-de="Animiert die Biegung bis zur Trennebene oder zurück." data-tip-en="Animates the bend to the separating plane or back.">' + labels.bendButton + '</button>' +
+          '<span class="ls-ffn-bend-readout" aria-live="polite" data-tip-de="Nennt Biegegrad und ob die Muster getrennt sind." data-tip-en="Names the bend amount and whether the patterns are separated."></span>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img"></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Input und Output bleiben d_model; das FFN dehnt den Vektor auf d_ff und projiziert ihn zurück. Es arbeitet pro Token." : "Input and output stay at d_model; the FFN expands the vector to d_ff and projects it back. It works per token.") + '</p></div>' +
+      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Input und Output bleiben d_model; das FFN dehnt den Vektor auf d_ff und projiziert ihn zurück. Es arbeitet pro Token." : "Input and output stay at d_model; the FFN expands the vector to d_ff and projects it back. It works per token.") + '</p></div>' +
       '<p class="ls-ffn-caveat">' + (DE ? "Die Punkte sind symbolisch: Im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen noch höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The points are symbolic: in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
@@ -110,6 +110,7 @@
       var card = document.createElement("article");
       card.className = "ls-ffn-context" + (mode === "fruit" ? " is-active" : "");
       card.setAttribute("data-mode", mode);
+      card.setAttribute("data-tip", DE ? "Kontextkarte: zeigt, welche Muster in W₁ und W₂ reagieren." : "Context card: shows which patterns react in W₁ and W₂.");
       card.innerHTML =
         '<div class="ls-ffn-context-head"><span class="ls-ffn-stream-pill">' + labels.stream + '</span><span class="ls-ffn-context-title">' + api.esc(title) + '</span></div>' +
         '<div class="ls-ffn-flow">' +

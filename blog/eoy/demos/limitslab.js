@@ -112,13 +112,13 @@
     function isRun(id) { return !!state.run[id]; }
     function test() { return TESTS[state.test] || TESTS.paraphrase; }
     function head() {
-      return '<div class="ls-ll-head"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><b>' + L("Vier Bruchstellen, kein Benchmark", "Four failure points, not a benchmark") + '</b><p>' + L("Ein Prompt ist eine Stichprobe. Wähle einen Test, starte die Simulation und lies das reale Protokoll. Antworten sind konstruiert, Protokolle echt.", "One prompt is one sample. Choose a test, run the simulation, and read the real protocol. Answers are constructed, protocols are real.") + '</p></div>';
+      return '<div class="ls-ll-head" data-tip="' + L("Der Prüfstand zeigt vier Bruchstellen; die Protokolle sind echt, die Antworten konstruiert.", "The test bench shows four failure points; protocols are real, the answers are constructed.") + '"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><b>' + L("Vier Bruchstellen, kein Benchmark", "Four failure points, not a benchmark") + '</b><p>' + L("Ein Prompt ist eine Stichprobe. Wähle einen Test, starte die Simulation und lies das reale Protokoll. Antworten sind konstruiert, Protokolle echt.", "One prompt is one sample. Choose a test, run the simulation, and read the real protocol. Answers are constructed, protocols are real.") + '</p></div>';
     }
     function tabs() {
       return '<div class="ls-ll-tabs" role="tablist">' + ORDER.map(function (id) {
         var t = TESTS[id];
         var done = isRun(id);
-        return '<button type="button" role="tab" class="ls-ll-tab' + (state.test === id ? ' is-active' : '') + (done ? ' is-done' : '') + '" data-test="' + id + '" aria-selected="' + (state.test === id ? "true" : "false") + '">' + (done ? '<span class="ls-ll-tab-check">✓</span> ' : '') + esc(t.label) + '</button>';
+        return '<button type="button" role="tab" class="ls-ll-tab' + (state.test === id ? ' is-active' : '') + (done ? ' is-done' : '') + '" data-test="' + id + '" aria-selected="' + (state.test === id ? "true" : "false") + '" data-tip="' + L("Wechselt den Test; ein Häkchen markiert bereits gelaufene Tests.", "Switches the test; a check mark marks tests already run.") + '">' + (done ? '<span class="ls-ll-tab-check">✓</span> ' : '') + esc(t.label) + '</button>';
       }).join("") + '</div>';
     }
     function visualHead(t) {
@@ -132,7 +132,7 @@
         t.protocol.map(function (step) { return '<li>' + esc(step) + '</li>'; }).join("") + '</ol></div>';
     }
     function runButton(id, revealed) {
-      return '<button type="button" class="ls-ll-run" data-run="' + id + '">' + (revealed ? L("Simulation erneut ansehen", "View simulation again") : L("Simulation ansehen", "View simulation")) + '</button>';
+      return '<button type="button" class="ls-ll-run" data-run="' + id + '" data-tip="' + L("Startet die kurze Simulation und blendet die Beobachtung ein.", "Starts the short simulation and reveals the observation.") + '">' + (revealed ? L("Simulation erneut ansehen", "View simulation again") : L("Simulation ansehen", "View simulation")) + '</button>';
     }
     function visualParaphrase(t) {
       var revealed = isRun(t.id);
@@ -154,7 +154,7 @@
     function visualCitation(t) {
       var revealed = isRun(t.id);
       var answer = revealed ? '<div class="ls-ll-cite-card"><span class="ls-ll-cite-label">' + L("Simulierte Antwort", "Simulated answer") + '</span><code>' + esc(t.answer) + '</code>' +
-        '<div class="ls-ll-cite-actions"><button type="button" class="ls-ll-check" data-verify>' + L("Quelle prüfen", "Check source") + '</button></div>' +
+        '<div class="ls-ll-cite-actions"><button type="button" class="ls-ll-check" data-verify data-tip="' + L("Prüft DOI und Titel der erfundenen Angabe.", "Checks the DOI and title of the invented entry.") + '">' + L("Quelle prüfen", "Check source") + '</button></div>' +
         (state.verified ? '<div class="ls-ll-cite-result is-bad">' + esc(t.check) + '</div>' : '<div class="ls-ll-cite-result">' + L("Die Form ist korrekt. Aber existiert die Quelle?", "The shape is correct. But does the source exist?") + '</div>') +
       '</div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Simulation läuft …", "Running simulation …") : L("Noch nicht simuliert", "Not simulated yet")) + '</div>';
       return '<div class="ls-ll-visual">' + visualHead(t) + taskHTML(t) +
@@ -167,7 +167,7 @@
       var revealed = isRun(t.id);
       var answer = revealed ? '<div class="ls-ll-answer"><b>' + esc(t.answer) + '</b><span class="ls-ll-conf">' + L("Konfidenz", "Confidence") + ' ' + t.conf + '%</span>' +
         '<div class="ls-ll-confbar"><i style="width:' + t.conf + '%"></i></div>' +
-        '<button type="button" class="ls-ll-ask" data-ask>' + L("Unsicherheit anfordern", "Ask for uncertainty") + '</button>' +
+        '<button type="button" class="ls-ll-ask" data-ask data-tip="' + L("Fragt nach der Unsicherheit; das Modell bleibt trotzdem sicher.", "Asks for uncertainty; the model stays confident anyway.") + '">' + L("Unsicherheit anfordern", "Ask for uncertainty") + '</button>' +
         (state.asked ? '<p class="ls-ll-asked is-bad">' + esc(t.asked) + '</p>' : '') +
       '</div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Simulation läuft …", "Running simulation …") : L("Noch nicht simuliert", "Not simulated yet")) + '</div>';
       return '<div class="ls-ll-visual">' + visualHead(t) + taskHTML(t) +
@@ -190,7 +190,7 @@
       return '<div class="ls-ll-visual">' + visualHead(t) + taskHTML(t) +
         '<div class="ls-ll-context-bar" aria-hidden="true">' + segments + '<i class="ls-ll-context-fact" style="left:' + pct + '%"></i><span class="ls-ll-context-mid">' + L("Mitte", "middle") + '</span></div>' +
         '<div class="ls-ll-pos">' + t.positions.map(function (p, idx) {
-          return '<button type="button" class="ls-ll-posbtn' + (idx === state.pos ? ' is-active' : '') + '" data-pos="' + idx + '">' + esc(p.label) + '</button>';
+          return '<button type="button" class="ls-ll-posbtn' + (idx === state.pos ? ' is-active' : '') + '" data-pos="' + idx + '" data-tip="' + L("Legt den Fakt an diese Stelle im langen Dokument.", "Places the fact at this position in the long document.") + '">' + esc(p.label) + '</button>';
         }).join("") + '</div>' +
         '<div class="ls-ll-prompt">' + esc(t.prompt) + '</div>' +
         (revealed ? '<div class="ls-ll-answer ' + (pos.ok ? 'is-ok' : 'is-bad') + '"><b>' + esc(pos.answer) + '</b><span class="ls-ll-badge ' + (pos.ok ? 'is-ok' : 'is-bad') + '">' + (pos.ok ? '✓' : '✗') + '</span></div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Simulation läuft …", "Running simulation …") : L("Noch nicht simuliert", "Not simulated yet")) + '</div>') +
@@ -209,7 +209,7 @@
       var why = t.why;
       if (revealed && t.id === "citation" && state.verified && t.whyChecked) why = t.whyChecked;
       if (revealed && t.id === "boundary" && state.asked) why = t.asked;
-      return '<div class="ls-ll-observe">' +
+      return '<div class="ls-ll-observe" data-tip="' + L("Die Beobachtung erscheint nach dem Start; darunter stehen Grund und Gegenmittel.", "The observation appears after starting; the reason and countermeasure follow below.") + '">' +
         '<div class="ls-ll-observe-head"><span>' + L("Beobachtung", "Observation") + '</span><b class="ls-ll-stamp">' + L("SIMULIERT", "SIMULATED") + '</b></div>' +
         '<p class="ls-ll-observe-lead">' + esc(revealed ? t.observation : t.wait) + '</p>' +
         (revealed ? '<p class="ls-ll-why">' + esc(why) + '</p>' +
@@ -219,7 +219,7 @@
     }
     function summary() {
       var count = ORDER.filter(isRun).length;
-      return '<div class="ls-ll-summary"><span>' + count + ' / 4 ' + L("Tests gelaufen", "tests run") + '</span><div class="ls-ll-summary-track"><i style="width:' + (count * 25) + '%"></i></div> <span>' + L("Kein Test beweist Zuverlässigkeit; erst Variationen zeigen, wo sie bricht.", "No single test proves reliability; only variations show where it breaks.") + '</span></div>';
+      return '<div class="ls-ll-summary" data-tip="' + L("Zählt die gelaufenen Tests; kein einzelner Test beweist Zuverlässigkeit.", "Counts the tests run; no single test proves reliability.") + '"><span>' + count + ' / 4 ' + L("Tests gelaufen", "tests run") + '</span><div class="ls-ll-summary-track"><i style="width:' + (count * 25) + '%"></i></div> <span>' + L("Kein Test beweist Zuverlässigkeit; erst Variationen zeigen, wo sie bricht.", "No single test proves reliability; only variations show where it breaks.") + '</span></div>';
     }
     function render() {
       var t = test();

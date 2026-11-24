@@ -152,7 +152,7 @@
       var bubbles = d.items.map(function (it, idx) {
         var m = RISK_META[idx] || RISK_META[0];
         var p = pos[m.quad] || pos.tl;
-        return '<g class="ls-rm-bubble is-' + m.color + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '" transform="translate(' + p[0] + ',' + p[1] + ')" role="button" tabindex="0" aria-label="' + esc(it.title) + '">' +
+        return '<g class="ls-rm-bubble is-' + m.color + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '" transform="translate(' + p[0] + ',' + p[1] + ')" role="button" tabindex="0" aria-label="' + esc(it.title) + '" data-tip="' + L("Klick zeigt Gefahr, Mechanismus, Beispiel und Gegenmittel.", "Click shows danger, mechanism, example, and countermeasure.") + '">' +
           '<circle class="ls-rm-bubble-ring" r="34"></circle>' +
           '<circle class="ls-rm-bubble-dot" r="26"></circle>' +
           '<text class="ls-rm-bubble-num" text-anchor="middle" y="5">0' + (idx + 1) + '</text>' +
@@ -160,7 +160,7 @@
           '<text class="ls-rm-bubble-title" text-anchor="middle" y="46">' + esc(it.title) + '</text>' +
         '</g>';
       }).join("");
-      var svg = '<svg class="ls-rm-quadrant" viewBox="0 0 400 240" role="img" aria-label="' + esc(d.sub) + '">' +
+      var svg = '<svg class="ls-rm-quadrant" viewBox="0 0 400 240" role="img" aria-label="' + esc(d.sub) + '" data-tip="' + L("Vier Felder: Gegenwart und Zukunft, Absicht und Unfall.", "Four fields: present and future, intent and accident.") + '">' +
         '<rect class="ls-rm-q q-tl" x="0" y="0" width="200" height="120"></rect>' +
         '<rect class="ls-rm-q q-tr" x="200" y="0" width="200" height="120"></rect>' +
         '<rect class="ls-rm-q q-bl" x="0" y="120" width="200" height="120"></rect>' +
@@ -173,7 +173,7 @@
         '<text class="ls-rm-axis-label" x="392" y="114" text-anchor="end">' + (DE ? "Unfall" : "Accident") + '</text>' +
         bubbles +
       '</svg>';
-      var detail = '<div class="ls-rm-detail ls-rm-detail--risk">' +
+      var detail = '<div class="ls-rm-detail ls-rm-detail--risk" data-tip="' + L("Details zum gewählten Risiko, inklusive Quelle.", "Details on the selected risk, including its source.") + '">' +
         '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag) + '</span><b>' + esc(item.title) + '</b></div>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Gefahr" : "Danger") + ':</b> ' + esc(item.body) + '</p>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Warum" : "Why") + ':</b> ' + esc(item.mechanism) + '</p>' +
@@ -182,7 +182,7 @@
       '</div>';
       var layers = DATA.safety.items.map(function (layer, idx) {
         var on = !!meta.layers[idx];
-        return '<div class="ls-rm-defense-card' + (on ? ' is-on' : ' is-off') + '">' +
+        return '<div class="ls-rm-defense-card' + (on ? ' is-on' : ' is-off') + '" data-tip="' + L("Zeigt, welche Verteidigungsebene gegen dieses Risiko greift.", "Shows which defence layer acts against this risk.") + '">' +
           '<span class="ls-rm-defense-num">' + esc(layer.level) + '</span>' +
           '<b>' + esc(layer.title) + '</b>' +
           '<span class="ls-rm-defense-pill">' + (on ? (DE ? "greift" : "acts") : (DE ? "greift kaum" : "barely acts")) + '</span>' +
@@ -199,7 +199,7 @@
       state.active = active;
       var rows = d.items.map(function (item, idx) {
         var meta = LIMIT_META[idx] || LIMIT_META[0];
-        return '<button type="button" class="ls-rm-meter-row' + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '">' +
+        return '<button type="button" class="ls-rm-meter-row' + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '" data-tip="' + L("Die Position auf der Skala zeigt stabil, brüchig oder fehlend.", "The position on the scale shows stable, brittle, or missing.") + '">' +
           '<span class="ls-rm-meter-name">' + esc(item.title) + '</span>' +
           '<span class="ls-rm-meter-track"><i class="ls-rm-meter-pin is-' + item.status + '" style="left:' + meta.position + '%"></i></span>' +
           '<span class="ls-rm-status is-' + item.status + '">' + esc(statusLabel(item.status)) + '</span>' +
@@ -207,7 +207,7 @@
       }).join("");
       var item = d.items[active];
       var meta = LIMIT_META[active] || LIMIT_META[0];
-      var detail = '<div class="ls-rm-detail ls-rm-detail--limit">' +
+      var detail = '<div class="ls-rm-detail ls-rm-detail--limit" data-tip="' + L("Warum diese Fähigkeit strukturell begrenzt ist und was hilft.", "Why this capability is structurally limited and what helps.") + '">' +
         '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag) + '</span><b>' + esc(item.title) + '</b></div>' +
         '<p class="ls-rm-block">' + esc(item.body) + '</p>' +
         '<p class="ls-rm-block"><b>' + (DE ? "Warum strukturell?" : "Why structural?") + ':</b> ' + esc(meta.why) + '</p>' +
@@ -215,7 +215,7 @@
         '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite) + '</span>' +
       '</div>';
       el.innerHTML = header(d) +
-        '<div class="ls-rm-spectrum"><div class="ls-rm-spectrum-scale"><span>' + (DE ? "stabil" : "stable") + '</span><span>' + (DE ? "brüchig" : "brittle") + '</span><span>' + (DE ? "fehlt" : "missing") + '</span></div>' + rows + '</div>' +
+        '<div class="ls-rm-spectrum" data-tip="' + L("Fähigkeiten von stabil bis fehlend; die Farbe des Punktes markiert den Status.", "Capabilities from stable to missing; the dot colour marks the status.") + '"><div class="ls-rm-spectrum-scale"><span>' + (DE ? "stabil" : "stable") + '</span><span>' + (DE ? "brüchig" : "brittle") + '</span><span>' + (DE ? "fehlt" : "missing") + '</span></div>' + rows + '</div>' +
         detail;
     }
     function renderSociety(d) {
@@ -228,7 +228,7 @@
       var item = list[active] || {};
       var chainHTML = chain.map(function (c, idx) {
         var lvl = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
-        return '<button type="button" class="ls-rm-chain-step' + (kind === "chain" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="chain">' +
+        return '<button type="button" class="ls-rm-chain-step' + (kind === "chain" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="chain" data-tip="' + L("Eine Stufe der Wertschöpfungskette; der Balken zeigt die Konzentration.", "One stage of the value chain; the bar shows concentration.") + '">' +
           '<span class="ls-rm-chain-tag">' + esc(c.tag) + '</span>' +
           '<b>' + esc(c.title) + '</b>' +
           '<span class="ls-rm-chain-who">' + esc(c.who) + '</span>' +
@@ -237,13 +237,13 @@
         '</button>';
       }).join('<span class="ls-rm-chain-arrow" aria-hidden="true">→</span>');
       var crossHTML = cross.map(function (c, idx) {
-        return '<button type="button" class="ls-rm-cross-card' + (kind === "cross" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="cross">' +
+        return '<button type="button" class="ls-rm-cross-card' + (kind === "cross" && idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="cross" data-tip="' + L("Ein Querschnittsthema; Klick zeigt, wer das Risiko trägt.", "A cross-cutting topic; click shows who carries the risk.") + '">' +
           '<span class="ls-rm-tag">' + esc(c.tag) + '</span>' +
           '<b>' + esc(c.title) + '</b>' +
           '<span>' + esc(c.short) + '</span>' +
         '</button>';
       }).join("");
-      var detail = '<div class="ls-rm-detail ls-rm-detail--soc">' +
+      var detail = '<div class="ls-rm-detail ls-rm-detail--soc" data-tip="' + L("Details zur gewählten Stufe oder zum Querschnitt.", "Details on the selected stage or cross-section.") + '">' +
         '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag || "") + '</span><b>' + esc(item.title || "") + '</b></div>' +
         (item.who ? '<p class="ls-rm-block"><b>' + (DE ? "Wer" : "Who") + ':</b> ' + esc(item.who) + '</p>' : '') +
         '<p class="ls-rm-block"><b>' + (DE ? "Was" : "What") + ':</b> ' + esc(item.body || "") + '</p>' +
@@ -272,14 +272,14 @@
           var extra = "";
           if (item.level) extra = '<span class="ls-rm-level">' + esc(item.level) + '</span>';
           else if (item.status) extra = '<span class="ls-rm-status is-' + item.status + '">' + esc(statusLabel(item.status)) + '</span>';
-          return '<button type="button" class="ls-rm-card' + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '">' +
+          return '<button type="button" class="ls-rm-card' + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '" data-tip="' + L("Klick zeigt die Erklärung und die Quelle dieser Ebene.", "Click shows the explanation and source for this layer.") + '">' +
             '<span class="ls-rm-tag">' + esc(item.tag) + '</span>' +
             '<b>' + esc(item.title) + '</b>' +
             '<span class="ls-rm-short">' + esc(item.short) + '</span>' +
             extra +
           '</button>';
         }).join("") + '</div>' +
-        '<div class="ls-rm-detail">' +
+        '<div class="ls-rm-detail" data-tip="' + L("Erklärung des gewählten Eintrags mit Quellenangabe.", "Explanation of the selected entry with its source.") + '">' +
           '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(d.items[active].tag) + '</span><b>' + esc(d.items[active].title) + '</b></div>' +
           '<p>' + esc(d.items[active].body) + '</p>' +
           '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(d.items[active].cite) + '</span>' +

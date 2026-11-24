@@ -87,7 +87,9 @@
     var C = api.colors();
     var host = document.createElement("div");
     host.className = "ls-wm-scene";
+    host.setAttribute("data-tip", DE ? "Vom Zugstrom über die Probe bis zum rekonstruierten Brett." : "From the move stream through the probe to the reconstructed board.");
     var canvas = document.createElement("canvas");
+    canvas.setAttribute("data-tip", DE ? "Interaktive Grafik: im Spiel markieren goldene Punkte gültige Züge." : "Interactive graphic: in the game, gold dots mark valid moves.");
     host.appendChild(canvas);
     var tip = document.createElement("div");
     tip.className = "ls-wm-tip";
@@ -97,14 +99,17 @@
     playBtn.type = "button";
     playBtn.className = "ls-wm-play";
     playBtn.textContent = DE ? "Spielen" : "Play";
+    playBtn.setAttribute("data-tip", DE ? "Startet oder wiederholt eine Partie Othello gegen den Computer." : "Starts or restarts a game of Othello against the computer.");
     host.appendChild(playBtn);
     var gameStatus = document.createElement("div");
     gameStatus.className = "ls-wm-game-status";
     gameStatus.hidden = true;
+    gameStatus.setAttribute("data-tip", DE ? "Zeigt, wer am Zug ist, wie viele Züge möglich sind und das Ergebnis." : "Shows whose turn it is, how many moves are possible, and the result.");
     host.appendChild(gameStatus);
     var wmFormula = document.createElement("div");
     wmFormula.className = "ls-wm-formula";
     wmFormula.hidden = true;
+    wmFormula.setAttribute("data-tip", DE ? "Die Formel des aktuellen Schritts: Logit, Softmax oder Argmax." : "The formula for the current step: logit, softmax, or argmax.");
     host.appendChild(wmFormula);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
@@ -1110,6 +1115,11 @@
     function draw() {
       if (!W || !H) return;
       playBtn.hidden = state.step !== 0;
+      canvas.setAttribute("data-tip", state.step === 0
+        ? (DE ? "Othello-Brett und Zugfolge: hier spielst du gegen den Computer." : "Othello board and move stream: here you play against the computer.")
+        : state.step === 1
+          ? (DE ? "Fünf Schritte von der Aktivierung über die Probe und Softmax zum Brett." : "Five steps from activation through the probe and softmax to the board.")
+          : (DE ? "Drei Logits pro Feld, ein Unterraum für Schach und viele Unterräume für reale Modelle." : "Three logits per square, one subspace for chess, and many subspaces for real models."));
       hoverHits = [];
       ctx.clearRect(0, 0, W, H);
       if (state.step === 0) drawStep0(ctx);

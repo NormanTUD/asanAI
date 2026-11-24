@@ -6,6 +6,87 @@
     var host = document.createElement("div");
     host.className = "ls-scene-host";
     root.appendChild(host);
+
+    if (!api.tip) api.tip = function (de, en) { return api.lang === "de" ? de : en; };
+    var tipEl = document.createElement("div");
+    tipEl.className = "ls-eoy-tip";
+    tipEl.hidden = true;
+    document.body.appendChild(tipEl);
+    var tipTarget = null;
+    function tipEsc(v) {
+      return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function tipHtml(text) {
+      var parts = String(text).split("$");
+      var html = "";
+      for (var i = 0; i < parts.length; i++) {
+        if (i % 2 === 1 && parts[i]) {
+          if (window.temml && window.temml.renderToString) {
+            try {
+              html += window.temml.renderToString(parts[i], { displayMode: false, throwOnError: false });
+              continue;
+            } catch (err) {}
+          }
+          html += tipEsc(parts[i]);
+        } else {
+          html += tipEsc(parts[i]);
+        }
+      }
+      return html;
+    }
+    function tipTextFor(node) {
+      var text = node.getAttribute("data-tip");
+      if (!text) text = node.getAttribute(api.lang === "de" ? "data-tip-de" : "data-tip-en");
+      return text || "";
+    }
+    function tipNode(e) {
+      var node = e.target && e.target.closest ? e.target.closest("[data-tip],[data-tip-de],[data-tip-en]") : null;
+      if (!node || !host.contains(node)) return null;
+      if (node.closest(".ls-rope-scene,.ls-bs-residual")) return null;
+      if (node.tagName === "CANVAS" && node.closest(".ls-codesem-scene,.ls-ind-scene")) return null;
+      return node;
+    }
+    function tipPlace(x, y) {
+      if (tipEl.hidden) return;
+      var pad = 14;
+      var w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+      var left = x + pad, top = y + pad;
+      if (left + w > window.innerWidth - 8) left = x - w - pad;
+      if (top + h > window.innerHeight - 8) top = y - h - pad;
+      tipEl.style.left = Math.max(8, left) + "px";
+      tipEl.style.top = Math.max(8, top) + "px";
+    }
+    function tipShow(node, x, y) {
+      var text = tipTextFor(node);
+      if (!text) return;
+      tipTarget = node;
+      tipEl.innerHTML = tipHtml(text);
+      tipEl.hidden = false;
+      tipPlace(x, y);
+    }
+    function tipHide() {
+      tipTarget = null;
+      tipEl.hidden = true;
+    }
+    host.addEventListener("pointerover", function (e) {
+      var node = tipNode(e);
+      if (node) tipShow(node, e.clientX, e.clientY);
+    });
+    host.addEventListener("pointermove", function (e) {
+      if (tipTarget) tipPlace(e.clientX, e.clientY);
+    });
+    host.addEventListener("pointerout", function (e) {
+      if (!tipTarget) return;
+      if (!e.relatedTarget || !tipTarget.contains(e.relatedTarget)) tipHide();
+    });
+    host.addEventListener("pointerdown", tipHide);
+    host.addEventListener("focusin", function (e) {
+      var node = tipNode(e);
+      if (!node) return;
+      var r = node.getBoundingClientRect();
+      tipShow(node, r.left + r.width / 2, r.bottom - 4);
+    });
+    host.addEventListener("focusout", tipHide);
     var scenes = {};
     var scene = null, name = null, ro = null, roRaf = 0;
     if (window.ResizeObserver) {
@@ -109,6 +190,7 @@
       ownsKeys: function () { return scene && scene.ownsKeys ? !!scene.ownsKeys() : false; },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },
       destroy: function () {
+        tipEl.remove();
         if (ro) ro.disconnect();
         if (roRaf) cancelAnimationFrame(roRaf);
         Object.keys(scenes).forEach(function (key) {

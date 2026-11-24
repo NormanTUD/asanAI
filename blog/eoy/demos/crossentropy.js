@@ -31,14 +31,14 @@
     var el = document.createElement("div");
     el.className = "ls-ce-scene";
     el.innerHTML =
-      '<div class="ls-ce-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-ce-stage" data-tip="' + (DE ? "Ziehe einen Balken nach oben oder unten, um seine Wahrscheinlichkeit von Hand zu setzen." : "Drag a bar up or down to set that token's probability by hand.") + '"><canvas class="ls-canvas" role="img" data-tip="' + (DE ? "Balken zeigen die vorhergesagten Wahrscheinlichkeiten; die Anzeige rechts zeigt den Loss für das Ziel-Token." : "Bars show predicted probabilities; the gauge shows the cross-entropy loss for the target token.") + '"></canvas></div>' +
       '<div class="ls-ce-controls">' +
-        '<span class="ls-ce-control-label">' + (DE ? "Ziel-Token" : "target token") + '</span>' +
-        '<span class="ls-ce-targets"></span>' +
-        '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-ce-train">' + (DE ? "Trainingsschritt" : "Training step") + '</button>' +
-        '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-ce-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
+        '<span class="ls-ce-control-label" data-tip="' + (DE ? "Wähle, welches Token das Modell als Nächstes vorhersagen soll." : "Choose which token the model should predict next.") + '">' + (DE ? "Ziel-Token" : "target token") + '</span>' +
+        '<span class="ls-ce-targets" data-tip="' + (DE ? "Jedes Chip setzt das Ziel-Token und startet den Loss neu." : "Each chip sets the target token and resets the loss history.") + '"></span>' +
+        '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-ce-train" data-tip="' + (DE ? "Führt einen Gradientenschritt aus und erhöht die Wahrscheinlichkeit des Ziels." : "Run one gradient step to push probability toward the target.") + '">' + (DE ? "Trainingsschritt" : "Training step") + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-ce-reset" data-tip="' + (DE ? "Setzt Logits und Loss-Verlauf auf den Anfang zurück." : "Restore the initial logits and clear the loss history.") + '">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
       '</div>' +
-      '<div class="ls-ce-readout" aria-live="polite"></div>';
+      '<div class="ls-ce-readout" aria-live="polite" data-tip="' + (DE ? "Live-Werte: Ziel, Loss, Ziel-Wahrscheinlichkeit, Softmax-Summe und Gradient." : "Live values: target, loss, target probability, softmax sum, and gradient.") + '"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-ce-stage");
     var canvas = el.querySelector("canvas");
@@ -65,6 +65,7 @@
         var b = document.createElement("button");
         b.type = "button";
         b.className = "ls-chip" + (i === target ? " is-on" : "");
+        b.setAttribute("data-tip", DE ? "Setzt dieses Token als Ziel und startet den Loss neu." : "Set this token as the target and reset the loss history.");
         b.textContent = tok;
         b.addEventListener("click", function () {
           target = i;

@@ -9,15 +9,15 @@
     var V = window.LearnSysVisuals;
     var el = document.createElement("div");
     el.className = "ls-manifold-scene";
-    el.innerHTML = '<div class="ls-dual-manifolds"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<p class="ls-vr-note">' + (DE ? "Vietoris–Rips: Punkte sind verbunden, wenn ihr Abstand unter der Schwelle liegt. Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt. Fahre über einen Punkt, um das Wort zu sehen." : "Vietoris–Rips: points are connected when their distance is below the threshold. Rotate and translate the Japanese cloud until it sits on the English one. Hover a point to see its word.") + '</p>' +
+    el.innerHTML = '<div class="ls-dual-manifolds" data-tip="' + (DE ? "Zwei Punktwolken mit Vietoris–Rips-Kanten; ziehe zum Drehen und fahre über einen Punkt für sein Wort." : "Two point clouds with Vietoris–Rips edges; drag to rotate and hover a point for its word.") + '"><canvas class="ls-canvas" role="img" data-tip="' + (DE ? "Die englische und die japanische Wolke; die Ausrichtung wird besser, wenn sie sich decken." : "The English and Japanese clouds; alignment improves as they overlap.") + '"></canvas></div>' +
+      '<p class="ls-vr-note" data-tip="' + (DE ? "Die Ausrichtung steigt, wenn die japanische Wolke auf der englischen liegt." : "Alignment rises as the Japanese cloud sits on the English one.") + '">' + (DE ? "Vietoris–Rips: Punkte sind verbunden, wenn ihr Abstand unter der Schwelle liegt. Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt. Fahre über einen Punkt, um das Wort zu sehen." : "Vietoris–Rips: points are connected when their distance is below the threshold. Rotate and translate the Japanese cloud until it sits on the English one. Hover a point to see its word.") + '</p>' +
       '<div class="ls-manifold-controls">' +
-        '<label class="ls-range">' + (DE ? "Drehung" : "Yaw") + ' <input type="range" class="ls-manifold-rotate" min="-180" max="180" step="1" value="62"><output>62°</output></label>' +
-        '<label class="ls-range">' + (DE ? "Rotation" : "Roll") + ' <input type="range" class="ls-manifold-roll" min="-180" max="180" step="1" value="26"><output>26°</output></label>' +
-        '<label class="ls-range">' + (DE ? "Verschiebung" : "Translation") + ' <input type="range" class="ls-manifold-shift" min="-0.2" max="2.4" step="0.01" value="1.8"><output>1.80</output></label>' +
-        '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-manifold-find">' + (DE ? "Übersetzung finden" : "Find translation") + '</button>' +
+        '<label class="ls-range" data-tip="' + (DE ? "Dreht die japanische Wolke um die senkrechte Achse." : "Yaw rotates the Japanese cloud around the vertical axis.") + '">' + (DE ? "Drehung" : "Yaw") + ' <input type="range" class="ls-manifold-rotate" min="-180" max="180" step="1" value="62"><output>62°</output></label>' +
+        '<label class="ls-range" data-tip="' + (DE ? "Kippt die japanische Wolke um die Blickachse." : "Roll tilts the Japanese cloud around the viewing axis.") + '">' + (DE ? "Rotation" : "Roll") + ' <input type="range" class="ls-manifold-roll" min="-180" max="180" step="1" value="26"><output>26°</output></label>' +
+        '<label class="ls-range" data-tip="' + (DE ? "Verschiebt die japanische Wolke auf die englische zu." : "Translation slides the Japanese cloud toward the English one.") + '">' + (DE ? "Verschiebung" : "Translation") + ' <input type="range" class="ls-manifold-shift" min="-0.2" max="2.4" step="0.01" value="1.8"><output>1.80</output></label>' +
+        '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-manifold-find" data-tip="' + (DE ? "Animiert die Wolke zur besten Ausrichtung." : "Animate the cloud to the best alignment.") + '">' + (DE ? "Übersetzung finden" : "Find translation") + '</button>' +
       '</div>' +
-      '<div class="ls-manifold-readout" aria-live="polite"></div>';
+      '<div class="ls-manifold-readout" aria-live="polite" data-tip="' + (DE ? "Ausrichtung, aktuelle Drehung und Verschiebung sowie das überfahrene Wort." : "Alignment score, current rotation and translation, and the hovered word.") + '"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-dual-manifolds");
     var canvas = el.querySelector("canvas");

@@ -50,28 +50,28 @@
     var el = document.createElement("div");
     el.className = "ls-ar-scene";
     el.innerHTML =
-      '<div class="ls-ar-head"><span class="ls-ar-badge">' + L("Dynamisches RAG", "Dynamic RAG") + '</span><span class="ls-ar-sub">' + L("kraken.pdf liegt außerhalb des LLM. Der Agent liest, chunkt und bewertet die Datei, bevor das Modell antwortet.", "kraken.pdf sits outside the LLM. The agent reads, chunks, and scores the file before the model answers.") + '</span><span class="ls-ar-guide"></span></div>' +
-      '<div class="ls-ar-query"><span>' + L("Frage", "Question") + '</span><b>' + L("Wie viele Herzen hat ein Krake?", "How many hearts does an octopus have?") + '</b><em>' + L("Die Datei ist fiktiv, die Fakten darin sind belegt.", "The file is fictional; the facts in it are sourced.") + '</em></div>' +
+      '<div class="ls-ar-head" data-tip="' + L("Der Agent liest die Datei außerhalb des LLM, bevor das Modell antwortet.", "The agent reads the file outside the LLM before the model answers.") + '"><span class="ls-ar-badge">' + L("Dynamisches RAG", "Dynamic RAG") + '</span><span class="ls-ar-sub">' + L("kraken.pdf liegt außerhalb des LLM. Der Agent liest, chunkt und bewertet die Datei, bevor das Modell antwortet.", "kraken.pdf sits outside the LLM. The agent reads, chunks, and scores the file before the model answers.") + '</span><span class="ls-ar-guide" data-tip="' + L("Zeigt den aktuellen Schritt der Kette Datei, Chunks, Winkel, Kontext, Antwort.", "Shows the current step of the chain file, chunks, angle, context, answer.") + '"></span></div>' +
+      '<div class="ls-ar-query" data-tip="' + L("Die Frage, die später mit dem abgerufenen Chunk beantwortet wird.", "The question that is later answered with the retrieved chunk.") + '"><span>' + L("Frage", "Question") + '</span><b>' + L("Wie viele Herzen hat ein Krake?", "How many hearts does an octopus have?") + '</b><em>' + L("Die Datei ist fiktiv, die Fakten darin sind belegt.", "The file is fictional; the facts in it are sourced.") + '</em></div>' +
       '<div class="ls-ar-grid">' +
-        '<section class="ls-ar-col ls-ar-reader">' +
+        '<section class="ls-ar-col ls-ar-reader" data-tip="' + L("Die Datei liegt außerhalb des Modells; hier wird sie gelesen und zerlegt.", "The file sits outside the model; here it is read and split.") + '">' +
           '<div class="ls-ar-col-head"><b>kraken.pdf</b><span>' + L("außerhalb des LLM · Datei", "outside the LLM · file") + '</span></div>' +
-          '<div class="ls-ar-filecard">' +
+          '<div class="ls-ar-filecard" data-tip="' + L("Datei mit Ladebalken; der Agent liest sie Absatz für Absatz.", "The file with a progress bar; the agent reads it paragraph by paragraph.") + '">' +
             '<span class="ls-ar-fileicon">PDF</span>' +
             '<div class="ls-ar-filemeta"><b>kraken.pdf</b><small>' + L("1,2 KB · 5 Absätze · fiktives Buch", "1.2 KB · 5 paragraphs · fictional book") + '</small></div>' +
-            '<button type="button" class="ls-ar-upload">' + L("Hochladen", "Upload") + '</button>' +
-            '<div class="ls-ar-progress"><i></i></div>' +
+            '<button type="button" class="ls-ar-upload" data-tip="' + L("Startet das Lesen, Chunken und Bewerten der Datei.", "Starts reading, chunking, and scoring the file.") + '">' + L("Hochladen", "Upload") + '</button>' +
+            '<div class="ls-ar-progress" data-tip="' + L("Fortschritt beim Lesen der Datei.", "Progress reading the file.") + '"><i></i></div>' +
             '<small class="ls-ar-progress-label"></small>' +
           '</div>' +
-          '<code class="ls-ar-cmd"></code>' +
-          '<div class="ls-ar-book"></div>' +
+          '<code class="ls-ar-cmd" data-tip="' + L("Der Agentenbefehl, der gerade außerhalb des LLM läuft.", "The agent command currently running outside the LLM.") + '"></code>' +
+          '<div class="ls-ar-book" data-tip="' + L("Der Dateitext in fünf Absätzen, die zu Chunks werden.", "The file text in five paragraphs that become chunks.") + '"></div>' +
         '</section>' +
-        '<section class="ls-ar-col ls-ar-chunks">' +
+        '<section class="ls-ar-col ls-ar-chunks" data-tip="' + L("Die Chunks werden bewertet: nur C1 liegt unter dem Grenzwinkel.", "The chunks are scored: only C1 is below the angle threshold.") + '">' +
           '<div class="ls-ar-col-head"><b>' + L("Chunks", "Chunks") + '</b><span>' + L("außerhalb des LLM · bewertet", "outside the LLM · scored") + '</span></div>' +
-          '<div class="ls-ar-angles"></div>' +
-          '<div class="ls-ar-list"></div>' +
-          '<div class="ls-ar-measure"></div>' +
+          '<div class="ls-ar-angles" data-tip="' + L("Die Winkel der Chunks zur Frage; unter 35 Grad heißt passend.", "The chunk angles to the question; below 35 degrees means it fits.") + '"></div>' +
+          '<div class="ls-ar-list" data-tip="' + L("Jeder Chunk mit Urteil, Winkel und Score; der passende wird in den Kontext gelegt.", "Each chunk with verdict, angle, and score; the fitting one enters the context.") + '"></div>' +
+          '<div class="ls-ar-measure" data-tip="' + L("Vergleicht alle Chunk-Winkel mit dem Grenzwinkel.", "Compares all chunk angles with the threshold.") + '"></div>' +
         '</section>' +
-        '<section class="ls-ar-col ls-ar-chat-col">' +
+        '<section class="ls-ar-col ls-ar-chat-col" data-tip="' + L("Das LLM sieht nur den unsichtbaren Kontext, nicht die Datei.", "The LLM sees only the invisible context, not the file.") + '">' +
           '<div class="ls-ar-col-head"><b>' + L("KI-Chat", "AI chat") + '</b><span>' + L("im LLM · Antwort", "inside the LLM · answer") + '</span></div>' +
           '<div class="ls-ar-phone"><div class="ls-ar-phone-frame"><div class="ls-ar-phone-notch"></div>' +
             '<div class="ls-ar-phone-screen ia-chat-screen is-active">' +
@@ -85,14 +85,14 @@
               '<div class="ia-chat-compose"><button type="button" class="ls-ar-attach" aria-label="' + L("kraken.pdf anhängen", "Attach kraken.pdf") + '">📎</button><span class="ia-chat-placeholder">' + L("Nachricht", "Message") + '</span><span class="ia-chat-input"></span><i class="ia-chat-send" aria-hidden="true"></i></div>' +
             '</div>' +
           '</div></div>' +
-          '<div class="ls-ar-context"><div class="ls-ar-context-head"><span class="ls-ar-lock" aria-hidden="true">🔒</span>' + L("Unsichtbarer Kontext · nur Modell", "Invisible context · model only") + '</div><div class="ls-ar-context-body"></div></div>' +
+          '<div class="ls-ar-context" data-tip="' + L("Nur der ausgewählte Chunk liegt im Kontext; die Datei selbst sieht das Modell nicht.", "Only the selected chunk sits in the context; the model never sees the file itself.") + '"><div class="ls-ar-context-head"><span class="ls-ar-lock" aria-hidden="true">🔒</span>' + L("Unsichtbarer Kontext · nur Modell", "Invisible context · model only") + '</div><div class="ls-ar-context-body"></div></div>' +
         '</section>' +
       '</div>' +
-      '<div class="ls-ar-status" aria-live="polite"></div>' +
+      '<div class="ls-ar-status" aria-live="polite" data-tip="' + L("Erklärt, was im aktuellen Schritt im Hintergrund passiert.", "Explains what happens in the background at the current step.") + '"></div>' +
       '<div class="ls-ar-bottom">' +
-        '<button type="button" class="ls-ar-next"></button>' +
-        '<div class="ls-ar-loop"><span>' + L("Datei", "file") + '</span><i>→</i><span>' + L("Chunks", "chunks") + '</span><i>→</i><span>' + L("Winkel", "angle") + '</span><i>→</i><span>' + L("unsichtbarer Kontext", "invisible context") + '</span><i>→</i><span>' + L("Antwort", "answer") + '</span></div>' +
-        '<button type="button" class="ls-ar-reset">' + L("Zurücksetzen", "Reset") + '</button>' +
+        '<button type="button" class="ls-ar-next" data-tip="' + L("Geht einen Schritt weiter: lesen, chunken, bewerten, Kontext, Antwort.", "Moves one step ahead: read, chunk, score, context, answer.") + '"></button>' +
+        '<div class="ls-ar-loop" data-tip="' + L("Die Kette der Schritte; der aktive Schritt leuchtet.", "The chain of steps; the active step lights up.") + '"><span>' + L("Datei", "file") + '</span><i>→</i><span>' + L("Chunks", "chunks") + '</span><i>→</i><span>' + L("Winkel", "angle") + '</span><i>→</i><span>' + L("unsichtbarer Kontext", "invisible context") + '</span><i>→</i><span>' + L("Antwort", "answer") + '</span></div>' +
+        '<button type="button" class="ls-ar-reset" data-tip="' + L("Setzt die Datei, die Chunks und den Kontext zurück.", "Resets the file, the chunks, and the context.") + '">' + L("Zurücksetzen", "Reset") + '</button>' +
       '</div>';
     root.appendChild(el);
     var uploadBtns = el.querySelectorAll(".ls-ar-upload, .ls-ar-attach");
@@ -190,7 +190,7 @@
       bookEl.innerHTML = CHUNKS.map(function (c, i) {
         var reading = state.step === 0 && state.reading === i;
         var chunked = state.step >= 1;
-        return '<div class="ls-ar-book-chunk' + (reading ? " is-reading" : "") + (chunked ? " is-chunked" : "") + '"><b>' + c.id + '</b><p>' + esc(c.full) + '</p></div>';
+        return '<div class="ls-ar-book-chunk' + (reading ? " is-reading" : "") + (chunked ? " is-chunked" : "") + '" data-tip="' + L("Ein Absatz der Datei; der Rahmen zeigt, ob er schon als Chunk erkannt ist.", "One paragraph of the file; the frame shows whether it is already a chunk.") + '"><b>' + c.id + '</b><p>' + esc(c.full) + '</p></div>';
       }).join("");
     }
     function renderChunks() {
@@ -208,7 +208,7 @@
             : ev
               ? L("verworfen", "discarded")
               : L("wird gelesen", "reading");
-        return '<div class="ls-ar-snip' + (on ? " is-in" : "") + '">' +
+        return '<div class="ls-ar-snip' + (on ? " is-in" : "") + '" data-tip="' + L("Urteil, Winkel und Score eines Chunks; der Balken zeigt den Score.", "Verdict, angle, and score of a chunk; the bar shows the score.") + '">' +
           '<div class="ls-ar-snip-head"><b>' + c.id + '</b><span>' + L("kraken.pdf", "kraken.pdf") + '</span><em class="' + (ev ? "is-" + c.kind : "is-pending") + '">' + esc(verdict) + '</em></div>' +
           '<p>' + esc(c.short) + '</p>' +
           '<div class="ls-ar-score"><span class="ls-ar-track"><i class="' + (c.score >= 0.7 ? "is-high" : c.score >= 0.4 ? "is-mid" : "is-low") + '" style="width:' + pct + '%"></i></span><b class="ls-ar-angle">' + angle + '</b><span>' + score + '</span></div>' +
@@ -291,7 +291,7 @@
         return;
       }
       contextBody.innerHTML = selected.map(function (c) {
-        return '<div class="ls-ar-ctx-card"><div><b>' + c.id + '</b><span>' + L("kraken.pdf", "kraken.pdf") + '</span></div><p>' + esc(c.short) + '</p></div>';
+        return '<div class="ls-ar-ctx-card" data-tip="' + L("Dieser Chunk liegt im unsichtbaren Kontext und stützt die Antwort.", "This chunk sits in the invisible context and grounds the answer.") + '"><div><b>' + c.id + '</b><span>' + L("kraken.pdf", "kraken.pdf") + '</span></div><p>' + esc(c.short) + '</p></div>';
       }).join("");
     }
     function renderNext() {

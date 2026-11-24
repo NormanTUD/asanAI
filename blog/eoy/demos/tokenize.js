@@ -50,21 +50,21 @@
     el.innerHTML =
       '<div class="ls-tokenize-content">' +
       '<div class="ls-tokenize-split">' +
-        '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div>' +
-        '<div class="ls-tokenize-chips" aria-live="polite"></div>' +
-        '<div class="ls-tokenize-stats"></div>' +
+        '<div class="ls-scene-row ls-tokenize-samples" data-tip="' + (DE ? "Wähle ein Beispiel, um seine Zerlegung in Tokens zu sehen." : "Pick a sample to see how it splits into tokens.") + '"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div>' +
+        '<div class="ls-tokenize-chips" aria-live="polite" data-tip="' + (DE ? "Jedes Stück ist ein Token; die kleine Zahl ist seine Vokabular-ID." : "Each piece is a token; the small number is its vocabulary id.") + '"></div>' +
+        '<div class="ls-tokenize-stats" data-tip="' + (DE ? "Zählt Tokens, Teile, Subword-Splits und Leerzeichen in diesem Beispiel." : "Counts tokens, pieces, subword splits, and whitespace in this sample.") + '"></div>' +
       '</div>' +
       '<div class="ls-bpe" hidden>' +
-        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: Zeichen-BPE · einzelne Zeichen" : "Start: character-level BPE · individual characters") + '</span></div>' +
-        '<div class="ls-bpe-equation" aria-live="polite"></div>' +
-        '<div class="ls-bpe-corpus" aria-live="polite"></div>' +
-        '<div class="ls-bpe-stage" aria-live="polite"></div>' +
-        '<div class="ls-bpe-meters" aria-live="polite"></div>' +
-        '<div class="ls-bpe-counts" aria-live="polite"></div>' +
+        '<div class="ls-bpe-head" data-tip="' + (DE ? "BPE lernt häufige Zeichenpaare und ersetzt sie durch neue Symbole." : "BPE learns frequent character pairs and replaces them with new symbols.") + '"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: Zeichen-BPE · einzelne Zeichen" : "Start: character-level BPE · individual characters") + '</span></div>' +
+        '<div class="ls-bpe-equation" aria-live="polite" data-tip="' + (DE ? "Der Merge dieser Stufe: zwei Symbole werden zu einem." : "The merge chosen for this stage: two symbols become one.") + '"></div>' +
+        '<div class="ls-bpe-corpus" aria-live="polite" data-tip="' + (DE ? "Der kleine Korpus; hervorgehobene Symbole sind das nächste Paar." : "The tiny corpus; highlighted symbols are the pair merged next.") + '"></div>' +
+        '<div class="ls-bpe-stage" aria-live="polite" data-tip="' + (DE ? "Aktuelle Merge-Stufe und was der nächste Schritt zusammenführt." : "Current merge stage and what the next step will merge.") + '"></div>' +
+        '<div class="ls-bpe-meters" aria-live="polite" data-tip="' + (DE ? "Die Tokenzahl im Korpus sinkt, während das Vokabular wächst." : "Tokens in the corpus shrink as the vocabulary grows.") + '"></div>' +
+        '<div class="ls-bpe-counts" aria-live="polite" data-tip="' + (DE ? "Die häufigsten Symbolpaare, die noch im Korpus übrig sind." : "The most frequent symbol pairs still left in the corpus.") + '"></div>' +
         '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Diese Demo zeigt Zeichen-BPE; Byte-BPE (z. B. GPT-2) startet mit 256 Byte-Werten." : "Each merge replaces a frequent pair with a new symbol. The splits are learned from the training data: as much text as possible with as few tokens as possible. The word remains reconstructable from its symbols; the text is lossless. This demo shows character-level BPE; byte-level BPE (e.g. GPT-2) starts with 256 byte values.") + '</p>' +
       '</div>' +
       '</div>' +
-      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev" data-tip="' + (DE ? "Gehe einen Tokenisierungsschritt oder BPE-Merge zurück." : "Go back one tokenization step or BPE merge.") + '">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress" data-tip="' + (DE ? "Aktueller Schritt innerhalb dieser Demo." : "Current step within this demo.") + '"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next" data-tip="' + (DE ? "Gehe einen Tokenisierungsschritt oder BPE-Merge vor." : "Go forward one tokenization step or BPE merge.") + '">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var samples = el.querySelector(".ls-tokenize-samples");
     var chips = el.querySelector(".ls-tokenize-chips");
@@ -163,7 +163,7 @@
       sampleIndex = step;
       var value = examples[sampleKeys[sampleIndex]].value;
       chips.innerHTML = tokenize(value).map(function (tok, i) {
-        return '<span class="ls-token-chip' + (tok.sub ? " is-sub" : "") + (tok.space ? " is-space" : "") + '" style="--token-color:' + colors[i % colors.length] + '"><b>' + api.esc(tok.word) + '</b><small>id ' + tok.id + '</small></span>';
+        return '<span class="ls-token-chip' + (tok.sub ? " is-sub" : "") + (tok.space ? " is-space" : "") + '" data-tip="' + (DE ? "Ein Token-Stück; bei Subwords zerlegt das Modell ein Wort in mehrere Teile." : "A token piece; for subwords the model splits one word into several parts.") + '" style="--token-color:' + colors[i % colors.length] + '"><b>' + api.esc(tok.word) + '</b><small>id ' + tok.id + '</small></span>';
       }).join("");
       var tokens = tokenize(value);
       var spaces = tokens.filter(function (t) { return t.space; }).length;
@@ -189,7 +189,7 @@
         w.symbols.forEach(function (sym, idx) {
           sign += '<span class="ls-bpe-symbol' + (hi[idx] ? " is-pair" : "") + '">' + api.esc(sym) + '</span>';
         });
-        return '<div class="ls-bpe-word"><span class="ls-bpe-word-label">' + api.esc(w.word) + '</span><span class="ls-bpe-word-count">×' + w.count + '</span><span class="ls-bpe-symbols">' + sign + '</span></div>';
+        return '<div class="ls-bpe-word" data-tip="' + (DE ? "Ein Wort mit seiner Häufigkeit; die Symbole zeigen die aktuelle Zerlegung." : "A word with its frequency; the symbols show its current split.") + '"><span class="ls-bpe-word-label">' + api.esc(w.word) + '</span><span class="ls-bpe-word-count">×' + w.count + '</span><span class="ls-bpe-symbols">' + sign + '</span></div>';
       }).join("");
       var mergeText = st.merge
         ? (DE ? "Stufe " + step + ": „" + st.merge.a + "“ + „" + st.merge.b + "“ → „" + st.merge.a + st.merge.b + "“ (" + st.merge.count + "×)" : "Stage " + step + ": “" + st.merge.a + "” + “" + st.merge.b + "” → “" + st.merge.a + st.merge.b + "” (" + st.merge.count + "×)")
@@ -213,7 +213,7 @@
         meter(DE ? "Vokabular" : "vocabulary", vocabNow, vocabMax, C.sky);
       stageEl.innerHTML = '<b>' + api.esc(mergeText) + '</b><span>' + api.esc(nextText) + '</span>';
       countsEl.innerHTML = st.pairs.slice(0, 4).map(function (p) {
-        return '<span class="ls-bpe-pair"><b>' + api.esc(p.a) + '+' + api.esc(p.b) + '</b> ' + p.count + '×</span>';
+        return '<span class="ls-bpe-pair" data-tip="' + (DE ? "Ein Kandidatenpaar für den nächsten Merge mit seiner Häufigkeit." : "A candidate pair for the next merge with its frequency.") + '"><b>' + api.esc(p.a) + '+' + api.esc(p.b) + '</b> ' + p.count + '×</span>';
       }).join("");
       samples.querySelectorAll("[data-sample]").forEach(function (b) { b.classList.remove("is-on"); });
     }
@@ -261,6 +261,7 @@
       b.type = "button";
       b.className = "ls-chip";
       b.setAttribute("data-sample", key);
+      b.setAttribute("data-tip", DE ? "Zeigt die Token-Zerlegung für dieses Beispiel." : "Shows the token split for this sample.");
       b.textContent = examples[key].label;
       b.addEventListener("click", function () { mode = "split"; step = sampleKeys.indexOf(key); sampleIndex = step; render(); });
       samples.appendChild(b);

@@ -11,12 +11,12 @@
     var el = document.createElement("div");
     el.className = "ls-media-scene";
     el.innerHTML = '<div class="ls-media-tabs" role="tablist">' +
-        '<button type="button" class="ls-chip is-on" data-media="search" role="tab" aria-selected="true">' + (DE ? "Suche" : "Search") + '</button>' +
-        '<button type="button" class="ls-chip" data-media="chat" role="tab" aria-selected="false">' + (DE ? "Chat" : "Chat") + '</button>' +
-        '<button type="button" class="ls-chip" data-media="code" role="tab" aria-selected="false">Code</button>' +
+        '<button type="button" class="ls-chip is-on" data-media="search" role="tab" aria-selected="true" data-tip="' + (DE ? "Suche: klassische Treffer und eine KI-Antwort auf einem Bildschirm." : "Search: classic results and an AI answer on one screen.") + '">' + (DE ? "Suche" : "Search") + '</button>' +
+        '<button type="button" class="ls-chip" data-media="chat" role="tab" aria-selected="false" data-tip="' + (DE ? "Chat: dieselbe Frage als Dialog, Antwort Token für Token." : "Chat: the same question as a dialogue, answered token by token.") + '">' + (DE ? "Chat" : "Chat") + '</button>' +
+        '<button type="button" class="ls-chip" data-media="code" role="tab" aria-selected="false" data-tip="' + (DE ? "Code: ein Agent schreibt das Programm und startet es im Terminal." : "Code: an agent writes the program and runs it in the terminal.") + '">Code</button>' +
       '</div>' +
-      '<div class="ls-media-stage"><div class="ls-media-layer" data-layer="phone"></div><div class="ls-media-layer" data-layer="code" hidden></div></div>' +
-      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-media-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-media-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-media-next">' + (DE ? "Weiter" : "Next") + ' →</button></div>';
+      '<div class="ls-media-stage"><div class="ls-media-layer" data-layer="phone" data-tip="' + (DE ? "Telefonansicht für Suche und Chat." : "Phone view for search and chat.") + '"></div><div class="ls-media-layer" data-layer="code" hidden data-tip="' + (DE ? "Terminalansicht, in der der Agent das Skript ausführt." : "Terminal view where the agent runs the script.") + '"></div></div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-media-prev" data-tip="' + (DE ? "Einen Schritt zurück in der Folge Suche, Chat, Code." : "One step back in the search, chat, code sequence.") + '">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-media-progress" data-tip="' + (DE ? "Aktueller Schritt der Folge." : "Current step of the sequence.") + '"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-media-next" data-tip="' + (DE ? "Nächster Schritt; am Ende geht es zur nächsten Folie." : "Next step; at the end it moves to the next slide.") + '">' + (DE ? "Weiter" : "Next") + ' →</button></div>';
     root.appendChild(el);
     var phoneLayer = el.querySelector('[data-layer="phone"]');
     var codeLayer = el.querySelector('[data-layer="code"]');

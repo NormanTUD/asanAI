@@ -352,14 +352,14 @@
     el.className = "ls-hx-scene";
     el.innerHTML =
       '<div class="ls-hx-top">' +
-        '<div class="ls-hx-chips" role="tablist"></div>' +
-        '<div class="ls-hx-mode" role="group" aria-label="' + L("Antwortquelle", "Answer source") + '">' +
-          '<button type="button" class="is-on" data-hx-mode="memory">' + L("Aus dem Gedächtnis", "From memory") + '</button>' +
-          '<button type="button" data-hx-mode="rag">' + L("Mit RAG", "With RAG") + '</button>' +
+        '<div class="ls-hx-chips" role="tablist" data-tip="' + L("Jeder Typ zeigt eine andere Ursache und einen anderen Gegenhebel.", "Each type shows a different cause and a different countermeasure.") + '"></div>' +
+        '<div class="ls-hx-mode" role="group" aria-label="' + L("Antwortquelle", "Answer source") + '" data-tip="' + L("Wechselt zwischen Antwort aus dem Gedächtnis und Antwort mit abgerufener Quelle.", "Switches between an answer from memory and one with a retrieved source.") + '">' +
+          '<button type="button" class="is-on" data-hx-mode="memory" data-tip="' + L("Das Modell antwortet nur aus den Trainingsdaten.", "The model answers only from training data.") + '">' + L("Aus dem Gedächtnis", "From memory") + '</button>' +
+          '<button type="button" data-hx-mode="rag" data-tip="' + L("Eine abgerufene Quelle S1 liegt im Kontext.", "A retrieved source S1 is in the context.") + '">' + L("Mit RAG", "With RAG") + '</button>' +
         '</div>' +
       '</div>' +
       '<div class="ls-hx-hero">' +
-        '<div class="ls-hx-win">' +
+        '<div class="ls-hx-win" data-tip="' + L("Der Chat zeigt Antwort, Quelle und Sicherheit für den gewählten Typ.", "The chat shows the answer, source, and confidence for the selected type.") + '">' +
           '<div class="ls-hx-winbar">' +
             '<span class="ls-hx-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
             '<span class="ls-hx-addr">chat.example.com</span>' +
@@ -367,7 +367,7 @@
           '</div>' +
           '<div class="ls-hx-winbody">' +
             '<div class="ls-hx-chatcol">' +
-              '<div class="ls-hx-thread">' +
+              '<div class="ls-hx-thread" data-tip="' + L("Frage und Modellantwort; die Antwort zerfällt in prüfbare Aussagen.", "Question and model answer; the answer splits into checkable claims.") + '">' +
                 '<div class="ls-hx-msg is-user">' +
                   '<span class="ls-hx-role">' + L("Du", "You") + '</span>' +
                   '<div class="ls-hx-bubble ls-hx-bubble--user">' +
@@ -378,21 +378,21 @@
                   '<span class="ls-hx-role">LLM</span>' +
                   '<div class="ls-hx-bubble ls-hx-bubble--ai">' +
                     '<div class="ls-hx-answer-text"></div>' +
-                    '<div class="ls-hx-cite-card"></div>' +
-                    '<div class="ls-hx-conf"><span>' + L("Sicherheit", "Confidence") + '</span><span class="ls-hx-conf-track"><i></i></span><b class="ls-hx-conf-val"></b></div>' +
+                    '<div class="ls-hx-cite-card" data-tip="' + L("Die zitierte Quelle oder das Fehlen einer Quelle.", "The cited source or the absence of one.") + '"></div>' +
+                    '<div class="ls-hx-conf" data-tip="' + L("Wie sicher das Modell klingt, unabhängig davon, ob es recht hat.", "How confident the model sounds, regardless of whether it is right.") + '"><span>' + L("Sicherheit", "Confidence") + '</span><span class="ls-hx-conf-track"><i></i></span><b class="ls-hx-conf-val"></b></div>' +
                   '</div>' +
                 '</div>' +
               '</div>' +
-              '<div class="ls-hx-mechanism"></div>' +
+              '<div class="ls-hx-mechanism" data-tip="' + L("Der Mechanismus hinter diesem Halluzinationstyp.", "The mechanism behind this hallucination type.") + '"></div>' +
             '</div>' +
-            '<aside class="ls-hx-verifycol">' +
+            '<aside class="ls-hx-verifycol" data-tip="' + L("Die Quellenprüfung zerlegt die Antwort und vergleicht sie mit Belegen.", "The source check splits the answer and compares it with evidence.") + '">' +
               '<div class="ls-hx-verify-head"><span>' + L("Quellenprüfung", "Source check") + '</span><i class="ls-hx-verify-dot" aria-hidden="true"></i></div>' +
               '<div class="ls-hx-verify-body">' +
-                '<section class="ls-hx-panel ls-hx-source"><div class="ls-hx-panel-head"></div><div class="ls-hx-source-body"></div><p class="ls-hx-source-note"></p><p class="ls-hx-cite"></p></section>' +
-                '<div class="ls-hx-claims"></div>' +
-                '<div class="ls-hx-detail"></div>' +
-                '<div class="ls-hx-score"><span>FActScore</span><div class="ls-hx-scorebar"><i></i></div><b></b></div>' +
-                '<div class="ls-hx-verdict"></div>' +
+                '<section class="ls-hx-panel ls-hx-source" data-tip="' + L("Der Kontext oder die Trainingsdaten, gegen die geprüft wird.", "The context or training data that the answer is checked against.") + '"><div class="ls-hx-panel-head"></div><div class="ls-hx-source-body"></div><p class="ls-hx-source-note"></p><p class="ls-hx-cite"></p></section>' +
+                '<div class="ls-hx-claims" data-tip="' + L("Jede Zeile ist eine atomare Aussage mit Urteil; Klick zeigt den Beleg.", "Each row is an atomic claim with a verdict; click to see the evidence.") + '"></div>' +
+                '<div class="ls-hx-detail" data-tip="' + L("Belegstelle und Begründung für die gewählte Aussage.", "Evidence span and reason for the selected claim.") + '"></div>' +
+                '<div class="ls-hx-score" data-tip="' + L("FActScore: Anteil der Aussagen, die eine Quelle deckt.", "FActScore: share of claims that a source supports.") + '"><span>FActScore</span><div class="ls-hx-scorebar"><i></i></div><b></b></div>' +
+                '<div class="ls-hx-verdict" data-tip="' + L("Urteil zur aktuellen Schalterkombination.", "Verdict on the current switch combination.") + '"></div>' +
               '</div>' +
             '</aside>' +
           '</div>' +
@@ -400,17 +400,17 @@
       '</div>' +
       '<div class="ls-hx-lab-head"><b>' + L("Labor", "Lab") + '</b><span>' + L("Typen, Evidenz und Gegenmaßnahmen", "types, evidence, and countermeasures") + '</span></div>' +
       '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
-        '<div class="ls-hx-source-card is-weights" data-source-kind="weights"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
-        '<div class="ls-hx-source-claim"><span>' + L("Behauptung", "Claim") + '</span></div>' +
-        '<div class="ls-hx-source-card is-context" data-source-kind="context"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
+        '<div class="ls-hx-source-card is-weights" data-source-kind="weights" data-tip="' + L("Was das Modell aus dem Training mitbringt; hier sitzen Fakten und alte Zahlen.", "What the model brings from training; facts and old numbers live here.") + '"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
+        '<div class="ls-hx-source-claim" data-tip="' + L("Die geprüfte Aussage steht zwischen beiden möglichen Quellen.", "The checked claim sits between the two possible sources.") + '"><span>' + L("Behauptung", "Claim") + '</span></div>' +
+        '<div class="ls-hx-source-card is-context" data-source-kind="context" data-tip="' + L("Was im Prompt oder in der abgerufenen Quelle steht; RAG füllt diesen Teil.", "What is in the prompt or the retrieved source; RAG fills this side.") + '"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
       '</div>' +
       '<div class="ls-hx-bottom">' +
-        '<div class="ls-hx-risk"><div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("rechts = plausibel · oben = gedeckt", "right = plausible · top = grounded") + '</span></div><div class="ls-hx-risk-svg"></div></div>' +
-        '<div class="ls-hx-measures"></div>' +
+        '<div class="ls-hx-risk" data-tip="' + L("Die Position zeigt Plausibilität gegen Deckung; oben rechts liegt die Halluzinationszone.", "The position shows plausibility against grounding; the hallucination zone is top right.") + '"><div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("rechts = plausibel · oben = gedeckt", "right = plausible · top = grounded") + '</span></div><div class="ls-hx-risk-svg"></div></div>' +
+        '<div class="ls-hx-measures" data-tip="' + L("Gegenmaßnahmen: Klick schaltet eine Prüfung ein oder aus.", "Countermeasures: click to turn a check on or off.") + '"></div>' +
       '</div>' +
-      '<div class="ls-hx-takeaway"></div>' +
+      '<div class="ls-hx-takeaway" data-tip="' + L("Fasst zusammen, ob die gewählten Hebel hier helfen.", "Summarises whether the chosen levers help here.") + '"></div>' +
       '<details class="ls-hx-ragbox">' +
-        '<summary><span class="ls-hx-ragbox-mark">↗</span><b>' + L("RAG in 30 Sekunden", "RAG in 30 seconds") + '</b><span>' + L("So kommen passende Sätze in den Kontext", "How fitting sentences enter the context") + '</span></summary>' +
+        '<summary data-tip="' + L("Kurze Einführung: wie Retrieval passende Sätze in den Kontext legt.", "Short introduction: how retrieval puts fitting sentences into the context.") + '"><span class="ls-hx-ragbox-mark">↗</span><b>' + L("RAG in 30 Sekunden", "RAG in 30 seconds") + '</b><span>' + L("So kommen passende Sätze in den Kontext", "How fitting sentences enter the context") + '</span></summary>' +
         '<div class="ls-hx-ragbox-body">' +
           '<p class="ls-hx-rag-query"><b>' + L("Frage", "Question") + ':</b> ' + L("An welchem Fluss liegt Berlin?", "Which river is Berlin on?") + '</p>' +
           '<div class="ls-hx-rag-steps">' +
@@ -422,8 +422,8 @@
           '<div class="ls-hx-rag-lab">' +
             '<div class="ls-hx-rag-viz"><svg class="ls-hx-rag-svg" viewBox="0 0 280 160" role="img"></svg></div>' +
             '<div class="ls-hx-rag-side">' +
-              '<label class="ls-hx-rag-threshold"><span>' + L("Grenzwinkel", "Angle threshold") + '</span><input type="range" class="ls-hx-rag-range" min="10" max="85" step="1" value="35"><output class="ls-hx-rag-angle">35°</output></label>' +
-              '<div class="ls-hx-rag-context"><div class="ls-hx-rag-context-head"><b>' + L("Im Kontext", "In the context") + '</b><span class="ls-hx-rag-count"></span></div><div class="ls-hx-rag-list"></div></div>' +
+              '<label class="ls-hx-rag-threshold" data-tip="' + L("Grenzwinkel: kleinere Werte holen weniger, größere mehr Sätze.", "Angle threshold: smaller values retrieve fewer sentences, larger ones more.") + '"><span>' + L("Grenzwinkel", "Angle threshold") + '</span><input type="range" class="ls-hx-rag-range" min="10" max="85" step="1" value="35"><output class="ls-hx-rag-angle">35°</output></label>' +
+              '<div class="ls-hx-rag-context" data-tip="' + L("Diese Sätze liegen danach im Kontext des Modells.", "These sentences then sit in the model context.") + '"><div class="ls-hx-rag-context-head"><b>' + L("Im Kontext", "In the context") + '</b><span class="ls-hx-rag-count"></span></div><div class="ls-hx-rag-list"></div></div>' +
               '<p class="ls-hx-rag-hint" aria-live="polite"></p>' +
             '</div>' +
           '</div>' +
@@ -431,7 +431,7 @@
         '</div>' +
       '</details>' +
       '<details class="ls-hx-ragbox">' +
-        '<summary><span class="ls-hx-ragbox-mark">◎</span><b>' + L("Forschung: tiefer als die Typen", "Research: beyond the types") + '</b><span>' + L("Taxonomie, Konfabulation, Messung, Vermeidbarkeit", "taxonomy, confabulation, measurement, avoidability") + '</span></summary>' +
+        '<summary data-tip="' + L("Forschungskontext: Taxonomie, Konfabulation, Messung und Vermeidbarkeit.", "Research context: taxonomy, confabulation, measurement, and avoidability.") + '"><span class="ls-hx-ragbox-mark">◎</span><b>' + L("Forschung: tiefer als die Typen", "Research: beyond the types") + '</b><span>' + L("Taxonomie, Konfabulation, Messung, Vermeidbarkeit", "taxonomy, confabulation, measurement, avoidability") + '</span></summary>' +
         '<div class="ls-hx-ragbox-body">' +
           '<div class="ls-hx-research-grid">' +
             '<article class="ls-hx-research-card"><b>' + L("Zwei Achsen", "Two axes") + '</b><p>' + L("Faktizität: Aussage gegen Welt. Faithfulness: Aussage gegen Quelle, Anweisung oder eigenen Text. Intrinsic widerspricht der Quelle; extrinsic ist nicht gedeckt, kann aber wahr sein.", "Factuality: statement against the world. Faithfulness: statement against the source, instruction, or its own text. Intrinsic contradicts the source; extrinsic is unsupported but can be true.") + '</p><span>Huang et al. (2023); Ji et al. (2023)</span></article>' +
@@ -515,7 +515,7 @@
     }
     function renderChips() {
       chips.innerHTML = TYPES.map(function (t, i) {
-        return '<button type="button" class="ls-hx-chip is-' + t.color + (i === selected ? ' is-on' : '') + '" data-type="' + i + '" role="tab" aria-selected="' + (i === selected ? 'true' : 'false') + '">' +
+        return '<button type="button" class="ls-hx-chip is-' + t.color + (i === selected ? ' is-on' : '') + '" data-type="' + i + '" role="tab" aria-selected="' + (i === selected ? 'true' : 'false') + '" data-tip="' + L("Wechselt den Halluzinationstyp und damit Frage, Quelle und Prüfung.", "Switches the hallucination type and with it the question, source, and check.") + '">' +
           '<span class="ls-hx-chip-icon">' + esc(t.icon) + '</span><span>' + esc(t.label) + '</span></button>';
       }).join("");
       chips.querySelectorAll("[data-type]").forEach(function (b) {
@@ -561,7 +561,7 @@
       questionText.textContent = t.question;
       claimsEl.innerHTML = claims.map(function (c, i) {
         var s = STATUS[c.status] || STATUS.unverifiable;
-        return '<button type="button" class="ls-hx-claim ' + s.cls + (i === activeClaim ? ' is-on' : '') + '" data-claim="' + i + '" aria-pressed="' + (i === activeClaim ? 'true' : 'false') + '">' +
+        return '<button type="button" class="ls-hx-claim ' + s.cls + (i === activeClaim ? ' is-on' : '') + '" data-claim="' + i + '" aria-pressed="' + (i === activeClaim ? 'true' : 'false') + '" data-tip="' + L("Wählt diese Aussage; rechts erscheinen Beleg und Begründung.", "Selects this claim; evidence and reason appear on the right.") + '">' +
           '<span class="ls-hx-claim-icon">' + s.icon + '</span><span class="ls-hx-claim-text">' + esc(c.text) + '</span><span class="ls-hx-claim-status">' + s.label + '</span></button>';
       }).join("");
       claimsEl.querySelectorAll("[data-claim]").forEach(function (b) {
@@ -611,7 +611,7 @@
       measuresEl.innerHTML = MEASURES.map(function (m) {
         var s = t.measures[m.id] || { status: "none", note: "" };
         var ms = MSTATUS[s.status] || MSTATUS.none;
-        return '<button type="button" class="ls-hx-measure ' + ms.cls + (activeMeasure[m.id] ? ' is-on' : '') + '" data-measure="' + m.id + '" aria-pressed="' + (activeMeasure[m.id] ? 'true' : 'false') + '">' +
+        return '<button type="button" class="ls-hx-measure ' + ms.cls + (activeMeasure[m.id] ? ' is-on' : '') + '" data-measure="' + m.id + '" aria-pressed="' + (activeMeasure[m.id] ? 'true' : 'false') + '" data-tip="' + L("Schaltet diese Gegenmaßnahme an oder aus und zeigt, ob sie hier greift.", "Turns this countermeasure on or off and shows whether it works here.") + '">' +
           '<span class="ls-hx-measure-icon">' + esc(m.icon) + '</span><b>' + esc(m.label) + '</b>' +
           '<span class="ls-hx-measure-status">' + ms.label + '</span><p>' + esc(s.note) + '</p></button>';
       }).join("");

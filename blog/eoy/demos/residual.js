@@ -101,6 +101,8 @@
     var layerRow = el.querySelector(".ls-res-layers");
     var readout = el.querySelector(".ls-res-readout");
     var caption = el.querySelector(".ls-res-caption");
+    readout.setAttribute("data-tip", DE ? "Zeigt die Update-Gleichung und die gewählte Dimension." : "Shows the update equation and the selected dimension.");
+    caption.setAttribute("data-tip", DE ? "Ordnet die Ansicht didaktisch ein." : "Gives the didactic framing of the view.");
     var size = null;
     var phase = "notebook";
     var layer = 0;
@@ -659,6 +661,9 @@
         b.type = "button";
         b.className = "ls-res-phase" + (phase === p.id ? " is-on" : "");
         b.textContent = p.label;
+        b.setAttribute("data-tip", p.id === "notebook"
+          ? (DE ? "Wechselt zur Notizbuch-Ansicht." : "Switches to the notebook view.")
+          : (DE ? "Wechselt zur Stream-Ansicht." : "Switches to the stream view."));
         b.setAttribute("aria-pressed", phase === p.id ? "true" : "false");
         b.addEventListener("click", function () { setPhase(p.id); });
         phaseRow.appendChild(b);
@@ -672,6 +677,7 @@
         startChip.type = "button";
         startChip.className = "ls-chip" + (layer === 0 ? " is-on" : "");
         startChip.textContent = DE ? "Tokens" : "Tokens";
+        startChip.setAttribute("data-tip", DE ? "Zeigt nur die Tokens, bevor eine Schicht schreibt." : "Shows only the tokens before any layer writes.");
         startChip.style.borderLeft = "3px solid " + C.muted;
         startChip.setAttribute("aria-pressed", layer === 0 ? "true" : "false");
         startChip.addEventListener("click", function () {
@@ -688,6 +694,7 @@
           b.type = "button";
           b.className = "ls-chip" + (i + 1 === layer ? " is-on" : i + 1 < layer ? " is-done" : "");
           b.textContent = l.name;
+          b.setAttribute("data-tip", DE ? "Öffnet Schicht " + (i + 1) + " und zeigt, was sie im Notizbuch ergänzt." : "Opens layer " + (i + 1) + " and shows what it adds to the notebook.");
           b.style.borderLeft = "3px solid " + colors[i];
           b.setAttribute("aria-pressed", i + 1 === layer ? "true" : "false");
           b.addEventListener("click", function () {
@@ -706,6 +713,9 @@
           b.type = "button";
           b.className = "ls-chip" + (i === streamLayer ? " is-on" : i < streamLayer ? " is-done" : "");
           b.textContent = l;
+          b.setAttribute("data-tip", i === 0
+            ? (DE ? "Zeigt den Ausgangszustand des Streams." : "Shows the initial state of the stream.")
+            : (DE ? "Zeigt den Stream nach Attention und FFN " + i + "." : "Shows the stream after attention and FFN " + i + "."));
           b.style.borderLeft = "3px solid " + sc[i];
           b.setAttribute("aria-pressed", i === streamLayer ? "true" : "false");
           b.addEventListener("click", function () {
@@ -751,6 +761,9 @@
         ? (layer ? (DE ? "Notizbuch mit fünf Schichten. Schicht " + layer + " von 5." : "Notebook with five layers. Layer " + layer + " of 5.") : (DE ? "Notizbuch mit den Tokens und fünf Schichten. Noch keine Schicht geöffnet." : "Notebook with the tokens and five layers. No layer opened yet."))
         : (DE ? "Residual Stream x " + streamLayer + " mit sechs Dimensionen: getragen plus Attention plus FFN." : "Residual stream x " + streamLayer + " with six dimensions: carried plus attention plus FFN.");
       canvas.setAttribute("aria-label", aria);
+      canvas.setAttribute("data-tip", phase === "notebook"
+        ? (DE ? "Notizbuch: jede Schicht schreibt ihre Erkenntnis dazu, ohne zu löschen." : "Notebook: every layer adds its insight without deleting.")
+        : (DE ? "Stream: getragener Zustand plus Attention-Update plus FFN-Update." : "Stream: carried state plus attention update plus FFN update."));
     }
     function startNote() {
       noteProgress = reduced ? 1 : 0;

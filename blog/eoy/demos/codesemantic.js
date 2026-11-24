@@ -8,10 +8,10 @@
     var el = document.createElement("div");
     el.className = "ls-codesem-scene";
     el.innerHTML = '<div class="ls-codesem-top">' +
-      '<div class="ls-codesem-tasks" role="group" aria-label="' + (DE ? "Aufgabe" : "task") + '"></div>' +
-      '<div class="ls-codesem-compare" aria-live="polite"></div>' +
+      '<div class="ls-codesem-tasks" role="group" aria-label="' + (DE ? "Aufgabe" : "task") + '" data-tip="' + (DE ? "Die Aufgabe entscheidet, welche Merkmale als Signal zählen." : "The task decides which features count as signal.") + '"></div>' +
+      '<div class="ls-codesem-compare" aria-live="polite" data-tip="' + (DE ? "Zwei Beispiele zeigen, wie die aktuelle Aufgabe sie beurteilt." : "Two examples show how the current task judges them.") + '"></div>' +
       '</div>' +
-      '<div class="ls-codesem-stage"><canvas class="ls-codesem-canvas" role="img"></canvas><div class="ls-codesem-tip"></div></div>';
+      '<div class="ls-codesem-stage" data-tip="' + (DE ? "Links die Karten, rechts der fiktive Embedding-Raum mit den Zielknoten." : "Cards on the left, the fictional embedding space with target nodes on the right.") + '"><canvas class="ls-codesem-canvas" role="img" data-tip="' + (DE ? "Farbige Punkte wandern zu dem Knoten, der zur Aufgabe passt." : "Coloured points move to the node that fits the task.") + '"></canvas><div class="ls-codesem-tip"></div></div>';
     root.appendChild(el);
     var tasksEl = el.querySelector(".ls-codesem-tasks");
     var compareEl = el.querySelector(".ls-codesem-compare");
@@ -112,7 +112,7 @@
         var head = detail ? (DE ? "Kontext: Rechtschreibtest" : "context: spelling test") : (DE ? "Kontext: Bedeutung" : "context: meaning");
         var va = detail ? (DE ? "2 Fehler" : "2 errors") : (DE ? "gleiche Bedeutung" : "same meaning");
         var vb = detail ? (DE ? "korrekt" : "correct") : (DE ? "gleiche Bedeutung" : "same meaning");
-        compareEl.innerHTML = '<div class="cc-head">' + head + '</div>' +
+        compareEl.innerHTML = '<div class="cc-head" data-tip="' + (DE ? "Der Kontext, gegen den die beiden Beispiele beurteilt werden." : "The context against which the two examples are judged.") + '">' + head + '</div>' +
           '<div class="cc-row"><span class="cc-sentence">' + a + '</span><span class="cc-verdict ' + (detail ? "is-detail" : "is-good") + '">' + va + '</span></div>' +
           '<div class="cc-row"><span class="cc-sentence">' + b + '</span><span class="cc-verdict is-good">' + vb + '</span></div>';
       } else {
@@ -121,7 +121,7 @@
         var cHead = detail ? (DE ? "Kontext: In JS umschreiben" : "context: rewrite in JS") : (DE ? "Kontext: Algorithmus" : "context: algorithm");
         var cVa = detail ? (DE ? "muss nach JS" : "must become JS") : "Quicksort";
         var cVb = detail ? (DE ? "ist schon JS" : "is already JS") : "Quicksort";
-        compareEl.innerHTML = '<div class="cc-head">' + cHead + '</div>' +
+        compareEl.innerHTML = '<div class="cc-head" data-tip="' + (DE ? "Der Kontext, gegen den die beiden Codebeispiele beurteilt werden." : "The context against which the two code examples are judged.") + '">' + cHead + '</div>' +
           '<div class="cc-row"><code>' + ca + '</code><span class="cc-verdict ' + (detail ? "is-detail" : "is-good") + '">' + cVa + '</span></div>' +
           '<div class="cc-row"><code>' + cb + '</code><span class="cc-verdict is-good">' + cVb + '</span></div>';
       }
@@ -133,7 +133,7 @@
         : [{ id: "algorithm", label: DE ? "Algorithmus" : "algorithm" }, { id: "rewrite", label: DE ? "In JS umschreiben" : "rewrite in JS" }];
       tasksEl.innerHTML = '<span>' + (DE ? "Aufgabe:" : "task:") + '</span>' + opts.map(function (o) {
         var on = o.id === task;
-        return '<button type="button" class="ls-codesem-task' + (on ? " is-on" : "") + '" data-task="' + o.id + '" aria-pressed="' + (on ? "true" : "false") + '">' + api.esc(o.label) + '</button>';
+        return '<button type="button" class="ls-codesem-task' + (on ? " is-on" : "") + '" data-task="' + o.id + '" aria-pressed="' + (on ? "true" : "false") + '" data-tip="' + (DE ? "Wechselt die Aufgabe und damit, was als Signal zählt." : "Switches the task and with it what counts as signal.") + '">' + api.esc(o.label) + '</button>';
       }).join("");
       tasksEl.querySelectorAll("[data-task]").forEach(function (btn) {
         btn.addEventListener("click", function () {

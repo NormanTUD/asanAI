@@ -25,14 +25,14 @@
       '<div class="ls-qkv-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-qkv-tip" hidden></div></div>' +
       '<div class="ls-qkv-vectors" aria-hidden="true"></div>' +
       '<div class="ls-qkv-controls">' +
-        '<div class="ls-qkv-headrow"><button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
-        '<button type="button" class="ls-chip" data-head="1">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button></div>' +
-        '<div class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="graph">' + (DE ? "Graph" : "Graph") + '</button><button type="button" class="ls-chip" data-view="simplex">Simplex</button></div>' +
-        '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
+        '<div class="ls-qkv-headrow"><button type="button" class="ls-chip is-on" data-head="0" data-tip-de="Head 1: fragt nach dem, worauf sich es bezieht." data-tip-en="Head 1: asks what it refers to.">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
+        '<button type="button" class="ls-chip" data-head="1" data-tip-de="Head 2: fragt nach dem Ort." data-tip-en="Head 2: asks about the place.">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button></div>' +
+        '<div class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs" data-tip-de="Zeigt die Attention als gewichtete Bögen zwischen den Tokens." data-tip-en="Shows attention as weighted arcs between the tokens.">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="graph" data-tip-de="Zeigt alle Tokens im Kreis; Kanten sind Attention-Gewichte." data-tip-en="Shows all tokens in a circle; edges are attention weights.">' + (DE ? "Graph" : "Graph") + '</button><button type="button" class="ls-chip" data-view="simplex" data-tip-de="Zeigt die Gewichte als Punkt im Dreieck der drei Values." data-tip-en="Shows the weights as a point in the triangle of the three values.">Simplex</button></div>' +
+        '<span class="ls-qkv-query" data-tip-de="Die Query ist das Token, dessen Aufmerksamkeit verteilt wird." data-tip-en="The query is the token whose attention is distributed.">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
       '</div>' +
-      '<div class="ls-qkv-percent"></div>' +
-      '<div class="ls-qkv-readout" aria-live="polite"></div>' +
-      '<div class="ls-scene-formula ls-qkv-formula"><div class="ls-math"></div></div>';
+      '<div class="ls-qkv-percent" data-tip-de="Zeigt den Attention-Anteil auf das gewählte Token." data-tip-en="Shows the attention share on the selected token."></div>' +
+      '<div class="ls-qkv-readout" aria-live="polite" data-tip-de="Nennt die Mischung der Values und die Head-Ausgabe." data-tip-en="Names the mixture of values and the head output."></div>' +
+      '<div class="ls-scene-formula ls-qkv-formula" data-tip-de="Formel: Q und K bestimmen die Gewichte, die Values werden gemischt, W_O bildet die Head-Ausgabe." data-tip-en="Formula: Q and K set the weights, the values are mixed, W_O forms the head output."><div class="ls-math"></div></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-qkv-stage");
     var canvas = el.querySelector("canvas");
@@ -41,6 +41,7 @@
     var percentEl = el.querySelector(".ls-qkv-percent");
     var queryEl = el.querySelector(".ls-qkv-query b");
     var formulaEl = el.querySelector(".ls-qkv-formula .ls-math");
+    canvas.setAttribute("data-tip", DE ? "Zeigt je nach Ansicht Bögen, Graph oder Simplex der Attention." : "Shows attention as arcs, graph or simplex depending on the view.");
     var pipelineTex = DE
       ? "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K gelernt}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{Gewichte }\\alpha}}_{\\text{bestimmt den Punkt im Gewichts-Simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V gelernt}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\underbrace{\\alpha_{ij}}_{\\text{Gewicht}}\\underbrace{v_j}_{\\text{Value}}}_{\\text{gewichtete Mischung der Values}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{Head-Ausgabe}}\\end{aligned}"
       : "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K learned}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{weights }\\alpha}}_{\\text{sets the point in the weight simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V learned}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\underbrace{\\alpha_{ij}}_{\\text{weight}}\\underbrace{v_j}_{\\text{value}}}_{\\text{weighted mixture of the values}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{head output}}\\end{aligned}";
@@ -86,7 +87,7 @@
       var vd = VECTOR_DATA[head];
       var rows = [["q", vd.q, "green"], ["k", vd.k, "sky"], ["v", vd.v, "gold"]];
       vectorsEl.innerHTML = rows.map(function (row) {
-        return '<div class="ls-qkv-vec ls-qkv-vec--' + row[2] + '"><span>' + row[0] + '</span><span class="ls-qkv-vbars">' +
+        return '<div class="ls-qkv-vec ls-qkv-vec--' + row[2] + '" data-tip="' + (DE ? "Zeigt den gelernten " + row[0] + "-Vektor des aktiven Heads." : "Shows the learned " + row[0] + " vector of the active head.") + '"><span>' + row[0] + '</span><span class="ls-qkv-vbars">' +
           row[1].map(function (v) { return '<i style="--v:' + v.toFixed(2) + '"></i>'; }).join("") +
         '</span></div>';
       }).join("");

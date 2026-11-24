@@ -34,26 +34,26 @@
     el.innerHTML =
       '<div class="ls-code-frame"><div class="ls-code-screen">' +
         '<div class="ls-code-desktop" style="background-image:url(\'' + (api.asset ? api.asset("opera.jpg") : "opera.jpg") + '\')">' +
-          '<div class="ls-code-window ls-code-window--agent">' +
+          '<div class="ls-code-window ls-code-window--agent" data-tip="' + (DE ? "Der Agent schreibt das Python-Programm Zeichen für Zeichen." : "The agent writes the Python program character by character.") + '">' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
-            '<div class="ls-code-chat">' +
+            '<div class="ls-code-chat" data-tip="' + (DE ? "Chat mit dem Agenten: Auftrag, Antwort und Ausführungshinweis." : "Chat with the agent: task, reply, and run note.") + '">' +
               '<div class="ls-code-msg is-user ls-code-user-msg" hidden><span class="ls-code-user-text"></span></div>' +
               '<div class="ls-code-msg is-agent" hidden><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe " + program + " im Terminal aus." : "I'll run " + program + " in the terminal.") + '</div>' +
             '</div>' +
-            '<div class="ls-code-filehead">' + program + '</div>' +
-            '<pre class="ls-code-body"><code></code></pre>' +
-            '<div class="ls-code-agent-prompt"><b>$</b><span></span></div>' +
+            '<div class="ls-code-filehead" data-tip="' + (DE ? "Der Dateiname des Skripts, das der Agent schreibt." : "The file name of the script the agent writes.") + '">' + program + '</div>' +
+            '<pre class="ls-code-body" data-tip="' + (DE ? "Das Programm mit Syntaxfarben; es lädt ein Modell und bewertet einen Text." : "The program with syntax colours; it loads a model and scores a text.") + '"><code></code></pre>' +
+            '<div class="ls-code-agent-prompt" data-tip="' + (DE ? "Der Prompt, in dem der Auftrag getippt wird." : "The prompt where the task is typed.") + '"><b>$</b><span></span></div>' +
           '</div>' +
-          '<div class="ls-code-window ls-code-window--run" hidden>' +
+          '<div class="ls-code-window ls-code-window--run" hidden data-tip="' + (DE ? "Das Terminal führt das Skript aus und zeigt die Ausgabe." : "The terminal runs the script and shows the output.") + '">' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div>' +
-            '<div class="ls-code-term"><b class="ls-code-command"></b><span></span></div>' +
+            '<div class="ls-code-term"><b class="ls-code-command" data-tip="' + (DE ? "Der Befehl, der das Python-Programm startet." : "The command that starts the Python program.") + '"></b><span data-tip="' + (DE ? "Ausgabe des Modells: Label und Konfidenz pro Klasse." : "Model output: label and confidence per class.") + '"></span></div>' +
           '</div>' +
-          '<div class="ls-code-startmenu" hidden><button type="button" data-start="agent">Agent</button><button type="button" data-start="run">Terminal</button><div class="ls-code-startjoke">' + (DE ? "Keine Updates verfügbar. Alles läuft lokal." : "No updates available. Everything runs locally.") + '</div></div>' +
-          '<div class="ls-code-taskbar"><button type="button" class="ls-code-start" aria-label="Start">▦</button><button type="button" class="ls-code-task is-on" data-task="agent">Agent</button><button type="button" class="ls-code-task" data-task="run">Terminal</button><span class="ls-code-clock">14:32</span></div>' +
+          '<div class="ls-code-startmenu" hidden><button type="button" data-start="agent" data-tip="' + (DE ? "Öffnet das Agentenfenster mit dem Code." : "Opens the agent window with the code.") + '">Agent</button><button type="button" data-start="run" data-tip="' + (DE ? "Öffnet das Terminalfenster mit der Ausführung." : "Opens the terminal window with the run.") + '">Terminal</button><div class="ls-code-startjoke">' + (DE ? "Keine Updates verfügbar. Alles läuft lokal." : "No updates available. Everything runs locally.") + '</div></div>' +
+          '<div class="ls-code-taskbar"><button type="button" class="ls-code-start" aria-label="Start" data-tip="' + (DE ? "Menü zum Umschalten zwischen Agent und Terminal." : "Menu to switch between agent and terminal.") + '">▦</button><button type="button" class="ls-code-task is-on" data-task="agent" data-tip="' + (DE ? "Bringt das Agentenfenster nach vorn." : "Brings the agent window to the front.") + '">Agent</button><button type="button" class="ls-code-task" data-task="run" data-tip="' + (DE ? "Bringt das Terminalfenster nach vorn." : "Brings the terminal window to the front.") + '">Terminal</button><span class="ls-code-clock">14:32</span></div>' +
         '</div>' +
       '</div></div>' +
-      '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay" disabled>' + (DE ? "Weiter" : "Next") + '</button>';
+      '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay" disabled data-tip="' + (DE ? "Startet das Skript oder wiederholt die ganze Szene." : "Runs the script or replays the whole scene.") + '">' + (DE ? "Weiter" : "Next") + '</button>';
     root.appendChild(el);
     var codeEl = el.querySelector(".ls-code-body code");
     var commandEl = el.querySelector(".ls-code-command");

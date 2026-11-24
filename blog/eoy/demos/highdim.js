@@ -32,20 +32,20 @@
     var colgroup = '<colgroup><col class="ls-highdim-token-col">';
     for (var c = 0; c < cols; c++) colgroup += "<col>";
     colgroup += '<col class="ls-highdim-ellipsis-col"></colgroup>';
-    var head = '<tr><th></th>';
+    var head = '<tr data-tip="' + (DE ? "Jede Spalte ist eine Embedding-Dimension; die Zeile zeigt die ersten Werte." : "Each column is one embedding dimension; the row shows the first values.") + '"><th></th>';
     for (var j = 0; j < cols; j++) head += '<th>d' + (j + 1) + '</th>';
     head += '<th class="ls-highdim-ellipsis">…</th></tr>';
     var body = tokens.map(function (tok, ti) {
       var cells = '';
       for (var k = 0; k < cols; k++) cells += '<td>' + value(ti, k) + '</td>';
-      return '<tr data-token="' + ti + '"' + (ti === selected ? ' class="is-on"' : '') + '><th><span class="ls-highdim-token">' + esc(tokenLabel(tok.t)) + '</span><small>' + tok.id + '</small></th>' + cells + '<td class="ls-highdim-ellipsis">…</td></tr>';
+      return '<tr data-token="' + ti + '" data-tip="' + (DE ? "Klicke ein Token, um seine Vektorwerte oben zu lesen." : "Click a token to read its vector values in the panel above.") + '"' + (ti === selected ? ' class="is-on"' : '') + '><th><span class="ls-highdim-token">' + esc(tokenLabel(tok.t)) + '</span><small>' + tok.id + '</small></th>' + cells + '<td class="ls-highdim-ellipsis">…</td></tr>';
     }).join("");
-    var more = '<tr class="is-ellipsis"><td colspan="' + (cols + 2) + '">…</td></tr>';
+    var more = '<tr class="is-ellipsis" data-tip="' + (DE ? "Die Tabelle geht weiter; nur ein kleiner Ausschnitt des Vektors ist zu sehen." : "The table continues; only a small slice of the vector is shown.") + '"><td colspan="' + (cols + 2) + '">…</td></tr>';
     var el = document.createElement("div");
     el.className = "ls-highdim-scene";
     el.innerHTML =
-      '<div class="ls-highdim-selected" aria-live="polite"></div>' +
-      '<div class="ls-highdim-scroll"><table>' + colgroup + '<thead>' + head + '</thead><tbody>' + body + more + '</tbody></table></div>';
+      '<div class="ls-highdim-selected" aria-live="polite" data-tip="' + (DE ? "Zeigt das gewählte Token, seine Vokabular-ID und die ersten Dimensionswerte." : "Shows the selected token, its vocabulary id, and its first dimension values.") + '"></div>' +
+      '<div class="ls-highdim-scroll" data-tip="' + (DE ? "Scrolle horizontal, um mehr der 4096 Dimensionen zu sehen." : "Scroll horizontally to see more of the 4096 dimensions.") + '"><table>' + colgroup + '<thead>' + head + '</thead><tbody>' + body + more + '</tbody></table></div>';
     root.appendChild(el);
     var selectedEl = el.querySelector(".ls-highdim-selected");
     function showSelected(ti) {

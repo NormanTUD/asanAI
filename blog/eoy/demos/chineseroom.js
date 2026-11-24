@@ -15,19 +15,19 @@
         "Du verstehst die Zeichen nicht. Wenn du zufällig Chinesisch kannst, tue so, als könntest du es nicht.",
         "You do not understand the characters. If you happen to know Chinese, pretend you do not."
       ) + '</p>' +
-      '<div class="ls-cr2-room">' +
+      '<div class="ls-cr2-room" data-tip="' + T("Das chinesische Zimmer: Du bekommst Zeichen durch den Schlitz und antwortest nur nach dem Regelbuch.", "The Chinese room: characters arrive through the slot and you answer only from the rulebook.") + '">' +
         '<div class="ls-cr2-wall" aria-hidden="true"></div>' +
         '<div class="ls-cr2-window" aria-hidden="true"><span class="ls-cr2-stars"></span><span class="ls-cr2-moon" aria-hidden="true">🌕</span></div>' +
-        '<div class="ls-cr2-slot"><span class="ls-cr2-slot-label">' + T("Einwurf", "Slot") + '</span><span class="ls-cr2-slot-slit" aria-hidden="true"></span></div>' +
+        '<div class="ls-cr2-slot" data-tip="' + T("Hier kommen die Zeichen von außen herein; du siehst nur die Formen, nicht ihre Bedeutung.", "Characters arrive here from outside; you see only their shapes, not their meaning.") + '"><span class="ls-cr2-slot-label">' + T("Einwurf", "Slot") + '</span><span class="ls-cr2-slot-slit" aria-hidden="true"></span></div>' +
         '<div class="ls-cr2-lamp" aria-hidden="true"><span class="ls-cr2-cord"></span><span class="ls-cr2-shade"></span><span class="ls-cr2-light"></span></div>' +
         '<div class="ls-cr2-floor" aria-hidden="true"></div>' +
         '<div class="ls-cr2-desk">' +
-          '<div class="ls-cr2-slip"></div>' +
-          '<div class="ls-cr2-book"></div>' +
+          '<div class="ls-cr2-slip" data-tip="' + T("Die aktuelle Eingabe, die du im Regelbuch nachschlägst.", "The current input that you look up in the rulebook.") + '"></div>' +
+          '<div class="ls-cr2-book" data-tip="' + T("Das Regelbuch listet Paare aus Eingabe und Ausgabe; Blättern ersetzt das Verstehen.", "The rulebook lists input-output pairs; flipping pages replaces understanding.") + '"></div>' +
           '<div class="ls-cr2-options" role="group" aria-label="' + T("Antwort wählen", "Choose an answer") + '"></div>' +
           '<p class="ls-cr2-feedback" aria-live="polite"></p>' +
         '</div>' +
-        '<div class="ls-cr2-hud"></div>' +
+        '<div class="ls-cr2-hud" data-tip="' + T("Runde und Punktestand: Punkte zählen befolgte Regeln, nicht Einsicht.", "Round and score: points count rules followed, not insight.") + '"></div>' +
         '<div class="ls-cr2-reveal" aria-hidden="true"><div class="ls-cr2-reveal-card"></div></div>' +
       '</div>';
     root.appendChild(el);
@@ -93,9 +93,9 @@
 
     function renderHud() {
       hud.innerHTML =
-        '<span class="ls-cr2-hud-chip"><span class="ls-cr2-hud-dot" aria-hidden="true"></span><span>' +
+        '<span class="ls-cr2-hud-chip" data-tip="' + T("Fortschritt durch die drei Aufgabenrunden.", "Progress through the three task rounds.") + '"><span class="ls-cr2-hud-dot" aria-hidden="true"></span><span>' +
           T("Runde", "Round") + ' <b>' + (idx + 1) + ' / ' + rounds.length + '</b></span></span>' +
-        '<span class="ls-cr2-hud-chip"><span>' + T("Regeln befolgt", "Rules followed") + ' <b>' + score + '</b></span></span>';
+        '<span class="ls-cr2-hud-chip" data-tip="' + T("Wie oft du die passende Regel gefunden hast.", "How often you found the matching rule.") + '"><span>' + T("Regeln befolgt", "Rules followed") + ' <b>' + score + '</b></span></span>';
     }
 
     function rulePageHTML(p) {
@@ -126,8 +126,8 @@
           '<div class="ls-cr2-book-page ls-cr2-book-page--right" data-cr2-right>' + right +
             '<span class="ls-cr2-page-no">' + (page + 2) + '</span></div>' +
           '<span class="ls-cr2-book-spine" aria-hidden="true"></span>' +
-          '<button type="button" class="ls-cr2-book-turn ls-cr2-book-turn--prev" data-cr2-turn="-1" aria-label="' + T("Vorherige Seite", "Previous page") + '"' + (page <= 0 ? " disabled" : "") + '>‹</button>' +
-          '<button type="button" class="ls-cr2-book-turn ls-cr2-book-turn--next" data-cr2-turn="1" aria-label="' + T("Nächste Seite", "Next page") + '"' + (page >= RULES.length - 1 ? " disabled" : "") + '>' + T("Seite", "Page") + ' ›</button>' +
+          '<button type="button" class="ls-cr2-book-turn ls-cr2-book-turn--prev" data-cr2-turn="-1" data-tip="' + T("Eine Regel zurückblättern.", "Flip back one rule.") + '" aria-label="' + T("Vorherige Seite", "Previous page") + '"' + (page <= 0 ? " disabled" : "") + '>‹</button>' +
+          '<button type="button" class="ls-cr2-book-turn ls-cr2-book-turn--next" data-cr2-turn="1" data-tip="' + T("Eine Regel weiterblättern, bis die Eingabe passt.", "Flip forward until the input matches.") + '" aria-label="' + T("Nächste Seite", "Next page") + '"' + (page >= RULES.length - 1 ? " disabled" : "") + '>' + T("Seite", "Page") + ' ›</button>' +
         '</div>';
     }
 
@@ -182,6 +182,7 @@
         b.className = "ls-cr2-choice";
         b.lang = "zh";
         b.textContent = opt;
+        b.setAttribute("data-tip", T("Wähle die Ausgabe, die im Regelbuch zu dieser Eingabe steht.", "Pick the output that the rulebook gives for this input."));
         b.disabled = busy;
         b.addEventListener("click", function () { choose(opt, b); });
         optionsEl.appendChild(b);
@@ -332,7 +333,7 @@
     function showReveal() {
       done = true;
       var rows = rounds.map(function (r) {
-        return '<tr><td class="zh" lang="zh">' + esc(r.input) + '</td>' +
+        return '<tr data-tip="' + T("Zeile aus dem Regelbuch: Eingabe, Ausgabe und die Bedeutung auf Deutsch.", "A rulebook row: input, output, and the meaning in English.") + '"><td class="zh" lang="zh">' + esc(r.input) + '</td>' +
           '<td class="zh" lang="zh">' + esc(r.answer) + '</td>' +
           '<td class="gloss">' + esc(T(r.de, r.en)) + '</td></tr>';
       }).join("");
@@ -341,7 +342,7 @@
         '<h2 class="ls-cr2-reveal-title">' + T("Von außen sah es aus wie Verstehen.", "From the outside it looked like understanding.") + '</h2>' +
         '<table><tbody>' + rows + '</tbody></table>' +
         '<p class="ls-cr2-reveal-note">' + T("Innen hast du Zeichen nach Regeln ersetzt. Searle (1980) nennt das den Unterschied zwischen Symbolmanipulation und Bedeutung. Ob das ganze System versteht, ist umstritten.", "Inside, you replaced symbols by rules. Searle (1980) calls this the difference between symbol manipulation and meaning. Whether the whole system understands is disputed.") + '</p>' +
-        '<div class="ls-cr2-reveal-actions"><button type="button" class="ls-btn ls-btn--tiny" data-cr2-restart>' + T("Neu starten", "Restart") + '</button></div>';
+        '<div class="ls-cr2-reveal-actions"><button type="button" class="ls-btn ls-btn--tiny" data-cr2-restart data-tip="' + T("Das Zimmer mit neuen Aufgaben erneut durchlaufen.", "Run the room again with fresh tasks.") + '">' + T("Neu starten", "Restart") + '</button></div>';
       reveal.classList.add("is-visible");
       reveal.setAttribute("aria-hidden", "false");
       var restart = revealCard.querySelector("[data-cr2-restart]");

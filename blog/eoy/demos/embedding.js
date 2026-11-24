@@ -11,10 +11,10 @@
     var scene = document.createElement("div");
     scene.className = "ls-embed-scene";
     scene.innerHTML =
-      '<div class="ls-embed-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-embed-mini-table" hidden></div><div class="ls-embed-highdim" hidden></div></div>' +
+      '<div class="ls-embed-stage" data-tip="' + (DE ? "Klicke Wörter an und ziehe im 3D-Modus, um die Perspektive zu drehen." : "Click words and drag in 3D mode to rotate the view.") + '"><canvas class="ls-canvas" role="img" data-tip="' + (DE ? "Interaktiver Embedding-Raum; die Formel unten zeigt die aktuelle Rechnung." : "Interactive embedding space; the formula below shows the current calculation.") + '"></canvas><div class="ls-embed-mini-table" hidden></div><div class="ls-embed-highdim" hidden></div></div>' +
       '<div class="ls-scene-controls"></div>' +
       '<div class="ls-scene-readout ls-sr-only" aria-live="polite"></div>' +
-      '<div class="ls-scene-formula"><div class="ls-math" data-tex=""></div></div>';
+      '<div class="ls-scene-formula" data-tip="' + (DE ? "Die aktuelle Vektorrechnung als Formel." : "The current vector calculation as math.") + '"><div class="ls-math" data-tex=""></div></div>';
     root.appendChild(scene);
     var stage = scene.querySelector(".ls-embed-stage");
     var canvas = scene.querySelector("canvas");
@@ -80,11 +80,12 @@
         var x = ((w.v[0] - 12.5) / 15).toFixed(2);
         var y = (w.v[1] / 22).toFixed(2);
         var z = w.z < -0.5 ? (DE ? "Tier" : "animal") : w.z > 0.5 ? (DE ? "Fiktion" : "fiction") : (DE ? "Mensch" : "human");
-        return '<tr data-word="' + id + '" tabindex="0" aria-selected="false"><th>' + api.esc(wordLabel(id)) + '</th><td>' + x + '</td><td>' + y + '</td><td>' + z + '</td></tr>';
+        return '<tr data-word="' + id + '" tabindex="0" aria-selected="false" data-tip="' + (DE ? "Klicke, um dieses Wort im Raum auszuwählen." : "Click to select this word in the space.") + '"><th>' + api.esc(wordLabel(id)) + '</th><td>' + x + '</td><td>' + y + '</td><td>' + z + '</td></tr>';
       }).join("");
       miniTable.setAttribute("role", "group");
       miniTable.setAttribute("aria-label", DE ? "Tabelle der drei Dimensionen" : "Table of the three dimensions");
-      miniTable.innerHTML = '<div class="ls-embed-mini-head">' + (DE ? "Beispiele in den drei Dimensionen" : "Examples in the three dimensions") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+      miniTable.setAttribute("data-tip", DE ? "Eine lesbare Tabelle der konstruierten 3D-Wortvektoren." : "A readable table of the constructed 3D word vectors.");
+      miniTable.innerHTML = '<div class="ls-embed-mini-head" data-tip="' + (DE ? "Die drei Achsen Macht, Geschlecht und Kategorie als Spalten." : "The three axes power, gender, and category as columns.") + '">' + (DE ? "Beispiele in den drei Dimensionen" : "Examples in the three dimensions") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
     }
     function syncMiniSelection() {
       if (!miniTable) return;
@@ -116,12 +117,12 @@
       var body = tokens.map(function (tok, ti) {
         var cells = "";
         for (var k = 0; k < cols; k++) cells += "<td>" + value(ti, k) + "</td>";
-        return "<tr><th>" + api.esc(tok) + "</th>" + cells + "<td>…</td></tr>";
+        return "<tr data-tip=\"" + (DE ? "Ein Token-Vektor über die gezeigten Dimensionen." : "One token's vector values across the shown dimensions.") + "\"><th>" + api.esc(tok) + "</th>" + cells + "<td>…</td></tr>";
       }).join("");
       highdimEl.innerHTML =
-        '<div class="ls-highdim-note">' + (DE ? "Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Vektor, jede Spalte eine Dimension." : "Slice: 16 of 4096 dimensions. Each row is a vector, each column a dimension.") + '</div>' +
-        '<div class="ls-highdim-scroll"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
-        '<p class="ls-highdim-foot">' + (DE ? "Auch wenn wir uns 4096 Dimensionen nicht mehr vorstellen können: Es gelten dieselben Regeln. Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter. Nur die Zahl der Koordinaten wächst, und hier passen viel mehr unabhängige Beziehungen hinein als in zwei oder drei Dimensionen." : "Even though we cannot picture 4096 dimensions, the same rules apply. Difference, angle, and matrix multiplication still work coordinate by coordinate. Only the number of coordinates grows, and there is room for many more independent relations than in two or three dimensions.") + '</p>';
+        '<div class="ls-highdim-note" data-tip="' + (DE ? "Nur ein Ausschnitt; das echte Embedding hat 4096 Dimensionen." : "Only a slice; the real embedding has 4096 dimensions.") + '">' + (DE ? "Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Vektor, jede Spalte eine Dimension." : "Slice: 16 of 4096 dimensions. Each row is a vector, each column a dimension.") + '</div>' +
+        '<div class="ls-highdim-scroll" data-tip="' + (DE ? "Scrolle horizontal, um weitere Dimensionen zu sehen." : "Scroll horizontally to see more dimensions.") + '"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
+        '<p class="ls-highdim-foot" data-tip="' + (DE ? "Dieselben Rechenregeln gelten in jeder Dimension, nur mit mehr Koordinaten." : "The same arithmetic works in every dimension, just with more coordinates.") + '">' + (DE ? "Auch wenn wir uns 4096 Dimensionen nicht mehr vorstellen können: Es gelten dieselben Regeln. Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter. Nur die Zahl der Koordinaten wächst, und hier passen viel mehr unabhängige Beziehungen hinein als in zwei oder drei Dimensionen." : "Even though we cannot picture 4096 dimensions, the same rules apply. Difference, angle, and matrix multiplication still work coordinate by coordinate. Only the number of coordinates grows, and there is room for many more independent relations than in two or three dimensions.") + '</p>';
     }
     function tempById(id) {
       for (var i = 0; i < TEMP.length; i++) if (TEMP[i].id === id) return TEMP[i];
@@ -894,15 +895,19 @@
       controls.innerHTML = "";
       var row1 = document.createElement("div");
       row1.className = "ls-scene-row";
-      row1.appendChild(makeChip(DE ? "Temperatur" : "Temperature", st.mode === "temperature", function () {
+      var tempChip = makeChip(DE ? "Temperatur" : "Temperature", st.mode === "temperature", function () {
         st.mode = "temperature"; st.group = null; st.showHighdim = false; syncControls(); draw(); ensureLoop();
-      }));
-      row1.appendChild(makeChip(DE ? "Bedeutung" : "Meaning", st.mode === "space", function () {
+      });
+      tempChip.setAttribute("data-tip", DE ? "Zeigt die Temperaturlinie und die Addition zweier Temperaturwerte." : "Show the temperature line and the addition of two temperature values.");
+      row1.appendChild(tempChip);
+      var meaningChip = makeChip(DE ? "Bedeutung" : "Meaning", st.mode === "space", function () {
         st.mode = "space"; syncControls(); draw(); ensureLoop();
-      }));
+      });
+      meaningChip.setAttribute("data-tip", DE ? "Zeigt den Wortraum mit anklickbaren Wörtern." : "Show the word space with clickable words.");
+      row1.appendChild(meaningChip);
       if (st.mode === "space") {
         ["1D", "2D", "3D"].forEach(function (label, i) {
-          row1.appendChild(makeChip(label, st.dim === i, function () {
+          var dimChip = makeChip(label, st.dim === i, function () {
             st.dim = i; animateDimTo(i); st.group = null;
             // HARD RULE (2/5): entering 3D starts with points, not arrows.
             resetDirectionView();
@@ -913,7 +918,9 @@
             }
             if (i !== 2) st.showHighdim = false;
             syncControls(); ensureLoop();
-          }));
+          });
+          dimChip.setAttribute("data-tip", i === 0 ? (DE ? "Eine Achse: viele Wörter teilen sich dieselbe Position." : "One axis: many words share the same position.") : i === 1 ? (DE ? "Zwei Achsen: Macht und Geschlecht als Ebenen." : "Two axes: power and gender as a plane.") : (DE ? "Drei Achsen: die Kategorie kommt als Tiefe hinzu." : "Three axes: category adds depth."));
+          row1.appendChild(dimChip);
         });
         var reset = document.createElement("button");
         reset.type = "button";
@@ -921,6 +928,7 @@
         reset.textContent = DE ? "Ansicht" : "View";
         reset.title = DE ? "Nächste Ansicht" : "Next view";
         reset.setAttribute("aria-label", DE ? "Nächste Ansicht" : "Next view");
+        reset.setAttribute("data-tip", DE ? "Wechselt zwischen drei festen Kameraperspektiven." : "Cycle through three fixed camera views.");
         reset.addEventListener("click", function () {
           viewPreset = (viewPreset + 1) % VIEW_PRESETS.length;
           camTarget = VIEW_PRESETS[viewPreset];
@@ -933,6 +941,7 @@
           tableBtn.type = "button";
           tableBtn.className = "ls-btn ls-btn--ghost ls-btn--tiny";
           tableBtn.textContent = st.showHighdim ? (DE ? "← 3D" : "← 3D") : (DE ? "4096 Dimensionen" : "4096 dimensions");
+          tableBtn.setAttribute("data-tip", DE ? "Zeigt einen Tabellenausschnitt aus einem 4096-dimensionalen Embedding." : "Show a table slice from a 4096-dimensional embedding.");
           tableBtn.addEventListener("click", function () {
             st.showHighdim = !st.showHighdim;
             if (st.showHighdim) buildHighdimTable();
@@ -951,20 +960,24 @@
         PAIRS.forEach(function (pair) {
           var p0 = tempById(pair[0]), p1 = tempById(pair[1]);
           var label = text(p0.label) + " + " + text(p1.label);
-          row2.appendChild(makeChip(label, st.pair[0] === pair[0] && st.pair[1] === pair[1], function () {
+          var pairChip = makeChip(label, st.pair[0] === pair[0] && st.pair[1] === pair[1], function () {
             st.pair = pair.slice(); syncControls(); draw();
-          }));
+          });
+          pairChip.setAttribute("data-tip", DE ? "Addiert dieses Temperaturpaar auf der Linie." : "Add this temperature pair on the line.");
+          row2.appendChild(pairChip);
         });
       } else {
         examplesForDim().forEach(function (ex) {
-          row2.appendChild(makeChip(text(ex.label), st.arithmetic === ex.id, function () {
+          var exChip = makeChip(text(ex.label), st.arithmetic === ex.id, function () {
             st.arithmetic = st.arithmetic === ex.id ? null : ex.id;
             resetDirectionView();
             syncControls(); draw();
-          }));
+          });
+          exChip.setAttribute("data-tip", DE ? "Wendet dieses Vektorbeispiel in der aktuellen Dimension an." : "Apply this vector example in the current dimension.");
+          row2.appendChild(exChip);
         });
         if (st.dim === 2) {
-          row2.appendChild(makeChip(DE ? "Richtungen" : "Directions", st.vectorMode, function () {
+          var dirChip = makeChip(DE ? "Richtungen" : "Directions", st.vectorMode, function () {
             st.vectorMode = !st.vectorMode;
             st.arithmetic = null;
             st.group = null;
@@ -973,7 +986,9 @@
             vectorTarget = st.vectorMode ? 1 : 0;
             if (!st.vectorMode) vectorMix = 0;
             syncControls(); draw(); ensureLoop();
-          }));
+          });
+          dirChip.setAttribute("data-tip", DE ? "Zeigt Wörter als Pfeile vom Ursprung." : "Show words as arrows from the origin.");
+          row2.appendChild(dirChip);
         }
       }
       controls.appendChild(row2);

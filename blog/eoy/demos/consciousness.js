@@ -92,22 +92,22 @@
     el.className = "ls-con-notes";
     el.innerHTML =
       '<div class="ls-con-head"><span>' + (DE ? "Bewusstsein" : "Consciousness") + '</span><b>' + (DE ? "Hat eine KI irgendeine Form von Qualia?" : "Does an AI have any form of qualia?") + '</b><p class="ls-con-sub">' + (DE ? "Um überlegen zu können, ob KI Bewusstsein hat, müssen wir erstmal überlegen, was Bewusstsein überhaupt ist. Keiner weiß es so genau, aber hier sind einige Theorien." : "To consider whether AI has consciousness, we first need to consider what consciousness actually is. No one knows exactly, but here are some theories.") + '</p></div>' +
-      '<div class="ls-con-map" aria-label="' + (DE ? "Zugang ist funktional erklärbar, Erleben bleibt offen" : "Access is functionally explainable, experience remains open") + '">' +
-        '<div class="ls-con-map-box"><b>' + (DE ? "Zugang" : "Access") + '</b><span>' + (DE ? "Bericht · Kontrolle · Aufmerksamkeit" : "report · control · attention") + '</span><em>' + (DE ? "funktional erklärbar" : "functionally explainable") + '</em></div>' +
-        '<div class="ls-con-map-gap" aria-hidden="true">?</div>' +
-        '<div class="ls-con-map-box is-open"><b>' + (DE ? "Erleben" : "Experience") + '</b><span>' + (DE ? "Qualia · „wie es sich anfühlt“" : "qualia · “what it feels like”") + '</span><em>' + (DE ? "offen" : "open") + '</em></div>' +
+      '<div class="ls-con-map" data-tip="' + (DE ? "Die Karte trennt funktionalen Zugang von subjektivem Erleben." : "The map separates functional access from subjective experience.") + '" aria-label="' + (DE ? "Zugang ist funktional erklärbar, Erleben bleibt offen" : "Access is functionally explainable, experience remains open") + '">' +
+        '<div class="ls-con-map-box" data-tip="' + (DE ? "Zugang: was ein System berichtet, kontrolliert und worauf es achtet." : "Access: what a system reports, controls, and attends to.") + '"><b>' + (DE ? "Zugang" : "Access") + '</b><span>' + (DE ? "Bericht · Kontrolle · Aufmerksamkeit" : "report · control · attention") + '</span><em>' + (DE ? "funktional erklärbar" : "functionally explainable") + '</em></div>' +
+        '<div class="ls-con-map-gap" data-tip="' + (DE ? "Die Erklärungslücke zwischen messbarer Funktion und gefühltem Erleben." : "The explanatory gap between measurable function and felt experience.") + '" aria-hidden="true">?</div>' +
+        '<div class="ls-con-map-box is-open" data-tip="' + (DE ? "Erleben: wie sich etwas anfühlt, bleibt von außen offen." : "Experience: how something feels stays open from outside.") + '"><b>' + (DE ? "Erleben" : "Experience") + '</b><span>' + (DE ? "Qualia · „wie es sich anfühlt“" : "qualia · “what it feels like”") + '</span><em>' + (DE ? "offen" : "open") + '</em></div>' +
       '</div>' +
-      '<div class="ls-con-body"><div class="ls-con-list" role="tablist" aria-label="' + (DE ? "Bewusstseinstheorien" : "Theories of consciousness") + '"></div><article class="ls-con-detail" aria-live="polite"></article></div>' +
+      '<div class="ls-con-body"><div class="ls-con-list" role="tablist" aria-label="' + (DE ? "Bewusstseinstheorien" : "Theories of consciousness") + '"></div><article class="ls-con-detail" data-tip="' + (DE ? "Kernidee, offene Frage und Quellen der gewählten Theorie." : "Core idea, open question, and sources of the selected theory.") + '" aria-live="polite"></article></div>' +
       '<section class="ls-con-open"><div class="ls-con-open-head"><span>' + (DE ? "Offen" : "Open") + '</span><b>' + (DE ? "Was wir nicht wissen" : "What we do not know") + '</b><p>' + esc(OPEN.lead) + '</p></div><div class="ls-con-open-grid">' +
-        OPEN.items.map(function (item) { return '<div><b>' + esc(item[0]) + '</b><p>' + esc(item[1]) + '</p></div>'; }).join("") +
+        OPEN.items.map(function (item) { return '<div data-tip="' + (DE ? "Kurz erklärt, was dieses offene Problem bedeutet." : "A short note on what this open problem means.") + '"><b>' + esc(item[0]) + '</b><p>' + esc(item[1]) + '</p></div>'; }).join("") +
       '</div><p class="ls-con-cite">' + OPEN.cite + '</p></section>' +
-      '<div class="ls-con-links"><a href="https://unfinishablemap.org" target="_blank" rel="noopener">The Unfinishable Map →</a></div>';
+      '<div class="ls-con-links"><a href="https://unfinishablemap.org" target="_blank" rel="noopener" data-tip="' + (DE ? "Externe Karte, die Bewusstseinstheorien und Stufen verbindet." : "An external map that connects theories and levels of consciousness.") + '">The Unfinishable Map →</a></div>';
     root.appendChild(el);
     var list = el.querySelector(".ls-con-list");
     var detail = el.querySelector(".ls-con-detail");
     function renderList() {
       list.innerHTML = THEORIES.map(function (t, i) {
-        return '<button type="button" class="ls-con-tab ls-con-tab--' + t.tone + (i === selected ? ' is-on' : '') + '" data-con="' + i + '" role="tab" aria-selected="' + (i === selected ? 'true' : 'false') + '"><span>' + String(i + 1).padStart(2, "0") + '</span>' + esc(t.tag) + '</button>';
+        return '<button type="button" class="ls-con-tab ls-con-tab--' + t.tone + (i === selected ? ' is-on' : '') + '" data-con="' + i + '" data-tip="' + (DE ? "Diese Theorie anzeigen: Kernidee, offene Frage und Quellen." : "Show this theory: core idea, open question, and sources.") + '" role="tab" aria-selected="' + (i === selected ? 'true' : 'false') + '"><span>' + String(i + 1).padStart(2, "0") + '</span>' + esc(t.tag) + '</button>';
       }).join("");
       list.querySelectorAll("[data-con]").forEach(function (b) {
         b.addEventListener("click", function () { selected = parseInt(b.getAttribute("data-con"), 10); render(); });

@@ -6,7 +6,8 @@
   function bars(n, className) {
     var out = "";
     for (var i = 0; i < n; i++) out += "<i></i>";
-    return '<span class="' + className + '">' + out + "</span>";
+    var tip = className === "ls-hc-vector" ? ' data-tip-de="Balken: Aktivierungswerte des Vektors." data-tip-en="Bars: activation values of the vector."' : "";
+    return '<span class="' + className + '"' + tip + '>' + out + "</span>";
   }
 
   function group(step, label, inner) {
@@ -17,13 +18,13 @@
   function matrix(cols, rows) {
     var out = "";
     for (var i = 0; i < cols * rows; i++) out += "<i></i>";
-    return '<span class="ls-hc-matrix" style="--hc-cols:' + cols + '">' + out + "</span>";
+    return '<span class="ls-hc-matrix" style="--hc-cols:' + cols + '" data-tip-de="Matrix: lineare Mischung der Eingaben." data-tip-en="Matrix: linear mixing of the inputs.">' + out + "</span>";
   }
 
   function headsHtml() {
     var out = "";
     for (var i = 1; i <= 4; i++) {
-      out += '<span class="ls-hc-head" title="Head ' + i + ': ein Vektor pro Token"><b>H' + i + "</b>" + bars(4, "ls-hc-bars") + "</span>";
+      out += '<span class="ls-hc-head" title="Head ' + i + ': ein Vektor pro Token" data-tip-de="Head ' + i + ': eigener Vektor pro Token; jeder Kopf achtet auf etwas anderes." data-tip-en="Head ' + i + ': its own vector per token; each head attends to something different."><b>H' + i + "</b>" + bars(4, "ls-hc-bars") + "</span>";
     }
     return '<span class="ls-hc-heads">' + out + "</span>";
   }
@@ -37,15 +38,15 @@
       colors.forEach(function (col, i) {
         cells += '<span class="ls-hc-concat-cell" style="--hc-color:var(--ls-' + col + ')" title="Head ' + (i + 1) + '-Block an dieser Token-Zeile"><b>H' + (i + 1) + "</b><i></i><i></i></span>";
       });
-      out += '<span class="ls-hc-concat-token-row" title="Token ' + t + ': eine Zeile des konkatenierten Vektors"><b class="ls-hc-concat-token">' + t + "</b>" + cells + "</span>";
+      out += '<span class="ls-hc-concat-token-row" title="Token ' + t + ': eine Zeile des konkatenierten Vektors" data-tip-de="Eine Zeile: konkatenierte Head-Vektoren für dieses Token." data-tip-en="One row: concatenated head vectors for this token."><b class="ls-hc-concat-token">' + t + "</b>" + cells + "</span>";
     });
-    return '<span class="ls-hc-concat-matrix">' + out + "</span>";
+    return '<span class="ls-hc-concat-matrix" data-tip-de="Jede Zeile ist ein Token; die farbigen Blöcke sind die vier Head-Vektoren." data-tip-en="Each row is a token; the coloured blocks are the four head vectors.">' + out + "</span>";
   }
 
   function tokensHtml(DE) {
     var toks = DE ? ["Der", "Hund", "läuft", "."] : ["The", "dog", "runs", "."];
     return '<span class="ls-hc-tokens">' + toks.map(function (t) {
-      return '<span class="ls-hc-token" title="Token ' + t + ': ein Vektor pro Token"><b>' + t + "</b>" + bars(3, "ls-hc-token-bars") + "</span>";
+      return '<span class="ls-hc-token" title="Token ' + t + ': ein Vektor pro Token" data-tip-de="Ein Token mit seinem eigenen Vektor; das FFN verarbeitet jeden separat." data-tip-en="One token with its own vector; the FFN processes each separately."><b>' + t + "</b>" + bars(3, "ls-hc-token-bars") + "</span>";
     }).join("") + "</span>";
   }
 
@@ -73,9 +74,9 @@
       stageHtml =
         group(0, DE ? "1 · Heads" : "1 · heads", headsHtml()) +
         group(1, DE ? "2 · Concat" : "2 · concat", concatHtml(DE)) +
-        group(2, "3 · W_O", matrix(4, 4) + '<span class="ls-hc-dim">H·d_v → d_model · mischt</span>') +
+        group(2, "3 · W_O", matrix(4, 4) + '<span class="ls-hc-dim" data-tip-de="W_O mischt die Head-Blöcke zu einem Vektor pro Token." data-tip-en="W_O mixes the head blocks into one vector per token.">H·d_v → d_model · mischt</span>') +
         group(3, DE ? "4 · Token-Vektoren" : "4 · token vectors", tokensHtml(DE)) +
-        group(4, "5 · FFN", '<span class="ls-hc-box" title="Das FFN liest einen Token-Vektor pro Token, nicht die einzelnen Heads">FFN</span>');
+        group(4, "5 · FFN", '<span class="ls-hc-box" title="Das FFN liest einen Token-Vektor pro Token, nicht die einzelnen Heads" data-tip-de="Das FFN liest den gemischten Token-Vektor, nicht die einzelnen Heads." data-tip-en="The FFN reads the mixed token vector, not the individual heads.">FFN</span>');
     } else {
       stageHtml =
         group(0, DE ? "Token-Vektor" : "token vector", bars(5, "ls-hc-vector")) +
@@ -84,7 +85,7 @@
         '<span class="ls-hc-arrow">→</span>' +
         group(1, DE ? "Hidden d_ff" : "hidden d_ff", bars(8, "ls-hc-vector")) +
         '<span class="ls-hc-arrow">→</span>' +
-        group(2, "act", '<span class="ls-hc-box">GELU</span>') +
+        group(2, "act", '<span class="ls-hc-box" data-tip-de="Die Aktivierung biegt jeden Hidden-Wert nichtlinear." data-tip-en="The activation bends each hidden value nonlinearly.">GELU</span>') +
         '<span class="ls-hc-arrow">→</span>' +
         group(3, "W_2", matrix(7, 5)) +
         '<span class="ls-hc-arrow">→</span>' +
@@ -100,7 +101,7 @@
       '<p class="ls-hc-footer">' + (concat
         ? (DE ? "Wichtig: Pro Token entsteht ein langer Vektor; über alle Tokens steht er als Zeile in einer Matrix (Tokens × H·d_v). W_O mischt die Head-Blöcke zu einem Token-Vektor; das FFN liest diesen als Ganzes, keine einzelnen Heads." : "Important: each token becomes one long vector; across all tokens it stands as a row in a matrix (tokens × H·d_v). W_O mixes the head blocks into one token vector; the FFN reads that as a whole, not the individual heads.")
         : (DE ? "Wichtig: Das FFN läuft für jedes Token einzeln. Es trennt nicht wieder nach Heads; es gibt jedem Token seinen neuen Vektor zurück." : "Important: the FFN runs separately for each token. It does not split the heads again; it gives each token its new vector back.")) + '</p>';
-    var sepHtml = concat ? '' : '<div class="ls-hc-sep"><div class="ls-hc-sep-head"><b>' + (DE ? "Trennen und isolieren" : "Separate and isolate") + '</b><span>' + (DE ? "Input → Hidden → Output: Bereiche werden getrennt und wieder zusammengesetzt." : "Input → Hidden → Output: regions are separated and reassembled.") + '</span></div><div class="ls-hc-sep-stage"><canvas class="ls-hc-sep-canvas" role="img" aria-label="' + (DE ? "Statisches Drei-Stufen-Bild: Input ist verworren, Hidden trennt die Bereiche, Output isoliert und setzt sie wieder zusammen." : "Static three-stage image: input is tangled, hidden separates the regions, output isolates and reassembles them.") + '"></canvas></div><p class="ls-hc-sep-note">' + (DE ? "Statisch, schematisch: Input ist verworren, Hidden trennt die Bereiche, Output isoliert sie und setzt sie wieder zusammen. Fiktives Beispiel, keine Messung." : "Static, schematic: input is tangled, hidden separates the regions, output isolates them and reassembles them. Fictional example, not a measurement.") + '</p></div>';
+    var sepHtml = concat ? '' : '<div class="ls-hc-sep"><div class="ls-hc-sep-head"><b>' + (DE ? "Trennen und isolieren" : "Separate and isolate") + '</b><span>' + (DE ? "Input → Hidden → Output: Bereiche werden getrennt und wieder zusammengesetzt." : "Input → Hidden → Output: regions are separated and reassembled.") + '</span></div><div class="ls-hc-sep-stage"><canvas class="ls-hc-sep-canvas" role="img" data-tip-de="Schema: Input verworren, Hidden trennt die Bereiche, Output setzt sie neu zusammen." data-tip-en="Schematic: input tangled, hidden separates the regions, output reassembles them." aria-label="' + (DE ? "Statisches Drei-Stufen-Bild: Input ist verworren, Hidden trennt die Bereiche, Output isoliert und setzt sie wieder zusammen." : "Static three-stage image: input is tangled, hidden separates the regions, output isolates and reassembles them.") + '"></canvas></div><p class="ls-hc-sep-note">' + (DE ? "Statisch, schematisch: Input ist verworren, Hidden trennt die Bereiche, Output isoliert sie und setzt sie wieder zusammen. Fiktives Beispiel, keine Messung." : "Static, schematic: input is tangled, hidden separates the regions, output isolates them and reassembles them. Fictional example, not a measurement.") + '</p></div>';
     el.innerHTML = concat ? flowHtml : '<div class="ls-hc-split"><div class="ls-hc-flow-col">' + flowHtml + '</div>' + sepHtml + '</div>';
     root.appendChild(el);
     var note = el.querySelector(".ls-hc-note");

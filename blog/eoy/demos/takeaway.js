@@ -7,13 +7,13 @@
     var el = document.createElement("div");
     el.className = "ls-tk-scene";
     el.innerHTML =
-      '<div class="ls-tk-stage"><canvas class="ls-tk-canvas" role="img" aria-label="' +
+      '<div class="ls-tk-stage" data-tip="' + (DE ? "Die sechs Schritte der Verarbeitung als Raster; jeder Schritt hat ein eigenes Panel." : "The six processing steps as a grid; each step has its own panel.") + '"><canvas class="ls-tk-canvas" data-tip="' + (DE ? "Schematische Animation: vom Text über Tokens und Vektoren bis zur Token-Verteilung." : "Schematic animation: from text through tokens and vectors to the token distribution.") + '" role="img" aria-label="' +
         (DE ? "Animation: Text wird zu Tokens, Vektoren, Attention, FFN und einer Verteilung über das nächste Token." : "Animation: text becomes tokens, vectors, attention, FFN, and a distribution over the next token.") +
       '"></canvas></div>' +
       '<div class="ls-tk-summary">' +
-        '<article><span>01</span><b>' + (DE ? "Zeichen → Bedeutung" : "Signs → meaning") + '</b><p>' + (DE ? "Text wird zu Tokens, Tokens zu gelernten Vektoren. Bedeutung wird Geometrie." : "Text becomes tokens, tokens become learned vectors. Meaning becomes geometry.") + '</p></article>' +
-        '<article><span>02</span><b>' + (DE ? "Bedeutung → Kontext" : "Meaning → context") + '</b><p>' + (DE ? "Attention mischt den Kontext, das FFN verschiebt die Punkte, der Residualstrom trägt alles weiter." : "Attention mixes context, the FFN shifts the points, the residual stream carries everything forward.") + '</p></article>' +
-        '<article><span>03</span><b>' + (DE ? "Kontext → Wirkung" : "Context → impact") + '</b><p>' + (DE ? "Am Ende steht eine Verteilung über das nächste Token; daraus wird Text, Verhalten und Verantwortung." : "At the end stands a distribution over the next token; from it come text, behaviour, and responsibility.") + '</p></article>' +
+        '<article data-tip="' + (DE ? "Erster Schritt: Text zerlegen und Tokens in gelernte Vektoren übersetzen." : "First step: split text and map tokens into learned vectors.") + '"><span>01</span><b>' + (DE ? "Zeichen → Bedeutung" : "Signs → meaning") + '</b><p>' + (DE ? "Text wird zu Tokens, Tokens zu gelernten Vektoren. Bedeutung wird Geometrie." : "Text becomes tokens, tokens become learned vectors. Meaning becomes geometry.") + '</p></article>' +
+        '<article data-tip="' + (DE ? "Zweiter Schritt: Attention mischt Kontext, das FFN verschiebt die Vektoren." : "Second step: attention mixes context and the FFN shifts the vectors.") + '"><span>02</span><b>' + (DE ? "Bedeutung → Kontext" : "Meaning → context") + '</b><p>' + (DE ? "Attention mischt den Kontext, das FFN verschiebt die Punkte, der Residualstrom trägt alles weiter." : "Attention mixes context, the FFN shifts the points, the residual stream carries everything forward.") + '</p></article>' +
+        '<article data-tip="' + (DE ? "Dritter Schritt: aus der Verteilung über das nächste Token folgt die Ausgabe." : "Third step: the output follows from the distribution over the next token.") + '"><span>03</span><b>' + (DE ? "Kontext → Wirkung" : "Context → impact") + '</b><p>' + (DE ? "Am Ende steht eine Verteilung über das nächste Token; daraus wird Text, Verhalten und Verantwortung." : "At the end stands a distribution over the next token; from it come text, behaviour, and responsibility.") + '</p></article>' +
       '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-tk-stage");

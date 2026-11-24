@@ -93,13 +93,13 @@
     var el = document.createElement("div");
     el.className = "ls-loop-scene";
     el.innerHTML =
-      '<div class="ls-loop-sentence" aria-live="polite"></div>' +
-      '<div class="ls-loop-tree" aria-live="polite"></div>' +
-      '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas><div class="ls-land-tip" hidden></div><div class="ls-land-legend" aria-hidden="true"><div class="ls-land-scale"><span>' + (DE ? "unwahrscheinlich" : "unlikely") + '</span><i></i><span>' + (DE ? "wahrscheinlich" : "likely") + '</span></div><small>' + (DE ? "Ziehen zum Drehen · Klicken zum Wählen" : "Drag to rotate · click to choose") + '</small></div></div></div>' +
+      '<div class="ls-loop-sentence" aria-live="polite" data-tip-de="Klick auf ein früheres Token, um dorthin zurückzuspringen." data-tip-en="Click an earlier token to jump back to it."></div>' +
+      '<div class="ls-loop-tree" aria-live="polite" data-tip-de="Zeigt den bisherigen Pfad und die nächsten Token als Zweige." data-tip-en="Shows the path so far and the next tokens as branches."></div>' +
+      '<div class="ls-loop-viz"><div class="ls-loop-bars" data-tip-de="Balken sind die Wahrscheinlichkeiten der nächsten Tokens; klicken wählt eines." data-tip-en="Bars are the probabilities of the next tokens; click one to choose it."></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img" data-tip-de="3D-Landschaft: Höhe ist Wahrscheinlichkeit; ziehen dreht, klicken wählt." data-tip-en="3D landscape: height is probability; drag to rotate, click to choose."></canvas><div class="ls-land-tip" hidden></div><div class="ls-land-legend" aria-hidden="true" data-tip-de="Farbskala von unwahrscheinlich zu wahrscheinlich." data-tip-en="Colour scale from unlikely to likely."><div class="ls-land-scale"><span>' + (DE ? "unwahrscheinlich" : "unlikely") + '</span><i></i><span>' + (DE ? "wahrscheinlich" : "likely") + '</span></div><small>' + (DE ? "Ziehen zum Drehen · Klicken zum Wählen" : "Drag to rotate · click to choose") + '</small></div></div></div>' +
       '<div class="ls-loop-bottom">' +
-        '<div class="ls-loop-modes" role="group" aria-label="' + (DE ? "Auswahlmodus" : "Decoding mode") + '"></div>' +
-        '<div class="ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
-        '<div class="ls-loop-readout" aria-live="polite"></div>' +
+        '<div class="ls-loop-modes" role="group" aria-label="' + (DE ? "Auswahlmodus" : "Decoding mode") + '" data-tip-de="Wählt, wie das nächste Token gezogen wird." data-tip-en="Chooses how the next token is sampled."></div>' +
+        '<div class="ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '" data-tip-de="Nimmt das letzte Token zurück." data-tip-en="Takes back the last token.">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next" data-tip-de="Zieht das nächste Token und hängt es an." data-tip-en="Draws the next token and appends it.">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset" data-tip-de="Startet die Geschichte neu." data-tip-en="Restarts the story.">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8" data-tip-de="T steuert die Zufälligkeit; höher flacher, niedriger spitzer." data-tip-en="T controls randomness; higher is flatter, lower is sharper."><output>0.80</output></label></div>' +
+        '<div class="ls-loop-readout" aria-live="polite" data-tip-de="Zeigt Schritt, Kontextlänge, Top-Token, Loss und Modus." data-tip-en="Shows step, context length, top token, loss and mode."></div>' +
       '</div>';
     root.appendChild(el);
     var sentenceEl = el.querySelector(".ls-loop-sentence");
@@ -1187,12 +1187,12 @@
       var path = ['<span class="ls-loop-base">' + api.esc(words.join(" ")) + '</span>'];
       generated.forEach(function (tok, i) {
         path.push('<span class="ls-loop-arrow">→</span>');
-        path.push('<span class="ls-loop-node" data-rewind="' + i + '" role="button" tabindex="0" title="' + (DE ? "Hierher zurück" : "Go back here") + '">' + api.esc(tok) + (DE && i === 0 ? "," : "") + '</span>');
+        path.push('<span class="ls-loop-node" data-rewind="' + i + '" role="button" tabindex="0" title="' + (DE ? "Hierher zurück" : "Go back here") + '" data-tip="' + (DE ? "Springt zu diesem früheren Token zurück." : "Jumps back to this earlier token.") + '">' + api.esc(tok) + (DE && i === 0 ? "," : "") + '</span>');
       });
       var opts = choicesFor();
       var next = opts.length
         ? '<span class="ls-loop-next-label">' + (DE ? "nächstes:" : "next:") + '</span> ' + opts.map(function (o) {
-            return '<button type="button" class="ls-loop-branch" data-choice="' + api.esc(o.t) + '">' + api.esc(o.t) + '</button>';
+            return '<button type="button" class="ls-loop-branch" data-choice="' + api.esc(o.t) + '" data-tip="' + (DE ? "Wählt dieses Token als nächsten Schritt." : "Chooses this token as the next step.") + '">' + api.esc(o.t) + '</button>';
           }).join('<span class="ls-loop-sep">·</span>')
         : '<span class="ls-loop-end">' + (DE ? "Satzende" : "end of sentence") + '</span>';
       treeEl.innerHTML = '<div class="ls-loop-line">' + path.join(" ") + '</div><div class="ls-loop-line">' + next + '</div>';
@@ -1253,7 +1253,7 @@
         var on = decodeMode === "greedy" ? i === top : (decodeMode === "topp" && probs[i] >= probs[cut]);
         var label = o.t === EOS ? (DE ? "Ende" : "End") : o.t;
         return '<button type="button" class="ls-loop-bar' + (on ? " is-on" : "") + '" data-bar="' + i + '"' +
-          (atEnd ? ' disabled' : '') + ' title="' + api.esc(o.t) + '" aria-label="' + api.esc(o.t) + '">' +
+          (atEnd ? ' disabled' : '') + ' title="' + api.esc(o.t) + '" aria-label="' + api.esc(o.t) + '" data-tip="' + (DE ? "Wahrscheinlichkeit für dieses Token; klicken wählt es." : "Probability of this token; clicking chooses it.") + '">' +
           '<span class="ls-loop-bar-label">' + api.esc(label) + '</span>' +
           '<span class="ls-loop-bar-track"><i style="width:' + (probs[i] * 100).toFixed(1) + '%"></i></span>' +
           '<span class="ls-loop-bar-val">' + (probs[i] * 100).toFixed(0) + '%</span></button>';
@@ -1407,6 +1407,11 @@
       b.className = "ls-chip" + (m.id === decodeMode ? " is-on" : "");
       b.setAttribute("data-mode", m.id);
       b.textContent = m.label;
+      b.setAttribute("data-tip", m.id === "sample"
+        ? (DE ? "Zieht zufällig nach den Wahrscheinlichkeiten." : "Samples randomly according to the probabilities.")
+        : m.id === "greedy"
+          ? (DE ? "Nimmt immer das wahrscheinlichste Token." : "Always takes the most likely token.")
+          : (DE ? "Beschränkt die Auswahl auf Token bis 90 Prozent Wahrscheinlichkeitsmasse." : "Restricts the choice to tokens within 90 percent probability mass."));
       b.addEventListener("click", function () { setMode(m.id); });
       el.querySelector(".ls-loop-modes").appendChild(b);
     });

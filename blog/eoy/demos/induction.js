@@ -16,8 +16,10 @@
     var C = api.colors();
     var host = document.createElement("div");
     host.className = "ls-ind-scene";
+    host.setAttribute("data-tip", DE ? "Induktionskopf: das Muster früher sehen und daraus das nächste Token vorhersagen." : "Induction head: see the pattern earlier and predict the next token from it.");
     var canvas = document.createElement("canvas");
     canvas.className = "ls-ind-canvas";
+    canvas.setAttribute("data-tip", DE ? "Interaktive Grafik: fahre über Elemente für Details, klicke Zeilen oder Karten an." : "Interactive graphic: hover elements for details, click rows or cards.");
     canvas.setAttribute("role", "img");
     host.appendChild(canvas);
     var tipEl = document.createElement("div");
@@ -1381,11 +1383,24 @@
       canvas.setAttribute("aria-label", ARIA[mode] || ARIA.sequence);
     }
 
+    function setCanvasTip() {
+      canvas.setAttribute("data-tip", mode === "copy"
+        ? (DE ? "Drei Schritte des Kopierens: Vorgänger merken, Stelle finden, Inhalt kopieren." : "Three copying steps: remember the predecessor, find the place, copy the content.")
+        : mode === "circuit"
+          ? (DE ? "Schaltkreis aus zwei Köpfen: Previous-Token-Head in Schicht 1, Induction Head in Schicht 2." : "Two-head circuit: previous-token head in layer 1, induction head in layer 2.")
+          : mode === "heads"
+            ? (DE ? "Vier Attention-Head-Typen: klicke eine Karte für Query, Key, Value und Bedeutung." : "Four attention-head types: click a card for query, key, value, and meaning.")
+            : mode === "emergence"
+              ? (DE ? "Drei Trainingskurven und ein Phase-Change-Fenster zwischen 2,5 und 5 Milliarden Tokens." : "Three training curves and a phase-change window between 2.5 and 5 billion tokens.")
+              : (DE ? "Text mit Muster: Schicht 1 merkt den Vorgänger, Schicht 2 findet die Stelle und kopiert." : "Text with a pattern: layer 1 remembers the predecessor, layer 2 finds the place and copies."));
+    }
+
     function setMode(next) {
       if (next !== "sequence" && next !== "copy" && next !== "circuit" && next !== "heads" && next !== "emergence") return;
       if (next === mode) return;
       mode = next;
       setAria();
+      setCanvasTip();
       draw();
     }
 
@@ -1402,6 +1417,7 @@
       ro.observe(host);
     }
     setAria();
+    setCanvasTip();
     canvas.addEventListener("click", function (e) {
       var r = canvas.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;

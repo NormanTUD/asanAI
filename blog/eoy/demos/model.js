@@ -19,7 +19,27 @@
   }
 
   function modelScene(root, api) {
-    if (window.tf && window.TfSinusScene) return window.TfSinusScene(root, api);
+    var DE = api.lang === "de";
+    function decorateSin() {
+      [
+        [".ls-sinus-canvas", "Hauptplot: Datenpunkte, Modellkurve und wahrer Sinus; achte auf die Extrapolation.", "Main plot: data points, model curve and true sine; watch the extrapolation."],
+        [".ls-sinus-loss-canvas", "Loss-Kurve: zeigt, wie der Fehler während des Trainings fällt.", "Loss curve: shows how the error falls during training."],
+        [".ls-sinus-train", "Pausiert oder startet das Training des kleinen Netzes.", "Pauses or starts training of the small network."],
+        [".ls-sinus-reset", "Setzt Modell und Trainingsfortschritt zurück.", "Resets the model and training progress."],
+        [".ls-sinus-matrix-btn", "Blendet die aktuellen Gewichte und Biases ein.", "Shows the current weights and biases."],
+        [".ls-sinus-loss", "Aktueller Loss des Modells auf den Trainingsdaten.", "Current loss of the model on the training data."],
+        [".ls-sinus-readout", "Nennt Phase, Epoche und was das Modell gerade gelernt hat.", "Names the phase, epoch and what the model has learned so far."],
+        [".ls-sinus-matrices-close", "Schließt die Gewichtsansicht.", "Closes the weight view."]
+      ].forEach(function (item) {
+        var node = root.querySelector(item[0]);
+        if (node) node.setAttribute("data-tip", DE ? item[1] : item[2]);
+      });
+    }
+    if (window.tf && window.TfSinusScene) {
+      var ready = window.TfSinusScene(root, api);
+      decorateSin();
+      return ready;
+    }
     if (!window.TfSinusScene) return null;
     var placeholder = document.createElement("div");
     placeholder.className = "ls-empty";
@@ -36,6 +56,7 @@
       if (!root.isConnected) return;
       placeholder.remove();
       instance = window.TfSinusScene(root, api);
+      decorateSin();
       pending.forEach(function (args) {
         try { if (instance.update) instance.update.apply(instance, args); } catch (err) {}
       });

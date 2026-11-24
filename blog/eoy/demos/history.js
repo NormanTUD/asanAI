@@ -258,10 +258,10 @@
     var el = document.createElement("div");
     el.className = "ls-history-scene";
     el.innerHTML = '<div class="ls-history-head"><span class="ls-history-kicker">' + (DE ? "Geschichte in zehn Schritten" : "History in ten steps") + '</span><span class="ls-history-hint">' + (DE ? "Tab wählen" : "Choose a tab") + '</span></div>' +
-      '<div class="ls-history-legend" aria-hidden="true">' + STRANDS.map(function (st) { return '<span><i style="background:' + st.color + '"></i>' + st.label + '</span>'; }).join("") + '</div>' +
+      '<div class="ls-history-legend" aria-hidden="true">' + STRANDS.map(function (st) { return '<span data-tip="' + (DE ? "Farbe der Stränge: zeigt, zu welchem Themenstrang dieser Schritt gehört." : "Strand colour: shows which theme this step belongs to.") + '"><i style="background:' + st.color + '"></i>' + st.label + '</span>'; }).join("") + '</div>' +
       '<div class="ls-history-tabs" role="tablist" aria-label="' + (DE ? "Geschichte" : "History") + '"></div>' +
-      '<div class="ls-history-panel" role="tabpanel" aria-live="polite"></div>' +
-      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-history-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-history-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-history-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+      '<div class="ls-history-panel" data-tip="' + (DE ? "Der ausgewählte Schritt mit Text, Bildern oder Diagramm und Quellen." : "The selected step with text, images or a diagram, and sources.") + '" role="tabpanel" aria-live="polite"></div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-history-prev" data-tip="' + (DE ? "Zum vorherigen Geschichtsschritt." : "Go to the previous history step.") + '">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-history-progress" data-tip="' + (DE ? "Position in der Zeitleiste." : "Position on the timeline.") + '"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-history-next" data-tip="' + (DE ? "Zum nächsten Geschichtsschritt." : "Go to the next history step.") + '">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var track = el.querySelector(".ls-history-tabs");
     var panel = el.querySelector(".ls-history-panel");
@@ -301,21 +301,21 @@
     function figuresHTML(e) {
       if (!e.images || !e.images.length) return "";
       return '<div class="ls-history-figures">' + e.images.map(function (im) {
-        return '<figure class="ls-history-figure"><img src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async"><figcaption>' + api.esc(im.cap) + ' <a href="' + api.esc(im.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a></figcaption></figure>';
+        return '<figure class="ls-history-figure" data-tip="' + (DE ? "Historische Aufnahme zu diesem Schritt; die Bildunterschrift nennt die Quelle." : "Historical image for this step; the caption names the source.") + '"><img src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async"><figcaption>' + api.esc(im.cap) + ' <a href="' + api.esc(im.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a></figcaption></figure>';
       }).join("") + '</div>';
     }
     function sourcesHTML(e) {
       var ss = e.sources || (e.source ? [e.source] : []);
       if (!ss.length) return "";
       return '<div class="ls-history-sources">' + ss.map(function (s) {
-        return '<a class="ls-history-source" href="' + api.esc(s.url) + '" target="_blank" rel="noopener">' + api.esc(s.label) + '</a>';
+        return '<a class="ls-history-source" data-tip="' + (DE ? "Primärquelle zu diesem Schritt in einem neuen Tab öffnen." : "Open the primary source for this step in a new tab.") + '" href="' + api.esc(s.url) + '" target="_blank" rel="noopener">' + api.esc(s.label) + '</a>';
       }).join("") + '</div>';
     }
     function render() {
       index = Math.max(0, Math.min(tabs.length - 1, index));
       track.innerHTML = tabs.map(function (t, i) {
         var st = STRANDS[TAB_STRAND[i] || 0];
-        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" role="tab" aria-selected="' + (i === index ? 'true' : 'false') + '" data-history="' + i + '" style="--strand-color:' + st.color + '"><b>' + api.esc(t.year) + '</b><span>' + api.esc(t.label) + '</span></button>';
+        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" role="tab" aria-selected="' + (i === index ? 'true' : 'false') + '" data-history="' + i + '" data-tip="' + api.esc((DE ? "Schritt " : "Step ") + (i + 1) + ": " + t.title) + '" style="--strand-color:' + st.color + '"><b>' + api.esc(t.year) + '</b><span>' + api.esc(t.label) + '</span></button>';
       }).join("");
       track.querySelectorAll("[data-history]").forEach(function (b) {
         b.addEventListener("click", function () { setIndex(parseInt(b.getAttribute("data-history"), 10)); });
@@ -328,7 +328,7 @@
           '<h3 class="ls-history-title">' + api.esc(e.title) + '</h3>' +
           '<p class="ls-history-text">' + api.esc(e.text) + '</p>' +
         '</div>' +
-        (hasMedia ? '<div class="ls-history-media">' + figuresHTML(e) + (e.diagram ? '<div class="ls-history-diagram">' + diagramHTML(e.diagram) + '</div>' : '') + '</div>' : '') +
+        (hasMedia ? '<div class="ls-history-media">' + figuresHTML(e) + (e.diagram ? '<div class="ls-history-diagram" data-tip="' + (DE ? "Schematisches Diagramm zum zentralen Problem dieses Schritts." : "Schematic diagram of the central problem in this step.") + '">' + diagramHTML(e.diagram) + '</div>' : '') + '</div>' : '') +
         '</div>' +
         sourcesHTML(e);
       progress.textContent = (index + 1) + ' / ' + tabs.length;

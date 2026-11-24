@@ -46,19 +46,21 @@
     host.className = "ls-st-scene";
     var canvas = document.createElement("canvas");
     canvas.className = "ls-canvas";
+    canvas.setAttribute("data-tip", DE ? "Interaktive Grafik: klicke Personen oder Zeilen, um Details zu sehen." : "Interactive plot: click people or rows to see details.");
     canvas.setAttribute("role", "img");
     host.appendChild(canvas);
     var hero = document.createElement("figure");
     hero.className = "ls-st-hero";
+    hero.setAttribute("data-tip", DE ? "Abbildung 10: eine Karte, die aus gelernten Koordinatenrichtungen entsteht." : "Figure 10: a map built from learned coordinate directions.");
     var paperSrc = "../image.php?f=gurnee-tegmark-world.png&w=1800&fmt=png";
     var paperBig = "../image.php?f=gurnee-tegmark-world.png&w=2200&fmt=png";
     hero.innerHTML =
-      '<div class="ls-st-hero-img">' +
-        '<a href="' + paperBig + '" target="_blank" rel="noopener"><img src="' + paperSrc + '" alt="' + (DE ? "Weltkarte der aus Llama-2-70B-Aktivierungen gelesenen Koordinaten, Gurnee und Tegmark 2023, Abbildung 10" : "World map of coordinates read from Llama-2-70B activations, Gurnee and Tegmark 2023, Figure 10") + '"></a>' +
+      '<div class="ls-st-hero-img" data-tip="' + (DE ? "Aus Llama-2-70B-Aktivierungen gelesene Breiten- und Längengrade." : "Latitude and longitude read from Llama-2-70B activations.") + '">' +
+        '<a href="' + paperBig + '" target="_blank" rel="noopener" data-tip="' + (DE ? "Das Bild in höherer Auflösung öffnen." : "Open the image at higher resolution.") + '"><img src="' + paperSrc + '" alt="' + (DE ? "Weltkarte der aus Llama-2-70B-Aktivierungen gelesenen Koordinaten, Gurnee und Tegmark 2023, Abbildung 10" : "World map of coordinates read from Llama-2-70B activations, Gurnee and Tegmark 2023, Figure 10") + '"></a>' +
       '</div>' +
-      '<figcaption>' + (DE
-        ? 'Gurnee &amp; Tegmark (2023), Abb. 10: Weltkarte aus gelernten Breiten-/Längengrad-Richtungen. Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Quelle: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.'
-        : 'Gurnee &amp; Tegmark (2023), Fig. 10: world map from learned latitude/longitude directions. License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.') + '</figcaption>';
+      '<figcaption data-tip="' + (DE ? "Bildunterschrift mit Lizenz und Quelle der Abbildung." : "Caption with the figure license and source.") + '">' + (DE
+        ? 'Gurnee &amp; Tegmark (2023), Abb. 10: Weltkarte aus gelernten Breiten-/Längengrad-Richtungen. Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" data-tip="Lizenzseite der Creative-Commons-Namensnennung öffnen.">CC BY 4.0</a>. Quelle: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener" data-tip="Die Originalarbeit auf arXiv öffnen.">arXiv:2310.02207</a>.'
+        : 'Gurnee &amp; Tegmark (2023), Fig. 10: world map from learned latitude/longitude directions. License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" data-tip="Open the Creative Commons attribution license page.">CC BY 4.0</a>. Source: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener" data-tip="Open the original paper on arXiv.">arXiv:2310.02207</a>.') + '</figcaption>';
     host.appendChild(hero);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");

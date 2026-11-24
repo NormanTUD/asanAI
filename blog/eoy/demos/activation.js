@@ -20,6 +20,8 @@
     var canvas = el.querySelector("canvas");
     var chips = el.querySelector(".ls-act-chips");
     var readout = el.querySelector(".ls-act-readout");
+    canvas.setAttribute("data-tip", DE ? "Zeigt die Aktivierungskurve; achte auf Nullpunkt und Steigung." : "Shows the activation curve; watch the zero crossing and slope.");
+    readout.setAttribute("data-tip", DE ? "Nennt die aktive Funktion, ihren Verlauf und eine Eigenschaft." : "Names the active function, its shape, and one property.");
     var ctx = null, size = null, active = window.__lsActLast || "relu", hits = [];
     var fromId = active, morph = 1, morphStart = 0, morphRaf = 0;
     var C = api.colors();
@@ -97,6 +99,7 @@
       b.type = "button";
       b.className = "ls-chip" + (fn.id === active ? " is-on" : "");
       b.textContent = fn.label;
+      b.setAttribute("data-tip", DE ? "Stellt die Kurve auf " + fn.label + " um." : "Switches the curve to " + fn.label + ".");
       b.addEventListener("click", function () {
         setActive(fn.id);
         chips.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });

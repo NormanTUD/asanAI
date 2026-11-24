@@ -54,16 +54,16 @@
     var el = document.createElement("div");
     el.className = "ls-agents-scene";
     el.innerHTML =
-      '<div class="ls-agents-win">' +
+      '<div class="ls-agents-win" data-tip="' + (DE ? "Links der Kontext des Modells, rechts die Werkzeuge außerhalb davon." : "Left the model context, right the tools outside it.") + '">' +
         '<div class="ls-agents-winbar">' +
           '<span class="ls-agents-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
           '<span class="ls-agents-addr">agent · tools</span>' +
-          '<span class="ls-agents-badge">' + (DE ? "Gleiches Modell" : "Same model") + '</span>' +
+          '<span class="ls-agents-badge" data-tip="' + (DE ? "Dasselbe LLM; nur Kontext und Werkzeuge machen den Agenten aus." : "The same LLM; only context and tools make it an agent.") + '">' + (DE ? "Gleiches Modell" : "Same model") + '</span>' +
         '</div>' +
         '<div class="ls-agents-subline">' + (DE ? "Ein Agent kann dasselbe Modell verwenden; Kontext und Werkzeuge ändern sich." : "An agent can use the same model; context and tools change.") + '</div>' +
       '<div class="ls-agents-grid">' +
-        '<section class="ls-agents-col is-chat"><div class="ls-agents-col-head"><b>' + (DE ? "KI-Chat" : "AI chat") + '</b><span>' + (DE ? "Agent · Kontext" : "agent · context") + '</span></div><div class="ls-agents-context" aria-live="polite"></div><div class="ls-agents-compose"><span>' + (DE ? "Nachricht" : "Message") + '</span><i aria-hidden="true"></i></div></section>' +
-        '<section class="ls-agents-col"><div class="ls-agents-col-head"><b>' + (DE ? "Runtime" : "Runtime") + '</b><span>' + (DE ? "außerhalb des Modells" : "outside the model") + '</span></div><div class="ls-agents-runtime"><div class="ls-agents-terminal" aria-live="polite"></div><div class="ls-agents-shot" role="img" aria-label="' + (DE ? "Browser-Screenshot: Beispiel-Shop mit dem Preis 42 Euro." : "Browser screenshot: example shop with the price 42 euros.") + '">' +
+        '<section class="ls-agents-col is-chat" data-tip="' + (DE ? "Hier wächst der Kontext: Auftrag, Tool-Calls, Ergebnisse und Antworten." : "The context grows here: task, tool calls, results, and answers.") + '"><div class="ls-agents-col-head"><b>' + (DE ? "KI-Chat" : "AI chat") + '</b><span>' + (DE ? "Agent · Kontext" : "agent · context") + '</span></div><div class="ls-agents-context" aria-live="polite"></div><div class="ls-agents-compose"><span>' + (DE ? "Nachricht" : "Message") + '</span><i aria-hidden="true"></i></div></section>' +
+        '<section class="ls-agents-col" data-tip="' + (DE ? "Die Runtime führt Befehle aus und schickt das Ergebnis zurück ins Modell." : "The runtime executes commands and sends the result back to the model.") + '"><div class="ls-agents-col-head"><b>' + (DE ? "Runtime" : "Runtime") + '</b><span>' + (DE ? "außerhalb des Modells" : "outside the model") + '</span></div><div class="ls-agents-runtime"><div class="ls-agents-terminal" aria-live="polite" data-tip="' + (DE ? "Befehle und ihre Ausgabe, etwa bc, Browser und Datei." : "Commands and their output, such as bc, browser, and file.") + '"></div><div class="ls-agents-shot" role="img" aria-label="' + (DE ? "Browser-Screenshot: Beispiel-Shop mit dem Preis 42 Euro." : "Browser screenshot: example shop with the price 42 euros.") + '" data-tip="' + (DE ? "Der Screenshot kommt erst auf deine Anweisung; das Modell sieht ihn als Bildtokens." : "The screenshot appears only on your command; the model sees it as image tokens.") + '">' +
           '<div class="ls-code-monitor"><div class="ls-code-frame"><div class="ls-code-screen"><div class="ls-code-desktop" style="background-image:url(\'' + (api.asset ? api.asset("opera.jpg") : "opera.jpg") + '\')">' +
             '<div class="ls-code-window ls-agents-browser">' +
               '<div class="ls-code-bar"><i></i><i></i><i></i><span>Browser</span></div>' +
@@ -77,9 +77,9 @@
           '</div></div></div></div>' +
         '</div><div class="ls-agents-html" hidden></div></div></section>' +
       '</div>' +
-      '<div class="ls-agents-loop"><span>' + (DE ? "Tool-Call" : "tool call") + '</span><i>→</i><span>' + (DE ? "ausführen" : "execute") + '</span><i>→</i><span>' + (DE ? "Ergebnis in den Kontext" : "result into context") + '</span><i>→</i><span>' + (DE ? "weiter" : "continue") + '</span></div>' +
-      '<div class="ls-agents-controls"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-agents-prev">←</button><span class="ls-agents-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-agents-next">' + (DE ? "Nächster Schritt" : "Next step") + '</button></div>' +
-      '<p class="ls-agents-readout"></p>' +
+      '<div class="ls-agents-loop" data-tip="' + (DE ? "Der Kern des Agenten: Tool-Call, Ausführung, Ergebnis in den Kontext, weiter." : "The agent loop: tool call, execution, result into context, continue.") + '"><span>' + (DE ? "Tool-Call" : "tool call") + '</span><i>→</i><span>' + (DE ? "ausführen" : "execute") + '</span><i>→</i><span>' + (DE ? "Ergebnis in den Kontext" : "result into context") + '</span><i>→</i><span>' + (DE ? "weiter" : "continue") + '</span></div>' +
+      '<div class="ls-agents-controls"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-agents-prev" data-tip="' + (DE ? "Einen Schritt zurück im Ablauf." : "One step back in the sequence.") + '">←</button><span class="ls-agents-progress" data-tip="' + (DE ? "Aktueller Schritt des Agenten." : "Current agent step.") + '"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-agents-next" data-tip="' + (DE ? "Zeigt den nächsten Tool-Call oder das Ergebnis." : "Shows the next tool call or result.") + '">' + (DE ? "Nächster Schritt" : "Next step") + '</button></div>' +
+      '<p class="ls-agents-readout" data-tip="' + (DE ? "Erklärt, was der Schritt gerade im Modell und in der Runtime bedeutet." : "Explains what the step means in the model and in the runtime.") + '"></p>' +
       '</div>';
     root.appendChild(el);
     var contextEl = el.querySelector(".ls-agents-context");
@@ -96,17 +96,17 @@
       var contextHtml = "";
       var terminal = [];
       upTo.forEach(function (s) {
-        if (s.kind === "user") contextHtml += '<div class="ls-agents-msg is-user"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span></div>';
+        if (s.kind === "user") contextHtml += '<div class="ls-agents-msg is-user" data-tip="' + (DE ? "Deine Nachricht steht im Kontext und startet den Ablauf." : "Your message sits in the context and starts the sequence.") + '"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span></div>';
         else if (s.kind === "tool") {
-          contextHtml += '<div class="ls-agents-msg is-model"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span>' + (s.tool ? '<code class="ls-agents-tool">' + esc(s.tool) + '</code>' : '') + '</div>';
+          contextHtml += '<div class="ls-agents-msg is-model" data-tip="' + (DE ? "Die Modellantwort; ein Tool-Call ist Code für die Runtime." : "The model answer; a tool call is code for the runtime.") + '"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span>' + (s.tool ? '<code class="ls-agents-tool">' + esc(s.tool) + '</code>' : '') + '</div>';
           if (s.tool) terminal.push('<span class="is-cmd">$ ' + esc(s.tool) + '</span>');
           if (s.result) terminal.push('<span class="is-ok">' + esc(s.result) + '</span>');
         } else if (s.kind === "shot") {
-          contextHtml += '<div class="ls-agents-msg is-model"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span><span class="ls-agents-image">' + (DE ? "Bildtokens im Kontext · 1280 × 800" : "image tokens in context · 1280 × 800") + '</span></div>';
+          contextHtml += '<div class="ls-agents-msg is-model" data-tip="' + (DE ? "Das Bild wird als Tokens in den Kontext gehängt." : "The image is appended to the context as tokens.") + '"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span><span class="ls-agents-image">' + (DE ? "Bildtokens im Kontext · 1280 × 800" : "image tokens in context · 1280 × 800") + '</span></div>';
           terminal.push('<span class="is-cmd">$ ' + esc(s.tool) + '</span>');
           terminal.push('<span class="is-ok">' + esc(s.result) + '</span>');
         } else if (s.kind === "final") {
-          contextHtml += '<div class="ls-agents-msg is-final"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span></div>';
+          contextHtml += '<div class="ls-agents-msg is-final" data-tip="' + (DE ? "Die abschließende Antwort nach mehreren Tool-Schritten." : "The final answer after several tool steps.") + '"><b>' + esc(s.who) + '</b><span>' + esc(s.text) + '</span></div>';
         }
       });
       contextEl.innerHTML = contextHtml;
