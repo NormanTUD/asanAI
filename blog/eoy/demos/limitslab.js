@@ -14,6 +14,7 @@
         label: L("Formatierung", "Formatting"),
         kicker: L("01 · Eingabeform", "01 · Input format"),
         title: L("Dieselbe Aufgabe, ein anderes Format", "Same task, a different format"),
+        claim: L("Dieselbe Aufgabe soll unter bedeutungserhaltenden Formatänderungen dasselbe Label liefern.", "The same task should get the same label under meaning-preserving format changes."),
         task: L("Support-Ticket klassifizieren", "Classify a support ticket"),
         scenario: L("Dieselbe Beschwerde, dreimal anders gerahmt: Fließtext, Markdown und Chat-Template. Das Label soll gleich bleiben.", "The same complaint, framed three ways: prose, Markdown, and a chat template. The label should stay the same."),
         prompt: L("Meine Bestellung ist seit zwei Wochen nicht da. Ich möchte sie stornieren.", "My order has not arrived for two weeks. I want to cancel it."),
@@ -39,6 +40,7 @@
         label: L("Erfundenes Zitat", "Fabricated citation"),
         kicker: L("02 · Existenz", "02 · Existence"),
         title: L("Eine Quelle muss auffindbar sein", "A source has to be findable"),
+        claim: L("Eine Literaturangabe ist erst belegt, wenn DOI oder Titel auflösbar sind.", "A bibliographic entry is supported only when its DOI or title resolves."),
         task: L("Literaturangabe prüfen", "Check a bibliographic entry"),
         scenario: L("Eine Antwort nennt Autoren, Journal, Jahr und DOI. Das sieht vollständig aus; ob die Arbeit existiert, entscheidet erst der Abgleich mit einer Bibliothek.", "An answer names authors, journal, year, and DOI. It looks complete; whether the work exists is decided only by checking a library."),
         prompt: L("Nenne eine Studie, die zeigt, dass Koffein die Reaktionszeit verbessert.", "Name a study showing that caffeine improves reaction time."),
@@ -62,6 +64,7 @@
         label: L("Kalibrierung", "Calibration"),
         kicker: L("03 · Konfidenz", "03 · Confidence"),
         title: L("Sicherheit ist keine Korrektheit", "Confidence is not correctness"),
+        claim: L("Konfidenz ist kein Beweis für Korrektheit; ohne Zugriff bleibt die Antwort eine Vermutung.", "Confidence is not proof of correctness; without access the answer remains a guess."),
         task: L("Aktuelle Auskunft einholen", "Get a current piece of information"),
         scenario: L("Gefragt sind die heutigen Öffnungszeiten des Bürgeramts. Das Modell hat keinen Zugriff auf den aktuellen Aushang; seine Konfidenz ist ein gelerntes Signal, kein Beleg.", "The question is today's opening hours of the city office. The model has no access to the current notice; its confidence is a learned signal, not evidence."),
         prompt: L("Welche Öffnungszeiten hat das Bürgeramt heute?", "What are the city office's opening hours today?"),
@@ -85,6 +88,7 @@
         label: L("Kontext", "Context"),
         kicker: L("04 · Arbeitsgedächtnis", "04 · Working memory"),
         title: L("Die Mitte geht unter", "The middle gets lost"),
+        claim: L("Relevante Information wird am Anfang und Ende besser genutzt als in der Mitte.", "Relevant information is used better at the start and end than in the middle."),
         task: L("Vertrag prüfen", "Check a contract"),
         scenario: L("Die entscheidende Klausel steht an unterschiedlichen Stellen im langen Dokument.", "The decisive clause sits at different positions in a long document."),
         prompt: L("Wann endet der Vertrag?", "When does the contract end?"),
@@ -116,7 +120,7 @@
     function isRun(id) { return !!state.run[id]; }
     function test() { return TESTS[state.test] || TESTS.paraphrase; }
     function head() {
-      return '<div class="ls-ll-head" data-tip="' + L("Der Prüfstand zeigt vier Bruchstellen; die Protokolle sind echt, die Antworten konstruiert.", "The test bench shows four failure points; protocols are real, the answers are constructed.") + '"><div class="ls-ll-headtop"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><span class="ls-ll-live"><i></i> ' + L("BEREIT", "READY") + '</span></div><b>' + L("Vier Bruchstellen, kein Benchmark", "Four failure points, not a benchmark") + '</b><p>' + L("Ein Prompt ist eine Stichprobe. Wähle einen Test, starte den Prüfstand und lies das reale Protokoll. Antworten sind konstruiert, Protokolle echt.", "One prompt is one sample. Choose a test, run the check, and read the real protocol. Answers are constructed, protocols are real.") + '</p></div>';
+      return '<div class="ls-ll-head" data-tip="' + L("Der Prüfstand zeigt vier Bruchstellen; die Protokolle sind echt, die Antworten konstruiert.", "The test bench shows four failure points; protocols are real, the answers are constructed.") + '"><div class="ls-ll-headtop"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><span class="ls-ll-live"><i></i> ' + L("BEREIT", "READY") + '</span></div><b>' + L("Zuverlässigkeit ist mehr als eine richtige Antwort.", "Reliability is more than one correct answer.") + '</b><p>' + L("Diese Seite ist ein Prüfstand, kein Modell-Ranking. Vier Tests zeigen, wo dieselbe Aufgabe unter Variation kippt. Wähle einen Test, starte den Prüfstand und lies den Befund. Antworten sind konstruiert, Protokolle echt.", "This page is a test bench, not a model ranking. Four tests show where the same task breaks under variation. Choose a test, start the check, and read the finding. Answers are constructed, protocols are real.") + '</p><div class="ls-ll-claimband"><span>' + L("Die Behauptung", "The claim") + '</span><b>' + L("Ein Modell ist nicht zuverlässig, weil es einmal richtig antwortet. Zuverlässig heißt: unter plausiblen Variationen stabil und belegt.", "A model is not reliable because it answers correctly once. Reliable means stable and grounded under plausible variation.") + '</b></div><div class="ls-ll-howto"><span><b>1</b> ' + L("Test wählen", "Choose a test") + '</span><span><b>2</b> ' + L("Prüfstand starten", "Start the check") + '</span><span><b>3</b> ' + L("Befund lesen", "Read the finding") + '</span></div></div>';
     }
     function tabs() {
       return '<div class="ls-ll-tabs" role="tablist">' + ORDER.map(function (id) {
@@ -126,10 +130,11 @@
       }).join("") + '</div>';
     }
     function visualHead(t) {
-      return '<div class="ls-ll-visual-head"><span>' + esc(t.kicker) + '</span><b>' + esc(t.title) + '</b></div>';
+      return '<div class="ls-ll-visual-head"><span>' + esc(t.kicker) + '</span><b>' + esc(t.title) + '</b></div>' +
+        '<div class="ls-ll-claimline"><span>' + L("Behauptung", "Claim") + '</span><b>' + esc(t.claim || "") + '</b></div>';
     }
     function taskHTML(t) {
-      return '<div class="ls-ll-task"><span>' + L("Aufgabe", "Task") + '</span><b>' + esc(t.task) + '</b><p>' + esc(t.scenario) + '</p></div>';
+      return '<div class="ls-ll-task"><span>' + L("Testfall", "Test case") + '</span><b>' + esc(t.task) + '</b><p>' + esc(t.scenario) + '</p></div>';
     }
     function protocolHTML(t) {
       return '<div class="ls-ll-protocol"><b>' + L("So testest du es wirklich", "How to test it for real") + '</b><ol>' +
@@ -213,14 +218,24 @@
       var why = t.why;
       if (revealed && t.id === "citation" && state.verified && t.whyChecked) why = t.whyChecked;
       if (revealed && t.id === "boundary" && state.asked) why = t.asked;
-      return '<div class="ls-ll-observe" data-tip="' + L("Die Beobachtung erscheint nach dem Start; darunter stehen Grund und Gegenmittel.", "The observation appears after starting; the reason and countermeasure follow below.") + '">' +
-        '<div class="ls-ll-observe-head"><span>' + L("Beobachtung", "Observation") + '</span><b class="ls-ll-stamp">' + L("BEISPIEL", "EXAMPLE") + '</b></div>' +
+      return '<div class="ls-ll-observe" data-tip="' + L("Der Befund erscheint nach dem Start; darunter stehen Grund, Forschung und Gegenmittel.", "The finding appears after starting; the reason, research, and countermeasure follow below.") + '">' +
+        '<div class="ls-ll-observe-head"><span>' + L("Befund", "Finding") + '</span><b class="ls-ll-stamp">' + L("BEISPIEL", "EXAMPLE") + '</b></div>' +
         '<p class="ls-ll-observe-lead">' + esc(revealed ? t.observation : t.wait) + '</p>' +
-        (revealed ? '<p class="ls-ll-why">' + esc(why) + '</p>' +
-          (t.evidence ? '<p class="ls-ll-evidence"><b>' + L("Befund", "Finding") + ':</b> ' + esc(t.evidence) + '</p>' : '') +
+        (revealed ? '<p class="ls-ll-why"><b>' + L("Warum?", "Why?") + '</b> ' + esc(why) + '</p>' +
+          (t.evidence ? '<p class="ls-ll-evidence"><b>' + L("Forschung", "Research") + ':</b> ' + esc(t.evidence) + '</p>' : '') +
           '<div class="ls-ll-fix"><b>' + L("Was hilft?", "What helps?") + ':</b> ' + esc(t.fix) + '</div>' +
           '<span class="ls-ll-cite"><b>' + L("Quelle", "Source") + ':</b> ' + esc(t.cite) + '</span>' : '') +
       '</div>';
+    }
+    function researchHTML() {
+      return '<details class="ls-ll-research"><summary><b>' + L("Forschung: sechs Befunde hinter dem Prüfstand", "Research: six findings behind the bench") + '</b><span>' + L("Primärquellen öffnen", "open primary sources") + '</span></summary><div class="ls-ll-research-grid">' +
+        '<a href="https://arxiv.org/abs/2310.11324" target="_blank" rel="noopener"><b>Formatierung</b><span>Sclar et al. (2023): bis zu 76 Punkte Unterschied zwischen bedeutungserhaltenden Prompt-Formaten.</span></a>' +
+        '<a href="https://www.nature.com/articles/s41598-023-41032-5" target="_blank" rel="noopener"><b>Erfundene Zitate</b><span>Walters &amp; Wilder (2023): 51 % erfundene Zitate über sechs Studien; GPT-3.5 55 %, GPT-4 18 %.</span></a>' +
+        '<a href="https://arxiv.org/abs/2207.05221" target="_blank" rel="noopener"><b>Kalibrierung</b><span>Kadavath et al. (2022): Konfidenz ist oft nützlich, aber P(IK) generalisiert nur teilweise.</span></a>' +
+        '<a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noopener"><b>Langer Kontext</b><span>Liu et al. (2023): U-förmige Nutzung; die Mitte geht unter.</span></a>' +
+        '<a href="https://arxiv.org/abs/2310.01798" target="_blank" rel="noopener"><b>Selbstkorrektur</b><span>Huang et al. (2023): ohne Außenfeedback korrigieren Modelle ihr Reasoning oft nicht zuverlässig.</span></a>' +
+        '<a href="https://arxiv.org/abs/2305.18654" target="_blank" rel="noopener"><b>Komposition</b><span>Dziri et al. (2023): mehrstufige Aufgaben werden oft als lineares Subgraph-Matching gelöst; die Leistung fällt mit der Tiefe.</span></a>' +
+        '</div></details>';
     }
     function summary() {
       var count = ORDER.filter(isRun).length;
@@ -228,7 +243,7 @@
     }
     function render() {
       var t = test();
-      el.innerHTML = head() + tabs() + '<div class="ls-ll-board">' + visual(t) + readout(t) + '</div>' + summary();
+      el.innerHTML = head() + tabs() + '<div class="ls-ll-board">' + visual(t) + readout(t) + '</div>' + summary() + researchHTML();
     }
     function runTest(id) {
       clearTimer();
@@ -271,11 +286,19 @@
       },
       next: function () {
         var i = ORDER.indexOf(state.test);
-        if (i < 0 || i >= ORDER.length - 1) return false;
+        if (i < 0) return false;
+        if (!state.run[state.test]) {
+          state.run[state.test] = true;
+          state.running = null;
+          render();
+          return true;
+        }
+        if (i >= ORDER.length - 1) return false;
         state.test = ORDER[i + 1];
         state.verified = false;
         state.asked = false;
         state.running = null;
+        state.run[state.test] = true;
         render();
         return true;
       },
@@ -289,7 +312,7 @@
         render();
         return true;
       },
-      hasNext: function () { var i = ORDER.indexOf(state.test); return i >= 0 && i < ORDER.length - 1; },
+      hasNext: function () { var i = ORDER.indexOf(state.test); return i >= 0 && (!state.run[state.test] || i < ORDER.length - 1); },
       hasPrev: function () { return ORDER.indexOf(state.test) > 0; },
       resize: function () {},
       destroy: function () { clearTimer(); if (el.parentNode) el.parentNode.removeChild(el); }
