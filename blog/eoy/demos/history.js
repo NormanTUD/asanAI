@@ -307,7 +307,7 @@
     function sourcesHTML(e) {
       var ss = e.sources || (e.source ? [e.source] : []);
       if (!ss.length) return "";
-      return '<div class="ls-history-sources">' + ss.map(function (s) {
+      return '<div class="ls-history-sources"><b class="ls-history-sources-label">' + (DE ? "Quellen" : "Sources") + '</b>' + ss.map(function (s) {
         return '<a class="ls-history-source" data-tip="' + (DE ? "Primärquelle zu diesem Schritt in einem neuen Tab öffnen." : "Open the primary source for this step in a new tab.") + '" href="' + api.esc(s.url) + '" target="_blank" rel="noopener">' + api.esc(s.label) + '</a>';
       }).join("") + '</div>';
     }
@@ -315,14 +315,17 @@
       index = Math.max(0, Math.min(tabs.length - 1, index));
       track.innerHTML = tabs.map(function (t, i) {
         var st = STRANDS[TAB_STRAND[i] || 0];
-        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" role="tab" aria-selected="' + (i === index ? 'true' : 'false') + '" data-history="' + i + '" data-tip="' + api.esc((DE ? "Schritt " : "Step ") + (i + 1) + ": " + t.title) + '" style="--strand-color:' + st.color + '"><b>' + api.esc(t.year) + '</b><span>' + api.esc(t.label) + '</span></button>';
+        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" role="tab" aria-selected="' + (i === index ? 'true' : 'false') + '" data-history="' + i + '" data-tip="' + api.esc((DE ? "Schritt " : "Step ") + (i + 1) + ": " + t.title) + '" style="--strand-color:' + st.color + '"><i class="ls-history-node-no">' + (i + 1 < 10 ? '0' : '') + (i + 1) + '</i><b>' + api.esc(t.year) + '</b><span>' + api.esc(t.label) + '</span></button>';
       }).join("");
       track.querySelectorAll("[data-history]").forEach(function (b) {
         b.addEventListener("click", function () { setIndex(parseInt(b.getAttribute("data-history"), 10)); });
       });
       var e = tabs[index];
+      var activeStrand = STRANDS[TAB_STRAND[index] || 0];
+      panel.style.setProperty("--history-accent", activeStrand.color);
       var hasMedia = (e.images && e.images.length) || e.diagram;
-      panel.innerHTML = '<div class="ls-history-body' + (hasMedia ? '' : ' is-single') + '">' +
+      panel.innerHTML = '<div class="ls-history-panel-meta"><span>' + (DE ? "Schritt " : "Step ") + (index + 1) + ' / ' + tabs.length + '</span><span class="ls-history-strand">' + api.esc(activeStrand.label) + '</span></div>' +
+        '<div class="ls-history-body' + (hasMedia ? '' : ' is-single') + '">' +
         '<div class="ls-history-textcol">' +
           '<div class="ls-history-year">' + api.esc(e.year) + '</div>' +
           '<h3 class="ls-history-title">' + api.esc(e.title) + '</h3>' +

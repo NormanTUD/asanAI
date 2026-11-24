@@ -2799,7 +2799,7 @@ h1,h2,h3,h4{
 .ls-hg-gauge-fill{fill:none;stroke:var(--ls-green);stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .55s cubic-bezier(.22,1,.36,1),stroke .3s ease}
 .ls-hg-gauge-fill.is-mid{stroke:var(--ls-gold)}
 .ls-hg-gauge-fill.is-high{stroke:#c95656}
-.ls-hg-gauge-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:1px;font:700 26px/1 "Barlow",sans-serif;color:var(--ls-ink)}
+.ls-hg-gauge-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 12px;text-align:center;font:700 14px/1.2 "Barlow",sans-serif;color:var(--ls-ink)}
 .ls-hg-gauge-val span{margin-top:8px;font:700 11px/1 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-hg-gauge-cap{margin:-4px 0 0;text-align:center;font:600 8px/1.2 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
 .ls-hg-checks{display:flex;flex-direction:column;gap:5px}
@@ -2993,7 +2993,6 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 
 /* Deep-blue instrument stage for the final ten lessons. The page stays paper;
    the demo area gets the blue atmosphere, while content cards stay white. */
-#ls-demo[data-scene="history"],
 #ls-demo[data-scene="consciousness"]{
   background:
     radial-gradient(120% 92% at 12% 0%, rgba(0,75,111,.16), transparent 58%),
@@ -3074,13 +3073,11 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
   0%,100%{box-shadow:inset 0 3px 0 var(--ls-petrol),0 8px 22px rgba(0,40,60,.07)}
   50%{box-shadow:inset 0 3px 0 var(--ls-petrol),0 0 0 1px rgba(0,146,153,.30),0 14px 34px rgba(0,75,111,.13)}
 }
-#ls-demo[data-scene="history"],
 #ls-demo[data-scene="consciousness"]{
   position:relative;
   overflow:hidden;
   isolation:isolate;
 }
-#ls-demo[data-scene="history"]::before,
 #ls-demo[data-scene="consciousness"]::before{
   content:"";
   position:absolute;
@@ -3095,7 +3092,6 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
   animation:ls-demo-aurora 22s ease-in-out infinite alternate;
   will-change:transform;
 }
-#ls-demo[data-scene="history"]::after,
 #ls-demo[data-scene="consciousness"]::after{
   content:"";
   position:absolute;
@@ -3108,13 +3104,10 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
   mix-blend-mode:soft-light;
   opacity:.7;
 }
-#ls-demo[data-scene="history"] > *,
 #ls-demo[data-scene="consciousness"] > *{
   position:relative;
   z-index:1;
 }
-#ls-demo[data-scene="history"] .ls-history-panel,
-#ls-demo[data-scene="history"] .ls-history-figure,
 #ls-demo[data-scene="riskmap"] .ls-rm-card,
 #ls-demo[data-scene="riskmap"] .ls-rm-detail,
 #ls-demo[data-scene="consciousness"] .ls-con-detail,
@@ -3136,7 +3129,6 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 }
 
 /* Inner vignette and a hairline of light make the demo feel like a lit stage. */
-#ls-demo[data-scene="history"],
 #ls-demo[data-scene="consciousness"]{
   box-shadow:inset 0 0 90px rgba(0,40,60,.07),inset 0 1px 0 rgba(255,255,255,.7);
 }
@@ -4742,8 +4734,8 @@ html.dark .ls-cr2-room {
 .ls-hx-mode button{appearance:none;border:0;background:transparent;color:var(--ls-muted);font:600 var(--ls-fs-micro)/1 "Open Sans",sans-serif;padding:7px 10px;border-radius:999px;cursor:pointer;white-space:nowrap}
 .ls-hx-mode button.is-on{background:var(--ls-green);color:#fff}
 .ls-hx-mode button:focus-visible{outline:2px solid var(--ls-blue);outline-offset:2px}
-.ls-hx-hero{flex:0 0 auto}
-.ls-hx-win{border:1px solid var(--ls-line);border-radius:12px;background:#fff;box-shadow:0 14px 34px rgba(0,30,40,.10);overflow:hidden}
+.ls-hx-hero{flex:0 0 auto;height:clamp(420px,58vh,520px)}
+.ls-hx-win{display:flex;flex-direction:column;height:100%;min-height:0;border:1px solid var(--ls-line);border-radius:12px;background:#fff;box-shadow:0 14px 34px rgba(0,30,40,.10);overflow:hidden}
 .ls-hx-winbar{display:flex;align-items:center;gap:9px;padding:8px 12px;background:var(--ls-paper-2);border-bottom:1px solid var(--ls-line)}
 .ls-hx-dots{display:inline-flex;gap:5px}
 .ls-hx-dots i{width:8px;height:8px;border-radius:50%;background:var(--ls-line-strong);display:block}
@@ -4753,7 +4745,7 @@ html.dark .ls-cr2-room {
 .ls-hx-addr{flex:1;min-width:0;font:500 10px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--ls-muted);background:rgba(255,255,255,.7);border:1px solid var(--ls-line);border-radius:999px;padding:5px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ls-hx-mode-badge{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-petrol);border:1px solid var(--ls-line-strong);border-radius:999px;padding:5px 8px;white-space:nowrap}
 .ls-hx-mode-badge.is-rag{color:var(--ls-green);border-color:rgba(99,164,75,.5);background:rgba(99,164,75,.08)}
-.ls-hx-winbody{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);min-height:330px}
+.ls-hx-winbody{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);min-height:0;flex:1 1 auto}
 .ls-hx-chatcol{display:flex;flex-direction:column;min-width:0;border-right:1px solid var(--ls-line);background:radial-gradient(80% 80% at 0 0,rgba(18,117,172,.06),transparent 60%),var(--ls-paper-2)}
 .ls-hx-thread{flex:1;min-height:0;padding:14px 16px;display:flex;flex-direction:column;gap:12px;overflow:auto}
 .ls-hx-msg{display:flex;flex-direction:column;gap:4px;max-width:94%}
@@ -5091,4 +5083,60 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
   .ls-rope-guide-hint{display:none}
   .ls-rope-view{min-height:340px}
   .ls-rope-view canvas{min-height:260px}
+}
+
+
+/* History: an editorial timeline on calm paper, no aurora. */
+#ls-demo[data-scene="history"]{
+  background:linear-gradient(180deg, rgba(250,248,241,.98), rgba(255,255,255,.99));
+}
+.ls-history-scene{gap:11px;padding:8px 9px 7px;overflow-y:auto}
+.ls-history-head{align-items:center;gap:14px;padding:1px 2px 9px;border-bottom:1px solid var(--ls-line)}
+.ls-history-kicker{font:700 clamp(16px,1.65vw,21px)/1.1 "Barlow",sans-serif;letter-spacing:-.01em;color:var(--ls-petrol)}
+.ls-history-hint{padding:4px 9px;border:1px solid var(--ls-line);border-radius:999px;background:var(--ls-paper);font:700 8.5px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
+.ls-history-legend{gap:7px 14px;padding:0 2px;font:600 8.5px/1.2 "Open Sans",sans-serif}
+.ls-history-legend span{gap:6px}
+.ls-history-legend i{width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.8),0 0 0 3px rgba(0,75,111,.08)}
+.ls-history-tabs{position:relative;padding-top:16px;gap:8px;grid-template-columns:repeat(5,minmax(0,1fr))}
+.ls-history-tabs::before{content:"";position:absolute;left:2px;right:2px;top:7px;height:1px;background:linear-gradient(90deg,transparent,var(--ls-line-strong) 12%,var(--ls-line-strong) 88%,transparent);pointer-events:none}
+.ls-history-node{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;gap:4px 8px;align-items:start;min-height:76px;padding:9px 10px;border:1px solid var(--ls-line);border-left:3px solid var(--strand-color,var(--ls-petrol));background:rgba(255,255,255,.72);border-radius:2px;box-shadow:0 1px 0 rgba(255,255,255,.9) inset;transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease}
+.ls-history-node:hover{border-color:var(--ls-line-strong);background:#fff;transform:translateY(-1px)}
+.ls-history-node.is-on{border-color:var(--strand-color,var(--ls-petrol));background:#fff;box-shadow:0 10px 22px rgba(0,30,40,.08),inset 0 0 0 1px var(--strand-color,var(--ls-petrol));transform:translateY(-1px)}
+.ls-history-node::before{top:-13px;width:8px;height:8px;border:2px solid var(--strand-color,var(--ls-petrol));background:var(--ls-paper)}
+.ls-history-node.is-on::before{background:var(--strand-color,var(--ls-petrol));box-shadow:0 0 0 4px rgba(255,255,255,.9),0 0 0 5px var(--strand-color,var(--ls-petrol))}
+.ls-history-node-no{grid-row:1/3;align-self:start;padding-top:1px;font:700 9px/1 "Barlow",sans-serif;letter-spacing:.1em;color:var(--strand-color,var(--ls-muted));font-style:normal}
+.ls-history-node b{font:700 10.5px/1.15 "Barlow",sans-serif;color:var(--ls-petrol);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-history-node span{font:600 8px/1.25 "Open Sans",sans-serif;color:var(--ls-muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ls-history-node.is-on b{color:var(--ls-ink)}
+.ls-history-panel{position:relative;border:1px solid var(--ls-line);border-top:4px solid var(--history-accent,var(--ls-petrol));background:linear-gradient(180deg,#fff,rgba(250,248,241,.72));padding:17px 19px 16px;box-shadow:0 16px 34px rgba(0,30,40,.06);border-radius:2px}
+.ls-history-panel-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-muted)}
+.ls-history-strand{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border:1px solid color-mix(in srgb,var(--history-accent,var(--ls-petrol)) 45%,transparent);background:color-mix(in srgb,var(--history-accent,var(--ls-petrol)) 9%,transparent);color:var(--history-accent,var(--ls-petrol))}
+.ls-history-strand::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--history-accent,var(--ls-petrol))}
+.ls-history-body{grid-template-columns:minmax(0,1fr) minmax(250px,.5fr);gap:18px;align-items:start;width:100%}
+.ls-history-textcol{gap:6px}
+.ls-history-year{display:inline-flex;align-self:flex-start;padding:3px 8px;border:1px solid color-mix(in srgb,var(--history-accent,var(--ls-green)) 40%,transparent);background:color-mix(in srgb,var(--history-accent,var(--ls-green)) 8%,transparent);font:700 9px/1 "Open Sans",sans-serif;letter-spacing:.1em;color:var(--history-accent,var(--ls-green))}
+.ls-history-title{font:700 clamp(25px,2.6vw,34px)/1.03 "Barlow",sans-serif;letter-spacing:-.025em;max-width:24ch;color:var(--ls-ink)}
+.ls-history-text{font:var(--ls-fs-ui)/1.68 "Open Sans",sans-serif;max-width:66ch;color:var(--ls-soft)}
+.ls-history-media{gap:9px}
+.ls-history-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ls-history-figures .ls-history-figure:only-child{grid-column:1/-1}
+.ls-history-figure{border:1px solid var(--ls-line);background:#fff;padding:5px;box-shadow:0 6px 16px rgba(0,30,40,.055);max-width:none}
+#ls-demo[data-scene="history"] .ls-history-figure img{height:168px;max-height:168px;width:100%;object-fit:contain;background:#fff}
+.ls-history-figures .ls-history-figure:only-child img{height:205px;max-height:205px}
+.ls-history-figure figcaption{margin-top:5px;font:var(--ls-fs-micro)/1.38 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-history-diagram{max-width:none;border:1px solid var(--ls-line);background:#fff;padding:8px;box-shadow:0 6px 16px rgba(0,30,40,.045)}
+.ls-history-diagram svg{max-height:190px}
+.ls-history-sources{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px;margin-top:5px;padding-top:10px;border-top:1px dashed var(--ls-line)}
+.ls-history-sources-label{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-muted);margin-right:2px}
+.ls-history-source{align-self:auto;padding:3px 7px;border:1px solid var(--ls-line);background:var(--ls-paper);font:600 9px/1.2 "Open Sans",sans-serif;color:var(--ls-petrol);text-decoration:none;transition:border-color .15s ease,background .15s ease}
+.ls-history-source:hover{border-color:var(--ls-petrol);background:#fff}
+.ls-history-scene .ls-tokenize-nav{margin-top:1px;padding-top:3px;border-top:1px solid var(--ls-line)}
+@media (max-width:760px){
+  .ls-history-body{grid-template-columns:1fr;gap:12px}
+  .ls-history-title{font-size:24px}
+  .ls-history-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ls-history-tabs::before{display:none}
+  .ls-history-node::before{display:none}
+  .ls-history-figures{grid-template-columns:1fr}
+  .ls-history-figures .ls-history-figure:only-child img,#ls-demo[data-scene="history"] .ls-history-figure img{height:180px;max-height:180px}
 }

@@ -33,7 +33,7 @@
           '</div>' +
           '<aside class="ls-hg-check" data-tip="' + (DE ? "Die Prüfseite schätzt das Risiko und listet die aktiven Schutzmaßnahmen." : "The check panel estimates risk and lists the active guardrails.") + '">' +
             '<div class="ls-hg-check-head">' + (DE ? "Prüfung" : "Check") + '</div>' +
-            '<div class="ls-hg-gauge" data-tip="' + (DE ? "Der Ring zeigt das Halluzinationsrisiko von 0 bis 100 Prozent." : "The ring shows hallucination risk from 0 to 100 percent.") + '"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ls-hg-gauge-track" cx="60" cy="60" r="48"/><circle class="ls-hg-gauge-fill" cx="60" cy="60" r="48"/></svg><div class="ls-hg-gauge-val"><b class="ls-hg-risk-val"></b><span>%</span></div></div>' +
+            '<div class="ls-hg-gauge" data-tip="' + (DE ? "Der Ring zeigt das Halluzinationsrisiko qualitativ: wenig gefüllt heißt relativ gering, voll heißt hoch." : "The ring shows hallucination risk qualitatively: little fill means relatively low, full means high.") + '"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ls-hg-gauge-track" cx="60" cy="60" r="48"/><circle class="ls-hg-gauge-fill" cx="60" cy="60" r="48"/></svg><div class="ls-hg-gauge-val"><b class="ls-hg-risk-val"></b></div></div>' +
             '<p class="ls-hg-gauge-cap">' + (DE ? "Halluzinationsrisiko" : "Hallucination risk") + '</p>' +
             '<div class="ls-hg-checks">' +
               '<div class="ls-hg-checkrow" data-check="rag" data-tip="' + (DE ? "Zeigt, ob eine Quelle im Kontext liegt." : "Shows whether a source is in the context.") + '"><i></i><b>' + (DE ? "Quelle im Kontext" : "Source in context") + '</b><span></span></div>' +
@@ -116,7 +116,11 @@
       answerEl.textContent = answer;
       citeEl.textContent = cite;
 
-      riskVal.textContent = String(risk);
+      riskVal.textContent = risk < 30
+        ? (DE ? "relativ gering" : "relatively low")
+        : risk < 60
+          ? (DE ? "mittel" : "medium")
+          : (DE ? "hoch" : "high");
       var riskClass = risk < 30 ? "is-low" : risk < 60 ? "is-mid" : "is-high";
       if (gaugeFill) {
         gaugeFill.style.strokeDashoffset = String(CIRC * (1 - risk / 100));

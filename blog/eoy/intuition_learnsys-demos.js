@@ -16,6 +16,13 @@
     function tipEsc(v) {
       return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
+    function tipBreak(text) {
+      return String(text)
+        .replace(/\s*·\s*/g, "\n")
+        .replace(/;\s+/g, ";\n")
+        .replace(/([.!?])\s+(?=[A-ZÄÖÜ0-9])/g, "$1\n")
+        .replace(/\n{3,}/g, "\n\n");
+    }
     function tipHtml(text) {
       var parts = String(text).split("$");
       var html = "";
@@ -29,7 +36,7 @@
           }
           html += tipEsc(parts[i]);
         } else {
-          html += tipEsc(parts[i]);
+          html += tipEsc(tipBreak(parts[i]));
         }
       }
       return html;
@@ -74,7 +81,7 @@
         node = e.target.closest("canvas, svg, [role=img], button, [role=button], input, select, output");
       }
       if (!node || !host.contains(node)) return null;
-      if (node.closest(".ls-rope-scene,.ls-bs-residual")) return null;
+      if (node.closest(".ls-rope-scene,.ls-bs-residual,.ls-wm-scene")) return null;
       return node;
     }
     function tipPlace(x, y) {

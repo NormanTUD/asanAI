@@ -127,8 +127,9 @@
     var W = 1, H = 1;
     var state = { step: 0, phase: 0, t: 0, running: false, raf: 0, last: 0 };
     var hoverHits = [];
-    function addHit(x, y, w, h, text) {
-      if (w > 0 && h > 0) hoverHits.push({ x: x, y: y, w: w, h: h, text: text });
+    var linked64 = null;
+    function addHit(x, y, w, h, text, link) {
+      if (w > 0 && h > 0) hoverHits.push({ x: x, y: y, w: w, h: h, text: text, link: link || null });
     }
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var FRAMES = buildFrames();
@@ -656,6 +657,11 @@
               + (DE ? " · aus x ∈ ℝ^512 · Probe-Zeile W[" + squareLabel(ls) + ", " + stateName(lo) + "]" : " · from x ∈ ℝ^512 · probe row W[" + squareLabel(ls) + ", " + stateName(lo) + "]"));
         }
       }
+      if (linked64 && linked64.row >= 0 && linked64.col >= 0) {
+        c.strokeStyle = C.gold;
+        c.lineWidth = 2;
+        c.strokeRect(x + linked64.col * cw + 1, y + linked64.row * ch + 1, cw - 2, ch - 2);
+      }
       var ry = y + (row + .5) * ch;
       c.strokeStyle = C.gold;
       c.lineWidth = 1.5;
@@ -686,7 +692,8 @@
           var pi = pr * 8 + pc;
           addHit(x + pc * cell, y + pr * cell, cell, cell,
             (DE ? "Feld " : "square ") + squareLabel(pi) + " · " + stateName(stateIdx) + ": " + (PROBS[pi][stateIdx] * 100).toFixed(1) + "%"
-              + (DE ? " · aus x ∈ ℝ^512 und Probe-Zeile W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]" : " · from x ∈ ℝ^512 and probe row W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]"));
+              + (DE ? " · im 64×3: Zeile " + (pi + 1) + ", Spalte " + (stateIdx + 1) + " · aus x ∈ ℝ^512 und Probe-Zeile W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]" : " · in 64×3: row " + (pi + 1) + ", column " + (stateIdx + 1) + " · from x ∈ ℝ^512 and probe row W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]"),
+            { row: pi, col: stateIdx });
         }
       }
       if (typeof row === "number") {
@@ -1183,6 +1190,7 @@
     function hideTip() {
       tip.hidden = true;
       canvas.style.cursor = "";
+      if (linked64) { linked64 = null; draw(); }
     }
     canvas.addEventListener("pointermove", function (e) {
       var r = canvas.getBoundingClientRect();
@@ -1193,7 +1201,12 @@
         if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) { hit = h; break; }
       }
       if (!hit) { hideTip(); return; }
-      tip.textContent = hit.text + "\n" + (DE
+      var nextLink = hit.link || null;
+      if (JSON.stringify(nextLink) !== JSON.stringify(linked64)) {
+        linked64 = nextLink;
+        draw();
+      }
+      tip.textContent = hit.text.replace(/\s*·\s*/g, "\n") + "\n" + (DE
         ? "Jedes Feld hat drei Zustände: leer, dein Spieler, Gegner. Die Probe liest sie relativ zum Spieler am Zug."
         : "Each square has three states: empty, your player, opponent. The probe reads them relative to the player to move.");
       tip.hidden = false;
