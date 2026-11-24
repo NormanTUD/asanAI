@@ -2429,6 +2429,9 @@
       bar.hidden = !show;
       bar.style.display = show ? "" : "none";
     }
+    if (window.__lsUpdateQuickNav) {
+      try { window.__lsUpdateQuickNav(); } catch (e) {}
+    }
   }
 
   function renderNavHint() {
@@ -5768,32 +5771,58 @@
       if (bottom) bottom.style.setProperty("display", "none", "important");
     }
 
+    var navShown = { prev: false, next: false };
+    var navHideTimers = { prev: 0, next: 0 };
+    function setQuickNav(btn, key, show) {
+      if (show) {
+        if (navHideTimers[key]) { clearTimeout(navHideTimers[key]); navHideTimers[key] = 0; }
+        if (navShown[key]) return;
+        navShown[key] = true;
+        btn.style.setProperty("display", "inline-flex", "important");
+        topLayer(btn, true);
+        return;
+      }
+      if (!navShown[key] || navHideTimers[key]) return;
+      navHideTimers[key] = setTimeout(function () {
+        navHideTimers[key] = 0;
+        navShown[key] = false;
+        btn.style.setProperty("display", "none", "important");
+        topLayer(btn, false);
+      }, 360);
+    }
     function updateQuickNav() {
-      hideOtherNavs();
       var ready = window.__lsPageReady === true;
       var p = ready && hasPrevPage();
       var n = ready && hasNextPage();
-      qPrev.style.setProperty("display", p ? "inline-flex" : "none", "important");
-      qNext.style.setProperty("display", n ? "inline-flex" : "none", "important");
-      topLayer(qPrev, p);
-      topLayer(qNext, n);
+      setQuickNav(qPrev, "prev", p);
+      setQuickNav(qNext, "next", n);
       try {
         if (window.parent && window.parent !== window) {
           window.parent.postMessage({ type: "ls-nav-state", prev: !!p, next: !!n }, "*");
         }
       } catch (e) {}
     }
+    function refreshQuickNav() {
+      hideOtherNavs();
+      updateQuickNav();
+    }
 
-    qPrev.addEventListener("click", function () { prev(); setTimeout(updateQuickNav, 140); });
-    qNext.addEventListener("click", function () { next(); setTimeout(updateQuickNav, 140); });
+    qPrev.addEventListener("click", function () { prev(); setTimeout(updateQuickNav, 380); });
+    qNext.addEventListener("click", function () { next(); setTimeout(updateQuickNav, 380); });
 
+    window.__lsUpdateQuickNav = updateQuickNav;
     var main = document.querySelector(".ls-main");
     if (main) main.style.setProperty("padding-bottom", "72px", "important");
 
-    updateQuickNav();
-    setInterval(updateQuickNav, 250);
-    window.addEventListener("focus", updateQuickNav);
-    document.addEventListener("visibilitychange", updateQuickNav);
+    refreshQuickNav();
+    setInterval(updateQuickNav, 800);
+    document.addEventListener("click", function (e) {
+      if (e.target && e.target.closest && e.target.closest("#ls-demo")) setTimeout(updateQuickNav, 380);
+    });
+    document.addEventListener("keyup", function () { setTimeout(updateQuickNav, 380); });
+    window.addEventListener("resize", function () { setTimeout(updateQuickNav, 380); });
+    window.addEventListener("focus", refreshQuickNav);
+    document.addEventListener("visibilitychange", refreshQuickNav);
   }
 
   LS.mount = function (el, config) {
