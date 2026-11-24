@@ -215,6 +215,22 @@
 	}
 	body.ready .keyhint { opacity: 1; }
 	body.ready .keyhint.gone { opacity: 0; }
+	.hint {
+		position: fixed;
+		left: max(34px, env(safe-area-inset-left));
+		bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px));
+		z-index: 4;
+		pointer-events: none;
+		font-size: 9.5px;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: rgba(235, 241, 255, 0.3);
+		opacity: 0;
+		transition: opacity 1.8s ease;
+		white-space: nowrap;
+	}
+	body.ready .hint { opacity: 1; }
+	body.ready .hint.gone { opacity: 0; }
 	.sr-only {
 		position: absolute;
 		width: 1px;
@@ -236,6 +252,7 @@
 		.nav { right: 14px; bottom: max(16px, calc(env(safe-area-inset-bottom) + 10px)); gap: 7px; }
 		.nav button { width: 28px; height: 28px; font-size: 13px; }
 		.keyhint { display: none; }
+		.hint { display: none; }
 	}
 </style>
 </head>
@@ -257,6 +274,7 @@
 	<button id="next" type="button" aria-label="Next step">→</button>
 </div>
 <div class="keyhint" aria-hidden="true">→</div>
+<div class="hint" id="hint" aria-hidden="true">drag · click</div>
 <p class="sr-only">Interactive three-dimensional story about the Fuzzy-HoTT consciousness model. Use left and right arrow keys to move through the steps. Drag an idea, drag one of its three fuzzy membership parts, or click empty space to build a new idea.</p>
 
 <script src="../three.min.js"></script>
@@ -331,6 +349,7 @@
 	const prevBtn = document.getElementById("prev");
 	const nextBtn = document.getElementById("next");
 	const keyHint = document.querySelector(".keyhint");
+	const hintEl = document.getElementById("hint");
 
 	let w = 0, h = 0, dpr = 1;
 	let X = 4.3, Y = 3.0, Z = 1.4;
@@ -346,7 +365,7 @@
 	let spotTimer = 0;
 	let creativeDone = false;
 	let tensionLevel = 0;
-	let pointerOn = 0;
+	let autoplay = true;
 	let hasPointer = false;
 	let pointerDown = false;
 	let hoverNode = null;
@@ -912,9 +931,7 @@
 			morphPos: new THREE.Vector3(),
 			morphColor: new THREE.Color(1, 1, 1),
 			morphMem: [0.5, 0.5, 0.5],
-			morphSize: 0.2,
-			prev: new THREE.Vector3(),
-			phaseArr: new Float32Array(PTS)
+			morphSize: 0.2
 		};
 		for (let i = 0; i < PTS; i++) {
 			epPhase[slot * PTS + i] = e.phase;
@@ -1047,7 +1064,11 @@
 		const set = SPOT_SETS[stage];
 		spot = set[0];
 		updateCaption();
-		if (manual) keyHint.classList.add("gone");
+		if (manual) {
+			autoplay = false;
+			keyHint.classList.add("gone");
+			hintEl.classList.add("gone");
+		}
 		if (stage === 1) burst(nodes[0].pos, nodes[0].hue, 9, 0.08, 0.4);
 		if (stage === 5) {
 			nodes[5].explodePulse = 1.25;
@@ -1116,7 +1137,13 @@
 			const pt = presenceTarget(n);
 			n.presence += (pt - n.presence) * (1 - Math.exp(-2.3 * dt));
 			const focused = focus === n;
-			const explodeTarget = (focused ? (stage === 0 ? 1.0 : 0.34) : 0.055) + n.explodePulse;
+			let explodeFocus = 0.34;
+			if (stage === 0) {
+				const t = clamp((stageAge - 3.0) / 3.6, 0, 1);
+				const eased = t * t * (3 - 2 * t);
+				explodeFocus = 1.0 - 0.82 * eased;
+			}
+			const explodeTarget = (focused ? explodeFocus : 0.055) + n.explodePulse;
 			n.explode += (explodeTarget - n.explode) * (1 - Math.exp(-4.2 * dt));
 			n.explodePulse *= Math.exp(-1.25 * dt);
 			n.focus += ((focused ? 1 : 0) - n.focus) * (1 - Math.exp(-4.5 * dt));
@@ -1205,7 +1232,7 @@
 		stageAge += realDt;
 		if (dragNode || dragSat || pointerDown) stageAge = 0;
 		const hold = STAGES[stage].hold;
-		if (stage < 7 && stageAge > hold) {
+		if (autoplay && stage < 7 && stageAge > hold) {
 			setStage(stage + 1, false);
 			return;
 		}
@@ -1254,10 +1281,11 @@
 			const p = n.presence;
 			const e = n.energy;
 			const f = n.focus;
+			const assem = 1 - 0.6 * clamp(n.explode, 0, 1);
 			if (f > 0.04) {
-				g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 11.5 * (0.5 + 0.5 * p), p * f * (0.05 + 0.05 * e));
+				g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 11.5 * (0.5 + 0.5 * p), p * f * (0.05 + 0.05 * e) * (0.4 + 0.6 * assem));
 			}
-			g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 6.6 * (0.5 + 0.5 * p), p * (0.065 + 0.125 * e) * (1 + 0.35 * f));
+			g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 6.6 * (0.5 + 0.5 * p), p * (0.065 + 0.125 * e) * (1 + 0.35 * f) * (0.5 + 0.5 * assem));
 			g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 2.3 * p, p * (0.10 + 0.18 * e) * (1 + 0.45 * f));
 			g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 0.64 * p, p * (0.20 + 0.26 * e) * (1 + 0.40 * f));
 			for (let i = 0; i < 3; i++) {
@@ -1275,6 +1303,12 @@
 			tmpV.set((a.pos.x + b.pos.x) * 0.5, (a.pos.y + b.pos.y) * 0.5, (a.pos.z + b.pos.z) * 0.5);
 			const pulse = 0.5 + 0.5 * Math.sin(time * 2.0);
 			g = fillGlowPoint(g, tmpV.x, tmpV.y, tmpV.z, tmpColor, worldR * (5.0 + 1.2 * pulse), tensionLevel * (0.13 + 0.13 * pulse));
+		}
+
+		if (stage === 7) {
+			tmpColor.setHSL(0.58, 0.45, 0.66);
+			const pulse = 0.5 + 0.5 * Math.sin(time * 0.5);
+			g = fillGlowPoint(g, 0, 0, 0, tmpColor, worldR * (19 + 2 * pulse), 0.035 + 0.02 * pulse);
 		}
 
 		for (const e of edges) {
@@ -1351,12 +1385,12 @@
 		return stage >= 2 ? 1 : 0;
 	}
 
-	function updateEdges(dt) {
+	function updateEdges(dt, animDt) {
 		const morphBoost = stage === 3 ? 1.45 : stage === 7 ? 1.15 : 1.0;
 		for (const e of edges) {
 			const a = nodes[e.a];
 			const b = nodes[e.b];
-			e.phase += dt * e.speed * morphBoost * MOTION;
+			e.phase += animDt * e.speed * morphBoost * MOTION;
 			const rt = revealTargetFor(e);
 			const bt = buildTargetFor(e);
 			e.reveal += (rt - e.reveal) * (1 - Math.exp(-3.0 * dt));
@@ -1376,7 +1410,8 @@
 				e.morphMem[i] = lerp(a.mEff[i], b.mEff[i], u);
 			}
 			e.morphColor.copy(a.color).lerp(b.color, u);
-			e.morphSize = morphRBase() * (0.35 + 0.65 * e.reveal) * (0.9 + 0.1 * Math.sin(time * 2 + e.seed));
+			const sizeBoost = stage === 3 ? 1.28 : 1.0;
+			e.morphSize = morphRBase() * sizeBoost * (0.35 + 0.65 * e.reveal) * (0.9 + 0.1 * Math.sin(time * 2 + e.seed));
 			const minE = Math.min(a.energy, b.energy);
 			e.morph.position.copy(e.morphPos);
 			e.morph.scale.setScalar(Math.max(0.0001, e.morphSize));
@@ -1638,7 +1673,7 @@
 			for (let i = 0; i < 3; i++) {
 				const s = focus.satScreen[i];
 				const el = axisLabels[i];
-				const opacity = focus.focus * focus.presence * 0.62;
+				const opacity = focus.focus * focus.presence * 0.62 * (0.45 + 0.55 * clamp(focus.explode * 1.4, 0, 1));
 				if (!s.vis || opacity < 0.02) {
 					el.style.opacity = "0";
 					continue;
@@ -1687,7 +1722,8 @@
 		const pitchTarget = pitchBase + finalePitch;
 		cam.pitch += (pitchTarget - cam.pitch) * (1 - Math.exp(-2.6 * dt));
 
-		const radiusTarget = baseDist * st.zoom * (1 + 0.008 * Math.sin(time * 0.8));
+		const breathe = stage === 7 ? 0.022 : 0.008;
+		const radiusTarget = baseDist * st.zoom * (1 + breathe * Math.sin(time * (stage === 7 ? 0.55 : 0.8)));
 		cam.radius += (radiusTarget - cam.radius) * (1 - Math.exp(-2.2 * dt));
 
 		const cy = Math.cos(cam.pitch);
@@ -1743,6 +1779,8 @@
 		hasPointer = true;
 		pointerDown = true;
 		stageAge = 0;
+		autoplay = false;
+		hintEl.classList.add("gone");
 		const hit = pickAt(pointer.x, pointer.y);
 		if (hit && hit.sat) {
 			dragSat = hit.sat;
@@ -1824,14 +1862,15 @@
 	function frame(now) {
 		if (!last) last = now;
 		const rawDt = Math.min((now - last) / 1000, 0.25);
+		const animDt = Math.min(rawDt, 0.10);
 		let dt = Math.min(rawDt, 0.05);
 		last = now;
-		time += dt * MOTION;
+		time += animDt * MOTION;
 
 		updateStageLogic(dt, rawDt);
 		updateMemberships(dt);
 		updateNodes(dt);
-		updateEdges(dt);
+		updateEdges(dt, animDt);
 		updateGlow();
 		updateConnectors();
 		updateSparks(dt);
@@ -1862,10 +1901,14 @@
 	captionEl.classList.add("show");
 	window.setTimeout(() => document.body.classList.add("ready"), 80);
 	window.setTimeout(() => keyHint.classList.add("gone"), 9000);
+	window.setTimeout(() => hintEl.classList.add("gone"), 11000);
 
 	window.__fh = {
 		nodes, edges, camera,
 		get stage() { return stage; },
+		get age() { return stageAge; },
+		get down() { return pointerDown; },
+		get time() { return time; },
 		setStage, nextStage, prevStage
 	};
 

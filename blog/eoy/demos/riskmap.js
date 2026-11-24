@@ -401,7 +401,34 @@
         }
       },
       next: function () {
-        var list = state.mode === "society" ? (state.socKind === "cross" ? modeData().items : modeData().chain) : modeData().items;
+        if (state.mode === "society") {
+          if (state.socKind === "chain") {
+            var chain = modeData().chain;
+            if (state.active < chain.length - 1) {
+              state.active++;
+              render();
+              animateDetail();
+              return true;
+            }
+            if (modeData().items.length) {
+              state.socKind = "cross";
+              state.active = 0;
+              render();
+              animateDetail();
+              return true;
+            }
+            return false;
+          }
+          var cross = modeData().items;
+          if (state.active < cross.length - 1) {
+            state.active++;
+            render();
+            animateDetail();
+            return true;
+          }
+          return false;
+        }
+        var list = modeData().items;
         if (state.active < list.length - 1) {
           state.active++;
           render();
@@ -411,6 +438,24 @@
         return false;
       },
       prev: function () {
+        if (state.mode === "society") {
+          if (state.socKind === "cross") {
+            if (state.active > 0) {
+              state.active--;
+              render();
+              animateDetail();
+              return true;
+            }
+            if (modeData().chain.length) {
+              state.socKind = "chain";
+              state.active = modeData().chain.length - 1;
+              render();
+              animateDetail();
+              return true;
+            }
+            return false;
+          }
+        }
         if (state.active > 0) {
           state.active--;
           render();
@@ -420,10 +465,16 @@
         return false;
       },
       hasNext: function () {
-        var list = state.mode === "society" ? (state.socKind === "cross" ? modeData().items : modeData().chain) : modeData().items;
-        return state.active < list.length - 1;
+        if (state.mode === "society") {
+          if (state.socKind === "chain") return modeData().chain.length > 0;
+          return state.active < modeData().items.length - 1;
+        }
+        return state.active < modeData().items.length - 1;
       },
-      hasPrev: function () { return state.active > 0; },
+      hasPrev: function () {
+        if (state.mode === "society" && state.socKind === "cross") return modeData().chain.length > 0;
+        return state.active > 0;
+      },
       resize: function () {},
       destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
     };
