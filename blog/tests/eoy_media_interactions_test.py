@@ -2228,7 +2228,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     context.close()
 
 
-def test_qualia_and_takeaway(browser, base, lang, results):
+def test_qualia_and_final_status(browser, base, lang, results):
     context, page, logs = open_page(browser, base, lang, path="/eoy/31.php", wait_media=False)
     tag = f"qualia-{lang}"
     page.wait_for_timeout(700)
@@ -2237,17 +2237,17 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     qualia = page.evaluate(
         r"""
 () => ({
-  scene: !!document.querySelector('.ls-mi-qualia'),
-  outside: !!document.querySelector('.ls-mi-outside'),
-  inside: !!document.querySelector('.ls-mi-inside'),
-  mary: !!document.querySelector('.ls-mi-mary'),
-  measure: !!document.querySelector('.ls-mi-measure'),
-  graph: !!document.querySelector('.ls-mi-measure-graph'),
-  apples: document.querySelectorAll('.ls-mi-mary-apple').length,
-  bw: document.querySelector('.ls-mi-mary-apple.is-bw') ? getComputedStyle(document.querySelector('.ls-mi-mary-apple.is-bw')).filter : '',
-  maryText: document.querySelector('.ls-mi-mary p')?.innerText || '',
-  maryLabels: getComputedStyle(document.querySelector('.ls-mi-mary-room'), '::before').content,
-  text: document.querySelector('.ls-mi-qualia-text')?.innerText || '',
+  scene: !!document.querySelector('.ls-mi2'),
+  outside: !!document.querySelector('.ls-mi2-side.is-out'),
+  inside: !!document.querySelector('.ls-mi2-side.is-in'),
+  mary: !!document.querySelector('.ls-mi2-mary'),
+  measure: !!document.querySelector('.ls-mi2-measure'),
+  graph: !!document.querySelector('.ls-mi2-measure svg'),
+  apples: document.querySelectorAll('.ls-mi2-apple').length,
+  bw: document.querySelector('.ls-mi2-apple.is-bw') ? getComputedStyle(document.querySelector('.ls-mi2-apple.is-bw')).filter : '',
+  maryText: document.querySelector('.ls-mi2-mary')?.innerText || '',
+  maryLabels: Array.from(document.querySelectorAll('.ls-mi2-room-label')).map(function (n) { return n.textContent.trim(); }).join('|'),
+  text: document.querySelector('.ls-mi2-def')?.innerText || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
@@ -2256,8 +2256,10 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     results.check(tag, "qualia card shows Mary's room", qualia["mary"], str(qualia))
     results.check(tag, "outside view is a measurement panel", qualia["measure"] and qualia["graph"], str(qualia))
     results.check(tag, "Mary's left apple is the same apple in grayscale", qualia["apples"] == 2 and "grayscale" in qualia["bw"], str(qualia))
-    results.check(tag, "Mary lives in a grayscale world without red", ("grau" in qualia["maryText"] or "gray" in qualia["maryText"]) and ("Rot" in qualia["maryText"] or "red" in qualia["maryText"]), qualia["maryText"][:220])
-    results.check(tag, "Mary's room has no S/W or Rot pseudo-labels", qualia["maryLabels"] in ("none", "normal", '""'), qualia["maryLabels"])
+    mary_l = qualia["maryText"].lower()
+    labels_l = qualia["maryLabels"].lower()
+    results.check(tag, "Mary lives in a grayscale world without red", ("grau" in mary_l or "gray" in mary_l or "grey" in mary_l) and ("rot" in mary_l or "red" in mary_l), qualia["maryText"][:220])
+    results.check(tag, "Mary's room labels grey and red", ("grau" in labels_l or "grey" in labels_l) and ("rot" in labels_l or "red" in labels_l), qualia["maryLabels"])
     results.check(tag, "qualia text explains the felt redness", "Quale" in qualia["text"] or "quale" in qualia["text"], qualia["text"][:160])
     results.check(tag, "qualia page has no overflow", qualia["overflow"] <= 2, str(qualia["overflow"]))
     page.evaluate("() => LearnSys.go(0, 0, 1)")
@@ -2265,47 +2267,100 @@ def test_qualia_and_takeaway(browser, base, lang, results):
     theories = page.evaluate(
         r"""
 () => ({
-  sub: document.querySelector('.ls-con-sub')?.textContent || '',
-  gw: !!document.querySelector('.ls-con-gw'),
-  stage: document.querySelector('.ls-con-gw-stage b')?.textContent || '',
-  audience: document.querySelector('.ls-con-gw-audience')?.textContent || '',
+  scene: !!document.querySelector('.ls-con2'),
+  title: document.querySelector('[data-con2-title]')?.textContent || '',
+  lead: document.querySelector('[data-con2-lead]')?.textContent || '',
+  canvas: !!document.querySelector('.ls-con2-canvas'),
+  detail: document.querySelector('[data-con2-detail]')?.innerText || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
-    results.check(tag, "theory page starts with what consciousness is", "was Bewusstsein" in theories["sub"] or "what consciousness" in theories["sub"], theories["sub"][:160])
-    results.check(tag, "global workspace visual is mounted", theories["gw"] and "workspace" in theories["stage"].lower(), str(theories))
-    results.check(tag, "global workspace has no audience", "Zuschauer" in theories["audience"] or "audience" in theories["audience"], theories["audience"])
+    results.check(tag, "theory page starts with Global Workspace", "Global Workspace" in theories["title"], theories["title"][:160])
+    results.check(tag, "global workspace explains access, not experience", ("Zugang" in theories["lead"] or "access" in theories["lead"].lower()) and ("nicht Erleben" in theories["lead"] or "not experience" in theories["lead"].lower()), theories["lead"][:220])
+    results.check(tag, "global workspace canvas is mounted", theories["scene"] and theories["canvas"], str(theories)[:220])
+    results.check(tag, "theory detail names the access limit", "Zugang" in theories["detail"] or "access" in theories["detail"].lower(), theories["detail"][:220])
     results.check(tag, "theory page has no overflow", theories["overflow"] <= 2, str(theories["overflow"]))
-    page.evaluate("() => LearnSys.go(0, 0, 2)")
-    page.wait_for_timeout(1600)
-    takeaway = page.evaluate(
+    page.evaluate(
         r"""
 () => {
-  var canvas = document.querySelector('.ls-tk-canvas');
-  var r = canvas ? canvas.getBoundingClientRect() : null;
+  for (var i = 0; i < 40; i++) {
+    var s = document.querySelector('[data-con2-status]');
+    if (s && /Drei Wirbel|Three vortices/.test(s.textContent)) break;
+    LearnSys.next();
+  }
+}
+"""
+    )
+    page.wait_for_timeout(300)
+    kast_before = page.evaluate(
+        r"""
+() => ({
+  status: document.querySelector('[data-con2-status]')?.textContent || '',
+  diss: document.querySelector('[data-con-diss]')?.value || '',
+  count: document.querySelector('[data-con-count]')?.value || ''
+})
+"""
+    )
+    results.check(tag, "Kastrup reaches the dissociated state", "Drei Wirbel" in kast_before["status"] or "Three vortices" in kast_before["status"], str(kast_before)[:220])
+    results.check(tag, "Kastrup next announces the end of dissociation", "Tod" in kast_before["status"] or "death" in kast_before["status"].lower(), kast_before["status"][:220])
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(350)
+    kast_after = page.evaluate(
+        r"""
+() => ({
+  status: document.querySelector('[data-con2-status]')?.textContent || '',
+  diss: document.querySelector('[data-con-diss]')?.value || '',
+  count: document.querySelector('[data-con-count]')?.value || '',
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "Kastrup next dissolves dissociation", kast_after["diss"] == "0", str(kast_after)[:220])
+    results.check(tag, "Kastrup death leaves one consciousness", kast_after["count"] == "1", str(kast_after)[:220])
+    results.check(tag, "Kastrup death is explained", ("Tod" in kast_after["status"] or "death" in kast_after["status"].lower()) and ("Dissoziation" in kast_after["status"] or "dissociation" in kast_after["status"].lower()), kast_after["status"][:220])
+    results.check(tag, "Kastrup page has no overflow", kast_after["overflow"] <= 2, str(kast_after["overflow"]))
+    page.evaluate("() => LearnSys.go(0, 0, 2)")
+    page.wait_for_timeout(900)
+    final = page.evaluate(
+        r"""
+() => {
+  var cn = document.querySelector('.ls-cn');
+  var detail = document.querySelector('.ls-cn-detail');
+  var bottom = document.querySelector('.ls-cn-bottom');
+  var r = cn ? cn.getBoundingClientRect() : null;
   return {
-    canvas: !!canvas,
-    w: canvas ? canvas.width : 0,
-    h: canvas ? canvas.height : 0,
-    cssW: r ? Math.round(r.width) : 0,
-    cssH: r ? Math.round(r.height) : 0,
-    summary: document.querySelectorAll('.ls-tk-summary article').length,
-    questions: !!document.querySelector('.ls-tk-questions'),
+    scene: !!cn,
+    cards: document.querySelectorAll('.ls-cn-card').length,
+    jspace: /J-Space|J-space/.test(detail?.innerText || ''),
+    gurnee: /Gurnee/.test(detail?.innerText || ''),
+    butlin: /Butlin/.test(bottom?.innerText || ''),
+    source: !!bottom?.querySelector('a[href*="2308.08708"]'),
+    takeaway: !!document.querySelector('.ls-tk-canvas'),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 }
 """
     )
-    results.check(tag, "takeaway canvas is mounted", takeaway["canvas"] and takeaway["cssW"] > 200 and takeaway["cssH"] > 200, str(takeaway))
-    results.check(tag, "takeaway canvas has a real drawing buffer", takeaway["w"] > 200 and takeaway["h"] > 200, str(takeaway))
-    results.check(tag, "takeaway summarises three moves", takeaway["summary"] == 3, str(takeaway))
-    results.check(tag, "takeaway has no Prüffragen row", not takeaway["questions"], str(takeaway))
-    page_text = page.evaluate("() => document.body.innerText")
-    results.check(tag, "takeaway has no object text", "[object HTMLDivElement]" not in page_text, page_text[-240:])
-    results.check(tag, "takeaway page has no overflow", takeaway["overflow"] <= 2, str(takeaway["overflow"]))
+    results.check(tag, "final status scene is mounted", final["scene"], str(final))
+    results.check(tag, "final status offers six approaches", final["cards"] == 6, str(final))
+    results.check(tag, "final status explains the J-space finding", final["jspace"] and final["gurnee"], str(final))
+    results.check(tag, "final status cites Butlin on current systems", final["butlin"] and final["source"], str(final))
+    results.check(tag, "takeaway scene is no longer mounted", not final["takeaway"], str(final))
+    results.check(tag, "final status page has no overflow", final["overflow"] <= 2, str(final["overflow"]))
+    page.locator('.ls-cn-card[data-cn="1"]').click()
+    page.wait_for_timeout(200)
+    switched = page.evaluate(
+        r"""
+() => ({
+  detail: document.querySelector('.ls-cn-detail')?.innerText || '',
+  selected: document.querySelector('.ls-cn-card.is-on')?.getAttribute('data-cn') || ''
+})
+"""
+    )
+    results.check(tag, "final status switches approaches", switched["selected"] == "1" and ("Phi" in switched["detail"] or "IIT" in switched["detail"]), str(switched)[:220])
     errors = logs.take()
-    results.check(tag, "qualia/takeaway pages have no console errors", not errors, " | ".join(errors)[:400])
+    results.check(tag, "qualia/final status pages have no console errors", not errors, " | ".join(errors)[:400])
     context.close()
 
 
@@ -2384,7 +2439,7 @@ def main():
                 test_gauss_slider(browser, base, lang, results)
                 test_hallucination_lab(browser, base, lang, results)
                 test_risk_and_limit_visuals(browser, base, lang, results)
-                test_qualia_and_takeaway(browser, base, lang, results)
+                test_qualia_and_final_status(browser, base, lang, results)
                 test_tabs_and_code(page, logs, results, tag)
                 test_phone_screen_clicks(page, logs, results, tag)
                 test_hidden_media_buttons(page, logs, results, tag)
