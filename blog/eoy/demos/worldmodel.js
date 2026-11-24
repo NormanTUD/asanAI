@@ -654,7 +654,9 @@
             (DE ? "Feld " : "square ") + squareLabel(ls) + " · " + stateName(lo)
               + " · Logit " + V.fmt(SCORES[ls][lo], 2)
               + " · p " + (PROBS[ls][lo] * 100).toFixed(1) + "%"
-              + (DE ? " · aus x ∈ ℝ^512 · Probe-Zeile W[" + squareLabel(ls) + ", " + stateName(lo) + "]" : " · from x ∈ ℝ^512 · probe row W[" + squareLabel(ls) + ", " + stateName(lo) + "]"));
+              + (DE ? " · im 64×3: Zeile " + (ls + 1) + ", Spalte " + (lo + 1) + " · markiert live in den drei 8×8-Maps" : " · in 64×3: row " + (ls + 1) + ", column " + (lo + 1) + " · highlighted live in all three 8×8 maps")
+              + (DE ? " · aus x ∈ ℝ^512 · Probe-Zeile W[" + squareLabel(ls) + ", " + stateName(lo) + "]" : " · from x ∈ ℝ^512 · probe row W[" + squareLabel(ls) + ", " + stateName(lo) + "]"),
+            { row: ls, col: lo });
         }
       }
       if (linked64 && linked64.row >= 0 && linked64.col >= 0) {
@@ -683,6 +685,18 @@
           c.strokeStyle = V.alpha(C.line, .18);
           c.strokeRect(x + col * cell + .5, y + r * cell + .5, cell - 1, cell - 1);
         }
+      }
+      if (linked64 && linked64.row >= 0) {
+        var lr = Math.floor(linked64.row / 8), lc = linked64.row % 8;
+        c.save();
+        c.strokeStyle = C.gold;
+        c.lineWidth = linked64.col === stateIdx ? 2.8 : 1.4;
+        c.strokeRect(x + lc * cell + 1.5, y + lr * cell + 1.5, cell - 3, cell - 3);
+        if (linked64.col === stateIdx) {
+          c.fillStyle = V.alpha(C.gold, .16);
+          c.fillRect(x + lc * cell + 2, y + lr * cell + 2, cell - 4, cell - 4);
+        }
+        c.restore();
       }
       c.strokeStyle = V.alpha(C.lineStrong, .65);
       c.lineWidth = 1;
