@@ -11,7 +11,7 @@
     el.className = "ls-position-scene";
     el.innerHTML =
       '<div class="ls-position-grid">' +
-        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
+        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Positionen 0–100000 (256 Zeilen gesampelt) · 3D = Projektion" : "High-dimensional space · positions 0–100000 (256 sampled rows) · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
         '<div class="ls-position-right"><div class="ls-position-metric"><span>' + (DE ? "Metrik" : "Metric") + '</span><div class="ls-position-metric-btns" role="group" aria-label="' + (DE ? "Metrik der Positionsdarstellung" : "Position visualisation metric") + '"><button type="button" data-pos-metric="greatcircle" class="is-on">' + (DE ? "Großkreis (Winkel)" : "Great circle (angle)") + '</button><button type="button" data-pos-metric="euclid">' + (DE ? "Euklid (Distanz)" : "Euclidean (distance)") + '</button></div></div><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range" hidden>Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
@@ -23,7 +23,7 @@
     var metricBtns = Array.prototype.slice.call(el.querySelectorAll("[data-pos-metric]"));
     var metric = "greatcircle";
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var context = 128, dims = 64, pos = 7, rotate = !reducedMotion;
+    var context = 100000, dims = 64, pos = 7, rotate = !reducedMotion;
     var posAnim = pos;
     function addTrailTo(target) {
       target = clamp(Math.round(target || 0), 0, 100000);
@@ -58,11 +58,12 @@
       var ctx = heatSize.ctx, w = heatSize.w, h = heatSize.h;
       ctx.clearRect(0, 0, w, h);
       var padL = 34, padB = 22, padT = 8, padR = 8;
-      var cols = Math.min(dims, 64), rows = Math.min(context, 128);
+      var cols = Math.min(dims, 64), rows = Math.min(context, 256);
+      function rowPosition(row) { return Math.round(row * (context - 1) / (rows - 1)); }
       var cw = (w - padL - padR) / cols, ch = (h - padT - padB) / rows;
       for (var i = 0; i < rows; i++) {
         for (var j = 0; j < cols; j++) {
-          var v = pe(i, dims, j);
+          var v = pe(rowPosition(i), dims, j);
           var t = (v + 1) / 2;
           var col = t < 0.5 ? mix(C.sky, C.paper, t * 2) : mix(C.paper, C.gold, (t - 0.5) * 2);
           ctx.fillStyle = col;
@@ -75,7 +76,7 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "right";
       ctx.fillText("0", padL - 4, padT + 8);
-      ctx.fillText(String(rows - 1), padL - 4, padT + (rows - 1) * ch + ch);
+      ctx.fillText(String(context - 1), padL - 4, padT + (rows - 1) * ch + ch);
       ctx.textAlign = "center";
       ctx.fillText(DE ? "Dimension" : "dimension", padL + (w - padL - padR) / 2, h - 5);
       if (heatHover && heatHover.row >= 0 && heatHover.col >= 0 && heatHover.row < rows && heatHover.col < cols) {
@@ -88,13 +89,14 @@
         var pair = Math.floor(heatHover.col / 2);
         var freq = Math.pow(10000, (2 * pair) / Math.max(2, dims));
         var isSin = heatHover.col % 2 === 0;
-        var val = pe(heatHover.row, dims, heatHover.col);
+        var actualPosition = rowPosition(heatHover.row);
+        var val = pe(actualPosition, dims, heatHover.col);
         var lines = [
-          L("Zeile: Position ", "row: position ") + heatHover.row + L(" (0–127)", " (0–127)"),
+          L("Zeile: Position ", "row: position ") + actualPosition + L(" (0–100000, gesampelt)", " (0–100000, sampled)"),
           L("Spalte: Dimension ", "column: dimension ") + heatHover.col + L(" (0–63)", " (0–63)"),
           L("Paar ", "pair ") + (pair + 1) + " · " + (isSin ? "sin" : "cos"),
           L("Frequenz ", "frequency ") + freq.toFixed(2),
-          (isSin ? "sin(" : "cos(") + heatHover.row + " / " + freq.toFixed(2) + ") = " + val.toFixed(3)
+          (isSin ? "sin(" : "cos(") + actualPosition + " / " + freq.toFixed(2) + ") = " + val.toFixed(3)
         ];
         var tw = 236, th = lines.length * 13 + 10;
         var tx = heatHover.x + 12 + tw > w ? heatHover.x - tw - 10 : heatHover.x + 12;
@@ -365,7 +367,7 @@
       var r = heat.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
       var padL = 34, padB = 22, padT = 8, padR = 8;
-      var cols = Math.min(dims, 64), rows = Math.min(context, 128);
+      var cols = Math.min(dims, 64), rows = Math.min(context, 256);
       var cw = (heatSize.w - padL - padR) / cols, ch = (heatSize.h - padT - padB) / rows;
       var col = Math.floor((x - padL) / cw), row = Math.floor((y - padT) / ch);
       if (col < 0 || row < 0 || col >= cols || row >= rows) {
