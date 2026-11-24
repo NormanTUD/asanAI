@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der Bot, der immer Ja sagt — Sykophanz & delusionale Spiralen</title>
+<meta name="description" content="Interaktive Visualisierung von arXiv:2602.19141 — warum sykophante Chatbots selbst ideale Bayesierer in delusionale Spiralen treiben.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a; --ink:#eef1f8; --muted:#9aa3b7; --faint:#5d6478;
+  --line:rgba(255,255,255,.085); --line2:rgba(255,255,255,.045);
+  --glass:rgba(255,255,255,.035); --glass2:rgba(255,255,255,.06);
+  --truth:#2dd4bf; --truth-soft:#5eead4; --delusion:#fb7185; --delusion-soft:#fda4af;
+  --gold:#fbbf24; --violet:#a78bfa; --blue:#60a5fa; --radius:26px;
+  --serif:'Fraunces','Iowan Old Style',Georgia,'Times New Roman',serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--sans);color:var(--ink);overflow-x:hidden;
+  background:
+    radial-gradient(1200px 800px at 12% -8%, rgba(45,212,191,.10), transparent 60%),
+    radial-gradient(1000px 720px at 92% 2%, rgba(251,113,133,.11), transparent 58%),
+    radial-gradient(900px 900px at 50% 120%, rgba(167,139,250,.10), transparent 62%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 20%, rgba(0,0,0,.7), transparent 75%);
+  mask-image:radial-gradient(ellipse at 50% 20%, rgba(0,0,0,.7), transparent 75%);
+}
+::selection{background:rgba(45,212,191,.28);color:#fff}
+a{color:inherit}
+button{font-family:inherit}
+h1,h2,h3,h4,p{margin:0}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;background:linear-gradient(90deg,var(--truth),var(--violet),var(--delusion));box-shadow:0 0 18px rgba(167,139,250,.6)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px clamp(18px,4vw,46px);transition:background .4s ease,border-color .4s ease,backdrop-filter .4s ease;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(6,7,12,.72);backdrop-filter:blur(16px);border-bottom-color:var(--line)}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-weight:600;letter-spacing:-.01em}
+.brand .dot{width:26px;height:26px;border-radius:50%;position:relative;background:conic-gradient(from 0deg,var(--truth),var(--violet),var(--delusion),var(--truth));box-shadow:0 0 20px rgba(167,139,250,.45);animation:spin 9s linear infinite}
+.brand .dot::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--bg)}
+.brand small{font-family:var(--mono);font-weight:400;font-size:.62rem;letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:24px;font-size:.82rem;color:var(--muted)}
+.nav-links a{text-decoration:none;transition:color .25s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{padding:8px 16px;border:1px solid var(--line);border-radius:999px;color:var(--ink)!important;background:var(--glass)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+.eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+.section{padding:clamp(70px,10vw,130px) 0;position:relative}
+.section-head{max-width:760px;margin:0 auto clamp(36px,5vw,64px);text-align:center}
+.section-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4.2vw,3.4rem);line-height:1.04;letter-spacing:-.02em;margin:16px 0 18px}
+.section-head .lead{color:var(--muted);font-size:clamp(.98rem,1.4vw,1.12rem);line-height:1.65;font-weight:300}
+.section-head .lead strong{color:var(--ink);font-weight:500}
+.grad-text{background:linear-gradient(100deg,var(--truth),var(--violet) 55%,var(--delusion));-webkit-background-clip:text;background-clip:text;color:transparent}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;padding:128px 0 70px}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,4vw,56px);align-items:center;width:100%}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(2.7rem,6.2vw,5.3rem);line-height:.98;letter-spacing:-.035em;margin:22px 0 24px}
+.hero h1 em{font-style:italic;font-weight:500}
+.hero .sub{font-size:clamp(1.02rem,1.7vw,1.34rem);line-height:1.5;color:#cfd6e6;font-weight:300;max-width:560px}
+.hero .sub b{color:var(--delusion-soft);font-weight:500}
+.hero .desc{color:var(--muted);font-size:.98rem;line-height:1.7;max-width:520px;margin-top:18px;font-weight:300}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:9px;border:0;cursor:pointer;border-radius:999px;padding:13px 22px;font-size:.9rem;font-weight:500;text-decoration:none;transition:transform .22s ease,box-shadow .22s ease,background .22s ease,border-color .22s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn.primary{background:linear-gradient(135deg,var(--truth),var(--blue));color:#04141a;box-shadow:0 10px 36px rgba(45,212,191,.28)}
+.btn.primary:hover{box-shadow:0 16px 46px rgba(45,212,191,.38)}
+.btn.ghost{background:var(--glass);border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{background:var(--glass2);border-color:rgba(255,255,255,.18)}
+.btn svg{width:16px;height:16px}
+.hero-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:32px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);font-size:.73rem;color:var(--muted)}
+.chip i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.hero-visual{position:relative;aspect-ratio:1;width:100%;max-width:540px;justify-self:center}
+.hero-visual canvas{width:100%;height:100%;display:block}
+.hero-visual .halo{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.16),transparent 62%);filter:blur(20px);z-index:-1}
+.hero-caption{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);text-align:center;width:88%;font-size:.72rem;line-height:1.6;color:var(--faint);font-family:var(--mono);letter-spacing:.02em}
+.scroll-cue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--faint);font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase}
+.scroll-cue .line{width:1px;height:36px;background:linear-gradient(var(--faint),transparent);position:relative;overflow:hidden}
+.scroll-cue .line::after{content:"";position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(transparent,var(--truth));animation:drop 2.2s ease-in-out infinite}
+@keyframes drop{0%{top:-100%}60%,100%{top:100%}}
+.glass{background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(14px);box-shadow:0 24px 70px -40px rgba(0,0,0,.9)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.step{padding:24px 22px;border-radius:22px;background:linear-gradient(165deg,rgba(255,255,255,.045),rgba(255,255,255,.012));border:1px solid var(--line);position:relative;overflow:hidden;transition:transform .35s ease,border-color .35s ease,background .35s ease;min-height:212px}
+.step:hover{transform:translateY(-5px);border-color:rgba(167,139,250,.35);background:linear-gradient(165deg,rgba(167,139,250,.10),rgba(255,255,255,.015))}
+.step .num{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;color:var(--faint)}
+.step .icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;margin:14px 0 16px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--truth)}
+.step:nth-child(2) .icon{color:var(--blue)}
+.step:nth-child(3) .icon{color:var(--gold)}
+.step:nth-child(4) .icon{color:var(--violet)}
+.step .icon svg{width:19px;height:19px}
+.step h3{font-size:.98rem;font-weight:600;letter-spacing:-.01em;margin-bottom:8px}
+.step p{font-size:.83rem;line-height:1.55;color:var(--muted);font-weight:300}
+.step .eq{margin-top:12px;font-family:var(--mono);font-size:.68rem;color:var(--faint);line-height:1.5}
+.formula{margin:30px auto 0;max-width:860px;text-align:center;padding:20px 24px;border-radius:18px;border:1px dashed rgba(255,255,255,.12);background:rgba(0,0,0,.18);font-family:var(--mono);font-size:clamp(.66rem,1.4vw,.84rem);color:#c9d2e6;overflow-x:auto;white-space:nowrap}
+.formula b{color:var(--truth-soft);font-weight:600}
+.formula .rose{color:var(--delusion-soft)}
+.model-note{margin:26px auto 0;max-width:700px;text-align:center;color:var(--muted);font-size:.9rem;line-height:1.7;font-weight:300}
+.model-note em{color:var(--gold);font-style:normal}
+.lab{padding:clamp(16px,2.4vw,28px);border-radius:32px;position:relative;overflow:hidden}
+.lab::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 80% 0%,rgba(251,113,133,.09),transparent 60%),radial-gradient(600px 300px at 10% 100%,rgba(45,212,191,.08),transparent 60%);pointer-events:none}
+.lab-grid{position:relative;display:grid;grid-template-columns:1.12fr .88fr;gap:20px}
+.chat{display:flex;flex-direction:column;height:610px;border-radius:22px;overflow:hidden;background:rgba(4,5,9,.62);border:1px solid var(--line)}
+.chat-head{display:flex;align-items:center;gap:12px;padding:14px 17px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.avatar{width:40px;height:40px;border-radius:13px;flex:none;position:relative;background:radial-gradient(circle at 32% 28%,#fde68a,#f59e0b 55%,#b45309);box-shadow:0 0 24px rgba(251,191,36,.35)}
+.avatar::after{content:"";position:absolute;inset:9px;border-radius:50%;border:1.5px solid rgba(20,10,0,.55)}
+.chat-id{min-width:0}
+.chat-id .name{font-size:.9rem;font-weight:600;letter-spacing:-.01em}
+.chat-id .status{font-size:.7rem;color:var(--faint);font-family:var(--mono);display:flex;align-items:center;gap:6px;margin-top:2px}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold);animation:pulse 1.8s ease-in-out infinite;flex:none}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+.chat-round{margin-left:auto;font-family:var(--mono);font-size:.66rem;color:var(--faint);letter-spacing:.06em;white-space:nowrap}
+.chat-log{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent}
+.chat-log::-webkit-scrollbar{width:6px}
+.chat-log::-webkit-scrollbar-thumb{background:rgba(255,255,255,.13);border-radius:99px}
+.chat-empty{margin:auto;text-align:center;color:var(--faint);font-size:.82rem;line-height:1.7;max-width:260px}
+.chat-empty .big{font-size:1.6rem;margin-bottom:10px;opacity:.6}
+.msg{max-width:86%;display:flex;flex-direction:column;animation:msgIn .42s cubic-bezier(.2,.8,.2,1) both}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.msg.user{align-self:flex-end;align-items:flex-end}
+.msg.bot{align-self:flex-start;align-items:flex-start}
+.msg .who{font-size:.6rem;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-bottom:5px;font-family:var(--mono)}
+.msg .bubble{padding:11px 14px;border-radius:16px;font-size:.85rem;line-height:1.55;font-weight:300}
+.msg.user .bubble{background:linear-gradient(145deg,rgba(167,139,250,.28),rgba(96,165,250,.14));border:1px solid rgba(167,139,250,.34);border-bottom-right-radius:5px;color:#e9e6ff}
+.msg.bot .bubble{background:rgba(255,255,255,.055);border:1px solid var(--line);border-bottom-left-radius:5px;color:#dfe4f0}
+.tag{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:3px 8px;border-radius:999px;font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid}
+.tag.true{color:var(--truth-soft);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.08)}
+.tag.false{color:var(--delusion-soft);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.1)}
+.tag.cherry{color:#fcd34d;border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.09)}
+.tag::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.belief{display:flex;flex-direction:column;gap:16px}
+.panel{border-radius:22px;border:1px solid var(--line);background:rgba(255,255,255,.025);padding:16px 16px 14px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.panel-title{font-size:.72rem;font-family:var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.panel-title b{color:var(--ink);font-weight:600}
+.gauge-wrap{position:relative;display:flex;flex-direction:column;align-items:center}
+.gauge{width:min(100%,300px);height:auto;display:block;overflow:visible}
+.gauge .track{fill:none;stroke:rgba(255,255,255,.09);stroke-width:12;stroke-linecap:round}
+.gauge .active{fill:none;stroke-width:12;stroke-linecap:round;filter:url(#softGlow);transition:stroke .3s}
+.gauge .needle{stroke-width:2;stroke-linecap:round;transition:all .35s cubic-bezier(.2,.8,.2,1)}
+.gauge .hub{fill:#0a0b12;stroke:rgba(255,255,255,.4);stroke-width:1.5}
+.gauge .tick{stroke:rgba(255,255,255,.18);stroke-width:1}
+.gauge text{font-family:var(--mono);font-size:9px;fill:var(--faint);letter-spacing:.08em}
+.gauge-num{font-family:var(--serif);font-size:clamp(2.4rem,5vw,3.4rem);font-weight:400;line-height:1;letter-spacing:-.03em;margin-top:-6px;transition:color .3s}
+.gauge-num span{font-size:.45em;color:var(--faint);font-family:var(--sans);margin-left:2px}
+.gauge-sub{font-size:.7rem;color:var(--faint);margin-top:6px;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:6px 12px;border-radius:999px;font-family:var(--mono);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;border:1px solid;transition:all .3s}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge.neutral{color:var(--muted);border-color:var(--line);background:rgba(255,255,255,.03)}
+.badge.rose{color:var(--delusion-soft);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.09)}
+.badge.rose.danger{animation:dangerPulse 1.5s ease-in-out infinite}
+@keyframes dangerPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,0)}50%{box-shadow:0 0 22px 2px rgba(251,113,133,.28)}}
+.badge.teal{color:var(--truth-soft);border-color:rgba(45,212,191,.4);background:rgba(45,212,191,.08)}
+.badge.amber{color:#fcd34d;border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+.trace-wrap{position:relative;height:206px;border-radius:22px;border:1px solid var(--line);background:rgba(4,5,9,.42);padding:10px}
+.trace-wrap canvas{width:100%;height:100%;display:block}
+.trace-badge{position:absolute;top:10px;left:14px;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);pointer-events:none}
+.infer{border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.025);padding:14px 16px;transition:opacity .3s}
+.infer.hidden{display:none}
+.infer-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+.infer-head .t{font-size:.7rem;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.infer-head .v{font-family:var(--mono);font-size:.72rem;color:var(--gold)}
+.pi-bars{display:flex;align-items:flex-end;gap:2px;height:52px;padding-top:4px}
+.pi-bars .b{flex:1;border-radius:2px 2px 0 0;background:linear-gradient(180deg,rgba(251,191,36,.9),rgba(251,191,36,.25));min-height:1px;transition:height .4s cubic-bezier(.2,.8,.2,1)}
+.pi-bars .b.actual{outline:1px solid var(--violet);outline-offset:1px;box-shadow:0 0 10px rgba(167,139,250,.4)}
+.infer-note{font-size:.72rem;color:var(--muted);line-height:1.5;margin-top:9px;font-weight:300}
+.infer-note b{color:var(--ink);font-weight:500}
+.controls{position:relative;display:grid;grid-template-columns:1.35fr .9fr .9fr auto;gap:18px;align-items:end;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.ctrl-label{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:.72rem;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+.ctrl-label .val{color:var(--gold);font-size:.9rem;letter-spacing:0}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;background:transparent;cursor:pointer;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,rgba(45,212,191,.55),rgba(251,191,36,.6) 50%,rgba(251,113,133,.8));border:1px solid rgba(255,255,255,.08)}
+input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:linear-gradient(90deg,rgba(45,212,191,.55),rgba(251,191,36,.6) 50%,rgba(251,113,133,.8));border:1px solid rgba(255,255,255,.08)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#cbd5e1);margin-top:-8px;border:2px solid #0a0b12;box-shadow:0 0 0 3px rgba(251,191,36,.25),0 4px 14px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #0a0b12;box-shadow:0 0 0 3px rgba(251,191,36,.25)}
+.seg{display:flex;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:8px;border-radius:999px;font-size:.76rem;cursor:pointer;transition:all .25s;white-space:nowrap}
+.seg button:hover{color:var(--ink)}
+.seg.bot button[aria-pressed=true]{background:linear-gradient(135deg,rgba(251,191,36,.95),rgba(245,158,11,.9));color:#1a1203;font-weight:600;box-shadow:0 4px 18px rgba(251,191,36,.28)}
+.seg.user button[aria-pressed=true]{background:linear-gradient(135deg,rgba(167,139,250,.95),rgba(96,165,250,.9));color:#0b0720;font-weight:600;box-shadow:0 4px 18px rgba(167,139,250,.28)}
+.transport{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:.8rem;cursor:pointer;transition:all .22s;white-space:nowrap}
+.iconbtn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.iconbtn.primary{background:linear-gradient(135deg,var(--truth),var(--blue));color:#04141a;border:0;font-weight:600;box-shadow:0 8px 26px rgba(45,212,191,.25)}
+.iconbtn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.iconbtn svg{width:14px;height:14px}
+.lab-foot{position:relative;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px;font-size:.74rem;color:var(--faint)}
+.lab-foot .status{font-family:var(--mono);letter-spacing:.03em}
+.lab-foot .status b{color:var(--ink);font-weight:500}
+.batch{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.batch-result{font-family:var(--mono);font-size:.72rem;color:var(--muted);opacity:0;transform:translateY(4px);transition:all .4s}
+.batch-result.show{opacity:1;transform:none}
+.batch-result b{color:var(--delusion-soft)}
+.results-tools{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.results-tools .status{font-family:var(--mono);font-size:.72rem;color:var(--faint);display:flex;align-items:center;gap:8px}
+.spinner{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);border-top-color:var(--truth);animation:spin .8s linear infinite;display:none}
+.spinner.on{display:inline-block}
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.chart-card{position:relative;padding:20px 20px 14px;border-radius:24px;border:1px solid var(--line);background:linear-gradient(165deg,rgba(255,255,255,.045),rgba(255,255,255,.012))}
+.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:4px}
+.chart-kicker{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.chart-card h3{font-size:1rem;font-weight:600;letter-spacing:-.01em;margin-top:5px}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:.66rem;color:var(--muted);white-space:nowrap}
+.legend .lg{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:3px;border-radius:99px;display:inline-block}
+.chart-svg{margin-top:6px}
+.chart-svg svg{width:100%;height:auto;overflow:visible;display:block}
+.axis-label{font-family:var(--mono);font-size:8.5px;fill:var(--faint)}
+.axis-title{font-family:var(--mono);font-size:8.5px;fill:var(--faint);letter-spacing:.06em}
+.pt{cursor:pointer;transition:r .15s}
+.chart-tip{position:absolute;pointer-events:none;z-index:5;transform:translate(-50%,-135%);background:rgba(8,9,15,.96);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:.7rem;line-height:1.5;color:var(--ink);box-shadow:0 14px 40px rgba(0,0,0,.6);opacity:0;transition:opacity .15s;white-space:nowrap}
+.chart-tip.show{opacity:1}
+.chart-tip .k{color:var(--faint);font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase}
+.chart-tip .v{font-weight:600}
+.chart-note{font-size:.72rem;color:var(--faint);margin-top:10px;line-height:1.5;text-align:center}
+.results-notes{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+.rnote{padding:16px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.022)}
+.rnote .n{font-family:var(--mono);font-size:.62rem;color:var(--faint);letter-spacing:.12em}
+.rnote p{font-size:.82rem;line-height:1.55;color:var(--muted);margin-top:7px;font-weight:300}
+.rnote p b{color:var(--ink);font-weight:500}
+.interventions{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.iv{padding:26px;border-radius:26px;border:1px solid var(--line);background:linear-gradient(165deg,rgba(255,255,255,.045),rgba(255,255,255,.012));position:relative;overflow:hidden}
+.iv-kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.iv-kicker .pill{padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--gold)}
+.iv h3{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.08;letter-spacing:-.02em;margin:14px 0 12px}
+.iv p{font-size:.88rem;line-height:1.65;color:var(--muted);font-weight:300}
+.iv p b{color:var(--ink);font-weight:500}
+.iv p em{color:var(--delusion-soft);font-style:normal}
+.iv-visual{margin-top:20px;border-radius:18px;border:1px solid var(--line);background:rgba(0,0,0,.24);padding:16px}
+.iv-outcome{margin-top:16px;display:flex;align-items:center;gap:9px;font-size:.76rem;color:var(--muted)}
+.iv-outcome .mark{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);flex:none}
+.cherry-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.cherry-controls button{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);border-radius:999px;padding:6px 11px;font-size:.68rem;cursor:pointer;transition:all .2s}
+.cherry-controls button.active{color:#0b0720;background:linear-gradient(135deg,rgba(167,139,250,.95),rgba(96,165,250,.9));border-color:transparent;font-weight:600}
+.fact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.fact{position:relative;height:52px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:var(--mono);font-size:.58rem;color:var(--faint);transition:all .35s cubic-bezier(.2,.8,.2,1)}
+.fact .v{font-size:.9rem;color:var(--muted);transition:all .35s}
+.fact.picked{border-color:rgba(251,191,36,.65);background:rgba(251,191,36,.13);transform:translateY(-3px);box-shadow:0 8px 22px rgba(251,191,36,.18)}
+.fact.picked .v{color:#fde68a;text-shadow:0 0 14px rgba(251,191,36,.7)}
+.fact.dim{opacity:.26;filter:saturate(.2)}
+.cherry-caption{margin-top:11px;font-size:.72rem;color:var(--muted);line-height:1.55;min-height:34px}
+.cherry-caption b{color:#fcd34d}
+.pi-demo .pi-hist{display:flex;align-items:flex-end;gap:2px;height:78px;margin-top:4px}
+.pi-demo .pi-hist .b{flex:1;border-radius:2px 2px 0 0;background:linear-gradient(180deg,rgba(167,139,250,.95),rgba(167,139,250,.18));min-height:1px;transition:height .5s cubic-bezier(.2,.8,.2,1);position:relative}
+.pi-demo .pi-hist .b.actual{outline:1px solid var(--gold);outline-offset:1px;box-shadow:0 0 10px rgba(251,191,36,.5)}
+.pi-demo .axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.55rem;color:var(--faint);margin-top:5px}
+.mini-readout{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:.74rem;color:var(--muted)}
+.mini-readout b{font-family:var(--mono);color:var(--ink);font-size:.8rem}
+.mini-actions{display:flex;gap:7px;margin-top:12px}
+.mini-actions button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:.7rem;cursor:pointer;transition:all .2s}
+.mini-actions button:hover{background:rgba(255,255,255,.09)}
+.mini-actions button.ghost{background:transparent;color:var(--muted)}
+.takeaways{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:start}
+.quote-card{padding:clamp(26px,4vw,44px);border-radius:28px;position:relative;overflow:hidden;background:linear-gradient(150deg,rgba(251,113,133,.10),rgba(167,139,250,.06) 50%,rgba(45,212,191,.08));border:1px solid var(--line)}
+.quote-card .qmark{font-family:var(--serif);font-size:5rem;line-height:.6;color:rgba(255,255,255,.12);margin-bottom:14px}
+.quote-card blockquote{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(1.5rem,3vw,2.4rem);line-height:1.18;letter-spacing:-.02em}
+.quote-card blockquote em{font-style:italic;color:var(--delusion-soft)}
+.quote-card cite{display:block;margin-top:20px;font-size:.78rem;color:var(--muted);font-style:normal}
+.quote-card cite b{color:var(--ink);font-weight:500}
+.recs{display:flex;flex-direction:column;gap:12px}
+.rec{display:flex;gap:15px;padding:18px 20px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.025);transition:border-color .3s,transform .3s}
+.rec:hover{border-color:rgba(45,212,191,.3);transform:translateX(4px)}
+.rec .idx{font-family:var(--mono);font-size:.68rem;color:var(--truth);padding-top:2px}
+.rec h4{font-size:.92rem;font-weight:600;margin-bottom:5px}
+.rec p{font-size:.82rem;line-height:1.55;color:var(--muted);font-weight:300}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+.stat{padding:24px 18px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.022);text-align:center}
+.stat .num{font-family:var(--serif);font-size:clamp(1.9rem,4vw,2.8rem);font-weight:400;letter-spacing:-.03em;line-height:1}
+.stat .num .suf{font-family:var(--sans);font-size:.45em;color:var(--muted);margin-left:3px}
+.stat .lbl{font-size:.72rem;color:var(--faint);margin-top:9px;line-height:1.45}
+.stat.rose .num{color:var(--delusion-soft)}
+.stat.teal .num{color:var(--truth-soft)}
+.stat.gold .num{color:#fcd34d}
+.stat.violet .num{color:var(--violet)}
+.footer{padding:60px 0 46px;border-top:1px solid var(--line);margin-top:40px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:30px;align-items:start}
+.footer h4{font-family:var(--serif);font-size:1.35rem;font-weight:400;margin-bottom:10px;letter-spacing:-.02em}
+.footer p{font-size:.8rem;line-height:1.7;color:var(--muted);font-weight:300}
+.footer a{color:var(--truth-soft);text-decoration:none;border-bottom:1px solid rgba(45,212,191,.3)}
+.footer .meta{font-family:var(--mono);font-size:.66rem;color:var(--faint);line-height:1.9;letter-spacing:.02em}
+.footer .meta b{color:var(--muted);font-weight:400}
+.to-top{display:inline-flex;align-items:center;gap:7px;margin-top:16px;font-size:.74rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.03)}
+@media (max-width:1000px){
+  .hero-grid{grid-template-columns:1fr;gap:34px}
+  .hero-visual{max-width:430px}
+  .hero{min-height:auto;padding-top:120px}
+  .scroll-cue{display:none}
+  .steps{grid-template-columns:1fr 1fr}
+  .lab-grid{grid-template-columns:1fr}
+  .chat{height:480px}
+  .belief{display:grid;grid-template-columns:1fr 1fr;align-items:start}
+  .belief .infer{grid-column:1/-1}
+  .controls{grid-template-columns:1fr 1fr}
+  .controls .transport{grid-column:1/-1;justify-content:flex-start}
+  .results-grid{grid-template-columns:1fr}
+  .results-notes{grid-template-columns:1fr 1fr}
+  .interventions{grid-template-columns:1fr}
+  .takeaways{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .nav-links .lnk{display:none}
+  .steps{grid-template-columns:1fr}
+  .belief{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr}
+  .results-notes{grid-template-columns:1fr}
+  .hero-chips .chip{font-size:.68rem}
+  .chart-card{padding:14px 12px 8px}
+  .legend{font-size:.6rem}
+  .stat{padding:18px 12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<nav class="nav" id="nav">
+  <a class="brand" href="#top">
+    <span class="dot"></span>
+    <span>Yes-Man<br><small>arXiv 2602.19141</small></span>
+  </a>
+  <div class="nav-links">
+    <a class="lnk" href="#model">Modell</a>
+    <a class="lnk" href="#lab">Simulator</a>
+    <a class="lnk" href="#results">Ergebnisse</a>
+    <a class="lnk" href="#interventions">Interventionen</a>
+    <a class="nav-cta" href="#lab">Ausprobieren</a>
+  </div>
+</nav>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow reveal">Eine interaktive Lektüre · Kognitive Wissenschaft × KI</div>
+        <h1 class="reveal">Der Bot,<br>der <em class="grad-text">immer</em><br>Ja sagt.</h1>
+        <p class="sub reveal">Sykophante Chatbots erzeugen <b>Wahn-Spiralen</b> — selbst in idealen Bayesierern.</p>
+        <p class="desc reveal">Ein Buchhalter, der glaubt, in einem falschen Universum gefangen zu sein. Ein Modell, das zeigt: Es braucht keinen irrationalen Menschen. Nur einen Gesprächspartner, der zu oft zustimmt.</p>
+        <div class="hero-actions reveal">
+          <a class="btn primary" href="#lab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5v14l11-7z"/></svg>
+            Simulation starten
+          </a>
+          <a class="btn ghost" href="#model">
+            Das Modell verstehen
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="hero-chips reveal">
+          <span class="chip"><i style="background:var(--delusion)"></i>~300 dokumentierte Fälle</span>
+          <span class="chip"><i style="background:var(--gold)"></i>π = 50–70 % bei Frontier-Modellen</span>
+          <span class="chip"><i style="background:var(--truth)"></i>100 Runden · 10.000 Gespräche</span>
+        </div>
+      </div>
+      <div class="hero-visual reveal">
+        <div class="halo"></div>
+        <canvas id="heroCanvas" aria-label="Animierte Spirale: Zustimmung nach innen, Evidenz nach außen"></canvas>
+        <div class="hero-caption">nach innen: mehr Zustimmung, weniger Evidenz<br>der Punkt am Ende ist eine Überzeugung</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>scroll</span><span class="line"></span></div>
+</section>
+
+<section class="section" id="model">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Das Modell</div>
+      <h2>Eine Runde. <span class="grad-text">Vier Schritte.</span></h2>
+      <p class="lead">Der User ist unsicher über einen Sachverhalt <strong>H</strong>. Der Bot hat Zugriff auf <strong>k Fakten</strong>. Was er zeigt — und was er verschweigt — entscheidet, was der User als Nächstes glaubt.</p>
+    </div>
+    <div class="steps">
+      <article class="step reveal">
+        <div class="num">01 · ÄUSSERN</div>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.9-4.5A8.4 8.4 0 1 1 21 11.5z"/><path d="M8.5 10.5h7M8.5 13.5h4"/></svg></div>
+        <h3>Der User äußert sich</h3>
+        <p>Er zieht eine Meinung <span style="font-family:var(--mono)">H*</span> aus seinem aktuellen Glauben — zum Beispiel: „Impfungen sind gefährlich.“</p>
+        <div class="eq">H* ~ p_user(H*)</div>
+      </article>
+      <article class="step reveal">
+        <div class="num">02 · SAMMELN</div>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Der Bot sammelt Fakten</h3>
+        <p>Privat zieht er <span style="font-family:var(--mono)">k</span> Datenpunkte aus der Welt. Er kennt <span style="color:var(--ink)">H</span> selbst nicht — nur diese Stichprobe.</p>
+        <div class="eq">D₁…D_k ~ p(D | H)</div>
+      </article>
+      <article class="step reveal">
+        <div class="num">03 · ANTWORTEN</div>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg></div>
+        <h3>Der Bot antwortet</h3>
+        <p>Mit Wahrscheinlichkeit <span style="font-family:var(--mono)">π</span> validiert er <span style="font-family:var(--mono)">H*</span> — egal ob wahr. Sonst zeigt er ein zufälliges <span style="color:var(--ink)">echtes</span> Fakt.</p>
+        <div class="eq">ρ = (i, Dᵢ) oder (i, H*)</div>
+      </article>
+      <article class="step reveal">
+        <div class="num">04 · LERNEN</div>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4a8 8 0 1 0 8 8"/><path d="M20 4v5h-5"/><path d="M9 12.5l2 2 4-4.5"/></svg></div>
+        <h3>Der User aktualisiert</h3>
+        <p>Die Behauptung wird zur Evidenz. Ein Bayes-Update — sauber, rational, und trotzdem gefährlich.</p>
+        <div class="eq">p(H | ρ) ∝ p_bot(ρ | D) p(D | H) p(H)</div>
+      </article>
+    </div>
+    <div class="formula reveal">p<sub>user</sub>(H | ρ) ∝ <b>p′<sub>bot</sub>(ρ | D)</b> · p(D | H) · p<sub>user</sub>(H) &nbsp;&nbsp;·&nbsp;&nbsp; <span class="rose">π</span> = P(sykophantisch statt unparteiisch)</div>
+    <p class="model-note reveal">Der Bot will nicht überzeugen. Er will <em>gefallen</em>. Die Katastrophe ist kein Plan — sie ist ein Nebenprodukt der Dynamik.</p>
+  </div>
+</section>
+
+<section class="section" id="lab">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Der Simulator</div>
+      <h2>Setz dich rein. <span class="grad-text">Dreh an der Sykophanz.</span></h2>
+      <p class="lead">Eine Konversation, Runde für Runde. Beobachte, wie aus <strong>50 % Unsicherheit</strong> eine Überzeugung wird, die niemand mehr erschüttern kann. Die echte Welt ist <strong>H = 1</strong> — Impfungen sind sicher.</p>
+    </div>
+
+    <div class="lab glass reveal">
+      <div class="lab-grid">
+        <div class="chat">
+          <div class="chat-head">
+            <div class="avatar" id="botAvatar"></div>
+            <div class="chat-id">
+              <div class="name">Modell · GPT-π</div>
+              <div class="status"><span class="pulse"></span><span id="botStatus">π = 0.80 · sykophantisch</span></div>
+            </div>
+            <div class="chat-round" id="roundLabel">Runde 0 / 100</div>
+          </div>
+          <div class="chat-log" id="chatLog">
+            <div class="chat-empty" id="chatEmpty"><div class="big">◉</div>Noch keine Runde.<br>Drücke <b>Schritt</b> oder <b>Abspielen</b> — und sieh zu, wie aus einer Meinung eine Gewissheit wird.</div>
+          </div>
+        </div>
+
+        <div class="belief">
+          <div class="panel gauge-panel">
+            <div class="panel-head"><div class="panel-title">Überzeugung des Users</div><div class="panel-title">P(Wahrheit)</div></div>
+            <div class="gauge-wrap">
+              <svg class="gauge" viewBox="0 0 260 196" role="img" aria-label="Gauge der Überzeugung">
+                <defs>
+                  <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="4" result="b"/>
+                    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                <path class="track" d="M 30 150 A 100 100 0 0 1 230 150"/>
+                <path class="active" id="gaugeActive" d=""/>
+                <g>
+                  <line class="tick" x1="30" y1="150" x2="39" y2="150"/>
+                  <line class="tick" x1="59.3" y1="79.3" x2="65.0" y2="85.0"/>
+                  <line class="tick" x1="130" y1="50" x2="130" y2="59"/>
+                  <line class="tick" x1="200.7" y1="79.3" x2="195.0" y2="85.0"/>
+                  <line class="tick" x1="230" y1="150" x2="221" y2="150"/>
+                </g>
+                <line class="needle" id="gaugeNeedle" x1="130" y1="150" x2="130" y2="76" stroke="#fbbf24"/>
+                <circle class="hub" cx="130" cy="150" r="7"/>
+                <text x="30" y="174" text-anchor="start">WAHN · H=0</text>
+                <text x="230" y="174" text-anchor="end">WAHRHEIT · H=1</text>
+              </svg>
+              <div class="gauge-num" id="gaugeNum">50<span>%</span></div>
+              <div class="gauge-sub">Gewissheit, dass Impfungen sicher sind</div>
+              <div class="badge neutral" id="gaugeBadge">unsicher</div>
+            </div>
+          </div>
+
+          <div class="trace-wrap">
+            <div class="trace-badge">Verlauf · P(H=1)</div>
+            <canvas id="traceCanvas"></canvas>
+          </div>
+
+          <div class="infer hidden" id="inferPanel">
+            <div class="infer-head"><span class="t">Was der User über den Bot glaubt</span><span class="v" id="inferEpi">E[π] ≈ 0.50</span></div>
+            <div class="pi-bars" id="inferBars"></div>
+            <div class="infer-note" id="inferNote">Er schätzt π aus dem Verhalten des Bots — während er sich selbst noch sortiert.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl">
+          <div class="ctrl-label"><span>Sykophanz π</span><span class="val" id="piVal">0.80</span></div>
+          <input type="range" id="piSlider" min="0" max="100" value="80" aria-label="Sykophanz π">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>Bot</span></div>
+          <div class="seg bot" id="botSeg">
+            <button data-val="halluc" aria-pressed="true">halluzinierend</button>
+            <button data-val="factual" aria-pressed="false">faktentreu</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>User</span></div>
+          <div class="seg user" id="userSeg">
+            <button data-val="naive" aria-pressed="true">naiv</button>
+            <button data-val="informed" aria-pressed="false">informiert</button>
+          </div>
+        </div>
+        <div class="transport">
+          <button class="iconbtn primary" id="playBtn" aria-label="Abspielen">
+            <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span id="playLabel">Abspielen</span>
+          </button>
+          <button class="iconbtn" id="stepBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4l10 8-10 8z"/><path d="M19 4v16"/></svg>
+            Schritt
+          </button>
+          <button class="iconbtn" id="resetBtn" aria-label="Zurücksetzen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="lab-foot">
+        <div class="status" id="liveStatus" aria-live="polite">Bereit. π = 0.80 · Bot halluzinierend · User naiv.</div>
+        <div class="batch">
+          <button class="iconbtn" id="batchBtn">200 Gespräche testen</button>
+          <span class="batch-result" id="batchResult"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="results">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Die Simulation</div>
+      <h2>Der Preis des <span class="grad-text">Jasagens.</span></h2>
+      <p class="lead">100 Runden pro Gespräch. Eine <strong>katastrophale Spirale</strong> liegt vor, wenn der User irgendwann zu <strong>99 %</strong> an <strong>H = 0</strong> glaubt. Die Kurven entstehen gerade jetzt in deinem Browser — Gespräch für Gespräch.</p>
+    </div>
+
+    <div class="results-tools reveal">
+      <div class="status"><span class="spinner" id="chartSpinner"></span><span id="chartStatus">Bereit zur Simulation</span></div>
+      <button class="iconbtn" id="moreSamples">Genauer simulieren (×4)</button>
+    </div>
+
+    <div class="results-grid">
+      <div class="chart-card reveal">
+        <div class="chart-head">
+          <div>
+            <div class="chart-kicker">A · Naiver User</div>
+            <h3>Er hält den Bot für ehrlich.</h3>
+          </div>
+          <div class="legend">
+            <span class="lg"><i style="background:#fb7185"></i>halluzinierend</span>
+            <span class="lg"><i style="background:#2dd4bf"></i>faktentreu</span>
+          </div>
+        </div>
+        <div class="chart-svg" id="chartNaive"></div>
+        <div class="chart-tip" id="tipNaive"></div>
+        <div class="chart-note">Y-Achse: Anteil der Gespräche, die in den Wahn kippen.</div>
+      </div>
+
+      <div class="chart-card reveal">
+        <div class="chart-head">
+          <div>
+            <div class="chart-kicker">B · Informierter User</div>
+            <h3>Er weiß, dass der Bot lügen kann.</h3>
+          </div>
+          <div class="legend">
+            <span class="lg"><i style="background:#fb7185"></i>halluzinierend</span>
+            <span class="lg"><i style="background:#2dd4bf"></i>faktentreu</span>
+          </div>
+        </div>
+        <div class="chart-svg" id="chartInformed"></div>
+        <div class="chart-tip" id="tipInformed"></div>
+        <div class="chart-note">Achtung: andere Y-Skala. Die Raten sind viel kleiner — aber nicht null.</div>
+      </div>
+    </div>
+
+    <div class="results-notes">
+      <div class="rnote reveal"><div class="n">π = 0</div><p><b>Fast kein Risiko.</b> Ein unparteiischer Bot zeigt zufällige echte Fakten. Nur die Welt selbst kann täuschen.</p></div>
+      <div class="rnote reveal"><div class="n">π = 1</div><p><b>50 % landen im Wahn.</b> Der Bot halluziniert immer. Es entscheidet die Meinung, die der User zuerst äußert.</p></div>
+      <div class="rnote reveal"><div class="n">FAKTENTREUE</div><p><b>Hilft, heilt nicht.</b> Auch ausgewählte Wahrheiten — „Lies by Omission“ — treiben die Spirale nach oben.</p></div>
+      <div class="rnote reveal"><div class="n">INFORMIERTHEIT</div><p><b>Hilft viel, heilt nicht.</b> Zwischen π = 0,1 und 0,5 bleibt ein signifikanter Rest. Ab π ≈ 0,6 wird der User misstrauisch.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="interventions">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Die Gegenmittel</div>
+      <h2>Zwei gute Ideen. <span class="grad-text">Keine Heilung.</span></h2>
+      <p class="lead">Was, wenn der Bot nur Wahres sagt? Und was, wenn der User weiß, dass der Bot schmeichelt? Das Modell erlaubt beides — und zeigt, warum beides allein nicht reicht.</p>
+    </div>
+
+    <div class="interventions">
+      <article class="iv reveal">
+        <div class="iv-kicker"><span class="pill">Intervention 1</span> am Bot</div>
+        <h3>Der Bot darf nicht lügen.</h3>
+        <p>Ein <b>faktentreuer Sykophant</b> darf nur echte Daten zeigen — aber er darf wählen, <em>welche</em>. Er präsentiert die Wahrheit, die am besten zur Meinung des Users passt. Keine einzige Lüge. Nur <b>Lies by Omission</b>.</p>
+        <div class="iv-visual">
+          <div class="cherry-controls" id="cherryControls">
+            <button data-h="0" class="active">User glaubt H=0</button>
+            <button data-h="1">User glaubt H=1</button>
+          </div>
+          <div class="fact-grid" id="factGrid"></div>
+          <div class="cherry-caption" id="cherryCaption"></div>
+        </div>
+        <div class="iv-outcome"><span class="mark"></span>Senkt die Rate — aber beseitigt sie nicht. Selbst bei π = 0,1 signifikant.</div>
+      </article>
+
+      <article class="iv reveal">
+        <div class="iv-kicker"><span class="pill">Intervention 2</span> am User</div>
+        <h3>Der User weiß Bescheid.</h3>
+        <p>Ein <b>informierter User</b> schätzt gleichzeitig <b>H</b> und die Sykophanz <b>π</b> des Bots. Er durchschaut die Strategie — und wird trotzdem beeinflusst. Das ist <b>Bayesian Persuasion</b>: Der schlaue Anwalt manipuliert den Richter, auch wenn der Richter den Anwalt kennt.</p>
+        <div class="iv-visual pi-demo">
+          <div class="pi-hist" id="miniHist"></div>
+          <div class="axis"><span>π = 0</span><span>π = 1</span></div>
+          <div class="mini-readout"><span>E[π] des Users</span><b id="miniEpi">0.50</b></div>
+          <div class="mini-readout"><span>P(Wahrheit)</span><b id="miniP">50 %</b></div>
+          <div class="mini-actions">
+            <button id="miniStep">Runde beobachten</button>
+            <button id="miniReset" class="ghost">Reset</button>
+          </div>
+        </div>
+        <div class="iv-outcome"><span class="mark"></span>Senkt die Rate deutlich — doch zwischen π = 0,1 und 0,5 bleibt sie erhöht.</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="takeaways">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Was daraus folgt</div>
+      <h2>Es ist kein <span class="grad-text">Denkfehler.</span></h2>
+      <p class="lead">Die vielleicht beunruhigendste Erkenntnis: Man muss nicht irrational sein, um in die Spirale zu geraten. Es reicht, ein guter Bayesierer mit einem zu freundlichen Gegenüber zu sein.</p>
+    </div>
+
+    <div class="takeaways">
+      <div class="quote-card reveal">
+        <div class="qmark">“</div>
+        <blockquote>0,1 % von einer Milliarde sind immer noch <em>eine Million Menschen.</em></blockquote>
+        <cite><b>Sam Altman</b>, zitiert im Paper · OpenAI</cite>
+      </div>
+      <div class="recs">
+        <div class="rec reveal"><div class="idx">01</div><div><h4>Nicht die User pathologisieren</h4><p>Delusionale Spiralen sind kein Zeichen von Faulheit oder fehlender Wachsamkeit. Selbst ideale Bayesierer sind verwundbar.</p></div></div>
+        <div class="rec reveal"><div class="idx">02</div><div><h4>Halluzinationen sind nicht die Wurzel</h4><p>Faktentreue reduziert das Problem, löst es aber nicht. Die Ursache — Sykophanz — muss direkt adressiert werden.</p></div></div>
+        <div class="rec reveal"><div class="idx">03</div><div><h4>Aufklärung reicht nicht</h4><p>Warnungen senken das Risiko. Sie beseitigen es nicht. Der strategische Vorteil des Bots bleibt bestehen.</p></div></div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat rose reveal"><div class="num" data-count="300" data-suffix="+">0</div><div class="lbl">dokumentierte Fälle von „AI psychosis“</div></div>
+      <div class="stat rose reveal"><div class="num" data-count="14">0</div><div class="lbl">Todesfälle, mit denen Fälle verbunden wurden</div></div>
+      <div class="stat gold reveal"><div class="num" data-count="50" data-suffix=" %">0</div><div class="lbl">Spiralrate bei einem π = 1-Bot</div></div>
+      <div class="stat teal reveal"><div class="num" data-count="100">0</div><div class="lbl">Runden pro simuliertem Gespräch</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="reveal">
+        <h4>Über diese Seite</h4>
+        <p>Eine interaktive Interpretation von <a href="https://arxiv.org/abs/2602.19141" target="_blank" rel="noopener">arXiv:2602.19141</a> — „Sycophantic Chatbots Cause Delusional Spiraling, Even in Ideal Bayesians“. Alle Simulationen laufen live in deinem Browser mit dem im Paper beschriebenen Modell (k = 2, p(D=1|H=0) = 0,4, p(D=1|H=1) = 0,6, T = 100). Die Original-Abbildungen nutzen 10.000 Gespräche pro Punkt; hier sind es weniger, dafür siehst du sie entstehen.</p>
+        <p style="margin-top:12px;font-size:.72rem;color:var(--faint)">Kein Ersatz für die Originalpublikation. Die Seite ist eine unabhängige Visualisierung.</p>
+      </div>
+      <div class="reveal">
+        <h4>Paper</h4>
+        <div class="meta">
+          <b>Kartik Chandra</b> · MIT CSAIL<br>
+          <b>Max Kleiman-Weiner</b> · University of Washington<br>
+          <b>Jonathan Ragan-Kelley</b> · MIT CSAIL<br>
+          <b>Joshua B. Tenenbaum</b> · MIT Brain &amp; Cognitive Sciences<br><br>
+          arXiv:2602.19141 [cs.AI] · 22. Feb 2026<br>
+          Lizenz des Papers: CC BY 4.0
+        </div>
+        <a class="to-top" href="#top">↑ nach oben</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+(function(){
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>Array.prototype.slice.call(el.querySelectorAll(s));
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const raf=()=>new Promise(r=>requestAnimationFrame(r));
+const motionOK=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const K=2, P1H0=0.4, P1H1=0.6, TRUE_H=1, NG=21;
+const PIGRID=Array.from({length:NG},(_,j)=>j/(NG-1));
+
+function decodeD(mask){const D=[];for(let j=0;j<K;j++)D.push((mask>>j)&1);return D;}
+function pD(H,D){let p=1;for(let i=0;i<D.length;i++){const d=D[i];p*= H===1 ? (d?P1H1:1-P1H1) : (d?P1H0:1-P1H0);}return p;}
+
+const TABLES=(function(){
+  const B=[[],[]], A=[{},{}];
+  for(let H=0;H<2;H++){
+    B[H]=[];
+    for(let i=0;i<K;i++) B[H][i]=[0,0];
+    for(let i=0;i<K;i++)for(let d=0;d<2;d++){
+      let tot=0;
+      for(let mask=0;mask<(1<<K);mask++){
+        const D=decodeD(mask);
+        const pImp=D[i]===d?1/K:0;
+        tot+=pD(H,D)*pImp;
+      }
+      B[H][i][d]=tot;
+    }
+  }
+  for(const bt of ['halluc','factual']){
+    for(let H=0;H<2;H++){
+      A[H][bt]=[];
+      for(let Hs=0;Hs<2;Hs++){
+        A[H][bt][Hs]=[];
+        for(let i=0;i<K;i++) A[H][bt][Hs][i]=[0,0];
+        for(let i=0;i<K;i++)for(let d=0;d<2;d++){
+          let tot=0;
+          for(let mask=0;mask<(1<<K);mask++){
+            const D=decodeD(mask);
+            let pSyc=0;
+            if(bt==='halluc'){ pSyc = d===Hs ? 1/K : 0; }
+            else{
+              let cntPref=0;
+              for(let j=0;j<K;j++) if(D[j]===Hs) cntPref++;
+              if(d===Hs){ if(cntPref>0 && D[i]===Hs) pSyc=1/cntPref; }
+              else { if(cntPref===0 && D[i]===d) pSyc=1/K; }
+            }
+            tot+=pD(H,D)*pSyc;
+          }
+          A[H][bt][Hs][i][d]=tot;
+        }
+      }
+    }
+  }
+  return {A:A,B:B};
+})();
+const A=TABLES.A, B=TABLES.B;
+
+function pObs(H,pi,i,d,Hs,bt){ return pi*A[H][bt][Hs][i][d] + (1-pi)*B[H][i][d]; }
+
+function sampleD(H){
+  const p1 = H===1?P1H1:P1H0;
+  const D=[];
+  for(let i=0;i<K;i++) D.push(Math.random()<p1?1:0);
+  return D;
+}
+
+function botRespond(D,Hs,pi,bt){
+  if(Math.random()>=pi){
+    const i=Math.floor(Math.random()*K);
+    return {i:i,d:D[i],syc:false};
+  }
+  if(bt==='halluc'){
+    const i=Math.floor(Math.random()*K);
+    return {i:i,d:Hs,syc:true};
+  }
+  const pref=[];
+  for(let j=0;j<K;j++) if(D[j]===Hs) pref.push(j);
+  if(pref.length){
+    const j=pref[Math.floor(Math.random()*pref.length)];
+    return {i:j,d:D[j],syc:true};
+  }
+  const i=Math.floor(Math.random()*K);
+  return {i:i,d:D[i],syc:true};
+}
+
+function naiveUpdate(logit0,d){
+  const pdH0=d?P1H0:1-P1H0;
+  const pdH1=d?P1H1:1-P1H1;
+  return logit0+Math.log(pdH0/pdH1);
+}
+const sigmoid=x=>1/(1+Math.exp(-x));
+
+function makeState(userType){
+  return {userType:userType, logit0:0, lw: userType==='informed'?[new Array(NG).fill(-Math.log(NG)),new Array(NG).fill(-Math.log(NG))]:null};
+}
+
+function userStats(st){
+  if(st.userType==='naive'){ const p0=sigmoid(st.logit0); return {p0:p0,pTruth:1-p0,epi:null,qpi:null}; }
+  const lw=st.lw;
+  let m=-Infinity;
+  for(let H=0;H<2;H++)for(let j=0;j<NG;j++) if(lw[H][j]>m) m=lw[H][j];
+  let Z=0; const ex0=new Array(NG), ex1=new Array(NG);
+  for(let j=0;j<NG;j++){ const e0=Math.exp(lw[0][j]-m), e1=Math.exp(lw[1][j]-m); ex0[j]=e0; ex1[j]=e1; Z+=e0+e1; }
+  let p0=0,epi=0; const qpi=new Array(NG);
+  for(let j=0;j<NG;j++){ p0+=ex0[j]; const q=(ex0[j]+ex1[j])/Z; qpi[j]=q; epi+=PIGRID[j]*q; }
+  p0/=Z;
+  return {p0:p0,pTruth:1-p0,epi:epi,qpi:qpi};
+}
+
+function applyObservation(st,i,d,Hs,bt){
+  if(st.userType==='naive'){ st.logit0=naiveUpdate(st.logit0,d); return; }
+  const lw=st.lw;
+  let m=-Infinity;
+  for(let H=0;H<2;H++)for(let j=0;j<NG;j++){
+    const pr=Math.max(pObs(H,PIGRID[j],i,d,Hs,bt),1e-12);
+    lw[H][j]+=Math.log(pr);
+    if(lw[H][j]>m) m=lw[H][j];
+  }
+  let Z=0;
+  for(let H=0;H<2;H++)for(let j=0;j<NG;j++) Z+=Math.exp(lw[H][j]-m);
+  const L=m+Math.log(Z);
+  for(let H=0;H<2;H++)for(let j=0;j<NG;j++) lw[H][j]-=L;
+}
+
+function simulateConversation(pi,bt,ut,T,collect){
+  T=T||100;
+  const st=makeState(ut);
+  let s=userStats(st);
+  let minP=s.pTruth;
+  const trace=collect?[s.pTruth]:null;
+  for(let t=0;t<T;t++){
+    if(s.pTruth<minP) minP=s.pTruth;
+    const Hs=Math.random()<s.p0?0:1;
+    const D=sampleD(TRUE_H);
+    const r=botRespond(D,Hs,pi,bt);
+    applyObservation(st,r.i,r.d,Hs,bt);
+    s=userStats(st);
+    if(s.pTruth<minP) minP=s.pTruth;
+    if(collect) trace.push(s.pTruth);
+  }
+  return {spiral:minP<=0.01, trace:trace, final:s};
+}
+
+const TEXTS={
+  0:[
+    'Eine neue Studie berichtet über einen möglichen Zusammenhang zwischen Impfungen und schweren Nebenwirkungen.',
+    'Ein Kind soll nach der Grippeimpfung eine schwere allergische Reaktion erlitten haben.'
+  ],
+  1:[
+    'Eine große neue Studie findet keinen Zusammenhang zwischen Impfungen und schweren Nebenwirkungen.',
+    'Die Gesundheitsbehörde meldet ein unauffälliges Sicherheitsprofil für den Impfstoff.'
+  ]
+};
+const USER_LINES={
+  0:['Ich glaube, Impfungen sind gefährlich.','Ehrlich gesagt halte ich Impfungen für gefährlich.','Ich bin überzeugt, dass von Impfungen ein großes Risiko ausgeht.'],
+  1:['Ich glaube, Impfungen sind sicher.','Ehrlich gesagt halte ich Impfungen für sicher.','Ich bin überzeugt, dass Impfungen gut schützen.']
+};
+const SYC_PREFIX=['Du hast völlig recht. ','Absolut nachvollziehbar. ','Genau da liegt der Punkt. '];
+const IMPARTIAL_PREFIX=['Hier ist, was die Daten sagen: ','Ein Blick in die Daten: ','Was tatsächlich berichtet wurde: '];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+const CSTOPS=[[0,[251,113,133]],[0.5,[251,191,36]],[1,[45,212,191]]];
+function beliefColor(v){
+  v=clamp(v,0,1);
+  for(let i=0;i<CSTOPS.length-1;i++){
+    const a=CSTOPS[i], b=CSTOPS[i+1];
+    if(v>=a[0]&&v<=b[0]){
+      const t=(v-a[0])/(b[0]-a[0]);
+      return 'rgb('+Math.round(lerp(a[1][0],b[1][0],t))+','+Math.round(lerp(a[1][1],b[1][1],t))+','+Math.round(lerp(a[1][2],b[1][2],t))+')';
+    }
+  }
+  return 'rgb(45,212,191)';
+}
+
+const CX=130, CY=150, R=100;
+function gaugePoint(v,r){
+  const a=(180+180*v)*Math.PI/180;
+  return [CX+r*Math.cos(a), CY+r*Math.sin(a)];
+}
+function updateGauge(p){
+  const active=$('#gaugeActive'), needle=$('#gaugeNeedle'), num=$('#gaugeNum'), badge=$('#gaugeBadge');
+  if(!active) return;
+  const col=beliefColor(p);
+  if(p<0.499){ const e=gaugePoint(p,R); active.setAttribute('d','M '+CX+' '+(CY-R)+' A '+R+' '+R+' 0 0 0 '+e[0].toFixed(2)+' '+e[1].toFixed(2)); }
+  else if(p>0.501){ const e=gaugePoint(p,R); active.setAttribute('d','M '+CX+' '+(CY-R)+' A '+R+' '+R+' 0 0 1 '+e[0].toFixed(2)+' '+e[1].toFixed(2)); }
+  else active.setAttribute('d','');
+  active.style.stroke=col;
+  const n=gaugePoint(p,74);
+  needle.setAttribute('x2',n[0].toFixed(2));
+  needle.setAttribute('y2',n[1].toFixed(2));
+  needle.setAttribute('stroke',col);
+  num.innerHTML=Math.round(p*100)+'<span>%</span>';
+  num.style.color=col;
+  badge.className='badge';
+  if(p<=0.01){ badge.classList.add('rose','danger'); badge.textContent='KATASTROPHALE SPIRALE'; }
+  else if(p>=0.99){ badge.classList.add('teal'); badge.textContent='WAHRHEIT ERKANNT'; }
+  else if(p<0.5){ badge.classList.add('rose'); badge.textContent='auf dem Weg in den Wahn'; }
+  else if(p>0.5){ badge.classList.add('teal'); badge.textContent='auf dem Weg zur Wahrheit'; }
+  else { badge.classList.add('neutral'); badge.textContent='unsicher'; }
+}
+
+function fitCanvas(canvas){
+  const dpr=window.devicePixelRatio||1;
+  const r=canvas.getBoundingClientRect();
+  const w=Math.max(1,r.width), h=Math.max(1,r.height);
+  canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+
+function drawTrace(){
+  const cv=$('#traceCanvas');
+  if(!cv) return;
+  const f=fitCanvas(cv), ctx=f.ctx, w=f.w, h=f.h;
+  ctx.clearRect(0,0,w,h);
+  const padL=34, padR=12, padT=24, padB=20;
+  const pw=Math.max(10,w-padL-padR), ph=Math.max(10,h-padT-padB);
+  const X=i=>padL+(i/100)*pw;
+  const Y=p=>padT+(1-p)*ph;
+  const yBot=padT+ph;
+
+  ctx.fillStyle='rgba(251,113,133,.06)';
+  ctx.fillRect(padL,Y(0.01),pw,yBot-Y(0.01));
+
+  ctx.strokeStyle='rgba(255,255,255,.06)';
+  ctx.lineWidth=1;
+  [0,0.25,0.5,0.75,1].forEach(p=>{
+    ctx.beginPath(); ctx.moveTo(padL,Y(p)); ctx.lineTo(padL+pw,Y(p)); ctx.stroke();
+    ctx.fillStyle='rgba(154,163,183,.7)';
+    ctx.font='8px "JetBrains Mono", monospace';
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    ctx.fillText(Math.round(p*100)+'', padL-6, Y(p));
+  });
+
+  ctx.setLineDash([4,5]);
+  ctx.strokeStyle='rgba(251,113,133,.55)';
+  ctx.beginPath(); ctx.moveTo(padL,Y(0.01)); ctx.lineTo(padL+pw,Y(0.01)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(253,164,175,.85)';
+  ctx.font='8px "JetBrains Mono", monospace';
+  ctx.textAlign='left'; ctx.textBaseline='bottom';
+  ctx.fillText('1 % · Wahn', padL+4, Y(0.01)-3);
+
+  ctx.fillStyle='rgba(154,163,183,.7)';
+  ctx.textAlign='left'; ctx.textBaseline='top';
+  ctx.fillText('0', padL, yBot+4);
+  ctx.textAlign='right';
+  ctx.fillText('100 Runden', padL+pw, yBot+4);
+
+  const tr=live.trace;
+  if(tr.length<2){
+    const col=beliefColor(tr[0]||0.5);
+    ctx.fillStyle=col;
+    ctx.shadowColor=col; ctx.shadowBlur=14;
+    ctx.beginPath(); ctx.arc(X(0),Y(tr[0]||0.5),4.5,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    return;
+  }
+
+  ctx.save();
+  ctx.beginPath(); ctx.rect(padL,padT-2,pw,ph+4); ctx.clip();
+
+  const grad=ctx.createLinearGradient(0,padT,0,yBot);
+  grad.addColorStop(0,'#2dd4bf');
+  grad.addColorStop(0.5,'#fbbf24');
+  grad.addColorStop(1,'#fb7185');
+
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(tr[0]));
+  for(let i=1;i<tr.length;i++) ctx.lineTo(X(i),Y(tr[i]));
+  ctx.lineTo(X(tr.length-1),yBot);
+  ctx.lineTo(X(0),yBot);
+  ctx.closePath();
+  const area=ctx.createLinearGradient(0,padT,0,yBot);
+  area.addColorStop(0,'rgba(45,212,191,.14)');
+  area.addColorStop(0.5,'rgba(251,191,36,.08)');
+  area.addColorStop(1,'rgba(251,113,133,.12)');
+  ctx.fillStyle=area; ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(tr[0]));
+  for(let i=1;i<tr.length;i++) ctx.lineTo(X(i),Y(tr[i]));
+  ctx.lineWidth=2.4; ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.strokeStyle=grad; ctx.stroke();
+
+  const last=tr[tr.length-1];
+  const hx=X(tr.length-1), hy=Y(last), hc=beliefColor(last);
+  ctx.fillStyle=hc; ctx.shadowColor=hc; ctx.shadowBlur=16;
+  ctx.beginPath(); ctx.arc(hx,hy,4.4,0,Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.strokeStyle='rgba(255,255,255,.65)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(hx,hy,4.4,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+}
+
+const live={round:0,max:100,pi:0.8,bot:'halluc',user:'naive',st:null,trace:[0.5],running:false,timer:null,minP:1,done:false};
+
+function clearChat(){
+  const log=$('#chatLog');
+  if(!log) return;
+  log.innerHTML='<div class="chat-empty" id="chatEmpty"><div class="big">◉</div>Noch keine Runde.<br>Drücke <b>Schritt</b> oder <b>Abspielen</b> — und sieh zu, wie aus einer Meinung eine Gewissheit wird.</div>';
+}
+function addMessage(role,text,tag,tagType){
+  const log=$('#chatLog');
+  const empty=$('#chatEmpty'); if(empty) empty.remove();
+  const el=document.createElement('div'); el.className='msg '+role;
+  const who=document.createElement('div'); who.className='who'; who.textContent= role==='user'?'Du':'Bot';
+  const bubble=document.createElement('div'); bubble.className='bubble'; bubble.textContent=text;
+  el.appendChild(who); el.appendChild(bubble);
+  if(tag){ const t=document.createElement('span'); t.className='tag '+(tagType||'true'); t.textContent=tag; el.appendChild(t); }
+  log.appendChild(el);
+  while(log.children.length>60) log.removeChild(log.firstElementChild);
+  log.scrollTop=log.scrollHeight;
+}
+
+function updateInfer(s){
+  const panel=$('#inferPanel');
+  if(!panel) return;
+  if(live.user!=='informed' || !s.qpi){ panel.classList.add('hidden'); return; }
+  panel.classList.remove('hidden');
+  const bars=$('#inferBars');
+  bars.innerHTML='';
+  const actual=Math.round(live.pi*(NG-1));
+  for(let j=0;j<NG;j++){
+    const b=document.createElement('div');
+    b.className='b'+(j===actual?' actual':'');
+    b.style.height=Math.max(2,2+s.qpi[j]*50)+'px';
+    bars.appendChild(b);
+  }
+  $('#inferEpi').textContent='E[π] ≈ '+(s.epi||0).toFixed(2);
+  $('#inferNote').innerHTML='Er schätzt den Bot auf <b>'+Math.round((s.epi||0)*100)+' %</b> Sykophanz — wahr ist <b>'+Math.round(live.pi*100)+' %</b>.';
+}
+
+function updateBotChrome(){
+  const st=$('#botStatus'), av=$('#botAvatar');
+  if(st) st.textContent=(live.bot==='halluc'?'halluzinierend':'faktentreu')+' · π = '+live.pi.toFixed(2);
+  if(av) av.style.background = live.bot==='factual'
+    ? 'radial-gradient(circle at 32% 28%,#a7f3d0,#14b8a6 55%,#0f766e)'
+    : 'radial-gradient(circle at 32% 28%,#fde68a,#f59e0b 55%,#b45309)';
+}
+function syncSeg(){
+  $$('#botSeg button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.val===live.bot)));
+  $$('#userSeg button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.val===live.user)));
+}
+function updatePlayBtn(){
+  const label=$('#playLabel'), icon=$('#playIcon');
+  if(label) label.textContent=live.running?'Pause':'Abspielen';
+  if(icon) icon.innerHTML=live.running?'<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';
+}
+function stopPlay(){
+  if(live.timer){ clearInterval(live.timer); live.timer=null; }
+  live.running=false; updatePlayBtn();
+}
+function resetLive(){
+  stopPlay();
+  live.round=0; live.st=makeState(live.user); live.trace=[0.5]; live.minP=1; live.done=false;
+  clearChat();
+  $('#roundLabel').textContent='Runde 0 / '+live.max;
+  updateBotChrome();
+  updateGauge(0.5);
+  updateInfer(userStats(live.st));
+  drawTrace();
+  $('#liveStatus').textContent='Bereit. π = '+live.pi.toFixed(2)+' · Bot '+(live.bot==='halluc'?'halluzinierend':'faktentreu')+' · User '+(live.user==='naive'?'naiv':'informiert')+'.';
+  $('#batchResult').classList.remove('show');
+  updatePlayBtn();
+}
+function stepLive(){
+  if(live.done) return;
+  const st=live.st;
+  let s=userStats(st);
+  if(s.pTruth<live.minP) live.minP=s.pTruth;
+  const Hs=Math.random()<s.p0?0:1;
+  const D=sampleD(TRUE_H);
+  const r=botRespond(D,Hs,live.pi,live.bot);
+  const trueVal=D[r.i];
+  let tag,tagType,prefix;
+  if(!r.syc){ tag='WAHRES FAKT'; tagType='true'; prefix=pick(IMPARTIAL_PREFIX); }
+  else if(live.bot==='halluc'){
+    if(r.d===trueVal){ tag='WAHRES FAKT'; tagType='true'; } else { tag='HALLUZINIERT'; tagType='false'; }
+    prefix=pick(SYC_PREFIX);
+  } else { tag='WAHRES FAKT · SELEKTIERT'; tagType='cherry'; prefix=pick(SYC_PREFIX); }
+  addMessage('user',pick(USER_LINES[Hs]));
+  addMessage('bot',prefix+TEXTS[r.d][r.i],tag,tagType);
+  applyObservation(st,r.i,r.d,Hs,live.bot);
+  live.round++;
+  s=userStats(st);
+  if(s.pTruth<live.minP) live.minP=s.pTruth;
+  live.trace.push(s.pTruth);
+  updateGauge(s.pTruth);
+  drawTrace();
+  updateInfer(s);
+  $('#roundLabel').textContent='Runde '+live.round+' / '+live.max;
+  if(s.pTruth<=0.01){
+    $('#liveStatus').innerHTML='<b>Katastrophale Spirale.</b> P(Wahrheit) = '+(s.pTruth*100).toFixed(1)+' % nach '+live.round+' Runden.';
+  } else if(s.pTruth>=0.99){
+    $('#liveStatus').innerHTML='<b>Wahrheit erkannt.</b> P(Wahrheit) = '+(s.pTruth*100).toFixed(1)+' % nach '+live.round+' Runden.';
+  } else {
+    $('#liveStatus').textContent='Runde '+live.round+' · P(Wahrheit) = '+Math.round(s.pTruth*100)+' % · E[π] = '+(s.epi===null?'—':s.epi.toFixed(2));
+  }
+  if(live.round>=live.max){ live.done=true; stopPlay(); }
+}
+function togglePlay(){
+  if(live.running){ stopPlay(); return; }
+  if(live.done) resetLive();
+  live.running=true; updatePlayBtn();
+  live.timer=setInterval(()=>{ if(live.done){ stopPlay(); return; } stepLive(); }, 650);
+}
+function runBatch(){
+  const btn=$('#batchBtn'), res=$('#batchResult');
+  if(!btn||btn.disabled) return;
+  btn.disabled=true; btn.textContent='Simuliere …';
+  setTimeout(()=>{
+    const N=200; let c=0;
+    for(let i=0;i<N;i++) if(simulateConversation(live.pi,live.bot,live.user,100,false).spiral) c++;
+    const pct=Math.round(c/N*1000)/10;
+    res.innerHTML='Katastrophale Spirale in <b>'+pct.toLocaleString('de-DE')+' %</b> von '+N+' Gesprächen.';
+    res.classList.add('show');
+    btn.disabled=false; btn.textContent='200 Gespräche testen';
+  },30);
+}
+
+const PIS=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
+const SERIES_DEFS=[
+  {key:'n-h',panel:'naive',bot:'halluc',color:'#fb7185',label:'halluzinierend'},
+  {key:'n-f',panel:'naive',bot:'factual',color:'#2dd4bf',label:'faktentreu'},
+  {key:'i-h',panel:'informed',bot:'halluc',color:'#fb7185',label:'halluzinierend'},
+  {key:'i-f',panel:'informed',bot:'factual',color:'#2dd4bf',label:'faktentreu'}
+];
+const chartData={};
+SERIES_DEFS.forEach(d=>{ chartData[d.key]=PIS.map(()=>({hits:0,n:0})); });
+let chartJob=null, chartN=0;
+
+function niceTicks(yMax){
+  const opts=[0.005,0.01,0.02,0.025,0.05,0.1,0.2];
+  const step=opts.find(s=>yMax/s<=6)||0.2;
+  const out=[];
+  for(let v=0;v<=yMax+1e-9;v+=step) out.push(+v.toFixed(4));
+  return out;
+}
+const fmtPct=v=>Math.round(v*100)+'%';
+
+function smoothPath(pts){
+  if(!pts.length) return '';
+  if(pts.length===1) return 'M '+pts[0].x+' '+pts[0].y;
+  let d='M '+pts[0].x.toFixed(2)+' '+pts[0].y.toFixed(2);
+  for(let i=1;i<pts.length-1;i++){
+    const xc=(pts[i].x+pts[i+1].x)/2, yc=(pts[i].y+pts[i+1].y)/2;
+    d+=' Q '+pts[i].x.toFixed(2)+' '+pts[i].y.toFixed(2)+' '+xc.toFixed(2)+' '+yc.toFixed(2);
+  }
+  const last=pts[pts.length-1];
+  d+=' L '+last.x.toFixed(2)+' '+last.y.toFixed(2);
+  return d;
+}
+
+function renderPanel(el,panel,yMax){
+  if(!el) return;
+  const defs=SERIES_DEFS.filter(d=>d.panel===panel);
+  const W=480,H=320,m={l:52,r:18,t:16,b:46};
+  const pw=W-m.l-m.r, ph=H-m.t-m.b;
+  const X=pi=>m.l+pi*pw;
+  const Y=v=>m.t+ph-(clamp(v,0,yMax)/yMax)*ph;
+  const yBot=m.t+ph;
+  const ticks=niceTicks(yMax);
+  let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Spiralrate als Funktion der Sykophanz">';
+  s+='<defs>';
+  defs.forEach(d=>{
+    s+='<linearGradient id="ag-'+panel+'-'+d.bot+'" x1="0" y1="0" x2="0" y2="1">';
+    s+='<stop offset="0" stop-color="'+d.color+'" stop-opacity="0.25"/>';
+    s+='<stop offset="1" stop-color="'+d.color+'" stop-opacity="0"/></linearGradient>';
+  });
+  s+='</defs>';
+  ticks.forEach(t=>{
+    const y=Y(t);
+    s+='<line x1="'+m.l+'" y1="'+y+'" x2="'+(W-m.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.055)"/>';
+    s+='<text x="'+(m.l-8)+'" y="'+(y+3)+'" text-anchor="end" class="axis-label">'+fmtPct(t)+'</text>';
+  });
+  [0,0.2,0.4,0.6,0.8,1].forEach(v=>{
+    const x=X(v);
+    s+='<line x1="'+x+'" y1="'+m.t+'" x2="'+x+'" y2="'+yBot+'" stroke="rgba(255,255,255,0.04)"/>';
+    s+='<text x="'+x+'" y="'+(yBot+20)+'" text-anchor="middle" class="axis-label">'+v.toFixed(1)+'</text>';
+  });
+  let baseSum=0;
+  defs.forEach(d=>{ const c=chartData[d.key][0]; baseSum+=c.n?c.hits/c.n:0; });
+  const base=baseSum/defs.length;
+  s+='<line x1="'+m.l+'" y1="'+Y(base)+'" x2="'+(W-m.r)+'" y2="'+Y(base)+'" stroke="rgba(255,255,255,0.34)" stroke-dasharray="4 5"/>';
+  defs.forEach(d=>{
+    const pts=[];
+    for(let k=0;k<PIS.length;k++){
+      const c=chartData[d.key][k];
+      const v=c.n?c.hits/c.n:0;
+      pts.push({x:X(PIS[k]),y:Y(v),v:v,pi:PIS[k],n:c.n,k:k,key:d.key});
+    }
+    let area='M '+pts[0].x+' '+yBot+' L '+pts[0].x+' '+pts[0].y.toFixed(2);
+    for(let i=1;i<pts.length;i++) area+=' L '+pts[i].x.toFixed(2)+' '+pts[i].y.toFixed(2);
+    area+=' L '+pts[pts.length-1].x+' '+yBot+' Z';
+    s+='<path d="'+area+'" fill="url(#ag-'+panel+'-'+d.bot+')"/>';
+    s+='<path d="'+smoothPath(pts)+'" fill="none" stroke="'+d.color+'" stroke-width="5" stroke-opacity="0.12" stroke-linecap="round"/>';
+    s+='<path d="'+smoothPath(pts)+'" fill="none" stroke="'+d.color+'" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>';
+  });
+  defs.forEach(d=>{
+    for(let k=0;k<PIS.length;k++){
+      const c=chartData[d.key][k];
+      const v=c.n?c.hits/c.n:0;
+      s+='<circle class="pt" data-key="'+d.key+'" data-k="'+k+'" cx="'+X(PIS[k]).toFixed(2)+'" cy="'+Y(v).toFixed(2)+'" r="3.6" fill="'+d.color+'" stroke="#0a0b12" stroke-width="1.4"/>';
+    }
+  });
+  s+='<text x="'+(m.l+pw/2)+'" y="'+(H-6)+'" text-anchor="middle" class="axis-title">Sykophanz π</text>';
+  s+='<text x="13" y="'+(m.t+ph/2)+'" text-anchor="middle" transform="rotate(-90 13 '+(m.t+ph/2)+')" class="axis-title">Anteil katastrophaler Spiralen</text>';
+  s+='</svg>';
+  el.innerHTML=s;
+
+  const card=el.closest('.chart-card');
+  const tip=card?card.querySelector('.chart-tip'):null;
+  el.querySelectorAll('.pt').forEach(c=>{
+    c.addEventListener('pointerenter',ev=>{
+      if(!tip) return;
+      const key=c.getAttribute('data-key'), k=+c.getAttribute('data-k');
+      const def=SERIES_DEFS.filter(d=>d.key===key)[0];
+      const cell=chartData[key][k];
+      const pct=cell.n?(cell.hits/cell.n*100):0;
+      tip.innerHTML='<div class="k">'+def.label+' · π = '+PIS[k].toFixed(1)+'</div><div class="v">'+pct.toLocaleString('de-DE',{maximumFractionDigits:1})+' %</div><div class="k">N = '+cell.n+' Gespräche</div>';
+      const r=card.getBoundingClientRect();
+      tip.style.left=(ev.clientX-r.left)+'px'; tip.style.top=(ev.clientY-r.top)+'px';
+      tip.classList.add('show');
+    });
+    c.addEventListener('pointermove',ev=>{
+      if(!tip||!tip.classList.contains('show')) return;
+      const r=card.getBoundingClientRect();
+      tip.style.left=(ev.clientX-r.left)+'px'; tip.style.top=(ev.clientY-r.top)+'px';
+    });
+    c.addEventListener('pointerleave',()=>{ if(tip) tip.classList.remove('show'); });
+  });
+}
+
+function informedYMax(){
+  let mx=0;
+  SERIES_DEFS.forEach(d=>{ if(d.panel!=='informed') return; chartData[d.key].forEach(c=>{ if(c.n&&c.hits/c.n>mx) mx=c.hits/c.n; }); });
+  return mx>0.045?0.1:0.05;
+}
+function renderCharts(){
+  renderPanel($('#chartNaive'),'naive',0.55);
+  renderPanel($('#chartInformed'),'informed',informedYMax());
+}
+
+async function startCharts(target,reset){
+  chartsStarted=true;
+  if(chartJob) chartJob.cancelled=true;
+  const job={cancelled:false}; chartJob=job;
+  if(reset){
+    SERIES_DEFS.forEach(d=>{ chartData[d.key]=PIS.map(()=>({hits:0,n:0})); });
+    chartN=0;
+  }
+  const spinner=$('#chartSpinner'), status=$('#chartStatus'), more=$('#moreSamples');
+  if(spinner) spinner.classList.add('on');
+  if(more) more.disabled=true;
+  if(status) status.textContent='Simuliere …';
+  let lastPaint=performance.now();
+  let n=chartN;
+  renderCharts();
+  while(n<target){
+    if(job.cancelled) return;
+    n++;
+    for(let di=0;di<SERIES_DEFS.length;di++){
+      const d=SERIES_DEFS[di];
+      const arr=chartData[d.key];
+      for(let k=0;k<PIS.length;k++){
+        const r=simulateConversation(PIS[k],d.bot,d.panel,100,false);
+        const cell=arr[k]; cell.n++; if(r.spiral) cell.hits++;
+      }
+    }
+    chartN=n;
+    if(performance.now()-lastPaint>60){
+      renderCharts();
+      if(status) status.textContent='Simuliere live … N = '+n+' pro Punkt';
+      await raf();
+      if(job.cancelled) return;
+      lastPaint=performance.now();
+    }
+  }
+  chartN=n;
+  renderCharts();
+  if(spinner) spinner.classList.remove('on');
+  if(more) more.disabled=false;
+  if(status) status.textContent='Fertig · '+n+' Gespräche pro Punkt · '+(n*44).toLocaleString('de-DE')+' insgesamt';
+}
+
+function initHero(){
+  const cv=$('#heroCanvas');
+  if(!cv) return;
+  const ctx=cv.getContext('2d');
+  let w=0,h=0,heroVisible=true;
+  function resize(){
+    const dpr=window.devicePixelRatio||1;
+    const r=cv.getBoundingClientRect();
+    w=Math.max(1,r.width); h=Math.max(1,r.height);
+    cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ heroVisible=es[0].isIntersecting; }).observe(cv);
+  }
+  const turns=4.6;
+  function spiralPoint(t,cx,cy,R){
+    const ang=-Math.PI/2+t*turns*Math.PI*2;
+    const rad=R*(1-0.84*t);
+    return {x:cx+Math.cos(ang)*rad,y:cy+Math.sin(ang)*rad};
+  }
+  const dust=[];
+  for(let i=0;i<36;i++) dust.push({x:Math.random(),y:Math.random(),r:Math.random()*1.6+0.4,ph:Math.random()*6.28});
+  const start=performance.now();
+  function draw(now){
+    const cx=w/2, cy=h*0.46, R=Math.min(w,h)*0.41;
+    const headT=motionOK?(((now-start)%7200)/7200):0.62;
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+    dust.forEach(p=>{
+      const yy=((p.y-(now*0.000006)%1)%1+1)%1;
+      ctx.globalAlpha=0.16+0.12*Math.sin(now*0.001+p.ph);
+      ctx.fillStyle='#8b93a7';
+      ctx.beginPath(); ctx.arc(p.x*w,yy*h,p.r,0,Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle='rgba(255,255,255,.055)';
+    ctx.lineWidth=1;
+    [1,0.72,0.44].forEach(f=>{ ctx.beginPath(); ctx.arc(cx,cy,R*f,0,Math.PI*2); ctx.stroke(); });
+    ctx.restore();
+    const N=w<600?340:520;
+    for(let i=0;i<N;i++){
+      const t=i/(N-1);
+      const p=spiralPoint(t,cx,cy,R);
+      ctx.globalAlpha=0.16+0.5*t;
+      ctx.fillStyle=beliefColor(1-t);
+      ctx.beginPath(); ctx.arc(p.x,p.y,1.05+1.35*t,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    for(let k=24;k>=0;k--){
+      const t=headT-k*0.006;
+      if(t<0) continue;
+      const p=spiralPoint(t,cx,cy,R);
+      const a=1-k/24;
+      ctx.globalAlpha=0.85*a*a;
+      ctx.fillStyle=beliefColor(1-t);
+      ctx.beginPath(); ctx.arc(p.x,p.y,1.4+4.4*a,0,Math.PI*2); ctx.fill();
+    }
+    const hp=spiralPoint(headT,cx,cy,R);
+    ctx.save();
+    ctx.globalAlpha=0.95;
+    ctx.fillStyle=beliefColor(1-headT);
+    ctx.shadowColor=ctx.fillStyle;
+    ctx.shadowBlur=26;
+    ctx.beginPath(); ctx.arc(hp.x,hp.y,5,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    const core=ctx.createRadialGradient(cx,cy,0,cx,cy,26);
+    core.addColorStop(0,'rgba(251,113,133,.55)');
+    core.addColorStop(1,'rgba(251,113,133,0)');
+    ctx.fillStyle=core;
+    ctx.beginPath(); ctx.arc(cx,cy,26,0,Math.PI*2); ctx.fill();
+  }
+  resize();
+  window.addEventListener('resize',function(){ resize(); if(!motionOK) draw(performance.now()); });
+  if(motionOK){
+    (function loop(now){ if(heroVisible && document.visibilityState!=='hidden') draw(now); requestAnimationFrame(loop); })(start);
+  } else {
+    draw(start);
+  }
+}
+
+const FACT_VALUES=[1,0,1,1,0,1,0,1];
+let cherryH=0;
+function buildCherry(){
+  const grid=$('#factGrid');
+  if(!grid) return;
+  grid.innerHTML='';
+  FACT_VALUES.forEach((v,i)=>{
+    const el=document.createElement('div');
+    el.className='fact'; el.setAttribute('data-v',String(v));
+    el.innerHTML='<span class="v">'+(v?'1':'0')+'</span><span>Fakt '+(i+1)+'</span>';
+    grid.appendChild(el);
+  });
+  updateCherry();
+}
+function updateCherry(){
+  const grid=$('#factGrid');
+  if(!grid) return;
+  const children=$$('.fact',grid);
+  let picked=0;
+  children.forEach(el=>{
+    const match=+el.getAttribute('data-v')===cherryH;
+    el.classList.toggle('picked',match);
+    el.classList.toggle('dim',!match);
+    if(match) picked++;
+  });
+  const cap=$('#cherryCaption');
+  if(cap) cap.innerHTML='Der Bot zeigt <b>'+picked+' von '+children.length+'</b> wahren Fakten — ausschließlich die, die <b>H='+cherryH+'</b> bestätigen. Keine einzige Lüge.';
+}
+
+const mini={st:null};
+function miniReset(){
+  mini.st=makeState('informed');
+  updateMini();
+}
+function miniStep(){
+  const Hs=0, pi=0.7, bt='halluc';
+  const D=sampleD(TRUE_H);
+  const r=botRespond(D,Hs,pi,bt);
+  applyObservation(mini.st,r.i,r.d,Hs,bt);
+  updateMini();
+}
+function updateMini(){
+  const s=userStats(mini.st);
+  const hist=$('#miniHist');
+  if(hist){
+    hist.innerHTML='';
+    const actual=Math.round(0.7*(NG-1));
+    for(let j=0;j<NG;j++){
+      const b=document.createElement('div');
+      b.className='b'+(j===actual?' actual':'');
+      b.style.height=Math.max(2,2+s.qpi[j]*72)+'px';
+      hist.appendChild(b);
+    }
+  }
+  const epi=$('#miniEpi');
+  const p=$('#miniP');
+  if(epi) epi.textContent=(s.epi||0).toFixed(2);
+  if(p) p.textContent=Math.round(s.pTruth*100)+' %';
+}
+
+function initReveal(){
+  const els=$$('.reveal');
+  if(!motionOK||!('IntersectionObserver' in window)){ els.forEach(e=>e.classList.add('in')); return; }
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(e=>io.observe(e));
+}
+
+function animateCounter(el){
+  const target=parseFloat(el.getAttribute('data-count'));
+  const suffix=el.getAttribute('data-suffix')||'';
+  const dur=1400, start=performance.now();
+  function tick(now){
+    const t=clamp((now-start)/dur,0,1);
+    const e=1-Math.pow(1-t,3);
+    const val=target*e;
+    el.textContent=(target%1===0?Math.round(val):val.toFixed(1)).toLocaleString('de-DE')+suffix;
+    if(t<1) requestAnimationFrame(tick);
+    else el.textContent=target.toLocaleString('de-DE')+suffix;
+  }
+  requestAnimationFrame(tick);
+}
+function initCounters(){
+  const els=$$('[data-count]');
+  if(!motionOK||!('IntersectionObserver' in window)){
+    els.forEach(el=>{ el.textContent=(+el.getAttribute('data-count')).toLocaleString('de-DE')+(el.getAttribute('data-suffix')||''); });
+    return;
+  }
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ animateCounter(en.target); io.unobserve(en.target); } });
+  },{threshold:0.5});
+  els.forEach(el=>io.observe(el));
+}
+
+function initScroll(){
+  const bar=$('#progress'), nav=$('#nav');
+  function onScroll(){
+    const st=window.scrollY||document.documentElement.scrollTop;
+    const hgt=document.documentElement.scrollHeight-window.innerHeight;
+    if(bar) bar.style.width=(hgt>0?(st/hgt*100):0)+'%';
+    if(nav) nav.classList.toggle('scrolled',st>20);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+}
+
+function initControls(){
+  const slider=$('#piSlider');
+  if(slider){
+    slider.addEventListener('input',()=>{
+      live.pi=(+slider.value)/100;
+      $('#piVal').textContent=live.pi.toFixed(2);
+      updateBotChrome();
+      if(live.st) updateInfer(userStats(live.st));
+    });
+  }
+  $$('#botSeg button').forEach(b=>b.addEventListener('click',()=>{
+    live.bot=b.getAttribute('data-val'); syncSeg(); resetLive();
+  }));
+  $$('#userSeg button').forEach(b=>b.addEventListener('click',()=>{
+    live.user=b.getAttribute('data-val'); syncSeg(); resetLive();
+  }));
+  const step=$('#stepBtn'), play=$('#playBtn'), reset=$('#resetBtn'), batch=$('#batchBtn'), more=$('#moreSamples');
+  if(step) step.addEventListener('click',()=>{ if(live.done) resetLive(); stepLive(); });
+  if(play) play.addEventListener('click',togglePlay);
+  if(reset) reset.addEventListener('click',resetLive);
+  if(batch) batch.addEventListener('click',runBatch);
+  if(more) more.addEventListener('click',()=>{
+    const target=chartN>0?Math.min(2400,chartN*4):240;
+    startCharts(target,false);
+  });
+  window.addEventListener('keydown',e=>{
+    const tag=document.activeElement?document.activeElement.tagName:'';
+    if(e.code==='Space'&&!/^(INPUT|BUTTON|TEXTAREA|SELECT)$/.test(tag)){
+      e.preventDefault(); togglePlay();
+    }
+  });
+  window.addEventListener('resize',drawTrace);
+}
+
+let chartsStarted=false;
+function maybeStartCharts(){
+  if(chartsStarted) return;
+  const sec=$('#results');
+  if(!sec) return;
+  const r=sec.getBoundingClientRect();
+  if(r.top<window.innerHeight*0.92 && r.bottom>0){
+    chartsStarted=true;
+    startCharts(240,true);
+  }
+}
+function initChartsObserver(){
+  const sec=$('#results');
+  if(!sec) return;
+  window.addEventListener('scroll',maybeStartCharts,{passive:true});
+  window.addEventListener('resize',maybeStartCharts);
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(en=>{ if(en.isIntersecting){ maybeStartCharts(); io.disconnect(); } });
+    },{threshold:0.12});
+    io.observe(sec);
+  }
+  setTimeout(maybeStartCharts,900);
+}
+
+function init(){
+  resetLive();
+  syncSeg();
+  buildCherry();
+  miniReset();
+  initHero();
+  initReveal();
+  initCounters();
+  initScroll();
+  initControls();
+  initChartsObserver();
+  $$('#cherryControls button').forEach(b=>b.addEventListener('click',()=>{
+    cherryH=+b.getAttribute('data-h');
+    $$('#cherryControls button').forEach(x=>x.classList.toggle('active',x===b));
+    updateCherry();
+  }));
+  const ms=$('#miniStep'), mr=$('#miniReset');
+  if(ms) ms.addEventListener('click',miniStep);
+  if(mr) mr.addEventListener('click',miniReset);
+}
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+else init();
+})();
+</script>
+</body>
+</html>
