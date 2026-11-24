@@ -73,6 +73,27 @@
         status: L("Drei Wirbel, stark dissoziiert. Weiter beendet die Dissoziation: Der Tod löst die Wirbel auf.", "Three vortices, strongly dissociated. Next ends the dissociation: death dissolves the vortices.")
       },
       {
+        key: "fourE", tone: "teal",
+        tag: "Körper · Welt · Handlung · Werkzeug",
+        title: "4E Cognition",
+        lead: L("Denken ist kein Rechnen im Kopf: Es ist Körper, Welt, Handlung und Werkzeug.", "Thinking is not computation in the head: it is body, world, action, and tool."),
+        basics: L("Embodied = Denken ist an einen Körper gebunden; Embedded = Denken findet in einer physischen und sozialen Welt statt; Enacted = Wissen entsteht durch Handeln; Extended = Werkzeuge erweitern das Denken.", "Embodied = thought is tied to a body; Embedded = thought happens in a physical and social world; Enacted = knowledge arises through action; Extended = tools extend thought."),
+        body: [
+          L("4E Cognition beschreibt Denken als biologische und situierte Tätigkeit: Der Körper liefert die Sinne, die Welt den Kontext, die Handlung die Rückmeldung, das Werkzeug die Reichweite. Ein LLM lebt nur in der letzten Dimension. Es ist ein Textwerkzeug ohne Nervensystem, ohne geteilte physische Welt und ohne Handlungsschleife; embedded ist es ontologisch isoliert, im hochdimensionalen Raum seiner Gewichte.", "4E Cognition describes thinking as a biological and situated activity: the body supplies the senses, the world the context, action the feedback, and tools the reach. An LLM lives only in the last dimension. It is a text tool without a nervous system, without a shared physical world, and without an action loop; as an embedded agent it is ontologically isolated, inside the high-dimensional space of its weights."),
+          L("Deshalb ist „heiß“ für uns an einen verbrannten Finger gekoppelt, für ein LLM an Token in der Nähe von „Ofen“, „Sonne“ oder „scharf“. Das ist der Unterschied zwischen Erdung und Statistik, nicht nur ein Unterschied der Wortwahl. Die 4E-Hürde ist deshalb keine Messung von Bewusstsein, aber sie zeigt, was einem nicht-biologischen System für Bedeutung fehlt.", "That is why “hot” is tied for us to a burnt finger, and for an LLM to tokens near “stove”, “sun”, or “spicy”. This is the difference between grounding and statistics, not just a difference in wording. The 4E hurdle is therefore not a measurement of consciousness, but it shows what a non-biological system lacks for meaning.")
+        ],
+        open: L("4E ist eine Familie von Ansätzen, kein einzelner Test; sie beschreibt, was Erdung verlangt, nicht ob ein System bewusst ist.", "4E is a family of approaches, not a single test; it describes what grounding requires, not whether a system is conscious."),
+        cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
+        hint: L("Wechsle Mensch/KI und klick die vier E's. Beobachte, was „heiß“ im Körper verankert.", "Switch human/AI and click the four E's. Watch what anchors “hot” in the body."),
+        status: L("Mensch: 4 von 4 gekoppelt. Wechsel auf KI: nur Extended bleibt.", "Human: 4 of 4 coupled. Switch to AI: only Extended remains."),
+        quote: {
+          text: "Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion.",
+          author: "Alva Noë",
+          work: "Out of Our Heads: Why You Are Not Your Brain, and Other Lessons From the Biology of Consciousness (2009)",
+          url: "https://openlibrary.org/works/OL12000405W"
+        }
+      },
+      {
         key: "myst", tone: "lilac",
         tag: "Die Grenze der Erklärung",
         title: "New Mysterianism",
@@ -124,6 +145,21 @@
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 };
     var kast = { diss: 70, count: 3, selected: 0, dissolved: false };
+    var four = { mode: "human", focus: 0, word: "hot" };
+    var FOUR_E = [
+      { key: "embodied", label: "Embodied", subDe: "Körper", subEn: "Body", noteDe: "Sinne, Schmerz, Motorik: Denken ist an einen Körper gebunden.", noteEn: "Senses, pain, motor control: thought is tied to a body.", missingDe: "kein Körper, kein Nervensystem", missingEn: "no body, no nervous system", color: "#ffb36b" },
+      { key: "embedded", label: "Embedded", subDe: "Welt", subEn: "World", noteDe: "Physische und soziale Lage: Denken findet in einer Welt statt.", noteEn: "Physical and social situation: thought happens in a world.", missingDe: "keine geteilte physische Welt", missingEn: "no shared physical world", color: "#7fe0b0" },
+      { key: "enacted", label: "Enacted", subDe: "Handlung", subEn: "Action", noteDe: "Wissen entsteht im Handeln und in der Rückmeldung der Welt.", noteEn: "Knowledge arises in action and in the world's feedback.", missingDe: "keine Handlungsschleife", missingEn: "no action loop", color: "#7fd7ef" },
+      { key: "extended", label: "Extended", subDe: "Werkzeug", subEn: "Tool", noteDe: "Werkzeuge erweitern das Denken; hier lebt die KI.", noteEn: "Tools extend thought; this is where AI lives.", missingDe: "Textwerkzeug, aber allein", missingEn: "a text tool, alone", color: "#c7a5ff" }
+    ];
+    var FOUR_WORDS = {
+      hot: { de: "heiß", en: "hot", groundDe: "verbrannte Finger", groundEn: "a burnt finger", tokensDe: ["Ofen", "Sonne", "scharf", "Kaffee"], tokensEn: ["stove", "sun", "spicy", "coffee"], color: "#ff8b6b" },
+      heavy: { de: "schwer", en: "heavy", groundDe: "Muskeln ziehen", groundEn: "muscles strain", tokensDe: ["Gewicht", "Stein", "kg", "Masse"], tokensEn: ["weight", "stone", "kg", "mass"], color: "#ffd27a" },
+      danger: { de: "Gefahr", en: "danger", groundDe: "Herz schlägt schnell", groundEn: "the heart races", tokensDe: ["Risiko", "Warnung", "Angst", "Bedrohung"], tokensEn: ["risk", "warning", "fear", "threat"], color: "#ff6b8a" },
+      tree: { de: "Baum", en: "tree", groundDe: "gemeinsamer Blick", groundEn: "a shared gaze", tokensDe: ["Blatt", "Wald", "grün", "Holz"], tokensEn: ["leaf", "forest", "green", "wood"], color: "#7fe0b0" }
+    };
+    var fourStars = [];
+    for (var fsi = 0; fsi < 84; fsi++) fourStars.push({ x: (fsi * 0.37 + 0.03) % 1, y: (fsi * 0.53 + 0.11) % 1, r: 0.4 + (fsi % 4) * 0.35, a: 0.04 + (fsi % 5) * 0.018 });
     var myst = { marks: [] };
 
     var PRED_STIM = {
@@ -189,7 +225,8 @@
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 }; setStatus(THEORIES[2].status); }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false }; setStatus(THEORIES[3].status); }
-      if (active === 4) { initMyst(); setStatus(THEORIES[4].status); }
+      if (active === 4) { four = { mode: "human", focus: 0, word: "hot" }; setStatus(THEORIES[4].status); }
+      if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }
       renderControls(); draw(performance.now());
     }
 
@@ -537,6 +574,227 @@
       ctx.fillStyle = "rgba(201,243,255,.62)"; ctx.font = font(10.5, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillText(L("Ein Ozean. Viele Wirbel. Dasselbe Wasser.", "One ocean. Many vortices. The same water."), w / 2, h - 14);
     }
+    function fourLink(x1, y1, x2, y2, color, on, ai) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.quadraticCurveTo((x1 + x2) / 2, Math.min(y1, y2) - 24, x2, y2);
+      if (on) {
+        var lg = ctx.createLinearGradient(x1, y1, x2, y2);
+        lg.addColorStop(0, color); lg.addColorStop(1, "rgba(127,215,239,.18)");
+        ctx.strokeStyle = lg;
+        ctx.lineWidth = 1.4;
+        ctx.shadowColor = color; ctx.shadowBlur = 8;
+      } else {
+        ctx.strokeStyle = "rgba(180,220,230,.16)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 6]);
+        ctx.lineDashOffset = ai ? -4 : 0;
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+    function fourCard(x, y, cw, ch, e, i) {
+      var on = four.mode !== "ai" || i === 3;
+      var focus = four.focus === i;
+      ctx.save();
+      rr(x, y, cw, ch, 12);
+      var g = ctx.createLinearGradient(x, y, x, y + ch);
+      g.addColorStop(0, on ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.035)");
+      g.addColorStop(1, on ? "rgba(255,255,255,.035)" : "rgba(255,255,255,.015)");
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.strokeStyle = focus ? "#ffd27a" : on ? e.color : "rgba(180,220,230,.16)";
+      ctx.lineWidth = focus ? 1.8 : 1;
+      if (focus) { ctx.shadowColor = "rgba(255,210,122,.65)"; ctx.shadowBlur = 12; }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(x + 15, y + ch / 2, 7, 0, Math.PI * 2);
+      ctx.fillStyle = on ? "rgba(255,255,255,.10)" : "rgba(255,255,255,.03)";
+      ctx.fill();
+      ctx.strokeStyle = on ? e.color : "rgba(180,220,230,.28)";
+      ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = on ? e.color : "rgba(180,220,230,.36)";
+      ctx.font = font(8, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("E", x + 15, y + ch / 2 + 0.5);
+      ctx.textAlign = "left";
+      ctx.fillStyle = on ? "#eaf7fb" : "rgba(200,230,240,.40)";
+      ctx.font = font(10.5, 700);
+      ctx.fillText(e.label, x + 28, y + ch * 0.41);
+      ctx.fillStyle = on ? "rgba(201,243,255,.60)" : "rgba(180,220,230,.28)";
+      ctx.font = font(7.5, 600);
+      ctx.fillText(L(e.subDe, e.subEn), x + 28, y + ch * 0.67);
+      if (on) {
+        dot(x + cw - 12, y + 12, 2.5, e.color);
+      } else {
+        ctx.fillStyle = "rgba(255,139,107,.76)";
+        ctx.font = font(7, 700); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+        ctx.fillText(L("fehlt", "missing"), x + cw - 8, y + ch - 7);
+      }
+      ctx.restore();
+    }
+    function fourBody(cx, cy, r, t) {
+      var pulse = 0.5 + 0.5 * Math.sin(t * 1.7);
+      var aura = ctx.createRadialGradient(cx, cy, 2, cx, cy, r * 2.3);
+      aura.addColorStop(0, "rgba(127,215,239,.18)");
+      aura.addColorStop(0.55, "rgba(0,146,153,.08)");
+      aura.addColorStop(1, "rgba(0,146,153,0)");
+      ctx.fillStyle = aura;
+      ctx.beginPath(); ctx.arc(cx, cy, r * 2.3, 0, Math.PI * 2); ctx.fill();
+      ctx.save(); ctx.translate(cx, cy);
+      for (var ri = 0; ri < 3; ri++) {
+        ctx.beginPath();
+        ctx.ellipse(0, 0, r * (0.86 + ri * 0.24), r * (0.46 + ri * 0.12), -0.16, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(127,215,239," + (0.19 - ri * 0.045) + ")";
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.strokeStyle = "#9fe7f5"; ctx.lineWidth = 2; ctx.lineCap = "round";
+      ctx.shadowColor = "rgba(127,215,239,.75)"; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(0, -r * 0.62, r * 0.24, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, -r * 0.38);
+      ctx.quadraticCurveTo(-r * 0.28, -r * 0.20, -r * 0.20, r * 0.20);
+      ctx.moveTo(0, -r * 0.38);
+      ctx.quadraticCurveTo(r * 0.28, -r * 0.20, r * 0.20, r * 0.20);
+      ctx.moveTo(-r * 0.16, -r * 0.18); ctx.lineTo(-r * 0.62, r * 0.02);
+      ctx.moveTo(r * 0.16, -r * 0.18); ctx.lineTo(r * 0.62, r * 0.02);
+      ctx.moveTo(-r * 0.14, r * 0.20); ctx.lineTo(-r * 0.26, r * 0.72);
+      ctx.moveTo(r * 0.14, r * 0.20); ctx.lineTo(r * 0.26, r * 0.72);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#ff8b6b";
+      ctx.beginPath(); ctx.arc(0, -r * 0.04, 3 + pulse * 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = "rgba(201,243,255,.64)"; ctx.font = font(9, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText(L("Mensch · 4/4", "human · 4/4"), cx, cy + r * 1.02);
+    }
+    function fourTokenCore(cx, cy, r, t) {
+      ctx.save(); ctx.translate(cx, cy);
+      ctx.setLineDash([4, 5]); ctx.lineDashOffset = -t * 6;
+      ctx.strokeStyle = "rgba(180,220,230,.22)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(0, -r * 0.62, r * 0.24, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, -r * 0.38); ctx.lineTo(0, r * 0.30);
+      ctx.moveTo(0, -r * 0.12); ctx.lineTo(-r * 0.54, r * 0.10);
+      ctx.moveTo(0, -r * 0.12); ctx.lineTo(r * 0.54, r * 0.10);
+      ctx.moveTo(0, r * 0.30); ctx.lineTo(-r * 0.34, r * 0.78);
+      ctx.moveTo(0, r * 0.30); ctx.lineTo(r * 0.34, r * 0.78);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      for (var i = 0; i < 3; i++) {
+        rr(-r * 0.78, -r * 0.46 + i * r * 0.34, r * 1.56, r * 0.24, 6);
+        ctx.fillStyle = "rgba(127,215,239,.10)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(127,215,239,.44)";
+        ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = "rgba(201,243,255,.62)"; ctx.font = font(7, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("token " + (i + 1), 0, -r * 0.34 + i * r * 0.34);
+      }
+      ctx.restore();
+      ctx.fillStyle = "rgba(255,139,107,.72)"; ctx.font = font(9, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText(L("KI · 1/4", "AI · 1/4"), cx, cy + r * 1.02);
+    }
+    function fourPanel(px, py, pw, ph) {
+      var ai = four.mode === "ai";
+      var word = FOUR_WORDS[four.word];
+      rr(px, py, pw, ph, 16);
+      var g = ctx.createLinearGradient(px, py, px + pw, py + ph);
+      g.addColorStop(0, "rgba(255,255,255,.075)");
+      g.addColorStop(1, "rgba(255,255,255,.022)");
+      ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = "rgba(201,243,255,.13)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = "rgba(201,243,255,.50)"; ctx.font = font(8, 700); ctx.textAlign = "left"; ctx.textBaseline = "top";
+      ctx.fillText(L("Wort", "word"), px + 14, py + 16);
+      ctx.fillStyle = word.color; ctx.font = '700 ' + Math.max(24, Math.min(34, pw * 0.20)) + 'px "Barlow", "Open Sans", sans-serif';
+      ctx.fillText(L(word.de, word.en), px + 14, py + 30);
+      ctx.strokeStyle = "rgba(201,243,255,.13)"; ctx.beginPath(); ctx.moveTo(px + 14, py + 76); ctx.lineTo(px + pw - 14, py + 76); ctx.stroke();
+      ctx.fillStyle = ai ? "rgba(201,243,255,.50)" : "rgba(255,210,122,.72)"; ctx.font = font(8, 700);
+      ctx.fillText(ai ? L("Token-Nachbarn", "token neighbours") : L("Körper", "body"), px + 14, py + 88);
+      ctx.fillStyle = ai ? "rgba(234,247,251,.88)" : "rgba(234,247,251,.92)"; ctx.font = font(11, 600);
+      ctx.fillText(ai ? L(word.tokensDe[0], word.tokensEn[0]) : L(word.groundDe, word.groundEn), px + 14, py + 102);
+      if (ai) {
+        var tw = Math.max(54, (pw - 38) / 2), th = 23;
+        word.tokensDe.slice(0, 4).forEach(function (tok, i) {
+          var tx = px + 14 + (i % 2) * (tw + 5), ty = py + 126 + Math.floor(i / 2) * (th + 5);
+          rr(tx, ty, tw, th, 7);
+          ctx.fillStyle = "rgba(127,215,239,.09)"; ctx.fill();
+          ctx.strokeStyle = "rgba(127,215,239,.25)"; ctx.lineWidth = 1; ctx.stroke();
+          ctx.fillStyle = "rgba(201,243,255,.72)"; ctx.font = font(8, 600); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText(L(word.tokensDe[i], word.tokensEn[i]), tx + tw / 2, ty + th / 2 + 0.5);
+        });
+        ctx.fillStyle = "rgba(255,139,107,.76)"; ctx.font = font(8.5, 700); ctx.textAlign = "left"; ctx.textBaseline = "top";
+        ctx.fillText(L("kein Körper, kein Affekt", "no body, no affect"), px + 14, py + 188);
+      } else {
+        [L("Sinnesfeedback", "sensory feedback"), L("Affekt", "affect"), L("geteilte Welt", "shared world")].forEach(function (label, i) {
+          var yy = py + 128 + i * 19;
+          dot(px + 17, yy + 4, 2.2, word.color);
+          ctx.fillStyle = "rgba(234,247,251,.72)"; ctx.font = font(8.5, 600); ctx.textAlign = "left"; ctx.textBaseline = "middle";
+          ctx.fillText(label, px + 25, yy + 3);
+        });
+      }
+      ctx.strokeStyle = "rgba(201,243,255,.13)"; ctx.beginPath(); ctx.moveTo(px + 14, py + ph - 38); ctx.lineTo(px + pw - 14, py + ph - 38); ctx.stroke();
+      ctx.fillStyle = ai ? "rgba(255,179,107,.85)" : "rgba(127,224,176,.88)"; ctx.font = font(9, 700); ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+      ctx.fillText(ai ? L("1 / 4 · nur Extended", "1 / 4 · Extended only") : L("4 / 4 · gekoppelt", "4 / 4 · coupled"), px + 14, py + ph - 15);
+    }
+    function drawFourE(w, h, t, now) {
+      var ai = four.mode === "ai";
+      var word = FOUR_WORDS[four.word];
+      var bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#031820"); bg.addColorStop(0.55, "#07313d"); bg.addColorStop(1, "#03141b");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      var glow = ctx.createRadialGradient(w * 0.31, h * 0.50, 0, w * 0.31, h * 0.50, Math.max(w, h) * 0.62);
+      glow.addColorStop(0, "rgba(0,146,153,.15)"); glow.addColorStop(1, "rgba(0,146,153,0)");
+      ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
+      fourStars.forEach(function (st) {
+        ctx.globalAlpha = st.a * (0.7 + 0.3 * Math.sin(t * 0.6 + st.x * 20));
+        dot(st.x * w, st.y * h, st.r, "#d9f8ff");
+      });
+      ctx.globalAlpha = 1;
+      var lw = Math.max(214, Math.min(w * 0.64, w - 188));
+      var panelX = lw + 10, panelW = w - panelX - 10;
+      var pad = 12;
+      var bodyX = lw * 0.50, bodyY = h * 0.50;
+      var cardW = Math.min(146, (lw - pad * 3) / 2);
+      var cardH = Math.min(50, h * 0.14);
+      var topY = pad, botY = h - pad - cardH;
+      var leftX = pad, rightX = lw - pad - cardW;
+      var pos = [
+        { x: leftX, y: topY }, { x: rightX, y: topY },
+        { x: leftX, y: botY }, { x: rightX, y: botY }
+      ];
+      ctx.save();
+      ctx.globalAlpha = 0.04; ctx.fillStyle = "#c9f3ff"; ctx.font = '700 150px "Barlow", "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("4E", bodyX, bodyY + 46);
+      ctx.restore();
+      var horizon = ctx.createLinearGradient(0, bodyY + 54, 0, h);
+      horizon.addColorStop(0, "rgba(0,0,0,0)"); horizon.addColorStop(1, "rgba(0,40,52,.38)");
+      ctx.fillStyle = horizon; ctx.fillRect(0, bodyY + 54, lw, h - bodyY - 54);
+      pos.forEach(function (p, i) {
+        fourLink(bodyX, bodyY, p.x + cardW / 2, p.y + cardH / 2, FOUR_E[i].color, four.mode !== "ai" || i === 3, ai);
+      });
+      if (panelW > 110) {
+        var beamEnd = ai ? bodyX + 56 : bodyX;
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(panelX, h * 0.26);
+        ctx.quadraticCurveTo((panelX + beamEnd) / 2, h * 0.42, beamEnd, bodyY);
+        if (ai) {
+          ctx.strokeStyle = "rgba(180,220,230,.24)"; ctx.setLineDash([4, 7]); ctx.lineDashOffset = -t * 18; ctx.lineWidth = 1;
+        } else {
+          var bgd = ctx.createLinearGradient(panelX, h * 0.26, bodyX, bodyY);
+          bgd.addColorStop(0, word.color); bgd.addColorStop(1, "rgba(255,210,122,.16)");
+          ctx.strokeStyle = bgd; ctx.lineWidth = 1.5; ctx.shadowColor = word.color; ctx.shadowBlur = 10;
+        }
+        ctx.stroke(); ctx.restore();
+        if (ai) {
+          ctx.fillStyle = "rgba(255,139,107,.82)"; ctx.font = font(8, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText(L("kein Körper", "no body"), beamEnd + 20, bodyY - 20);
+        }
+      }
+      if (ai) fourTokenCore(bodyX, bodyY, Math.min(lw, h) * 0.17, t);
+      else fourBody(bodyX, bodyY, Math.min(lw, h) * 0.17, t);
+      pos.forEach(function (p, i) { fourCard(p.x, p.y, cardW, cardH, FOUR_E[i], i); });
+      if (panelW > 110) fourPanel(panelX, 12, panelW, h - 24);
+    }
     function drawMyst(w, h, t, now) {
       ctx.fillStyle = "#04070d"; ctx.fillRect(0, 0, w, h);
       stars.forEach(function (s) {
@@ -569,7 +827,7 @@
       ctx.fillStyle = "rgba(255,255,255,.72)"; ctx.font = font(10.5, 600); ctx.textAlign = "left"; ctx.textBaseline = "bottom";
       ctx.fillText(L("Ratten lernen das Labyrinth. Gleichungen?", "Rats learn the maze. Equations?"), 18, h - 18);
     }
-    var DRAWERS = [drawWorkspace, drawIIT, drawPredictive, drawKastrup, drawMyst];
+    var DRAWERS = [drawWorkspace, drawIIT, drawPredictive, drawKastrup, drawFourE, drawMyst];
 
     function draw(now) {
       if (!size || !ctx || size.w < 40 || size.h < 40) return;
@@ -608,7 +866,7 @@
     function renderChrome() {
       var th = THEORIES[active];
       el.setAttribute("data-theory", th.key);
-      el.style.setProperty("--con-accent", th.tone === "green" ? "var(--ls-green)" : th.tone === "gold" ? "var(--ls-gold)" : th.tone === "sky" ? "var(--ls-sky)" : th.tone === "blue" ? "var(--ls-blue)" : "var(--ls-lilac)");
+      el.style.setProperty("--con-accent", th.tone === "green" ? "var(--ls-green)" : th.tone === "gold" ? "var(--ls-gold)" : th.tone === "sky" ? "var(--ls-sky)" : th.tone === "blue" ? "var(--ls-blue)" : th.tone === "teal" ? "var(--ls-teal)" : "var(--ls-lilac)");
       kicker.textContent = L("Bewusstsein · Theorie ", "Consciousness · theory ") + (active + 1) + " / " + THEORIES.length;
       titleEl.textContent = th.title;
       leadEl.textContent = th.lead;
@@ -617,7 +875,8 @@
         '<div class="ls-con2-detail-body">' + th.body.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join("") + '</div>' +
         '<p class="ls-con2-basics"><b>' + L("Voraussetzungen", "Background") + '</b> ' + esc(th.basics) + '</p>' +
         '<div class="ls-con2-open"><b>' + L("Was offen bleibt", "What remains open") + '</b><p>' + esc(th.open) + '</p></div>' +
-        '<p class="ls-con2-cite">' + th.cite + '</p>';
+        '<p class="ls-con2-cite">' + th.cite + '</p>' +
+        (th.quote ? '<blockquote class="ls-con2-quote"><p>“' + esc(th.quote.text) + '”</p><cite><a href="' + esc(th.quote.url) + '" target="_blank" rel="noopener">' + esc(th.quote.author) + ', ' + esc(th.quote.work) + '</a></cite></blockquote>' : '');
       canvas.setAttribute("aria-label", th.title + ". " + th.lead);
     }
     function setIitMode(ff) {
@@ -676,6 +935,46 @@
       draw(performance.now());
       return true;
     }
+    function fourStatusText() {
+      return four.mode === "ai"
+        ? L("KI: 1 von 4. Nur Extended ist da; Embodied, Embedded und Enacted fehlen.", "AI: 1 of 4. Only Extended is present; Embodied, Embedded and Enacted are missing.")
+        : L("Mensch: 4 von 4 gekoppelt. Wort, Körper, Welt und Handlung sind verbunden.", "Human: 4 of 4 coupled. Word, body, world and action are connected.");
+    }
+    function fourWordStatus() {
+      var w = FOUR_WORDS[four.word];
+      return four.mode === "ai"
+        ? L(w.de + ": Token-Nachbarn " + w.tokensDe.join(" · "), w.en + ": token neighbours " + w.tokensEn.join(" · "))
+        : L(w.de + ": " + w.groundDe, w.en + ": " + w.groundEn);
+    }
+    function fourSetMode(mode) {
+      four.mode = mode === "ai" ? "ai" : "human";
+      four.focus = four.mode === "ai" ? 3 : 0;
+      setStatus(fourStatusText());
+      renderControls();
+      draw(performance.now());
+    }
+    function fourSetFocus(i) {
+      four.focus = clamp(i, 0, 3);
+      var e = FOUR_E[four.focus];
+      setStatus(four.mode === "ai"
+        ? L(e.label + ": " + e.missingDe, e.label + ": " + e.missingEn)
+        : L(e.label + ": " + e.noteDe, e.label + ": " + e.noteEn));
+      renderControls();
+      draw(performance.now());
+    }
+    function fourSetWord(key) {
+      if (!FOUR_WORDS[key]) return;
+      four.word = key;
+      setStatus(fourWordStatus());
+      renderControls();
+      draw(performance.now());
+    }
+    function fourNextAction() {
+      if (four.mode === "ai") return false;
+      if (four.focus < 3) { four.focus++; fourSetFocus(four.focus); return true; }
+      fourSetMode("ai");
+      return true;
+    }
     function mystNextAction() {
       if (myst.marks.length < 16) {
         spawnMark(false);
@@ -709,6 +1008,19 @@
         controls.innerHTML =
           '<label class="ls-con2-range"><span>' + L("Dissoziation", "Dissociation") + '</span><input type="range" data-con-diss min="0" max="100" step="1" value="' + kast.diss + '"><output>' + kast.diss + ' %</output></label>' +
           '<label class="ls-con2-range"><span>' + L("Wirbel", "Vortices") + '</span><input type="range" data-con-count min="1" max="5" step="1" value="' + kast.count + '"><output>' + kast.count + '</output></label>' +
+          '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
+      } else if (active === 4) {
+        controls.innerHTML =
+          '<div class="ls-con2-row">' +
+            '<button type="button" class="ls-con2-chip' + (four.mode === "human" ? " is-on" : "") + '" data-four-mode="human">' + L("Mensch", "Human") + '</button>' +
+            '<button type="button" class="ls-con2-chip' + (four.mode === "ai" ? " is-on" : "") + '" data-four-mode="ai">' + L("KI", "AI") + '</button>' +
+          '</div>' +
+          '<div class="ls-con2-row">' + FOUR_E.map(function (e, i) {
+            return '<button type="button" class="ls-con2-chip' + (four.focus === i ? " is-on" : "") + '" data-four-focus="' + i + '" style="--chip:' + e.color + '">' + e.label + '</button>';
+          }).join("") + '</div>' +
+          '<div class="ls-con2-row">' + Object.keys(FOUR_WORDS).map(function (k) {
+            return '<button type="button" class="ls-con2-chip' + (four.word === k ? " is-on" : "") + '" data-four-word="' + k + '">' + L(FOUR_WORDS[k].de, FOUR_WORDS[k].en) + '</button>';
+          }).join("") + '</div>' +
           '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
       } else {
         controls.innerHTML = '<div class="ls-con2-row"><button type="button" class="ls-con2-btn is-primary" data-con-spawn>' + L("Neue Frage", "New question") + '</button><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
@@ -760,6 +1072,15 @@
       controls.querySelectorAll("[data-con-count]").forEach(function (inp) {
         inp.addEventListener("input", function () { setKastCount(inp.value); });
       });
+      controls.querySelectorAll("[data-four-mode]").forEach(function (b) {
+        b.addEventListener("click", function () { fourSetMode(b.getAttribute("data-four-mode")); });
+      });
+      controls.querySelectorAll("[data-four-focus]").forEach(function (b) {
+        b.addEventListener("click", function () { fourSetFocus(parseInt(b.getAttribute("data-four-focus"), 10) || 0); });
+      });
+      controls.querySelectorAll("[data-four-word]").forEach(function (b) {
+        b.addEventListener("click", function () { fourSetWord(b.getAttribute("data-four-word")); });
+      });
       controls.querySelectorAll("[data-con-spawn]").forEach(function (b) {
         b.addEventListener("click", function () { spawnMark(false); setStatus(L("Noch eine Frage. Sie fliegt weiter, ohne anzukommen.", "One more question. It keeps flying without landing.")); draw(performance.now()); });
       });
@@ -792,7 +1113,8 @@
       if (active === 1 && iitNextAction()) return true;
       if (active === 2 && !predModelFresh()) { updatePredModel(); return true; }
       if (active === 3 && kastNextAction()) return true;
-      if (active === 4 && mystNextAction()) return true;
+      if (active === 4 && fourNextAction()) return true;
+      if (active === 5 && mystNextAction()) return true;
       if (active < THEORIES.length - 1) { setTheory(active + 1); return true; }
       return false;
     }
@@ -848,7 +1170,7 @@
       update: function () {},
       next: goNext,
       prev: goPrev,
-      hasNext: function () { return active === 4 ? myst.marks.length < 16 : active < THEORIES.length - 1; },
+      hasNext: function () { return active === 5 ? myst.marks.length < 16 : active < THEORIES.length - 1; },
       hasPrev: function () { return active > 0; },
       ownsKeys: function () { return true; },
       onKey: function (e) {

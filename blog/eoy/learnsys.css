@@ -5706,3 +5706,11 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
   .ls-cn-bottom a{white-space:normal}
 }
 @media (prefers-reduced-motion:reduce){.ls-cn-verdict:before{animation:none}}
+/* 4E Cognition: body, world, action, tool */
+.ls-con2[data-theory="fourE"] .ls-con2-stage{height:clamp(320px,44vh,460px);background:#031820;border-color:rgba(0,146,153,.38);box-shadow:0 18px 40px rgba(0,20,30,.18)}
+.ls-con2-quote{position:relative;margin:8px 0 0;padding:12px 14px 10px 17px;border-left:3px solid var(--ls-teal);border-radius:0 10px 10px 0;background:linear-gradient(90deg,rgba(0,146,153,.09),rgba(0,146,153,.015));overflow:hidden}
+.ls-con2-quote:before{content:"“";position:absolute;right:10px;top:-10px;font:700 74px/1 Georgia,serif;color:rgba(0,146,153,.13);pointer-events:none}
+.ls-con2-quote p{position:relative;margin:0;font:italic 500 15.5px/1.52 Georgia,"Times New Roman",serif;color:var(--ls-ink)}
+.ls-con2-quote cite{position:relative;display:block;margin-top:5px;font:600 10.5px/1.4 "Open Sans",sans-serif;font-style:normal;color:var(--ls-muted)}
+.ls-con2-quote cite a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}
+@media (max-width:640px){.ls-con2-quote p{font-size:14px}.ls-con2[data-theory="fourE"] .ls-con2-stage{height:320px}}
