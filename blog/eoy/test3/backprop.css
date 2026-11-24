@@ -239,3 +239,8 @@
   .bp-boundary { height: 138px; }
   .bp-table { font-size: 9.5px; }
 }
+
+.bp-net #bp-pulses circle { pointer-events: none; }
+
+.bp-grad-grid b.ok { color: var(--green); }
+.bp-grad-grid b.bad { color: var(--rose); }

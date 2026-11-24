@@ -371,8 +371,8 @@
     currentEl.textContent = "m=" + state.m + " · n=" + state.n + " · |m−n|=" + rel;
     heatReadout.textContent = L("Zelle ", "cell ") + "(" + state.m + "," + state.n + ") = " + v.toFixed(3);
     dialReadout.innerHTML = L(
-      "Paar " + p + ": θ = " + selectedTheta().toFixed(4) + ". q dreht um " + ((state.rope ? state.m * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°, k um " + ((state.rope ? state.n * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°. <b>q·k = " + pairDot().toFixed(3) + "</b>.",
-      "Pair " + p + ": θ = " + selectedTheta().toFixed(4) + ". q rotates by " + ((state.rope ? state.m * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°, k by " + ((state.rope ? state.n * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°. <b>q·k = " + pairDot().toFixed(3) + "</b>."
+      "Paar " + p + " (d<sub>" + (2 * p - 1) + "</sub>, d<sub>" + (2 * p) + "</sub>): θ = " + selectedTheta().toFixed(4) + ". q dreht um " + ((state.rope ? state.m * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°, k um " + ((state.rope ? state.n * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°. <b>q·k = " + pairDot().toFixed(3) + "</b>.",
+      "Pair " + p + " (d<sub>" + (2 * p - 1) + "</sub>, d<sub>" + (2 * p) + "</sub>): θ = " + selectedTheta().toFixed(4) + ". q rotates by " + ((state.rope ? state.m * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°, k by " + ((state.rope ? state.n * selectedTheta() : 0) * 180 / Math.PI).toFixed(1) + "°. <b>q·k = " + pairDot().toFixed(3) + "</b>."
     );
     readout.innerHTML = state.rope
       ? L(
@@ -393,7 +393,7 @@
       b.type = "button";
       b.className = "rope-freq" + (i === state.selected ? " is-on" : "");
       b.innerHTML = '<span>' + L("Paar ", "pair ") + (i + 1) + '</span><b>θ ' + theta(i).toFixed(3) + '</b><i class="rope-freq-bar" style="width:' + Math.max(6, theta(i) * 100).toFixed(1) + '%"></i>';
-      b.setAttribute("title", L("Frequenzpaar ", "frequency pair ") + (i + 1) + ": θ = " + theta(i).toFixed(5));
+      b.setAttribute("title", L("Paar ", "pair ") + (i + 1) + L(" · Dimensionen ", " · dimensions ") + (2 * i + 1) + "/" + (2 * i + 2) + ": θ = " + theta(i).toFixed(5));
       b.addEventListener("click", function (idx) {
         return function () {
           state.selected = idx;
@@ -409,7 +409,7 @@
     controls.innerHTML =
       '<label class="t2-range th-range"><span>' + L("Position m", "Position m") + '</span><input type="range" id="rope-m" min="0" max="' + (state.maxPos - 1) + '" step="1" value="' + state.m + '"><output>' + state.m + '</output></label>' +
       '<label class="t2-range th-range"><span>' + L("Position n", "Position n") + '</span><input type="range" id="rope-n" min="0" max="' + (state.maxPos - 1) + '" step="1" value="' + state.n + '"><output>' + state.n + '</output></label>' +
-      '<label class="t2-range th-range"><span>' + L("Frequenzpaare", "Frequency pairs") + '</span><input type="range" id="rope-pairs" min="1" max="8" step="1" value="' + state.pairs + '"><output>' + state.pairs + '</output></label>' +
+      '<label class="t2-range th-range"><span>' + L("Dimensionspaare (2 Dim. pro Paar)", "Dimension pairs (2 dims per pair)") + '</span><input type="range" id="rope-pairs" min="1" max="8" step="1" value="' + state.pairs + '"><output>' + state.pairs + '</output></label>' +
       '<div class="th-switchrow" role="group" aria-label="' + L("Maximale Position", "Maximum position") + '">' +
         [16, 32, 64].map(function (n) {
           return '<button type="button" class="proto-chip' + (state.maxPos === n ? ' is-on' : '') + '" data-rope-max="' + n + '">' + n + '</button>';

@@ -351,6 +351,52 @@
     }
   ];
 
+  var ropeStep = DE ? {
+    kicker: "RoPE",
+    title: "RoPE: relative Position als Rotation",
+    body: "RoPE dreht Query und Key pro 2D-Paar um einen positionsabhängigen Winkel: q<sub>m</sub> = R(mθ) q und k<sub>n</sub> = R(nθ) k. Das Skalarprodukt hängt dann nur noch vom relativen Abstand n−m ab, nicht von den absoluten Positionen. Links steht die Formel, in der Mitte ein 2D-Paar, rechts dieselbe Rotation über die Position als Helix.\n\nVorteile: Die Rotation ist orthogonal, die Länge der Vektoren bleibt gleich; relative Abstände stecken direkt im Score; es gibt keine zusätzlichen gelernten Positionsparameter; die Frequenzen lassen die Ähnlichkeit mit dem Abstand abklingen; RoPE passt auch zu linearer Attention.\n\nGrenzen: Die Anzahl der Dimensionen muss gerade sein, weil paarweise gedreht wird; Basisfrequenz und Paarbelegung sind Designentscheidungen; für Kontexte länger als das Training braucht RoPE eine Skalierung oder Interpolation (YaRN, NTK, LongRoPE); die Rotation muss in jeder Attention-Schicht und im KV-Cache konsistent angewendet werden.",
+    watch: "Bewege m und n, wähle ein Frequenzpaar und schalte RoPE aus. In der 2D-Ansicht drehen sich q und k; rechts siehst du dieselbe Drehung über die Position als Helix.",
+    demoState: { scene: "rope" },
+    context: "q<sub>m</sub> · k<sub>n</sub> = q · R((n−m)θ) k. Die Rotation ist orthogonal; die Norm bleibt. Für ein einzelnes Paar hängt der Score nur von n−m ab.",
+    deep: "Die Score-Matrix eines einzelnen Paars ist entlang der Diagonalen konstant, weil nur n−m zählt. Die Summe über die Paare bildet den Fingerabdruck. Für lange Kontexte werden die Frequenzen skaliert oder interpoliert; die Wahl der Basis und der Interpolation entscheidet über die Extrapolation. Quellen: Su et al. (2021), Peng et al. (2023), Ding et al. (2024).",
+    boxes: [
+      box("rope-1", "Vorteile", "Was RoPE gut macht", "Relative Position ohne zusätzliche gelernte Parameter. Die Rotation ist orthogonal, also bleibt die Länge der Vektoren erhalten. Die Frequenzen erzeugen eine langfristige Abnahme der Ähnlichkeit mit dem Abstand; RoPE ist auch mit linearer Attention kompatibel."),
+      box("rope-2", "Grenzen", "Was RoPE nicht löst", "Die Dimensionenzahl muss gerade sein, weil paarweise gedreht wird. Basisfrequenz und Paarbelegung sind Designentscheidungen. Kontexte länger als das Training brauchen eine Skalierung oder Interpolation (YaRN, NTK, LongRoPE). Die Rotation muss in jeder Schicht und im KV-Cache konsistent angewendet werden."),
+      box("rope-3", "Dimensionen", "Ein Paar = zwei Dimensionen", "RoPE dreht immer zwei Dimensionen gemeinsam: (d<sub>2i+1</sub>, d<sub>2i+2</sub>). Ein Head mit d = 64 hat 32 solcher Paare; jedes Paar hat seine eigene Frequenz θ<sub>i</sub> = 10000<sup>−2i/d</sup>. Die Demo zeigt bis zu 8 Paare.")
+    ],
+    sources: [
+      { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Rotation von Query und Key; relative Position im Skalarprodukt.", en: "RoPE: rotation of query and key; relative position in the dot product." } },
+      { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE in den Attention-Schichten.", en: "Llama 2 uses RoPE in its attention layers." } },
+      { label: "Peng et al. (2023), YaRN: Efficient Context Window Extension of Large Language Models", url: "https://arxiv.org/abs/2309.00071", why: { de: "YaRN erweitert RoPE auf lange Kontexte.", en: "YaRN extends RoPE to long contexts." } },
+      { label: "Ding et al. (2024), LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens", url: "https://arxiv.org/abs/2402.13753", why: { de: "LongRoPE: lange Kontexte mit angepassten RoPE-Frequenzen.", en: "LongRoPE: long contexts with adjusted RoPE frequencies." } }
+    ]
+  } : {
+    kicker: "RoPE",
+    title: "RoPE: relative position as rotation",
+    body: "RoPE rotates query and key per 2D pair by a position-dependent angle: q<sub>m</sub> = R(mθ) q and k<sub>n</sub> = R(nθ) k. The dot product then depends only on the relative distance n−m, not on the absolute positions. On the left is the formula, in the middle one 2D pair, and on the right the same rotation across positions as a helix.\n\nAdvantages: the rotation is orthogonal, so the vector lengths stay the same; relative distances sit directly in the score; there are no additional learned position parameters; the frequencies make similarity decay with distance; RoPE also works with linear attention.\n\nLimits: the number of dimensions must be even because dimensions rotate in pairs; the base frequency and the pairing are design choices; contexts longer than training need scaling or interpolation (YaRN, NTK, LongRoPE); the rotation must be applied consistently in every attention layer and in the KV cache.",
+    watch: "Move m and n, choose a frequency pair, and switch RoPE off. In the 2D view q and k rotate; on the right you see the same rotation across positions as a helix.",
+    demoState: { scene: "rope" },
+    context: "q<sub>m</sub> · k<sub>n</sub> = q · R((n−m)θ) k. The rotation is orthogonal; the norm stays. For a single pair the score depends only on n−m.",
+    deep: "The score matrix of a single pair is constant along diagonals because only n−m matters. The sum over the pairs forms the fingerprint. For long contexts the frequencies are scaled or interpolated; the choice of base and interpolation decides extrapolation. Sources: Su et al. (2021), Peng et al. (2023), Ding et al. (2024).",
+    boxes: [
+      box("rope-1", "Advantages", "What RoPE does well", "Relative position without additional learned parameters. The rotation is orthogonal, so vector lengths are preserved. The frequencies make similarity decay with distance; RoPE is also compatible with linear attention."),
+      box("rope-2", "Limits", "What RoPE does not solve", "The number of dimensions must be even because dimensions rotate in pairs. Base frequency and pairing are design choices. Contexts longer than training need scaling or interpolation (YaRN, NTK, LongRoPE). The rotation must be applied consistently in every layer and in the KV cache."),
+      box("rope-3", "Dimensions", "One pair = two dimensions", "RoPE always rotates two dimensions together: (d<sub>2i+1</sub>, d<sub>2i+2</sub>). A head with d = 64 has 32 such pairs; each pair has its own frequency θ<sub>i</sub> = 10000<sup>−2i/d</sup>. The demo shows up to 8 pairs.")
+    ],
+    sources: [
+      { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Rotation von Query und Key; relative Position im Skalarprodukt.", en: "RoPE: rotation of query and key; relative position in the dot product." } },
+      { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE in den Attention-Schichten.", en: "Llama 2 uses RoPE in its attention layers." } },
+      { label: "Peng et al. (2023), YaRN: Efficient Context Window Extension of Large Language Models", url: "https://arxiv.org/abs/2309.00071", why: { de: "YaRN erweitert RoPE auf lange Kontexte.", en: "YaRN extends RoPE to long contexts." } },
+      { label: "Ding et al. (2024), LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens", url: "https://arxiv.org/abs/2402.13753", why: { de: "LongRoPE: lange Kontexte mit angepassten RoPE-Frequenzen.", en: "LongRoPE: long contexts with adjusted RoPE frequencies." } }
+    ]
+  };
+
+  var positionStep = {
+    kicker: DE ? "Position" : "Position",
+    title: DE ? "Jeder Platz bekommt einen Fingerabdruck" : "Every place gets a fingerprint",
+    substeps: [positionSteps[0], ropeStep]
+  };
+
   var attentionSteps = DE ? [
     {
       kicker: "Attend",
@@ -2308,7 +2354,7 @@
     substeps: [spacetimeSpace, spacetimeTime]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnStep, residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsCombinedStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionStep, attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnStep, residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, spacetimeStep, agentsCombinedStep, hallucinationStep, historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
 
   var day = {
     id: "intuition",

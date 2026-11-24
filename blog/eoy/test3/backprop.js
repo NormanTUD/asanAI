@@ -23,6 +23,10 @@
   var stage = document.querySelector(".bp-stage");
   if (!svg || !table) return;
 
+  var tip = document.createElement("div");
+  tip.className = "bp-tip";
+  document.body.appendChild(tip);
+
   var X = [[0, 0], [0, 1], [1, 0], [1, 1]];
   var T = [0, 1, 1, 0];
   var EPS = 1e-4;
@@ -204,6 +208,9 @@
       line.setAttribute("data-param", e.id);
       svg.appendChild(line);
     });
+    var pulseLayer = svgEl("g", { id: "bp-pulses" });
+    pulseLayer.setAttribute("pointer-events", "none");
+    svg.appendChild(pulseLayer);
     NODES.x0 && [NODES.x0, NODES.x1].forEach(function (n, i) {
       svg.appendChild(svgEl("circle", { cx: n.x, cy: n.y, r: n.r, class: "bp-node", "data-node": "x" + i }));
       var lab = svgEl("text", { x: n.x, y: n.y - 3, class: "bp-node-label" });
@@ -241,6 +248,21 @@
       var targetEl = e.target.closest ? e.target.closest("[data-param]") : null;
       if (targetEl) selectParam(targetEl.getAttribute("data-param"));
     });
+    svg.addEventListener("mousemove", function (e) {
+      var targetEl = e.target.closest ? e.target.closest("[data-param]") : null;
+      if (!targetEl) { tip.classList.remove("is-on"); return; }
+      var id = targetEl.getAttribute("data-param");
+      var a = analyticGrad(id), n = numericGrad(id);
+      tip.innerHTML = '<b>' + param(id).label + '</b> = ' + fmt(paramValue(id), 3) +
+        '<br>∂L/∂w = ' + fmt(a) + '<br>num. = ' + fmt(n) +
+        '<br>|Δ| = ' + Math.abs(a - n).toExponential(1);
+      var left = Math.min(window.innerWidth - 270, e.clientX + 16);
+      var top = Math.min(window.innerHeight - 120, e.clientY + 16);
+      tip.style.left = Math.max(8, left) + "px";
+      tip.style.top = Math.max(8, top) + "px";
+      tip.classList.add("is-on");
+    });
+    svg.addEventListener("mouseleave", function () { tip.classList.remove("is-on"); });
   }
 
   function renderNetwork(data) {
@@ -364,10 +386,10 @@
     var box = T2.fit(lossCanvas, lossCanvas);
     var ctx = box.ctx, w = box.w, h = box.h;
     ctx.clearRect(0, 0, w, h);
-    var line = "rgba(150,210,230,0.18)";
+    var line = "rgba(150,210,230,0.16)";
     var muted = "rgba(143,170,180,0.82)";
     var gold = T2.cssVar("--gold") || "#e3be62";
-    var padL = 30, padR = 10, padT = 10, padB = 20;
+    var padL = 32, padR = 12, padT = 12, padB = 22;
     var hist = state.history.length ? state.history : [lossOnly()];
     var maxV = Math.max(0.02, Math.max.apply(null, hist));
     function X(i) { return padL + (hist.length === 1 ? 0 : i / (hist.length - 1)) * (w - padL - padR); }
@@ -378,13 +400,27 @@
       var yy = padT + (h - padT - padB) * g / 2;
       ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(w - padR, yy); ctx.stroke();
     }
+    var fill = ctx.createLinearGradient(0, padT, 0, h - padB);
+    fill.addColorStop(0, "rgba(227,190,98,0.2)");
+    fill.addColorStop(1, "rgba(227,190,98,0)");
+    ctx.beginPath();
+    ctx.moveTo(X(0), h - padB);
+    hist.forEach(function (v, i) { ctx.lineTo(X(i), Y(v)); });
+    ctx.lineTo(X(hist.length - 1), h - padB);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
     ctx.beginPath();
     hist.forEach(function (v, i) { if (i === 0) ctx.moveTo(X(i), Y(v)); else ctx.lineTo(X(i), Y(v)); });
     ctx.strokeStyle = gold;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = gold;
+    ctx.shadowBlur = 12;
     ctx.stroke();
+    ctx.shadowBlur = 0;
     var last = hist.length - 1;
-    ctx.beginPath(); ctx.arc(X(last), Y(hist[last]), 3.2, 0, Math.PI * 2); ctx.fillStyle = gold; ctx.fill();
+    ctx.beginPath(); ctx.arc(X(last), Y(hist[last]), 4, 0, Math.PI * 2); ctx.fillStyle = gold; ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.68)"; ctx.lineWidth = 1.2; ctx.stroke();
     ctx.fillStyle = muted;
     ctx.font = '600 9px "Open Sans", sans-serif';
     ctx.textAlign = "left";
@@ -401,26 +437,83 @@
     var ctx = box.ctx, w = box.w, h = box.h;
     ctx.clearRect(0, 0, w, h);
     var pad = 22;
-    var gw = 26, gh = 18;
+    var gw = 34, gh = 24;
+    var green = T2.cssVar("--green") || "#7cc264";
+    var rose = T2.cssVar("--rose") || "#e3898c";
+    var gold = T2.cssVar("--gold") || "#e3be62";
     for (var gy = 0; gy < gh; gy++) {
       for (var gx = 0; gx < gw; gx++) {
         var x0 = gx / (gw - 1), x1 = 1 - gy / (gh - 1);
         var y = forwardExample([x0, x1]).y;
         var on = y > 0.5;
-        ctx.fillStyle = on ? "rgba(124,194,100,0.18)" : "rgba(227,137,140,0.16)";
+        var strength = Math.min(1, Math.abs(y - 0.5) * 1.8);
+        ctx.fillStyle = on
+          ? "rgba(124,194,100," + (0.06 + 0.18 * strength).toFixed(3) + ")"
+          : "rgba(227,137,140," + (0.05 + 0.16 * strength).toFixed(3) + ")";
         ctx.fillRect(pad + gx / gw * (w - pad * 2), pad + gy / gh * (h - pad * 2), (w - pad * 2) / gw + 0.5, (h - pad * 2) / gh + 0.5);
       }
     }
-    ctx.strokeStyle = "rgba(150,210,230,0.18)";
+
+    var G = 56;
+    var vals = [];
+    for (var yy = 0; yy < G; yy++) {
+      vals.push([]);
+      for (var xx = 0; xx < G; xx++) {
+        vals[yy].push(forwardExample([xx / (G - 1), 1 - yy / (G - 1)]).y - 0.5);
+      }
+    }
+    function gxPx(gx) { return pad + gx / (G - 1) * (w - pad * 2); }
+    function gyPx(gy) { return pad + gy / (G - 1) * (h - pad * 2); }
+    function crossing(x1, y1, v1, x2, y2, v2) {
+      var t = v1 / (v1 - v2);
+      return [x1 + (x2 - x1) * t, y1 + (y2 - y1) * t];
+    }
+    ctx.save();
+    ctx.strokeStyle = gold;
+    ctx.lineWidth = 1.8;
+    ctx.shadowColor = gold;
+    ctx.shadowBlur = 9;
+    ctx.beginPath();
+    for (var gy2 = 0; gy2 < G - 1; gy2++) {
+      for (var gx2 = 0; gx2 < G - 1; gx2++) {
+        var a = vals[gy2][gx2], b = vals[gy2][gx2 + 1], c = vals[gy2 + 1][gx2 + 1], d = vals[gy2 + 1][gx2];
+        var pts = [];
+        if ((a > 0) !== (b > 0)) pts.push(crossing(gx2, gy2, a, gx2 + 1, gy2, b));
+        if ((b > 0) !== (c > 0)) pts.push(crossing(gx2 + 1, gy2, b, gx2 + 1, gy2 + 1, c));
+        if ((d > 0) !== (c > 0)) pts.push(crossing(gx2, gy2 + 1, d, gx2 + 1, gy2 + 1, c));
+        if ((a > 0) !== (d > 0)) pts.push(crossing(gx2, gy2, a, gx2, gy2 + 1, d));
+        if (pts.length >= 2) {
+          ctx.moveTo(gxPx(pts[0][0]), gyPx(pts[0][1]));
+          ctx.lineTo(gxPx(pts[1][0]), gyPx(pts[1][1]));
+          if (pts.length === 4) {
+            ctx.moveTo(gxPx(pts[2][0]), gyPx(pts[2][1]));
+            ctx.lineTo(gxPx(pts[3][0]), gyPx(pts[3][1]));
+          }
+        }
+      }
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.strokeStyle = "rgba(150,210,230,0.16)";
     ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
     X.forEach(function (x, i) {
       var px = pad + x[0] * (w - pad * 2);
       var py = h - pad - x[1] * (h - pad * 2);
       ctx.beginPath();
-      ctx.arc(px, py, i === state.example ? 5 : 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = T[i] ? (T2.cssVar("--green") || "#7cc264") : (T2.cssVar("--rose") || "#e3898c");
+      ctx.arc(px, py, i === state.example ? 6 : 4, 0, Math.PI * 2);
+      ctx.fillStyle = T[i] ? green : rose;
+      ctx.shadowColor = T[i] ? green : rose;
+      ctx.shadowBlur = i === state.example ? 16 : 8;
       ctx.fill();
-      if (i === state.example) { ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.4; ctx.stroke(); }
+      ctx.shadowBlur = 0;
+      if (i === state.example) {
+        ctx.beginPath();
+        ctx.arc(px, py, 9, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255,255,255,.8)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
     });
     ctx.fillStyle = "rgba(143,170,180,0.85)";
     ctx.font = '600 9px "Open Sans", sans-serif';
@@ -431,6 +524,8 @@
     ctx.rotate(-Math.PI / 2);
     ctx.fillText("x₂", 0, 0);
     ctx.restore();
+    ctx.textAlign = "left";
+    ctx.fillText("y = 0.5", pad + 4, pad + 13);
     dataLossEl.textContent = L("Loss ", "loss ") + data.loss.toFixed(4);
   }
 
@@ -496,6 +591,51 @@
     ));
   }
 
+  function edgeGrad(g, id) {
+    var p = param(id);
+    if (p.kind === "w1") return g.gW1[p.i][p.j];
+    if (p.kind === "b1") return g.gb1[p.i];
+    if (p.kind === "w2") return g.gW2[p.i];
+    return g.gb2;
+  }
+
+  function animateBackward(g) {
+    if (T2.reduced()) return;
+    var layer = svg.querySelector("#bp-pulses");
+    if (!layer) return;
+    var items = EDGES.map(function (e) {
+      var grad = edgeGrad(g, e.id);
+      var a = NODES[e.a], b = NODES[e.b];
+      var circle = svgEl("circle", { cx: b.x, cy: b.y, r: 2.4 + Math.min(3.4, Math.abs(grad) * 18) });
+      circle.setAttribute("fill", grad >= 0 ? "#e3be62" : "#7ec8ef");
+      circle.setAttribute("opacity", "0");
+      circle.setAttribute("pointer-events", "none");
+      circle.style.filter = "drop-shadow(0 0 6px " + (grad >= 0 ? "#e3be62" : "#7ec8ef") + ")";
+      layer.appendChild(circle);
+      return {
+        el: circle,
+        ax: a.x, ay: a.y, bx: b.x, by: b.y,
+        delay: e.kind === "w2" || e.kind === "b2" ? 0 : 150
+      };
+    });
+    var start = performance.now();
+    function frame(now) {
+      var alive = false;
+      items.forEach(function (it) {
+        var t = (now - start - it.delay) / 560;
+        if (now - start < it.delay) { alive = true; return; }
+        if (t >= 1) { it.el.remove(); return; }
+        alive = true;
+        var e = T2.ease(Math.max(0, t));
+        it.el.setAttribute("cx", T2.lerp(it.bx, it.ax, e).toFixed(1));
+        it.el.setAttribute("cy", T2.lerp(it.by, it.ay, e).toFixed(1));
+        it.el.setAttribute("opacity", Math.sin(Math.PI * Math.max(0, t)).toFixed(2));
+      });
+      if (alive) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
   function applyStep(silent) {
     var old = lossOnly();
     var g = gradientsBatch();
@@ -511,6 +651,7 @@
     if (state.history.length > 140) state.history.shift();
     renderAll(data);
     if (!silent) {
+      animateBackward(g);
       narrateLab(L(
         "Schritt " + state.steps + ": Loss " + old.toFixed(4) + " → " + data.loss.toFixed(4) + ". Jedes Gewicht bewegt sich gegen seinen Gradienten.",
         "Step " + state.steps + ": loss " + old.toFixed(4) + " → " + data.loss.toFixed(4) + ". Every weight moves against its gradient."
@@ -543,6 +684,8 @@
 
   function resetLab() {
     if (state.timer) { clearInterval(state.timer); state.timer = 0; }
+    var pulseLayer = svg.querySelector("#bp-pulses");
+    if (pulseLayer) pulseLayer.innerHTML = "";
     state.W1 = clone(INIT.W1);
     state.b1 = INIT.b1.slice();
     state.W2 = INIT.W2.slice();
