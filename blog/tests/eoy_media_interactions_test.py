@@ -2135,68 +2135,70 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
         r"""
 () => ({
   mounted: !!document.querySelector('.ls-ll'),
-  tabs: document.querySelectorAll('.ls-ll-tab').length,
-  vars: document.querySelectorAll('.ls-ll-var').length,
-  head: document.querySelector('.ls-ll-head p')?.innerText || '',
-  protocol: document.querySelectorAll('.ls-ll-protocol li').length,
-  stamp: !!document.querySelector('.ls-ll-stamp'),
+  step: document.querySelector('.ls-ll-step')?.textContent || '',
+  title: document.querySelector('.ls-ll-title')?.textContent || '',
+  cases: document.querySelectorAll('.ls-ll-case').length,
+  waiting: document.querySelector('.ls-ll-result')?.classList.contains('is-waiting') || false,
+  run: !!document.querySelector('.ls-ll-run'),
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
     results.check(tag, "limits test bench is mounted", bench["mounted"], str(bench))
-    results.check(tag, "limits test bench has four tests", bench["tabs"] == 4, str(bench))
-    results.check(tag, "paraphrase test shows three variants", bench["vars"] == 3, str(bench))
-    results.check(tag, "limits lab labels its observations as constructed", ("konstruiert" in bench["head"] or "constructed" in bench["head"] or bench["stamp"]), bench["head"][:200])
-    results.check(tag, "limits lab shows a real test protocol", bench["protocol"] >= 3, str(bench["protocol"]))
-    results.check(tag, "limits lab stamps the observation as simulated", bench["stamp"], str(bench))
+    results.check(tag, "limits bench starts at test one", "1 / 4" in bench["step"], str(bench))
+    results.check(tag, "limits bench names the task in the title", "Ticket" in bench["title"] or "ticket" in bench["title"], str(bench))
+    results.check(tag, "limits bench shows the evaluated text pair", bench["cases"] == 2, str(bench))
+    results.check(tag, "limits bench waits for the check", bench["waiting"] and bench["run"], str(bench))
     page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
+    page.wait_for_timeout(100)
     para = page.evaluate(
         r"""
 () => ({
-  badges: document.querySelectorAll('.ls-ll-badge').length,
-  consistency: document.querySelector('.ls-ll-consistency b')?.textContent || '',
-  why: document.querySelector('.ls-ll-why')?.textContent || ''
+  answers: [...document.querySelectorAll('.ls-ll-case-out b')].map((e) => e.textContent),
+  result: document.querySelector('.ls-ll-result')?.innerText || '',
+  why: document.querySelector('.ls-ll-why')?.textContent || '',
+  aha: document.querySelector('.ls-ll-aha')?.textContent || '',
+  practice: document.querySelectorAll('.ls-ll-practice span').length,
+  stamp: !!document.querySelector('.ls-ll-stamp')
 })
 """
     )
-    results.check(tag, "paraphrase test reveals answers", para["badges"] == 3, str(para))
-    results.check(tag, "paraphrase test shows inconsistency", para["consistency"] == "2 / 3", str(para))
+    results.check(tag, "format test reveals both labels", len(para["answers"]) == 2 and "Storno" in " ".join(para["answers"]) and "Versandstatus" in " ".join(para["answers"]), str(para)[:220])
+    results.check(tag, "format test states the mismatch", "Gleiche Bedeutung" in para["result"] or "Same meaning" in para["result"], para["result"][:180])
     results.check(tag, "format test explains the failure", "Format" in para["why"] or "format" in para["why"], para["why"][:160])
-    observation = page.evaluate("() => document.querySelector('.ls-ll-observe-lead')?.textContent || ''")
-    results.check(tag, "paraphrase observation is explicit about the labels", "Storno" in observation or "Cancel" in observation, observation[:200])
-    page.locator('.ls-ll-tab[data-test="citation"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    page.locator('.ls-ll-check').click()
-    page.wait_for_timeout(200)
-    cite = page.evaluate("() => ({ result: document.querySelector('.ls-ll-cite-result')?.textContent || '', why: document.querySelector('.ls-ll-why')?.textContent || '' })")
-    results.check(tag, "citation test exposes a missing DOI", "nicht gefunden" in cite["result"] or "not found" in cite["result"], str(cite)[:200])
-    results.check(tag, "citation test explains the findability failure", "Quelle" in cite["why"] or "source" in cite["why"], cite["why"][:160])
-    page.locator('.ls-ll-tab[data-test="boundary"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    page.locator('.ls-ll-ask').click()
-    page.wait_for_timeout(150)
-    boundary = page.evaluate("() => ({ answer: document.querySelector('.ls-ll-answer b')?.textContent || '', asked: document.querySelector('.ls-ll-asked')?.textContent || '', conf: document.querySelector('.ls-ll-conf')?.textContent || '' })")
-    results.check(tag, "boundary test gives a confident answer", bool(boundary["answer"]) and "91" in boundary["conf"], str(boundary))
-    results.check(tag, "boundary test keeps the answer on follow-up", ("8–16" in boundary["asked"] or "8-16" in boundary["asked"]) and ("keine Unsicherheit" in boundary["asked"] or "no uncertainty" in boundary["asked"]), str(boundary))
-    page.locator('.ls-ll-tab[data-test="context"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    page.locator('.ls-ll-posbtn[data-pos="1"]').click()
-    page.locator('.ls-ll-run').click()
-    page.wait_for_timeout(700)
-    ctx = page.evaluate("() => ({ answer: document.querySelector('.ls-ll-answer b')?.textContent || '', badge: document.querySelector('.ls-ll-answer .ls-ll-badge')?.textContent || '', fact: !!document.querySelector('.ls-ll-context-fact'), summary: document.querySelector('.ls-ll-summary')?.textContent || '', overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
-    results.check(tag, "context test marks the middle fact as wrong", "2025" in ctx["answer"] and "✗" in ctx["badge"], str(ctx)[:200])
-    results.check(tag, "context test shows the fact marker and progress", ctx["fact"] and "4 / 4" in ctx["summary"], str(ctx)[:200])
-    page.locator('.ls-ll-tab[data-test="paraphrase"]').click()
+    results.check(tag, "format test gives an aha moment", "Darum" in para["aha"] or "This is why" in para["aha"], para["aha"][:180])
+    results.check(tag, "limits lab gives three practical actions", para["practice"] == 3, str(para["practice"]))
+    results.check(tag, "limits lab stamps the example", para["stamp"], str(para))
     page.keyboard.press("ArrowRight")
-    page.wait_for_timeout(250)
-    arrow = page.evaluate("() => ({ active: document.querySelector('.ls-ll-tab.is-active')?.getAttribute('data-test'), title: document.querySelector('.ls-ll-visual-head b')?.textContent || '' })")
-    results.check(tag, "right arrow walks through the test bench", arrow["active"] == "citation", str(arrow))
-    results.check(tag, "right arrow stays on the limits slide", "Quelle" in arrow["title"] or "source" in arrow["title"].lower(), str(arrow))
+    page.wait_for_timeout(150)
+    cite = page.evaluate(
+        r"""
+() => ({
+  step: document.querySelector('.ls-ll-step')?.textContent || '',
+  title: document.querySelector('.ls-ll-title')?.textContent || '',
+  answer: document.querySelector('.ls-ll-cite code')?.textContent || '',
+  check: !!document.querySelector('.ls-ll-check')
+})
+"""
+    )
+    results.check(tag, "next starts and opens the citation test", "2 / 4" in cite["step"] and ("Quelle" in cite["title"] or "source" in cite["title"].lower()), str(cite)[:220])
+    results.check(tag, "citation test shows the evaluated model answer", "Müller" in cite["answer"] and cite["check"], str(cite)[:220])
+    page.locator('.ls-ll-check').click()
+    page.wait_for_timeout(100)
+    checked = page.evaluate("() => ({ result: document.querySelector('.ls-ll-check-result')?.textContent || '', why: document.querySelector('.ls-ll-why')?.textContent || '' })")
+    results.check(tag, "citation test exposes a missing DOI", "nicht gefunden" in checked["result"] or "not found" in checked["result"], str(checked)[:200])
+    results.check(tag, "citation test explains the findability failure", "Quelle" in checked["why"] or "source" in checked["why"], checked["why"][:160])
+    page.keyboard.press("ArrowRight")
+    page.wait_for_timeout(150)
+    boundary = page.evaluate("() => ({ step: document.querySelector('.ls-ll-step')?.textContent || '', rows: document.querySelectorAll('.ls-ll-seven-row').length, text: document.querySelector('.ls-ll-seven')?.innerText || '' })")
+    results.check(tag, "next opens the calibration test", "3 / 4" in boundary["step"] and boundary["rows"] == 4, str(boundary)[:200])
+    results.check(tag, "calibration test shows confidence and no source", "91" in boundary["text"] and ("keine" in boundary["text"] or "none" in boundary["text"]), boundary["text"][:200])
+    page.keyboard.press("ArrowRight")
+    page.wait_for_timeout(150)
+    ctx = page.evaluate("() => ({ step: document.querySelector('.ls-ll-step')?.textContent || '', cases: document.querySelectorAll('.ls-ll-case').length, text: document.querySelector('.ls-ll-cases')?.innerText || '', practice: document.querySelectorAll('.ls-ll-practice span').length, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
+    results.check(tag, "next opens the context test", "4 / 4" in ctx["step"] and ctx["cases"] == 3, str(ctx)[:220])
+    results.check(tag, "context test marks the middle answer as wrong", "2025" in ctx["text"] and "14. März 2027" in ctx["text"], ctx["text"][:220])
+    results.check(tag, "context test keeps the practical checklist", ctx["practice"] == 3, str(ctx)[:220])
     results.check(tag, "risk/limit/society page has no overflow", ctx["overflow"] <= 2, str(ctx["overflow"]))
     page.evaluate("() => LearnSys.go(0, 0, 2)")
     page.wait_for_timeout(700)
