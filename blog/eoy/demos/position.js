@@ -6,6 +6,7 @@
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function positionScene(root, api) {
     var DE = api.lang === "de";
+    function L(de, en) { return DE ? de : en; }
     var el = document.createElement("div");
     el.className = "ls-position-scene";
     el.innerHTML =
@@ -42,7 +43,7 @@
     }
     var clamp = api.util.clamp;
     var trail = [];
-    var trailPoints = [], hoverTrail = -1;
+    var trailPoints = [], hoverTrail = -1, heatHover = null;
     var reveal = false;
     var sweep = null;
     var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
@@ -77,6 +78,41 @@
       ctx.fillText(String(rows - 1), padL - 4, padT + (rows - 1) * ch + ch);
       ctx.textAlign = "center";
       ctx.fillText(DE ? "Dimension" : "dimension", padL + (w - padL - padR) / 2, h - 5);
+      if (heatHover && heatHover.row >= 0 && heatHover.col >= 0 && heatHover.row < rows && heatHover.col < cols) {
+        var hx = padL + heatHover.col * cw, hy = padT + heatHover.row * ch;
+        ctx.save();
+        ctx.strokeStyle = C.petrol || C.ink;
+        ctx.lineWidth = 1.6;
+        ctx.strokeRect(hx + 0.5, hy + 0.5, Math.max(3, cw - 1), Math.max(3, ch - 1));
+        ctx.restore();
+        var pair = Math.floor(heatHover.col / 2);
+        var freq = Math.pow(10000, (2 * pair) / Math.max(2, dims));
+        var isSin = heatHover.col % 2 === 0;
+        var val = pe(heatHover.row, dims, heatHover.col);
+        var lines = [
+          L("Zeile: Position ", "row: position ") + heatHover.row + L(" (0–127)", " (0–127)"),
+          L("Spalte: Dimension ", "column: dimension ") + heatHover.col + L(" (0–63)", " (0–63)"),
+          L("Paar ", "pair ") + (pair + 1) + " · " + (isSin ? "sin" : "cos"),
+          L("Frequenz ", "frequency ") + freq.toFixed(2),
+          (isSin ? "sin(" : "cos(") + heatHover.row + " / " + freq.toFixed(2) + ") = " + val.toFixed(3)
+        ];
+        var tw = 236, th = lines.length * 13 + 10;
+        var tx = heatHover.x + 12 + tw > w ? heatHover.x - tw - 10 : heatHover.x + 12;
+        var ty = heatHover.y + 12 + th > h ? heatHover.y - th - 10 : heatHover.y + 12;
+        tx = Math.max(6, Math.min(w - tw - 6, tx));
+        ty = Math.max(6, Math.min(h - th - 6, ty));
+        ctx.fillStyle = "rgba(8, 20, 24, .93)";
+        ctx.fillRect(tx, ty, tw, th);
+        ctx.strokeStyle = C.lineStrong;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(tx + 0.5, ty + 0.5, tw - 1, th - 1);
+        ctx.fillStyle = "#f4fbfd";
+        ctx.font = '600 10px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        lines.forEach(function (line, i) { ctx.fillText(line, tx + 7, ty + 6 + i * 13); });
+        ctx.textBaseline = "alphabetic";
+      }
     }
     var mix = api.util.hexMix;
     function project(x, y, z) {
@@ -324,6 +360,26 @@
         drawCurve();
       }
     }
+    heat.addEventListener("pointermove", function (e) {
+      if (!heatSize) return;
+      var r = heat.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var padL = 34, padB = 22, padT = 8, padR = 8;
+      var cols = Math.min(dims, 64), rows = Math.min(context, 128);
+      var cw = (heatSize.w - padL - padR) / cols, ch = (heatSize.h - padT - padB) / rows;
+      var col = Math.floor((x - padL) / cw), row = Math.floor((y - padT) / ch);
+      if (col < 0 || row < 0 || col >= cols || row >= rows) {
+        if (heatHover) { heatHover = null; drawHeat(); }
+        return;
+      }
+      heatHover = { row: row, col: col, x: x, y: y };
+      drawHeat();
+    });
+    heat.addEventListener("pointerleave", function () {
+      if (!heatHover) return;
+      heatHover = null;
+      drawHeat();
+    });
     heat.addEventListener("pointerdown", function (e) {
       reveal = true;
       var r = heat.getBoundingClientRect();
