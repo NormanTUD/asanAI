@@ -5244,6 +5244,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-ll-question{display:flex;flex-direction:column;gap:3px;padding:9px 11px;border-left:3px solid var(--ls-blue);background:rgba(18,117,172,.05)}
 .ls-ll-question span{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-blue)}
 .ls-ll-question b{font:600 12.5px/1.4 "Open Sans",sans-serif;color:var(--ls-ink)}
+.ls-ll-demo{min-height:180px;display:flex;flex-direction:column;justify-content:center}
 .ls-ll-cases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .ls-ll-cases--rows{grid-template-columns:1fr}
 .ls-ll-case{display:flex;flex-direction:column;gap:7px;padding:11px;border:1px solid var(--ls-line);background:var(--ls-paper-2);border-radius:3px}
@@ -5267,7 +5268,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-ll-seven-row span{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
 .ls-ll-seven-row b{font:600 12px/1.35 "Open Sans",sans-serif;color:var(--ls-ink)}
 .ls-ll-seven-row b.is-bad{color:#a33}
-.ls-ll-result{display:flex;flex-direction:column;gap:5px;padding:12px 14px;border:1px solid rgba(99,164,75,.38);border-left:4px solid var(--ls-green);background:rgba(99,164,75,.06);border-radius:3px}
+.ls-ll-result{display:flex;flex-direction:column;gap:5px;min-height:185px;padding:11px 13px;border:1px solid rgba(99,164,75,.38);border-left:4px solid var(--ls-green);background:rgba(99,164,75,.06);border-radius:3px}
 .ls-ll-result-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .ls-ll-result-head>span{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--ls-green)}
 .ls-ll-stamp{padding:2px 6px;border:1px solid rgba(159,151,0,.55);background:rgba(159,151,0,.08);color:var(--ls-gold);font:700 7px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;font-style:normal;transform:rotate(-1.5deg)}
@@ -5292,7 +5293,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 /* Limits: a calm, editorial test bench. One thing at a time. */
 .ls-ll{
   --ll-accent:var(--ls-petrol);
-  gap:13px;padding:20px 22px 18px;border:1px solid var(--ls-line);border-top:4px solid var(--ll-accent);border-radius:7px;
+  gap:10px;padding:18px 20px 16px;border:1px solid var(--ls-line);border-top:4px solid var(--ll-accent);border-radius:7px;
   background:
     linear-gradient(180deg,rgba(255,255,255,.98),rgba(247,250,249,.96)),
     repeating-linear-gradient(90deg,transparent 0 31px,rgba(0,75,111,.018) 31px 32px);
@@ -5305,8 +5306,8 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-ll-dots i{display:block;width:7px;height:7px;border-radius:50%;background:var(--ls-line);box-shadow:0 0 0 1px rgba(0,75,111,.08)}
 .ls-ll-dots i.is-done{background:color-mix(in srgb,var(--ll-accent) 45%,#fff);border:0}
 .ls-ll-dots i.is-on{background:var(--ll-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--ll-accent) 16%,transparent)}
-.ls-ll-title{font-size:clamp(26px,2.6vw,36px);max-width:25ch;color:var(--ls-ink)}
-.ls-ll-lead{font-size:13.5px;line-height:1.55;max-width:78ch}
+.ls-ll-title{font-size:clamp(26px,2.6vw,36px);max-width:25ch;color:var(--ls-ink);min-height:2.2em}
+.ls-ll-lead{font-size:13.5px;line-height:1.55;max-width:78ch;min-height:3.2em}
 .ls-ll-question{border-left-color:var(--ll-accent);background:color-mix(in srgb,var(--ll-accent) 6%,transparent)}
 .ls-ll-question span{color:var(--ll-accent)}
 .ls-ll-case{border-top:3px solid color-mix(in srgb,var(--ll-accent) 62%,#fff);box-shadow:0 7px 18px rgba(0,30,40,.045);transition:transform .16s ease,box-shadow .16s ease}

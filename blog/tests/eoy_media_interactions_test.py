@@ -2163,7 +2163,8 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
 })
 """
     )
-    results.check(tag, "format test reveals both labels", len(para["answers"]) == 2 and "Storno" in " ".join(para["answers"]) and "Versandstatus" in " ".join(para["answers"]), str(para)[:220])
+    labels = " ".join(para["answers"])
+    results.check(tag, "format test reveals both labels", len(para["answers"]) == 2 and ("Storno" in labels or "Cancel" in labels) and ("Versandstatus" in labels or "Shipping status" in labels), str(para)[:220])
     results.check(tag, "format test states the mismatch", "Gleiche Bedeutung" in para["result"] or "Same meaning" in para["result"], para["result"][:180])
     results.check(tag, "format test explains the failure", "Format" in para["why"] or "format" in para["why"], para["why"][:160])
     results.check(tag, "format test gives an aha moment", "Darum" in para["aha"] or "This is why" in para["aha"], para["aha"][:180])
@@ -2197,7 +2198,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     page.wait_for_timeout(150)
     ctx = page.evaluate("() => ({ step: document.querySelector('.ls-ll-step')?.textContent || '', cases: document.querySelectorAll('.ls-ll-case').length, text: document.querySelector('.ls-ll-cases')?.innerText || '', practice: document.querySelectorAll('.ls-ll-practice span').length, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
     results.check(tag, "next opens the context test", "4 / 4" in ctx["step"] and ctx["cases"] == 3, str(ctx)[:220])
-    results.check(tag, "context test marks the middle answer as wrong", "2025" in ctx["text"] and "14. März 2027" in ctx["text"], ctx["text"][:220])
+    results.check(tag, "context test marks the middle answer as wrong", "2025" in ctx["text"] and "2027" in ctx["text"], ctx["text"][:220])
     results.check(tag, "context test keeps the practical checklist", ctx["practice"] == 3, str(ctx)[:220])
     results.check(tag, "risk/limit/society page has no overflow", ctx["overflow"] <= 2, str(ctx["overflow"]))
     page.evaluate("() => LearnSys.go(0, 0, 2)")

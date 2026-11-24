@@ -13,8 +13,8 @@
         title: L("Gleiches Ticket, zwei Formate", "Same ticket, two formats"),
         lead: L("Das Modell klassifiziert denselben Text einmal als Fließtext und einmal als Chat. Das Label soll gleich bleiben.", "The model classifies the same text once as plain text and once as chat. The label should stay the same."),
         cases: [
-          { label: L("Text A · Fließtext", "Text A · plain text"), text: L("Aufgabe: Klassifiziere das Ticket.\\nTicket: „Mein Paket ist zu spät, ich möchte stornieren.“\\nLabel:", "Task: classify the ticket.\\nTicket: “My parcel is late, I want to cancel.”\\nLabel:"), answer: L("Storno", "Cancel"), ok: true },
-          { label: L("Text B · Chat-Format", "Text B · chat format"), text: L("System: Du bist ein Klassifikator.\\nUser: „Mein Paket ist zu spät, ich möchte stornieren.“\\nAssistant:", "System: You are a classifier.\\nUser: “My parcel is late, I want to cancel.”\\nAssistant:"), answer: L("Versandstatus", "Shipping status"), ok: false }
+          { label: L("Text A · Fließtext", "Text A · plain text"), text: L("Aufgabe: Klassifiziere das Ticket.\nTicket: „Mein Paket ist zu spät, ich möchte stornieren.“\nLabel:", "Task: classify the ticket.\nTicket: “My parcel is late, I want to cancel.”\nLabel:"), answer: L("Storno", "Cancel"), ok: true },
+          { label: L("Text B · Chat-Format", "Text B · chat format"), text: L("System: Du bist ein Klassifikator.\nUser: „Mein Paket ist zu spät, ich möchte stornieren.“\nAssistant:", "System: You are a classifier.\nUser: “My parcel is late, I want to cancel.”\nAssistant:"), answer: L("Versandstatus", "Shipping status"), ok: false }
         ],
         result: L("Gleiche Bedeutung, anderes Label.", "Same meaning, different label."),
         aha: L("Darum funktioniert derselbe Prompt in einem anderen Tool plötzlich anders: Das Format ist ein Teil der Eingabe.", "This is why the same prompt suddenly behaves differently in another tool: the format is part of the input."),
@@ -99,7 +99,7 @@
     }
     function citationDemo(t) {
       if (!isRun()) return '<div class="ls-ll-wait">' + L("Noch nicht geprüft. Klicke auf „Prüfstand starten“.", "Not checked yet. Click “Start check”.") + '</div>';
-      return '<div class="ls-ll-cite"><span>' + L("Antwort des Modells", "Model answer") + '</span><code>' + esc(t.answer) + '</code><button type="button" class="ls-ll-check" data-check>' + (state.checked ? L("Erneut prüfen", "Check again") : L("DOI und Titel prüfen", "Check DOI and title")) + '</button>' + (state.checked ? '<p class="ls-ll-badline">' + esc(t.check) + '</p>' : '') + '</div>';
+      return '<div class="ls-ll-cite"><span>' + L("Antwort des Modells", "Model answer") + '</span><code>' + esc(t.answer) + '</code><button type="button" class="ls-ll-check" data-check>' + (state.checked ? L("Erneut prüfen", "Check again") : L("DOI und Titel prüfen", "Check DOI and title")) + '</button>' + (state.checked ? '<p class="ls-ll-check-result is-bad">' + esc(t.check) + '</p>' : '') + '</div>';
     }
     function boundaryDemo(t) {
       return '<div class="ls-ll-seven"><div class="ls-ll-seven-row"><span>' + L("Frage", "Question") + '</span><b>' + esc(t.question) + '</b></div><div class="ls-ll-seven-row"><span>' + L("Antwort", "Answer") + '</span><b>' + (isRun() ? esc(t.answer) : "?") + '</b></div><div class="ls-ll-seven-row"><span>' + L("Konfidenz", "Confidence") + '</span><b>' + (isRun() ? t.conf + " %" : "?") + '</b></div><div class="ls-ll-seven-row"><span>' + L("Quelle", "Source") + '</span><b class="is-bad">' + L("keine", "none") + '</b></div></div>';
@@ -110,17 +110,18 @@
       }).join("") + '</div>';
     }
     function demo(t) {
-      if (t === TESTS.format) return formatDemo(t);
-      if (t === TESTS.citation) return citationDemo(t);
-      if (t === TESTS.boundary) return boundaryDemo(t);
-      return contextDemo(t);
+      var html;
+      if (t === TESTS.format) html = formatDemo(t);
+      else if (t === TESTS.citation) html = citationDemo(t);
+      else if (t === TESTS.boundary) html = boundaryDemo(t);
+      else html = contextDemo(t);
+      return '<div class="ls-ll-demo">' + html + '</div>';
     }
     function result(t) {
       if (!isRun()) return '<div class="ls-ll-result is-waiting"><div class="ls-ll-result-head"><span>' + L("Ergebnis", "Result") + '</span></div><p>' + L("Starte den Prüfstand, dann erscheint hier das Ergebnis.", "Start the check; the result will appear here.") + '</p></div>';
       return '<div class="ls-ll-result"><div class="ls-ll-result-head"><span>' + L("Ergebnis", "Result") + '</span><b class="ls-ll-stamp">' + L("BEISPIEL", "EXAMPLE") + '</b></div><b>' + esc(t.result) + '</b><p class="ls-ll-aha"><b>' + L("Aha", "Aha") + '</b> ' + esc(t.aha) + '</p><p class="ls-ll-observe-lead"><b>' + L("Warum?", "Why?") + '</b> ' + esc(t.why) + '</p><p class="ls-ll-why"><b>' + L("Was hilft?", "What helps?") + '</b> ' + esc(t.fix) + '</p><p class="ls-ll-source"><b>' + L("Quelle", "Source") + ':</b> ' + (t.url ? '<a href="' + t.url + '" target="_blank" rel="noopener">' + esc(t.source) + '</a>' : esc(t.source)) + '</p></div>';
     }
     function practice(t) {
-      if (!isRun()) return "";
       return '<div class="ls-ll-practice"><b>' + L("Bevor du der Antwort glaubst", "Before you trust the answer") + '</b>' + (t.practice || []).map(function (p, i) { return '<span><i>' + (i + 1) + '</i>' + esc(p) + '</span>'; }).join("") + '</div>';
     }
     function render() {
@@ -151,6 +152,7 @@
         if (index() <= 0) return false;
         state.test = ORDER[index() - 1];
         state.checked = false;
+        state.run[state.test] = true;
         render();
         return true;
       },

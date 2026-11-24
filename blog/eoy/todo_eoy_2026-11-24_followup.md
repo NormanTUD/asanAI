@@ -24,13 +24,15 @@ list in sync and exactly one item `[in work]`.
   Spieler, Gegner), not in all three; hovering a map cell keeps the link.
   Tooltip names the 64×3 row/column and the source activation/probe row.
 - [done] Run eoy media interactions + JS validator and record raw output.
-  `eoy_media_interactions_test.py`: 2168 checks, 0 failures (DE+EN), including
-  the new live 64×3 / 8×8 linkage. `js_validator.py`: 0 errors, 236 existing
-  warnings. Re-ran after limiting the highlight to the matching state map.
-- [in work] "Grenzen: Was LLMs nicht zuverlässig können": use the space,
-  remove the fake 520 ms simulation delay and wording, make the bench immersive,
-  and stop „Versandstatus“ from colliding with the red ✗.
-- [pending] Commit/push only after explicit confirmation.
+  `eoy_media_interactions_test.py`: 2176 checks, 0 failures (DE+EN), including
+  the rebuilt limits bench and its auto-run navigation. `js_validator.py`:
+  0 errors, 236 existing warnings.
+- [done] "Grenzen: Was LLMs nicht zuverlässig können": rebuilt as a single-focus
+  four-test bench. One evaluated text, one result, one aha line and three
+  practical actions per test. Real newlines in prompt cards, stable container
+  height, no moving background, no fake delay, clear source per test. Next
+  starts the current test and auto-runs the next; Back restarts the previous.
+- [done] Commit/push after explicit confirmation.
 
 ## Notes
 
