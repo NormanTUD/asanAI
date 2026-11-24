@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fuzzy · HoTT</title>
+<style>
+	:root {
+		--ink: #e9eefc;
+	}
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		overflow: hidden;
+		background: #04060c;
+	}
+	body {
+		font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+		color: var(--ink);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		user-select: none;
+		-webkit-user-select: none;
+		touch-action: none;
+		cursor: default;
+	}
+	canvas {
+		position: fixed;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+	#gl { z-index: 0; }
+	#fx { z-index: 1; pointer-events: none; }
+	.brand {
+		position: fixed;
+		top: max(30px, env(safe-area-inset-top));
+		left: max(34px, env(safe-area-inset-left));
+		z-index: 2;
+		pointer-events: none;
+		opacity: 0;
+		transform: translateY(-6px);
+		transition: opacity 1.8s ease, transform 1.8s ease;
+	}
+	body.ready .brand { opacity: 1; transform: translateY(0); }
+	.brand-title {
+		font-size: 12px;
+		font-weight: 500;
+		letter-spacing: 0.42em;
+		text-transform: uppercase;
+		color: rgba(235, 241, 255, 0.82);
+		white-space: nowrap;
+	}
+	.brand-title em {
+		font-style: normal;
+		background: linear-gradient(90deg, #ffd479, #7fe0ff 52%, #ff9ec4);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+	.brand-line {
+		position: relative;
+		width: 54px;
+		height: 1px;
+		margin-top: 13px;
+		overflow: hidden;
+		background: linear-gradient(90deg, rgba(235, 241, 255, 0.28), rgba(235, 241, 255, 0));
+	}
+	.brand-line::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+		transform: translateX(-100%);
+		animation: sweep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+	}
+	@keyframes sweep {
+		0%, 55% { transform: translateX(-100%); }
+		85%, 100% { transform: translateX(220%); }
+	}
+	.hint {
+		position: fixed;
+		right: max(34px, env(safe-area-inset-right));
+		bottom: max(28px, env(safe-area-inset-bottom));
+		z-index: 2;
+		pointer-events: none;
+		font-size: 9.5px;
+		letter-spacing: 0.34em;
+		text-transform: uppercase;
+		color: rgba(235, 241, 255, 0.3);
+		opacity: 0;
+		transition: opacity 2.2s ease;
+		white-space: nowrap;
+	}
+	body.ready .hint { opacity: 1; }
+	body.ready .hint.gone { opacity: 0; }
+	.caption {
+		position: fixed;
+		left: 50%;
+		bottom: max(28px, env(safe-area-inset-bottom));
+		z-index: 2;
+		pointer-events: none;
+		transform: translateX(-50%);
+		font-size: 9.5px;
+		letter-spacing: 0.62em;
+		text-transform: uppercase;
+		color: rgba(235, 241, 255, 0.34);
+		opacity: 0;
+		transition: opacity 1.6s ease;
+		white-space: nowrap;
+	}
+	body.ready .caption { opacity: 1; }
+	#capWord {
+		display: inline-block;
+		opacity: 1;
+		transition: opacity 0.9s ease, letter-spacing 1.4s ease;
+	}
+	.compass {
+		position: fixed;
+		top: max(26px, env(safe-area-inset-top));
+		right: max(30px, env(safe-area-inset-right));
+		z-index: 2;
+		width: 44px;
+		height: 44px;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 2s ease;
+	}
+	body.ready .compass { opacity: 0.72; }
+	.compass svg { display: block; width: 100%; height: 100%; overflow: visible; }
+	.compass .ray {
+		stroke-linecap: round;
+		animation: ray 7s ease-in-out infinite;
+		transform-origin: 24px 24px;
+	}
+	.compass .r1 { animation-delay: 0s; }
+	.compass .r2 { animation-delay: 0.6s; }
+	.compass .r3 { animation-delay: 1.2s; }
+	@keyframes ray {
+		0%, 100% { opacity: 0.34; }
+		50% { opacity: 0.85; }
+	}
+	@media (max-width: 640px) {
+		.brand { top: 22px; left: 22px; }
+		.brand-title { font-size: 10.5px; letter-spacing: 0.34em; }
+		.hint, .caption { bottom: 20px; font-size: 8.5px; }
+		.hint { display: none; }
+		.compass { top: 18px; right: 20px; width: 36px; height: 36px; }
+	}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
+<p class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Interactive fuzzy-set and homotopy visualization. Drag ideas to reshape them. Click empty space to grow a new idea.</p>
+<div class="brand">
+	<div class="brand-title">Fuzzy <em>·</em> HoTT</div>
+	<div class="brand-line"></div>
+</div>
+<div class="compass" aria-hidden="true">
+	<svg viewBox="0 0 48 48">
+		<line class="ray r1" x1="24" y1="24" x2="24" y2="10" stroke="rgba(255,207,107,.9)" stroke-width="1"/>
+		<line class="ray r2" x1="24" y1="24" x2="36.1" y2="31" stroke="rgba(127,224,255,.9)" stroke-width="1"/>
+		<line class="ray r3" x1="24" y1="24" x2="11.9" y2="31" stroke="rgba(255,158,196,.9)" stroke-width="1"/>
+		<circle cx="24" cy="24" r="1.4" fill="rgba(235,241,255,.5)"/>
+	</svg>
+</div>
+<div class="caption"><span id="capWord">ambiguity</span></div>
+<div class="hint">drag · click</div>
+
+<script src="../three.min.js"></script>
+<script>
+(() => {
+	"use strict";
+
+	const TAU = Math.PI * 2;
+	const MAX_NODES = 10;
+	const CORE_NODES = 6;
+	const AXIS_A0 = -Math.PI / 2;
+	const AXIS_A1 = Math.PI / 6;
+	const AXIS_A2 = Math.PI * 5 / 6;
+	const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	const MOTION = reduceMotion ? 0.4 : 1;
+
+	const glCanvas = document.getElementById("gl");
+	const fxCanvas = document.getElementById("fx");
+	const fx = fxCanvas.getContext("2d");
+	const captionEl = document.getElementById("capWord");
+
+	let w = 0;
+	let h = 0;
+	let dpr = 1;
+	let cx = 0;
+	let cy = 0;
+	let sx = 0;
+	let sy = 0;
+	let radius = 60;
+
+	let time = 0;
+	let last = 0;
+	let spot = 0;
+	let spotTimer = 0;
+	let pointerOn = 0;
+	let hasPointer = false;
+
+	const pointer = { x: 0, y: 0, node: null };
+	const nodes = [];
+	const edges = [];
+	const sparks = [];
+
+	const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+	const lerp = (a, b, t) => a + (b - a) * t;
+	const mixHue = (a, b, t) => {
+		let d = ((b - a + 540) % 360) - 180;
+		return (a + d * t + 360) % 360;
+	};
+	const hsla = (hue, s, l, a) => `hsla(${hue}, ${s}%, ${l}%, ${a})`;
+
+	function hslToRgb(hue, s, l) {
+		const h = (((hue % 360) + 360) % 360) / 360;
+		const a = s * Math.min(l, 1 - l);
+		const f = (n) => {
+			const k = (n + h * 12) % 12;
+			return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+		};
+		return [f(0), f(8), f(4)];
+	}
+
+	const CORE = [
+		{ label: "FREEDOM",    hue: 44,  fx: -0.95, fy: -0.66, m: [0.82, 0.46, 0.62] },
+		{ label: "JUSTICE",    hue: 203, fx:  0.95, fy: -0.66, m: [0.68, 0.82, 0.38] },
+		{ label: "FAIRNESS",   hue: 158, fx:  0.00, fy: -0.16, m: [0.50, 0.78, 0.44] },
+		{ label: "HEALTH",     hue: 96,  fx: -0.52, fy:  0.50, m: [0.12, 0.50, 0.86] },
+		{ label: "PLEASURE",   hue: 334, fx:  0.52, fy:  0.50, m: [0.06, 0.22, 0.90] },
+		{ label: "MODERATION", hue: 268, fx:  0.00, fy:  0.90, m: [0.32, 0.66, 0.60] }
+	];
+
+	function createNode(def, core) {
+		return {
+			label: def.label || "",
+			hue: def.hue,
+			fx: def.fx,
+			fy: def.fy,
+			m: def.m.slice(),
+			core,
+			seed: Math.random() * 1000,
+			x: 0, y: 0, vx: 0, vy: 0,
+			ax: 0, ay: 0,
+			baseR: 0,
+			birth: 0,
+			drag: false,
+			labelA: 0
+		};
+	}
+
+	CORE.forEach((def) => nodes.push(createNode(def, true)));
+
+	function addEdge(a, b, bow) {
+		if (a === b || a < 0 || b < 0) return;
+		for (const e of edges) {
+			if ((e.a === a && e.b === b) || (e.a === b && e.b === a)) return;
+		}
+		edges.push({
+			a, b,
+			seed: Math.random() * 1000,
+			speed: 0.26 + Math.random() * 0.3,
+			bow: bow !== undefined ? bow : (Math.random() < 0.5 ? -1 : 1) * (0.06 + Math.random() * 0.07),
+			dir: 0
+		});
+	}
+
+	addEdge(0, 1);
+	addEdge(1, 2);
+	addEdge(0, 2);
+	addEdge(2, 3);
+	addEdge(2, 4);
+	addEdge(3, 5);
+	addEdge(5, 4);
+
+	function layout() {
+		w = window.innerWidth;
+		h = window.innerHeight;
+		dpr = Math.min(window.devicePixelRatio || 1, 2);
+		cx = w / 2;
+		cy = h / 2;
+		sx = Math.min(w * 0.36, 540);
+		sy = Math.min(h * 0.36, 440);
+		radius = clamp(Math.min(sx, sy) * 0.26, 30, 92);
+
+		for (const n of nodes) {
+			n.ax = cx + n.fx * sx;
+			n.ay = cy + n.fy * sy;
+			n.baseR = radius * (n.core ? 1 : 0.82);
+		}
+
+		glCanvas.width = Math.round(w * dpr);
+		glCanvas.height = Math.round(h * dpr);
+		fxCanvas.width = Math.round(w * dpr);
+		fxCanvas.height = Math.round(h * dpr);
+		fx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+		if (renderer) {
+			renderer.setPixelRatio(dpr);
+			renderer.setSize(w, h, false);
+		}
+		if (uniforms) uniforms.uAspect.value = w / h;
+	}
+
+	let renderer = null;
+	let uniforms = null;
+	let scene = null;
+	let camera = null;
+
+	const VERT = `
+		varying vec2 vUv;
+		void main() {
+			vUv = uv;
+			gl_Position = vec4(position.xy, 0.0, 1.0);
+		}
+	`;
+
+	const FRAG = `
+		#ifdef GL_FRAGMENT_PRECISION_HIGH
+			precision highp float;
+		#else
+			precision mediump float;
+		#endif
+		varying vec2 vUv;
+
+		uniform float uTime;
+		uniform float uAspect;
+		uniform vec2 uPointer;
+		uniform float uPointerOn;
+		uniform vec2 uPos[${MAX_NODES}];
+		uniform float uRad[${MAX_NODES}];
+		uniform vec3 uCol[${MAX_NODES}];
+		uniform vec3 uMem[${MAX_NODES}];
+
+		const float A0 = -1.5707963267948966;
+		const float A1 = 0.5235987755982988;
+		const float A2 = 2.6179938779914944;
+
+		float hash21(vec2 p) {
+			p = fract(p * vec2(123.34, 456.21));
+			p += dot(p, p + 45.32);
+			return fract(p.x * p.y);
+		}
+
+		float vnoise(vec2 p) {
+			vec2 i = floor(p);
+			vec2 f = fract(p);
+			f = f * f * (3.0 - 2.0 * f);
+			float a = hash21(i);
+			float b = hash21(i + vec2(1.0, 0.0));
+			float c = hash21(i + vec2(0.0, 1.0));
+			float d = hash21(i + vec2(1.0, 1.0));
+			return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+		}
+
+		float fbm(vec2 p) {
+			float v = 0.0;
+			float amp = 0.5;
+			for (int i = 0; i < 3; i++) {
+				v += amp * vnoise(p);
+				p = p * 2.03 + vec2(17.0, 9.0);
+				amp *= 0.5;
+			}
+			return v;
+		}
+
+		float lobeField(vec2 q, float rad, vec3 m) {
+			float r = max(length(q), 0.0001);
+			float th = atan(q.y, q.x);
+			float s = m.x * pow(0.5 + 0.5 * cos(th - A0), 2.0)
+			        + m.y * pow(0.5 + 0.5 * cos(th - A1), 2.0)
+			        + m.z * pow(0.5 + 0.5 * cos(th - A2), 2.0);
+			float rr = rad * (0.42 + 0.62 * s);
+			float d = r / max(rr, 0.0001);
+			float core = 1.0 - smoothstep(0.86, 1.0, d);
+			float halo = exp(-d * d * 1.25) * 0.55;
+			float far = exp(-d * d * 0.22) * 0.10;
+			float rimd = (d - 1.0) * 7.0;
+			float rim = exp(-rimd * rimd) * 0.3;
+			return core * 0.6 + halo + far + rim;
+		}
+
+		void main() {
+			vec2 p = vec2((vUv.x - 0.5) * uAspect, vUv.y - 0.5) * 2.0;
+
+			float radial = length(p * vec2(0.9, 1.05));
+			vec3 bg = mix(vec3(0.056, 0.074, 0.132), vec3(0.012, 0.017, 0.036), smoothstep(0.0, 1.3, radial));
+			float n = fbm(p * 1.15 + vec2(uTime * 0.014, -uTime * 0.011));
+			bg += vec3(0.034, 0.051, 0.086) * n * 0.8;
+			float vin = length(p * vec2(0.66, 0.96));
+			bg *= 1.0 - smoothstep(0.95, 1.9, vin) * 0.55;
+
+			vec3 col = bg;
+			for (int i = 0; i < ${MAX_NODES}; i++) {
+				float rad = uRad[i];
+				if (rad > 0.0001) {
+					vec2 q = p - uPos[i];
+					float f = lobeField(q, rad, uMem[i]);
+					col += uCol[i] * f * 0.55;
+				}
+			}
+
+			vec2 pd = p - uPointer;
+			float aura = exp(-dot(pd, pd) * 5.0) * uPointerOn;
+			col += vec3(0.09, 0.15, 0.25) * aura * 0.55;
+
+			col = 1.0 - exp(-col * 1.18);
+			float lum = dot(col, vec3(0.299, 0.587, 0.114));
+			col = mix(vec3(lum), col, 1.1);
+			col += (hash21(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * 0.012;
+
+			gl_FragColor = vec4(col, 1.0);
+		}
+	`;
+
+	function initGL() {
+		try {
+			renderer = new THREE.WebGLRenderer({
+				canvas: glCanvas,
+				antialias: true,
+				alpha: false,
+				powerPreference: "high-performance"
+			});
+			renderer.setClearColor(0x04060c, 1);
+
+			const uniformsInit = {
+				uTime: { value: 0 },
+				uAspect: { value: 1 },
+				uPointer: { value: new THREE.Vector2(0, 0) },
+				uPointerOn: { value: 0 },
+				uPos: { value: [] },
+				uRad: { value: [] },
+				uCol: { value: [] },
+				uMem: { value: [] }
+			};
+			for (let i = 0; i < MAX_NODES; i++) {
+				uniformsInit.uPos.value.push(new THREE.Vector2(0, 0));
+				uniformsInit.uRad.value.push(0);
+				uniformsInit.uCol.value.push(new THREE.Vector3(0, 0, 0));
+				uniformsInit.uMem.value.push(new THREE.Vector3(0.5, 0.5, 0.5));
+			}
+			uniforms = uniformsInit;
+
+			scene = new THREE.Scene();
+			camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+			const material = new THREE.ShaderMaterial({
+				uniforms,
+				vertexShader: VERT,
+				fragmentShader: FRAG,
+				depthTest: false,
+				depthWrite: false
+			});
+			scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+			renderer.render(scene, camera);
+		} catch (err) {
+			console.warn("Fuzzy field unavailable:", err && err.message ? err.message : err);
+			renderer = null;
+			uniforms = null;
+		}
+	}
+
+	initGL();
+	layout();
+	for (const n of nodes) {
+		n.x = n.ax;
+		n.y = n.ay;
+	}
+
+	function memOf(n) {
+		return [
+			clamp(n.m[0] + 0.045 * Math.sin(time * 0.50 + n.seed), 0.05, 1),
+			clamp(n.m[1] + 0.045 * Math.sin(time * 0.47 + n.seed + 2.1), 0.05, 1),
+			clamp(n.m[2] + 0.045 * Math.sin(time * 0.53 + n.seed + 4.2), 0.05, 1)
+		];
+	}
+
+	function radiusOf(n) {
+		return n.baseR * n.birth * (1 + 0.025 * Math.sin(time * 0.9 + n.seed));
+	}
+
+	function pushSpark(x, y, hue, strength) {
+		if (sparks.length > 28) return;
+		sparks.push({
+			x, y,
+			hue,
+			life: 0,
+			ttl: 1.3 + Math.random() * 0.9,
+			r0: 3,
+			r1: (44 + Math.random() * 38) * strength
+		});
+	}
+
+	function spawnNode(x, y) {
+		const live = nodes.length;
+		if (live >= MAX_NODES) {
+			pushSpark(x, y, 205, 1.4);
+			return;
+		}
+		const n = createNode({
+			label: "",
+			hue: [24, 48, 140, 176, 300, 326, 210][Math.floor(Math.random() * 7)],
+			fx: clamp((x - cx) / sx, -1.15, 1.15),
+			fy: clamp((y - cy) / sy, -1.15, 1.15),
+			m: [0.15 + Math.random() * 0.7, 0.1 + Math.random() * 0.8, 0.15 + Math.random() * 0.8]
+		}, false);
+		n.ax = clamp(x, 24, w - 24);
+		n.ay = clamp(y, 24, h - 24);
+		n.x = n.ax;
+		n.y = n.ay;
+		n.baseR = radius * 0.82;
+		const idx = nodes.length;
+		nodes.push(n);
+
+		const near = nodes
+			.slice(0, idx)
+			.map((o, i) => ({ i, d: Math.hypot(o.ax - n.ax, o.ay - n.ay) }))
+			.sort((a, b) => a.d - b.d)
+			.slice(0, 2);
+		for (const { i } of near) addEdge(idx, i);
+
+		pushSpark(x, y, n.hue, 1.5);
+	}
+
+	function update(dt) {
+		time += dt * MOTION;
+		pointerOn += ((hasPointer ? 1 : 0) - pointerOn) * (1 - Math.exp(-3 * dt));
+		spotTimer += dt;
+		if (spotTimer > 3.6) {
+			spotTimer = 0;
+			spot = (spot + 1) % CORE_NODES;
+			const s = nodes[spot];
+			if (s) captionEl.style.color = hsla(s.hue, 70, 82, 0.42);
+		}
+
+		const hover = hasPointer ? hitTest(pointer.x, pointer.y) : null;
+
+		for (const n of nodes) {
+			n.birth += (1 - n.birth) * (1 - Math.exp(-2.4 * dt));
+			const focus = (hover === n || nodes[spot] === n) ? 1 : 0;
+			n.labelA += (focus - n.labelA) * (1 - Math.exp(-4.5 * dt));
+
+			const driftX = Math.sin(time * 0.24 + n.seed) * radius * 0.09;
+			const driftY = Math.cos(time * 0.20 + n.seed * 1.4) * radius * 0.08;
+			let tx = n.ax + driftX;
+			let ty = n.ay + driftY;
+
+			if (hasPointer && !n.drag) {
+				const dxp = pointer.x - n.ax;
+				const dyp = pointer.y - n.ay;
+				const dp = Math.hypot(dxp, dyp) || 1;
+				const pull = Math.max(0, 1 - dp / 280) * 0.13;
+				tx += dxp * pull;
+				ty += dyp * pull;
+			}
+
+			if (n.drag) {
+				const k = 1 - Math.exp(-18 * dt);
+				n.x += (pointer.x - n.x) * k;
+				n.y += (pointer.y - n.y) * k;
+				n.vx = 0;
+				n.vy = 0;
+			} else {
+				n.vx += (tx - n.x) * 26 * dt;
+				n.vy += (ty - n.y) * 26 * dt;
+				const damp = Math.exp(-6.5 * dt);
+				n.vx *= damp;
+				n.vy *= damp;
+				n.x += n.vx * dt;
+				n.y += n.vy * dt;
+			}
+			const margin = 18;
+			n.x = clamp(n.x, margin, w - margin);
+			n.y = clamp(n.y, margin, h - margin);
+		}
+
+		for (let i = sparks.length - 1; i >= 0; i--) {
+			const s = sparks[i];
+			s.life += dt;
+			if (s.life >= s.ttl) sparks.splice(i, 1);
+		}
+
+		const connected = new Set();
+		for (const e of edges) {
+			connected.add(e.a < e.b ? e.a + ":" + e.b : e.b + ":" + e.a);
+		}
+
+		for (let i = 0; i < nodes.length; i++) {
+			for (let j = i + 1; j < nodes.length; j++) {
+				if (connected.has(i + ":" + j)) continue;
+				const a = nodes[i];
+				const b = nodes[j];
+				const d = Math.hypot(a.x - b.x, a.y - b.y);
+				const overlap = (radiusOf(a) + radiusOf(b)) * 0.96 - d;
+				if (overlap > 4 && Math.random() < overlap * 0.0022 * dt) {
+					const t = radiusOf(a) / (radiusOf(a) + radiusOf(b));
+					pushSpark(
+						lerp(a.x, b.x, t) + (Math.random() - 0.5) * 20,
+						lerp(a.y, b.y, t) + (Math.random() - 0.5) * 20,
+						mixHue(a.hue, b.hue, Math.random()),
+						1
+					);
+				}
+			}
+		}
+
+		for (const e of edges) {
+			const a = nodes[e.a];
+			const b = nodes[e.b];
+			if (!a || !b) continue;
+			const phase = time * e.speed + e.seed;
+			const dir = Math.sin(phase) >= 0 ? 1 : -1;
+			if (e.dir !== 0 && e.dir !== dir) {
+				const at = dir === 1 ? a : b;
+				pushSpark(at.x, at.y, at.hue, 0.7);
+			}
+			e.dir = dir;
+		}
+
+	}
+
+	function controlPoint(a, b, e) {
+		const dx = b.x - a.x;
+		const dy = b.y - a.y;
+		const len = Math.hypot(dx, dy) || 1;
+		const bow = e.bow * len + Math.sin(time * 0.4 + e.seed) * Math.min(14, len * 0.05);
+		return {
+			x: (a.x + b.x) / 2 - (dy / len) * bow,
+			y: (a.y + b.y) / 2 + (dx / len) * bow
+		};
+	}
+
+	function quadPoint(a, c, b, t) {
+		const it = 1 - t;
+		return {
+			x: it * it * a.x + 2 * it * t * c.x + t * t * b.x,
+			y: it * it * a.y + 2 * it * t * c.y + t * t * b.y
+		};
+	}
+
+	function tracePath(points) {
+		fx.beginPath();
+		fx.moveTo(points[0].x, points[0].y);
+		for (let i = 1; i < points.length; i++) fx.lineTo(points[i].x, points[i].y);
+	}
+
+	function lobeRadiusPx(th, base, m) {
+		const s = m[0] * Math.pow(0.5 + 0.5 * Math.cos(th - AXIS_A0), 2)
+			+ m[1] * Math.pow(0.5 + 0.5 * Math.cos(th - AXIS_A1), 2)
+			+ m[2] * Math.pow(0.5 + 0.5 * Math.cos(th - AXIS_A2), 2);
+		return base * (0.42 + 0.62 * s);
+	}
+
+	function blobPath(x, y, base, m) {
+		const N = 72;
+		fx.beginPath();
+		for (let k = 0; k <= N; k++) {
+			const th = (k / N) * TAU;
+			const r = lobeRadiusPx(th, base, m);
+			const px = x + Math.cos(th) * r;
+			const py = y + Math.sin(th) * r;
+			if (k === 0) fx.moveTo(px, py);
+			else fx.lineTo(px, py);
+		}
+		fx.closePath();
+	}
+
+	function drawEdges() {
+		for (const e of edges) {
+			const a = nodes[e.a];
+			const b = nodes[e.b];
+			if (!a || !b) continue;
+			const c = controlPoint(a, b, e);
+			const pts = [];
+			for (let k = 0; k <= 32; k++) pts.push(quadPoint(a, c, b, k / 32));
+			const hue = mixHue(a.hue, b.hue, 0.5);
+			const birth = Math.min(a.birth, b.birth);
+
+			tracePath(pts);
+			fx.strokeStyle = hsla(hue, 82, 68, 0.045 * birth);
+			fx.lineWidth = 7;
+			fx.stroke();
+
+			const grad = fx.createLinearGradient(a.x, a.y, b.x, b.y);
+			grad.addColorStop(0, hsla(a.hue, 88, 72, 0.30 * birth));
+			grad.addColorStop(1, hsla(b.hue, 88, 72, 0.30 * birth));
+			fx.setLineDash([2, 9]);
+			fx.lineDashOffset = -(time * 30 + e.seed * 12);
+			tracePath(pts);
+			fx.strokeStyle = grad;
+			fx.lineWidth = 1.1;
+			fx.stroke();
+			fx.setLineDash([]);
+		}
+	}
+
+	function drawTension() {
+		const a = nodes[3];
+		const b = nodes[4];
+		if (!a || !b) return;
+		const d = Math.hypot(a.x - b.x, a.y - b.y);
+		const overlap = (radiusOf(a) + radiusOf(b)) * 0.96 - d;
+		if (overlap <= 0) return;
+		const t = radiusOf(a) / (radiusOf(a) + radiusOf(b));
+		const x = lerp(a.x, b.x, t);
+		const y = lerp(a.y, b.y, t);
+		const pulse = 0.5 + 0.5 * Math.sin(time * 2.1);
+		const r = overlap * 1.05 + 10;
+		const g = fx.createRadialGradient(x, y, 0, x, y, r);
+		g.addColorStop(0, hsla(mixHue(a.hue, b.hue, 0.5), 92, 70, 0.12 * pulse));
+		g.addColorStop(1, hsla(mixHue(a.hue, b.hue, 0.5), 92, 60, 0));
+		fx.fillStyle = g;
+		fx.beginPath();
+		fx.arc(x, y, r, 0, TAU);
+		fx.fill();
+	}
+
+	function drawFocus() {
+		for (const n of nodes) {
+			if (n.labelA < 0.02) continue;
+			const m = memOf(n);
+			blobPath(n.x, n.y, radiusOf(n), m);
+			fx.strokeStyle = hsla(n.hue, 88, 86, 0.30 * n.labelA);
+			fx.lineWidth = 1;
+			fx.stroke();
+		}
+	}
+
+	function drawMorphs() {
+		for (const e of edges) {
+			const a = nodes[e.a];
+			const b = nodes[e.b];
+			if (!a || !b) continue;
+			const phase = time * e.speed + e.seed;
+			const u = 0.5 - 0.5 * Math.cos(phase);
+			const c = controlPoint(a, b, e);
+			const P = quadPoint(a, c, b, u);
+			const A = memOf(a);
+			const B = memOf(b);
+			const m = [lerp(A[0], B[0], u), lerp(A[1], B[1], u), lerp(A[2], B[2], u)];
+			const hue = mixHue(a.hue, b.hue, u);
+			const birth = Math.min(a.birth, b.birth);
+			const mr = Math.max(4.2, radius * 0.13) * (0.9 + 0.1 * Math.sin(time * 2 + e.seed));
+			const dir = Math.sin(phase) >= 0 ? 1 : -1;
+
+			for (let j = 4; j >= 1; j--) {
+				const tt = clamp(u - dir * 0.03 * j, 0, 1);
+				const Q = quadPoint(a, c, b, tt);
+				const g = fx.createRadialGradient(Q.x, Q.y, 0, Q.x, Q.y, mr * (1 - 0.12 * j));
+				g.addColorStop(0, hsla(hue, 92, 74, 0.22 * (1 - j / 5.5) * birth));
+				g.addColorStop(1, hsla(hue, 92, 60, 0));
+				fx.fillStyle = g;
+				fx.beginPath();
+				fx.arc(Q.x, Q.y, mr * (1 - 0.12 * j), 0, TAU);
+				fx.fill();
+			}
+
+			const glow = fx.createRadialGradient(P.x, P.y, 0, P.x, P.y, mr * 3.4);
+			glow.addColorStop(0, hsla(hue, 95, 78, 0.42 * birth));
+			glow.addColorStop(0.45, hsla(hue, 92, 64, 0.14 * birth));
+			glow.addColorStop(1, hsla(hue, 92, 58, 0));
+			fx.fillStyle = glow;
+			fx.beginPath();
+			fx.arc(P.x, P.y, mr * 3.4, 0, TAU);
+			fx.fill();
+
+			blobPath(P.x, P.y, mr * 1.5, m);
+			fx.fillStyle = hsla(hue, 96, 84, 0.9 * birth);
+			fx.fill();
+		}
+	}
+
+	function drawSparks() {
+		for (const s of sparks) {
+			const t = s.life / s.ttl;
+			const k = 1 - t;
+			const r = s.r0 + (s.r1 - s.r0) * (1 - Math.pow(1 - t, 3));
+			fx.strokeStyle = hsla(s.hue, 92, 78, 0.42 * k * k);
+			fx.lineWidth = 1.1;
+			fx.beginPath();
+			fx.arc(s.x, s.y, r, 0, TAU);
+			fx.stroke();
+
+			const g = fx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r * 0.5 + 2);
+			g.addColorStop(0, hsla(s.hue, 95, 82, 0.20 * k * k));
+			g.addColorStop(1, hsla(s.hue, 92, 62, 0));
+			fx.fillStyle = g;
+			fx.beginPath();
+			fx.arc(s.x, s.y, r * 0.5 + 2, 0, TAU);
+			fx.fill();
+		}
+	}
+
+	function drawLabels() {
+		fx.textAlign = "center";
+		fx.textBaseline = "middle";
+		fx.font = "600 9.5px ui-sans-serif, system-ui, -apple-system, sans-serif";
+		if ("letterSpacing" in fx) fx.letterSpacing = "2px";
+		for (const n of nodes) {
+			if (!n.label || n.labelA < 0.01) continue;
+			fx.globalAlpha = n.labelA;
+			fx.lineWidth = 3.5;
+			fx.strokeStyle = "rgba(4, 6, 12, 0.62)";
+			fx.strokeText(n.label, n.x, n.y);
+			fx.fillStyle = hsla(n.hue, 78, 90, 0.94);
+			fx.fillText(n.label, n.x, n.y);
+		}
+		fx.globalAlpha = 1;
+		if ("letterSpacing" in fx) fx.letterSpacing = "0px";
+	}
+
+	function renderOverlay() {
+		fx.clearRect(0, 0, w, h);
+		fx.lineJoin = "round";
+		fx.lineCap = "round";
+
+		fx.globalCompositeOperation = "source-over";
+		drawEdges();
+		fx.globalCompositeOperation = "lighter";
+		drawTension();
+		fx.globalCompositeOperation = "source-over";
+		drawFocus();
+		fx.globalCompositeOperation = "lighter";
+		drawMorphs();
+		drawSparks();
+		fx.globalCompositeOperation = "source-over";
+		drawLabels();
+	}
+
+	function updateUniforms() {
+		if (!uniforms || !renderer) return;
+		const aspect = w / h;
+		const pxToWorld = 2 / h;
+		for (let i = 0; i < MAX_NODES; i++) {
+			const n = nodes[i];
+			if (!n) {
+				uniforms.uRad.value[i] = 0;
+				uniforms.uCol.value[i].set(0, 0, 0);
+				continue;
+			}
+			const wx = (n.x / w - 0.5) * 2 * aspect;
+			const wy = (0.5 - n.y / h) * 2;
+			uniforms.uPos.value[i].set(wx, wy);
+			uniforms.uRad.value[i] = radiusOf(n) * pxToWorld;
+			const m = memOf(n);
+			uniforms.uMem.value[i].set(m[0], m[1], m[2]);
+			const rgb = hslToRgb(n.hue, 0.72, 0.6);
+			const gain = 0.92 + n.labelA * 0.34;
+			uniforms.uCol.value[i].set(rgb[0] * gain, rgb[1] * gain, rgb[2] * gain);
+		}
+		uniforms.uTime.value = time;
+		uniforms.uPointerOn.value = pointerOn;
+		uniforms.uPointer.value.set(
+			(pointer.x / w - 0.5) * 2 * aspect,
+			(0.5 - pointer.y / h) * 2
+		);
+	}
+
+	function frame(now) {
+		if (!last) last = now;
+		let dt = (now - last) / 1000;
+		last = now;
+		dt = Math.min(dt, 0.05);
+
+		update(dt);
+		updateUniforms();
+		if (renderer) renderer.render(scene, camera);
+		renderOverlay();
+		requestAnimationFrame(frame);
+	}
+
+	let dragNode = null;
+
+	function hitTest(x, y) {
+		let best = null;
+		let bestD = Infinity;
+		for (const n of nodes) {
+			const d = Math.hypot(x - n.x, y - n.y);
+			const hit = Math.max(radiusOf(n) * 0.95, 28);
+			if (d < hit && d < bestD) {
+				best = n;
+				bestD = d;
+			}
+		}
+		return best;
+	}
+
+	window.addEventListener("pointermove", (e) => {
+		pointer.x = e.clientX;
+		pointer.y = e.clientY;
+		hasPointer = true;
+		if (dragNode) {
+			document.body.style.cursor = "grabbing";
+			return;
+		}
+		const hit = hitTest(pointer.x, pointer.y);
+		pointer.node = hit;
+		document.body.style.cursor = hit ? "grab" : "default";
+	}, { passive: true });
+
+	window.addEventListener("pointerdown", (e) => {
+		pointer.x = e.clientX;
+		pointer.y = e.clientY;
+		hasPointer = true;
+		const hit = hitTest(pointer.x, pointer.y);
+		if (hit) {
+			dragNode = hit;
+			hit.drag = true;
+			pointer.node = hit;
+			const idx = nodes.indexOf(hit);
+			if (idx >= 0 && idx < CORE_NODES) {
+				spot = idx;
+				spotTimer = 0;
+			}
+			document.body.style.cursor = "grabbing";
+			pushSpark(hit.x, hit.y, hit.hue, 0.8);
+		} else {
+			spawnNode(pointer.x, pointer.y);
+		}
+	}, { passive: true });
+
+	window.addEventListener("pointerup", () => {
+		if (dragNode) {
+			dragNode.drag = false;
+			dragNode = null;
+			document.body.style.cursor = hitTest(pointer.x, pointer.y) ? "grab" : "default";
+		}
+	});
+
+	window.addEventListener("pointercancel", () => {
+		if (dragNode) {
+			dragNode.drag = false;
+			dragNode = null;
+		}
+	});
+
+	window.addEventListener("pointerleave", () => {
+		hasPointer = false;
+		pointer.node = null;
+	});
+
+	window.addEventListener("blur", () => {
+		hasPointer = false;
+		if (dragNode) {
+			dragNode.drag = false;
+			dragNode = null;
+		}
+	});
+
+	window.addEventListener("resize", layout);
+
+	const captions = ["ambiguity", "connection", "emergence"];
+	let capIndex = 0;
+	window.setInterval(() => {
+		capIndex = (capIndex + 1) % captions.length;
+		captionEl.style.opacity = "0";
+		window.setTimeout(() => {
+			captionEl.textContent = captions[capIndex];
+			captionEl.style.opacity = "1";
+		}, 950);
+	}, 5200);
+
+	window.__fh = { nodes, edges, sparks };
+	window.setTimeout(() => document.body.classList.add("ready"), 80);
+	window.setTimeout(() => document.querySelector(".hint").classList.add("gone"), 9500);
+	captionEl.style.color = hsla(nodes[0].hue, 70, 82, 0.42);
+
+	requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
