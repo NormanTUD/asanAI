@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fuzzy · HoTT — a three-dimensional story</title>
+<title>Fuzzy · HoTT</title>
 <style>
 	:root { --accent: #ffcf6b; }
 	* { box-sizing: border-box; }
@@ -310,7 +310,7 @@
 	const AXIS_COLOR = AXIS_HUE.map((h) => new THREE.Color().setHSL(h / 360, 0.9, 0.67));
 
 	const STAGES = [
-		{ word: "assembly", line: "parts become one", accent: "#ffcf6b", hold: 9.6, zoom: 0.64 },
+		{ word: "assembly", line: "parts become one", accent: "#ffcf6b", hold: 9.6, zoom: 0.68 },
 		{ word: "ambiguity", line: "ideas overlap", accent: "#9fd8ff", hold: 8.6, zoom: 1.02 },
 		{ word: "structure", line: "ideas connect", accent: "#7fe0ff", hold: 9.0, zoom: 1.0 },
 		{ word: "transformation", line: "paths deform ideas", accent: "#8affc1", hold: 9.2, zoom: 0.98 },
@@ -1108,6 +1108,7 @@
 
 	function energyTarget(n) {
 		if (n.core) return STAGE_ENERGY[stage][Math.min(nodes.indexOf(n), 5)];
+		if (stage === 0) return 0.55;
 		return stage === 4 || stage === 5 ? 0.28 : 1.0;
 	}
 
@@ -1137,13 +1138,7 @@
 			const pt = presenceTarget(n);
 			n.presence += (pt - n.presence) * (1 - Math.exp(-2.3 * dt));
 			const focused = focus === n;
-			let explodeFocus = 0.34;
-			if (stage === 0) {
-				const t = clamp((stageAge - 3.0) / 3.6, 0, 1);
-				const eased = t * t * (3 - 2 * t);
-				explodeFocus = 1.0 - 0.82 * eased;
-			}
-			const explodeTarget = (focused ? explodeFocus : 0.055) + n.explodePulse;
+			const explodeTarget = (focused ? (stage === 0 ? 1.0 : 0.34) : 0.055) + n.explodePulse;
 			n.explode += (explodeTarget - n.explode) * (1 - Math.exp(-4.2 * dt));
 			n.explodePulse *= Math.exp(-1.25 * dt);
 			n.focus += ((focused ? 1 : 0) - n.focus) * (1 - Math.exp(-4.5 * dt));
@@ -1699,7 +1694,7 @@
 		let lookZ = 0;
 		if (stage === 0) {
 			lookX = nodes[0].pos.x;
-			lookY = nodes[0].pos.y;
+			lookY = nodes[0].pos.y + 0.12;
 			lookZ = nodes[0].pos.z;
 		} else if (stage === 4) {
 			lookY = -1.45;
@@ -1846,6 +1841,7 @@
 
 	function initCamera() {
 		cam.look.copy(nodes[0].pos);
+		cam.look.y += 0.12;
 		cam.radius = baseDist * STAGES[0].zoom;
 		cam.yaw = 0.24;
 		cam.pitch = 0.035;
@@ -1902,15 +1898,6 @@
 	window.setTimeout(() => document.body.classList.add("ready"), 80);
 	window.setTimeout(() => keyHint.classList.add("gone"), 9000);
 	window.setTimeout(() => hintEl.classList.add("gone"), 11000);
-
-	window.__fh = {
-		nodes, edges, camera,
-		get stage() { return stage; },
-		get age() { return stageAge; },
-		get down() { return pointerDown; },
-		get time() { return time; },
-		setStage, nextStage, prevStage
-	};
 
 	requestAnimationFrame(frame);
 })();
