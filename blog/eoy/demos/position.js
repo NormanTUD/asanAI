@@ -11,7 +11,7 @@
     el.className = "ls-position-scene";
     el.innerHTML =
       '<div class="ls-position-grid">' +
-        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Positionen 0–100000 (256 Zeilen gesampelt) · 3D = Projektion" : "High-dimensional space · positions 0–100000 (256 sampled rows) · 3D = projection") + '</div><canvas class="ls-position-heat" aria-label="' + L("Heatmap der Positionskodierungen über 256 gesampelte Positionen und 64 Dimensionen; über eine Zelle fahren zeigt Position, Dimension, Frequenz, Sinus, Kosinus und Wert.", "Heatmap of positional encodings over 256 sampled positions and 64 dimensions; hover a cell for position, dimension, frequency, sine, cosine and value.") + '"></canvas><div class="ls-position-heat-cursor" aria-hidden="true"><span></span></div><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
+        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Positionen 0–100000 (256 Zeilen gesampelt) · 3D = Projektion" : "High-dimensional space · positions 0–100000 (256 sampled rows) · 3D = projection") + '</div><canvas class="ls-position-heat" aria-label="' + L("Heatmap der Positionskodierungen über 256 gesampelte Positionen und 64 Dimensionen; über eine Zelle fahren zeigt Position, Dimension, Frequenz, Sinus, Kosinus und Wert.", "Heatmap of positional encodings over 256 sampled positions and 64 dimensions; hover a cell for position, dimension, frequency, sine, cosine and value.") + '"></canvas><div class="ls-position-heat-cursor" aria-hidden="true"><span></span></div><div class="ls-position-legend" data-tip="' + L("Zellfarbe: Sinus-/Kosinuswert von −1 bis +1. Der Mittelwert ist Petrol, nicht Weiß, damit die Punkte auf dem weißen Hintergrund sichtbar bleiben.", "Cell colour: sine/cosine value from −1 to +1. The middle is petrol, not white, so points stay visible on the white background.") + '"><span>−1</span><i></i><span>+1</span></div><div class="ls-position-hue-legend" data-tip="' + L("Farbe der Trail-Punkte: Position von 0 bis 100000. Dieselbe Farbskala läuft links als schmaler Streifen neben der Heatmap.", "Trail-point colour: position from 0 to 100000. The same scale runs as a thin strip beside the heatmap.") + '"><span>0</span><i></i><span>100k</span><em>' + L("Position", "position") + '</em></div></div>' +
         '<div class="ls-position-right"><div class="ls-position-metric"><span>' + (DE ? "Metrik" : "Metric") + '</span><div class="ls-position-metric-btns" role="group" aria-label="' + (DE ? "Metrik der Positionsdarstellung" : "Position visualisation metric") + '"><button type="button" data-pos-metric="greatcircle" class="is-on" data-tip="' + L("Großkreis: vergleicht die Richtungen der Positionsvektoren über den Winkel auf der Einheitskugel; 0° heißt gleiche Richtung.", "Great circle: compares the directions of the position vectors by the angle on the unit sphere; 0° means the same direction.") + '">' + (DE ? "Großkreis (Winkel)" : "Great circle (angle)") + '</button><button type="button" data-pos-metric="euclid" data-tip="' + L("Euklid: vergleicht die rohen Positionsvektoren über ihre Länge; die Distanz wächst mit dem Abstand der Positionen.", "Euclidean: compares the raw position vectors by their length; the distance grows with the separation of the positions.") + '">' + (DE ? "Euklid (Distanz)" : "Euclidean (distance)") + '</button></div></div><div class="ls-position-panel"><canvas class="ls-position-curve" aria-label="' + L("Kurve der Distanz zwischen Position 0 und der gewählten Position unter der aktuellen Metrik; der aktuelle Wert steht in der Anzeige darunter.", "Distance curve between position 0 and the selected position under the current metric; the current value is in the readout below.") + '"></canvas></div><label class="ls-range" hidden>Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
       '<div class="ls-position-readout" aria-live="polite" data-tip="' + L("Zeigt die gewählte Position, die Metrik, den Winkel bzw. die Distanz und den aktuellen Heatmap-Wert.", "Shows the selected position, metric, angle or distance, and the current heatmap value.") + '"></div>';
@@ -78,10 +78,14 @@
         for (var j = 0; j < cols; j++) {
           var v = pe(rowPosition(i), dims, j);
           var t = (v + 1) / 2;
-          var col = t < 0.5 ? mix(C.sky, C.paper, t * 2) : mix(C.paper, C.gold, (t - 0.5) * 2);
+          var col = t < 0.5 ? mix(C.sky, C.petrol, t * 2) : mix(C.petrol, C.gold, (t - 0.5) * 2);
           ctx.fillStyle = col;
           ctx.fillRect(padL + j * cw, padT + i * ch, Math.ceil(cw) + 0.5, Math.ceil(ch) + 0.5);
         }
+      }
+      for (var hi = 0; hi < rows; hi++) {
+        ctx.fillStyle = positionColor(rowPosition(hi));
+        ctx.fillRect(padL - 8, padT + hi * ch, 4, Math.ceil(ch) + 0.5);
       }
       ctx.strokeStyle = C.line;
       ctx.strokeRect(padL, padT, w - padL - padR, h - padT - padB);
@@ -130,6 +134,10 @@
       }
     }
     var mix = api.util.hexMix;
+    function positionColor(p) {
+      var t = Math.max(0, Math.min(1, p / Math.max(1, context)));
+      return t < 0.5 ? mix(C.blue, C.lilac, t * 2) : mix(C.lilac, C.gold, (t - 0.5) * 2);
+    }
     function project(x, y, z) {
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
@@ -238,17 +246,14 @@
         var pp = P(posVec(p));
         trailPoints.push({ value: p, x: pp.x, y: pp.y });
       });
-      if (trailPoints.length) {
+      trailPoints.forEach(function (tp) {
         ctx.beginPath();
-        trailPoints.forEach(function (tp) {
-          ctx.moveTo(tp.x + 2.1, tp.y);
-          ctx.arc(tp.x, tp.y, 2.1, 0, Math.PI * 2);
-        });
-        ctx.fillStyle = Cc.green;
-        ctx.globalAlpha = 0.62;
+        ctx.arc(tp.x, tp.y, 2.4, 0, Math.PI * 2);
+        ctx.fillStyle = positionColor(tp.value);
+        ctx.globalAlpha = 0.86;
         ctx.fill();
-        ctx.globalAlpha = 1;
-      }
+      });
+      ctx.globalAlpha = 1;
       if (hoverTrail >= 0 && !trailPoints[hoverTrail]) hoverTrail = -1;
       if (hoverTrail >= 0) {
         var hp = trailPoints[hoverTrail];
@@ -310,11 +315,12 @@
       ctx.beginPath(); ctx.arc(sp.x, sp.y, 4, 0, Math.PI * 2); ctx.fillStyle = Cc.blue; ctx.fill();
       ctx.fillStyle = Cc.blue; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText(DE ? "Start" : "start", sp.x + 7, sp.y - 5);
+      var currentColor = positionColor(posAnim);
       ctx.save();
-      ctx.shadowColor = "rgba(99,164,75,.55)"; ctx.shadowBlur = 14;
-      ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = Cc.green; ctx.fill();
+      ctx.shadowColor = "rgba(0,75,111,.45)"; ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = currentColor; ctx.fill();
       ctx.restore();
-      ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.ink; ctx.lineWidth = 1.5; ctx.stroke();
       var geoLen = dist;
       var angleDeg = theta * 180 / Math.PI;
       curve.__lsPosition = { pos: pos, trail: trail.slice(), sweeping: !!sweep, metric: metric, start: startP, current: curP, distance: geoLen, angle: theta };

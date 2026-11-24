@@ -136,7 +136,7 @@
     }
 
     function drawBackground(c) {
-      V.aurora(c, W, H, C, { vignette: 0.09 });
+      c.clearRect(0, 0, W, H);
     }
 
     function drawTime(c) {

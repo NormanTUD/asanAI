@@ -1086,7 +1086,10 @@ h1,h2,h3,h4{
 .ls-position-heat-cursor{position:absolute;z-index:3;height:2px;background:var(--ls-gold);box-shadow:0 0 6px rgba(159,151,0,.7);pointer-events:none;transition:top .08s linear}
 .ls-position-heat-cursor span{position:absolute;right:0;top:-7px;padding:1px 4px;background:var(--ls-gold);color:#fff;font:700 7px/1.2 "Open Sans",sans-serif;white-space:nowrap}
 .ls-position-legend{position:absolute;right:6px;bottom:4px;display:flex;align-items:center;gap:4px;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);pointer-events:none}
-.ls-position-legend i{width:38px;height:6px;background:linear-gradient(90deg,var(--ls-sky),#fff,var(--ls-gold))}
+.ls-position-legend i{width:38px;height:6px;background:linear-gradient(90deg,var(--ls-sky),var(--ls-petrol),var(--ls-gold))}
+.ls-position-hue-legend{position:absolute;left:8px;bottom:4px;display:flex;align-items:center;gap:3px;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);pointer-events:none}
+.ls-position-hue-legend i{width:32px;height:4px;background:linear-gradient(90deg,var(--ls-blue),var(--ls-lilac),var(--ls-gold))}
+.ls-position-hue-legend em{font-style:normal;font-size:7px;text-transform:uppercase;letter-spacing:.04em}
 .ls-position-readout,.ls-att-readout,.ls-res-readout,.ls-meadow-readout,.ls-sm-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
 .ls-animal-readout,.ls-model-readout,.ls-traj-readout,.ls-loop-readout,.ls-position-readout,.ls-att-readout,.ls-res-readout,.ls-meadow-readout,.ls-sm-readout,.ls-stack-readout,.ls-bpe-count{font-variant-numeric:tabular-nums}
 .ls-animal-readout,.ls-model-readout{min-height:2.6em}
@@ -2736,7 +2739,7 @@ h1,h2,h3,h4{
 
 /* Hallucination guard: RAG, CoT, verification */
 .ls-hg-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:7px;padding:2px;overflow-y:auto}
-.ls-hg-win{display:flex;flex-direction:column;min-height:0;border:1px solid var(--ls-line);border-radius:14px;background:#fff;box-shadow:0 18px 40px rgba(0,30,40,.12);overflow:hidden}
+.ls-hg-win{display:flex;flex-direction:column;flex:1 1 auto;height:100%;max-height:100%;min-height:0;border:1px solid var(--ls-line);border-radius:14px;background:#fff;box-shadow:0 18px 40px rgba(0,30,40,.12);overflow:hidden}
 .ls-hg-winbar{display:flex;align-items:center;gap:9px;padding:9px 12px;background:linear-gradient(180deg,#2a3038 0%,#1b2129 100%);border-bottom:1px solid rgba(255,255,255,.09)}
 .ls-hg-dots{display:inline-flex;gap:5px}
 .ls-hg-dots i{display:grid;place-items:center;width:10px;height:10px;border-radius:50%;flex:0 0 auto}
@@ -2760,7 +2763,7 @@ h1,h2,h3,h4{
 .ls-hg-toggle.is-on{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
 .ls-hg-toggle-ico{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:6px;background:rgba(0,75,111,.08);font:700 8px/1 "Open Sans",sans-serif;color:var(--ls-petrol)}
 .ls-hg-toggle.is-on .ls-hg-toggle-ico{background:rgba(255,255,255,.22);color:#fff}
-.ls-hg-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(230px,.9fr);min-height:0;flex:1 1 auto}
+.ls-hg-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(230px,.9fr);min-height:0;flex:1 1 auto;overflow:hidden}
 .ls-hg-chat{display:flex;flex-direction:column;gap:12px;min-width:0;padding:14px 16px;border-right:1px solid var(--ls-line);background:radial-gradient(80% 80% at 0 0,rgba(18,117,172,.05),transparent 60%),var(--ls-paper-2);overflow:auto}
 .ls-hg-msg{display:flex;flex-direction:column;gap:4px;max-width:96%}
 .ls-hg-msg.is-user{align-self:flex-end;align-items:flex-end}
@@ -2991,9 +2994,7 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 /* Deep-blue instrument stage for the final ten lessons. The page stays paper;
    the demo area gets the blue atmosphere, while content cards stay white. */
 #ls-demo[data-scene="history"],
-#ls-demo[data-scene="riskmap"],
-#ls-demo[data-scene="consciousness"],
-#ls-demo[data-scene="spacetime"]{
+#ls-demo[data-scene="consciousness"]{
   background:
     radial-gradient(120% 92% at 12% 0%, rgba(0,75,111,.16), transparent 58%),
     radial-gradient(86% 78% at 92% 6%, rgba(92,155,175,.12), transparent 62%),
@@ -3074,14 +3075,12 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
   50%{box-shadow:inset 0 3px 0 var(--ls-petrol),0 0 0 1px rgba(0,146,153,.30),0 14px 34px rgba(0,75,111,.13)}
 }
 #ls-demo[data-scene="history"],
-#ls-demo[data-scene="riskmap"],
 #ls-demo[data-scene="consciousness"]{
   position:relative;
   overflow:hidden;
   isolation:isolate;
 }
 #ls-demo[data-scene="history"]::before,
-#ls-demo[data-scene="riskmap"]::before,
 #ls-demo[data-scene="consciousness"]::before{
   content:"";
   position:absolute;
@@ -3097,7 +3096,6 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
   will-change:transform;
 }
 #ls-demo[data-scene="history"]::after,
-#ls-demo[data-scene="riskmap"]::after,
 #ls-demo[data-scene="consciousness"]::after{
   content:"";
   position:absolute;
@@ -3111,7 +3109,6 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
   opacity:.7;
 }
 #ls-demo[data-scene="history"] > *,
-#ls-demo[data-scene="riskmap"] > *,
 #ls-demo[data-scene="consciousness"] > *{
   position:relative;
   z-index:1;
@@ -3140,9 +3137,7 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 
 /* Inner vignette and a hairline of light make the demo feel like a lit stage. */
 #ls-demo[data-scene="history"],
-#ls-demo[data-scene="riskmap"],
-#ls-demo[data-scene="consciousness"],
-#ls-demo[data-scene="spacetime"]{
+#ls-demo[data-scene="consciousness"]{
   box-shadow:inset 0 0 90px rgba(0,40,60,.07),inset 0 1px 0 rgba(255,255,255,.7);
 }
 
@@ -3566,7 +3561,7 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 }
 
 /* Risk quadrant and capability spectrum */
-.ls-rm-quadrant{display:block;width:100%;max-width:440px;margin:0 auto;min-height:0;overflow:visible}
+.ls-rm-quadrant{display:block;width:100%;max-width:760px;margin:0 auto;min-height:0;overflow:visible}
 .ls-rm-q{stroke:rgba(0,75,111,.10);stroke-width:1}
 .ls-rm-q.q-tl{fill:rgba(145,133,190,.07)}
 .ls-rm-q.q-tr{fill:rgba(159,151,0,.07)}
@@ -3981,7 +3976,7 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-ar-grid{flex:1 1 0;min-height:0}
 .ls-ar-phone,.ls-ar-phone-frame{min-height:0}
 .ls-ar-phone{align-items:center}
-.ls-ar-phone-frame{width:auto;height:min(100%,540px);max-width:100%;aspect-ratio:9/19.5}
+.ls-ar-phone-frame{width:auto;height:min(100%,520px);max-width:100%;aspect-ratio:9/17.5}
 @media (max-width:760px){.ls-ar-grid{grid-template-columns:1fr;min-height:0;flex:0 0 auto;align-content:start;grid-auto-rows:auto}.ls-ar-phone{min-height:420px}.ls-ar-phone-frame{height:420px;max-height:none}}
 @media (max-width:760px){.ls-ar-head{flex-wrap:wrap}.ls-ar-head .ls-ar-sub{white-space:normal}}
 /* History: text on the left, media on the right */
@@ -3996,8 +3991,9 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
   .ls-history-body{grid-template-columns:1fr}
   .ls-history-media{order:2}
 }
-.ls-ar-next{padding:5px 8px;border:1px solid var(--ls-green);background:var(--ls-green);color:#fff;font:700 var(--ls-fs-micro) "Open Sans",sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
-.ls-ar-next:hover{background:#558c3f;border-color:#558c3f}
+.ls-ar-next{min-height:38px;padding:9px 15px;border:1px solid var(--ls-green);border-radius:6px;background:var(--ls-green);color:#fff;font:700 11.5px/1.2 "Open Sans",sans-serif;cursor:pointer;text-transform:none;letter-spacing:0;box-shadow:0 3px 10px rgba(99,164,75,.20)}
+.ls-ar-next:hover{background:#558c3f;border-color:#558c3f;box-shadow:0 4px 14px rgba(99,164,75,.30)}
+.ls-ar-next.is-call{box-shadow:0 0 0 3px rgba(99,164,75,.16),0 3px 10px rgba(99,164,75,.20)}
 /* Agent tools: context as a chat window like slide 1 */
 .ls-agents-col.is-chat{border-radius:18px;background:linear-gradient(180deg,#fbfcfe,#eef2f8);box-shadow:0 14px 34px rgba(0,30,40,.08);overflow:hidden}
 .ls-agents-col.is-chat .ls-agents-col-head{background:rgba(255,255,255,.72);padding:8px 12px}

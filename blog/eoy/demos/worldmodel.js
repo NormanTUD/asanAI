@@ -442,20 +442,21 @@
       var pad = Math.max(18, Math.min(28, W * .035));
       var narrow = W < 620;
       head(c, DE ? "Othello spielen" : "Play Othello", pad, 34, { size: Math.min(28, Math.max(22, W * .038)) });
-      txt(c, DE ? "Du: Schwarz · Computer: Weiß" : "You: black · computer: white", pad, 58, { size: 11, color: C.muted });
+      txt(c, DE ? "Du: Schwarz · Computer: Weiß" : "You: black · computer: white", pad, 58, { size: 12, color: C.muted });
       var black = 0, white = 0;
       for (var sr = 0; sr < 8; sr++) for (var sc = 0; sc < 8; sc++) { if (game.board[sr][sc] === 1) black++; else if (game.board[sr][sc] === -1) white++; }
-      txt(c, DE ? "Du " + black + " · Computer " + white : "You " + black + " · Computer " + white, narrow ? pad : W - pad, narrow ? 84 : 58, { align: narrow ? "left" : "right", size: 12, color: C.ink, font: '700 12px "Barlow", "Open Sans", sans-serif' });
+      txt(c, DE ? "Du " + black + " · Computer " + white : "You " + black + " · Computer " + white, narrow ? pad : W - pad, narrow ? 88 : 88, { align: narrow ? "left" : "right", size: 16, color: C.ink, font: '700 16px "Barlow", "Open Sans", sans-serif' });
       accent(c, pad, 72, 40);
-      var boardS = Math.min(narrow ? W * .70 : W * .54, H * .62);
+      var boardS = Math.min(narrow ? W * .70 : W * .54, H * .58);
       var bx = narrow ? (W - boardS) / 2 + 10 : W * .50 - boardS / 2;
-      var by = Math.max(100, (H - boardS) / 2 + 18);
+      var by = Math.max(112, (H - boardS) / 2 + 28);
       game.rect = { x: bx, y: by, S: boardS };
       var moves = game.player === 1 ? legal(game.board, 1) : [];
       drawBoard(c, game.board, bx, by, boardS, { labels: true, legal: moves, last: game.last });
-      var hy = by + boardS + 24;
+      var hy = by + boardS + 46;
+      if (hy > H - 10) hy = by - 14;
       var label = game.winner === 1 ? (DE ? "Du gewinnst!" : "You win!") : game.winner === -1 ? (DE ? "Computer gewinnt" : "Computer wins") : (DE ? "Dein Zug" : "Your move");
-      txt(c, label, bx + boardS / 2, hy, { align: "center", size: 12, color: game.winner === 1 ? C.green : C.ink });
+      txt(c, label, bx + boardS / 2, hy, { align: "center", size: 15, color: game.winner === 1 ? C.green : C.ink, font: '700 15px "Barlow", "Open Sans", sans-serif' });
       if (!narrow) {
         var lx = Math.min(W - pad - 150, bx + boardS + 22);
         var ly = by + 8;
@@ -649,7 +650,10 @@
       for (var ls = 0; ls < 64; ls++) {
         for (var lo = 0; lo < 3; lo++) {
           addHit(x + lo * cw, y + ls * ch, cw, ch,
-            (DE ? "Feld " : "square ") + squareLabel(ls) + " · " + stateName(lo) + " · Logit " + V.fmt(SCORES[ls][lo], 2));
+            (DE ? "Feld " : "square ") + squareLabel(ls) + " · " + stateName(lo)
+              + " · Logit " + V.fmt(SCORES[ls][lo], 2)
+              + " · p " + (PROBS[ls][lo] * 100).toFixed(1) + "%"
+              + (DE ? " · aus x ∈ ℝ^512 · Probe-Zeile W[" + squareLabel(ls) + ", " + stateName(lo) + "]" : " · from x ∈ ℝ^512 · probe row W[" + squareLabel(ls) + ", " + stateName(lo) + "]"));
         }
       }
       var ry = y + (row + .5) * ch;
@@ -681,7 +685,8 @@
         for (var pc = 0; pc < 8; pc++) {
           var pi = pr * 8 + pc;
           addHit(x + pc * cell, y + pr * cell, cell, cell,
-            (DE ? "Feld " : "square ") + squareLabel(pi) + " · " + stateName(stateIdx) + ": " + (PROBS[pi][stateIdx] * 100).toFixed(1) + "%");
+            (DE ? "Feld " : "square ") + squareLabel(pi) + " · " + stateName(stateIdx) + ": " + (PROBS[pi][stateIdx] * 100).toFixed(1) + "%"
+              + (DE ? " · aus x ∈ ℝ^512 und Probe-Zeile W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]" : " · from x ∈ ℝ^512 and probe row W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]"));
         }
       }
       if (typeof row === "number") {
@@ -763,7 +768,7 @@
       var scores = SCORES[e4];
       var probs = PROBS[e4];
       var e4State = winIndex(scores);
-      var boardSize = narrow ? 150 : 210;
+      var boardSize = narrow ? 170 : Math.min(260, W * .24, H * .38);
       var boardX = narrow ? (W - boardSize) / 2 : W - pad - boardSize;
       var boardY = narrow ? 330 : 132;
       var questions = DE ? [
@@ -791,10 +796,11 @@
         addHit(bx, by, 34, 18, DE ? "L6: die Aktivierung nach Schicht 6; 512 Zahlen pro Token" : "L6: the activation after layer 6; 512 numbers per token");
         txt(c, "L6", bx + 17, by + 9, { align: "center", size: 10, color: "#fff" });
         drawActivationStrip(c, bx + 44, by, W - 2 * pad - 44, 16, "x · 512");
-        var gw = Math.min(W - 2 * pad, narrow ? 340 : 400);
-        var gh = gw / 2;
+        var gw = Math.max(220, W - 2 * pad);
+        var gh = Math.min(gw / 2, H - 220);
+        if (gh < 120) gh = Math.max(90, H - 240);
         drawActivationGrid(c, pad, 140, gw, gh);
-        txt(c, "32 × 16 = 512", pad, 140 + gh + 16, { size: 9, color: C.muted });
+        txt(c, "32 × 16 = 512 · ganze Breite", pad, 140 + gh + 16, { size: 9, color: C.muted });
         txt(c, "x ∈ ℝ^512", pad, H - 48, { size: 11, color: C.ink });
       } else if (phase === 1) {
         drawActivationStrip(c, pad, 100, W - 2 * pad, 12, "x · 512");
@@ -932,16 +938,27 @@
           drawBoard(c, TRUTH, bx9, by9, bs9, { highlight: [4, 4] });
           txt(c, "64 × 3 → Brett", bx9 + bs9 / 2, by9 - 12, { align: "center", size: 10, color: C.ink });
         } else {
-          drawLogitsColumn(c, pad, 110, 54, 200, e4);
-          var hs2 = 90, gap2 = 10;
+          var top = 108;
+          var bottom = H - 58;
+          var gridH = Math.max(130, bottom - top);
+          var boardSide = Math.min(330, W * .25, H * .48);
+          var boardLeft = W - pad - boardSide;
+          var boardTop = top + Math.max(0, (gridH - boardSide) / 2);
+          var logitW = Math.min(150, W * .13);
+          var logitH = Math.min(gridH, 390);
+          drawLogitsColumn(c, pad, top, logitW, logitH, e4);
+          var left = pad + logitW + 22;
+          var available = Math.max(220, boardLeft - left - 24);
+          var gap2 = Math.max(8, available * .025);
+          var hs2 = Math.max(94, Math.min(190, (available - 2 * gap2) / 3, gridH * .72));
           var labels2 = DE ? ["leer", "mein Spieler", "Gegner"] : ["empty", "my player", "opponent"];
+          var gridTop = top + Math.max(0, (gridH - hs2) / 2 - 8);
           for (var o9 = 0; o9 < 3; o9++) {
-            txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted });
-            drawProbGrid(c, pad + 80 + o9 * (hs2 + gap2), 110, hs2, o9, e4);
+            txt(c, labels2[o9], left + o9 * (hs2 + gap2) + hs2 / 2, gridTop - 10, { align: "center", size: 12, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted, font: '700 12px "Barlow", "Open Sans", sans-serif' });
+            drawProbGrid(c, left + o9 * (hs2 + gap2), gridTop, hs2, o9, e4);
           }
-          var bs10 = boardSize, bx10 = boardX, by10 = boardY;
-          drawBoard(c, TRUTH, bx10, by10, bs10, { highlight: [4, 4] });
-          txt(c, "64 × 3 → Brett", bx10 + bs10 / 2, by10 - 12, { align: "center", size: 10, color: C.ink });
+          drawBoard(c, TRUTH, boardLeft, boardTop, boardSide, { highlight: [4, 4] });
+          txt(c, "64 × 3 → Brett", boardLeft + boardSide / 2, boardTop - 14, { align: "center", size: 11, color: C.ink });
         }
         setWmFormula("\\text{board}[s] = \\operatorname{argmax}_z\\,p[s,z]");
       }

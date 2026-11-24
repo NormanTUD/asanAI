@@ -295,6 +295,7 @@
       }).join("");
     }
     function renderNext() {
+      nextBtn.classList.toggle("is-call", state.step < 4);
       nextBtn.textContent = state.step < 0
         ? L("Weiter: kraken.pdf hochladen", "Next: upload kraken.pdf")
         : state.step === 0
