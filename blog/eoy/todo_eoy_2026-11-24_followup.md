@@ -27,6 +27,9 @@ list in sync and exactly one item `[in work]`.
   `eoy_media_interactions_test.py`: 2168 checks, 0 failures (DE+EN), including
   the new live 64×3 / 8×8 linkage. `js_validator.py`: 0 errors, 236 existing
   warnings. Re-ran after limiting the highlight to the matching state map.
+- [in work] "Grenzen: Was LLMs nicht zuverlässig können": use the space,
+  remove the fake 520 ms simulation delay and wording, make the bench immersive,
+  and stop „Versandstatus“ from colliding with the red ✗.
 - [pending] Commit/push only after explicit confirmation.
 
 ## Notes

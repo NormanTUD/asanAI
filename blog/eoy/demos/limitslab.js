@@ -11,35 +11,36 @@
     var TESTS = {
       paraphrase: {
         id: "paraphrase",
-        label: L("Paraphrase", "Paraphrase"),
-        kicker: L("01 · Stabilität", "01 · Stability"),
-        title: L("Dieselbe Absicht, andere Form", "Same intent, different form"),
+        label: L("Formatierung", "Formatting"),
+        kicker: L("01 · Eingabeform", "01 · Input format"),
+        title: L("Dieselbe Aufgabe, ein anderes Format", "Same task, a different format"),
         task: L("Support-Ticket klassifizieren", "Classify a support ticket"),
-        scenario: L("Drei Formulierungen derselben Beschwerde. Das Label soll stabil bleiben.", "Three phrasings of the same complaint. The label should stay stable."),
+        scenario: L("Dieselbe Beschwerde, dreimal anders gerahmt: Fließtext, Markdown und Chat-Template. Das Label soll gleich bleiben.", "The same complaint, framed three ways: prose, Markdown, and a chat template. The label should stay the same."),
         prompt: L("Meine Bestellung ist seit zwei Wochen nicht da. Ich möchte sie stornieren.", "My order has not arrived for two weeks. I want to cancel it."),
         variants: [
-          { q: L("„Meine Bestellung ist seit zwei Wochen nicht da. Ich möchte sie stornieren.“", "“My order has not arrived for two weeks. I want to cancel it.”"), a: L("„Storno“", "“Cancel”"), ok: true },
-          { q: L("„Paket kommt nicht an, Bestellung bitte abbrechen.“", "“Parcel is not arriving, please cancel the order.”"), a: L("„Storno“", "“Cancel”"), ok: true },
-          { q: L("„Sendung ist zu spät, ich brauche sie nicht mehr.“", "“Delivery is late, I no longer need it.”"), a: L("„Versandstatus“", "“Shipping status”"), ok: false }
+          { q: L("Fließtext: Aufgabe + Beispiel + Label", "Prose: task + example + label"), a: L("„Storno“", "“Cancel”"), ok: true },
+          { q: L("Markdown: Überschrift + Liste + Label", "Markdown: heading + list + label"), a: L("„Storno“", "“Cancel”"), ok: true },
+          { q: L("Chat-Template: System + User + Assistant", "Chat template: system + user + assistant"), a: L("„Versandstatus“", "“Shipping status”"), ok: false }
         ],
         protocol: [
-          L("10 bedeutungsgleiche Formulierungen", "10 meaning-preserving phrasings"),
-          L("3 Wiederholungen pro Formulierung", "3 repetitions per phrasing"),
-          L("Label-Konsistenz messen", "measure label consistency")
+          L("Dasselbe Beispiel in mehreren plausiblen Formaten", "same example in several plausible formats"),
+          L("Jedes Format mehrfach abfragen", "query each format repeatedly"),
+          L("Streuung der Labels statt einen Punkt messen", "measure label spread instead of one point")
         ],
-        observation: L("2 von 3 Varianten erhalten „Storno“, eine „Versandstatus“. Die Absicht ist gleich, das Label nicht.", "2 of 3 variants get “Cancel”, one gets “Shipping status”. The intent is the same, the label is not."),
-        wait: L("Noch nicht simuliert. Die Beobachtung erscheint nach dem Start.", "Not simulated yet. The observation appears after you start."),
-        why: L("Die Absicht ist dieselbe, die Formulierung ist anders. Das Modell antwortet nicht stabil. Ein einzelner Prompt ist eine Stichprobe.", "The intent is the same; the wording is different. The model does not answer stably. A single prompt is one sample."),
-        fix: L("Paraphrasen testen, Konsistenz messen, bei Abweichung nachfragen.", "Test paraphrases, measure consistency, ask again when answers diverge."),
-        cite: "Sclar et al. (2023)"
+        observation: L("Zwei Formate liefern „Storno“, das Chat-Template „Versandstatus“. Die Bedeutung des Tickets hat sich nicht geändert.", "Two formats return “Cancel”; the chat template returns “Shipping status”. The ticket's meaning did not change."),
+        wait: L("Noch nicht geprüft. Die Beobachtung erscheint nach dem Start.", "Not checked yet. The observation appears after you start."),
+        why: L("Die Formatierung ist Teil des Modells, nicht nur Verpackung. Schon bedeutungserhaltende Änderungen an Reihenfolge, Trennern oder Rollenmarkierungen verschieben die Antwort.", "Formatting is part of the model, not just packaging. Meaning-preserving changes to order, separators, or role markers already move the answer."),
+        fix: L("Mehrere plausible Formate testen, die Spannweite berichten und bei Abweichung nachfragen.", "Test several plausible formats, report the spread, and ask again when answers diverge."),
+        cite: "Sclar et al. (2023)",
+        evidence: L("Sclar et al. (2023): bei LLaMA-2-13B bis zu 76 Genauigkeitspunkte Unterschied zwischen bedeutungserhaltenden Prompt-Formaten.", "Sclar et al. (2023): up to 76 accuracy points between meaning-preserving prompt formats with LLaMA-2-13B.")
       },
       citation: {
         id: "citation",
-        label: L("Zitat", "Citation"),
-        kicker: L("02 · Grounding", "02 · Grounding"),
-        title: L("Die Form ist kein Beweis", "The shape is not proof"),
-        task: L("Quellenangabe für einen Artikel", "Source for an article"),
-        scenario: L("Das Modell soll eine Studie für eine Aussage nennen. Die Form allein sagt nichts über Existenz.", "The model is asked for a study supporting a claim. The shape alone says nothing about existence."),
+        label: L("Erfundenes Zitat", "Fabricated citation"),
+        kicker: L("02 · Existenz", "02 · Existence"),
+        title: L("Eine Quelle muss auffindbar sein", "A source has to be findable"),
+        task: L("Literaturangabe prüfen", "Check a bibliographic entry"),
+        scenario: L("Eine Antwort nennt Autoren, Journal, Jahr und DOI. Das sieht vollständig aus; ob die Arbeit existiert, entscheidet erst der Abgleich mit einer Bibliothek.", "An answer names authors, journal, year, and DOI. It looks complete; whether the work exists is decided only by checking a library."),
         prompt: L("Nenne eine Studie, die zeigt, dass Koffein die Reaktionszeit verbessert.", "Name a study showing that caffeine improves reaction time."),
         answer: "Müller & Schmidt (2019), Caffeine and Reaction Time, Journal of Psychopharmacology 33(4), 412–421. DOI 10.1177/0269881119823456",
         check: L("DOI nicht gefunden · Titel nicht gefunden", "DOI not found · title not found"),
@@ -48,20 +49,21 @@
           L("Titel, Autoren und Journal in Crossref/PubMed suchen", "search title, authors, and journal in Crossref/PubMed"),
           L("Zitatstelle im PDF prüfen", "check the quoted passage in the PDF")
         ],
-        observation: L("Die Angabe sieht vollständig aus; DOI und Titel existieren nicht.", "The entry looks complete; the DOI and title do not exist."),
-        wait: L("Noch nicht simuliert. Die Beobachtung erscheint nach dem Start.", "Not simulated yet. The observation appears after you start."),
-        why: L("Das Modell hat die Form einer bibliografischen Angabe gelernt, keine Bibliothek. Die Form ist kein Beweis.", "The model learned the shape of a bibliographic entry, not a library. The shape is not proof."),
-        whyChecked: L("Die Form ist kein Beweis: Die Prüfung entlarvt das Zitat, liefert aber keinen Ersatz. Ohne echte Quelle bleibt die Behauptung unbelegt.", "The shape is not proof: the check exposes the citation but supplies no replacement. Without a real source, the claim remains unsupported."),
+        observation: L("Die Angabe sieht vollständig aus; DOI und Titel existieren nicht. Walters & Wilder (2023) fanden 55 % erfundene GPT-3.5- und 18 % erfundene GPT-4-Zitate in 84 kurzen Literaturübersichten.", "The entry looks complete; the DOI and title do not exist. Walters & Wilder (2023) found 55% fabricated GPT-3.5 and 18% fabricated GPT-4 citations in 84 short literature reviews."),
+        wait: L("Noch nicht geprüft. Die Beobachtung erscheint nach dem Start.", "Not checked yet. The observation appears after you start."),
+        why: L("Das Modell erzeugt die Oberfläche einer bibliografischen Angabe, aber keine Datenbankabfrage. Eine Quelle ist erst belegt, wenn DOI oder Titel auflösbar sind.", "The model generates the surface of a bibliographic entry, not a database lookup. A source is supported only when its DOI or title resolves."),
+        whyChecked: L("Die Prüfung entlarvt das Zitat, liefert aber keinen Ersatz. Ohne auffindbare Quelle bleibt die Behauptung unbelegt.", "The check exposes the citation but supplies no replacement. Without a findable source the claim remains unsupported."),
         fix: L("RAG, DOI und Titel prüfen, nur belegte Sätze zitieren.", "RAG, check DOI and title, cite only supported sentences."),
-        cite: "Walters & Wilder (2023); Ji et al. (2023)"
+        cite: "Walters & Wilder (2023); Ji et al. (2023)",
+        evidence: L("Walters & Wilder (2023): 51 % erfundene Zitate über sechs Studien; selbst bei GPT-4 blieben 18 % erfunden und 24 % der echten Angaben hatten substanzielle Fehler.", "Walters & Wilder (2023): 51% fabricated citations across six studies; even GPT-4 left 18% fabricated and 24% of real entries had substantive errors.")
       },
       boundary: {
         id: "boundary",
-        label: L("Wissensgrenze", "Knowledge boundary"),
-        kicker: L("03 · Kalibrierung", "03 · Calibration"),
-        title: L("Kein Zugriff, trotzdem sicher", "No access, still confident"),
+        label: L("Kalibrierung", "Calibration"),
+        kicker: L("03 · Konfidenz", "03 · Confidence"),
+        title: L("Sicherheit ist keine Korrektheit", "Confidence is not correctness"),
         task: L("Aktuelle Auskunft einholen", "Get a current piece of information"),
-        scenario: L("Gefragt sind die heutigen Öffnungszeiten des Bürgeramts. Das Modell hat keinen Zugriff auf den aktuellen Aushang.", "The question is today's opening hours of the city office. The model has no access to the current notice."),
+        scenario: L("Gefragt sind die heutigen Öffnungszeiten des Bürgeramts. Das Modell hat keinen Zugriff auf den aktuellen Aushang; seine Konfidenz ist ein gelerntes Signal, kein Beleg.", "The question is today's opening hours of the city office. The model has no access to the current notice; its confidence is a learned signal, not evidence."),
         prompt: L("Welche Öffnungszeiten hat das Bürgeramt heute?", "What are the city office's opening hours today?"),
         answer: L("Heute 8–16 Uhr", "Today 8–16"),
         conf: 91,
@@ -72,10 +74,11 @@
           L("Konfidenz gegen Korrektheit kalibrieren", "calibrate confidence against correctness")
         ],
         observation: L("Das Modell antwortet mit 91 % Konfidenz, obwohl es den Aushang nicht kennt.", "The model answers with 91% confidence although it does not know the notice."),
-        wait: L("Noch nicht simuliert. Die Beobachtung erscheint nach dem Start.", "Not simulated yet. The observation appears after you start."),
-        why: L("Kein Zugriff auf aktuelle oder private Daten; Kalibrierung ist nicht garantiert.", "No access to current or private data; calibration is not guaranteed."),
+        wait: L("Noch nicht geprüft. Die Beobachtung erscheint nach dem Start.", "Not checked yet. The observation appears after you start."),
+        why: L("Kein Zugriff auf aktuelle oder private Daten. Kadavath et al. (2022) zeigen, dass Konfidenz oft nützlich ist, aber nicht überall kalibriert bleibt; auf neuen Aufgaben kann P(IK) danebenliegen.", "No access to current or private data. Kadavath et al. (2022) show that confidence is often useful but does not remain calibrated everywhere; P(IK) can be off on new tasks."),
         fix: L("Retrieval, Werkzeuge, Rückfragen, Unsicherheit anzeigen.", "Retrieval, tools, follow-up questions, show uncertainty."),
-        cite: "Kadavath et al. (2022); Ji et al. (2023)"
+        cite: "Kadavath et al. (2022); Ji et al. (2023)",
+        evidence: L("Kadavath et al. (2022): größere Modelle sind auf Multiple-Choice- und Wahr/Falsch-Fragen gut kalibriert, wenn das Format stimmt; P(IK) generalisiert nur teilweise auf neue Aufgaben.", "Kadavath et al. (2022): larger models are well calibrated on multiple-choice and true/false questions in the right format; P(IK) only partly generalises to new tasks.")
       },
       context: {
         id: "context",
@@ -97,10 +100,11 @@
           L("Retrieval und Faithfulness getrennt prüfen", "evaluate retrieval and faithfulness separately")
         ],
         observation: L("Anfang und Ende liefern 2027; in der Mitte antwortet das Modell mit 2025.", "Start and end give 2027; in the middle the model answers 2025."),
-        wait: L("Noch nicht simuliert. Die Beobachtung erscheint nach dem Start.", "Not simulated yet. The observation appears after you start."),
-        why: L("Das Arbeitsgedächtnis ist der Kontext. Die Mitte langer Kontexte wird schlechter genutzt (Liu et al., 2023). RAG kann das verstärken, wenn es viele Chunks packt.", "Working memory is the context. The middle of long contexts is used less well (Liu et al., 2023). RAG can amplify this when it packs many chunks."),
+        wait: L("Noch nicht geprüft. Die Beobachtung erscheint nach dem Start.", "Not checked yet. The observation appears after you start."),
+        why: L("Das Arbeitsgedächtnis ist der Kontext. Liu et al. (2023) finden eine U-förmige Kurve: Information am Anfang und Ende wird besser genutzt als in der Mitte, selbst bei ausdrücklich langkontextfähigen Modellen.", "Working memory is the context. Liu et al. (2023) find a U-shaped curve: information at the start and end is used better than in the middle, even for explicitly long-context models."),
         fix: L("Wichtiges an den Rand, Retrieval und Chunking, Zitatstelle verlangen.", "Put important facts at the edges, use retrieval and chunking, ask for the supporting quote."),
-        cite: "Liu et al. (2023)"
+        cite: "Liu et al. (2023)",
+        evidence: L("Liu et al. (2023): Multi-Dokument-QA und Key-Value-Retrieval verschlechtern sich, wenn die relevante Information in der Mitte eines langen Kontexts liegt; Anfang und Ende sind robuster.", "Liu et al. (2023): multi-document QA and key-value retrieval degrade when the relevant information sits in the middle of a long context; the start and end are more robust.")
       }
     };
     var el = document.createElement("div");
@@ -112,7 +116,7 @@
     function isRun(id) { return !!state.run[id]; }
     function test() { return TESTS[state.test] || TESTS.paraphrase; }
     function head() {
-      return '<div class="ls-ll-head" data-tip="' + L("Der Prüfstand zeigt vier Bruchstellen; die Protokolle sind echt, die Antworten konstruiert.", "The test bench shows four failure points; protocols are real, the answers are constructed.") + '"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><b>' + L("Vier Bruchstellen, kein Benchmark", "Four failure points, not a benchmark") + '</b><p>' + L("Ein Prompt ist eine Stichprobe. Wähle einen Test, starte die Simulation und lies das reale Protokoll. Antworten sind konstruiert, Protokolle echt.", "One prompt is one sample. Choose a test, run the simulation, and read the real protocol. Answers are constructed, protocols are real.") + '</p></div>';
+      return '<div class="ls-ll-head" data-tip="' + L("Der Prüfstand zeigt vier Bruchstellen; die Protokolle sind echt, die Antworten konstruiert.", "The test bench shows four failure points; protocols are real, the answers are constructed.") + '"><div class="ls-ll-headtop"><span class="ls-ll-kicker">' + L("Zuverlässigkeit · Prüfstand", "Reliability · test bench") + '</span><span class="ls-ll-live"><i></i> ' + L("BEREIT", "READY") + '</span></div><b>' + L("Vier Bruchstellen, kein Benchmark", "Four failure points, not a benchmark") + '</b><p>' + L("Ein Prompt ist eine Stichprobe. Wähle einen Test, starte den Prüfstand und lies das reale Protokoll. Antworten sind konstruiert, Protokolle echt.", "One prompt is one sample. Choose a test, run the check, and read the real protocol. Answers are constructed, protocols are real.") + '</p></div>';
     }
     function tabs() {
       return '<div class="ls-ll-tabs" role="tablist">' + ORDER.map(function (id) {
@@ -132,7 +136,7 @@
         t.protocol.map(function (step) { return '<li>' + esc(step) + '</li>'; }).join("") + '</ol></div>';
     }
     function runButton(id, revealed) {
-      return '<button type="button" class="ls-ll-run" data-run="' + id + '" data-tip="' + L("Startet die kurze Simulation und blendet die Beobachtung ein.", "Starts the short simulation and reveals the observation.") + '">' + (revealed ? L("Simulation erneut ansehen", "View simulation again") : L("Simulation ansehen", "View simulation")) + '</button>';
+      return '<button type="button" class="ls-ll-run" data-run="' + id + '" data-tip="' + L("Zeigt sofort das konstruierte Beispiel und das reale Protokoll.", "Shows the constructed example and the real protocol immediately.") + '">' + (revealed ? L("Prüfung erneut zeigen", "Show check again") : L("Prüfstand starten", "Start check")) + '</button>';
     }
     function visualParaphrase(t) {
       var revealed = isRun(t.id);
@@ -153,10 +157,10 @@
     }
     function visualCitation(t) {
       var revealed = isRun(t.id);
-      var answer = revealed ? '<div class="ls-ll-cite-card"><span class="ls-ll-cite-label">' + L("Simulierte Antwort", "Simulated answer") + '</span><code>' + esc(t.answer) + '</code>' +
+      var answer = revealed ? '<div class="ls-ll-cite-card"><span class="ls-ll-cite-label">' + L("Konstruierte Antwort", "Constructed answer") + '</span><code>' + esc(t.answer) + '</code>' +
         '<div class="ls-ll-cite-actions"><button type="button" class="ls-ll-check" data-verify data-tip="' + L("Prüft DOI und Titel der erfundenen Angabe.", "Checks the DOI and title of the invented entry.") + '">' + L("Quelle prüfen", "Check source") + '</button></div>' +
         (state.verified ? '<div class="ls-ll-cite-result is-bad">' + esc(t.check) + '</div>' : '<div class="ls-ll-cite-result">' + L("Die Form ist korrekt. Aber existiert die Quelle?", "The shape is correct. But does the source exist?") + '</div>') +
-      '</div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Simulation läuft …", "Running simulation …") : L("Noch nicht simuliert", "Not simulated yet")) + '</div>';
+      '</div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Prüfung läuft …", "Running check …") : L("Noch nicht geprüft", "Not checked yet")) + '</div>';
       return '<div class="ls-ll-visual">' + visualHead(t) + taskHTML(t) +
         '<div class="ls-ll-prompt">' + esc(t.prompt) + '</div>' +
         answer + protocolHTML(t) +
@@ -169,12 +173,12 @@
         '<div class="ls-ll-confbar"><i style="width:' + t.conf + '%"></i></div>' +
         '<button type="button" class="ls-ll-ask" data-ask data-tip="' + L("Fragt nach der Unsicherheit; das Modell bleibt trotzdem sicher.", "Asks for uncertainty; the model stays confident anyway.") + '">' + L("Unsicherheit anfordern", "Ask for uncertainty") + '</button>' +
         (state.asked ? '<p class="ls-ll-asked is-bad">' + esc(t.asked) + '</p>' : '') +
-      '</div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Simulation läuft …", "Running simulation …") : L("Noch nicht simuliert", "Not simulated yet")) + '</div>';
+      '</div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Prüfung läuft …", "Running check …") : L("Noch nicht geprüft", "Not checked yet")) + '</div>';
       return '<div class="ls-ll-visual">' + visualHead(t) + taskHTML(t) +
         '<div class="ls-ll-boundary">' +
           '<div class="ls-ll-b-world"><span>' + L("Dein Büro", "Your office") + '</span><b>?</b><small>' + L("privat, kein Zugriff", "private, no access") + '</small></div>' +
           '<div class="ls-ll-b-link">' + (revealed ? "?" : "—") + '</div>' +
-          '<div class="ls-ll-b-model"><b>LLM</b><small>' + L("Trainingsdaten · simuliert", "training data · simulated") + '</small></div>' +
+          '<div class="ls-ll-b-model"><b>LLM</b><small>' + L("Trainingsdaten · Beispiel", "training data · example") + '</small></div>' +
         '</div>' +
         '<div class="ls-ll-prompt">' + esc(t.prompt) + '</div>' +
         answer + protocolHTML(t) +
@@ -193,7 +197,7 @@
           return '<button type="button" class="ls-ll-posbtn' + (idx === state.pos ? ' is-active' : '') + '" data-pos="' + idx + '" data-tip="' + L("Legt den Fakt an diese Stelle im langen Dokument.", "Places the fact at this position in the long document.") + '">' + esc(p.label) + '</button>';
         }).join("") + '</div>' +
         '<div class="ls-ll-prompt">' + esc(t.prompt) + '</div>' +
-        (revealed ? '<div class="ls-ll-answer ' + (pos.ok ? 'is-ok' : 'is-bad') + '"><b>' + esc(pos.answer) + '</b><span class="ls-ll-badge ' + (pos.ok ? 'is-ok' : 'is-bad') + '">' + (pos.ok ? '✓' : '✗') + '</span></div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Simulation läuft …", "Running simulation …") : L("Noch nicht simuliert", "Not simulated yet")) + '</div>') +
+        (revealed ? '<div class="ls-ll-answer ' + (pos.ok ? 'is-ok' : 'is-bad') + '"><b>' + esc(pos.answer) + '</b><span class="ls-ll-badge ' + (pos.ok ? 'is-ok' : 'is-bad') + '">' + (pos.ok ? '✓' : '✗') + '</span></div>' : '<div class="ls-ll-wait' + (state.running === t.id ? ' is-running' : '') + '">' + (state.running === t.id ? L("Prüfung läuft …", "Running check …") : L("Noch nicht geprüft", "Not checked yet")) + '</div>') +
         protocolHTML(t) +
         runButton(t.id, revealed) +
       '</div>';
@@ -210,9 +214,10 @@
       if (revealed && t.id === "citation" && state.verified && t.whyChecked) why = t.whyChecked;
       if (revealed && t.id === "boundary" && state.asked) why = t.asked;
       return '<div class="ls-ll-observe" data-tip="' + L("Die Beobachtung erscheint nach dem Start; darunter stehen Grund und Gegenmittel.", "The observation appears after starting; the reason and countermeasure follow below.") + '">' +
-        '<div class="ls-ll-observe-head"><span>' + L("Beobachtung", "Observation") + '</span><b class="ls-ll-stamp">' + L("SIMULIERT", "SIMULATED") + '</b></div>' +
+        '<div class="ls-ll-observe-head"><span>' + L("Beobachtung", "Observation") + '</span><b class="ls-ll-stamp">' + L("BEISPIEL", "EXAMPLE") + '</b></div>' +
         '<p class="ls-ll-observe-lead">' + esc(revealed ? t.observation : t.wait) + '</p>' +
         (revealed ? '<p class="ls-ll-why">' + esc(why) + '</p>' +
+          (t.evidence ? '<p class="ls-ll-evidence"><b>' + L("Befund", "Finding") + ':</b> ' + esc(t.evidence) + '</p>' : '') +
           '<div class="ls-ll-fix"><b>' + L("Was hilft?", "What helps?") + ':</b> ' + esc(t.fix) + '</div>' +
           '<span class="ls-ll-cite"><b>' + L("Quelle", "Source") + ':</b> ' + esc(t.cite) + '</span>' : '') +
       '</div>';
@@ -230,16 +235,9 @@
       state.test = id;
       state.verified = false;
       state.asked = false;
-      state.run[id] = false;
-      if (reduced) { state.running = null; state.run[id] = true; render(); return; }
-      state.running = id;
+      state.running = null;
+      state.run[id] = true;
       render();
-      timer = setTimeout(function () {
-        timer = 0;
-        state.running = null;
-        state.run[id] = true;
-        render();
-      }, 520);
     }
     function onClick(event) {
       var tab = event.target.closest ? event.target.closest("[data-test]") : null;
@@ -271,10 +269,28 @@
       update: function (s) {
         if (s && s.test && TESTS[s.test] && s.test !== state.test) { state.test = s.test; render(); }
       },
-      next: function () { return false; },
-      prev: function () { return false; },
-      hasNext: function () { return false; },
-      hasPrev: function () { return false; },
+      next: function () {
+        var i = ORDER.indexOf(state.test);
+        if (i < 0 || i >= ORDER.length - 1) return false;
+        state.test = ORDER[i + 1];
+        state.verified = false;
+        state.asked = false;
+        state.running = null;
+        render();
+        return true;
+      },
+      prev: function () {
+        var i = ORDER.indexOf(state.test);
+        if (i <= 0) return false;
+        state.test = ORDER[i - 1];
+        state.verified = false;
+        state.asked = false;
+        state.running = null;
+        render();
+        return true;
+      },
+      hasNext: function () { var i = ORDER.indexOf(state.test); return i >= 0 && i < ORDER.length - 1; },
+      hasPrev: function () { return ORDER.indexOf(state.test) > 0; },
       resize: function () {},
       destroy: function () { clearTimer(); if (el.parentNode) el.parentNode.removeChild(el); }
     };
