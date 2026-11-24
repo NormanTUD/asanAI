@@ -35,9 +35,9 @@
         tag: "Phi · Integration",
         title: "Integrated Information Theory (IIT)",
         lead: L("Bewusstsein ist die integrierte Ursache-Wirkungs-Struktur eines Systems; Rekurrenz macht aus Teilen ein Ganzes.", "Consciousness is a system's integrated cause-effect structure; recurrence turns parts into a whole."),
-        basics: L("Ursache-Wirkung = ein Teil beeinflusst einen anderen; Integration = das Ganze lässt sich nicht ohne Verlust zerlegen; Rekurrenz = Signale laufen zurück, nicht nur vorwärts.", "Cause-effect = one part influences another; integration = the whole cannot be split without loss; recurrence = signals run back, not only forward."),
+        basics: L("Ursache-Wirkung = ein Teil beeinflusst einen anderen; Integration = das Ganze lässt sich nicht ohne Verlust zerlegen; Rekurrenz = Signale laufen zurück, nicht nur vorwärts; Schnitt = Partition: Verbindungen kappen, dann ist das Ganze zerlegbar und Phi fällt.", "Cause-effect = one part influences another; integration = the whole cannot be split without loss; recurrence = signals run back, not only forward; cut = partition: sever connections, then the whole is separable and Phi falls."),
         body: [
-          L("IIT identifiziert Bewusstsein mit der integrierten Ursache-Wirkungs-Struktur eines Systems. Rekurrenz lässt Signale zurücklaufen; dadurch wirken die Teile aufeinander und bilden ein Ganzes, das sich nicht ohne Verlust zerlegen lässt. Phi misst diese Integration; ohne Rückkopplung ist Phi 0, ein Schnitt senkt es.", "IIT identifies consciousness with a system's integrated cause-effect structure. Recurrence lets signals run back; the parts act on each other and form a whole that cannot be split without loss. Phi measures this integration; without feedback Phi is 0, and a cut lowers it.")
+          L("IIT identifiziert Bewusstsein mit der integrierten Ursache-Wirkungs-Struktur eines Systems. Rekurrenz lässt Signale zurücklaufen; dadurch wirken die Teile aufeinander und bilden ein Ganzes, das sich nicht ohne Verlust zerlegen lässt. Phi misst diese Integration; ohne Rückkopplung ist Phi 0. Ein Schnitt ist eine Partition: Er kappt Verbindungen, der Puls kommt nicht mehr herum, das Ganze wird zerlegbar, und Phi fällt.", "IIT identifies consciousness with a system's integrated cause-effect structure. Recurrence lets signals run back; the parts act on each other and form a whole that cannot be split without loss. Phi measures this integration; without feedback Phi is 0. A cut is a partition: it severs connections, the pulse no longer gets around, the whole becomes separable, and Phi falls.")
         ],
         open: L("Phi ist für große Systeme kaum berechenbar und für LLMs nicht belastbar gemessen.", "Phi is hard to compute for large systems and has not been robustly measured for LLMs."),
         cite: '<a href="https://doi.org/10.1186/1471-2202-5-42" target="_blank" rel="noopener">Tononi (2004)</a>; <a href="https://doi.org/10.1038/nrn.2016.44" target="_blank" rel="noopener">Tononi et al. (2016)</a>',
@@ -76,13 +76,13 @@
         key: "myst", tone: "lilac",
         tag: "Die Grenze der Erklärung",
         title: "New Mysterianism",
-        lead: L("Vielleicht liegt Bewusstsein außerhalb unserer kognitiven Reichweite – wie Gleichungen für eine Ratte.", "Perhaps consciousness lies beyond our cognitive reach – like equations for a rat."),
+        lead: L("Vielleicht liegt Bewusstsein jenseits unserer Begriffe – wie Differentialgleichungen für eine Ratte.", "Perhaps consciousness lies beyond our concepts – like differential equations for a rat."),
         basics: L("Kognitive Grenze = Grenze unserer Begriffe, nicht der Rechenleistung; nicht falsifizierbar = es gibt keine Beobachtung, die die These widerlegen könnte.", "Cognitive limit = a limit of our concepts, not of computing power; not falsifiable = no observation could refute the claim."),
         body: [
-          L("Ratten lernen ein Labyrinth, aber keine Gleichungen. McGinn fragt, ob Bewusstsein für uns so ein Fall ist: eine Frage, die unsere Begriffe übersteigt. Das ist keine Erklärung, sondern eine kognitive Grenze – nicht falsifizierbar und nicht durch mehr Rechenleistung überwindbar.", "Rats learn a maze but cannot solve equations. McGinn asks whether consciousness is such a case for us: a question that exceeds our concepts. This is not an explanation but a cognitive limit – not falsifiable and not overcome by more computing power.")
+          L("Ratten lösen im Labyrinth erstaunlich viel: Sie finden Abkürzungen zum Futter und erinnern sich, welche Arme sie schon besucht haben (Tolman et al., 1946; Olton & Samuelson, 1976). Aber sie lösen keine Differentialgleichungen; ihre Begriffe bleiben an konkrete Wege und Belohnungen gebunden. McGinn fragt, ob Bewusstsein für uns eine ähnliche Grenze ist: keine technische, sondern eine Grenze unserer Begriffe. Vielleicht können wir es prinzipiell nicht vollständig verstehen – so wie eine Ratte keine Differentialgleichung löst.", "Rats learn a lot in mazes: they take shortcuts to food and remember which arms they have already visited (Tolman et al., 1946; Olton & Samuelson, 1976). But they do not solve differential equations; their concepts stay tied to concrete paths and rewards. McGinn asks whether consciousness is a similar limit for us: not a technical one, but a limit of our concepts. Perhaps we cannot fully understand it in principle – just as a rat cannot solve a differential equation.")
         ],
         open: L("Nicht falsifizierbar, aber auch keine Erklärung; sie verschiebt die Frage in unsere Erkenntnisgrenzen.", "Not falsifiable, but also not an explanation; it moves the question to our cognitive limits."),
-        cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://en.wikipedia.org/wiki/New_mysterianism" target="_blank" rel="noopener">Wikipedia</a>',
+        cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://doi.org/10.1037/h0060262" target="_blank" rel="noopener">Tolman, Ritchie &amp; Kalish (1946)</a>; <a href="https://doi.org/10.1037/0097-7403.2.2.97" target="_blank" rel="noopener">Olton &amp; Samuelson (1976)</a>',
         hint: L("Neue Frage erzeugt ein weiteres Fragezeichen. Manche sind groß, manche klein; keine landet auf einer Antwort.", "New question spawns another question mark. Some are large, some small; none lands on an answer."),
         status: L("Die Fragezeichen fliegen. Keine Antwort in Sicht.", "The question marks are flying. No answer in sight.")
       }
@@ -194,13 +194,13 @@
     }
 
     function wsCenters(w, h) {
-      var cx = w * 0.5, cy = h * 0.52, R = Math.min(w, h) * 0.26;
+      var cx = w * 0.5, cy = h * 0.52, R = Math.min(w * 0.20, h * 0.30);
       var pts = [];
       for (var i = 0; i < 5; i++) {
         var a = -Math.PI / 2 + i * Math.PI * 2 / 5;
         pts.push({ x: cx + Math.cos(a) * R * 2.0, y: cy + Math.sin(a) * R * 1.35, a: a });
       }
-      return { cx: cx, cy: cy, R: R, pts: pts, cardW: Math.min(172, w * 0.2), cardH: 50 };
+      return { cx: cx, cy: cy, R: R, pts: pts, cardW: Math.min(190, w * 0.22), cardH: 58 };
     }
     function moduleIcon(kind, x, y, color) {
       ctx.save(); ctx.translate(x, y); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.6; ctx.lineCap = "round";
@@ -333,7 +333,7 @@
           ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = ROSE; ctx.lineWidth = 1.8;
           ctx.beginPath(); ctx.moveTo(ga.x, ga.y); ctx.lineTo(gb.x, gb.y); ctx.stroke(); ctx.restore();
           ctx.fillStyle = ROSE; ctx.font = font(11, 700); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
-          ctx.fillText(L("Schnitt", "cut"), (ga.x + gb.x) / 2, (ga.y + gb.y) / 2 - 6);
+          ctx.fillText(L("Partition", "partition"), (ga.x + gb.x) / 2, (ga.y + gb.y) / 2 - 6);
         }
         ctx.fillStyle = C.muted; ctx.font = font(11, 600); ctx.textAlign = "center"; ctx.textBaseline = "top";
         ctx.fillText(L("Ring: der Puls kehrt zurück – Rückkopplung", "ring: the pulse returns – recurrence"), cx, cy + R + 24);
@@ -347,12 +347,15 @@
             var py = pos[idx].y + (pos[idx + 1].y - pos[idx].y) * fr;
             ctx.save(); ctx.shadowColor = C.blue; ctx.shadowBlur = 20; dot(px, py, 6, C.blue); ctx.restore();
           } else {
-            var aa = -Math.PI / 2 + phase * Math.PI * 2;
+            var sweep = (N - cutIdx) / N * Math.PI * 2;
+            var aa = -Math.PI / 2 + phase * sweep;
             var qx2 = cx + Math.cos(aa) * R, qy2 = cy + Math.sin(aa) * R;
             ctx.save(); ctx.shadowColor = C.blue; ctx.shadowBlur = 20; dot(qx2, qy2, 6, C.blue); ctx.restore();
-            var ab = -Math.PI / 2 - phase * Math.PI * 2;
-            var rx = cx + Math.cos(ab) * R, ry = cy + Math.sin(ab) * R;
-            ctx.save(); ctx.shadowColor = C.gold; ctx.shadowBlur = 18; dot(rx, ry, 5.5, C.gold); ctx.restore();
+            if (cutIdx === 0) {
+              var ab = -Math.PI / 2 - phase * Math.PI * 2;
+              var rx = cx + Math.cos(ab) * R, ry = cy + Math.sin(ab) * R;
+              ctx.save(); ctx.shadowColor = C.gold; ctx.shadowBlur = 18; dot(rx, ry, 5.5, C.gold); ctx.restore();
+            }
           }
         } else iit.pulseStart = 0;
       }
@@ -449,46 +452,53 @@
       return ids.map(function (id, i) { return { x: w * spots[id].x, y: h * spots[id].y, i: i }; });
     }
     function drawVortex(c, on, diss, t) {
-      var vR = 38 + diss * 10;
+      var vR = 42 + diss * 10;
       if (on) {
-        var gl = ctx.createRadialGradient(c.x, c.y, 2, c.x, c.y, vR * 1.5);
-        gl.addColorStop(0, "rgba(201,243,255,.12)"); gl.addColorStop(1, "rgba(201,243,255,0)");
-        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(c.x, c.y, vR * 1.5, 0, Math.PI * 2); ctx.fill();
+        var gl = ctx.createRadialGradient(c.x, c.y, 2, c.x, c.y, vR * 1.45);
+        gl.addColorStop(0, "rgba(201,243,255,.13)"); gl.addColorStop(1, "rgba(201,243,255,0)");
+        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(c.x, c.y, vR * 1.45, 0, Math.PI * 2); ctx.fill();
       }
-      ctx.save(); ctx.translate(c.x, c.y);
+      ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(-0.18 + c.i * 0.055);
+      var body = ctx.createRadialGradient(0, 0, 2, 0, 0, vR);
+      body.addColorStop(0, "rgba(2,14,20,.90)");
+      body.addColorStop(0.52, "rgba(18,117,172,.22)");
+      body.addColorStop(1, "rgba(126,200,239,0)");
+      ctx.fillStyle = body;
+      ctx.beginPath(); ctx.ellipse(0, 0, vR, vR * 0.44, 0, 0, Math.PI * 2); ctx.fill();
       for (var k = 0; k < 5; k++) {
-        var f = k / 4, rr = vR * (1 - f * 0.74), yy = -vR * 0.12 + f * vR * 0.32;
-        ctx.beginPath(); ctx.ellipse(0, yy, rr, rr * 0.40, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = on ? "rgba(255,239,191,.55)" : "rgba(201,243,255,.38)";
-        ctx.globalAlpha = 0.10 + f * 0.10; ctx.lineWidth = 1; ctx.stroke();
+        var f = k / 4, rr = vR * (1 - f * 0.72), yy = -vR * 0.10 + f * vR * 0.30;
+        ctx.beginPath(); ctx.ellipse(0, yy, rr, rr * 0.44, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = on ? "rgba(255,239,191,.60)" : "rgba(201,243,255,.42)";
+        ctx.globalAlpha = 0.12 + f * 0.10; ctx.lineWidth = 1; ctx.stroke();
       }
       ctx.globalAlpha = 1;
-      for (var arm = 0; arm < 3; arm++) {
-        var base = arm * Math.PI * 2 / 3 + t * 0.5;
+      for (var arm = 0; arm < 2; arm++) {
+        var base = arm * Math.PI + t * 0.45;
         ctx.beginPath();
-        for (var st = 0; st <= 48; st++) {
-          var u = st / 48, ang = base + u * Math.PI * 1.75;
-          var rad = 3 + u * vR * 0.98;
+        for (var st = 0; st <= 52; st++) {
+          var u = st / 52, ang = base + u * Math.PI * 1.85;
+          var rad = 3 + u * vR * 0.96;
           var xx = Math.cos(ang) * rad;
-          var yy = Math.sin(ang) * rad * 0.40 + (1 - u) * vR * 0.05;
+          var yy = Math.sin(ang) * rad * 0.44 + (1 - u) * vR * 0.05;
           if (st === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
         }
-        ctx.strokeStyle = on ? "rgba(255,239,191,.62)" : "rgba(201,243,255,.30)";
-        ctx.lineWidth = on ? 1.5 : 1.1; ctx.lineCap = "round"; ctx.stroke();
+        ctx.strokeStyle = on ? "rgba(255,239,191,.72)" : "rgba(201,243,255,.36)";
+        ctx.lineWidth = on ? 1.8 : 1.3; ctx.lineCap = "round"; ctx.stroke();
       }
-      ctx.beginPath(); ctx.ellipse(0, vR * 0.04, vR * 0.20, vR * 0.08, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#03131a"; ctx.fill();
-      ctx.beginPath(); ctx.ellipse(0, 0, vR * 0.98, vR * 0.40, 0, Math.PI * 1.05, Math.PI * 1.95);
-      ctx.strokeStyle = "rgba(230,250,255,.22)"; ctx.lineWidth = 1.2; ctx.stroke();
+      var hole = ctx.createRadialGradient(0, 0, 1, 0, 0, vR * 0.24);
+      hole.addColorStop(0, "#010a0f"); hole.addColorStop(1, "rgba(3,19,26,.15)");
+      ctx.fillStyle = hole;
+      ctx.beginPath(); ctx.ellipse(0, vR * 0.04, vR * 0.24, vR * 0.11, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0, 0, vR * 0.98, vR * 0.42, 0, Math.PI * 1.05, Math.PI * 1.95);
+      ctx.strokeStyle = "rgba(230,250,255,.30)"; ctx.lineWidth = 1.4; ctx.stroke();
       for (var sp = 0; sp < 5; sp++) {
         var sa = t * 0.55 + sp * 1.6, sr = vR * (0.35 + (sp % 3) * 0.18);
-        var sx = Math.cos(sa) * sr, sy = Math.sin(sa) * sr * 0.40;
-        ctx.globalAlpha = on ? 0.55 : 0.28;
-        dot(sx, sy, 0.9 + (sp % 2) * 0.5, "#e9fbff");
+        ctx.globalAlpha = on ? 0.62 : 0.32;
+        dot(Math.cos(sa) * sr, Math.sin(sa) * sr * 0.44, 1 + (sp % 2) * 0.5, "#e9fbff");
       }
       ctx.globalAlpha = 1;
       ctx.restore();
-      ctx.fillStyle = on ? "#ffefbf" : "rgba(234,246,250,.68)";
+      ctx.fillStyle = on ? "#ffefbf" : "rgba(234,246,250,.70)";
       ctx.font = font(11, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
       ctx.fillText(kast.count === 1 ? L("der eine Ozean", "the one ocean") : L("Geist ", "mind ") + String.fromCharCode(65 + c.i), c.x, c.y + vR * 0.48 + 16);
     }
@@ -555,8 +565,15 @@
       DRAWERS[active](w, h, t, now);
     }
     function fit() {
-      size = api.fit(canvas, canvas);
-      ctx = size.ctx;
+      var r = canvas.getBoundingClientRect();
+      var w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+      if (w < 10 || h < 10) return;
+      var dpr = Math.min(2.5, Math.max(2, window.devicePixelRatio || 1));
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      size = { w: w, h: h, ctx: ctx };
       draw(performance.now());
     }
     function loop(now) {
@@ -601,7 +618,7 @@
       } else if (active === 1) {
         controls.innerHTML =
           '<div class="ls-con2-row"><button type="button" class="ls-con2-chip' + (!iit.feedforward ? " is-on" : "") + '" data-con-iit="recurrent">' + L("Rekurrent", "Recurrent") + '</button><button type="button" class="ls-con2-chip' + (iit.feedforward ? " is-on" : "") + '" data-con-iit="feedforward">' + L("Feedforward", "Feedforward") + '</button></div>' +
-          '<label class="ls-con2-range' + (iit.feedforward ? " is-disabled" : "") + '"><span>' + L("Schnitt", "Cut") + '</span><input type="range" data-con-cut min="0" max="100" step="1" value="' + iit.cut + '"' + (iit.feedforward ? " disabled" : "") + '><output>' + iit.cut + ' %</output></label>' +
+          '<label class="ls-con2-range' + (iit.feedforward ? " is-disabled" : "") + '"><span>' + L("Partition (Schnitt)", "Partition (cut)") + '</span><input type="range" data-con-cut min="0" max="100" step="1" value="' + iit.cut + '"' + (iit.feedforward ? " disabled" : "") + '><output>' + iit.cut + ' %</output></label>' +
           '<div class="ls-con2-row"><button type="button" class="ls-con2-btn is-primary" data-con-pulse>' + L("Puls", "Pulse") + '</button><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
       } else if (active === 2) {
         controls.innerHTML =
@@ -641,7 +658,7 @@
         inp.addEventListener("input", function () {
           iit.cut = parseInt(inp.value, 10) || 0;
           inp.nextElementSibling.textContent = iit.cut + " %";
-          setStatus(L("Schnitt ", "Cut ") + iit.cut + "%: " + (iit.cut >= 70 ? L("Der Ring bricht. Phi fällt.", "The ring breaks. Phi falls.") : iit.cut >= 40 ? L("Die Querverbindungen fallen weg.", "Cross-links disappear.") : L("Die Struktur ist noch verbunden.", "The structure is still connected.")));
+          setStatus(L("Partition ", "Partition ") + iit.cut + "%: " + (iit.cut >= 70 ? L("Der Ring ist weit gekappt. Der Puls stoppt am Schnitt; Phi fällt.", "The ring is cut wide open. The pulse stops at the cut; Phi falls.") : iit.cut >= 40 ? L("Die Querverbindungen fallen weg; der Puls kommt nicht mehr herum.", "Cross-links disappear; the pulse no longer gets around.") : L("Die Struktur ist noch weitgehend verbunden.", "The structure is still mostly connected.")));
           draw(performance.now());
         });
       });
