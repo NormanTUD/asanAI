@@ -28,7 +28,7 @@
         open: L("Warum der Zugang sich von innen anfühlt, sagt die Tafel nicht.", "Why access feels like something from the inside is not shown by the board."),
         cite: '<a href="https://archive.org/details/cognitivetheoryo0000baar" target="_blank" rel="noopener">Baars (1988)</a>; <a href="https://doi.org/10.1016/S0010-0277(00)00123-2" target="_blank" rel="noopener">Dehaene &amp; Naccache (2001)</a>; <a href="https://doi.org/10.1016/0004-3702(85)90063-3" target="_blank" rel="noopener">Hayes-Roth (1985)</a>',
         hint: L("Klick ein Subsystem: sein Ergebnis erscheint auf der Tafel. Broadcast macht es global.", "Click a subsystem: its result appears on the board. Broadcast makes it global."),
-        status: L("Noch nichts auf der Tafel. Klick ein Subsystem.", "Nothing on the board yet. Click a subsystem.")
+        status: L("Noch nichts auf der Tafel. Weiter fügt Subsysteme hinzu.", "Nothing on the board yet. Next adds subsystems.")
       },
       {
         key: "iit", tone: "gold",
@@ -42,7 +42,7 @@
         open: L("Phi ist für große Systeme kaum berechenbar und für LLMs nicht belastbar gemessen.", "Phi is hard to compute for large systems and has not been robustly measured for LLMs."),
         cite: '<a href="https://doi.org/10.1186/1471-2202-5-42" target="_blank" rel="noopener">Tononi (2004)</a>; <a href="https://doi.org/10.1038/nrn.2016.44" target="_blank" rel="noopener">Tononi et al. (2016)</a>',
         hint: L("Drücke Puls. Schalte auf Feedforward: der Puls kehrt nicht zurück, Phi fällt. Ziehe den Schnitt.", "Press Pulse. Switch to feedforward: the pulse does not return, Phi falls. Pull the cut."),
-        status: L("Rekurrent, ungeschnitten. Drücke Puls.", "Recurrent, uncut. Press Pulse.")
+        status: L("Rekurrent, ungeschnitten. Weiter pulst den Ring.", "Recurrent, uncut. Next pulses the ring.")
       },
       {
         key: "predictive", tone: "sky",
@@ -56,7 +56,7 @@
         open: L("Es erklärt Funktion und Selbstmodell, aber nicht, warum Vorhersage sich anfühlt.", "It explains function and self-model, but not why prediction feels like anything."),
         cite: '<a href="https://doi.org/10.1017/S0140525X12000477" target="_blank" rel="noopener">Clark (2013)</a>; <a href="https://doi.org/10.1038/nrn2787" target="_blank" rel="noopener">Friston (2010)</a>',
         hint: L("Wähle einen Eingang und zieh an der Präzision. Bei hoher Präzision dominiert die Vorhersage.", "Choose an input and drag precision. At high precision the prediction dominates."),
-        status: L("Mittlere Präzision. Vorhersage und Eingang halten sich die Waage.", "Medium precision. Prediction and input are balanced.")
+        status: L("Mittlere Präzision. Weiter aktualisiert das Modell.", "Medium precision. Next updates the model.")
       },
       {
         key: "kastrup", tone: "blue",
@@ -70,7 +70,7 @@
         open: L("Metaphysisch und schwer falsifizierbar; erklärt konkrete neuronale Mechanismen weniger direkt.", "Metaphysical and hard to falsify; it explains concrete neural mechanisms less directly."),
         cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>',
         hint: L("Zieh an der Dissoziation: Die Wirbel werden klarer oder durchlässiger. Klick einen Wirbel.", "Drag dissociation: the vortices become clearer or more permeable. Click a vortex."),
-        status: L("Drei Wirbel, stark dissoziiert. Von innen getrennt, von außen ein Wasser.", "Three vortices, strongly dissociated. Separate from inside, one water from outside.")
+        status: L("Drei Wirbel, stark dissoziiert. Weiter trennt stärker und fügt einen Wirbel hinzu.", "Three vortices, strongly dissociated. Next separates more and adds a vortex.")
       },
       {
         key: "myst", tone: "lilac",
@@ -84,7 +84,7 @@
         open: L("Nicht falsifizierbar, aber auch keine Erklärung; sie verschiebt die Frage in unsere Erkenntnisgrenzen.", "Not falsifiable, but also not an explanation; it moves the question to our cognitive limits."),
         cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://doi.org/10.1037/h0060262" target="_blank" rel="noopener">Tolman, Ritchie &amp; Kalish (1946)</a>; <a href="https://doi.org/10.1037/0097-7403.2.2.97" target="_blank" rel="noopener">Olton &amp; Samuelson (1976)</a>',
         hint: L("Neue Frage erzeugt ein weiteres Fragezeichen. Manche sind groß, manche klein; keine landet auf einer Antwort.", "New question spawns another question mark. Some are large, some small; none lands on an answer."),
-        status: L("Die Fragezeichen fliegen. Keine Antwort in Sicht.", "The question marks are flying. No answer in sight.")
+        status: L("Die Fragezeichen fliegen. Weiter erzeugt weitere Fragen.", "The question marks are flying. Next creates more questions.")
       }
     ];
 
@@ -121,7 +121,7 @@
     for (var si = 0; si < 64; si++) stars.push({ x: (si * 0.37 + 0.05) % 1, y: (si * 0.31 + 0.09) % 1, r: 0.5 + (si % 3) * 0.5, a: 0.05 + (si % 6) * 0.025 });
 
     var ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 };
-    var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82 };
+    var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 };
     var kast = { diss: 70, count: 3, selected: 0 };
     var myst = { marks: [] };
@@ -186,7 +186,7 @@
 
     function resetTheory() {
       if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
-      if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82 }; setStatus(THEORIES[1].status); }
+      if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 }; setStatus(THEORIES[2].status); }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0 }; setStatus(THEORIES[3].status); }
       if (active === 4) { initMyst(); setStatus(THEORIES[4].status); }
@@ -607,6 +607,60 @@
         '<p class="ls-con2-cite">' + th.cite + '</p>';
       canvas.setAttribute("aria-label", th.title + ". " + th.lead);
     }
+    function setIitMode(ff) {
+      iit.feedforward = !!ff;
+      setStatus(iit.feedforward ? L("Feedforward: Der Puls läuft nur vorwärts. Phi fällt auf 0.", "Feedforward: the pulse only moves forward. Phi falls to 0.") : L("Rekurrent: Der Puls kann zurückkehren. Die Struktur ist integriert.", "Recurrent: the pulse can return. The structure is integrated."));
+      renderControls(); draw(performance.now());
+    }
+    function setIitCut(v) {
+      iit.cut = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
+      var inp = el.querySelector("[data-con-cut]");
+      if (inp) { inp.value = String(iit.cut); if (inp.nextElementSibling) inp.nextElementSibling.textContent = iit.cut + " %"; }
+      setStatus(L("Partition ", "Partition ") + iit.cut + "%: " + (iit.cut >= 70 ? L("Der Ring ist weit gekappt. Der Puls stoppt am Schnitt; Phi fällt.", "The ring is cut wide open. The pulse stops at the cut; Phi falls.") : iit.cut >= 40 ? L("Die Querverbindungen fallen weg; der Puls kommt nicht mehr herum.", "Cross-links disappear; the pulse no longer gets around.") : L("Die Struktur ist noch weitgehend verbunden.", "The structure is still mostly connected.")));
+      draw(performance.now());
+    }
+    function pulseIit() {
+      iit.pulseStart = performance.now();
+      iit.pulsed = true;
+      setStatus(iit.feedforward ? L("Der Puls läuft vorwärts und endet. Keine Rückkehr, keine Integration.", "The pulse moves forward and ends. No return, no integration.") : L("Der Puls läuft um den Ring und kehrt zurück.", "The pulse travels around the ring and returns."));
+      draw(performance.now());
+    }
+    function iitNextAction() {
+      if (iit.feedforward) return false;
+      if (!iit.pulsed) { pulseIit(); return true; }
+      if (iit.cut < 80) { setIitCut(80); return true; }
+      setIitMode(true);
+      return true;
+    }
+    function setKastDiss(v) {
+      kast.diss = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
+      var inp = el.querySelector("[data-con-diss]");
+      if (inp) { inp.value = String(kast.diss); if (inp.nextElementSibling) inp.nextElementSibling.textContent = kast.diss + " %"; }
+      setStatus(kast.diss < 12 ? L("Der Ozean fließt frei; die Wirbel sind kaum abgegrenzt.", "The ocean flows freely; the vortices are barely separated.") : kast.diss < 55 ? L("Die Wirbel bilden sich. Das Wasser zwischen ihnen bleibt verbunden.", "The vortices form. The water between them stays connected.") : L("Die Wirbel sind stark abgegrenzt. Von innen sieht jeder wie ein eigenes Bewusstsein aus.", "The vortices are strongly separated. From inside each looks like its own consciousness."));
+      draw(performance.now());
+    }
+    function setKastCount(v) {
+      kast.count = Math.max(1, Math.min(5, parseInt(v, 10) || 1));
+      kast.selected = Math.min(kast.selected, kast.count - 1);
+      var inp = el.querySelector("[data-con-count]");
+      if (inp) { inp.value = String(kast.count); if (inp.nextElementSibling) inp.nextElementSibling.textContent = String(kast.count); }
+      setStatus(kast.count === 1 ? L("Ein Ozean: ein Bewusstsein, keine Trennung.", "One ocean: one consciousness, no separation.") : L(kast.count + " Wirbel: derselbe Ozean, mehrere lokale Geister.", kast.count + " vortices: the same ocean, several local minds."));
+      draw(performance.now());
+    }
+    function kastNextAction() {
+      if (kast.diss < 95) { setKastDiss(95); return true; }
+      if (kast.count < 4) { setKastCount(4); return true; }
+      return false;
+    }
+    function mystNextAction() {
+      if (myst.marks.length < 16) {
+        spawnMark(false);
+        setStatus(L("Noch eine Frage. Sie fliegt weiter, ohne anzukommen.", "One more question. It keeps flying without landing."));
+        draw(performance.now());
+        return true;
+      }
+      return false;
+    }
     function renderControls() {
       var th = THEORIES[active];
       if (active === 0) {
@@ -649,22 +703,13 @@
         });
       });
       controls.querySelectorAll("[data-con-iit]").forEach(function (b) {
-        b.addEventListener("click", function () {
-          iit.feedforward = b.getAttribute("data-con-iit") === "feedforward";
-          setStatus(iit.feedforward ? L("Feedforward: Der Puls läuft nur vorwärts. Phi fällt auf 0.", "Feedforward: the pulse only moves forward. Phi falls to 0.") : L("Rekurrent: Der Puls kann zurückkehren. Die Struktur ist integriert.", "Recurrent: the pulse can return. The structure is integrated."));
-          renderControls(); draw(performance.now());
-        });
+        b.addEventListener("click", function () { setIitMode(b.getAttribute("data-con-iit") === "feedforward"); });
       });
       controls.querySelectorAll("[data-con-cut]").forEach(function (inp) {
-        inp.addEventListener("input", function () {
-          iit.cut = parseInt(inp.value, 10) || 0;
-          inp.nextElementSibling.textContent = iit.cut + " %";
-          setStatus(L("Partition ", "Partition ") + iit.cut + "%: " + (iit.cut >= 70 ? L("Der Ring ist weit gekappt. Der Puls stoppt am Schnitt; Phi fällt.", "The ring is cut wide open. The pulse stops at the cut; Phi falls.") : iit.cut >= 40 ? L("Die Querverbindungen fallen weg; der Puls kommt nicht mehr herum.", "Cross-links disappear; the pulse no longer gets around.") : L("Die Struktur ist noch weitgehend verbunden.", "The structure is still mostly connected.")));
-          draw(performance.now());
-        });
+        inp.addEventListener("input", function () { setIitCut(inp.value); });
       });
       controls.querySelectorAll("[data-con-pulse]").forEach(function (b) {
-        b.addEventListener("click", function () { iit.pulseStart = performance.now(); setStatus(iit.feedforward ? L("Der Puls läuft vorwärts und endet. Keine Rückkehr, keine Integration.", "The pulse moves forward and ends. No return, no integration.") : L("Der Puls läuft um den Ring und kehrt zurück.", "The pulse travels around the ring and returns.")); });
+        b.addEventListener("click", pulseIit);
       });
       controls.querySelectorAll("[data-con-stim]").forEach(function (b) {
         b.addEventListener("click", function () {
@@ -686,21 +731,10 @@
         b.addEventListener("click", updatePredModel);
       });
       controls.querySelectorAll("[data-con-diss]").forEach(function (inp) {
-        inp.addEventListener("input", function () {
-          kast.diss = parseInt(inp.value, 10) || 0;
-          inp.nextElementSibling.textContent = kast.diss + " %";
-          setStatus(kast.diss < 12 ? L("Der Ozean fließt frei; die Wirbel sind kaum abgegrenzt.", "The ocean flows freely; the vortices are barely separated.") : kast.diss < 55 ? L("Die Wirbel bilden sich. Das Wasser zwischen ihnen bleibt verbunden.", "The vortices form. The water between them stays connected.") : L("Die Wirbel sind stark abgegrenzt. Von innen sieht jeder wie ein eigenes Bewusstsein aus.", "The vortices are strongly separated. From inside each looks like its own consciousness."));
-          draw(performance.now());
-        });
+        inp.addEventListener("input", function () { setKastDiss(inp.value); });
       });
       controls.querySelectorAll("[data-con-count]").forEach(function (inp) {
-        inp.addEventListener("input", function () {
-          kast.count = parseInt(inp.value, 10) || 1;
-          kast.selected = Math.min(kast.selected, kast.count - 1);
-          inp.nextElementSibling.textContent = String(kast.count);
-          setStatus(kast.count === 1 ? L("Ein Ozean: ein Bewusstsein, keine Trennung.", "One ocean: one consciousness, no separation.") : L(kast.count + " Wirbel: derselbe Ozean, mehrere lokale Geister.", kast.count + " vortices: the same ocean, several local minds."));
-          draw(performance.now());
-        });
+        inp.addEventListener("input", function () { setKastCount(inp.value); });
       });
       controls.querySelectorAll("[data-con-spawn]").forEach(function (b) {
         b.addEventListener("click", function () { spawnMark(false); setStatus(L("Noch eine Frage. Sie fliegt weiter, ohne anzukommen.", "One more question. It keeps flying without landing.")); draw(performance.now()); });
