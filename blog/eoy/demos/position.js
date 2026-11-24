@@ -187,21 +187,17 @@
         var pp = P(posVec(p));
         trailPoints.push({ value: p, x: pp.x, y: pp.y });
       });
-      if (trailPoints.length > 1) {
-        ctx.save();
-        ctx.strokeStyle = Cc.green;
-        ctx.globalAlpha = 0.38;
-        ctx.lineWidth = 1.2;
+      if (trailPoints.length) {
         ctx.beginPath();
-        trailPoints.forEach(function (tp, i) { if (i === 0) ctx.moveTo(tp.x, tp.y); else ctx.lineTo(tp.x, tp.y); });
-        ctx.stroke();
-        ctx.restore();
-      }
-      trailPoints.forEach(function (tp) {
-        ctx.beginPath(); ctx.arc(tp.x, tp.y, 2.1, 0, Math.PI * 2);
-        ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.62; ctx.fill();
+        trailPoints.forEach(function (tp) {
+          ctx.moveTo(tp.x + 2.1, tp.y);
+          ctx.arc(tp.x, tp.y, 2.1, 0, Math.PI * 2);
+        });
+        ctx.fillStyle = Cc.green;
+        ctx.globalAlpha = 0.62;
+        ctx.fill();
         ctx.globalAlpha = 1;
-      });
+      }
       if (hoverTrail >= 0 && !trailPoints[hoverTrail]) hoverTrail = -1;
       if (hoverTrail >= 0) {
         var hp = trailPoints[hoverTrail];
@@ -224,20 +220,19 @@
       var startP = posVec(0);
       var curP = posVec(posAnim);
       var sp = P(startP), cp = P(curP);
-      var isEuclid = metric === "euclid";
-      var dot = 0, theta = 0, dist = 0;
+      ctx.save();
+      ctx.setLineDash([3, 4]);
+      ctx.strokeStyle = Cc.petrol;
+      ctx.globalAlpha = 0.32;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(origin.x, origin.y);
+      ctx.lineTo(cp.x, cp.y);
+      ctx.stroke();
+      ctx.restore();
       drawToken();
-      if (!isEuclid) {
-        ctx.save();
-        ctx.setLineDash([3, 4]);
-        ctx.strokeStyle = Cc.petrol;
-        ctx.globalAlpha = 0.32;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(origin.x, origin.y);
-        ctx.lineTo(cp.x, cp.y);
-        ctx.stroke();
-        ctx.restore();
+      var dot = 0, theta = 0, dist = 0;
+      if (metric !== "euclid") {
         dot = Math.max(-1, Math.min(1, startP[0] * curP[0] + startP[1] * curP[1] + startP[2] * curP[2]));
         theta = Math.acos(dot);
         ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.8;
@@ -271,17 +266,14 @@
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
       var geoLen = dist;
       var angleDeg = theta * 180 / Math.PI;
-      curve.__lsPosition = { pos: pos, trail: trail.slice(), sweeping: !!sweep, metric: metric, start: posVec(0), current: posVec(posAnim), distance: geoLen, angle: theta };
+      curve.__lsPosition = { pos: pos, trail: trail.slice(), sweeping: !!sweep, metric: metric, start: startP, current: curP, distance: geoLen, angle: theta };
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + Math.round(posAnim), 12, 18);
-      ctx.textAlign = "right";
-      ctx.fillStyle = isEuclid ? Cc.gold : Cc.petrol;
-      ctx.fillText(isEuclid ? (DE ? "Euklidische Spirale" : "Euclidean spiral") : (DE ? "Kugel · Großkreis" : "sphere · great circle"), w - 12, 18);
       ctx.textAlign = "left";
       if (hoverTrail >= 0 && trailPoints[hoverTrail]) {
         var hpv = trailPoints[hoverTrail].value;
         var hv = posVec(hpv);
-        if (isEuclid) {
+        if (metric === "euclid") {
           var hdist = Math.hypot(startP[0] - hv[0], startP[1] - hv[1], startP[2] - hv[2]);
           readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(hpv) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + hv.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Euklid-Distanz" : "Euclidean distance") + ' <b>' + hdist.toFixed(3) + '</b></span>';
         } else {
@@ -290,9 +282,7 @@
           readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(hpv) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + hv.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + htheta.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (htheta * 180 / Math.PI).toFixed(1) + '°</b></span>';
         }
       } else {
-        readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Metrik" : "Metric") + ' <b>' + (isEuclid ? (DE ? "Euklid" : "Euclidean") : (DE ? "Großkreis" : "Great circle")) + '</b></span>' + (isEuclid
-          ? '<span>' + (DE ? "Euklid-Distanz" : "Euclidean distance") + ' <b>' + dist.toFixed(3) + '</b></span>'
-          : '<span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + theta.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (theta * 180 / Math.PI).toFixed(1) + '°</b></span>');
+        readout.innerHTML = "";
       }
     }
     function draw() {

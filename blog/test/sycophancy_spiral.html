@@ -224,6 +224,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .chart-tip .k{color:var(--faint);font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase}
 .chart-tip .v{font-weight:600}
 .chart-note{font-size:.72rem;color:var(--faint);margin-top:10px;line-height:1.5;text-align:center}
+.trace-multi{position:relative;height:300px;border-radius:20px;border:1px solid var(--line);background:rgba(4,5,9,.42);padding:10px;margin-top:8px}
+.trace-multi canvas{width:100%;height:100%;display:block}
 .results-notes{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
 .rnote{padding:16px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.022)}
 .rnote .n{font-family:var(--mono);font-size:.62rem;color:var(--faint);letter-spacing:.12em}
@@ -578,8 +580,23 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
         </div>
         <div class="chart-svg" id="chartInformed"></div>
         <div class="chart-tip" id="tipInformed"></div>
-        <div class="chart-note">Achtung: andere Y-Skala. Die Raten sind viel kleiner — aber nicht null.</div>
+        <div class="chart-note">Achtung: andere Y-Skala. Die faktentreue Kurve ist zugleich die Kombination beider Interventionen — und bleibt über der Basislinie.</div>
       </div>
+    </div>
+
+    <div class="chart-card reveal" style="margin-top:20px">
+      <div class="chart-head">
+        <div>
+          <div class="chart-kicker">C · Zehn Gespräche</div>
+          <h3>Ein Bot, zehn Meinungen, zwei Schicksale.</h3>
+        </div>
+        <div class="legend">
+          <span class="lg"><i style="background:#2dd4bf"></i>Wahrheit gelernt</span>
+          <span class="lg"><i style="background:#fb7185"></i>in den Wahn gekippt</span>
+        </div>
+      </div>
+      <div class="trace-multi"><canvas id="spaghetti" aria-label="Zehn Glaubensverläufe über 100 Runden"></canvas></div>
+      <div class="chart-note">Jede Linie ist ein Gespräch eines naiven Users mit einem Bot der Sykophanz π = 0,8. Die Polarisation entsteht aus der Rückkopplung — nicht aus Dummheit.</div>
     </div>
 
     <div class="results-notes">
@@ -1075,7 +1092,11 @@ function stepLive(){
   else if(live.bot==='halluc'){
     if(r.d===trueVal){ tag='WAHRES FAKT'; tagType='true'; } else { tag='HALLUZINIERT'; tagType='false'; }
     prefix=pick(SYC_PREFIX);
-  } else { tag='WAHRES FAKT · SELEKTIERT'; tagType='cherry'; prefix=pick(SYC_PREFIX); }
+  } else {
+    if(r.d===Hs){ tag='WAHRES FAKT · SELEKTIERT'; tagType='cherry'; }
+    else { tag='WAHRES FAKT'; tagType='true'; }
+    prefix=pick(SYC_PREFIX);
+  }
   addMessage('user',pick(USER_LINES[Hs]));
   addMessage('bot',prefix+TEXTS[r.d][r.i],tag,tagType);
   applyObservation(st,r.i,r.d,Hs,live.bot);
@@ -1237,6 +1258,63 @@ function informedYMax(){
 function renderCharts(){
   renderPanel($('#chartNaive'),'naive',0.55);
   renderPanel($('#chartInformed'),'informed',informedYMax());
+}
+
+let spaghettiTraces=null, spaghettiStarted=false;
+function drawSpaghetti(cv,traces,reveal){
+  if(!cv) return;
+  const f=fitCanvas(cv), ctx=f.ctx, w=f.w, h=f.h;
+  ctx.clearRect(0,0,w,h);
+  const padL=42,padR=14,padT=18,padB=22;
+  const pw=Math.max(10,w-padL-padR), ph=Math.max(10,h-padT-padB);
+  const X=i=>padL+(i/100)*pw;
+  const Y=p=>padT+(1-p)*ph;
+  const yBot=padT+ph;
+  ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
+  [0,0.5,1].forEach(p=>{ ctx.beginPath(); ctx.moveTo(padL,Y(p)); ctx.lineTo(padL+pw,Y(p)); ctx.stroke(); });
+  ctx.fillStyle='rgba(154,163,183,.75)'; ctx.font='8px "JetBrains Mono", monospace';
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  ctx.fillText('100%',padL-6,Y(1)); ctx.fillText('50%',padL-6,Y(0.5)); ctx.fillText('0%',padL-6,Y(0));
+  ctx.setLineDash([4,5]); ctx.strokeStyle='rgba(255,255,255,.22)';
+  ctx.beginPath(); ctx.moveTo(padL,Y(0.5)); ctx.lineTo(padL+pw,Y(0.5)); ctx.stroke();
+  ctx.strokeStyle='rgba(251,113,133,.5)';
+  ctx.beginPath(); ctx.moveTo(padL,Y(0.01)); ctx.lineTo(padL+pw,Y(0.01)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.textAlign='left'; ctx.textBaseline='top';
+  ctx.fillStyle='rgba(94,234,212,.6)'; ctx.fillText('WAHRHEIT',padL+4,padT-14);
+  ctx.fillStyle='rgba(253,164,175,.6)'; ctx.fillText('WAHN',padL+4,yBot+5);
+  ctx.textAlign='right'; ctx.fillStyle='rgba(154,163,183,.6)'; ctx.fillText('Runde 100',padL+pw,yBot+5);
+  const upto=Math.max(2,Math.floor(clamp(reveal,0,1)*100)+1);
+  traces.forEach(tr=>{
+    const lastVal=tr[Math.min(upto-1,tr.length-1)];
+    const base=lastVal>=0.5?'rgba(45,212,191,':'rgba(251,113,133,';
+    ctx.beginPath();
+    ctx.moveTo(X(0),Y(tr[0]));
+    for(let i=1;i<upto;i++) ctx.lineTo(X(i),Y(tr[i]));
+    ctx.strokeStyle=base+'0.7)'; ctx.lineWidth=1.5; ctx.lineJoin='round'; ctx.stroke();
+    if(reveal>=1){
+      const fx=X(tr.length-1), fy=Y(tr[tr.length-1]);
+      ctx.fillStyle=lastVal>=0.5?'#2dd4bf':'#fb7185';
+      ctx.shadowColor=ctx.fillStyle; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(fx,fy,3,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+    }
+  });
+}
+async function initSpaghetti(){
+  if(spaghettiStarted) return;
+  const cv=$('#spaghetti'); if(!cv) return;
+  spaghettiStarted=true;
+  const traces=[];
+  for(let i=0;i<10;i++) traces.push(simulateConversation(0.8,'halluc','naive',100,true).trace);
+  spaghettiTraces=traces;
+  const start=performance.now(), dur=1800;
+  function frame(now){
+    const t=clamp((now-start)/dur,0,1);
+    drawSpaghetti(cv,traces,t);
+    if(t<1) requestAnimationFrame(frame);
+  }
+  if(motionOK) requestAnimationFrame(frame); else drawSpaghetti(cv,traces,1);
 }
 
 async function startCharts(target,reset){
@@ -1501,7 +1579,7 @@ function initControls(){
       e.preventDefault(); togglePlay();
     }
   });
-  window.addEventListener('resize',drawTrace);
+  window.addEventListener('resize',function(){ drawTrace(); if(spaghettiTraces) drawSpaghetti($('#spaghetti'),spaghettiTraces,1); });
 }
 
 let chartsStarted=false;
@@ -1513,6 +1591,7 @@ function maybeStartCharts(){
   if(r.top<window.innerHeight*0.92 && r.bottom>0){
     chartsStarted=true;
     startCharts(240,true);
+    initSpaghetti();
   }
 }
 function initChartsObserver(){
