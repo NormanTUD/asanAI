@@ -13,7 +13,7 @@
   if (!document.getElementById("ls-wm-style")) {
     var st = document.createElement("style");
     st.id = "ls-wm-style";
-    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:transparent}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:240px;padding:6px 8px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 11px/1.35 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none}.ls-wm-tip[hidden]{display:none}.ls-wm-play{position:absolute;right:12px;bottom:12px;z-index:9;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-green,#63a44b);color:#fff;padding:7px 11px;font:600 12px 'Open Sans',sans-serif;cursor:pointer}.ls-wm-play:hover{background:var(--tm-petrol,#004b6f)}.ls-wm-game-status{position:absolute;left:14px;bottom:14px;z-index:9;max-width:min(52%,420px);font:600 11px/1.4 'Open Sans',sans-serif;color:var(--tm-ink,#000);background:rgba(255,255,255,.92);border:1px solid var(--tm-line,#b9c8c3);padding:6px 8px}";
+    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:transparent}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:320px;padding:8px 10px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 13px/1.45 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none;white-space:pre-line}.ls-wm-tip[hidden]{display:none}.ls-wm-play{position:absolute;right:12px;bottom:12px;z-index:9;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-green,#63a44b);color:#fff;padding:7px 11px;font:600 12px 'Open Sans',sans-serif;cursor:pointer}.ls-wm-play:hover{background:var(--tm-petrol,#004b6f)}.ls-wm-game-status{position:absolute;left:14px;bottom:14px;z-index:9;max-width:min(52%,420px);font:600 11px/1.4 'Open Sans',sans-serif;color:var(--tm-ink,#000);background:rgba(255,255,255,.92);border:1px solid var(--tm-line,#b9c8c3);padding:6px 8px}";
     document.head.appendChild(st);
   }
 
@@ -1176,7 +1176,9 @@
         if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) { hit = h; break; }
       }
       if (!hit) { hideTip(); return; }
-      tip.textContent = hit.text;
+      tip.textContent = hit.text + "\n" + (DE
+        ? "Jedes Feld hat drei Zustände: leer, dein Spieler, Gegner. Die Probe liest sie relativ zum Spieler am Zug."
+        : "Each square has three states: empty, your player, opponent. The probe reads them relative to the player to move.");
       tip.hidden = false;
       var tw = tip.offsetWidth || 180, th = tip.offsetHeight || 30;
       var tx = x + 14, ty = y + 14;
