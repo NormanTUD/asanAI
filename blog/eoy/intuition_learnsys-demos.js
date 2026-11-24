@@ -37,13 +37,44 @@
     function tipTextFor(node) {
       var text = node.getAttribute("data-tip");
       if (!text) text = node.getAttribute(api.lang === "de" ? "data-tip-de" : "data-tip-en");
-      return text || "";
+      if (!text) text = node.getAttribute("aria-label") || node.getAttribute("title") || "";
+      if (!text && node.matches && node.matches("canvas, svg, [role=img]")) {
+        text = api.tip(
+          "Interaktive Grafik. Fahre über die Elemente, um Werte und Erklärungen zu sehen.",
+          "Interactive graphic. Hover the elements to see values and explanations."
+        );
+      }
+      if (!text && node.matches && node.matches("button, [role=button]")) text = node.textContent.trim();
+      if (!text && node.matches && node.matches("output")) {
+        text = api.tip("Aktueller Wert", "Current value");
+      }
+      if (!text && node.matches && node.matches("input, select")) {
+        text = node.getAttribute("placeholder") || node.getAttribute("name") || api.tip("Eingabefeld", "Input field");
+      }
+      if (!text) return "";
+      if (node.matches && node.matches("input")) {
+        var label = node.closest("label");
+        var name = label ? label.textContent.replace(node.value, "").trim() : (node.getAttribute("aria-label") || "");
+        text += "\n" + name + ": " + node.value;
+      } else if (node.matches && node.matches("output")) {
+        text += "\n" + api.tip("Aktueller Wert", "Current value") + ": " + node.value;
+      }
+      if (node.matches && node.matches("canvas, svg, [role=img]")) {
+        var scope = node.closest(".ls-scene-layer, .ls-scene-host, .ls-bs-detail, .ls-stage, [data-demo]") || host;
+        var live = scope && scope.querySelector('[aria-live="polite"]');
+        var valueText = live ? live.textContent.replace(/\s+/g, " ").trim() : "";
+        if (valueText && text.indexOf(valueText) === -1) text += "\n" + valueText.slice(0, 260);
+      }
+      return text;
     }
     function tipNode(e) {
-      var node = e.target && e.target.closest ? e.target.closest("[data-tip],[data-tip-de],[data-tip-en]") : null;
+      if (!e.target || !e.target.closest) return null;
+      var node = e.target.closest("[data-tip],[data-tip-de],[data-tip-en]");
+      if (!node) {
+        node = e.target.closest("canvas, svg, [role=img], button, [role=button], input, select, output");
+      }
       if (!node || !host.contains(node)) return null;
       if (node.closest(".ls-rope-scene,.ls-bs-residual")) return null;
-      if (node.tagName === "CANVAS" && node.closest(".ls-codesem-scene,.ls-ind-scene")) return null;
       return node;
     }
     function tipPlace(x, y) {

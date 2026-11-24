@@ -832,7 +832,7 @@
       if (sub) {
         var leadClass = sub.lead ? ' class="ls-bs-lead"' : '';
         var subText = String(sub.text).split(/\n{2,}/).map(function (chunk) { return '<p' + leadClass + '>' + inlineMathText(chunk) + '</p>'; }).join('');
-        var subCanvas = '<div class="ls-bs-subcanvas"><canvas data-mini="' + (sub.mini || "ffn") + '"></canvas></div>';
+        var subCanvas = '<div class="ls-bs-subcanvas"><canvas data-mini="' + (sub.mini || "ffn") + '" aria-label="' + esc((DE ? "Schematische Darstellung zu " : "Schematic for ") + sub.title) + '"></canvas></div>';
         html += '<h3 class="ls-bs-title">' + esc(sub.title) + '</h3>' +
           '<div class="ls-bs-sub ls-bs-sub--wide">' + (sub.lead ? subText + subCanvas : subCanvas + subText) + '</div>';
       } else {
@@ -842,7 +842,7 @@
         if (b.id === "transformer") {
           html += '<div class="ls-bs-traj" data-traj-host>' +
             '<div class="ls-bs-traj-head"><b>' + (DE ? "Denken = Punkte verschieben" : "Thinking = moving points") + '</b><span>' + (DE ? "Jede Schicht verschiebt den Token-Vektor neu." : "Every layer moves the token vector again.") + '</span></div>' +
-            '<div class="ls-bs-traj-stage"><canvas class="ls-bs-traj-canvas" role="img"></canvas></div>' +
+            '<div class="ls-bs-traj-stage"><canvas class="ls-bs-traj-canvas" role="img" aria-label="' + (DE ? "2D-Trajektorie von vier Token-Vektoren durch die Schichten; Punkte sind Vektoren, Linien sind Wege." : "2D trajectory of four token vectors through the layers; points are vectors, lines are paths.") + '"></canvas></div>' +
             '<div class="ls-bs-traj-bar"><button type="button" class="ls-btn ls-btn--tiny ls-bs-traj-step">' + (DE ? "Nächste Schicht" : "Next layer") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-bs-traj-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button><span class="ls-bs-traj-readout" aria-live="polite"></span></div>' +
             '<p class="ls-bs-traj-note">' + (DE ? "Vereinfachte 2D-Trajektorie wie im Transformer-Labor: Jeder Punkt ist ein Token-Vektor; die Linie zeigt seinen Weg durch die Schichten. Fiktives Beispiel, keine Messung." : "Simplified 2D trajectory as in the transformer lab: each point is a token vector; the line shows its path through the layers. Fictional example, not a measurement.") + '</p>' +
           '</div>';
@@ -878,7 +878,7 @@
       } else if (b.sub) {
         // The overview signpost is already rendered above; sub-pages follow.
       } else {
-        html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '"></canvas></div>';
+        html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '" aria-label="' + esc((DE ? "Schematische Darstellung zu " : "Schematic for ") + (b.title || "")) + '"></canvas></div>';
       }
       if (!sub && b.mini === "unembed") {
         html += '<p class="ls-bs-traj-caption">' + (DE ? "Der Output-Vektor des LLM ist der letzte Vektor des letzten Tokens in der letzten Schicht. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; in dieser schematischen Ansicht entscheidet der Kosinus zu diesem Vektor, im echten Logit zählt auch die Länge." : "The output vector of the LLM is the final vector of the last token in the last layer. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; in this schematic view the cosine to this vector decides, while the real logit also includes length.") + '</p>';

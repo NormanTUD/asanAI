@@ -1729,6 +1729,55 @@ def test_phase_change_hovers(browser, base, lang, results):
     context.close()
 
 
+def test_canvas_hover_coverage(browser, base, lang, results):
+    context, page, logs = open_page(browser, base, lang, wait_media=False, path=INDEX)
+    tag = f"canvas-hover-coverage-{lang}"
+    tip_selector = ".ls-eoy-tip,.ls-qkv-tip,.ls-codesem-tip,.ls-ind-tip,.ls-land-tip,.ls-wm-tip,.ls-bs-res-tip"
+    covered = 0
+    for step in range(31):
+        page.evaluate("(step) => LearnSys.go(0, step, 0)", step)
+        page.wait_for_timeout(1100)
+        canvases = page.evaluate(
+            """
+            () => Array.from(document.querySelectorAll('canvas')).filter((canvas) => {
+              const r = canvas.getBoundingClientRect();
+              const cs = getComputedStyle(canvas);
+              return r.width > 30 && r.height > 30 && r.top < innerHeight && r.bottom > 0 &&
+                cs.display !== 'none' && cs.visibility !== 'hidden';
+            }).map((canvas) => {
+              const r = canvas.getBoundingClientRect();
+              return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+            })
+            """
+        )
+        for canvas in canvases:
+            page.mouse.move(2, 2)
+            page.wait_for_timeout(60)
+            page.mouse.move(canvas["x"], canvas["y"])
+            page.wait_for_timeout(180)
+            tip = page.evaluate(
+                """
+                (selector) => {
+                  for (const element of document.querySelectorAll(selector)) {
+                    if (!element.hidden && element.offsetWidth > 0 && element.textContent.trim()) {
+                      return { text: element.textContent.trim(), font: parseFloat(getComputedStyle(element).fontSize) };
+                    }
+                  }
+                  return null;
+                }
+                """,
+                tip_selector,
+            )
+            covered += 1
+            results.check(tag, f"step {step + 1}: canvas shows a hover explanation", bool(tip and len(tip["text"]) > 20), str(tip)[:160])
+            if tip and "ls-eoy-tip" in page.evaluate("() => document.querySelector('.ls-eoy-tip')?.className || ''"):
+                results.check(tag, f"step {step + 1}: hover text is readable", tip["font"] >= 12, str(tip))
+    results.check(tag, "all slide canvases were reached", covered >= 20, str(covered))
+    errors = logs.take()
+    results.check(tag, "canvas hover coverage has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+
 def test_ffn_role(browser, base, lang, results):
     context, page, logs = open_page(browser, base, lang, path="/eoy/18.php", wait_media=False)
     tag = f"ffn-role-{lang}"
@@ -2316,6 +2365,7 @@ def main():
                 test_nav_hint(browser, base, lang, results)
                 test_blocks_sequence(browser, base, lang, results)
                 test_phase_change_hovers(browser, base, lang, results)
+                test_canvas_hover_coverage(browser, base, lang, results)
                 test_ffn_role(browser, base, lang, results)
                 test_embedding_arrows(browser, base, lang, results)
                 test_unembed_pause(browser, base, lang, results)

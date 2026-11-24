@@ -191,7 +191,7 @@ button{color:inherit}
 .ls-tip-kicker{font-size:var(--ls-fs-micro);text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);margin-bottom:3px}
 .ls-tip p{margin:0 0 4px}
 .ls-tip-more{font-size:var(--ls-fs-micro);color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
-.ls-eoy-tip{position:fixed;z-index:125;max-width:300px;padding:8px 10px;border:1px solid var(--ls-line-strong);border-radius:8px;background:var(--ls-paper);box-shadow:0 10px 30px rgba(0,20,30,.18);font:600 11px/1.45 "Open Sans",sans-serif;color:var(--ls-ink);white-space:pre-line;pointer-events:none}
+.ls-eoy-tip{position:fixed;z-index:125;max-width:380px;padding:10px 12px;border:1px solid var(--ls-line-strong);border-radius:10px;background:var(--ls-paper);box-shadow:0 12px 34px rgba(0,20,30,.22);font:500 13px/1.5 "Open Sans",sans-serif;color:var(--ls-ink);white-space:pre-line;pointer-events:none}
 .ls-eoy-tip[hidden]{display:none}
 .ls-eoy-tip math{font-size:1em;color:inherit}
 html.dark .ls-eoy-tip,html[data-theme="dark"] .ls-eoy-tip{background:#0f1c26;color:#e9f5f8;border-color:rgba(180,232,248,.35)}
