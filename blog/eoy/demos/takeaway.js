@@ -52,30 +52,10 @@
       }
     ];
 
-    var TAKEAWAYS = [
-      { color: "petrol", num: "01", title: L("Vorhersage", "Prediction"), body: L("Das nächste Token ist das Ziel. Fähigkeiten und Fehler folgen aus dieser einen Aufgabe.", "The next token is the goal. Abilities and errors follow from this one task.") },
-      { color: "green", num: "02", title: L("Kontext", "Context"), body: L("Das Modell erinnert nur, was im Fenster steht. Wichtiges an den Rand, Beleg verlangen.", "The model remembers only what is in the window. Put key facts at the edges and ask for evidence.") },
-      { color: "gold", num: "03", title: L("Wahrheit", "Truth"), body: L("Plausibel ist nicht wahr. Prüfe Quelle, Rechnung und Gegenbeispiel.", "Plausible is not true. Check the source, the calculation, and a counterexample.") },
-      { color: "lilac", num: "04", title: L("Macht", "Power"), body: L("Training braucht Compute und Kapital. Wer sie hat, setzt Preise, Zugang und Regeln.", "Training needs compute and capital. Whoever has them sets prices, access, and rules.") }
-    ];
-
-    var QUESTIONS = [
-      { q: L("Welche Daten?", "Which data?"), s: L("Woraus wurde gelernt?", "What was it trained on?") },
-      { q: L("Welche Aufgabe?", "Which task?"), s: L("Was soll es eigentlich tun?", "What is it supposed to do?") },
-      { q: L("Welche Evidenz?", "Which evidence?"), s: L("Was belegt die Antwort?", "What supports the answer?") },
-      { q: L("Wer haftet?", "Who is accountable?"), s: L("Wer trägt die Folgen?", "Who bears the consequences?") }
-    ];
-
     var el = document.createElement("div");
     el.className = "ls-tk2";
     var chips = STATIONS.map(function (s, i) {
       return '<button type="button" class="ls-tk2-chip' + (i === 0 ? " is-on" : "") + '" data-tk2-station="' + i + '" role="tab" aria-selected="' + (i === 0) + '"><span>0' + (i + 1) + '</span>' + esc(s.chip) + '</button>';
-    }).join("");
-    var takeaways = TAKEAWAYS.map(function (t) {
-      return '<article class="ls-tk2-take is-' + t.color + '"><span>' + t.num + '</span><b>' + t.title + '</b><p>' + t.body + '</p></article>';
-    }).join("");
-    var questions = QUESTIONS.map(function (q) {
-      return '<div class="ls-tk2-q"><b>' + q.q + '</b><span>' + q.s + '</span></div>';
     }).join("");
     el.innerHTML =
       '<div class="ls-tk2-hero">' +
@@ -88,9 +68,7 @@
           '<span class="ls-tk2-state" data-tk2-state>' + L("ungeprüft", "unverified") + '</span>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-tk2-detail" data-tk2-detail></div>' +
-      '<div class="ls-tk2-takes">' + takeaways + '</div>' +
-      '<div class="ls-tk2-questions"><b>' + L("Vier Fragen, die bleiben", "Four questions that stay") + '</b>' + questions + '</div>';
+      '<div class="ls-tk2-detail" data-tk2-detail></div>';
     root.appendChild(el);
 
     var canvas = el.querySelector(".ls-tk2-canvas");
@@ -369,14 +347,15 @@
       var labels = DE ? ["Text", "Token", "Vektor", "Attention", "FFN", "Verteilung"] : ["Text", "Token", "Vector", "Attention", "FFN", "Distribution"];
       for (var i = 0; i < 6; i++) {
         var x = gateX(i, w), on = i === active;
+        var pulse = on ? 1 + 0.06 * Math.sin(t * 3.2) : 1;
         if (on) {
           ctx.save();
-          var halo = ctx.createRadialGradient(x, y, 2, x, y, 34);
-          halo.addColorStop(0, "rgba(201,162,39,.28)"); halo.addColorStop(1, "rgba(201,162,39,0)");
-          ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(x, y, 34, 0, Math.PI * 2); ctx.fill();
+          var halo = ctx.createRadialGradient(x, y, 2, x, y, 34 * pulse);
+          halo.addColorStop(0, "rgba(201,162,39,.30)"); halo.addColorStop(1, "rgba(201,162,39,0)");
+          ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(x, y, 34 * pulse, 0, Math.PI * 2); ctx.fill();
           ctx.restore();
         }
-        ctx.beginPath(); ctx.arc(x, y, on ? 19 : 15, 0, Math.PI * 2);
+        ctx.beginPath(); ctx.arc(x, y, (on ? 19 : 15) * pulse, 0, Math.PI * 2);
         ctx.fillStyle = C.paper; ctx.fill();
         ctx.strokeStyle = on ? C.gold : C.lineStrong; ctx.lineWidth = on ? 2.4 : 1.3; ctx.stroke();
         ctx.fillStyle = on ? C.gold : C.petrol;
@@ -473,6 +452,26 @@
     }
     chipEls.forEach(function (b) {
       b.addEventListener("click", function () { selectStation(parseInt(b.getAttribute("data-tk2-station"), 10) || 0); });
+    });
+    function gateAt(x, y) {
+      if (!size) return -1;
+      var riverY = Math.max(14 + Math.max(160, size.h * 0.55) + 40, size.h * 0.72);
+      if (Math.abs(y - riverY) > 34) return -1;
+      var best = -1, bestDist = 1e9;
+      for (var i = 0; i < 6; i++) {
+        var d = Math.abs(x - gateX(i, size.w));
+        if (d < bestDist) { bestDist = d; best = i; }
+      }
+      return bestDist < 38 ? best : -1;
+    }
+    canvas.addEventListener("click", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var hit = gateAt(e.clientX - r.left, e.clientY - r.top);
+      if (hit >= 0) selectStation(hit);
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      var r = canvas.getBoundingClientRect();
+      canvas.style.cursor = gateAt(e.clientX - r.left, e.clientY - r.top) >= 0 ? "pointer" : "default";
     });
     if (tempEl) tempEl.addEventListener("input", function () {
       temp = Math.max(0.2, Math.min(1.8, parseFloat(tempEl.value) || 0.8));

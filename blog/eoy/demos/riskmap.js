@@ -55,7 +55,7 @@
         ],
         items: [
           { tag: "Arbeit", title: "Aufgaben, nicht Berufe", short: "Ersetzen und neu schaffen", body: "Automatisierung ersetzt Aufgaben und schafft neue. Ob der Gewinn bei vielen ankommt, hängt von Institutionen und Politik ab, nicht von der Technik allein.", example: "Übersetzung, Kundenservice, Programmierung.", counter: "Weiterbildung, soziale Sicherung, Wettbewerb.", cite: "Acemoglu & Restrepo (2019)" },
-          { tag: "Wahrheit", title: "Falsch ist billiger", short: "Desinformation in Echtzeit", body: "In der untersuchten Twitter-Stichprobe verbreiteten sich falsche Nachrichten schneller als wahre. Generative Modelle machen überzeugende Fälschungen billig und skalierbar.", example: "Gefälschte Stimmen, Fake-Zitate.", counter: "Provenienz, Journalismus, Plattformregeln.", cite: "Vosoughi et al. (2018)" },
+          { tag: "Wahrheit", title: "Falsch ist billiger", short: "Desinformation in Echtzeit", body: "In der untersuchten Twitter-Stichprobe verbreiteten sich falsche Nachrichten schneller als wahre. Generative Modelle machen überzeugende Fälschungen billig und skalierbar. Eine Quelle ist ein Hinweis, kein Beweis.", example: "Gefälschte Stimmen, Fake-Zitate, erfundene DOIs. Eine KI nennt DOI und Titel; erst die Auflösung zeigt, ob beides existiert.", counter: "Quellenarbeit: verfolge jede Quelle bis zur Primärquelle (Studie, Datensatz, Originaldokument, eigene Beobachtung) und prüfe die ganze Kette auf Konsistenz. Widerspruch oder Lücke = nicht belegt oder unvollständig. Provenienz, Journalismus und Plattformregeln helfen, ersetzen die Prüfung aber nicht.", cite: "Vosoughi et al. (2018); Wineburg & McGrew (2019); Caulfield (2019); ACRL (2015)" },
           { tag: "Urheberrecht", title: "Wer besitzt den Stil?", short: "Training, Remix, Lizenz", body: "Modelle lernen aus geschützten Werken und können Stile nachahmen. Urheberrecht, Lizenz und Vergütung sind national unterschiedlich und offen.", example: "Stilimitation, Trainingsdaten.", counter: "Lizenzen, Vergütung, Transparenz.", cite: "US Copyright Office (2025)" },
           { tag: "Macht", title: "Wer schreibt die Regeln?", short: "Compute, Staaten, Konzerne", body: "Rechenleistung ist konzentriert; Daten und Talente sind ebenfalls ungleich verteilt. Demokratische Kontrolle braucht Transparenz, Wettbewerb und Regeln, die auch über Grenzen gelten.", example: "Tiananmen bei chinesischen Modellen; Safety-Filter bei US-Modellen.", counter: "Transparenz, unabhängige Audits, Wettbewerb.", cite: "Sastry et al. (2024); Noels et al. (2025)" }
         ]
@@ -109,7 +109,7 @@
         ],
         items: [
           { tag: "Work", title: "Tasks, not jobs", short: "replace and create", body: "Automation replaces tasks and creates new ones. Whether the gains reach many people depends on institutions and politics, not on technology alone.", example: "Translation, customer service, programming.", counter: "Retraining, social insurance, competition.", cite: "Acemoglu & Restrepo (2019)" },
-          { tag: "Truth", title: "False is cheaper", short: "real-time disinformation", body: "In the Twitter sample studied, false news spread faster than true news. Generative models make convincing fakes cheap and scalable.", example: "Cloned voices, fake citations.", counter: "Provenance, journalism, platform rules.", cite: "Vosoughi et al. (2018)" },
+          { tag: "Truth", title: "False is cheaper", short: "real-time disinformation", body: "In the Twitter sample studied, false news spread faster than true news. Generative models make convincing fakes cheap and scalable. A source is a lead, not proof.", example: "Cloned voices, fake citations, invented DOIs. An AI names a DOI and title; only resolving them shows whether both exist.", counter: "Source work: trace every source to its primary source (study, dataset, original document, direct observation) and check the whole chain for consistency. Contradiction or gap = not supported or incomplete. Provenance, journalism, and platform rules help, but they do not replace the check.", cite: "Vosoughi et al. (2018); Wineburg & McGrew (2019); Caulfield (2019); ACRL (2015)" },
           { tag: "Copyright", title: "Who owns the style?", short: "training, remix, licence", body: "Models learn from protected works and can imitate styles. Copyright, licensing, and payment are national questions and remain open.", example: "Style imitation, training data.", counter: "Licences, payment, transparency.", cite: "US Copyright Office (2025)" },
           { tag: "Power", title: "Who writes the rules?", short: "compute, states, companies", body: "Compute is concentrated; data and talent are also unevenly distributed. Democratic control needs transparency, competition, and rules that work across borders.", example: "Tiananmen in Chinese models; safety filters in US models.", counter: "Transparency, independent audits, competition.", cite: "Sastry et al. (2024); Noels et al. (2025)" }
         ]
@@ -237,6 +237,36 @@
       ];
       return '<svg class="ls-rm-soc-cross-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' + paths[idx] + '</svg>';
     }
+    function socDetailInner(item, kind) {
+      var lvl = Math.max(1, Math.min(4, parseInt(item.level, 10) || 1));
+      return '<div class="ls-rm-soc-detail-top">' +
+        '<span class="ls-rm-soc-detail-id' + (kind === "cross" ? " is-cross" : "") + '">' + esc(item.tag || "") + '</span>' +
+        '<div class="ls-rm-soc-detail-title"><b>' + esc(item.title || "") + '</b>' + (item.who ? '<span>' + esc(item.who) + '</span>' : '') + '</div>' +
+        (kind === "chain" ? '<div class="ls-rm-soc-detail-meter"><span>' + L("Konzentration", "Concentration") + '</span><b>' + esc(item.conc || "") + '</b><i><em style="width:' + (lvl * 25) + '%"></em></i></div>' : '') +
+      '</div>' +
+      '<div class="ls-rm-soc-blocks">' +
+        '<div class="ls-rm-soc-block"><b>' + L("Was", "What") + '</b><p>' + esc(item.body || "") + '</p></div>' +
+        '<div class="ls-rm-soc-block"><b>' + L("Beispiel", "Example") + '</b><p>' + esc(item.example || "") + '</p></div>' +
+        '<div class="ls-rm-soc-block is-fix"><b>' + L("Was hilft?", "What helps?") + '</b><p>' + esc(item.counter || "") + '</p></div>' +
+      '</div>' +
+      '<span class="ls-rm-cite"><b>' + L("Quelle", "Source") + ':</b> ' + esc(item.cite || "") + '</span>';
+    }
+    function measureSocDetail() {
+      if (state.mode !== "society") return;
+      var holder = el.querySelector(".ls-rm-soc-detail");
+      if (!holder) return;
+      var w = holder.getBoundingClientRect().width;
+      if (w < 40) return;
+      var probe = document.createElement("div");
+      probe.className = "ls-rm-soc-detail";
+      probe.style.cssText = "position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none;width:" + w + "px;";
+      el.appendChild(probe);
+      var max = 0, d = modeData();
+      (d.chain || []).forEach(function (item) { probe.innerHTML = socDetailInner(item, "chain"); max = Math.max(max, probe.offsetHeight); });
+      (d.items || []).forEach(function (item) { probe.innerHTML = socDetailInner(item, "cross"); max = Math.max(max, probe.offsetHeight); });
+      probe.remove();
+      if (max > 0) holder.style.minHeight = Math.ceil(max) + "px";
+    }
     function renderSociety(d) {
       var chain = d.chain || [];
       var cross = d.items || [];
@@ -287,25 +317,14 @@
           }).join("") + '</div>' +
         '</div>';
       }
-      var detail = '<div class="ls-rm-soc-detail" data-tip="' + L("Was diese Stufe bedeutet, ein Beispiel und was hilft.", "What this stage means, an example, and what helps.") + '">' +
-        '<div class="ls-rm-soc-detail-top">' +
-          '<span class="ls-rm-soc-detail-id' + (kind === "cross" ? " is-cross" : "") + '">' + esc(item.tag || "") + '</span>' +
-          '<div class="ls-rm-soc-detail-title"><b>' + esc(item.title || "") + '</b>' + (item.who ? '<span>' + esc(item.who) + '</span>' : '') + '</div>' +
-          (kind === "chain" ? '<div class="ls-rm-soc-detail-meter"><span>' + L("Konzentration", "Concentration") + '</span><b>' + esc(item.conc || "") + '</b><i><em style="width:' + (lvl * 25) + '%"></em></i></div>' : '') +
-        '</div>' +
-        '<div class="ls-rm-soc-blocks">' +
-          '<div class="ls-rm-soc-block"><b>' + L("Was", "What") + '</b><p>' + esc(item.body || "") + '</p></div>' +
-          '<div class="ls-rm-soc-block"><b>' + L("Beispiel", "Example") + '</b><p>' + esc(item.example || "") + '</p></div>' +
-          '<div class="ls-rm-soc-block is-fix"><b>' + L("Was hilft?", "What helps?") + '</b><p>' + esc(item.counter || "") + '</p></div>' +
-        '</div>' +
-        '<span class="ls-rm-cite"><b>' + L("Quelle", "Source") + ':</b> ' + esc(item.cite || "") + '</span>' +
-      '</div>';
+      var detail = '<div class="ls-rm-soc-detail" data-tip="' + L("Was diese Stufe bedeutet, ein Beispiel und was hilft.", "What this stage means, an example, and what helps.") + '">' + socDetailInner(item, kind) + '</div>';
       var takeaway = '<div class="ls-rm-soc-takeaway"><b>' + L("Merksatz", "Takeaway") + '</b><p>' +
         (kind === "chain"
           ? L("Wer eine Stufe kontrolliert, setzt die Bedingungen für alle darunter.", "Whoever controls one stage sets the terms for everyone below.")
           : L("Macht ist nicht nur Compute: Arbeit, Wahrheit, Urheberrecht und Regeln verteilen die Risiken.", "Power is not only compute: work, truth, copyright, and rules distribute the risks.")) +
         '</p></div>';
       el.innerHTML = header(d) + switchHTML + hero + detail + takeaway;
+      measureSocDetail();
     }
     function render() {
       var d = modeData();
@@ -475,7 +494,7 @@
         if (state.mode === "society" && state.socKind === "cross") return modeData().chain.length > 0;
         return state.active > 0;
       },
-      resize: function () {},
+      resize: function () { if (state.mode === "society") measureSocDetail(); },
       destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
     };
   }
