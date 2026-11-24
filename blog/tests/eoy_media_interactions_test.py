@@ -1729,34 +1729,30 @@ def test_phase_change_hovers(browser, base, lang, results):
     context.close()
 
 
-def test_ffn_separation(browser, base, lang, results):
+def test_ffn_role(browser, base, lang, results):
     context, page, logs = open_page(browser, base, lang, path="/eoy/18.php", wait_media=False)
-    tag = f"ffn-sep-{lang}"
+    tag = f"ffn-role-{lang}"
     page.wait_for_timeout(700)
-    page.evaluate("() => LearnSys.go(0, 0, 1)")
-    page.wait_for_timeout(1000)
     info = page.evaluate(
         r"""
 () => ({
-  card: !!document.querySelector('.ls-hc-sep'),
-  canvas: !!document.querySelector('.ls-hc-sep-canvas'),
-  buttons: document.querySelectorAll('.ls-hc-sep button').length,
-  note: document.querySelector('.ls-hc-sep')?.innerText || '',
-  aria: document.querySelector('.ls-hc-sep-canvas')?.getAttribute('aria-label') || '',
-  width: document.querySelector('.ls-hc-sep-canvas')?.getBoundingClientRect().width || 0,
-  height: document.querySelector('.ls-hc-sep-canvas')?.getBoundingClientRect().height || 0,
+  title: document.querySelector('#ls-title')?.textContent || '',
+  kicker: document.querySelector('#ls-kicker')?.textContent || '',
+  scene: !!document.querySelector('.ls-ffn-scene'),
+  canvas: !!document.querySelector('.ls-ffn-bend-canvas'),
+  removedCard: !!document.querySelector('.ls-hc-sep'),
+  removedCanvas: !!document.querySelector('.ls-hc-sep-canvas'),
+  body: document.querySelector('#ls-body')?.innerText || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
-    results.check(tag, "FFN subdivision shows the separation visual", info["card"] and info["canvas"], str(info)[:240])
-    results.check(tag, "FFN separation canvas is visible next to the graph", info["width"] > 120 and info["height"] > 120, str(info)[:240])
-    results.check(tag, "FFN separation is purely visual", info["buttons"] == 0, str(info)[:240])
-    results.check(tag, "FFN separation shows input, hidden and output", all(token in info["note"] for token in ("Input", "Hidden", "Output")), info["note"][:240])
-    results.check(tag, "FFN separation explains the regions", "trennt" in info["aria"] or "separates" in info["aria"], info["aria"][:240])
-    results.check(tag, "FFN separation has no page overflow", info["overflow"] <= 2, str(info["overflow"]))
+    results.check(tag, "FFN role slide is mounted", info["scene"] and info["canvas"], str(info)[:240])
+    results.check(tag, "FFN role slide keeps its MLP explanation", "MLP" in info["body"], info["body"][:240])
+    results.check(tag, "removed FFN separation sub-slide is gone", not info["removedCard"] and not info["removedCanvas"], str(info)[:240])
+    results.check(tag, "FFN role slide has no page overflow", info["overflow"] <= 2, str(info["overflow"]))
     errors = logs.take()
-    results.check(tag, "FFN separation has no console errors", not errors, " | ".join(errors)[:400])
+    results.check(tag, "FFN role slide has no console errors", not errors, " | ".join(errors)[:400])
     context.close()
 
 
@@ -1987,8 +1983,9 @@ def test_hallucination_lab(browser, base, lang, results):
   group: document.querySelector('.ls-hx-question span')?.textContent || '',
   source: document.querySelector('.ls-hx-source-body')?.innerText || '',
   sourceCards: document.querySelectorAll('.ls-hx-source-card').length,
-  contextPos: !!document.querySelector('.ls-hx-contextpos'),
-  contextText: document.querySelector('.ls-hx-contextpos')?.innerText || '',
+  rag: !!document.querySelector('.ls-hx-ragbox'),
+  ragText: document.querySelector('.ls-hx-ragbox')?.textContent || '',
+  removedContextPos: !!document.querySelector('.ls-hx-contextpos'),
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
@@ -1999,7 +1996,8 @@ def test_hallucination_lab(browser, base, lang, results):
     results.check(tag, "hallucination lab has a risk map", info["risk"], str(info))
     results.check(tag, "hallucination lab exposes the taxonomy group", "Faktizität" in info["group"] or "Factuality" in info["group"], info["group"])
     results.check(tag, "hallucination lab distinguishes weights and context", info["sourceCards"] == 2, str(info)[:200])
-    results.check(tag, "hallucination lab shows the RAG context-position effect", info["contextPos"] and ("Liu" in info["contextText"]) and ("Mitte" in info["contextText"] or "middle" in info["contextText"]), info["contextText"][:240])
+    results.check(tag, "hallucination lab has the optional interactive RAG box", info["rag"] and ("Grenzwinkel" in info["ragText"] or "threshold" in info["ragText"] or "RAG in 30" in info["ragText"]), info["ragText"][:240])
+    results.check(tag, "old RAG context-position bar is gone", not info["removedContextPos"], str(info)[:240])
     page.locator('.ls-hx-chip').nth(2).click()
     page.wait_for_timeout(200)
     intrinsic = page.evaluate("() => ({ weights: document.querySelector('.ls-hx-source-card.is-weights')?.className || '', context: document.querySelector('.ls-hx-source-card.is-context')?.className || '' })")
@@ -2090,8 +2088,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
   mounted: !!document.querySelector('.ls-ll'),
   tabs: document.querySelectorAll('.ls-ll-tab').length,
   vars: document.querySelectorAll('.ls-ll-var').length,
-  disclaimer: !!document.querySelector('.ls-ll-disclaimer'),
-  disclaimerText: document.querySelector('.ls-ll-disclaimer')?.innerText || '',
+  head: document.querySelector('.ls-ll-head p')?.innerText || '',
   protocol: document.querySelectorAll('.ls-ll-protocol li').length,
   stamp: !!document.querySelector('.ls-ll-stamp'),
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -2101,7 +2098,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     results.check(tag, "limits test bench is mounted", bench["mounted"], str(bench))
     results.check(tag, "limits test bench has four tests", bench["tabs"] == 4, str(bench))
     results.check(tag, "paraphrase test shows three variants", bench["vars"] == 3, str(bench))
-    results.check(tag, "limits lab is labeled as a simulation", bench["disclaimer"] and ("SIMULATION" in bench["disclaimerText"] or "SIMULATED" in bench["disclaimerText"]), bench["disclaimerText"][:200])
+    results.check(tag, "limits lab labels its observations as constructed", ("konstruiert" in bench["head"] or "constructed" in bench["head"] or bench["stamp"]), bench["head"][:200])
     results.check(tag, "limits lab shows a real test protocol", bench["protocol"] >= 3, str(bench["protocol"]))
     results.check(tag, "limits lab stamps the observation as simulated", bench["stamp"], str(bench))
     page.locator('.ls-ll-run').click()
@@ -2319,7 +2316,7 @@ def main():
                 test_nav_hint(browser, base, lang, results)
                 test_blocks_sequence(browser, base, lang, results)
                 test_phase_change_hovers(browser, base, lang, results)
-                test_ffn_separation(browser, base, lang, results)
+                test_ffn_role(browser, base, lang, results)
                 test_embedding_arrows(browser, base, lang, results)
                 test_unembed_pause(browser, base, lang, results)
                 test_residual_layout(browser, base, lang, results)
