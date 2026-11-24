@@ -3472,7 +3472,8 @@
       }
       var keyBase = activeStep();
       var substepKeys = cfg.eoySingle && keyBase && keyBase.substeps;
-      if (!substepKeys && demo && demo.onKey && demo.onKey(e)) { updateBottomNav(); e.preventDefault(); return; }
+      var sceneOwnsKeys = demo && demo.ownsKeys && demo.ownsKeys();
+      if ((!substepKeys || sceneOwnsKeys) && demo && demo.onKey && demo.onKey(e)) { updateBottomNav(); e.preventDefault(); return; }
       if (e.key === "?" || e.key === "h" || e.key === "H") { e.preventDefault(); toggleHelp(); return; }
       if (e.shiftKey && e.key === "ArrowRight") { e.preventDefault(); nextDay(); return; }
       if (e.shiftKey && e.key === "ArrowLeft") { e.preventDefault(); prevDay(); return; }

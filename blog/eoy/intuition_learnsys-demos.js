@@ -106,6 +106,7 @@
         if (typeof scene.hasPrev === "function") return !!scene.hasPrev();
         return typeof scene.prev === "function";
       },
+      ownsKeys: function () { return scene && scene.ownsKeys ? !!scene.ownsKeys() : false; },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },
       destroy: function () {
         if (ro) ro.disconnect();
