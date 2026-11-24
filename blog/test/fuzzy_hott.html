@@ -3,21 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fuzzy · HoTT</title>
+<title>Fuzzy · HoTT — a three-dimensional story</title>
 <style>
-	:root {
-		--ink: #e9eefc;
-	}
+	:root { --accent: #ffcf6b; }
 	* { box-sizing: border-box; }
 	html, body {
 		margin: 0;
 		height: 100%;
 		overflow: hidden;
-		background: #04060c;
+		background: #03050b;
 	}
 	body {
 		font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-		color: var(--ink);
+		color: #e9eefc;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		user-select: none;
@@ -33,12 +31,54 @@
 		display: block;
 	}
 	#gl { z-index: 0; }
-	#fx { z-index: 1; pointer-events: none; }
+	.vignette {
+		position: fixed;
+		inset: 0;
+		z-index: 2;
+		pointer-events: none;
+		background:
+			radial-gradient(ellipse at 50% 46%, rgba(0,0,0,0) 38%, rgba(2,3,8,0.55) 100%),
+			linear-gradient(180deg, rgba(2,3,8,0.35), rgba(0,0,0,0) 18%, rgba(0,0,0,0) 82%, rgba(2,3,8,0.45));
+	}
+	.labels {
+		position: fixed;
+		inset: 0;
+		z-index: 3;
+		pointer-events: none;
+		overflow: hidden;
+	}
+	.label {
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: 0;
+		white-space: nowrap;
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: 0.30em;
+		text-transform: uppercase;
+		color: #eef3ff;
+		text-shadow: 0 0 16px rgba(0,0,0,0.92), 0 0 22px rgba(0,0,0,0.82);
+		will-change: transform, opacity;
+	}
+	.axis-label {
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: 0;
+		white-space: nowrap;
+		font-size: 8px;
+		font-weight: 500;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		text-shadow: 0 0 12px rgba(0,0,0,0.95);
+		will-change: transform, opacity;
+	}
 	.brand {
 		position: fixed;
 		top: max(30px, env(safe-area-inset-top));
 		left: max(34px, env(safe-area-inset-left));
-		z-index: 2;
+		z-index: 4;
 		pointer-events: none;
 		opacity: 0;
 		transform: translateY(-6px);
@@ -80,95 +120,144 @@
 		0%, 55% { transform: translateX(-100%); }
 		85%, 100% { transform: translateX(220%); }
 	}
-	.hint {
-		position: fixed;
-		right: max(34px, env(safe-area-inset-right));
-		bottom: max(28px, env(safe-area-inset-bottom));
-		z-index: 2;
-		pointer-events: none;
-		font-size: 9.5px;
-		letter-spacing: 0.34em;
-		text-transform: uppercase;
-		color: rgba(235, 241, 255, 0.3);
-		opacity: 0;
-		transition: opacity 2.2s ease;
-		white-space: nowrap;
-	}
-	body.ready .hint { opacity: 1; }
-	body.ready .hint.gone { opacity: 0; }
 	.caption {
 		position: fixed;
 		left: 50%;
-		bottom: max(28px, env(safe-area-inset-bottom));
-		z-index: 2;
-		pointer-events: none;
+		bottom: max(58px, calc(env(safe-area-inset-bottom) + 44px));
+		z-index: 4;
 		transform: translateX(-50%);
+		text-align: center;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.55s ease;
+		white-space: nowrap;
+	}
+	.caption.show { opacity: 1; }
+	.caption .eyebrow {
 		font-size: 9.5px;
-		letter-spacing: 0.62em;
+		font-weight: 500;
+		letter-spacing: 0.52em;
 		text-transform: uppercase;
+		color: var(--accent);
+		text-shadow: 0 0 18px rgba(0,0,0,0.9);
+	}
+	.caption .line {
+		margin-top: 8px;
+		font-size: 10.5px;
+		letter-spacing: 0.20em;
+		color: rgba(235, 241, 255, 0.55);
+		text-shadow: 0 0 16px rgba(0,0,0,0.95);
+	}
+	.dots {
+		position: fixed;
+		left: 50%;
+		bottom: max(26px, calc(env(safe-area-inset-bottom) + 16px));
+		z-index: 5;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		gap: 11px;
+	}
+	.dot {
+		width: 5px;
+		height: 5px;
+		padding: 0;
+		border: 0;
+		border-radius: 50%;
+		background: rgba(235, 241, 255, 0.26);
+		cursor: pointer;
+		transition: transform 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+	}
+	.dot:hover { background: rgba(235, 241, 255, 0.6); }
+	.dot.active {
+		background: var(--accent);
+		box-shadow: 0 0 12px var(--accent), 0 0 24px color-mix(in srgb, var(--accent) 45%, transparent);
+		transform: scale(1.55);
+	}
+	.nav {
+		position: fixed;
+		right: max(22px, env(safe-area-inset-right));
+		bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px));
+		z-index: 5;
+		display: flex;
+		gap: 9px;
+	}
+	.nav button {
+		width: 31px;
+		height: 31px;
+		padding: 0;
+		border-radius: 50%;
+		border: 1px solid rgba(235, 241, 255, 0.14);
+		background: rgba(235, 241, 255, 0.035);
+		color: rgba(235, 241, 255, 0.62);
+		font-size: 14px;
+		line-height: 1;
+		cursor: pointer;
+		transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+	}
+	.nav button:hover {
+		border-color: rgba(235, 241, 255, 0.38);
+		background: rgba(235, 241, 255, 0.09);
+		color: rgba(255, 255, 255, 0.95);
+	}
+	.nav button:disabled { opacity: 0.25; cursor: default; }
+	.keyhint {
+		position: fixed;
+		right: max(22px, env(safe-area-inset-right));
+		bottom: max(62px, calc(env(safe-area-inset-bottom) + 54px));
+		z-index: 5;
+		pointer-events: none;
+		font-size: 10px;
+		letter-spacing: 0.1em;
 		color: rgba(235, 241, 255, 0.34);
 		opacity: 0;
 		transition: opacity 1.6s ease;
-		white-space: nowrap;
 	}
-	body.ready .caption { opacity: 1; }
-	#capWord {
-		display: inline-block;
-		opacity: 1;
-		transition: opacity 0.9s ease, letter-spacing 1.4s ease;
+	body.ready .keyhint { opacity: 1; }
+	body.ready .keyhint.gone { opacity: 0; }
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0,0,0,0);
+		border: 0;
 	}
-	.compass {
-		position: fixed;
-		top: max(26px, env(safe-area-inset-top));
-		right: max(30px, env(safe-area-inset-right));
-		z-index: 2;
-		width: 44px;
-		height: 44px;
-		pointer-events: none;
-		opacity: 0;
-		transition: opacity 2s ease;
-	}
-	body.ready .compass { opacity: 0.72; }
-	.compass svg { display: block; width: 100%; height: 100%; overflow: visible; }
-	.compass .ray {
-		stroke-linecap: round;
-		animation: ray 7s ease-in-out infinite;
-		transform-origin: 24px 24px;
-	}
-	.compass .r1 { animation-delay: 0s; }
-	.compass .r2 { animation-delay: 0.6s; }
-	.compass .r3 { animation-delay: 1.2s; }
-	@keyframes ray {
-		0%, 100% { opacity: 0.34; }
-		50% { opacity: 0.85; }
-	}
-	@media (max-width: 640px) {
-		.brand { top: 22px; left: 22px; }
-		.brand-title { font-size: 10.5px; letter-spacing: 0.34em; }
-		.hint, .caption { bottom: 20px; font-size: 8.5px; }
-		.hint { display: none; }
-		.compass { top: 18px; right: 20px; width: 36px; height: 36px; }
+	@media (max-width: 700px) {
+		.brand { top: 20px; left: 20px; }
+		.brand-title { font-size: 10px; letter-spacing: 0.34em; }
+		.caption { bottom: max(52px, calc(env(safe-area-inset-bottom) + 42px)); }
+		.caption .eyebrow { font-size: 8.5px; letter-spacing: 0.42em; }
+		.caption .line { font-size: 9px; letter-spacing: 0.12em; margin-top: 6px; }
+		.dots { gap: 8px; bottom: max(22px, calc(env(safe-area-inset-bottom) + 14px)); }
+		.dot { width: 4px; height: 4px; }
+		.nav { right: 14px; bottom: max(16px, calc(env(safe-area-inset-bottom) + 10px)); gap: 7px; }
+		.nav button { width: 28px; height: 28px; font-size: 13px; }
+		.keyhint { display: none; }
 	}
 </style>
 </head>
 <body>
 <canvas id="gl" aria-hidden="true"></canvas>
-<canvas id="fx" aria-hidden="true"></canvas>
-<p class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Interactive fuzzy-set and homotopy visualization. Drag ideas to reshape them. Click empty space to grow a new idea.</p>
-<div class="brand">
+<div class="vignette" aria-hidden="true"></div>
+<div class="labels" id="labels" aria-hidden="true"></div>
+<div class="brand" aria-hidden="true">
 	<div class="brand-title">Fuzzy <em>·</em> HoTT</div>
 	<div class="brand-line"></div>
 </div>
-<div class="compass" aria-hidden="true">
-	<svg viewBox="0 0 48 48">
-		<line class="ray r1" x1="24" y1="24" x2="24" y2="10" stroke="rgba(255,207,107,.9)" stroke-width="1"/>
-		<line class="ray r2" x1="24" y1="24" x2="36.1" y2="31" stroke="rgba(127,224,255,.9)" stroke-width="1"/>
-		<line class="ray r3" x1="24" y1="24" x2="11.9" y2="31" stroke="rgba(255,158,196,.9)" stroke-width="1"/>
-		<circle cx="24" cy="24" r="1.4" fill="rgba(235,241,255,.5)"/>
-	</svg>
+<div class="caption" id="caption" aria-live="polite">
+	<div class="eyebrow" id="stageWord">assembly</div>
+	<div class="line" id="stageLine">parts become one</div>
 </div>
-<div class="caption"><span id="capWord">ambiguity</span></div>
-<div class="hint">drag · click</div>
+<div class="dots" id="dots" role="tablist" aria-label="Story steps"></div>
+<div class="nav">
+	<button id="prev" type="button" aria-label="Previous step">←</button>
+	<button id="next" type="button" aria-label="Next step">→</button>
+</div>
+<div class="keyhint" aria-hidden="true">→</div>
+<p class="sr-only">Interactive three-dimensional story about the Fuzzy-HoTT consciousness model. Use left and right arrow keys to move through the steps. Drag an idea, drag one of its three fuzzy membership parts, or click empty space to build a new idea.</p>
 
 <script src="../three.min.js"></script>
 <script>
@@ -176,180 +265,196 @@
 	"use strict";
 
 	const TAU = Math.PI * 2;
-	const MAX_NODES = 10;
+	const DEG = Math.PI / 180;
+	const MAX_NODES = 9;
+	const MAX_EDGES = 20;
+	const PTS = 96;
+	const SEG = 36;
+	const GLOW_MAX = 192;
+	const SPARK_MAX = 96;
+	const STAR_COUNT = 380;
 	const CORE_NODES = 6;
-	const AXIS_A0 = -Math.PI / 2;
-	const AXIS_A1 = Math.PI / 6;
-	const AXIS_A2 = Math.PI * 5 / 6;
+	const FOV = 42;
 	const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	const MOTION = reduceMotion ? 0.4 : 1;
-
-	const glCanvas = document.getElementById("gl");
-	const fxCanvas = document.getElementById("fx");
-	const fx = fxCanvas.getContext("2d");
-	const captionEl = document.getElementById("capWord");
-
-	let w = 0;
-	let h = 0;
-	let dpr = 1;
-	let cx = 0;
-	let cy = 0;
-	let sx = 0;
-	let sy = 0;
-	let radius = 60;
-
-	let time = 0;
-	let last = 0;
-	let spot = 0;
-	let spotTimer = 0;
-	let pointerOn = 0;
-	let hasPointer = false;
-
-	const pointer = { x: 0, y: 0, node: null };
-	const nodes = [];
-	const edges = [];
-	const sparks = [];
-	const motes = [];
+	const MOTION = reduceMotion ? 0.45 : 1;
 
 	const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 	const lerp = (a, b, t) => a + (b - a) * t;
-	const mixHue = (a, b, t) => {
-		let d = ((b - a + 540) % 360) - 180;
-		return (a + d * t + 360) % 360;
-	};
-	const hsla = (hue, s, l, a) => `hsla(${hue}, ${s}%, ${l}%, ${a})`;
+	const hsla = (h, s, l, a) => `hsla(${h}, ${s}%, ${l}%, ${a})`;
 
-	function hslToRgb(hue, s, l) {
-		const h = (((hue % 360) + 360) % 360) / 360;
-		const a = s * Math.min(l, 1 - l);
-		const f = (n) => {
-			const k = (n + h * 12) % 12;
-			return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
-		};
-		return [f(0), f(8), f(4)];
-	}
+	const AXIS_HUE = [44, 194, 330];
+	const AXIS_CSS = ["#ffcf6b", "#7fdcff", "#ff9ec4"];
+	const AXIS_DIR = [
+		new THREE.Vector3(0.0, 1.0, 0.18).normalize(),
+		new THREE.Vector3(0.866, -0.5, 0.18).normalize(),
+		new THREE.Vector3(-0.866, -0.5, 0.18).normalize()
+	];
+	const AXIS_COLOR = AXIS_HUE.map((h) => new THREE.Color().setHSL(h / 360, 0.9, 0.67));
+
+	const STAGES = [
+		{ word: "assembly", line: "parts become one", accent: "#ffcf6b", hold: 9.6, zoom: 0.64 },
+		{ word: "ambiguity", line: "ideas overlap", accent: "#9fd8ff", hold: 8.6, zoom: 1.02 },
+		{ word: "structure", line: "ideas connect", accent: "#7fe0ff", hold: 9.0, zoom: 1.0 },
+		{ word: "transformation", line: "paths deform ideas", accent: "#8affc1", hold: 9.2, zoom: 0.98 },
+		{ word: "tension", line: "two ideas conflict", accent: "#ff8fa6", hold: 8.8, zoom: 0.86 },
+		{ word: "resolution", line: "a third idea balances", accent: "#b79cff", hold: 9.2, zoom: 0.90 },
+		{ word: "creativity", line: "new ideas emerge", accent: "#ffd479", hold: 9.2, zoom: 1.0 },
+		{ word: "consciousness", line: "a flowing space of ideas", accent: "#dfe9ff", hold: Infinity, zoom: 1.17 }
+	];
+	const STAGE_ENERGY = [
+		[1.0, 0.12, 0.12, 0.12, 0.12, 0.0],
+		[1.0, 1.0, 1.0, 1.0, 1.0, 0.0],
+		[1.0, 1.0, 1.0, 1.0, 1.0, 0.0],
+		[1.0, 1.0, 1.0, 1.0, 1.0, 0.0],
+		[0.28, 0.28, 0.28, 1.32, 1.32, 0.0],
+		[0.40, 0.40, 0.40, 1.10, 1.10, 1.35],
+		[1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+		[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+	];
+	const SPOT_SETS = [[0], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [3, 4], [5], [2, 3], [0, 1, 2, 3, 4, 5]];
 
 	const CORE = [
-		{ label: "FREEDOM",    hue: 44,  fx: -0.95, fy: -0.66, m: [0.82, 0.46, 0.62] },
-		{ label: "JUSTICE",    hue: 203, fx:  0.95, fy: -0.66, m: [0.68, 0.82, 0.38] },
-		{ label: "FAIRNESS",   hue: 158, fx:  0.00, fy: -0.16, m: [0.50, 0.78, 0.44] },
-		{ label: "HEALTH",     hue: 96,  fx: -0.52, fy:  0.50, m: [0.12, 0.50, 0.86] },
-		{ label: "PLEASURE",   hue: 334, fx:  0.52, fy:  0.50, m: [0.06, 0.22, 0.90] },
-		{ label: "MODERATION", hue: 268, fx:  0.00, fy:  0.90, m: [0.32, 0.66, 0.60] }
+		{ label: "FREEDOM", fx: -0.95, fy: -0.66, fz: 0.50, m: [0.82, 0.46, 0.62] },
+		{ label: "JUSTICE", fx: 0.95, fy: -0.66, fz: -0.60, m: [0.68, 0.82, 0.38] },
+		{ label: "FAIRNESS", fx: 0.00, fy: -0.16, fz: 1.00, m: [0.50, 0.78, 0.44] },
+		{ label: "HEALTH", fx: -0.52, fy: 0.50, fz: -0.90, m: [0.12, 0.50, 0.86] },
+		{ label: "PLEASURE", fx: 0.52, fy: 0.50, fz: 0.50, m: [0.06, 0.22, 0.90] },
+		{ label: "MODERATION", fx: 0.00, fy: 0.90, fz: -0.20, m: [0.32, 0.66, 0.60] }
 	];
 
-	function createNode(def, core) {
-		return {
-			label: def.label || "",
-			hue: def.hue,
-			fx: def.fx,
-			fy: def.fy,
-			m: def.m.slice(),
-			core,
-			seed: Math.random() * 1000,
-			x: 0, y: 0, vx: 0, vy: 0,
-			ax: 0, ay: 0,
-			baseR: 0,
-			birth: 0,
-			drag: false,
-			labelA: 0
-		};
-	}
+	const glCanvas = document.getElementById("gl");
+	const labelsEl = document.getElementById("labels");
+	const captionEl = document.getElementById("caption");
+	const stageWordEl = document.getElementById("stageWord");
+	const stageLineEl = document.getElementById("stageLine");
+	const dotsEl = document.getElementById("dots");
+	const prevBtn = document.getElementById("prev");
+	const nextBtn = document.getElementById("next");
+	const keyHint = document.querySelector(".keyhint");
 
-	CORE.forEach((def) => nodes.push(createNode(def, true)));
+	let w = 0, h = 0, dpr = 1;
+	let X = 4.3, Y = 3.0, Z = 1.4;
+	let worldR = 0.82;
+	let baseDist = 12.5;
+	let projCss = 1100;
+	let uProj = 1100;
+	let time = 0;
+	let last = 0;
+	let stage = 0;
+	let stageAge = 0;
+	let spot = 0;
+	let spotTimer = 0;
+	let creativeDone = false;
+	let tensionLevel = 0;
+	let pointerOn = 0;
+	let hasPointer = false;
+	let pointerDown = false;
+	let hoverNode = null;
+	let hoverSat = null;
+	let dragNode = null;
+	let dragSat = null;
+	let dragPlane = null;
+	let dragOffset = new THREE.Vector3();
+	let lastCursor = "";
+	let captionTimer = 0;
 
-	function addEdge(a, b, bow) {
-		if (a === b || a < 0 || b < 0) return;
-		for (const e of edges) {
-			if ((e.a === a && e.b === b) || (e.a === b && e.b === a)) return;
-		}
-		edges.push({
-			a, b,
-			seed: Math.random() * 1000,
-			speed: 0.26 + Math.random() * 0.3,
-			bow: bow !== undefined ? bow : (Math.random() < 0.5 ? -1 : 1) * (0.06 + Math.random() * 0.07),
-			dir: 0
-		});
-	}
+	const pointer = { x: 0, y: 0, ndcX: 0, ndcY: 0 };
+	const raycaster = new THREE.Raycaster();
+	const nodes = [];
+	const edges = [];
+	const dots = [];
 
-	addEdge(0, 1);
-	addEdge(1, 2);
-	addEdge(0, 2);
-	addEdge(2, 3);
-	addEdge(2, 4);
-	addEdge(3, 5);
-	addEdge(5, 4);
-
-	function layout() {
-		w = window.innerWidth;
-		h = window.innerHeight;
-		dpr = Math.min(window.devicePixelRatio || 1, 2);
-		cx = w / 2;
-		cy = h / 2;
-		sx = Math.min(w * 0.36, 540);
-		sy = Math.min(h * 0.36, 440);
-		radius = clamp(Math.min(sx, sy) * 0.26, 30, 92);
-
-		for (const n of nodes) {
-			n.ax = cx + n.fx * sx;
-			n.ay = cy + n.fy * sy;
-			n.baseR = radius * (n.core ? 1 : 0.82);
-		}
-
-		glCanvas.width = Math.round(w * dpr);
-		glCanvas.height = Math.round(h * dpr);
-		fxCanvas.width = Math.round(w * dpr);
-		fxCanvas.height = Math.round(h * dpr);
-		fx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-		if (renderer) {
-			renderer.setPixelRatio(dpr);
-			renderer.setSize(w, h, false);
-		}
-		if (uniforms) uniforms.uAspect.value = w / h;
-	}
+	const scene = new THREE.Scene();
+	const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 400);
+	camera.position.set(0, 0, 12);
+	scene.add(camera);
 
 	let renderer = null;
-	let uniforms = null;
-	let scene = null;
-	let camera = null;
+	try {
+		renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+		renderer.setClearColor(0x03050b, 1);
+	} catch (err) {
+		console.warn("WebGL unavailable:", err && err.message ? err.message : err);
+	}
 
-	const VERT = `
-		varying vec2 vUv;
+	const cam = { yaw: 0.2, pitch: 0.03, radius: 12.5, look: new THREE.Vector3(0, 0, 0) };
+
+	const tmpV = new THREE.Vector3();
+	const tmpV2 = new THREE.Vector3();
+	const tmpV3 = new THREE.Vector3();
+	const tmpColor = new THREE.Color();
+	const tmpHSL = { h: 0, s: 0, l: 0 };
+	const tmpDir = new THREE.Vector3();
+
+	function makeGlowTexture() {
+		const c = document.createElement("canvas");
+		c.width = 256;
+		c.height = 256;
+		const g = c.getContext("2d");
+		const grad = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+		grad.addColorStop(0.0, "rgba(255,255,255,0.95)");
+		grad.addColorStop(0.12, "rgba(255,255,255,0.72)");
+		grad.addColorStop(0.30, "rgba(255,255,255,0.34)");
+		grad.addColorStop(0.55, "rgba(255,255,255,0.11)");
+		grad.addColorStop(0.80, "rgba(255,255,255,0.03)");
+		grad.addColorStop(1.0, "rgba(255,255,255,0)");
+		g.fillStyle = grad;
+		g.fillRect(0, 0, 256, 256);
+		const tex = new THREE.CanvasTexture(c);
+		tex.minFilter = THREE.LinearFilter;
+		tex.magFilter = THREE.LinearFilter;
+		return tex;
+	}
+
+	function makeRingTexture() {
+		const c = document.createElement("canvas");
+		c.width = 128;
+		c.height = 128;
+		const g = c.getContext("2d");
+		g.globalCompositeOperation = "lighter";
+		g.strokeStyle = "rgba(255,255,255,0.9)";
+		g.lineWidth = 2.5;
+		g.beginPath();
+		g.arc(64, 64, 44, 0, TAU);
+		g.stroke();
+		g.strokeStyle = "rgba(255,255,255,0.25)";
+		g.lineWidth = 9;
+		g.beginPath();
+		g.arc(64, 64, 44, 0, TAU);
+		g.stroke();
+		const dot = g.createRadialGradient(64, 64, 0, 64, 64, 30);
+		dot.addColorStop(0, "rgba(255,255,255,0.5)");
+		dot.addColorStop(1, "rgba(255,255,255,0)");
+		g.fillStyle = dot;
+		g.beginPath();
+		g.arc(64, 64, 30, 0, TAU);
+		g.fill();
+		const tex = new THREE.CanvasTexture(c);
+		tex.minFilter = THREE.LinearFilter;
+		tex.magFilter = THREE.LinearFilter;
+		return tex;
+	}
+
+	const glowTex = makeGlowTexture();
+	const ringTex = makeRingTexture();
+
+	const SKY_VERT = `
+		varying vec3 vDir;
 		void main() {
-			vUv = uv;
-			gl_Position = vec4(position.xy, 0.0, 1.0);
+			vDir = normalize(position);
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 		}
 	`;
-
-	const FRAG = `
-		#ifdef GL_FRAGMENT_PRECISION_HIGH
-			precision highp float;
-		#else
-			precision mediump float;
-		#endif
-		varying vec2 vUv;
-
+	const SKY_FRAG = `
+		precision mediump float;
+		varying vec3 vDir;
 		uniform float uTime;
-		uniform float uAspect;
-		uniform vec2 uPointer;
-		uniform float uPointerOn;
-		uniform vec2 uPos[${MAX_NODES}];
-		uniform float uRad[${MAX_NODES}];
-		uniform vec3 uCol[${MAX_NODES}];
-		uniform vec3 uMem[${MAX_NODES}];
-
-		const float A0 = -1.5707963267948966;
-		const float A1 = 0.5235987755982988;
-		const float A2 = 2.6179938779914944;
-
 		float hash21(vec2 p) {
 			p = fract(p * vec2(123.34, 456.21));
 			p += dot(p, p + 45.32);
 			return fract(p.x * p.y);
 		}
-
-		float vnoise(vec2 p) {
+		float noise(vec2 p) {
 			vec2 i = floor(p);
 			vec2 f = fract(p);
 			f = f * f * (3.0 - 2.0 * f);
@@ -359,652 +464,1410 @@
 			float d = hash21(i + vec2(1.0, 1.0));
 			return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 		}
-
-		float fbm(vec2 p) {
-			float v = 0.0;
-			float amp = 0.5;
-			for (int i = 0; i < 3; i++) {
-				v += amp * vnoise(p);
-				p = p * 2.03 + vec2(17.0, 9.0);
-				amp *= 0.5;
-			}
-			return v;
-		}
-
-		float lobeField(vec2 q, float rad, vec3 m) {
-			float r = max(length(q), 0.0001);
-			float th = atan(q.y, q.x);
-			float c0 = 0.5 + 0.5 * cos(th - A0);
-			float c1 = 0.5 + 0.5 * cos(th - A1);
-			float c2 = 0.5 + 0.5 * cos(th - A2);
-			float s = m.x * c0 * c0 + m.y * c1 * c1 + m.z * c2 * c2;
-			float rr = rad * (0.42 + 0.62 * s);
-			float d = r / max(rr, 0.0001);
-			float core = 1.0 - smoothstep(0.86, 1.0, d);
-			float halo = exp(-d * d * 1.25) * 0.55;
-			float far = exp(-d * d * 0.22) * 0.10;
-			float rimd = (d - 1.0) * 7.0;
-			float rim = exp(-rimd * rimd) * 0.3;
-			return core * 0.6 + halo + far + rim;
-		}
-
 		void main() {
-			vec2 p = vec2((vUv.x - 0.5) * uAspect, vUv.y - 0.5) * 2.0;
-
-			float radial = length(p * vec2(0.9, 1.05));
-			vec3 bg = mix(vec3(0.056, 0.074, 0.132), vec3(0.012, 0.017, 0.036), smoothstep(0.0, 1.3, radial));
-			float n = fbm(p * 1.15 + vec2(uTime * 0.014, -uTime * 0.011));
-			bg += vec3(0.034, 0.051, 0.086) * n * 0.8;
-			float vin = length(p * vec2(0.66, 0.96));
-			bg *= 1.0 - smoothstep(0.95, 1.9, vin) * 0.55;
-
-			vec3 col = bg;
-			for (int i = 0; i < ${MAX_NODES}; i++) {
-				float rad = uRad[i];
-				if (rad > 0.0001) {
-					vec2 q = p - uPos[i];
-					float f = lobeField(q, rad, uMem[i]);
-					col += uCol[i] * f * 0.55;
-				}
-			}
-
-			vec2 pd = p - uPointer;
-			float aura = exp(-dot(pd, pd) * 5.0) * uPointerOn;
-			col += vec3(0.09, 0.15, 0.25) * aura * 0.55;
-
-			col = 1.0 - exp(-col * 1.18);
-			float lum = dot(col, vec3(0.299, 0.587, 0.114));
-			col = mix(vec3(lum), col, 1.1);
-			col += (hash21(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * 0.012;
-
+			vec3 d = normalize(vDir);
+			float up = d.y * 0.5 + 0.5;
+			vec3 col = mix(vec3(0.010, 0.014, 0.030), vec3(0.034, 0.049, 0.092), smoothstep(0.0, 1.0, up));
+			float by = (d.y - 0.14) * 1.75;
+			float band = exp(-by * by);
+			float n1 = noise(d.xz * 2.2 + vec2(uTime * 0.006, uTime * 0.004));
+			float n2 = noise(d.xy * 4.2 - vec2(uTime * 0.004, d.z * 2.0));
+			col += vec3(0.115, 0.055, 0.165) * n1 * band * 0.55;
+			col += vec3(0.022, 0.090, 0.130) * n2 * 0.45;
+			col += vec3(0.050, 0.060, 0.105) * band * 0.35;
 			gl_FragColor = vec4(col, 1.0);
 		}
 	`;
+	const sky = new THREE.Mesh(
+		new THREE.SphereGeometry(150, 32, 20),
+		new THREE.ShaderMaterial({
+			uniforms: { uTime: { value: 0 } },
+			vertexShader: SKY_VERT,
+			fragmentShader: SKY_FRAG,
+			side: THREE.BackSide,
+			depthTest: false,
+			depthWrite: false
+		})
+	);
+	sky.renderOrder = -100;
+	scene.add(sky);
 
-	function initGL() {
-		try {
-			renderer = new THREE.WebGLRenderer({
-				canvas: glCanvas,
-				antialias: true,
-				alpha: false,
-				powerPreference: "high-performance"
-			});
-			renderer.setClearColor(0x04060c, 1);
-
-			const uniformsInit = {
-				uTime: { value: 0 },
-				uAspect: { value: 1 },
-				uPointer: { value: new THREE.Vector2(0, 0) },
-				uPointerOn: { value: 0 },
-				uPos: { value: [] },
-				uRad: { value: [] },
-				uCol: { value: [] },
-				uMem: { value: [] }
-			};
-			for (let i = 0; i < MAX_NODES; i++) {
-				uniformsInit.uPos.value.push(new THREE.Vector2(0, 0));
-				uniformsInit.uRad.value.push(0);
-				uniformsInit.uCol.value.push(new THREE.Vector3(0, 0, 0));
-				uniformsInit.uMem.value.push(new THREE.Vector3(0.5, 0.5, 0.5));
+	const starGeo = new THREE.BufferGeometry();
+	const starPos = new Float32Array(STAR_COUNT * 3);
+	const starCol = new Float32Array(STAR_COUNT * 3);
+	const starSize = new Float32Array(STAR_COUNT);
+	const starPhase = new Float32Array(STAR_COUNT);
+	for (let i = 0; i < STAR_COUNT; i++) {
+		const r = 38 + Math.random() * 84;
+		const th = Math.random() * TAU;
+		const ph = Math.acos(2 * Math.random() - 1);
+		starPos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+		starPos[i * 3 + 1] = r * Math.cos(ph);
+		starPos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+		const c = new THREE.Color().setHSL(Math.random() < 0.2 ? [44, 330, 194][Math.floor(Math.random() * 3)] / 360 : 0.58, 0.45, 0.72);
+		starCol[i * 3] = c.r;
+		starCol[i * 3 + 1] = c.g;
+		starCol[i * 3 + 2] = c.b;
+		starSize[i] = 0.10 + Math.random() * 0.22;
+		starPhase[i] = Math.random() * 100;
+	}
+	starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+	starGeo.setAttribute("aColor", new THREE.BufferAttribute(starCol, 3));
+	starGeo.setAttribute("aSize", new THREE.BufferAttribute(starSize, 1));
+	starGeo.setAttribute("aPhase", new THREE.BufferAttribute(starPhase, 1));
+	const starMat = new THREE.ShaderMaterial({
+		uniforms: { uTime: { value: 0 }, uProj: { value: 1000 } },
+		vertexShader: `
+			attribute vec3 aColor;
+			attribute float aSize;
+			attribute float aPhase;
+			uniform float uTime;
+			uniform float uProj;
+			varying vec3 vColor;
+			varying float vAlpha;
+			void main() {
+				vec4 mv = modelViewMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * mv;
+				float tw = 0.50 + 0.50 * sin(uTime * 0.55 + aPhase);
+				vAlpha = (0.18 + 0.55 * tw * tw) * 0.55;
+				vColor = aColor;
+				gl_PointSize = clamp(aSize * uProj / max(1.0, -mv.z), 1.0, 4.5);
 			}
-			uniforms = uniformsInit;
+		`,
+		fragmentShader: `
+			precision mediump float;
+			varying vec3 vColor;
+			varying float vAlpha;
+			void main() {
+				float d = length(gl_PointCoord - 0.5) * 2.0;
+				float a = smoothstep(1.0, 0.0, d);
+				a = a * a;
+				gl_FragColor = vec4(vColor, vAlpha * a);
+			}
+		`,
+		transparent: true,
+		blending: THREE.AdditiveBlending,
+		depthTest: false,
+		depthWrite: false
+	});
+	const stars = new THREE.Points(starGeo, starMat);
+	stars.renderOrder = -50;
+	scene.add(stars);
 
-			scene = new THREE.Scene();
-			camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-			const material = new THREE.ShaderMaterial({
-				uniforms,
-				vertexShader: VERT,
-				fragmentShader: FRAG,
-				depthTest: false,
-				depthWrite: false
-			});
-			scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
-			renderer.render(scene, camera);
-		} catch (err) {
-			console.warn("Fuzzy field unavailable:", err && err.message ? err.message : err);
-			renderer = null;
-			uniforms = null;
+	const BLOB_GEO = new THREE.SphereGeometry(1, 40, 28);
+
+	const BLOB_VERT = `
+		uniform vec3 uMem;
+		uniform float uTime;
+		uniform float uSeed;
+		varying float vRad;
+		varying vec3 vN;
+		varying vec3 vV;
+		const vec3 A0 = vec3(0.0, 0.9842, 0.1772);
+		const vec3 A1 = vec3(0.8523, -0.4921, 0.1772);
+		const vec3 A2 = vec3(-0.8523, -0.4921, 0.1772);
+		void main() {
+			vec3 p = normalize(position);
+			float c0 = max(dot(p, A0), 0.0);
+			float c1 = max(dot(p, A1), 0.0);
+			float c2 = max(dot(p, A2), 0.0);
+			float s = uMem.x * c0 * c0 + uMem.y * c1 * c1 + uMem.z * c2 * c2;
+			float wob = 0.035 * sin(uTime * 0.9 + uSeed + p.y * 2.2 + p.x * 1.7)
+			          + 0.018 * sin(uTime * 0.6 + p.z * 3.0 + uSeed * 1.3);
+			float r = 0.64 + 0.70 * s + wob;
+			vRad = r;
+			vec3 dp = p * r;
+			vec4 mv = modelViewMatrix * vec4(dp, 1.0);
+			vN = normalize(normalMatrix * p);
+			vV = normalize(-mv.xyz);
+			gl_Position = projectionMatrix * mv;
 		}
-	}
+	`;
+	const BLOB_FRAG = `
+		precision mediump float;
+		uniform vec3 uColor;
+		uniform float uOpacity;
+		varying float vRad;
+		varying vec3 vN;
+		varying vec3 vV;
+		void main() {
+			vec3 N = normalize(vN);
+			vec3 V = normalize(vV);
+			float f = pow(1.0 - clamp(abs(dot(N, V)), 0.0, 1.0), 1.65);
+			float body = smoothstep(0.70, 1.30, vRad);
+			vec3 col = uColor * (0.16 + 1.35 * f + 0.30 * body);
+			col += vec3(0.10, 0.12, 0.18) * f * 0.35;
+			float a = (0.04 + 0.72 * f + 0.08 * body) * uOpacity;
+			gl_FragColor = vec4(col, a);
+		}
+	`;
 
-	initGL();
-	layout();
-	for (const n of nodes) {
-		n.x = n.ax;
-		n.y = n.ay;
+	const GLOW_VERT = `
+		attribute vec3 aColor;
+		attribute float aSize;
+		attribute float aAlpha;
+		uniform float uProj;
+		varying vec3 vColor;
+		varying float vAlpha;
+		void main() {
+			vec4 mv = modelViewMatrix * vec4(position, 1.0);
+			gl_Position = projectionMatrix * mv;
+			gl_PointSize = clamp(aSize * uProj / max(0.6, -mv.z), 1.0, 900.0);
+			vColor = aColor;
+			vAlpha = aAlpha;
+		}
+	`;
+	const GLOW_FRAG = `
+		precision mediump float;
+		uniform sampler2D uMap;
+		varying vec3 vColor;
+		varying float vAlpha;
+		void main() {
+			vec4 t = texture2D(uMap, gl_PointCoord);
+			gl_FragColor = vec4(vColor * t.rgb, t.a * vAlpha);
+		}
+	`;
+	const glowGeo = new THREE.BufferGeometry();
+	const glowPos = new Float32Array(GLOW_MAX * 3);
+	const glowCol = new Float32Array(GLOW_MAX * 3);
+	const glowSize = new Float32Array(GLOW_MAX);
+	const glowAlpha = new Float32Array(GLOW_MAX);
+	glowGeo.setAttribute("position", new THREE.BufferAttribute(glowPos, 3).setUsage(THREE.DynamicDrawUsage));
+	glowGeo.setAttribute("aColor", new THREE.BufferAttribute(glowCol, 3).setUsage(THREE.DynamicDrawUsage));
+	glowGeo.setAttribute("aSize", new THREE.BufferAttribute(glowSize, 1).setUsage(THREE.DynamicDrawUsage));
+	glowGeo.setAttribute("aAlpha", new THREE.BufferAttribute(glowAlpha, 1).setUsage(THREE.DynamicDrawUsage));
+	glowGeo.setDrawRange(0, 0);
+	const glowMat = new THREE.ShaderMaterial({
+		uniforms: { uProj: { value: 1000 }, uMap: { value: glowTex } },
+		vertexShader: GLOW_VERT,
+		fragmentShader: GLOW_FRAG,
+		transparent: true,
+		blending: THREE.AdditiveBlending,
+		depthTest: false,
+		depthWrite: false
+	});
+	const glowPoints = new THREE.Points(glowGeo, glowMat);
+	glowPoints.frustumCulled = false;
+	glowPoints.renderOrder = 0;
+	scene.add(glowPoints);
+
+	const connGeo = new THREE.BufferGeometry();
+	const connPos = new Float32Array(MAX_NODES * 3 * 2 * 3);
+	const connCol = new Float32Array(MAX_NODES * 3 * 2 * 3);
+	connGeo.setAttribute("position", new THREE.BufferAttribute(connPos, 3).setUsage(THREE.DynamicDrawUsage));
+	connGeo.setAttribute("color", new THREE.BufferAttribute(connCol, 3).setUsage(THREE.DynamicDrawUsage));
+	connGeo.setDrawRange(0, 0);
+	const connMat = new THREE.LineBasicMaterial({
+		vertexColors: true,
+		transparent: true,
+		opacity: 1,
+		blending: THREE.AdditiveBlending,
+		depthTest: false,
+		depthWrite: false
+	});
+	const connectors = new THREE.LineSegments(connGeo, connMat);
+	connectors.frustumCulled = false;
+	connectors.renderOrder = 1;
+	scene.add(connectors);
+
+	const edgePointGeo = new THREE.BufferGeometry();
+	const epPos = new Float32Array(MAX_EDGES * PTS * 3);
+	const epCol = new Float32Array(MAX_EDGES * PTS * 3);
+	const epT = new Float32Array(MAX_EDGES * PTS);
+	const epPhase = new Float32Array(MAX_EDGES * PTS);
+	const epSpeed = new Float32Array(MAX_EDGES * PTS);
+	const epOpacity = new Float32Array(MAX_EDGES * PTS);
+	const epBuild = new Float32Array(MAX_EDGES * PTS);
+	for (let s = 0; s < MAX_EDGES; s++) {
+		for (let i = 0; i < PTS; i++) epT[s * PTS + i] = i / (PTS - 1);
 	}
-	for (let i = 0; i < 90; i++) {
-		motes.push({
-			x: Math.random(),
-			y: Math.random(),
-			depth: 0.25 + Math.random() * 0.75,
-			r: 0.4 + Math.random() * 1.25,
-			sp: 0.0035 + Math.random() * 0.012,
-			ph: Math.random() * TAU,
-			hue: Math.random() < 0.16 ? [44, 158, 203, 268, 334][Math.floor(Math.random() * 5)] : 214
+	edgePointGeo.setAttribute("position", new THREE.BufferAttribute(epPos, 3).setUsage(THREE.DynamicDrawUsage));
+	edgePointGeo.setAttribute("aColor", new THREE.BufferAttribute(epCol, 3).setUsage(THREE.DynamicDrawUsage));
+	edgePointGeo.setAttribute("aT", new THREE.BufferAttribute(epT, 1));
+	edgePointGeo.setAttribute("aPhase", new THREE.BufferAttribute(epPhase, 1).setUsage(THREE.DynamicDrawUsage));
+	edgePointGeo.setAttribute("aSpeed", new THREE.BufferAttribute(epSpeed, 1).setUsage(THREE.DynamicDrawUsage));
+	edgePointGeo.setAttribute("aOpacity", new THREE.BufferAttribute(epOpacity, 1).setUsage(THREE.DynamicDrawUsage));
+	edgePointGeo.setAttribute("aBuild", new THREE.BufferAttribute(epBuild, 1).setUsage(THREE.DynamicDrawUsage));
+	edgePointGeo.setDrawRange(0, 0);
+	const edgePointMat = new THREE.ShaderMaterial({
+		uniforms: { uTime: { value: 0 }, uProj: { value: 1000 } },
+		vertexShader: `
+			attribute vec3 aColor;
+			attribute float aT;
+			attribute float aPhase;
+			attribute float aSpeed;
+			attribute float aOpacity;
+			attribute float aBuild;
+			uniform float uTime;
+			uniform float uProj;
+			varying vec3 vColor;
+			varying float vAlpha;
+			void main() {
+				vec4 mv = modelViewMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * mv;
+				float wave = 0.5 + 0.5 * sin(aT * 12.566 - uTime * aSpeed + aPhase);
+				float pulse = pow(wave, 6.0);
+				float built = 1.0 - smoothstep(aBuild - 0.05, aBuild + 0.01, aT);
+				vAlpha = (0.10 + 1.05 * pulse) * aOpacity * built;
+				vColor = aColor * (0.65 + 0.55 * pulse);
+				float sz = 0.028 + 0.052 * pulse;
+				gl_PointSize = clamp(sz * uProj / max(0.8, -mv.z), 1.0, 42.0);
+			}
+		`,
+		fragmentShader: `
+			precision mediump float;
+			varying vec3 vColor;
+			varying float vAlpha;
+			void main() {
+				float d = length(gl_PointCoord - 0.5) * 2.0;
+				float a = smoothstep(1.0, 0.0, d);
+				a *= a;
+				gl_FragColor = vec4(vColor, vAlpha * a);
+			}
+		`,
+		transparent: true,
+		blending: THREE.AdditiveBlending,
+		depthTest: false,
+		depthWrite: false
+	});
+	const edgePoints = new THREE.Points(edgePointGeo, edgePointMat);
+	edgePoints.frustumCulled = false;
+	edgePoints.renderOrder = 3;
+	scene.add(edgePoints);
+
+	const LINE_VERTS = MAX_EDGES * SEG * 2;
+	const edgeLineGeo = new THREE.BufferGeometry();
+	const elPos = new Float32Array(LINE_VERTS * 3);
+	const elCol = new Float32Array(LINE_VERTS * 3);
+	edgeLineGeo.setAttribute("position", new THREE.BufferAttribute(elPos, 3).setUsage(THREE.DynamicDrawUsage));
+	edgeLineGeo.setAttribute("color", new THREE.BufferAttribute(elCol, 3).setUsage(THREE.DynamicDrawUsage));
+	edgeLineGeo.setDrawRange(0, 0);
+	const edgeLineMat = new THREE.LineBasicMaterial({
+		vertexColors: true,
+		transparent: true,
+		opacity: 1,
+		blending: THREE.AdditiveBlending,
+		depthTest: false,
+		depthWrite: false
+	});
+	const edgeLines = new THREE.LineSegments(edgeLineGeo, edgeLineMat);
+	edgeLines.frustumCulled = false;
+	edgeLines.renderOrder = 2;
+	scene.add(edgeLines);
+
+	const sparkGeo = new THREE.BufferGeometry();
+	const spPos = new Float32Array(SPARK_MAX * 3);
+	const spCol = new Float32Array(SPARK_MAX * 3);
+	const spBirth = new Float32Array(SPARK_MAX);
+	const spSize = new Float32Array(SPARK_MAX);
+	const spGrowth = new Float32Array(SPARK_MAX);
+	for (let i = 0; i < SPARK_MAX; i++) spBirth[i] = -1000;
+	sparkGeo.setAttribute("position", new THREE.BufferAttribute(spPos, 3).setUsage(THREE.DynamicDrawUsage));
+	sparkGeo.setAttribute("aColor", new THREE.BufferAttribute(spCol, 3).setUsage(THREE.DynamicDrawUsage));
+	sparkGeo.setAttribute("aBirth", new THREE.BufferAttribute(spBirth, 1).setUsage(THREE.DynamicDrawUsage));
+	sparkGeo.setAttribute("aSize", new THREE.BufferAttribute(spSize, 1).setUsage(THREE.DynamicDrawUsage));
+	sparkGeo.setAttribute("aGrowth", new THREE.BufferAttribute(spGrowth, 1).setUsage(THREE.DynamicDrawUsage));
+	sparkGeo.setDrawRange(0, SPARK_MAX);
+	const sparkMat = new THREE.ShaderMaterial({
+		uniforms: { uTime: { value: 0 }, uProj: { value: 1000 }, uMap: { value: ringTex } },
+		vertexShader: `
+			attribute vec3 aColor;
+			attribute float aBirth;
+			attribute float aSize;
+			attribute float aGrowth;
+			uniform float uTime;
+			uniform float uProj;
+			varying vec3 vColor;
+			varying float vAlpha;
+			void main() {
+				float age = uTime - aBirth;
+				float life = clamp(age / 1.7, 0.0, 1.0);
+				float size = aSize + aGrowth * age;
+				vec4 mv = modelViewMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * mv;
+				gl_PointSize = clamp(size * uProj / max(0.8, -mv.z), 1.0, 700.0);
+				vAlpha = pow(1.0 - life, 2.0);
+				if (age < 0.0) vAlpha = 0.0;
+				vColor = aColor;
+			}
+		`,
+		fragmentShader: `
+			precision mediump float;
+			uniform sampler2D uMap;
+			varying vec3 vColor;
+			varying float vAlpha;
+			void main() {
+				vec4 t = texture2D(uMap, gl_PointCoord);
+				gl_FragColor = vec4(vColor * t.rgb, t.a * vAlpha);
+			}
+		`,
+		transparent: true,
+		blending: THREE.AdditiveBlending,
+		depthTest: false,
+		depthWrite: false
+	});
+	const sparkPoints = new THREE.Points(sparkGeo, sparkMat);
+	sparkPoints.frustumCulled = false;
+	sparkPoints.renderOrder = 6;
+	scene.add(sparkPoints);
+	let sparkCursor = 0;
+
+	function buildNodeMeshes(n) {
+		const mat = new THREE.ShaderMaterial({
+			uniforms: {
+				uMem: { value: new THREE.Vector3(0.5, 0.5, 0.5) },
+				uTime: { value: 0 },
+				uSeed: { value: n.seed },
+				uColor: { value: new THREE.Color(1, 1, 1) },
+				uOpacity: { value: 1 }
+			},
+			vertexShader: BLOB_VERT,
+			fragmentShader: BLOB_FRAG,
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+			depthTest: false,
+			depthWrite: false
 		});
+		n.mesh = new THREE.Mesh(BLOB_GEO, mat);
+		n.mesh.frustumCulled = false;
+		n.mesh.renderOrder = 4;
+		scene.add(n.mesh);
+
+		n.sat = [];
+		n.satScreen = [];
+		for (let i = 0; i < 3; i++) {
+			n.sat.push(new THREE.Vector3());
+			n.satScreen.push({ x: 0, y: 0, r: 0, vis: false });
+		}
 	}
 
-	function memOf(n) {
-		return [
-			clamp(n.m[0] + 0.045 * Math.sin(time * 0.50 + n.seed), 0.05, 1),
-			clamp(n.m[1] + 0.045 * Math.sin(time * 0.47 + n.seed + 2.1), 0.05, 1),
-			clamp(n.m[2] + 0.045 * Math.sin(time * 0.53 + n.seed + 4.2), 0.05, 1)
-		];
+	function makeNode(def, core) {
+		const n = {
+			label: def.label || "",
+			core,
+			fx: def.fx || 0,
+			fy: def.fy || 0,
+			fz: def.fz || 0,
+			seed: Math.random() * 1000,
+			m: def.m.slice(),
+			mEff: def.m.slice(),
+			base: new THREE.Vector3(),
+			pos: new THREE.Vector3(),
+			vel: new THREE.Vector3(),
+			color: new THREE.Color(1, 1, 1),
+			hue: 0,
+			presence: 0,
+			energy: 1,
+			focus: 0,
+			explode: 0.06,
+			explodePulse: 0,
+			labelA: 0,
+			dragPoint: new THREE.Vector3(),
+			sx: 0, sy: 0, sr: 0, svis: false
+		};
+		buildNodeMeshes(n);
+		if (n.label) {
+			const el = document.createElement("div");
+			el.className = "label";
+			el.textContent = n.label;
+			labelsEl.appendChild(el);
+			n.el = el;
+		} else {
+			n.el = null;
+		}
+		return n;
 	}
 
-	function radiusOf(n) {
-		return n.baseR * n.birth * (1 + 0.025 * Math.sin(time * 0.9 + n.seed));
+	CORE.forEach((def) => nodes.push(makeNode(def, true)));
+
+	const axisLabels = [];
+	for (let i = 0; i < 3; i++) {
+		const el = document.createElement("div");
+		el.className = "axis-label";
+		el.textContent = ["politics", "ethics", "self"][i];
+		el.style.color = AXIS_CSS[i];
+		labelsEl.appendChild(el);
+		axisLabels.push(el);
 	}
 
-	function pushSpark(x, y, hue, strength) {
-		if (sparks.length > 28) return;
-		sparks.push({
-			x, y,
-			hue,
-			life: 0,
-			ttl: 1.3 + Math.random() * 0.9,
-			r0: 3,
-			r1: (44 + Math.random() * 38) * strength
+	const morphRBase = () => worldR * 0.40;
+
+	function makeEdge(a, b) {
+		if (a === b) return null;
+		for (const e of edges) {
+			if ((e.a === a && e.b === b) || (e.a === b && e.b === a)) return null;
+		}
+		if (edges.length >= MAX_EDGES) return null;
+		const slot = edges.length;
+		const e = {
+			a, b, slot,
+			seed: Math.random() * 1000,
+			phase: Math.random() * TAU,
+			speed: 0.34 + Math.random() * 0.32,
+			bow: (Math.random() < 0.5 ? -1 : 1) * (0.07 + Math.random() * 0.06),
+			zbow: (Math.random() - 0.5) * 1.3,
+			build: 0,
+			reveal: 0,
+			dir: 0,
+			morphPos: new THREE.Vector3(),
+			morphColor: new THREE.Color(1, 1, 1),
+			morphMem: [0.5, 0.5, 0.5],
+			morphSize: 0.2,
+			prev: new THREE.Vector3(),
+			phaseArr: new Float32Array(PTS)
+		};
+		for (let i = 0; i < PTS; i++) {
+			epPhase[slot * PTS + i] = e.phase;
+			epSpeed[slot * PTS + i] = e.speed * 2.2;
+		}
+		edgePointGeo.attributes.aPhase.needsUpdate = true;
+		edgePointGeo.attributes.aSpeed.needsUpdate = true;
+		const mat = new THREE.ShaderMaterial({
+			uniforms: {
+				uMem: { value: new THREE.Vector3(0.5, 0.5, 0.5) },
+				uTime: { value: 0 },
+				uSeed: { value: e.seed },
+				uColor: { value: new THREE.Color(1, 1, 1) },
+				uOpacity: { value: 0 }
+			},
+			vertexShader: BLOB_VERT,
+			fragmentShader: BLOB_FRAG,
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+			depthTest: false,
+			depthWrite: false
 		});
+		e.morph = new THREE.Mesh(BLOB_GEO, mat);
+		e.morph.frustumCulled = false;
+		e.morph.renderOrder = 5;
+		scene.add(e.morph);
+		edges.push(e);
+		return e;
 	}
 
-	function spawnNode(x, y) {
-		const live = nodes.length;
-		if (live >= MAX_NODES) {
-			pushSpark(x, y, 205, 1.4);
-			return;
+	makeEdge(0, 1);
+	makeEdge(1, 2);
+	makeEdge(0, 2);
+	makeEdge(2, 3);
+	makeEdge(2, 4);
+	makeEdge(3, 5);
+	makeEdge(5, 4);
+
+	function composeColor(n, out) {
+		let x = 0;
+		let y = 0;
+		let sum = 0;
+		for (let i = 0; i < 3; i++) {
+			const a = AXIS_HUE[i] * DEG;
+			const m = n.mEff[i];
+			x += Math.cos(a) * m;
+			y += Math.sin(a) * m;
+			sum += m;
 		}
-		const n = createNode({
-			label: "",
-			hue: [24, 48, 140, 176, 300, 326, 210][Math.floor(Math.random() * 7)],
-			fx: clamp((x - cx) / sx, -1.15, 1.15),
-			fy: clamp((y - cy) / sy, -1.15, 1.15),
-			m: [0.15 + Math.random() * 0.7, 0.1 + Math.random() * 0.8, 0.15 + Math.random() * 0.8]
-		}, false);
-		n.ax = clamp(x, 24, w - 24);
-		n.ay = clamp(y, 24, h - 24);
-		n.x = n.ax;
-		n.y = n.ay;
-		n.baseR = radius * 0.82;
-		const idx = nodes.length;
-		nodes.push(n);
-
-		const near = nodes
-			.slice(0, idx)
-			.map((o, i) => ({ i, d: Math.hypot(o.ax - n.ax, o.ay - n.ay) }))
-			.sort((a, b) => a.d - b.d)
-			.slice(0, 2);
-		for (const { i } of near) addEdge(idx, i);
-
-		pushSpark(x, y, n.hue, 1.5);
+		let hue = Math.atan2(y, x) / DEG;
+		if (hue < 0) hue += 360;
+		const mag = Math.min(1, Math.hypot(x, y) / (sum || 1));
+		n.hue = hue;
+		out.setHSL(hue / 360, 0.68 + 0.20 * mag, 0.57 + 0.07 * mag);
 	}
 
-	function update(dt) {
-		time += dt * MOTION;
-		pointerOn += ((hasPointer ? 1 : 0) - pointerOn) * (1 - Math.exp(-3 * dt));
-		spotTimer += dt;
-		if (spotTimer > 3.6) {
-			spotTimer = 0;
-			spot = (spot + 1) % CORE_NODES;
-			const s = nodes[spot];
-			if (s) captionEl.style.color = hsla(s.hue, 70, 82, 0.42);
+	function updateMemberships(dt) {
+		for (const n of nodes) {
+			for (let i = 0; i < 3; i++) {
+				n.mEff[i] = clamp(n.m[i] + 0.040 * Math.sin(time * 0.50 + n.seed + i * 2.1), 0.03, 1);
+			}
+			composeColor(n, n.color);
 		}
+	}
 
-		const hover = hasPointer ? hitTest(pointer.x, pointer.y) : null;
+	function layout() {
+		w = window.innerWidth;
+		h = window.innerHeight;
+		dpr = Math.min(window.devicePixelRatio || 1, 2);
+		const aspect = w / h;
+		const xf = clamp(aspect / 1.5, 0.5, 1);
+		X = 4.3 * xf;
+		Y = 3.0;
+		Z = 1.4;
+		worldR = clamp(Math.min(X * 1.05, Y * 1.20) * 0.24, 0.5, 1.0);
+		const tan = Math.tan(FOV * 0.5 * DEG);
+		const hw = 0.98 * X + worldR + 0.55;
+		const hh = 0.92 * Y + worldR + 0.55;
+		baseDist = Math.max(hh / tan, hw / (tan * Math.max(0.3, aspect))) + 1.4;
+		projCss = (h * 0.5) / tan;
+		uProj = (h * dpr * 0.5) / tan;
+
+		if (renderer) {
+			renderer.setPixelRatio(dpr);
+			renderer.setSize(w, h, false);
+		}
+		camera.aspect = aspect;
+		camera.updateProjectionMatrix();
 
 		for (const n of nodes) {
-			n.birth += (1 - n.birth) * (1 - Math.exp(-3.0 * dt));
-			const focus = (hover === n || nodes[spot] === n) ? 1 : 0;
-			n.labelA += (focus - n.labelA) * (1 - Math.exp(-4.5 * dt));
+			if (n.core) n.base.set(n.fx * X, -n.fy * Y, n.fz * Z);
+		}
+		glowMat.uniforms.uProj.value = uProj;
+		edgePointMat.uniforms.uProj.value = uProj;
+		sparkMat.uniforms.uProj.value = uProj;
+		starMat.uniforms.uProj.value = uProj;
+	}
 
-			const driftX = Math.sin(time * 0.24 + n.seed) * radius * 0.09;
-			const driftY = Math.cos(time * 0.20 + n.seed * 1.4) * radius * 0.08;
-			let tx = n.ax + driftX;
-			let ty = n.ay + driftY;
+	for (let i = 0; i < 8; i++) {
+		const b = document.createElement("button");
+		b.type = "button";
+		b.className = "dot";
+		b.setAttribute("role", "tab");
+		b.setAttribute("aria-label", STAGES[i].word);
+		b.addEventListener("click", () => setStage(i, true));
+		dotsEl.appendChild(b);
+		dots.push(b);
+	}
 
-			if (hasPointer && !n.drag) {
-				const dxp = pointer.x - n.ax;
-				const dyp = pointer.y - n.ay;
-				const dp = Math.hypot(dxp, dyp) || 1;
-				const pull = Math.max(0, 1 - dp / 280) * 0.13;
-				tx += dxp * pull;
-				ty += dyp * pull;
+	function updateCaption() {
+		const s = STAGES[stage];
+		document.documentElement.style.setProperty("--accent", s.accent);
+		captionEl.classList.remove("show");
+		window.clearTimeout(captionTimer);
+		captionTimer = window.setTimeout(() => {
+			stageWordEl.textContent = s.word;
+			stageLineEl.textContent = s.line;
+			captionEl.classList.add("show");
+		}, 220);
+		for (let i = 0; i < dots.length; i++) dots[i].classList.toggle("active", i === stage);
+		prevBtn.disabled = stage === 0;
+		nextBtn.textContent = stage === 7 ? "↺" : "→";
+		nextBtn.setAttribute("aria-label", stage === 7 ? "Restart story" : "Next step");
+	}
+
+	function setStage(s, manual) {
+		stage = clamp(s, 0, 7);
+		stageAge = 0;
+		spotTimer = 0;
+		const set = SPOT_SETS[stage];
+		spot = set[0];
+		updateCaption();
+		if (manual) keyHint.classList.add("gone");
+		if (stage === 1) burst(nodes[0].pos, nodes[0].hue, 9, 0.08, 0.4);
+		if (stage === 5) {
+			nodes[5].explodePulse = 1.25;
+			burst(nodes[5].pos, nodes[5].hue, 10, 0.14, 0.55);
+		}
+		if (stage >= 6 && !creativeDone) {
+			creativeDone = true;
+			spawnCreative();
+		}
+		if (stage === 7) {
+			const c = new THREE.Vector3(0, 0, 0);
+			burst(c, 205, 16, 0.16, 0.7);
+			for (const n of nodes) {
+				n.explodePulse = Math.max(n.explodePulse, 0.55);
+				burst(n.pos, n.hue, 3, 0.07, 0.32);
 			}
+		}
+	}
 
-			if (n.drag) {
-				const k = 1 - Math.exp(-18 * dt);
-				n.x += (pointer.x - n.x) * k;
-				n.y += (pointer.y - n.y) * k;
-				n.vx = 0;
-				n.vy = 0;
+	function nextStage() {
+		if (stage >= 7) {
+			window.location.reload();
+			return;
+		}
+		setStage(stage + 1, true);
+	}
+	function prevStage() {
+		if (stage > 0) setStage(stage - 1, true);
+	}
+
+	function advanceSpot() {
+		const set = SPOT_SETS[stage].filter((i) => nodes[i] && nodes[i].presence > 0.45);
+		if (set.length < 2) return;
+		const cur = set.indexOf(spot);
+		spot = set[(cur + 1 + set.length) % set.length];
+	}
+
+	function energyTarget(n) {
+		if (n.core) return STAGE_ENERGY[stage][Math.min(nodes.indexOf(n), 5)];
+		return stage === 4 || stage === 5 ? 0.28 : 1.0;
+	}
+
+	function presenceTarget(n) {
+		if (n.core && nodes.indexOf(n) === 5) return stage >= 5 ? 1 : 0;
+		return 1;
+	}
+
+	function offsetFor(n) {
+		tmpV3.set(0, 0, 0);
+		const idx = nodes.indexOf(n);
+		if (idx === 3 || idx === 4) {
+			if (stage === 4) {
+				tmpV3.set(idx === 3 ? 1.15 : -1.15, 0, idx === 3 ? 0.85 : -0.85);
+			} else if (stage === 5) {
+				tmpV3.set(idx === 3 ? 0.55 : -0.55, 0, idx === 3 ? 0.35 : -0.35);
+			}
+		}
+		return tmpV3;
+	}
+
+	function updateNodes(dt) {
+		const focus = hoverNode || nodes[spot] || nodes[0];
+		for (const n of nodes) {
+			const et = energyTarget(n);
+			n.energy += (et - n.energy) * (1 - Math.exp(-2.6 * dt));
+			const pt = presenceTarget(n);
+			n.presence += (pt - n.presence) * (1 - Math.exp(-2.3 * dt));
+			const focused = focus === n;
+			const explodeTarget = (focused ? (stage === 0 ? 1.0 : 0.34) : 0.055) + n.explodePulse;
+			n.explode += (explodeTarget - n.explode) * (1 - Math.exp(-4.2 * dt));
+			n.explodePulse *= Math.exp(-1.25 * dt);
+			n.focus += ((focused ? 1 : 0) - n.focus) * (1 - Math.exp(-4.5 * dt));
+			const la = focused && n.label && n.presence > 0.5 ? 1 : 0;
+			n.labelA += (la - n.labelA) * (1 - Math.exp(-4.5 * dt));
+
+			const off = offsetFor(n);
+			const driftX = Math.sin(time * 0.24 + n.seed) * 0.055;
+			const driftY = Math.cos(time * 0.20 + n.seed * 1.4) * 0.05;
+			const driftZ = Math.sin(time * 0.17 + n.seed * 0.8) * 0.05;
+			if (n === dragNode) {
+				const k = 1 - Math.exp(-17 * dt);
+				n.pos.lerp(n.dragPoint, k);
+				n.vel.set(0, 0, 0);
 			} else {
-				n.vx += (tx - n.x) * 26 * dt;
-				n.vy += (ty - n.y) * 26 * dt;
-				const damp = Math.exp(-6.5 * dt);
-				n.vx *= damp;
-				n.vy *= damp;
-				n.x += n.vx * dt;
-				n.y += n.vy * dt;
+				tmpV.set(n.base.x + off.x + driftX, n.base.y + off.y + driftY, n.base.z + off.z + driftZ);
+				n.vel.x += (tmpV.x - n.pos.x) * 22 * dt;
+				n.vel.y += (tmpV.y - n.pos.y) * 22 * dt;
+				n.vel.z += (tmpV.z - n.pos.z) * 22 * dt;
+				const damp = Math.exp(-6.2 * dt);
+				n.vel.multiplyScalar(damp);
+				n.pos.addScaledVector(n.vel, dt);
 			}
-			const margin = 18;
-			n.x = clamp(n.x, margin, w - margin);
-			n.y = clamp(n.y, margin, h - margin);
+
+			n.mesh.position.copy(n.pos);
+			const sc = worldR * (0.18 + 0.82 * n.presence) * (1 + 0.02 * Math.sin(time * 0.9 + n.seed));
+			n.mesh.scale.setScalar(Math.max(0.0001, sc));
+			n.mesh.visible = n.presence > 0.02;
+			const mat = n.mesh.material;
+			mat.uniforms.uMem.value.set(n.mEff[0], n.mEff[1], n.mEff[2]);
+			mat.uniforms.uTime.value = time;
+			mat.uniforms.uColor.value.copy(n.color);
+			const shellA = n.presence * (0.20 + 0.55 * n.energy) * (1 - 0.68 * clamp(n.explode, 0, 1)) * (1 + 0.22 * n.focus);
+			mat.uniforms.uOpacity.value = shellA;
+		}
+	}
+
+	function controlPoint(a, b, e, out) {
+		const dx = b.x - a.x;
+		const dy = b.y - a.y;
+		const len = Math.hypot(dx, dy) || 1;
+		const bow = e.bow * len + Math.sin(time * 0.4 + e.seed) * Math.min(0.18, len * 0.03);
+		out.set(
+			(a.x + b.x) * 0.5 - (dy / len) * bow,
+			(a.y + b.y) * 0.5 + (dx / len) * bow,
+			(a.z + b.z) * 0.5 + e.zbow + Math.cos(time * 0.33 + e.seed) * 0.08
+		);
+		return out;
+	}
+
+	const ctrlTmp = new THREE.Vector3();
+	function quadPoint(a, c, b, t, out) {
+		const it = 1 - t;
+		const w0 = it * it;
+		const w1 = 2 * it * t;
+		const w2 = t * t;
+		out.set(
+			w0 * a.x + w1 * c.x + w2 * b.x,
+			w0 * a.y + w1 * c.y + w2 * b.y,
+			w0 * a.z + w1 * c.z + w2 * b.z
+		);
+		return out;
+	}
+
+	function updateHoverAndDrag(dt) {
+		if (hasPointer) {
+			const hit = pickAt(pointer.x, pointer.y);
+			hoverSat = hit ? hit.sat : null;
+			hoverNode = hit ? hit.node : null;
+			let cursor = "default";
+			if (dragSat || dragNode) cursor = "grabbing";
+			else if (hoverSat || hoverNode) cursor = "grab";
+			if (cursor !== lastCursor) {
+				document.body.style.cursor = cursor;
+				lastCursor = cursor;
+			}
+		} else if (lastCursor !== "default") {
+			document.body.style.cursor = "default";
+			lastCursor = "default";
+			hoverNode = null;
+			hoverSat = null;
+		}
+	}
+
+	function updateStageLogic(dt, realDt) {
+		stageAge += realDt;
+		if (dragNode || dragSat || pointerDown) stageAge = 0;
+		const hold = STAGES[stage].hold;
+		if (stage < 7 && stageAge > hold) {
+			setStage(stage + 1, false);
+			return;
+		}
+		if (SPOT_SETS[stage].length > 1) {
+			spotTimer += realDt;
+			if (spotTimer > 3.7) {
+				spotTimer = 0;
+				advanceSpot();
+			}
+		}
+		tensionLevel += ((stage === 4 ? 1 : 0) - tensionLevel) * (1 - Math.exp(-2.2 * dt));
+	}
+
+	function updateSatellites() {
+		for (const n of nodes) {
+			for (let i = 0; i < 3; i++) {
+				const dist = worldR * (0.75 + 0.95 * n.mEff[i] + 1.4 * n.explode);
+				n.sat[i].set(
+					n.pos.x + AXIS_DIR[i].x * dist,
+					n.pos.y + AXIS_DIR[i].y * dist,
+					n.pos.z + AXIS_DIR[i].z * dist
+				);
+			}
+		}
+	}
+
+	function fillGlowPoint(idx, x, y, z, col, size, alpha) {
+		if (idx >= GLOW_MAX) return idx;
+		const i3 = idx * 3;
+		glowPos[i3] = x;
+		glowPos[i3 + 1] = y;
+		glowPos[i3 + 2] = z;
+		glowCol[i3] = col.r;
+		glowCol[i3 + 1] = col.g;
+		glowCol[i3 + 2] = col.b;
+		glowSize[idx] = size;
+		glowAlpha[idx] = alpha;
+		return idx + 1;
+	}
+
+	function updateGlow() {
+		updateSatellites();
+		let g = 0;
+		for (const n of nodes) {
+			if (n.presence < 0.03) continue;
+			const p = n.presence;
+			const e = n.energy;
+			const f = n.focus;
+			if (f > 0.04) {
+				g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 11.5 * (0.5 + 0.5 * p), p * f * (0.05 + 0.05 * e));
+			}
+			g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 6.6 * (0.5 + 0.5 * p), p * (0.065 + 0.125 * e) * (1 + 0.35 * f));
+			g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 2.3 * p, p * (0.10 + 0.18 * e) * (1 + 0.45 * f));
+			g = fillGlowPoint(g, n.pos.x, n.pos.y, n.pos.z, n.color, worldR * 0.64 * p, p * (0.20 + 0.26 * e) * (1 + 0.40 * f));
+			for (let i = 0; i < 3; i++) {
+				const s = n.sat[i];
+				const size = worldR * (0.20 + 0.28 * n.mEff[i]) * (1 + 0.70 * n.explode) * (0.4 + 0.6 * p);
+				const alpha = p * (0.30 + 0.35 * e) * (0.62 + 0.50 * clamp(n.explode, 0, 1)) * (1 + 0.30 * f);
+				g = fillGlowPoint(g, s.x, s.y, s.z, AXIS_COLOR[i], size, alpha);
+			}
 		}
 
-		for (let i = sparks.length - 1; i >= 0; i--) {
-			const s = sparks[i];
-			s.life += dt;
-			if (s.life >= s.ttl) sparks.splice(i, 1);
+		if (tensionLevel > 0.01) {
+			const a = nodes[3];
+			const b = nodes[4];
+			tmpColor.copy(a.color).lerp(b.color, 0.5);
+			tmpV.set((a.pos.x + b.pos.x) * 0.5, (a.pos.y + b.pos.y) * 0.5, (a.pos.z + b.pos.z) * 0.5);
+			const pulse = 0.5 + 0.5 * Math.sin(time * 2.0);
+			g = fillGlowPoint(g, tmpV.x, tmpV.y, tmpV.z, tmpColor, worldR * (5.0 + 1.2 * pulse), tensionLevel * (0.13 + 0.13 * pulse));
 		}
 
+		for (const e of edges) {
+			if (e.reveal < 0.03) continue;
+			const a = nodes[e.a];
+			const b = nodes[e.b];
+			const minE = Math.min(a.energy, b.energy);
+			g = fillGlowPoint(g, e.morphPos.x, e.morphPos.y, e.morphPos.z, e.morphColor, morphRBase() * 6.0 * (0.35 + 0.65 * e.reveal), e.reveal * 0.30 * minE);
+			const c = ctrlTmp;
+			controlPoint(a.pos, b.pos, e, c);
+			const dir = Math.sin(e.phase) >= 0 ? 1 : -1;
+			const u = 0.5 - 0.5 * Math.cos(e.phase);
+			for (let k = 1; k <= 3; k++) {
+				const t = clamp(u - dir * 0.042 * k, 0, 1);
+				const q = quadPoint(a.pos, c, b.pos, t, tmpV2);
+				g = fillGlowPoint(g, q.x, q.y, q.z, e.morphColor, morphRBase() * (2.8 - 0.55 * k) * (0.35 + 0.65 * e.reveal), e.reveal * (0.20 - 0.04 * k) * minE);
+			}
+		}
+		glowGeo.setDrawRange(0, g);
+		glowGeo.attributes.position.needsUpdate = true;
+		glowGeo.attributes.aColor.needsUpdate = true;
+		glowGeo.attributes.aSize.needsUpdate = true;
+		glowGeo.attributes.aAlpha.needsUpdate = true;
+	}
+
+	function updateConnectors() {
+		let v = 0;
+		for (const n of nodes) {
+			if (n.presence < 0.03) continue;
+			for (let i = 0; i < 3; i++) {
+				const s = n.sat[i];
+				connPos[v * 3] = n.pos.x;
+				connPos[v * 3 + 1] = n.pos.y;
+				connPos[v * 3 + 2] = n.pos.z;
+				connPos[(v + 1) * 3] = s.x;
+				connPos[(v + 1) * 3 + 1] = s.y;
+				connPos[(v + 1) * 3 + 2] = s.z;
+				const a = n.presence * (0.035 + 0.10 * clamp(n.explode, 0, 1) + 0.12 * n.focus) * (0.4 + 0.6 * n.energy);
+				const ac = AXIS_COLOR[i];
+				connCol[v * 3] = ac.r * a;
+				connCol[v * 3 + 1] = ac.g * a;
+				connCol[v * 3 + 2] = ac.b * a;
+				connCol[(v + 1) * 3] = ac.r * a;
+				connCol[(v + 1) * 3 + 1] = ac.g * a;
+				connCol[(v + 1) * 3 + 2] = ac.b * a;
+				v += 2;
+			}
+		}
+		connGeo.setDrawRange(0, v);
+		connGeo.attributes.position.needsUpdate = true;
+		connGeo.attributes.color.needsUpdate = true;
+	}
+
+	function revealTargetFor(e) {
+		const a = nodes[e.a];
+		const b = nodes[e.b];
+		if (!a || !b) return 0;
+		if (Math.min(a.presence, b.presence) < 0.2) return 0;
+		const moderation = e.a === 5 || e.b === 5;
+		if (stage === 2 || stage === 3) return moderation ? 0 : 1;
+		if (stage === 4) return moderation ? 0 : 0.14;
+		if (stage === 5) return moderation ? 1 : 0.14;
+		if (stage >= 6) return 1;
+		return 0;
+	}
+
+	function buildTargetFor(e) {
+		const a = nodes[e.a];
+		const b = nodes[e.b];
+		if (!a || !b) return 0;
+		if (Math.min(a.presence, b.presence) < 0.2) return 0;
+		const moderation = e.a === 5 || e.b === 5;
+		if (moderation) return stage >= 5 ? 1 : 0;
+		return stage >= 2 ? 1 : 0;
+	}
+
+	function updateEdges(dt) {
+		const morphBoost = stage === 3 ? 1.45 : stage === 7 ? 1.15 : 1.0;
+		for (const e of edges) {
+			const a = nodes[e.a];
+			const b = nodes[e.b];
+			e.phase += dt * e.speed * morphBoost * MOTION;
+			const rt = revealTargetFor(e);
+			const bt = buildTargetFor(e);
+			e.reveal += (rt - e.reveal) * (1 - Math.exp(-3.0 * dt));
+			const bSpeed = 0.85 + (e.seed % 1) * 0.8;
+			e.build += (bt - e.build) * (1 - Math.exp(-bSpeed * 2.2 * dt));
+			const u = 0.5 - 0.5 * Math.cos(e.phase);
+			const ctrl = controlPoint(a.pos, b.pos, e, ctrlTmp);
+			const dir = Math.sin(e.phase) >= 0 ? 1 : -1;
+			if (e.dir !== 0 && e.dir !== dir && e.reveal > 0.35 && e.build > 0.75) {
+				const at = dir === 1 ? a : b;
+				spawnSpark(at.pos.x, at.pos.y, at.pos.z, at.hue, 0.05, 0.35);
+			}
+			e.dir = dir;
+
+			quadPoint(a.pos, ctrl, b.pos, u, e.morphPos);
+			for (let i = 0; i < 3; i++) {
+				e.morphMem[i] = lerp(a.mEff[i], b.mEff[i], u);
+			}
+			e.morphColor.copy(a.color).lerp(b.color, u);
+			e.morphSize = morphRBase() * (0.35 + 0.65 * e.reveal) * (0.9 + 0.1 * Math.sin(time * 2 + e.seed));
+			const minE = Math.min(a.energy, b.energy);
+			e.morph.position.copy(e.morphPos);
+			e.morph.scale.setScalar(Math.max(0.0001, e.morphSize));
+			e.morph.visible = e.reveal > 0.03;
+			const mm = e.morph.material;
+			mm.uniforms.uMem.value.set(e.morphMem[0], e.morphMem[1], e.morphMem[2]);
+			mm.uniforms.uTime.value = time;
+			mm.uniforms.uColor.value.copy(e.morphColor);
+			mm.uniforms.uOpacity.value = e.reveal * (0.55 + 0.45 * minE) * (0.5 + 0.5 * e.build);
+
+			const base = e.slot;
+			for (let i = 0; i < PTS; i++) {
+				quadPoint(a.pos, ctrl, b.pos, i / (PTS - 1), tmpV2);
+				const idx = (base * PTS + i) * 3;
+				epPos[idx] = tmpV2.x;
+				epPos[idx + 1] = tmpV2.y;
+				epPos[idx + 2] = tmpV2.z;
+				const t = i / (PTS - 1);
+				const cr = lerp(a.color.r, b.color.r, t);
+				const cg = lerp(a.color.g, b.color.g, t);
+				const cb = lerp(a.color.b, b.color.b, t);
+				epCol[idx] = cr;
+				epCol[idx + 1] = cg;
+				epCol[idx + 2] = cb;
+				epOpacity[base * PTS + i] = e.reveal * (0.45 + 0.55 * minE);
+				epBuild[base * PTS + i] = e.build;
+			}
+
+			for (let sIdx = 0; sIdx < SEG; sIdx++) {
+				const t0 = sIdx / SEG;
+				const t1 = (sIdx + 1) / SEG;
+				quadPoint(a.pos, ctrl, b.pos, t0, tmpV2);
+				quadPoint(a.pos, ctrl, b.pos, t1, tmpV);
+				const i0 = (base * SEG + sIdx) * 2;
+				elPos[i0 * 3] = tmpV2.x;
+				elPos[i0 * 3 + 1] = tmpV2.y;
+				elPos[i0 * 3 + 2] = tmpV2.z;
+				elPos[(i0 + 1) * 3] = tmpV.x;
+				elPos[(i0 + 1) * 3 + 1] = tmpV.y;
+				elPos[(i0 + 1) * 3 + 2] = tmpV.z;
+				const tm = (t0 + t1) * 0.5;
+				const vis = clamp((e.build - tm) * 26, 0, 1) * e.reveal * (0.45 + 0.55 * minE) * 0.20;
+				const cr = lerp(a.color.r, b.color.r, tm) * vis;
+				const cg = lerp(a.color.g, b.color.g, tm) * vis;
+				const cb = lerp(a.color.b, b.color.b, tm) * vis;
+				elCol[i0 * 3] = cr;
+				elCol[i0 * 3 + 1] = cg;
+				elCol[i0 * 3 + 2] = cb;
+				elCol[(i0 + 1) * 3] = cr;
+				elCol[(i0 + 1) * 3 + 1] = cg;
+				elCol[(i0 + 1) * 3 + 2] = cb;
+			}
+		}
+		edgePointGeo.setDrawRange(0, edges.length * PTS);
+		edgeLineGeo.setDrawRange(0, edges.length * SEG * 2);
+		edgePointGeo.attributes.position.needsUpdate = true;
+		edgePointGeo.attributes.aColor.needsUpdate = true;
+		edgePointGeo.attributes.aOpacity.needsUpdate = true;
+		edgePointGeo.attributes.aBuild.needsUpdate = true;
+		edgeLineGeo.attributes.position.needsUpdate = true;
+		edgeLineGeo.attributes.color.needsUpdate = true;
+	}
+
+	function spawnSpark(x, y, z, hue, size, growth) {
+		const i = sparkCursor;
+		sparkCursor = (sparkCursor + 1) % SPARK_MAX;
+		const i3 = i * 3;
+		spPos[i3] = x;
+		spPos[i3 + 1] = y;
+		spPos[i3 + 2] = z;
+		tmpColor.setHSL(((hue % 360) + 360) % 360 / 360, 0.85, 0.72);
+		spCol[i3] = tmpColor.r;
+		spCol[i3 + 1] = tmpColor.g;
+		spCol[i3 + 2] = tmpColor.b;
+		spBirth[i] = time;
+		spSize[i] = size;
+		spGrowth[i] = growth;
+		sparkGeo.attributes.position.needsUpdate = true;
+		sparkGeo.attributes.aColor.needsUpdate = true;
+		sparkGeo.attributes.aBirth.needsUpdate = true;
+		sparkGeo.attributes.aSize.needsUpdate = true;
+		sparkGeo.attributes.aGrowth.needsUpdate = true;
+	}
+
+	function burst(pos, hue, count, size, growth) {
+		for (let i = 0; i < count; i++) {
+			tmpV.set(
+				pos.x + (Math.random() - 0.5) * 0.4,
+				pos.y + (Math.random() - 0.5) * 0.4,
+				pos.z + (Math.random() - 0.5) * 0.4
+			);
+			spawnSpark(tmpV.x, tmpV.y, tmpV.z, hue + (Math.random() - 0.5) * 40, size * (0.6 + Math.random() * 0.8), growth * (0.6 + Math.random() * 0.9));
+		}
+	}
+
+	function updateSparks(dt) {
 		const connected = new Set();
 		for (const e of edges) {
 			connected.add(e.a < e.b ? e.a + ":" + e.b : e.b + ":" + e.a);
 		}
-
-		for (let i = 0; i < nodes.length; i++) {
-			for (let j = i + 1; j < nodes.length; j++) {
-				if (connected.has(i + ":" + j)) continue;
-				const a = nodes[i];
-				const b = nodes[j];
-				const d = Math.hypot(a.x - b.x, a.y - b.y);
-				const overlap = (radiusOf(a) + radiusOf(b)) * 0.96 - d;
-				if (overlap > 4 && Math.random() < overlap * 0.0022 * dt) {
-					const t = radiusOf(a) / (radiusOf(a) + radiusOf(b));
-					pushSpark(
-						lerp(a.x, b.x, t) + (Math.random() - 0.5) * 20,
-						lerp(a.y, b.y, t) + (Math.random() - 0.5) * 20,
-						mixHue(a.hue, b.hue, Math.random()),
-						1
-					);
+		if (stage >= 1) {
+			for (let i = 0; i < nodes.length; i++) {
+				for (let j = i + 1; j < nodes.length; j++) {
+					if (connected.has(i + ":" + j)) continue;
+					const a = nodes[i];
+					const b = nodes[j];
+					if (Math.min(a.presence, b.presence) < 0.4) continue;
+					const d = a.pos.distanceTo(b.pos);
+					const reach = (a.worldR || worldR) + (b.worldR || worldR) + worldR * 1.5;
+					const ov = reach - d;
+					if (ov <= 0) continue;
+					let p = ov * 0.09 * dt;
+					if (stage === 4 && ((i === 3 && j === 4) || (i === 4 && j === 3))) p *= 5;
+					if (Math.random() < p) {
+						tmpV.set((a.pos.x + b.pos.x) * 0.5, (a.pos.y + b.pos.y) * 0.5, (a.pos.z + b.pos.z) * 0.5);
+						tmpV.x += (Math.random() - 0.5) * 0.4;
+						tmpV.y += (Math.random() - 0.5) * 0.4;
+						spawnSpark(tmpV.x, tmpV.y, tmpV.z, lerpHue(a.hue, b.hue, Math.random()), 0.05, 0.5);
+					}
 				}
 			}
 		}
-
-		for (const e of edges) {
-			const a = nodes[e.a];
-			const b = nodes[e.b];
-			if (!a || !b) continue;
-			const phase = time * e.speed + e.seed;
-			const dir = Math.sin(phase) >= 0 ? 1 : -1;
-			if (e.dir !== 0 && e.dir !== dir) {
-				const at = dir === 1 ? a : b;
-				pushSpark(at.x, at.y, at.hue, 0.7);
-			}
-			e.dir = dir;
-		}
-
-		for (const m of motes) {
-			m.y -= m.sp * (0.35 + m.depth) * dt;
-			if (m.y < -0.04) {
-				m.y = 1.04;
-				m.x = Math.random();
-			}
-		}
 	}
 
-	function controlPoint(a, b, e) {
-		const dx = b.x - a.x;
-		const dy = b.y - a.y;
-		const len = Math.hypot(dx, dy) || 1;
-		const bow = e.bow * len + Math.sin(time * 0.4 + e.seed) * Math.min(14, len * 0.05);
-		return {
-			x: (a.x + b.x) / 2 - (dy / len) * bow,
-			y: (a.y + b.y) / 2 + (dx / len) * bow
+	function lerpHue(a, b, t) {
+		let d = ((b - a + 540) % 360) - 180;
+		return (a + d * t + 360) % 360;
+	}
+
+	function spawnCreative() {
+		const fa = nodes[2];
+		const he = nodes[3];
+		tmpV.copy(fa.base).lerp(he.base, 0.5);
+		if (nodes.length >= MAX_NODES) {
+			burst(tmpV, 205, 12, 0.12, 0.5);
+			return;
+		}
+		const n = spawnNodeAt(tmpV.x, tmpV.y, tmpV.z);
+		if (!n) return;
+		n.explodePulse = 1.35;
+		makeEdge(nodes.indexOf(n), 2);
+		makeEdge(nodes.indexOf(n), 3);
+		burst(n.pos, 205, 14, 0.12, 0.55);
+	}
+
+	function spawnNodeAt(x, y, z) {
+		if (nodes.length >= MAX_NODES) return null;
+		const def = {
+			label: "",
+			fx: 0, fy: 0, fz: 0,
+			m: [0.12 + Math.random() * 0.8, 0.12 + Math.random() * 0.8, 0.12 + Math.random() * 0.8]
 		};
+		const n = makeNode(def, false);
+		n.base.set(x, y, z);
+		n.pos.copy(n.base);
+		n.presence = 0.001;
+		n.energy = 1;
+		n.explodePulse = 1.1;
+		composeColor(n, n.color);
+		nodes.push(n);
+		return n;
 	}
 
-	function quadPoint(a, c, b, t) {
-		const it = 1 - t;
-		return {
-			x: it * it * a.x + 2 * it * t * c.x + t * t * b.x,
-			y: it * it * a.y + 2 * it * t * c.y + t * t * b.y
-		};
-	}
-
-	function tracePath(points) {
-		fx.beginPath();
-		fx.moveTo(points[0].x, points[0].y);
-		for (let i = 1; i < points.length; i++) fx.lineTo(points[i].x, points[i].y);
-	}
-
-	function lobeRadiusPx(th, base, m) {
-		const s = m[0] * Math.pow(0.5 + 0.5 * Math.cos(th - AXIS_A0), 2)
-			+ m[1] * Math.pow(0.5 + 0.5 * Math.cos(th - AXIS_A1), 2)
-			+ m[2] * Math.pow(0.5 + 0.5 * Math.cos(th - AXIS_A2), 2);
-		return base * (0.42 + 0.62 * s);
-	}
-
-	function blobPath(x, y, base, m) {
-		const N = 72;
-		fx.beginPath();
-		for (let k = 0; k <= N; k++) {
-			const th = (k / N) * TAU;
-			const r = lobeRadiusPx(th, base, m);
-			const px = x + Math.cos(th) * r;
-			const py = y + Math.sin(th) * r;
-			if (k === 0) fx.moveTo(px, py);
-			else fx.lineTo(px, py);
+	function spawnAtPointer() {
+		const plane = new THREE.Plane();
+		camera.getWorldDirection(tmpDir);
+		plane.setFromNormalAndCoplanarPoint(tmpDir, new THREE.Vector3(0, 0, 0));
+		raycaster.setFromCamera(new THREE.Vector2(pointer.ndcX, pointer.ndcY), camera);
+		const p = new THREE.Vector3();
+		if (!raycaster.ray.intersectPlane(plane, p)) return;
+		p.x = clamp(p.x, -X * 1.2, X * 1.2);
+		p.y = clamp(p.y, -Y * 1.2, Y * 1.2);
+		if (nodes.length >= MAX_NODES) {
+			burst(p, 205, 10, 0.1, 0.45);
+			return;
 		}
-		fx.closePath();
+		const n = spawnNodeAt(p.x, p.y, p.z);
+		if (!n) return;
+		n.explodePulse = 1.2;
+		const near = nodes
+			.filter((o) => o !== n && o.presence > 0.4)
+			.map((o) => ({ o, d: o.base.distanceTo(n.base) }))
+			.sort((a, b) => a.d - b.d)
+			.slice(0, 2);
+		for (const { o } of near) makeEdge(nodes.indexOf(n), nodes.indexOf(o));
+		burst(n.pos, n.hue, 12, 0.1, 0.5);
 	}
 
-	function drawEdges() {
-		for (const e of edges) {
-			const a = nodes[e.a];
-			const b = nodes[e.b];
-			if (!a || !b) continue;
-			const c = controlPoint(a, b, e);
-			const pts = [];
-			for (let k = 0; k <= 32; k++) pts.push(quadPoint(a, c, b, k / 32));
-			const hue = mixHue(a.hue, b.hue, 0.5);
-			const birth = Math.min(a.birth, b.birth);
-
-			tracePath(pts);
-			fx.strokeStyle = hsla(hue, 82, 68, 0.045 * birth);
-			fx.lineWidth = 7;
-			fx.stroke();
-
-			const grad = fx.createLinearGradient(a.x, a.y, b.x, b.y);
-			grad.addColorStop(0, hsla(a.hue, 88, 72, 0.30 * birth));
-			grad.addColorStop(1, hsla(b.hue, 88, 72, 0.30 * birth));
-			fx.setLineDash([2, 9]);
-			fx.lineDashOffset = -(time * 30 + e.seed * 12);
-			tracePath(pts);
-			fx.strokeStyle = grad;
-			fx.lineWidth = 1.1;
-			fx.stroke();
-			fx.setLineDash([]);
-		}
-	}
-
-	function drawTension() {
-		const a = nodes[3];
-		const b = nodes[4];
-		if (!a || !b) return;
-		const d = Math.hypot(a.x - b.x, a.y - b.y);
-		const overlap = (radiusOf(a) + radiusOf(b)) * 0.96 - d;
-		if (overlap <= 0) return;
-		const t = radiusOf(a) / (radiusOf(a) + radiusOf(b));
-		const x = lerp(a.x, b.x, t);
-		const y = lerp(a.y, b.y, t);
-		const pulse = 0.5 + 0.5 * Math.sin(time * 2.1);
-		const r = overlap * 1.05 + 10;
-		const g = fx.createRadialGradient(x, y, 0, x, y, r);
-		g.addColorStop(0, hsla(mixHue(a.hue, b.hue, 0.5), 92, 70, 0.12 * pulse));
-		g.addColorStop(1, hsla(mixHue(a.hue, b.hue, 0.5), 92, 60, 0));
-		fx.fillStyle = g;
-		fx.beginPath();
-		fx.arc(x, y, r, 0, TAU);
-		fx.fill();
-	}
-
-	function drawFocus() {
+	function projectAll() {
+		camera.updateMatrixWorld();
 		for (const n of nodes) {
-			if (n.labelA < 0.02) continue;
-			const m = memOf(n);
-			blobPath(n.x, n.y, radiusOf(n), m);
-			fx.strokeStyle = hsla(n.hue, 88, 86, 0.30 * n.labelA);
-			fx.lineWidth = 1;
-			fx.stroke();
-		}
-	}
-
-	function drawMorphs() {
-		for (const e of edges) {
-			const a = nodes[e.a];
-			const b = nodes[e.b];
-			if (!a || !b) continue;
-			const phase = time * e.speed + e.seed;
-			const u = 0.5 - 0.5 * Math.cos(phase);
-			const c = controlPoint(a, b, e);
-			const P = quadPoint(a, c, b, u);
-			const A = memOf(a);
-			const B = memOf(b);
-			const m = [lerp(A[0], B[0], u), lerp(A[1], B[1], u), lerp(A[2], B[2], u)];
-			const hue = mixHue(a.hue, b.hue, u);
-			const birth = Math.min(a.birth, b.birth);
-			const mr = Math.max(4.2, radius * 0.13) * (0.9 + 0.1 * Math.sin(time * 2 + e.seed));
-			const dir = Math.sin(phase) >= 0 ? 1 : -1;
-
-			for (let j = 4; j >= 1; j--) {
-				const tt = clamp(u - dir * 0.03 * j, 0, 1);
-				const Q = quadPoint(a, c, b, tt);
-				const g = fx.createRadialGradient(Q.x, Q.y, 0, Q.x, Q.y, mr * (1 - 0.12 * j));
-				g.addColorStop(0, hsla(hue, 92, 74, 0.22 * (1 - j / 5.5) * birth));
-				g.addColorStop(1, hsla(hue, 92, 60, 0));
-				fx.fillStyle = g;
-				fx.beginPath();
-				fx.arc(Q.x, Q.y, mr * (1 - 0.12 * j), 0, TAU);
-				fx.fill();
+			tmpV.copy(n.pos).project(camera);
+			n.svis = tmpV.z > -1 && tmpV.z < 1;
+			n.sx = (tmpV.x * 0.5 + 0.5) * w;
+			n.sy = (-tmpV.y * 0.5 + 0.5) * h;
+			const dist = camera.position.distanceTo(n.pos);
+			n.sr = (worldR * Math.max(0.15, n.presence) * projCss) / Math.max(1, dist);
+			for (let i = 0; i < 3; i++) {
+				tmpV.copy(n.sat[i]).project(camera);
+				const s = n.satScreen[i];
+				s.vis = tmpV.z > -1 && tmpV.z < 1;
+				s.x = (tmpV.x * 0.5 + 0.5) * w;
+				s.y = (-tmpV.y * 0.5 + 0.5) * h;
+				const sd = camera.position.distanceTo(n.sat[i]);
+				const sw = worldR * (0.20 + 0.26 * n.mEff[i]) * (1 + 0.55 * n.explode);
+				s.r = Math.max(11, (sw * projCss) / Math.max(1, sd) * 0.75);
 			}
-
-			const glow = fx.createRadialGradient(P.x, P.y, 0, P.x, P.y, mr * 3.4);
-			glow.addColorStop(0, hsla(hue, 95, 78, 0.42 * birth));
-			glow.addColorStop(0.45, hsla(hue, 92, 64, 0.14 * birth));
-			glow.addColorStop(1, hsla(hue, 92, 58, 0));
-			fx.fillStyle = glow;
-			fx.beginPath();
-			fx.arc(P.x, P.y, mr * 3.4, 0, TAU);
-			fx.fill();
-
-			blobPath(P.x, P.y, mr * 1.5, m);
-			fx.fillStyle = hsla(hue, 96, 84, 0.9 * birth);
-			fx.fill();
 		}
 	}
 
-	function drawSparks() {
-		for (const s of sparks) {
-			const t = s.life / s.ttl;
-			const k = 1 - t;
-			const r = s.r0 + (s.r1 - s.r0) * (1 - Math.pow(1 - t, 3));
-			fx.strokeStyle = hsla(s.hue, 92, 78, 0.42 * k * k);
-			fx.lineWidth = 1.1;
-			fx.beginPath();
-			fx.arc(s.x, s.y, r, 0, TAU);
-			fx.stroke();
-
-			const g = fx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r * 0.5 + 2);
-			g.addColorStop(0, hsla(s.hue, 95, 82, 0.20 * k * k));
-			g.addColorStop(1, hsla(s.hue, 92, 62, 0));
-			fx.fillStyle = g;
-			fx.beginPath();
-			fx.arc(s.x, s.y, r * 0.5 + 2, 0, TAU);
-			fx.fill();
-		}
-	}
-
-	function drawLabels() {
-		fx.textAlign = "center";
-		fx.textBaseline = "middle";
-		fx.font = "600 9.5px ui-sans-serif, system-ui, -apple-system, sans-serif";
-		if ("letterSpacing" in fx) fx.letterSpacing = "2px";
+	function pickAt(x, y) {
+		let bestSat = null;
+		let bestSatD = Infinity;
 		for (const n of nodes) {
-			if (!n.label || n.labelA < 0.01) continue;
-			fx.globalAlpha = n.labelA;
-			fx.lineWidth = 3.5;
-			fx.strokeStyle = "rgba(4, 6, 12, 0.62)";
-			fx.strokeText(n.label, n.x, n.y);
-			fx.fillStyle = hsla(n.hue, 78, 90, 0.94);
-			fx.fillText(n.label, n.x, n.y);
+			if (n.presence < 0.25 || !n.svis) continue;
+			for (let i = 0; i < 3; i++) {
+				const s = n.satScreen[i];
+				if (!s.vis) continue;
+				const d = Math.hypot(x - s.x, y - s.y);
+				if (d < s.r && d < bestSatD) {
+					bestSatD = d;
+					bestSat = { node: n, axis: i };
+				}
+			}
 		}
-		fx.globalAlpha = 1;
-		if ("letterSpacing" in fx) fx.letterSpacing = "0px";
+		if (bestSat) return { node: bestSat.node, sat: bestSat };
+		let bestNode = null;
+		let bestNodeD = Infinity;
+		for (const n of nodes) {
+			if (n.presence < 0.25 || !n.svis) continue;
+			const d = Math.hypot(x - n.sx, y - n.sy);
+			const r = Math.max(26, n.sr * 1.05);
+			if (d < r && d < bestNodeD) {
+				bestNodeD = d;
+				bestNode = n;
+			}
+		}
+		return bestNode ? { node: bestNode, sat: null } : null;
 	}
 
-	function drawMotes() {
-		const parX = hasPointer ? (pointer.x - cx) * -0.006 : 0;
-		const parY = hasPointer ? (pointer.y - cy) * -0.006 : 0;
-		for (const m of motes) {
-			const x = m.x * w + Math.sin(time * 0.11 + m.ph) * (6 + m.depth * 10) + parX * m.depth;
-			const y = m.y * h + Math.cos(time * 0.09 + m.ph * 1.3) * (4 + m.depth * 7) + parY * m.depth;
-			const twinkle = 0.55 + 0.45 * Math.sin(time * 0.5 + m.ph * 2.1);
-			fx.fillStyle = hsla(m.hue, 55, 88, 0.10 * m.depth * twinkle);
-			fx.beginPath();
-			fx.arc(x, y, m.r * (0.7 + m.depth * 0.6), 0, TAU);
-			fx.fill();
+	function updateLabels() {
+		const focus = hoverNode || nodes[spot] || nodes[0];
+		for (const n of nodes) {
+			if (!n.el) continue;
+			const vis = n.labelA > 0.02 && n.svis;
+			n.el.style.opacity = vis ? String(n.labelA) : "0";
+			if (vis) {
+				n.el.style.transform = `translate3d(${n.sx.toFixed(1)}px, ${n.sy.toFixed(1)}px, 0) translate(-50%, -50%)`;
+				tmpHSL.h = 0;
+				tmpHSL.s = 0;
+				tmpHSL.l = 0;
+				n.color.getHSL(tmpHSL);
+				n.el.style.color = hsla(tmpHSL.h * 360, 70, 90, 1);
+				n.el.style.textShadow = `0 0 16px rgba(0,0,0,0.92), 0 0 26px ${hsla(tmpHSL.h * 360, 80, 62, 0.45)}`;
+			}
+		}
+		const showAxes = stage <= 3 || (hasPointer && hoverNode === focus);
+		if (showAxes && focus && focus.presence > 0.4) {
+			for (let i = 0; i < 3; i++) {
+				const s = focus.satScreen[i];
+				const el = axisLabels[i];
+				const opacity = focus.focus * focus.presence * 0.62;
+				if (!s.vis || opacity < 0.02) {
+					el.style.opacity = "0";
+					continue;
+				}
+				const dx = s.x - focus.sx;
+				const dy = s.y - focus.sy;
+				const dl = Math.hypot(dx, dy) || 1;
+				const ox = s.x + (dx / dl) * 20;
+				const oy = s.y + (dy / dl) * 20;
+				el.style.opacity = String(opacity);
+				el.style.transform = `translate3d(${ox.toFixed(1)}px, ${oy.toFixed(1)}px, 0) translate(-50%, -50%)`;
+			}
+		} else {
+			for (let i = 0; i < 3; i++) axisLabels[i].style.opacity = "0";
 		}
 	}
 
-	function renderOverlay() {
-		fx.clearRect(0, 0, w, h);
-		fx.lineJoin = "round";
-		fx.lineCap = "round";
-
-		fx.globalCompositeOperation = "lighter";
-		drawMotes();
-		fx.globalCompositeOperation = "source-over";
-		drawEdges();
-		fx.globalCompositeOperation = "lighter";
-		drawTension();
-		fx.globalCompositeOperation = "source-over";
-		drawFocus();
-		fx.globalCompositeOperation = "lighter";
-		drawMorphs();
-		drawSparks();
-		fx.globalCompositeOperation = "source-over";
-		drawLabels();
-	}
-
-	function updateUniforms() {
-		if (!uniforms || !renderer) return;
+	function updateCamera(dt) {
 		const aspect = w / h;
-		const pxToWorld = 2 / h;
-		for (let i = 0; i < MAX_NODES; i++) {
-			const n = nodes[i];
-			if (!n) {
-				uniforms.uRad.value[i] = 0;
-				uniforms.uCol.value[i].set(0, 0, 0);
-				continue;
-			}
-			const wx = (n.x / w - 0.5) * 2 * aspect;
-			const wy = (0.5 - n.y / h) * 2;
-			uniforms.uPos.value[i].set(wx, wy);
-			uniforms.uRad.value[i] = radiusOf(n) * pxToWorld;
-			const m = memOf(n);
-			uniforms.uMem.value[i].set(m[0], m[1], m[2]);
-			const rgb = hslToRgb(n.hue, 0.72, 0.6);
-			const gain = 0.92 + n.labelA * 0.34;
-			uniforms.uCol.value[i].set(rgb[0] * gain, rgb[1] * gain, rgb[2] * gain);
+		const st = STAGES[stage];
+		let lookX = 0;
+		let lookY = 0;
+		let lookZ = 0;
+		if (stage === 0) {
+			lookX = nodes[0].pos.x;
+			lookY = nodes[0].pos.y;
+			lookZ = nodes[0].pos.z;
+		} else if (stage === 4) {
+			lookY = -1.45;
+			lookZ = -0.35;
+		} else if (stage === 5) {
+			lookY = -1.85;
+			lookZ = -0.30;
 		}
-		uniforms.uTime.value = time;
-		uniforms.uPointerOn.value = pointerOn;
-		uniforms.uPointer.value.set(
-			(pointer.x / w - 0.5) * 2 * aspect,
-			(0.5 - pointer.y / h) * 2
+		tmpV.set(lookX, lookY, lookZ);
+		cam.look.lerp(tmpV, 1 - Math.exp(-2.3 * dt));
+
+		const yawBase = Math.sin(time * 0.10) * 0.20 + pointer.ndcX * 0.14;
+		const stageYaw = [0.24, 0.0, 0.10, 0.18, -0.10, -0.06, 0.12, 0.0][stage];
+		const finaleYaw = stage === 7 ? Math.sin(time * 0.08) * 0.42 : 0;
+		const yawTarget = yawBase + stageYaw + finaleYaw;
+		cam.yaw += (yawTarget - cam.yaw) * (1 - Math.exp(-2.6 * dt));
+
+		const pitchBase = 0.035 + pointer.ndcY * -0.05 + Math.sin(time * 0.05) * 0.02;
+		const finalePitch = stage === 7 ? Math.sin(time * 0.045) * 0.07 : 0;
+		const pitchTarget = pitchBase + finalePitch;
+		cam.pitch += (pitchTarget - cam.pitch) * (1 - Math.exp(-2.6 * dt));
+
+		const radiusTarget = baseDist * st.zoom * (1 + 0.008 * Math.sin(time * 0.8));
+		cam.radius += (radiusTarget - cam.radius) * (1 - Math.exp(-2.2 * dt));
+
+		const cy = Math.cos(cam.pitch);
+		camera.position.set(
+			cam.look.x + Math.sin(cam.yaw) * cy * cam.radius,
+			cam.look.y + Math.sin(cam.pitch) * cam.radius,
+			cam.look.z + Math.cos(cam.yaw) * cy * cam.radius
 		);
+		camera.lookAt(cam.look);
+		camera.updateMatrixWorld();
 	}
 
-	function frame(now) {
-		if (!last) last = now;
-		let dt = (now - last) / 1000;
-		last = now;
-		dt = Math.min(dt, 0.05);
-
-		update(dt);
-		updateUniforms();
-		if (renderer) renderer.render(scene, camera);
-		renderOverlay();
-		requestAnimationFrame(frame);
+	function beginDragPlane(point) {
+		camera.getWorldDirection(tmpDir);
+		dragPlane = new THREE.Plane();
+		dragPlane.setFromNormalAndCoplanarPoint(tmpDir, point);
 	}
 
-	let dragNode = null;
-
-	function hitTest(x, y) {
-		let best = null;
-		let bestD = Infinity;
-		for (const n of nodes) {
-			const d = Math.hypot(x - n.x, y - n.y);
-			const hit = Math.max(radiusOf(n) * 0.95, 28);
-			if (d < hit && d < bestD) {
-				best = n;
-				bestD = d;
-			}
-		}
-		return best;
+	function rayPoint() {
+		raycaster.setFromCamera(new THREE.Vector2(pointer.ndcX, pointer.ndcY), camera);
+		const p = new THREE.Vector3();
+		if (!raycaster.ray.intersectPlane(dragPlane, p)) return null;
+		return p;
 	}
 
 	window.addEventListener("pointermove", (e) => {
 		pointer.x = e.clientX;
 		pointer.y = e.clientY;
+		pointer.ndcX = (e.clientX / w) * 2 - 1;
+		pointer.ndcY = -(e.clientY / h) * 2 + 1;
 		hasPointer = true;
-		if (dragNode) {
-			document.body.style.cursor = "grabbing";
-			return;
+		if (dragSat) {
+			const p = rayPoint();
+			if (p) {
+				const n = dragSat.node;
+				const axis = dragSat.axis;
+				const s = p.clone().sub(n.pos).dot(AXIS_DIR[axis]);
+				const wgt = clamp((s / worldR - 0.75 - 1.4 * n.explode) / 0.95, 0.03, 1);
+				n.m[axis] = wgt;
+			}
+		} else if (dragNode) {
+			const p = rayPoint();
+			if (p) dragNode.dragPoint.copy(p).add(dragOffset);
 		}
-		const hit = hitTest(pointer.x, pointer.y);
-		pointer.node = hit;
-		document.body.style.cursor = hit ? "grab" : "default";
 	}, { passive: true });
 
 	window.addEventListener("pointerdown", (e) => {
+		if (e.target && e.target.closest && e.target.closest("button")) return;
 		pointer.x = e.clientX;
 		pointer.y = e.clientY;
+		pointer.ndcX = (e.clientX / w) * 2 - 1;
+		pointer.ndcY = -(e.clientY / h) * 2 + 1;
 		hasPointer = true;
-		const hit = hitTest(pointer.x, pointer.y);
-		if (hit) {
-			dragNode = hit;
-			hit.drag = true;
-			pointer.node = hit;
-			const idx = nodes.indexOf(hit);
+		pointerDown = true;
+		stageAge = 0;
+		const hit = pickAt(pointer.x, pointer.y);
+		if (hit && hit.sat) {
+			dragSat = hit.sat;
+			beginDragPlane(hit.node.pos);
+			hoverNode = hit.node;
+		} else if (hit) {
+			dragNode = hit.node;
+			hit.node.dragPoint.copy(hit.node.pos);
+			beginDragPlane(hit.node.pos);
+			raycaster.setFromCamera(new THREE.Vector2(pointer.ndcX, pointer.ndcY), camera);
+			const p = new THREE.Vector3();
+			if (raycaster.ray.intersectPlane(dragPlane, p)) dragOffset.copy(hit.node.pos).sub(p);
+			hoverNode = hit.node;
+			const idx = nodes.indexOf(hit.node);
 			if (idx >= 0 && idx < CORE_NODES) {
 				spot = idx;
 				spotTimer = 0;
 			}
-			document.body.style.cursor = "grabbing";
-			pushSpark(hit.x, hit.y, hit.hue, 0.8);
+			burst(hit.node.pos, hit.node.hue, 4, 0.05, 0.3);
 		} else {
-			spawnNode(pointer.x, pointer.y);
+			spawnAtPointer();
 		}
 	}, { passive: true });
 
-	window.addEventListener("pointerup", () => {
-		if (dragNode) {
-			dragNode.drag = false;
-			dragNode = null;
-			document.body.style.cursor = hitTest(pointer.x, pointer.y) ? "grab" : "default";
-		}
-	});
+	function endPointer() {
+		pointerDown = false;
+		dragNode = null;
+		dragSat = null;
+		dragPlane = null;
+	}
 
-	window.addEventListener("pointercancel", () => {
-		if (dragNode) {
-			dragNode.drag = false;
-			dragNode = null;
-		}
-	});
-
-	window.addEventListener("pointerleave", () => {
-		hasPointer = false;
-		pointer.node = null;
-	});
-
+	window.addEventListener("pointerup", endPointer);
+	window.addEventListener("pointercancel", endPointer);
 	window.addEventListener("blur", () => {
+		endPointer();
 		hasPointer = false;
-		if (dragNode) {
-			dragNode.drag = false;
-			dragNode = null;
+		hoverNode = null;
+		hoverSat = null;
+	});
+	window.addEventListener("pointerleave", () => {
+		endPointer();
+		hasPointer = false;
+		hoverNode = null;
+		hoverSat = null;
+	});
+
+	window.addEventListener("keydown", (e) => {
+		if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+			e.preventDefault();
+			nextStage();
+		} else if (e.key === "ArrowLeft") {
+			e.preventDefault();
+			prevStage();
+		} else if (e.key === "r" || e.key === "R") {
+			window.location.reload();
 		}
 	});
+
+	prevBtn.addEventListener("click", prevStage);
+	nextBtn.addEventListener("click", nextStage);
 
 	window.addEventListener("resize", layout);
 
-	const captions = ["ambiguity", "connection", "emergence"];
-	let capIndex = 0;
-	window.setInterval(() => {
-		capIndex = (capIndex + 1) % captions.length;
-		captionEl.style.opacity = "0";
-		window.setTimeout(() => {
-			captionEl.textContent = captions[capIndex];
-			captionEl.style.opacity = "1";
-		}, 950);
-	}, 5200);
+	function initCamera() {
+		cam.look.copy(nodes[0].pos);
+		cam.radius = baseDist * STAGES[0].zoom;
+		cam.yaw = 0.24;
+		cam.pitch = 0.035;
+		const cy = Math.cos(cam.pitch);
+		camera.position.set(
+			cam.look.x + Math.sin(cam.yaw) * cy * cam.radius,
+			cam.look.y + Math.sin(cam.pitch) * cam.radius,
+			cam.look.z + Math.cos(cam.yaw) * cy * cam.radius
+		);
+		camera.lookAt(cam.look);
+		camera.updateMatrixWorld();
+	}
 
-	window.__fh = { nodes, edges, sparks };
+	function frame(now) {
+		if (!last) last = now;
+		const rawDt = Math.min((now - last) / 1000, 0.25);
+		let dt = Math.min(rawDt, 0.05);
+		last = now;
+		time += dt * MOTION;
+
+		updateStageLogic(dt, rawDt);
+		updateMemberships(dt);
+		updateNodes(dt);
+		updateEdges(dt);
+		updateGlow();
+		updateConnectors();
+		updateSparks(dt);
+		updateCamera(dt);
+		projectAll();
+		updateHoverAndDrag(dt);
+		updateLabels();
+
+		sky.material.uniforms.uTime.value = time;
+		sky.rotation.y += dt * 0.004 * MOTION;
+		starMat.uniforms.uTime.value = time;
+		edgePointMat.uniforms.uTime.value = time;
+		sparkMat.uniforms.uTime.value = time;
+		glowGeo.attributes.position.needsUpdate = true;
+		glowGeo.attributes.aColor.needsUpdate = true;
+		glowGeo.attributes.aSize.needsUpdate = true;
+		glowGeo.attributes.aAlpha.needsUpdate = true;
+
+		if (renderer) renderer.render(scene, camera);
+		requestAnimationFrame(frame);
+	}
+
+	layout();
+	for (const n of nodes) n.pos.copy(n.base);
+	initCamera();
+	updateMemberships(0);
+	updateCaption();
+	captionEl.classList.add("show");
 	window.setTimeout(() => document.body.classList.add("ready"), 80);
-	window.setTimeout(() => document.querySelector(".hint").classList.add("gone"), 9500);
-	captionEl.style.color = hsla(nodes[0].hue, 70, 82, 0.42);
+	window.setTimeout(() => keyHint.classList.add("gone"), 9000);
+
+	window.__fh = {
+		nodes, edges, camera,
+		get stage() { return stage; },
+		setStage, nextStage, prevStage
+	};
 
 	requestAnimationFrame(frame);
 })();
