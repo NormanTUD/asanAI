@@ -95,7 +95,7 @@
         '<span class="ls-con2-kicker" data-con2-kicker></span>' +
         '<b data-con2-title></b>' +
         '<p class="ls-con2-lead" data-con2-lead></p>' +
-        '<span class="ls-con2-navhint">← → ' + L("Theorie", "theory") + '</span>' +
+        '<span class="ls-con2-navhint">← → ' + L("Schritt", "step") + '</span>' +
       '</div>' +
       '<div class="ls-con2-stage"><canvas class="ls-con2-canvas" role="img" aria-label="' + L("Interaktive Bewusstseins-Theorie.", "Interactive theory of consciousness.") + '"></canvas></div>' +
       '<div class="ls-con2-controls" data-con2-controls></div>' +
@@ -120,7 +120,7 @@
     var stars = [];
     for (var si = 0; si < 64; si++) stars.push({ x: (si * 0.37 + 0.05) % 1, y: (si * 0.31 + 0.09) % 1, r: 0.5 + (si % 3) * 0.5, a: 0.05 + (si % 6) * 0.025 });
 
-    var ws = { written: [false, false, false, false, false], broadcastUntil: 0, last: -1, pulseStart: 0 };
+    var ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 };
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82 };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 };
     var kast = { diss: 70, count: 3, selected: 0 };
@@ -185,7 +185,7 @@
     initMyst();
 
     function resetTheory() {
-      if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
+      if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82 }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 }; setStatus(THEORIES[2].status); }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0 }; setStatus(THEORIES[3].status); }
@@ -588,7 +588,7 @@
     }
 
     function writeModule(i) {
-      ws.written[i] = true; ws.last = i; ws.pulseStart = performance.now();
+      ws.written[i] = true; ws.last = i; ws.pulseStart = performance.now(); ws.broadcasted = false;
       setStatus(MODULES[i].label + L(" schreibt: ", " writes: ") + MODULES[i].result + ".");
       renderControls(); draw(performance.now());
     }
@@ -643,6 +643,7 @@
       controls.querySelectorAll("[data-con-broadcast]").forEach(function (b) {
         b.addEventListener("click", function () {
           ws.broadcastUntil = performance.now() + 1200;
+          ws.broadcasted = true;
           setStatus(L("Broadcast: Die Tafel sendet an alle Subsysteme. Nur was auf der Tafel steht, ist global.", "Broadcast: the board sends to all subsystems. Only what is on the board is global."));
           draw(performance.now());
         });
@@ -716,8 +717,24 @@
       setStatus(L("Modell aktualisiert: Die Vorhersage liegt jetzt auf dem Eingang. Die Überraschung sinkt.", "Model updated: the prediction now sits on the input. Surprise falls."));
       draw(performance.now());
     }
+    function wsNextAction() {
+      var i = ws.written.indexOf(false);
+      if (i >= 0) { writeModule(i); return true; }
+      if (!ws.broadcasted) {
+        ws.broadcasted = true;
+        ws.broadcastUntil = performance.now() + 1200;
+        setStatus(L("Broadcast: Die Tafel sendet an alle Subsysteme. Nur was auf der Tafel steht, ist global.", "Broadcast: the board sends to all subsystems. Only what is on the board is global."));
+        draw(performance.now());
+        return true;
+      }
+      return false;
+    }
     function goNext() {
+      if (active === 0 && wsNextAction()) return true;
+      if (active === 1 && iitNextAction()) return true;
       if (active === 2 && !predModelFresh()) { updatePredModel(); return true; }
+      if (active === 3 && kastNextAction()) return true;
+      if (active === 4 && mystNextAction()) return true;
       if (active < THEORIES.length - 1) { setTheory(active + 1); return true; }
       return false;
     }
@@ -768,7 +785,7 @@
       update: function () {},
       next: goNext,
       prev: goPrev,
-      hasNext: function () { return active < THEORIES.length - 1; },
+      hasNext: function () { return active === 4 ? myst.marks.length < 16 : active < THEORIES.length - 1; },
       hasPrev: function () { return active > 0; },
       ownsKeys: function () { return true; },
       onKey: function (e) {
