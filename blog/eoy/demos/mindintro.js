@@ -82,11 +82,15 @@
     var reveal = el.querySelector("[data-mi-reveal]");
     var choice = el.querySelector("[data-mi-choice]");
     var answerText = el.querySelector("[data-mi-answer-text]");
-    if (reveal) reveal.addEventListener("click", function () {
+    var maryRevealed = false;
+    function revealMary() {
+      if (!mary || maryRevealed) return;
+      maryRevealed = true;
       mary.classList.add("is-revealed");
-      reveal.hidden = true;
-      choice.hidden = false;
-    });
+      if (reveal) reveal.hidden = true;
+      if (choice) choice.hidden = false;
+    }
+    if (reveal) reveal.addEventListener("click", revealMary);
     el.querySelectorAll("[data-mi-answer]").forEach(function (b) {
       b.addEventListener("click", function () {
         var yes = b.getAttribute("data-mi-answer") === "yes";
@@ -108,7 +112,13 @@
       b.addEventListener("click", function () { miQa = parseInt(b.getAttribute("data-mi-q"), 10) || 0; renderQA(); });
     });
     renderQA();
-    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+    return {
+      update: function () {},
+      next: function () { if (!maryRevealed) { revealMary(); return true; } return false; },
+      hasNext: function () { return !maryRevealed; },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
   }
   core.register("mindintro", mindIntroScene);
 })();

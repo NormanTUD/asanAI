@@ -4019,7 +4019,7 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-mi2-examples{display:flex;flex-wrap:wrap;gap:6px}
 .ls-mi2-examples span{border:1px solid var(--ls-line);border-radius:999px;background:rgba(255,255,255,.7);padding:5px 9px;font:700 10px/1 "Open Sans",sans-serif;color:var(--ls-petrol)}
 .ls-mi2-right{display:flex;flex-direction:column;gap:10px;min-width:0}
-.ls-mi2-mary{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:center;min-height:290px;border:1px solid var(--ls-line);border-radius:16px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:12px;box-shadow:0 10px 24px rgba(0,35,50,.05)}
+.ls-mi2-mary{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start;min-height:290px;border:1px solid var(--ls-line);border-radius:16px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:12px;box-shadow:0 10px 24px rgba(0,35,50,.05)}
 .ls-mi2-room{position:relative;height:96px;border:1px solid var(--ls-line);border-radius:10px;background:linear-gradient(90deg,#f7f7f7 0 50%,#ededed 50% 100%);overflow:hidden}
 .ls-mi2-apple{position:absolute;top:50%;width:34px;height:34px;margin-top:-19px;border-radius:50% 50% 46% 46%}
 .ls-mi2-apple.is-bw{left:18%;background:radial-gradient(circle at 38% 35%,#ededed,#b8b8b8 58%,#8a8a8a);filter:grayscale(1)}
@@ -5627,7 +5627,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-mi2-spectrum{border:1px solid var(--ls-line);border-radius:16px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:12px;box-shadow:0 10px 24px rgba(0,35,50,.05);display:flex;flex-direction:column;gap:8px;min-width:0}
 .ls-mi2-spectrum-head{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
 .ls-mi2-spectrum-head span{font:700 9px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-gold)}
-.ls-mi2-spectrum-head b{font:700 16px/1.1 "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-mi2-spectrum-head b{font:700 20px/1.1 "Barlow",sans-serif;color:var(--ls-petrol)}
 .ls-mi2-spectrum-lead{margin:0;font:600 12.5px/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-mi2-spectrum-note{margin:0;font:600 11px/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-mi2-observers{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -5860,7 +5860,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-mi2-side.is-in{border-top:3px solid #e53935}
 .ls-mi2-side p{max-width:22ch}
 .ls-mi2-gap b{display:block;padding:0 2px}
-.ls-mi2-mary{align-content:center;border-top:3px solid var(--ls-gold)}
+.ls-mi2-mary{align-content:start;border-top:3px solid var(--ls-gold)}
 .ls-mi2-mary.is-revealed{border-color:rgba(229,57,53,.32);box-shadow:0 14px 30px rgba(229,57,53,.08)}
 .ls-mi2-choice{margin-top:4px;gap:3px}
 .ls-mi2-choice>span{font-size:8px}
@@ -5884,4 +5884,12 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-mi2-spectrum{padding:10px;gap:6px}
 .ls-mi2-spectrum-lead{font-size:11.5px;line-height:1.4}
 .ls-mi2-spectrum-fig figcaption{font-size:8.5px;line-height:1.3;padding:4px 6px 5px}
-.ls-mi2-spectrum-fig img{height:90px!important;max-height:90px!important}
+.ls-mi2-spectrum-fig img{height:150px!important;max-height:150px!important}
+
+
+/* Mary's Room stays anchored at the top; the red image gets the space it needs. */
+.ls-mi2-mary{align-items:start}
+.ls-mi2-mary-text{align-self:start}
+.ls-mi2-room{align-self:start}
+.ls-mi2-spectrum-head b{font-size:20px}
+.ls-mi2-spectrum-fig img{height:150px!important;max-height:150px!important;object-fit:contain;background:#fff}
