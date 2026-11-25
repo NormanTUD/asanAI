@@ -455,7 +455,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
               <option value="3">±3,0</option>
             </select>
           </div>
-          <div class="mini-note"><b>Nur Vorhersage und 3D-Relief.</b> Loss, Fehler und Training bleiben auf dem gelernten Bereich. Außerhalb gibt es keine Trainingsdaten, die Ausgabe ist eine Extrapolation.</div>
+          <div class="mini-note"><b>Nur Vorhersage und 3D-Relief.</b> Loss, Fehler und Training bleiben auf dem gelernten Bereich. Außerhalb gibt es keine Trainingsdaten. Hover über die Vorhersage zeigt x, y und den rohen Wert.</div>
           <div class="divider"></div>
           <div class="source">
             <canvas id="originalThumb" width="58" height="58" aria-label="Originalbild in Farbe"></canvas>
@@ -816,7 +816,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     probe: { idx: 0, locked: false, trace: null, last: 0, raf: 0, rows: [] },
     feature: { model: null, layer: -1, gen: -1, data: null, busy: false, last: 0, start: 0, cards: [] },
     relief: { x: null, gen: -1, dim: -1, factor: 1, N: 44, data: null, channels: 1, busy: false, last: 0, yaw: -0.7, pitch: 0.85, zoom: 1, auto: true, drawLast: 0, dirty: false },
-    view: { active: false, factor: 1.5, N: 0, x: null, gen: -1, dim: -1, data: null, channels: 1, busy: false, hover: false, hoverText: "" },
+    view: { active: false, factor: 1.5, N: 0, x: null, gen: -1, dim: -1, data: null, channels: 1, busy: false, hover: false, hoverText: "", req: 0 },
     render: { lastPred: 0, lastChart: 0, lastStats: 0 }
   };
 
@@ -1209,13 +1209,18 @@ select:disabled{opacity:.45;cursor:not-allowed}
       if (oldX) setTimeout(function () { try { oldX.dispose(); } catch (e) {} }, 4000);
       if (oldY) setTimeout(function () { try { oldY.dispose(); } catch (e) {} }, 4000);
     }
+    S.view.data = null;
+    var oldViewTensor = S.view.x;
+    S.view.x = null;
+    S.view.gen = -1;
+    if (oldViewTensor) setTimeout(function () { try { oldViewTensor.dispose(); } catch (e) {} }, 3000);
     $("#resOut").textContent = N + " × " + N;
     $("#targetMeta").textContent = N + " × " + N + " × " + S.channels;
-    $("#predMeta").textContent = N + " × " + N + " × " + S.channels;
     $("#errorMeta").textContent = N + " × " + N;
     $("#targetMean").textContent = "Ø " + fmt(S.targetMean, 3);
     $("#predMean").textContent = "–";
     $("#errorMean").textContent = "–";
+    updatePredMeta();
     updateStats();
     return true;
   }
@@ -1569,8 +1574,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
     var oldReliefTensor = S.relief.x;
     S.relief.x = null;
     S.relief.gen = -1;
+    S.view.data = null;
+    S.view.busy = false;
+    S.view.hover = false;
+    S.view.hoverText = "";
+    var oldViewTensor = S.view.x;
+    S.view.x = null;
+    S.view.gen = -1;
     if (oldFeatureModel) setTimeout(function () { try { oldFeatureModel.dispose(); } catch (e) {} }, 1200);
     if (oldReliefTensor) setTimeout(function () { try { oldReliefTensor.dispose(); } catch (e) {} }, 3000);
+    if (oldViewTensor) setTimeout(function () { try { oldViewTensor.dispose(); } catch (e) {} }, 3000);
+    if (S.view.active) buildViewInput();
     if ($("#graphSvg")) $("#graphSvg").innerHTML = "";
     if ($("#graphEmpty")) $("#graphEmpty").style.display = "grid";
     if ($("#weightGrid")) $("#weightGrid").innerHTML = '<div class="feature-note">Warte auf Gewichte …</div>';
@@ -1587,6 +1601,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     drawError();
     drawGraph();
     requestPrediction(true);
+    if (S.view.active) requestViewPrediction(true);
     refreshWeights(true);
     if (typeof window.__catlabAfterModel === "function") window.__catlabAfterModel();
     return model;
@@ -1729,6 +1744,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       drawLossChart();
       updateLiveStats();
       refreshProbe();
+      if (S.view.active) requestViewPrediction();
     }).catch(function (err) {
       if (gen === S.gen) setStatus("Vorhersage fehlgeschlagen: " + (err && err.message ? err.message : err), "warn");
     }).finally(function () {
@@ -1755,19 +1771,20 @@ select:disabled{opacity:.45;cursor:not-allowed}
   function drawPrediction() {
     var cv = $("#predCanvas");
     if (!cv) return;
-    if (!S.pred.data) {
-      drawPlaceholder(cv, S.model ? "Modell rechnet …" : "Noch kein Modell");
+    var useView = S.view.active;
+    var data = useView ? S.view.data : S.pred.data;
+    var N = useView ? S.view.N : S.N;
+    var ch = useView ? S.view.channels : S.channels;
+    if (!data || !N) {
+      drawPlaceholder(cv, useView ? "Extrapolation rechnet …" : (S.model ? "Modell rechnet …" : "Noch kein Modell"));
+      updatePredMeta();
       return;
     }
-    var N = S.N;
-    var ch = S.channels;
-    var data = S.pred.data;
     var off = document.createElement("canvas");
     off.width = N;
     off.height = N;
     var octx = off.getContext("2d");
     var img = octx.createImageData(N, N);
-    var sum = 0;
     for (var p = 0; p < N * N; p++) {
       var r;
       var g;
@@ -1775,12 +1792,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       if (ch === 1) {
         var v = clamp(data[p], 0, 1);
         r = g = b = v * 255;
-        sum += v;
       } else {
         r = clamp(data[p * 3], 0, 1) * 255;
         g = clamp(data[p * 3 + 1], 0, 1) * 255;
         b = clamp(data[p * 3 + 2], 0, 1) * 255;
-        sum += 0.2126 * r / 255 + 0.7152 * g / 255 + 0.0722 * b / 255;
       }
       var q = p * 4;
       img.data[q] = r;
@@ -1793,7 +1808,39 @@ select:disabled{opacity:.45;cursor:not-allowed}
     if (!f.w) return;
     f.ctx.imageSmoothingEnabled = true;
     f.ctx.drawImage(off, 0, 0, N, N, 0, 0, f.w, f.h);
-    $("#predMean").textContent = "Ø " + fmt(sum / (N * N), 3);
+    if (useView) {
+      var frac = 1 / S.view.factor;
+      var x0 = f.w * (1 - frac) / 2;
+      var x1 = f.w * (1 + frac) / 2;
+      var y0 = f.h * (1 - frac) / 2;
+      var y1 = f.h * (1 + frac) / 2;
+      f.ctx.save();
+      f.ctx.setLineDash([4, 4]);
+      f.ctx.strokeStyle = "rgba(200,251,255,.72)";
+      f.ctx.lineWidth = 1;
+      f.ctx.strokeRect(Math.round(x0) + 0.5, Math.round(y0) + 0.5, Math.round(x1 - x0) - 1, Math.round(y1 - y0) - 1);
+      f.ctx.setLineDash([]);
+      f.ctx.fillStyle = "rgba(200,251,255,.85)";
+      f.ctx.font = "600 9px ui-monospace, monospace";
+      f.ctx.textAlign = "left";
+      f.ctx.textBaseline = "top";
+      f.ctx.fillText("gelernt", x0 + 5, y0 + 4);
+      f.ctx.restore();
+    }
+    if (S.pred.data) {
+      var sum = 0;
+      for (var p2 = 0; p2 < S.N * S.N; p2++) {
+        if (S.channels === 1) {
+          sum += S.pred.data[p2];
+        } else {
+          sum += 0.2126 * S.pred.data[p2 * 3] + 0.7152 * S.pred.data[p2 * 3 + 1] + 0.0722 * S.pred.data[p2 * 3 + 2];
+        }
+      }
+      $("#predMean").textContent = "Ø " + fmt(sum / (S.N * S.N), 3);
+    } else {
+      $("#predMean").textContent = "–";
+    }
+    updatePredMeta();
   }
 
   function drawError() {
@@ -2427,17 +2474,35 @@ select:disabled{opacity:.45;cursor:not-allowed}
       if (!cv) return;
       cv.setAttribute("tabindex", "0");
       cv.addEventListener("pointermove", function (e) {
+        if (cv.id === "predCanvas" && S.view.active) {
+          showExtrapHover(cv, e);
+          return;
+        }
         if (S.probe.locked) return;
         setProbeFromEvent(cv, e);
       });
       cv.addEventListener("pointerdown", function (e) {
+        if (cv.id === "predCanvas" && S.view.active) {
+          showExtrapHover(cv, e);
+          return;
+        }
         setProbeFromEvent(cv, e);
         S.probe.locked = true;
         updateProbeLockUi();
         refreshProbe();
         drawGraph();
       });
+      if (id === "predCanvas") {
+        cv.addEventListener("pointerleave", function () {
+          if (S.view.active) {
+            S.view.hover = false;
+            S.view.hoverText = "";
+            updatePredMeta();
+          }
+        });
+      }
       cv.addEventListener("keydown", function (e) {
+        if (cv.id === "predCanvas" && S.view.active) return;
         var N = S.N;
         if (!N) return;
         var step = e.shiftKey ? 5 : 1;
@@ -2456,7 +2521,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
         S.probe.locked = true;
         S.probe.idx = idx;
         if (S.weights) S.probe.trace = computeTrace(idx);
-            updateProbeLockUi();
+        updateProbeLockUi();
         refreshProbe();
         drawGraph();
       });
@@ -2663,7 +2728,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       }
     }
     var label = $("#predFootLabel");
-    if (label) label.textContent = S.view.active ? "Netz-Ausgabe (extrapoliert)" : "Netz-Ausgabe";
+    if (label) label.textContent = S.view.active ? "Netz-Ausgabe · Ø gelernt" : "Netz-Ausgabe";
   }
 
   function buildViewInput() {
@@ -2691,12 +2756,15 @@ select:disabled{opacity:.45;cursor:not-allowed}
     S.view.gen = S.gen;
     S.view.factor = factor;
     S.view.data = null;
+    S.view.busy = false;
+    S.view.req = (S.view.req || 0) + 1;
   }
 
   function requestViewPrediction(force) {
     if (!S.view.active || !S.model || !S.view.x || S.view.busy) return;
     if (!force && document.hidden) return;
     var gen = S.gen;
+    var req = S.view.req;
     S.view.busy = true;
     var out;
     try {
@@ -2706,15 +2774,15 @@ select:disabled{opacity:.45;cursor:not-allowed}
       return;
     }
     out.data().then(function (data) {
-      if (gen !== S.gen) return;
+      if (gen !== S.gen || req !== S.view.req) return;
       S.view.data = data;
       S.view.channels = S.channels;
       drawPrediction();
     }).catch(function (err) {
-      if (gen === S.gen) setStatus("Extrapolation fehlgeschlagen: " + (err && err.message ? err.message : err), "warn");
+      if (gen === S.gen && req === S.view.req) setStatus("Extrapolation fehlgeschlagen: " + (err && err.message ? err.message : err), "warn");
     }).finally(function () {
       try { out.dispose(); } catch (e) {}
-      if (gen === S.gen) S.view.busy = false;
+      if (gen === S.gen && req === S.view.req) S.view.busy = false;
     });
   }
 
@@ -2737,6 +2805,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
       setStatus("Extrapolation an: Vorhersage und 3D-Relief zeigen ±" + formatFactor(S.view.factor) + ". Loss, Fehler und Training bleiben auf dem gelernten Bereich.", "warn");
     } else {
       S.view.data = null;
+      S.view.busy = false;
+      S.view.req = (S.view.req || 0) + 1;
       var old = S.view.x;
       S.view.x = null;
       S.view.gen = -1;
@@ -2971,7 +3041,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       S.relief.last = performance.now();
       S.relief.dirty = true;
       if ($("#reliefNote")) {
-        $("#reliefNote").textContent = "Höhe = Helligkeit · " + S.relief.N + " × " + S.relief.N + " Gitter · ziehen dreht, Mausrad zoomt.";
+        $("#reliefNote").textContent = "Höhe = Helligkeit · " + S.relief.N + " × " + S.relief.N + " Gitter · " + (S.view.active ? "Bereich ±" + formatFactor(S.view.factor) + " · gelernt: inneres Quadrat" : "gelernter Bereich x,y ∈ [-1,1]²");
       }
     } catch (e) {
       setStatus("Relief konnte nicht berechnet werden: " + (e && e.message ? e.message : e), "warn");
@@ -3004,6 +3074,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     var RN = S.relief.N;
     var data = S.relief.data;
     var ch = S.relief.channels;
+    var factor = S.view.active ? S.view.factor : 1;
     var yaw = S.relief.yaw;
     var pitch = S.relief.pitch;
     var zoom = S.relief.zoom;
@@ -3025,8 +3096,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
     for (var j = 0; j < RN; j++) {
       for (var i = 0; i < RN; i++) {
         var idx = j * RN + i;
-        var x = ((i + 0.5) / RN) * 2 - 1;
-        var y = ((RN - 1 - j + 0.5) / RN) * 2 - 1;
+        var x = -factor + ((i + 0.5) / RN) * 2 * factor;
+        var y = -factor + ((RN - 1 - j + 0.5) / RN) * 2 * factor;
         var v;
         if (ch === 1) {
           v = clamp(data[idx], 0, 1);
@@ -3089,6 +3160,30 @@ select:disabled{opacity:.45;cursor:not-allowed}
       ctx.lineWidth = 0.5;
       ctx.stroke();
     });
+    if (factor > 1) {
+      var c0 = project(-1, -1, 0);
+      var c1 = project(1, -1, 0);
+      var c2 = project(1, 1, 0);
+      var c3 = project(-1, 1, 0);
+      ctx.save();
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = "rgba(200,251,255,.72)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(c0.x, c0.y);
+      ctx.lineTo(c1.x, c1.y);
+      ctx.lineTo(c2.x, c2.y);
+      ctx.lineTo(c3.x, c3.y);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(200,251,255,.86)";
+      ctx.font = "600 9px ui-monospace, monospace";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("gelernt", c0.x + 4, c0.y - 4);
+      ctx.restore();
+    }
   }
 
   function drawReliefFrame(ts) {
@@ -3317,7 +3412,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     $("#statData").textContent = S.N && S.targetGray
       ? NUM.format(S.N * S.N) + " Pixel (" + S.N + " × " + S.N + " × " + S.channels + ")"
       : "–";
-    $("#predMeta").textContent = S.N + " × " + S.N + " × " + S.channels;
+    updatePredMeta();
     $("#targetMeta").textContent = S.N + " × " + S.N + " × " + S.channels;
     var pm = $("#statPredMs");
     if (pm) pm.textContent = S.pred.data ? Math.round(S.pred.ms) + " ms" : "–";
@@ -3567,6 +3662,20 @@ select:disabled{opacity:.45;cursor:not-allowed}
     });
     $("#fourierToggle").addEventListener("change", applyConfig);
     $("#grayToggle").addEventListener("change", applyConfig);
+    var exToggle = $("#extrapolateToggle");
+    var exRange = $("#extrapolateRange");
+    if (exRange) {
+      exRange.value = String(S.view.factor);
+      exRange.disabled = true;
+      exRange.addEventListener("change", function () {
+        setViewFactor(parseFloat(exRange.value) || 1.5);
+      });
+    }
+    if (exToggle) {
+      exToggle.addEventListener("change", function () {
+        setExtrapolation(exToggle.checked);
+      });
+    }
     $("#resSelect").addEventListener("change", applyConfig);
     $("#activationSelect").addEventListener("change", applyConfig);
     $("#initSelect").addEventListener("change", applyConfig);
