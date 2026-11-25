@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Ein 2×2-Pixel-Bild mit einem kleinen neuronalen Netz trainieren: vier Farben, Live-Loss, Netzgraph, Gewichte und editierbare Aktivierung.">
+<title>2×2-Labor · Ein Netz lernt vier Farben</title>
+<link rel="stylesheet" href="../../Temml-Local.min.css">
+<style>
+@font-face{font-family:"Barlow";src:url("../assets/fonts/barlow-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Barlow";src:url("../assets/fonts/barlow-500.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Barlow";src:url("../assets/fonts/barlow-600.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Barlow";src:url("../assets/fonts/barlow-700.woff2") format("woff2");font-weight:700;font-display:swap}
+:root{--bg:#05070c;--line:rgba(138,180,255,.15);--line2:rgba(138,180,255,.28);--text:#e9f0ff;--muted:#9aaac6;--dim:#667894;--cyan:#67e8f9;--blue:#60a5fa;--violet:#c084fc;--amber:#fbbf24;--green:#34d399;--red:#fb7185;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--sans:"Barlow","Open Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg);color-scheme:dark}
+body{margin:0;min-height:100%;color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55;background:radial-gradient(900px 620px at 12% -6%,rgba(103,232,249,.12),transparent 62%),radial-gradient(760px 560px at 92% 2%,rgba(192,132,252,.11),transparent 60%),linear-gradient(180deg,#070b13,#05070c 42%,#04060a)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.3;background-image:linear-gradient(rgba(138,180,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(138,180,255,.045) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at 50% 30%,#000,rgba(0,0,0,.55) 45%,transparent 82%)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.5))}
+a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
+p{margin:0 0 1em}h1,h2,h3,h4,p{margin-top:0}
+code,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+::selection{background:rgba(103,232,249,.28);color:#fff}:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.boot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px;background:radial-gradient(700px 520px at 50% 38%,rgba(103,232,249,.12),transparent 68%),#05070c;transition:opacity .5s,visibility .5s}
+.boot.is-done{opacity:0;visibility:hidden;pointer-events:none}
+.boot-card{width:min(460px,100%);padding:30px;text-align:center;border-radius:22px;border:1px solid var(--line2);background:linear-gradient(160deg,rgba(255,255,255,.065),rgba(255,255,255,.014));box-shadow:0 40px 120px -50px #000;backdrop-filter:blur(18px)}
+.boot-kicker{font:600 10px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--cyan)}
+.boot-card h2{margin:10px 0 6px;font-size:26px;font-weight:600;letter-spacing:-.02em}
+#bootText{color:var(--muted);font-size:13px;min-height:20px}
+.boot-track{height:5px;margin:20px 0 12px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+#bootBar{height:100%;width:8%;border-radius:inherit;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--violet));transition:width .5s}
+.boot-small{color:var(--dim);font:500 10px/1.5 var(--mono)}
+#bootError{margin-top:14px;padding:12px;border-radius:12px;border:1px solid rgba(251,113,133,.3);background:rgba(251,113,133,.08);color:#ffd9de;text-align:left;font-size:12px}
+.app{position:relative;z-index:1;max-width:1820px;margin:0 auto;padding:22px clamp(14px,3vw,36px) 64px;opacity:0;transition:opacity .5s}
+body.is-ready .app{opacity:1}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.brand-mark{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;border:1px solid rgba(103,232,249,.34);background:radial-gradient(circle at 35% 25%,rgba(103,232,249,.24),rgba(96,165,250,.06) 55%,rgba(8,13,22,.8));box-shadow:0 0 34px -8px rgba(103,232,249,.55);color:var(--cyan);font:600 18px/1 var(--mono)}
+.eyebrow{font:600 10px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
+.brand h1{margin:4px 0 0;font-size:clamp(24px,2.8vw,34px);font-weight:600;line-height:1;letter-spacing:-.03em}
+.brand p{margin:5px 0 0;color:var(--muted);font-size:13px;max-width:70ch}
+.hud{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{display:inline-flex;align-items:center;gap:7px;min-height:32px;padding:0 10px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.035);color:var(--muted);font:600 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.pill .dot{width:6px;height:6px;border-radius:50%;background:var(--dim)}
+.pill.is-live{border-color:rgba(52,211,153,.32);color:#d7fff2}.pill.is-live .dot{background:var(--green);box-shadow:0 0 10px var(--green)}
+.hud-stat{min-width:68px;padding:5px 10px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.026)}
+.hud-stat span{display:block;font:600 8px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.hud-stat b{display:block;margin-top:4px;font:600 14px/1 var(--mono);font-variant-numeric:tabular-nums}
+.layout{display:grid;grid-template-columns:320px minmax(0,1fr) 390px;grid-template-areas:"controls stage instruments";gap:16px;align-items:start}
+.rail--controls{grid-area:controls;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto;scrollbar-width:thin;scrollbar-color:rgba(138,180,255,.24) transparent;padding-right:3px}
+.stage{grid-area:stage;min-width:0}
+.rail--instruments{grid-area:instruments;display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel{border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.052),rgba(255,255,255,.012));box-shadow:0 26px 80px -40px #000;backdrop-filter:blur(14px)}
+.rail--controls.panel{padding:4px 0}
+.group{border-bottom:1px solid rgba(138,180,255,.1)}.group:last-child{border-bottom:0}
+.group>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 15px;cursor:pointer}
+.group>summary::-webkit-details-marker{display:none}
+.group-title{font:600 11px/1 var(--sans);letter-spacing:.13em;text-transform:uppercase}
+.group-hint{font:500 9px/1 var(--mono);color:var(--dim);margin-left:auto;margin-right:4px}
+.group-body{padding:0 15px 14px}
+.field{display:grid;gap:6px;margin:9px 0}
+.field>label{display:flex;justify-content:space-between;gap:8px;font:600 9px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.field output{color:var(--cyan);font:600 10px/1 var(--mono);text-transform:none;letter-spacing:0}
+input[type=number],input[type=text],select{width:100%;min-height:34px;padding:0 9px;border-radius:9px;border:1px solid var(--line);background:rgba(4,8,15,.6);font:500 12px/1 var(--mono)}
+input[type=range]{width:100%;accent-color:var(--cyan)}
+select{padding-right:24px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 13px) 14px,calc(100% - 8px) 14px;background-size:5px 5px;background-repeat:no-repeat}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 11px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:600 11px/1 var(--sans);cursor:pointer;transition:transform .15s,border-color .15s}
+.btn:hover{transform:translateY(-1px);border-color:var(--line2)}
+.btn--primary{background:linear-gradient(135deg,var(--cyan),var(--blue));border:0;color:#031018;box-shadow:0 8px 26px -12px rgba(103,232,249,.8)}
+.btn--danger{border-color:rgba(251,113,133,.32);color:#ffd9de;background:rgba(251,113,133,.08)}
+.btn--tiny{min-height:28px;padding:0 8px;font-size:10px;border-radius:7px}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap}.btn-row .btn{flex:1 1 auto}
+.divider{height:1px;background:rgba(138,180,255,.1);margin:11px 0}
+.mini-note{color:var(--dim);font:500 9px/1.5 var(--mono)}
+.mini-note b{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip-btn{border:1px solid var(--line);background:rgba(4,8,15,.35);color:var(--dim);border-radius:6px;padding:4px 6px;font:500 8px/1 var(--mono);cursor:pointer}
+.chip-btn:hover{color:var(--text);border-color:var(--line2)}
+.status-line{min-height:16px;margin:0 4px 10px;color:var(--dim);font:500 9px/1.4 var(--mono)}
+.status-line.is-error{color:#ffb3bd}.status-line.is-good{color:var(--green)}.status-line.is-warn{color:var(--amber)}
+.stage-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:0 4px 10px;flex-wrap:wrap}
+.stage-head h2{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.stage-head p{margin:4px 0 0;color:var(--dim);font:500 9px/1.4 var(--mono)}
+.image-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.image-panel{padding:12px}
+.image-panel h3{margin:0 0 8px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.image-panel h3 span{font:500 9px/1 var(--mono);color:var(--dim)}
+.px-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06)}
+.px{border:0;padding:0;background:#111;cursor:pointer;position:relative}
+.px.is-selected{box-shadow:inset 0 0 0 2px #fff,0 0 0 2px rgba(103,232,249,.4);z-index:1}
+.px span{position:absolute;left:5px;top:4px;font:600 8px/1 var(--mono);color:rgba(0,0,0,.55)}
+.pickers{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 12px}
+.picker{display:flex;flex-direction:column;gap:3px;color:var(--dim);font:600 8px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.picker input[type=color]{width:100%;height:30px;padding:0;border:1px solid var(--line);border-radius:7px;background:transparent;cursor:pointer}
+.field-panel,.loss-panel{padding:12px;margin-top:12px}
+.field-panel h3,.loss-panel h3{margin:0 0 8px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.field-panel h3 span{font:500 9px/1 var(--mono);color:var(--dim)}
+.canvas-wrap{position:relative;width:100%;height:260px;border-radius:10px;border:1px solid rgba(138,180,255,.1);background:rgba(4,8,15,.5);overflow:hidden}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cap{margin-top:6px;color:var(--dim);font:500 9px/1.45 var(--mono)}
+.cap b{color:var(--muted)}
+.loss-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+.loss-big{display:flex;align-items:baseline;gap:6px}
+.loss-big b{font:600 22px/1 var(--mono);font-variant-numeric:tabular-nums}
+.loss-big span{font:500 9px/1 var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.loss-canvas-wrap{position:relative;width:100%;height:140px;margin-top:4px}
+.loss-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.loss-foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:4px;color:var(--dim);font:500 8px/1 var(--mono)}
+.loss-foot b{color:var(--muted)}
+.graph-panel{padding:12px}.graph-panel h3,.probe-panel h3{margin:0 0 8px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.graph-panel h3 span{font:500 9px/1 var(--mono);color:var(--dim)}
+.graph-wrap{position:relative;width:100%;height:390px;border-radius:10px;border:1px solid rgba(138,180,255,.1);background:radial-gradient(circle at 50% 40%,rgba(12,21,38,.72),rgba(3,6,11,.56));overflow:hidden}
+.graph-wrap svg{width:100%;height:100%;display:block}
+.graph-note{margin-top:6px;color:var(--dim);font:500 9px/1.5 var(--mono)}
+.probe-panel{padding:12px}
+.probe-values{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px}
+.probe-value{padding:8px;border-radius:8px;border:1px solid rgba(138,180,255,.1);background:rgba(4,8,15,.4);min-width:0}
+.probe-value span{display:block;font:600 8px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.probe-value b{display:block;margin-top:5px;font:600 12px/1 var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.probe-value small{display:block;margin-top:4px;font:500 8px/1.3 var(--mono);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.probe-pos{font:600 9px/1.45 var(--mono);color:var(--dim);margin-bottom:7px}
+.probe-trace{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow:auto}
+.trace-row{padding:6px 7px;border-radius:7px;border:1px solid rgba(138,180,255,.09);background:rgba(4,8,15,.32);font:500 8.5px/1.4 var(--mono);color:var(--dim)}
+.trace-row b{color:var(--muted)}.trace-row span{color:var(--text);overflow-wrap:anywhere}
+.deep{margin-top:16px;padding:12px 14px 16px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding:3px;border-radius:11px;border:1px solid rgba(138,180,255,.1);background:rgba(4,8,15,.32);margin-bottom:12px}
+.tab-btn{border:0;background:transparent;color:var(--dim);padding:8px 12px;border-radius:8px;font:600 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.tab-btn.is-active{color:#041018;background:linear-gradient(135deg,var(--cyan),var(--blue))}
+.tab-panel{display:none}.tab-panel.is-active{display:block}
+.formula-editor{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin-bottom:10px;padding:10px 12px;border-radius:11px;border:1px solid rgba(103,232,249,.16);background:rgba(103,232,249,.04)}
+.formula-editor .field{flex:1 1 260px;margin:0}
+.formula-editor .btn{flex:0 0 auto}
+.formula-status{flex-basis:100%;min-height:12px;color:var(--dim);font:500 9px/1.4 var(--mono)}
+.formula-status.is-error{color:#ffb3bd}.formula-status.is-good{color:var(--green)}
+.formula-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+.formula-card{padding:12px 13px;border-radius:11px;border:1px solid rgba(138,180,255,.1);background:rgba(4,8,15,.34);min-width:0}
+.formula-card h4{margin:0 0 7px;font:600 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.formula-card .math{overflow-x:auto;padding:2px 0 4px;color:var(--text)}
+.formula-card .math math,.formula-card .math .temml{color:var(--text)}
+.formula-card p{margin:5px 0 0;color:var(--dim);font-size:11px;line-height:1.45}
+.formula-card code{color:var(--amber);font-size:11px}
+.weight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.layer-card{padding:10px 11px;border-radius:11px;border:1px solid rgba(138,180,255,.1);background:rgba(4,8,15,.32);min-width:0}
+.layer-card h4{margin:0 0 6px;font:600 9px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.layer-card h4 span{color:var(--dim);font-weight:500;letter-spacing:0;text-transform:none}
+.matrix{display:grid;gap:2px;margin:5px 0 6px}
+.cell{min-height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font:500 8px/1 var(--mono);color:rgba(255,255,255,.9);overflow:hidden}
+.act-strip{display:flex;gap:2px;align-items:end;height:24px;margin-top:5px}
+.act-strip i{flex:1;border-radius:2px 2px 0 0;background:var(--cyan);opacity:.7;min-height:2px}
+.layer-foot{font:500 8px/1.4 var(--mono);color:var(--dim);margin-top:5px}
+.layer-foot b{color:var(--muted)}
+.site-foot{margin-top:22px;padding-top:14px;border-top:1px solid rgba(138,180,255,.09);color:var(--dim);font:500 9.5px/1.6 var(--mono);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.site-foot a{color:var(--muted)}
+@media(max-width:1480px){.layout{grid-template-columns:300px minmax(0,1fr);grid-template-areas:"controls stage" "instruments instruments"}.rail--instruments{display:grid;grid-template-columns:1fr 1fr;align-items:start}.rail--controls{max-height:none;position:static}}
+@media(max-width:980px){.layout{grid-template-columns:1fr;grid-template-areas:"controls" "stage" "instruments"}.rail--instruments{grid-template-columns:1fr}.image-row{grid-template-columns:1fr}.pickers{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
+</style>
+</head>
+<body>
+<div class="boot" id="boot">
+  <div class="boot-card">
+    <div class="boot-kicker">2×2-Labor</div>
+    <h2>Ein Netz lernt vier Farben</h2>
+    <p id="bootText">TF.js wird geladen …</p>
+    <div class="boot-track"><div id="bootBar"></div></div>
+    <p class="boot-small">Lokal · WebGL/CPU · vier Pixel, ein kleines Netz</p>
+    <div id="bootError" hidden></div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">2×2</div>
+      <div>
+        <div class="eyebrow">Pixel · Farben · Live</div>
+        <h1>2×2-Labor</h1>
+        <p>Vier Farben, ein kleines neuronales Netz. Du siehst zu, wie es die Farben lernt, die Gewichte ändert und die gelernte Funktion zwischen den Pixeln zeigt.</p>
+      </div>
+    </div>
+    <div class="hud">
+      <span class="pill" id="backendPill"><i class="dot"></i><span>TF.js</span></span>
+      <span class="pill" id="livePill"><i class="dot"></i><span>Pause</span></span>
+      <div class="hud-stat"><span>Loss</span><b id="hudLoss">–</b></div>
+      <div class="hud-stat"><span>Schritte/s</span><b id="hudRate">0</b></div>
+      <div class="hud-stat"><span>Schritt</span><b id="hudStep">0</b></div>
+    </div>
+  </header>
+  <div class="status-line" id="statusLine" role="status" aria-live="polite">Bereit.</div>
+
+  <main class="layout">
+    <aside class="rail rail--controls panel" aria-label="Steuerung">
+      <details class="group" open>
+        <summary><span class="group-title">Bild</span><span class="group-hint">2×2 Farben</span></summary>
+        <div class="group-body">
+          <div class="pickers" id="pickers">
+            <label class="picker">TL<input type="color" id="color0" value="#ff5a5f"></label>
+            <label class="picker">TR<input type="color" id="color1" value="#ffd166"></label>
+            <label class="picker">BL<input type="color" id="color2" value="#06d6a0"></label>
+            <label class="picker">BR<input type="color" id="color3" value="#118ab2"></label>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn--tiny" id="btnRandomColors">Farben würfeln</button>
+            <button type="button" class="btn btn--tiny" id="btnSampleColors">Beispiel</button>
+          </div>
+          <p class="mini-note" style="margin-top:8px">Klicke ein Pixel im Ziel oder in der Vorhersage, um seine Sonde zu wählen.</p>
+        </div>
+      </details>
+
+      <details class="group" open>
+        <summary><span class="group-title">Netz</span><span class="group-hint">Form &amp; Formel</span></summary>
+        <div class="group-body">
+          <div class="field"><label for="layersRange">Versteckte Layer <output id="layersOut">2</output></label><input type="range" id="layersRange" min="1" max="3" step="1" value="2"></div>
+          <div class="field"><label for="widthRange">Neuronen pro Layer <output id="widthOut">6</output></label><input type="range" id="widthRange" min="1" max="8" step="1" value="6"></div>
+          <div class="field"><label for="actExpr">Aktivierung φ(z)</label><input type="text" id="actExpr" value="tanh(z)" spellcheck="false"><div class="chips"><button type="button" class="chip-btn" data-expr="tanh(z)">tanh</button><button type="button" class="chip-btn" data-expr="relu(z)">relu</button><button type="button" class="chip-btn" data-expr="sigmoid(z)">sigmoid</button><button type="button" class="chip-btn" data-expr="sin(z)">sin</button><button type="button" class="chip-btn" data-expr="z*z">z²</button></div></div>
+          <button type="button" class="btn btn--tiny" id="applyAct">Formel übernehmen</button>
+          <div class="field" style="margin-top:10px"><label for="lossSelect">Loss</label><select id="lossSelect"><option value="mse" selected>MSE</option><option value="l1">L1</option></select></div>
+          <div class="field"><label for="lrInput">Lernrate</label><input type="number" id="lrInput" min="0.001" max="0.2" step="0.001" value="0.03"></div>
+          <div class="field"><label for="spsRange">Tempo <output id="spsOut">5 Schritte/s</output></label><input type="range" id="spsRange" min="1" max="60" step="1" value="5"></div>
+          <div class="btn-row" style="margin-top:10px"><button type="button" class="btn btn--primary" id="trainBtn">Training starten</button><button type="button" class="btn btn--danger" id="resetBtn">Reset</button></div>
+          <p class="mini-note" style="margin-top:8px">Architektur, Formel oder Farben ändern das Modell. Lernrate und Tempo wirken sofort.</p>
+        </div>
+      </details>
+
+      <details class="group">
+        <summary><span class="group-title">Status</span><span class="group-hint">Live</span></summary>
+        <div class="group-body">
+          <div class="mini-note" style="display:grid;gap:5px">
+            <span><b>Loss:</b> <span id="statLoss">–</span></span>
+            <span><b>Bester Loss:</b> <span id="statBest">–</span></span>
+            <span><b>Mittlerer Fehler:</b> <span id="statError">–</span></span>
+            <span><b>Epochen:</b> <span id="statEpoch">0</span></span>
+            <span><b>Parameter:</b> <span id="statParams">–</span></span>
+            <span><b>Architektur:</b> <span id="statArch">–</span></span>
+          </div>
+        </div>
+      </details>
+    </aside>
+
+    <section class="stage" aria-label="Bild und Training">
+      <div class="stage-head"><div><h2>Was das Netz gerade sieht</h2><p>Ziel, Vorhersage, gelernte Funktion und Loss, live.</p></div></div>
+      <div class="image-row">
+        <div class="panel image-panel"><h3>Ziel <span id="targetMeta">2×2</span></h3><div class="px-grid" id="targetGrid"><button type="button" class="px" data-pixel="0" aria-label="Ziel Pixel 0"><span>TL</span></button><button type="button" class="px" data-pixel="1" aria-label="Ziel Pixel 1"><span>TR</span></button><button type="button" class="px" data-pixel="2" aria-label="Ziel Pixel 2"><span>BL</span></button><button type="button" class="px" data-pixel="3" aria-label="Ziel Pixel 3"><span>BR</span></button></div><div class="cap"><b>Farben:</b> oben links, oben rechts, unten links, unten rechts.</div></div>
+        <div class="panel image-panel"><h3>Vorhersage <span id="predMeta">2×2</span></h3><div class="px-grid" id="predGrid"><button type="button" class="px" data-pixel="0" aria-label="Vorhersage Pixel 0"><span>TL</span></button><button type="button" class="px" data-pixel="1" aria-label="Vorhersage Pixel 1"><span>TR</span></button><button type="button" class="px" data-pixel="2" aria-label="Vorhersage Pixel 2"><span>BL</span></button><button type="button" class="px" data-pixel="3" aria-label="Vorhersage Pixel 3"><span>BR</span></button></div><div class="cap"><b>Netz:</b> aktuelle Ausgabe an den vier Pixelzentren.</div></div>
+      </div>
+      <div class="panel field-panel"><h3>Gelernte Funktion <span>RGB über (x,y)</span></h3><div class="canvas-wrap"><canvas id="fieldCanvas" aria-label="Gelernte RGB-Funktion zwischen den vier Pixeln"></canvas></div><div class="cap"><b>Vier Punkte:</b> die Pixelzentren. Dazwischen interpoliert das Netz. Die Ringe markieren die Trainingspunkte.</div></div>
+      <div class="panel loss-panel"><div class="loss-head"><h3>Loss live</h3><div class="loss-big"><b id="lossNow">–</b><span id="lossBest">bester Wert –</span></div></div><div class="loss-canvas-wrap"><canvas id="lossCanvas" aria-label="Loss-Kurve"></canvas></div><div class="loss-foot"><span>Epochen: <b id="lossEpoch">0</b></span><span>Schritte/s: <b id="lossRate">0</b></span><span>Punkte: <b id="lossPoints">0</b></span></div></div>
+    </section>
+
+    <aside class="rail rail--instruments" aria-label="Netz und Sonde">
+      <section class="panel graph-panel"><h3>Netz <span>Kanten = Gewichte · Knoten = Aktivierung</span></h3><div class="graph-wrap"><svg id="graphSvg" viewBox="0 0 640 430" role="img" aria-label="Netzwerk mit Eingabe, versteckten Layern und RGB-Ausgabe"></svg></div><div class="graph-note"><b>Ausgewähltes Pixel:</b> Die Knoten zeigen seine Aktivierungen. Die Ausgabe sind R, G, B.</div></section>
+      <section class="panel probe-panel"><h3>Sonde</h3><div class="probe-pos" id="probePos">Pixel –</div><div class="probe-values"><div class="probe-value"><span>Ziel</span><b id="probeTarget">–</b><small id="probeTargetSmall">–</small></div><div class="probe-value"><span>Netz</span><b id="probePred">–</b><small id="probePredSmall">–</small></div><div class="probe-value"><span>Fehler</span><b id="probeError">–</b><small>mittleres |Δ|</small></div></div><div class="probe-trace" id="probeTrace"><div class="trace-row">Warte auf das Modell …</div></div></section>
+    </aside>
+  </main>
+
+  <section class="panel deep" aria-label="Formeln und Gewichte">
+    <div class="tabs" role="tablist"><button type="button" class="tab-btn is-active" data-tab="formulas">Formeln</button><button type="button" class="tab-btn" data-tab="weights">Gewichte &amp; Aktivierungen</button></div>
+    <section class="tab-panel is-active" id="tab-formulas">
+      <div class="formula-editor"><div class="field"><label for="actExpr2">Aktivierungsformel φ(z) — editierbar</label><input type="text" id="actExpr2" value="tanh(z)" spellcheck="false"></div><button type="button" class="btn btn--primary" id="applyAct2">Übernehmen</button><div class="formula-status" id="actStatus">Erlaubt: z, Zahlen, + − * / ( ), tanh, relu, sigmoid, sin, cos, abs, exp, log, sqrt, pi.</div></div>
+      <div class="formula-stack" id="formulaStack"><div class="formula-card"><h4>Formeln</h4><p>Werden nach dem Start des Modells gerendert …</p></div></div>
+    </section>
+    <section class="tab-panel" id="tab-weights"><div class="weight-grid" id="weightGrid"><div class="layer-card">Warte auf das Modell …</div></div></section>
+  </section>
+
+  <footer class="site-foot"><p>TF.js lokal · Temml lokal · keine Analytics. Vier Pixel, ein kleines Netz, alles im Browser.</p><p><a href="gewichte-verstehen.html">Falten oder Wellen?</a> · <a href="mini-rekonstruktion.html">Mini-Netz 2→3→1</a> · <a href="index.html">Katzen-Labor</a></p></footer>
+</div>
+
+<script src="../../temml.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var NUM = new Intl.NumberFormat("de-DE");
+  var PIXELS = [{x:-0.5,y:0.5},{x:0.5,y:0.5},{x:-0.5,y:-0.5},{x:0.5,y:-0.5}];
+  var TARGET_DEFAULT = ["#ff5a5f","#ffd166","#06d6a0","#118ab2"];
+  var S = {
+    ready:false, tf:false, backend:"…", model:null, optimizer:null, act:null,
+    colors:TARGET_DEFAULT.slice(), targetRgb:[], pred:null, loss:NaN, best:Infinity,
+    step:0, history:[], training:false, selected:0, layers:2, width:6, expr:"tanh(z)",
+    lossMode:"mse", lr:0.03, sps:5, rate:0, rateSteps:0, rateT:0,
+    lastTs:0, lastPred:0, lastField:0, stepAcc:0, fieldX:null, fieldN:80,
+    xAll:null, yAll:null, fieldData:null, dirty:true, weights:null, trace:null, lastWeights:0
+  };
+  var ActLayer = null;
+
+  function clamp(v,a,b){ return Math.min(b,Math.max(a,v)); }
+  function fmt(v,d){ if(!isFinite(v))return "–"; return Number(v).toLocaleString("de-DE",{minimumFractionDigits:d===undefined?2:d,maximumFractionDigits:d===undefined?2:d}); }
+  function setStatus(msg, kind){ var el=$("#statusLine"); if(!el)return; el.textContent=msg; el.className="status-line"+(kind?" is-"+kind:""); }
+  function setBoot(text,pct){ var el=$("#bootText"); if(el)el.textContent=text; if(typeof pct==="number")$("#bootBar").style.width=clamp(pct,0,100)+"%"; }
+  function hideBoot(){ document.body.classList.add("is-ready"); $("#app").setAttribute("aria-hidden","false"); setTimeout(function(){ $("#boot").classList.add("is-done"); },250); }
+  function hexToRgb(hex){ var h=String(hex||"#000000").replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; return [parseInt(h.slice(0,2),16)/255,parseInt(h.slice(2,4),16)/255,parseInt(h.slice(4,6),16)/255]; }
+  function rgbHex(c){ return "#"+[0,1,2].map(function(i){ return clamp(Math.round(c[i]*255),0,255).toString(16).padStart(2,"0"); }).join(""); }
+  function rgbCss(c){ return "rgb("+[0,1,2].map(function(i){return clamp(Math.round(c[i]*255),0,255);}).join(",")+")"; }
+  function readColors(){ S.colors=[0,1,2,3].map(function(i){ var el=$("#color"+i); return el?el.value:TARGET_DEFAULT[i]; }); S.targetRgb=S.colors.map(hexToRgb); }
+  function syncColorInputs(){ for(var i=0;i<4;i++){ var el=$("#color"+i); if(el)el.value=S.colors[i]; } }
+
+  function loadScript(src){ return new Promise(function(res,rej){ var s=document.createElement("script"); s.src=src; s.async=true; s.onload=res; s.onerror=function(){rej(new Error("Konnte "+src+" nicht laden."));}; document.head.appendChild(s); }); }
+  async function loadTf(){
+    if(!window.tf){ try{ await loadScript("../assets/tf.min.js"); }catch(e){ await loadScript("../../../tf/tf.min.js"); } }
+    if(!window.tf) throw new Error("TF.js ist nicht verfügbar.");
+    await window.tf.ready();
+    var backend="";
+    try{ if(await window.tf.setBackend("webgl")) backend="webgl"; }catch(e){}
+    if(!backend){ try{ await window.tf.setBackend("cpu"); backend="cpu"; }catch(e){} }
+    S.backend=(window.tf.getBackend&&window.tf.getBackend())||backend||"cpu";
+    S.tf=true;
+    var pill=$("#backendPill"); if(pill)pill.querySelector("span").textContent="TF.js · "+S.backend.toUpperCase();
+  }
+
+  function makeActLayerClass(){
+    return class extends window.tf.layers.Layer {
+      constructor(config){ super(config); this.act=config.act; }
+      computeOutputShape(s){ return s; }
+      call(input){ var z=Array.isArray(input)?input[0]:input; return this.act.tensor(z); }
+      getConfig(){ return Object.assign({},super.getConfig()); }
+    };
+  }
+
+  function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function texBlock(tex){
+    if(window.temml&&window.temml.renderToString){
+      try{ return window.temml.renderToString(tex,{displayMode:true,throwOnError:false}); }catch(e){}
+    }
+    return '<code>'+escapeHtml(tex)+'</code>';
+  }
+  function renderFormulas(){
+    var stack=$("#formulaStack");
+    if(!stack)return;
+    if(!window.temml){ stack.innerHTML='<div class="formula-card"><h4>Formeln</h4><p>Temml wird geladen …</p></div>'; setTimeout(renderFormulas,300); return; }
+    var cards=[];
+    cards.push(["Forward-Pass",String.raw`\underbrace{\mathbf a^{(l)}}_{\text{Aktivierung}}=\underbrace{\varphi\!\left(\underbrace{\mathbf W^{(l)}\mathbf a^{(l-1)}+\mathbf b^{(l)}}_{\text{lineare Schicht }\mathbf z^{(l)}}\right)}_{\text{Nichtlinearität}}`,"Jede Schicht ist linear plus Aktivierung. φ ist die Formel, die du oben ändern kannst."]);
+    cards.push(["Aktivierung",String.raw`\underbrace{\varphi(z)}_{\text{Formel}}=\underbrace{\text{deine Formel}}_{\text{editierbar}}`,"Aktuell: <code>φ(z) = "+escapeHtml(S.expr)+"</code>. Erlaubt sind z, Zahlen, + − * /, Klammern und tanh, relu, sigmoid, sin, cos, abs, exp, z*z."]);
+    cards.push(["Ausgabe",String.raw`\underbrace{\hat{\mathbf y}}_{\text{RGB-Ausgabe}}=\underbrace{\mathbf W^{(\text{out})}\mathbf a^{(L)}+\mathbf b^{(\text{out})}}_{\text{linear}}`,"Drei Ausgaben, R, G und B. Für die Anzeige werden sie auf 0..1 begrenzt."]);
+    if(S.lossMode==="l1"){
+      cards.push(["Loss",String.raw`\underbrace{\mathcal L}_{\text{Fehler}}=\underbrace{\frac{1}{4\cdot 3}\sum_{i=1}^{4}\sum_{c=1}^{3}\left|\hat y_{i,c}-y_{i,c}\right|}_{\text{mittlerer absoluter Fehler}}`,"L1 bestraft den Betrag. Der Fehler wird über 4 Pixel und 3 Kanäle gemittelt."]);
+    }else{
+      cards.push(["Loss",String.raw`\underbrace{\mathcal L}_{\text{Fehler}}=\underbrace{\frac{1}{4\cdot 3}\sum_{i=1}^{4}\sum_{c=1}^{3}\left(\hat y_{i,c}-y_{i,c}\right)^2}_{\text{mittlerer quadratischer Fehler}}`,"MSE bestraft große Fehler stärker. Der Loss im Plot ist der volle Fehler über alle vier Pixel."]);
+    }
+    cards.push(["Adam-Schritt",String.raw`\underbrace{\boldsymbol\theta_{t+1}}_{\text{neue Gewichte}}=\underbrace{\boldsymbol\theta_t}_{\text{alte Gewichte}}-\underbrace{\eta\,\frac{\hat{\mathbf m}_t}{\sqrt{\hat{\mathbf v}_t}+\epsilon}}_{\text{adaptiver Schritt}}`,"Adam passt die Schrittweite pro Gewicht an. Die Lernrate η steht im linken Regler."]);
+    var arch="2 → "+Array(S.layers).fill(S.width).join(" → ")+" → 3";
+    cards.push(["Architektur","", "Netz: <code>"+arch+"</code> · Parameter: <code>"+($("#statParams")?$("#statParams").textContent:"–")+"</code> · Loss: <code>"+S.lossMode.toUpperCase()+"</code> · Lernrate: <code>"+S.lr+"</code>"]);
+    stack.innerHTML=cards.map(function(c){
+      return '<div class="formula-card"><h4>'+c[0]+'</h4>'+(c[1]?'<div class="math">'+texBlock(c[1])+'</div>':'')+'<p>'+c[2]+'</p></div>';
+    }).join("");
+  }
+
+  function makeAct(expr){
+    var e=String(expr||"").replace(/\s+/g,"");
+    var map={
+      "tanh(z)":[function(z){return window.tf.tanh(z);},Math.tanh],
+      "relu(z)":[function(z){return window.tf.relu(z);},function(z){return Math.max(0,z);}],
+      "sigmoid(z)":[function(z){return window.tf.sigmoid(z);},function(z){return 1/(1+Math.exp(-z));}],
+      "sin(z)":[function(z){return window.tf.sin(z);},Math.sin],
+      "cos(z)":[function(z){return window.tf.cos(z);},Math.cos],
+      "abs(z)":[function(z){return window.tf.abs(z);},Math.abs],
+      "exp(z)":[function(z){return window.tf.exp(z);},Math.exp],
+      "z*z":[function(z){return window.tf.mul(z,z);},function(z){return z*z;}],
+      "z":[function(z){return z;},function(z){return z;}]
+    };
+    if(!map[e])throw new Error("Unbekannte Formel. Erlaubt: tanh(z), relu(z), sigmoid(z), sin(z), cos(z), abs(z), exp(z), z*z, z.");
+    return {expr:e,tensor:map[e][0],number:map[e][1]};
+  }
+
+  function buildData(){
+    if(!window.tf)return;
+    if(S.xAll)S.xAll.dispose(); if(S.yAll)S.yAll.dispose();
+    S.xAll=window.tf.tensor2d(PIXELS.map(function(p){return [p.x,p.y];}),[4,2]);
+    S.yAll=window.tf.tensor2d(S.targetRgb,[4,3]);
+    if(!S.fieldX){
+      var N=S.fieldN, f=new Float32Array(N*N*2), o=0;
+      for(var r=0;r<N;r++)for(var c=0;c<N;c++){
+        f[o++]=-0.8+(c+0.5)/N*1.6;
+        f[o++]=0.8-(r+0.5)/N*1.6;
+      }
+      S.fieldX=window.tf.tensor2d(f,[N*N,2]);
+    }
+  }
+
+  function buildModel(){
+    if(!window.tf)return;
+    var act;
+    try{ act=makeAct(S.expr); }catch(e){ setStatus(e.message,"error"); return; }
+    var oldModel=S.model, oldOpt=S.optimizer;
+    S.model=null; S.optimizer=null; S.act=act; S.pred=null; S.loss=NaN; S.best=Infinity;
+    S.step=0; S.history=[]; S.rate=0; S.rateSteps=0; S.rateT=0; S.stepAcc=0; S.dirty=true;
+    var seed=(Math.random()*4294967295)>>>0;
+    var model=window.tf.sequential();
+    for(var i=0;i<S.layers;i++){
+      model.add(window.tf.layers.dense({
+        inputShape:i===0?[2]:undefined,
+        units:S.width,
+        activation:"linear",
+        kernelInitializer:window.tf.initializers.glorotUniform({seed:(seed+i*2654435761)>>>0}),
+        biasInitializer:"zeros"
+      }));
+      model.add(new ActLayer({act:act,name:"act"+(i+1)}));
+    }
+    model.add(window.tf.layers.dense({
+      units:3,
+      activation:"linear",
+      kernelInitializer:window.tf.initializers.glorotUniform({seed:(seed+999)>>>0}),
+      biasInitializer:"zeros"
+    }));
+    S.model=model;
+    S.optimizer=window.tf.train.adam(S.lr);
+    if(oldModel)setTimeout(function(){try{oldModel.dispose();}catch(e){}},600);
+    if(oldOpt&&oldOpt.dispose)setTimeout(function(){try{oldOpt.dispose();}catch(e){}},600);
+    var params=model.countParams?model.countParams():0;
+    $("#statParams").textContent=NUM.format(params);
+    $("#statArch").textContent="2 → "+Array(S.layers).fill(S.width).join(" → ")+" → 3";
+    updateTrainUi(); updateStats(); requestPrediction(true); requestField(true); updateWeights();
+    renderFormulas();
+    setStatus("Modell gebaut: "+$("#statArch").textContent+", φ = "+S.expr+".","good");
+  }
+
+  function computeLoss(data){
+    var acc=0,count=0;
+    for(var i=0;i<4;i++){
+      for(var c=0;c<3;c++){
+        var d=data[i*3+c]-S.targetRgb[i][c];
+        acc+=S.lossMode==="l1"?Math.abs(d):d*d;
+        count++;
+      }
+    }
+    return count?acc/count:NaN;
+  }
+  function computeMeanError(data){
+    var acc=0,count=0;
+    for(var i=0;i<4;i++)for(var c=0;c<3;c++){acc+=Math.abs(data[i*3+c]-S.targetRgb[i][c]);count++;}
+    return count?acc/count:NaN;
+  }
+
+  function requestPrediction(force){
+    if(!S.model||!S.xAll)return;
+    var out;
+    try{ out=S.model.apply(S.xAll); }catch(e){ return; }
+    var data=out.dataSync(); out.dispose();
+    S.pred=Array.from(data);
+    S.loss=computeLoss(data);
+    if(isFinite(S.loss))S.best=Math.min(S.best,S.loss);
+    S.history.push({s:S.step,l:S.loss});
+    if(S.history.length>2000)S.history=S.history.filter(function(p,i){return i%2===0;});
+    drawTarget(); drawPred(); drawLossChart(); updateStats(); updateProbe();
+    if(force)S.dirty=false;
+  }
+
+  function requestField(force){
+    if(!S.model||!S.fieldX)return;
+    var out;
+    try{ out=S.model.apply(S.fieldX); }catch(e){ return; }
+    var data=out.dataSync(); out.dispose();
+    S.fieldData=data;
+    drawField();
+  }
+
+  function trainStep(){
+    if(!S.model||!S.optimizer||!S.xAll||!S.yAll)return false;
+    try{
+      var vars=S.model.trainableWeights.map(function(w){return w.val;});
+      S.optimizer.minimize(function(){
+        var pred=S.model.apply(S.xAll);
+        var diff=pred.sub(S.yAll);
+        return S.lossMode==="l1"?window.tf.mean(window.tf.abs(diff)):window.tf.mean(window.tf.square(diff));
+      },false,vars);
+      S.step++;
+      S.rateSteps++;
+      S.dirty=true;
+      return true;
+    }catch(e){
+      S.training=false; updateTrainUi();
+      setStatus("Training angehalten: "+(e&&e.message?e.message:e),"error");
+      return false;
+    }
+  }
+
+  function startTraining(){
+    if(!S.ready||!S.model)return;
+    S.training=true; S.rateT=performance.now(); S.rateSteps=0;
+    updateTrainUi();
+    setStatus("Training läuft. Die vier Farben werden gelernt.","good");
+  }
+  function pauseTraining(silent){
+    S.training=false; S.rate=0; updateTrainUi();
+    if(!silent)setStatus("Training pausiert.","warn");
+  }
+  function toggleTraining(){ if(S.training)pauseTraining(); else startTraining(); }
+
+  function updateTrainUi(){
+    var btn=$("#trainBtn"); if(btn)btn.textContent=S.training?"Training pausieren":"Training starten";
+    var pill=$("#livePill");
+    if(pill){ pill.classList.toggle("is-live",S.training); pill.querySelector("span").textContent=S.training?"Live":"Pause"; }
+  }
+
+  function updateStats(){
+    var me=S.pred?computeMeanError(S.pred):NaN;
+    $("#hudLoss").textContent=isFinite(S.loss)?fmt(S.loss,4):"–";
+    $("#hudRate").textContent=Math.round(S.rate);
+    $("#hudStep").textContent=NUM.format(S.step);
+    $("#statLoss").textContent=isFinite(S.loss)?fmt(S.loss,5):"–";
+    $("#statBest").textContent=isFinite(S.best)?fmt(S.best,5):"–";
+    $("#statError").textContent=isFinite(me)?fmt(me,4):"–";
+    $("#statEpoch").textContent=NUM.format(S.step);
+    $("#lossNow").textContent=isFinite(S.loss)?fmt(S.loss,5):"–";
+    $("#lossBest").textContent="bester Wert "+(isFinite(S.best)?fmt(S.best,5):"–");
+    $("#lossEpoch").textContent=NUM.format(S.step);
+    $("#lossRate").textContent=Math.round(S.rate);
+    $("#lossPoints").textContent=NUM.format(S.history.length);
+  }
+
+  function drawTarget(){
+    for(var i=0;i<4;i++){
+      var el=$('#targetGrid .px[data-pixel="'+i+'"]');
+      if(el){
+        el.style.background=S.colors[i];
+        el.classList.toggle("is-selected",S.selected===i);
+      }
+    }
+    $("#targetMeta").textContent="2 × 2 × 3";
+  }
+  function drawPred(){
+    for(var i=0;i<4;i++){
+      var el=$('#predGrid .px[data-pixel="'+i+'"]');
+      if(!el)continue;
+      if(S.pred){
+        el.style.background=rgbCss([S.pred[i*3],S.pred[i*3+1],S.pred[i*3+2]]);
+      }else{
+        el.style.background="#151a25";
+      }
+      el.classList.toggle("is-selected",S.selected===i);
+    }
+    $("#predMeta").textContent="2 × 2 × 3";
+  }
+
+  function fitCanvas(cv){
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    var r=cv.getBoundingClientRect();
+    var w=Math.max(40,Math.round(r.width)),h=Math.max(40,Math.round(r.height));
+    if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){
+      cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+    }
+    var ctx=cv.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle="#050810"; ctx.fillRect(0,0,w,h);
+    return {ctx:ctx,w:w,h:h};
+  }
+
+  function drawField(){
+    var cv=$("#fieldCanvas"); if(!cv)return;
+    var f=fitCanvas(cv),ctx=f.ctx,w=f.w,h=f.h;
+    if(!S.fieldData){ ctx.fillStyle="#667894"; ctx.font="600 10px ui-monospace,monospace"; ctx.textAlign="center"; ctx.fillText("Warte auf Vorhersage …",w/2,h/2); return; }
+    var N=S.fieldN,pad=18,size=Math.min(w,h)-2*pad;
+    var ox=(w-size)/2,oy=(h-size)/2;
+    var off=document.createElement("canvas"); off.width=N; off.height=N;
+    var octx=off.getContext("2d"); var img=octx.createImageData(N,N);
+    for(var p=0;p<N*N;p++){
+      var q=p*4;
+      img.data[q]=clamp(S.fieldData[p*3],0,1)*255;
+      img.data[q+1]=clamp(S.fieldData[p*3+1],0,1)*255;
+      img.data[q+2]=clamp(S.fieldData[p*3+2],0,1)*255;
+      img.data[q+3]=255;
+    }
+    octx.putImageData(img,0,0);
+    ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(off,ox,oy,size,size);
+    ctx.strokeStyle="rgba(200,230,255,.22)"; ctx.strokeRect(ox+.5,oy+.5,size-1,size-1);
+    for(var i=0;i<4;i++){
+      var px=ox+(PIXELS[i].x+0.8)/1.6*size;
+      var py=oy+(0.8-PIXELS[i].y)/1.6*size;
+      ctx.beginPath(); ctx.arc(px,py,S.selected===i?5:3.2,0,Math.PI*2);
+      ctx.strokeStyle=S.selected===i?"#fff":"rgba(255,255,255,.6)";
+      ctx.lineWidth=S.selected===i?2:1;
+      ctx.stroke();
+      if(S.selected===i){
+        ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2);
+        ctx.strokeStyle="rgba(103,232,249,.8)"; ctx.lineWidth=1.2; ctx.stroke();
+      }
+    }
+  }
+
+  function drawLossChart(){
+    var cv=$("#lossCanvas"); if(!cv)return;
+    var f=fitCanvas(cv),ctx=f.ctx,w=f.w,h=f.h;
+    var padL=38,padR=10,padT=8,padB=18;
+    var x0=padL,x1=w-padR,y0=padT,y1=h-padB;
+    ctx.strokeStyle="rgba(138,180,255,.12)"; ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0,y1);ctx.lineTo(x1,y1);ctx.stroke();
+    var hist=S.history;
+    if(!hist.length){
+      ctx.fillStyle="#667894";ctx.font="600 9px ui-monospace,monospace";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText("Loss erscheint beim Training.",(x0+x1)/2,(y0+y1)/2); return;
+    }
+    var logs=hist.map(function(p){return Math.log10(Math.max(p.l,1e-8));});
+    var vMin=Math.min.apply(null,logs),vMax=Math.max.apply(null,logs);
+    if(vMax-vMin<0.4){vMax=vMin+0.4;}
+    var stepMin=hist[0].s,stepMax=Math.max(hist[hist.length-1].s,stepMin+1);
+    function X(s){return x0+((s-stepMin)/Math.max(1,stepMax-stepMin))*(x1-x0);}
+    function Y(v){return y1-((v-vMin)/Math.max(0.001,vMax-vMin))*(y1-y0);}
+    for(var t=0;t<=3;t++){
+      var vv=vMin+(vMax-vMin)*t/3,yy=Y(vv);
+      ctx.strokeStyle="rgba(138,180,255,.07)";ctx.beginPath();ctx.moveTo(x0,yy);ctx.lineTo(x1,yy);ctx.stroke();
+      ctx.fillStyle="#667894";ctx.font="500 8px ui-monospace,monospace";ctx.textAlign="right";ctx.textBaseline="middle";
+      ctx.fillText("1e"+vv.toFixed(0),x0-6,yy);
+    }
+    var grad=ctx.createLinearGradient(0,y0,0,y1);grad.addColorStop(0,"rgba(103,232,249,.2)");grad.addColorStop(1,"rgba(103,232,249,0)");
+    ctx.beginPath();ctx.moveTo(X(hist[0].s),y1);
+    for(var i=0;i<hist.length;i++)ctx.lineTo(X(hist[i].s),Y(logs[i]));
+    ctx.lineTo(X(hist[hist.length-1].s),y1);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+    ctx.beginPath();
+    for(var j=0;j<hist.length;j++){if(j===0)ctx.moveTo(X(hist[j].s),Y(logs[j]));else ctx.lineTo(X(hist[j].s),Y(logs[j]));}
+    ctx.strokeStyle="rgba(103,232,249,.9)";ctx.lineWidth=1.4;ctx.stroke();
+    var lx=X(hist[hist.length-1].s),ly=Y(logs[logs.length-1]);
+    ctx.save();ctx.shadowColor="rgba(103,232,249,.9)";ctx.shadowBlur=8;ctx.fillStyle="#d8fdff";ctx.beginPath();ctx.arc(lx,ly,2.4,0,Math.PI*2);ctx.fill();ctx.restore();
+    ctx.fillStyle="#667894";ctx.font="500 8px ui-monospace,monospace";ctx.textAlign="left";ctx.textBaseline="top";ctx.fillText("Loss (log)",x0+2,y0+1);
+  }
+
+  function mixColor(a,b,t){ return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)]; }
+  function cssRgb(c){ return "rgb("+c[0]+","+c[1]+","+c[2]+")"; }
+  function activationColor(v){
+    var t=Math.tanh(v);
+    return t>=0?mixColor([12,18,32],[251,191,36],t):mixColor([12,18,32],[34,211,238],-t);
+  }
+  function weightColor(v,scale){
+    var t=clamp(v/Math.max(1e-6,scale),-1,1);
+    return t>=0?mixColor([10,16,28],[251,191,36],t):mixColor([10,16,28],[34,211,238],-t);
+  }
+  function maxAbs(values){ var m=0; for(var i=0;i<values.length;i++)m=Math.max(m,Math.abs(values[i])); return Math.max(1e-6,m); }
+
+  function readWeights(){
+    if(!S.model)return null;
+    var layers=[];
+    for(var i=0;i<S.model.layers.length;i++){
+      var l=S.model.layers[i];
+      var ws=l.getWeights?l.getWeights():[];
+      if(ws.length<2)continue;
+      var shape=ws[0].shape;
+      layers.push({W:ws[0].dataSync(),b:ws[1].dataSync(),in:shape[0],out:shape[1],name:l.name});
+    }
+    S.weights=layers;
+    return layers;
+  }
+
+  function computeTrace(idx){
+    if(!S.weights||!S.act)return null;
+    var p=PIXELS[idx],a=[p.x,p.y],rows=[];
+    for(var li=0;li<S.weights.length;li++){
+      var L=S.weights[li],z=new Float32Array(L.out),out=new Float32Array(L.out);
+      for(var j=0;j<L.out;j++){
+        var sum=L.b[j];
+        for(var k=0;k<L.in;k++)sum+=a[k]*L.W[k*L.out+j];
+        z[j]=sum;
+      }
+      var isOut=li===S.weights.length-1;
+      for(var j2=0;j2<L.out;j2++)out[j2]=isOut?z[j2]:S.act.number(z[j2]);
+      rows.push({z:z,a:out,isOut:isOut});
+      a=Array.from(out);
+    }
+    return {input:[p.x,p.y],layers:rows,output:rows.length?rows[rows.length-1].a:new Float32Array(0)};
+  }
+
+  function updateWeights(){
+    if(!S.model)return;
+    var layers=readWeights();
+    if(!layers)return;
+    S.trace=computeTrace(S.selected);
+    drawGraph();
+    updateProbe();
+    updateLayerCards();
+  }
+
+  function drawGraph(){
+    var svg=$("#graphSvg");
+    if(!svg)return;
+    if(!S.weights||!S.trace){ svg.innerHTML=""; return; }
+    var layers=S.weights, hidden=layers.length-1, outDim=layers[layers.length-1].out;
+    var W=640,H=430, parts=[];
+    var inputX=56, outX=596;
+    var hiddenX=[];
+    for(var i=0;i<hidden;i++) hiddenX.push(hidden===1?326:176+(i/(hidden-1))*300);
+    function yPos(n,gap,center){ var arr=[]; for(var k=0;k<n;k++)arr.push(center+(k-(n-1)/2)*gap); return arr; }
+    var inputY=[182,248];
+    var hiddenY=[]; for(var i2=0;i2<hidden;i2++)hiddenY.push(yPos(layers[i2].out,Math.min(30,240/Math.max(1,layers[i2].out-1)),215));
+    var outY=yPos(outDim,54,215);
+    var edges=[];
+    for(var j=0;j<layers[0].out;j++){
+      for(var k=0;k<2;k++) edges.push({x1:inputX,y1:inputY[k],x2:hiddenX[0],y2:hiddenY[0][j],w:layers[0].W[k*layers[0].out+j]});
+    }
+    for(var li=0;li<hidden-1;li++){
+      var next=layers[li+1];
+      for(var a=0;a<layers[li].out;a++)for(var b=0;b<next.out;b++){
+        edges.push({x1:hiddenX[li],y1:hiddenY[li][a],x2:hiddenX[li+1],y2:hiddenY[li+1][b],w:next.W[a*next.out+b]});
+      }
+    }
+    var last=layers[hidden], lastY=hiddenY[hidden-1];
+    for(var a2=0;a2<layers[hidden-1].out;a2++)for(var b2=0;b2<outDim;b2++){
+      edges.push({x1:hiddenX[hidden-1],y1:lastY[a2],x2:outX,y2:outY[b2],w:last.W[a2*outDim+b2]});
+    }
+    var mw=maxAbs(edges.map(function(e){return e.w;}));
+    for(var e=0;e<edges.length;e++){
+      var ed=edges[e],t=Math.min(1,Math.abs(ed.w)/mw);
+      parts.push('<line x1="'+ed.x1+'" y1="'+ed.y1+'" x2="'+ed.x2+'" y2="'+ed.y2+'" stroke="'+(ed.w>=0?"#fbbf24":"#22d3ee")+'" stroke-opacity="'+(0.04+0.42*t).toFixed(3)+'" stroke-width="'+(0.35+1.2*t).toFixed(2)+'" stroke-linecap="round"/>');
+    }
+    for(var k2=0;k2<2;k2++){
+      parts.push('<circle cx="'+inputX+'" cy="'+inputY[k2]+'" r="6" fill="#0b1220" stroke="rgba(103,232,249,.55)" stroke-width="1.2"/>');
+      parts.push('<text x="'+(inputX-12)+'" y="'+(inputY[k2]+3)+'" text-anchor="end" font-family="ui-monospace,monospace" font-size="10" fill="#9aaac6">'+(k2===0?"x":"y")+'</text>');
+      parts.push('<text x="'+(inputX-12)+'" y="'+(inputY[k2]+15)+'" text-anchor="end" font-family="ui-monospace,monospace" font-size="8" fill="#667894">'+fmt(S.trace.input[k2],2)+'</text>');
+    }
+    parts.push('<text x="'+inputX+'" y="18" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" letter-spacing=".08em" fill="#667894">Eingabe · 2</text>');
+    for(var li2=0;li2<hidden;li2++){
+      var arr=hiddenY[li2];
+      for(var n=0;n<layers[li2].out;n++){
+        var av=S.trace.layers[li2]?S.trace.layers[li2].a[n]:0;
+        parts.push('<circle cx="'+hiddenX[li2]+'" cy="'+arr[n]+'" r="5" fill="'+cssRgb(activationColor(av))+'" stroke="rgba(220,240,255,.35)" stroke-width=".8"><title>L'+(li2+1)+' · Neuron '+n+' · a='+av.toFixed(3)+'</title></circle>');
+      }
+      parts.push('<text x="'+hiddenX[li2]+'" y="18" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" letter-spacing=".08em" fill="#667894">L'+(li2+1)+' · '+layers[li2].out+'</text>');
+    }
+    var channelBase=[[255,90,95],[52,211,153],[96,165,250]];
+    for(var o=0;o<outDim;o++){
+      var val=S.trace.output[o];
+      var lab=outDim===3?["R","G","B"][o]:"y";
+      var col=outDim===3?mixColor([12,18,32],channelBase[o],clamp(val,0,1)):mixColor([12,18,32],[235,245,255],clamp(val,0,1));
+      parts.push('<circle cx="'+outX+'" cy="'+outY[o]+'" r="9" fill="'+cssRgb(col)+'" stroke="rgba(220,240,255,.5)" stroke-width="1.2"/>');
+      parts.push('<text x="'+(outX+16)+'" y="'+(outY[o]+3)+'" font-family="ui-monospace,monospace" font-size="9" fill="#9aaac6">'+lab+' '+fmt(val,2)+'</text>');
+    }
+    parts.push('<text x="'+outX+'" y="18" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" letter-spacing=".08em" fill="#667894">Ausgabe · '+outDim+'</text>');
+    parts.push('<text x="'+outX+'" y="'+(H-6)+'" text-anchor="middle" font-family="ui-monospace,monospace" font-size="8" fill="#667894">RGB</text>');
+    svg.innerHTML=parts.join("");
+  }
+
+  function updateProbe(){
+    var idx=S.selected, target=S.targetRgb[idx], pred=S.pred?[S.pred[idx*3],S.pred[idx*3+1],S.pred[idx*3+2]]:null;
+    var p=PIXELS[idx];
+    $("#probePos").textContent="Pixel "+(idx+1)+" · x "+fmt(p.x,2)+" · y "+fmt(p.y,2);
+    $("#probeTarget").textContent=String(S.colors[idx]||"–").toUpperCase();
+    $("#probeTargetSmall").textContent=target.map(function(v){return Math.round(v*255);}).join(", ");
+    $("#probePred").textContent=pred?rgbHex(pred).toUpperCase():"–";
+    $("#probePredSmall").textContent=pred?pred.map(function(v){return Math.round(v*255);}).join(", "):"–";
+    $("#probeError").textContent=pred?fmt((Math.abs(pred[0]-target[0])+Math.abs(pred[1]-target[1])+Math.abs(pred[2]-target[2]))/3,3):"–";
+    var host=$("#probeTrace");
+    if(!host)return;
+    if(!S.trace){ host.innerHTML='<div class="trace-row">Warte auf das Modell …</div>'; return; }
+    var html='<div class="trace-row"><b>Eingabe</b> <span>x = '+fmt(p.x,2)+' · y = '+fmt(p.y,2)+'</span></div>';
+    for(var li=0;li<S.trace.layers.length;li++){
+      var tr=S.trace.layers[li];
+      if(tr.isOut){
+        html+='<div class="trace-row"><b>Ausgabe</b> <span>['+Array.from(tr.a).map(function(v){return fmt(v,2);}).join(", ")+']</span></div>';
+      }else{
+        html+='<div class="trace-row"><b>L'+(li+1)+'</b> <span>z = ['+Array.from(tr.z).map(function(v){return fmt(v,2);}).join(", ")+']<br>a = ['+Array.from(tr.a).map(function(v){return fmt(v,2);}).join(", ")+']</span></div>';
+      }
+    }
+    host.innerHTML=html;
+  }
+
+  function updateLayerCards(){
+    var host=$("#weightGrid");
+    if(!host||!S.weights){ return; }
+    host.innerHTML="";
+    for(var li=0;li<S.weights.length;li++){
+      var L=S.weights[li], isOut=li===S.weights.length-1;
+      var card=document.createElement("div");
+      card.className="layer-card";
+      var scale=maxAbs(Array.from(L.W));
+      var cols=L.out, cells="";
+      for(var r=0;r<L.in;r++)for(var c=0;c<cols;c++){
+        var v=L.W[r*cols+c];
+        cells+='<div class="cell" style="background:'+cssRgb(weightColor(v,scale))+'">'+fmt(v,1)+'</div>';
+      }
+      var bias="";
+      for(var b=0;b<L.out;b++)bias+='<div class="cell bias">'+fmt(L.b[b],1)+'</div>';
+      var acts=isOut?S.trace.output:S.trace.layers[li].a;
+      var strip="";
+      var maxA=Math.max(1e-6,Math.max.apply(null,Array.from(acts).map(function(v){return Math.abs(v);})));
+      for(var s=0;s<acts.length;s++){
+        var av=acts[s],hh=Math.max(2,Math.abs(av)/maxA*24);
+        strip+='<i style="height:'+hh+'px;background:'+(av>=0?"#fbbf24":"#22d3ee")+'"></i>';
+      }
+      card.innerHTML='<h4>'+(isOut?"Ausgabe":"L"+(li+1))+' <span>'+L.in+' → '+L.out+(isOut?" · linear":" · φ = "+S.expr)+'</span></h4>'+
+        '<div class="matrix" style="grid-template-columns:repeat('+cols+',1fr)">'+cells+'</div>'+
+        '<div class="matrix" style="grid-template-columns:repeat('+cols+',1fr)">'+bias+'</div>'+
+        '<div class="act-strip">'+strip+'</div>'+
+        '<div class="layer-foot">‖W‖ '+fmt(Math.sqrt(Array.from(L.W).reduce(function(s2,v){return s2+v*v;},0)),2)+' · max|a| '+fmt(maxA,2)+(isOut?' · RGB '+Array.from(acts).map(function(v){return fmt(v,2);}).join(" / "):"")+'</div>';
+      host.appendChild(card);
+    }
+  }
+
+  function selectPixel(i){
+    S.selected=clamp(i,0,3);
+    $$(".px").forEach(function(el){ el.classList.toggle("is-selected",parseInt(el.getAttribute("data-pixel"),10)===S.selected); });
+    drawField();
+    if(S.weights)updateWeights();
+    var p=PIXELS[S.selected];
+    $("#probePos").textContent="Pixel "+(S.selected+1)+" · x "+fmt(p.x,2)+" · y "+fmt(p.y,2);
+    setStatus("Sonde auf Pixel "+(S.selected+1)+" gesetzt.","good");
+  }
+
+  function syncExprInputs(){ var a=$("#actExpr"),b=$("#actExpr2"); if(a)a.value=S.expr; if(b)b.value=S.expr; }
+  function applyActivation(){
+    var input=$("#actExpr2")||$("#actExpr");
+    var val=input?input.value.trim():"";
+    try{
+      var act=makeAct(val);
+      S.expr=act.expr;
+      syncExprInputs();
+      var st=$("#actStatus"); if(st){st.textContent="Gültig: φ(z) = "+act.expr;st.className="formula-status is-good";}
+      buildModel();
+    }catch(e){
+      var st2=$("#actStatus"); if(st2){st2.textContent=e.message;st2.className="formula-status is-error";}
+      setStatus(e.message,"error");
+    }
+  }
+
+  function applyColors(){
+    readColors();
+    drawTarget();
+    if(!window.tf)return;
+    buildData();
+    buildModel();
+    if(S.training)startTraining();
+    setStatus("Neue Zielfarben. Das Netz startet neu.","good");
+  }
+
+  function buildDataSafe(){ buildData(); }
+
+  function bind(){
+    ["0","1","2","3"].forEach(function(i){ var el=$("#color"+i); if(el)el.addEventListener("input",applyColors); });
+    $("#btnRandomColors").addEventListener("click",function(){
+      var arr=[]; for(var i=0;i<4;i++){ var h="#"; for(var j=0;j<3;j++)h+=Math.floor(Math.random()*256).toString(16).padStart(2,"0"); arr.push(h); }
+      S.colors=arr; syncColorInputs(); applyColors();
+    });
+    $("#btnSampleColors").addEventListener("click",function(){ S.colors=TARGET_DEFAULT.slice(); syncColorInputs(); applyColors(); });
+    $("#layersRange").addEventListener("input",function(){ S.layers=clamp(parseInt(this.value,10)||1,1,3); $("#layersOut").textContent=S.layers; buildModel(); if(S.training)startTraining(); });
+    $("#widthRange").addEventListener("input",function(){ S.width=clamp(parseInt(this.value,10)||1,1,8); $("#widthOut").textContent=S.width; buildModel(); if(S.training)startTraining(); });
+    $("#lrInput").addEventListener("change",function(){ S.lr=clamp(parseFloat(this.value)||0.03,0.001,0.2); if(S.model)S.optimizer=window.tf.train.adam(S.lr); renderFormulas(); setStatus("Lernrate: "+S.lr,"good"); });
+    $("#lossSelect").addEventListener("change",function(){ S.lossMode=this.value; S.history=[]; drawLossChart(); renderFormulas(); setStatus("Loss: "+S.lossMode.toUpperCase(),"good"); });
+    $("#spsRange").addEventListener("input",function(){ S.sps=clamp(parseInt(this.value,10)||1,1,60); $("#spsOut").textContent=S.sps+" Schritte/s"; });
+    $("#trainBtn").addEventListener("click",toggleTraining);
+    $("#resetBtn").addEventListener("click",function(){ buildModel(); if(S.training)startTraining(); setStatus("Modell und Training zurückgesetzt.","warn"); });
+    $("#applyAct").addEventListener("click",applyActivation);
+    $("#applyAct2").addEventListener("click",applyActivation);
+    $$("#actExpr, #actExpr2").forEach(function(el){ el.addEventListener("keydown",function(e){ if(e.key==="Enter"){e.preventDefault();applyActivation();} }); });
+    $$("#actExpr, #actExpr2").forEach(function(el){ el.addEventListener("input",function(){ var other=el.id==="actExpr"?document.querySelector("#actExpr2"):document.querySelector("#actExpr"); if(other)other.value=el.value; }); });
+    $$(".chip-btn").forEach(function(b){ b.addEventListener("click",function(){ S.expr=b.getAttribute("data-expr"); S.expr=makeAct(S.expr).expr; syncExprInputs(); var st=$("#actStatus"); if(st){st.textContent="Gültig: φ(z) = "+S.expr;st.className="formula-status is-good";} buildModel(); }); });
+    $$(".px").forEach(function(el){ el.addEventListener("click",function(){ selectPixel(parseInt(el.getAttribute("data-pixel"),10)); }); });
+    $$(".tab-btn").forEach(function(b){ b.addEventListener("click",function(){ var t=b.getAttribute("data-tab"); $$(".tab-btn").forEach(function(x){x.classList.toggle("is-active",x===b);}); $$(".tab-panel").forEach(function(p){p.classList.toggle("is-active",p.id==="tab-"+t);}); }); });
+    window.addEventListener("resize",function(){ drawField(); drawLossChart(); });
+  }
+
+  function loop(ts){
+    requestAnimationFrame(loop);
+    if(!S.ready)return;
+    if(!S.lastTs)S.lastTs=ts;
+    var dt=Math.min(120,ts-S.lastTs); S.lastTs=ts;
+    if(S.training){
+      S.stepAcc+=(dt/1000)*S.sps;
+      var n=Math.min(10,Math.floor(S.stepAcc)); S.stepAcc-=n;
+      var t0=performance.now();
+      for(var i=0;i<n;i++){ if(i>0&&performance.now()-t0>12)break; if(!trainStep())break; }
+    }
+    if(S.rateT&&ts-S.rateT>1000){ S.rate=S.rateSteps*1000/Math.max(1,ts-S.rateT); S.rateSteps=0; S.rateT=ts; updateStats(); }
+    if(S.dirty&&S.model&&ts-S.lastPred>90){ S.dirty=false; S.lastPred=ts; requestPrediction(true); }
+    if(S.model&&ts-S.lastField>320){ S.lastField=ts; requestField(); }
+    if(S.model&&ts-S.lastWeights>340){ S.lastWeights=ts; updateWeights(); }
+  }
+
+  async function boot(){
+    bind();
+    readColors();
+    updateTrainUi();
+    setBoot("TF.js lokal laden …",10);
+    try{ await loadTf(); }catch(e){ setBoot("Start fehlgeschlagen.",100); var box=$("#bootError"); if(box){box.hidden=false;box.textContent=e.message+" Prüfe ../assets/tf.min.js.";} return; }
+    ActLayer=makeActLayerClass();
+    setBoot("Vier Farben und Modell vorbereiten …",45);
+    buildData();
+    buildModel();
+    renderFormulas();
+    selectPixel(0);
+    drawTarget(); drawPred(); drawField(); drawLossChart(); updateStats();
+    setBoot("Bereit.",100);
+    S.ready=true;
+    setTimeout(hideBoot,200);
+    setTimeout(startTraining,700);
+    if(!S.lastTs)requestAnimationFrame(loop);
+  }
+
+  window.Test2={S:S};
+  boot();
+})();
+</script>
+</body>
+</html>
