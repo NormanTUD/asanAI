@@ -3837,6 +3837,7 @@ body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
 .ls-ll-ctxplot-legend i.is-ok{background:var(--ls-green)}
 .ls-ll-ctxplot-legend i.is-bad{background:#c95656}
 .ls-ll-curve{display:block;width:100%;height:auto;overflow:visible}
+.ls-ll-ctxplot .ls-ll-curve{height:200px;max-height:200px;width:100%}
 .ls-ll-curve-plot{fill:rgba(0,75,111,.02);stroke:var(--ls-line)}
 .ls-ll-curve-band{fill:rgba(201,86,86,.07)}
 .ls-ll-curve-band-label{fill:#8a2f2f;font:700 7px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em}
@@ -5428,7 +5429,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
   -webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 78%);
   mask-image:linear-gradient(180deg,#000 0%,transparent 78%);
 }
-.ls-ll>*{position:relative;z-index:1}
+.ls-ll>*{position:relative;z-index:1;flex:0 0 auto}
 .ls-ll>.ls-ll-intro{position:sticky;top:0;z-index:5}
 .ls-ll-head{gap:4px;padding:1px 2px 7px;border-bottom:1px solid var(--ls-line)}
 .ls-ll-headtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -5574,6 +5575,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
     repeating-linear-gradient(90deg,transparent 0 31px,rgba(0,75,111,.018) 31px 32px);
   box-shadow:0 20px 44px rgba(0,30,40,.075);
 }
+.ls-ll>*{flex:0 0 auto}
 .ls-ll-top{gap:8px}
 .ls-ll-step{background:#fff;border-color:var(--ls-line)}
 .ls-ll-kind{border-color:color-mix(in srgb,var(--ll-accent) 40%,transparent);background:color-mix(in srgb,var(--ll-accent) 9%,transparent);color:var(--ll-accent)}
