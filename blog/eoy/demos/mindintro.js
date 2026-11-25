@@ -83,6 +83,7 @@
     var choice = el.querySelector("[data-mi-choice]");
     var answerText = el.querySelector("[data-mi-answer-text]");
     var maryRevealed = false;
+    var maryAnswerState = 0;
     function revealMary() {
       if (!mary || maryRevealed) return;
       maryRevealed = true;
@@ -90,15 +91,22 @@
       if (reveal) reveal.hidden = true;
       if (choice) choice.hidden = false;
     }
-    if (reveal) reveal.addEventListener("click", revealMary);
-    el.querySelectorAll("[data-mi-answer]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        var yes = b.getAttribute("data-mi-answer") === "yes";
-        el.querySelectorAll("[data-mi-answer]").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+    function setMaryAnswer(yes) {
+      maryAnswerState = yes ? 1 : 2;
+      el.querySelectorAll("[data-mi-answer]").forEach(function (x) {
+        x.classList.toggle("is-on", (x.getAttribute("data-mi-answer") === "yes") === yes);
+      });
+      if (answerText) {
         answerText.classList.add("is-on");
         answerText.textContent = yes
           ? L("Dann gibt es Wissen jenseits der physikalischen Fakten: das Erleben selbst.", "Then there is knowledge beyond physical facts: the experience itself.")
           : L("Dann müsste alles Erleben in den physikalischen Fakten stecken. Genau das ist umstritten.", "Then all experience would have to be contained in physical facts. That is exactly what is disputed.");
+      }
+    }
+    if (reveal) reveal.addEventListener("click", revealMary);
+    el.querySelectorAll("[data-mi-answer]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        setMaryAnswer(b.getAttribute("data-mi-answer") === "yes");
       });
     });
 
@@ -108,14 +116,21 @@
       qaButtons.forEach(function (b, i) { b.classList.toggle("is-on", i === miQa); });
       if (qaAnswer) qaAnswer.textContent = QA[miQa].a;
     }
+    function nextStep() {
+      if (!maryRevealed) { revealMary(); return true; }
+      if (maryAnswerState === 0) { setMaryAnswer(true); return true; }
+      if (maryAnswerState === 1) { setMaryAnswer(false); return true; }
+      if (miQa < QA.length - 1) { miQa++; renderQA(); return true; }
+      return false;
+    }
     qaButtons.forEach(function (b) {
       b.addEventListener("click", function () { miQa = parseInt(b.getAttribute("data-mi-q"), 10) || 0; renderQA(); });
     });
     renderQA();
     return {
       update: function () {},
-      next: function () { if (!maryRevealed) { revealMary(); return true; } return false; },
-      hasNext: function () { return !maryRevealed; },
+      next: nextStep,
+      hasNext: function () { return !maryRevealed || maryAnswerState < 2 || miQa < QA.length - 1; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

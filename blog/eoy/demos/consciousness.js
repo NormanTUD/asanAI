@@ -163,7 +163,6 @@
         '<span class="ls-con2-navhint">← → ' + L("Schritt", "step") + '</span>' +
       '</div>' +
       '<div class="ls-con2-stage"><canvas class="ls-con2-canvas" role="img" aria-label="' + L("Interaktive Bewusstseins-Theorie.", "Interactive theory of consciousness.") + '"></canvas></div>' +
-      '<div class="ls-con2-caption" data-con2-caption hidden></div>' +
       '<div class="ls-con2-controls" data-con2-controls></div>' +
       '<p class="ls-con2-status" data-con2-status aria-live="polite"></p>' +
       '<aside class="ls-con2-detail" data-con2-detail></aside>';
@@ -349,9 +348,9 @@
       ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.stroke();
       ctx.beginPath(); ctx.arc(cx, cy, R * 0.88, 0, Math.PI * 2); ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke();
       ctx.fillStyle = C.petrol; ctx.font = font(13, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
-      ctx.fillText("GLOBAL WORKSPACE", cx, cy - R + 18);
+      ctx.fillText("GLOBAL WORKSPACE", cx, cy - R + 40);
       ctx.fillStyle = C.muted; ctx.font = font(10.5, 600);
-      ctx.fillText(L("nur Ergebnisse", "results only"), cx, cy - R + 56);
+      ctx.fillText(L("nur Ergebnisse", "results only"), cx, cy - R + 70);
       var results = MODULES.map(function (m, i) { return ws.written[i] ? m : null; }).filter(Boolean);
       ctx.textAlign = "left"; ctx.textBaseline = "middle";
       if (!results.length) {
@@ -1002,16 +1001,6 @@
       titleEl.textContent = th.title;
       leadEl.textContent = th.lead;
       writeTheoryParam(th);
-      var captionEl = el.querySelector("[data-con2-caption]");
-      if (captionEl) {
-        if (th.caption && th.caption.length) {
-          captionEl.hidden = false;
-          captionEl.innerHTML = th.caption.map(function (p, i) { return '<p' + (i ? ' class="is-callout"' : '') + '>' + esc(p) + '</p>'; }).join("");
-        } else {
-          captionEl.hidden = true;
-          captionEl.innerHTML = "";
-        }
-      }
       var qa = th.qa || [];
       if (qaOpen >= qa.length) qaOpen = 0;
       detail.innerHTML =
@@ -1023,6 +1012,7 @@
           }).join("") + '</div>' +
           (qa[qaOpen] ? '<p class="ls-con2-a">' + esc(qa[qaOpen].a) + '</p>' : '') +
         '</div>' +
+        (th.caption && th.caption.length ? '<div class="ls-con2-caption">' + th.caption.map(function (p, i) { return '<p' + (i ? ' class="is-callout"' : '') + '>' + esc(p) + '</p>'; }).join("") + '</div>' : '') +
         '<p class="ls-con2-cite">' + th.cite + '</p>' +
         (th.quote ? '<blockquote class="ls-con2-quote"><p>“' + esc(th.quote.text) + '”</p><cite><a href="' + esc(th.quote.url) + '" target="_blank" rel="noopener">' + esc(th.quote.author) + ', ' + esc(th.quote.work) + '</a></cite></blockquote>' : '');
       detail.querySelectorAll("[data-con-qa]").forEach(function (b) {

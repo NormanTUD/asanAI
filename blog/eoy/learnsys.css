@@ -5968,3 +5968,16 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-mi2-more[open]>summary{padding:6px 0 4px;border-top:1px solid var(--ls-line);border-bottom:1px solid var(--ls-line)}
 .ls-mi2-more[open]>summary::before{display:none}
 .ls-mi2-more[open]>summary span{margin-left:auto}
+
+
+/* Keep the theory stage the same height so switching theories never jumps. */
+.ls-con2[data-theory] .ls-con2-stage{height:clamp(320px,40vh,420px)}
+@media(max-width:640px){.ls-con2[data-theory] .ls-con2-stage{height:clamp(300px,45vh,360px)}}
+
+/* Lock the theory blocks to one height so controls/detail never jump. */
+.ls-con2-controls{min-height:99px;align-content:flex-start}
+.ls-con2-detail{height:346px;min-height:346px;max-height:346px;overflow:auto}
+@media(max-width:760px){
+  .ls-con2-controls{min-height:0}
+  .ls-con2-detail{height:auto;min-height:0;max-height:none;overflow:visible}
+}
