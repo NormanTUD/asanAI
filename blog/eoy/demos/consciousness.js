@@ -208,13 +208,14 @@
     var kastParticles = [], kastPW = 0, kastPH = 0;
     function seedKastParticles(w, h) {
       kastParticles = [];
-      for (var i = 0; i < 180; i++) {
+      for (var i = 0; i < 320; i++) {
         kastParticles.push({
-          x: Math.random() * w, y: Math.random() * h,
+          x: (i % 2 === 0 ? ((i * 0.61803398875) % 1) : Math.random()) * w,
+          y: (i % 2 === 0 ? ((i * 0.41421356237 + 0.17) % 1) : Math.random()) * h,
           vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
           size: 0.7 + Math.random() * 1.1,
           alpha: 0.22 + Math.random() * 0.5,
-          free: i % 3 === 0,
+          free: i % 2 === 0,
           trail: []
         });
       }
@@ -655,13 +656,13 @@
       kastParticles.forEach(function (p, pi) {
         var oceanDrift = 0.002 + (1 - diss) * 0.004;
         if (p.free) {
-          p.vx += Math.sin(p.y * 0.012 + t * 0.7) * oceanDrift * 1.8;
-          p.vy += Math.cos(p.x * 0.014 + t * 0.6) * oceanDrift * 1.8;
+          p.vx += Math.sin(p.y * 0.012 + t * 0.7) * oceanDrift * 2.7;
+          p.vy += Math.cos(p.x * 0.014 + t * 0.6) * oceanDrift * 2.7;
           for (var fi = 0; fi < centers.length; fi++) {
             var fdx = p.x - centers[fi].x, fdy = p.y - centers[fi].y;
             var fdist = Math.hypot(fdx, fdy) || 1;
-            if (fdist < 120) {
-              var push = (1 - fdist / 120) * 0.035;
+            if (fdist < 90) {
+              var push = (1 - fdist / 90) * 0.025;
               p.vx += (fdx / fdist) * push;
               p.vy += (fdy / fdist) * push;
             }
@@ -689,7 +690,7 @@
         if (p.x < -20) p.x = w + 20; if (p.x > w + 20) p.x = -20;
         if (p.y < -20) p.y = h + 20; if (p.y > h + 20) p.y = -20;
         p.trail.push({ x: p.x, y: p.y });
-        if (p.trail.length > 22) p.trail.shift();
+        if (p.trail.length > 26) p.trail.shift();
       });
       kastParticles.forEach(function (p, pi) {
         if (p.trail.length > 1) {
