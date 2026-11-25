@@ -1129,9 +1129,15 @@
 
     function predModelFresh() { return pred.priorTarget === null && Math.abs(pred.priorCenter - PRED_STIM[pred.stimulus].center) < 0.015; }
     function updatePredModel() {
-      pred.priorCenter = PRED_STIM[pred.stimulus].center;
-      pred.priorTarget = null;
-      setStatus(L("Modell aktualisiert: Die Vorhersage liegt jetzt auf dem Eingang. Die Überraschung sinkt.", "Model updated: the prediction now sits on the input. Surprise falls."));
+      var target = PRED_STIM[pred.stimulus].center;
+      if (reduce || Math.abs(pred.priorCenter - target) < 0.001) {
+        pred.priorCenter = target;
+        pred.priorTarget = null;
+        setStatus(L("Modell aktualisiert: Die Vorhersage liegt jetzt auf dem Eingang. Die Überraschung sinkt.", "Model updated: the prediction now sits on the input. Surprise falls."));
+      } else {
+        pred.priorTarget = target;
+        setStatus(L("Modell gleicht sich an: Die Vorhersage wandert sanft zum Eingang; die Überraschung sinkt.", "Model adapting: the prediction moves smoothly toward the input; surprise falls."));
+      }
       draw(performance.now());
     }
     function wsNextAction() {

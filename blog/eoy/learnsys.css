@@ -5746,3 +5746,37 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 /* The QKV stage has a fixed minimum canvas height; let the scene scroll instead of letting it spill into the next rows. */
 .ls-qkv-scene{grid-template-rows:minmax(300px,1fr) auto auto auto auto auto}
 @media (max-width:720px){.ls-loss-scene{grid-template-rows:minmax(300px,1fr) auto auto auto auto}}
+/* Readability pass: controls and answers were too small on the consciousness slides. */
+.ls-con2-chip{font-size:12.5px;line-height:1.25;padding:8px 11px}
+.ls-con2-btn{font-size:12.5px;line-height:1.25;padding:9px 13px}
+.ls-con2-range{font-size:12px;line-height:1.3}
+.ls-con2-range output{font-size:12px}
+.ls-con2-status{font-size:12.5px;line-height:1.4}
+.ls-con2-kicker,.ls-con2-navhint,.ls-con2-detail-head span{font-size:10.5px}
+.ls-con2-cite{font-size:11.5px;line-height:1.45}
+.ls-con2-detail-body p{font-size:14.5px;line-height:1.5}
+.ls-con2-q{font-size:12px;line-height:1.3;padding:7px 9px}
+.ls-con2-a{font-size:14px;line-height:1.5;padding:8px 10px}
+.ls-mi2-kicker{font-size:10.5px}
+.ls-mi2-hero-hint{font-size:10.5px}
+.ls-mi2-measure-label,.ls-mi2-measure>span{font-size:9px}
+.ls-mi2-gap{font-size:9px}
+.ls-mi2-room-label{font-size:9.5px}
+.ls-mi2-examples span{font-size:11.5px}
+.ls-mi2-reveal,.ls-mi2-swap{font-size:11.5px;line-height:1.2}
+.ls-mi2-answer{font-size:13.5px}
+.ls-mi2-spectrum-note{font-size:12px}
+.ls-mi2-bubble,.ls-mi2-avatar,.ls-mi2-quale{font-size:12px}
+.ls-mi2-qa-head span{font-size:10px}
+.ls-mi2-q{font-size:12px;line-height:1.3;padding:6px 9px}
+.ls-mi2-qa-answer{font-size:14px;line-height:1.5}
+.ls-cn-kicker{font-size:10.5px}
+.ls-cn-tag{font-size:10px}
+.ls-cn-status{font-size:9.5px;padding:3px 7px}
+.ls-cn-verdict em{font-size:9.5px}
+.ls-cn-cite{font-size:11.5px;line-height:1.45}
+.ls-cn-bottom>b{font-size:11px}
+.ls-cn-detail-grid b{font-size:10.5px}
+.ls-cn-detail-grid p{font-size:13.5px;line-height:1.5}
+.ls-cn-q{font-size:12px;line-height:1.3;padding:6px 9px}
+.ls-cn-qa-answer{font-size:14px;line-height:1.5}
