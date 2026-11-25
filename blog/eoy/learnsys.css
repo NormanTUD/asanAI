@@ -6021,3 +6021,31 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 @media(max-width:640px){
   .ls-con2[data-theory] .ls-con2-stage{min-height:190px}
 }
+
+
+/* Kastrup: the long ocean/vortex explanation belongs at the top of the block. */
+.ls-con2-caption--top{margin:0 0 2px;border-left-color:var(--ls-teal);background:linear-gradient(90deg,rgba(0,146,153,.085),rgba(0,146,153,.015))}
+.ls-con2-caption--top p{font-size:13px;line-height:1.5}
+
+
+/* Kastrup's ocean/vortex text is prose, not a coloured callout block. */
+.ls-con2-caption--top{
+  margin:0 0 9px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:none;
+  box-shadow:none;
+  color:var(--ls-soft);
+  font:600 13.5px/1.55 "Open Sans",sans-serif;
+}
+.ls-con2-caption--top p,
+.ls-con2-caption--top p.is-callout{
+  margin:0 0 7px;
+  padding:0;
+  border:0;
+  background:none;
+  color:inherit;
+  font:inherit;
+}
+.ls-con2-caption--top p:last-child{margin-bottom:0}

@@ -95,23 +95,21 @@
         title: "Analytic Idealism (Kastrup)",
         lead: L("Ein Ozean, viele Wirbel: Individualbewusstsein als lokale Dissoziation.", "One ocean, many vortices: individual consciousness as local dissociation."),
         body: [
-          L("Bewusstsein ist fundamental; jedes Ich ist eine lokale, temporäre Dissoziation im selben Bewusstsein.", "Consciousness is fundamental; each “I” is a local, temporary dissociation within the same consciousness.")
+          L("Das Fundament ist Bewusstsein, nicht Materie; Materie ist eine Erscheinung in ihm. Jedes Ich, jedes Lebewesen ist eine lokale, vorübergehende Dissoziation dieses einen Bewusstseins, wie ein Wirbel im Ozean: von innen erlebt er sich als getrennt und begrenzt, von außen ist er nur eine lokale Bewegung des einen Wassers.", "The foundation is consciousness, not matter; matter is an appearance within it. Every “I”, every living being, is a local, temporary dissociation of this one consciousness, like a vortex in the ocean: from inside it experiences itself as separate and bounded; from outside it is only a local movement of the one water."),
+          L("Du bist nicht im Bewusstsein wie ein Fisch im Wasser; du bist das Bewusstsein, geformt zu einem Wirbel. Löst sich der Wirbel auf, wirst du nicht vernichtet, denn du warst nie ein getrenntes Ding.", "You are not in consciousness like a fish in water; you are consciousness, shaped into a vortex. When the vortex dissolves, you are not destroyed, because you were never a separate thing.")
         ],
         qa: [
           { q: L("Was ist Bewusstsein?", "What is consciousness?"), a: L("Das Fundament; Materie ist eine Erscheinung in Bewusstsein.", "The foundation; matter is an appearance within consciousness.") },
           { q: L("Was ist ein Ich?", "What is an “I”?"), a: L("Eine lokale, temporäre Dissoziation, wie ein Wirbel im Wasser.", "A local, temporary dissociation, like a vortex in water.") },
           { q: L("Was ist der Tod?", "What is death?"), a: L("Das Ende der Dissoziation; das eine Bewusstsein bleibt.", "The end of the dissociation; the one consciousness remains.") },
-          { q: L("Was ist das Dashboard?", "What is the dashboard?"), a: L("Wahrnehmung ist ein komprimiertes Icon, nicht das Ding selbst.", "Perception is a compressed icon, not the thing itself.") },
+          { q: L("Was ist das Dashboard?", "What is the dashboard?"), a: L("Nach Hoffmans Interface-Theorie ist Wahrnehmung eine Benutzeroberfläche, kein Fenster zur Wirklichkeit: So wie ein Datei-Icon nützlich ist, ohne die Bits und Bytes auf der Festplatte zu zeigen, zeigt auch unser Wahrnehmungsbild nur das, was für Handeln nützlich ist, nicht die Welt an sich. Hoffman, Singh und Prakash (2015).", "On Hoffman's interface theory, perception is a user interface, not a window onto reality: just as a file icon is useful without showing the bits and bytes on the hard drive, our perceptual image shows what is useful for action, not the world as it is. Hoffman, Singh, and Prakash (2015).") },
           { q: L("Was ist der Einwand?", "What is the objection?"), a: L("Metaphysisch und schwer falsifizierbar; konkrete Mechanismen erklärt sie weniger.", "Metaphysical and hard to falsify; concrete mechanisms are less explained.") },
           { q: L("Wie passt Atman/Brahman?", "How do Atman and Brahman fit?"), a: L("Advaita Vedanta: Das individuelle Selbst (Atman) ist letztlich eins mit dem universalen Bewusstsein (Brahman). Kastrups Bild passt strukturell: persönliche Bewusstseine sind Dissoziationen eines universalen Bewusstseins. Das ist eine Analogie, keine Eins-zu-eins-Identität; Kastrup argumentiert philosophisch, nicht aus der Schrift.", "Advaita Vedanta: the individual self (Atman) is ultimately one with universal consciousness (Brahman). Kastrup's picture fits structurally: personal consciousnesses are dissociations of one universal consciousness. This is an analogy, not a one-to-one identity; Kastrup argues philosophically, not from scripture.") },
         ],
-        cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>; <a href="https://iep.utm.edu/advaita-vedanta/" target="_blank" rel="noopener">Advaita Vedanta (IEP)</a>',
+        cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>; <a href="https://doi.org/10.3758/s13423-015-0890-8" target="_blank" rel="noopener">Hoffman, Singh &amp; Prakash (2015)</a>; <a href="https://iep.utm.edu/advaita-vedanta/" target="_blank" rel="noopener">Advaita Vedanta (IEP)</a>',
         hint: L("Zieh an der Dissoziation. Weiter löst die Dissoziation auf: Der Tod beendet die Grenzen, nicht die Wirbel.", "Drag dissociation. Next dissolves the dissociation: death ends the boundaries, not the vortices."),
         status: L("Drei Wirbel, stark dissoziiert. Weiter löst die Dissoziation auf; der Tod beendet die Grenzen.", "Three vortices, strongly dissociated. Next dissolves the dissociation; death ends the boundaries."),
-        caption: [
-          L("Der große Ozean ist das universelle Bewusstsein. Jeder Wirbel ist ein Lebewesen – ein Alter. Von innen erlebt sich der Wirbel als getrennt, individuell, mit klaren Grenzen. Doch von außen betrachtet ist er nur eine lokale Bewegungsstruktur des einen Ozeans.", "The great ocean is universal consciousness. Every vortex is a living being, an alter. From inside, the vortex experiences itself as separate, individual, with clear boundaries. From outside, it is only a local movement structure of the one ocean."),
-          L("Zentral: Du bist nicht IM Bewusstsein, wie ein Fisch im Wasser. Du BIST das Bewusstsein, geformt zu einem Wirbel. Wenn der Wirbel sich auflöst, wirst du nicht „vernichtet“ – du warst nie ein separates Ding.", "Central: You are not IN consciousness, like a fish in water. You ARE consciousness, shaped into a vortex. When the vortex dissolves, you are not “destroyed”; you were never a separate thing.")
-        ]
+        caption: []
       },
       {
         key: "fourE", tone: "teal",
@@ -1013,6 +1011,7 @@
       if (qaOpen >= qa.length) qaOpen = 0;
       detail.innerHTML =
         '<div class="ls-con2-detail-head"><span>' + esc(th.tag) + '</span><b>' + esc(th.title) + '</b></div>' +
+        (th.caption && th.caption.length ? '<div class="ls-con2-caption ls-con2-caption--top">' + th.caption.map(function (p, i) { return '<p' + (i ? ' class="is-callout"' : '') + '>' + esc(p) + '</p>'; }).join("") + '</div>' : '') +
         '<div class="ls-con2-detail-body">' + th.body.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join("") + '</div>' +
         '<div class="ls-con2-qa">' +
           '<div class="ls-con2-qa-questions">' + qa.map(function (item, i) {
@@ -1020,7 +1019,6 @@
           }).join("") + '</div>' +
           (qa[qaOpen] ? '<p class="ls-con2-a">' + esc(qa[qaOpen].a) + '</p>' : '') +
         '</div>' +
-        (th.caption && th.caption.length ? '<div class="ls-con2-caption">' + th.caption.map(function (p, i) { return '<p' + (i ? ' class="is-callout"' : '') + '>' + esc(p) + '</p>'; }).join("") + '</div>' : '') +
         '<p class="ls-con2-cite">' + th.cite + '</p>' +
         (th.quote ? '<blockquote class="ls-con2-quote"><p>“' + esc(th.quote.text) + '”</p><cite><a href="' + esc(th.quote.url) + '" target="_blank" rel="noopener">' + esc(th.quote.author) + ', ' + esc(th.quote.work) + '</a></cite></blockquote>' : '');
       detail.querySelectorAll("[data-con-qa]").forEach(function (b) {
