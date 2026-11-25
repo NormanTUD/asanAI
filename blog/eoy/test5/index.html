@@ -453,6 +453,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
               <option value="1.5" selected>±1,5</option>
               <option value="2">±2,0</option>
               <option value="3">±3,0</option>
+              <option value="5">±5,0</option>
+              <option value="10">±10,0</option>
             </select>
           </div>
           <div class="mini-note"><b>Nur Vorhersage und 3D-Relief.</b> Loss, Fehler und Training bleiben auf dem gelernten Bereich. Außerhalb gibt es keine Trainingsdaten. Hover über die Vorhersage zeigt x, y und den rohen Wert.</div>
@@ -743,6 +745,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <footer class="site-foot">
     <p>Zufallsbilder von <a href="https://cataas.com" target="_blank" rel="noopener">cataas.com</a> (CORS-frei). Lokale Fallbacks: <code>blog/lndw/katze1.jpg</code> bis <code>katze3.jpg</code> (Testmaterial, Lizenz ungeprüft). Uploads bleiben im Browser.</p>
     <p>TF.js lokal · Temml lokal · keine Analytics. Nur das Zufallsbild verlässt den Browser.</p>
+    <p><a href="rekonstruktion.html">Wie rekonstruiert man das Bild aus den Gewichten?</a></p>
   </footer>
 </div>
 
@@ -2743,7 +2746,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
   function buildViewInput() {
     if (!window.tf || !S.inputDim) return;
     var factor = S.view.factor;
-    var N = clamp(Math.round(S.N * factor), S.N, 160);
+    var N = clamp(Math.round(S.N * factor), S.N, 200);
     if (S.view.x && S.view.gen === S.gen && S.view.dim === S.inputDim && S.view.factor === factor && S.view.N === N) return;
     var old = S.view.x;
     S.view.x = null;
@@ -2834,7 +2837,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
   }
 
   function setViewFactor(factor) {
-    S.view.factor = clamp(Number(factor) || 1.5, 1.1, 4);
+    S.view.factor = clamp(Number(factor) || 1.5, 1.1, 10);
     if (!S.view.active) {
       updatePredMeta();
       return;
