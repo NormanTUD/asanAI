@@ -5839,7 +5839,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-mi2-spectrum-fig img{display:block;width:100%;height:auto}
 .ls-mi2-spectrum-fig figcaption{padding:5px 7px 6px;font:600 10px/1.35 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-mi2-spectrum-fig figcaption a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}
-.ls-mi2-answer{min-height:4.2em;visibility:hidden}
+.ls-mi2-answer{min-height:10em;visibility:hidden}
 .ls-mi2-answer.is-on{visibility:visible}
 .ls-cn-quote{position:relative;margin:1px 0 0;padding:17px 22px 15px 48px;border:1px solid rgba(0,146,153,.22);border-left:4px solid var(--ls-gold);border-radius:14px;background:radial-gradient(110% 130% at 8% 0%,rgba(201,162,39,.12),transparent 55%),linear-gradient(135deg,#fffdf6,#f4fbf8);box-shadow:0 14px 32px rgba(0,35,50,.08)}
 .ls-cn-quote:before{content:"“";position:absolute;left:12px;top:2px;font:700 58px/1 Georgia,serif;color:rgba(201,162,39,.55);pointer-events:none}
