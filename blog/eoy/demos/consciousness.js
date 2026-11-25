@@ -285,17 +285,6 @@
       if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false }; setStatus(THEORIES[2].status); }
-      if (active === 2) {
-        var data = predCalc();
-        var padX = 46, span = size.w - padX * 2;
-        var u = (x - padX) / Math.max(1, span);
-        if (u < 0 || u > 1) return "";
-        var idx = Math.max(0, Math.min(data.xs.length - 1, Math.round(u * (data.xs.length - 1))));
-        return (DE ? "x = " : "x = ") + data.xs[idx].toFixed(2) + ": " + (DE ? "Eingang " : "input ") + data.input[idx].toFixed(2) +
-          ", " + (DE ? "Vorhersage " : "prediction ") + data.prior[idx].toFixed(2) +
-          ", " + (DE ? "Wahrnehmung " : "percept ") + data.percept[idx].toFixed(2) +
-          ". " + (DE ? "Überraschung " : "surprise ") + Math.round(pred.surprise) + "%, " + (DE ? "Präzision " : "precision ") + Math.round(pred.precision) + "%.";
-      }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 }; setStatus(THEORIES[3].status); }
       if (active === 4) { four = { mode: "human", focus: 0, word: "hot" }; setStatus(THEORIES[4].status); }
       if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }

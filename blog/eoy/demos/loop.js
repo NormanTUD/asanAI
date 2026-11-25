@@ -113,6 +113,7 @@
     var landEl = el.querySelector(".ls-loop-landscape");
     var landCanvas = landEl.querySelector("canvas");
     var landTip = landEl.querySelector(".ls-land-tip");
+    landCanvas.setAttribute("data-ls-canvas-tip", "1");
     var landPoints = [];
     var landscape = true, landSize = null;
     var landYaw = -0.86, landPitch = 0.918, landZoom = 1, landSteep = 1;
