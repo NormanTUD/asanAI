@@ -548,13 +548,17 @@
       return ids.map(function (id, i) { return { x: w * spots[id].x, y: h * spots[id].y, i: i }; });
     }
     function drawVortex(c, on, diss, t) {
-      var vR = 34 + diss * 14;
-      if (on) {
+      var fade = Math.max(0, Math.min(1, diss / 0.28));
+      fade = fade * fade * (3 - 2 * fade);
+      var vR = 26 + diss * 40;
+      if (on && fade > 0.01) {
         var gl = ctx.createRadialGradient(c.x, c.y, 2, c.x, c.y, vR * 1.45);
         gl.addColorStop(0, "rgba(159,151,0,.16)"); gl.addColorStop(1, "rgba(159,151,0,0)");
         ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(c.x, c.y, vR * 1.45, 0, Math.PI * 2); ctx.fill();
       }
+      if (fade <= 0.01) return;
       ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(-0.18 + c.i * 0.055);
+      ctx.globalAlpha = fade;
       var body = ctx.createRadialGradient(0, 0, 2, 0, 0, vR);
       body.addColorStop(0, "rgba(0,75,111,.18)");
       body.addColorStop(0.55, "rgba(0,146,153,.10)");
@@ -565,9 +569,9 @@
         var f = k / 4, rr = vR * (1 - f * 0.72);
         ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2);
         ctx.strokeStyle = on ? "rgba(122,116,0,.62)" : "rgba(0,75,111,.30)";
-        ctx.globalAlpha = 0.18 + f * 0.12; ctx.lineWidth = 1; ctx.stroke();
+        ctx.globalAlpha = fade * (0.18 + f * 0.12); ctx.lineWidth = 1; ctx.stroke();
       }
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha = fade;
       for (var arm = 0; arm < 2; arm++) {
         var base = arm * Math.PI + t * 0.45;
         ctx.beginPath();
@@ -589,17 +593,19 @@
       ctx.strokeStyle = "rgba(0,75,111,.24)"; ctx.lineWidth = 1.4; ctx.stroke();
       for (var sp = 0; sp < 5; sp++) {
         var sa = t * 0.55 + sp * 1.6, sr = vR * (0.35 + (sp % 3) * 0.18);
-        ctx.globalAlpha = on ? 0.62 : 0.36;
+        ctx.globalAlpha = fade * (on ? 0.62 : 0.36);
         dot(Math.cos(sa) * sr, Math.sin(sa) * sr, 1 + (sp % 2) * 0.5, "#1275ac");
       }
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha = fade;
       ctx.restore();
       var strong = on ? "#7a7400" : "#004b6f";
+      ctx.globalAlpha = fade;
       ctx.fillStyle = strong; ctx.font = font(10.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
       var line1 = kast.count === 1 ? L("das eine", "the one") : L("persönliches", "personal");
       var line2 = kast.count === 1 ? L("Bewusstsein", "consciousness") : L("Bewusstsein " + String.fromCharCode(65 + c.i), "consciousness " + String.fromCharCode(65 + c.i));
       ctx.fillText(line1, c.x, c.y + vR + 8);
       ctx.fillText(line2, c.x, c.y + vR + 20);
+      ctx.globalAlpha = 1;
     }
     function drawDissolvedVortex(c, t) {
       var vR = 34;
@@ -645,8 +651,9 @@
         for (var ci = 0; ci < centers.length; ci++) {
           var dx = p.x - centers[ci].x, dy = p.y - centers[ci].y;
           var dist = Math.hypot(dx, dy) || 1;
-          if (dist < 132) {
-            var pull = (1 - dist / 132) * (0.12 + diss * 0.55);
+          var reach = 46 + diss * 188;
+          if (dist < reach) {
+            var pull = (1 - dist / reach) * diss * (0.18 + diss * 0.72);
             p.vx += (-dy / dist) * pull;
             p.vy += (dx / dist) * pull;
             p.vx += (-dx / dist) * pull * 0.08;
@@ -660,22 +667,21 @@
         if (p.x < -20) p.x = w + 20; if (p.x > w + 20) p.x = -20;
         if (p.y < -20) p.y = h + 20; if (p.y > h + 20) p.y = -20;
         p.trail.push({ x: p.x, y: p.y });
-        if (p.trail.length > 7) p.trail.shift();
+        if (p.trail.length > 14) p.trail.shift();
       });
       kastParticles.forEach(function (p, pi) {
         if (p.trail.length > 1) {
           ctx.beginPath();
           ctx.moveTo(p.trail[0].x, p.trail[0].y);
           for (var ti = 1; ti < p.trail.length; ti++) ctx.lineTo(p.trail[ti].x, p.trail[ti].y);
-          ctx.strokeStyle = "rgba(0,146,153," + (p.alpha * 0.35) + ")";
-          ctx.lineWidth = 0.8; ctx.stroke();
+          ctx.strokeStyle = "rgba(0,146,153," + (p.alpha * 0.55) + ")";
+          ctx.lineWidth = 1.05; ctx.stroke();
         }
         ctx.globalAlpha = p.alpha;
         dot(p.x, p.y, p.size, pi % 11 === 0 ? "#9f9700" : pi % 3 === 0 ? "#009299" : "#5c9baf");
       });
       ctx.globalAlpha = 1;
       if (kast.dissolved) {
-        centers.forEach(function (c) { drawDissolvedVortex(c, t); });
         ctx.fillStyle = "#004b6f"; ctx.font = font(11, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
         ctx.fillText(L("Der Tod beendet die Dissoziation. Das eine Bewusstsein bleibt.", "Death ends the dissociation. The one consciousness remains."), w / 2, h - 14);
         return;
