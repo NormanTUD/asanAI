@@ -20,7 +20,6 @@
     set(".ls-sim-replay", "Wiederholt das Unembedding Schritt für Schritt.", "Replays the unembedding step by step.");
     set(".ls-sim-next-angle", "Springt zum nächsten Winkel im Unembedding-Lauf.", "Jumps to the next angle in the unembedding run.");
     set(".ls-sim-readout", "Aktuelle Winkel, Skalen und die daraus folgenden Token-Logits.", "Current angles, scales, and the resulting token logits.");
-    set(".ls-sim-caption", "Erklärt, was die aktuelle Ansicht über Embeddings zeigt.", "Explains what the current view shows about embeddings.");
     set(".ls-sim-unembed-list", "Die konkurrierenden nächsten Token mit ihrem Score.", "The competing next tokens with their scores.");
     root.querySelectorAll(".ls-sim-tab").forEach(function (b, i) {
       var de = ["Richtungen: Bedeutung liegt in der Richtung, nicht in der Länge.", "Skaleninvarianz: derselbe Vektor darf länger oder kürzer sein.", "Unembedding: das versteckte Vektor-Ergebnis wird zu Token-Logits."][i] || "Ansicht wechseln.";

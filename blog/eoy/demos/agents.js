@@ -79,7 +79,7 @@
       '</div>' +
       '<div class="ls-agents-loop" data-tip="' + (DE ? "Der Kern des Agenten: Tool-Call, Ausführung, Ergebnis in den Kontext, weiter." : "The agent loop: tool call, execution, result into context, continue.") + '"><span>' + (DE ? "Tool-Call" : "tool call") + '</span><i>→</i><span>' + (DE ? "ausführen" : "execute") + '</span><i>→</i><span>' + (DE ? "Ergebnis in den Kontext" : "result into context") + '</span><i>→</i><span>' + (DE ? "weiter" : "continue") + '</span></div>' +
       '<div class="ls-agents-controls"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-agents-prev" data-tip="' + (DE ? "Einen Schritt zurück im Ablauf." : "One step back in the sequence.") + '">←</button><span class="ls-agents-progress" data-tip="' + (DE ? "Aktueller Schritt des Agenten." : "Current agent step.") + '"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-agents-next" data-tip="' + (DE ? "Zeigt den nächsten Tool-Call oder das Ergebnis." : "Shows the next tool call or result.") + '">' + (DE ? "Nächster Schritt" : "Next step") + '</button></div>' +
-      '<p class="ls-agents-readout" data-tip="' + (DE ? "Erklärt, was der Schritt gerade im Modell und in der Runtime bedeutet." : "Explains what the step means in the model and in the runtime.") + '"></p>' +
+      '<p class="ls-agents-readout"></p>' +
       '</div>';
     root.appendChild(el);
     var contextEl = el.querySelector(".ls-agents-context");

@@ -103,7 +103,7 @@
     host.addEventListener("pointerover", function (e) {
       var node = tipNode(e);
       if (node) tipShow(node, e.clientX, e.clientY);
-      else if (tipTarget && !tipTarget.contains(e.target)) tipHide();
+      else tipHide();
     });
     host.addEventListener("pointermove", function (e) {
       if (tipTarget) tipPlace(e.clientX, e.clientY);

@@ -408,7 +408,7 @@
         '<div class="ls-hx-risk" data-tip="' + L("Die Position zeigt Plausibilität gegen Deckung; oben rechts liegt die Halluzinationszone.", "The position shows plausibility against grounding; the hallucination zone is top right.") + '"><div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("rechts = plausibel · oben = gedeckt", "right = plausible · top = grounded") + '</span></div><div class="ls-hx-risk-svg"></div></div>' +
         '<div class="ls-hx-measures" data-tip="' + L("Gegenmaßnahmen: Klick schaltet eine Prüfung ein oder aus.", "Countermeasures: click to turn a check on or off.") + '"></div>' +
       '</div>' +
-      '<div class="ls-hx-takeaway" data-tip="' + L("Fasst zusammen, ob die gewählten Hebel hier helfen.", "Summarises whether the chosen levers help here.") + '"></div>' +
+      '<div class="ls-hx-takeaway"></div>' +
       '<details class="ls-hx-ragbox">' +
         '<summary data-tip="' + L("Kurze Einführung: wie Retrieval passende Sätze in den Kontext legt.", "Short introduction: how retrieval puts fitting sentences into the context.") + '"><span class="ls-hx-ragbox-mark">↗</span><b>' + L("RAG in 30 Sekunden", "RAG in 30 seconds") + '</b><span>' + L("So kommen passende Sätze in den Kontext", "How fitting sentences enter the context") + '</span></summary>' +
         '<div class="ls-hx-ragbox-body">' +

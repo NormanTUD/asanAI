@@ -9,7 +9,7 @@
     el.className = "ls-codesem-scene";
     el.innerHTML = '<div class="ls-codesem-top">' +
       '<div class="ls-codesem-tasks" role="group" aria-label="' + (DE ? "Aufgabe" : "task") + '" data-tip="' + (DE ? "Die Aufgabe entscheidet, welche Merkmale als Signal zählen." : "The task decides which features count as signal.") + '"></div>' +
-      '<div class="ls-codesem-compare" aria-live="polite" data-tip="' + (DE ? "Zwei Beispiele zeigen, wie die aktuelle Aufgabe sie beurteilt." : "Two examples show how the current task judges them.") + '"></div>' +
+      '<div class="ls-codesem-compare" aria-live="polite"></div>' +
       '</div>' +
       '<div class="ls-codesem-stage" data-tip="' + (DE ? "Links die Karten, rechts der fiktive Embedding-Raum mit den Zielknoten." : "Cards on the left, the fictional embedding space with target nodes on the right.") + '"><canvas class="ls-codesem-canvas" role="img" data-tip="' + (DE ? "Farbige Punkte wandern zu dem Knoten, der zur Aufgabe passt." : "Coloured points move to the node that fits the task.") + '"></canvas><div class="ls-codesem-tip"></div></div>';
     root.appendChild(el);

@@ -30,8 +30,8 @@
         '<div class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs" data-tip-de="Zeigt die Attention als gewichtete Bögen zwischen den Tokens." data-tip-en="Shows attention as weighted arcs between the tokens.">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="graph" data-tip-de="Zeigt alle Tokens im Kreis; Kanten sind Attention-Gewichte." data-tip-en="Shows all tokens in a circle; edges are attention weights.">' + (DE ? "Graph" : "Graph") + '</button><button type="button" class="ls-chip" data-view="simplex" data-tip-de="Zeigt die Gewichte als Punkt im Dreieck der drei Values." data-tip-en="Shows the weights as a point in the triangle of the three values.">Simplex</button></div>' +
         '<span class="ls-qkv-query" data-tip-de="Die Query ist das Token, dessen Aufmerksamkeit verteilt wird." data-tip-en="The query is the token whose attention is distributed.">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
       '</div>' +
-      '<div class="ls-qkv-percent" data-tip-de="Zeigt den Attention-Anteil auf das gewählte Token." data-tip-en="Shows the attention share on the selected token."></div>' +
-      '<div class="ls-qkv-readout" aria-live="polite" data-tip-de="Nennt die Mischung der Values und die Head-Ausgabe." data-tip-en="Names the mixture of values and the head output."></div>' +
+      '<div class="ls-qkv-percent"></div>' +
+      '<div class="ls-qkv-readout" aria-live="polite"></div>' +
       '<div class="ls-scene-formula ls-qkv-formula" data-tip-de="Formel: Q und K bestimmen die Gewichte, die Values werden gemischt, W_O bildet die Head-Ausgabe." data-tip-en="Formula: Q and K set the weights, the values are mixed, W_O forms the head output."><div class="ls-math"></div></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-qkv-stage");

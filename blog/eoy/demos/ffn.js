@@ -69,7 +69,7 @@
     el.innerHTML =
       '<div class="ls-ffn-stepper">' +
         '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-prev" aria-label="' + api.esc(labels.prev) + '" data-tip-de="Zeigt den vorigen Beispielkontext." data-tip-en="Shows the previous example context.">←</button>' +
-        '<span class="ls-ffn-step-label" aria-live="polite" data-tip-de="Zeigt, welcher Kontext gerade aktiv ist." data-tip-en="Shows which context is currently active."></span>' +
+        '<span class="ls-ffn-step-label" aria-live="polite"></span>' +
         '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-next" aria-label="' + api.esc(labels.next) + '" data-tip-de="Zeigt den nächsten Beispielkontext." data-tip-en="Shows the next example context.">→</button>' +
       '</div>' +
       '<div class="ls-ffn-contexts"></div>' +
@@ -79,7 +79,7 @@
         '<div class="ls-ffn-bend-bar">' +
           '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0" data-tip-de="Hebt den Kernbereich an; höhere Werte machen die Trennebene sichtbar." data-tip-en="Lifts the core region; higher values reveal the separating plane."><output>0.00</output></label>' +
           '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-bend-toggle" data-tip-de="Animiert die Biegung bis zur Trennebene oder zurück." data-tip-en="Animates the bend to the separating plane or back.">' + labels.bendButton + '</button>' +
-          '<span class="ls-ffn-bend-readout" aria-live="polite" data-tip-de="Nennt Biegegrad und ob die Muster getrennt sind." data-tip-en="Names the bend amount and whether the patterns are separated."></span>' +
+          '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
       '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Input und Output bleiben d_model; das FFN dehnt den Vektor auf d_ff und projiziert ihn zurück. Es arbeitet pro Token." : "Input and output stay at d_model; the FFN expands the vector to d_ff and projects it back. It works per token.") + '</p></div>' +

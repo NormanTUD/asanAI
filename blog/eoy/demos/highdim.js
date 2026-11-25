@@ -45,7 +45,7 @@
     var el = document.createElement("div");
     el.className = "ls-highdim-scene";
     el.innerHTML =
-      '<div class="ls-highdim-selected" aria-live="polite" data-tip="' + (DE ? "Zeigt das gewählte Token, seine Vokabular-ID und die ersten Dimensionswerte." : "Shows the selected token, its vocabulary id, and its first dimension values.") + '"></div>' +
+      '<div class="ls-highdim-selected" aria-live="polite"></div>' +
       '<div class="ls-highdim-scroll" data-tip="' + (DE ? "Scrolle horizontal, um mehr der 4096 Dimensionen zu sehen." : "Scroll horizontally to see more of the 4096 dimensions.") + '"><table>' + colgroup + '<thead>' + head + '</thead><tbody>' + body + more + '</tbody></table></div>';
     root.appendChild(el);
     var selectedEl = el.querySelector(".ls-highdim-selected");

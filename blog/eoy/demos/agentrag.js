@@ -88,7 +88,7 @@
           '<div class="ls-ar-context" data-tip="' + L("Nur der ausgewählte Chunk liegt im Kontext; die Datei selbst sieht das Modell nicht.", "Only the selected chunk sits in the context; the model never sees the file itself.") + '"><div class="ls-ar-context-head"><span class="ls-ar-lock" aria-hidden="true">🔒</span>' + L("Unsichtbarer Kontext · nur Modell", "Invisible context · model only") + '</div><div class="ls-ar-context-body"></div></div>' +
         '</section>' +
       '</div>' +
-      '<div class="ls-ar-status" aria-live="polite" data-tip="' + L("Erklärt, was im aktuellen Schritt im Hintergrund passiert.", "Explains what happens in the background at the current step.") + '"></div>' +
+      '<div class="ls-ar-status" aria-live="polite"></div>' +
       '<div class="ls-ar-bottom">' +
         '<button type="button" class="ls-ar-next" data-tip="' + L("Geht einen Schritt weiter: lesen, chunken, bewerten, Kontext, Antwort.", "Moves one step ahead: read, chunk, score, context, answer.") + '"></button>' +
         '<div class="ls-ar-loop" data-tip="' + L("Die Kette der Schritte; der aktive Schritt leuchtet.", "The chain of steps; the active step lights up.") + '"><span>' + L("Datei", "file") + '</span><i>→</i><span>' + L("Chunks", "chunks") + '</span><i>→</i><span>' + L("Winkel", "angle") + '</span><i>→</i><span>' + L("unsichtbarer Kontext", "invisible context") + '</span><i>→</i><span>' + L("Antwort", "answer") + '</span></div>' +

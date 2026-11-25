@@ -40,7 +40,7 @@
               '<div class="ls-hg-checkrow" data-check="cot" data-tip="' + (DE ? "Zeigt, ob der Denkweg sichtbar ist." : "Shows whether the reasoning is visible.") + '"><i></i><b>' + (DE ? "Sichtbarer Denkweg" : "Visible reasoning") + '</b><span></span></div>' +
               '<div class="ls-hg-checkrow" data-check="verify" data-tip="' + (DE ? "Zeigt, ob die Antwort gegengeprüft wird." : "Shows whether the answer is checked.") + '"><i></i><b>' + (DE ? "Gegenprüfung" : "Verification") + '</b><span></span></div>' +
             '</div>' +
-            '<div class="ls-hg-readout" data-tip="' + (DE ? "Fasst zusammen, was die Schalterkombination bedeutet." : "Summarises what the switch combination means.") + '"></div>' +
+            '<div class="ls-hg-readout"></div>' +
           '</aside>' +
         '</div>' +
       '</div>';

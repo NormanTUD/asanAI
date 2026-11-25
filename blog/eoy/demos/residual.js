@@ -101,7 +101,6 @@
     var layerRow = el.querySelector(".ls-res-layers");
     var readout = el.querySelector(".ls-res-readout");
     var caption = el.querySelector(".ls-res-caption");
-    readout.setAttribute("data-tip", DE ? "Zeigt die Update-Gleichung und die gewählte Dimension." : "Shows the update equation and the selected dimension.");
     caption.setAttribute("data-tip", DE ? "Ordnet die Ansicht didaktisch ein." : "Gives the didactic framing of the view.");
     var size = null;
     var phase = "notebook";

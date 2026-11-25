@@ -83,7 +83,6 @@
     vector.setAttribute("data-tip", DE ? "Gewichtete Summe der Value-Vektoren; der Pfeil r ist die Mischung." : "Weighted sum of the value vectors; the arrow r is the mixture.");
     matrixEl.setAttribute("data-tip", DE ? "Tabelle aller Attention-Gewichte; eine Zeile zeigt die Verteilung eines Tokens." : "Table of all attention weights; one row shows a token's distribution.");
     formulaEl.setAttribute("data-tip", DE ? "Die Formel zeigt r als gewichtete Summe der Values." : "The formula shows r as a weighted sum of the values.");
-    readout.setAttribute("data-tip", DE ? "Nennt die aktive Zeile und den stärksten Key." : "Names the active row and the strongest key.");
     var C = api.colors();
     var graphSize = null, vectorSize = null, graphHits = [], vectorHits = [];
     var animRow = null, animFrom = null, animTo = null, animStart = 0, animRaf = 0;

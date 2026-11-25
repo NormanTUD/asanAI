@@ -21,7 +21,6 @@
     var chips = el.querySelector(".ls-act-chips");
     var readout = el.querySelector(".ls-act-readout");
     canvas.setAttribute("data-tip", DE ? "Zeigt die Aktivierungskurve; achte auf Nullpunkt und Steigung." : "Shows the activation curve; watch the zero crossing and slope.");
-    readout.setAttribute("data-tip", DE ? "Nennt die aktive Funktion, ihren Verlauf und eine Eigenschaft." : "Names the active function, its shape, and one property.");
     var ctx = null, size = null, active = window.__lsActLast || "relu", hits = [];
     var fromId = active, morph = 1, morphStart = 0, morphRaf = 0;
     var C = api.colors();

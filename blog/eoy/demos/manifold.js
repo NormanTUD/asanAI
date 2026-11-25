@@ -17,7 +17,7 @@
         '<label class="ls-range" data-tip="' + (DE ? "Verschiebt die japanische Wolke auf die englische zu." : "Translation slides the Japanese cloud toward the English one.") + '">' + (DE ? "Verschiebung" : "Translation") + ' <input type="range" class="ls-manifold-shift" min="-0.2" max="2.4" step="0.01" value="1.8"><output>1.80</output></label>' +
         '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-manifold-find" data-tip="' + (DE ? "Animiert die Wolke zur besten Ausrichtung." : "Animate the cloud to the best alignment.") + '">' + (DE ? "Übersetzung finden" : "Find translation") + '</button>' +
       '</div>' +
-      '<div class="ls-manifold-readout" aria-live="polite" data-tip="' + (DE ? "Ausrichtung, aktuelle Drehung und Verschiebung sowie das überfahrene Wort." : "Alignment score, current rotation and translation, and the hovered word.") + '"></div>';
+      '<div class="ls-manifold-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-dual-manifolds");
     var canvas = el.querySelector("canvas");

@@ -38,7 +38,7 @@
         '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-ce-train" data-tip="' + (DE ? "Führt einen Gradientenschritt aus und erhöht die Wahrscheinlichkeit des Ziels." : "Run one gradient step to push probability toward the target.") + '">' + (DE ? "Trainingsschritt" : "Training step") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-ce-reset" data-tip="' + (DE ? "Setzt Logits und Loss-Verlauf auf den Anfang zurück." : "Restore the initial logits and clear the loss history.") + '">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
       '</div>' +
-      '<div class="ls-ce-readout" aria-live="polite" data-tip="' + (DE ? "Live-Werte: Ziel, Loss, Ziel-Wahrscheinlichkeit, Softmax-Summe und Gradient." : "Live values: target, loss, target probability, softmax sum, and gradient.") + '"></div>';
+      '<div class="ls-ce-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-ce-stage");
     var canvas = el.querySelector("canvas");

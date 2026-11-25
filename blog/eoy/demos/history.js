@@ -260,7 +260,7 @@
     el.innerHTML = '<div class="ls-history-head"><span class="ls-history-kicker">' + (DE ? "Geschichte in zehn Schritten" : "History in ten steps") + '</span><span class="ls-history-hint">' + (DE ? "Tab wählen" : "Choose a tab") + '</span></div>' +
       '<div class="ls-history-legend" aria-hidden="true">' + STRANDS.map(function (st) { return '<span data-tip="' + (DE ? "Farbe der Stränge: zeigt, zu welchem Themenstrang dieser Schritt gehört." : "Strand colour: shows which theme this step belongs to.") + '"><i style="background:' + st.color + '"></i>' + st.label + '</span>'; }).join("") + '</div>' +
       '<div class="ls-history-tabs" role="tablist" aria-label="' + (DE ? "Geschichte" : "History") + '"></div>' +
-      '<div class="ls-history-panel" data-tip="' + (DE ? "Der ausgewählte Schritt mit Text, Bildern oder Diagramm und Quellen." : "The selected step with text, images or a diagram, and sources.") + '" role="tabpanel" aria-live="polite"></div>' +
+      '<div class="ls-history-panel" role="tabpanel" aria-live="polite"></div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-history-prev" data-tip="' + (DE ? "Zum vorherigen Geschichtsschritt." : "Go to the previous history step.") + '">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-history-progress" data-tip="' + (DE ? "Position in der Zeitleiste." : "Position on the timeline.") + '"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-history-next" data-tip="' + (DE ? "Zum nächsten Geschichtsschritt." : "Go to the next history step.") + '">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var track = el.querySelector(".ls-history-tabs");
