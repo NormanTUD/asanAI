@@ -2718,7 +2718,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 
   function reliefNoteText() {
     return S.view.active
-      ? "Höhe = rohe Ausgabe · Farbe 0..1 · Bereich ±" + formatFactor(S.view.factor) + " · gelernt: inneres Quadrat"
+      ? "Höhe = Ausgabe, begrenzt · Farbe 0..1 · Bereich ±" + formatFactor(S.view.factor) + " · gelernt: inneres Quadrat"
       : "Höhe = Helligkeit · " + S.relief.N + " × " + S.relief.N + " Gitter · gelernter Bereich x,y ∈ [-1,1]²";
   }
 
@@ -2732,6 +2732,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       } else {
         el.textContent = S.N + " × " + S.N + " × " + S.channels;
       }
+      el.title = el.textContent;
     }
     var label = $("#predFootLabel");
     if (label) label.textContent = S.view.active ? "Netz-Ausgabe · Ø gelernt" : "Netz-Ausgabe";
@@ -3574,7 +3575,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     out.toBlob(function (blob) {
       if (blob) downloadBlob(blob, "katzen-labor-" + Date.now() + ".png");
     }, "image/png");
-    setStatus("PNG mit Ziel, Vorhersage und Fehler exportiert.", "good");
+    setStatus(S.view.active ? "PNG des gelernten Bereichs exportiert (Ziel, Vorhersage, Fehler). Die Extrapolation ist nur auf dem Bildschirm." : "PNG mit Ziel, Vorhersage und Fehler exportiert.", "good");
   }
 
   async function exportModel() {
