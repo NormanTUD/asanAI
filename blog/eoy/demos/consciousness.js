@@ -651,13 +651,13 @@
         for (var ci = 0; ci < centers.length; ci++) {
           var dx = p.x - centers[ci].x, dy = p.y - centers[ci].y;
           var dist = Math.hypot(dx, dy) || 1;
-          var reach = 46 + diss * 188;
+          var reach = 80 + diss * 280;
           if (dist < reach) {
-            var pull = (1 - dist / reach) * diss * (0.18 + diss * 0.72);
-            p.vx += (-dy / dist) * pull;
-            p.vy += (dx / dist) * pull;
-            p.vx += (-dx / dist) * pull * 0.08;
-            p.vy += (-dy / dist) * pull * 0.08;
+            var falloff = 1 - dist / reach;
+            var swirl = falloff * diss * 1.12;
+            var inward = falloff * diss * 0.22;
+            p.vx += (-dy / dist) * swirl - (dx / dist) * inward;
+            p.vy += (dx / dist) * swirl - (dy / dist) * inward;
           }
         }
         p.vx *= 0.985; p.vy *= 0.985;
@@ -667,15 +667,15 @@
         if (p.x < -20) p.x = w + 20; if (p.x > w + 20) p.x = -20;
         if (p.y < -20) p.y = h + 20; if (p.y > h + 20) p.y = -20;
         p.trail.push({ x: p.x, y: p.y });
-        if (p.trail.length > 14) p.trail.shift();
+        if (p.trail.length > 22) p.trail.shift();
       });
       kastParticles.forEach(function (p, pi) {
         if (p.trail.length > 1) {
           ctx.beginPath();
           ctx.moveTo(p.trail[0].x, p.trail[0].y);
           for (var ti = 1; ti < p.trail.length; ti++) ctx.lineTo(p.trail[ti].x, p.trail[ti].y);
-          ctx.strokeStyle = "rgba(0,146,153," + (p.alpha * 0.55) + ")";
-          ctx.lineWidth = 1.05; ctx.stroke();
+          ctx.strokeStyle = "rgba(0,146,153," + (p.alpha * 0.72) + ")";
+          ctx.lineWidth = 1.35; ctx.lineCap = "round"; ctx.stroke();
         }
         ctx.globalAlpha = p.alpha;
         dot(p.x, p.y, p.size, pi % 11 === 0 ? "#9f9700" : pi % 3 === 0 ? "#009299" : "#5c9baf");
