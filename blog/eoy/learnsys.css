@@ -5893,3 +5893,51 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-mi2-room{align-self:start}
 .ls-mi2-spectrum-head b{font-size:20px}
 .ls-mi2-spectrum-fig img{height:150px!important;max-height:150px!important;object-fit:contain;background:#fff}
+
+/* f(x): make the sentence x → f_θ → distribution visible, not a wall of controls. */
+.ls-fx-stage{
+  grid-template-columns:minmax(0,1fr) 26px 150px 26px minmax(0,1.35fr);
+  grid-template-rows:auto auto;
+  gap:10px 14px;align-items:center;min-height:0;
+}
+.ls-fx-inputs{
+  grid-column:1/-1;grid-row:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;
+}
+.ls-fx-input{padding:8px 10px 7px;min-height:82px}
+.ls-fx-input-label{font-size:11px}
+.ls-fx-input b{font-size:7px}
+.ls-fx-input small{font-size:8px}
+.ls-fx-x{
+  grid-column:1;grid-row:2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:6px;
+  padding:14px 16px;border:1px solid var(--ls-line);border-left:4px solid var(--ls-blue);border-radius:4px;
+  background:linear-gradient(135deg,rgba(18,117,172,.065),rgba(255,255,255,.92));box-shadow:0 10px 26px rgba(0,30,40,.055);
+}
+.ls-fx-x-label{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--ls-blue)}
+.ls-fx-x .ls-bs-fx-prompt{font:700 clamp(20px,2vw,28px)/1.22 "Barlow",sans-serif;color:var(--ls-ink)}
+.ls-fx-x small{font:600 8px/1.3 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-muted)}
+.ls-fx-link--a{grid-column:2;grid-row:2}
+.ls-fx-core{grid-column:3;grid-row:2;width:150px;height:150px;align-self:center}
+.ls-fx-core-node{width:116px;height:116px}
+.ls-fx-core-node b,.ls-fx-core-node .ls-math{font-size:31px}
+.ls-fx-link--b{grid-column:4;grid-row:2}
+.ls-fx-output{grid-column:5;grid-row:2;align-self:stretch}
+.ls-fx-output .ls-fx-start{margin-bottom:1px}
+.ls-fx .ls-bs-fx-cands{gap:6px}
+.ls-fx .ls-bs-fx-cand i{height:13px}
+.ls-fx.ls-bs-fx{background:
+  radial-gradient(ellipse at 8% 0%,rgba(99,164,75,.14),transparent 52%),
+  radial-gradient(ellipse at 94% 4%,rgba(18,117,172,.13),transparent 52%),
+  linear-gradient(180deg,#fff 0%,var(--ls-paper) 100%);
+}
+.ls-fx-hero{padding:2px 0 6px;border-bottom:1px solid var(--ls-line)}
+.ls-fx-hero h2{font-size:clamp(30px,3.8vw,48px)}
+.ls-fx-batch{background:rgba(255,255,255,.72)}
+@media(max-width:900px){
+  .ls-fx-stage{grid-template-columns:1fr;grid-template-rows:auto}
+  .ls-fx-inputs{grid-column:1;grid-row:auto;grid-template-columns:1fr 1fr}
+  .ls-fx-x,.ls-fx-core,.ls-fx-output{grid-column:1;grid-row:auto}
+  .ls-fx-link{display:none}
+  .ls-fx-core{width:112px;height:112px;justify-self:center}
+  .ls-fx-core-node{width:88px;height:88px}
+  .ls-fx-core-node b,.ls-fx-core-node .ls-math{font-size:25px}
+}
