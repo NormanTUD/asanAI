@@ -6,6 +6,22 @@
     var DE = api.lang === "de";
     var esc = api.esc || function (s) { return String(s == null ? "" : s); };
     function L(de, en) { return DE ? de : en; }
+    function readTheoryParam() {
+      try {
+        var key = new URLSearchParams(location.search).get("theory");
+        if (!key) return null;
+        for (var i = 0; i < THEORIES.length; i++) if (THEORIES[i].key === key) return i;
+      } catch (e) {}
+      return null;
+    }
+    function writeTheoryParam(th) {
+      try {
+        var u = new URL(location.href);
+        if (th && th.key) u.searchParams.set("theory", th.key);
+        else u.searchParams.delete("theory");
+        history.replaceState(null, "", u.pathname + u.search + u.hash);
+      } catch (e) {}
+    }
 
     var MODULES = [
       { key: "visual", label: L("Visueller Cortex", "Visual cortex"), result: L("Kante", "edge"), color: "#1275ac" },
@@ -114,8 +130,8 @@
           { q: L("Was sagt Noë?", "What does Noë say?"), a: L("Bewusstsein ist etwas, das wir erreichen; eher Tanzen als Verdauen.", "Consciousness is something we achieve, more like dancing than digestion.") },
         ],
         cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
-        hint: L("Wechsle Mensch/KI und klick die vier E's. Beobachte, was „heiß“ im Körper verankert.", "Switch human/AI and click the four E's. Watch what anchors “hot” in the body."),
-        status: L("Mensch: 4 von 4 gekoppelt. Wechsel auf KI: nur Extended bleibt.", "Human: 4 of 4 coupled. Switch to AI: only Extended remains."),
+        hint: L("Weiter aktiviert die vier E's. KI zeigt, welche davon fehlen; beobachte, was „heiß“ beim Menschen verankert.", "Next activates the four E's. AI shows which are missing; watch what anchors “hot” for a human."),
+        status: L("Mensch: 1 von 4 aktiv. Weiter aktiviert Embedded.", "Human: 1 of 4 active. Next activates Embedded."),
         quote: {
           text: "Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion.",
           author: "Alva Noë",
@@ -181,7 +197,7 @@
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false };
     var kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 };
-    var four = { mode: "human", focus: 0, word: "hot" };
+    var four = { mode: "human", focus: 0, word: "hot", active: 1 };
     var FOUR_E = [
       { key: "embodied", label: "Embodied", subDe: "Körper", subEn: "Body", noteDe: "Sinne, Schmerz, Motorik: Denken ist an einen Körper gebunden.", noteEn: "Senses, pain, motor control: thought is tied to a body.", missingDe: "kein Körper, kein Nervensystem", missingEn: "no body, no nervous system", color: "#ffb36b" },
       { key: "embedded", label: "Embedded", subDe: "Welt", subEn: "World", noteDe: "Physische und soziale Lage: Denken findet in einer Welt statt.", noteEn: "Physical and social situation: thought happens in a world.", missingDe: "keine geteilte physische Welt", missingEn: "no shared physical world", color: "#7fe0b0" },
@@ -196,6 +212,20 @@
     };
     var fourStars = [];
     for (var fsi = 0; fsi < 84; fsi++) fourStars.push({ x: (fsi * 0.37 + 0.03) % 1, y: (fsi * 0.53 + 0.11) % 1, r: 0.4 + (fsi % 4) * 0.35, a: 0.04 + (fsi % 5) * 0.018 });
+    var kastParticles = [], kastPW = 0, kastPH = 0;
+    function seedKastParticles(w, h) {
+      kastParticles = [];
+      for (var i = 0; i < 180; i++) {
+        kastParticles.push({
+          x: Math.random() * w, y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+          size: 0.7 + Math.random() * 1.1,
+          alpha: 0.22 + Math.random() * 0.5,
+          trail: []
+        });
+      }
+      kastPW = w; kastPH = h;
+    }
     var myst = { marks: [] };
 
     var PRED_STIM = {
@@ -615,16 +645,41 @@
       glow.addColorStop(0, "rgba(0,146,153,.10)"); glow.addColorStop(1, "rgba(0,146,153,0)");
       ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
       var centers = kastCenters(w, h), diss = kast.diss / 100;
-      for (var p = 0; p < 260; p++) {
-        var base = centers[p % centers.length];
-        var ang = p * 2.39996 + t * (0.15 + (p % 7) * 0.016);
-        var band = (p % 13) / 12;
-        var rr2 = (9 + band * 76) * (0.78 + diss * 0.32);
-        var x = base.x + Math.cos(ang) * rr2;
-        var y = base.y + Math.sin(ang) * rr2;
-        ctx.globalAlpha = 0.12 + (p % 5) * 0.045;
-        dot(x, y, 0.8 + (p % 4) * 0.35, p % 11 === 0 ? "#9f9700" : p % 3 === 0 ? "#009299" : "#5c9baf");
-      }
+      if (!kastParticles.length || kastPW !== w || kastPH !== h) seedKastParticles(w, h);
+      kastParticles.forEach(function (p, pi) {
+        p.vx += Math.sin(p.y * 0.012 + t * 0.7) * 0.002;
+        p.vy += Math.cos(p.x * 0.014 + t * 0.6) * 0.002;
+        for (var ci = 0; ci < centers.length; ci++) {
+          var dx = p.x - centers[ci].x, dy = p.y - centers[ci].y;
+          var dist = Math.hypot(dx, dy) || 1;
+          if (dist < 132) {
+            var pull = (1 - dist / 132) * (0.12 + diss * 0.55);
+            p.vx += (-dy / dist) * pull;
+            p.vy += (dx / dist) * pull;
+            p.vx += (-dx / dist) * pull * 0.08;
+            p.vy += (-dy / dist) * pull * 0.08;
+          }
+        }
+        p.vx *= 0.985; p.vy *= 0.985;
+        var sp = Math.hypot(p.vx, p.vy);
+        if (sp > 2.2) { p.vx *= 2.2 / sp; p.vy *= 2.2 / sp; }
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -20) p.x = w + 20; if (p.x > w + 20) p.x = -20;
+        if (p.y < -20) p.y = h + 20; if (p.y > h + 20) p.y = -20;
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 7) p.trail.shift();
+      });
+      kastParticles.forEach(function (p, pi) {
+        if (p.trail.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(p.trail[0].x, p.trail[0].y);
+          for (var ti = 1; ti < p.trail.length; ti++) ctx.lineTo(p.trail[ti].x, p.trail[ti].y);
+          ctx.strokeStyle = "rgba(0,146,153," + (p.alpha * 0.35) + ")";
+          ctx.lineWidth = 0.8; ctx.stroke();
+        }
+        ctx.globalAlpha = p.alpha;
+        dot(p.x, p.y, p.size, pi % 11 === 0 ? "#9f9700" : pi % 3 === 0 ? "#009299" : "#5c9baf");
+      });
       ctx.globalAlpha = 1;
       if (kast.dissolved) {
         centers.forEach(function (c) { drawDissolvedVortex(c, t); });
@@ -657,7 +712,7 @@
       ctx.restore();
     }
     function fourCard(x, y, cw, ch, e, i) {
-      var on = four.mode !== "ai" || i === 3;
+      var on = four.mode === "ai" ? i === 3 : i < four.active;
       var focus = four.focus === i;
       ctx.save();
       rr(x, y, cw, ch, 12);
@@ -727,28 +782,22 @@
       ctx.fillText(L("Mensch · 4/4", "human · 4/4"), cx, cy + r * 1.00);
     }
     function fourTokenCore(cx, cy, r, t) {
-      ctx.save(); ctx.translate(cx, cy);
-      ctx.setLineDash([4, 5]); ctx.lineDashOffset = -t * 6;
-      ctx.strokeStyle = "rgba(0,75,111,.26)"; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.arc(0, -r * 0.62, r * 0.24, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.38); ctx.lineTo(0, r * 0.30);
-      ctx.moveTo(0, -r * 0.12); ctx.lineTo(-r * 0.54, r * 0.10);
-      ctx.moveTo(0, -r * 0.12); ctx.lineTo(r * 0.54, r * 0.10);
-      ctx.moveTo(0, r * 0.30); ctx.lineTo(-r * 0.34, r * 0.78);
-      ctx.moveTo(0, r * 0.30); ctx.lineTo(r * 0.34, r * 0.78);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      var aura = ctx.createRadialGradient(cx, cy, 2, cx, cy, r * 2.1);
+      aura.addColorStop(0, "rgba(0,146,153,.13)"); aura.addColorStop(1, "rgba(0,146,153,0)");
+      ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(cx, cy, r * 2.1, 0, Math.PI * 2); ctx.fill();
+      ctx.save(); ctx.setLineDash([4, 6]); ctx.lineDashOffset = -t * 8;
       for (var i = 0; i < 3; i++) {
-        rr(-r * 0.78, -r * 0.46 + i * r * 0.34, r * 1.56, r * 0.24, 6);
-        ctx.fillStyle = "rgba(255,255,255,.9)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(0,146,153,.42)";
-        ctx.lineWidth = 1; ctx.stroke();
-        ctx.fillStyle = "#00384f"; ctx.font = font(9.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("token " + (i + 1), 0, -r * 0.34 + i * r * 0.34);
+        ctx.beginPath(); ctx.ellipse(cx, cy - r * 0.08, r * (0.82 + i * 0.22), r * (0.64 + i * 0.12), -0.10, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0,75,111," + (0.22 - i * 0.05) + ")"; ctx.lineWidth = 1.1; ctx.stroke();
       }
       ctx.restore();
+      var med = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.35, 2, cx, cy, r * 0.82);
+      med.addColorStop(0, "rgba(255,255,255,.98)"); med.addColorStop(0.55, "rgba(226,247,250,.96)"); med.addColorStop(1, "rgba(184,229,238,.94)");
+      ctx.beginPath(); ctx.arc(cx, cy - r * 0.04, r * 0.78, 0, Math.PI * 2);
+      ctx.fillStyle = med; ctx.fill();
+      ctx.strokeStyle = "rgba(0,75,111,.30)"; ctx.lineWidth = 1.3; ctx.stroke();
+      ctx.save(); ctx.font = Math.round(r * 1.18) + 'px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🤖", cx, cy - r * 0.03); ctx.restore();
       ctx.fillStyle = "#b24a4e"; ctx.font = font(10.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
       ctx.fillText(L("KI · 1/4", "AI · 1/4"), cx, cy + r * 1.00);
     }
@@ -829,7 +878,7 @@
       horizon.addColorStop(0, "rgba(0,146,153,0)"); horizon.addColorStop(1, "rgba(0,146,153,.08)");
       ctx.fillStyle = horizon; ctx.fillRect(0, bodyY + 54, lw, h - bodyY - 54);
       pos.forEach(function (p, i) {
-        fourLink(bodyX, bodyY, p.x + cardW / 2, p.y + cardH / 2, FOUR_E[i].color, four.mode !== "ai" || i === 3, ai);
+        fourLink(bodyX, bodyY, p.x + cardW / 2, p.y + cardH / 2, FOUR_E[i].color, four.mode === "ai" ? i === 3 : i < four.active, ai);
       });
       if (panelW > 110) {
         var beamEnd = ai ? bodyX + 56 : bodyX;
@@ -929,6 +978,7 @@
       kicker.textContent = L("Bewusstsein · Theorie ", "Consciousness · theory ") + (active + 1) + " / " + THEORIES.length;
       titleEl.textContent = th.title;
       leadEl.textContent = th.lead;
+      writeTheoryParam(th);
       var captionEl = el.querySelector("[data-con2-caption]");
       if (captionEl) {
         if (th.caption && th.caption.length) {
@@ -1014,9 +1064,10 @@
       return true;
     }
     function fourStatusText() {
-      return four.mode === "ai"
-        ? L("KI: 1 von 4. Nur Extended ist da; Embodied, Embedded und Enacted fehlen.", "AI: 1 of 4. Only Extended is present; Embodied, Embedded and Enacted are missing.")
-        : L("Mensch: 4 von 4 gekoppelt. Wort, Körper, Welt und Handlung sind verbunden.", "Human: 4 of 4 coupled. Word, body, world and action are connected.");
+      if (four.mode === "ai") return L("KI: 1 von 4. Extended ist aktiv; Embodied, Embedded und Enacted fehlen.", "AI: 1 of 4. Extended is active; Embodied, Embedded and Enacted are missing.");
+      if (four.active >= 4) return L("Mensch: 4 von 4 aktiv. Alle vier Dimensionen sind gekoppelt.", "Human: 4 of 4 active. All four dimensions are coupled.");
+      var next = FOUR_E[four.active].label;
+      return L("Mensch: " + four.active + " von 4 aktiv. Weiter aktiviert " + next + ".", "Human: " + four.active + " of 4 active. Next activates " + next + ".");
     }
     function fourWordStatus() {
       var w = FOUR_WORDS[four.word];
@@ -1026,13 +1077,15 @@
     }
     function fourSetMode(mode) {
       four.mode = mode === "ai" ? "ai" : "human";
-      four.focus = four.mode === "ai" ? 3 : 0;
+      four.active = 4;
+      four.focus = 3;
       setStatus(fourStatusText());
       renderControls();
       draw(performance.now());
     }
     function fourSetFocus(i) {
       four.focus = clamp(i, 0, 3);
+      if (four.mode !== "ai") four.active = Math.max(four.active, four.focus + 1);
       var e = FOUR_E[four.focus];
       setStatus(four.mode === "ai"
         ? L(e.label + ": " + e.missingDe, e.label + ": " + e.missingEn)
@@ -1049,9 +1102,15 @@
     }
     function fourNextAction() {
       if (four.mode === "ai") return false;
-      if (four.focus < 3) { four.focus++; fourSetFocus(four.focus); return true; }
-      fourSetMode("ai");
-      return true;
+      if (four.active < 4) {
+        four.active++;
+        four.focus = four.active - 1;
+        setStatus(fourStatusText());
+        renderControls();
+        draw(performance.now());
+        return true;
+      }
+      return false;
     }
     function mystNextAction() {
       if (myst.marks.length < 16) {
@@ -1203,7 +1262,7 @@
     function goPrev() { if (active > 0) { setTheory(active - 1); return true; } return false; }
     function setTheory(i) {
       active = clamp(i, 0, THEORIES.length - 1);
-      if (active === 4) four = { mode: "human", focus: 0, word: "hot" };
+      if (active === 4) four = { mode: "human", focus: 0, word: "hot", active: 1 };
       qaOpen = 0;
       activeSince = performance.now();
       renderChrome();
@@ -1247,7 +1306,7 @@
     window.addEventListener("resize", fit);
     function onTheme() { C = api.colors(); draw(performance.now()); }
     window.addEventListener("tm:theme", onTheme);
-    setTheory(0);
+    setTheory(readTheoryParam() == null ? 0 : readTheoryParam());
     fit();
     startLoop();
     return {
