@@ -5780,3 +5780,42 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-cn-detail-grid p{font-size:13.5px;line-height:1.5}
 .ls-cn-q{font-size:12px;line-height:1.3;padding:6px 9px}
 .ls-cn-qa-answer{font-size:14px;line-height:1.5}
+/* Kastrup and 4E stay on a light ocean/paper stage, even in dark mode. */
+.ls-con2[data-theory="fourE"] .ls-con2-stage{background:#f8fcff;border-color:rgba(0,146,153,.26);box-shadow:0 14px 34px rgba(0,35,50,.07)}
+.ls-con2[data-theory="kastrup"] .ls-con2-stage{background:#f8fcff;border-color:rgba(0,146,153,.24);box-shadow:0 14px 34px rgba(0,35,50,.07)}
+.ls-mi2-choice>span{font-size:10.5px}
+.ls-mi2-choice-row button{font-size:12px;line-height:1.2;padding:8px 13px}
+.ls-mi2-qa-head b{font-size:16px}
+.ls-cn-num{font-size:11px}
+.ls-cn-card .ls-cn-status{font-size:10.5px}
+:root{--ls-fs-micro:max(11.5px,calc(var(--ls-fs-body) * .58))}
+.ls-con2-chip{font-size:13px}
+.ls-con2-btn{font-size:13px}
+.ls-con2-range,.ls-con2-range output{font-size:12.5px}
+.ls-con2-status{font-size:13px}
+.ls-con2-kicker,.ls-con2-navhint,.ls-con2-detail-head span{font-size:11px}
+.ls-con2-cite{font-size:12px}
+.ls-con2-detail-body p{font-size:15px}
+.ls-con2-q{font-size:12.5px}
+.ls-con2-a{font-size:15px}
+.ls-mi2-kicker{font-size:11px}
+.ls-mi2-hero-hint{font-size:11.5px}
+.ls-mi2-measure-label,.ls-mi2-measure>span{font-size:10px}
+.ls-mi2-gap{font-size:10.5px}
+.ls-mi2-room-label{font-size:10.5px}
+.ls-mi2-orb em{font-size:10.5px}
+.ls-mi2-examples span{font-size:12px}
+.ls-mi2-reveal,.ls-mi2-swap{font-size:12px}
+.ls-mi2-q{font-size:12.5px}
+.ls-mi2-qa-answer{font-size:15px}
+.ls-cn-kicker{font-size:11px}
+.ls-cn-tag{font-size:10.5px}
+.ls-cn-status{font-size:11px}
+.ls-cn-card .ls-cn-status{font-size:11px}
+.ls-cn-verdict em{font-size:10.5px}
+.ls-cn-cite{font-size:12px}
+.ls-cn-detail-grid b{font-size:11px}
+.ls-cn-detail-grid p{font-size:14px}
+.ls-cn-q{font-size:12.5px}
+.ls-cn-qa-answer{font-size:15px}
+.ls-btn--tiny{font-size:max(12px,var(--ls-fs-ui-sm))}

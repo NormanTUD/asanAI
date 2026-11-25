@@ -87,10 +87,11 @@
           { q: L("Was ist der Tod?", "What is death?"), a: L("Das Ende der Dissoziation; das eine Bewusstsein bleibt.", "The end of the dissociation; the one consciousness remains.") },
           { q: L("Was ist das Dashboard?", "What is the dashboard?"), a: L("Wahrnehmung ist ein komprimiertes Icon, nicht das Ding selbst.", "Perception is a compressed icon, not the thing itself.") },
           { q: L("Was ist der Einwand?", "What is the objection?"), a: L("Metaphysisch und schwer falsifizierbar; konkrete Mechanismen erklärt sie weniger.", "Metaphysical and hard to falsify; concrete mechanisms are less explained.") },
+          { q: L("Wie passt Atman/Brahman?", "How do Atman and Brahman fit?"), a: L("Advaita Vedanta: Das individuelle Selbst (Atman) ist letztlich eins mit dem universalen Bewusstsein (Brahman). Kastrups Bild passt strukturell: persönliche Bewusstseine sind Dissoziationen eines universalen Bewusstseins. Das ist eine Analogie, keine Eins-zu-eins-Identität; Kastrup argumentiert philosophisch, nicht aus der Schrift.", "Advaita Vedanta: the individual self (Atman) is ultimately one with universal consciousness (Brahman). Kastrup's picture fits structurally: personal consciousnesses are dissociations of one universal consciousness. This is an analogy, not a one-to-one identity; Kastrup argues philosophically, not from scripture.") },
         ],
-        cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>',
-        hint: L("Zieh an der Dissoziation. Weiter: Der Tod beendet die Dissoziation, die Wirbel lösen sich auf.", "Drag dissociation. Next: death ends the dissociation, the vortices dissolve."),
-        status: L("Drei Wirbel, stark dissoziiert. Weiter beendet die Dissoziation: Der Tod löst die Wirbel auf.", "Three vortices, strongly dissociated. Next ends the dissociation: death dissolves the vortices.")
+        cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>; <a href="https://iep.utm.edu/advaita-vedanta/" target="_blank" rel="noopener">Advaita Vedanta (IEP)</a>',
+        hint: L("Zieh an der Dissoziation. Weiter löst die Dissoziation auf: Der Tod beendet die Grenzen, nicht die Wirbel.", "Drag dissociation. Next dissolves the dissociation: death ends the boundaries, not the vortices."),
+        status: L("Drei Wirbel, stark dissoziiert. Weiter löst die Dissoziation auf; der Tod beendet die Grenzen.", "Three vortices, strongly dissociated. Next dissolves the dissociation; death ends the boundaries.")
       },
       {
         key: "fourE", tone: "teal",
@@ -173,7 +174,7 @@
 
     var ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 };
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
-    var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 };
+    var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false };
     var kast = { diss: 70, count: 3, selected: 0, dissolved: false };
     var four = { mode: "human", focus: 0, word: "hot" };
     var FOUR_E = [
@@ -253,7 +254,7 @@
     function resetTheory() {
       if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
-      if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0 }; setStatus(THEORIES[2].status); }
+      if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false }; setStatus(THEORIES[2].status); }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false }; setStatus(THEORIES[3].status); }
       if (active === 4) { four = { mode: "human", focus: 0, word: "hot" }; setStatus(THEORIES[4].status); }
       if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }
@@ -519,24 +520,24 @@
       return ids.map(function (id, i) { return { x: w * spots[id].x, y: h * spots[id].y, i: i }; });
     }
     function drawVortex(c, on, diss, t) {
-      var vR = 42 + diss * 10;
+      var vR = 34 + diss * 14;
       if (on) {
         var gl = ctx.createRadialGradient(c.x, c.y, 2, c.x, c.y, vR * 1.45);
-        gl.addColorStop(0, "rgba(201,243,255,.13)"); gl.addColorStop(1, "rgba(201,243,255,0)");
+        gl.addColorStop(0, "rgba(159,151,0,.16)"); gl.addColorStop(1, "rgba(159,151,0,0)");
         ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(c.x, c.y, vR * 1.45, 0, Math.PI * 2); ctx.fill();
       }
       ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(-0.18 + c.i * 0.055);
       var body = ctx.createRadialGradient(0, 0, 2, 0, 0, vR);
-      body.addColorStop(0, "rgba(2,14,20,.90)");
-      body.addColorStop(0.52, "rgba(18,117,172,.22)");
+      body.addColorStop(0, "rgba(0,75,111,.18)");
+      body.addColorStop(0.55, "rgba(0,146,153,.10)");
       body.addColorStop(1, "rgba(126,200,239,0)");
       ctx.fillStyle = body;
-      ctx.beginPath(); ctx.ellipse(0, 0, vR, vR * 0.44, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 0, vR, 0, Math.PI * 2); ctx.fill();
       for (var k = 0; k < 5; k++) {
-        var f = k / 4, rr = vR * (1 - f * 0.72), yy = -vR * 0.10 + f * vR * 0.30;
-        ctx.beginPath(); ctx.ellipse(0, yy, rr, rr * 0.44, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = on ? "rgba(255,239,191,.60)" : "rgba(201,243,255,.42)";
-        ctx.globalAlpha = 0.12 + f * 0.10; ctx.lineWidth = 1; ctx.stroke();
+        var f = k / 4, rr = vR * (1 - f * 0.72);
+        ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2);
+        ctx.strokeStyle = on ? "rgba(122,116,0,.62)" : "rgba(0,75,111,.30)";
+        ctx.globalAlpha = 0.18 + f * 0.12; ctx.lineWidth = 1; ctx.stroke();
       }
       ctx.globalAlpha = 1;
       for (var arm = 0; arm < 2; arm++) {
@@ -546,35 +547,51 @@
           var u = st / 52, ang = base + u * Math.PI * 1.85;
           var rad = 3 + u * vR * 0.96;
           var xx = Math.cos(ang) * rad;
-          var yy = Math.sin(ang) * rad * 0.44 + (1 - u) * vR * 0.05;
+          var yy = Math.sin(ang) * rad;
           if (st === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
         }
-        ctx.strokeStyle = on ? "rgba(255,239,191,.72)" : "rgba(201,243,255,.36)";
-        ctx.lineWidth = on ? 1.8 : 1.3; ctx.lineCap = "round"; ctx.stroke();
+        ctx.strokeStyle = on ? "rgba(122,116,0,.72)" : "rgba(0,146,153,.46)";
+        ctx.lineWidth = on ? 1.9 : 1.4; ctx.lineCap = "round"; ctx.stroke();
       }
-      var hole = ctx.createRadialGradient(0, 0, 1, 0, 0, vR * 0.24);
-      hole.addColorStop(0, "#010a0f"); hole.addColorStop(1, "rgba(3,19,26,.15)");
+      var hole = ctx.createRadialGradient(0, 0, 1, 0, 0, vR * 0.22);
+      hole.addColorStop(0, "rgba(0,75,111,.30)"); hole.addColorStop(1, "rgba(0,146,153,.02)");
       ctx.fillStyle = hole;
-      ctx.beginPath(); ctx.ellipse(0, vR * 0.04, vR * 0.24, vR * 0.11, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(0, 0, vR * 0.98, vR * 0.42, 0, Math.PI * 1.05, Math.PI * 1.95);
-      ctx.strokeStyle = "rgba(230,250,255,.30)"; ctx.lineWidth = 1.4; ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, vR * 0.22, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 0, vR * 0.98, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(0,75,111,.24)"; ctx.lineWidth = 1.4; ctx.stroke();
       for (var sp = 0; sp < 5; sp++) {
         var sa = t * 0.55 + sp * 1.6, sr = vR * (0.35 + (sp % 3) * 0.18);
-        ctx.globalAlpha = on ? 0.62 : 0.32;
-        dot(Math.cos(sa) * sr, Math.sin(sa) * sr * 0.44, 1 + (sp % 2) * 0.5, "#e9fbff");
+        ctx.globalAlpha = on ? 0.62 : 0.36;
+        dot(Math.cos(sa) * sr, Math.sin(sa) * sr, 1 + (sp % 2) * 0.5, "#1275ac");
       }
       ctx.globalAlpha = 1;
       ctx.restore();
-      ctx.fillStyle = on ? "#ffefbf" : "rgba(234,246,250,.70)";
-      ctx.font = font(11, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
-      ctx.fillText(kast.count === 1 ? L("der eine Ozean", "the one ocean") : L("Geist ", "mind ") + String.fromCharCode(65 + c.i), c.x, c.y + vR * 0.48 + 16);
+      var strong = on ? "#7a7400" : "#004b6f";
+      ctx.fillStyle = strong; ctx.font = font(9.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      var line1 = kast.count === 1 ? L("das eine", "the one") : L("persönliches", "personal");
+      var line2 = kast.count === 1 ? L("Bewusstsein", "consciousness") : L("Bewusstsein " + String.fromCharCode(65 + c.i), "consciousness " + String.fromCharCode(65 + c.i));
+      ctx.fillText(line1, c.x, c.y + vR + 8);
+      ctx.fillText(line2, c.x, c.y + vR + 20);
+    }
+    function drawDissolvedVortex(c, t) {
+      var vR = 34;
+      ctx.save(); ctx.translate(c.x, c.y);
+      for (var k = 0; k < 4; k++) {
+        var rr = vR * (0.65 + k * 0.26) + Math.sin(t * 0.8 + k) * 2.5;
+        ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0,146,153," + (0.22 - k * 0.04) + ")";
+        ctx.lineWidth = 1.1; ctx.stroke();
+      }
+      ctx.beginPath(); ctx.arc(0, 0, 5 + Math.sin(t * 1.2 + c.i) * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,146,153,.18)"; ctx.fill();
+      ctx.restore();
     }
     function drawKastrup(w, h, t, now) {
       var g = ctx.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, "#062a3a"); g.addColorStop(0.55, "#084250"); g.addColorStop(1, "#06202b");
+      g.addColorStop(0, "#f8fcff"); g.addColorStop(0.55, "#e9f8fb"); g.addColorStop(1, "#f5fbf5");
       ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
       var glow = ctx.createRadialGradient(w * 0.5, h * 0.5, 0, w * 0.5, h * 0.5, Math.max(w, h) * 0.6);
-      glow.addColorStop(0, "rgba(126,200,239,.10)"); glow.addColorStop(1, "rgba(126,200,239,0)");
+      glow.addColorStop(0, "rgba(0,146,153,.10)"); glow.addColorStop(1, "rgba(0,146,153,0)");
       ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
       var centers = kastCenters(w, h), diss = kast.diss / 100;
       for (var p = 0; p < 130; p++) {
@@ -582,26 +599,19 @@
         var ang = p * 2.39996 + t * (0.16 + (p % 4) * 0.018);
         var rr2 = (10 + (p % 9) * 5.5) * (0.75 + diss * 0.35);
         var x = base.x + Math.cos(ang) * rr2;
-        var y = base.y + Math.sin(ang) * rr2 * 0.66;
+        var y = base.y + Math.sin(ang) * rr2;
         ctx.globalAlpha = 0.10 + (p % 4) * 0.035;
-        dot(x, y, 1 + (p % 3) * 0.35, p % 3 === 0 ? "#c9f3ff" : "#7ec8ef");
+        dot(x, y, 1 + (p % 3) * 0.35, p % 3 === 0 ? "#009299" : "#5c9baf");
       }
       ctx.globalAlpha = 1;
       if (kast.dissolved) {
-        var cy = h * 0.52;
-        for (var ri = 0; ri < 4; ri++) {
-          var rr = 26 + ri * 21 + Math.sin(t * 0.8 + ri) * 3;
-          ctx.beginPath();
-          ctx.ellipse(w * 0.5, cy, rr, rr * 0.42, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(201,243,255," + (0.24 - ri * 0.045) + ")";
-          ctx.lineWidth = 1; ctx.stroke();
-        }
-        ctx.fillStyle = "rgba(201,243,255,.62)"; ctx.font = font(10.5, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+        centers.forEach(function (c) { drawDissolvedVortex(c, t); });
+        ctx.fillStyle = "#004b6f"; ctx.font = font(11, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
         ctx.fillText(L("Der Tod beendet die Dissoziation. Das eine Bewusstsein bleibt.", "Death ends the dissociation. The one consciousness remains."), w / 2, h - 14);
         return;
       }
       centers.forEach(function (c) { drawVortex(c, c.i === kast.selected, diss, t); });
-      ctx.fillStyle = "rgba(201,243,255,.62)"; ctx.font = font(10.5, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+      ctx.fillStyle = "#5a7280"; ctx.font = font(11, 600); ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillText(L("Ein Ozean. Viele Wirbel. Dasselbe Wasser.", "One ocean. Many vortices. The same water."), w / 2, h - 14);
     }
     function fourLink(x1, y1, x2, y2, color, on, ai) {
@@ -611,12 +621,12 @@
       ctx.quadraticCurveTo((x1 + x2) / 2, Math.min(y1, y2) - 24, x2, y2);
       if (on) {
         var lg = ctx.createLinearGradient(x1, y1, x2, y2);
-        lg.addColorStop(0, color); lg.addColorStop(1, "rgba(127,215,239,.18)");
+        lg.addColorStop(0, color); lg.addColorStop(1, "rgba(0,75,111,.14)");
         ctx.strokeStyle = lg;
-        ctx.lineWidth = 1.4;
-        ctx.shadowColor = color; ctx.shadowBlur = 8;
+        ctx.lineWidth = 1.6;
+        ctx.shadowColor = "rgba(0,75,111,.16)"; ctx.shadowBlur = 5;
       } else {
-        ctx.strokeStyle = "rgba(180,220,230,.16)";
+        ctx.strokeStyle = "rgba(0,75,111,.20)";
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 6]);
         ctx.lineDashOffset = ai ? -4 : 0;
@@ -630,35 +640,35 @@
       ctx.save();
       rr(x, y, cw, ch, 12);
       var g = ctx.createLinearGradient(x, y, x, y + ch);
-      g.addColorStop(0, on ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.035)");
-      g.addColorStop(1, on ? "rgba(255,255,255,.035)" : "rgba(255,255,255,.015)");
+      g.addColorStop(0, on ? "rgba(255,255,255,.96)" : "rgba(255,255,255,.62)");
+      g.addColorStop(1, on ? "rgba(241,251,252,.94)" : "rgba(255,255,255,.48)");
       ctx.fillStyle = g;
       ctx.fill();
-      ctx.strokeStyle = focus ? "#ffd27a" : on ? e.color : "rgba(180,220,230,.16)";
-      ctx.lineWidth = focus ? 1.8 : 1;
-      if (focus) { ctx.shadowColor = "rgba(255,210,122,.65)"; ctx.shadowBlur = 12; }
+      ctx.strokeStyle = focus ? "#9f9700" : on ? e.color : "rgba(0,75,111,.18)";
+      ctx.lineWidth = focus ? 2 : 1;
+      if (focus) { ctx.shadowColor = "rgba(159,151,0,.22)"; ctx.shadowBlur = 9; }
       ctx.stroke();
       ctx.shadowBlur = 0;
       ctx.beginPath(); ctx.arc(x + 15, y + ch / 2, 7, 0, Math.PI * 2);
-      ctx.fillStyle = on ? "rgba(255,255,255,.10)" : "rgba(255,255,255,.03)";
+      ctx.fillStyle = on ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.5)";
       ctx.fill();
-      ctx.strokeStyle = on ? e.color : "rgba(180,220,230,.28)";
-      ctx.lineWidth = 1; ctx.stroke();
-      ctx.fillStyle = on ? e.color : "rgba(180,220,230,.36)";
-      ctx.font = font(8, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.strokeStyle = on ? e.color : "rgba(0,75,111,.30)";
+      ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.fillStyle = on ? e.color : "rgba(0,75,111,.38)";
+      ctx.font = font(9, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText("E", x + 15, y + ch / 2 + 0.5);
       ctx.textAlign = "left";
-      ctx.fillStyle = on ? "#eaf7fb" : "rgba(200,230,240,.40)";
-      ctx.font = font(10.5, 700);
-      ctx.fillText(e.label, x + 28, y + ch * 0.41);
-      ctx.fillStyle = on ? "rgba(201,243,255,.60)" : "rgba(180,220,230,.28)";
-      ctx.font = font(7.5, 600);
+      ctx.fillStyle = on ? "#00384f" : "rgba(0,75,111,.42)";
+      ctx.font = font(11.5, 700);
+      ctx.fillText(e.label, x + 28, y + ch * 0.40);
+      ctx.fillStyle = on ? "#5a7280" : "rgba(0,75,111,.30)";
+      ctx.font = font(9, 600);
       ctx.fillText(L(e.subDe, e.subEn), x + 28, y + ch * 0.67);
       if (on) {
         dot(x + cw - 12, y + 12, 2.5, e.color);
       } else {
-        ctx.fillStyle = "rgba(255,139,107,.76)";
-        ctx.font = font(7, 700); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+        ctx.fillStyle = "#b24a4e";
+        ctx.font = font(8, 700); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
         ctx.fillText(L("fehlt", "missing"), x + cw - 8, y + ch - 7);
       }
       ctx.restore();
@@ -666,38 +676,38 @@
     function fourBody(cx, cy, r, t) {
       var pulse = 0.5 + 0.5 * Math.sin(t * 1.7);
       var aura = ctx.createRadialGradient(cx, cy, 2, cx, cy, r * 2.3);
-      aura.addColorStop(0, "rgba(127,215,239,.20)");
-      aura.addColorStop(0.55, "rgba(0,146,153,.09)");
+      aura.addColorStop(0, "rgba(0,146,153,.15)");
+      aura.addColorStop(0.55, "rgba(0,146,153,.06)");
       aura.addColorStop(1, "rgba(0,146,153,0)");
       ctx.fillStyle = aura;
       ctx.beginPath(); ctx.arc(cx, cy, r * 2.3, 0, Math.PI * 2); ctx.fill();
       for (var ri = 0; ri < 3; ri++) {
         ctx.beginPath();
-        ctx.ellipse(cx, cy - r * 0.08, r * (0.84 + ri * 0.22), r * (0.58 + ri * 0.13), -0.10, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(127,215,239," + (0.24 - ri * 0.055) + ")";
+        ctx.ellipse(cx, cy - r * 0.08, r * (0.84 + ri * 0.22), r * (0.66 + ri * 0.12), -0.10, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0,75,111," + (0.18 - ri * 0.04) + ")";
         ctx.lineWidth = 1; ctx.stroke();
       }
       var med = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.35, 2, cx, cy, r * 0.82);
-      med.addColorStop(0, "rgba(255,255,255,.16)");
-      med.addColorStop(0.55, "rgba(0,146,153,.16)");
-      med.addColorStop(1, "rgba(3,24,32,.62)");
+      med.addColorStop(0, "rgba(255,255,255,.98)");
+      med.addColorStop(0.55, "rgba(221,244,248,.96)");
+      med.addColorStop(1, "rgba(190,231,240,.94)");
       ctx.beginPath(); ctx.arc(cx, cy - r * 0.04, r * 0.78, 0, Math.PI * 2);
       ctx.fillStyle = med; ctx.fill();
-      ctx.strokeStyle = "rgba(201,243,255,.36)"; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.strokeStyle = "rgba(0,75,111,.28)"; ctx.lineWidth = 1.3; ctx.stroke();
       ctx.save();
       ctx.font = Math.round(r * 1.25) + 'px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", "Open Sans", sans-serif';
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText("🧍", cx, cy - r * 0.03);
       ctx.restore();
-      ctx.fillStyle = "#ff8b6b";
+      ctx.fillStyle = "#e05a4f";
       ctx.beginPath(); ctx.arc(cx + r * 0.40, cy - r * 0.58, 2.6 + pulse * 1.6, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(201,243,255,.70)"; ctx.font = font(9, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillStyle = "#004b6f"; ctx.font = font(10.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
       ctx.fillText(L("Mensch · 4/4", "human · 4/4"), cx, cy + r * 1.00);
     }
     function fourTokenCore(cx, cy, r, t) {
       ctx.save(); ctx.translate(cx, cy);
       ctx.setLineDash([4, 5]); ctx.lineDashOffset = -t * 6;
-      ctx.strokeStyle = "rgba(180,220,230,.22)"; ctx.lineWidth = 1.2;
+      ctx.strokeStyle = "rgba(0,75,111,.26)"; ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.arc(0, -r * 0.62, r * 0.24, 0, Math.PI * 2); ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(0, -r * 0.38); ctx.lineTo(0, r * 0.30);
@@ -709,71 +719,72 @@
       ctx.setLineDash([]);
       for (var i = 0; i < 3; i++) {
         rr(-r * 0.78, -r * 0.46 + i * r * 0.34, r * 1.56, r * 0.24, 6);
-        ctx.fillStyle = "rgba(127,215,239,.10)";
+        ctx.fillStyle = "rgba(255,255,255,.9)";
         ctx.fill();
-        ctx.strokeStyle = "rgba(127,215,239,.44)";
+        ctx.strokeStyle = "rgba(0,146,153,.42)";
         ctx.lineWidth = 1; ctx.stroke();
-        ctx.fillStyle = "rgba(201,243,255,.62)"; ctx.font = font(7, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillStyle = "#00384f"; ctx.font = font(8.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText("token " + (i + 1), 0, -r * 0.34 + i * r * 0.34);
       }
       ctx.restore();
-      ctx.fillStyle = "rgba(255,139,107,.72)"; ctx.font = font(9, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
-      ctx.fillText(L("KI · 1/4", "AI · 1/4"), cx, cy + r * 1.02);
+      ctx.fillStyle = "#b24a4e"; ctx.font = font(10.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText(L("KI · 1/4", "AI · 1/4"), cx, cy + r * 1.00);
     }
     function fourPanel(px, py, pw, ph) {
       var ai = four.mode === "ai";
       var word = FOUR_WORDS[four.word];
       rr(px, py, pw, ph, 16);
       var g = ctx.createLinearGradient(px, py, px + pw, py + ph);
-      g.addColorStop(0, "rgba(255,255,255,.075)");
-      g.addColorStop(1, "rgba(255,255,255,.022)");
+      g.addColorStop(0, "rgba(255,255,255,.94)");
+      g.addColorStop(1, "rgba(243,251,252,.86)");
       ctx.fillStyle = g; ctx.fill();
-      ctx.strokeStyle = "rgba(201,243,255,.13)"; ctx.lineWidth = 1; ctx.stroke();
-      ctx.fillStyle = "rgba(201,243,255,.50)"; ctx.font = font(8, 700); ctx.textAlign = "left"; ctx.textBaseline = "top";
+      ctx.strokeStyle = "rgba(0,75,111,.16)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = "#5a7280"; ctx.font = font(9.5, 700); ctx.textAlign = "left"; ctx.textBaseline = "top";
       ctx.fillText(L("Wort", "word"), px + 14, py + 16);
-      ctx.fillStyle = word.color; ctx.font = '700 ' + Math.max(24, Math.min(34, pw * 0.20)) + 'px "Barlow", "Open Sans", sans-serif';
+      ctx.fillStyle = "#00384f"; ctx.font = '700 ' + Math.max(25, Math.min(35, pw * 0.20)) + 'px "Barlow", "Open Sans", sans-serif';
       ctx.fillText(L(word.de, word.en), px + 14, py + 30);
-      ctx.strokeStyle = "rgba(201,243,255,.13)"; ctx.beginPath(); ctx.moveTo(px + 14, py + 76); ctx.lineTo(px + pw - 14, py + 76); ctx.stroke();
-      ctx.fillStyle = ai ? "rgba(201,243,255,.50)" : "rgba(255,210,122,.72)"; ctx.font = font(8, 700);
+      dot(px + pw - 18, py + 42, 4, word.color);
+      ctx.strokeStyle = "rgba(0,75,111,.14)"; ctx.beginPath(); ctx.moveTo(px + 14, py + 76); ctx.lineTo(px + pw - 14, py + 76); ctx.stroke();
+      ctx.fillStyle = ai ? "#5a7280" : "#7a7400"; ctx.font = font(9.5, 700);
       ctx.fillText(ai ? L("Token-Nachbarn", "token neighbours") : L("Körper", "body"), px + 14, py + 88);
-      ctx.fillStyle = ai ? "rgba(201,243,255,.60)" : "rgba(234,247,251,.92)"; ctx.font = font(11, 600);
+      ctx.fillStyle = ai ? "#5a7280" : "#00384f"; ctx.font = font(12.5, 600);
       ctx.fillText(ai ? L("nächste Nachbarn", "nearest neighbours") : L(word.groundDe, word.groundEn), px + 14, py + 102);
       if (ai) {
-        var tw = Math.max(54, (pw - 38) / 2), th = 23;
+        var tw = Math.max(54, (pw - 38) / 2), th = 25;
         word.tokensDe.slice(0, 4).forEach(function (tok, i) {
           var tx = px + 14 + (i % 2) * (tw + 5), ty = py + 126 + Math.floor(i / 2) * (th + 5);
           rr(tx, ty, tw, th, 7);
-          ctx.fillStyle = "rgba(127,215,239,.09)"; ctx.fill();
-          ctx.strokeStyle = "rgba(127,215,239,.25)"; ctx.lineWidth = 1; ctx.stroke();
-          ctx.fillStyle = "rgba(201,243,255,.72)"; ctx.font = font(8, 600); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillStyle = "rgba(255,255,255,.9)"; ctx.fill();
+          ctx.strokeStyle = "rgba(0,146,153,.28)"; ctx.lineWidth = 1; ctx.stroke();
+          ctx.fillStyle = "#00384f"; ctx.font = font(9.5, 600); ctx.textAlign = "center"; ctx.textBaseline = "middle";
           ctx.fillText(L(word.tokensDe[i], word.tokensEn[i]), tx + tw / 2, ty + th / 2 + 0.5);
         });
-        ctx.fillStyle = "rgba(255,139,107,.76)"; ctx.font = font(8.5, 700); ctx.textAlign = "left"; ctx.textBaseline = "top";
-        ctx.fillText(L("kein Körper, kein Affekt", "no body, no affect"), px + 14, py + 188);
+        ctx.fillStyle = "#b24a4e"; ctx.font = font(9.5, 700); ctx.textAlign = "left"; ctx.textBaseline = "top";
+        ctx.fillText(L("kein Körper, kein Affekt", "no body, no affect"), px + 14, py + 192);
       } else {
         [L("Sinnesfeedback", "sensory feedback"), L("Affekt", "affect"), L("geteilte Welt", "shared world")].forEach(function (label, i) {
-          var yy = py + 128 + i * 19;
-          dot(px + 17, yy + 4, 2.2, word.color);
-          ctx.fillStyle = "rgba(234,247,251,.72)"; ctx.font = font(8.5, 600); ctx.textAlign = "left"; ctx.textBaseline = "middle";
+          var yy = py + 128 + i * 20;
+          dot(px + 17, yy + 4, 2.4, word.color);
+          ctx.fillStyle = "#486775"; ctx.font = font(10.5, 600); ctx.textAlign = "left"; ctx.textBaseline = "middle";
           ctx.fillText(label, px + 25, yy + 3);
         });
       }
-      ctx.strokeStyle = "rgba(201,243,255,.13)"; ctx.beginPath(); ctx.moveTo(px + 14, py + ph - 38); ctx.lineTo(px + pw - 14, py + ph - 38); ctx.stroke();
-      ctx.fillStyle = ai ? "rgba(255,179,107,.85)" : "rgba(127,224,176,.88)"; ctx.font = font(9, 700); ctx.textAlign = "left"; ctx.textBaseline = "bottom";
-      ctx.fillText(ai ? L("1 / 4 · nur Extended", "1 / 4 · Extended only") : L("4 / 4 · gekoppelt", "4 / 4 · coupled"), px + 14, py + ph - 15);
+      ctx.strokeStyle = "rgba(0,75,111,.14)"; ctx.beginPath(); ctx.moveTo(px + 14, py + ph - 38); ctx.lineTo(px + pw - 14, py + ph - 38); ctx.stroke();
+      ctx.fillStyle = ai ? "#b24a4e" : "#3f6f2f"; ctx.font = font(10.5, 700); ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+      ctx.fillText(ai ? L("1 / 4 · nur Extended", "1 / 4 · Extended only") : L("4 / 4 · gekoppelt", "4 / 4 · coupled"), px + 14, py + ph - 14);
     }
     function drawFourE(w, h, t, now) {
       var ai = four.mode === "ai";
       var word = FOUR_WORDS[four.word];
       var bg = ctx.createLinearGradient(0, 0, 0, h);
-      bg.addColorStop(0, "#031820"); bg.addColorStop(0.55, "#07313d"); bg.addColorStop(1, "#03141b");
+      bg.addColorStop(0, "#f8fcff"); bg.addColorStop(0.55, "#eaf8fb"); bg.addColorStop(1, "#f5fbf5");
       ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
       var glow = ctx.createRadialGradient(w * 0.31, h * 0.50, 0, w * 0.31, h * 0.50, Math.max(w, h) * 0.62);
-      glow.addColorStop(0, "rgba(0,146,153,.15)"); glow.addColorStop(1, "rgba(0,146,153,0)");
+      glow.addColorStop(0, "rgba(0,146,153,.10)"); glow.addColorStop(1, "rgba(0,146,153,0)");
       ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
       fourStars.forEach(function (st) {
         ctx.globalAlpha = st.a * (0.7 + 0.3 * Math.sin(t * 0.6 + st.x * 20));
-        dot(st.x * w, st.y * h, st.r, "#d9f8ff");
+        dot(st.x * w, st.y * h, st.r, "#5c9baf");
       });
       ctx.globalAlpha = 1;
       var lw = Math.max(214, Math.min(w * 0.64, w - 188));
@@ -789,11 +800,11 @@
         { x: leftX, y: botY }, { x: rightX, y: botY }
       ];
       ctx.save();
-      ctx.globalAlpha = 0.04; ctx.fillStyle = "#c9f3ff"; ctx.font = '700 150px "Barlow", "Open Sans", sans-serif';
+      ctx.globalAlpha = 0.05; ctx.fillStyle = "#004b6f"; ctx.font = '700 150px "Barlow", "Open Sans", sans-serif';
       ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("4E", bodyX, bodyY + 46);
       ctx.restore();
       var horizon = ctx.createLinearGradient(0, bodyY + 54, 0, h);
-      horizon.addColorStop(0, "rgba(0,0,0,0)"); horizon.addColorStop(1, "rgba(0,40,52,.38)");
+      horizon.addColorStop(0, "rgba(0,146,153,0)"); horizon.addColorStop(1, "rgba(0,146,153,.08)");
       ctx.fillStyle = horizon; ctx.fillRect(0, bodyY + 54, lw, h - bodyY - 54);
       pos.forEach(function (p, i) {
         fourLink(bodyX, bodyY, p.x + cardW / 2, p.y + cardH / 2, FOUR_E[i].color, four.mode !== "ai" || i === 3, ai);
@@ -804,15 +815,15 @@
         ctx.beginPath(); ctx.moveTo(panelX, h * 0.26);
         ctx.quadraticCurveTo((panelX + beamEnd) / 2, h * 0.42, beamEnd, bodyY);
         if (ai) {
-          ctx.strokeStyle = "rgba(180,220,230,.24)"; ctx.setLineDash([4, 7]); ctx.lineDashOffset = -t * 18; ctx.lineWidth = 1;
+          ctx.strokeStyle = "rgba(0,75,111,.24)"; ctx.setLineDash([4, 7]); ctx.lineDashOffset = -t * 18; ctx.lineWidth = 1.1;
         } else {
           var bgd = ctx.createLinearGradient(panelX, h * 0.26, bodyX, bodyY);
-          bgd.addColorStop(0, word.color); bgd.addColorStop(1, "rgba(255,210,122,.16)");
-          ctx.strokeStyle = bgd; ctx.lineWidth = 1.5; ctx.shadowColor = word.color; ctx.shadowBlur = 10;
+          bgd.addColorStop(0, word.color); bgd.addColorStop(1, "rgba(159,151,0,.18)");
+          ctx.strokeStyle = bgd; ctx.lineWidth = 1.6; ctx.shadowColor = "rgba(0,75,111,.18)"; ctx.shadowBlur = 6;
         }
         ctx.stroke(); ctx.restore();
         if (ai) {
-          ctx.fillStyle = "rgba(255,139,107,.82)"; ctx.font = font(8, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillStyle = "#b24a4e"; ctx.font = font(9.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
           ctx.fillText(L("kein Körper", "no body"), beamEnd + 20, bodyY - 20);
         }
       }
@@ -956,20 +967,16 @@
       kast.selected = Math.min(kast.selected, kast.count - 1);
       var inp = el.querySelector("[data-con-count]");
       if (inp) { inp.value = String(kast.count); if (inp.nextElementSibling) inp.nextElementSibling.textContent = String(kast.count); }
-      setStatus(kast.count === 1 ? L("Ein Ozean: ein Bewusstsein, keine Trennung.", "One ocean: one consciousness, no separation.") : L(kast.count + " Wirbel: derselbe Ozean, mehrere lokale Geister.", kast.count + " vortices: the same ocean, several local minds."));
+      setStatus(kast.count === 1 ? L("Ein Ozean: ein Bewusstsein, keine Trennung.", "One ocean: one consciousness, no separation.") : L(kast.count + " Wirbel: derselbe Ozean, mehrere persönliche Bewusstseine.", kast.count + " vortices: the same ocean, several personal consciousnesses."));
       draw(performance.now());
     }
     function kastNextAction() {
       if (kast.dissolved) return false;
       kast.dissolved = true;
       kast.diss = 0;
-      kast.count = 1;
-      kast.selected = 0;
       var dinp = el.querySelector("[data-con-diss]");
       if (dinp) { dinp.value = "0"; if (dinp.nextElementSibling) dinp.nextElementSibling.textContent = "0 %"; }
-      var cinp = el.querySelector("[data-con-count]");
-      if (cinp) { cinp.value = "1"; if (cinp.nextElementSibling) cinp.nextElementSibling.textContent = "1"; }
-      setStatus(L("Der Tod beendet die Dissoziation: Die Wirbel lösen sich auf; das eine Bewusstsein bleibt.", "Death ends the dissociation: the vortices dissolve; the one consciousness remains."));
+      setStatus(L("Der Tod beendet die Dissoziation: Die Grenzen lösen sich auf; das eine Bewusstsein bleibt.", "Death ends the dissociation: the boundaries dissolve; the one consciousness remains."));
       draw(performance.now());
       return true;
     }
@@ -1089,6 +1096,7 @@
         b.addEventListener("click", function () {
           pred.stimulus = b.getAttribute("data-con-stim");
           pred.priorTarget = null;
+          pred.modelReady = false;
           setStatus(L("Der Eingang wechselt. Die Vorhersage bleibt zunächst; daraus entsteht der Fehler.", "The input changes. The prediction stays for now; that difference is the error."));
           renderControls(); draw(performance.now());
         });
@@ -1127,9 +1135,10 @@
       });
     }
 
-    function predModelFresh() { return pred.priorTarget === null && Math.abs(pred.priorCenter - PRED_STIM[pred.stimulus].center) < 0.015; }
+    function predModelFresh() { return !!pred.modelReady; }
     function updatePredModel() {
       var target = PRED_STIM[pred.stimulus].center;
+      pred.modelReady = true;
       if (reduce || Math.abs(pred.priorCenter - target) < 0.001) {
         pred.priorCenter = target;
         pred.priorTarget = null;
@@ -1165,6 +1174,7 @@
     function goPrev() { if (active > 0) { setTheory(active - 1); return true; } return false; }
     function setTheory(i) {
       active = clamp(i, 0, THEORIES.length - 1);
+      if (active === 4) four = { mode: "human", focus: 0, word: "hot" };
       qaOpen = 0;
       activeSince = performance.now();
       renderChrome();
@@ -1196,7 +1206,7 @@
         var x = centers[i].x, y = centers[i].y;
         if (Math.hypot(mx - x, my - y) < 42) {
           kast.selected = i;
-          setStatus(L("Du betrachtest Geist ", "You are looking at mind ") + String.fromCharCode(65 + i) + L(". Derselbe Wasserwirbel: von innen getrennt, von außen eine lokale Bewegung.", ". The same water vortex: separate from inside, a local movement from outside."));
+          setStatus(L("Du betrachtest persönliches Bewusstsein ", "You are looking at personal consciousness ") + String.fromCharCode(65 + i) + L(". Derselbe Wasserwirbel: von innen getrennt, von außen eine lokale Bewegung.", ". The same water vortex: separate from inside, a local movement from outside."));
           draw(performance.now());
           return;
         }
