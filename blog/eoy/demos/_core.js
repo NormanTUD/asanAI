@@ -59,7 +59,7 @@
   function canvasTip(canvas, provider) {
     if (!canvas || typeof provider !== "function") return null;
     var tip = document.createElement("div");
-    tip.className = "ls-canvas-tip";
+    tip.className = "ls-eoy-tip ls-canvas-tip";
     tip.hidden = true;
     (canvas.parentNode || document.body).appendChild(tip);
     canvas.setAttribute("data-ls-canvas-tip", "1");

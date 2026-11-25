@@ -384,7 +384,7 @@
     canvas.addEventListener("pointerleave", function () { if (hover) { hover = null; draw(); } });
     core.canvasTip(canvas, function (x, y) {
       var h = nearest(x, y);
-      if (!h) return "";
+      if (!h) return DE ? "Zwei Punktwolken: Englisch und Japanisch. Fahre über einen Punkt für das Wortpaar; ziehen dreht, Regler verschieben." : "Two point clouds: English and Japanese. Hover a point for the word pair; drag to rotate, sliders translate.";
       var pair = WORDS[h.index];
       var sp = source[h.index], tp = targetPoints()[h.index];
       return (h.side === "en" ? (DE ? "Englisch: " : "English: ") + pair[0] : (DE ? "Japanisch: " : "Japanese: ") + pair[1]) +

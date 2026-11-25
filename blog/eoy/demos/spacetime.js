@@ -589,7 +589,7 @@
         return (DE ? row.label[0] : row.label[1]) + ": stärkste Ausrichtung " + cols[max] + " (" + row.values[max].toFixed(2) + "). " +
           (DE ? "Klicken hebt die Zeile hervor." : "Click to highlight the row.");
       }
-      return "";
+      return DE ? "Punkte sind Personen oder Neuronen. Fahre über einen Punkt für Jahr, Vorhersage oder Ausrichtung; klicken hebt ihn hervor." : "Points are people or neurons. Hover a point for year, prediction, or alignment; click to highlight.";
     });
     canvas.addEventListener("click", function (e) {
       var r = canvas.getBoundingClientRect();

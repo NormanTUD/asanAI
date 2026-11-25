@@ -921,7 +921,7 @@
           return (DE ? "Dimension " : "Dimension ") + (d + 1) + ": Residual " + base.toFixed(2) + " + Attention " + attn.toFixed(2) + " + FFN " + ffn.toFixed(2) + " = " + (base + attn + ffn).toFixed(2) + ". Klicken fixiert die Dimension.";
         }
       }
-      return "";
+      return DE ? "Balken: Residual, Attention-Update und FFN-Update addieren sich pro Dimension. Fahre über einen Balken." : "Bars: residual, attention update, and FFN update add per dimension. Hover a bar.";
     });
     canvas.addEventListener("pointerleave", function () {
       if (hoverDim === -1) return;

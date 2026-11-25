@@ -430,6 +430,15 @@
     curve.addEventListener("pointerleave", function () {
       if (hoverTrail !== -1) { hoverTrail = -1; drawCurve(); }
     });
+    core.canvasTip(curve, function (x, y) {
+      var best = null, bd = 18;
+      trailPoints.forEach(function (tp) {
+        var d = Math.hypot(tp.x - x, tp.y - y);
+        if (d < bd) { bd = d; best = tp; }
+      });
+      if (!best) return L("Kurve der Distanz zwischen Position 0 und der gewählten Position. Fahre über einen Trail-Punkt für seinen Wert.", "Distance curve between position 0 and the selected position. Hover a trail point for its value.");
+      return L("Position ", "Position ") + Math.round(best.value) + L(" auf dem Trail. Die Heatmap zeigt Position, Dimension und Sinus-/Kosinuswert; ein Klick auf die Heatmap setzt die Position.", " on the trail. The heatmap shows position, dimension, and sine/cosine value; click the heatmap to set the position.");
+    });
     window.addEventListener("pointermove", function (e) {
       if (!drag) return;
       yaw += (e.clientX - drag.x) * 0.008;

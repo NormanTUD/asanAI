@@ -346,7 +346,7 @@
           var d = Math.hypot(px - x, py - y);
           if (d < bd) { bd = d; best = i; }
         });
-        if (best < 0) return "";
+        if (best < 0) return DE ? "Datenpunkte und aktuelle Gerade: Fahre über einen Punkt für x, y und Vorhersage." : "Data points and current line: hover a point for x, y, and prediction.";
         var cur = current() || { a: 0, b: 0 };
         var xv = xs[best], yv = ys[best], yhat = cur.a * xv + cur.b;
         return (DE ? "Beispiel " : "Example ") + (best + 1) + ": x = " + xv.toFixed(2) + ", y = " + yv.toFixed(2) + ", ŷ = " + yhat.toFixed(2) + ". Fehler " + (yhat - yv).toFixed(2) + ". Klicken wählt das Beispiel.";

@@ -1302,7 +1302,7 @@
 
     core.canvasTip(canvas, function (x, y) {
       var hit = hitAt(x, y);
-      if (!hit) return "";
+      if (!hit) return DE ? "Embedding-Raum: Punkte sind Wörter, Richtungen tragen Bedeutung. Fahre über einen Punkt oder ziehe im 3D-Modus." : "Embedding space: points are words, directions carry meaning. Hover a point or drag in 3D.";
       if (hit.kind === "temp") {
         var t = tempById(hit.id);
         var active = st.pair && (st.pair[0] === hit.id || st.pair[1] === hit.id);

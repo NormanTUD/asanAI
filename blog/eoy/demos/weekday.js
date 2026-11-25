@@ -154,7 +154,7 @@
       var pts = place().pts;
       var best = null, bd = 24;
       pts.forEach(function (p) { var d = Math.hypot(p.x - x, p.y - y); if (d < bd) { bd = d; best = p; } });
-      if (!best) return "";
+      if (!best) return DE ? "Die Woche als Linie oder Kreis: Fahre über einen Tag; jeder Schritt trägt denselben Winkel." : "The week as a line or circle: hover a day; every step carries the same angle.";
       var step = 360 / days.length;
       return best.label + (DE ? ": Tag " : ": day ") + (best.index + 1) + (DE ? " von 7. " : " of 7. ") +
         (DE ? "Der Schritt zum nächsten Tag ist immer derselbe Winkel: " : "The step to the next day is always the same angle: ") + step.toFixed(1) + "°.";

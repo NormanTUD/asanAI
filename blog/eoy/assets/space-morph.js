@@ -909,17 +909,11 @@
 		drawBox(box, C);
 		drawAxis(axisAlpha, C);
 
-		const gridAlpha = (0.22 + 0.24 * lift) * (1 - project * 0.35);
+		const gridAlpha = (0.18 + 0.16 * lift) * (1 - project * 0.35);
 		ctx.lineWidth = 1;
 		ctx.globalAlpha = gridAlpha;
+		ctx.strokeStyle = withAlpha(C.grid, 1);
 		gridSegments(lift, project).forEach(segment => {
-			const a = segment[0], b = segment[segment.length - 1];
-			const fade = ctx.createLinearGradient(a.X, a.Y, b.X, b.Y);
-			fade.addColorStop(0, withAlpha(C.grid, 0));
-			fade.addColorStop(0.30, withAlpha(C.grid, 1));
-			fade.addColorStop(0.70, withAlpha(C.grid, 1));
-			fade.addColorStop(1, withAlpha(C.grid, 0));
-			ctx.strokeStyle = fade;
 			ctx.beginPath();
 			segment.forEach((p, i) => i ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y));
 			ctx.stroke();
@@ -1150,6 +1144,24 @@
 		renderCopy();
 		fitCopyHeight();
 		bindDrag();
+
+		if (window.LearnSysDemoCore && window.LearnSysDemoCore.canvasTip) {
+			window.LearnSysDemoCore.canvasTip(canvas, function (x, y) {
+				const cfg = SCENES[Math.max(0, Math.min(SCENES.length - 1, cur))] || SCENES[0];
+				const lift = cfg.lift || 0, project = cfg.project || 0;
+				let best = null, bd = 18;
+				PTS.forEach(function (p) {
+					const q = warp(p.x, p.y, lift, project);
+					const d = Math.hypot(q.X - x, q.Y - y);
+					if (d < bd) { bd = d; best = p; }
+				});
+				if (!best) return "";
+				const score = SCORE(best.x, best.y);
+				return (DE ? "Punkt im " : "Point in the ") + (best.c === 0 ? (DE ? "Kern" : "core") : (DE ? "Ring" : "ring")) +
+					": x = " + best.x.toFixed(2) + ", y = " + best.y.toFixed(2) + ", Score s = " + score.toFixed(2) +
+					". " + (DE ? "Die Biegung verändert die Höhe, nicht die Klasse." : "The bend changes the height, not the class.");
+			});
+		}
 
 		const nextBtn = copyEl("ism-next");
 		const prevBtn = copyEl("ism-prev");

@@ -1346,7 +1346,7 @@
               ". " + (DE ? "Klicken schreibt das Ergebnis auf die Tafel; Broadcast macht es global." : "Click to write the result onto the board; broadcast makes it global.");
           }
         }
-        return "";
+        return DE ? "Global Workspace: Klicke ein Subsystem, um sein Ergebnis auf die Tafel zu schreiben. Broadcast macht es global." : "Global workspace: click a subsystem to write its result onto the board. Broadcast makes it global.";
       }
       if (active === 1) {
         var N = 6, cx = size.w * 0.5, cy = size.h * 0.52, R = Math.min(size.w, size.h) * 0.31;
@@ -1366,13 +1366,13 @@
                 (DE ? "Rekurrenter Ring: Der Puls kann zurückkehren. Partition " + iit.cut + " % kappt Verbindungen." : "Recurrent ring: the pulse can return. Partition " + iit.cut + "% cuts connections."));
           }
         }
-        return "";
+        return DE ? "IIT: Knoten und Kanten bilden den integrierten Ring. Klicke oder ziehe die Partition, um Verbindungen zu kappen." : "IIT: nodes and edges form the integrated ring. Click or drag the partition to cut connections.";
       }
       if (active === 2) {
         var data = predCalc();
         var padX = 46, span = size.w - padX * 2;
         var u = (x - padX) / Math.max(1, span);
-        if (u < 0 || u > 1) return "";
+        if (u < 0 || u > 1) return DE ? "Predictive Processing: Eingang, Vorhersage und Wahrnehmung überlagern sich. Fahre über die Kurve." : "Predictive processing: input, prediction, and percept overlap. Hover the curve.";
         var idx = Math.max(0, Math.min(data.xs.length - 1, Math.round(u * (data.xs.length - 1))));
         return (DE ? "x = " : "x = ") + data.xs[idx].toFixed(2) + ": " + (DE ? "Eingang " : "input ") + data.input[idx].toFixed(2) +
           ", " + (DE ? "Vorhersage " : "prediction ") + data.prior[idx].toFixed(2) +
@@ -1389,7 +1389,7 @@
               (DE ? ". Derselbe Wasserwirbel: von innen getrennt, von außen eine lokale Bewegung. Klicken wählt ihn." : ". The same water vortex: separate from inside, a local movement from outside. Click to select it.");
           }
         }
-        return "";
+        return DE ? "Kastrup: Jeder Wirbel ist ein persönliches Bewusstsein; der Ozean ist das eine Bewusstsein. Fahre über einen Wirbel." : "Kastrup: each vortex is a personal consciousness; the ocean is the one consciousness. Hover a vortex.";
       }
       if (active === 4) {
         var lw = Math.max(214, Math.min(size.w * 0.64, size.w - 188));
@@ -1402,7 +1402,7 @@
             return e.label + ": " + (DE ? e.noteDe : e.noteEn) + (four.mode === "ai" ? " " + (DE ? e.missingDe : e.missingEn) : "");
           }
         }
-        return "";
+        return DE ? "4E Cognition: Vier Perspektiven auf Denken. Fahre über eine Karte für die Erklärung." : "4E cognition: four perspectives on thought. Hover a card for the explanation.";
       }
       if (active === 5) {
         var best = null, bd = 36;
@@ -1411,6 +1411,7 @@
           if (d < bd) { bd = d; best = m; }
         });
         if (best) return L("Fragezeichen: Das Muster ist sichtbar, aber die Erklärung fehlt. Genau diese Lücke ist das harte Problem.", "Question mark: the pattern is visible, but the explanation is missing. That gap is the hard problem.");
+        return L("New Mysterianism: Die Fragezeichen stehen für die Grenze unserer Begriffe. Fahre über eines.", "New mysterianism: the question marks stand for the limit of our concepts. Hover one.");
       }
       return "";
     });

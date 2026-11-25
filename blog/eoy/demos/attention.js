@@ -477,7 +477,7 @@
           return (DE ? "Token " : "Token ") + tokenLabel(ts[h.i], h.i) + ". " + topWeights(m[h.i], ts, 3) + (DE ? ". Klicken zeigt diese Zeile im Graphen." : ". Click to show this row in the graph.");
         }
       }
-      return "";
+      return DE ? "Attention-Graph: Die Tokens stehen unten, die Bögen sind Gewichte. Fahre über ein Token für seine Zeile; klicken wählt sie." : "Attention graph: tokens sit at the bottom, arcs are weights. Hover a token for its row; click to select it.";
     });
     core.canvasTip(vector, function (x, y) {
       var best = null, bestD = 1e9;
@@ -486,7 +486,7 @@
         var d = Math.hypot(x - h.x, y - h.y);
         if (d < (h.r || 14) && d < bestD) { best = h; bestD = d; }
       }
-      if (!best) return "";
+      if (!best) return DE ? "Value-Mischung: Punkte sind Value-Vektoren, der grüne Pfeil r ist ihre gewichtete Summe. Fahre über einen Punkt." : "Value mixture: points are value vectors, the green arrow r is their weighted sum. Hover a point.";
       if (best.rMix) return DE ? "r = gewichtete Summe der Value-Vektoren: (" + best.cx.toFixed(2) + ", " + best.cy.toFixed(2) + ")." : "r = weighted sum of the value vectors: (" + best.cx.toFixed(2) + ", " + best.cy.toFixed(2) + ").";
       return (DE ? "Token " : "Token ") + best.label + ": " + Math.round(best.wt * 100) + (DE ? "% Gewicht im aktuellen Mix." : "% weight in the current mixture.");
     });

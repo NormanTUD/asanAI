@@ -287,10 +287,6 @@
         ctx.beginPath(); ctx.arc(px(hp.x), py(hp.y), 7, 0, Math.PI * 2);
         ctx.fillStyle = V.alpha(C.gold, .25); ctx.fill();
         ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.stroke();
-        V.label(ctx, "x " + hp.x.toFixed(2) + " · y " + hp.y.toFixed(2), px(hp.x) + 9, py(hp.y) - 9, {
-          font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif',
-          color: C.ink, align: "left", bgAlpha: 0.9
-        });
       }
       legend(size.w, size.h);
       V.heading(ctx, phase === "linear" ? "1 Neuron · ŷ = w x + b" : "1 → 32 → 32 → 32 → 1", size.w - 20, 18, C.petrol, 10, 1);
@@ -596,6 +592,19 @@
     canvas.addEventListener("pointerup", function () { drag = null; });
     canvas.addEventListener("pointercancel", function () { drag = null; });
     canvas.addEventListener("pointerleave", function () { if (hoverIndex !== -1) { hoverIndex = -1; draw(); } });
+    if (window.LearnSysDemoCore) {
+      window.LearnSysDemoCore.canvasTip(canvas, function (x, y) {
+        if (!size || lossView) return "";
+        var best = -1, bd = 1e9;
+        points.forEach(function (pt, i) {
+          var d = Math.abs(px(pt.x) - x) + Math.abs(py(pt.y) - y);
+          if (d < bd) { bd = d; best = i; }
+        });
+        if (best < 0 || bd >= 18) return DE ? "Sinus-Demo: Punkte sind Daten, die Kurve ist das Modell. Fahre über einen Punkt; ziehen verschiebt ihn." : "Sine demo: points are data, the curve is the model. Hover a point; drag to move it.";
+        var pt = points[best];
+        return (DE ? "Datenpunkt " : "Data point ") + (best + 1) + ": x = " + pt.x.toFixed(2) + ", y = " + pt.y.toFixed(2) + ". " + (DE ? "Ziehen verändert den Zielwert; das Modell passt seine Kurve an." : "Drag changes the target; the model adjusts its curve.");
+      });
+    }
     trainBtn.addEventListener("click", function () { if (training) pauseTraining(); else resumeTraining(); });
     resetBtn.addEventListener("click", resetActive);
     matrixBtn.addEventListener("click", function () {

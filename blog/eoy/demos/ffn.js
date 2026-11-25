@@ -386,7 +386,7 @@
         var d = Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2);
         if (d < bestD) { bestD = d; best = i; }
       });
-      if (best < 0) return "";
+      if (best < 0) return DE ? "Punktwolke: Kern und Ring liegen übereinander; die Biegung hebt den Kern an, bis eine Ebene trennt. Fahre über einen Punkt." : "Point cloud: core and ring overlap; the bend lifts the core until a plane separates them. Hover a point.";
       var p = bendProjected[best];
       var isCore = p.c === 0;
       return p.label + (DE ? " · " : " · ") + (isCore ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0]) +

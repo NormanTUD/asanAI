@@ -288,7 +288,7 @@
           var d = Math.hypot(px - x, py - y);
           if (d < bd) { bd = d; best = i; }
         }
-        if (best < 0) return "";
+        if (best < 0) return DE ? "Ceres: grüne Linie ist die Wahrheit, blaue Punkte sind verrauschte Beobachtungen. Fahre über einen Punkt." : "Ceres: the green line is truth, blue points are noisy observations. Hover a point.";
         var observed = obsY(best), trueY = truth(xs[best]), err = observed - trueY;
         return (DE ? "Beobachtung " : "Observation ") + (best + 1) + " / " + N + ": x = " + xs[best].toFixed(2) + ", gemessen " + observed.toFixed(2) + ", Wahrheit " + trueY.toFixed(2) + ". Fehler " + (err > 0 ? "+" : "") + err.toFixed(2) + " (σ = " + sigma.toFixed(1) + ").";
       });
@@ -296,7 +296,7 @@
         if (!errorSize) return "";
         var pad = 34, xMin = -4, xMax = 4, bins = 20, binW = (xMax - xMin) / bins;
         var bin = Math.floor((x - pad) / (errorSize.w - pad * 2) * bins);
-        if (bin < 0 || bin >= bins) return "";
+        if (bin < 0 || bin >= bins) return DE ? "Fehlerverteilung: Balken zählen Beobachtungen pro Fehlerbereich; die Glockenkurve zeigt die Erwartung." : "Error distribution: bars count observations per error bin; the bell curve shows the expectation.";
         var counts = new Array(bins).fill(0);
         for (var i = 0; i < N; i++) {
           var e = zs[i] * sigma;

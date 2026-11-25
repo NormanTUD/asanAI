@@ -746,7 +746,7 @@
           var d = Math.hypot(hit.x - x, hit.y - y);
           if (d < bestD) { bestD = d; best = hit; }
         });
-        if (!best) return "";
+        if (!best) return DE ? "Wortrichtungen auf der Einheitskugel: Fahre über einen Punkt, um das Wort und seine Nachbarn zu sehen." : "Word directions on the unit sphere: hover a point to see the word and its neighbours.";
         return word(best.i) + (best.i === selected ? (DE ? " · ausgewählt. " : " · selected. ") : ". ") +
           (DE ? "Richtung auf der Einheitskugel. Klicken wählt das Wort; die Winkel zu den Nachbarn stehen im Plot." : "Direction on the unit sphere. Click to choose the word; the angles to its neighbours are shown in the plot.");
       });

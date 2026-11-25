@@ -469,7 +469,7 @@
     });
     core.canvasTip(canvas, function (x, y) {
       var i = barAt(x, y);
-      if (i < 0 || !size) return "";
+      if (i < 0 || !size) return DE ? "Balken sind Modellwahrscheinlichkeiten. Fahre über einen Balken für Ziel, Loss und Gradient; ziehen setzt die Wahrscheinlichkeit." : "Bars are model probabilities. Hover a bar for target, loss, and gradient; drag to set its probability.";
       var p = softmax(logits);
       var isTarget = i === target;
       var loss = lossOf(p);
