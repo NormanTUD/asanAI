@@ -61,7 +61,7 @@
     var tip = document.createElement("div");
     tip.className = "ls-eoy-tip ls-canvas-tip";
     tip.hidden = true;
-    (canvas.parentNode || document.body).appendChild(tip);
+    document.body.appendChild(tip);
     canvas.setAttribute("data-ls-canvas-tip", "1");
     function hide() { if (!tip.hidden) tip.hidden = true; }
     function place(x, y) {

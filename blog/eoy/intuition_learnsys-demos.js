@@ -45,12 +45,6 @@
       var text = node.getAttribute("data-tip");
       if (!text) text = node.getAttribute(api.lang === "de" ? "data-tip-de" : "data-tip-en");
       if (!text) text = node.getAttribute("aria-label") || node.getAttribute("title") || "";
-      if (!text && node.matches && node.matches("canvas, svg, [role=img]")) {
-        text = api.tip(
-          "Interaktive Grafik. Fahre über die Elemente, um Werte und Erklärungen zu sehen.",
-          "Interactive graphic. Hover the elements to see values and explanations."
-        );
-      }
       if (!text && node.matches && node.matches("button, [role=button]")) text = node.textContent.trim();
       if (!text && node.matches && node.matches("output")) {
         text = api.tip("Aktueller Wert", "Current value");
