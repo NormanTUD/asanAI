@@ -2288,7 +2288,7 @@
 
   var inductionStep = {
     kicker: DE ? "In-Context" : "In-context",
-    title: DE ? "Induktionsköpfe" : "Induction heads",
+    title: DE ? "Arten von Attention-Heads" : "Types of Attention Heads",
     substeps: [inductionSequence, inductionHeads, inductionEmergence, headConcatSubstep]
   };
 
