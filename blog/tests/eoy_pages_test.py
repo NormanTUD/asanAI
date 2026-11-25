@@ -337,7 +337,7 @@ def walk_single(driver, results, page, lang):
         return
     steps = 0
     s = state(driver)
-    while s["canNext"] and steps < 40:
+    while s["canNext"] and steps < 120:
         try:
             driver.execute_script(
                 "var b=document.getElementById('ls-quick-next');"
@@ -367,7 +367,7 @@ def walk_single(driver, results, page, lang):
     )
 
     back_steps = 0
-    while s["canPrev"] and back_steps < 40:
+    while s["canPrev"] and back_steps < 120:
         try:
             driver.execute_script(
                 "var b=document.getElementById('ls-quick-prev');"
