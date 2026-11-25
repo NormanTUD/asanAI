@@ -93,8 +93,8 @@
         hint: L("Zieh an der Dissoziation. Weiter löst die Dissoziation auf: Der Tod beendet die Grenzen, nicht die Wirbel.", "Drag dissociation. Next dissolves the dissociation: death ends the boundaries, not the vortices."),
         status: L("Drei Wirbel, stark dissoziiert. Weiter löst die Dissoziation auf; der Tod beendet die Grenzen.", "Three vortices, strongly dissociated. Next dissolves the dissociation; death ends the boundaries."),
         caption: [
-          L("Der große Ozean ist das universelle Bewusstsein. Jeder Wirbel ist ein Lebewesen, ein Alter. Von innen erlebt sich der Wirbel als getrennt, individuell, mit klaren Grenzen. Doch von außen betrachtet ist er nur eine lokale Bewegungsstruktur des einen Ozeans.", "The great ocean is universal consciousness. Every vortex is a living being, an alter. From inside, the vortex experiences itself as separate, individual, with clear boundaries. From outside, it is only a local movement structure of the one ocean."),
-          L("Du bist nicht IM Bewusstsein, wie ein Fisch im Wasser. Du BIST das Bewusstsein, geformt zu einem Wirbel. Wenn der Wirbel sich auflöst, wirst du nicht „vernichtet“; du warst nie ein separates Ding.", "You are not IN consciousness, like a fish in water. You ARE consciousness, shaped into a vortex. When the vortex dissolves, you are not “destroyed”; you were never a separate thing.")
+          L("Der große Ozean ist das universelle Bewusstsein. Jeder Wirbel ist ein Lebewesen – ein Alter. Von innen erlebt sich der Wirbel als getrennt, individuell, mit klaren Grenzen. Doch von außen betrachtet ist er nur eine lokale Bewegungsstruktur des einen Ozeans.", "The great ocean is universal consciousness. Every vortex is a living being, an alter. From inside, the vortex experiences itself as separate, individual, with clear boundaries. From outside, it is only a local movement structure of the one ocean."),
+          L("Du bist nicht IM Bewusstsein, wie ein Fisch im Wasser. Du BIST das Bewusstsein, geformt zu einem Wirbel. Wenn der Wirbel sich auflöst, wirst du nicht „vernichtet“ – du warst nie ein separates Ding.", "You are not IN consciousness, like a fish in water. You ARE consciousness, shaped into a vortex. When the vortex dissolves, you are not “destroyed”; you were never a separate thing.")
         ]
       },
       {
@@ -572,7 +572,7 @@
       ctx.globalAlpha = 1;
       ctx.restore();
       var strong = on ? "#7a7400" : "#004b6f";
-      ctx.fillStyle = strong; ctx.font = font(9.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillStyle = strong; ctx.font = font(10.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
       var line1 = kast.count === 1 ? L("das eine", "the one") : L("persönliches", "personal");
       var line2 = kast.count === 1 ? L("Bewusstsein", "consciousness") : L("Bewusstsein " + String.fromCharCode(65 + c.i), "consciousness " + String.fromCharCode(65 + c.i));
       ctx.fillText(line1, c.x, c.y + vR + 8);
@@ -681,10 +681,10 @@
       ctx.fillText("E", x + 15, y + ch / 2 + 0.5);
       ctx.textAlign = "left";
       ctx.fillStyle = on ? "#00384f" : "rgba(0,75,111,.42)";
-      ctx.font = font(11.5, 700);
+      ctx.font = font(12, 700);
       ctx.fillText(e.label, x + 28, y + ch * 0.40);
       ctx.fillStyle = on ? "#5a7280" : "rgba(0,75,111,.30)";
-      ctx.font = font(9, 600);
+      ctx.font = font(10, 600);
       ctx.fillText(L(e.subDe, e.subEn), x + 28, y + ch * 0.67);
       if (on) {
         dot(x + cw - 12, y + 12, 2.5, e.color);
@@ -745,7 +745,7 @@
         ctx.fill();
         ctx.strokeStyle = "rgba(0,146,153,.42)";
         ctx.lineWidth = 1; ctx.stroke();
-        ctx.fillStyle = "#00384f"; ctx.font = font(8.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillStyle = "#00384f"; ctx.font = font(9.5, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText("token " + (i + 1), 0, -r * 0.34 + i * r * 0.34);
       }
       ctx.restore();
