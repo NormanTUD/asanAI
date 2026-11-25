@@ -2196,12 +2196,12 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     results.check(tag, "calibration test shows confidence and no source", "91" in boundary["text"] and ("keine" in boundary["text"] or "none" in boundary["text"]), boundary["text"][:200])
     page.keyboard.press("ArrowRight")
     page.wait_for_timeout(150)
-    ctx = page.evaluate("() => ({ step: document.querySelector('.ls-ll-step')?.textContent || '', cases: document.querySelectorAll('.ls-ll-case').length, text: document.querySelector('.ls-ll-cases')?.innerText || '', practice: document.querySelectorAll('.ls-ll-practice span').length, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
-    results.check(tag, "next opens the context test", "4 / 4" in ctx["step"] and ctx["cases"] == 3, str(ctx)[:220])
+    ctx = page.evaluate("() => ({ step: document.querySelector('.ls-ll-step')?.textContent || '', marks: document.querySelectorAll('.ls-ll-mark').length, text: document.querySelector('.ls-ll-ctxplot')?.innerText || '', practice: document.querySelectorAll('.ls-ll-practice span').length, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
+    results.check(tag, "next opens the context test", "4 / 4" in ctx["step"] and ctx["marks"] == 3, str(ctx)[:220])
     results.check(tag, "context test marks the middle answer as wrong", "2025" in ctx["text"] and "2027" in ctx["text"], ctx["text"][:220])
     results.check(tag, "context test keeps the practical checklist", ctx["practice"] == 3, str(ctx)[:220])
     results.check(tag, "risk/limit/society page has no overflow", ctx["overflow"] <= 2, str(ctx["overflow"]))
-    page.evaluate("() => LearnSys.go(0, 0, 2)")
+    page.evaluate("() => LearnSys.next()")
     page.wait_for_timeout(700)
     chain = page.evaluate(
         r"""
