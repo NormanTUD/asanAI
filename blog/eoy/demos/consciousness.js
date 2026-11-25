@@ -1250,6 +1250,14 @@
       if (active === 3 && kastNextAction()) return true;
       if (active === 4 && fourNextAction()) return true;
       if (active === 5 && mystNextAction()) return true;
+      if (active === 2 && pred.priorTarget !== null) { setTheory(3); return true; }
+      if (active === 3 && kast.dissolving) { setTheory(4); return true; }
+      var qa = THEORIES[active].qa || [];
+      if (qaOpen < qa.length - 1) {
+        qaOpen++;
+        renderChrome();
+        return true;
+      }
       if (active < THEORIES.length - 1) { setTheory(active + 1); return true; }
       return false;
     }
