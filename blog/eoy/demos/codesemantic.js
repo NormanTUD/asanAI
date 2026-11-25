@@ -163,7 +163,13 @@
           hit = h; break;
         }
       }
-      if (!hit) { tipEl.classList.remove("is-on"); return; }
+      if (!hit) {
+        tipEl.textContent = DE ? "Karten links, Embedding-Raum rechts: Fahre über einen Punkt oder eine Karte." : "Cards on the left, embedding space on the right: hover a point or a card.";
+        tipEl.classList.add("is-on");
+        tipEl.style.left = Math.max(8, Math.min(x + 14, size.w - 310)) + "px";
+        tipEl.style.top = Math.max(8, Math.min(y + 14, size.h - 84)) + "px";
+        return;
+      }
       tipEl.textContent = hit.text;
       tipEl.classList.add("is-on");
       var left = Math.max(8, Math.min(x + 14, size.w - 310));

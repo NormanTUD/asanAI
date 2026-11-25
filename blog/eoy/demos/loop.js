@@ -1110,7 +1110,16 @@
         var d = Math.min(Math.hypot(x - pt.sx, y - pt.sy), Math.hypot(x - pt.px, y - pt.py));
         if (d < bd) { bd = d; best = pt; }
       });
-      if (!best) { hideLandTip(); return; }
+      if (!best) {
+        landTip.innerHTML = '<b>' + (DE ? "3D-Landschaft" : "3D landscape") + '</b> · ' + (DE ? "Höhe ist Wahrscheinlichkeit; ziehen dreht, klicken wählt." : "height is probability; drag to rotate, click to choose.");
+        landTip.hidden = false;
+        var lw0 = landSize ? landSize.w : landEl.clientWidth;
+        var lh0 = landSize ? landSize.h : landEl.clientHeight;
+        var tw0 = landTip.offsetWidth, th0 = landTip.offsetHeight;
+        landTip.style.left = Math.max(6, Math.min(lw0 - tw0 - 6, x + 12)) + "px";
+        landTip.style.top = Math.max(6, Math.min(lh0 - th0 - 6, y - th0 - 10)) + "px";
+        return;
+      }
       var pct = best.p == null ? "—" : (best.p * 100).toFixed(best.p * 100 < 1 ? 1 : 0) + "%";
       var z = best.p == null ? "—" : (-best.p).toFixed(2).replace("-", "−");
       landTip.innerHTML = '<b>' + api.esc(best.t) + '</b> · p = ' + pct +

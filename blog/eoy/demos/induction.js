@@ -1359,7 +1359,16 @@
         var h = hoverHits[i];
         if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) { hit = h; break; }
       }
-      if (!hit) { tipEl.classList.remove("is-on"); return; }
+      if (!hit) {
+        tipEl.textContent = mode === "heads"
+          ? (DE ? "Vier Attention-Head-Typen: Fahre über eine Karte; klicken zeigt ihre Query/Key/Value-Regel." : "Four attention-head types: hover a card; click to show its query/key/value rule.")
+          : (DE ? "Fahre über ein Element der Grafik für Details; klicken zeigt die zugehörige Zeile." : "Hover an element of the graphic for details; click to show its row.");
+        tipEl.classList.add("is-on");
+        tipEl.style.left = Math.max(8, Math.min(x + 14, W - 270)) + "px";
+        var tipH = tipEl.offsetHeight || 0;
+        tipEl.style.top = Math.max(8, Math.min(y + 14, H - tipH - 8)) + "px";
+        return;
+      }
       tipEl.textContent = hit.text;
       tipEl.classList.add("is-on");
       var left = Math.max(8, Math.min(x + 14, W - 270));

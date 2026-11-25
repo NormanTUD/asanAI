@@ -27,6 +27,7 @@
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0, reserveIdle = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
     var dimMix = 0, dimTarget = 0, dimAnim = null, stateApplied = false;
+    var entryArithmetic = null, lastAppliedArithmetic = null;
     var VIEW_PRESETS = [
       { yaw: -0.55, pitch: 0.78, zoom: 1 },
       { yaw: 0.00, pitch: 1.08, zoom: 1 },
@@ -998,7 +999,13 @@
       }
       if (s.selected) st.selected = s.selected;
       if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
-      if (s.arithmetic !== undefined) st.arithmetic = s.arithmetic;
+      if (s.arithmetic !== undefined) {
+        if (s.arithmetic !== lastAppliedArithmetic) {
+          entryArithmetic = s.arithmetic;
+          lastAppliedArithmetic = s.arithmetic;
+        }
+        st.arithmetic = s.arithmetic;
+      }
       if (st.dim !== 2 && st.arithmetic) {
         var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
         if (curEx && curEx.only3d) st.arithmetic = null;
@@ -1096,7 +1103,7 @@
       }
       var list = examplesForDim();
       var idx = currentExampleIndex();
-      if (idx <= 0) return false;
+      if (idx <= 0 || st.arithmetic === entryArithmetic) return false;
       st.arithmetic = list[idx - 1].id;
       resetDirectionView();
       syncControls();
@@ -1378,7 +1385,7 @@
         if (st.mode === "temperature") return currentPairIndex() > 0;
         if (st.mode !== "space" || st.dim < 1) return false;
         if (st.dim === 2 && st.vectorMode) return true;
-        return currentExampleIndex() > 0;
+        return currentExampleIndex() > 0 && st.arithmetic !== entryArithmetic;
       },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
       resume: function () { ensureLoop(); },

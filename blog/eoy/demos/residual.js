@@ -911,7 +911,7 @@
       draw();
     });
     core.canvasTip(canvas, function (x, y) {
-      if (phase !== "stream") return "";
+      if (phase !== "stream") return DE ? "Notizbuch: Jede Schicht liest den aktuellen Stream und schreibt ihre Beobachtung dazu. Weiter zeigt die Updates." : "Notebook: every layer reads the current stream and writes its observation. Next shows the updates.";
       for (var i = 0; i < barHits.length; i++) {
         var h = barHits[i];
         if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {

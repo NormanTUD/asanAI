@@ -113,6 +113,7 @@
   var root = null;
   var cfg = null;
   var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0, substep: 0, edit: false };
+  var lastNav = "";
   var lastNextAt = 0, motionSpeedTimer = 0;
   function accelerateMotion() {
     var now = performance.now();
@@ -2880,6 +2881,7 @@
     });
   }
   function go(day, step, substep) {
+    lastNav = "";
     day = Number(day);
     step = Number(step);
     if (!isFinite(day)) day = state.day;
@@ -2899,8 +2901,7 @@
     var demoChanged = oldDemo !== d.demo;
     var stepChanged = oldStep !== state.step;
     if (dayChanged || stepChanged) {
-      var remembered = rememberedSubstep(d, state.step);
-      state.substep = remembered == null ? 0 : remembered;
+      state.substep = 0;
     }
     if (typeof substep === "number" && isFinite(substep)) {
       var viewBase = stepAt(d, state.step);
@@ -2944,6 +2945,8 @@
     navHintDismissed = true;
     renderNavHint();
     accelerateMotion();
+    var forcePage = lastNav === "page-prev";
+    lastNav = "";
     // Single-entry eoy pages only walk their own substeps; never cross into
     // another step or entry, even if a layout overlay says otherwise.
     if (cfg.eoySingle) {
@@ -2953,9 +2956,10 @@
         if (typeof demo.finish === "function") demo.finish();
         return;
       }
-      if (demo && typeof demo.next === "function" && demo.next()) { updateBottomNav(); return; }
+      if (!forcePage && demo && typeof demo.next === "function" && demo.next()) { lastNav = "demo-next"; updateBottomNav(); return; }
       if (singleNext && singleNext.substeps && state.substep < singleNext.substeps.length - 1) {
         state.substep++;
+        lastNav = "page-next";
         rememberSubstep();
         cueSuppressUntil = performance.now() + 500;
         renderSubstep(1);
@@ -2968,11 +2972,12 @@
       if (typeof demo.finish === "function") demo.finish();
       return;
     }
-    if (!cfg.eoySingle && demo && typeof demo.next === "function" && demo.next()) return;
+    if (!forcePage && !cfg.eoySingle && demo && typeof demo.next === "function" && demo.next()) { lastNav = "demo-next"; return; }
     var d = activeDay();
     var base = activeStep();
     if (base && base.substeps && state.substep < base.substeps.length - 1) {
       state.substep++;
+      lastNav = "page-next";
       rememberSubstep();
       cueSuppressUntil = performance.now() + 500;
       renderSubstep(1);
@@ -2981,12 +2986,14 @@
     }
     if (state.step < visibleCount(d) - 1) {
       go(state.day, state.step + 1);
+      lastNav = "page-next";
       return;
     }
     var list = cfg.days;
     var pos = list.indexOf(d);
     if (pos >= 0 && pos < list.length - 1) {
       go(pos + 1, 0);
+      lastNav = "page-next";
       return;
     }
   }
@@ -2997,11 +3004,14 @@
   function prev() {
     navHintDismissed = true;
     renderNavHint();
+    var forcePage = lastNav === "page-next";
+    lastNav = "";
     if (cfg.eoySingle) {
       var singlePrev = activeStep();
-      if (demo && typeof demo.prev === "function" && demo.prev()) { updateBottomNav(); return; }
+      if (!forcePage && demo && typeof demo.prev === "function" && demo.prev()) { lastNav = "demo-prev"; updateBottomNav(); return; }
       if (singlePrev && singlePrev.substeps && state.substep > 0) {
         state.substep--;
+        lastNav = "page-prev";
         rememberSubstep();
         cueSuppressUntil = performance.now() + 500;
         renderSubstep(-1);
@@ -3009,11 +3019,12 @@
       }
       return;
     }
-    if (!cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) return;
+    if (!forcePage && !cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) { lastNav = "demo-prev"; return; }
     var d = activeDay();
     var base = activeStep();
     if (base && base.substeps && state.substep > 0) {
       state.substep--;
+      lastNav = "page-prev";
       rememberSubstep();
       cueSuppressUntil = performance.now() + 500;
       renderSubstep(-1);
@@ -3024,6 +3035,7 @@
       var prevStep = state.step - 1;
       var rememberedPrev = rememberedSubstep(d, prevStep);
       go(state.day, prevStep, rememberedPrev == null ? lastSubstepFor(d, prevStep) : rememberedPrev);
+      lastNav = "page-prev";
       return;
     }
     var list = cfg.days;
@@ -3033,6 +3045,7 @@
       var lastStep = visibleCount(p) - 1;
       var rememberedDay = rememberedSubstep(p, lastStep);
       go(pos - 1, lastStep, rememberedDay == null ? lastSubstepFor(p, lastStep) : rememberedDay);
+      lastNav = "page-prev";
       return;
     }
   }
