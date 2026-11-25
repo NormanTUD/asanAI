@@ -214,6 +214,7 @@
           vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
           size: 0.7 + Math.random() * 1.1,
           alpha: 0.22 + Math.random() * 0.5,
+          free: i % 3 === 0,
           trail: []
         });
       }
@@ -653,18 +654,32 @@
       if (!kastParticles.length || kastPW !== w || kastPH !== h) seedKastParticles(w, h);
       kastParticles.forEach(function (p, pi) {
         var oceanDrift = 0.002 + (1 - diss) * 0.004;
-        p.vx += Math.sin(p.y * 0.012 + t * 0.7) * oceanDrift;
-        p.vy += Math.cos(p.x * 0.014 + t * 0.6) * oceanDrift;
-        for (var ci = 0; ci < centers.length; ci++) {
-          var dx = p.x - centers[ci].x, dy = p.y - centers[ci].y;
-          var dist = Math.hypot(dx, dy) || 1;
-          var reach = 80 + diss * 280;
-          if (dist < reach) {
-            var falloff = 1 - dist / reach;
-            var swirl = falloff * diss * 0.82;
-            var inward = falloff * diss * 0.22;
-            p.vx += (-dy / dist) * swirl - (dx / dist) * inward;
-            p.vy += (dx / dist) * swirl - (dy / dist) * inward;
+        if (p.free) {
+          p.vx += Math.sin(p.y * 0.012 + t * 0.7) * oceanDrift * 1.8;
+          p.vy += Math.cos(p.x * 0.014 + t * 0.6) * oceanDrift * 1.8;
+          for (var fi = 0; fi < centers.length; fi++) {
+            var fdx = p.x - centers[fi].x, fdy = p.y - centers[fi].y;
+            var fdist = Math.hypot(fdx, fdy) || 1;
+            if (fdist < 120) {
+              var push = (1 - fdist / 120) * 0.035;
+              p.vx += (fdx / fdist) * push;
+              p.vy += (fdy / fdist) * push;
+            }
+          }
+        } else {
+          p.vx += Math.sin(p.y * 0.012 + t * 0.7) * oceanDrift;
+          p.vy += Math.cos(p.x * 0.014 + t * 0.6) * oceanDrift;
+          for (var ci = 0; ci < centers.length; ci++) {
+            var dx = p.x - centers[ci].x, dy = p.y - centers[ci].y;
+            var dist = Math.hypot(dx, dy) || 1;
+            var reach = 80 + diss * 280;
+            if (dist < reach) {
+              var falloff = 1 - dist / reach;
+              var swirl = falloff * diss * 0.82;
+              var inward = falloff * diss * 0.22;
+              p.vx += (-dy / dist) * swirl - (dx / dist) * inward;
+              p.vy += (dx / dist) * swirl - (dy / dist) * inward;
+            }
           }
         }
         p.vx *= 0.985; p.vy *= 0.985;
