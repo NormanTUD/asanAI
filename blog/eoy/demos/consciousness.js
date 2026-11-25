@@ -74,12 +74,12 @@
         key: "predictive", tone: "sky",
         tag: "Vorhersage · freie Energie",
         title: "Predictive Processing",
-        lead: L("Das Gehirn sagt Sinnesdaten voraus und korrigiert den Fehler; Wahrnehmung ist kontrollierte Halluzination.", "The brain predicts sensory input and corrects the error; perception is controlled hallucination."),
+        lead: L("Die Predictive-Processing-Theorie sagt, dass das Gehirn dauerhaft ein Modell baut, das vorhersagt, welche Reize als Nächstes über die Sinne ankommen. Es versucht, den Vorhersagefehler zu reduzieren, also seine Vorhersagen zu verbessern.", "Predictive processing says the brain continuously builds a model that predicts which signals will arrive next through the senses. It tries to reduce the prediction error, making its predictions better."),
         body: [
-          L("Das Gehirn sagt Sinnesdaten voraus und korrigiert den Fehler. Präzision entscheidet, ob Vorhersage oder Evidenz dominiert.", "The brain predicts sensory input and corrects the error. Precision decides whether prediction or evidence dominates.")
+          L("Das Gehirn versucht ständig vorherzusagen, was als Nächstes über die Sinne hereinkommt. Trifft die Vorhersage daneben, entsteht ein Vorhersagefehler. Diesen Fehler kann es auf zwei Wegen verkleinern: das innere Modell anpassen oder handeln, damit der erwartete Reiz wirklich eintrifft (Active Inference).", "The brain continuously tries to predict what will arrive next through the senses. When the prediction misses, a prediction error arises. It can reduce that error in two ways: update the internal model, or act so that the expected signal actually arrives (active inference)."),
+          L("Präzision legt fest, wie stark es dabei der aktuellen Sinnesinformation oder seiner bisherigen Erwartung vertraut. Ist die Erwartung sehr stark, sieht man eher, was das Modell erwartet; Wahrnehmung wird zur kontrollierten Halluzination.", "Precision sets how strongly the system trusts current sensory information versus its existing expectation. When the expectation is very strong, you see more of what the model expects; perception becomes controlled hallucination.")
         ],
         qa: [
-          { q: L("Was ist Predictive Processing?", "What is predictive processing?"), a: L("Das Gehirn sagt Sinnesdaten voraus und korrigiert den Fehler.", "The brain predicts sensory input and corrects the error.") },
           { q: L("Was ist Präzision?", "What is precision?"), a: L("Wie stark das System Vorhersage oder Eingang vertraut.", "How strongly the system trusts prediction or input.") },
           { q: L("Warum kontrollierte Halluzination?", "Why controlled hallucination?"), a: L("Bei hoher Präzision dominiert die Vorhersage; der Eingang korrigiert kaum.", "At high precision the prediction dominates; input barely corrects it.") },
           { q: L("Was fehlt LLMs?", "What do LLMs lack?"), a: L("Ein sensomotorischer Körper und eine Handlungsschleife; sie sagen Text voraus.", "A sensorimotor body and an action loop; they predict text.") },

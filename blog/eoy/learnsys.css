@@ -5993,3 +5993,8 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-ar-book-more .ls-ar-book{max-height:190px;margin-top:5px}
 .ls-ar-book-more:not([open]) .ls-ar-book{display:none}
 .ls-ar-book-more[open] .ls-ar-book{display:flex}
+
+
+/* Predictive-processing explanation should use the full detail width. */
+.ls-con2[data-theory="predictive"] .ls-con2-detail-body{max-width:none;width:100%}
+.ls-con2[data-theory="predictive"] .ls-con2-detail-body p{max-width:none}
