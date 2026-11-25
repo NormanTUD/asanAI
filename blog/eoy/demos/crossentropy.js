@@ -467,6 +467,21 @@
         canvas.style.cursor = barAt(x, y) >= 0 ? "ns-resize" : "default";
       }
     });
+    core.canvasTip(canvas, function (x, y) {
+      var i = barAt(x, y);
+      if (i < 0 || !size) return "";
+      var p = softmax(logits);
+      var isTarget = i === target;
+      var loss = lossOf(p);
+      var grad = gradients(p)[i];
+      return DE
+        ? tokens[i] + ": Modellwahrscheinlichkeit " + (p[i] * 100).toFixed(1) + "%. " +
+          (isTarget ? "Ziel-Token; Loss = " + loss.toFixed(3) + "." : "Nicht das Ziel; Loss = " + loss.toFixed(3) + ".") +
+          " Gradient " + grad.toFixed(2) + ". Ziehen setzt diese Wahrscheinlichkeit; der Rest wird verteilt."
+        : tokens[i] + ": model probability " + (p[i] * 100).toFixed(1) + "%. " +
+          (isTarget ? "Target token; loss = " + loss.toFixed(3) + "." : "Not the target; loss = " + loss.toFixed(3) + ".") +
+          " Gradient " + grad.toFixed(2) + ". Drag to set this probability; the rest is redistributed.";
+    });
     canvas.addEventListener("pointerup", endBarDrag);
     canvas.addEventListener("pointercancel", endBarDrag);
     trainBtn.addEventListener("click", function () { cancelBatch(false); trainStep(); });

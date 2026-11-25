@@ -118,6 +118,20 @@
       chips.querySelectorAll(".ls-chip").forEach(function (x, i) { x.classList.toggle("is-on", i === idx); });
       return true;
     }
+    core.canvasTip(canvas, function (px, py) {
+      if (!size) return "";
+      var pad = 34, x0 = pad, x1 = size.w - pad, y0 = size.h - pad, y1 = pad;
+      if (px < x0 - 8 || px > x1 + 8 || py < y1 - 8 || py > y0 + 8) return "";
+      var x = clamp(-3 + (px - x0) / (x1 - x0) * 6, -3, 3);
+      var fn = fns.filter(function (item) { return item.id === active; })[0] || fns[0];
+      var value = f(active, x);
+      var slope = (f(active, x + 0.01) - f(active, x - 0.01)) / 0.02;
+      var name = fn.label;
+      var zero = Math.abs(x) < 0.04 ? (DE ? " · hier liegt der Nullpunkt." : " · this is the zero crossing.") : "";
+      return DE
+        ? name + " bei x = " + x.toFixed(2) + ": f(x) = " + value.toFixed(3) + ". Steigung ≈ " + slope.toFixed(2) + zero
+        : name + " at x = " + x.toFixed(2) + ": f(x) = " + value.toFixed(3) + ". Slope ≈ " + slope.toFixed(2) + zero;
+    });
     window.addEventListener("resize", resize);
     resize();
     return {

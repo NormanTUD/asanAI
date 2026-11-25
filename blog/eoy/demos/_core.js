@@ -56,6 +56,44 @@
     ["cold", "lukewarm"]
   ];
 
+  function canvasTip(canvas, provider) {
+    if (!canvas || typeof provider !== "function") return null;
+    var tip = document.createElement("div");
+    tip.className = "ls-canvas-tip";
+    tip.hidden = true;
+    (canvas.parentNode || document.body).appendChild(tip);
+    canvas.setAttribute("data-ls-canvas-tip", "1");
+    function hide() { if (!tip.hidden) tip.hidden = true; }
+    function place(x, y) {
+      var w = tip.offsetWidth || 0, h = tip.offsetHeight || 0;
+      var left = x + 14, top = y + 14;
+      if (left + w > window.innerWidth - 8) left = x - w - 14;
+      if (top + h > window.innerHeight - 8) top = y - h - 14;
+      tip.style.left = Math.max(8, left) + "px";
+      tip.style.top = Math.max(8, top) + "px";
+    }
+    function move(e) {
+      var r = canvas.getBoundingClientRect();
+      var text = provider(e.clientX - r.left, e.clientY - r.top, e);
+      if (!text) { hide(); return; }
+      if (tip.textContent !== text) tip.textContent = text;
+      tip.hidden = false;
+      place(e.clientX, e.clientY);
+    }
+    canvas.addEventListener("pointermove", move, { passive: true });
+    canvas.addEventListener("pointerleave", hide);
+    canvas.addEventListener("pointerdown", hide);
+    return {
+      hide: hide,
+      destroy: function () {
+        canvas.removeEventListener("pointermove", move);
+        canvas.removeEventListener("pointerleave", hide);
+        canvas.removeEventListener("pointerdown", hide);
+        if (tip.parentNode) tip.parentNode.removeChild(tip);
+      }
+    };
+  }
+
   function esc(s) { return String(s == null ? "" : s); }
   function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -65,5 +103,5 @@
   var scenes = {};
   function register(name, factory) { if (typeof name === "string" && typeof factory === "function") scenes[name] = factory; }
   function get(name) { return scenes[name] || null; }
-  window.LearnSysDemoCore = { SHARED: SHARED, TEMP: TEMP, WORDS: WORDS, WORD_IDS: WORD_IDS, WORD_IDS_3D: WORD_IDS_3D, EXAMPLES: EXAMPLES, PAIRS: PAIRS, esc: esc, clamp: clamp, lerp: lerp, ease: ease, register: register, get: get, scenes: scenes };
+  window.LearnSysDemoCore = { SHARED: SHARED, TEMP: TEMP, WORDS: WORDS, WORD_IDS: WORD_IDS, WORD_IDS_3D: WORD_IDS_3D, EXAMPLES: EXAMPLES, PAIRS: PAIRS, esc: esc, clamp: clamp, lerp: lerp, ease: ease, canvasTip: canvasTip, register: register, get: get, scenes: scenes };
 })();

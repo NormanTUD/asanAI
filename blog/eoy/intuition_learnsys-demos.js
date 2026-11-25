@@ -81,7 +81,7 @@
         node = e.target.closest("canvas, svg, [role=img], button, [role=button], input, select, output");
       }
       if (!node || !host.contains(node)) return null;
-      if (node.closest(".ls-rope-scene,.ls-bs-residual,.ls-wm-scene,.ls-ind-scene")) return null;
+      if (node.closest("[data-ls-canvas-tip],.ls-rope-scene,.ls-bs-residual,.ls-wm-scene,.ls-ind-scene")) return null;
       return node;
     }
     function tipPlace(x, y) {

@@ -85,7 +85,7 @@
     formulaEl.setAttribute("data-tip", DE ? "Die Formel zeigt r als gewichtete Summe der Values." : "The formula shows r as a weighted sum of the values.");
     readout.setAttribute("data-tip", DE ? "Nennt die aktive Zeile und den stärksten Key." : "Names the active row and the strongest key.");
     var C = api.colors();
-    var graphSize = null, vectorSize = null, graphHits = [];
+    var graphSize = null, vectorSize = null, graphHits = [], vectorHits = [];
     var animRow = null, animFrom = null, animTo = null, animStart = 0, animRaf = 0;
 
     function contextObj() {
@@ -132,6 +132,14 @@
         m.push(maskRow(row, i));
       }
       return m;
+    }
+    function topWeights(row, ts, n) {
+      return row.map(function (wt, j) { return { wt: wt, j: j }; })
+        .sort(function (a, b) { return b.wt - a.wt; })
+        .slice(0, n)
+        .filter(function (x) { return x.wt > 0.005; })
+        .map(function (x) { return Math.round(x.wt * 100) + "% " + tokenLabel(ts[x.j], x.j); })
+        .join(" · ");
     }
     function topKey(row, i) {
       var best = -1, bw = -1;
@@ -329,13 +337,15 @@
       ctx.beginPath(); ctx.moveTo(cx - scale * 1.9, cy); ctx.lineTo(cx + scale * 1.9, cy); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx, cy - scale * 1.15); ctx.lineTo(cx, cy + scale * 1.15); ctx.stroke();
       ctx.globalAlpha = 1;
+      vectorHits = [];
       var sumX = 0, sumY = 0;
       var pts = [];
       ts.forEach(function (tok, j) {
         var e = EMB[tok] || [0, 0];
         var wt = row[j] || 0;
         sumX += e[0] * wt; sumY += e[1] * wt;
-        pts.push({ x: cx + e[0] * scale, y: cy - e[1] * scale, label: tokenLabel(tok, j), wt: wt, j: j });
+        pts.push({ x: cx + e[0] * scale, y: cy - e[1] * scale, label: tokenLabel(tok, j), wt: wt, j: j, ex: e[0], ey: e[1] });
+        vectorHits.push({ x: cx + e[0] * scale, y: cy - e[1] * scale, r: 15, j: j, label: tokenLabel(tok, j), wt: wt });
       });
       var ex = cx + sumX * scale, ey = cy - sumY * scale;
       pts.forEach(function (pt) {
@@ -389,6 +399,7 @@
       ctx.fillStyle = C.petrol;
       ctx.textAlign = "right";
       ctx.fillText("r = Σ w · v", w - 8, 12);
+      vectorHits.push({ x: ex, y: ey, r: 18, rMix: true, cx: sumX, cy: sumY });
       ctx.textAlign = "left";
       vector.setAttribute("aria-label", DE
         ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + tokenLabel(ts[selected], selected) + "; r = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
@@ -398,7 +409,7 @@
       var ts = tokens(), m = matrix();
       var html = '<table><thead><tr><th></th>' + ts.map(function (t, j) { return '<th>' + api.esc(tokenLabel(t, j)) + '</th>'; }).join("") + '</tr></thead><tbody>';
       m.forEach(function (row, i) {
-        html += '<tr data-row="' + i + '"' + (i === selected ? ' class="is-on"' : '') + ' data-tip="' + (DE ? "Zeigt die Gewichte dieser Token-Zeile; klicken wählt sie." : "Shows the weights for this token row; clicking selects it.") + '"><th>' + api.esc(tokenLabel(ts[i], i)) + '</th>';
+        html += '<tr data-row="' + i + '"' + (i === selected ? ' class="is-on"' : '') + ' data-tip="' + api.esc((DE ? "Zeile " : "Row ") + tokenLabel(ts[i], i) + ". " + topWeights(m[i], ts, 3) + (DE ? ". Klicken wählt diese Zeile." : ". Click to select this row.")) + '"><th>' + api.esc(tokenLabel(ts[i], i)) + '</th>';
         row.forEach(function (wt) {
           var pct = Math.round(wt * 100);
           var alpha = Math.min(0.80, 0.10 + wt * 0.95);
@@ -458,6 +469,27 @@
       renderSentences(); renderTable(); renderFormula(); renderReadout();
       drawGraph(); drawVector();
     }
+    core.canvasTip(graph, function (x, y) {
+      var m = matrix(), ts = tokens();
+      for (var i = 0; i < graphHits.length; i++) {
+        var h = graphHits[i];
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
+          return (DE ? "Token " : "Token ") + tokenLabel(ts[h.i], h.i) + ". " + topWeights(m[h.i], ts, 3) + (DE ? ". Klicken zeigt diese Zeile im Graphen." : ". Click to show this row in the graph.");
+        }
+      }
+      return "";
+    });
+    core.canvasTip(vector, function (x, y) {
+      var best = null, bestD = 1e9;
+      for (var i = 0; i < vectorHits.length; i++) {
+        var h = vectorHits[i];
+        var d = Math.hypot(x - h.x, y - h.y);
+        if (d < (h.r || 14) && d < bestD) { best = h; bestD = d; }
+      }
+      if (!best) return "";
+      if (best.rMix) return DE ? "r = gewichtete Summe der Value-Vektoren: (" + best.cx.toFixed(2) + ", " + best.cy.toFixed(2) + ")." : "r = weighted sum of the value vectors: (" + best.cx.toFixed(2) + ", " + best.cy.toFixed(2) + ").";
+      return (DE ? "Token " : "Token ") + best.label + ": " + Math.round(best.wt * 100) + (DE ? "% Gewicht im aktuellen Mix." : "% weight in the current mixture.");
+    });
     graph.addEventListener("pointerup", function (e) {
       var r = graph.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
