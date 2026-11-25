@@ -65,12 +65,6 @@
             '<div class="ls-mi2-spectrum-head"><span>' + L("Other Minds", "Other minds") + '</span><b>' + L("Gleiche Worte, anderes Erleben", "Same words, different experience") + '</b></div>' +
             '<p class="ls-mi2-spectrum-lead">' + L("A und B sehen dieselbe Tomate und sagen beide „rot“. Was A innerlich sieht, könnte B „grün“ nennen.", "A and B see the same tomato and both say “red.” What A sees inwardly could be what B calls “green.”") + '</p>' +
             '<figure class="ls-mi2-spectrum-fig"><img src="inverted_qualia_strawberry.jpg" alt="' + L("Invertierte Qualia: Eine Erdbeere, deren Farben innen anders erlebt werden.", "Inverted qualia: a strawberry whose colours are experienced differently inside.") + '"><figcaption>Was a bee, <a href="https://creativecommons.org/licenses/by-sa/2.5" target="_blank" rel="noopener">CC BY-SA 2.5</a>, via <a href="https://commons.wikimedia.org/wiki/File:Inverted_qualia_of_colour_strawberry.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>; <a href="https://en.wikipedia.org/wiki/Inverted_spectrum" target="_blank" rel="noopener">Inverted spectrum</a>.</figcaption></figure>' +
-            '<div class="ls-mi2-observers">' +
-              '<div class="ls-mi2-observer"><span class="ls-mi2-avatar">A</span><div class="ls-mi2-bubble">' + L("„Das ist rot.“", "“That is red.”") + '</div><div class="ls-mi2-quale is-red" data-mi-quale-a><span>' + L("Rot", "red") + '</span></div></div>' +
-              '<div class="ls-mi2-observer"><span class="ls-mi2-avatar">B</span><div class="ls-mi2-bubble">' + L("„Das ist rot.“", "“That is red.”") + '</div><div class="ls-mi2-quale is-green" data-mi-quale-b><span>' + L("Grün", "green") + '</span></div></div>' +
-            '</div>' +
-            '<p class="ls-mi2-spectrum-note">' + L("Von außen sind Worte und Verhalten identisch; ob die inneren Farben vertauscht sind, ist nicht messbar.", "From outside, words and behaviour are identical; whether the inner colours are swapped cannot be measured.") + '</p>' +
-            '<div class="ls-mi2-spectrum-foot"><button type="button" class="ls-mi2-swap" data-mi-swap data-tip="' + L("Tauscht die inneren Farben, ohne die Worte zu ändern.", "Swaps the inner colours without changing the words.") + '">' + L("Qualia tauschen", "Swap qualia") + '</button><span data-mi-spectrum-status aria-live="polite">' + L("Beide berichten dasselbe. Von außen ist der Unterschied unsichtbar.", "Both report the same. From outside the difference is invisible.") + '</span></div>' +
           '</section>' +
         '</aside>' +
       '</div>' +
@@ -103,23 +97,6 @@
       });
     });
 
-    var swapped = false;
-    var qualeA = el.querySelector("[data-mi-quale-a]");
-    var qualeB = el.querySelector("[data-mi-quale-b]");
-    var status = el.querySelector("[data-mi-spectrum-status]");
-    var swap = el.querySelector("[data-mi-swap]");
-    function renderSpectrum() {
-      if (!qualeA || !qualeB) return;
-      qualeA.className = "ls-mi2-quale " + (swapped ? "is-green" : "is-red");
-      qualeB.className = "ls-mi2-quale " + (swapped ? "is-red" : "is-green");
-      qualeA.querySelector("span").textContent = swapped ? L("Grün", "green") : L("Rot", "red");
-      qualeB.querySelector("span").textContent = swapped ? L("Rot", "red") : L("Grün", "green");
-      if (status) status.textContent = swapped
-        ? L("Jetzt sieht A Grün und B Rot. Die Worte sind gleich geblieben.", "Now A sees green and B sees red. The words stayed the same.")
-        : L("Beide berichten dasselbe. Von außen ist der Unterschied unsichtbar.", "Both report the same. From outside the difference is invisible.");
-    }
-    if (swap) swap.addEventListener("click", function () { swapped = !swapped; renderSpectrum(); });
-    renderSpectrum();
     var qaAnswer = el.querySelector("[data-mi-qa-answer]");
     var qaButtons = Array.prototype.slice.call(el.querySelectorAll("[data-mi-q]"));
     function renderQA() {
