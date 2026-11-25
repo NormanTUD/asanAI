@@ -46,6 +46,13 @@
             '<p class="is-easy"><b>' + L("Leichtes Problem:", "Easy problem:") + '</b> ' + L("Muster erkennen, integrieren, berichten: Mechanismen sind denkbar.", "Discriminate, integrate, report: mechanisms are conceivable.") + '</p>' +
             '<p class="is-hard"><b>' + L("Schweres Problem:", "Hard problem:") + '</b> ' + L("Warum wird Verarbeitung subjektiv erlebt? Wir haben nicht einmal eine Richtung. Chalmers (1995): „Why should physical processing give rise to a rich inner life at all?“", "Why is processing subjectively experienced? We do not even have a direction. Chalmers (1995): “Why should physical processing give rise to a rich inner life at all?”") + ' <a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Originalarbeit (PDF)</a></p>' +
           '</div>' +
+          '<div class="ls-mi2-qa">' +
+        '<div class="ls-mi2-qa-head"><span>' + L("Fragen", "Questions") + '</span><b>' + L("Kurz beantwortet", "Brief answers") + '</b></div>' +
+        '<div class="ls-mi2-qa-questions">' + QA.map(function (item, i) {
+          return '<button type="button" class="ls-mi2-q' + (i === 0 ? " is-on" : "") + '" data-mi-q="' + i + '">' + esc(item.q) + '</button>';
+        }).join("") + '</div>' +
+        '<p class="ls-mi2-qa-answer" data-mi-qa-answer>' + esc(QA[0].a) + '</p>' +
+      '</div>' +
         '</section>' +
         '<aside class="ls-mi2-right">' +
           '<section class="ls-mi2-mary" data-mi-mary data-tip="' + L("Marys Zimmer: Klick zeigt ihr den roten Apfel.", "Mary's room: click to show her the red apple.") + '">' +
@@ -67,13 +74,6 @@
             '<figure class="ls-mi2-spectrum-fig"><img src="inverted_qualia_strawberry.jpg" alt="' + L("Invertierte Qualia: Eine Erdbeere, deren Farben innen anders erlebt werden.", "Inverted qualia: a strawberry whose colours are experienced differently inside.") + '"><figcaption>Was a bee, <a href="https://creativecommons.org/licenses/by-sa/2.5" target="_blank" rel="noopener">CC BY-SA 2.5</a>, via <a href="https://commons.wikimedia.org/wiki/File:Inverted_qualia_of_colour_strawberry.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>; <a href="https://en.wikipedia.org/wiki/Inverted_spectrum" target="_blank" rel="noopener">Inverted spectrum</a>.</figcaption></figure>' +
           '</section>' +
         '</aside>' +
-      '</div>' +
-      '<div class="ls-mi2-qa">' +
-        '<div class="ls-mi2-qa-head"><span>' + L("Fragen", "Questions") + '</span><b>' + L("Kurz beantwortet", "Brief answers") + '</b></div>' +
-        '<div class="ls-mi2-qa-questions">' + QA.map(function (item, i) {
-          return '<button type="button" class="ls-mi2-q' + (i === 0 ? " is-on" : "") + '" data-mi-q="' + i + '">' + esc(item.q) + '</button>';
-        }).join("") + '</div>' +
-        '<p class="ls-mi2-qa-answer" data-mi-qa-answer>' + esc(QA[0].a) + '</p>' +
       '</div>';
     root.appendChild(el);
 
