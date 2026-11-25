@@ -122,7 +122,7 @@
         qa: [
           { q: L("Was sind die vier E's?", "What are the four E's?"), a: L("Embodied, Embedded, Enacted, Extended: Körper, Welt, Handlung, Werkzeug.", "Embodied, Embedded, Enacted, Extended: body, world, action, tool.") },
           { q: L("Warum fehlt KI die Erdung?", "Why does AI lack grounding?"), a: L("Ihr fehlen Körper, geteilte physische Welt und Handlungsschleife; sie lebt nur im Extended-Modus.", "It lacks a body, a shared physical world, and an action loop; it lives only in the extended mode.") },
-          { q: L("Was heißt „heiß“ für Mensch und LLM?", "What does “hot” mean for a human and an LLM?"), a: L("Für uns ein verbranter Finger; für ein LLM nur Tokens in der Nähe von Ofen, Sonne und scharf.", "For us, a burnt finger; for an LLM, just tokens near stove, sun, and spicy.") },
+          { q: L("Was heißt „heiß“ für Mensch und LLM?", "What does “hot” mean for a human and an LLM?"), a: L("Für uns ein verbrannter Finger; für ein LLM nur Tokens in der Nähe von Ofen, Sonne und scharf.", "For us, a burnt finger; for an LLM, just tokens near stove, sun, and spicy.") },
           { q: L("Ist 4E ein Bewusstseinstest?", "Is 4E a test for consciousness?"), a: L("Nein, eine Familie von Ansätzen; sie zeigt, was Erdung verlangt.", "No, a family of approaches; it shows what grounding requires.") },
         ],
         cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
