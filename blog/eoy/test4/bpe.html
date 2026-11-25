@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <title>Test 4 · Der Sparzwang</title>
 <link rel="stylesheet" href="../test/proto.css">
 <link rel="stylesheet" href="../test2/kit.css">
@@ -104,6 +105,11 @@
     </section>
 
     <p class="proto-note" data-de-html="BPE startet mit einzelnen Zeichen und ersetzt vier Mal das gewählte Paar durch ein neues Symbol. Die Tokenzahl zählt Symbole im ganzen Korpus, gewichtet mit der Worthäufigkeit. Der Standard ist der Greedy-Lauf (immer das häufigste Paar). Dein Lauf darf anders wählen. Das neue Wort wird mit deinem Vokabular und mit dem Standard-Vokabular zerlegt, damit du die Entscheidung nicht nur am Trainingskorpus siehst." data-en-html="BPE starts with individual characters and replaces the chosen pair with a new symbol four times. The token count counts symbols across the corpus, weighted by word frequency. The standard is the greedy run (always the most frequent pair). Your run may choose differently. The new word is split with your vocabulary and with the standard vocabulary, so you see the decision beyond the training corpus.">BPE startet mit einzelnen Zeichen und ersetzt vier Mal das gewählte Paar durch ein neues Symbol. Die Tokenzahl zählt Symbole im ganzen Korpus, gewichtet mit der Worthäufigkeit. Der Standard ist der Greedy-Lauf (immer das häufigste Paar). Dein Lauf darf anders wählen. Das neue Wort wird mit deinem Vokabular und mit dem Standard-Vokabular zerlegt, damit du die Entscheidung nicht nur am Trainingskorpus siehst.</p>
+
+    <details class="g-proof" style="--accent: var(--gold)">
+      <summary data-de="Warum ist der häufigste Merge nicht automatisch die beste Wahl?" data-en="Why is the most frequent merge not automatically the best choice?">Warum ist der häufigste Merge nicht automatisch die beste Wahl?</summary>
+      <p data-de-html="Er optimiert die Häufigkeit im <b>aktuellen</b> Korpus, nicht das Endvokabular. Eine andere Reihenfolge kann Budget für Paare ausgeben, die später mehr Wörtern helfen, und sie zerlegt ein neues Wort anders. Die Reihenfolge ist eine Entscheidung über die Zukunft, nicht nur über die vier Wörter von heute." data-en-html="It optimises frequency in the <b>current</b> corpus, not the final vocabulary. A different order can spend budget on pairs that help more words later, and it splits a new word differently. The order is a decision about the future, not only about today's four words.">Er optimiert die Häufigkeit im <b>aktuellen</b> Korpus, nicht das Endvokabular. Eine andere Reihenfolge kann Budget für Paare ausgeben, die später mehr Wörtern helfen, und sie zerlegt ein neues Wort anders. Die Reihenfolge ist eine Entscheidung über die Zukunft, nicht nur über die vier Wörter von heute.</p>
+    </details>
 
     <footer class="proto-foot">
       <span>03 / 03</span>

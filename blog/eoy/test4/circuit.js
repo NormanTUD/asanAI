@@ -2,14 +2,13 @@
   "use strict";
 
   var t = function (de, en) { return window.Proto ? Proto.t(de, en) : de; };
-  var HEAD_NAMES = { prev: "Previous-Token-Head", ind: "Induction-Head" };
 
   var ROUNDS = [
-    { tokens: ["A", "7", "B", "3", "C", "9", "A"], label: "A → ?" },
-    { tokens: ["◆", "●", "▲", "■", "◆"], label: "◆ → ?" },
-    { tokens: ["x", "q", "y", "w", "z", "e", "y"], label: "y → ?" },
-    { tokens: ["1", "4", "2", "8", "1"], label: "1 → ?" },
-    { tokens: ["red", "blue", "green", "yellow", "red"], label: "red → ?" }
+    { tokens: ["A", "7", "B", "3", "C", "9", "A"] },
+    { tokens: ["◆", "●", "▲", "■", "●", "◆"] },
+    { tokens: ["x", "q", "y", "w", "z", "e", "y"] },
+    { tokens: ["1", "4", "2", "8", "4", "1"] },
+    { tokens: ["red", "blue", "green", "yellow", "blue", "red"] }
   ].map(function (r) {
     var toks = r.tokens.slice();
     var query = toks[toks.length - 1];
@@ -24,7 +23,6 @@
     var baseline = prevSource >= 0 && prevSource + 1 < toks.length - 1 ? toks[prevSource + 1] : null;
     return {
       tokens: toks,
-      label: r.label,
       query: query,
       source: source,
       copy: copy,
@@ -66,7 +64,6 @@
     selected: null,
     round: 0,
     ran: false,
-    score: 0,
     ablatePrev: false,
     ablateInd: false,
     builtOnce: false
@@ -79,6 +76,9 @@
     return id === "prev" ? "Previous-Token-Head" : "Induction-Head";
   }
   function roundData() { return ROUNDS[state.round]; }
+  function baselineScore() {
+    return ROUNDS.reduce(function (n, r) { return n + (r.baseline === r.answer ? 1 : 0); }, 0);
+  }
   function isCorrectOrder() {
     return state.slots[0] === "prev" && state.slots[1] === "ind";
   }
@@ -126,17 +126,17 @@
   function renderSequence() {
     var d = roundData();
     var good = state.ran && liveScore() === 5;
-    var bad = state.ran && !good;
     var html = d.tokens.map(function (tok, i) {
       var cls = "ct-token";
       var sub = "";
+      var tokCol = tokenColor(tok);
       if (i === d.tokens.length - 1) {
         cls += " is-query";
         sub = en() ? "query" : "Query";
       }
       if (good && i === d.source) { cls += " is-source"; sub = en() ? "earlier" : "früher"; }
       if (good && i === d.copy) { cls += " is-copy"; sub = en() ? "copied" : "kopiert"; }
-      return '<span class="' + cls + '">' + esc(tok) + (sub ? '<span class="ct-token-sub">' + sub + '</span>' : "") + '</span>';
+      return '<span class="' + cls + '" style="--tok:' + tokCol + '">' + esc(tok) + (sub ? '<span class="ct-token-sub">' + sub + '</span>' : "") + '</span>';
     }).join("");
     var hidden;
     if (!state.ran) {
@@ -158,7 +158,7 @@
       html += '<span class="ct-pred-label">' + (en() ? "expected" : "erwartet") + '</span>';
       html += '<span class="ct-pred-pill is-ghost">' + esc(d.answer) + '</span>';
       html += '<span class="ct-pred-label">' + (en() ? "one layer" : "eine Schicht") + '</span>';
-      html += '<span class="ct-pred-pill is-ghost">' + esc(d.baseline || "—") + '</span>';
+      html += '<span class="ct-pred-pill is-ghost">' + esc(d.baseline || (en() ? "none" : "keine")) + '</span>';
     } else {
       html += '<span class="ct-pred-label">' + (en() ? "circuit" : "Schaltkreis") + '</span>';
       html += '<span class="ct-pred-pill ' + (good ? "is-good" : "is-bad") + '"><b>' + esc(good ? d.answer : (d.baseline || "—")) + '</b> ' + (good ? "✓" : "✕") + '</span>';
@@ -201,7 +201,7 @@
   function renderBaseline() {
     var n = state.ran ? liveScore() : 0;
     baselineEl.innerHTML =
-      '<div class="ct-baseline-row"><b>' + (en() ? "one layer" : "eine Schicht") + '</b><span class="ct-baseline-track"><i style="width:0%"></i></span><span class="ct-baseline-val">0 / 5</span></div>' +
+      '<div class="ct-baseline-row"><b>' + (en() ? "one layer" : "eine Schicht") + '</b><span class="ct-baseline-track"><i style="width:' + (baselineScore() / 5 * 100) + '%"></i></span><span class="ct-baseline-val">' + baselineScore() + ' / 5</span></div>' +
       '<div class="ct-baseline-row is-you"><b>' + (en() ? "your circuit" : "dein Schaltkreis") + '</b><span class="ct-baseline-track"><i style="width:' + (n / 5 * 100) + '%"></i></span><span class="ct-baseline-val">' + n + ' / 5</span></div>';
   }
 
@@ -294,6 +294,13 @@
     renderReadout();
   }
 
+  function tokenColor(tok) {
+    var palette = ["var(--g-sky)", "var(--g-lilac)", "var(--g-green)", "var(--g-gold)", "var(--g-rose)"];
+    var h = 0;
+    for (var i = 0; i < tok.length; i++) h = (h * 31 + tok.charCodeAt(i)) % 9973;
+    return palette[h % palette.length];
+  }
+
   function esc(v) {
     return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
@@ -349,7 +356,6 @@
       return;
     }
     state.ran = true;
-    state.score = liveScore();
     if (isCorrectOrder() && !isAblated()) {
       var first = !state.builtOnce;
       state.builtOnce = true;
@@ -366,7 +372,6 @@
     state.slots = [null, null];
     state.selected = null;
     state.ran = false;
-    state.score = 0;
     state.ablatePrev = false;
     state.ablateInd = false;
     ablPrev.checked = false;
@@ -390,7 +395,6 @@
     state.selected = null;
     state.round = 0;
     state.ran = false;
-    state.score = 0;
     state.ablatePrev = false;
     state.ablateInd = false;
     state.builtOnce = false;

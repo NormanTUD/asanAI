@@ -18,14 +18,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 42px;
-  height: 42px;
-  padding: 0 11px;
+  min-width: 46px;
+  height: 46px;
+  padding: 0 12px;
   border-radius: 11px;
-  border: 1px solid rgba(185, 234, 248, .16);
-  background: linear-gradient(180deg, rgba(22, 40, 48, .9), rgba(9, 20, 25, .9));
+  --tok: var(--g-sky);
+  border: 1px solid color-mix(in srgb, var(--tok) 48%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tok) 16%, rgba(22, 40, 48, .9)), rgba(9, 20, 25, .9));
+  box-shadow: inset 0 0 14px color-mix(in srgb, var(--tok) 10%, transparent);
   color: var(--g-ink);
-  font: 700 14px/1 "JetBrains Mono", ui-monospace, monospace;
+  font: 700 15px/1 "JetBrains Mono", ui-monospace, monospace;
   letter-spacing: -.02em;
   transition: border-color .22s ease, box-shadow .22s ease, background .22s ease, transform .22s var(--ease);
 }
@@ -77,7 +79,7 @@
   top: -7px;
   left: 50%;
   transform: translateX(-50%);
-  font: 700 7px/1 "Open Sans", sans-serif;
+  font: 700 8px/1 "Open Sans", sans-serif;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--g-muted);
@@ -145,7 +147,7 @@
 .ct-round:hover { border-color: rgba(185, 234, 248, .34); transform: translateY(-1px); }
 .ct-round.is-on { border-color: rgba(179, 168, 230, .55); background: rgba(179, 168, 230, .12); }
 .ct-round-top { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-.ct-round-num { font: 700 8px/1 "Open Sans", sans-serif; letter-spacing: .1em; color: var(--g-muted); }
+.ct-round-num { font: 700 9px/1 "Open Sans", sans-serif; letter-spacing: .1em; color: var(--g-muted); }
 .ct-round-dot {
   width: 8px;
   height: 8px;
@@ -187,12 +189,13 @@
 .ct-bench { display: grid; gap: 0; }
 .ct-layer {
   position: relative;
-  border: 1px solid rgba(179, 168, 230, .16);
+  border: 1px solid rgba(179, 168, 230, .28);
   border-radius: 13px;
   background:
-    radial-gradient(80% 140% at 50% 0%, rgba(179, 168, 230, .075), transparent 62%),
+    radial-gradient(80% 140% at 50% 0%, rgba(179, 168, 230, .14), transparent 64%),
     rgba(4, 10, 13, .34);
   padding: 10px;
+  box-shadow: 0 0 26px rgba(179, 168, 230, .055), inset 0 1px 0 rgba(220, 248, 255, .04);
 }
 .ct-layer-head {
   display: flex;

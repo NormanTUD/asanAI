@@ -39,7 +39,6 @@
 
   var start = startWords();
   var startTokens = totalSymbols(start);
-  var startVocab = vocabOf(start).size;
   var greedy = greedyRun(start, MERGES);
   var standard = {
     words: greedy.words,
@@ -53,7 +52,6 @@
     used: 0,
     done: false,
     lastNew: null,
-    newBest: false,
     replaying: false,
     best: loadBest()
   };
@@ -161,7 +159,6 @@
   }
 
   function renderWords() {
-    var vocab = currentVocab();
     wordsEl.innerHTML = state.words.map(function (w) {
       var syms = w.symbols.map(function (s) {
         var merged = s.length > 1;
@@ -175,14 +172,16 @@
       ? (en() ? "4 merges · final vocabulary" : "4 Merges · fertiges Vokabular")
       : (en() ? state.used + " of 4 merges" : state.used + " von 4 Merges");
     if (state.lastNew) {
+      var fresh = state.lastNew;
       Array.prototype.forEach.call(wordsEl.querySelectorAll(".bp2-sym"), function (el) {
-        if (el.getAttribute("data-sym") === state.lastNew) el.classList.add("is-new");
+        if (el.getAttribute("data-sym") === fresh) el.classList.add("is-new");
       });
       clearTimeout(animTimer);
       animTimer = setTimeout(function () {
         Array.prototype.forEach.call(wordsEl.querySelectorAll(".bp2-sym.is-new"), function (el) {
           el.classList.remove("is-new");
         });
+        if (state.lastNew === fresh) state.lastNew = null;
       }, 760);
     }
   }
@@ -226,7 +225,7 @@
     candidateHint.textContent = en() ? "pick a pair" : "wähle ein Paar";
     candidatesEl.innerHTML = top.map(function (p, i) {
       return '<button type="button" class="bp2-cand' + (i === 0 ? " is-greedy" : "") + '" data-a="' + esc(p.a) + '" data-b="' + esc(p.b) + '">' +
-        '<span class="bp2-cand-pair"><span>' + esc(p.a) + '</span><em>+</em><span>' + esc(p.b) + '</span><em>→</em><span>' + esc(p.a + p.b) + '</span></span>' +
+        '<span class="bp2-cand-pair"><span style="color:' + symColor(p.a) + '">' + esc(p.a) + '</span><em>+</em><span style="color:' + symColor(p.b) + '">' + esc(p.b) + '</span><em>→</em><span style="color:' + symColor(p.a + p.b) + '">' + esc(p.a + p.b) + '</span></span>' +
         '<span class="bp2-cand-bar"><i style="width:' + Math.max(6, p.count / max * 100) + '%"></i></span>' +
         '<span class="bp2-cand-count">' + p.count + '×</span>' +
       '</button>';
@@ -302,6 +301,9 @@
         ? 'Both split this word into ' + mine.length + ' tokens, possibly with different pieces.'
         : 'Beide zerlegen dieses Wort in ' + mine.length + ' Tokens, möglicherweise mit anderen Stücken.';
     }
+    if (!state.done) {
+      newNote.innerHTML = (en() ? "Mid-run after " : "Zwischenstand nach ") + state.used + (en() ? " merges. " : " Merges. ") + newNote.innerHTML;
+    }
   }
   function splitRow(label, tokens, you) {
     var chips = tokens.map(function (s) {
@@ -360,7 +362,6 @@
       var tokens = totalSymbols(state.words);
       if (state.best == null || tokens < state.best) {
         state.best = tokens;
-        state.newBest = true;
         saveBest(tokens);
       }
       toast(en() ? "4 merges. Your vocabulary is ready." : "4 Merges. Dein Vokabular steht.");
@@ -371,6 +372,10 @@
   candidatesEl.addEventListener("click", function (e) {
     var b = e.target.closest("[data-a]");
     if (!b || state.done) return;
+    if (state.replaying) {
+      state.replaying = false;
+      clearTimeout(replayTimer);
+    }
     applyMerge(b.getAttribute("data-a"), b.getAttribute("data-b"));
   });
 
@@ -383,7 +388,6 @@
     state.used = 0;
     state.done = false;
     state.lastNew = null;
-    state.newBest = false;
     toastEl.classList.remove("is-on");
     renderAll();
   });

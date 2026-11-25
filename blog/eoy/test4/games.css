@@ -11,6 +11,7 @@
 }
 
 .g-card {
+  animation: g-fade .5s ease both;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -18,7 +19,9 @@
   padding: 20px 20px 18px;
   border-radius: calc(var(--radius) + 4px);
   border: 1px solid var(--line);
-  background: var(--card);
+  background:
+    radial-gradient(130% 110% at 100% 0%, color-mix(in srgb, var(--accent, var(--green)) 8%, transparent), transparent 62%),
+    var(--card);
   box-shadow: var(--shadow-sm);
   text-decoration: none;
   color: inherit;
@@ -33,6 +36,8 @@
   background: var(--accent, var(--green));
 }
 .g-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--line-strong); }
+.g-card:nth-child(2) { animation-delay: .07s; }
+.g-card:nth-child(3) { animation-delay: .14s; }
 .g-card:focus-visible { outline: 2px solid var(--accent, var(--green)); outline-offset: 3px; }
 
 .g-card-art {
@@ -63,8 +68,18 @@
 .g-card:hover .g-go::after { transform: translateX(3px); }
 
 /* ---------- stage ---------- */
+@keyframes g-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes g-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .g-stage {
   --accent: var(--petrol);
+  animation: g-rise .6s var(--ease) both;
   --g-ink: #eaf4f7;
   --g-soft: #b9ced7;
   --g-muted: #87a3ae;
@@ -79,7 +94,9 @@
   overflow: hidden;
   color: var(--g-ink);
   background:
-    radial-gradient(90% 120% at 50% -10%, color-mix(in srgb, var(--accent) 26%, #1b2730) 0%, transparent 58%),
+    radial-gradient(80% 110% at 50% -12%, color-mix(in srgb, var(--accent) 40%, #1b2730) 0%, transparent 62%),
+    radial-gradient(62% 72% at 50% 58%, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 70%),
+    radial-gradient(70% 90% at 88% 112%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 62%),
     radial-gradient(110% 120% at 50% 118%, #0a161b 0%, #05090b 68%);
   box-shadow: inset 0 0 140px 24px rgba(0, 0, 0, .38);
   isolation: isolate;
@@ -119,6 +136,16 @@
   background: rgba(8, 18, 23, .55);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+.g-hud::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 65%, transparent), transparent);
+  pointer-events: none;
 }
 .g-kicker {
   display: inline-flex;
@@ -171,9 +198,11 @@
 
 .g-panel {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--g-sky) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(18, 33, 39, .8), rgba(7, 16, 20, .88));
+  background:
+    radial-gradient(80% 100% at 50% 0%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 62%),
+    linear-gradient(180deg, rgba(18, 33, 39, .8), rgba(7, 16, 20, .88));
   box-shadow:
     0 24px 60px rgba(0, 0, 0, .34),
     inset 0 1px 0 rgba(220, 248, 255, .06),
@@ -189,7 +218,8 @@
   position: absolute;
   inset: 0 12% auto 12%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(190, 240, 255, .3), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 55%, transparent), transparent);
+  opacity: .9;
   pointer-events: none;
 }
 .g-panel-head {
@@ -359,4 +389,47 @@
 
 @media (prefers-reduced-motion: reduce) {
   .g-card, .g-btn, .g-chip, .g-meter > i, .g-toast { transition: none; }
+  .g-stage, .g-card { animation: none; }
 }
+
+/* ---------- self-check ---------- */
+.g-proof {
+  margin: 16px 0 0;
+  padding: 13px 15px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--card) 90%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+.g-proof summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font: 700 12.5px/1.45 var(--sans);
+  color: var(--ink);
+  list-style: none;
+}
+.g-proof summary::-webkit-details-marker { display: none; }
+.g-proof summary::before {
+  content: "?";
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 800 11px/1 var(--sans);
+  color: #fff;
+  background: var(--accent, var(--green));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, var(--green)) 16%, transparent);
+}
+.g-proof[open] summary::before { content: "!"; }
+.g-proof p {
+  margin: 10px 0 0 30px;
+  max-width: 82ch;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.g-proof p b { color: var(--ink); }

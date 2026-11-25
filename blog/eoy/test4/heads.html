@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <title>Test 4 · Zwei Köpfe, ein Budget</title>
 <link rel="stylesheet" href="../test/proto.css">
 <link rel="stylesheet" href="../test2/kit.css">
@@ -71,24 +72,24 @@
                   <path d="M196 380 504 380"/>
                 </g>
 
-                <circle id="hd-target-0" cx="350" cy="80" r="34" class="hd-target hd-target--gold" aria-hidden="true"/>
-                <circle id="hd-target-1" cx="120" cy="470" r="34" class="hd-target hd-target--sky" aria-hidden="true"/>
+                <circle id="hd-target-0" cx="350" cy="80" r="28" class="hd-target hd-target--gold" aria-hidden="true"/>
+                <circle id="hd-target-1" cx="120" cy="470" r="28" class="hd-target hd-target--sky" aria-hidden="true"/>
 
                 <g class="hd-corners">
                   <g class="hd-corner">
                     <circle cx="350" cy="80" r="8" class="hd-corner-dot hd-corner-dot--gold"/>
-                    <text x="350" y="52" text-anchor="middle" class="hd-corner-name">Tier</text>
-                    <text x="350" y="112" text-anchor="middle" id="hd-pct-0" class="hd-corner-pct">33%</text>
+                    <text x="350" y="42" text-anchor="middle" class="hd-corner-name">Tier</text>
+                    <text x="350" y="118" text-anchor="middle" id="hd-pct-0" class="hd-corner-pct">33%</text>
                   </g>
                   <g class="hd-corner">
                     <circle cx="120" cy="470" r="8" class="hd-corner-dot hd-corner-dot--sky"/>
-                    <text x="120" y="504" text-anchor="middle" class="hd-corner-name">Straße</text>
-                    <text x="120" y="446" text-anchor="middle" id="hd-pct-1" class="hd-corner-pct">33%</text>
+                    <text x="120" y="508" text-anchor="middle" class="hd-corner-name">Straße</text>
+                    <text x="120" y="438" text-anchor="middle" id="hd-pct-1" class="hd-corner-pct">33%</text>
                   </g>
                   <g class="hd-corner">
                     <circle cx="580" cy="470" r="8" class="hd-corner-dot hd-corner-dot--lilac"/>
-                    <text x="580" y="504" text-anchor="middle" class="hd-corner-name">es</text>
-                    <text x="580" y="446" text-anchor="middle" id="hd-pct-2" class="hd-corner-pct">33%</text>
+                    <text x="580" y="508" text-anchor="middle" class="hd-corner-name">es</text>
+                    <text x="580" y="438" text-anchor="middle" id="hd-pct-2" class="hd-corner-pct">33%</text>
                   </g>
                 </g>
 
@@ -177,6 +178,11 @@
     </section>
 
     <p class="proto-note" data-de-html="Der Simplex ist die Menge aller Aufteilungen eines Budgets auf drei Werte: <b>α<sub>Tier</sub> + α<sub>Straße</sub> + α<sub>es</sub> = 1</b>. Ein Punkt ist eine Aufteilung. Ein Kopf ist ein Punkt. Zwei Fragen brauchen zwei Punkte. Die Zahlen 67 % und 75 % sind die auf drei Ecken normierten gelernten Gewichte aus der Demo, keine Messung." data-en-html="The simplex is the set of all ways to split one budget over three values: <b>α<sub>animal</sub> + α<sub>street</sub> + α<sub>it</sub> = 1</b>. One point is one allocation. One head is one point. Two questions need two points. The 67% and 75% are the learned weights from the demo normalised over three corners, not a measurement.">Der Simplex ist die Menge aller Aufteilungen eines Budgets auf drei Werte: <b>α<sub>Tier</sub> + α<sub>Straße</sub> + α<sub>es</sub> = 1</b>. Ein Punkt ist eine Aufteilung. Ein Kopf ist ein Punkt. Zwei Fragen brauchen zwei Punkte. Die Zahlen 67 % und 75 % sind die auf drei Ecken normierten gelernten Gewichte aus der Demo, keine Messung.</p>
+
+    <details class="g-proof" style="--accent: var(--sky)">
+      <summary data-de="Warum reicht ein Punkt nicht für beide Fragen?" data-en="Why is one point not enough for both questions?">Warum reicht ein Punkt nicht für beide Fragen?</summary>
+      <p data-de-html="Weil die Gewichte zu <b>1</b> summieren. Ein Punkt kann nur eine Ecke priorisieren. Zwei Fragen brauchen zwei Punkte, also zwei Köpfe. Genau das ist Multi-Head-Attention: nicht mehr Kapazität, sondern mehr als eine Allokation." data-en-html="Because the weights sum to <b>1</b>. One point can prioritise only one corner. Two questions need two points, so two heads. That is multi-head attention: not more capacity, but more than one allocation.">Weil die Gewichte zu <b>1</b> summieren. Ein Punkt kann nur eine Ecke priorisieren. Zwei Fragen brauchen zwei Punkte, also zwei Köpfe. Genau das ist Multi-Head-Attention: nicht mehr Kapazität, sondern mehr als eine Allokation.</p>
+    </details>
 
     <footer class="proto-foot">
       <span>01 / 03</span>

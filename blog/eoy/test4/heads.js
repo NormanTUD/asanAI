@@ -20,7 +20,6 @@
   if (!root) return;
 
   var svg = root;
-  var board = svg.closest(".hd-board");
   var p1 = document.getElementById("hd-p1");
   var p2 = document.getElementById("hd-p2");
   var target0 = document.getElementById("hd-target-0");
@@ -61,6 +60,7 @@
     won: false
   };
   var toastTimer = 0;
+  if (floatEl && floatEl.parentNode !== document.body) document.body.appendChild(floatEl);
 
   function mix(a, b, c) { return [a, b, c]; }
   function names() { return Proto && Proto.lang() === "en" ? NAMES_EN : NAMES_DE; }
@@ -128,9 +128,9 @@
     p1.classList.toggle("is-dim", state.phase === 2 && state.head !== 0);
     p1.querySelector(".hd-point-label").textContent = state.phase === 1 ? "H1+H2" : "H1";
     if (state.phase === 1) {
-      p2.hidden = true;
+      p2.setAttribute("hidden", "");
     } else {
-      p2.hidden = false;
+      p2.removeAttribute("hidden");
       p2.classList.toggle("is-active", state.head === 1);
       p2.classList.toggle("is-dim", state.head !== 1);
     }
@@ -169,9 +169,6 @@
 
     headsEl.querySelectorAll("[data-head]").forEach(function (b) {
       b.classList.toggle("is-on", parseInt(b.getAttribute("data-head"), 10) === state.head);
-    });
-    presetsEl.querySelectorAll("[data-corner]").forEach(function (b) {
-      b.setAttribute("aria-pressed", "false");
     });
 
     if (state.phase === 1) {
@@ -223,8 +220,8 @@
       learnedEls.forEach(function (el, h) {
         var p = toPoint(LEARNED[h]);
         el.setAttribute("transform", "translate(" + p.x.toFixed(1) + " " + p.y.toFixed(1) + ")");
-        if (el.hidden) {
-          el.hidden = false;
+        if (el.hasAttribute("hidden")) {
+          el.removeAttribute("hidden");
           el.classList.add("is-on");
         }
       });
@@ -235,7 +232,7 @@
       }).join("");
     } else {
       learnedPanel.hidden = true;
-      learnedEls.forEach(function (el) { el.hidden = true; el.classList.remove("is-on"); });
+      learnedEls.forEach(function (el) { el.setAttribute("hidden", ""); el.classList.remove("is-on"); });
     }
 
   }
@@ -303,11 +300,13 @@
     var near = nearestPoint(pt);
     if (near >= 0) {
       var a = state.alpha[near];
-      var box = board.getBoundingClientRect();
-      var screen = toScreen(toPoint(a));
       floatEl.innerHTML = "<b>H" + (near + 1) + "</b> " + pctText(a).join(" · ");
-      floatEl.style.left = (screen.x - box.left) + "px";
-      floatEl.style.top = (screen.y - box.top) + "px";
+      var fx = e.clientX + 14, fy = e.clientY + 14;
+      var fw = floatEl.offsetWidth || 120, fh = floatEl.offsetHeight || 30;
+      if (fx + fw > window.innerWidth - 8) fx = e.clientX - fw - 14;
+      if (fy + fh > window.innerHeight - 8) fy = e.clientY - fh - 14;
+      floatEl.style.left = fx + "px";
+      floatEl.style.top = fy + "px";
       floatEl.classList.add("is-on");
     } else {
       floatEl.classList.remove("is-on");
@@ -320,12 +319,6 @@
     floatEl.classList.remove("is-on");
     endDrag();
   });
-  function toScreen(p) {
-    var r = svg.getBoundingClientRect();
-    var vb = svg.viewBox.baseVal;
-    return { x: r.left + p.x / vb.width * r.width, y: r.top + p.y / vb.height * r.height };
-  }
-
   svg.addEventListener("keydown", function (e) {
     var step = e.shiftKey ? 0.05 : 0.018;
     var a = activeAlpha().slice();

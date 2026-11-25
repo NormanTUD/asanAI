@@ -11,7 +11,7 @@
   border-radius: 11px;
   border: 1px solid rgba(227, 190, 98, .1);
   background:
-    linear-gradient(90deg, rgba(227, 190, 98, .05), transparent 42%),
+    linear-gradient(90deg, rgba(227, 190, 98, .09), transparent 46%),
     rgba(4, 10, 13, .3);
   transition: border-color .2s ease, background .2s ease;
 }
@@ -34,15 +34,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  height: 30px;
-  padding: 0 8px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 9px;
   border-radius: 8px;
   border: 1px solid color-mix(in srgb, var(--sym) 52%, transparent);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--sym) 24%, transparent), color-mix(in srgb, var(--sym) 10%, transparent));
+    linear-gradient(180deg, color-mix(in srgb, var(--sym) 38%, transparent), color-mix(in srgb, var(--sym) 16%, transparent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--sym) 14%, transparent), inset 0 1px 0 rgba(255, 255, 255, .08);
   color: var(--g-ink);
-  font: 700 12.5px/1 "JetBrains Mono", ui-monospace, monospace;
+  font: 700 13.5px/1 "JetBrains Mono", ui-monospace, monospace;
   letter-spacing: -.02em;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
   transition: transform .18s var(--ease), box-shadow .18s ease, border-color .18s ease;
@@ -175,8 +176,8 @@
   gap: 7px;
   padding: 9px 10px;
   border-radius: 10px;
-  border: 1px solid rgba(185, 234, 248, .14);
-  background: linear-gradient(180deg, rgba(22, 40, 48, .72), rgba(9, 20, 25, .72));
+  border: 1px solid color-mix(in srgb, var(--g-gold) 20%, transparent);
+  background: linear-gradient(180deg, rgba(227, 190, 98, .06), rgba(9, 20, 25, .72));
   color: var(--g-soft);
   text-align: left;
   cursor: pointer;
@@ -187,6 +188,7 @@
 .bp2-cand[disabled] { opacity: .3; cursor: default; transform: none; }
 .bp2-cand-pair { display: inline-flex; align-items: center; gap: 3px; font: 700 11px/1 "JetBrains Mono", ui-monospace, monospace; color: var(--g-ink); }
 .bp2-cand-pair em { font-style: normal; color: var(--g-muted); }
+.bp2-cand-pair span { text-shadow: 0 0 14px currentColor; }
 .bp2-cand-bar { height: 5px; border-radius: 999px; background: rgba(234, 244, 247, .08); overflow: hidden; }
 .bp2-cand-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--g-gold), rgba(227, 190, 98, .35)); }
 .bp2-cand-count { font: 700 10px/1 "JetBrains Mono", ui-monospace, monospace; color: var(--g-gold); }

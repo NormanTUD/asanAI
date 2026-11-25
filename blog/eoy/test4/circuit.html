@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <title>Test 4 · Baue den Kopierautomaten</title>
 <link rel="stylesheet" href="../test/proto.css">
 <link rel="stylesheet" href="../test2/kit.css">
@@ -138,6 +139,11 @@
     </section>
 
     <p class="proto-note" data-de-html="Der Schaltkreis ist der Zwei-Head-Schaltkreis aus der Induktionskopf-Literatur, schematisch: Schicht 1 schreibt den Vorgänger als Key, Schicht 2 matcht die aktuelle Query gegen diese Keys und kopiert den Value der früheren Stelle. Die fünf Muster sind konstruiert, damit kein Faktenwissen hilft. Die Ablation ist eine echte Neuberechnung, kein eingefrorener Text." data-en-html="The circuit is the two-head circuit from the induction-head literature, schematic: layer 1 writes the predecessor as a key, layer 2 matches the current query against those keys and copies the value from the earlier spot. The five patterns are constructed so that no factual knowledge helps. The ablation is a real recomputation, not frozen text.">Der Schaltkreis ist der Zwei-Head-Schaltkreis aus der Induktionskopf-Literatur, schematisch: Schicht 1 schreibt den Vorgänger als Key, Schicht 2 matcht die aktuelle Query gegen diese Keys und kopiert den Value der früheren Stelle. Die fünf Muster sind konstruiert, damit kein Faktenwissen hilft. Die Ablation ist eine echte Neuberechnung, kein eingefrorener Text.</p>
+
+    <details class="g-proof" style="--accent: var(--lilac)">
+      <summary data-de="Warum reicht eine Schicht nicht für In-Context-Learning?" data-en="Why is one layer not enough for in-context learning?">Warum reicht eine Schicht nicht für In-Context-Learning?</summary>
+      <p data-de-html="Der Induction-Head braucht Keys, die der Previous-Token-Head erst schreibt. Ohne Schicht 1 gibt es nichts zu matchen. Die Tiefe ist die Komposition: Schicht 1 schreibt, Schicht 2 liest und kopiert. Deshalb bricht die Ablation die Trefferquote ein." data-en-html="The induction head needs keys that the previous-token head writes first. Without layer 1 there is nothing to match. Depth is the composition: layer 1 writes, layer 2 reads and copies. That is why the ablation collapses the accuracy.">Der Induction-Head braucht Keys, die der Previous-Token-Head erst schreibt. Ohne Schicht 1 gibt es nichts zu matchen. Die Tiefe ist die Komposition: Schicht 1 schreibt, Schicht 2 liest und kopiert. Deshalb bricht die Ablation die Trefferquote ein.</p>
+    </details>
 
     <footer class="proto-foot">
       <span>02 / 03</span>
