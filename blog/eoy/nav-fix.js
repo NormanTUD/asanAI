@@ -43,14 +43,14 @@
   }
 
   function canPrev() {
-    if (window.LearnSys && typeof LearnSys.canPrev === "function") return !!LearnSys.canPrev();
+    try { if (window.LearnSys && typeof LearnSys.canPrev === "function") return !!LearnSys.canPrev(); } catch (e) {}
     var b = document.getElementById("ls-prev");
-    return b ? !b.hidden : true;
+    return b ? !b.hidden : false;
   }
   function canNext() {
-    if (window.LearnSys && typeof LearnSys.canNext === "function") return !!LearnSys.canNext();
+    try { if (window.LearnSys && typeof LearnSys.canNext === "function") return !!LearnSys.canNext(); } catch (e) {}
     var b = document.getElementById("ls-next");
-    return b ? !b.hidden : true;
+    return b ? !b.hidden : false;
   }
   function goPrev() {
     if (window.LearnSys && typeof LearnSys.prev === "function") return LearnSys.prev();

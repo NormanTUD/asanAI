@@ -458,7 +458,8 @@
   }
 
   function activeDay() {
-    return cfg.days[state.day] || cfg.days[0];
+    if (!cfg || !cfg.days) return null;
+    return cfg.days[state.day] || cfg.days[0] || null;
   }
   function activeStep() {
     var d = activeDay();
@@ -2385,6 +2386,7 @@
   }
 
   function hasPrevPage() {
+    if (!cfg) return false;
     var day = activeDay();
     var base = activeStep();
     if (cfg.eoySingle) {
@@ -2400,6 +2402,7 @@
     return cfg.days.indexOf(day) > 0;
   }
   function hasNextPage() {
+    if (!cfg) return false;
     var day = activeDay();
     var base = activeStep();
     if (cfg.eoySingle) {

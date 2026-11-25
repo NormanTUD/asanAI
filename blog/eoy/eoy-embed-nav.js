@@ -16,15 +16,15 @@
   }
 
   function canPrev() {
-    if (window.LearnSys && typeof LearnSys.canPrev === "function") return !!LearnSys.canPrev();
+    try { if (window.LearnSys && typeof LearnSys.canPrev === "function") return !!LearnSys.canPrev(); } catch (e) {}
     var p = document.getElementById("ls-prev");
-    return p ? !p.hidden : true;
+    return p ? !p.hidden : false;
   }
 
   function canNext() {
-    if (window.LearnSys && typeof LearnSys.canNext === "function") return !!LearnSys.canNext();
+    try { if (window.LearnSys && typeof LearnSys.canNext === "function") return !!LearnSys.canNext(); } catch (e) {}
     var n = document.getElementById("ls-next");
-    return n ? !n.hidden : true;
+    return n ? !n.hidden : false;
   }
 
   function goPrev() {
