@@ -211,6 +211,8 @@
         kastParticles.push({
           x: (i % 2 === 0 ? ((i * 0.61803398875) % 1) : Math.random()) * w,
           y: (i % 2 === 0 ? ((i * 0.41421356237 + 0.17) % 1) : Math.random()) * h,
+          homeX: ((i * 0.61803398875) % 1) * w,
+          homeY: ((i * 0.41421356237 + 0.17) % 1) * h,
           vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
           size: 0.7 + Math.random() * 1.1,
           alpha: 0.22 + Math.random() * 0.5,
@@ -682,12 +684,23 @@
             }
           }
         }
+        var homing = (1 - Math.min(1, diss / 0.22)) * 0.00016;
+        if (homing > 0) {
+          p.vx += (p.homeX - p.x) * homing;
+          p.vy += (p.homeY - p.y) * homing;
+          p.vx += (Math.random() - 0.5) * 0.0014;
+          p.vy += (Math.random() - 0.5) * 0.0014;
+        }
         p.vx *= 0.985; p.vy *= 0.985;
         var sp = Math.hypot(p.vx, p.vy);
         if (sp > 2.2) { p.vx *= 2.2 / sp; p.vy *= 2.2 / sp; }
         p.x += p.vx; p.y += p.vy;
-        if (p.x < -20) p.x = w + 20; if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20; if (p.y > h + 20) p.y = -20;
+        var wrapped = false;
+        if (p.x < -20) { p.x = w + 20; wrapped = true; }
+        if (p.x > w + 20) { p.x = -20; wrapped = true; }
+        if (p.y < -20) { p.y = h + 20; wrapped = true; }
+        if (p.y > h + 20) { p.y = -20; wrapped = true; }
+        if (wrapped) p.trail.length = 0;
         p.trail.push({ x: p.x, y: p.y });
         if (p.trail.length > 26) p.trail.shift();
       });
