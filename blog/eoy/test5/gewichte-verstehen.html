@@ -110,6 +110,8 @@ h3{font-size:18px;font-weight:600;letter-spacing:-.01em;margin:28px 0 10px}
 .demo-cell{min-width:0}
 .demo-cell .canvas-wrap{position:relative;width:100%;height:260px;border-radius:12px;border:1px solid rgba(138,180,255,.1);background:rgba(4,8,15,.5);overflow:hidden}
 .demo-cell canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#relu3d{cursor:grab;touch-action:none}
+#relu3d:active{cursor:grabbing}
 .demo-cell .cap{margin-top:7px;color:var(--dim);font:500 9.5px/1.45 var(--mono);letter-spacing:.03em}
 .demo-cell .cap b{color:var(--muted)}
 .demo-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
@@ -245,15 +247,15 @@ table.compare td b{color:var(--text);font-weight:600}
       <div class="demo-grid">
         <div class="demo-cell">
           <div class="canvas-wrap"><canvas id="relu2d" aria-label="Draufsicht der ReLU-Funktion mit Faltlinien"></canvas></div>
-          <div class="cap"><b>Draufsicht:</b> Helligkeit = Ausgabe, weiße Linien = ReLU-Falten.</div>
+          <div class="cap"><b>Draufsicht:</b> Farbe = Ausgabe (kühl negativ, warm positiv), weiße Linien = ReLU-Falten.</div>
         </div>
         <div class="demo-cell">
           <div class="canvas-wrap"><canvas id="relu3d" aria-label="Gefaltete Oberfläche der ReLU-Funktion"></canvas></div>
-          <div class="cap"><b>Oberfläche:</b> Höhe = Ausgabe. Das ist das gefaltete Papier.</div>
+          <div class="cap"><b>Oberfläche:</b> Höhe = Ausgabe. Ziehen dreht die Ansicht.</div>
         </div>
       </div>
       <div class="weights-list" id="foldWeights"></div>
-      <p class="demo-note"><b>Lesart:</b> Jede Zeile zeigt die Gewichte eines versteckten Neurons: Richtung der Faltlinie, Verschiebung b und Ausgabestärke a. Die Demo ist kein trainiertes Netz, sondern die Funktion eines 1-Layer-ReLU-Netzes.</p>
+      <p class="demo-note"><b>Lesart:</b> Jede Zeile zeigt die Gewichte eines versteckten Neurons: w ist die Normale der Faltlinie, b verschiebt sie, a ist die Ausgabestärke. Die Demo ist kein trainiertes Netz, sondern die Funktion eines 1-Layer-ReLU-Netzes.</p>
     </div>
 
     <div class="callout warm" style="margin-top:20px">
@@ -417,6 +419,13 @@ table.compare td b{color:var(--text);font-weight:600}
     t=clamp(t,-1,1);
     return t>=0 ? mix([10,16,28],[251,191,36],t) : mix([10,16,28],[34,211,238],-t);
   }
+  function heightColor(t){
+    t=clamp(t,0,1);
+    var stops=[[8,10,20],[45,20,80],[130,40,90],[230,100,50],[255,230,120]];
+    var pos=t*(stops.length-1);
+    var i=Math.floor(pos);
+    return mix(stops[i],stops[Math.min(stops.length-1,i+1)],pos-i);
+  }
   function rgb(c){return "rgb("+c[0]+","+c[1]+","+c[2]+")";}
   function fit(cv){
     var dpr=Math.min(2,window.devicePixelRatio||1);
@@ -436,7 +445,7 @@ table.compare td b{color:var(--text);font-weight:600}
   }
   function fmt(v,d){return (Number(v)||0).toFixed(d===undefined?2:d).replace(".",",");}
 
-  var relu = { pool: [], n: 3 };
+  var relu = { pool: [], n: 3, yaw: -0.65, pitch: 0.92 };
   function newPool(){
     var seed=(Math.random()*4294967295)>>>0;
     function rnd(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
@@ -546,7 +555,7 @@ table.compare td b{color:var(--text);font-weight:600}
         maxAbs=Math.max(maxAbs,Math.abs(v));
       }
     }
-    var yaw=-0.65, pitch=0.92;
+    var yaw=relu.yaw, pitch=relu.pitch;
     var cy=Math.cos(yaw), sy=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
     var scale=Math.min(w,h)*0.31;
     function project(x,y,z){
@@ -577,8 +586,7 @@ table.compare td b{color:var(--text);font-weight:600}
     for(var qi=0;qi<quads.length;qi++){
       var q=quads[qi];
       var vAvg=(vals[q.a]+vals[q.b]+vals[q.c]+vals[q.d])/4;
-      var col=ramp(vAvg/maxAbs);
-      col=mix([40,54,78],col,0.92);
+      var col=heightColor((vAvg/maxAbs+1)/2);
       ctx.beginPath();
       ctx.moveTo(verts[q.a].x,verts[q.a].y);
       ctx.lineTo(verts[q.b].x,verts[q.b].y);
@@ -631,6 +639,187 @@ table.compare td b{color:var(--text);font-weight:600}
       count.addEventListener("input",function(){
         relu.n=clamp(parseInt(count.value,10)||1,1,6);
         if(out) out.textContent=relu.n;
+        drawAll();
+      });
+    }
+    if(btn){
+      btn.addEventListener("click",function(){
+        newPool();
+        drawAll();
+      });
+    }
+    var cv3=document.getElementById("relu3d");
+    if(cv3){
+      var drag=null;
+      cv3.addEventListener("pointerdown",function(e){
+        drag={x:e.clientX,y:e.clientY};
+        try{cv3.setPointerCapture(e.pointerId);}catch(err){}
+      });
+      cv3.addEventListener("pointermove",function(e){
+        if(!drag)return;
+        var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+        drag={x:e.clientX,y:e.clientY};
+        relu.yaw+=dx*0.008;
+        relu.pitch=clamp(relu.pitch+dy*0.006,0.2,1.4);
+        draw3D();
+      });
+      cv3.addEventListener("pointerup",function(e){
+        drag=null;
+        try{cv3.releasePointerCapture(e.pointerId);}catch(err){}
+      });
+      cv3.addEventListener("pointercancel",function(){drag=null;});
+    }
+    newPool();
+    drawAll();
+    var rt=0;
+    window.addEventListener("resize",function(){
+      clearTimeout(rt);
+      rt=setTimeout(drawAll,140);
+    });
+  }
+  init();
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var COLORS = ["#67e8f9","#fbbf24","#c084fc","#34d399","#fb7185","#60a5fa"];
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function fit(cv){
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    var r=cv.getBoundingClientRect();
+    var w=Math.max(40,Math.round(r.width));
+    var h=Math.max(40,Math.round(r.height));
+    if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){
+      cv.width=Math.round(w*dpr);
+      cv.height=Math.round(h*dpr);
+    }
+    var ctx=cv.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle="#050810";
+    ctx.fillRect(0,0,w,h);
+    return {ctx:ctx,w:w,h:h};
+  }
+  function fmt(v,d){return (Number(v)||0).toFixed(d===undefined?2:d).replace(".",",");}
+
+  var wave = { pool: [], n: 4 };
+  function newPool(){
+    wave.pool=[];
+    for(var k=1;k<=6;k++){
+      wave.pool.push({
+        k:k,
+        a:(0.35+Math.random()*0.9)*(Math.random()<0.5?-1:1),
+        p:Math.random()*Math.PI*2
+      });
+    }
+  }
+  function value(x){
+    var s=0;
+    for(var j=0;j<wave.n;j++){
+      var c=wave.pool[j];
+      s+=c.a*Math.sin(2*Math.PI*c.k*x+c.p);
+    }
+    return s;
+  }
+
+  function draw(){
+    var cv=document.getElementById("fourierCanvas");
+    if(!cv)return;
+    var f=fit(cv), ctx=f.ctx, w=f.w, h=f.h;
+    var padL=38,padR=14,padT=18,padB=26;
+    var x0=padL,x1=w-padR,y0=padT,y1=h-padB;
+    var N=420;
+    var sums=new Float32Array(N);
+    var comps=[];
+    for(var j=0;j<wave.n;j++) comps.push(new Float32Array(N));
+    var maxAbs=1e-6;
+    for(var i=0;i<N;i++){
+      var x=i/(N-1);
+      var s=0;
+      for(var j2=0;j2<wave.n;j2++){
+        var c=wave.pool[j2];
+        var v=c.a*Math.sin(2*Math.PI*c.k*x+c.p);
+        comps[j2][i]=v;
+        s+=v;
+      }
+      sums[i]=s;
+      maxAbs=Math.max(maxAbs,Math.abs(s));
+    }
+    var gx0=x0,gx1=x1,gy0=y0,gy1=y1;
+    ctx.strokeStyle="rgba(138,180,255,.1)";
+    ctx.lineWidth=1;
+    for(var t=0;t<=4;t++){
+      var xx=gx0+(gx1-gx0)*t/4;
+      ctx.beginPath(); ctx.moveTo(xx,gy0); ctx.lineTo(xx,gy1); ctx.stroke();
+      var yy=gy0+(gy1-gy0)*t/4;
+      ctx.beginPath(); ctx.moveTo(gx0,yy); ctx.lineTo(gx1,yy); ctx.stroke();
+    }
+    var mid=(gy0+gy1)/2;
+    ctx.strokeStyle="rgba(138,180,255,.22)";
+    ctx.beginPath(); ctx.moveTo(gx0,mid); ctx.lineTo(gx1,mid); ctx.stroke();
+    function X(i){return gx0+(i/(N-1))*(gx1-gx0);}
+    function Y(v){return gy1-((v+maxAbs)/(2*maxAbs))*(gy1-gy0);}
+    for(var j3=0;j3<wave.n;j3++){
+      ctx.beginPath();
+      for(var i2=0;i2<N;i2++){
+        var xx2=X(i2), yy2=Y(comps[j3][i2]);
+        if(i2===0)ctx.moveTo(xx2,yy2); else ctx.lineTo(xx2,yy2);
+      }
+      ctx.strokeStyle=COLORS[j3%COLORS.length];
+      ctx.globalAlpha=0.35;
+      ctx.lineWidth=1.2;
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    ctx.save();
+    ctx.shadowColor="rgba(103,232,249,.55)";
+    ctx.shadowBlur=10;
+    ctx.beginPath();
+    for(var i3=0;i3<N;i3++){
+      var xx3=X(i3), yy3=Y(sums[i3]);
+      if(i3===0)ctx.moveTo(xx3,yy3); else ctx.lineTo(xx3,yy3);
+    }
+    ctx.strokeStyle="#d9fbff";
+    ctx.lineWidth=2.2;
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle="rgba(200,230,255,.55)";
+    ctx.font="600 9px ui-monospace, monospace";
+    ctx.textAlign="center";
+    ctx.textBaseline="top";
+    ctx.fillText("0",gx0,gy1+7);
+    ctx.fillText("0,5",(gx0+gx1)/2,gy1+7);
+    ctx.fillText("1",gx1,gy1+7);
+    ctx.textAlign="left";
+    ctx.textBaseline="bottom";
+    ctx.fillText("Summe",gx0+2,gy0-3);
+  }
+
+  function drawWeights(){
+    var host=document.getElementById("waveWeights");
+    if(!host)return;
+    host.innerHTML="";
+    for(var j=0;j<wave.n;j++){
+      var c=wave.pool[j];
+      var div=document.createElement("div");
+      div.className="weight-line";
+      div.innerHTML='<b>W'+(j+1)+'</b>  <i>A</i>='+fmt(c.a)+'  <i>k</i>='+c.k+'  <i>φ</i>='+fmt(c.p);
+      host.appendChild(div);
+    }
+  }
+
+  function drawAll(){draw();drawWeights();}
+
+  function init(){
+    var count=document.getElementById("waveCount");
+    var out=document.getElementById("waveCountOut");
+    var btn=document.getElementById("waveNew");
+    if(count){
+      count.addEventListener("input",function(){
+        wave.n=clamp(parseInt(count.value,10)||1,1,6);
+        if(out)out.textContent=wave.n;
         drawAll();
       });
     }
