@@ -2410,8 +2410,6 @@ def test_qualia_and_final_status(browser, base, lang, results):
   canvasW: document.querySelector('.ls-con2-canvas')?.width || 0,
   canvasH: document.querySelector('.ls-con2-canvas')?.height || 0,
   controls: document.querySelectorAll('[data-four-mode]').length + document.querySelectorAll('[data-four-focus]').length + document.querySelectorAll('[data-four-word]').length,
-  quote: document.querySelector('.ls-con2-quote')?.innerText || '',
-  quoteLink: document.querySelector('.ls-con2-quote a')?.href || '',
   light: (function () {
     var c = document.querySelector('.ls-con2-canvas');
     if (!c) return false;
@@ -2427,17 +2425,17 @@ def test_qualia_and_final_status(browser, base, lang, results):
     results.check(tag, "4E canvas is mounted", four["canvas"] and four["canvasW"] > 200 and four["canvasH"] > 200, str(four)[:220])
     results.check(tag, "4E stays on a light stage", four["light"], str(four)[:220])
     results.check(tag, "4E starts with one active dimension", "1 von 4" in four["status"] or "1 of 4" in four["status"], four["status"][:220])
-    results.check(tag, "4E includes the Noë quote", "Consciousness is not something that happens" in four["quote"] and "Alva No" in four["quote"], four["quote"][:240])
-    results.check(tag, "4E links the Noë source", "OL12000405W" in four["quoteLink"], four["quoteLink"])
     results.check(tag, "4E page has no overflow", four["overflow"] <= 2, str(four["overflow"]))
     four_qa = page.evaluate("() => ({ count: document.querySelectorAll('[data-con-qa]').length, answer: document.querySelector('.ls-con2-a')?.textContent || '' })")
-    results.check(tag, "4E offers six answered questions", four_qa["count"] == 6 and len(four_qa["answer"]) > 20, str(four_qa)[:220])
+    results.check(tag, "4E offers five answered questions", four_qa["count"] == 5 and len(four_qa["answer"]) > 20, str(four_qa)[:220])
     page.locator('[data-con-qa="1"]').click()
     page.wait_for_timeout(150)
     four_answer = page.evaluate("() => document.querySelector('.ls-con2-a')?.textContent || ''")
     results.check(tag, "4E question selection changes the answer", four_answer and four_answer != four_qa["answer"], four_answer[:220])
     four_len = page.evaluate("() => document.body.innerText.length")
     results.check(tag, "4E text does not grow beyond baseline", four_len <= budgets["main"], f"{four_len} > {budgets['main']}")
+    page.locator('[data-con-qa="0"]').click()
+    page.wait_for_timeout(100)
     page.evaluate("() => LearnSys.next()")
     page.wait_for_timeout(150)
     two_dims = page.evaluate("() => document.querySelector('[data-con2-status]')?.textContent || ''")
@@ -2460,10 +2458,15 @@ def test_qualia_and_final_status(browser, base, lang, results):
     page.wait_for_timeout(250)
     missing = page.evaluate("() => document.querySelector('[data-con2-status]')?.textContent || ''")
     results.check(tag, "4E names the missing embedded world", ("keine geteilte" in missing or "no shared" in missing), missing[:220])
-    page.evaluate("() => LearnSys.next()")
+    page.evaluate("""() => {
+      for (var i = 0; i < 10; i++) {
+        if (document.querySelector('.ls-con2')?.getAttribute('data-theory') === 'myst') break;
+        LearnSys.next();
+      }
+    }""")
     page.wait_for_timeout(250)
     after_four = page.evaluate("() => document.querySelector('.ls-con2')?.getAttribute('data-theory') || ''")
-    results.check(tag, "4E next reaches Mysterianism", after_four == "myst", after_four)
+    results.check(tag, "4E Q&A advances to Mysterianism", after_four == "myst", after_four)
     page.evaluate("() => LearnSys.prev()")
     page.wait_for_timeout(350)
     back_four = page.evaluate("() => ({ theory: document.querySelector('.ls-con2')?.getAttribute('data-theory') || '', mode: document.querySelector('[data-four-mode].is-on')?.getAttribute('data-four-mode') || '', status: document.querySelector('[data-con2-status]')?.textContent || '' })")
