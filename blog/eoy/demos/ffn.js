@@ -204,8 +204,8 @@
       function warp(x, y) {
         var r = Math.hypot(x, y);
         var t = Math.max(0, Math.min(1, (r - 0.30) / 0.24));
-        var ringDamp = 1 - 0.80 * (t * t * (3 - 2 * t));
-        return { x: x, y: y, z: bend * 1.45 * Math.exp(-(r * r) / 0.20) * ringDamp };
+        var ringDamp = 1 - 0.45 * (t * t * (3 - 2 * t));
+        return { x: x, y: y, z: bend * (0.10 + 1.35 * Math.exp(-(r * r) / 0.20) * ringDamp) };
       }
       function project(x, y, z) {
         return { x: cx + x * scale + z * scale * 0.25, y: cy + y * scale * 0.35 - z * scale * 0.98, z: z };
