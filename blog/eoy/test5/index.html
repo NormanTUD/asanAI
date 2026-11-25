@@ -590,7 +590,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <div class="stage-head">
         <div>
           <h2>Was das Netz gerade sieht</h2>
-          <p>Ziel, Vorhersage und Fehler, pixelgenau und live.</p>
+          <p id="stageSub">Ziel, Vorhersage und Fehler, pixelgenau und live.</p>
         </div>
         <div class="mini-actions">
           <span class="pill" id="probeModePill"><i class="dot"></i><span>Sonde frei</span></span>
@@ -2716,6 +2716,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
     return String(v).replace(".", ",");
   }
 
+  function reliefNoteText() {
+    return S.view.active
+      ? "Höhe = rohe Ausgabe · Farbe 0..1 · Bereich ±" + formatFactor(S.view.factor) + " · gelernt: inneres Quadrat"
+      : "Höhe = Helligkeit · " + S.relief.N + " × " + S.relief.N + " Gitter · gelernter Bereich x,y ∈ [-1,1]²";
+  }
+
   function updatePredMeta() {
     var el = $("#predMeta");
     if (el) {
@@ -2729,6 +2735,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
     }
     var label = $("#predFootLabel");
     if (label) label.textContent = S.view.active ? "Netz-Ausgabe · Ø gelernt" : "Netz-Ausgabe";
+    var errorMeta = $("#errorMeta");
+    if (errorMeta) errorMeta.textContent = S.view.active ? "nur gelernt" : S.N + " × " + S.N;
   }
 
   function buildViewInput() {
@@ -2795,13 +2803,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
     if (S.view.active) {
       buildViewInput();
       S.view.data = null;
+      S.relief.data = null;
+      S.relief.last = 0;
+      S.relief.dirty = true;
       requestViewPrediction(true);
-      if (S.uiTab === "relief") {
-        S.relief.data = null;
-        S.relief.last = 0;
-        S.relief.dirty = true;
-        refreshRelief(true);
-      }
+      if (S.uiTab === "relief") refreshRelief(true);
       setStatus("Extrapolation an: Vorhersage und 3D-Relief zeigen ±" + formatFactor(S.view.factor) + ". Loss, Fehler und Training bleiben auf dem gelernten Bereich.", "warn");
     } else {
       S.view.data = null;
@@ -2811,14 +2817,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
       S.view.x = null;
       S.view.gen = -1;
       if (old) setTimeout(function () { try { old.dispose(); } catch (e) {} }, 2000);
-      if (S.uiTab === "relief") {
-        S.relief.data = null;
-        S.relief.last = 0;
-        S.relief.dirty = true;
-        refreshRelief(true);
-      }
+      S.relief.data = null;
+      S.relief.last = 0;
+      S.relief.dirty = true;
+      if (S.uiTab === "relief") refreshRelief(true);
       setStatus("Extrapolation aus. Vorhersage und 3D-Relief zeigen den gelernten Bereich.", "good");
     }
+    if ($("#reliefNote")) $("#reliefNote").textContent = reliefNoteText();
+    var stageSub = $("#stageSub");
+    if (stageSub) stageSub.textContent = S.view.active
+      ? "Vorhersage und 3D-Relief extrapolieren; Ziel und Fehler bleiben auf dem gelernten Bereich."
+      : "Ziel, Vorhersage und Fehler, pixelgenau und live.";
     drawPrediction();
     updatePredMeta();
   }
@@ -2831,14 +2840,13 @@ select:disabled{opacity:.45;cursor:not-allowed}
     }
     buildViewInput();
     S.view.data = null;
+    S.relief.data = null;
+    S.relief.last = 0;
+    S.relief.dirty = true;
     requestViewPrediction(true);
-    if (S.uiTab === "relief") {
-      S.relief.data = null;
-      S.relief.last = 0;
-      S.relief.dirty = true;
-      refreshRelief(true);
-    }
+    if (S.uiTab === "relief") refreshRelief(true);
     setStatus("Extrapolationsrand ±" + formatFactor(S.view.factor) + ".", "warn");
+    if ($("#reliefNote")) $("#reliefNote").textContent = reliefNoteText();
     drawPrediction();
     updatePredMeta();
   }
@@ -3025,6 +3033,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     if (!force && S.uiTab !== "relief") return;
     if (S.relief.busy) return;
     var gen = S.gen;
+    var factor = S.view.active ? S.view.factor : 1;
     S.relief.busy = true;
     try {
       buildReliefInput();
@@ -3035,14 +3044,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
       } finally {
         try { out.dispose(); } catch (e) {}
       }
-      if (gen !== S.gen) return;
+      if (gen !== S.gen || factor !== (S.view.active ? S.view.factor : 1)) return;
       S.relief.data = data;
       S.relief.channels = S.channels;
       S.relief.last = performance.now();
       S.relief.dirty = true;
-      if ($("#reliefNote")) {
-        $("#reliefNote").textContent = "Höhe = Helligkeit · " + S.relief.N + " × " + S.relief.N + " Gitter · " + (S.view.active ? "Bereich ±" + formatFactor(S.view.factor) + " · gelernt: inneres Quadrat" : "gelernter Bereich x,y ∈ [-1,1]²");
-      }
+      if ($("#reliefNote")) $("#reliefNote").textContent = reliefNoteText();
     } catch (e) {
       setStatus("Relief konnte nicht berechnet werden: " + (e && e.message ? e.message : e), "warn");
     } finally {
@@ -3098,14 +3105,16 @@ select:disabled{opacity:.45;cursor:not-allowed}
         var idx = j * RN + i;
         var x = -factor + ((i + 0.5) / RN) * 2 * factor;
         var y = -factor + ((RN - 1 - j + 0.5) / RN) * 2 * factor;
-        var v;
+        var rawV;
         if (ch === 1) {
-          v = clamp(data[idx], 0, 1);
+          rawV = data[idx];
         } else {
-          v = clamp(0.2126 * data[idx * 3] + 0.7152 * data[idx * 3 + 1] + 0.0722 * data[idx * 3 + 2], 0, 1);
+          rawV = 0.2126 * data[idx * 3] + 0.7152 * data[idx * 3 + 1] + 0.0722 * data[idx * 3 + 2];
         }
-        vals[idx] = v;
-        verts[idx] = project(x, y, v * 1.7);
+        var colorV = clamp(rawV, 0, 1);
+        vals[idx] = colorV;
+        var heightV = S.view.active ? clamp(rawV, -1.2, 2.2) : colorV;
+        verts[idx] = project(x, y, heightV * 1.7);
       }
     }
     var quads = [];
