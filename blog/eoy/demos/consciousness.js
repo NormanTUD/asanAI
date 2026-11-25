@@ -91,7 +91,11 @@
         ],
         cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>; <a href="https://iep.utm.edu/advaita-vedanta/" target="_blank" rel="noopener">Advaita Vedanta (IEP)</a>',
         hint: L("Zieh an der Dissoziation. Weiter löst die Dissoziation auf: Der Tod beendet die Grenzen, nicht die Wirbel.", "Drag dissociation. Next dissolves the dissociation: death ends the boundaries, not the vortices."),
-        status: L("Drei Wirbel, stark dissoziiert. Weiter löst die Dissoziation auf; der Tod beendet die Grenzen.", "Three vortices, strongly dissociated. Next dissolves the dissociation; death ends the boundaries.")
+        status: L("Drei Wirbel, stark dissoziiert. Weiter löst die Dissoziation auf; der Tod beendet die Grenzen.", "Three vortices, strongly dissociated. Next dissolves the dissociation; death ends the boundaries."),
+        caption: [
+          L("Der große Ozean ist das universelle Bewusstsein. Jeder Wirbel ist ein Lebewesen, ein Alter. Von innen erlebt sich der Wirbel als getrennt, individuell, mit klaren Grenzen. Doch von außen betrachtet ist er nur eine lokale Bewegungsstruktur des einen Ozeans.", "The great ocean is universal consciousness. Every vortex is a living being, an alter. From inside, the vortex experiences itself as separate, individual, with clear boundaries. From outside, it is only a local movement structure of the one ocean."),
+          L("Du bist nicht IM Bewusstsein, wie ein Fisch im Wasser. Du BIST das Bewusstsein, geformt zu einem Wirbel. Wenn der Wirbel sich auflöst, wirst du nicht „vernichtet“; du warst nie ein separates Ding.", "You are not IN consciousness, like a fish in water. You ARE consciousness, shaped into a vortex. When the vortex dissolves, you are not “destroyed”; you were never a separate thing.")
+        ]
       },
       {
         key: "fourE", tone: "teal",
@@ -150,6 +154,7 @@
         '<span class="ls-con2-navhint">← → ' + L("Schritt", "step") + '</span>' +
       '</div>' +
       '<div class="ls-con2-stage"><canvas class="ls-con2-canvas" role="img" aria-label="' + L("Interaktive Bewusstseins-Theorie.", "Interactive theory of consciousness.") + '"></canvas></div>' +
+      '<div class="ls-con2-caption" data-con2-caption hidden></div>' +
       '<div class="ls-con2-controls" data-con2-controls></div>' +
       '<p class="ls-con2-status" data-con2-status aria-live="polite"></p>' +
       '<aside class="ls-con2-detail" data-con2-detail></aside>';
@@ -175,7 +180,7 @@
     var ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 };
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false };
-    var kast = { diss: 70, count: 3, selected: 0, dissolved: false };
+    var kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 };
     var four = { mode: "human", focus: 0, word: "hot" };
     var FOUR_E = [
       { key: "embodied", label: "Embodied", subDe: "Körper", subEn: "Body", noteDe: "Sinne, Schmerz, Motorik: Denken ist an einen Körper gebunden.", noteEn: "Senses, pain, motor control: thought is tied to a body.", missingDe: "kein Körper, kein Nervensystem", missingEn: "no body, no nervous system", color: "#ffb36b" },
@@ -255,7 +260,7 @@
       if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false }; setStatus(THEORIES[2].status); }
-      if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false }; setStatus(THEORIES[3].status); }
+      if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 }; setStatus(THEORIES[3].status); }
       if (active === 4) { four = { mode: "human", focus: 0, word: "hot" }; setStatus(THEORIES[4].status); }
       if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }
       renderControls(); draw(performance.now());
@@ -587,6 +592,22 @@
       ctx.restore();
     }
     function drawKastrup(w, h, t, now) {
+      if (kast.dissolving) {
+        var prog = clamp((now - kast.dissolveStart) / 1500, 0, 1);
+        var eased = prog * prog * (3 - 2 * prog);
+        kast.diss = kast.dissolveFrom * (1 - eased);
+        var dinp = el.querySelector("[data-con-diss]");
+        if (dinp) {
+          dinp.value = String(Math.round(kast.diss));
+          if (dinp.nextElementSibling) dinp.nextElementSibling.textContent = Math.round(kast.diss) + " %";
+        }
+        if (prog >= 1) {
+          kast.dissolving = false;
+          kast.dissolved = true;
+          kast.diss = 0;
+          setStatus(L("Der Tod beendet die Dissoziation: Die Grenzen sind aufgelöst; das eine Bewusstsein bleibt.", "Death ends the dissociation: the boundaries are dissolved; the one consciousness remains."));
+        }
+      }
       var g = ctx.createLinearGradient(0, 0, 0, h);
       g.addColorStop(0, "#f8fcff"); g.addColorStop(0.55, "#e9f8fb"); g.addColorStop(1, "#f5fbf5");
       ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
@@ -594,14 +615,15 @@
       glow.addColorStop(0, "rgba(0,146,153,.10)"); glow.addColorStop(1, "rgba(0,146,153,0)");
       ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
       var centers = kastCenters(w, h), diss = kast.diss / 100;
-      for (var p = 0; p < 130; p++) {
+      for (var p = 0; p < 260; p++) {
         var base = centers[p % centers.length];
-        var ang = p * 2.39996 + t * (0.16 + (p % 4) * 0.018);
-        var rr2 = (10 + (p % 9) * 5.5) * (0.75 + diss * 0.35);
+        var ang = p * 2.39996 + t * (0.15 + (p % 7) * 0.016);
+        var band = (p % 13) / 12;
+        var rr2 = (9 + band * 76) * (0.78 + diss * 0.32);
         var x = base.x + Math.cos(ang) * rr2;
         var y = base.y + Math.sin(ang) * rr2;
-        ctx.globalAlpha = 0.10 + (p % 4) * 0.035;
-        dot(x, y, 1 + (p % 3) * 0.35, p % 3 === 0 ? "#009299" : "#5c9baf");
+        ctx.globalAlpha = 0.12 + (p % 5) * 0.045;
+        dot(x, y, 0.8 + (p % 4) * 0.35, p % 11 === 0 ? "#9f9700" : p % 3 === 0 ? "#009299" : "#5c9baf");
       }
       ctx.globalAlpha = 1;
       if (kast.dissolved) {
@@ -907,6 +929,16 @@
       kicker.textContent = L("Bewusstsein · Theorie ", "Consciousness · theory ") + (active + 1) + " / " + THEORIES.length;
       titleEl.textContent = th.title;
       leadEl.textContent = th.lead;
+      var captionEl = el.querySelector("[data-con2-caption]");
+      if (captionEl) {
+        if (th.caption && th.caption.length) {
+          captionEl.hidden = false;
+          captionEl.innerHTML = th.caption.map(function (p, i) { return '<p' + (i ? ' class="is-callout"' : '') + '>' + esc(p) + '</p>'; }).join("");
+        } else {
+          captionEl.hidden = true;
+          captionEl.innerHTML = "";
+        }
+      }
       var qa = th.qa || [];
       if (qaOpen >= qa.length) qaOpen = 0;
       detail.innerHTML =
@@ -955,28 +987,29 @@
     }
     function setKastDiss(v) {
       kast.dissolved = false;
+      kast.dissolving = false;
       kast.diss = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
       var inp = el.querySelector("[data-con-diss]");
       if (inp) { inp.value = String(kast.diss); if (inp.nextElementSibling) inp.nextElementSibling.textContent = kast.diss + " %"; }
       setStatus(kast.diss < 12 ? L("Der Ozean fließt frei; die Wirbel sind kaum abgegrenzt.", "The ocean flows freely; the vortices are barely separated.") : kast.diss < 55 ? L("Die Wirbel bilden sich. Das Wasser zwischen ihnen bleibt verbunden.", "The vortices form. The water between them stays connected.") : L("Die Wirbel sind stark abgegrenzt. Von innen sieht jeder wie ein eigenes Bewusstsein aus.", "The vortices are strongly separated. From inside each looks like its own consciousness."));
       draw(performance.now());
     }
-    function setKastCount(v) {
-      kast.dissolved = false;
-      kast.count = Math.max(1, Math.min(5, parseInt(v, 10) || 1));
-      kast.selected = Math.min(kast.selected, kast.count - 1);
-      var inp = el.querySelector("[data-con-count]");
-      if (inp) { inp.value = String(kast.count); if (inp.nextElementSibling) inp.nextElementSibling.textContent = String(kast.count); }
-      setStatus(kast.count === 1 ? L("Ein Ozean: ein Bewusstsein, keine Trennung.", "One ocean: one consciousness, no separation.") : L(kast.count + " Wirbel: derselbe Ozean, mehrere persönliche Bewusstseine.", kast.count + " vortices: the same ocean, several personal consciousnesses."));
-      draw(performance.now());
-    }
     function kastNextAction() {
-      if (kast.dissolved) return false;
-      kast.dissolved = true;
-      kast.diss = 0;
-      var dinp = el.querySelector("[data-con-diss]");
-      if (dinp) { dinp.value = "0"; if (dinp.nextElementSibling) dinp.nextElementSibling.textContent = "0 %"; }
-      setStatus(L("Der Tod beendet die Dissoziation: Die Grenzen lösen sich auf; das eine Bewusstsein bleibt.", "Death ends the dissociation: the boundaries dissolve; the one consciousness remains."));
+      if (kast.dissolved || kast.dissolving) return false;
+      if (reduce) {
+        kast.dissolving = false;
+        kast.dissolved = true;
+        kast.diss = 0;
+        var rinp = el.querySelector("[data-con-diss]");
+        if (rinp) { rinp.value = "0"; if (rinp.nextElementSibling) rinp.nextElementSibling.textContent = "0 %"; }
+        setStatus(L("Der Tod beendet die Dissoziation: Die Grenzen sind aufgelöst; das eine Bewusstsein bleibt.", "Death ends the dissociation: the boundaries are dissolved; the one consciousness remains."));
+        draw(performance.now());
+        return true;
+      }
+      kast.dissolving = true;
+      kast.dissolveStart = performance.now();
+      kast.dissolveFrom = kast.diss;
+      setStatus(L("Die Dissoziation löst sich auf: Die Grenzen werden durchlässig, der Ozean bleibt.", "The dissociation is dissolving: the boundaries become permeable, the ocean remains."));
       draw(performance.now());
       return true;
     }
@@ -1052,7 +1085,6 @@
       } else if (active === 3) {
         controls.innerHTML =
           '<label class="ls-con2-range"><span>' + L("Dissoziation", "Dissociation") + '</span><input type="range" data-con-diss min="0" max="100" step="1" value="' + kast.diss + '"><output>' + kast.diss + ' %</output></label>' +
-          '<label class="ls-con2-range"><span>' + L("Wirbel", "Vortices") + '</span><input type="range" data-con-count min="1" max="5" step="1" value="' + kast.count + '"><output>' + kast.count + '</output></label>' +
           '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
       } else if (active === 4) {
         controls.innerHTML =
@@ -1114,9 +1146,6 @@
       });
       controls.querySelectorAll("[data-con-diss]").forEach(function (inp) {
         inp.addEventListener("input", function () { setKastDiss(inp.value); });
-      });
-      controls.querySelectorAll("[data-con-count]").forEach(function (inp) {
-        inp.addEventListener("input", function () { setKastCount(inp.value); });
       });
       controls.querySelectorAll("[data-four-mode]").forEach(function (b) {
         b.addEventListener("click", function () { fourSetMode(b.getAttribute("data-four-mode")); });

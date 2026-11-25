@@ -2271,6 +2271,8 @@ def test_qualia_and_final_status(browser, base, lang, results):
     page.wait_for_timeout(150)
     intro_answer = page.evaluate("() => document.querySelector('[data-mi-qa-answer]')?.textContent || ''")
     results.check(tag, "intro question selection changes the answer", intro_answer and intro_answer != intro_qa["answer"], intro_answer[:220])
+    intro_fonts = page.evaluate("() => ({ q: parseFloat(getComputedStyle(document.querySelector('[data-mi-q]')).fontSize), a: parseFloat(getComputedStyle(document.querySelector('[data-mi-qa-answer]')).fontSize) })")
+    results.check(tag, "intro questions and answers are readable", intro_fonts["q"] >= 12 and intro_fonts["a"] >= 14, str(intro_fonts))
     page.evaluate("() => LearnSys.go(0, 0, 1)")
     page.wait_for_timeout(800)
     theories = page.evaluate(
@@ -2296,8 +2298,31 @@ def test_qualia_and_final_status(browser, base, lang, results):
     page.wait_for_timeout(150)
     theory_answer = page.evaluate("() => document.querySelector('.ls-con2-a')?.textContent || ''")
     results.check(tag, "theory question selection changes the answer", theory_answer and theory_answer != theory_qa["answer"], theory_answer[:220])
+    theory_fonts = page.evaluate("() => ({ chip: parseFloat(getComputedStyle(document.querySelector('.ls-con2-chip')).fontSize), q: parseFloat(getComputedStyle(document.querySelector('[data-con-qa]')).fontSize), a: parseFloat(getComputedStyle(document.querySelector('.ls-con2-a')).fontSize) })")
+    results.check(tag, "theory controls and answers are readable", theory_fonts["chip"] >= 12 and theory_fonts["q"] >= 12 and theory_fonts["a"] >= 14, str(theory_fonts))
     theory_len = page.evaluate("() => document.body.innerText.length")
     results.check(tag, "theory text does not grow beyond baseline", theory_len <= budgets["main"], f"{theory_len} > {budgets['main']}")
+    page.evaluate(
+        r"""
+() => {
+  for (var i = 0; i < 40; i++) {
+    if (document.querySelector('.ls-con2')?.getAttribute('data-theory') === 'predictive') break;
+    LearnSys.next();
+  }
+}
+"""
+    )
+    page.wait_for_timeout(200)
+    predictive = page.evaluate("() => ({ theory: document.querySelector('.ls-con2')?.getAttribute('data-theory') || '', status: document.querySelector('[data-con2-status]')?.textContent || '' })")
+    results.check(tag, "Predictive is reachable before Kastrup", predictive["theory"] == "predictive", str(predictive)[:220])
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(120)
+    adapting = page.evaluate("() => ({ theory: document.querySelector('.ls-con2')?.getAttribute('data-theory') || '', status: document.querySelector('[data-con2-status]')?.textContent || '' })")
+    results.check(tag, "Predictive starts a smooth model update", adapting["theory"] == "predictive" and ("gleicht sich an" in adapting["status"] or "adapting" in adapting["status"].lower()), str(adapting)[:220])
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(250)
+    advanced = page.evaluate("() => document.querySelector('.ls-con2')?.getAttribute('data-theory') || ''")
+    results.check(tag, "Predictive advances while still animating", advanced == "kastrup", advanced)
     page.evaluate(
         r"""
 () => {
@@ -2315,28 +2340,55 @@ def test_qualia_and_final_status(browser, base, lang, results):
 () => ({
   status: document.querySelector('[data-con2-status]')?.textContent || '',
   diss: document.querySelector('[data-con-diss]')?.value || '',
-  count: document.querySelector('[data-con-count]')?.value || ''
+  countSlider: document.querySelectorAll('[data-con-count]').length,
+  caption: document.querySelector('.ls-con2-caption')?.innerText || '',
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
     results.check(tag, "Kastrup reaches the dissociated state", "Drei Wirbel" in kast_before["status"] or "Three vortices" in kast_before["status"], str(kast_before)[:220])
+    results.check(tag, "Kastrup has no vortex-count slider", kast_before["countSlider"] == 0, str(kast_before["countSlider"]))
+    results.check(tag, "Kastrup shows the ocean and the callout", ("Der große Ozean" in kast_before["caption"] or "The great ocean" in kast_before["caption"]) and ("Du bist nicht IM Bewusstsein" in kast_before["caption"] or "You are not IN consciousness" in kast_before["caption"]), kast_before["caption"][:240])
+    results.check(tag, "Kastrup caption has two paragraphs", kast_before["caption"].count("\n") >= 1, kast_before["caption"][:240])
+    kast_len = page.evaluate("() => document.body.innerText.length")
+    results.check(tag, "Kastrup text does not grow beyond baseline", kast_len <= budgets["main"], f"{kast_len} > {budgets['main']}")
+    kast_light = page.evaluate("""() => { var c=document.querySelector('.ls-con2-canvas'), x=c.getContext('2d'), d=x.getImageData(10,10,1,1).data; return (d[0]+d[1]+d[2])/3; }""")
+    results.check(tag, "Kastrup stays on a light stage", kast_light > 180, str(kast_light))
     results.check(tag, "Kastrup next announces the end of dissociation", "Tod" in kast_before["status"] or "death" in kast_before["status"].lower(), kast_before["status"][:220])
     page.evaluate("() => LearnSys.next()")
-    page.wait_for_timeout(350)
+    page.wait_for_timeout(180)
+    kast_transition = page.evaluate(
+        r"""
+() => ({
+  status: document.querySelector('[data-con2-status]')?.textContent || '',
+  diss: parseFloat(document.querySelector('[data-con-diss]')?.value || '0'),
+  overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+})
+"""
+    )
+    results.check(tag, "Kastrup dissolves smoothly", kast_transition["diss"] > 0 and ("löst sich auf" in kast_transition["status"] or "dissolving" in kast_transition["status"].lower()), str(kast_transition)[:220])
+    results.check(tag, "Kastrup transition has no overflow", kast_transition["overflow"] <= 2, str(kast_transition["overflow"]))
+    page.wait_for_timeout(1700)
     kast_after = page.evaluate(
         r"""
 () => ({
   status: document.querySelector('[data-con2-status]')?.textContent || '',
   diss: document.querySelector('[data-con-diss]')?.value || '',
-  count: document.querySelector('[data-con-count]')?.value || '',
+  countSlider: document.querySelectorAll('[data-con-count]').length,
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
-    results.check(tag, "Kastrup next dissolves dissociation", kast_after["diss"] == "0", str(kast_after)[:220])
-    results.check(tag, "Kastrup death leaves one consciousness", kast_after["count"] == "1", str(kast_after)[:220])
+    results.check(tag, "Kastrup next completes the dissolution", kast_after["diss"] == "0" and kast_after["countSlider"] == 0, str(kast_after)[:220])
     results.check(tag, "Kastrup death is explained", ("Tod" in kast_after["status"] or "death" in kast_after["status"].lower()) and ("Dissoziation" in kast_after["status"] or "dissociation" in kast_after["status"].lower()), kast_after["status"][:220])
     results.check(tag, "Kastrup page has no overflow", kast_after["overflow"] <= 2, str(kast_after["overflow"]))
+    atman = page.evaluate("""() => {
+      var buttons = Array.from(document.querySelectorAll('[data-con-qa]'));
+      var button = buttons.find(function (b) { return /Atman/.test(b.textContent); });
+      if (button) button.click();
+      return { count: buttons.length, answer: document.querySelector('.ls-con2-a')?.textContent || '' };
+    }""")
+    results.check(tag, "Kastrup answers the Atman/Brahman question", atman["count"] >= 6 and ("Atman" in atman["answer"] or "Brahman" in atman["answer"]) and ("Advaita" in atman["answer"] or "analogy" in atman["answer"].lower()), str(atman)[:240])
     page.evaluate(
         r"""
 () => {
@@ -2360,6 +2412,12 @@ def test_qualia_and_final_status(browser, base, lang, results):
   controls: document.querySelectorAll('[data-four-mode]').length + document.querySelectorAll('[data-four-focus]').length + document.querySelectorAll('[data-four-word]').length,
   quote: document.querySelector('.ls-con2-quote')?.innerText || '',
   quoteLink: document.querySelector('.ls-con2-quote a')?.href || '',
+  light: (function () {
+    var c = document.querySelector('.ls-con2-canvas');
+    if (!c) return false;
+    var x = c.getContext('2d'), d = x.getImageData(10, 10, 1, 1).data;
+    return (d[0] + d[1] + d[2]) / 3 > 180;
+  })(),
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
@@ -2367,6 +2425,7 @@ def test_qualia_and_final_status(browser, base, lang, results):
     results.check(tag, "4E theory is before Mysterianism", four["theory"] == "fourE" and four["title"] == "4E Cognition", str(four)[:220])
     results.check(tag, "4E offers mode, four E and word controls", four["controls"] == 10, str(four["controls"]))
     results.check(tag, "4E canvas is mounted", four["canvas"] and four["canvasW"] > 200 and four["canvasH"] > 200, str(four)[:220])
+    results.check(tag, "4E stays on a light stage", four["light"], str(four)[:220])
     results.check(tag, "4E starts as coupled human", "4 von 4" in four["status"] or "4 of 4" in four["status"], four["status"][:220])
     results.check(tag, "4E includes the Noë quote", "Consciousness is not something that happens" in four["quote"] and "Alva No" in four["quote"], four["quote"][:240])
     results.check(tag, "4E links the Noë source", "OL12000405W" in four["quoteLink"], four["quoteLink"])
@@ -2391,6 +2450,14 @@ def test_qualia_and_final_status(browser, base, lang, results):
     page.wait_for_timeout(250)
     missing = page.evaluate("() => document.querySelector('[data-con2-status]')?.textContent || ''")
     results.check(tag, "4E names the missing embedded world", ("keine geteilte" in missing or "no shared" in missing), missing[:220])
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(250)
+    after_four = page.evaluate("() => document.querySelector('.ls-con2')?.getAttribute('data-theory') || ''")
+    results.check(tag, "4E next reaches Mysterianism", after_four == "myst", after_four)
+    page.evaluate("() => LearnSys.prev()")
+    page.wait_for_timeout(350)
+    back_four = page.evaluate("() => ({ theory: document.querySelector('.ls-con2')?.getAttribute('data-theory') || '', mode: document.querySelector('[data-four-mode].is-on')?.getAttribute('data-four-mode') || '', status: document.querySelector('[data-con2-status]')?.textContent || '' })")
+    results.check(tag, "4E restores the human after returning", back_four["theory"] == "fourE" and back_four["mode"] == "human" and ("4 von 4" in back_four["status"] or "4 of 4" in back_four["status"]), str(back_four)[:240])
     page.evaluate("() => LearnSys.go(0, 0, 2)")
     page.wait_for_timeout(900)
     final = page.evaluate(
@@ -2425,6 +2492,8 @@ def test_qualia_and_final_status(browser, base, lang, results):
     page.wait_for_timeout(150)
     final_answer = page.evaluate("() => document.querySelector('[data-cn-qa-answer]')?.innerText || ''")
     results.check(tag, "final status question selection changes the answer", final_answer and final_answer != final_qa["answer"], final_answer[:220])
+    final_fonts = page.evaluate("() => ({ q: parseFloat(getComputedStyle(document.querySelector('[data-cn-q]')).fontSize), a: parseFloat(getComputedStyle(document.querySelector('[data-cn-qa-answer]')).fontSize) })")
+    results.check(tag, "final questions and answers are readable", final_fonts["q"] >= 12 and final_fonts["a"] >= 14, str(final_fonts))
     final_len = page.evaluate("() => document.body.innerText.length")
     results.check(tag, "final text does not grow beyond baseline", final_len <= budgets["final"], f"{final_len} > {budgets['final']}")
     page.locator('.ls-cn-card[data-cn="1"]').click()

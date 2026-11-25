@@ -5819,3 +5819,9 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-cn-q{font-size:12.5px}
 .ls-cn-qa-answer{font-size:15px}
 .ls-btn--tiny{font-size:max(12px,var(--ls-fs-ui-sm))}
+.ls-cn-bottom p.ls-cn-qa-answer{font-size:15px;line-height:1.5;border-top:1px dashed var(--ls-line);padding-top:6px}
+.ls-con2-caption{display:flex;flex-direction:column;gap:5px;border:1px solid rgba(0,146,153,.20);border-left:4px solid var(--ls-teal);border-radius:12px;background:linear-gradient(90deg,#f8fdff,#f2fbf6);padding:9px 12px;color:#00384f;font:600 13.5px/1.55 "Open Sans",sans-serif}
+.ls-con2-caption p{margin:0}
+.ls-con2-caption p.is-callout{border-left:2px solid var(--ls-gold);padding-left:9px;color:#3f5d68}
+.ls-con2-caption[hidden]{display:none!important}
+.ls-app{--ls-fs-micro:max(11.5px,calc(var(--ls-fs-body) * .58))}
