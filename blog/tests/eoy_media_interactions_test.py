@@ -2631,6 +2631,186 @@ setInterval(function () {
     context.close()
 
 
+def test_custom_training_data(browser, base, lang, results):
+    tag = f"custom-data-{lang}"
+    context, page, logs = open_page(browser, base, lang, path="/eoy/16.php", wait_media=False)
+    page.wait_for_function("() => !!document.querySelector('.ls-sinus-data')", timeout=40000)
+    page.wait_for_timeout(900)
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(700)
+    initial = page.evaluate(
+        r"""
+() => {
+  var d = document.querySelector('.ls-sinus-data');
+  var scene = document.querySelector('.ls-sinus-scene');
+  return {
+    present: !!d,
+    hidden: d ? d.hidden : null,
+    open: d ? d.open : null,
+    mode: d ? d.getAttribute('data-mode') : '',
+    rows: d ? d.querySelectorAll('tbody tr').length : -1,
+    count: d ? d.querySelector('.ls-sinus-data-count').textContent : '',
+    custom: scene ? scene.classList.contains('is-custom-data') : false,
+    layers: scene ? scene.getAttribute('data-net-layers') : '',
+    archOpen: !!(d && d.querySelector('.ls-sinus-arch') && d.querySelector('.ls-sinus-arch').open)
+  };
+}
+"""
+    )
+    results.check(tag, "data box is visible in the net phase", initial["present"] and not initial["hidden"], str(initial))
+    results.check(tag, "data box starts collapsed", initial["open"] is False and initial["archOpen"] is False, str(initial))
+    results.check(tag, "data table starts with the sine points", initial["rows"] == 18 and initial["mode"] == "sine", str(initial))
+    results.check(tag, "architecture starts at 32,32,32", initial["layers"] == "32,32,32", str(initial))
+
+    parsed = page.evaluate(
+        r"""
+() => {
+  var ok = window.TfSinusScene.parseCsvPoints('x;y\n0,1;0,5\n0,2;0,6');
+  var bad = window.TfSinusScene.parseCsvPoints('x,y\n0.1,0.5\nfoo,bar');
+  var spaced = window.TfSinusScene.parseCsvPoints('0.1 0.5\n0.2 0.7');
+  var spacedComma = window.TfSinusScene.parseCsvPoints('0,1 0,5\n0,2 0,7');
+  var commaSpace = window.TfSinusScene.parseCsvPoints('0.1, 0.5\n0.2, 0.7');
+  return {
+    okN: ok.points.length, okX: ok.points[0].x, okY: ok.points[0].y, okE: ok.errors.length,
+    badN: bad.points.length, badE: bad.errors.length,
+    spacedN: spaced.points.length,
+    spacedCommaN: spacedComma.points.length, spacedCommaX: spacedComma.points[0] && spacedComma.points[0].x,
+    commaSpaceN: commaSpace.points.length, commaSpaceY: commaSpace.points[0] && commaSpace.points[0].y
+  };
+}
+"""
+    )
+    results.check(tag, "CSV parser accepts a header, semicolons and decimal commas", parsed["okN"] == 2 and abs(parsed["okX"] - 0.1) < 1e-9 and abs(parsed["okY"] - 0.5) < 1e-9 and parsed["okE"] == 0, str(parsed))
+    results.check(tag, "CSV parser reports invalid rows", parsed["badN"] == 1 and parsed["badE"] == 1, str(parsed))
+    results.check(tag, "CSV parser accepts whitespace-separated pairs", parsed["spacedN"] == 2, str(parsed))
+    results.check(tag, "CSV parser accepts whitespace pairs with decimal commas", parsed["spacedCommaN"] == 2 and abs(parsed["spacedCommaX"] - 0.1) < 1e-9, str(parsed))
+    results.check(tag, "CSV parser accepts comma-space separators", parsed["commaSpaceN"] == 2 and abs(parsed["commaSpaceY"] - 0.5) < 1e-9, str(parsed))
+
+    page.locator(".ls-sinus-data > summary").click()
+    page.wait_for_timeout(150)
+    page.fill(".ls-sinus-csv", "x;y\n0,1;0,5\nfoo;bar")
+    page.click(".ls-sinus-apply")
+    page.wait_for_timeout(300)
+    invalid = page.evaluate("() => ({ err: document.querySelector('.ls-sinus-data-errors').textContent, mode: document.querySelector('.ls-sinus-data').getAttribute('data-mode') })")
+    results.check(tag, "invalid CSV keeps the sine data and shows an error", bool(invalid["err"]) and invalid["mode"] == "sine", str(invalid))
+
+    page.fill(".ls-sinus-csv", "x;y\n0,1;0,5\n0,3;0,8\n0,5;0,2\n0,7;0,95\n0,9;0,4")
+    page.click(".ls-sinus-apply")
+    page.wait_for_timeout(1200)
+    custom = page.evaluate(
+        r"""
+() => {
+  var d = document.querySelector('.ls-sinus-data');
+  var scene = document.querySelector('.ls-sinus-scene');
+  var readout = document.querySelector('.ls-sinus-readout');
+  return {
+    mode: d.getAttribute('data-mode'),
+    points: d.getAttribute('data-points'),
+    rows: d.querySelectorAll('tbody tr').length,
+    custom: scene.classList.contains('is-custom-data'),
+    outside: readout.textContent.indexOf('—') >= 0,
+    train: document.querySelector('.ls-sinus-train').textContent,
+    err: d.querySelector('.ls-sinus-data-errors').textContent,
+    csv: document.querySelector('.ls-sinus-csv').value
+  };
+}
+"""
+    )
+    results.check(tag, "applying CSV switches to custom data", custom["mode"] == "custom" and custom["custom"] and custom["rows"] == 5 and custom["points"] == "5", str(custom))
+    results.check(tag, "custom data hides the sine error readout", custom["outside"], str(custom))
+    results.check(tag, "applying custom data starts training", "paus" in custom["train"].lower() or "pause" in custom["train"].lower(), str(custom))
+    results.check(tag, "the CSV text stays after applying", "0,9;0,4" in custom["csv"] and "0,1;0,5" in custom["csv"], custom["csv"][:160])
+
+    page.fill(".ls-sinus-csv", custom["csv"] + "\n0,95;0,3")
+    page.click(".ls-sinus-apply")
+    page.wait_for_timeout(900)
+    appended = page.evaluate(
+        r"""
+() => ({
+  rows: document.querySelectorAll('.ls-sinus-data tbody tr').length,
+  points: document.querySelector('.ls-sinus-data').getAttribute('data-points'),
+  first: document.querySelector('input[data-idx="0"][data-axis="x"]').value,
+  last: document.querySelector('input[data-idx="5"][data-axis="x"]').value,
+  csv: document.querySelector('.ls-sinus-csv').value
+})
+"""
+    )
+    results.check(tag, "adding rows to the CSV keeps the old points", appended["rows"] == 6 and appended["points"] == "6" and appended["first"] == "0.1" and appended["last"] == "0.95", str(appended))
+
+    page.locator(".ls-sinus-arch > summary").click()
+    page.wait_for_timeout(150)
+    page.fill(".ls-sinus-arch-layers", "2")
+    page.wait_for_timeout(200)
+    arch_inputs = page.locator(".ls-sinus-arch-grid input")
+    arch_inputs.nth(0).fill("8")
+    arch_inputs.nth(1).fill("16")
+    page.click(".ls-sinus-arch-apply")
+    page.wait_for_timeout(1200)
+    arch = page.evaluate(
+        r"""
+() => ({
+  layers: document.querySelector('.ls-sinus-scene').getAttribute('data-net-layers'),
+  model: document.querySelector('.ls-sinus-readout').textContent,
+  inputs: Array.from(document.querySelectorAll('.ls-sinus-arch-grid input')).map(function (n) { return n.value; }),
+  mode: document.querySelector('.ls-sinus-data').getAttribute('data-mode')
+})
+"""
+    )
+    results.check(tag, "architecture applies per-layer neuron counts", arch["layers"] == "8,16" and "1 → 8 → 16 → 1" in arch["model"], str(arch))
+    results.check(tag, "architecture keeps the custom data", arch["mode"] == "custom", str(arch))
+
+    page.click(".ls-sinus-restore")
+    page.wait_for_timeout(900)
+    restored = page.evaluate(
+        r"""
+() => {
+  var d = document.querySelector('.ls-sinus-data');
+  var scene = document.querySelector('.ls-sinus-scene');
+  return {
+    mode: d.getAttribute('data-mode'),
+    rows: d.querySelectorAll('tbody tr').length,
+    custom: scene.classList.contains('is-custom-data'),
+    outside: document.querySelector('.ls-sinus-readout').textContent.indexOf('—') >= 0,
+    train: document.querySelector('.ls-sinus-train').textContent
+  };
+}
+"""
+    )
+    results.check(tag, "restore brings the sine data back", restored["mode"] == "sine" and restored["rows"] == 18 and not restored["custom"] and not restored["outside"], str(restored))
+
+    page.fill('input[data-idx="0"][data-axis="x"]', "0,42")
+    page.fill('input[data-idx="0"][data-axis="y"]', "1,23")
+    page.click(".ls-sinus-apply")
+    page.wait_for_timeout(900)
+    comma = page.evaluate(
+        r"""
+() => ({
+  x: document.querySelector('input[data-idx="0"][data-axis="x"]').value,
+  y: document.querySelector('input[data-idx="0"][data-axis="y"]').value,
+  mode: document.querySelector('.ls-sinus-data').getAttribute('data-mode'),
+  custom: document.querySelector('.ls-sinus-scene').classList.contains('is-custom-data')
+})
+"""
+    )
+    results.check(tag, "table accepts comma decimals and keeps dot output", comma["x"] == "0.42" and comma["y"] == "1.23" and comma["mode"] == "custom" and comma["custom"], str(comma))
+
+    page.set_input_files(".ls-sinus-file-input", {"name": "punkte.csv", "mimeType": "text/csv", "buffer": b"x;y\n0,2;0,4\n0,4;0,6\n"})
+    page.wait_for_timeout(400)
+    uploaded = page.evaluate("() => ({ csv: document.querySelector('.ls-sinus-csv').value, name: document.querySelector('.ls-sinus-file-name').textContent })")
+    results.check(tag, "CSV file upload fills the text buffer", "0,2;0,4" in uploaded["csv"] and uploaded["name"] == "punkte.csv", str(uploaded))
+    errors = logs.take()
+    results.check(tag, "custom-data flow has no console errors", not errors, " | ".join(errors)[:400])
+    context.close()
+
+    probe_context, probe, _ = open_page(browser, base, lang, path="/eoy/13.php", wait_media=False)
+    probe.wait_for_timeout(800)
+    linear = probe.evaluate(
+        "() => { var d = document.querySelector('.ls-sinus-data'); return { present: !!d, hidden: d ? d.hidden : null, title: (document.getElementById('ls-title') || {}).textContent || '' }; }"
+    )
+    results.check(tag, "linear model slide hides the data box", (not linear["present"]) or linear["hidden"] is True, str(linear))
+    probe_context.close()
+
+
 def test_index_sprint(browser, base, lang, results):
     context = browser.new_context(viewport={"width": 1200, "height": 900})
     page = context.new_page()
@@ -2708,6 +2888,7 @@ def main():
                 test_risk_and_limit_visuals(browser, base, lang, results)
                 test_qualia_and_final_status(browser, base, lang, results)
                 test_scene_recovers_after_late_registration(browser, base, lang, results)
+                test_custom_training_data(browser, base, lang, results)
                 test_tabs_and_code(page, logs, results, tag)
                 test_phone_screen_clicks(page, logs, results, tag)
                 test_hidden_media_buttons(page, logs, results, tag)
