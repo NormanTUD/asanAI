@@ -140,14 +140,13 @@
         ],
         qa: [
           { q: L("Was behauptet McGinn?", "What does McGinn claim?"), a: L("Bewusstsein könnte jenseits unserer Begriffe liegen.", "Consciousness may lie beyond our concepts.") },
-          { q: L("Warum die Ratte?", "Why the rat?"), a: L("Sie lernt das Labyrinth, löst aber keine Differentialgleichungen.", "It learns the maze but does not solve differential equations.") },
           { q: L("Ist das falsifizierbar?", "Is that falsifiable?"), a: L("Nein; keine Beobachtung kann die Grenze zeigen.", "No; no observation can demonstrate the limit.") },
           { q: L("Was folgt für KI?", "What follows for AI?"), a: L("Kein Test; die Frage verschiebt sich in unsere Erkenntnisgrenzen.", "No test; the question moves into our cognitive limits.") },
           { q: L("Was ist der Einwand?", "What is the objection?"), a: L("Eine Grenze zu behaupten erklärt Bewusstsein nicht.", "Claiming a limit does not explain consciousness.") },
         ],
         cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://doi.org/10.1037/h0060262" target="_blank" rel="noopener">Tolman, Ritchie &amp; Kalish (1946)</a>; <a href="https://doi.org/10.1037/0097-7403.2.2.97" target="_blank" rel="noopener">Olton &amp; Samuelson (1976)</a>; <a href="https://doi.org/10.1016/j.expneurol.2010.09.008" target="_blank" rel="noopener">Ben Abdallah et al. (2011)</a>',
-        hint: L("Neue Frage erzeugt ein weiteres Fragezeichen. Manche sind groß, manche klein; keine landet auf einer Antwort.", "New question spawns another question mark. Some are large, some small; none lands on an answer."),
-        status: L("Die Fragezeichen fliegen. Weiter erzeugt weitere Fragen.", "The question marks are flying. Next creates more questions.")
+        hint: L("Die Fragezeichen stehen für das, was unsere Begriffe nicht fassen.", "The question marks stand for what our concepts cannot capture."),
+        status: L("Die Fragezeichen stehen für die Grenze unserer Begriffe: Bewusstsein könnte sich einer vollständigen Erklärung entziehen.", "The question marks stand for the limit of our concepts: consciousness may resist a complete explanation.")
       }
     ];
 
@@ -1131,15 +1130,6 @@
       }
       return false;
     }
-    function mystNextAction() {
-      if (myst.marks.length < 16) {
-        spawnMark(false);
-        setStatus(L("Noch eine Frage. Sie fliegt weiter, ohne anzukommen.", "One more question. It keeps flying without landing."));
-        draw(performance.now());
-        return true;
-      }
-      return false;
-    }
     function renderControls() {
       var th = THEORIES[active];
       if (active === 0) {
@@ -1178,7 +1168,7 @@
           }).join("") + '</div>' +
           '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Neu starten", "Start over") + '</button></div>';
       } else {
-        controls.innerHTML = '<div class="ls-con2-row"><button type="button" class="ls-con2-btn is-primary" data-con-spawn>' + L("Neue Frage", "New question") + '</button><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
+        controls.innerHTML = '';
       }
       if (statusEl) {
         var dissRange = controls.querySelector("[data-con-diss]");
@@ -1242,9 +1232,6 @@
       controls.querySelectorAll("[data-four-word]").forEach(function (b) {
         b.addEventListener("click", function () { fourSetWord(b.getAttribute("data-four-word")); });
       });
-      controls.querySelectorAll("[data-con-spawn]").forEach(function (b) {
-        b.addEventListener("click", function () { spawnMark(false); setStatus(L("Noch eine Frage. Sie fliegt weiter, ohne anzukommen.", "One more question. It keeps flying without landing.")); draw(performance.now()); });
-      });
       controls.querySelectorAll("[data-con-reset]").forEach(function (b) {
         b.addEventListener("click", resetTheory);
       });
@@ -1288,7 +1275,6 @@
       if (active === 2 && !predModelFresh()) { updatePredModel(); return true; }
       if (active === 3 && kastNextAction()) return true;
       if (active === 4 && fourNextAction()) return true;
-      if (active === 5 && mystNextAction()) return true;
       if (active === 2 && pred.priorTarget !== null) { setTheory(3); return true; }
       if (active === 3 && kast.dissolving) { setTheory(4); return true; }
       if (qaOpen < qa.length - 1) {
@@ -1359,7 +1345,7 @@
       update: function () {},
       next: goNext,
       prev: goPrev,
-      hasNext: function () { return active === 5 ? myst.marks.length < 16 : active < THEORIES.length - 1; },
+      hasNext: function () { return active < THEORIES.length - 1; },
       hasPrev: function () { return active > 0; },
       ownsKeys: function () { return true; },
       onKey: function (e) {
