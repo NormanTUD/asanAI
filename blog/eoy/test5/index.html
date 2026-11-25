@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Katzen-Labor · Ein MLP lernt ein Bild</title>
 <link rel="stylesheet" href="../../Temml-Local.min.css">
 <style>
@@ -162,6 +165,7 @@ input[type=number],input[type=text],select{
 input[type=number]:focus,select:focus{border-color:rgba(103,232,249,.55);box-shadow:0 0 0 3px rgba(103,232,249,.12);outline:none}
 input[type=range]{width:100%;height:22px;margin:0;accent-color:var(--cyan);background:transparent}
 select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 16px) 16px,calc(100% - 11px) 16px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:30px}
+select:disabled{opacity:.45;cursor:not-allowed}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:0 14px;border-radius:11px;
   border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);
@@ -213,7 +217,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .image-title .tag-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px currentColor}
 .image-card[data-view=pred] .tag-dot{background:var(--amber);color:var(--amber)}
 .image-card[data-view=error] .tag-dot{background:var(--red);color:var(--red)}
-.image-meta{font:600 10px/1 var(--mono);color:var(--dim);white-space:nowrap}
+.image-meta{font:600 10px/1 var(--mono);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66%}
 .image-wrap{position:relative;width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid rgba(138,180,255,.12);background:radial-gradient(circle at 50% 42%,#0c1526,#04070c 72%)}
 .image-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .image-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:16px;font:600 10px/1 var(--mono);color:var(--dim)}
@@ -440,6 +444,19 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
             <input type="range" id="viewScale" min="200" max="460" step="10" value="300">
           </div>
           <label class="check"><input type="checkbox" id="grayToggle" checked><span><b>Graustufen</b> (Luma, 1 Kanal)</span></label>
+          <div class="divider"></div>
+          <label class="check"><input type="checkbox" id="extrapolateToggle"><span><b>Außerhalb von [-1,1]² zeigen</b></span></label>
+          <div class="field">
+            <label for="extrapolateRange">Extrapolationsrand</label>
+            <select id="extrapolateRange" disabled>
+              <option value="1.25">±1,25</option>
+              <option value="1.5" selected>±1,5</option>
+              <option value="2">±2,0</option>
+              <option value="3">±3,0</option>
+            </select>
+          </div>
+          <div class="mini-note"><b>Nur Vorhersage und 3D-Relief.</b> Loss, Fehler und Training bleiben auf dem gelernten Bereich. Außerhalb gibt es keine Trainingsdaten, die Ausgabe ist eine Extrapolation.</div>
+          <div class="divider"></div>
           <div class="source">
             <canvas id="originalThumb" width="58" height="58" aria-label="Originalbild in Farbe"></canvas>
             <div class="source-copy">
@@ -589,7 +606,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
         <figure class="panel image-card" data-view="pred">
           <div class="image-head"><span class="image-title"><i class="tag-dot"></i>Vorhersage</span><span class="image-meta" id="predMeta">–</span></div>
           <div class="image-wrap"><canvas id="predCanvas" aria-label="Vorhersage des Netzes"></canvas></div>
-          <figcaption class="image-foot"><span>Netz-Ausgabe</span><b id="predMean">–</b></figcaption>
+          <figcaption class="image-foot"><span id="predFootLabel">Netz-Ausgabe</span><b id="predMean">–</b></figcaption>
         </figure>
         <figure class="panel image-card" data-view="error">
           <div class="image-head"><span class="image-title"><i class="tag-dot"></i>Fehler</span><span class="image-meta" id="errorMeta">–</span></div>
@@ -798,7 +815,8 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     weightCards: [],
     probe: { idx: 0, locked: false, trace: null, last: 0, raf: 0, rows: [] },
     feature: { model: null, layer: -1, gen: -1, data: null, busy: false, last: 0, start: 0, cards: [] },
-    relief: { x: null, gen: -1, dim: -1, N: 44, data: null, channels: 1, busy: false, last: 0, yaw: -0.7, pitch: 0.85, zoom: 1, auto: true, drawLast: 0, dirty: false },
+    relief: { x: null, gen: -1, dim: -1, factor: 1, N: 44, data: null, channels: 1, busy: false, last: 0, yaw: -0.7, pitch: 0.85, zoom: 1, auto: true, drawLast: 0, dirty: false },
+    view: { active: false, factor: 1.5, N: 0, x: null, gen: -1, dim: -1, data: null, channels: 1, busy: false, hover: false, hoverText: "" },
     render: { lastPred: 0, lastChart: 0, lastStats: 0 }
   };
 
@@ -2605,7 +2623,8 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
   function buildReliefInput() {
     var RN = 44;
     var dim = S.inputDim;
-    if (S.relief.x && S.relief.gen === S.gen && S.relief.dim === dim) return;
+    var factor = S.view.active ? S.view.factor : 1;
+    if (S.relief.x && S.relief.gen === S.gen && S.relief.dim === dim && S.relief.factor === factor) return;
     if (S.relief.x) {
       try { S.relief.x.dispose(); } catch (e) {}
     }
@@ -2613,8 +2632,8 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     var o = 0;
     for (var row = 0; row < RN; row++) {
       for (var col = 0; col < RN; col++) {
-        var x = ((col + 0.5) / RN) * 2 - 1;
-        var y = ((row + 0.5) / RN) * 2 - 1;
+        var x = -factor + ((col + 0.5) / RN) * 2 * factor;
+        var y = -factor + ((row + 0.5) / RN) * 2 * factor;
         o = encodePoint(features, o, x, y);
       }
     }
@@ -2622,6 +2641,165 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     S.relief.N = RN;
     S.relief.dim = dim;
     S.relief.gen = S.gen;
+    S.relief.factor = factor;
+  }
+
+  function formatFactor(f) {
+    var v = Number(f);
+    if (v === 1.25) return "1,25";
+    if (v === 1.5) return "1,5";
+    return String(v).replace(".", ",");
+  }
+
+  function updatePredMeta() {
+    var el = $("#predMeta");
+    if (el) {
+      if (S.view.active) {
+        el.textContent = S.view.hover && S.view.hoverText
+          ? S.view.hoverText
+          : (S.view.N || "–") + " × " + (S.view.N || "–") + " · ±" + formatFactor(S.view.factor);
+      } else {
+        el.textContent = S.N + " × " + S.N + " × " + S.channels;
+      }
+    }
+    var label = $("#predFootLabel");
+    if (label) label.textContent = S.view.active ? "Netz-Ausgabe (extrapoliert)" : "Netz-Ausgabe";
+  }
+
+  function buildViewInput() {
+    if (!window.tf || !S.inputDim) return;
+    var factor = S.view.factor;
+    var N = clamp(Math.round(S.N * factor), S.N, 160);
+    if (S.view.x && S.view.gen === S.gen && S.view.dim === S.inputDim && S.view.factor === factor && S.view.N === N) return;
+    var old = S.view.x;
+    S.view.x = null;
+    S.view.gen = -1;
+    if (old) setTimeout(function () { try { old.dispose(); } catch (e) {} }, 2500);
+    var dim = S.inputDim;
+    var features = new Float32Array(N * N * dim);
+    var o = 0;
+    for (var row = 0; row < N; row++) {
+      for (var col = 0; col < N; col++) {
+        var x = -factor + ((col + 0.5) / N) * 2 * factor;
+        var y = -factor + ((row + 0.5) / N) * 2 * factor;
+        o = encodePoint(features, o, x, y);
+      }
+    }
+    S.view.x = tf.tensor2d(features, [N * N, dim]);
+    S.view.N = N;
+    S.view.dim = dim;
+    S.view.gen = S.gen;
+    S.view.factor = factor;
+    S.view.data = null;
+  }
+
+  function requestViewPrediction(force) {
+    if (!S.view.active || !S.model || !S.view.x || S.view.busy) return;
+    if (!force && document.hidden) return;
+    var gen = S.gen;
+    S.view.busy = true;
+    var out;
+    try {
+      out = S.model.apply(S.view.x);
+    } catch (e) {
+      S.view.busy = false;
+      return;
+    }
+    out.data().then(function (data) {
+      if (gen !== S.gen) return;
+      S.view.data = data;
+      S.view.channels = S.channels;
+      drawPrediction();
+    }).catch(function (err) {
+      if (gen === S.gen) setStatus("Extrapolation fehlgeschlagen: " + (err && err.message ? err.message : err), "warn");
+    }).finally(function () {
+      try { out.dispose(); } catch (e) {}
+      if (gen === S.gen) S.view.busy = false;
+    });
+  }
+
+  function setExtrapolation(active) {
+    S.view.active = !!active;
+    S.view.hover = false;
+    S.view.hoverText = "";
+    var range = $("#extrapolateRange");
+    if (range) range.disabled = !S.view.active;
+    if (S.view.active) {
+      buildViewInput();
+      S.view.data = null;
+      requestViewPrediction(true);
+      if (S.uiTab === "relief") {
+        S.relief.data = null;
+        S.relief.last = 0;
+        S.relief.dirty = true;
+        refreshRelief(true);
+      }
+      setStatus("Extrapolation an: Vorhersage und 3D-Relief zeigen ±" + formatFactor(S.view.factor) + ". Loss, Fehler und Training bleiben auf dem gelernten Bereich.", "warn");
+    } else {
+      S.view.data = null;
+      var old = S.view.x;
+      S.view.x = null;
+      S.view.gen = -1;
+      if (old) setTimeout(function () { try { old.dispose(); } catch (e) {} }, 2000);
+      if (S.uiTab === "relief") {
+        S.relief.data = null;
+        S.relief.last = 0;
+        S.relief.dirty = true;
+        refreshRelief(true);
+      }
+      setStatus("Extrapolation aus. Vorhersage und 3D-Relief zeigen den gelernten Bereich.", "good");
+    }
+    drawPrediction();
+    updatePredMeta();
+  }
+
+  function setViewFactor(factor) {
+    S.view.factor = clamp(Number(factor) || 1.5, 1.1, 4);
+    if (!S.view.active) {
+      updatePredMeta();
+      return;
+    }
+    buildViewInput();
+    S.view.data = null;
+    requestViewPrediction(true);
+    if (S.uiTab === "relief") {
+      S.relief.data = null;
+      S.relief.last = 0;
+      S.relief.dirty = true;
+      refreshRelief(true);
+    }
+    setStatus("Extrapolationsrand ±" + formatFactor(S.view.factor) + ".", "warn");
+    drawPrediction();
+    updatePredMeta();
+  }
+
+  function showExtrapHover(cv, e) {
+    if (!S.view.active) return;
+    if (!S.view.data || !S.view.N) {
+      S.view.hover = false;
+      S.view.hoverText = "";
+      updatePredMeta();
+      return;
+    }
+    var r = cv.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var N = S.view.N;
+    var factor = S.view.factor;
+    var col = clamp(Math.floor((e.clientX - r.left) / r.width * N), 0, N - 1);
+    var row = clamp(Math.floor((e.clientY - r.top) / r.height * N), 0, N - 1);
+    var x = -factor + ((col + 0.5) / N) * 2 * factor;
+    var y = -factor + ((row + 0.5) / N) * 2 * factor;
+    var idx = row * N + col;
+    var value;
+    if (S.view.channels === 1) {
+      value = fmt(S.view.data[idx], 3);
+    } else {
+      var o = idx * 3;
+      value = fmt(S.view.data[o], 2) + "/" + fmt(S.view.data[o + 1], 2) + "/" + fmt(S.view.data[o + 2], 2);
+    }
+    S.view.hover = true;
+    S.view.hoverText = "x " + fmt(x, 2) + ", y " + fmt(y, 2) + " → " + value;
+    updatePredMeta();
   }
 
   function populateFeatureLayers() {
