@@ -455,19 +455,11 @@
       context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
       deep: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂. Die Demo zeigt die Idee, nicht die exakten Gewichte.",
       boxes: [
-        box("ffn-1", "Mathematik", "Wie sind FFN mathematisch aufgebaut?", "Die Layer sind so aufgebaut:\n\n$$\\text{dense}(x) = \\underbrace{W}_{\\text{Gewichte}} \\cdot \\underbrace{x}_{\\text{Eingabe}} + \\underbrace{b}_{\\text{Bias}}$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{Aktivierung}(\\underbrace{\\text{dense}_1(x)}_{\\text{Erste Schicht}})\\right)$$"),
         box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN ist ein MLP pro Token und trennt Muster, die sonst verworren bleiben. Beide zusammen bilden einen Block."),
         box("ffn-4", "Geometrie", "Ist der reichere Vektor hochdimensional?", "Ja. Jeder Punkt hier steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in $W_1$ und der Pull in $W_2$ sind Richtungen in diesem hochdimensionalen Raum.")
       ],
       questionGroups: [
         { id: "g-basics", title: "Eine Ebene tiefer", questions: [] },
-        {
-          id: "g-lens-mathematik",
-          title: "Mathematik",
-          questions: [
-            { id: "q-box-ffn-1", title: "Wie sind FFN mathematisch aufgebaut?", body: "Die Layer sind so aufgebaut:\n\n$$\\text{dense}(x) = \\underbrace{W}_{\\text{Gewichte}} \\cdot \\underbrace{x}_{\\text{Eingabe}} + \\underbrace{b}_{\\text{Bias}}$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{Aktivierung}(\\underbrace{\\text{dense}_1(x)}_{\\text{Erste Schicht}})\\right)$$", tex: "", kind: "trivia" }
-          ]
-        },
         {
           id: "g-lens-technik",
           title: "Technik",
@@ -506,19 +498,11 @@
       context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
       deep: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂. The demo shows the idea, not the exact weights.",
       boxes: [
-        box("ffn-1", "Mathematics", "How is the FFN built mathematically?", "The layers are built like this:\n\n$$\\text{dense}(x) = \\underbrace{W}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b}_{\\text{bias}}$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{activation}(\\underbrace{\\text{dense}_1(x)}_{\\text{first layer}})\\right)$$"),
         box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN is an MLP per token and separates patterns that would otherwise stay entangled. Together they form one block."),
         box("ffn-4", "Geometry", "Is the richer vector high-dimensional?", "Yes. Every point here stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in $W_1$ and the pull in $W_2$ are directions in that high-dimensional space.")
       ],
       questionGroups: [
         { id: "g-basics", title: "One level deeper", questions: [] },
-        {
-          id: "g-lens-mathematics",
-          title: "Mathematics",
-          questions: [
-            { id: "q-box-ffn-1", title: "How is the FFN built mathematically?", body: "The layers are built like this:\n\n$$\\text{dense}(x) = \\underbrace{W}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b}_{\\text{bias}}$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{activation}(\\underbrace{\\text{dense}_1(x)}_{\\text{first layer}})\\right)$$", tex: "", kind: "trivia" }
-          ]
-        },
         {
           id: "g-lens-technique",
           title: "Technique",
@@ -823,12 +807,11 @@
     {
       kicker: "Raum biegen",
       title: "Was sind neuronale Netze?",
-      body: "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: In der Demo hebt eine Schicht die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Das FFN wendet pro Token eine gelernte nichtlineare Transformation an; die Biegung ist eine Intuition, kein wörtliches Falten.",
+      body: "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: In der Demo hebt eine Schicht die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Das FFN wendet pro Token eine gelernte nichtlineare Transformation an; die Biegung ist eine Intuition, kein wörtliches Falten.\n\nMathematisch sind die Layer so aufgebaut:\n\n$$\\text{dense}(x) = \\underbrace{W}_{\\text{Gewichte}} \\cdot \\underbrace{x}_{\\text{Eingabe}} + \\underbrace{b}_{\\text{Bias}}$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{Aktivierung}(\\underbrace{\\text{dense}_1(x)}_{\\text{Erste Schicht}})\\right)$$\n\nDie Dense-Schicht dehnt auf $n$ verborgene Werte, biegt jeden mit einer Aktivierung und projiziert auf eine Höhe.",
       demoState: { scene: "mlp" },
       context: "Die Dense-Schicht hebt die Punkte in eine zusätzliche Dimension; die Aktivierung biegt sie. Erst die Nichtlinearität macht den flachen Schnitt möglich.",
       deep: "Das ist keine Animation über den Daten, sondern eine Animation der Daten selbst: Die Darstellung bleibt lokal zusammenhängend, aber Abstände und Nachbarschaften können sich verändern, während der Raum sich krümmt. Die Form hängt von Gewichten, Bias und Aktivierung ab.",
       boxes: [
-        box("mlp-1", "Mathematik", "Die Dense-Schicht", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. Die Schicht dehnt auf n verborgene Werte, biegt jeden mit einer Aktivierung und projiziert auf eine Höhe."),
         box("mlp-2", "Grenze", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Ein echtes Modell arbeitet mit Tausenden Dimensionen.")
       ],
       sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }]
@@ -837,12 +820,11 @@
     {
       kicker: "Bending space",
       title: "What are neural networks?",
-      body: "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. The FFN applies a learned nonlinear transformation per token; the bend is an intuition, not a literal fold.",
+      body: "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. The FFN applies a learned nonlinear transformation per token; the bend is an intuition, not a literal fold.\n\nMathematically, the layers are built like this:\n\n$$\\text{dense}(x) = \\underbrace{W}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b}_{\\text{bias}}$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{activation}(\\underbrace{\\text{dense}_1(x)}_{\\text{first layer}})\\right)$$\n\nThe dense layer expands to $n$ hidden values, bends each with an activation, and projects to one height.",
       demoState: { scene: "mlp" },
       context: "The dense layer lifts the points into an extra dimension; the activation bends them. Only the nonlinearity makes the flat cut possible.",
       deep: "This is not an animation over the data; it is an animation of the data itself. The representation stays locally connected, but distances and neighbourhoods can change while the space bends. The shape depends on weights, bias, and activation.",
       boxes: [
-        box("mlp-1", "Mathematics", "The dense layer", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. The layer expands to n hidden values, bends each with an activation, and projects to one height."),
         box("mlp-2", "Limit", "Why don't we see this in an LLM?", "Because the spaces are too high-dimensional. The demo is a projection onto three axes. A real model works with thousands of dimensions.")
       ],
       sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }]
