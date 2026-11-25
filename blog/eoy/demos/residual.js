@@ -911,6 +911,18 @@
       canvas.style.cursor = hit >= 0 ? "pointer" : "default";
       draw();
     });
+    core.canvasTip(canvas, function (x, y) {
+      if (phase !== "stream") return "";
+      for (var i = 0; i < barHits.length; i++) {
+        var h = barHits[i];
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
+          var d = h.i;
+          var base = baseShown[d] || 0, attn = attnShown[d] || 0, ffn = ffnShown[d] || 0;
+          return (DE ? "Dimension " : "Dimension ") + (d + 1) + ": Residual " + base.toFixed(2) + " + Attention " + attn.toFixed(2) + " + FFN " + ffn.toFixed(2) + " = " + (base + attn + ffn).toFixed(2) + ". Klicken fixiert die Dimension.";
+        }
+      }
+      return "";
+    });
     canvas.addEventListener("pointerleave", function () {
       if (hoverDim === -1) return;
       hoverDim = -1;

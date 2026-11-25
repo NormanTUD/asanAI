@@ -331,6 +331,27 @@
         if (best !== selectedExample) { selectedExample = best; drawData(); drawExamples(); }
       });
     }
+    if (window.LearnSysDemoCore && dataCanvas) {
+      window.LearnSysDemoCore.canvasTip(dataCanvas, function (x, y) {
+        if (!data) return "";
+        var r = dataCanvas.getBoundingClientRect();
+        var w = r.width, h = r.height, pad = 8;
+        var xs = data.examples.xs, ys = data.examples.ys;
+        var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+        var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+        var best = -1, bd = 18;
+        xs.forEach(function (x, i) {
+          var px = pad + (x - minX) / (maxX - minX) * (w - 2 * pad);
+          var py = h - pad - (ys[i] - minY) / (maxY - minY) * (h - 2 * pad);
+          var d = Math.hypot(px - x, py - y);
+          if (d < bd) { bd = d; best = i; }
+        });
+        if (best < 0) return "";
+        var cur = current() || { a: 0, b: 0 };
+        var xv = xs[best], yv = ys[best], yhat = cur.a * xv + cur.b;
+        return (DE ? "Beispiel " : "Example ") + (best + 1) + ": x = " + xv.toFixed(2) + ", y = " + yv.toFixed(2) + ", ŷ = " + yhat.toFixed(2) + ". Fehler " + (yhat - yv).toFixed(2) + ". Klicken wählt das Beispiel.";
+      });
+    }
     function resize() { size = api.fit(canvas, stage); if (data) draw(); else drawData(); }
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {

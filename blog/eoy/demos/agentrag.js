@@ -281,7 +281,7 @@
         answerEl.innerHTML = '<span class="ls-ar-answer-partial">' + L("Ein Krake hat …", "An octopus has …") + '</span>';
       } else {
         answerEl.innerHTML = L("Ein Krake hat drei Herzen: zwei Kiemenherzen und ein Körperherz.", "An octopus has three hearts: two gill hearts and one body heart.") +
-          ' <span class="ls-ar-cite" title="' + L("Quelle: C1 aus kraken.pdf", "Source: C1 from kraken.pdf") + '">[C1]</span>';
+          ' <span class="ls-ar-cite" data-tip="' + L("Quelle: C1 aus kraken.pdf", "Source: C1 from kraken.pdf") + '">[C1]</span>';
       }
     }
     function renderContext() {

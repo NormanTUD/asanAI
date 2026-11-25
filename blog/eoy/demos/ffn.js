@@ -277,19 +277,6 @@
         ctx.stroke();
       });
       ctx.globalAlpha = 1;
-      if (ffnHover >= 0 && bendProjected[ffnHover]) {
-        var hp = bendProjected[ffnHover];
-        var label = hp.label + (DE ? " · Kontextmuster" : " · context pattern");
-        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        var tw = ctx.measureText(label).width;
-        var tx = Math.max(6, Math.min(w - tw - 6, hp.x + 8));
-        var ty = Math.max(16, Math.min(h - 8, hp.y - 10));
-        ctx.fillStyle = "rgba(255,255,255,.95)";
-        ctx.fillRect(tx - 3, ty - 9, tw + 6, 14);
-        ctx.fillStyle = hp.c === 0 ? C.green : C.gold;
-        ctx.textAlign = "left";
-        ctx.fillText(label, tx, ty + 2);
-      }
       var lineAlpha = Math.max(0, Math.min(1, (bend - 0.45) / 0.25));
       if (lineAlpha > 0.01) {
         var ly = cy - 0.62 * scale * 0.98;
@@ -392,6 +379,19 @@
     });
     bendCanvas.addEventListener("pointerleave", function () {
       if (ffnHover !== -1) { ffnHover = -1; drawBend(); }
+    });
+    core.canvasTip(bendCanvas, function (x, y) {
+      var best = -1, bestD = 14 * 14;
+      bendProjected.forEach(function (p, i) {
+        var d = Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      if (best < 0) return "";
+      var p = bendProjected[best];
+      var isCore = p.c === 0;
+      return p.label + (DE ? " · " : " · ") + (isCore ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0]) +
+        ". " + (DE ? "Biegung " : "Bend ") + bend.toFixed(2) + ". " +
+        (DE ? (isCore ? "Kernmuster: wird angehoben und lässt sich von den Mechanik-Punkten trennen." : "Ringmuster: bleibt unten; die Biegung trennt es vom Kern.") : (isCore ? "Core pattern: lifted so the separating plane can cut it from the mechanism points." : "Ring pattern: stays low; the bend separates it from the core."));
     });
     function resize() {
       size = api.fit(bendCanvas, bendStage);

@@ -277,6 +277,35 @@
         setSigma(nextSigmaValue, true);
       }
     }
+    if (window.LearnSysDemoCore) {
+      window.LearnSysDemoCore.canvasTip(plotCanvas, function (x, y) {
+        if (!plotSize) return "";
+        var pad = 34, xMin = 0, xMax = 10, yMin = 0, yMax = 10;
+        var best = -1, bd = 13;
+        for (var i = 0; i < N; i++) {
+          var px = pad + (xs[i] - xMin) / (xMax - xMin) * (plotSize.w - pad * 2);
+          var py = plotSize.h - pad - (obsY(i) - yMin) / (yMax - yMin) * (plotSize.h - pad * 2);
+          var d = Math.hypot(px - x, py - y);
+          if (d < bd) { bd = d; best = i; }
+        }
+        if (best < 0) return "";
+        var observed = obsY(best), trueY = truth(xs[best]), err = observed - trueY;
+        return (DE ? "Beobachtung " : "Observation ") + (best + 1) + " / " + N + ": x = " + xs[best].toFixed(2) + ", gemessen " + observed.toFixed(2) + ", Wahrheit " + trueY.toFixed(2) + ". Fehler " + (err > 0 ? "+" : "") + err.toFixed(2) + " (σ = " + sigma.toFixed(1) + ").";
+      });
+      window.LearnSysDemoCore.canvasTip(errorCanvas, function (x, y) {
+        if (!errorSize) return "";
+        var pad = 34, xMin = -4, xMax = 4, bins = 20, binW = (xMax - xMin) / bins;
+        var bin = Math.floor((x - pad) / (errorSize.w - pad * 2) * bins);
+        if (bin < 0 || bin >= bins) return "";
+        var counts = new Array(bins).fill(0);
+        for (var i = 0; i < N; i++) {
+          var e = zs[i] * sigma;
+          var b = Math.floor((e - xMin) / binW);
+          if (b >= 0 && b < bins) counts[b]++;
+        }
+        return (DE ? "Fehlerbereich " : "Error bin ") + (xMin + bin * binW).toFixed(2) + " bis " + (xMin + (bin + 1) * binW).toFixed(2) + ": " + counts[bin] + " " + (DE ? "Beobachtungen. Die Glockenkurve zeigt die erwartete Verteilung." : "observations. The bell curve shows the expected distribution.");
+      });
+    }
     return {
       update: function (s) {
         if (!s) return;

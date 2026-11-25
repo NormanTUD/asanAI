@@ -738,6 +738,19 @@
     });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", draw);
+    if (window.LearnSysDemoCore) {
+      window.LearnSysDemoCore.canvasTip(canvas, function (x, y) {
+        if (mode !== "directions" || !hits.length) return "";
+        var best = null, bestD = 22;
+        hits.forEach(function (hit) {
+          var d = Math.hypot(hit.x - x, hit.y - y);
+          if (d < bestD) { bestD = d; best = hit; }
+        });
+        if (!best) return "";
+        return word(best.i) + (best.i === selected ? (DE ? " · ausgewählt. " : " · selected. ") : ". ") +
+          (DE ? "Richtung auf der Einheitskugel. Klicken wählt das Wort; die Winkel zu den Nachbarn stehen im Plot." : "Direction on the unit sphere. Click to choose the word; the angles to its neighbours are shown in the plot.");
+      });
+    }
     choose(0);
     setMode("directions");
     resize();

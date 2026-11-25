@@ -573,6 +573,7 @@
       if (!host) return null;
       var stage = host.querySelector(".ls-bs-traj-stage");
       var canvas = host.querySelector(".ls-bs-traj-canvas");
+      if (canvas) canvas.setAttribute("data-ls-canvas-tip", "1");
       var stepBtn = host.querySelector(".ls-bs-traj-step");
       var resetBtn = host.querySelector(".ls-bs-traj-reset");
       var readout = host.querySelector(".ls-bs-traj-readout");

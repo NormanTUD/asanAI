@@ -759,23 +759,6 @@
         ctx.globalAlpha = 1;
       }
 
-      if (hoverInfo) {
-        var hw = WORDS[hoverInfo.id];
-        var dims = st.dim === 0 ? [hw.v[0]] : st.dim === 1 ? [hw.v[0], hw.v[1]] : [hw.v[0], hw.v[1], hw.z];
-        var htext = wordLabel(hoverInfo.id) + " · (" + dims.join(", ") + ")";
-        ctx.font = '700 ' + Math.max(9, Math.min(11, size.w * 0.018)) + 'px "Open Sans", sans-serif';
-        var htw = ctx.measureText(htext).width;
-        var htx = Math.max(8, Math.min(size.w - htw - 18, hoverInfo.x + 12));
-        var hty = Math.max(28, hoverInfo.y - 14);
-        ctx.fillStyle = C.paper || "#fff";
-        ctx.strokeStyle = C.lineStrong;
-        ctx.lineWidth = 1;
-        ctx.fillRect(htx - 5, hty - 12, htw + 10, 17);
-        ctx.strokeRect(htx - 5, hty - 12, htw + 10, 17);
-        ctx.fillStyle = C.ink;
-        ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
-        ctx.fillText(htext, htx, hty);
-      }
       var modeLabel = dimMix < 0.5 ? "1D" : (dimMix < 1.5 ? "2D" : "3D");
       drawLabel("EMBEDDING · " + modeLabel, 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Ziehen zum Drehen · Wörter anklicken" : "Drag to rotate · click words", size.w - 24, 26, C.muted, "right", 9);
@@ -1317,6 +1300,27 @@
       if (changed) ensureLoop();
     }
 
+    core.canvasTip(canvas, function (x, y) {
+      var hit = hitAt(x, y);
+      if (!hit) return "";
+      if (hit.kind === "temp") {
+        var t = tempById(hit.id);
+        var active = st.pair && (st.pair[0] === hit.id || st.pair[1] === hit.id);
+        return (DE ? "Temperaturpunkt " : "Temperature point ") + text(t.label) + " = " + t.value + ". " +
+          (active ? (DE ? "Teil der aktuellen Summe. " : "Part of the current sum. ") : "") +
+          (DE ? "Klicken wählt den Punkt; zwei Punkte werden addiert." : "Click to choose the point; two points are added.");
+      }
+      if (hit.kind === "group") {
+        var ids = hit.ids.map(function (id) { return wordLabel(id); }).join(", ");
+        return (DE ? "Gruppe: " : "Group: ") + ids + ". " + (DE ? "Die Wörter teilen sich in 1D eine Position; klicken wählt die Gruppe." : "The words share one 1D position; click to select the group.");
+      }
+      var w = WORDS[hit.id];
+      if (!w) return "";
+      var dims = st.dim === 0 ? [w.v[0]] : st.dim === 1 ? [w.v[0], w.v[1]] : [w.v[0], w.v[1], w.z];
+      var groups = { gender: DE ? "Geschlecht" : "gender", power: DE ? "Macht" : "power", rank: DE ? "Rang" : "rank", animal: DE ? "Tier" : "animal", fiction: DE ? "Fiktion" : "fiction" };
+      return wordLabel(hit.id) + " · " + (groups[w.group] || w.group) + " · (" + dims.map(function (v) { return Number(v).toFixed(0); }).join(", ") + "). " +
+        (DE ? "Klicken wählt das Wort; im 3D-Modus dreht Ziehen die Ansicht." : "Click to select the word; in 3D, drag to rotate the view.");
+    });
     canvas.addEventListener("pointermove", onMove);
     canvas.addEventListener("pointerdown", onDown);
     canvas.addEventListener("pointerup", onUp);

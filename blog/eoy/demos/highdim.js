@@ -38,7 +38,8 @@
     var body = tokens.map(function (tok, ti) {
       var cells = '';
       for (var k = 0; k < cols; k++) cells += '<td>' + value(ti, k) + '</td>';
-      return '<tr data-token="' + ti + '" data-tip="' + (DE ? "Klicke ein Token, um seine Vektorwerte oben zu lesen." : "Click a token to read its vector values in the panel above.") + '"' + (ti === selected ? ' class="is-on"' : '') + '><th><span class="ls-highdim-token">' + esc(tokenLabel(tok.t)) + '</span><small>' + tok.id + '</small></th>' + cells + '<td class="ls-highdim-ellipsis">…</td></tr>';
+      var rowTip = "Token " + esc(tokenLabel(tok.t)) + ", id " + tok.id + ": d1 " + value(ti, 0) + ", d2 " + value(ti, 1) + ", d3 " + value(ti, 2) + ". " + (DE ? "Klicken zeigt die ersten Werte oben." : "Click to show the first values above.");
+      return '<tr data-token="' + ti + '" data-tip="' + rowTip + '"' + (ti === selected ? ' class="is-on"' : '') + '><th><span class="ls-highdim-token">' + esc(tokenLabel(tok.t)) + '</span><small>' + tok.id + '</small></th>' + cells + '<td class="ls-highdim-ellipsis">…</td></tr>';
     }).join("");
     var more = '<tr class="is-ellipsis" data-tip="' + (DE ? "Die Tabelle geht weiter; nur ein kleiner Ausschnitt des Vektors ist zu sehen." : "The table continues; only a small slice of the vector is shown.") + '"><td colspan="' + (cols + 2) + '">…</td></tr>';
     var el = document.createElement("div");

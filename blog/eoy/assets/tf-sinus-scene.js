@@ -607,6 +607,15 @@
       matrixOverlay.hidden = true;
       matrixBtn.textContent = DE ? "Matrizen zeigen" : "Show matrices";
     });
+    if (window.LearnSysDemoCore && lossCanvas) {
+      window.LearnSysDemoCore.canvasTip(lossCanvas, function (x) {
+        var hist = active().history;
+        if (!hist.length || !lossSize) return "";
+        var i = Math.round((x - 8) / Math.max(1, lossSize.w - 16) * (hist.length - 1));
+        i = Math.max(0, Math.min(hist.length - 1, i));
+        return (DE ? "Epoche " : "Epoch ") + i + ": Loss = " + V.fmt(hist[i], 5) + ". " + (DE ? "Log-Skala; jede Stufe ist ein Faktor 10." : "Log scale; every step is a factor of 10.");
+      });
+    }
     function resize() { size = api.fit(canvas, canvas); if (lossView) { if (lossApi) lossApi.resize(); } else { draw(); updateMatrixCanvases(); } }
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {

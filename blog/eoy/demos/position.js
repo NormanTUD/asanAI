@@ -17,8 +17,10 @@
       '<div class="ls-position-readout" aria-live="polite" data-tip="' + L("Zeigt die gewählte Position, die Metrik, den Winkel bzw. die Distanz und den aktuellen Heatmap-Wert.", "Shows the selected position, metric, angle or distance, and the current heatmap value.") + '"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
+    heat.setAttribute("data-ls-canvas-tip", "1");
     var heatCursor = el.querySelector(".ls-position-heat-cursor");
     var curve = el.querySelector(".ls-position-curve");
+    curve.setAttribute("data-ls-canvas-tip", "1");
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
     var metricBtns = Array.prototype.slice.call(el.querySelectorAll("[data-pos-metric]"));

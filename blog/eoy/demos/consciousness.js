@@ -285,6 +285,17 @@
       if (active === 0) { ws = { written: [false, false, false, false, false], broadcastUntil: 0, broadcasted: false, last: -1, pulseStart: 0 }; setStatus(THEORIES[0].status); }
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false }; setStatus(THEORIES[2].status); }
+      if (active === 2) {
+        var data = predCalc();
+        var padX = 46, span = size.w - padX * 2;
+        var u = (x - padX) / Math.max(1, span);
+        if (u < 0 || u > 1) return "";
+        var idx = Math.max(0, Math.min(data.xs.length - 1, Math.round(u * (data.xs.length - 1))));
+        return (DE ? "x = " : "x = ") + data.xs[idx].toFixed(2) + ": " + (DE ? "Eingang " : "input ") + data.input[idx].toFixed(2) +
+          ", " + (DE ? "Vorhersage " : "prediction ") + data.prior[idx].toFixed(2) +
+          ", " + (DE ? "Wahrnehmung " : "percept ") + data.percept[idx].toFixed(2) +
+          ". " + (DE ? "Überraschung " : "surprise ") + Math.round(pred.surprise) + "%, " + (DE ? "Präzision " : "precision ") + Math.round(pred.precision) + "%.";
+      }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 }; setStatus(THEORIES[3].status); }
       if (active === 4) { four = { mode: "human", focus: 0, word: "hot" }; setStatus(THEORIES[4].status); }
       if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }
@@ -1332,6 +1343,87 @@
           return;
         }
       }
+    });
+
+    core.canvasTip(canvas, function (x, y) {
+      if (!size) return "";
+      if (active === 0) {
+        var g = wsCenters(size.w, size.h);
+        for (var i = 0; i < g.pts.length; i++) {
+          var p = g.pts[i];
+          if (Math.abs(x - p.x) <= g.cardW / 2 && Math.abs(y - p.y) <= g.cardH / 2) {
+            var m = MODULES[i];
+            return m.label + ": " + (ws.written[i] ? m.result : L("noch nicht auf der Tafel", "not on the board yet")) +
+              ". " + (DE ? "Klicken schreibt das Ergebnis auf die Tafel; Broadcast macht es global." : "Click to write the result onto the board; broadcast makes it global.");
+          }
+        }
+        return "";
+      }
+      if (active === 1) {
+        var N = 6, cx = size.w * 0.5, cy = size.h * 0.52, R = Math.min(size.w, size.h) * 0.31;
+        var pos = [];
+        if (iit.feedforward) {
+          for (var j = 0; j < N; j++) pos.push({ x: size.w * 0.1 + j * (size.w * 0.8) / (N - 1), y: cy });
+        } else {
+          for (var k = 0; k < N; k++) {
+            var a = -Math.PI / 2 + k * Math.PI * 2 / N;
+            pos.push({ x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R });
+          }
+        }
+        for (var n = 0; n < pos.length; n++) {
+          if (Math.hypot(x - pos[n].x, y - pos[n].y) < 20) {
+            return (DE ? "Knoten " : "Node ") + (n + 1) + " / " + N + ". " +
+              (iit.feedforward ? (DE ? "Feedforward-Kette: Der Puls läuft nur vorwärts, Phi fällt auf 0." : "Feedforward chain: the pulse only moves forward; Phi falls to 0.") :
+                (DE ? "Rekurrenter Ring: Der Puls kann zurückkehren. Partition " + iit.cut + " % kappt Verbindungen." : "Recurrent ring: the pulse can return. Partition " + iit.cut + "% cuts connections."));
+          }
+        }
+        return "";
+      }
+      if (active === 2) {
+        var data = predCalc();
+        var padX = 46, span = size.w - padX * 2;
+        var u = (x - padX) / Math.max(1, span);
+        if (u < 0 || u > 1) return "";
+        var idx = Math.max(0, Math.min(data.xs.length - 1, Math.round(u * (data.xs.length - 1))));
+        return (DE ? "x = " : "x = ") + data.xs[idx].toFixed(2) + ": " + (DE ? "Eingang " : "input ") + data.input[idx].toFixed(2) +
+          ", " + (DE ? "Vorhersage " : "prediction ") + data.prior[idx].toFixed(2) +
+          ", " + (DE ? "Wahrnehmung " : "percept ") + data.percept[idx].toFixed(2) +
+          ". " + (DE ? "Überraschung " : "surprise ") + Math.round(pred.surprise) + "%, " + (DE ? "Präzision " : "precision ") + Math.round(pred.precision) + "%.";
+      }
+      if (active === 3) {
+        var centers = kastCenters(size.w, size.h);
+        for (var c = 0; c < centers.length; c++) {
+          var cc = centers[c];
+          if (Math.hypot(x - cc.x, y - cc.y) < 42) {
+            if (kast.dissolved) return DE ? "Der Wirbel ist aufgelöst. Das eine Bewusstsein bleibt." : "The vortex is dissolved. The one consciousness remains.";
+            return (DE ? "Persönliches Bewusstsein " : "Personal consciousness ") + String.fromCharCode(65 + c) +
+              (DE ? ". Derselbe Wasserwirbel: von innen getrennt, von außen eine lokale Bewegung. Klicken wählt ihn." : ". The same water vortex: separate from inside, a local movement from outside. Click to select it.");
+          }
+        }
+        return "";
+      }
+      if (active === 4) {
+        var lw = Math.max(214, Math.min(size.w * 0.64, size.w - 188));
+        var pad = 12, cardW = Math.min(146, (lw - pad * 3) / 2), cardH = Math.min(50, size.h * 0.14);
+        var topY = pad, botY = size.h - pad - cardH, leftX = pad, rightX = lw - pad - cardW;
+        var cards = [{ x: leftX, y: topY }, { x: rightX, y: topY }, { x: leftX, y: botY }, { x: rightX, y: botY }];
+        for (var q = 0; q < cards.length; q++) {
+          if (x >= cards[q].x && x <= cards[q].x + cardW && y >= cards[q].y && y <= cards[q].y + cardH) {
+            var e = FOUR_E[q];
+            return e.label + ": " + (DE ? e.noteDe : e.noteEn) + (four.mode === "ai" ? " " + (DE ? e.missingDe : e.missingEn) : "");
+          }
+        }
+        return "";
+      }
+      if (active === 5) {
+        var best = null, bd = 36;
+        myst.marks.forEach(function (m) {
+          var d = Math.hypot(x - m.x * size.w, y - m.y * size.h);
+          if (d < bd) { bd = d; best = m; }
+        });
+        if (best) return L("Fragezeichen: Das Muster ist sichtbar, aber die Erklärung fehlt. Genau diese Lücke ist das harte Problem.", "Question mark: the pattern is visible, but the explanation is missing. That gap is the hard problem.");
+      }
+      return "";
     });
 
     var ro = null;

@@ -362,6 +362,19 @@
     }
     canvas.addEventListener("pointermove", move);
     canvas.addEventListener("pointerdown", move);
+    core.canvasTip(canvas, function () {
+      if (!anchors.length) return "";
+      var px = clamp(pointer.x, 0, CW - 1), py = clamp(pointer.y, 0, CH - 1);
+      var near = anchors.map(function (a, i) { return { i: i, d: Math.hypot(a.x - px, a.y - py) }; })
+        .sort(function (a, b) { return a.d - b.d; }).slice(0, Math.min(3, K));
+      var scale = scaleFor(anchors);
+      var sigma = Math.max(1e-6, T * scale * 0.5);
+      var score = near.map(function (x) { return Math.exp(-x.d / sigma); });
+      var sum = score.reduce(function (a, b) { return a + b; }, 0) || 1;
+      var parts = near.map(function (x, i) { return anchors[x.i].w + " " + Math.round(score[i] / sum * 100) + "%"; });
+      return (DE ? "Nächstes Wort: " : "Nearest word: ") + anchors[near[0].i].w + " · " + parts.join(" · ") +
+        " · T = " + T.toFixed(2) + ", k = " + K + ".";
+    });
     nEl.addEventListener("input", function () { setN(parseInt(nEl.value, 10) || 12); draw(); });
     tempEl.addEventListener("input", function () { T = clamp(parseFloat(tempEl.value) || 0.8, 0.2, 2.6); draw(); });
     kEl.addEventListener("input", function () { K = clamp(parseInt(kEl.value, 10) || 5, 1, 10); draw(); });

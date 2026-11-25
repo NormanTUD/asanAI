@@ -17,6 +17,7 @@
     var compareEl = el.querySelector(".ls-codesem-compare");
     var stage = el.querySelector(".ls-codesem-stage");
     var canvas = el.querySelector(".ls-codesem-canvas");
+    canvas.setAttribute("data-ls-canvas-tip", "1");
     var tipEl = el.querySelector(".ls-codesem-tip");
     var C = api.colors();
     var size = null, kind = "language", task = "meaning", raf = 0, running = true;

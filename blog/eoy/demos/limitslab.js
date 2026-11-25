@@ -120,7 +120,7 @@
       var marks = t.cases.map(function (c, idx) {
         var cx = xp(pos[idx]), cy = yp(acc(pos[idx]));
         var cls = c.ok ? " is-ok" : " is-bad";
-        return '<g class="ls-ll-mark' + cls + '" style="animation-delay:' + (0.42 + idx * 0.16) + 's">' +
+        return '<g class="ls-ll-mark' + cls + '" data-tip="' + L("Fall " + (idx + 1) + ": Position ", "Case " + (idx + 1) + ": position ") + posLabel[idx] + L(", Genauigkeit ca. ", ", accuracy about ") + Math.round(acc(pos[idx]) * 100) + L(" %. Antwort: ", "%. Answer: ") + esc(c.answer) + '" style="animation-delay:' + (0.42 + idx * 0.16) + 's">' +
           '<circle class="ls-ll-mark-halo" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="9"></circle>' +
           '<circle class="ls-ll-mark-dot" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="5"></circle>' +
           '<text class="ls-ll-mark-answer" x="' + cx.toFixed(1) + '" y="' + (cy - 14).toFixed(1) + '" text-anchor="middle">' + (isRun() ? esc(c.answer) : "?") + '</text>' +

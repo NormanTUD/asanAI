@@ -33,6 +33,7 @@
       ].forEach(function (item) {
         var node = root.querySelector(item[0]);
         if (node) node.setAttribute("data-tip", DE ? item[1] : item[2]);
+        if (node && item[0] === ".ls-sinus-canvas") node.setAttribute("data-ls-canvas-tip", "1");
       });
     }
     if (window.tf && window.TfSinusScene) {

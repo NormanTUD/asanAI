@@ -149,6 +149,16 @@
     }
 
     function resize() { size = api.fit(canvas, stage); draw(); }
+    core.canvasTip(canvas, function (x, y) {
+      if (!size) return "";
+      var pts = place().pts;
+      var best = null, bd = 24;
+      pts.forEach(function (p) { var d = Math.hypot(p.x - x, p.y - y); if (d < bd) { bd = d; best = p; } });
+      if (!best) return "";
+      var step = 360 / days.length;
+      return best.label + (DE ? ": Tag " : ": day ") + (best.index + 1) + (DE ? " von 7. " : " of 7. ") +
+        (DE ? "Der Schritt zum nächsten Tag ist immer derselbe Winkel: " : "The step to the next day is always the same angle: ") + step.toFixed(1) + "°.";
+    });
 
     function complete() {
       stopRaf();

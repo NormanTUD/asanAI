@@ -248,7 +248,6 @@
         ctx.stroke();
         drawLabelAt(source, hover.index, pair[0], C.blue, "right", 1);
         drawLabelAt(tPts, hover.index, pair[1], C.green, "left", 1);
-        V.tokenChip(ctx, pair[0] + " · " + pair[1], w / 2, 16, C.gold, C, { size: 11, align: "center" });
       }
       V.heading(ctx, DE ? "Englisch" : "English", 14, 16, C.muted, 10, 1);
       V.heading(ctx, DE ? "Japanisch" : "Japanese", w - 14, 16, C.muted, 10, 1);
@@ -383,6 +382,15 @@
     canvas.addEventListener("pointerup", function () { drag = null; canvas.style.cursor = hover ? "pointer" : "grab"; });
     canvas.addEventListener("pointercancel", function () { drag = null; });
     canvas.addEventListener("pointerleave", function () { if (hover) { hover = null; draw(); } });
+    core.canvasTip(canvas, function (x, y) {
+      var h = nearest(x, y);
+      if (!h) return "";
+      var pair = WORDS[h.index];
+      var sp = source[h.index], tp = targetPoints()[h.index];
+      return (h.side === "en" ? (DE ? "Englisch: " : "English: ") + pair[0] : (DE ? "Japanisch: " : "Japanese: ") + pair[1]) +
+        " · (" + sp.map(function (v) { return Number(v).toFixed(1); }).join(", ") + ") ↔ (" + tp.map(function (v) { return Number(v).toFixed(1); }).join(", ") + "). " +
+        (DE ? "Ausrichtung " + score() + "%. Ziehen dreht die Wolke; die Regler verschieben sie." : "Alignment " + score() + "%. Drag to rotate the cloud; the sliders translate it.");
+    });
     canvas.addEventListener("wheel", function (e) {
       e.preventDefault();
       zoom = Math.max(0.62, Math.min(2.2, zoom * (e.deltaY > 0 ? 0.94 : 1.06)));

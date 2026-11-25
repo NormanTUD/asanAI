@@ -1175,7 +1175,7 @@
         if (DE && i === base.length + 1) html += ",";
         if (i && !noSpace) html += " ";
         html += '<span class="' + item.cls + '"' +
-          (item.idx != null ? ' data-rewind="' + item.idx + '" role="button" tabindex="0" title="' + (DE ? "Hierher zurück" : "Go back here") + '"' : '') +
+          (item.idx != null ? ' data-rewind="' + item.idx + '" role="button" tabindex="0"' : '') +
           '>' + api.esc(item.tok) + "</span>";
       });
       sentenceEl.innerHTML = html;
@@ -1187,7 +1187,7 @@
       var path = ['<span class="ls-loop-base">' + api.esc(words.join(" ")) + '</span>'];
       generated.forEach(function (tok, i) {
         path.push('<span class="ls-loop-arrow">→</span>');
-        path.push('<span class="ls-loop-node" data-rewind="' + i + '" role="button" tabindex="0" title="' + (DE ? "Hierher zurück" : "Go back here") + '" data-tip="' + (DE ? "Springt zu diesem früheren Token zurück." : "Jumps back to this earlier token.") + '">' + api.esc(tok) + (DE && i === 0 ? "," : "") + '</span>');
+        path.push('<span class="ls-loop-node" data-rewind="' + i + '" role="button" tabindex="0" data-tip="' + (DE ? "Springt zu diesem früheren Token zurück: " : "Jumps back to this earlier token: ") + api.esc(tok) + '">' + api.esc(tok) + (DE && i === 0 ? "," : "") + '</span>');
       });
       var opts = choicesFor();
       var next = opts.length
@@ -1253,7 +1253,7 @@
         var on = decodeMode === "greedy" ? i === top : (decodeMode === "topp" && probs[i] >= probs[cut]);
         var label = o.t === EOS ? (DE ? "Ende" : "End") : o.t;
         return '<button type="button" class="ls-loop-bar' + (on ? " is-on" : "") + '" data-bar="' + i + '"' +
-          (atEnd ? ' disabled' : '') + ' title="' + api.esc(o.t) + '" aria-label="' + api.esc(o.t) + '" data-tip="' + (DE ? "Wahrscheinlichkeit für dieses Token; klicken wählt es." : "Probability of this token; clicking chooses it.") + '">' +
+          (atEnd ? ' disabled' : '') + ' aria-label="' + api.esc(o.t) + '" data-tip="' + (DE ? "Token „" : "Token “") + api.esc(o.t) + (DE ? "“: Wahrscheinlichkeit; klicken wählt es." : "”: probability; click to choose it.") + '">' +
           '<span class="ls-loop-bar-label">' + api.esc(label) + '</span>' +
           '<span class="ls-loop-bar-track"><i style="width:' + (probs[i] * 100).toFixed(1) + '%"></i></span>' +
           '<span class="ls-loop-bar-val">' + (probs[i] * 100).toFixed(0) + '%</span></button>';

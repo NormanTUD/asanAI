@@ -574,6 +574,23 @@
       return null;
     }
 
+    core.canvasTip(canvas, function (x, y) {
+      var h = hitAt(x, y);
+      if (!h) return "";
+      if (h.kind === "figure") {
+        var fig = FIGURES[h.i], err = fig.pred - fig.year;
+        return fig.name + ": gestorben " + fig.year + ", aus x vorhergesagt " + fig.pred + ". " +
+          (DE ? "Fehler " : "Error ") + (err > 0 ? "+" : "") + err + (DE ? " Jahre. Klicken hebt die Person hervor." : " years. Click to highlight the person.");
+      }
+      if (h.kind === "neuron") {
+        var row = NEURONS[h.i], max = 0;
+        for (var j = 1; j < row.values.length; j++) if (row.values[j] > row.values[max]) max = j;
+        var cols = DE ? ["Städte", "Landmarken", "Personen", "Kunst", "Schlagzeilen"] : ["Cities", "Landmarks", "People", "Art", "Headlines"];
+        return (DE ? row.label[0] : row.label[1]) + ": stärkste Ausrichtung " + cols[max] + " (" + row.values[max].toFixed(2) + "). " +
+          (DE ? "Klicken hebt die Zeile hervor." : "Click to highlight the row.");
+      }
+      return "";
+    });
     canvas.addEventListener("click", function (e) {
       var r = canvas.getBoundingClientRect();
       var h = hitAt(e.clientX - r.left, e.clientY - r.top);

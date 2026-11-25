@@ -36,6 +36,7 @@
     root.appendChild(el);
     var stage = el.querySelector(".ls-qkv-stage");
     var canvas = el.querySelector("canvas");
+    canvas.setAttribute("data-ls-canvas-tip", "1");
     var tipEl = el.querySelector(".ls-qkv-tip");
     var readout = el.querySelector(".ls-qkv-readout");
     var percentEl = el.querySelector(".ls-qkv-percent");
