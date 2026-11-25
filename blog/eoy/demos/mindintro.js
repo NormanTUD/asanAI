@@ -35,7 +35,7 @@
               '<div class="ls-mi2-measure"><svg viewBox="0 0 180 54" aria-hidden="true"><path d="M5 47 C30 47 44 40 58 35 C82 25 96 11 112 13 C132 16 148 33 175 36" fill="none" stroke="var(--ls-blue)" stroke-width="1.8"></path><line x1="108" y1="7" x2="108" y2="49" stroke="var(--ls-gold)" stroke-dasharray="3 2"></line><text x="112" y="11" class="ls-mi2-measure-label">700 nm</text></svg><div class="ls-mi2-bars"><i></i><i></i><i></i><i></i></div><span>' + L("Zapfen · Neuronen · Bericht", "cones · neurons · report") + '</span></div>' +
               '<b>' + L("Von außen", "From outside") + '</b><p>' + L("Messung, Aktivität, Beschreibung", "measurement, activity, description") + '</p>' +
             '</div>' +
-            '<div class="ls-mi2-gap" data-tip="' + L("Die Erklärungslücke: aus Messdaten folgt nicht, wie sich etwas anfühlt.", "The explanatory gap: measurements do not imply how something feels.") + '"><span>?</span><b>' + L("Erklärungslücke", "explanatory gap") + '</b></div>' +
+            '<div class="ls-mi2-gap" data-tip="' + L("Die Erklärungslücke: aus Messdaten folgt nicht, wie sich etwas anfühlt.", "The explanatory gap: measurements do not imply how something feels.") + '"><span>?</span><b>' + L("Erklärungs-<br>lücke", "explanatory<br>gap") + '</b></div>' +
             '<div class="ls-mi2-side is-in" data-tip="' + L("Von innen: die gefühlte Röte, die in keiner Messung vorkommt.", "From inside: the felt redness that appears in no measurement.") + '">' +
               '<div class="ls-mi2-felt"><span>?</span></div>' +
               '<b>' + L("Von innen", "From inside") + '</b><p>' + L("Wie sich das Rot anfühlt", "what the red feels like") + '</p>' +
@@ -46,13 +46,14 @@
             '<p class="is-easy"><b>' + L("Leichtes Problem:", "Easy problem:") + '</b> ' + L("Muster erkennen, integrieren, berichten: Mechanismen sind denkbar; „easy“ ist relativ und kann Jahrhunderte kosten.", "Discriminate, integrate, report: mechanisms are conceivable; “easy” is relative and can take centuries.") + '</p>' +
             '<p class="is-hard"><b>' + L("Schweres Problem:", "Hard problem:") + '</b> ' + L("Warum wird Verarbeitung subjektiv erlebt? Wir haben nicht einmal den Hauch einer Richtung für eine Antwort. Chalmers (1995): „Why should physical processing give rise to a rich inner life at all?“", "Why is processing subjectively experienced? We do not even have a hint of a direction for an answer. Chalmers (1995): “Why should physical processing give rise to a rich inner life at all?”") + ' <a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Originalarbeit (PDF)</a></p>' +
           '</div>' +
+          '<details class="ls-mi2-more"><summary><b>' + L("Kurzfragen", "Short questions") + '</b><span>' + L("fünf Antworten", "five answers") + '</span></summary>' +
           '<div class="ls-mi2-qa">' +
         '<div class="ls-mi2-qa-head"><span>' + L("Fragen", "Questions") + '</span><b>' + L("Kurz beantwortet", "Brief answers") + '</b></div>' +
         '<div class="ls-mi2-qa-questions">' + QA.map(function (item, i) {
           return '<button type="button" class="ls-mi2-q' + (i === 0 ? " is-on" : "") + '" data-mi-q="' + i + '">' + esc(item.q) + '</button>';
         }).join("") + '</div>' +
         '<p class="ls-mi2-qa-answer" data-mi-qa-answer>' + esc(QA[0].a) + '</p>' +
-      '</div>' +
+      '</div></details>' +
         '</section>' +
         '<aside class="ls-mi2-right">' +
           '<section class="ls-mi2-mary" data-mi-mary data-tip="' + L("Marys Zimmer: Klick zeigt ihr den roten Apfel.", "Mary's room: click to show her the red apple.") + '">' +

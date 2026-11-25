@@ -2298,6 +2298,8 @@ def test_qualia_and_final_status(browser, base, lang, results):
     results.check(tag, "intro text does not grow beyond baseline", intro_len <= budgets["intro"], f"{intro_len} > {budgets['intro']}")
     intro_qa = page.evaluate("() => ({ count: document.querySelectorAll('[data-mi-q]').length, answer: document.querySelector('[data-mi-qa-answer]')?.textContent || '' })")
     results.check(tag, "intro offers five answered questions", intro_qa["count"] == 5 and len(intro_qa["answer"]) > 20, str(intro_qa)[:220])
+    page.locator('.ls-mi2-more').evaluate("el => { el.open = true; }")
+    page.wait_for_timeout(100)
     page.locator('[data-mi-q="1"]').click()
     page.wait_for_timeout(150)
     intro_answer = page.evaluate("() => document.querySelector('[data-mi-qa-answer]')?.textContent || ''")
