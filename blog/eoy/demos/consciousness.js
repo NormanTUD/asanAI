@@ -1151,7 +1151,7 @@
           '<div class="ls-con2-row">' + Object.keys(FOUR_WORDS).map(function (k) {
             return '<button type="button" class="ls-con2-chip' + (four.word === k ? " is-on" : "") + '" data-four-word="' + k + '">' + L(FOUR_WORDS[k].de, FOUR_WORDS[k].en) + '</button>';
           }).join("") + '</div>' +
-          '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
+          '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Neu starten", "Start over") + '</button></div>';
       } else {
         controls.innerHTML = '<div class="ls-con2-row"><button type="button" class="ls-con2-btn is-primary" data-con-spawn>' + L("Neue Frage", "New question") + '</button><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
       }
