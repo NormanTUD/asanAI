@@ -2,6 +2,13 @@
   "use strict";
   if (!window.LearnSys || !window.LearnSysDemoCore) return;
   var SCENES = window.LearnSysDemoCore.scenes;
+  // The scene registry can be rebuilt after this file runs; resolve through the
+  // live core first and fall back to the registry captured at load time.
+  function sceneFactory(name) {
+    var core = window.LearnSysDemoCore;
+    if (core && core.scenes && core.scenes[name]) return core.scenes[name];
+    return SCENES[name] || null;
+  }
   LearnSys.defineDemo("intuition", function (root, api) {
     var host = document.createElement("div");
     host.className = "ls-scene-host";
@@ -138,11 +145,19 @@
       layer.setAttribute("data-scene", next);
       layer.hidden = true;
       host.appendChild(layer);
-      var inst = SCENES[next] ? SCENES[next](layer, api) : null;
+      var factory = sceneFactory(next);
+      var inst = factory ? factory(layer, api) : null;
       return { layer: layer, api: inst };
     }
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     function mount(next, dir) {
+      var cached = scenes[next];
+      // A scene whose script was not ready yet is cached without an api. Once
+      // the factory exists, drop that placeholder layer and build the scene.
+      if (cached && !cached.api && sceneFactory(next)) {
+        cached.layer.remove();
+        delete scenes[next];
+      }
       if (!scenes[next]) scenes[next] = makeLayer(next);
       var stepDir = dir < 0 ? "prev" : "next";
       Object.keys(scenes).forEach(function (key) {
@@ -188,14 +203,14 @@
       update: function (s, meta) {
         var next = (s && s.scene) || "embedding";
         var active = host.querySelector(".ls-scene-layer.is-active");
-        if (next !== name || !active || active.getAttribute("data-scene") !== next) {
+        if (next !== name || !active || active.getAttribute("data-scene") !== next || (!scene && sceneFactory(next))) {
           var dir = meta && (meta.subDir || meta.dir) ? (meta.subDir || meta.dir) : 1;
           mount(next, dir);
         }
         if (scene && scene.update) scene.update(s || {}, meta);
       },
       preload: function (nextName) {
-        if (!nextName || scenes[nextName] || !SCENES[nextName]) return;
+        if (!nextName || scenes[nextName] || !sceneFactory(nextName)) return;
         var entry = makeLayer(nextName);
         if (entry.api && entry.api.pause) { try { entry.api.pause(); } catch (e) {} }
         scenes[nextName] = entry;

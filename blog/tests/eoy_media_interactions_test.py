@@ -2579,6 +2579,58 @@ def test_qualia_and_final_status(browser, base, lang, results):
     context.close()
 
 
+def test_scene_recovers_after_late_registration(browser, base, lang, results):
+    tag = f"scene-recovery-{lang}"
+    context = browser.new_context(viewport={"width": 1280, "height": 900})
+    page = context.new_page()
+    page.set_default_timeout(8000)
+    page.add_init_script(INIT_SCRIPT)
+    page.add_init_script(
+        r"""
+window.__allowConsciousnessScene = false;
+window.__savedConsciousnessScene = null;
+setInterval(function () {
+  var core = window.LearnSysDemoCore;
+  if (core && core.scenes && core.scenes.consciousness && !window.__allowConsciousnessScene) {
+    window.__savedConsciousnessScene = core.scenes.consciousness;
+    delete core.scenes.consciousness;
+  }
+}, 1);
+"""
+    )
+    page.goto(f"{base}/eoy/31.php?lang={lang}", wait_until="load", timeout=40000)
+    page.wait_for_function("() => window.LearnSys && document.querySelector('#ls-title')", timeout=40000)
+    page.wait_for_function("() => !!window.__savedConsciousnessScene", timeout=15000)
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(700)
+    missing = page.evaluate(
+        "() => ({ empty: (document.querySelector('.ls-empty') || {}).textContent || '', scene: !!document.querySelector('.ls-con2') })"
+    )
+    results.check(
+        tag,
+        "missing scene shows the demo placeholder",
+        ("Demo folgt" in missing["empty"] or "Demo follows" in missing["empty"]) and not missing["scene"],
+        str(missing),
+    )
+    page.evaluate(
+        "() => { window.__allowConsciousnessScene = true; window.LearnSysDemoCore.scenes.consciousness = window.__savedConsciousnessScene; }"
+    )
+    page.evaluate("() => LearnSys.go(0, 0, 0)")
+    page.wait_for_timeout(400)
+    page.evaluate("() => LearnSys.go(0, 0, 1)")
+    page.wait_for_timeout(700)
+    recovered = page.evaluate(
+        "() => ({ empty: !!document.querySelector('.ls-empty'), scene: !!document.querySelector('.ls-con2'), title: (document.getElementById('ls-title') || {}).textContent || '' })"
+    )
+    results.check(
+        tag,
+        "late scene registration replaces the placeholder",
+        not recovered["empty"] and recovered["scene"],
+        str(recovered),
+    )
+    context.close()
+
+
 def test_index_sprint(browser, base, lang, results):
     context = browser.new_context(viewport={"width": 1200, "height": 900})
     page = context.new_page()
@@ -2655,6 +2707,7 @@ def main():
                 test_hallucination_lab(browser, base, lang, results)
                 test_risk_and_limit_visuals(browser, base, lang, results)
                 test_qualia_and_final_status(browser, base, lang, results)
+                test_scene_recovers_after_late_registration(browser, base, lang, results)
                 test_tabs_and_code(page, logs, results, tag)
                 test_phone_screen_clicks(page, logs, results, tag)
                 test_hidden_media_buttons(page, logs, results, tag)
