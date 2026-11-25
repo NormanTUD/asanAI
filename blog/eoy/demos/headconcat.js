@@ -3,6 +3,22 @@
   var core = window.LearnSysDemoCore;
   if (!core) return;
 
+  function tokenTip(t, DE) {
+    var punctuation = t === "." || t === "…" || t === "!" || t === "?";
+    if (punctuation) {
+      return DE ? "Satzzeichen-Token „" + t + "“: hat ebenfalls einen Vektor und eine eigene Zeile." : "Punctuation token “" + t + "”: it also has a vector and its own row.";
+    }
+    return DE ? "Token „" + t + "“: eigener Vektor an dieser Position; das FFN verarbeitet ihn separat." : "Token “" + t + "”: its own vector at this position; the FFN processes it separately.";
+  }
+
+  function rowTip(t, DE) {
+    var punctuation = t === "." || t === "…" || t === "!" || t === "?";
+    if (punctuation) {
+      return DE ? "Zeile für das Satzzeichen „" + t + "“: vier Head-Vektoren gehören zu diesem Token." : "Row for the punctuation “" + t + "”: four head vectors belong to this token.";
+    }
+    return DE ? "Zeile für „" + t + "“: die vier Head-Vektoren dieses Tokens." : "Row for “" + t + "”: this token’s four head vectors.";
+  }
+
   function bars(n, className) {
     var out = "";
     for (var i = 0; i < n; i++) out += "<i></i>";
@@ -24,7 +40,7 @@
   function headsHtml() {
     var out = "";
     for (var i = 1; i <= 4; i++) {
-      out += '<span class="ls-hc-head" title="Head ' + i + ': ein Vektor pro Token" data-tip-de="Head ' + i + ': eigener Vektor pro Token; jeder Kopf achtet auf etwas anderes." data-tip-en="Head ' + i + ': its own vector per token; each head attends to something different."><b>H' + i + "</b>" + bars(4, "ls-hc-bars") + "</span>";
+      out += '<span class="ls-hc-head" data-tip-de="Head ' + i + ': eigener Vektor pro Token; jeder Kopf achtet auf etwas anderes." data-tip-en="Head ' + i + ': its own vector per token; each head attends to something different."><b>H' + i + "</b>" + bars(4, "ls-hc-bars") + "</span>";
     }
     return '<span class="ls-hc-heads">' + out + "</span>";
   }
@@ -36,9 +52,9 @@
     toks.forEach(function (t) {
       var cells = "";
       colors.forEach(function (col, i) {
-        cells += '<span class="ls-hc-concat-cell" style="--hc-color:var(--ls-' + col + ')" title="Head ' + (i + 1) + '-Block an dieser Token-Zeile"><b>H' + (i + 1) + "</b><i></i><i></i></span>";
+        cells += '<span class="ls-hc-concat-cell" style="--hc-color:var(--ls-' + col + ')" data-tip-de="Block von Head ' + (i + 1) + ' in der Zeile für „' + t + '“." data-tip-en="Block from head ' + (i + 1) + ' in the row for “' + t + '”."><b>H' + (i + 1) + "</b><i></i><i></i></span>";
       });
-      out += '<span class="ls-hc-concat-token-row" title="Token ' + t + ': eine Zeile des konkatenierten Vektors" data-tip-de="Eine Zeile: konkatenierte Head-Vektoren für dieses Token." data-tip-en="One row: concatenated head vectors for this token."><b class="ls-hc-concat-token">' + t + "</b>" + cells + "</span>";
+      out += '<span class="ls-hc-concat-token-row" data-tip-de="' + rowTip(t, DE) + '" data-tip-en="' + rowTip(t, false) + '"><b class="ls-hc-concat-token">' + t + "</b>" + cells + "</span>";
     });
     return '<span class="ls-hc-concat-matrix" data-tip-de="Jede Zeile ist ein Token; die farbigen Blöcke sind die vier Head-Vektoren." data-tip-en="Each row is a token; the coloured blocks are the four head vectors.">' + out + "</span>";
   }
@@ -46,7 +62,7 @@
   function tokensHtml(DE) {
     var toks = DE ? ["Der", "Hund", "läuft", "."] : ["The", "dog", "runs", "."];
     return '<span class="ls-hc-tokens">' + toks.map(function (t) {
-      return '<span class="ls-hc-token" title="Token ' + t + ': ein Vektor pro Token" data-tip-de="Ein Token mit seinem eigenen Vektor; das FFN verarbeitet jeden separat." data-tip-en="One token with its own vector; the FFN processes each separately."><b>' + t + "</b>" + bars(3, "ls-hc-token-bars") + "</span>";
+      return '<span class="ls-hc-token" data-tip-de="' + tokenTip(t, DE) + '" data-tip-en="' + tokenTip(t, false) + '"><b>' + t + "</b>" + bars(3, "ls-hc-token-bars") + "</span>";
     }).join("") + "</span>";
   }
 
@@ -76,7 +92,7 @@
         group(1, DE ? "2 · Concat" : "2 · concat", concatHtml(DE)) +
         group(2, "3 · W_O", matrix(4, 4) + '<span class="ls-hc-dim" data-tip-de="W_O mischt die Head-Blöcke zu einem Vektor pro Token." data-tip-en="W_O mixes the head blocks into one vector per token.">H·d_v → d_model · mischt</span>') +
         group(3, DE ? "4 · Token-Vektoren" : "4 · token vectors", tokensHtml(DE)) +
-        group(4, "5 · FFN", '<span class="ls-hc-box" title="Das FFN liest einen Token-Vektor pro Token, nicht die einzelnen Heads" data-tip-de="Das FFN liest den gemischten Token-Vektor, nicht die einzelnen Heads." data-tip-en="The FFN reads the mixed token vector, not the individual heads.">FFN</span>');
+        group(4, "5 · FFN", '<span class="ls-hc-box" data-tip-de="Das FFN liest den gemischten Token-Vektor, nicht die einzelnen Heads." data-tip-en="The FFN reads the mixed token vector, not the individual heads.">FFN</span>');
     } else {
       stageHtml =
         group(0, DE ? "Token-Vektor" : "token vector", bars(5, "ls-hc-vector")) +

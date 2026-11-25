@@ -504,7 +504,8 @@
         var ttip = i === 4 ? (DE ? "Aktuelles " + tok + ": seine Query fragt nach dem früheren Vorkommen." : "Current " + tok + ": its query asks for the earlier occurrence.")
           : i === 1 ? (DE ? pred + ": das Token, das auf das frühere " + tok + " folgte." : pred + ": the token that followed the earlier " + tok + ".")
           : i === 0 ? (DE ? "Früheres " + tok + "." : "Earlier " + tok + ".")
-          : (DE ? "Token " + tokens[i] + "." : "Token " + tokens[i] + ".");
+          : i === 2 ? (DE ? "Ausgelassene Tokens: Der Kontext läuft zwischen dem Muster und dem aktuellen Vorkommen weiter." : "Omitted tokens: the context continues between the pattern and the current occurrence.")
+          : (DE ? "„" + tokens[i] + "“: ein Füllwort im Kontext, ohne Rolle im Muster." : "“" + tokens[i] + "”: a filler word in the context, with no role in the pattern.");
         addHover(cx - colW / 2, tokenY - chipSize * 0.95, colW, chipSize * 1.9, ttip);
       }
       txt(c, "Key", x + 10, keyY - 9, {
@@ -519,7 +520,10 @@
         });
         addHover(cx - colW / 2, keyY - 9, colW, 18, i === 1
           ? (DE ? "Key bei „" + pred + "“: davor war „" + tok + "“. Deshalb passt die Query." : "Key at “" + pred + "”: before it was “" + tok + "”. That is why the query matches.")
-          : (DE ? "Key bei „" + tokens[i] + "“: davor war „" + keys[i] + "“." : "Key at “" + tokens[i] + "”: before it was “" + keys[i] + "”."));
+          : i === 0 ? (DE ? "Erste Stelle: kein Vorgänger, daher kein Key." : "First position: no predecessor, so no key.")
+          : i === 2 ? (DE ? "Ausgelassene Stelle: kein exakter Key sichtbar; der Kontext läuft weiter." : "Omitted position: no exact key is visible; the context continues.")
+          : i === 3 ? (DE ? "Key beim Füllwort „" + tokens[i] + "“: Sein Vorgänger liegt im ausgelassenen Teil." : "Key at the filler “" + tokens[i] + "”: its predecessor lies in the omitted section.")
+          : (DE ? "Key am aktuellen „" + tokens[i] + "“: davor stand „" + keys[i] + "“; die Query sucht das frühere Muster." : "Key at the current “" + tokens[i] + "”: before it was “" + keys[i] + "”; the query looks for the earlier pattern."));
       }
       txt(c, "Gewicht", x + 10, weightY - 9, {
         size: small ? 8 : 9, color: C.muted,
@@ -532,7 +536,11 @@
           align: "center", size: small ? 8.5 : 9.5, color: i === 1 ? C.gold : C.muted,
           font: '700 ' + (small ? 8.5 : 9.5) + 'px "Open Sans", sans-serif'
         });
-        addHover(cx - colW / 2, weightY - 9, colW, 18, DE ? "Attention-Gewicht für „" + tokens[i] + "“: " + pct + (i === 1 ? ". Das ist der höchste Wert." : ".") : "Attention weight for “" + tokens[i] + "”: " + pct + (i === 1 ? ". This is the highest value." : "."));
+        addHover(cx - colW / 2, weightY - 9, colW, 18, i === 1
+          ? (DE ? "Attention-Gewicht bei „" + pred + "“: " + pct + ". Das ist der höchste Wert." : "Attention weight at “" + pred + "”: " + pct + ". This is the highest value.")
+          : i === 2 ? (DE ? "Attention-Gewicht an der ausgelassenen Stelle: " + pct + " (illustrativ)." : "Attention weight at the omitted position: " + pct + " (illustrative).")
+          : i === 3 ? (DE ? "Attention-Gewicht beim Füllwort „" + tokens[i] + "“: " + pct + " (illustrativ)." : "Attention weight at the filler “" + tokens[i] + "”: " + pct + " (illustrative).")
+          : (DE ? "Attention-Gewicht für „" + tokens[i] + "“: " + pct + " (illustrativ)." : "Attention weight for “" + tokens[i] + "”: " + pct + " (illustrative)."));
       }
       txt(c, (DE ? "Query: " : "query: ") + tok, cx4, tokenY - chipSize * 0.95 - 9, {
         align: "center", size: small ? 8.5 : 9.5, color: C.gold,
