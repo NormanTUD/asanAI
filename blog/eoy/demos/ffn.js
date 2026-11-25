@@ -46,7 +46,10 @@
       hint: "Das ist ein MLP: Bereich anheben, bis eine Ebene trennt.",
       prev: "Voriger Kontext",
       next: "Nächster Kontext",
-      step: "Kontext"
+      step: "Kontext",
+      coreState: "wird angehoben",
+      ringState: "bleibt unten",
+      demoBadge: "Schematische Demo · keine Messung"
     } : {
       fruitTitle: "I ate the apple",
       techTitle: "I bought an Apple laptop",
@@ -62,7 +65,10 @@
       hint: "This is an MLP: lift the region until a plane separates it.",
       prev: "Previous context",
       next: "Next context",
-      step: "Context"
+      step: "Context",
+      coreState: "is lifted",
+      ringState: "stays below",
+      demoBadge: "Schematic demo · not a measurement"
     };
     var el = document.createElement("div");
     el.className = "ls-ffn-scene";
@@ -74,8 +80,8 @@
       '</div>' +
       '<div class="ls-ffn-contexts"></div>' +
       '<div class="ls-ffn-bend">' +
-        '<div class="ls-ffn-bend-legend" data-tip-de="Legende: Kernmuster gegen Ringmuster." data-tip-en="Legend: core pattern versus ring pattern."><span><i class="is-core"></i>' + labels.core + '</span><span><i class="is-ring"></i>' + labels.ring + '</span></div>' +
-        '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img" data-tip-de="Punktwolke im FFN-Raum; beobachte, wie die Biegung Kern und Ring trennt." data-tip-en="Point cloud in FFN space; watch how the bend separates core and ring."></canvas></div>' +
+        '<div class="ls-ffn-bend-legend" data-tip-de="Legende: Kernmuster gegen Ringmuster." data-tip-en="Legend: core pattern versus ring pattern."><span><i class="is-core"></i>' + labels.core + ' <small>' + labels.coreState + '</small></span><span><i class="is-ring"></i>' + labels.ring + ' <small>' + labels.ringState + '</small></span></div>' +
+        '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img" data-tip-de="Punktwolke im FFN-Raum; beobachte, wie die Biegung Kern und Ring trennt." data-tip-en="Point cloud in FFN space; watch how the bend separates core and ring."></canvas><span class="ls-ffn-demo-badge">' + labels.demoBadge + '</span></div>' +
         '<div class="ls-ffn-bend-bar">' +
           '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0" data-tip-de="Hebt den Kernbereich an; höhere Werte machen die Trennebene sichtbar." data-tip-en="Lifts the core region; higher values reveal the separating plane."><output>0.00</output></label>' +
           '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-bend-toggle" data-tip-de="Animiert die Biegung bis zur Trennebene oder zurück." data-tip-en="Animates the bend to the separating plane or back.">' + labels.bendButton + '</button>' +
@@ -196,8 +202,10 @@
       ctx.fillStyle = halo;
       ctx.fillRect(0, 0, w, h);
       function warp(x, y) {
-        var r2 = x * x + y * y;
-        return { x: x, y: y, z: bend * 1.45 * Math.exp(-r2 / 0.20) };
+        var r = Math.hypot(x, y);
+        var t = Math.max(0, Math.min(1, (r - 0.30) / 0.24));
+        var ringDamp = 1 - 0.80 * (t * t * (3 - 2 * t));
+        return { x: x, y: y, z: bend * 1.45 * Math.exp(-(r * r) / 0.20) * ringDamp };
       }
       function project(x, y, z) {
         return { x: cx + x * scale + z * scale * 0.25, y: cy + y * scale * 0.35 - z * scale * 0.98, z: z };
@@ -230,22 +238,24 @@
       });
       bendProjected = projected;
       var center = project(0, 0, bend * 1.45);
+      var baseCenter = project(0, 0, 0);
       var coreR = 0.42 * scale, ringR = 0.95 * scale;
       var activeColor = activeMode === "fruit" ? C.green : C.gold;
       ctx.save();
       ctx.strokeStyle = activeColor;
       ctx.lineWidth = 1.2;
       ctx.globalAlpha = 0.12 + 0.08 * bend;
-      ctx.beginPath(); ctx.ellipse(center.x, center.y, ringR, ringR * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(baseCenter.x, baseCenter.y, ringR, ringR * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
       ctx.globalAlpha = 0.18 + 0.08 * bend;
       ctx.beginPath(); ctx.ellipse(center.x, center.y, coreR, coreR * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
       ctx.globalAlpha = 1;
       var haloTag = activeMode === "fruit" ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0];
       var haloR = activeMode === "fruit" ? coreR : ringR;
+      var haloCenter = activeMode === "fruit" ? center : baseCenter;
       ctx.fillStyle = activeColor;
       ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText(haloTag, center.x, Math.max(14, center.y - haloR * 0.34 - 7));
+      ctx.fillText(haloTag, haloCenter.x, Math.max(14, haloCenter.y - haloR * 0.34 - 7));
       ctx.restore();
       ffnEdges.forEach(function (e) {
         var a = projected[e.a], b = projected[e.b];
