@@ -2206,21 +2206,24 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
     chain = page.evaluate(
         r"""
 () => ({
-  steps: document.querySelectorAll('.ls-rm-chain-step').length,
-  cross: document.querySelectorAll('.ls-rm-cross-card').length,
+  steps: document.querySelectorAll('.ls-rm-soc-node').length,
+  cross: document.querySelectorAll('.ls-rm-soc-cross-card').length,
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
     results.check(tag, "society value chain is mounted", chain["steps"] == 5, str(chain)[:200])
-    results.check(tag, "society shows four cross-section conflicts", chain["cross"] == 4, str(chain)[:200])
-    page.locator('.ls-rm-chain-step[data-soc-item="4"]').click()
+    page.locator('.ls-rm-soc-node[data-soc-item="4"]').click()
     page.wait_for_timeout(200)
-    rules = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
+    rules = page.evaluate("() => document.querySelector('.ls-rm-soc-detail')?.innerText || ''")
     results.check(tag, "society rules stage names censorship", "Tiananmen" in rules, rules[:200])
-    page.locator('.ls-rm-cross-card[data-soc-item="3"]').click()
+    page.locator('[data-soc-mode="cross"]').click()
+    page.wait_for_timeout(300)
+    cross = page.evaluate("() => ({ cards: document.querySelectorAll('.ls-rm-soc-cross-card').length, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })")
+    results.check(tag, "society shows four cross-section conflicts", cross["cards"] == 4, str(cross)[:200])
+    page.locator('.ls-rm-soc-cross-card[data-soc-item="3"]').click()
     page.wait_for_timeout(200)
-    power = page.evaluate("() => document.querySelector('.ls-rm-detail')?.innerText || ''")
+    power = page.evaluate("() => document.querySelector('.ls-rm-soc-detail')?.innerText || ''")
     results.check(tag, "society power conflict names censorship", "Tiananmen" in power, power[:200])
     results.check(tag, "society page has no overflow", chain["overflow"] <= 2, str(chain["overflow"]))
     errors = logs.take()

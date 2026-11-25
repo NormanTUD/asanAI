@@ -349,7 +349,7 @@
       ctx.fillStyle = C.petrol; ctx.font = font(13, 700); ctx.textAlign = "center"; ctx.textBaseline = "top";
       ctx.fillText("GLOBAL WORKSPACE", cx, cy - R + 18);
       ctx.fillStyle = C.muted; ctx.font = font(10.5, 600);
-      ctx.fillText(L("nur Ergebnisse", "results only"), cx, cy - R + 34);
+      ctx.fillText(L("nur Ergebnisse", "results only"), cx, cy - R + 56);
       var results = MODULES.map(function (m, i) { return ws.written[i] ? m : null; }).filter(Boolean);
       ctx.textAlign = "left"; ctx.textBaseline = "middle";
       if (!results.length) {
