@@ -5998,3 +5998,26 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 /* Predictive-processing explanation should use the full detail width. */
 .ls-con2[data-theory="predictive"] .ls-con2-detail-body{max-width:none;width:100%}
 .ls-con2[data-theory="predictive"] .ls-con2-detail-body p{max-width:none}
+
+/* Smaller, consistent theory plots leave room for the Q&A below. */
+.ls-con2[data-theory] .ls-con2-stage{height:300px;min-height:300px;max-height:300px}
+@media(max-width:640px){.ls-con2[data-theory] .ls-con2-stage{height:260px;min-height:260px;max-height:260px}}
+
+
+/* Theory stage grows/shrinks with the remaining viewport; status joins controls. */
+.ls-con2[data-theory] .ls-con2-stage{
+  flex:1 1 0;
+  height:auto;
+  min-height:140px;
+  max-height:320px;
+}
+.ls-con2-controls .ls-con2-status{
+  flex:1 1 100%;
+  min-height:0;
+  margin:0;
+  padding:2px 0 0;
+  border-top:1px dashed var(--ls-line);
+}
+@media(max-width:640px){
+  .ls-con2[data-theory] .ls-con2-stage{min-height:150px}
+}

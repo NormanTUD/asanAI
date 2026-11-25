@@ -1187,6 +1187,14 @@
       } else {
         controls.innerHTML = '<div class="ls-con2-row"><button type="button" class="ls-con2-btn is-primary" data-con-spawn>' + L("Neue Frage", "New question") + '</button><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
       }
+      if (statusEl) {
+        var dissRange = controls.querySelector("[data-con-diss]");
+        if (dissRange && dissRange.closest(".ls-con2-range")) {
+          dissRange.closest(".ls-con2-range").insertAdjacentElement("afterend", statusEl);
+        } else {
+          controls.appendChild(statusEl);
+        }
+      }
       controls.querySelectorAll("[data-con-mod]").forEach(function (b) {
         b.addEventListener("click", function () {
           writeModule(parseInt(b.getAttribute("data-con-mod"), 10) || 0);
