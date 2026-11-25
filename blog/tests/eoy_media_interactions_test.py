@@ -2263,6 +2263,37 @@ def test_qualia_and_final_status(browser, base, lang, results):
     results.check(tag, "Mary's room labels grey and red", ("grau" in labels_l or "grey" in labels_l) and ("rot" in labels_l or "red" in labels_l), qualia["maryLabels"])
     results.check(tag, "qualia text explains the felt redness", "Qualia" in qualia["text"] or "qualia" in qualia["text"] or "Quale" in qualia["text"] or "quale" in qualia["text"], qualia["text"][:160])
     results.check(tag, "qualia page has no overflow", qualia["overflow"] <= 2, str(qualia["overflow"]))
+    intro_assets = page.evaluate(
+        r"""
+() => ({
+  img: (function () { var i = document.querySelector('.ls-mi2-spectrum-fig img'); return i ? { w: i.naturalWidth, h: i.naturalHeight, ok: i.complete } : null; })(),
+  caption: document.querySelector('.ls-mi2-spectrum-fig figcaption')?.innerText || '',
+  observers: !!document.querySelector('.ls-mi2-observers'),
+  swap: !!document.querySelector('[data-mi-swap]'),
+  hardLink: document.querySelector('.ls-mi2-problems a')?.href || '',
+  text: document.querySelector('.ls-mi2-problems')?.innerText || ''
+})
+"""
+    )
+    results.check(tag, "inverted-qualia image is mounted", intro_assets["img"] and intro_assets["img"]["ok"] and intro_assets["img"]["w"] > 500, str(intro_assets["img"]))
+    results.check(tag, "inverted-qualia image is credited", "CC BY-SA 2.5" in intro_assets["caption"] and "Wikimedia" in intro_assets["caption"] and "Inverted spectrum" in intro_assets["caption"], intro_assets["caption"][:220])
+    results.check(tag, "old A/B and swap controls are removed", not intro_assets["observers"] and not intro_assets["swap"], str(intro_assets)[:220])
+    intro_l = intro_assets["text"].lower()
+    results.check(tag, "first slide explains easy and hard problems", ("leichtes problem" in intro_l or "easy problem" in intro_l) and ("schweres problem" in intro_l or "hard problem" in intro_l) and "chalmers" in intro_l and "facing.pdf" in intro_assets["hardLink"], intro_assets["text"][:240])
+    page.locator('[data-mi-reveal]').click()
+    page.wait_for_timeout(200)
+    mary_before = page.evaluate("() => document.querySelector('.ls-mi2-mary').getBoundingClientRect().height")
+    page.locator('[data-mi-answer="yes"]').click()
+    page.wait_for_timeout(200)
+    mary_after = page.evaluate("() => document.querySelector('.ls-mi2-mary').getBoundingClientRect().height")
+    results.check(tag, "Mary answer does not jump the card height", abs(mary_after - mary_before) <= 3, f"{mary_before} -> {mary_after}")
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(400)
+    mary_next = page.evaluate("() => ({ theory: document.querySelector('.ls-con2')?.getAttribute('data-theory') || '', title: document.getElementById('ls-title')?.textContent || '' })")
+    results.check(tag, "Mary's Room can advance with Next", mary_next["theory"] == "workspace", str(mary_next)[:220])
+    page.evaluate("() => LearnSys.prev()")
+    page.wait_for_timeout(400)
+    results.check(tag, "Mary's Room is back after Previous", page.evaluate("() => !!document.querySelector('.ls-mi2-mary')"), "missing Mary")
     intro_len = page.evaluate("() => document.body.innerText.length")
     results.check(tag, "intro text does not grow beyond baseline", intro_len <= budgets["intro"], f"{intro_len} > {budgets['intro']}")
     intro_qa = page.evaluate("() => ({ count: document.querySelectorAll('[data-mi-q]').length, answer: document.querySelector('[data-mi-qa-answer]')?.textContent || '' })")
@@ -2432,6 +2463,13 @@ def test_qualia_and_final_status(browser, base, lang, results):
     page.wait_for_timeout(150)
     four_answer = page.evaluate("() => document.querySelector('.ls-con2-a')?.textContent || ''")
     results.check(tag, "4E question selection changes the answer", four_answer and four_answer != four_qa["answer"], four_answer[:220])
+    page.evaluate("() => LearnSys.next()")
+    page.wait_for_timeout(120)
+    q_next = page.evaluate("() => document.querySelector('.ls-con2-q.is-on')?.getAttribute('data-con-qa') || ''")
+    page.evaluate("() => LearnSys.prev()")
+    page.wait_for_timeout(120)
+    q_back = page.evaluate("() => document.querySelector('.ls-con2-q.is-on')?.getAttribute('data-con-qa') || ''")
+    results.check(tag, "Q&A steps forward and backward symmetrically", q_next == "2" and q_back == "1", f"{q_next} | {q_back}")
     four_len = page.evaluate("() => document.body.innerText.length")
     results.check(tag, "4E text does not grow beyond baseline", four_len <= budgets["main"], f"{four_len} > {budgets['main']}")
     page.locator('[data-con-qa="0"]').click()

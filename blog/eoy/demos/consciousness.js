@@ -110,7 +110,7 @@
         status: L("Drei Wirbel, stark dissoziiert. Weiter löst die Dissoziation auf; der Tod beendet die Grenzen.", "Three vortices, strongly dissociated. Next dissolves the dissociation; death ends the boundaries."),
         caption: [
           L("Der große Ozean ist das universelle Bewusstsein. Jeder Wirbel ist ein Lebewesen – ein Alter. Von innen erlebt sich der Wirbel als getrennt, individuell, mit klaren Grenzen. Doch von außen betrachtet ist er nur eine lokale Bewegungsstruktur des einen Ozeans.", "The great ocean is universal consciousness. Every vortex is a living being, an alter. From inside, the vortex experiences itself as separate, individual, with clear boundaries. From outside, it is only a local movement structure of the one ocean."),
-          L("Du bist nicht IM Bewusstsein, wie ein Fisch im Wasser. Du BIST das Bewusstsein, geformt zu einem Wirbel. Wenn der Wirbel sich auflöst, wirst du nicht „vernichtet“ – du warst nie ein separates Ding.", "You are not IN consciousness, like a fish in water. You ARE consciousness, shaped into a vortex. When the vortex dissolves, you are not “destroyed”; you were never a separate thing.")
+          L("Zentral: Du bist nicht IM Bewusstsein, wie ein Fisch im Wasser. Du BIST das Bewusstsein, geformt zu einem Wirbel. Wenn der Wirbel sich auflöst, wirst du nicht „vernichtet“ – du warst nie ein separates Ding.", "Central: You are not IN consciousness, like a fish in water. You ARE consciousness, shaped into a vortex. When the vortex dissolves, you are not “destroyed”; you were never a separate thing.")
         ]
       },
       {
