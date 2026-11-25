@@ -6019,5 +6019,5 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
   border-top:1px dashed var(--ls-line);
 }
 @media(max-width:640px){
-  .ls-con2[data-theory] .ls-con2-stage{min-height:150px}
+  .ls-con2[data-theory] .ls-con2-stage{min-height:190px}
 }
