@@ -5981,3 +5981,15 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
   .ls-con2-controls{min-height:0}
   .ls-con2-detail{height:auto;min-height:0;max-height:none;overflow:visible}
 }
+
+
+/* Secondary prose sits behind a calm disclosure instead of filling the stage. */
+.ls-ffn-more,.ls-ar-book-more{border-top:1px solid var(--ls-line);padding-top:5px}
+.ls-ffn-more>summary,.ls-ar-book-more>summary{display:flex;align-items:center;gap:7px;cursor:pointer;list-style:none;font:700 8.5px/1.2 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.09em;color:var(--ls-petrol)}
+.ls-ffn-more>summary::-webkit-details-marker,.ls-ar-book-more>summary::-webkit-details-marker{display:none}
+.ls-ffn-more>summary::before,.ls-ar-book-more>summary::before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid var(--ls-line-strong);color:var(--ls-petrol);font:700 11px/1 "Barlow",sans-serif}
+.ls-ffn-more[open]>summary::before,.ls-ar-book-more[open]>summary::before{content:"−"}
+.ls-ffn-more .ls-ffn-caveat{margin-top:6px}
+.ls-ar-book-more .ls-ar-book{max-height:190px;margin-top:5px}
+.ls-ar-book-more:not([open]) .ls-ar-book{display:none}
+.ls-ar-book-more[open] .ls-ar-book{display:flex}

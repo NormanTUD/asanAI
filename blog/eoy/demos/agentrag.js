@@ -63,7 +63,7 @@
             '<small class="ls-ar-progress-label"></small>' +
           '</div>' +
           '<code class="ls-ar-cmd" data-tip="' + L("Der Agentenbefehl, der gerade außerhalb des LLM läuft.", "The agent command currently running outside the LLM.") + '"></code>' +
-          '<div class="ls-ar-book" data-tip="' + L("Der Dateitext in fünf Absätzen, die zu Chunks werden.", "The file text in five paragraphs that become chunks.") + '"></div>' +
+          '<details class="ls-ar-book-more"><summary>' + L("Dateitext anzeigen", "Show file text") + '</summary><div class="ls-ar-book" data-tip="' + L("Der Dateitext in fünf Absätzen, die zu Chunks werden.", "The file text in five paragraphs that become chunks.") + '"></div></details>' +
         '</section>' +
         '<section class="ls-ar-col ls-ar-chunks" data-tip="' + L("Die Chunks werden bewertet: nur C1 liegt unter dem Grenzwinkel.", "The chunks are scored: only C1 is below the angle threshold.") + '">' +
           '<div class="ls-ar-col-head"><b>' + L("Chunks", "Chunks") + '</b><span>' + L("außerhalb des LLM · bewertet", "outside the LLM · scored") + '</span></div>' +
