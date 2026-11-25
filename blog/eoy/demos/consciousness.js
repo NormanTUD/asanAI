@@ -565,15 +565,12 @@
       body.addColorStop(1, "rgba(126,200,239,0)");
       ctx.fillStyle = body;
       ctx.beginPath(); ctx.arc(0, 0, vR, 0, Math.PI * 2); ctx.fill();
-      for (var k = 0; k < 5; k++) {
-        var f = k / 4, rr = vR * (1 - f * 0.72);
-        ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2);
-        ctx.strokeStyle = on ? "rgba(122,116,0,.62)" : "rgba(0,75,111,.30)";
-        ctx.globalAlpha = fade * (0.18 + f * 0.12); ctx.lineWidth = 1; ctx.stroke();
-      }
       ctx.globalAlpha = fade;
+      ctx.save();
+      ctx.shadowColor = on ? "rgba(122,116,0,.32)" : "rgba(0,146,153,.25)";
+      ctx.shadowBlur = 9;
       for (var arm = 0; arm < 2; arm++) {
-        var base = arm * Math.PI + t * 0.45;
+        var base = arm * Math.PI + t * 0.24;
         ctx.beginPath();
         for (var st = 0; st <= 52; st++) {
           var u = st / 52, ang = base + u * Math.PI * 1.85;
@@ -583,16 +580,20 @@
           if (st === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
         }
         ctx.strokeStyle = on ? "rgba(122,116,0,.72)" : "rgba(0,146,153,.46)";
-        ctx.lineWidth = on ? 1.9 : 1.4; ctx.lineCap = "round"; ctx.stroke();
+        ctx.globalAlpha = fade * 0.24;
+        ctx.lineWidth = on ? 6.5 : 5;
+        ctx.lineCap = "round"; ctx.stroke();
+        ctx.globalAlpha = fade * 0.72;
+        ctx.lineWidth = on ? 1.9 : 1.4;
+        ctx.stroke();
       }
+      ctx.restore();
       var hole = ctx.createRadialGradient(0, 0, 1, 0, 0, vR * 0.22);
       hole.addColorStop(0, "rgba(0,75,111,.30)"); hole.addColorStop(1, "rgba(0,146,153,.02)");
       ctx.fillStyle = hole;
       ctx.beginPath(); ctx.arc(0, 0, vR * 0.22, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, 0, vR * 0.98, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(0,75,111,.24)"; ctx.lineWidth = 1.4; ctx.stroke();
       for (var sp = 0; sp < 5; sp++) {
-        var sa = t * 0.55 + sp * 1.6, sr = vR * (0.35 + (sp % 3) * 0.18);
+        var sa = t * 0.30 + sp * 1.6, sr = vR * (0.35 + (sp % 3) * 0.18);
         ctx.globalAlpha = fade * (on ? 0.62 : 0.36);
         dot(Math.cos(sa) * sr, Math.sin(sa) * sr, 1 + (sp % 2) * 0.5, "#1275ac");
       }
@@ -646,15 +647,16 @@
       var centers = kastCenters(w, h), diss = kast.diss / 100;
       if (!kastParticles.length || kastPW !== w || kastPH !== h) seedKastParticles(w, h);
       kastParticles.forEach(function (p, pi) {
-        p.vx += Math.sin(p.y * 0.012 + t * 0.7) * 0.002;
-        p.vy += Math.cos(p.x * 0.014 + t * 0.6) * 0.002;
+        var oceanDrift = 0.002 + (1 - diss) * 0.004;
+        p.vx += Math.sin(p.y * 0.012 + t * 0.7) * oceanDrift;
+        p.vy += Math.cos(p.x * 0.014 + t * 0.6) * oceanDrift;
         for (var ci = 0; ci < centers.length; ci++) {
           var dx = p.x - centers[ci].x, dy = p.y - centers[ci].y;
           var dist = Math.hypot(dx, dy) || 1;
           var reach = 80 + diss * 280;
           if (dist < reach) {
             var falloff = 1 - dist / reach;
-            var swirl = falloff * diss * 1.12;
+            var swirl = falloff * diss * 0.82;
             var inward = falloff * diss * 0.22;
             p.vx += (-dy / dist) * swirl - (dx / dist) * inward;
             p.vy += (dx / dist) * swirl - (dy / dist) * inward;
