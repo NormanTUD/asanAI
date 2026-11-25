@@ -5829,3 +5829,15 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-cn-quote p{margin:0;font:italic 500 15px/1.5 Georgia,"Times New Roman",serif;color:var(--ls-ink)}
 .ls-cn-quote cite{display:block;margin-top:4px;font:600 11px/1.4 "Open Sans",sans-serif;font-style:normal;color:var(--ls-muted)}
 .ls-cn-quote cite a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}
+.ls-mi2-problems{display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--ls-line);padding-top:6px}
+.ls-mi2-problems p{margin:0;padding:5px 7px;border-left:3px solid var(--ls-green);background:rgba(99,164,75,.06);font:600 12px/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-mi2-problems p.is-hard{border-left-color:var(--ls-rose, #b24a4e);background:rgba(178,74,78,.06)}
+.ls-mi2-problems b{font:700 9.5px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--ls-petrol)}
+.ls-mi2-problems p.is-hard b{color:#b24a4e}
+.ls-mi2-problems a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}
+.ls-mi2-spectrum-fig{margin:0;border:1px solid var(--ls-line);border-radius:10px;overflow:hidden;background:#fff}
+.ls-mi2-spectrum-fig img{display:block;width:100%;height:auto}
+.ls-mi2-spectrum-fig figcaption{padding:5px 7px 6px;font:600 10px/1.35 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-mi2-spectrum-fig figcaption a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}
+.ls-mi2-answer{min-height:4.2em;visibility:hidden}
+.ls-mi2-answer.is-on{visibility:visible}

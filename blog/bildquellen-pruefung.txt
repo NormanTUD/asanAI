@@ -1785,3 +1785,13 @@ sunflower_pixels.jpg
     Lokal: sunflower_pixels.jpg (1280x960)
     Genutzt in: tenminutes/computer_vision.php § Local patterns, shared weights
     Status: OK - CC0, Autor, Lizenz und Dateiseite im Caption.
+
+=== EOY: Bewusstsein, invertiertes Spektrum (eoy/31.php) ===
+Inverted_qualia_of_colour_strawberry.jpg
+    URL: https://commons.wikimedia.org/wiki/File:Inverted_qualia_of_colour_strawberry.jpg
+    Kontext: https://en.wikipedia.org/wiki/Inverted_spectrum
+    Lizenz: CC BY-SA 2.5
+    Autor: Was a bee (Kombination aus Bildern von FoeNyx und Ueda.H)
+    Lokal: inverted_qualia_strawberry.jpg (1070x614)
+    Genutzt in: eoy/31.php § Other Minds / Gleiche Worte, anderes Erleben
+    Status: OK - Autor, Lizenz und Dateiseite im Caption verlinkt

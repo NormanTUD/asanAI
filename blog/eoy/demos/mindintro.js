@@ -41,8 +41,11 @@
               '<b>' + L("Von innen", "From inside") + '</b><p>' + L("Wie sich das Rot anfühlt", "what the red feels like") + '</p>' +
             '</div>' +
           '</div>' +
-          '<p class="ls-mi2-def">' + L("Qualia sind die gefühlten Eigenschaften einer Erfahrung: die Röte des Roten, der Schmerz des Schmerzes, der Klang einer Geige. Messungen beschreiben die Bedingungen, nicht das Erleben. Diese Lücke heißt das harte Problem (Chalmers, 1995).", "Qualia are the felt qualities of an experience: the redness of red, the painfulness of pain, the sound of a violin. Measurements describe the conditions, not the experience. This gap is the hard problem (Chalmers, 1995).") + '</p>' +
-          '<div class="ls-mi2-examples"><span>' + L("Rot", "red") + '</span><span>' + L("Schmerz", "pain") + '</span><span>' + L("Kaffee", "coffee") + '</span><span>' + L("ein Akkord", "a chord") + '</span></div>' +
+          '<p class="ls-mi2-def">' + L("Qualia sind die gefühlten Eigenschaften einer Erfahrung, etwa die Röte des Roten. Messungen beschreiben Bedingungen, nicht das Erleben.", "Qualia are the felt qualities of an experience, such as the redness of red. Measurements describe conditions, not experience.") + '</p>' +
+          '<div class="ls-mi2-problems">' +
+            '<p class="is-easy"><b>' + L("Leichtes Problem:", "Easy problem:") + '</b> ' + L("Muster erkennen, integrieren, berichten: Mechanismen sind denkbar, auch wenn das Jahrhunderte kostet.", "Discriminate, integrate, report: mechanisms are conceivable, even if getting them right takes centuries.") + '</p>' +
+            '<p class="is-hard"><b>' + L("Schweres Problem:", "Hard problem:") + '</b> ' + L("Warum wird Informationsverarbeitung subjektiv erlebt? Wir haben nicht einmal eine Richtung. Chalmers (1995): „Why should physical processing give rise to a rich inner life at all?“", "Why is information processing subjectively experienced? We do not even have a direction. Chalmers (1995): “Why should physical processing give rise to a rich inner life at all?”") + ' <a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Originalarbeit (PDF)</a></p>' +
+          '</div>' +
         '</section>' +
         '<aside class="ls-mi2-right">' +
           '<section class="ls-mi2-mary" data-mi-mary data-tip="' + L("Marys Zimmer: Klick zeigt ihr den roten Apfel.", "Mary's room: click to show her the red apple.") + '">' +
@@ -54,18 +57,19 @@
               '<div class="ls-mi2-choice" data-mi-choice hidden>' +
                 '<span>' + L("Lernt sie etwas Neues?", "Does she learn something new?") + '</span>' +
                 '<div class="ls-mi2-choice-row"><button type="button" data-mi-answer="yes">' + L("Ja", "Yes") + '</button><button type="button" data-mi-answer="no">' + L("Nein", "No") + '</button></div>' +
-                '<p class="ls-mi2-answer" data-mi-answer-text hidden></p>' +
+                '<p class="ls-mi2-answer" data-mi-answer-text aria-live="polite"></p>' +
               '</div>' +
             '</div>' +
           '</section>' +
           '<section class="ls-mi2-spectrum" data-tip="' + L("Invertiertes Spektrum: gleiche Worte, anderes Erleben.", "Inverted spectrum: same words, different experience.") + '">' +
             '<div class="ls-mi2-spectrum-head"><span>' + L("Other Minds", "Other minds") + '</span><b>' + L("Gleiche Worte, anderes Erleben", "Same words, different experience") + '</b></div>' +
-            '<p class="ls-mi2-spectrum-lead">' + L("A und B sehen dieselbe Tomate. Beide sagen: „Das ist rot.“ Aber was A innerlich sieht, könnte das sein, was B „grün“ nennt.", "A and B see the same tomato. Both say: “That is red.” But what A sees inwardly could be what B calls “green.”") + '</p>' +
+            '<p class="ls-mi2-spectrum-lead">' + L("A und B sehen dieselbe Tomate und sagen beide „rot“. Was A innerlich sieht, könnte B „grün“ nennen.", "A and B see the same tomato and both say “red.” What A sees inwardly could be what B calls “green.”") + '</p>' +
+            '<figure class="ls-mi2-spectrum-fig"><img src="../inverted_qualia_strawberry.jpg" alt="' + L("Invertierte Qualia: Eine Erdbeere, deren Farben innen anders erlebt werden.", "Inverted qualia: a strawberry whose colours are experienced differently inside.") + '"><figcaption>Was a bee, <a href="https://creativecommons.org/licenses/by-sa/2.5" target="_blank" rel="noopener">CC BY-SA 2.5</a>, via <a href="https://commons.wikimedia.org/wiki/File:Inverted_qualia_of_colour_strawberry.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>; <a href="https://en.wikipedia.org/wiki/Inverted_spectrum" target="_blank" rel="noopener">Inverted spectrum</a>.</figcaption></figure>' +
             '<div class="ls-mi2-observers">' +
               '<div class="ls-mi2-observer"><span class="ls-mi2-avatar">A</span><div class="ls-mi2-bubble">' + L("„Das ist rot.“", "“That is red.”") + '</div><div class="ls-mi2-quale is-red" data-mi-quale-a><span>' + L("Rot", "red") + '</span></div></div>' +
               '<div class="ls-mi2-observer"><span class="ls-mi2-avatar">B</span><div class="ls-mi2-bubble">' + L("„Das ist rot.“", "“That is red.”") + '</div><div class="ls-mi2-quale is-green" data-mi-quale-b><span>' + L("Grün", "green") + '</span></div></div>' +
             '</div>' +
-            '<p class="ls-mi2-spectrum-note">' + L("Von außen sind Worte und Verhalten identisch. Ob die inneren Farben vertauscht sind, ist nicht messbar. Das ist das Other-Minds-Problem.", "From outside, words and behaviour are identical. Whether the inner colours are swapped cannot be measured. That is the other-minds problem.") + '</p>' +
+            '<p class="ls-mi2-spectrum-note">' + L("Von außen sind Worte und Verhalten identisch; ob die inneren Farben vertauscht sind, ist nicht messbar.", "From outside, words and behaviour are identical; whether the inner colours are swapped cannot be measured.") + '</p>' +
             '<div class="ls-mi2-spectrum-foot"><button type="button" class="ls-mi2-swap" data-mi-swap data-tip="' + L("Tauscht die inneren Farben, ohne die Worte zu ändern.", "Swaps the inner colours without changing the words.") + '">' + L("Qualia tauschen", "Swap qualia") + '</button><span data-mi-spectrum-status aria-live="polite">' + L("Beide berichten dasselbe. Von außen ist der Unterschied unsichtbar.", "Both report the same. From outside the difference is invisible.") + '</span></div>' +
           '</section>' +
         '</aside>' +
@@ -92,7 +96,7 @@
       b.addEventListener("click", function () {
         var yes = b.getAttribute("data-mi-answer") === "yes";
         el.querySelectorAll("[data-mi-answer]").forEach(function (x) { x.classList.toggle("is-on", x === b); });
-        answerText.hidden = false;
+        answerText.classList.add("is-on");
         answerText.textContent = yes
           ? L("Dann gibt es Wissen jenseits der physikalischen Fakten: das Erleben selbst.", "Then there is knowledge beyond physical facts: the experience itself.")
           : L("Dann müsste alles Erleben in den physikalischen Fakten stecken. Genau das ist umstritten.", "Then all experience would have to be contained in physical facts. That is exactly what is disputed.");
