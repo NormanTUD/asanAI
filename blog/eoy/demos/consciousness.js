@@ -127,17 +127,10 @@
           { q: L("Was heißt „heiß“ für Mensch und LLM?", "What does “hot” mean for a human and an LLM?"), a: L("Für uns ein verbranntes Finger; für ein LLM Token nahe Ofen, Sonne, scharf.", "A burnt finger for us; tokens near stove, sun, and spicy for an LLM.") },
           { q: L("Ist 4E ein Bewusstseinstest?", "Is 4E a test for consciousness?"), a: L("Nein, eine Familie von Ansätzen; sie zeigt, was Erdung verlangt.", "No, a family of approaches; it shows what grounding requires.") },
           { q: L("Was ist Triumph und Leere?", "What is the triumph and the hollowness?"), a: L("LLMs sind ein Triumph des Extended Mind; ohne embodied grounding bleiben sie Werkzeuge.", "LLMs are a triumph of the extended mind; without embodied grounding they remain tools.") },
-          { q: L("Was sagt Noë?", "What does Noë say?"), a: L("Bewusstsein ist etwas, das wir erreichen; eher Tanzen als Verdauen.", "Consciousness is something we achieve, more like dancing than digestion.") },
         ],
         cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
         hint: L("Weiter aktiviert die vier E's. KI zeigt, welche davon fehlen; beobachte, was „heiß“ beim Menschen verankert.", "Next activates the four E's. AI shows which are missing; watch what anchors “hot” for a human."),
         status: L("Mensch: 1 von 4 aktiv. Weiter aktiviert Embedded.", "Human: 1 of 4 active. Next activates Embedded."),
-        quote: {
-          text: "Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion.",
-          author: "Alva Noë",
-          work: "Out of Our Heads: Why You Are Not Your Brain, and Other Lessons From the Biology of Consciousness (2009)",
-          url: "https://openlibrary.org/works/OL12000405W"
-        }
       },
       {
         key: "myst", tone: "lilac",
