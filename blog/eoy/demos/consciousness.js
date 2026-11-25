@@ -293,13 +293,22 @@
     }
 
     function wsCenters(w, h) {
-      var cx = w * 0.5, cy = h * 0.52, R = Math.min(w * 0.20, h * 0.30);
-      var pts = [];
-      for (var i = 0; i < 5; i++) {
-        var a = -Math.PI / 2 + i * Math.PI * 2 / 5;
-        pts.push({ x: cx + Math.cos(a) * R * 2.0, y: cy + Math.sin(a) * R * 1.35, a: a });
-      }
-      return { cx: cx, cy: cy, R: R, pts: pts, cardW: Math.min(190, w * 0.22), cardH: 58 };
+      var cx = w * 0.5, cy = h * 0.5;
+      var compact = h < 300 || w < 620;
+      var cardW = Math.min(compact ? 140 : 170, Math.max(96, w * 0.22));
+      var cardH = compact ? 38 : 46;
+      var R = Math.min(w * 0.18, Math.max(35, h * 0.235));
+      var gap = compact ? 10 : 14;
+      var rx = R + cardW / 2 + gap;
+      var ry = R + cardH / 2 + gap;
+      var pts = [
+        { x: cx, y: cy - ry, a: -Math.PI / 2 },
+        { x: cx - rx, y: cy - ry * 0.48, a: Math.PI },
+        { x: cx + rx, y: cy - ry * 0.48, a: 0 },
+        { x: cx - rx, y: cy + ry * 0.48, a: Math.PI },
+        { x: cx + rx, y: cy + ry * 0.48, a: 0 }
+      ];
+      return { cx: cx, cy: cy, R: R, pts: pts, cardW: cardW, cardH: cardH };
     }
     function moduleIcon(kind, x, y, color) {
       ctx.save(); ctx.translate(x, y); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.6; ctx.lineCap = "round";
@@ -353,20 +362,6 @@
       ctx.fillText("GLOBAL WORKSPACE", cx, cy - R + 40);
       ctx.fillStyle = C.muted; ctx.font = font(10.5, 600);
       ctx.fillText(L("nur Ergebnisse", "results only"), cx, cy - R + 70);
-      var results = MODULES.map(function (m, i) { return ws.written[i] ? m : null; }).filter(Boolean);
-      ctx.textAlign = "left"; ctx.textBaseline = "middle";
-      if (!results.length) {
-        ctx.fillStyle = C.muted; ctx.font = font(api.font("canvas-sm") * 0.78, 600); ctx.textAlign = "center";
-        ctx.fillText(L("noch leer", "empty"), cx, cy + 6);
-      } else {
-        var startY = cy - (results.length - 1) * 9 + 6;
-        results.forEach(function (m, i) {
-          dot(cx - Math.min(62, R * 0.55), startY + i * 18, 4, m.color);
-          ctx.fillStyle = C.soft; ctx.font = font(11, 600);
-          ctx.textAlign = "left"; ctx.textBaseline = "middle";
-          ctx.fillText(m.result, cx - Math.min(50, R * 0.42), startY + i * 18);
-        });
-      }
       if (ws.broadcastUntil > now) {
         var phase = 1 - (ws.broadcastUntil - now) / 1200;
         for (var r = 0; r < 3; r++) {
