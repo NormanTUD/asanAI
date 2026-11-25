@@ -5941,3 +5941,30 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
   .ls-fx-core-node{width:88px;height:88px}
   .ls-fx-core-node b,.ls-fx-core-node .ls-math{font-size:25px}
 }
+
+/* Loss landscape: a larger data/line panel and one readable selected example. */
+.ls-loss-scene{grid-template-columns:minmax(0,1fr) minmax(300px,.44fr);gap:10px}
+.ls-loss-side{gap:8px;padding:10px;background:linear-gradient(180deg,#fff,rgba(247,250,249,.95))}
+.ls-loss-data-wrap{position:relative;height:260px;display:flex;flex-direction:column;min-height:220px;border:1px solid var(--ls-line);background:#fff;border-radius:4px;overflow:hidden}
+.ls-loss-data-title{padding:7px 9px;border-bottom:1px solid var(--ls-line);background:rgba(0,75,111,.04);font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.09em;color:var(--ls-petrol)}
+.ls-loss-data-wrap canvas{display:block;flex:1 1 auto;width:100%;height:auto;min-height:0}
+.ls-loss-examples{gap:5px}
+.ls-loss-table{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;font:var(--ls-fs-micro)/1.3 "Open Sans",sans-serif}
+.ls-loss-example{display:flex;flex-direction:column;gap:2px;padding:7px 8px;border:1px solid var(--ls-line);border-radius:4px;background:rgba(255,255,255,.8)}
+.ls-loss-example b{font:700 10px/1 "Open Sans",sans-serif;letter-spacing:.04em;color:var(--ls-muted)}
+.ls-loss-example strong{font:700 17px/1.1 "Barlow",sans-serif;color:var(--ls-petrol);font-variant-numeric:tabular-nums}
+.ls-loss-example:nth-child(2) strong{color:var(--ls-gold)}
+.ls-loss-example:nth-child(3) strong{color:var(--ls-green)}
+.ls-loss-example-note{grid-column:1/-1;padding:4px 2px 0;font:600 8px/1.3 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-loss-table small{display:block}
+@media(max-width:760px){
+  .ls-loss-scene{grid-template-columns:1fr}
+  .ls-loss-data-wrap{height:230px}
+}
+
+
+/* The short questions are open by default and read as a section, not a box. */
+.ls-mi2-more[open]{border:0;background:transparent;overflow:visible}
+.ls-mi2-more[open]>summary{padding:6px 0 4px;border-top:1px solid var(--ls-line);border-bottom:1px solid var(--ls-line)}
+.ls-mi2-more[open]>summary::before{display:none}
+.ls-mi2-more[open]>summary span{margin-left:auto}

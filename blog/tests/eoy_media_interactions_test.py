@@ -2234,7 +2234,7 @@ def test_risk_and_limit_visuals(browser, base, lang, results):
 def test_qualia_and_final_status(browser, base, lang, results):
     context, page, logs = open_page(browser, base, lang, path="/eoy/31.php", wait_media=False)
     tag = f"qualia-{lang}"
-    budgets = {"de": {"intro": 2413, "main": 4318, "final": 3946}, "en": {"intro": 2354, "main": 4107, "final": 3775}}[lang]
+    budgets = {"de": {"intro": 2520, "main": 4318, "final": 3946}, "en": {"intro": 2490, "main": 4107, "final": 3775}}[lang]
     page.wait_for_timeout(700)
     page.evaluate("() => LearnSys.go(0, 0, 0)")
     page.wait_for_timeout(800)

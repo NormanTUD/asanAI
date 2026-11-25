@@ -7,7 +7,7 @@
     el.className = "ls-loss-scene";
     el.innerHTML =
       '<div class="ls-loss-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-loss-loader" role="status"><span class="ls-spinner" aria-hidden="true"></span><span>' + (DE ? "Loss-Fläche wird berechnet …" : "Computing the loss surface …") + '</span></div></div>' +
-      '<div class="ls-loss-side"><div class="ls-loss-examples"><div class="ls-loss-side-title">' + (DE ? "Beispiele" : "Examples") + '</div><div class="ls-loss-table" aria-live="polite"></div></div><div class="ls-loss-data-wrap"><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
+      '<div class="ls-loss-side"><div class="ls-loss-data-wrap"><div class="ls-loss-data-title">' + (DE ? "Daten + aktuelle Gerade" : "data + current line") + '</div><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-examples"><div class="ls-loss-side-title">' + (DE ? "Ausgewähltes Beispiel" : "Selected example") + '</div><div class="ls-loss-table" aria-live="polite"></div></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
       '<div class="ls-loss-formula"></div>' +
       '<div class="ls-loss-controls">' +
         '<div class="ls-loss-opts" role="group" aria-label="' + (DE ? "Optimierer" : "Optimizer") + '"><button type="button" class="ls-chip is-on" data-opt="sgd">SGD</button><button type="button" class="ls-chip" data-opt="adam">Adam</button><button type="button" class="ls-chip" data-opt="momentum">Momentum</button></div>' +
@@ -36,6 +36,7 @@
     var optOrder = ["sgd", "adam", "momentum"];
     var data = null, worker = null, workerFailed = false;
     var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
+    var selectedExample = 0;
     var yaw = 5.021592653589794, pitch = 1.234, zoom = 1, drag = null;
     function lossCamera(next) {
       if (next && typeof next === "object") {
@@ -90,11 +91,12 @@
     function drawExamples() {
       if (!data) { tableEl.innerHTML = '<span>' + (DE ? "Lade Beispiele …" : "Loading examples …") + '</span>'; return; }
       var cur = current() || { a: 0, b: 0 };
-      var rows = data.examples.xs.map(function (x, i) {
-        var yhat = cur.a * x + cur.b;
-        return '<span><b>x ' + x.toFixed(3) + '</b><small>y ' + data.examples.ys[i].toFixed(2) + ' · ŷ ' + yhat.toFixed(2) + '</small></span>';
-      }).join("");
-      tableEl.innerHTML = rows;
+      var i = Math.max(0, Math.min(data.examples.xs.length - 1, selectedExample));
+      var x = data.examples.xs[i], y = data.examples.ys[i], yhat = cur.a * x + cur.b;
+      tableEl.innerHTML = '<span class="ls-loss-example"><b>x</b><strong>' + x.toFixed(3) + '</strong></span>' +
+        '<span class="ls-loss-example"><b>y</b><strong>' + y.toFixed(2) + '</strong></span>' +
+        '<span class="ls-loss-example"><b>ŷ</b><strong>' + yhat.toFixed(2) + '</strong></span>' +
+        '<small class="ls-loss-example-note">' + (DE ? "Beispiel " : "example ") + (i + 1) + ' / ' + data.examples.xs.length + ' · ŷ = w x + b</small>';
     }
     function drawData() {
       if (!data || !dataCanvas) return;
@@ -109,14 +111,23 @@
       function X(x) { return pad + (x - minX) / (maxX - minX) * (w - 2 * pad); }
       function Y(y) { return h - pad - (y - minY) / (maxY - minY) * (h - 2 * pad); }
       c.strokeStyle = C.line; c.beginPath(); c.moveTo(pad, h - pad); c.lineTo(w - pad, h - pad); c.stroke();
-      xs.forEach(function (x, i) { c.beginPath(); c.arc(X(x), Y(ys[i]), 2.4, 0, Math.PI * 2); c.fillStyle = C.green; c.fill(); });
       var cur = current();
       if (cur) {
-        c.strokeStyle = C.blue; c.lineWidth = 1.8; c.beginPath();
+        c.strokeStyle = C.blue; c.lineWidth = 2.6; c.beginPath();
         c.moveTo(X(minX), Y(cur.a * minX + cur.b)); c.lineTo(X(maxX), Y(cur.a * maxX + cur.b)); c.stroke();
+        var i = Math.max(0, Math.min(xs.length - 1, selectedExample));
+        var px = X(xs[i]), py = Y(ys[i]), ph = Y(cur.a * xs[i] + cur.b);
+        c.save(); c.setLineDash([3, 3]); c.strokeStyle = C.gold; c.lineWidth = 1.4;
+        c.beginPath(); c.moveTo(px, py); c.lineTo(px, ph); c.stroke(); c.restore();
+        c.beginPath(); c.arc(px, py, 5.5, 0, Math.PI * 2); c.fillStyle = C.gold; c.fill();
+        c.strokeStyle = C.paper; c.lineWidth = 2; c.stroke();
+        c.beginPath(); c.arc(px, ph, 4.5, 0, Math.PI * 2); c.fillStyle = C.green; c.fill();
+        c.strokeStyle = C.paper; c.lineWidth = 1.8; c.stroke();
       }
-      c.fillStyle = C.muted; c.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      c.fillText(DE ? "Daten + aktuelle Gerade" : "data + current line", 6, 12);
+      xs.forEach(function (x, i) {
+        if (i === selectedExample) return;
+        c.beginPath(); c.arc(X(x), Y(ys[i]), 2.6, 0, Math.PI * 2); c.fillStyle = C.green; c.fill();
+      });
     }
     function renderFormula() {
       if (!formulaEl || !data) return;
@@ -301,6 +312,25 @@
       zoom = Math.max(0.6, Math.min(2.2, zoom * Math.exp(-e.deltaY * 0.0012)));
       draw();
     }, { passive: false });
+    if (dataCanvas) {
+      dataCanvas.addEventListener("pointermove", function (e) {
+        if (!data) return;
+        var r = dataCanvas.getBoundingClientRect();
+        var w = r.width, h = r.height, pad = 8;
+        var xs = data.examples.xs, ys = data.examples.ys;
+        var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+        var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+        var mx = e.clientX - r.left, my = e.clientY - r.top;
+        var best = selectedExample, bd = 18;
+        xs.forEach(function (x, i) {
+          var px = pad + (x - minX) / (maxX - minX) * (w - 2 * pad);
+          var py = h - pad - (ys[i] - minY) / (maxY - minY) * (h - 2 * pad);
+          var d = Math.hypot(px - mx, py - my);
+          if (d < bd) { bd = d; best = i; }
+        });
+        if (best !== selectedExample) { selectedExample = best; drawData(); drawExamples(); }
+      });
+    }
     function resize() { size = api.fit(canvas, stage); if (data) draw(); else drawData(); }
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {

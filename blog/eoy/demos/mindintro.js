@@ -46,7 +46,7 @@
             '<p class="is-easy"><b>' + L("Leichtes Problem:", "Easy problem:") + '</b> ' + L("Muster erkennen, integrieren, berichten: Mechanismen sind denkbar; „easy“ ist relativ und kann Jahrhunderte kosten.", "Discriminate, integrate, report: mechanisms are conceivable; “easy” is relative and can take centuries.") + '</p>' +
             '<p class="is-hard"><b>' + L("Schweres Problem:", "Hard problem:") + '</b> ' + L("Warum wird Verarbeitung subjektiv erlebt? Wir haben nicht einmal den Hauch einer Richtung für eine Antwort. Chalmers (1995): „Why should physical processing give rise to a rich inner life at all?“", "Why is processing subjectively experienced? We do not even have a hint of a direction for an answer. Chalmers (1995): “Why should physical processing give rise to a rich inner life at all?”") + ' <a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Originalarbeit (PDF)</a></p>' +
           '</div>' +
-          '<details class="ls-mi2-more"><summary><b>' + L("Kurzfragen", "Short questions") + '</b><span>' + L("fünf Antworten", "five answers") + '</span></summary>' +
+          '<details class="ls-mi2-more" open><summary><b>' + L("Kurzfragen", "Short questions") + '</b><span>' + L("fünf Antworten", "five answers") + '</span></summary>' +
           '<div class="ls-mi2-qa">' +
         '<div class="ls-mi2-qa-head"><span>' + L("Fragen", "Questions") + '</span><b>' + L("Kurz beantwortet", "Brief answers") + '</b></div>' +
         '<div class="ls-mi2-qa-questions">' + QA.map(function (item, i) {
