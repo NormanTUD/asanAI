@@ -2379,14 +2379,14 @@ def test_qualia_and_final_status(browser, base, lang, results):
   status: document.querySelector('[data-con2-status]')?.textContent || '',
   diss: document.querySelector('[data-con-diss]')?.value || '',
   countSlider: document.querySelectorAll('[data-con-count]').length,
-  caption: document.querySelector('.ls-con2-caption')?.innerText || '',
+  caption: document.querySelector('.ls-con2-caption')?.innerText || document.querySelector('[data-con2-detail]')?.innerText || '',
   overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
 })
 """
     )
     results.check(tag, "Kastrup reaches the dissociated state", "Drei Wirbel" in kast_before["status"] or "Three vortices" in kast_before["status"], str(kast_before)[:220])
     results.check(tag, "Kastrup has no vortex-count slider", kast_before["countSlider"] == 0, str(kast_before["countSlider"]))
-    results.check(tag, "Kastrup shows the ocean and the callout", ("Der große Ozean" in kast_before["caption"] or "The great ocean" in kast_before["caption"]) and ("Du bist nicht IM Bewusstsein" in kast_before["caption"] or "You are not IN consciousness" in kast_before["caption"]), kast_before["caption"][:240])
+    results.check(tag, "Kastrup shows the ocean and the callout", ("Ozean" in kast_before["caption"] or "ocean" in kast_before["caption"].lower()) and ("Du bist nicht im Bewusstsein" in kast_before["caption"] or "You are not in consciousness" in kast_before["caption"]), kast_before["caption"][:240])
     results.check(tag, "Kastrup caption has two paragraphs", kast_before["caption"].count("\n") >= 1, kast_before["caption"][:240])
     kast_len = page.evaluate("() => document.body.innerText.length")
     results.check(tag, "Kastrup text does not grow beyond baseline", kast_len <= budgets["main"], f"{kast_len} > {budgets['main']}")

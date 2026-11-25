@@ -105,34 +105,6 @@
         ctx.lineWidth = 1.6;
         ctx.strokeRect(hx + 0.5, hy + 0.5, Math.max(3, cw - 1), Math.max(3, ch - 1));
         ctx.restore();
-        var pair = Math.floor(heatHover.col / 2);
-        var freq = Math.pow(10000, (2 * pair) / Math.max(2, dims));
-        var isSin = heatHover.col % 2 === 0;
-        var actualPosition = rowPosition(heatHover.row);
-        var val = pe(actualPosition, dims, heatHover.col);
-        var lines = [
-          L("Zeile: Position ", "row: position ") + actualPosition + L(" (0–100000, gesampelt)", " (0–100000, sampled)"),
-          L("Spalte: Dimension ", "column: dimension ") + heatHover.col + L(" (0–63)", " (0–63)"),
-          L("Paar ", "pair ") + (pair + 1) + " · " + (isSin ? "sin" : "cos"),
-          L("Frequenz ", "frequency ") + freq.toFixed(2),
-          (isSin ? "sin(" : "cos(") + actualPosition + " / " + freq.toFixed(2) + ") = " + val.toFixed(3)
-        ];
-        var tw = 236, th = lines.length * 13 + 10;
-        var tx = heatHover.x + 12 + tw > w ? heatHover.x - tw - 10 : heatHover.x + 12;
-        var ty = heatHover.y + 12 + th > h ? heatHover.y - th - 10 : heatHover.y + 12;
-        tx = Math.max(6, Math.min(w - tw - 6, tx));
-        ty = Math.max(6, Math.min(h - th - 6, ty));
-        ctx.fillStyle = "rgba(8, 20, 24, .93)";
-        ctx.fillRect(tx, ty, tw, th);
-        ctx.strokeStyle = C.lineStrong;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(tx + 0.5, ty + 0.5, tw - 1, th - 1);
-        ctx.fillStyle = "#f4fbfd";
-        ctx.font = '600 10px "Open Sans", sans-serif';
-        ctx.textAlign = "left";
-        ctx.textBaseline = "top";
-        lines.forEach(function (line, i) { ctx.fillText(line, tx + 7, ty + 6 + i * 13); });
-        ctx.textBaseline = "alphabetic";
       }
     }
     var mix = api.util.hexMix;
@@ -404,6 +376,25 @@
       if (!heatHover) return;
       heatHover = null;
       drawHeat();
+    });
+    core.canvasTip(heat, function () {
+      if (!heatSize) return "";
+      if (!heatHover || heatHover.row < 0 || heatHover.col < 0) {
+        return L("Heatmap der Positionskodierungen: Fahre über eine Zelle für Position, Dimension, Frequenz, Sinus, Kosinus und Wert.", "Heatmap of positional encodings: hover a cell for position, dimension, frequency, sine, cosine, and value.");
+      }
+      var cols = Math.min(dims, 64), rows = Math.min(context, 256);
+      var pair = Math.floor(heatHover.col / 2);
+      var freq = Math.pow(10000, (2 * pair) / Math.max(2, dims));
+      var isSin = heatHover.col % 2 === 0;
+      var actualPosition = Math.round(heatHover.row * (context - 1) / (rows - 1));
+      var val = pe(actualPosition, dims, heatHover.col);
+      return [
+        L("Zeile: Position ", "row: position ") + actualPosition + L(" (0–100000, gesampelt)", " (0–100000, sampled)"),
+        L("Spalte: Dimension ", "column: dimension ") + heatHover.col + L(" (0–63)", " (0–63)"),
+        L("Paar ", "pair ") + (pair + 1) + " · " + (isSin ? "sin" : "cos"),
+        L("Frequenz ", "frequency ") + freq.toFixed(2),
+        (isSin ? "sin(" : "cos(") + actualPosition + " / " + freq.toFixed(2) + ") = " + val.toFixed(3)
+      ].join("\n");
     });
     heat.addEventListener("pointerdown", function (e) {
       reveal = true;

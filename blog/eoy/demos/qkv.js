@@ -65,6 +65,14 @@
     function hideTip() {
       if (tipEl) tipEl.hidden = true;
     }
+    function showFallbackTip(text, px, py) {
+      if (!tipEl || !size) return;
+      tipEl.innerHTML = '<b>' + api.esc(DE ? "Attention" : "Attention") + '</b><br>' + api.esc(text);
+      tipEl.hidden = false;
+      var tw = tipEl.offsetWidth || 180, th = tipEl.offsetHeight || 34;
+      tipEl.style.left = Math.max(4, Math.min(size.w - tw - 4, px + 12)) + "px";
+      tipEl.style.top = Math.max(4, Math.min(size.h - th - 4, py + 12)) + "px";
+    }
     function showTip(i, px, py) {
       if (!tipEl || !size) return;
       var tok = tokens[i] || "";
@@ -653,7 +661,7 @@
         arcHover = found;
         canvas.style.cursor = found >= 0 ? "pointer" : "default";
         if (found >= 0) showTip(found, ax, ay);
-        else if (pinnedToken < 0) hideTip();
+        else if (pinnedToken < 0) showFallbackTip(DE ? "Fahre über einen Bogen; klicken setzt die Query." : "Hover an arc; click to set the query.", ax, ay);
         return;
       }
       if (view !== "graph") return;
@@ -673,6 +681,7 @@
         });
       }
       graphHover = best;
+      if (best < 0 && pinnedToken < 0) showFallbackTip(DE ? "Fahre über einen Knoten oder eine Kante; klicken setzt die Query." : "Hover a node or edge; click to set the query.", graphMouse.x, graphMouse.y);
       draw();
     });
     canvas.addEventListener("pointerleave", function () {
