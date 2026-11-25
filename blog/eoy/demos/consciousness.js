@@ -559,16 +559,18 @@
       if (fade <= 0.01) return;
       ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(-0.18 + c.i * 0.055);
       ctx.globalAlpha = fade;
-      var body = ctx.createRadialGradient(0, 0, 2, 0, 0, vR);
-      body.addColorStop(0, "rgba(0,75,111,.18)");
-      body.addColorStop(0.55, "rgba(0,146,153,.10)");
+      var body = ctx.createRadialGradient(0, 0, 2, 0, 0, vR * 1.42);
+      body.addColorStop(0, "rgba(0,75,111,.16)");
+      body.addColorStop(0.42, "rgba(0,146,153,.10)");
+      body.addColorStop(0.72, "rgba(92,155,175,.035)");
       body.addColorStop(1, "rgba(126,200,239,0)");
       ctx.fillStyle = body;
-      ctx.beginPath(); ctx.arc(0, 0, vR, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 0, vR * 1.42, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = fade;
       ctx.save();
-      ctx.shadowColor = on ? "rgba(122,116,0,.32)" : "rgba(0,146,153,.25)";
-      ctx.shadowBlur = 9;
+      ctx.filter = "blur(2.4px)";
+      ctx.shadowColor = on ? "rgba(122,116,0,.28)" : "rgba(0,146,153,.22)";
+      ctx.shadowBlur = 14;
       for (var arm = 0; arm < 2; arm++) {
         var base = arm * Math.PI + t * 0.24;
         ctx.beginPath();
@@ -580,18 +582,21 @@
           if (st === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
         }
         ctx.strokeStyle = on ? "rgba(122,116,0,.72)" : "rgba(0,146,153,.46)";
-        ctx.globalAlpha = fade * 0.24;
-        ctx.lineWidth = on ? 6.5 : 5;
+        ctx.globalAlpha = fade * 0.07;
+        ctx.lineWidth = on ? 15 : 12;
         ctx.lineCap = "round"; ctx.stroke();
-        ctx.globalAlpha = fade * 0.72;
-        ctx.lineWidth = on ? 1.9 : 1.4;
+        ctx.globalAlpha = fade * 0.18;
+        ctx.lineWidth = on ? 7.5 : 6;
+        ctx.stroke();
+        ctx.globalAlpha = fade * 0.62;
+        ctx.lineWidth = on ? 2.2 : 1.6;
         ctx.stroke();
       }
       ctx.restore();
-      var hole = ctx.createRadialGradient(0, 0, 1, 0, 0, vR * 0.22);
-      hole.addColorStop(0, "rgba(0,75,111,.30)"); hole.addColorStop(1, "rgba(0,146,153,.02)");
+      var hole = ctx.createRadialGradient(0, 0, 1, 0, 0, vR * 0.34);
+      hole.addColorStop(0, "rgba(0,75,111,.20)"); hole.addColorStop(1, "rgba(0,146,153,0)");
       ctx.fillStyle = hole;
-      ctx.beginPath(); ctx.arc(0, 0, vR * 0.22, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 0, vR * 0.34, 0, Math.PI * 2); ctx.fill();
       for (var sp = 0; sp < 5; sp++) {
         var sa = t * 0.30 + sp * 1.6, sr = vR * (0.35 + (sp % 3) * 0.18);
         ctx.globalAlpha = fade * (on ? 0.62 : 0.36);
