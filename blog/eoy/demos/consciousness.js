@@ -1244,6 +1244,12 @@
       return false;
     }
     function goNext() {
+      var qa = THEORIES[active].qa || [];
+      if (qaOpen > 0) {
+        if (qaOpen < qa.length - 1) { qaOpen++; renderChrome(); return true; }
+        if (active < THEORIES.length - 1) { setTheory(active + 1); return true; }
+        return false;
+      }
       if (active === 0 && wsNextAction()) return true;
       if (active === 1 && iitNextAction()) return true;
       if (active === 2 && !predModelFresh()) { updatePredModel(); return true; }
@@ -1252,7 +1258,6 @@
       if (active === 5 && mystNextAction()) return true;
       if (active === 2 && pred.priorTarget !== null) { setTheory(3); return true; }
       if (active === 3 && kast.dissolving) { setTheory(4); return true; }
-      var qa = THEORIES[active].qa || [];
       if (qaOpen < qa.length - 1) {
         qaOpen++;
         renderChrome();
@@ -1261,11 +1266,17 @@
       if (active < THEORIES.length - 1) { setTheory(active + 1); return true; }
       return false;
     }
-    function goPrev() { if (active > 0) { setTheory(active - 1); return true; } return false; }
-    function setTheory(i) {
+    function goPrev() {
+      var qa = THEORIES[active].qa || [];
+      if (qaOpen > 0) { qaOpen--; renderChrome(); return true; }
+      if (active > 0) { setTheory(active - 1, true); return true; }
+      return false;
+    }
+    function setTheory(i, back) {
       active = clamp(i, 0, THEORIES.length - 1);
       if (active === 4) four = { mode: "human", focus: 0, word: "hot", active: 1 };
-      qaOpen = 0;
+      var targetQa = THEORIES[active].qa || [];
+      qaOpen = back && targetQa.length ? targetQa.length - 1 : 0;
       activeSince = performance.now();
       renderChrome();
       renderControls();
