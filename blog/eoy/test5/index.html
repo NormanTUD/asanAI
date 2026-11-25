@@ -125,9 +125,6 @@ body.is-ready .app{opacity:1}
 .hud-stat span{display:block;font:600 9px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
 .hud-stat b{display:block;margin-top:5px;font:600 16px/1 var(--mono);color:var(--text);font-variant-numeric:tabular-nums}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes scan{0%{transform:translateY(-110%)}100%{transform:translateY(420%)}}
-@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 
 .layout{display:grid;grid-template-columns:322px minmax(0,1fr) 392px;grid-template-areas:"controls stage instruments";gap:18px;align-items:start}
 .rail--controls{grid-area:controls;position:sticky;top:18px;max-height:calc(100vh - 36px);overflow:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin;scrollbar-color:rgba(138,180,255,.24) transparent}
@@ -219,19 +216,6 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .image-meta{font:600 10px/1 var(--mono);color:var(--dim);white-space:nowrap}
 .image-wrap{position:relative;width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid rgba(138,180,255,.12);background:radial-gradient(circle at 50% 42%,#0c1526,#04070c 72%)}
 .image-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.image-card{--probe:rgba(103,232,249,.78)}
-.image-card[data-view=pred]{--probe:rgba(251,191,36,.82)}
-.image-card[data-view=error]{--probe:rgba(255,255,255,.72)}
-.probe-crosshair{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:3;filter:drop-shadow(0 0 3px rgba(0,0,0,.75))}
-.probe-crosshair i{position:absolute;background:var(--probe);opacity:.72}
-.probe-crosshair i:first-child{left:-42px;top:0;width:84px;height:1px}
-.probe-crosshair i:nth-child(2){left:0;top:-42px;width:1px;height:84px}
-.probe-crosshair b{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border:1.5px solid var(--probe);border-radius:50%;box-shadow:0 0 12px var(--probe)}
-.image-card.is-live .image-wrap::after{
-  content:"";position:absolute;left:0;right:0;height:26%;pointer-events:none;
-  background:linear-gradient(180deg,transparent,rgba(103,232,249,.13),transparent);
-  animation:scan 3.2s linear infinite;mix-blend-mode:screen;pointer-events:none;
-}
 .image-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:16px;font:600 10px/1 var(--mono);color:var(--dim)}
 .image-foot b{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
 .drop-hint{position:absolute;inset:0;display:grid;place-items:center;border-radius:12px;border:1px dashed rgba(103,232,249,.5);background:rgba(5,9,16,.78);color:var(--cyan);font:600 11px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;pointer-events:none;opacity:0;transition:opacity .18s ease;z-index:4}
@@ -316,8 +300,6 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .heat-legend{display:flex;align-items:center;gap:8px;margin-top:10px;font:500 9px/1 var(--mono);color:var(--dim);letter-spacing:.06em}
 .heat-legend .ramp{height:7px;flex:1 1 180px;max-width:280px;border-radius:99px;background:linear-gradient(90deg,#1e3a8a,#0b1220 48%,#fbbf24)}
 
-.feature-tools{display:flex;gap:9px;align-items:end;flex-wrap:wrap;margin-bottom:12px}
-.feature-tools .field{margin:0;min-width:130px}
 .feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
 .feature-card{padding:6px;border-radius:10px;border:1px solid rgba(138,180,255,.1);background:rgba(4,8,15,.32);min-width:0}
 .feature-card canvas{width:100%;aspect-ratio:1;display:block;border-radius:6px;background:#05080e}
@@ -329,6 +311,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .formula-card h4{font:600 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:9px}
 .formula-card .tex{overflow-x:auto;overflow-y:hidden;color:var(--text);font-size:14px;padding:2px 0 4px;scrollbar-width:thin}
 .formula-card .tex .temml{color:var(--text)}
+.formula-card .tex-fallback{display:block;white-space:pre-wrap;padding:10px 12px;border-radius:8px;border:1px solid rgba(251,191,36,.18);background:rgba(4,8,15,.55);font:500 11px/1.65 var(--mono);color:var(--amber)}
 .formula-card p{margin-top:8px;color:var(--dim);font-size:12px;line-height:1.5}
 .formula-live{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
 .live-card{padding:13px 14px;border-radius:12px;border:1px solid rgba(103,232,249,.14);background:linear-gradient(160deg,rgba(103,232,249,.055),rgba(4,8,15,.36));min-width:0}
@@ -600,17 +583,17 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
       <div class="image-grid" id="imageGrid">
         <figure class="panel image-card" data-view="target">
           <div class="image-head"><span class="image-title"><i class="tag-dot"></i>Ziel</span><span class="image-meta" id="targetMeta">–</span></div>
-          <div class="image-wrap"><canvas id="targetCanvas" aria-label="Zielbild in der eingestellten Auflösung"></canvas><div class="probe-crosshair" aria-hidden="true"><i></i><i></i><b></b></div></div>
+          <div class="image-wrap"><canvas id="targetCanvas" aria-label="Zielbild in der eingestellten Auflösung"></canvas></div>
           <figcaption class="image-foot"><span>Graustufen-Ziel</span><b id="targetMean">–</b></figcaption>
         </figure>
         <figure class="panel image-card" data-view="pred">
           <div class="image-head"><span class="image-title"><i class="tag-dot"></i>Vorhersage</span><span class="image-meta" id="predMeta">–</span></div>
-          <div class="image-wrap"><canvas id="predCanvas" aria-label="Vorhersage des Netzes"></canvas><div class="probe-crosshair" aria-hidden="true"><i></i><i></i><b></b></div></div>
+          <div class="image-wrap"><canvas id="predCanvas" aria-label="Vorhersage des Netzes"></canvas></div>
           <figcaption class="image-foot"><span>Netz-Ausgabe</span><b id="predMean">–</b></figcaption>
         </figure>
         <figure class="panel image-card" data-view="error">
           <div class="image-head"><span class="image-title"><i class="tag-dot"></i>Fehler</span><span class="image-meta" id="errorMeta">–</span></div>
-          <div class="image-wrap"><canvas id="errorCanvas" aria-label="Fehlerkarte zwischen Ziel und Vorhersage"></canvas><div class="probe-crosshair" aria-hidden="true"><i></i><i></i><b></b></div></div>
+          <div class="image-wrap"><canvas id="errorCanvas" aria-label="Fehlerkarte zwischen Ziel und Vorhersage"></canvas></div>
           <figcaption class="image-foot"><span>|Ziel − Vorhersage|</span><b id="errorMean">–</b></figcaption>
         </figure>
         <div class="drop-hint">Bild hier ablegen</div>
@@ -1215,7 +1198,6 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     $("#targetMean").textContent = "Ø " + fmt(S.targetMean, 3);
     $("#predMean").textContent = "–";
     $("#errorMean").textContent = "–";
-    updateCrosshairs();
     updateStats();
     return true;
   }
@@ -1578,7 +1560,6 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     if ($("#featureGrid")) $("#featureGrid").innerHTML = '<div class="feature-note">Warte auf Aktivierungen …</div>';
     if ($("#featureLayer")) $("#featureLayer").innerHTML = '<option>warte …</option>';
     if ($("#reliefNote")) $("#reliefNote").textContent = "Warte auf Vorhersagen …";
-    updateCrosshairs();
     updateTrainUi();
     updateStats();
     updateLiveStats();
@@ -2315,18 +2296,6 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     }
   }
 
-  function updateCrosshairs() {
-    if (!S.N) return;
-    var col = S.probe.idx % S.N;
-    var row = Math.floor(S.probe.idx / S.N);
-    var left = ((col + 0.5) / S.N * 100) + "%";
-    var top = ((row + 0.5) / S.N * 100) + "%";
-    $$(".probe-crosshair").forEach(function (el) {
-      el.style.left = left;
-      el.style.top = top;
-    });
-  }
-
   function updateProbeLockUi() {
     var btn = $("#probeLockBtn");
     if (btn) {
@@ -2426,7 +2395,6 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     if (idx === S.probe.idx) return;
     S.probe.idx = idx;
     if (S.weights) S.probe.trace = computeTrace(idx);
-    updateCrosshairs();
     if (S.probe.raf) return;
     S.probe.raf = requestAnimationFrame(function () {
       S.probe.raf = 0;
@@ -2470,13 +2438,11 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
         S.probe.locked = true;
         S.probe.idx = idx;
         if (S.weights) S.probe.trace = computeTrace(idx);
-        updateCrosshairs();
-        updateProbeLockUi();
+            updateProbeLockUi();
         refreshProbe();
         drawGraph();
       });
     });
-    updateCrosshairs();
     updateProbeLockUi();
   }
 
@@ -3176,7 +3142,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
     $("#predMeta").textContent = S.N + " × " + S.N + " × " + S.channels;
     $("#targetMeta").textContent = S.N + " × " + S.N + " × " + S.channels;
     var pm = $("#statPredMs");
-    if (pm) pm.textContent = S.pred.data ? fmt(S.pred.ms, 0) + " ms" : "–";
+    if (pm) pm.textContent = S.pred.data ? Math.round(S.pred.ms) + " ms" : "–";
     var sb = $("#statBackend");
     if (sb) sb.textContent = S.backend || "–";
   }
