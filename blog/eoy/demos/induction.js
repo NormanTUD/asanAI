@@ -7,7 +7,7 @@
   if (!document.getElementById("ls-induction-style")) {
     var st = document.createElement("style");
     st.id = "ls-induction-style";
-    st.textContent = '.ls-ind-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:transparent}.ls-ind-scene .ls-ind-canvas{display:block;width:100%;height:100%;min-height:360px}.ls-ind-tip{position:absolute;z-index:20;max-width:260px;padding:6px 8px;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-paper,#fff);color:var(--tm-ink,#000);font:12px/1.35 "Open Sans",sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.12);pointer-events:none;opacity:0;transition:opacity .12s;border-radius:4px}.ls-ind-tip.is-on{opacity:1}';
+    st.textContent = '.ls-ind-scene{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:transparent}.ls-ind-scene .ls-ind-canvas{display:block;width:100%;height:100%;min-height:360px}.ls-ind-tip{position:absolute;z-index:20;max-width:260px;padding:6px 8px;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-paper,#fff);color:var(--tm-ink,#000);font:13px/1.45 "Open Sans",sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.12);pointer-events:none;opacity:0;transition:opacity .12s;border-radius:4px}.ls-ind-tip.is-on{opacity:1}';
     document.head.appendChild(st);
   }
 
@@ -788,6 +788,7 @@
       var small = W < 620;
       head(c, DE ? "Vier Köpfe, vier Regeln" : "Four heads, four rules", pad, 30, { size: small ? 18 : 22 });
       txt(c, DE ? "Attention wählt die Quelle, OV schreibt den Inhalt." : "Attention selects the source, OV writes the content.", pad, 50, { size: 10.5, color: C.muted });
+      addHover(pad, 4, W - 2 * pad, 64, DE ? "Die Folie stellt vier Attention-Heads gegenüber: Induktion, Duplicate, Successor und Name-Mover. Jeder Kopf wählt eine andere Quelle und schreibt deren Inhalt weiter." : "The slide compares four attention heads: induction, duplicate, successor, and name-mover. Each selects a different source and writes its content onward.");
       accent(c, pad, 64, 38);
       var items = [
         {
@@ -854,6 +855,7 @@
       c.lineWidth = 1;
       c.strokeRect(detX + 0.5, detY + 0.5, detW - 1, H - detY - 13);
       c.restore();
+      addHover(detX, detY, detW, H - detY - 12, item.title + ": " + item.body);
       var tsz = small ? 15 : 17;
       txt(c, item.title, detX + 12, detY + 24, {
         size: tsz,
