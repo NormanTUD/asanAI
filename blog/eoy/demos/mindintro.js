@@ -41,10 +41,10 @@
               '<b>' + L("Von innen", "From inside") + '</b><p>' + L("Wie sich das Rot anfühlt", "what the red feels like") + '</p>' +
             '</div>' +
           '</div>' +
-          '<p class="ls-mi2-def">' + L("Qualia sind die gefühlten Eigenschaften einer Erfahrung, etwa die Röte des Roten. Messungen beschreiben Bedingungen, nicht das Erleben.", "Qualia are the felt qualities of an experience, such as the redness of red. Measurements describe conditions, not experience.") + '</p>' +
+          '<p class="ls-mi2-def">' + L("Qualia sind die gefühlten Eigenschaften einer Erfahrung, etwa die Röte des Roten.", "Qualia are the felt qualities of an experience, such as the redness of red.") + '</p>' +
           '<div class="ls-mi2-problems">' +
-            '<p class="is-easy"><b>' + L("Leichtes Problem:", "Easy problem:") + '</b> ' + L("Muster erkennen, integrieren, berichten: Mechanismen sind denkbar, auch wenn das Jahrhunderte kostet.", "Discriminate, integrate, report: mechanisms are conceivable, even if getting them right takes centuries.") + '</p>' +
-            '<p class="is-hard"><b>' + L("Schweres Problem:", "Hard problem:") + '</b> ' + L("Warum wird Informationsverarbeitung subjektiv erlebt? Wir haben nicht einmal eine Richtung. Chalmers (1995): „Why should physical processing give rise to a rich inner life at all?“", "Why is information processing subjectively experienced? We do not even have a direction. Chalmers (1995): “Why should physical processing give rise to a rich inner life at all?”") + ' <a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Originalarbeit (PDF)</a></p>' +
+            '<p class="is-easy"><b>' + L("Leichtes Problem:", "Easy problem:") + '</b> ' + L("Muster erkennen, integrieren, berichten: Mechanismen sind denkbar.", "Discriminate, integrate, report: mechanisms are conceivable.") + '</p>' +
+            '<p class="is-hard"><b>' + L("Schweres Problem:", "Hard problem:") + '</b> ' + L("Warum wird Verarbeitung subjektiv erlebt? Wir haben nicht einmal eine Richtung. Chalmers (1995): „Why should physical processing give rise to a rich inner life at all?“", "Why is processing subjectively experienced? We do not even have a direction. Chalmers (1995): “Why should physical processing give rise to a rich inner life at all?”") + ' <a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Originalarbeit (PDF)</a></p>' +
           '</div>' +
         '</section>' +
         '<aside class="ls-mi2-right">' +
