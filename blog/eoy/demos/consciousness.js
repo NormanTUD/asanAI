@@ -145,7 +145,7 @@
         title: "New Mysterianism",
         lead: L("Vielleicht liegt Bewusstsein jenseits unserer Begriffe – wie Differentialgleichungen für eine Ratte.", "Perhaps consciousness lies beyond our concepts – like differential equations for a rat."),
         body: [
-          L("Ratten lernen das Labyrinth, lösen aber keine Differentialgleichungen. McGinn fragt, ob Bewusstsein eine ähnliche Begriffsgrenze für uns ist.", "Rats learn the maze but do not solve differential equations. McGinn asks whether consciousness is a similar limit of our concepts.")
+          L("Ratten lernen Labyrinthe. In einer Puzzlebox-Studie mit Mäusen wurden mechanische Verriegelungen stufenweise schwerer, bis die Tiere scheiterten (Ben Abdallah et al., 2011); das zeigt eine Grenze des Problemlösens. Ratten haben ihre intellektuellen Grenzen; die des Menschen liegen weiter, sind aber auch endlich. Eine unserer Grenzen könnte das Bewusstsein sein; McGinn fragt, ob es jenseits unserer Begriffe liegt.", "Rats learn mazes. In a puzzle-box study with mice, mechanical locks became progressively harder until the animals failed (Ben Abdallah et al., 2011); that shows a limit of problem solving. Rats have their intellectual limits; human limits reach further but are finite too. One of our limits could be consciousness; McGinn asks whether it lies beyond our concepts.")
         ],
         qa: [
           { q: L("Was behauptet McGinn?", "What does McGinn claim?"), a: L("Bewusstsein könnte jenseits unserer Begriffe liegen.", "Consciousness may lie beyond our concepts.") },
@@ -154,7 +154,7 @@
           { q: L("Was folgt für KI?", "What follows for AI?"), a: L("Kein Test; die Frage verschiebt sich in unsere Erkenntnisgrenzen.", "No test; the question moves into our cognitive limits.") },
           { q: L("Was ist der Einwand?", "What is the objection?"), a: L("Eine Grenze zu behaupten erklärt Bewusstsein nicht.", "Claiming a limit does not explain consciousness.") },
         ],
-        cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://doi.org/10.1037/h0060262" target="_blank" rel="noopener">Tolman, Ritchie &amp; Kalish (1946)</a>; <a href="https://doi.org/10.1037/0097-7403.2.2.97" target="_blank" rel="noopener">Olton &amp; Samuelson (1976)</a>',
+        cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://doi.org/10.1037/h0060262" target="_blank" rel="noopener">Tolman, Ritchie &amp; Kalish (1946)</a>; <a href="https://doi.org/10.1037/0097-7403.2.2.97" target="_blank" rel="noopener">Olton &amp; Samuelson (1976)</a>; <a href="https://doi.org/10.1016/j.expneurol.2010.09.008" target="_blank" rel="noopener">Ben Abdallah et al. (2011)</a>',
         hint: L("Neue Frage erzeugt ein weiteres Fragezeichen. Manche sind groß, manche klein; keine landet auf einer Antwort.", "New question spawns another question mark. Some are large, some small; none lands on an answer."),
         status: L("Die Fragezeichen fliegen. Weiter erzeugt weitere Fragen.", "The question marks are flying. Next creates more questions.")
       }
@@ -740,7 +740,8 @@
       ctx.fillText(e.label, x + 28, y + ch * 0.40);
       ctx.fillStyle = on ? "#5a7280" : "rgba(0,75,111,.30)";
       ctx.font = font(10, 600);
-      ctx.fillText(L(e.subDe, e.subEn), x + 28, y + ch * 0.67);
+      var sub = four.mode === "ai" ? (i === 3 ? L("Textwerkzeug", "text tool") : L("nicht vorhanden", "not present")) : L(e.subDe, e.subEn);
+      ctx.fillText(sub, x + 28, y + ch * 0.67);
       if (on) {
         dot(x + cw - 12, y + 12, 2.5, e.color);
       } else {

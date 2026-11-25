@@ -5825,3 +5825,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-con2-caption p.is-callout{border-left:2px solid var(--ls-gold);padding-left:9px;color:#3f5d68}
 .ls-con2-caption[hidden]{display:none!important}
 .ls-app{--ls-fs-micro:max(11.5px,calc(var(--ls-fs-body) * .58))}
+.ls-cn-quote{margin:0;padding:10px 14px 10px 18px;border-left:4px solid var(--ls-teal);border-radius:0 12px 12px 0;background:linear-gradient(90deg,rgba(0,146,153,.08),rgba(0,146,153,.015))}
+.ls-cn-quote p{margin:0;font:italic 500 15px/1.5 Georgia,"Times New Roman",serif;color:var(--ls-ink)}
+.ls-cn-quote cite{display:block;margin-top:4px;font:600 11px/1.4 "Open Sans",sans-serif;font-style:normal;color:var(--ls-muted)}
+.ls-cn-quote cite a{color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid rgba(0,75,111,.28)}

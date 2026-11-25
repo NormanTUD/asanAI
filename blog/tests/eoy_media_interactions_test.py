@@ -2485,6 +2485,7 @@ def test_qualia_and_final_status(browser, base, lang, results):
     butlin: /Butlin/.test(bottom?.innerText || ''),
     source: !!bottom?.querySelector('a[href*="2308.08708"]'),
     takeaway: !!document.querySelector('.ls-tk-canvas'),
+    quote: document.querySelector('.ls-cn-quote')?.innerText || '',
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 }
@@ -2495,6 +2496,7 @@ def test_qualia_and_final_status(browser, base, lang, results):
     results.check(tag, "final status explains the J-space finding", final["jspace"] and final["gurnee"], str(final))
     results.check(tag, "final status cites Butlin on current systems", final["butlin"] and final["source"], str(final))
     results.check(tag, "takeaway scene is no longer mounted", not final["takeaway"], str(final))
+    results.check(tag, "final slide closes with the Noë quote", "Consciousness is not something" in final["quote"] and "Alva No" in final["quote"], final["quote"][:240])
     results.check(tag, "final status page has no overflow", final["overflow"] <= 2, str(final["overflow"]))
     final_qa = page.evaluate("() => ({ count: document.querySelectorAll('[data-cn-q]').length, answer: document.querySelector('[data-cn-qa-answer]')?.innerText || '' })")
     results.check(tag, "final status offers five answered questions", final_qa["count"] == 5 and len(final_qa["answer"]) > 20, str(final_qa)[:220])

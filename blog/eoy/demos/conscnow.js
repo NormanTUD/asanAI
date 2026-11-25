@@ -130,7 +130,8 @@
           return '<button type="button" class="ls-cn-q' + (i === 0 ? " is-on" : "") + '" data-cn-q="' + i + '">' + item.q + '</button>';
         }).join("") + '</div>' +
         '<p class="ls-cn-qa-answer" data-cn-qa-answer>' + QA[0].a + '</p>' +
-      '</div>';
+      '</div>' +
+      '<blockquote class="ls-cn-quote"><p>“Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion.”</p><cite><a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Alva Noë, Out of Our Heads (2009)</a></cite></blockquote>';
     root.appendChild(el);
 
     var grid = el.querySelector(".ls-cn-grid");
