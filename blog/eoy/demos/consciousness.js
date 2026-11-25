@@ -265,12 +265,14 @@
       for (var i = 0; i < 14; i++) spawnMark(true);
     }
     function spawnMark(initial) {
+      var angle = Math.random() * Math.PI * 2;
+      var speed = 0.003 + Math.random() * 0.012;
       myst.marks.push({
-        x: initial ? Math.random() : -0.1,
+        x: initial ? Math.random() : Math.random(),
         y: 0.08 + Math.random() * 0.84,
         size: 18 + Math.random() * 78,
-        speed: 0.006 + Math.random() * 0.018,
-        drift: (Math.random() - 0.5) * 0.01,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
         rot: (Math.random() - 0.5) * 0.5,
         spin: (Math.random() - 0.5) * 0.002,
         a: 0.22 + Math.random() * 0.65
@@ -941,12 +943,11 @@
       glow.addColorStop(0, "rgba(126,200,239,.05)"); glow.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
       myst.marks.forEach(function (m) {
-        m.x += m.speed * 0.016;
-        m.y += m.drift * 0.016;
+        m.x += m.vx * 0.016;
+        m.y += m.vy * 0.016;
         m.rot += m.spin;
-        if (m.x > 1.12) m.x = -0.12;
-        if (m.y < -0.1) m.y = 0.95;
-        if (m.y > 1.1) m.y = -0.05;
+        if (m.x > 1.12) m.x = -0.12; else if (m.x < -0.12) m.x = 1.12;
+        if (m.y < -0.1) m.y = 1.1; else if (m.y > 1.1) m.y = -0.05;
         ctx.save();
         ctx.translate(m.x * w, m.y * h);
         ctx.rotate(m.rot);
