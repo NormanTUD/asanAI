@@ -1654,10 +1654,46 @@
     kicker: DE ? "Aktivierung" : "Activation",
     title: DE ? "Aktivierungen machen den Knick" : "Activations create the bend"
   });
-  var neuralLargeStep = Object.assign({}, neuralLargeSteps[0], {
+  var neuralLargeImageStep = {
+    kicker: DE ? "Bild als Funktion" : "An image as a function",
+    title: DE ? "Alles ist eine Funktion" : "Everything is a function",
+    body: DE
+      ? "Ein Bild ist eine Funktion. Für jede Koordinate $(x, y)$ sagt das Netz eine Farbe voraus: Rot, Grün, Blau. Aus 50 × 50 Pixeln werden 2.500 Punkte, jeder mit drei Zielwerten. Das Netz bekommt nur $(x, y)$ plus Fourier-Features und lernt die Farben.\n\nEs speichert keine Pixel. Es lernt die Funktion, die das Bild erzeugt. Dieselbe Maschine, die eben den Sinus gebogen hat, lernt hier ein Foto. Mit genug Neuronen kann ein Netz jede stetige Funktion auf einem begrenzten Bereich beliebig genau annähern. Deshalb ist „das kann es nicht lernen“ selten eine Frage der Funktion, sondern der Daten, der Architektur und des Trainings.\n\nBeobachte, wie aus Rauschen ein Bild wird: Der Loss fällt, die Konturen kommen. Was außerhalb des gelernten Quadrats passiert, sagt das Netz auch, aber dort gab es keine Daten."
+      : "An image is a function. For every coordinate $(x, y)$ the network predicts a colour: red, green, blue. 50 × 50 pixels become 2,500 points, each with three targets. The network sees only $(x, y)$ plus Fourier features and learns the colours.\n\nIt stores no pixels. It learns the function that produces the image. The same machine that just bent the sine now learns a photo. With enough neurons a network can approximate any continuous function on a bounded domain as closely as we like. So “it cannot learn that” is rarely about the function; it is about data, architecture, and training.\n\nWatch noise become an image: the loss falls, the contours arrive. Outside the trained square the network still answers, but there was no data there.",
+    watch: DE
+      ? "Beobachte Loss und Bild. Öffne unten „Eigenes Bild & Grenzen“: eigenes Bild laden, außerhalb des gelernten Quadrats schauen, mit neuen Zufallsgewichten neu starten."
+      : "Watch the loss and the image. Open “Own image & limits” below: load your own image, look outside the trained square, and restart with new random weights.",
+    demoState: { scene: "imagelab" },
+    context: DE
+      ? "Trainiert wird nur im Quadrat $x, y \\in [-1, 1]$. Außerhalb gibt es keine Daten. Das Netz rechnet dort weiter, weil es eine Funktion ist; niemand hat ihm gesagt, was dort richtig wäre."
+      : "Training happens only inside the square $x, y \\in [-1, 1]$. Outside there is no data. The network keeps computing because it is a function; nobody told it what would be right there.",
+    deep: DE
+      ? "Die Universal Approximation besagt: Ein Netz mit genug Neuronen kann jede stetige Funktion auf einem kompakten Bereich beliebig genau annähern (Cybenko, 1989; Hornik, 1991). Fourier-Features geben dem Netz von Anfang an hohe Frequenzen, deshalb lernt es scharfe Kanten schneller (Tancik et al., 2020). Die Garantie gilt im Trainingsbereich; außerhalb extrapoliert das Netz."
+      : "Universal approximation says: a network with enough neurons can approximate any continuous function on a compact domain as closely as we like (Cybenko, 1989; Hornik, 1991). Fourier features give the network high frequencies from the start, so it learns sharp edges faster (Tancik et al., 2020). The guarantee holds inside the training region; outside the network extrapolates.",
+    boxes: [
+      box("img-fn", DE ? "Technik" : "Technique", DE ? "Bild als Funktion" : "An image as a function", DE ? "Jedes Pixel ist ein Punkt $(x, y)$ mit drei Zielwerten. Das Netz ist eine Funktion von Koordinaten zu Farben." : "Every pixel is a point $(x, y)$ with three targets. The network is a function from coordinates to colours."),
+      box("img-fourier", DE ? "Mathematik" : "Mathematics", DE ? "Fourier-Features" : "Fourier features", DE ? "Fünf Oktaven Sinus und Cosinus geben dem Netz hohe Frequenzen. Ohne sie bleiben kleine Netze weich und matschig." : "Five octaves of sine and cosine give the network high frequencies. Without them small networks stay soft and blurry."),
+      box("img-formula", DE ? "Mathematik" : "Mathematics", DE ? "Die gelernte Abbildung" : "The learned mapping", DE ? "Das Netz bildet Koordinaten auf Farben ab. Gelernt werden die Gewichte dieser Funktion." : "The network maps coordinates to colours. What is learned are the weights of this function.", DE ? "\\underbrace{(R,G,B)}_{\\text{Farbe}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{Koordinaten}}\\right)}_{\\text{gelerntes Netz}}" : "\\underbrace{(R,G,B)}_{\\text{colour}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{coordinates}}\\right)}_{\\text{learned network}}"),
+      box("img-limit", DE ? "Grenze" : "Limit", DE ? "Was außerhalb passiert" : "What happens outside", DE ? "Außerhalb von $x, y \\in [-1, 1]$ gibt es keine Trainingsdaten. Die Ausgabe ist eine Extrapolation, kein Wissen." : "Outside $x, y \\in [-1, 1]$ there is no training data. The output is an extrapolation, not knowledge.")
+    ],
+    sources: [
+      { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für ein Netz mit einer versteckten Schicht.", en: "Universal approximation for a network with one hidden layer." } },
+      { label: "Hornik (1991), Approximation Capabilities of Multilayer Feedforward Networks", url: "https://doi.org/10.1016/0893-6080(91)90009-T", why: { de: "Mehrschichtige Netze sind universelle Approximatoren.", en: "Multilayer networks are universal approximators." } },
+      { label: "Tancik et al. (2020), Fourier Features Let Networks Learn High Frequency Functions", url: "https://arxiv.org/abs/2006.10739", why: { de: "Fourier-Features helfen kleinen MLPs, scharfe Details zu lernen.", en: "Fourier features help small MLPs learn sharp detail." } },
+      { label: "Mildenhall et al. (2020), NeRF: Representing Scenes as Neural Radiance Fields", url: "https://arxiv.org/abs/2003.08934", why: { de: "Eine Szene als Funktion von Koordinaten zu Farbe und Dichte.", en: "A scene as a function from coordinates to colour and density." } }
+    ]
+  };
+  var neuralLargeStep = {
     kicker: DE ? "Tiefe" : "Depth",
-    title: DE ? "Tiefe Netze biegen die Kurve" : "Deep networks bend the curve"
-  });
+    title: DE ? "Tiefe Netze biegen die Kurve" : "Deep networks bend the curve",
+    substeps: [
+      Object.assign({}, neuralLargeSteps[0], {
+        kicker: DE ? "Tiefe" : "Depth",
+        title: DE ? "Tiefe Netze biegen die Kurve" : "Deep networks bend the curve"
+      }),
+      neuralLargeImageStep
+    ]
+  };
   var neuralMlpStep = Object.assign({}, mlpSteps[0], {
     title: DE ? "Der Raum biegt sich" : "Space bends"
   });

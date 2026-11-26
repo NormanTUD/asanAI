@@ -25,7 +25,7 @@ $labels = [
 	'codesemantic' => 'Code + Semantik',
 	'ffn' => 'FFN', 'residual' => 'Residual', 'meadow' => 'Wiese',
 	'manifold' => 'Manifold', 'gauss' => 'Gauss', 'unembed' => 'Unembedding',
-	'model' => 'Modell', 'blocks' => 'Bausteine', 'highdim' => 'Hochdimensional', 'mlp' => 'MLP',
+	'model' => 'Modell', 'blocks' => 'Bausteine', 'highdim' => 'Hochdimensional', 'mlp' => 'MLP', 'imagelab' => 'Bild als Funktion',
 	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'agents' => 'Agent', 'agentrag' => 'Agent + RAG',
 	'gradient' => 'Gradient', 'riskmap' => 'AI and society', 'limitslab' => 'Grenzen-Prüfstand',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room',
