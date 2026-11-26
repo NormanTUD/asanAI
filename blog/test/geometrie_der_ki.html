@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der Pfad, den dein Modell vergisst</title>
+<meta name="description" content="Interaktive Lesehilfe zu Jose Crespo: The Misuse of Math in Creating AI. Kategorientheorie als Grammatik, Kernel und Quotient, Holonomie und pfadbewusste KI.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+    --bg:#05070f; --bg2:#0a0f1f;
+    --panel:rgba(16,24,45,.62); --panel2:rgba(10,16,32,.76);
+    --ink:#eef2ff; --muted:#94a3c4;
+    --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.17);
+    --cyan:#5ad1ff; --magenta:#ff6ec7; --violet:#a78bfa;
+    --amber:#ffcf6e; --mint:#6ef0b8; --coral:#ff8a7a;
+    --good:#6ef0b8; --bad:#ff7a8a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 26px 64px -30px rgba(0,0,0,.9);
+    --ring:rgba(90,209,255,.2); --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f5f6fb; --bg2:#e9edf7;
+    --panel:rgba(255,255,255,.76); --panel2:rgba(255,255,255,.9);
+    --ink:#161d33; --muted:#5a6684;
+    --line:rgba(25,35,65,.12); --line2:rgba(25,35,65,.21);
+    --cyan:#0e7490; --magenta:#b3247a; --violet:#6d28d9;
+    --amber:#a16207; --mint:#0f766e; --coral:#c2410c;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,50,80,.06),0 26px 64px -34px rgba(40,50,80,.45);
+    --ring:rgba(14,116,144,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:radial-gradient(1200px 800px at 80% -10%,rgba(90,209,255,.10),transparent 60%),radial-gradient(900px 700px at -10% 20%,rgba(255,110,199,.09),transparent 60%),radial-gradient(1000px 900px at 50% 120%,rgba(167,139,250,.09),transparent 60%),var(--bg);
+    line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:radial-gradient(var(--line2) 1px,transparent 1px);background-size:27px 27px;opacity:.22;
+    -webkit-mask-image:radial-gradient(circle at 50% 25%,#000,transparent 72%);mask-image:radial-gradient(circle at 50% 25%,#000,transparent 72%)}
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.42;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.28;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(90,209,255,.55),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(255,110,199,.48),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(167,139,250,.45),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--cyan)} strong{font-weight:650}
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--magenta))}
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--cyan);transform:translateY(-1px)}
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.2vw,5rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--cyan),var(--violet) 52%,var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:40ch;margin:0 0 28px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--cyan),var(--mint));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f5f6fb}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+  .hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .sphere-svg{width:min(440px,96%);height:auto;overflow:visible}
+  .orbit-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .orbit-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--magenta);font-weight:600}
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--cyan),var(--magenta));opacity:.75}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.7rem;color:var(--cyan);letter-spacing:.14em;margin-bottom:10px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1.08rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.86rem;line-height:1.5}
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--cyan);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+  .segmented{display:inline-flex;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--cyan);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f5f6fb}
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 18px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--cyan)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--cyan);outline-offset:6px}
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch-track{width:50px;height:28px;border-radius:999px;background:var(--line2);position:relative;transition:background .2s;flex:0 0 auto}
+  .switch-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
+  .switch input:checked + .switch-track{background:var(--cyan)}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(22px);background:var(--bg)}
+  .switch input:focus-visible + .switch-track{outline:2px solid var(--cyan);outline-offset:3px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--cyan);border:1px solid var(--cyan);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f5f6fb}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--cyan)}
+  .demo-actions{display:flex;flex-wrap:wrap;gap:10px}
+  .readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+  .readout strong{font-family:var(--serif);font-size:1.25rem;color:var(--cyan);font-weight:600}
+  .readout .big{font-family:var(--serif);font-size:1.7rem;color:var(--magenta);font-weight:600}
+  .formula-card{margin-top:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line2);border-radius:18px;background:linear-gradient(120deg,rgba(90,209,255,.08),rgba(255,110,199,.07));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.2rem,2.6vw,1.8rem);letter-spacing:.01em;line-height:1.45}
+  .formula sub{font-size:.6em}
+  .formula .op{color:var(--cyan)}
+  .formula-note{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted);margin-top:12px}
+  svg{overflow:visible}
+  .comp-svg,.hist-svg,.kernel-svg,.trap-svg,.holo-svg,.dag-svg,.radar-svg{width:100%;height:auto;display:block}
+  .comp-node{fill:var(--bg);stroke:var(--cyan);stroke-width:1.6}
+  .comp-node-label{fill:var(--ink);font-family:var(--serif);font-size:18px;font-style:italic}
+  .comp-arrow{stroke:var(--cyan);stroke-width:1.8;fill:none}
+  .comp-arrow-head{fill:var(--cyan)}
+  .comp-composite{stroke:var(--magenta);stroke-width:2;fill:none;stroke-dasharray:5 4}
+  .comp-composite-head{fill:var(--magenta)}
+  .comp-identity{stroke:var(--amber);stroke-width:2;fill:none}
+  .comp-identity-head{fill:var(--amber)}
+  .comp-label{fill:var(--muted);font-family:var(--mono);font-size:12px}
+  .comp-label-accent{fill:var(--magenta);font-family:var(--mono);font-size:12px}
+  .comp-label-amber{fill:var(--amber);font-family:var(--mono);font-size:12px}
+  .hist-grid{stroke:var(--line2);stroke-width:1;opacity:.35}
+  .hist-border{fill:none;stroke:var(--line2);stroke-width:1}
+  .hist-axis-label{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+  .hist-c0{fill:none;stroke:var(--cyan);stroke-width:2.4;stroke-linecap:round;opacity:.9}
+  .hist-c1{fill:none;stroke:var(--magenta);stroke-width:2.4;stroke-linecap:round;opacity:.9}
+  .hist-c2{fill:none;stroke:var(--amber);stroke-width:2.4;stroke-linecap:round;opacity:.9}
+  .hist-end{fill:var(--ink);filter:url(#glow-main)}
+  .hist-end-ring{fill:none;stroke:var(--cyan);stroke-width:1.4;opacity:.8}
+  .hist-end-label{fill:var(--ink);font-family:var(--serif);font-style:italic;font-size:18px}
+  .kernel-grid{stroke:var(--line2);stroke-width:1;opacity:.28}
+  .kernel-border{fill:none;stroke:var(--line2);stroke-width:1}
+  .kernel-point{fill:var(--muted);opacity:.65}
+  .kernel-axis{stroke:var(--cyan);stroke-width:1.8}
+  .kernel-axis-head{fill:var(--cyan)}
+  .kernel-fiber{stroke:var(--magenta);stroke-width:10;opacity:.16;stroke-linecap:round}
+  .kernel-fiber-line{stroke:var(--magenta);stroke-width:1.2;stroke-dasharray:4 5;opacity:.75}
+  .kernel-a{fill:var(--cyan);filter:url(#glow-main)}
+  .kernel-b{fill:var(--magenta);filter:url(#glow-main)}
+  .kernel-drop{stroke:var(--cyan);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+  .kernel-drop-b{stroke:var(--magenta);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+  .kernel-score{fill:var(--amber);font-family:var(--mono);font-size:12px}
+  .kernel-label{fill:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.05em}
+  .kernel-pair-label{font-family:var(--serif);font-size:15px;font-style:italic}
+  .kernel-quot{fill:var(--cyan);opacity:.7}
+  .trap-grid{stroke:var(--line2);stroke-width:1;opacity:.25}
+  .trap-border{fill:none;stroke:var(--line2);stroke-width:1}
+  .trap-cliff{fill:var(--bad);opacity:.12}
+  .trap-cliff-line{stroke:var(--bad);stroke-width:1.4;stroke-dasharray:5 5;opacity:.8}
+  .trap-clean{stroke:var(--cyan);stroke-width:2.2;fill:none;opacity:.35}
+  .trap-scarred{stroke:var(--amber);stroke-width:2.2;fill:none;opacity:.35}
+  .trap-cliff-c{stroke:var(--coral);stroke-width:2.2;fill:none;opacity:.35}
+  .trap-live{stroke-width:3;opacity:1}
+  .trap-now{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 4;opacity:.5}
+  .trap-dot-clean{fill:var(--cyan);filter:url(#glow-main)}
+  .trap-dot-scarred{fill:var(--amber);filter:url(#glow-main)}
+  .trap-dot-cliff{fill:var(--coral);filter:url(#glow-main)}
+  .trap-axis{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.05em}
+  .trap-gauge-bg{fill:var(--line)}
+  .trap-gauge-fill{fill:var(--mint);opacity:.5}
+  .trap-gauge-mark{stroke:var(--cyan);stroke-width:2}
+  .trap-big{fill:var(--ink);font-family:var(--serif);font-size:34px}
+  .trap-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .trap-klippe{fill:var(--coral);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+  .sphere-edge{fill:none;stroke:var(--line2);stroke-width:1.2}
+  .holo-grid{fill:none;stroke:var(--line2);stroke-width:.7;opacity:.28}
+  .holo-path{fill:none;stroke:var(--line2);stroke-width:1.2;stroke-dasharray:3 5;opacity:.7}
+  .holo-path-live{fill:none;stroke:var(--cyan);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:url(#glow-main)}
+  .holo-arrow-current{stroke:var(--cyan);stroke-width:2.6;fill:none;filter:url(#glow-main)}
+  .holo-head-current{fill:var(--cyan)}
+  .holo-arrow-start{stroke:var(--muted);stroke-width:1.6;fill:none;stroke-dasharray:4 4}
+  .holo-head-start{fill:var(--muted)}
+  .holo-arrow-final{stroke:var(--magenta);stroke-width:2.8;fill:none;filter:url(#glow-main)}
+  .holo-head-final{fill:var(--magenta)}
+  .holo-dot{fill:var(--cyan);filter:url(#glow-main)}
+  .holo-arc{fill:none;stroke:var(--amber);stroke-width:1.6;stroke-dasharray:3 3;opacity:.9}
+  .holo-angle{fill:var(--amber);font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+  .holo-label{fill:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.06em}
+  .holo-flat-grid{stroke:var(--line2);stroke-width:1;opacity:.28}
+  .holo-flat-path{fill:none;stroke:var(--line2);stroke-width:1.4;stroke-dasharray:4 5;opacity:.7}
+  .holo-flat-live{fill:none;stroke:var(--cyan);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;filter:url(#glow-main)}
+  .holo-flat-arrow{stroke:var(--cyan);stroke-width:2.6;fill:none;filter:url(#glow-main)}
+  .holo-flat-head{fill:var(--cyan)}
+  .holo-flat-label{fill:var(--muted);font-family:var(--mono);font-size:11px}
+  .dag-node{fill:var(--bg);stroke:var(--cyan);stroke-width:1.7}
+  .dag-node-b{stroke:var(--magenta)}
+  .dag-label{fill:var(--ink);font-family:var(--serif);font-size:20px;font-style:italic}
+  .dag-edge{stroke:var(--cyan);stroke-width:1.8;fill:none}
+  .dag-edge-head{fill:var(--cyan)}
+  .dag-back{stroke:var(--muted);stroke-width:1.4;fill:none;stroke-dasharray:4 4}
+  .dag-back-head{fill:var(--muted)}
+  .dag-caption{fill:var(--muted);font-family:var(--mono);font-size:11px}
+  .dag-result-track{fill:var(--line)}
+  .dag-result-bar{fill:url(#dag-fill)}
+  .dag-result-mark{stroke:var(--ink);stroke-width:2}
+  .dag-result-label{fill:var(--ink);font-family:var(--serif);font-size:22px}
+  .radar-ring{fill:none;stroke:var(--line2);stroke-width:.8;opacity:.55}
+  .radar-axis{stroke:var(--line2);stroke-width:1;transition:stroke .2s,stroke-width .2s}
+  .radar-axis.active{stroke:var(--amber);stroke-width:2.2}
+  .radar-label{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;transition:fill .2s}
+  .radar-label.active{fill:var(--amber)}
+  .radar-today{fill:rgba(255,110,199,.10);stroke:var(--magenta);stroke-width:1.5}
+  .radar-target{fill:rgba(90,209,255,.10);stroke:var(--cyan);stroke-width:1.8}
+  .radar-dot-today{fill:var(--magenta)}
+  .radar-dot-target{fill:var(--cyan)}
+  .radar-dot-target.active{fill:var(--amber)}
+  .radar-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+  .radar-legend span{display:inline-flex;align-items:center;gap:8px}
+  .radar-swatch{width:20px;height:10px;border-radius:3px;display:inline-block}
+  .axis-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+  .axis-btn{text-align:left;font-family:var(--mono);font-size:.72rem;letter-spacing:.03em;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .axis-btn:hover{color:var(--ink);border-color:var(--line2)}
+  .axis-btn.active{color:var(--amber);border-color:var(--amber);background:rgba(255,207,110,.06)}
+  .axis-desc{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:.86rem;color:var(--muted);min-height:3.2em}
+  .axis-desc b{color:var(--ink)}
+  .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+  .tool{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .tool:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .tool h3{font-family:var(--serif);font-size:1.02rem;font-weight:600;margin:0 0 6px}
+  .tool p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.5}
+  .tool .chip{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line2);border-radius:99px;padding:2px 8px}
+  .reason-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:8px}
+  .reason{padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+  .reason .rn{font-family:var(--mono);font-size:.66rem;color:var(--magenta);letter-spacing:.1em;margin-bottom:8px}
+  .reason h3{font-family:var(--serif);font-size:.98rem;font-weight:600;margin:0 0 6px}
+  .reason p{margin:0;color:var(--muted);font-size:.78rem;line-height:1.45}
+  .take-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.88rem}
+  .take .glyph{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase;margin-bottom:10px}
+  .note{border-left:2px solid var(--amber);padding:14px 18px;background:rgba(255,207,110,.05);border-radius:0 12px 12px 0;color:var(--muted);font-size:.9rem;margin-top:22px}
+  .note b{color:var(--ink)}
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--cyan);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .deep-body code{font-family:var(--mono);font-size:.86em;color:var(--cyan);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+  .code-block{margin:14px 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--bg);overflow-x:auto}
+  .code-block code{font-family:var(--mono);font-size:.8rem;color:var(--ink);white-space:pre;border:none;background:none;padding:0}
+  .code-block .c{color:var(--muted)}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  @media (max-width:980px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{order:-1}
+    .sphere-svg{width:min(320px,72%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .tools-grid{grid-template-columns:repeat(2,1fr)}
+    .reason-grid{grid-template-columns:repeat(2,1fr)}
+    .take-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .tldr-grid{grid-template-columns:1fr}
+    .tools-grid,.reason-grid{grid-template-columns:1fr}
+    .gloss-grid{grid-template-columns:1fr}
+    .axis-list{grid-template-columns:1fr}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <radialGradient id="sphere-fill" cx="38%" cy="32%" r="72%">
+      <stop offset="0%" stop-color="#5ad1ff" stop-opacity=".14"/>
+      <stop offset="55%" stop-color="#5ad1ff" stop-opacity=".04"/>
+      <stop offset="100%" stop-color="#05070f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dag-fill" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5ad1ff"/>
+      <stop offset="100%" stop-color="#ff6ec7"/>
+    </linearGradient>
+    <filter id="glow-main" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Jose Crespo PhD · Essay · Dezember 2025</div>
+      <h1>Der Pfad, den dein<br><span class="grad">Modell vergisst</span></h1>
+      <p class="lede">Kategorientheorie ist <b>Grammatik, nicht Literatur</b>. Die heutige KI benutzt nur ihren flachen Ausschnitt: Mengen und gedächtnislose Funktionen. Pfad, Gedächtnis und <b>Kernel</b> fallen heraus. Genau dort entstehen die Fehler, die kein Benchmark sieht.</p>
+      <div class="byline">
+        <span>A Mathematician Lurking in the TechUnderWorld</span><span class="dot-sep"></span>
+        <span>23. Dezember 2025</span>
+      </div>
+      <a class="cta" href="#grammatik">In 7 Minuten verstehen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg class="sphere-svg" id="hero-sphere" viewBox="0 0 420 420"></svg>
+      <div class="orbit-badge">Holonomie <strong>90°</strong> am selben Punkt</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>Grammatik, nicht Literatur</h3><p>Kategorientheorie gibt Disziplin: Objekte, Pfeile, Komposition, Identität. Kein Verstehen, keine Bedeutung.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>Set ist die Abkürzung</h3><p>Funktionen sind gedächtnislos. Ein KI-System ist aber akkumulierte Geschichte.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Kern und Quotient</h3><p>Jede Metrik ist eine Quotientenabbildung. Was sie nicht unterscheidet, ist ihr Kernel.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>Holonomie</h3><p>Auf gekrümmten Räumen ändert der Pfad den Zustand, auch wenn Start und Ziel gleich sind.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal" id="grammatik">
+      <div class="section-head"><span class="sec-num">01 · Grammatik, nicht Literatur</span></div>
+      <h2>Was Kategorientheorie wirklich gibt</h2>
+      <div class="prose">
+        <p>Kategorientheorie beantwortet eine einfache Frage: Wann lassen sich Dinge zusammenstecken, und was passiert dabei? <span class="accent">Objekte</span> sind Zustände, Räume oder Typen. <span class="accent">Morphismen</span> sind Übergänge. <span class="accent">Komposition</span> verkettet sie. Die <span class="accent">Identität</span> ist das Nichts-Tun.</p>
+        <p>Das ist Disziplin. Es ist keine Intelligenz und keine Bedeutung. Der Essay nennt es Grammatik, nicht Literatur. Ohne Grammatik kannst du nicht kohärent sprechen. Mit Grammatik allein wird niemand weise.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Objekte, Pfeile, Komposition</div>
+            <div class="demo-sub">Die ganze Grammatik in einem Bild</div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn" type="button" id="comp-compose">g ∘ f komponieren</button>
+            <button class="btn ghost" type="button" id="comp-identity">Identität zeigen</button>
+          </div>
+        </div>
+        <svg class="comp-svg" id="comp-svg" viewBox="0 0 520 210" role="img" aria-label="Diagramm mit Objekten A, B, C und Morphismen f und g"></svg>
+        <div class="readout"><span id="comp-status">A → B → C. Die Komposition ist erlaubt, weil die Enden passen.</span></div>
+      </div>
+
+      <div class="note"><b>Der wichtige Teil:</b> Kategorientheorie verbietet magischen Kleber. Sie erzwingt Schnittstellen. Sie macht Inkohärenz illegal. Aber sie sagt nicht, was ein Zustand bedeutet.</div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal" id="funktionen">
+      <div class="section-head"><span class="sec-num">02 · Der erste Fehler</span></div>
+      <h2>Funktionen sind gedächtnislos</h2>
+      <div class="prose">
+        <p>Die meisten AI-Papiere bleiben in der Kategorie <span class="accent">Set</span>: Mengen und totale Funktionen. Eine Funktion ist eine Landkarte ohne Gedächtnis. Sie sieht x und liefert y. Sie weiß nicht, wie du zu x gekommen bist, was vorher passiert ist, welche Krümmung du durchlaufen hast.</p>
+        <p>Aber ein KI-System ist <span class="accent">akkumulierte Geschichte</span>: jedes Token hängt am Kontext, jeder Agent an der Reihenfolge der Interaktion, jedes trainierte Modell am Sediment seines Trainingspfads. Eine Menge gedächtnisloser Funktionen kategoriell zu nennen, ist kein Tiefgang. Es ist Cosplay.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Drei Wege, ein Punkt</div>
+            <div class="demo-sub">Die Funktion sieht nur den Endpunkt</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="hist-toggle" checked>
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Historie zeigen</span>
+          </label>
+        </div>
+        <label class="slider-row">
+          <span>Krümmung</span>
+          <input id="hist-curve" type="range" min="-1" max="1" step="0.01" value="0.35" aria-label="Krümmung der Pfade">
+          <output id="hist-curve-out">0.35</output>
+        </label>
+        <svg class="hist-svg" id="hist-svg" viewBox="0 0 560 360" role="img" aria-label="Drei verschieden gekrümmte Pfade enden im selben Punkt x"></svg>
+        <div class="readout"><span id="hist-readout">3 Pfade → 1 Punkt x → f(x) = 0.50</span><strong id="hist-out">f(x) = 0.50</strong></div>
+        <div class="caption" id="hist-caption">Drei verschiedene Historien enden im selben Punkt. f(x) ist für alle gleich.</div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal" id="kernel">
+      <div class="section-head"><span class="sec-num">03 · Kernel und Quotient</span></div>
+      <h2>Was deine Metrik nicht sieht</h2>
+      <div class="prose">
+        <p>Der <span class="accent">Kernel</span> einer Abbildung p: A → B ist alles in A, was auf dasselbe Bild abgebildet wird. Es ist der Raum der Unterschiede, die keinen beobachtbaren Unterschied machen. Ein <span class="accent">Quotient</span> erklärt diese Unterschiede für irrelevant. Der Essay sagt: ein Quotient ist die Realität nach dem Vergessen.</p>
+        <p>Jede Metrik ist eine solche Abbildung. Sie faltet einen großen Raum interner Zustände auf eine dünne Linie aus Zahlen. Zwei Modelle können auf demselben Benchmark denselben Score haben und intern völlig verschieden sein. Die Differenz lebt im Kernel der Auswertung.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Ein Score, zwei Zustände</div>
+            <div class="demo-sub">Die Messachse legt fest, was gleich ist</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Ansicht">
+            <button class="seg active" type="button" data-kmode="space" aria-pressed="true">Raum</button>
+            <button class="seg" type="button" data-kmode="quotient" aria-pressed="false">Quotient</button>
+          </div>
+        </div>
+        <label class="slider-row">
+          <span>Metrik</span>
+          <input id="kernel-angle" type="range" min="0" max="180" step="1" value="35" aria-label="Richtung der Metrik">
+          <output id="kernel-angle-out">35°</output>
+        </label>
+        <svg class="kernel-svg" id="kernel-svg" viewBox="0 0 560 380" role="img" aria-label="Punktewolke interner Zustände, projiziert auf eine Metrikachse"></svg>
+        <div class="readout"><span id="kernel-readout">Score 94.2 · A und B sind für diese Metrik ununterscheidbar</span><strong id="kernel-score">94.2</strong></div>
+        <div class="caption" id="kernel-caption">Die gestrichelte Kernel-Linie ist die Menge aller Zustände mit demselben Score. A und B liegen darauf.</div>
+      </div>
+
+      <div class="formula-card reveal">
+        <div class="formula-kicker">Die Idee</div>
+        <div class="formula">p : A → B &nbsp;·&nbsp; ker p <span class="op">=</span> { a ∈ A : p(a) = 0 }</div>
+        <div class="formula-note">Der Kernel ist das, was die Abbildung nicht unterscheiden kann. Der Quotient A / ker p macht es zur Gleichheit.</div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal" id="falle">
+      <div class="section-head"><span class="sec-num">04 · Die Falle</span></div>
+      <h2>Quotienten verstecken den Kernel</h2>
+      <div class="prose">
+        <p>Quotienten beseitigen den Kernel nicht. Sie verstecken ihn. Die Zustände existieren weiter, divergieren, sammeln Unterschiede entlang ihrer Pfade. Irgendwann tritt ein Verhalten aus dem Kernel hervor: ein Fehler, den kein Benchmark gefangen hat, eine Fähigkeit, die monatelang im Verborgenen gewachsen ist.</p>
+        <p>Drei Modelle, ein Score von 94,2 Prozent. Eines lief sauber, eines wurde nach Kontamination gereinigt, eines steht kurz vor der Klippe. Das Ende sieht identisch aus. Die Wege sind es nicht.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Gleicher Score, drei Zustände</div>
+            <div class="demo-sub">Der Benchmark sieht nur die Projektion</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="trap-metric">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Nur Metrik</span>
+          </label>
+        </div>
+        <div id="trap-time-row">
+          <label class="slider-row">
+            <span>Training</span>
+            <input id="trap-time" type="range" min="0" max="100" step="1" value="0" aria-label="Trainingszeit">
+            <output id="trap-time-out">0%</output>
+          </label>
+          <div class="demo-actions"><button class="btn" type="button" id="trap-play">Abspielen</button></div>
+        </div>
+        <svg class="trap-svg" id="trap-svg" viewBox="0 0 560 360" role="img" aria-label="Drei Trainingspfade divergieren, während der Benchmark gleich bleibt"></svg>
+        <div class="readout"><span id="trap-readout">Benchmark 94,2 % · drei verschiedene interne Zustände</span><strong id="trap-score">94.2 %</strong></div>
+        <div class="caption" id="trap-caption">Der Benchmark ist eine Quotientenabbildung. Er faltet den internen Zustand auf eine Zahl. Die Klippe ist im Score unsichtbar.</div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal" id="holonomie">
+      <div class="section-head"><span class="sec-num">05 · Holonomie</span></div>
+      <h2>Der Weg ändert den Zustand</h2>
+      <div class="prose">
+        <p>Komposition löscht den Pfad. f: A → B, g: B → C, und g ∘ f: A → C. Der Zwischenraum B verschwindet. In flachen Räumen ist das harmlos: Alle Wege zwischen zwei Punkten sind äquivalent. Die Zustandsräume der KI sind nicht flach. Sie haben <span class="accent">Krümmung</span>. Und Krümmung erzeugt <span class="accent">Holonomie</span>: Der Weg ändert das Ergebnis, auch wenn du am selben Punkt ankommst.</p>
+        <p>Die Geschichte mit London und Tokyo ist die Intuition. Sauber gerechnet ist es ein Achtel der Kugel. Trage einen Pfeil vom Nordpol zum Äquator, dann entlang des Äquators, dann zurück zum Nordpol. Halte ihn immer parallel. Er kommt um 90 Grad gedreht an.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Ein Pfeil, der parallel bleibt</div>
+            <div class="demo-sub">Nordpol → Äquator 0° → Äquator 90° → Nordpol</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Raum">
+            <button class="seg active" type="button" data-hmode="curved" aria-pressed="true">Gekrümmt</button>
+            <button class="seg" type="button" data-hmode="flat" aria-pressed="false">Flach</button>
+          </div>
+        </div>
+        <label class="slider-row">
+          <span>Pfad</span>
+          <input id="holo-progress" type="range" min="0" max="100" step="1" value="0" aria-label="Fortschritt auf dem Pfad">
+          <output id="holo-progress-out">0%</output>
+        </label>
+        <svg class="holo-svg" id="holo-svg" viewBox="0 0 420 420" role="img" aria-label="Paralleltransport eines Pfeils auf einer Kugel"></svg>
+        <div class="readout">
+          <span id="holo-leg">Nordpol → Äquator 0°</span>
+          <strong id="holo-angle">Holonomie 90°</strong>
+        </div>
+        <div class="demo-actions">
+          <button class="btn" type="button" id="holo-play">Abspielen</button>
+          <button class="btn ghost" type="button" id="holo-reset">Zurücksetzen</button>
+        </div>
+        <div class="caption" id="holo-caption">Der Pfeil wird parallel transportiert: Er bleibt relativ zum Pfad so parallel wie möglich. Am Ende zeigt er in eine andere Richtung.</div>
+      </div>
+
+      <div class="note"><b>Der Punkt für KI:</b> Zwei Fine-Tuning-Läufe können zu denselben Gewichten führen und unterschiedliche interne Geometrie, Fehlermodi und Antworten auf adversarial prompts tragen. Funktionen sehen Endpunkte. Geometrie erinnert Wege.</div>
+    </section>
+
+    <!-- 06 -->
+    <section class="section reveal" id="dag">
+      <div class="section-head"><span class="sec-num">06 · Die DAG-Illusion</span></div>
+      <h2>Diagramme sind keine Dynamik</h2>
+      <div class="prose">
+        <p>Moderne KI wird als Flussdiagramm gezeichnet: Knoten sind Modelle oder Schritte, Kanten sind Datenfluss. Das sieht kategoriell aus. Es erfasst keine Dynamik. Ein DAG kennt keine Traversierung, keine akkumulierten Fehler, kein Gedächtnis jenseits des expliziten Zustands, keine alternative Route, keinen eigenen Kernel.</p>
+        <p>Zwei LLM-Agenten verhandeln: A schlägt vor, B kritisiert, A überarbeitet. Dreh die Reihenfolge um. Gleiche Agenten, gleiche Komposition, anderes Ergebnis. Der DAG sagt: äquivalent. Die Realität lacht.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Wer zuerst spricht, verankert</div>
+            <div class="demo-sub">Zwei Agenten, zwei Reihenfolgen</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Reihenfolge">
+            <button class="seg active" type="button" data-order="AB" aria-pressed="true">A zuerst</button>
+            <button class="seg" type="button" data-order="BA" aria-pressed="false">B zuerst</button>
+          </div>
+        </div>
+        <svg class="dag-svg" id="dag-svg" viewBox="0 0 560 240" role="img" aria-label="Zwei Agenten A und B mit Pfeilen in wechselnder Reihenfolge"></svg>
+        <div class="readout"><span id="dag-readout">A startet bei 0.30, B bei 0.70. A spricht zuerst.</span><strong id="dag-result">0.42</strong></div>
+        <div class="caption" id="dag-caption">Gleiche Knoten, gleiche zwei Interaktionen. Nur die Reihenfolge ändert sich. Das Ergebnis nicht.</div>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="section reveal" id="haskell">
+      <div class="section-head"><span class="sec-num">07 · Die funktionale Sünde</span></div>
+      <h2>Auch Haskell bleibt in der Lobby</h2>
+      <div class="prose">
+        <p>Das ist kein reines KI-Problem. Haskell, die Kathedrale der kategoriellen Reinheit, implementiert <span class="accent">Hask</span>: im Wesentlichen Set mit besserem Marketing. Monaden sequenzieren Berechnungen linear. Referenzielle Transparenz faltet den Pfad auf seinen Endpunkt.</p>
+        <p>Was Haskell nicht ausdrücken kann: zwei verschiedene Sequenzen, die äquivalent sein sollten und es nicht sind (Holonomie). Eine Schleife, die unerwartet endet (Krümmung). Operationen, die davon abhängen, wie du angekommen bist (Pfadabhängigkeit). Den Kernel: was intern verschieden ist und trotzdem dasselbe ausgibt.</p>
+      </div>
+
+      <div class="code-block"><code><span class="c">-- Monadische Sequenz: ein Pfad ohne Geometrie</span>
+action1 &gt;&gt;= \x -&gt;
+  action2 &gt;&gt;= \y -&gt;
+    action3
+
+<span class="c">-- zweimal ausführen: identisches Ergebnis. Der Pfad kollabiert.</span></code></div>
+
+      <div class="note"><b>Der Essay:</b> Die ganze funktionale Programmierung richtet Möbel in einem Raum ohne Fenster. Monaden, Funktoren, Applicatives sind clevere Umstellungen. Sie ändern nicht die flache Kategorie darunter.</div>
+    </section>
+
+    <!-- 08 -->
+    <section class="section reveal" id="werkzeuge">
+      <div class="section-head"><span class="sec-num">08 · Die Werkzeuge</span></div>
+      <h2>Seit sechzig Jahren vorhanden</h2>
+      <div class="prose">
+        <p>Die moderne Kategorientheorie hat das Werkzeug für genau diese Phänomene. Es ist pfadbewusst. Holonomie lebt dort. Gedächtnis lebt dort. Kernel und Quotienten sind keine Nachgedanken. Fast keine KI-Architektur benutzt es.</p>
+      </div>
+
+      <div class="tools-grid reveal">
+        <div class="tool"><h3>Angereicherte Kategorien</h3><p>Morphismen tragen zusätzliche Struktur: Kosten, Zeit, Wahrscheinlichkeit, Distanz.</p><span class="chip">vorhanden, ungenutzt</span></div>
+        <div class="tool"><h3>Höhere Kategorien</h3><p>Morphismen zwischen Morphismen. Transformationen von Transformationen.</p><span class="chip">vorhanden, ungenutzt</span></div>
+        <div class="tool"><h3>∞-Kategorien</h3><p>Unendliche Türme von Morphismen, die Pfade, Homotopien und Schleifen kodieren.</p><span class="chip">vorhanden, ungenutzt</span></div>
+        <div class="tool"><h3>Gefaserte Kategorien</h3><p>Systematischer Umgang mit parameterisierten Familien von Strukturen.</p><span class="chip">vorhanden, ungenutzt</span></div>
+        <div class="tool"><h3>Garben und Descent</h3><p>Lokales Verhalten, das durch globale Konsistenz eingeschränkt wird.</p><span class="chip">vorhanden, ungenutzt</span></div>
+        <div class="tool"><h3>Kan-Erweiterungen</h3><p>Prinzipielle Wege, Funktoren entlang von Pfaden zu erweitern.</p><span class="chip">vorhanden, ungenutzt</span></div>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section class="section reveal" id="pathaware">
+      <div class="section-head"><span class="sec-num">09 · Was path-aware wäre</span></div>
+      <h2>Die sechs Fähigkeiten</h2>
+      <div class="prose">
+        <p>Eine wirklich pfadbewusste Architektur würde Zustandsräume als geometrische Objekte darstellen, Trajektorien explizit verfolgen, Connections definieren, Krümmung messen, Kernel explizit modellieren und Holonomiegruppen nutzen. Fragmente gibt es: geometric deep learning, topologische Datenanalyse, Homotopy Type Theory. Den vollen Stack hat niemand gebaut.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Heute und das Ziel</div>
+            <div class="demo-sub">Schematisch, keine Messung</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:20px" class="radar-panels">
+          <div>
+            <svg class="radar-svg" id="radar-svg" viewBox="0 0 420 420" role="img" aria-label="Radar mit sechs Fähigkeiten, heute und Ziel"></svg>
+            <div class="radar-legend">
+              <span><i class="radar-swatch" style="background:var(--magenta)"></i>heute</span>
+              <span><i class="radar-swatch" style="background:var(--cyan)"></i>path-aware</span>
+            </div>
+          </div>
+          <div>
+            <div class="axis-list" id="axis-list"></div>
+            <div class="axis-desc" id="axis-desc"><b>Geometrie:</b> Zustandsräume als Mannigfaltigkeiten oder stratifizierte Räume, in denen Krümmung etwas bedeutet.</div>
+          </div>
+        </div>
+        <div class="caption">Die Werte sind eine Illustration der Essay-Argumente, keine Messung. Der Abstand ist die These.</div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="section reveal" id="warum">
+      <div class="section-head"><span class="sec-num">10 · Warum das passiert</span></div>
+      <h2>Fünf Gründe für die Blindheit</h2>
+      <div class="reason-grid reveal">
+        <div class="reason"><div class="rn">01</div><h3>Statistik, nicht Geometrie</h3><p>ML wuchs aus Regression, Optimierung und Wahrscheinlichkeiten. Die leben in flachen Vektorräumen.</p></div>
+        <div class="reason"><div class="rn">02</div><h3>Funktionen überall</h3><p>Softwareentwicklung denkt in Funktionskomposition. Kategorien von Mengen fühlen sich natürlich an.</p></div>
+        <div class="reason"><div class="rn">03</div><h3>Die Mathematik ist hart</h3><p>∞-Kategorien, derivierte Geometrie, HoTT brauchen Jahre. Ein DAG mit dem Label „kategoriell“ ist billiger.</p></div>
+        <div class="reason"><div class="rn">04</div><h3>Kernel sind unangenehm</h3><p>Zuzugeben, was das System nicht sieht, ist demütigend. Omniszienz zu behaupten ist leichter.</p></div>
+        <div class="reason"><div class="rn">05</div><h3>Kein schneller Lohn</h3><p>Path-Tracking verbessert heutige Benchmarks nicht. Der Nutzen zeigt sich in Robustheit und Stabilität.</p></div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="section reveal" id="fazit">
+      <div class="section-head"><span class="sec-num">11 · Fazit</span></div>
+      <h2>Die Anklage</h2>
+      <div class="prose">
+        <p>Das Problem ist nicht, dass Kategorientheorie zu abstrakt für KI ist. Das Problem ist, dass KI, funktionale Programmierung und ein Großteil der Informatik einen verkürzten Ausschnitt aus der Zeit vor 1950 benutzen: Funktionen ohne Pfade, Komposition ohne Transport, Pfeile ohne Gedächtnis, Kernel ohne Anerkennung. Das ist nicht Kategorientheorie. Das ist Cosplay.</p>
+        <p>Es ist, als würde man behaupten, Analysis zu benutzen, und dabei Ableitungen verweigern. Man ist im Gebäude, aber im Erdgeschoss. Die Pfade und Kernel sind trotzdem da.</p>
+      </div>
+
+      <div class="take-grid">
+        <div class="take"><div class="glyph">Schließen</div><h3>Ohne Pfad kein Verstehen</h3><p>Wenn deine Architektur nicht unterscheiden kann, wie ein Zustand erreicht wurde, kann sie nicht wirklich schließen, lernen oder sich anpassen.</p></div>
+        <div class="take"><div class="glyph">Blindheit</div><h3>Der Kernel bleibt</h3><p>Wenn sie ihren Kernel nicht sieht, kann sie nicht wissen, was sie nicht weiß. Die Metrik sieht gut aus, bis die Produktion den Rest zeigt.</p></div>
+        <div class="take"><div class="glyph">Wahl</div><h3>Modellieren oder verdrängen</h3><p>Die Pfade und Kernel sind da. Du kannst sie modellieren oder so tun, als gäbe es sie nicht. Sie werden weiter zählen.</p></div>
+      </div>
+
+      <div class="note"><b>Einordnung:</b> Das ist ein Essay, keine Studie. Die mathematischen Begriffe sind präzise, die These ist absichtlich scharf. Der Text nennt selbst Teilausnahmen: geometric deep learning, topologische Datenanalyse, Homotopy Type Theory. Dass die heutige KI path structure systematisch ignoriert, ist eine begründete Kritik, kein gemessenes Ergebnis.</div>
+
+      <details class="deep">
+        <summary>Glossar</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>Kategorie</dt><dd>Objekte, Morphismen, Komposition, Identität, mit Assoziativität und Identitätsgesetzen.</dd></div>
+            <div><dt>Set</dt><dd>Die Kategorie der Mengen und totalen Funktionen. Der flache Standardfall.</dd></div>
+            <div><dt>Kernel</dt><dd>Was eine Abbildung nicht unterscheidet: alles, was auf dasselbe Bild geht.</dd></div>
+            <div><dt>Quotient</dt><dd>Zustände werden gleichgesetzt, wenn ihre Differenz im Kernel liegt.</dd></div>
+            <div><dt>Holonomie</dt><dd>Die Drehung, die ein parallel transportierter Pfeil nach einem geschlossenen Weg auf gekrümmter Fläche erfährt.</dd></div>
+            <div><dt>Krümmung</dt><dd>Die lokale Eigenschaft, die Holonomie erzeugt. Flach heißt: alle Wege sind gleich.</dd></div>
+            <div><dt>Paralleltransport</dt><dd>Information entlang eines Pfades bewegen, ohne sie absichtlich zu drehen.</dd></div>
+            <div><dt>DAG</dt><dd>Gerichteter azyklischer Graph. Ein Flussdiagramm ohne Geometrie.</dd></div>
+            <div><dt>Angereicherte Kategorie</dt><dd>Morphismen tragen zusätzliche Struktur, etwa Kosten oder Distanz.</dd></div>
+            <div><dt>∞-Kategorie</dt><dd>Türme von Morphismen, die Pfade, Homotopien und Schleifen kodieren.</dd></div>
+            <div><dt>Garbe</dt><dd>Lokale Daten, die sich global konsistent verkleben lassen.</dd></div>
+            <div><dt>Kan-Erweiterung</dt><dd>Ein Funktor wird entlang eines Pfades bestmöglich fortgesetzt.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Quelle</h4>
+      <p>Jose Crespo PhD.<br>
+      <a href="https://www.josecrespophd.org/p/the-misuse-of-math-in-creating-ai" target="_blank" rel="noopener">The Misuse of Math in Creating AI</a>.<br>
+      A Mathematician Lurking in the TechUnderWorld, 23. Dezember 2025.</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Lesehilfe, keine eigene Forschung. Die Visualisierungen sind Lehrmodelle. Die Kugel zeigt ein Achtel der Kugeloberfläche; die Holonomie beträgt exakt 90 Grad. Die Radarwerte sind schematisch.</p>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  /* ---------- composition ---------- */
+  var compState = { compose: true, identity: false };
+  function headAt(x, y, ang, cls) {
+    var bx = x - Math.cos(ang) * 10, by = y - Math.sin(ang) * 10;
+    var px = -Math.sin(ang), py = Math.cos(ang);
+    return '<polygon class="' + cls + '" points="' + x + ',' + y + ' ' +
+      (bx + px * 4.5) + ',' + (by + py * 4.5) + ' ' +
+      (bx - px * 4.5) + ',' + (by - py * 4.5) + '"/>';
+  }
+  function arrow2D(x1, y1, x2, y2, cls, headCls) {
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    return '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' +
+      (x2 - Math.cos(ang) * 5) + '" y2="' + (y2 - Math.sin(ang) * 5) + '"/>' +
+      headAt(x2, y2, ang, headCls);
+  }
+  function renderComp() {
+    var svg = document.getElementById("comp-svg");
+    var A = { x: 70, y: 100 }, B = { x: 260, y: 100 }, C = { x: 450, y: 100 };
+    var parts = [];
+    [A, B, C].forEach(function (n) {
+      parts.push('<circle class="comp-node" cx="' + n.x + '" cy="' + n.y + '" r="22"/>');
+    });
+    parts.push('<text class="comp-node-label" x="' + A.x + '" y="' + (A.y + 6) + '" text-anchor="middle">A</text>');
+    parts.push('<text class="comp-node-label" x="' + B.x + '" y="' + (B.y + 6) + '" text-anchor="middle">B</text>');
+    parts.push('<text class="comp-node-label" x="' + C.x + '" y="' + (C.y + 6) + '" text-anchor="middle">C</text>');
+    parts.push(arrow2D(A.x + 24, A.y, B.x - 24, B.y, "comp-arrow", "comp-arrow-head"));
+    parts.push(arrow2D(B.x + 24, B.y, C.x - 24, C.y, "comp-arrow", "comp-arrow-head"));
+    parts.push('<text class="comp-label" x="' + ((A.x + B.x) / 2) + '" y="' + (A.y - 10) + '" text-anchor="middle">f</text>');
+    parts.push('<text class="comp-label" x="' + ((B.x + C.x) / 2) + '" y="' + (B.y - 10) + '" text-anchor="middle">g</text>');
+    if (compState.compose) {
+      parts.push('<path class="comp-composite" d="M' + A.x + ',' + (A.y + 22) + ' C 190,205 330,205 ' + C.x + ',' + (C.y + 22) + '"/>');
+      var ang = Math.atan2((C.y + 22) - 205, C.x - 330);
+      parts.push(headAt(C.x, C.y + 22, ang, "comp-composite-head"));
+      parts.push('<text class="comp-label-accent" x="' + ((A.x + C.x) / 2) + '" y="202" text-anchor="middle">g ∘ f</text>');
+    }
+    if (compState.identity) {
+      parts.push('<path class="comp-identity" d="M' + (A.x - 14) + ',' + (A.y - 18) + ' C ' + (A.x - 40) + ',' + (A.y - 72) + ' ' + (A.x + 40) + ',' + (A.y - 72) + ' ' + (A.x + 14) + ',' + (A.y - 18) + '"/>');
+      var ang2 = Math.atan2(72, 54);
+      parts.push(headAt(A.x + 14, A.y - 18, ang2, "comp-identity-head"));
+      parts.push('<text class="comp-label-amber" x="' + A.x + '" y="' + (A.y - 64) + '" text-anchor="middle">id_A</text>');
+    }
+    svg.innerHTML = parts.join("");
+    document.getElementById("comp-status").textContent = compState.compose
+      ? (compState.identity ? "Komposition und Identität: g ∘ f und id_A sind erlaubt." : "A → B → C. Die Komposition g ∘ f ist erlaubt, weil die Enden passen.")
+      : (compState.identity ? "Die Identität id_A ist der Pfeil, der A auf A abbildet." : "A → B → C. Ohne Komposition siehst du nur zwei einzelne Pfeile.");
+  }
+  document.getElementById("comp-compose").addEventListener("click", function () {
+    compState.compose = !compState.compose;
+    renderComp();
+  });
+  document.getElementById("comp-identity").addEventListener("click", function () {
+    compState.identity = !compState.identity;
+    renderComp();
+  });
+  renderComp();
+
+  /* ---------- history ---------- */
+  var histEl = document.getElementById("hist-svg");
+  var histRange = document.getElementById("hist-curve");
+  var histToggle = document.getElementById("hist-toggle");
+  function renderHistory() {
+    var k = parseFloat(histRange.value);
+    document.getElementById("hist-curve-out").textContent = k.toFixed(2);
+    var show = histToggle.checked;
+    var W = 560, H = 360, pad = 46;
+    var X = function (u) { return pad + u * (W - 2 * pad); };
+    var Y = function (v) { return H - pad - v * (H - 2 * pad); };
+    var E = [0.6, 0.5];
+    var starts = [[0.14, 0.2], [0.2, 0.82], [0.86, 0.16]];
+    var clss = ["hist-c0", "hist-c1", "hist-c2"];
+    var dirs = [-1, 1, 0.45];
+    var strength = (k + 1) / 2;
+    var parts = [];
+    for (var gx = 0; gx <= 10; gx++) {
+      parts.push('<line class="hist-grid" x1="' + X(gx / 10) + '" y1="' + Y(0) + '" x2="' + X(gx / 10) + '" y2="' + Y(1) + '"/>');
+    }
+    for (var gy = 0; gy <= 10; gy++) {
+      parts.push('<line class="hist-grid" x1="' + X(0) + '" y1="' + Y(gy / 10) + '" x2="' + X(1) + '" y2="' + Y(gy / 10) + '"/>');
+    }
+    parts.push('<rect class="hist-border" x="' + X(0) + '" y="' + Y(1) + '" width="' + (X(1) - X(0)) + '" height="' + (Y(0) - Y(1)) + '"/>');
+    parts.push('<text class="hist-axis-label" x="' + X(0.5) + '" y="' + (H - 14) + '" text-anchor="middle">interner Zustand</text>');
+    if (show) {
+      starts.forEach(function (S, i) {
+        var dx = E[0] - S[0], dy = E[1] - S[1];
+        var px = -dy, py = dx;
+        var off = (0.08 + 0.34 * strength) * dirs[i];
+        var c1x = S[0] + dx * 0.33 + px * off;
+        var c1y = S[1] + dy * 0.33 + py * off;
+        var c2x = S[0] + dx * 0.72 + px * off * 0.8;
+        var c2y = S[1] + dy * 0.72 + py * off * 0.8;
+        parts.push('<path class="' + clss[i] + '" d="M' + X(S[0]) + ',' + Y(S[1]) + ' C' + X(c1x) + ',' + Y(c1y) + ' ' + X(c2x) + ',' + Y(c2y) + ' ' + X(E[0]) + ',' + Y(E[1]) + '"/>');
+      });
+    }
+    parts.push('<circle class="hist-end-ring" cx="' + X(E[0]) + '" cy="' + Y(E[1]) + '" r="13"/>');
+    parts.push('<circle class="hist-end" cx="' + X(E[0]) + '" cy="' + Y(E[1]) + '" r="5"/>');
+    parts.push('<text class="hist-end-label" x="' + (X(E[0]) + 20) + '" y="' + (Y(E[1]) - 14) + '">x</text>');
+    histEl.innerHTML = parts.join("");
+    document.getElementById("hist-readout").textContent = show ? "3 Pfade → 1 Punkt x → f(x) = 0.50" : "Nur der Punkt x → f(x) = 0.50";
+    document.getElementById("hist-out").textContent = "f(x) = 0.50";
+    document.getElementById("hist-caption").textContent = show
+      ? "Drei verschiedene Historien enden im selben Punkt. Die Funktion sieht nur x. Die Wege dorthin sind für sie unsichtbar."
+      : "Die Historien sind ausgeblendet. Für die Funktion bleibt nur der Punkt x und die Ausgabe y.";
+  }
+  histRange.addEventListener("input", renderHistory);
+  histToggle.addEventListener("change", renderHistory);
+  renderHistory();
+
+  /* ---------- kernel / quotient ---------- */
+  var KERNEL_POINTS = (function () {
+    var seed = 12345;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    var pts = [];
+    for (var i = 0; i < 40; i++) {
+      var a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 0.9;
+      pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r });
+    }
+    return pts;
+  })();
+  var kernelState = { angle: 35, mode: "space" };
+  var kernelRange = document.getElementById("kernel-angle");
+  function renderKernel() {
+    var th = kernelState.angle * Math.PI / 180;
+    var u = { x: Math.cos(th), y: Math.sin(th) };
+    var n = { x: -u.y, y: u.x };
+    var W = 560, H = 380, cx = 280, cy = 190, sc = 150;
+    function P(p) { return { x: cx + p.x * sc, y: cy - p.y * sc }; }
+    var sStar = 0.902;
+    var score = 50 + 49 * sStar;
+    var svg = document.getElementById("kernel-svg");
+    var parts = [];
+    for (var gx = 0; gx <= 16; gx++) {
+      parts.push('<line class="kernel-grid" x1="' + (60 + gx * 27) + '" y1="30" x2="' + (60 + gx * 27) + '" y2="' + (H - 30) + '"/>');
+    }
+    for (var gy = 0; gy <= 12; gy++) {
+      parts.push('<line class="kernel-grid" x1="60" y1="' + (30 + gy * 26.6) + '" x2="' + (W - 60) + '" y2="' + (30 + gy * 26.6) + '"/>');
+    }
+    parts.push('<rect class="kernel-border" x="60" y="30" width="' + (W - 120) + '" height="' + (H - 60) + '"/>');
+    var a1 = P({ x: u.x * 1.35, y: u.y * 1.35 });
+    var a2 = P({ x: -u.x * 1.35, y: -u.y * 1.35 });
+    var axisAng = Math.atan2(a1.y - a2.y, a1.x - a2.x);
+    var kc = { x: u.x * sStar, y: u.y * sStar };
+    var k1 = P({ x: kc.x + n.x * 1.5, y: kc.y + n.y * 1.5 });
+    var k2 = P({ x: kc.x - n.x * 1.5, y: kc.y - n.y * 1.5 });
+    var A = { x: kc.x + n.x * 0.34, y: kc.y + n.y * 0.34 };
+    var B = { x: kc.x - n.x * 0.38, y: kc.y - n.y * 0.38 };
+    var pA = P(A), pB = P(B), pS = P(kc);
+    if (kernelState.mode === "space") {
+      KERNEL_POINTS.forEach(function (p) {
+        var pp = P(p);
+        parts.push('<circle class="kernel-point" cx="' + pp.x.toFixed(1) + '" cy="' + pp.y.toFixed(1) + '" r="3.2"/>');
+      });
+      parts.push('<line class="kernel-fiber" x1="' + k1.x + '" y1="' + k1.y + '" x2="' + k2.x + '" y2="' + k2.y + '"/>');
+      parts.push('<line class="kernel-fiber-line" x1="' + k1.x + '" y1="' + k1.y + '" x2="' + k2.x + '" y2="' + k2.y + '"/>');
+      parts.push('<line class="kernel-axis" x1="' + a2.x + '" y1="' + a2.y + '" x2="' + (a1.x - Math.cos(axisAng) * 6) + '" y2="' + (a1.y - Math.sin(axisAng) * 6) + '"/>');
+      parts.push(headAt(a1.x, a1.y, axisAng, "kernel-axis-head"));
+      parts.push('<line class="kernel-drop" x1="' + pA.x + '" y1="' + pA.y + '" x2="' + pS.x + '" y2="' + pS.y + '"/>');
+      parts.push('<line class="kernel-drop-b" x1="' + pB.x + '" y1="' + pB.y + '" x2="' + pS.x + '" y2="' + pS.y + '"/>');
+      parts.push('<circle class="kernel-a" cx="' + pA.x + '" cy="' + pA.y + '" r="7"/>');
+      parts.push('<circle class="kernel-b" cx="' + pB.x + '" cy="' + pB.y + '" r="7"/>');
+      parts.push('<text class="kernel-pair-label" fill="var(--cyan)" x="' + (pA.x + 12) + '" y="' + (pA.y - 10) + '">A</text>');
+      parts.push('<text class="kernel-pair-label" fill="var(--magenta)" x="' + (pB.x + 12) + '" y="' + (pB.y + 18) + '">B</text>');
+      parts.push('<circle cx="' + pS.x + '" cy="' + pS.y + '" r="4" fill="var(--amber)"/>');
+      parts.push('<text class="kernel-score" x="' + (pS.x + 10) + '" y="' + (pS.y - 8) + '">' + score.toFixed(1) + '</text>');
+      parts.push('<text class="kernel-label" x="' + (k1.x + (k2.x - k1.x) * 0.82) + '" y="' + (k1.y + (k2.y - k1.y) * 0.82 - 8) + '" text-anchor="middle">Kernel</text>');
+      parts.push('<text class="kernel-label" x="' + (a1.x + 10) + '" y="' + (a1.y - 8) + '">Metrik</text>');
+    } else {
+      parts.push('<line class="kernel-axis" x1="' + a2.x + '" y1="' + a2.y + '" x2="' + (a1.x - Math.cos(axisAng) * 6) + '" y2="' + (a1.y - Math.sin(axisAng) * 6) + '"/>');
+      parts.push(headAt(a1.x, a1.y, axisAng, "kernel-axis-head"));
+      KERNEL_POINTS.forEach(function (p) {
+        var s = p.x * u.x + p.y * u.y;
+        var q = P({ x: u.x * s, y: u.y * s });
+        parts.push('<circle class="kernel-quot" cx="' + q.x.toFixed(1) + '" cy="' + q.y.toFixed(1) + '" r="3.6"/>');
+      });
+      parts.push('<circle class="kernel-a" cx="' + pS.x + '" cy="' + pS.y + '" r="9"/>');
+      parts.push('<circle class="kernel-b" cx="' + (pS.x + 5) + '" cy="' + (pS.y - 3) + '" r="5" opacity=".85"/>');
+      parts.push('<text class="kernel-score" x="' + (pS.x + 14) + '" y="' + (pS.y - 10) + '">' + score.toFixed(1) + '</text>');
+      parts.push('<text class="kernel-label" x="' + (a1.x + 10) + '" y="' + (a1.y - 8) + '">Score</text>');
+    }
+    svg.innerHTML = parts.join("");
+    document.getElementById("kernel-angle-out").textContent = kernelState.angle + "°";
+    document.getElementById("kernel-score").textContent = score.toFixed(1);
+    document.getElementById("kernel-readout").textContent = kernelState.mode === "space"
+      ? "Score " + score.toFixed(1) + " · A und B sind für diese Metrik ununterscheidbar"
+      : "Quotient · 40 Zustände kollabieren auf ihre Scores";
+    document.getElementById("kernel-caption").textContent = kernelState.mode === "space"
+      ? "Die gestrichelte Kernel-Linie ist die Menge aller Zustände mit demselben Score. A und B liegen darauf."
+      : "Im Quotienten bleiben nur die projizierten Scores. A und B werden zu einem Punkt. Die interne Differenz ist verschwunden.";
+  }
+  kernelRange.addEventListener("input", function () {
+    kernelState.angle = parseInt(kernelRange.value, 10);
+    renderKernel();
+  });
+  document.querySelectorAll("[data-kmode]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      kernelState.mode = btn.getAttribute("data-kmode");
+      document.querySelectorAll("[data-kmode]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderKernel();
+    });
+  });
+  renderKernel();
+
+  /* ---------- kernel-quotient trap ---------- */
+  var trapState = { t: 0, playing: false, metricOnly: false, raf: null, last: 0 };
+  var trapTime = document.getElementById("trap-time");
+  var trapSvg = document.getElementById("trap-svg");
+  var trapMetric = document.getElementById("trap-metric");
+  var trapPlay = document.getElementById("trap-play");
+  var trapTimeRow = document.getElementById("trap-time-row");
+  var trapCurves = [
+    { cls: "trap-clean", dot: "trap-dot-clean", name: "sauber", f: function (t) { return 0.1 + 0.15 * Math.sin(Math.PI * t); } },
+    { cls: "trap-scarred", dot: "trap-dot-scarred", name: "gereinigt", f: function (t) { return 0.2 - 0.55 * t + 0.12 * Math.sin(2 * Math.PI * t); } },
+    { cls: "trap-cliff-c", dot: "trap-dot-cliff", name: "Klippe", f: function (t) { return 0.15 - 1.0 * t * t; } }
+  ];
+  function trapScoreY(v, top, bottom) { return bottom - (v / 100) * (bottom - top); }
+  function renderTrap() {
+    var t = trapState.t;
+    var parts = [];
+    if (trapState.metricOnly) {
+      var cx = 280, top = 46, bottom = 314;
+      parts.push('<rect x="' + (cx - 70) + '" y="' + top + '" width="140" height="' + (bottom - top) + '" rx="12" fill="var(--bg)" stroke="var(--line2)"/>');
+      parts.push('<rect class="trap-gauge-bg" x="' + (cx - 8) + '" y="' + top + '" width="16" height="' + (bottom - top) + '" rx="8"/>');
+      var sy = trapScoreY(94.2, top, bottom);
+      parts.push('<rect class="trap-gauge-fill" x="' + (cx - 8) + '" y="' + sy + '" width="16" height="' + (bottom - sy) + '" rx="8"/>');
+      parts.push('<line class="trap-gauge-mark" x1="' + (cx - 30) + '" y1="' + sy + '" x2="' + (cx + 30) + '" y2="' + sy + '"/>');
+      parts.push('<text class="trap-big" x="' + cx + '" y="30" text-anchor="middle">94.2 %</text>');
+      parts.push('<text class="trap-label" x="' + cx + '" y="' + (bottom + 28) + '" text-anchor="middle">Benchmark-Score</text>');
+      [-10, 0, 10].forEach(function (off, i) {
+        parts.push('<circle class="' + trapCurves[i].dot + '" cx="' + (cx + off) + '" cy="' + sy + '" r="7"/>');
+      });
+      parts.push('<text class="trap-label" x="' + (cx + 110) + '" y="' + (sy - 26) + '" text-anchor="middle">sauber</text>');
+      parts.push('<text class="trap-label" x="' + (cx + 110) + '" y="' + sy + '" text-anchor="middle">gereinigt</text>');
+      parts.push('<text class="trap-label" x="' + (cx + 110) + '" y="' + (sy + 26) + '" text-anchor="middle">Klippe</text>');
+      parts.push('<line x1="' + (cx + 18) + '" y1="' + (sy - 22) + '" x2="' + (cx + 82) + '" y2="' + (sy - 24) + '" stroke="var(--line2)" stroke-dasharray="3 3"/>');
+      parts.push('<line x1="' + (cx + 18) + '" y1="' + sy + '" x2="' + (cx + 82) + '" y2="' + sy + '" stroke="var(--line2)" stroke-dasharray="3 3"/>');
+      parts.push('<line x1="' + (cx + 18) + '" y1="' + (sy + 22) + '" x2="' + (cx + 82) + '" y2="' + (sy + 24) + '" stroke="var(--line2)" stroke-dasharray="3 3"/>');
+    } else {
+      var L = 54, R = 380, T = 38, B = 300;
+      function X(tv) { return L + tv * (R - L); }
+      function Y(v) { return B - ((v + 1) / 2) * (B - T); }
+      parts.push('<rect class="trap-cliff" x="' + L + '" y="' + Y(-0.8) + '" width="' + (R - L) + '" height="' + (B - Y(-0.8)) + '"/>');
+      parts.push('<line class="trap-cliff-line" x1="' + L + '" y1="' + Y(-0.8) + '" x2="' + R + '" y2="' + Y(-0.8) + '"/>');
+      parts.push('<text class="trap-klippe" x="' + (R - 4) + '" y="' + (Y(-0.8) + 14) + '" text-anchor="end">Klippe</text>');
+      for (var gx = 0; gx <= 8; gx++) {
+        parts.push('<line class="trap-grid" x1="' + X(gx / 8) + '" y1="' + T + '" x2="' + X(gx / 8) + '" y2="' + B + '"/>');
+      }
+      for (var gy = -1; gy <= 1; gy += 0.5) {
+        parts.push('<line class="trap-grid" x1="' + L + '" y1="' + Y(gy) + '" x2="' + R + '" y2="' + Y(gy) + '"/>');
+      }
+      parts.push('<rect class="trap-border" x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (B - T) + '"/>');
+      trapCurves.forEach(function (c) {
+        var pts = [];
+        for (var i = 0; i <= 60; i++) {
+          var tt = i / 60;
+          pts.push(X(tt).toFixed(1) + "," + Y(c.f(tt)).toFixed(1));
+        }
+        parts.push('<polyline class="' + c.cls + '" points="' + pts.join(" ") + '"/>');
+        var lpts = [];
+        for (var j = 0; j <= 60; j++) {
+          var u = (j / 60) * t;
+          lpts.push(X(u).toFixed(1) + "," + Y(c.f(u)).toFixed(1));
+        }
+        parts.push('<polyline class="' + c.cls + ' trap-live" points="' + lpts.join(" ") + '"/>');
+      });
+      parts.push('<line class="trap-now" x1="' + X(t) + '" y1="' + T + '" x2="' + X(t) + '" y2="' + B + '"/>');
+      trapCurves.forEach(function (c) {
+        parts.push('<circle class="' + c.dot + '" cx="' + X(t) + '" cy="' + Y(c.f(t)) + '" r="5"/>');
+      });
+      parts.push('<text class="trap-axis" x="' + (L + (R - L) / 2) + '" y="' + (B + 26) + '" text-anchor="middle">Trainingszeit</text>');
+      parts.push('<text class="trap-axis" x="' + (L - 8) + '" y="' + Y(1) + '" text-anchor="end">+1</text>');
+      parts.push('<text class="trap-axis" x="' + (L - 8) + '" y="' + Y(0) + '" text-anchor="end">0</text>');
+      parts.push('<text class="trap-axis" x="' + (L - 8) + '" y="' + Y(-1) + '" text-anchor="end">−1</text>');
+      var gx0 = 450, gtop = 60, gbot = 300;
+      parts.push('<text class="trap-axis" x="' + gx0 + '" y="' + (gtop - 14) + '" text-anchor="middle">Score</text>');
+      parts.push('<rect class="trap-gauge-bg" x="' + (gx0 - 7) + '" y="' + gtop + '" width="14" height="' + (gbot - gtop) + '" rx="7"/>');
+      var sy2 = trapScoreY(94.2, gtop, gbot);
+      parts.push('<rect class="trap-gauge-fill" x="' + (gx0 - 7) + '" y="' + sy2 + '" width="14" height="' + (gbot - sy2) + '" rx="7"/>');
+      parts.push('<line class="trap-gauge-mark" x1="' + (gx0 - 22) + '" y1="' + sy2 + '" x2="' + (gx0 + 22) + '" y2="' + sy2 + '"/>');
+      parts.push('<text class="trap-axis" x="' + (gx0 + 30) + '" y="' + (sy2 + 4) + '">94.2</text>');
+      [-6, 0, 6].forEach(function (off, i) {
+        parts.push('<circle class="' + trapCurves[i].dot + '" cx="' + (gx0 + off) + '" cy="' + sy2 + '" r="5"/>');
+      });
+    }
+    trapSvg.innerHTML = parts.join("");
+    trapTimeRow.hidden = trapState.metricOnly;
+    trapPlay.hidden = trapState.metricOnly;
+    document.getElementById("trap-time-out").textContent = Math.round(t * 100) + "%";
+    document.getElementById("trap-readout").textContent = trapState.metricOnly
+      ? "Nur Metrik: drei Modelle, ein Score"
+      : "Benchmark 94,2 % · drei verschiedene interne Zustände";
+    document.getElementById("trap-caption").textContent = trapState.metricOnly
+      ? "Der Quotient zeigt drei Punkte an derselben Stelle. Die internen Zustände sind aus dem Bild verschwunden."
+      : "Der Benchmark ist eine Quotientenabbildung. Er faltet den internen Zustand auf eine Zahl. Die Klippe ist im Score unsichtbar.";
+  }
+  function trapTick(now) {
+    if (!trapState.playing) return;
+    var dt = (now - trapState.last) / 1000;
+    trapState.last = now;
+    trapState.t = Math.min(1, trapState.t + dt * 0.35);
+    trapTime.value = Math.round(trapState.t * 100);
+    renderTrap();
+    if (trapState.t >= 1) {
+      trapState.playing = false;
+      trapPlay.textContent = "Abspielen";
+      return;
+    }
+    trapState.raf = requestAnimationFrame(trapTick);
+  }
+  trapPlay.addEventListener("click", function () {
+    trapState.playing = !trapState.playing;
+    if (trapState.playing) {
+      if (trapState.t >= 1) trapState.t = 0;
+      trapState.last = performance.now();
+      trapState.raf = requestAnimationFrame(trapTick);
+      trapPlay.textContent = "Pause";
+    } else {
+      if (trapState.raf) cancelAnimationFrame(trapState.raf);
+      trapPlay.textContent = "Abspielen";
+    }
+  });
+  trapTime.addEventListener("input", function () {
+    trapState.t = parseInt(trapTime.value, 10) / 100;
+    renderTrap();
+  });
+  trapMetric.addEventListener("change", function () {
+    trapState.metricOnly = trapMetric.checked;
+    renderTrap();
+  });
+  renderTrap();
+
+  /* ---------- holonomy ---------- */
+  function V(x, y, z) { return { x: x, y: y, z: z }; }
+  function vadd(a, b) { return V(a.x + b.x, a.y + b.y, a.z + b.z); }
+  function vscale(a, s) { return V(a.x * s, a.y * s, a.z * s); }
+  function vdot(a, b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+  function vcross(a, b) { return V(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
+  function vlen(a) { return Math.sqrt(vdot(a, a)); }
+  function vnorm(a) { var l = vlen(a) || 1; return vscale(a, 1 / l); }
+  function vrot(v, k, ang) {
+    var kn = vnorm(k);
+    var c = Math.cos(ang), s = Math.sin(ang);
+    return vadd(vadd(vscale(v, c), vscale(vcross(kn, v), s)), vscale(kn, vdot(kn, v) * (1 - c)));
+  }
+  function transport(v, P, Q, s) {
+    var axis = vcross(P, Q);
+    var th = Math.acos(clamp(vdot(P, Q), -1, 1));
+    return vrot(v, axis, s * th);
+  }
+  function slerp(P, Q, s) {
+    var d = clamp(vdot(P, Q), -1, 1);
+    var th = Math.acos(d);
+    if (th < 1e-6) return P;
+    var a = Math.sin((1 - s) * th) / Math.sin(th);
+    var b = Math.sin(s * th) / Math.sin(th);
+    return vnorm(V(a * P.x + b * Q.x, a * P.y + b * Q.y, a * P.z + b * Q.z));
+  }
+  var SPHERE = {
+    N: V(0, 0, 1), A: V(1, 0, 0), B: V(0, 1, 0), v0: V(1, 0, 0),
+    legs: [[V(0, 0, 1), V(1, 0, 0)], [V(1, 0, 0), V(0, 1, 0)], [V(0, 1, 0), V(0, 0, 1)]]
+  };
+  var sphereStarts = [];
+  var sphereVFinal = SPHERE.v0;
+  SPHERE.legs.forEach(function (leg) {
+    sphereStarts.push(sphereVFinal);
+    sphereVFinal = transport(sphereVFinal, leg[0], leg[1], 1);
+  });
+  var SPHERE_VIEW = { tilt: 20 * Math.PI / 180, cx: 210, cy: 210, R: 128 };
+  function sphProject(p) {
+    var ca = Math.cos(SPHERE_VIEW.tilt), sa = Math.sin(SPHERE_VIEW.tilt);
+    var zz = p.y * sa + p.z * ca;
+    return { x: SPHERE_VIEW.cx + SPHERE_VIEW.R * p.x, y: SPHERE_VIEW.cy - SPHERE_VIEW.R * zz };
+  }
+  function poly(pts, cls) {
+    return '<polyline class="' + cls + '" points="' + pts.map(function (p) {
+      return p.x.toFixed(1) + "," + p.y.toFixed(1);
+    }).join(" ") + '"/>';
+  }
+  function tangentDir(p3, v3) {
+    var a = sphProject(p3);
+    var b = sphProject(vadd(p3, vscale(vnorm(v3), 0.18)));
+    var dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy);
+    if (l < 1e-4) return { x: 0, y: -1, p: a };
+    return { x: dx / l, y: dy / l, p: a };
+  }
+  function arrowSVG(p3, v3, lineCls, headCls) {
+    var d = tangentDir(p3, v3);
+    var L = 28;
+    var ex = d.p.x + d.x * L, ey = d.p.y + d.y * L;
+    var bx = ex - d.x * 9, by = ey - d.y * 9;
+    var px = -d.y, py = d.x;
+    var head = '<polygon class="' + headCls + '" points="' + ex.toFixed(1) + "," + ey.toFixed(1) + " " +
+      (bx + px * 4.5).toFixed(1) + "," + (by + py * 4.5).toFixed(1) + " " +
+      (bx - px * 4.5).toFixed(1) + "," + (by - py * 4.5).toFixed(1) + '"/>';
+    var line = '<line class="' + lineCls + '" x1="' + d.p.x.toFixed(1) + '" y1="' + d.p.y.toFixed(1) + '" x2="' +
+      (ex - d.x * 4).toFixed(1) + '" y2="' + (ey - d.y * 4).toFixed(1) + '"/>';
+    return line + head;
+  }
+  function legPoints(leg, s0, s1, n) {
+    var pts = [];
+    for (var i = 0; i <= n; i++) {
+      var s = s0 + (s1 - s0) * i / n;
+      pts.push(sphProject(slerp(leg[0], leg[1], s)));
+    }
+    return pts;
+  }
+  function renderCurved(svg, t) {
+    var atEnd = t >= 2.999;
+    var idx = Math.min(2, Math.floor(t));
+    var s = atEnd ? 1 : (t - idx);
+    var leg = SPHERE.legs[idx];
+    var curP = slerp(leg[0], leg[1], s);
+    var curV = transport(sphereStarts[idx], leg[0], leg[1], s);
+    var parts = [];
+    parts.push('<circle cx="210" cy="210" r="128" fill="url(#sphere-fill)"/>');
+    parts.push('<circle class="sphere-edge" cx="210" cy="210" r="128"/>');
+    [-60, -30, 0, 30, 60].forEach(function (lat) {
+      var pts = [];
+      var la = lat * Math.PI / 180;
+      for (var lon = 0; lon <= 360; lon += 6) {
+        var lo = lon * Math.PI / 180;
+        pts.push(sphProject(V(Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la))));
+      }
+      parts.push(poly(pts, "holo-grid"));
+    });
+    for (var lon2 = 0; lon2 < 360; lon2 += 30) {
+      var pts2 = [];
+      var lo2 = lon2 * Math.PI / 180;
+      for (var lat2 = -90; lat2 <= 90; lat2 += 6) {
+        var la2 = lat2 * Math.PI / 180;
+        pts2.push(sphProject(V(Math.cos(la2) * Math.cos(lo2), Math.cos(la2) * Math.sin(lo2), Math.sin(la2))));
+      }
+      parts.push(poly(pts2, "holo-grid"));
+    }
+    SPHERE.legs.forEach(function (lg) { parts.push(poly(legPoints(lg, 0, 1, 40), "holo-path")); });
+    for (var i = 0; i <= idx; i++) {
+      var sEnd = (i < idx) ? 1 : s;
+      parts.push(poly(legPoints(SPHERE.legs[i], 0, sEnd, 32), "holo-path-live"));
+    }
+    parts.push(arrowSVG(SPHERE.N, SPHERE.v0, "holo-arrow-start", "holo-head-start"));
+    if (!atEnd) {
+      var cp = sphProject(curP);
+      parts.push('<circle class="holo-dot" cx="' + cp.x.toFixed(1) + '" cy="' + cp.y.toFixed(1) + '" r="4.5"/>');
+      parts.push(arrowSVG(curP, curV, "holo-arrow-current", "holo-head-current"));
+    }
+    if (atEnd) {
+      parts.push(arrowSVG(SPHERE.N, sphereVFinal, "holo-arrow-final", "holo-head-final"));
+      var n2 = sphProject(SPHERE.N);
+      var d0 = tangentDir(SPHERE.N, SPHERE.v0);
+      var d1 = tangentDir(SPHERE.N, sphereVFinal);
+      var r = 46;
+      var p0 = { x: n2.x + d0.x * r, y: n2.y + d0.y * r };
+      var p1 = { x: n2.x + d1.x * r, y: n2.y + d1.y * r };
+      var bx = d0.x + d1.x, by = d0.y + d1.y;
+      var bl = Math.hypot(bx, by) || 1; bx /= bl; by /= bl;
+      var qx = n2.x + bx * r * 1.35, qy = n2.y + by * r * 1.35;
+      parts.push('<path class="holo-arc" d="M' + p0.x.toFixed(1) + "," + p0.y.toFixed(1) + " Q" + qx.toFixed(1) + "," + qy.toFixed(1) + " " + p1.x.toFixed(1) + "," + p1.y.toFixed(1) + '"/>');
+      parts.push('<text class="holo-angle" x="' + (n2.x + bx * (r + 22)).toFixed(1) + '" y="' + (n2.y + by * (r + 22)).toFixed(1) + '" text-anchor="middle">90°</text>');
+    }
+    var pN = sphProject(SPHERE.N), pA = sphProject(SPHERE.A), pB = sphProject(SPHERE.B);
+    parts.push('<text class="holo-label" x="' + (pN.x + 14) + '" y="' + (pN.y - 8) + '">N</text>');
+    parts.push('<text class="holo-label" x="' + (pA.x + 10) + '" y="' + (pA.y + 16) + '">A</text>');
+    parts.push('<text class="holo-label" x="' + (pB.x + 10) + '" y="' + (pB.y - 8) + '">B</text>');
+    svg.innerHTML = parts.join("");
+  }
+  function renderFlat(svg, t) {
+    var pts = [{ x: 110, y: 300 }, { x: 310, y: 300 }, { x: 310, y: 100 }, { x: 110, y: 100 }, { x: 110, y: 300 }];
+    var tt = clamp(t, 0, 4);
+    var idx = Math.min(3, Math.floor(tt));
+    var s = tt >= 4 ? 1 : (tt - idx);
+    var p0 = pts[idx], p1 = pts[idx + 1];
+    var cur = { x: p0.x + (p1.x - p0.x) * s, y: p0.y + (p1.y - p0.y) * s };
+    var parts = [];
+    for (var gx = 90; gx <= 330; gx += 40) {
+      parts.push('<line class="holo-flat-grid" x1="' + gx + '" y1="80" x2="' + gx + '" y2="320"/>');
+    }
+    for (var gy = 80; gy <= 320; gy += 40) {
+      parts.push('<line class="holo-flat-grid" x1="90" y1="' + gy + '" x2="330" y2="' + gy + '"/>');
+    }
+    var full = pts.map(function (p) { return p.x + "," + p.y; }).join(" ");
+    parts.push('<polyline class="holo-flat-path" points="' + full + '"/>');
+    var trav = [pts[0]];
+    for (var i = 0; i < idx; i++) trav.push(pts[i + 1]);
+    trav.push(cur);
+    parts.push('<polyline class="holo-flat-live" points="' + trav.map(function (p) {
+      return p.x.toFixed(1) + "," + p.y.toFixed(1);
+    }).join(" ") + '"/>');
+    function flatArrow(x, y) {
+      var L = 28, ex = x + L, ey = y;
+      return '<line class="holo-flat-arrow" x1="' + x + '" y1="' + y + '" x2="' + (ex - 5) + '" y2="' + ey + '"/>' +
+        '<polygon class="holo-flat-head" points="' + ex + ',' + ey + " " + (ex - 10) + "," + (ey - 4.5) + " " + (ex - 10) + "," + (ey + 4.5) + '"/>';
+    }
+    parts.push('<circle cx="' + cur.x.toFixed(1) + '" cy="' + cur.y.toFixed(1) + '" r="4.5" fill="var(--cyan)" filter="url(#glow-main)"/>');
+    parts.push(flatArrow(cur.x, cur.y));
+    parts.push('<text class="holo-flat-label" x="' + (pts[0].x + 8) + '" y="' + (pts[0].y + 20) + '">Start</text>');
+    if (tt >= 3.999) {
+      parts.push('<text class="holo-angle" x="' + (pts[0].x + 40) + '" y="' + (pts[0].y - 16) + '">0°</text>');
+    }
+    svg.innerHTML = parts.join("");
+  }
+  var holo = { mode: "curved", progress: 0, playing: false, raf: null, last: 0 };
+  var holoSvg = document.getElementById("holo-svg");
+  var holoProgress = document.getElementById("holo-progress");
+  var holoPlay = document.getElementById("holo-play");
+  function holoLegCount() { return holo.mode === "curved" ? 3 : 4; }
+  function holoT() { return holo.progress / 100 * holoLegCount(); }
+  function renderHolo() {
+    var t = holoT();
+    if (holo.mode === "curved") renderCurved(holoSvg, t);
+    else renderFlat(holoSvg, t);
+    holoProgress.value = Math.round(holo.progress);
+    document.getElementById("holo-progress-out").textContent = Math.round(holo.progress) + "%";
+    var legNames = holo.mode === "curved"
+      ? ["Nordpol → Äquator 0°", "Äquator 0° → Äquator 90°", "Äquator 90° → Nordpol"]
+      : ["Kante 1 von 4", "Kante 2 von 4", "Kante 3 von 4", "Kante 4 von 4"];
+    var idx = Math.min(holoLegCount() - 1, Math.floor(t));
+    var atEnd = t >= holoLegCount() - 0.001;
+    document.getElementById("holo-leg").textContent = atEnd ? "Pfad geschlossen" : legNames[idx];
+    document.getElementById("holo-angle").textContent = holo.mode === "curved" ? "Holonomie 90°" : "Holonomie 0°";
+    document.getElementById("holo-caption").textContent = atEnd
+      ? (holo.mode === "curved"
+        ? "Der Pfeil ist zurück am Nordpol, aber um 90° gedreht. Kein Schritt hat ihn absichtlich rotiert. Die Krümmung der Fläche hat es getan."
+        : "In der Ebene kommt der Pfeil unverändert an. Die Holonomie ist null. Flach heißt: Der Weg zählt nicht.")
+      : "Der Pfeil wird parallel transportiert: Er bleibt relativ zum Pfad so parallel wie möglich.";
+  }
+  function holoTick(now) {
+    if (!holo.playing) return;
+    var dt = (now - holo.last) / 1000;
+    holo.last = now;
+    holo.progress = Math.min(100, holo.progress + dt * 18);
+    renderHolo();
+    if (holo.progress >= 100) {
+      holo.playing = false;
+      holoPlay.textContent = "Abspielen";
+      return;
+    }
+    holo.raf = requestAnimationFrame(holoTick);
+  }
+  holoPlay.addEventListener("click", function () {
+    holo.playing = !holo.playing;
+    if (holo.playing) {
+      if (holo.progress >= 100) holo.progress = 0;
+      holo.last = performance.now();
+      holo.raf = requestAnimationFrame(holoTick);
+      holoPlay.textContent = "Pause";
+    } else {
+      if (holo.raf) cancelAnimationFrame(holo.raf);
+      holoPlay.textContent = "Abspielen";
+    }
+  });
+  holoProgress.addEventListener("input", function () {
+    holo.progress = parseInt(holoProgress.value, 10);
+    if (holo.playing) {
+      holo.playing = false;
+      if (holo.raf) cancelAnimationFrame(holo.raf);
+      holoPlay.textContent = "Abspielen";
+    }
+    renderHolo();
+  });
+  document.getElementById("holo-reset").addEventListener("click", function () {
+    holo.progress = 0;
+    holo.playing = false;
+    if (holo.raf) cancelAnimationFrame(holo.raf);
+    holoPlay.textContent = "Abspielen";
+    renderHolo();
+  });
+  document.querySelectorAll("[data-hmode]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      holo.mode = btn.getAttribute("data-hmode");
+      holo.progress = 0;
+      holo.playing = false;
+      if (holo.raf) cancelAnimationFrame(holo.raf);
+      holoPlay.textContent = "Abspielen";
+      document.querySelectorAll("[data-hmode]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderHolo();
+    });
+  });
+  renderHolo();
+  var heroSphere = document.getElementById("hero-sphere");
+  if (heroSphere) renderCurved(heroSphere, 3);
+
+  /* ---------- DAG illusion ---------- */
+  var dagState = { order: "AB" };
+  function renderDag() {
+    var AB = dagState.order === "AB";
+    var svg = document.getElementById("dag-svg");
+    var A = { x: 150, y: 108 }, B = { x: 330, y: 108 };
+    var result = AB ? 0.42 : 0.58;
+    var parts = [];
+    parts.push('<circle class="dag-node" cx="' + A.x + '" cy="' + A.y + '" r="30"/>');
+    parts.push('<circle class="dag-node dag-node-b" cx="' + B.x + '" cy="' + B.y + '" r="30"/>');
+    parts.push('<text class="dag-label" x="' + A.x + '" y="' + (A.y + 7) + '" text-anchor="middle">A</text>');
+    parts.push('<text class="dag-label" x="' + B.x + '" y="' + (B.y + 7) + '" text-anchor="middle">B</text>');
+    if (AB) {
+      parts.push('<line class="dag-edge" x1="' + (A.x + 32) + '" y1="' + (A.y - 8) + '" x2="' + (B.x - 32) + '" y2="' + (B.y - 8) + '"/>');
+      parts.push(headAt(B.x - 32, B.y - 8, 0, "dag-edge-head"));
+      parts.push('<line class="dag-back" x1="' + (B.x - 32) + '" y1="' + (B.y + 10) + '" x2="' + (A.x + 32) + '" y2="' + (A.y + 10) + '"/>');
+      parts.push(headAt(A.x + 32, A.y + 10, Math.PI, "dag-back-head"));
+    } else {
+      parts.push('<line class="dag-edge" x1="' + (B.x - 32) + '" y1="' + (B.y - 8) + '" x2="' + (A.x + 32) + '" y2="' + (A.y - 8) + '"/>');
+      parts.push(headAt(A.x + 32, A.y - 8, Math.PI, "dag-edge-head"));
+      parts.push('<line class="dag-back" x1="' + (A.x + 32) + '" y1="' + (A.y + 10) + '" x2="' + (B.x - 32) + '" y2="' + (B.y + 10) + '"/>');
+      parts.push(headAt(B.x - 32, B.y + 10, 0, "dag-back-head"));
+    }
+    parts.push('<text class="dag-caption" x="280" y="' + (A.y - 54) + '" text-anchor="middle">' + (AB ? "A schlägt vor, B kritisiert" : "B schlägt vor, A kritisiert") + '</text>');
+    var tx = 110, tw = 340, ty = 196;
+    parts.push('<rect class="dag-result-track" x="' + tx + '" y="' + ty + '" width="' + tw + '" height="14" rx="7"/>');
+    parts.push('<rect class="dag-result-bar" x="' + tx + '" y="' + ty + '" width="' + (result * tw).toFixed(1) + '" height="14" rx="7"/>');
+    parts.push('<line class="dag-result-mark" x1="' + (tx + result * tw) + '" y1="' + (ty - 7) + '" x2="' + (tx + result * tw) + '" y2="' + (ty + 21) + '"/>');
+    parts.push('<text class="dag-result-label" x="' + (tx + result * tw) + '" y="' + (ty - 16) + '" text-anchor="middle">' + result.toFixed(2) + '</text>');
+    parts.push('<text class="dag-caption" x="' + tx + '" y="' + (ty + 36) + '">0</text>');
+    parts.push('<text class="dag-caption" x="' + (tx + tw) + '" y="' + (ty + 36) + '" text-anchor="end">1</text>');
+    svg.innerHTML = parts.join("");
+    document.getElementById("dag-result").textContent = result.toFixed(2);
+    document.getElementById("dag-readout").textContent = AB
+      ? "A startet bei 0.30, B bei 0.70. A spricht zuerst."
+      : "A startet bei 0.30, B bei 0.70. B spricht zuerst.";
+    document.getElementById("dag-caption").textContent = AB
+      ? "A spricht zuerst und verankert das Ergebnis bei 0.42. Gleiche Knoten, gleiche zwei Interaktionen."
+      : "B spricht zuerst und verankert das Ergebnis bei 0.58. Gleiche Knoten, gleiche zwei Interaktionen.";
+  }
+  document.querySelectorAll("[data-order]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      dagState.order = btn.getAttribute("data-order");
+      document.querySelectorAll("[data-order]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderDag();
+    });
+  });
+  renderDag();
+
+  /* ---------- radar ---------- */
+  var RADAR_AXES = [
+    { name: "Geometrie", today: 0.24, target: 0.92, desc: "Zustandsräume als Mannigfaltigkeiten oder stratifizierte Räume, in denen Krümmung etwas bedeutet." },
+    { name: "Trajektorien", today: 0.20, target: 0.86, desc: "Explizit verfolgen, wie ein Zustand erreicht wurde, nicht nur wo er ist." },
+    { name: "Connections", today: 0.14, target: 0.82, desc: "Regeln für den Paralleltransport entlang von Pfaden, damit parallele Operationen konsistent bleiben." },
+    { name: "Krümmung", today: 0.10, target: 0.78, desc: "Quantifizieren, wie stark der Pfad das Ergebnis beeinflusst." },
+    { name: "Kernel", today: 0.16, target: 0.9, desc: "Explizit modellieren, was die Architektur nicht unterscheiden kann." },
+    { name: "Holonomie", today: 0.06, target: 0.85, desc: "Die möglichen Geschichte-Effekte charakterisieren, die Pfade hinterlassen können." }
+  ];
+  function renderRadar() {
+    var svg = document.getElementById("radar-svg");
+    var cx = 210, cy = 210, R = 150, N = RADAR_AXES.length;
+    var ang0 = -Math.PI / 2;
+    function pt(i, r) {
+      var a = ang0 + i * 2 * Math.PI / N;
+      return { x: cx + Math.cos(a) * R * r, y: cy + Math.sin(a) * R * r };
+    }
+    var parts = [];
+    [0.25, 0.5, 0.75, 1].forEach(function (r) {
+      var pts = [];
+      for (var i = 0; i < N; i++) { var p = pt(i, r); pts.push(p.x.toFixed(1) + "," + p.y.toFixed(1)); }
+      parts.push('<polygon class="radar-ring" points="' + pts.join(" ") + '"/>');
+    });
+    RADAR_AXES.forEach(function (ax, i) {
+      var p = pt(i, 1);
+      parts.push('<line class="radar-axis" id="radar-axis-' + i + '" x1="' + cx + '" y1="' + cy + '" x2="' + p.x.toFixed(1) + '" y2="' + p.y.toFixed(1) + '"/>');
+      var lp = pt(i, 1.16);
+      var anchor = Math.abs(lp.x - cx) < 12 ? "middle" : (lp.x > cx ? "start" : "end");
+      parts.push('<text class="radar-label" id="radar-label-' + i + '" x="' + lp.x.toFixed(1) + '" y="' + (lp.y + 4).toFixed(1) + '" text-anchor="' + anchor + '">' + ax.name + '</text>');
+    });
+    var tpts = [], gpts = [];
+    RADAR_AXES.forEach(function (ax, i) {
+      var p1 = pt(i, ax.today), p2 = pt(i, ax.target);
+      tpts.push(p1.x.toFixed(1) + "," + p1.y.toFixed(1));
+      gpts.push(p2.x.toFixed(1) + "," + p2.y.toFixed(1));
+    });
+    parts.push('<polygon class="radar-today" points="' + tpts.join(" ") + '"/>');
+    parts.push('<polygon class="radar-target" points="' + gpts.join(" ") + '"/>');
+    RADAR_AXES.forEach(function (ax, i) {
+      var p1 = pt(i, ax.today), p2 = pt(i, ax.target);
+      parts.push('<circle class="radar-dot-today" cx="' + p1.x.toFixed(1) + '" cy="' + p1.y.toFixed(1) + '" r="3"/>');
+      parts.push('<circle class="radar-dot-target" id="radar-dot-' + i + '" cx="' + p2.x.toFixed(1) + '" cy="' + p2.y.toFixed(1) + '" r="4"/>');
+    });
+    svg.innerHTML = parts.join("");
+  }
+  function buildAxisList() {
+    var list = document.getElementById("axis-list");
+    RADAR_AXES.forEach(function (ax, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "axis-btn";
+      b.textContent = ax.name;
+      b.setAttribute("data-axis", String(i));
+      b.addEventListener("click", function () { selectAxis(i); });
+      list.appendChild(b);
+    });
+  }
+  function selectAxis(i) {
+    document.querySelectorAll(".axis-btn").forEach(function (b, j) {
+      b.classList.toggle("active", j === i);
+    });
+    RADAR_AXES.forEach(function (ax, j) {
+      var on = j === i;
+      var axis = document.getElementById("radar-axis-" + j);
+      var label = document.getElementById("radar-label-" + j);
+      var dot = document.getElementById("radar-dot-" + j);
+      if (axis) axis.classList.toggle("active", on);
+      if (label) label.classList.toggle("active", on);
+      if (dot) dot.classList.toggle("active", on);
+    });
+    document.getElementById("axis-desc").innerHTML = "<b>" + RADAR_AXES[i].name + ":</b> " + RADAR_AXES[i].desc;
+  }
+  renderRadar();
+  buildAxisList();
+  selectAxis(0);
+
+})();
+</script>
+</body>
+</html>
