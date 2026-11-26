@@ -213,10 +213,10 @@
     st.setProperty("bottom", "auto", "important");
   }
 
-  function fitHeight(root) {
+  function fitHeight(root, quiet) {
+    if (!root) return;
     var frame = root.__asanaiFrame;
-    var maxHeight = root.__asanaiMaxHeight;
-    if (!frame || !maxHeight) return;
+    if (!frame) return;
 
     var scroller = root.querySelector(".ls-text-scroll");
     var textHeight = 0;
@@ -233,29 +233,62 @@
       textHeight = Math.max(0, bottom - origin + padBottom);
     }
 
+    var stage = root.querySelector(".ls-stage");
     var head = root.querySelector(".ls-stage-head");
     var foot = root.querySelector(".ls-stage-foot");
     var chrome = (head ? head.getBoundingClientRect().height : 0)
       + (foot ? foot.getBoundingClientRect().height : 0);
+    var stagePad = stage ? (parseFloat(getComputedStyle(stage).paddingBottom) || 0) : 0;
     var demo = root.querySelector(".ls-demo");
     var scene = demo ? demo.getAttribute("data-scene") : "";
     var demoHeight = root.__asanaiDemoHeight || (scene === "media" ? 780 : 600);
-    demoHeight = Math.max(320, Math.min(demoHeight, maxHeight));
-    var stageHeight = demoHeight + chrome;
+    demoHeight = Math.max(280, demoHeight);
+    var stageHeight = Math.ceil(demoHeight + chrome + stagePad);
 
     var width = root.getBoundingClientRect().width || frame.getBoundingClientRect().width || 0;
-    var wanted;
-    if (width <= 980) wanted = textHeight + stageHeight + 1;
-    else wanted = Math.max(textHeight, stageHeight);
-
-    var fit = Math.max(320, Math.min(maxHeight, Math.round(wanted)));
-    if (fit >= maxHeight - 8) fit = maxHeight;
-    if (Math.abs(fit - maxHeight) < 2) return;
+    var wanted = width <= 980 ? textHeight + stageHeight + 1 : Math.max(textHeight, stageHeight);
+    var fit = Math.max(320, Math.round(wanted));
+    var current = parseFloat(frame.style.height) || 0;
+    // While the lesson is still mounting, only grow so the placeholder does not
+    // jump smaller before the full content is there.
+    if (quiet && current > fit) fit = Math.round(current);
+    if (Math.abs(fit - current) < 2) {
+      focusLoaderOnStage(root);
+      return;
+    }
 
     frame.style.height = fit + "px";
     root.style.height = fit + "px";
     focusLoaderOnStage(root);
-    window.dispatchEvent(new Event("resize"));
+    if (!quiet) window.dispatchEvent(new Event("resize"));
+  }
+
+  function bindAutoFit(root) {
+    if (!root || root.__asanaiFitBound) return;
+    root.__asanaiFitBound = true;
+    var timer = 0;
+    function schedule() {
+      if (timer) return;
+      timer = setTimeout(function () {
+        timer = 0;
+        if (root.__asanaiFinished) fitHeight(root);
+      }, 60);
+    }
+    window.addEventListener("resize", schedule);
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(schedule);
+      [".ls-text-scroll", "#ls-text-body", "#ls-extras"].forEach(function (sel) {
+        var el = root.querySelector(sel);
+        if (el) ro.observe(el);
+      });
+      root.__asanaiFitObserver = ro;
+    }
+    var demoHost = root.querySelector("#ls-demo");
+    if (demoHost && window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      mo.observe(demoHost, { attributes: true, attributeFilter: ["data-scene"] });
+      root.__asanaiFitMutation = mo;
+    }
   }
 
   function start() {
@@ -369,8 +402,6 @@
       + rootSelector + " .asanai-eoy-loader-panel{position:absolute!important;inset:0!important;"
       + "display:flex!important;align-items:center!important;justify-content:center!important;"
       + "background:#fff!important;overflow:hidden!important}"
-      + rootSelector + " .asanai-eoy-loader-panel:before{content:''!important;position:absolute!important;inset:0!important;"
-      + "background:linear-gradient(180deg,rgba(99,164,75,.035),rgba(18,117,172,.02) 55%,rgba(255,255,255,0))!important}"
       + rootSelector + " .asanai-eoy-loader-label{position:relative!important;z-index:1!important;font:600 16px/1 \"Open Sans\",system-ui,sans-serif!important;"
       + "letter-spacing:.14em!important;color:#004b6f!important;text-shadow:none!important}";
     var baseStyle = document.createElement("style");
@@ -454,6 +485,9 @@
         injectBody(doc, root, loader);
         root.setAttribute("data-asanai-phase", "text");
         focusLoaderOnStage(root);
+        // Size the div to the text as soon as the markup is in place; the demo
+        // is sized later when the scripts have mounted it.
+        fitHeight(root, true);
         var previewFallback = Promise.resolve();
         if (previewPromise && !doc.querySelector(".asanai-eoy-preview")) {
           previewFallback = Promise.race([
@@ -511,15 +545,15 @@
       var layoutStyle = document.createElement("style");
       layoutStyle.setAttribute("data-asanai-eoy-layout", "1");
       layoutStyle.textContent = "#" + root.id + " .ls-body{max-width:none!important}"
-        + "#" + root.id + " .ls-text-scroll{max-width:none!important}"
+        + "#" + root.id + " .ls-text-scroll{max-width:none!important;height:auto!important;overflow:visible!important}"
         + "@container (max-width:980px){#" + root.id
         + " .ls-main{display:flex!important;flex-direction:column!important}"
-        + "#" + root.id + " .ls-text{display:block!important;flex:0 0 auto!important;max-height:60%!important}"
-        + "#" + root.id + " .ls-text-scroll{height:100%!important}"
+        + "#" + root.id + " .ls-text{display:block!important;flex:0 0 auto!important;max-height:none!important}"
+        + "#" + root.id + " .ls-text-scroll{height:auto!important;overflow:visible!important}"
         + "#" + root.id + " .ls-stage{flex:1 1 0!important;min-height:0!important}"
         + "#" + root.id + " .ls-text-mobile-head,#" + root.id + " .ls-text-toggle{display:none!important}"
         + "#" + root.id + " .ls-app.is-text-open .ls-text{position:static!important;inset:auto!important;"
-        + "z-index:auto!important;border:0!important;overflow:hidden!important}}";
+        + "z-index:auto!important;border:0!important;overflow:visible!important}}";
       document.head.appendChild(layoutStyle);
     });
   }
@@ -639,6 +673,7 @@
     root.setAttribute("data-asanai-phase", "ready");
     root.classList.add("ls-loaded");
     window.__lsPageReady = true;
+    bindAutoFit(root);
     var settle = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     Promise.race([settle, new Promise(function (resolve) { setTimeout(resolve, 1500); })]).then(function () {
       fitHeight(root);

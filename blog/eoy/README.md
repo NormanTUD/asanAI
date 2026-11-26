@@ -54,11 +54,12 @@ Bearbeiten-Bedienelemente und schaltet den Hover-Effekt der Textblöcke ab.
 
 `div-embed.js` lädt die Lesson über den Proxy, scoped deren CSS auf das Div,
 injiziert das Markup und lädt die Lesson-Skripte in Reihenfolge. Spinner,
-Navigation und Overlays bleiben im Div. `data-height` ist die **Maximalhöhe**
-(Pixel oder CSS-Länge); nach dem Laden schrumpft das Div auf den tatsächlichen
-Inhalt. `data-demo-height` setzt die bevorzugte Demo-Höhe in Pixel (Default
-600, `media` 780), damit die Höhe nicht an der Demo vorbei wächst. Ohne
-`data-height` gilt `min(90vh, 1100px)` als Maximum. Pro Seite ist eine
+Navigation und Overlays bleiben im Div. `data-height` ist die **Anfangshöhe**
+(Pixel oder CSS-Länge); nach dem Laden passt sich das Div automatisch an den
+tatsächlichen Inhalt an und wächst bei Bedarf, damit innerhalb des Divs kein
+Scrollen nötig ist. `data-demo-height` setzt die bevorzugte Demo-Höhe in Pixel
+(Default 600, `media` 780), damit die Höhe nicht an der Demo vorbei wächst.
+Ohne `data-height` gilt `min(90vh, 1100px)` als Anfangshöhe. Pro Seite ist eine
 Einbettung vorgesehen, weil die Lesson feste IDs und globale Zustände nutzt.
 
 `text_preview.json` liefert den ersten Textblock für die Lade-Skeleton, damit
