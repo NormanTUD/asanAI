@@ -168,10 +168,7 @@
       watch: "Drehe die Ansicht. Am Ende der Beispiele führt Weiter zu „Richtungen“: Jedes Wort wird zum Vektor vom Ursprung. Welche Richtung bleibt für alle Paare gleich? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
       demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "king-man-woman", tables: true },
       boxes: [
-        box("emb-10", "Technik", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Eine Kreuzung auf dem Bildschirm bedeutet nicht, dass die Punkte im vollen Raum zusammenfallen."),
-        box("emb-11", "Geschichte", "Woher kommt das Bild?", "Die Idee, Bedeutung als Geometrie zu lesen, verbindet distributionelle Semantik mit Conceptual Spaces. Die konkrete Demo ist eine Vereinfachung, keine Messung eines echten Modells."),
-        box("hd-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, auch wenn sie sich bei wenigen Dimensionen überlagern (Superposition)."),
-        box("hd-2", "Grenze", "Kann man das noch sehen?", "Nein. Menschen sehen höchstens drei Achsen. Die Tabelle ist die ehrliche Darstellung für den Rechner; die 3D-Demos sind Projektionen für uns.")
+        box("hd-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann weitere Richtungen für Unterschiede öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, auch wenn sie sich bei wenigen Dimensionen überlagern (Superposition)."),
       ],
       sources: sources
     }
@@ -240,10 +237,7 @@
       watch: "Rotate the view. At the end of the examples, Next leads to “Directions”: every word becomes a vector from the origin. Which direction stays the same for all pairs? At the end, open the table of the three dimensions and then the 4096-dimension table.",
       demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions", tables: true },
       boxes: [
-        box("emb-10", "Technique", "Why don't we see this in an LLM?", "Because the spaces are too high-dimensional. The demo is a projection onto three axes. A crossing on screen does not mean the points coincide in the full space."),
-        box("emb-11", "History", "Where does the picture come from?", "The idea of reading meaning as geometry connects distributional semantics with conceptual spaces. The concrete demo is a simplification, not a measurement of a real model."),
-        box("hd-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side, even if they overlap when there are few dimensions (superposition)."),
-        box("hd-2", "Limit", "Can we still see this?", "No. Humans see at most three axes. The table is the honest view for the computer; the 3D demos are projections for us.")
+        box("hd-1", "Technique", "Why so many dimensions?", "Every extra dimension can open more directions for differences. With thousands of coordinates many relations can exist side by side, even if they overlap when there are few dimensions (superposition)."),
       ],
       sources: sources
     }
@@ -1128,7 +1122,7 @@
       context: "Mehr Dimensionen erlauben mehr unabhängige Unterschiede. Die 3D-Demos sind Projektionen; die Tabelle ist die ehrliche Darstellung für den Rechner.",
       deep: "Die Zahlen sind didaktisch, keine echten GPT-Gewichte. In einem echten Modell wird jede Koordinate aus Text gelernt; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
       boxes: [
-        box("hd-new-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, auch wenn sie sich bei wenigen Dimensionen überlagern (Superposition)."),
+        box("hd-new-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann weitere Richtungen für Unterschiede öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, auch wenn sie sich bei wenigen Dimensionen überlagern (Superposition)."),
         box("hd-new-2", "Grenze", "Was zeigt die Tabelle nicht?", "Sie zeigt einen Ausschnitt, keine echten Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; die Tabelle ist eine didaktische Darstellung.")
       ],
       sources: sources
@@ -1144,7 +1138,7 @@
       context: "More dimensions allow more independent differences. The 3D demos are projections; the table is the honest view for the computer.",
       deep: "The numbers are didactic, not real GPT weights. In a real model every coordinate is learned from text; no single column means anything on its own. The geometry comes from the interaction.",
       boxes: [
-        box("hd-new-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side, even if they overlap when there are few dimensions (superposition)."),
+        box("hd-new-1", "Technique", "Why so many dimensions?", "Every extra dimension can open more directions for differences. With thousands of coordinates many relations can exist side by side, even if they overlap when there are few dimensions (superposition)."),
         box("hd-new-2", "Limit", "What does the table not show?", "It shows a slice, not real weights. A real model learns every coordinate from text; the table is a didactic view.")
       ],
       sources: sources
