@@ -1144,7 +1144,7 @@
     var titleContent = editing
       ? '<span class="ls-inline-edit ls-inline-qtitle" contenteditable="true" spellcheck="true" data-edit-question-title-path="' + esc(path) + '">' + esc(q.title || t("question")) + '</span>'
       : titleHTML(q.title || t("question"));
-    var bodyContent = !q.body ? "" : (editing
+    var bodyContent = (!q.body && !editing) ? "" : (editing
       ? '<div class="ls-qbody ls-inline-edit ls-inline-raw" contenteditable="true" spellcheck="true" data-edit-question-path="' + esc(path) + '" data-edit-question-field="body">' + esc(q.body) + '</div>'
       : '<div class="ls-qbody" data-edit-question-path="' + esc(path) + '" data-edit-question-field="body">' + proseBlock(q.body) + '</div>');
     var texContent = !q.tex ? "" : (editing
@@ -1192,6 +1192,9 @@
         (g.id === "g-basics" || g.title === t("oneLevel"));
       if (flatSingle) {
         html += renderQuestionNode(questions[0], gi + ".0", 1, firstQuestionOpen);
+        if (state.edit && !editFormMode) {
+          html += '<div class="ls-inline-add"><button type="button" class="ls-btn ls-btn--tiny" data-edit-add-question="' + gi + '">+ ' + esc(t("addQuestion")) + '</button></div>';
+        }
         return;
       }
       var groupTitle = (state.edit && !editFormMode)
@@ -1209,6 +1212,9 @@
         questions.forEach(function (q, qi) {
           html += renderQuestionNode(q, gi + "." + qi, 1, fi === 0 && qi === 0 ? firstQuestionOpen : "");
         });
+        if (state.edit && !editFormMode) {
+          html += '<div class="ls-inline-add"><button type="button" class="ls-btn ls-btn--tiny" data-edit-add-question="' + gi + '">+ ' + esc(t("addQuestion")) + '</button></div>';
+        }
       }
       html += '</div></details>';
     });
@@ -3784,11 +3790,13 @@
       }, true);
       els.textScroll.addEventListener("click", function (e) {
         if (!state.edit || editFormMode || !e.target.closest) return;
-        var btn = e.target.closest("[data-edit-remove-question],[data-edit-remove-group],[data-edit-remove-source]");
+        var btn = e.target.closest("[data-edit-remove-question],[data-edit-remove-group],[data-edit-remove-source],[data-edit-add-question]");
         if (!btn) return;
         e.preventDefault();
         e.stopPropagation();
-        if (btn.hasAttribute("data-edit-remove-question")) {
+        if (btn.hasAttribute("data-edit-add-question")) {
+          addEditorQuestion(btn.getAttribute("data-edit-add-question"));
+        } else if (btn.hasAttribute("data-edit-remove-question")) {
           removeEditorQuestion(btn.getAttribute("data-edit-remove-question"));
         } else if (btn.hasAttribute("data-edit-remove-group")) {
           var gi = parseInt(btn.getAttribute("data-edit-remove-group"), 10);
