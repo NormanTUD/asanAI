@@ -290,10 +290,10 @@
         ]
       },
       "edit": {
-        "body": "Die ganze Architektur ist eine Funktion $f_\theta(x)$: Daten rein, eine Verteilung über das nächste Token raus. Pretraining nutzt fast das ganze Internet; Fine-tuning nutzt wenige, spezifische Fragen. Die Beispiele zeigen, warum die Daten den Unterschied machen.\n\nDie Form der Funktion bleibt beim Training gleich. Ein einfaches Beispiel ist $f_\theta(x) = ax + b$. Hier sind $a$ und $b$ die gelernten Gewichte, also $\theta$; das Training ändert nur diese Werte, nicht die Form der Funktion.",
+        "body": "Die ganze Architektur ist eine Funktion $f_\\theta(x)$: Text rein, eine Verteilung über das nächste Token raus. Pretraining nutzt fast das ganze Internet; Fine-tuning nutzt wenige, spezifische Fragen.\n\nDie Form der Funktion bleibt beim Training gleich. Ein einfaches Beispiel ist $f_\\theta(x) = ax + b$. Hier sind $a$ und $b$ die gelernten Gewichte, also $\\theta$; das Training ändert nur diese Werte, nicht die Form der Funktion.",
         "title": "Die Architektur als Funktion",
         "kicker": "Architektur",
-        "watch": "Drücke Weiter: Daten, Frage an Rohdaten, 1. Trainingsdatensatz, 2. Trainingsdatensatz. Bei jedem Beispiel zeigt der Trainingsschritt, wie sich die Kandidaten verschieben; welche Option in den Daten steht, welche nur plausibel ist und welche nicht passt.",
+        "watch": "",
         "groups": [
           {
             "id": "g-basics",
@@ -301,8 +301,8 @@
             "questions": [
               {
                 "id": "q-context",
-                "title": "Was ist der Kontext?",
-                "body": "In den Daten steht „Die Katze sitzt auf der Matte“. Das Netz bekommt den Anfang und soll „Matte“ vorhersagen. „Heizung“ ist auch plausibel, war aber in diesem Beispiel nicht der nächste Token; „Gleichung“ passt semantisch nicht.",
+                "title": "Was ist das Training?",
+                "body": "Beim Trainingsschritt werden die Vorhersage des nächsten Tokens, die die Funktion aktuell macht, und das, was sie machen sollte, verglichen und die Funktion wird ein kleines bisschen mehr in die Richtung geschoben, das zu antworten, was in den Trainingsdaten als Antwort steht.",
                 "tex": "",
                 "kind": "question"
               },
@@ -322,7 +322,7 @@
               {
                 "id": "q-box-fx-1",
                 "title": "Die Funktion",
-                "body": "$f_\theta(x)$ nimmt Daten und gibt eine Verteilung über das nächste Token aus. Die Form bleibt gleich, etwa $f_\theta(x)=ax+b$; $\theta$ sind die Gewichte, die das Training verändert.",
+                "body": "$f_\\theta(x)$ nimmt Daten und gibt eine Verteilung über das nächste Token aus. Die Form bleibt gleich, etwa $f_\\theta(x)=ax+b$.\n\n$\\theta$ sind die Gewichte, die während des Trainings verändert werden.",
                 "tex": "",
                 "kind": "trivia"
               }
@@ -331,22 +331,7 @@
           {
             "id": "g-lens-training",
             "title": "Training",
-            "questions": [
-              {
-                "id": "q-box-fx-2",
-                "title": "Pretraining",
-                "body": "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Trainingsschritt passt dieselben Gewichte an.",
-                "tex": "",
-                "kind": "trivia"
-              },
-              {
-                "id": "q-box-fx-3",
-                "title": "Fine-tuning",
-                "body": "Wenige, gezielte Fragen passen dieselben Gewichte in Richtung hilfreicher Antworten an.",
-                "tex": "",
-                "kind": "trivia"
-              }
-            ]
+            "questions": []
           },
           {
             "id": "g-lens-grenze",
