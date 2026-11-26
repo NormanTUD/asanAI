@@ -40,6 +40,29 @@ function eoy_parse_date($raw) {
     return new DateTimeImmutable(sprintf('%04d-%02d-%02d', $year, $month, $day));
 }
 
+function eoy_door_inner($dayLabel, $unlocked, $kicker, $title, $dateText, $isDe) {
+    $state = $unlocked
+        ? ($isDe ? 'Öffnen' : 'Open')
+        : $dateText;
+    $kickerText = $unlocked ? $kicker : ($isDe ? 'Noch verborgen' : 'Still hidden');
+    ob_start();
+    ?>
+        <span class="adv-inside" aria-hidden="true">
+            <span class="adv-inside-glow"></span>
+            <span class="adv-inside-day"><?php echo eoy_h($dayLabel); ?></span>
+        </span>
+        <span class="adv-face">
+            <span class="adv-face-top"><span class="adv-face-day"><?php echo eoy_h($dayLabel); ?></span><span class="adv-face-star" aria-hidden="true">✦</span></span>
+            <span class="adv-face-kicker"><?php echo eoy_h($kickerText); ?></span>
+            <?php if ($unlocked): ?>
+                <span class="adv-face-title"><?php echo eoy_h($title); ?></span>
+            <?php endif; ?>
+            <span class="adv-face-state"><?php echo eoy_h($state); ?></span>
+        </span>
+    <?php
+    return (string) ob_get_clean();
+}
+
 function eoy_article_link($day, $lang, $overrides) {
     $link = isset($overrides[$day]) ? trim((string) $overrides[$day]) : '';
     if ($link === '') {
@@ -107,26 +130,12 @@ $pageTitle = $isDe ? 'Adventskalender 2026' : 'Advent calendar 2026';
                         : ($isDe ? 'Tag ' . $day . ': noch geschlossen. Öffnet am ' . $day . '. Dezember 2026.' : 'Day ' . $day . ': still closed. Opens on ' . $day . ' December 2026.');
                     $dateText = $isDe ? ('Öffnet am ' . $day . '. Dez.') : ('Opens ' . $day . ' Dec');
                 ?>
+                    <?php $inner = eoy_door_inner($dayLabel, $unlocked, $kicker, $title, $dateText, $isDe); ?>
                     <?php if ($unlocked): ?>
-                        <a class="adv-door<?php echo $isToday ? ' is-today' : ''; ?>" style="--i:<?php echo $day; ?>" href="<?php echo eoy_h($link); ?>" target="_blank" rel="noopener" data-day="<?php echo $day; ?>" data-url="<?php echo eoy_h($link); ?>" aria-label="<?php echo eoy_h($aria); ?>">
+                        <a class="adv-door<?php echo $isToday ? ' is-today' : ''; ?>" style="--i:<?php echo $day; ?>" href="<?php echo eoy_h($link); ?>" target="_blank" rel="noopener" data-day="<?php echo $day; ?>" data-url="<?php echo eoy_h($link); ?>" aria-label="<?php echo eoy_h($aria); ?>"><?php echo $inner; ?></a>
                     <?php else: ?>
-                        <button class="adv-door is-locked<?php echo $isToday ? ' is-today' : ''; ?>" style="--i:<?php echo $day; ?>" type="button" data-day="<?php echo $day; ?>" aria-label="<?php echo eoy_h($aria); ?>" aria-disabled="true">
+                        <button class="adv-door is-locked<?php echo $isToday ? ' is-today' : ''; ?>" style="--i:<?php echo $day; ?>" type="button" data-day="<?php echo $day; ?>" aria-label="<?php echo eoy_h($aria); ?>" aria-disabled="true"><?php echo $inner; ?></button>
                     <?php endif; ?>
-                            <span class="adv-inside" aria-hidden="true">
-                                <span class="adv-inside-glow"></span>
-                                <span class="adv-inside-day"><?php echo $dayLabel; ?></span>
-                            </span>
-                            <span class="adv-face">
-                                <span class="adv-face-top"><span class="adv-face-day"><?php echo $dayLabel; ?></span><span class="adv-face-star" aria-hidden="true">✦</span></span>
-                                <?php if ($unlocked): ?>
-                                    <span class="adv-face-kicker"><?php echo eoy_h($kicker); ?></span>
-                                    <span class="adv-face-title"><?php echo eoy_h($title); ?></span>
-                                <?php else: ?>
-                                    <span class="adv-face-kicker"><?php echo eoy_h($isDe ? 'Noch verborgen' : 'Still hidden'); ?></span>
-                                <?php endif; ?>
-                                <span class="adv-face-state"><?php echo eoy_h($unlocked ? ($isDe ? 'Öffnen' : 'Open') : $dateText); ?></span>
-                            </span>
-                    <?php if ($unlocked): ?></a><?php else: ?></button><?php endif; ?>
                 <?php endfor; ?>
             </div>
         </section>
