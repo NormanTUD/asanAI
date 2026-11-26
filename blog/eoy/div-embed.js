@@ -258,7 +258,6 @@
     }
 
     frame.style.height = fit + "px";
-    root.style.height = fit + "px";
     focusLoaderOnStage(root);
     if (!quiet) window.dispatchEvent(new Event("resize"));
   }
@@ -333,9 +332,11 @@
     var rootId = "asanai-eoy-root-" + seq;
     var rootSelector = "#" + rootId;
 
+    var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var frame = document.createElement("div");
     frame.className = "asanai-eoy-frame";
-    frame.style.cssText = "position:relative;width:100%;height:" + height + ";min-height:0;max-height:none;container-type:size;";
+    frame.style.cssText = "position:relative;width:100%;height:" + height + ";min-height:0;max-height:none;"
+      + "container-type:size;" + (reduceMotion ? "" : "transition:height .34s cubic-bezier(.22,1,.36,1);");
     target.appendChild(frame);
 
     var root = document.createElement("div");
@@ -344,7 +345,7 @@
     root.setAttribute("data-asanai-eoy-root", "1");
     root.setAttribute("data-eoy-proxy", "1");
     root.setAttribute("data-theme", "light");
-    root.style.cssText = "position:relative;width:100%;height:" + height + ";min-height:0;max-height:none;"
+    root.style.cssText = "position:relative;width:100%;height:100%;min-height:0;max-height:none;"
       + "overflow:hidden;contain:layout paint;isolation:isolate;box-sizing:border-box;";
     frame.appendChild(root);
 
