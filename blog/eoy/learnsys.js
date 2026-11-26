@@ -3774,6 +3774,7 @@
         resetPositionBuffer(); hideTip(); toggleHelp(false); return;
       }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
+      if (e.target && (e.target.isContentEditable || (e.target.closest && e.target.closest('[contenteditable="true"]')))) return;
       if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
       if (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === " " || e.key === "PageDown" || e.key === "PageUp" || e.key === "Home" || e.key === "End") {
         navHintDismissed = true;
