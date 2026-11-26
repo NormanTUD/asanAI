@@ -1,0 +1,146 @@
+{
+  "version": 2,
+  "schema": "learnsys-changes/v2",
+  "kind": "learnsys-changes",
+  "data_file": "intuition_learnsys-data.js",
+  "generated_at": "2026-11-26T20:38:29.478Z",
+  "overlay_revision": "2026-11-26-image-fn-formula-6",
+  "pages": [
+    "intuition"
+  ],
+  "apply_to": [
+    "de",
+    "en"
+  ],
+  "multi_language": true,
+  "translation_note": "Apply every change to both languages; translate the missing language.",
+  "changes": [
+    {
+      "lang": "de",
+      "translate_to": "en",
+      "page": "intuition",
+      "step": 9,
+      "substep": 0,
+      "text_key": "9.0",
+      "slide_title": "Wie Attention rechnet",
+      "changed_fields": [
+        "body"
+      ],
+      "diff": {
+        "body": "Jedes Token erzeugt $Q, K, V$ aus der Eingabe $X$ durch <b>gelernte Matrizen</b> ($W_i^Q, W_i^K, W_i^V$):\n\n$$ r_i = \\text{Attention}_i(\\underbrace{X}_{\\text{Eingabe-Token}}) = \\underbrace{\\text{softmax}\\left( \\frac{\\overbrace{(X W_i^Q)(X W_i^K)^T}^{\\text{Frage vs. Antwort}}}{\\underbrace{\\sqrt{d_k}}_{\\text{Skalierung}}} \\right)}_{\\text{Aufmerksamkeits-Gewichte}} \\underbrace{(X \\cdot W_i^V)}_{\\text{Inhalt}}  $$\n\nZusammenführung über die gelernte Output-Matrix $W_O$:\n\n$$ y_i = \\underbrace{W_O}_{\\text{gelerntes Mischen}} \\cdot \\underbrace{r_i}_{\\text{Head-Ergebnis}} $$\n\n\nJeder Attention-Head hat 100% Aufmerksamkeit, die er mit diesem Mechanismus auf alle Tokens verteilen kann. Erhält ein einziges Token beispielsweise 80% Aufmerksamkeit, müssen sich die anderen die restlichen 20% teilen. Das hat den Vorteil, dass das Netzwerk sich nicht absolut festlegen muss und flexibel bleiben kann, aber dennoch klare Tendenzen darstellen kann, welches Wort wie wichtig ist im gesamten Kontext für alle anderen Worte."
+      }
+    },
+    {
+      "lang": "de",
+      "translate_to": "en",
+      "page": "intuition",
+      "step": 9,
+      "substep": 1,
+      "text_key": "9.1",
+      "slide_title": "Attention als vollverbundener Graph (ohne Causal Mask)",
+      "changed_fields": [
+        "watch",
+        "body",
+        "groups"
+      ],
+      "diff": {
+        "watch": "",
+        "body": "In dieser Darstellung ohne Causal Mask kann jedes Token auf jedes andere schauen: Die Attention-Matrix hat keine fehlenden Einträge. In einem GPT-Decoder maskiert die Causal Mask die Zukunft; dort sieht ein Token nur die Tokens, die vor ihm standen. Das erlaubt im Training das Netz darauf zu spezialisieren, dass es Sätze beenden kann, deren Ende es noch nciht kennt.\n\n\nDie Linienbreite und Helligkeit sind das Softmax-Gewicht. Eine dicke Kante bedeutet: Diese Query liest viel von diesem Token.\n\n\nIm Kreis siehst du alle Token; die Kanten von der Query „es“ zu jedem anderen Token sind die Softmax-Gewichte. Dick und hell heißt viel, dünn und blass heißt wenig. Fahre mit der Maus über eine Kante oder ein Token: Die Demo zeigt die Verbindung und den Prozentwert. Jedes Token hat außerdem eine Selbstkante. Klicke ein Token an, um seine Verbindungen zu sehen; für jede Query gibt es eine eigene Verteilung.\n",
+        "groups_remove": [
+          "0.questions.0",
+          "1.questions.0",
+          "1.questions.1",
+          "1.questions.2"
+        ]
+      }
+    },
+    {
+      "lang": "de",
+      "translate_to": "en",
+      "page": "intuition",
+      "step": 9,
+      "substep": 2,
+      "text_key": "9.2",
+      "slide_title": "Attention als Mischung der Value-Vektoren",
+      "changed_fields": [
+        "watch",
+        "body",
+        "groups"
+      ],
+      "diff": {
+        "watch": "",
+        "body": "Die drei Ecken sind die gelernten Value-Vektoren dreier Tokens. Attention mischt sie mit Gewichten: $r_i = \\sum_j \\alpha_{ij} v_j$, mit $\\alpha_{ij}\\ge 0$ und Summe 1. Der Mischungspunkt bleibt in der konvexen Hülle der Values; $W_O$ verschiebt ihn danach linear.\n\nDie drei Punkte sind keine Tokens, sondern die gelernten Value-Vektoren \n$v_j = W_V x_j$ von drei Tokens. Jeder Token trägt über $W_V$ einen Vektor bei.\n\nWIr haben hier eine kleine Auswahl der gesamten Tokens dieses Satzes, damit es darstellbar bleibt. Mit jedem Punkt mehr wird es ein höherdimensionalerer sogenannter Simplex.",
+        "groups_patch": {
+          "2.questions.0.body": "Ein Simplex ist die die einfachste eine Fläche oder ein Volumen umschließende Struktur aus $n$ Punkten."
+        },
+        "groups_remove": [
+          "0.questions.0",
+          "0.questions.1",
+          "1.questions.0",
+          "2.questions.1",
+          "3.questions.0"
+        ]
+      }
+    },
+    {
+      "lang": "de",
+      "translate_to": "en",
+      "page": "intuition",
+      "step": 9,
+      "substep": 3,
+      "text_key": "9.3",
+      "slide_title": "Head 2: Wo ist es?",
+      "changed_fields": [
+        "groups"
+      ],
+      "diff": {
+        "groups_patch": {
+          "0.questions.0.body": "Die spezifischen Gewichte der Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort."
+        },
+        "groups_remove": [
+          "0.questions.0",
+          "1.questions.0",
+          "2.questions.1"
+        ]
+      }
+    },
+    {
+      "lang": "de",
+      "translate_to": "en",
+      "page": "intuition",
+      "step": 9,
+      "substep": 4,
+      "text_key": "9.4",
+      "slide_title": "Head 2 als Graph",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "diff": {
+        "body": "Derselbe vollverbundene Graph in dieser Darstellung, andere Kantengewichte. Head 2 fragt nach dem Ort, deshalb wird die Kante von „es“ zu „Straße“ dick und hell; die Kante zu „Tier“ wird dünner. In dieser Darstellung ist keine Causal Mask, jedes Token kann jedes Andere sehen. Bei generativen Modellen kann jedes Token nur die vorherigen Tokens sehen.",
+        "groups_remove": [
+          "0.questions.0",
+          "0.questions.1",
+          "1.questions.0",
+          "1.questions.1",
+          "1.questions.2"
+        ]
+      }
+    },
+    {
+      "lang": "de",
+      "translate_to": "en",
+      "page": "intuition",
+      "step": 9,
+      "substep": 5,
+      "text_key": "9.5",
+      "slide_title": "Head 2 als Value-Mischung",
+      "changed_fields": [
+        "body"
+      ],
+      "diff": {
+        "body": "Dieselben drei Value-Vektoren, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt der Value von „Straße“ mehr Gewicht; der Mischungspunkt $r_i$ wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Im gezeigten Drei-Werte-Ausschnitt bleibt das Dreieck die Grenze für $r_i$; der echte Mischungsvektor nutzt alle Values. Die Head-Ausgabe ist $y_i = W_O r_i$. Du kannst den Punkt auch hier ziehen und die Mischung direkt verändern.\n\n\nEin Head ist ein Graph. Viele Heads sind viele Graphen mit eigenen \nKantengewichten; die Ausgaben werden konkateniert und projiziert. \nDeshalb kann ein Head auf Syntax achten, ein anderer auf Position oder \nBedeutung."
+      }
+    }
+  ]
+}

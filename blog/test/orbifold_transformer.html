@@ -6,17 +6,6 @@
 <title>Orbifold Transformer</title>
 <style>
 html, body { margin: 0; height: 100%; overflow: hidden; background: #03030a; }
-body::after {
-	content: "";
-	position: fixed;
-	inset: 0;
-	pointer-events: none;
-	background:
-		radial-gradient(58% 48% at 23% 27%, rgba(56, 110, 255, 0.16), transparent 72%),
-		radial-gradient(52% 44% at 79% 21%, rgba(255, 64, 170, 0.12), transparent 72%),
-		radial-gradient(50% 46% at 55% 83%, rgba(40, 220, 200, 0.09), transparent 72%);
-	mix-blend-mode: screen;
-}
 canvas { display: block; width: 100vw; height: 100vh; touch-action: none; cursor: grab; }
 body.dragging canvas { cursor: grabbing; }
 </style>
@@ -157,12 +146,6 @@ function softmaxRows(source) {
 		for (let j = 0; j < row.length; j++) exps[j] /= sum;
 		return exps;
 	});
-}
-
-function dot(left, right) {
-	let sum = 0;
-	for (let i = 0; i < left.length; i++) sum += left[i] * right[i];
-	return sum;
 }
 
 function buildModel() {
@@ -333,6 +316,7 @@ window.__ORBIFOLD = {
 	levelPos: levelPos,
 	hOf: hOf,
 	hueOf: hueOf,
+	project: project,
 	getState: reportState,
 	setProgress: setProgress
 };
@@ -453,8 +437,41 @@ function setProgress(value) {
 	timing.auto = false;
 }
 
+function toggleAuto() {
+	timing.auto = !timing.auto;
+}
+
+function toggleMode() {
+	timing.mode = timing.mode === "whole" ? "step" : "whole";
+}
+
+function stepLayer(direction) {
+	timing.auto = false;
+	timing.hold = 0;
+	let target = timing.tT + direction;
+	target = Math.max(0, Math.min(L, target));
+	if (target > 0 && target < L && Math.abs(target - Math.round(target)) < 0.03) {
+		target = Math.round(target) + 0.14;
+	}
+	timing.tT = target;
+}
+
+function restart() {
+	timing.tT = 0;
+	timing.hold = 0;
+	timing.auto = true;
+}
+
+Object.assign(window.__ORBIFOLD, {
+	toggleAuto: toggleAuto,
+	toggleMode: toggleMode,
+	step: stepLayer,
+	restart: restart,
+	camera: camera
+});
+
 function resize() {
-	DPR = Math.min(window.devicePixelRatio || 1, 1.25);
+	DPR = Math.min(window.devicePixelRatio || 1, 1);
 	W = window.innerWidth;
 	H = window.innerHeight;
 	canvas.width = Math.max(1, Math.round(W * DPR));
@@ -464,7 +481,6 @@ function resize() {
 	ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 	ctx.fillStyle = "#03030a";
 	ctx.fillRect(0, 0, W, H);
-	buildNebula();
 }
 
 function updateView() {
@@ -484,8 +500,16 @@ function project(x, y, z) {
 	const ry = y - view.camY;
 	const ry2 = ry * view.cpitch - rz0 * view.spitch;
 	const rz2 = ry * view.spitch + rz0 * view.cpitch;
-	const s = view.zoom * 700 / (rz2 + 7.5);
-	return { x: view.screenX + rx * s, y: view.screenY - ry2 * s, s: s, z: rz2 };
+	const near = rz2 + 7.5;
+	const visible = near > 0.5;
+	const s = visible ? view.zoom * 700 / near : 0;
+	return {
+		x: view.screenX + rx * s,
+		y: view.screenY - ry2 * s,
+		s: s,
+		z: rz2,
+		visible: visible
+	};
 }
 
 function smoothstep(a, b, x) {
@@ -493,38 +517,8 @@ function smoothstep(a, b, x) {
 	return t * t * (3 - 2 * t);
 }
 
-let nebulaCanvas = null;
-
-function buildNebula() {
-	const sprite = document.createElement("canvas");
-	sprite.width = Math.max(2, Math.round(W * 0.125));
-	sprite.height = Math.max(2, Math.round(H * 0.125));
-	const g = sprite.getContext("2d");
-	const radius = Math.max(sprite.width, sprite.height) * 0.9;
-	const blobs = [
-		{ x: 0.24, y: 0.28, c: "56,110,255", a: 0.035 },
-		{ x: 0.78, y: 0.22, c: "255,64,170", a: 0.028 },
-		{ x: 0.55, y: 0.82, c: "40,220,200", a: 0.024 }
-	];
-	for (let i = 0; i < blobs.length; i++) {
-		const blob = blobs[i];
-		const gx = sprite.width * blob.x;
-		const gy = sprite.height * blob.y;
-		const gradient = g.createRadialGradient(gx, gy, 0, gx, gy, radius);
-		gradient.addColorStop(0, "rgba(" + blob.c + "," + blob.a + ")");
-		gradient.addColorStop(1, "rgba(" + blob.c + ",0)");
-		g.fillStyle = gradient;
-		g.fillRect(0, 0, sprite.width, sprite.height);
-	}
-	nebulaCanvas = sprite;
-}
-
-function drawBackdrop() {
-	if (nebulaCanvas) ctx.drawImage(nebulaCanvas, 0, 0, W, H);
-}
-
 const starRandom = mulberry32(SEED);
-const stars = new Array(180);
+const stars = new Array(90);
 for (let i = 0; i < stars.length; i++) {
 	const pick = starRandom();
 	stars[i] = {
@@ -553,12 +547,6 @@ function drawStars() {
 		ctx.beginPath();
 		ctx.arc(sx * W, star.y * H, star.size, 0, TWO_PI);
 		ctx.fill();
-		if (star.size > 1.35) {
-			ctx.fillStyle = "rgba(" + star.tint + "," + alpha * 0.14 + ")";
-			ctx.beginPath();
-			ctx.arc(sx * W, star.y * H, star.size * 3.4, 0, TWO_PI);
-			ctx.fill();
-		}
 	}
 }
 
@@ -567,23 +555,28 @@ function drawFaintRing(screen, alpha, glow) {
 	let minY = Infinity;
 	let maxX = -Infinity;
 	let maxY = -Infinity;
+	let visibleCount = 0;
 	for (let token = 0; token < N; token++) {
 		const point = screen[token];
+		if (!point.visible) continue;
+		visibleCount++;
 		if (point.x < minX) minX = point.x;
 		if (point.y < minY) minY = point.y;
 		if (point.x > maxX) maxX = point.x;
 		if (point.y > maxY) maxY = point.y;
 	}
+	if (visibleCount === 0) return;
 	if (maxX - minX < 1) maxX = minX + 1;
 	if (maxY - minY < 1) maxY = minY + 1;
 	const gradient = ctx.createLinearGradient(minX, minY, maxX, maxY);
 	for (let k = 0; k <= 6; k++) {
-		gradient.addColorStop(k / 6, hueHsl(k * 60, alpha * 0.62, 64));
+		gradient.addColorStop(k / 6, hueHsl(k * 60, alpha * 0.75, 64));
 	}
 	ctx.beginPath();
 	for (let token = 0; token < N; token++) {
 		const a = screen[token];
 		const b = screen[(token + 1) % N];
+		if (!a.visible || !b.visible) continue;
 		ctx.moveTo(a.x, a.y);
 		ctx.lineTo(b.x, b.y);
 	}
@@ -602,11 +595,62 @@ function drawFaintRing(screen, alpha, glow) {
 	}
 	for (let token = 0; token < N; token++) {
 		const point = screen[token];
+		if (!point.visible) continue;
 		const scale = Math.max(0.45, point.s / 75);
-		ctx.fillStyle = tokenHsl(token, alpha * 0.92, 67);
+		ctx.fillStyle = tokenHsl(token, alpha, 67);
 		ctx.beginPath();
 		ctx.arc(point.x, point.y, Math.max(0.6, (glow ? 2.0 : 1.35) * scale), 0, TWO_PI);
 		ctx.fill();
+	}
+}
+
+function drawSpine() {
+	const points = [];
+	for (let layer = 0; layer <= L; layer++) {
+		const point = project(0, hOf(layer), 0);
+		if (point.visible) points.push(point);
+	}
+	if (points.length < 2) return;
+	const first = points[0];
+	const last = points[points.length - 1];
+	const gradient = ctx.createLinearGradient(first.x, first.y, last.x, last.y);
+	gradient.addColorStop(0, "rgba(90,160,255,0.1)");
+	gradient.addColorStop(0.5, "rgba(210,140,255,0.14)");
+	gradient.addColorStop(1, "rgba(255,130,210,0.1)");
+	ctx.strokeStyle = gradient;
+	ctx.lineWidth = 1.2;
+	ctx.beginPath();
+	ctx.moveTo(first.x, first.y);
+	for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+	ctx.stroke();
+	ctx.fillStyle = "rgba(200,225,255,0.18)";
+	for (let i = 0; i < points.length; i++) {
+		ctx.beginPath();
+		ctx.arc(points[i].x, points[i].y, 1.4, 0, TWO_PI);
+		ctx.fill();
+	}
+}
+
+function drawGhostFibers(levelScreen) {
+	for (let token = 0; token < N; token++) {
+		ctx.beginPath();
+		let drawing = false;
+		for (let layer = 0; layer <= L; layer++) {
+			const point = levelScreen[layer][token];
+			if (!point.visible) {
+				drawing = false;
+				continue;
+			}
+			if (!drawing) {
+				ctx.moveTo(point.x, point.y);
+				drawing = true;
+			} else {
+				ctx.lineTo(point.x, point.y);
+			}
+		}
+		ctx.strokeStyle = tokenHsl(token, 0.055, 62);
+		ctx.lineWidth = 0.85;
+		ctx.stroke();
 	}
 }
 
@@ -617,8 +661,23 @@ function drawFibers(levelScreen, currentScreen, layer) {
 		points.push(currentScreen[token]);
 		if (points.length < 2) continue;
 		ctx.beginPath();
-		ctx.moveTo(points[0].x, points[0].y);
-		for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+		let drawing = false;
+		let hasLine = false;
+		for (let i = 0; i < points.length; i++) {
+			const point = points[i];
+			if (!point.visible) {
+				drawing = false;
+				continue;
+			}
+			if (!drawing) {
+				ctx.moveTo(point.x, point.y);
+				drawing = true;
+			} else {
+				ctx.lineTo(point.x, point.y);
+				hasLine = true;
+			}
+		}
+		if (!hasLine) continue;
 		ctx.strokeStyle = tokenHsl(token, 0.34, 70);
 		ctx.lineWidth = 1.15;
 		ctx.stroke();
@@ -634,10 +693,15 @@ function drawAttention(phase, screen, world, layer) {
 			if (weight < 0.03) continue;
 			const a = screen[i];
 			const b = screen[j];
+			if (!a.visible || !b.visible) continue;
 			const midX = (world[i].x + world[j].x) * 0.5;
 			const midY = (world[i].y + world[j].y) * 0.5 + 0.25 + 0.7 * weight;
 			const midZ = (world[i].z + world[j].z) * 0.5;
 			const mid = project(midX, midY, midZ);
+			if (!mid.visible) {
+				mid.x = (a.x + b.x) * 0.5;
+				mid.y = (a.y + b.y) * 0.5;
+			}
 			const alpha = phase * (0.16 + 0.62 * Math.min(1, weight * 5));
 			const width = 0.4 + 6 * weight;
 			ctx.strokeStyle = tokenHsl(j, 1, 66);
@@ -670,7 +734,7 @@ function drawFocus(phase, screen, layer) {
 	if (phase <= 0.002) return;
 	const focus = model.focus[layer];
 	const point = screen[focus.index];
-	if (!point) return;
+	if (!point || !point.visible) return;
 	const scale = Math.max(0.45, point.s / 75);
 	const pulse = 0.5 + 0.5 * Math.sin(time * 3.4);
 	const radius = (46 + 24 * pulse) * scale;
@@ -695,6 +759,7 @@ function drawFfn(phase, screen, world, layer) {
 	const Qd = model.Qd;
 	for (let token = 0; token < N; token++) {
 		const point = screen[token];
+		if (!point.visible) continue;
 		const scale = Math.max(0.5, point.s / 75);
 		const radius = (14 + 34 * phase) * scale;
 		const aura = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
@@ -706,6 +771,7 @@ function drawFfn(phase, screen, world, layer) {
 	for (let token = 0; token < N; token++) {
 		const base = world[token];
 		const baseScreen = screen[token];
+		if (!baseScreen.visible) continue;
 		const spokes = [];
 		for (let f = 0; f < F; f++) {
 			const value = ffn[token][f];
@@ -716,6 +782,7 @@ function drawFfn(phase, screen, world, layer) {
 				base.y + direction.y * 0.9 * value,
 				base.z + direction.z * 0.9 * value
 			);
+			if (!point.visible) continue;
 			const strength = Math.min(1, value / 1.8);
 			const alpha = phase * (0.08 + 0.62 * strength);
 			const scale = Math.max(0.45, point.s / 75);
@@ -747,6 +814,7 @@ function drawCurrentCloud(screen) {
 	for (let token = 0; token < N; token++) {
 		const a = screen[token];
 		const b = screen[(token + 1) % N];
+		if (!a.visible || !b.visible) continue;
 		const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
 		gradient.addColorStop(0, tokenHsl(token, 0.85, 62));
 		gradient.addColorStop(1, tokenHsl((token + 1) % N, 0.85, 62));
@@ -764,6 +832,7 @@ function drawCurrentCloud(screen) {
 	ctx.globalAlpha = 1;
 	for (let token = 0; token < N; token++) {
 		const point = screen[token];
+		if (!point.visible) continue;
 		const scale = Math.max(0.45, point.s / 75);
 		const radius = 28 * scale;
 		const halo = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
@@ -775,6 +844,7 @@ function drawCurrentCloud(screen) {
 	}
 	for (let token = 0; token < N; token++) {
 		const point = screen[token];
+		if (!point.visible) continue;
 		const scale = Math.max(0.45, point.s / 75);
 		const glowSize = 96 * scale;
 		ctx.drawImage(
@@ -788,6 +858,7 @@ function drawCurrentCloud(screen) {
 	ctx.fillStyle = "rgba(255,255,255,0.96)";
 	for (let token = 0; token < N; token++) {
 		const point = screen[token];
+		if (!point.visible) continue;
 		const radius = Math.max(1.8, 3.4 * point.s / 75);
 		ctx.beginPath();
 		ctx.arc(point.x, point.y, radius, 0, TWO_PI);
@@ -796,6 +867,7 @@ function drawCurrentCloud(screen) {
 	ctx.lineWidth = 0.9;
 	for (let token = 0; token < N; token++) {
 		const point = screen[token];
+		if (!point.visible) continue;
 		const radius = Math.max(1.8, 3.4 * point.s / 75) + 2.2;
 		ctx.strokeStyle = tokenHsl(token, 0.6, 68);
 		ctx.beginPath();
@@ -811,6 +883,7 @@ function drawMorphStreaks(morph, oldScreen, screen) {
 	for (let token = 0; token < N; token++) {
 		const a = oldScreen[token];
 		const b = screen[token];
+		if (!a.visible || !b.visible) continue;
 		ctx.strokeStyle = tokenHsl(token, 0.34 * fade, 74);
 		ctx.lineWidth = 1.15;
 		ctx.beginPath();
@@ -857,10 +930,12 @@ function renderScene(frameState) {
 		currentScreen[token] = project(wx, wy, wz);
 	}
 
+	drawSpine();
+	drawGhostFibers(levelScreen);
 	for (let l = layer + 1; l <= L; l++) drawFaintRing(levelScreen[l], 0.06, false);
 	for (let l = 0; l < layer; l++) drawFaintRing(levelScreen[l], 0.5, true);
-	if (morph > 0.005 && morph < 0.995) {
-		drawFaintRing(levelScreen[layer], 0.24 * (1 - morph), true);
+	if (morph > 0.005) {
+		drawFaintRing(levelScreen[layer], 0.5 * morph, true);
 	}
 	drawFibers(levelScreen, currentScreen, layer);
 	drawAttention(attnPhase, currentScreen, currentWorld, layer);
@@ -893,10 +968,120 @@ function frame(now) {
 	ctx.fillRect(0, 0, W, H);
 
 	ctx.globalCompositeOperation = "lighter";
-	drawBackdrop();
 	drawStars();
 	renderScene(frameState);
 }
+
+let dragging = false;
+let usingTouch = false;
+let touchResetTimer = 0;
+let touchStartX = 0;
+let touchStartY = 0;
+let lastMouseX = 0;
+
+canvas.addEventListener("mousedown", function (event) {
+	if (usingTouch || event.button !== 0) return;
+	dragging = true;
+	lastMouseX = event.clientX;
+	timing.auto = false;
+	document.body.classList.add("dragging");
+	event.preventDefault();
+});
+
+window.addEventListener("mousemove", function (event) {
+	if (!dragging) return;
+	const dx = typeof event.movementX === "number"
+		? event.movementX
+		: event.clientX - lastMouseX;
+	lastMouseX = event.clientX;
+	camera.yaw += dx * 0.005;
+});
+
+window.addEventListener("mouseup", function () {
+	if (!dragging) return;
+	dragging = false;
+	document.body.classList.remove("dragging");
+});
+
+window.addEventListener("blur", function () {
+	dragging = false;
+	document.body.classList.remove("dragging");
+});
+
+canvas.addEventListener("wheel", function (event) {
+	event.preventDefault();
+	camera.pitch = Math.max(-0.2, Math.min(1.2, camera.pitch + event.deltaY * 0.0012));
+}, { passive: false });
+
+canvas.addEventListener("touchstart", function (event) {
+	if (event.touches.length !== 1) return;
+	usingTouch = true;
+	if (touchResetTimer) {
+		clearTimeout(touchResetTimer);
+		touchResetTimer = 0;
+	}
+	const touch = event.touches[0];
+	touchStartX = touch.clientX;
+	touchStartY = touch.clientY;
+	event.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener("touchmove", function (event) {
+	if (event.touches.length !== 1) return;
+	event.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener("touchend", function (event) {
+	const touch = event.changedTouches[0];
+	if (!touch) return;
+	const dx = touch.clientX - touchStartX;
+	const dy = touch.clientY - touchStartY;
+	const distance = Math.hypot(dx, dy);
+	if (distance < 30) {
+		toggleAuto();
+	} else if (Math.abs(dx) >= 30 && Math.abs(dx) > Math.abs(dy)) {
+		stepLayer(dx < 0 ? 1 : -1);
+	}
+	if (touchResetTimer) clearTimeout(touchResetTimer);
+	touchResetTimer = window.setTimeout(function () {
+		usingTouch = false;
+		touchResetTimer = 0;
+	}, 700);
+	event.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener("touchcancel", function () {
+	if (touchResetTimer) clearTimeout(touchResetTimer);
+	touchResetTimer = window.setTimeout(function () {
+		usingTouch = false;
+		touchResetTimer = 0;
+	}, 700);
+});
+
+window.addEventListener("keydown", function (event) {
+	if (event.code === "Space" || event.key === " ") {
+		event.preventDefault();
+		if (!event.repeat) toggleAuto();
+		return;
+	}
+	if (event.key === "w" || event.key === "W") {
+		if (!event.repeat) toggleMode();
+		return;
+	}
+	if (event.key === "ArrowLeft") {
+		event.preventDefault();
+		stepLayer(-1);
+		return;
+	}
+	if (event.key === "ArrowRight") {
+		event.preventDefault();
+		stepLayer(1);
+		return;
+	}
+	if (event.key === "r" || event.key === "R") {
+		if (!event.repeat) restart();
+	}
+});
 
 window.addEventListener("resize", resize);
 resize();
