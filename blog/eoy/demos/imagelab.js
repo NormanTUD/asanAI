@@ -456,7 +456,7 @@
       var start = 0;
       var parts = [];
       var settled = false;
-      function finish() {
+      function settle() {
         if (settled) return;
         settled = true;
         if (onDone) onDone();
@@ -466,7 +466,7 @@
       }
       function step() {
         if (!valid()) {
-          finish();
+          settle();
           return;
         }
         var count = Math.min(chunk, rows - start);
@@ -476,7 +476,7 @@
           out = st.model.apply(sub);
         } catch (e) {
           try { sub.dispose(); } catch (err) {}
-          finish();
+          settle();
           return;
         }
         out.data().then(function (data) {
@@ -493,9 +493,9 @@
             off += parts[i].length;
           }
           if (valid() && onData) onData(all);
-          finish();
+          settle();
         }).catch(function () {
-          finish();
+          settle();
         }).finally(function () {
           try { out.dispose(); } catch (e) {}
           try { sub.dispose(); } catch (e) {}
@@ -987,6 +987,7 @@
         requestViewPrediction(true);
       } else {
         st.viewData = null;
+        st.viewToken++;
         st.viewBusy = false;
       }
       updateExtraNote();
