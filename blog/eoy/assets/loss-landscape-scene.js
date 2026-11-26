@@ -7,7 +7,7 @@
     el.className = "ls-loss-scene";
     el.innerHTML =
       '<div class="ls-loss-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-loss-loader" role="status"><span class="ls-spinner" aria-hidden="true"></span><span>' + (DE ? "Loss-Fläche wird berechnet …" : "Computing the loss surface …") + '</span></div></div>' +
-      '<div class="ls-loss-side"><div class="ls-loss-data-wrap"><div class="ls-loss-data-title">' + (DE ? "Daten + aktuelle Gerade" : "data + current line") + '</div><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-examples"><div class="ls-loss-side-title">' + (DE ? "Ausgewähltes Beispiel" : "Selected example") + '</div><div class="ls-loss-table" aria-live="polite"></div></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
+      '<div class="ls-loss-side"><div class="ls-loss-data-wrap"><div class="ls-loss-data-title">' + (DE ? "Daten + aktuelle Gerade · hover für x, y, f(x)" : "data + current line · hover for x, y, f(x)") + '</div><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-examples"><div class="ls-loss-side-title">' + (DE ? "Ausgewähltes Beispiel" : "Selected example") + '</div><div class="ls-loss-table" aria-live="polite"></div></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
       '<div class="ls-loss-formula"></div>' +
       '<div class="ls-loss-controls">' +
         '<div class="ls-loss-opts" role="group" aria-label="' + (DE ? "Optimierer" : "Optimizer") + '"><button type="button" class="ls-chip is-on" data-opt="sgd">SGD</button><button type="button" class="ls-chip" data-opt="adam">Adam</button><button type="button" class="ls-chip" data-opt="momentum">Momentum</button></div>' +
@@ -95,8 +95,8 @@
       var x = data.examples.xs[i], y = data.examples.ys[i], yhat = cur.a * x + cur.b;
       tableEl.innerHTML = '<span class="ls-loss-example"><b>x</b><strong>' + x.toFixed(3) + '</strong></span>' +
         '<span class="ls-loss-example"><b>y</b><strong>' + y.toFixed(2) + '</strong></span>' +
-        '<span class="ls-loss-example"><b>ŷ</b><strong>' + yhat.toFixed(2) + '</strong></span>' +
-        '<small class="ls-loss-example-note">' + (DE ? "Beispiel " : "example ") + (i + 1) + ' / ' + data.examples.xs.length + ' · ŷ = w x + b</small>';
+        '<span class="ls-loss-example"><b>f(x)</b><strong>' + yhat.toFixed(2) + '</strong></span>' +
+        '<small class="ls-loss-example-note">' + (DE ? "Beispiel " : "example ") + (i + 1) + ' / ' + data.examples.xs.length + ' · f(x) = w x + b</small>';
     }
     function drawData() {
       if (!data || !dataCanvas) return;
@@ -316,40 +316,36 @@
       dataCanvas.addEventListener("pointermove", function (e) {
         if (!data) return;
         var r = dataCanvas.getBoundingClientRect();
-        var w = r.width, h = r.height, pad = 8;
-        var xs = data.examples.xs, ys = data.examples.ys;
+        var w = r.width, pad = 8;
+        var xs = data.examples.xs;
         var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
-        var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
-        var mx = e.clientX - r.left, my = e.clientY - r.top;
-        var best = selectedExample, bd = 18;
+        var mx = e.clientX - r.left;
+        var best = selectedExample, bd = Infinity;
         xs.forEach(function (x, i) {
           var px = pad + (x - minX) / (maxX - minX) * (w - 2 * pad);
-          var py = h - pad - (ys[i] - minY) / (maxY - minY) * (h - 2 * pad);
-          var d = Math.hypot(px - mx, py - my);
+          var d = Math.abs(px - mx);
           if (d < bd) { bd = d; best = i; }
         });
         if (best !== selectedExample) { selectedExample = best; drawData(); drawExamples(); }
       });
     }
     if (window.LearnSysDemoCore && dataCanvas) {
-      window.LearnSysDemoCore.canvasTip(dataCanvas, function (x, y) {
+      window.LearnSysDemoCore.canvasTip(dataCanvas, function (mx) {
         if (!data) return "";
         var r = dataCanvas.getBoundingClientRect();
-        var w = r.width, h = r.height, pad = 8;
+        var w = r.width, pad = 8;
         var xs = data.examples.xs, ys = data.examples.ys;
         var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
-        var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
-        var best = -1, bd = 18;
+        var best = -1, bd = Infinity;
         xs.forEach(function (x, i) {
           var px = pad + (x - minX) / (maxX - minX) * (w - 2 * pad);
-          var py = h - pad - (ys[i] - minY) / (maxY - minY) * (h - 2 * pad);
-          var d = Math.hypot(px - x, py - y);
+          var d = Math.abs(px - mx);
           if (d < bd) { bd = d; best = i; }
         });
-        if (best < 0) return DE ? "Datenpunkte und aktuelle Gerade: Fahre über einen Punkt für x, y und Vorhersage." : "Data points and current line: hover a point for x, y, and prediction.";
+        if (best < 0) return DE ? "Datenpunkte und aktuelle Gerade: Fahre über Punkte oder Gerade für x, y und f(x)." : "Data points and current line: hover points or the line for x, y, and f(x).";
         var cur = current() || { a: 0, b: 0 };
         var xv = xs[best], yv = ys[best], yhat = cur.a * xv + cur.b;
-        return (DE ? "Beispiel " : "Example ") + (best + 1) + ": x = " + xv.toFixed(2) + ", y = " + yv.toFixed(2) + ", ŷ = " + yhat.toFixed(2) + ". Fehler " + (yhat - yv).toFixed(2) + ". Klicken wählt das Beispiel.";
+        return (DE ? "Beispiel " : "Example ") + (best + 1) + ": x = " + xv.toFixed(2) + ", y = " + yv.toFixed(2) + ", f(x) = " + yhat.toFixed(2) + ". Fehler " + (yhat - yv).toFixed(2) + ". Klicken wählt das Beispiel.";
       });
     }
     function resize() { size = api.fit(canvas, stage); if (data) draw(); else drawData(); }

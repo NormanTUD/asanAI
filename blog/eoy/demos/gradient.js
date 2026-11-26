@@ -12,9 +12,9 @@
       node = root.querySelector(".ls-canvas");
       if (node) node.setAttribute("data-tip", DE ? "Die Loss-Fläche über zwei Parameter; höher oder rötlicher bedeutet schlechter." : "The loss surface over two parameters; higher or redder means worse.");
       node = root.querySelector(".ls-loss-data");
-      if (node) node.setAttribute("data-tip", DE ? "Die Beispieldaten als Punkte mit der aktuellen Geraden." : "The fitting examples as points with the current line.");
+      if (node) node.setAttribute("data-tip", DE ? "Datenpunkte + aktuelle Gerade: Fahre über Punkte oder Gerade für x, y und f(x)." : "Data points + current line: hover points or the line for x, y, and f(x).");
       node = root.querySelector(".ls-loss-table");
-      if (node) node.setAttribute("data-tip", DE ? "Jedes Beispiel mit x, Zielwert y und aktueller Vorhersage." : "Each example with its x, target y, and current prediction.");
+      if (node) node.setAttribute("data-tip", DE ? "Jedes Beispiel mit x, Zielwert y und aktuellem f(x)." : "Each example with its x, target y, and current f(x).");
       node = root.querySelector(".ls-loss-formula");
       if (node) node.setAttribute("data-tip", DE ? "Das lineare Modell und sein aktueller Loss als Formel." : "The linear model and its current loss as math.");
       node = root.querySelector('[data-opt="sgd"]');
