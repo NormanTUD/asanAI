@@ -1276,11 +1276,10 @@
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis. ",
+        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis.\n\nDie grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
         teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis. ",
         watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
-        context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
         sources: gaussSteps[0].sources
       },
       {
@@ -1352,11 +1351,10 @@
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
-        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short period of observation it disappeared behind the Sun, and nobody knew where to search, because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used the method of least squares (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), which Legendre had published in 1805, and helped spread it. LLMs use cross-entropy instead of MSE, but the development of MSE was still important for later loss functions and helps with understanding.",
+        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short period of observation it disappeared behind the Sun, and nobody knew where to search, because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used the method of least squares (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), which Legendre had published in 1805, and helped spread it. LLMs use cross-entropy instead of MSE, but the development of MSE was still important for later loss functions and helps with understanding.\n\nThe green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
         teaser: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
         watch: "",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
-        context: "The green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
         sources: gaussSteps[0].sources
       },
       {
