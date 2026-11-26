@@ -8,9 +8,9 @@
   var OCTAVES = 5;
   var INPUT_DIM = 2 + 4 * OCTAVES;
   var LAYERS = [96, 96, 96, 96];
-  var BATCH = 512;
+  var BATCH = 256;
   var LR = 0.01;
-  var SPS = 60;
+  var SPS = 50;
   var VIEW_N = 72;
   var HISTORY_MAX = 520;
   var OPERA = "opera.jpg";
@@ -136,46 +136,51 @@
     el.innerHTML =
       '<div class="ls-il-topline">' +
         '<span class="ls-il-kicker">' + L("Bild als Funktion", "An image as a function") + '</span>' +
-        '<span class="ls-il-formula">(x, y) &rarr; (R, G, B)</span>' +
+        '<span class="ls-il-formula">' + L("Input 50 &times; 50 &times; 3 &middot; Output 50 &times; 50 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 Eingaben (20 Fourier)", "Input 50 &times; 50 &times; 3 &middot; Output 50 &times; 50 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 inputs (20 Fourier)") + '</span>' +
       '</div>' +
       '<div class="ls-il-grid">' +
         '<figure class="ls-il-card ls-il-target">' +
-          '<div class="ls-il-cardhead"><span>' + L("Ziel", "Target") + '</span><span class="ls-il-meta">50 &times; 50 &times; 3</span></div>' +
-          '<div class="ls-il-canvaswrap"><canvas class="ls-il-target-canvas" role="img" aria-label="' + L("Zielbild: das Beispiel, zentriert auf 50 mal 50 Pixel und in Farbe.", "Target image: the example, centre-cropped to 50 by 50 pixels and in colour.") + '"></canvas></div>' +
+          '<div class="ls-il-cardhead"><span>Input</span><span class="ls-il-meta">50 &times; 50 &times; 3</span></div>' +
+          '<div class="ls-il-canvaswrap"><canvas class="ls-il-target-canvas" role="img" aria-label="' + L("Input: das Beispiel, zentriert auf 50 mal 50 Pixel und in Farbe.", "Input: the example, centre-cropped to 50 by 50 pixels and in colour.") + '"></canvas></div>' +
           '<figcaption class="ls-il-caption"><span class="ls-il-name">' + L("Opera (Beispiel)", "Opera (example)") + '</span><span>' + L("2.500 Pixel", "2,500 pixels") + '</span></figcaption>' +
         '</figure>' +
         '<figure class="ls-il-card ls-il-pred">' +
-          '<div class="ls-il-cardhead"><span>' + L("Vorhersage", "Prediction") + '</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
-          '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Vorhersage des Netzes: für jede Koordinate eine Farbe.", "Network prediction: a colour for every coordinate.") + '"></canvas><span class="ls-il-badge">' + L("Netz", "net") + '</span></div>' +
-          '<figcaption class="ls-il-caption"><span>' + L("nur (x, y) als Eingabe", "only (x, y) as input") + '</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0.00</b></span></figcaption>' +
+          '<div class="ls-il-cardhead"><span>Output</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
+          '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Output: für jede Koordinate eine Farbe.", "Output: a colour for every coordinate.") + '"></canvas><span class="ls-il-badge">' + L("Netz", "net") + '</span></div>' +
+          '<figcaption class="ls-il-caption"><span>' + L("nur (x, y)", "only (x, y)") + '</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0</b></span></figcaption>' +
         '</figure>' +
-        '<aside class="ls-il-side">' +
-          '<div class="ls-il-card ls-il-loss">' +
-            '<div class="ls-il-cardhead"><span>Loss</span><span class="ls-il-lossval">–</span></div>' +
-            '<div class="ls-il-losschart"><canvas class="ls-il-loss-canvas" role="img" aria-label="' + L("Loss-Kurve: zeigt, wie der Fehler während des Trainings fällt.", "Loss curve: shows how the error falls during training.") + '"></canvas></div>' +
-            '<div class="ls-il-losscaption"><span>' + L("bester", "best") + ' <b class="ls-il-best">–</b></span><span>' + L("MSE", "MSE") + '</span></div>' +
-          '</div>' +
-          '<div class="ls-il-status" aria-live="polite"><span class="ls-il-status-dot"></span><span class="ls-il-status-text">' + L("Netz wird vorbereitet …", "Preparing network …") + '</span></div>' +
-          '<div class="ls-il-controls">' +
-            '<button type="button" class="ls-btn ls-btn--tiny ls-il-toggle" disabled data-tip="' + L("Pausiert das Training. Das Netz lernt nur, solange diese Folie aktiv ist.", "Pauses training. The network learns only while this slide is active.") + '">' + L("Training starten", "Start training") + '</button>' +
-            '<button type="button" class="ls-btn ls-btn--tiny ls-il-reset" disabled data-tip="' + L("Baut das Netz mit neuen Zufallsgewichten neu und startet das Training von vorn.", "Rebuilds the network with new random weights and starts training from scratch.") + '">' + L("Neu starten", "Restart") + '</button>' +
-          '</div>' +
-        '</aside>' +
+        '<div class="ls-il-card ls-il-loss">' +
+          '<div class="ls-il-cardhead"><span>Loss</span><span class="ls-il-lossval">–</span></div>' +
+          '<div class="ls-il-losschart"><canvas class="ls-il-loss-canvas" role="img" aria-label="' + L("Loss-Kurve: zeigt, wie der Fehler während des Trainings fällt.", "Loss curve: shows how the error falls during training.") + '"></canvas></div>' +
+          '<div class="ls-il-losscaption"><span>' + L("bester", "best") + ' <b class="ls-il-best">–</b></span><span>MSE</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ls-il-bar">' +
+        '<div class="ls-il-status" aria-live="polite"><span class="ls-il-status-dot"></span><span class="ls-il-status-text">' + L("Netz wird vorbereitet …", "Preparing network …") + '</span></div>' +
+        '<div class="ls-il-controls">' +
+          '<button type="button" class="ls-btn ls-btn--tiny ls-il-toggle is-start" disabled data-tip="' + L("Startet oder stoppt das Training. Das Netz lernt nur, solange diese Folie aktiv ist.", "Starts or stops training. The network learns only while this slide is active.") + '">' + L("Training starten", "Start training") + '</button>' +
+          '<button type="button" class="ls-btn ls-btn--tiny ls-il-reset" disabled data-tip="' + L("Baut das Netz mit neuen Zufallsgewichten neu und startet das Training von vorn.", "Rebuilds the network with new random weights and starts training from scratch.") + '">' + L("Training neu starten", "Restart training") + '</button>' +
+        '</div>' +
       '</div>' +
       '<details class="ls-il-optional">' +
-        '<summary><span>' + L("Eigenes Bild & Grenzen", "Own image & limits") + '</span><span class="ls-il-optional-hint">' + L("optional", "optional") + '</span></summary>' +
+        '<summary><span>' + L("Eigenes Bild, Grenzen, Lernrate", "Own image, limits, learning rate") + '</span><span class="ls-il-optional-hint">' + L("optional", "optional") + '</span></summary>' +
         '<div class="ls-il-optional-body">' +
           '<div class="ls-il-uploadrow">' +
             '<label class="ls-btn ls-btn--tiny ls-il-upload">' + L("Eigenes Bild", "Own image") + '<input type="file" class="ls-il-file" accept="image/*"></label>' +
-            '<button type="button" class="ls-btn ls-btn--tiny ls-il-restore">' + L("Opera", "Opera") + '</button>' +
+            '<button type="button" class="ls-btn ls-btn--tiny ls-il-restore">Opera</button>' +
             '<span class="ls-il-filename">' + L("Opera (Beispiel)", "Opera (example)") + '</span>' +
           '</div>' +
-          '<p class="ls-il-hint">' + L("Jedes Bild wird zentriert auf 50 × 50 Pixel gebracht und in RGB gelernt. Uploads bleiben im Browser.", "Every image is centre-cropped to 50 × 50 pixels and learned in RGB. Uploads stay in the browser.") + '</p>' +
+          '<p class="ls-il-hint">' + L("Zentriert auf 50 × 50 × 3. Uploads bleiben im Browser.", "Centre-cropped to 50 × 50 × 3. Uploads stay in the browser.") + '</p>' +
           '<div class="ls-il-extrarow">' +
             '<label class="ls-il-check"><input type="checkbox" class="ls-il-extrap"> ' + L("Außerhalb des gelernten Bereichs", "Outside the trained region") + '</label>' +
             '<label class="ls-il-range">' + L("Rand", "Margin") + ' <output class="ls-il-factor">1,5×</output><input type="range" class="ls-il-factorinput" min="1.05" max="3" step="0.05" value="1.5" disabled></label>' +
           '</div>' +
-          '<p class="ls-il-hint ls-il-extranote">' + L("Das Netz kennt nur x, y ∈ [−1, 1]. Außerhalb rechnet es weiter, aber dort gab es keine Daten.", "The network only knows x, y ∈ [−1, 1]. Outside it keeps computing, but there was no data there.") + '</p>' +
+          '<p class="ls-il-hint ls-il-extranote">' + L("Das Netz kennt nur x, y ∈ [−1, 1].", "The network only knows x, y ∈ [−1, 1].") + '</p>' +
+          '<div class="ls-il-extrarow">' +
+            '<label class="ls-il-range">' + L("Lernrate", "Learning rate") + ' <output class="ls-il-lrout">0,0100</output><input type="range" class="ls-il-lrinput" min="0.0005" max="0.03" step="0.0005" value="0.01"></label>' +
+          '</div>' +
+          '<p class="ls-il-hint">' + L("Adam, Standard 0,01.", "Adam, default 0.01.") + '</p>' +
+          '<div class="ls-il-closebar"><button type="button" class="ls-btn ls-btn--tiny ls-il-close">' + L("Schließen", "Close") + '</button></div>' +
         '</div>' +
       '</details>';
     root.appendChild(el);
@@ -199,6 +204,10 @@
     var factorOut = el.querySelector(".ls-il-factor");
     var factorInput = el.querySelector(".ls-il-factorinput");
     var extraNote = el.querySelector(".ls-il-extranote");
+    var lrInput = el.querySelector(".ls-il-lrinput");
+    var lrOut = el.querySelector(".ls-il-lrout");
+    var closeBtn = el.querySelector(".ls-il-close");
+    var optionalEl = el.querySelector(".ls-il-optional");
     var grid = el.querySelector(".ls-il-grid");
 
     var C = api.colors();
@@ -240,7 +249,9 @@
       lastTrainPred: 0,
       lastViewPred: 0,
       startTimer: 0,
-      webgl: true
+      predTimer: 0,
+      webgl: true,
+      lr: LR
     };
     var rng = mulberry32(1);
 
@@ -323,7 +334,7 @@
 
     function makeOptimizer() {
       var old = st.opt;
-      st.opt = tf.train.adam(LR);
+      st.opt = tf.train.adam(st.lr);
       if (old && old.dispose) setTimeout(function () { try { old.dispose(); } catch (e) {} }, 600);
     }
 
@@ -345,10 +356,12 @@
       st.predBusy = false;
       st.viewBusy = false;
       st.predDirty = true;
-      st.lastTrainPred = 0;
-      st.lastViewPred = 0;
+      st.lastTrainPred = performance.now();
+      st.lastViewPred = performance.now();
       st.acc = 0;
       if (st.pendingLoss) { try { st.pendingLoss.dispose(); } catch (e) {} st.pendingLoss = null; }
+      if (st.predTimer) clearTimeout(st.predTimer);
+      st.predTimer = 0;
       if (oldModel) setTimeout(function () { try { oldModel.dispose(); } catch (e) {} }, 4000);
       drawTarget();
       drawPrediction();
@@ -356,8 +369,12 @@
       updateReadout();
       updateUi();
       if (st.active) {
-        requestTrainPrediction(true);
-        if (st.extrap) requestViewPrediction(true);
+        st.predTimer = setTimeout(function () {
+          st.predTimer = 0;
+          if (!st.active || st.dead) return;
+          requestTrainPrediction(true);
+          if (st.extrap) requestViewPrediction(true);
+        }, 260);
       }
     }
 
@@ -649,7 +666,7 @@
       var loss = st.loss;
       if (lossVal) lossVal.textContent = isFinite(loss) ? loss.toFixed(4) : "–";
       if (bestVal) bestVal.textContent = isFinite(st.best) ? st.best.toFixed(4) : "–";
-      if (epochEl) epochEl.textContent = (st.seen / PIXELS).toFixed(2);
+      if (epochEl) epochEl.textContent = String(Math.floor(st.seen / PIXELS));
     }
 
     function updateUi() {
@@ -657,6 +674,9 @@
       if (!st.ready) {
         toggleBtn.disabled = true;
         resetBtn.disabled = true;
+        toggleBtn.classList.add("is-start");
+        toggleBtn.classList.remove("is-stop");
+        toggleBtn.textContent = L("Training starten", "Start training");
         if (liveEl) liveEl.classList.remove("is-live", "is-paused");
         if (liveLabel) liveLabel.textContent = L("Lädt", "Loading");
         if (statusText) statusText.textContent = L("Netz wird vorbereitet …", "Preparing network …");
@@ -666,7 +686,9 @@
       }
       toggleBtn.disabled = false;
       resetBtn.disabled = false;
-      toggleBtn.textContent = st.running ? L("Pause", "Pause") : L("Training starten", "Start training");
+      toggleBtn.textContent = st.running ? L("Training stoppen", "Stop training") : L("Training starten", "Start training");
+      toggleBtn.classList.toggle("is-stop", st.running);
+      toggleBtn.classList.toggle("is-start", !st.running);
       if (liveEl) {
         liveEl.classList.toggle("is-live", st.running);
         liveEl.classList.toggle("is-paused", !st.running && st.userPaused);
@@ -674,8 +696,8 @@
       if (liveLabel) liveLabel.textContent = st.running ? L("Live", "Live") : (st.userPaused ? L("Pause", "Paused") : L("Bereit", "Ready"));
       if (statusText) {
         statusText.textContent = st.running
-          ? L("Das Netz sieht nur (x, y) und lernt die Farbe.", "The network sees only (x, y) and learns the colour.")
-          : (st.userPaused ? L("Pausiert. Die Folie ist aktiv, das Training steht.", "Paused. The slide is active, training is stopped.") : L("Bereit.", "Ready."));
+          ? L("Trainiert · nur (x, y) als Eingabe", "Training · only (x, y) as input")
+          : (st.userPaused ? L("Pausiert.", "Paused.") : L("Bereit.", "Ready."));
       }
       if (statusEl) statusEl.classList.toggle("is-live", st.running);
       el.classList.toggle("is-training", st.running);
@@ -709,8 +731,8 @@
           st.pendingLoss = null;
         }
       }
-      var predInterval = st.webgl ? 280 : 900;
-      var viewInterval = st.webgl ? 520 : 1400;
+      var predInterval = st.webgl ? 650 : 1500;
+      var viewInterval = st.webgl ? 1000 : 2200;
       if ((st.running || st.predDirty) && !st.predBusy && now - st.lastTrainPred > predInterval) {
         st.lastTrainPred = now;
         requestTrainPrediction(false);
@@ -740,17 +762,21 @@
 
     function scheduleStart() {
       if (st.dead || !st.ready) return;
-      st.running = true;
-      updateUi();
-      if (st.raf) return;
+      if (st.raf) {
+        st.running = true;
+        updateUi();
+        return;
+      }
       clearStart();
       st.startTimer = setTimeout(function () {
         st.startTimer = 0;
-        if (st.dead || !st.active || st.userPaused || !st.ready || !st.running || document.hidden) return;
+        if (st.dead || !st.active || st.userPaused || !st.ready || document.hidden) return;
+        st.running = true;
         st.acc = 0;
         st.lastTs = 0;
         ensureLoop();
-      }, 320);
+        updateUi();
+      }, 650);
     }
 
     function setActive(active) {
@@ -803,11 +829,25 @@
       return DE ? s.replace(".", ",") : s;
     }
 
+    function formatLr(v) {
+      var s = Number(v).toFixed(4);
+      return DE ? s.replace(".", ",") : s;
+    }
+
+    function setLearningRate(value) {
+      var v = clamp(Number(value) || LR, 0.0001, 0.05);
+      st.lr = v;
+      if (lrOut) lrOut.textContent = formatLr(v);
+      if (lrInput) lrInput.value = String(v);
+      if (!st.ready) return;
+      makeOptimizer();
+    }
+
     function updateExtraNote() {
       if (!extraNote) return;
       extraNote.textContent = st.extrap
-        ? L("Die Vorhersage zeigt ±" + formatFactor(st.viewFactor) + "×. Nur das gestrichelte Quadrat war im Training.", "The prediction shows ±" + formatFactor(st.viewFactor) + "×. Only the dashed square was in training.")
-        : L("Das Netz kennt nur x, y ∈ [−1, 1]. Außerhalb rechnet es weiter, aber dort gab es keine Daten.", "The network only knows x, y ∈ [−1, 1]. Outside it keeps computing, but there was no data there.");
+        ? L("Vorhersage außerhalb: ±" + formatFactor(st.viewFactor) + "×. Nur das gestrichelte Quadrat war im Training.", "Prediction outside: ±" + formatFactor(st.viewFactor) + "×. Only the dashed square was in training.")
+        : L("Das Netz kennt nur x, y ∈ [−1, 1].", "The network only knows x, y ∈ [−1, 1].");
     }
 
     function setExtrap(on) {
@@ -882,34 +922,58 @@
       });
     }
 
+    function waitForPage(done) {
+      var started = performance.now();
+      function check() {
+        if (st.dead) return;
+        var body = document.getElementById("ls-body");
+        var hasText = !body || body.textContent.trim().length > 0;
+        var loaded = document.readyState === "complete";
+        var fonts = !document.fonts || document.fonts.status === "loaded";
+        if ((loaded && hasText && fonts) || performance.now() - started > 2500) {
+          done();
+          return;
+        }
+        setTimeout(check, 120);
+      }
+      check();
+    }
+
     function boot() {
       if (st.booting || st.ready || st.dead) return;
       st.booting = true;
       updateUi();
-      waitTf(api.asset("assets/tf.min.js")).then(function () {
-        if (st.dead) return null;
-        return window.tf.ready();
-      }).then(function () {
-        if (st.dead) return null;
-        st.webgl = !!(window.tf.getBackend && window.tf.getBackend() === "webgl");
-        return loadImage(api.asset(OPERA)).catch(function () { return fallbackImage(); });
-      }).then(function (img) {
-        if (st.dead || !img) return;
-        if (!preprocess(img)) throw new Error("image");
-        if (fileName) fileName.textContent = L("Opera (Beispiel)", "Opera (example)");
-        buildTrainTensors();
-        st.ready = true;
-        st.booting = false;
-        buildViewInput();
-        resetNetwork(nextSeed());
-        drawTarget();
-        updateUi();
-        if (st.active && !st.userPaused) scheduleStart();
-      }).catch(function () {
-        st.booting = false;
-        st.ready = false;
-        updateUi();
-        if (statusText) statusText.textContent = L("TF.js oder das Bild konnte nicht geladen werden.", "TF.js or the image could not be loaded.");
+      waitForPage(function () {
+        if (st.dead || !st.active) {
+          st.booting = false;
+          updateUi();
+          return;
+        }
+        waitTf(api.asset("assets/tf.min.js")).then(function () {
+          if (st.dead) return null;
+          return window.tf.ready();
+        }).then(function () {
+          if (st.dead) return null;
+          st.webgl = !!(window.tf.getBackend && window.tf.getBackend() === "webgl");
+          return loadImage(api.asset(OPERA)).catch(function () { return fallbackImage(); });
+        }).then(function (img) {
+          if (st.dead || !img) return;
+          if (!preprocess(img)) throw new Error("image");
+          if (fileName) fileName.textContent = L("Opera (Beispiel)", "Opera (example)");
+          buildTrainTensors();
+          st.ready = true;
+          st.booting = false;
+          buildViewInput();
+          resetNetwork(nextSeed());
+          drawTarget();
+          updateUi();
+          if (st.active && !st.userPaused) scheduleStart();
+        }).catch(function () {
+          st.booting = false;
+          st.ready = false;
+          updateUi();
+          if (statusText) statusText.textContent = L("TF.js oder das Bild konnte nicht geladen werden.", "TF.js or the image could not be loaded.");
+        });
       });
     }
 
@@ -932,6 +996,8 @@
     function destroy() {
       st.dead = true;
       clearStart();
+      if (st.predTimer) clearTimeout(st.predTimer);
+      st.predTimer = 0;
       stopLoop();
       document.removeEventListener("visibilitychange", onVisibility);
       if (st.pendingLoss) { try { st.pendingLoss.dispose(); } catch (e) {} st.pendingLoss = null; }
@@ -957,6 +1023,9 @@
     });
     extrapCheck.addEventListener("change", function () { setExtrap(extrapCheck.checked); });
     factorInput.addEventListener("input", function () { setFactor(factorInput.value); });
+    lrInput.addEventListener("input", function () { if (lrOut) lrOut.textContent = formatLr(lrInput.value); });
+    lrInput.addEventListener("change", function () { setLearningRate(lrInput.value); });
+    closeBtn.addEventListener("click", function () { optionalEl.open = false; });
     document.addEventListener("visibilitychange", onVisibility);
     grid.addEventListener("dragover", function (e) {
       e.preventDefault();
@@ -978,6 +1047,8 @@
     updateUi();
     updateExtraNote();
     if (factorOut) factorOut.textContent = formatFactor(st.viewFactor) + "×";
+    if (lrOut) lrOut.textContent = formatLr(st.lr);
+    if (lrInput) lrInput.value = String(st.lr);
 
     return {
       update: function () {},
