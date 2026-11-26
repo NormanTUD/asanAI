@@ -102,7 +102,7 @@
 
     function update() {
       removeStray();
-      var ready = window.__lsPageReady === true;
+      var ready = window.__lsPageReady === true && window.__lsDemoLoading !== true;
       var p = ready && canPrev(), n = ready && canNext();
       prev.style.setProperty("display", p ? "inline-flex" : "none", "important");
       next.style.setProperty("display", n ? "inline-flex" : "none", "important");

@@ -112,16 +112,16 @@ button{color:inherit}
 .ls-demo{position:relative;z-index:1;flex:1;min-height:0;padding:12px 16px 8px}
 .ls-demo-body{position:relative;flex:1;min-height:0;display:flex}
 .ls-demo-body>.ls-demo{flex:1;min-height:0}
-.ls-demo-loader{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.26);backdrop-filter:blur(1.5px);pointer-events:none;overflow:hidden}
+.ls-demo-loader{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.16);pointer-events:none;overflow:hidden}
 .ls-demo-loader[hidden]{display:none}
-.ls-demo-loader::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(circle closest-side at 50% 50%,rgba(99,164,75,.05) 0%,rgba(18,117,172,.025) 38%,rgba(255,255,255,0) 76%);animation:ls-demo-breathe 3.2s ease-in-out infinite}
+.ls-demo-loader::before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(99,164,75,.03),rgba(18,117,172,.02) 55%,rgba(255,255,255,0));pointer-events:none}
 .ls-demo-loader-label{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;font:600 12px/1 "Open Sans",system-ui,sans-serif;letter-spacing:.08em;color:var(--ls-petrol);text-shadow:none}
 .ls-demo-loader-label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ls-green);opacity:.55;animation:ls-spinner-pulse 1.6s ease-in-out infinite}
 @keyframes ls-demo-breathe{0%,100%{opacity:.55}50%{opacity:1}}
 .ls-spinner{width:14px;height:14px;border:0;border-radius:50%;background:var(--ls-green);opacity:.35;animation:ls-spinner-pulse 1.4s ease-in-out infinite}
 @keyframes ls-spinner-pulse{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:.8;transform:scale(1)}}
 @keyframes ls-spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){.ls-spinner{animation:none;opacity:.6}.ls-demo-loader::before{animation:none;opacity:.75}.ls-demo-loader-label::before{animation:none;opacity:.55}}
+@media (prefers-reduced-motion: reduce){.ls-spinner{animation:none;opacity:.6}.ls-demo-loader-label::before{animation:none;opacity:.55}}
 .ls-stage-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:8px 22px 12px;border-top:1px solid var(--ls-line);font-size:var(--ls-fs-micro);color:var(--ls-muted);background:rgba(247,249,248,.86)}
 .ls-credit{text-align:right;white-space:nowrap}
 .ls-nav-hint[hidden]{display:none}
@@ -3461,6 +3461,16 @@ body:not(.ls-loaded) #navfix-next,
 body:not(.ls-loaded) #eoy-embed-nav,
 body:not(.ls-loaded) .eoy-nav,
 body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
+
+/* Keep navigation hidden while a demo is loading. Uses visibility so it also
+   overrides the inline display rules of the floating quick-nav buttons. */
+body.ls-demo-loading #ls-quick-prev,
+body.ls-demo-loading #ls-quick-next,
+body.ls-demo-loading #navfix-prev,
+body.ls-demo-loading #navfix-next,
+body.ls-demo-loading #eoy-embed-nav,
+body.ls-demo-loading .eoy-nav,
+body.ls-demo-loading .ls-bottom-nav{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
 
 /* Head concat / FFN split */
 .ls-hc-scene{display:flex;flex-direction:column;gap:12px;justify-content:center;min-height:360px;padding:10px 4px;overflow-y:auto}

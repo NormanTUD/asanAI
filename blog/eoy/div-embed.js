@@ -370,12 +370,9 @@
       + "display:flex!important;align-items:center!important;justify-content:center!important;"
       + "background:#fff!important;overflow:hidden!important}"
       + rootSelector + " .asanai-eoy-loader-panel:before{content:''!important;position:absolute!important;inset:0!important;"
-      + "background:radial-gradient(circle closest-side at 50% 50%,rgba(99,164,75,.12) 0%,rgba(99,164,75,.06) 38%,rgba(255,255,255,0) 76%)!important;"
-      + "animation:asanai-eoy-breathe 2.4s ease-in-out infinite!important}"
+      + "background:linear-gradient(180deg,rgba(99,164,75,.035),rgba(18,117,172,.02) 55%,rgba(255,255,255,0))!important}"
       + rootSelector + " .asanai-eoy-loader-label{position:relative!important;z-index:1!important;font:600 16px/1 \"Open Sans\",system-ui,sans-serif!important;"
-      + "letter-spacing:.14em!important;color:#e7f6f0!important;text-shadow:0 1px 18px rgba(0,20,30,.65)!important}"
-      + "@keyframes asanai-eoy-breathe{0%,100%{opacity:.55}50%{opacity:1}}"
-      + "@media (prefers-reduced-motion: reduce){" + rootSelector + " .asanai-eoy-loader-panel:before{animation:none!important;opacity:.75!important}}";
+      + "letter-spacing:.14em!important;color:#004b6f!important;text-shadow:none!important}";
     var baseStyle = document.createElement("style");
     baseStyle.setAttribute("data-asanai-eoy-base", "1");
     baseStyle.textContent = baseCss;

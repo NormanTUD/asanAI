@@ -86,7 +86,7 @@
     b.next.addEventListener("click", function () { goNext(); update(); setTimeout(update, 140); });
 
     function update() {
-      var ready = window.__lsPageReady === true;
+      var ready = window.__lsPageReady === true && window.__lsDemoLoading !== true;
       var p = ready && canPrev();
       var n = ready && canNext();
       b.prev.hidden = !p;

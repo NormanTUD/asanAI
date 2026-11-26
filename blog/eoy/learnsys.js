@@ -2024,12 +2024,16 @@
     clearTimeout(demoLoaderTimer);
     demoLoaderShownAt = performance.now();
     els.demoLoader.hidden = false;
+    window.__lsDemoLoading = true;
+    if (document.body) document.body.classList.add("ls-demo-loading");
     if (els.demoLoaderAnim) els.demoLoaderAnim.start();
   }
   function hideDemoLoader() {
     if (!els.demoLoader) return;
     clearTimeout(demoLoaderTimer);
     els.demoLoader.hidden = true;
+    window.__lsDemoLoading = false;
+    if (document.body) document.body.classList.remove("ls-demo-loading");
     if (els.demoLoaderAnim) els.demoLoaderAnim.stop();
   }
   function hideDemoLoaderWhenReady() {
@@ -2038,10 +2042,7 @@
     clearTimeout(demoLoaderTimer);
     var iframe = els.demo ? els.demo.querySelector("iframe") : null;
     function finish() {
-      demoLoaderTimer = setTimeout(function () {
-        if (els.demoLoader) els.demoLoader.hidden = true;
-        if (els.demoLoaderAnim) els.demoLoaderAnim.stop();
-      }, wait);
+      demoLoaderTimer = setTimeout(hideDemoLoader, wait);
     }
     if (iframe) {
       var loaded = false;
@@ -5807,7 +5808,7 @@
       }, 360);
     }
     function updateQuickNav() {
-      var ready = window.__lsPageReady === true;
+      var ready = window.__lsPageReady === true && window.__lsDemoLoading !== true;
       var p = ready && hasPrevPage();
       var n = ready && hasNextPage();
       setQuickNav(qPrev, "prev", p);

@@ -43,3 +43,12 @@ body:not(.ls-loaded) #navfix-next,
 body:not(.ls-loaded) #eoy-embed-nav,
 body:not(.ls-loaded) .eoy-nav,
 body:not(.ls-loaded) .ls-bottom-nav{display:none!important}
+
+/* Keep navigation hidden while a demo is loading. */
+body.ls-demo-loading #ls-quick-prev,
+body.ls-demo-loading #ls-quick-next,
+body.ls-demo-loading #navfix-prev,
+body.ls-demo-loading #navfix-next,
+body.ls-demo-loading #eoy-embed-nav,
+body.ls-demo-loading .eoy-nav,
+body.ls-demo-loading .ls-bottom-nav{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
