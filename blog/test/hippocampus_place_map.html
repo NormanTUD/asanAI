@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Karte im Kopf · O'Keefe &amp; Dostrovsky 1971</title>
+<meta name="description" content="Interaktive Lesehilfe zu O'Keefe und Dostrovsky 1971: The hippocampus as a spatial map. Acht von 76 Einheiten, Ort, Richtung, Reiz und die Idee der kognitiven Karte.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+    --bg:#070c10; --bg2:#0a1418;
+    --panel:rgba(14,32,36,.66); --panel2:rgba(8,20,24,.78);
+    --ink:#eef7f4; --muted:#93b0ae;
+    --line:rgba(160,255,235,.10); --line2:rgba(160,255,235,.18);
+    --teal:#5eead4; --mint:#6ef0b8; --amber:#ffd166; --coral:#ff7a6b; --violet:#b39ddb; --sky:#7cc9ff;
+    --good:#6ef0b8; --bad:#ff7a6b;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 26px 64px -30px rgba(0,0,0,.95);
+    --ring:rgba(94,234,212,.2); --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f6f4ec; --bg2:#ece8dc;
+    --panel:rgba(255,253,247,.78); --panel2:rgba(255,253,247,.9);
+    --ink:#14201e; --muted:#5c6f6c;
+    --line:rgba(20,50,45,.12); --line2:rgba(20,50,45,.21);
+    --teal:#0f766e; --mint:#0f766e; --amber:#a16207; --coral:#c2410c; --violet:#6d28d9; --sky:#0369a1;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,50,40,.06),0 26px 64px -34px rgba(40,50,40,.45);
+    --ring:rgba(15,118,110,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:radial-gradient(1200px 800px at 80% -10%,rgba(94,234,212,.10),transparent 60%),radial-gradient(900px 700px at -10% 20%,rgba(255,209,102,.08),transparent 60%),radial-gradient(1000px 900px at 50% 120%,rgba(179,157,219,.09),transparent 60%),var(--bg);
+    line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:48px 48px;opacity:.35;
+    -webkit-mask-image:radial-gradient(circle at 50% 25%,#000,transparent 75%);mask-image:radial-gradient(circle at 50% 25%,#000,transparent 75%)}
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.26;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(94,234,212,.55),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(255,209,102,.42),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(179,157,219,.45),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--teal)} strong{font-weight:650}
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--teal),var(--amber),var(--coral))}
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--teal);transform:translateY(-1px)}
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--teal),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.2vw,5rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--teal),var(--amber) 55%,var(--coral));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:42ch;margin:0 0 28px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--teal),var(--mint));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f6f4ec}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+  .hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .hero-arena{width:min(460px,98%);height:auto;overflow:visible}
+  .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .hero-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--amber);font-weight:600}
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--teal),var(--amber));opacity:.75}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.7rem;color:var(--teal);letter-spacing:.14em;margin-bottom:10px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1.08rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.86rem;line-height:1.5}
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--teal);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+  .segmented{display:inline-flex;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--teal);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f6f4ec}
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 16px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--teal)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--teal);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--teal);outline-offset:6px}
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch-track{width:50px;height:28px;border-radius:999px;background:var(--line2);position:relative;transition:background .2s;flex:0 0 auto}
+  .switch-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
+  .switch input:checked + .switch-track{background:var(--teal)}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(22px);background:var(--bg)}
+  .switch input:focus-visible + .switch-track{outline:2px solid var(--teal);outline-offset:3px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--teal);border:1px solid var(--teal);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f6f4ec}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--teal)}
+  .demo-actions{display:flex;flex-wrap:wrap;gap:10px}
+  .readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+  .readout strong{font-family:var(--serif);font-size:1.25rem;color:var(--teal);font-weight:600}
+  .readout .big{font-family:var(--serif);font-size:1.7rem;color:var(--amber);font-weight:600}
+  .chip-status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;padding:3px 9px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+  .chip-status.ok{color:var(--good);border-color:var(--good)}
+  .chip-status.no{color:var(--muted);opacity:.7}
+  .note{border-left:2px solid var(--amber);padding:14px 18px;background:rgba(255,209,102,.05);border-radius:0 12px 12px 0;color:var(--muted);font-size:.9rem;margin-top:22px}
+  .note b{color:var(--ink)}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:8px 0 28px}
+  .stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal),var(--amber))}
+  .stat-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .stat-values{font-family:var(--serif);font-size:1.5rem;font-weight:600;letter-spacing:-.02em}
+  .stat-values .to{color:var(--teal)}
+  .stat-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+  .take-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.88rem}
+  .take .glyph{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--teal);text-transform:uppercase;margin-bottom:10px}
+  .take ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.86rem}
+  .take li{margin:5px 0}
+  .cell-panel{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:start}
+  .cell-side{display:flex;flex-direction:column;gap:4px}
+  .cond-chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+  .raster{width:100%;height:auto;display:block;margin-top:8px}
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--teal);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  svg{overflow:visible}
+  .arena-svg,.probe-svg,.map-svg,.tolman-svg{width:100%;height:auto;display:block}
+  .arena-floor{fill:rgba(10,26,30,.6);stroke:var(--line2);stroke-width:1.2}
+  .arena-grid{stroke:var(--line2);stroke-width:.7;opacity:.28}
+  .arena-curtain{stroke:var(--amber);stroke-width:5;stroke-linecap:round;fill:none;opacity:.9}
+  .arena-open{stroke:var(--amber);stroke-width:1.2;stroke-dasharray:4 6;opacity:.5}
+  .arena-label{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em}
+  .arena-title{fill:var(--ink);font-family:var(--serif);font-size:15px;font-style:italic}
+  .path-faint{fill:none;stroke:var(--line2);stroke-width:1.4;stroke-dasharray:4 6;opacity:.7}
+  .path-live{fill:none;stroke:var(--teal);stroke-width:2;opacity:.55}
+  .field{opacity:.75;transition:opacity .2s}
+  .field.active{opacity:1}
+  .field-ring{fill:none;stroke-width:1.2;stroke-dasharray:3 4;opacity:.6}
+  .field-label{font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+  .rat-body{fill:var(--ink);stroke:var(--bg);stroke-width:2}
+  .rat-heading{stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
+  .rat-head{fill:var(--ink)}
+  .pref-arrow{stroke:var(--amber);stroke-width:2.4;fill:none}
+  .pref-head{fill:var(--amber)}
+  .spike{stroke:var(--amber);stroke-width:1.6;stroke-linecap:round}
+  .spike-bg{stroke:var(--line2);stroke-width:1;opacity:.4}
+  .raster-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .probe-head{fill:var(--bg);stroke:var(--line2);stroke-width:1.4}
+  .probe-drive{fill:var(--panel);stroke:var(--teal);stroke-width:1.6}
+  .probe-line{stroke:var(--coral);stroke-width:2.2;stroke-linecap:round}
+  .probe-tip{fill:var(--coral);filter:url(#glow-main)}
+  .probe-cortex{fill:rgba(124,201,255,.10);stroke:var(--line2);stroke-width:1}
+  .probe-hipp{fill:none;stroke:var(--amber);stroke-width:14;stroke-linecap:round;opacity:.22}
+  .probe-hipp-line{fill:none;stroke:var(--amber);stroke-width:2;opacity:.7}
+  .probe-label{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.05em}
+  .probe-label.active{fill:var(--ink)}
+  .tolman-map{fill:none;stroke:var(--teal);stroke-width:2.4;stroke-linecap:round}
+  .tolman-reflex{fill:none;stroke:var(--coral);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:5 5}
+  .tolman-goal{fill:var(--amber);filter:url(#glow-main)}
+  .tolman-start{fill:var(--ink)}
+  .tolman-label{fill:var(--muted);font-family:var(--mono);font-size:11px}
+  .tolman-wall{stroke:var(--line2);stroke-width:2;fill:none}
+  .unit-grid{display:grid;grid-template-columns:repeat(19,1fr);gap:7px;margin:6px 0 16px}
+  .unit{aspect-ratio:1;border-radius:50%;background:var(--muted);opacity:.5;transition:opacity .2s,transform .2s,box-shadow .2s;cursor:default}
+  .unit.spatial{background:var(--teal);opacity:1;box-shadow:0 0 10px var(--ring);transform:scale(1.18)}
+  .unit.arousal{background:var(--amber)}
+  .unit.movement{background:var(--violet)}
+  .unit.expectation{background:var(--coral)}
+  .unit.unclassified{background:var(--muted);opacity:.35}
+  .unit.silent{background:transparent;border:1px solid var(--muted);opacity:.7}
+  .unit.dim{opacity:.12;transform:none;box-shadow:none}
+  .unit.hot{opacity:1;transform:scale(1.25);box-shadow:0 0 12px var(--ring)}
+  .unit-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  .unit-btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.7rem;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:6px 11px;cursor:pointer;transition:color .18s,border-color .18s}
+  .unit-btn:hover{color:var(--ink);border-color:var(--line2)}
+  .unit-btn.active{color:var(--ink);border-color:var(--teal)}
+  .unit-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .unit-desc{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:.86rem;color:var(--muted);min-height:3.2em}
+  .unit-desc b{color:var(--ink)}
+  .activity{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 16px;margin-top:16px}
+  .abar{display:grid;grid-template-columns:48px 1fr 38px;align-items:center;gap:8px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+  .abar-track{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+  .abar-fill{display:block;height:100%;width:0;border-radius:99px;background:var(--teal);transition:width .2s}
+  .abar.on .abar-fill{background:var(--teal);box-shadow:0 0 10px var(--ring)}
+  .abar-val{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+  .map-code{font-family:var(--mono);font-size:.9rem;letter-spacing:.18em;color:var(--teal);margin-top:12px}
+  .timeline{display:flex;align-items:flex-start;gap:0;margin-top:10px;position:relative;overflow-x:auto;padding-bottom:8px}
+  .tl-stop{flex:1;min-width:92px;text-align:center;position:relative;background:none;border:none;color:inherit;cursor:pointer;padding:0 4px}
+  .tl-line{position:absolute;left:0;right:0;top:17px;height:1px;background:var(--line2);z-index:0}
+  .tl-dot{width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--muted);margin:11px auto 8px;position:relative;z-index:1;transition:background .2s,border-color .2s,transform .2s}
+  .tl-stop.active .tl-dot{background:var(--amber);border-color:var(--amber);transform:scale(1.25);box-shadow:0 0 14px rgba(255,209,102,.35)}
+  .tl-year{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.06em}
+  .tl-stop.active .tl-year{color:var(--ink)}
+  .tl-name{font-size:.72rem;color:var(--muted);margin-top:2px;line-height:1.3}
+  .tl-stop.active .tl-name{color:var(--ink)}
+  .tl-desc{margin-top:16px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:.88rem;color:var(--muted);min-height:4.2em}
+  .tl-desc b{color:var(--ink)}
+  @media (max-width:980px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{order:-1}
+    .hero-arena{width:min(340px,82%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .take-grid{grid-template-columns:1fr}
+    .activity{grid-template-columns:repeat(2,1fr)}
+    .unit-grid{grid-template-columns:repeat(13,1fr)}
+    .cell-panel{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .tldr-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .gloss-grid{grid-template-columns:1fr}
+    .unit-grid{grid-template-columns:repeat(10,1fr);gap:6px}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <radialGradient id="field-teal" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#5eead4" stop-opacity=".55"/>
+      <stop offset="70%" stop-color="#5eead4" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="field-amber" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffd166" stop-opacity=".55"/>
+      <stop offset="70%" stop-color="#ffd166" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#ffd166" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="field-coral" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff7a6b" stop-opacity=".55"/>
+      <stop offset="70%" stop-color="#ff7a6b" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#ff7a6b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="field-violet" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#b39ddb" stop-opacity=".55"/>
+      <stop offset="70%" stop-color="#b39ddb" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#b39ddb" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow-main" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Brain Research 34 · 1971 · Place Cells</div>
+      <h1>Die <span class="grad">Karte</span><br>im Kopf</h1>
+      <p class="lede">1971 fanden O'Keefe und Dostrovsky Zellen im Hippocampus, die nur an einem bestimmten Ort und in einer bestimmten Richtung feuerten. Aus <b>8 von 76 Einheiten</b> wurde die Idee einer inneren Karte.</p>
+      <div class="byline">
+        <span>J. O'Keefe &amp; J. Dostrovsky</span><span class="dot-sep"></span>
+        <span>Brain Research 34 (1971) 171-175</span>
+      </div>
+      <a class="cta" href="#frage">Die Karte öffnen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg class="hero-arena" id="hero-arena" viewBox="0 0 520 400"></svg>
+      <div class="hero-badge">Erste Aufnahme <strong>8 / 76</strong></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>8 von 76</h3><p>Nur acht Einheiten zeigten ein räumliches Muster. Die übrigen waren Bewegung, Arousal, Erwartung oder unklar.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>Ort plus Richtung</h3><p>Die Zellen feuerten nicht bei jedem Besuch. Sie brauchten eine bestimmte Position und eine bestimmte Orientierung.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Ort plus Reiz</h3><p>Oft kam ein taktiler oder visueller Reiz hinzu. Der Ort allein reichte nicht.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>Die Idee</h3><p>Der Hippocampus liefert dem restlichen Gehirn eine räumliche Referenzkarte.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal" id="frage">
+      <div class="section-head"><span class="sec-num">01 · Die Frage</span></div>
+      <h2>Warum finden Ratten den Weg?</h2>
+      <div class="prose">
+        <p>Ratten mit Hippocampus-Schäden sind in neuen Umgebungen hyperaktiv, bleiben an gelernten Antworten hängen, ignorieren drastische Veränderungen ihrer Umgebung und sind schlecht in räumlichen Aufgaben wie Labyrinthen. Das war der Ausgangspunkt des Papers.</p>
+        <p>Die Autoren prüfen eine alte Idee: Vielleicht fehlt diesen Tieren ein neurales System, das ihnen eine <span class="accent">kognitive Karte</span> ihrer Umgebung gibt. Edward Tolman hatte 1948 vorgeschlagen, dass Tiere beim Lernen eine Art Feldkarte im Gehirn aufbauen, die Routen, Pfade und Beziehungen zwischen Orten festhält. O'Keefe und Dostrovsky wollten sehen, ob es dafür einzelne Zellen gibt.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Karte oder Reflex?</div>
+            <div class="demo-sub">Tolmans Frage in einem Bild</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Modell">
+            <button class="seg active" type="button" data-tolman="map" aria-pressed="true">Kognitive Karte</button>
+            <button class="seg" type="button" data-tolman="reflex" aria-pressed="false">Stimulus-Response</button>
+          </div>
+        </div>
+        <svg class="tolman-svg" id="tolman-svg" viewBox="0 0 560 280" role="img" aria-label="Arena mit Start, Ziel und zwei möglichen Wegen"></svg>
+        <div class="readout"><span id="tolman-readout">Die Karte erlaubt den direkten Weg um das Hindernis.</span><strong id="tolman-status">Karte</strong></div>
+        <div class="caption" id="tolman-caption">Eine kognitive Karte erlaubt einen neuen Weg von einem neuen Start. Eine feste Stimulus-Response-Kette kennt nur die gelernte Route.</div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal" id="experiment">
+      <div class="section-head"><span class="sec-num">02 · Das Experiment</span></div>
+      <h2>Ein Mikroantrieb, 23 Ratten, ein Tisch</h2>
+      <div class="prose">
+        <p>Die Autoren bauten einen leichten <span class="accent">Mikroantrieb</span> mit bis zu acht glas-isolierten, platinierten Wolfram-Mikroelektroden, der fest auf dem Schädel der Ratte saß. Ein Differenzverstärker direkt am Antrieb unterdrückte Muskel- und Bewegungsartefakte. Die Elektroden wurden durch Kortex und dorsalen Hippocampus geführt.</p>
+        <p>Die Aufnahmefläche war eine <span class="accent">24 cm × 36 cm</span> große erhöhte Plattform, an drei Seiten von einem weißen Plastikvorhang umgeben. Die vierte Seite war offen und gab den Blick ins Labor frei. Die Tiere bewegten sich frei; die Forscher beobachteten Verhalten und zeichneten gleichzeitig die Einheiten auf.</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Ratten</div><div class="stat-values"><span class="to">23</span></div><div class="stat-note">frei beweglich, chronisch implantiert</div></div>
+        <div class="stat"><div class="stat-label">Einheiten</div><div class="stat-values"><span class="to">76</span></div><div class="stat-note">aus 36 Elektroden-Durchgängen</div></div>
+        <div class="stat"><div class="stat-label">Räumliche Einheiten</div><div class="stat-values"><span class="to">8</span></div><div class="stat-note">der Fokus des Papers</div></div>
+        <div class="stat"><div class="stat-label">Plattform</div><div class="stat-values"><span class="to">24 × 36</span></div><div class="stat-note">Zentimeter, drei Seiten Vorhang</div></div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Der Weg der Elektrode</div>
+            <div class="demo-sub">Schematisch, nicht maßstabsgetreu</div>
+          </div>
+        </div>
+        <label class="slider-row">
+          <span>Tiefe</span>
+          <input id="probe-depth" type="range" min="0" max="100" step="1" value="55" aria-label="Elektrodentiefe">
+          <output id="probe-depth-out">55%</output>
+        </label>
+        <svg class="probe-svg" id="probe-svg" viewBox="0 0 520 330" role="img" aria-label="Schematischer Querschnitt durch den Rattenkopf mit Elektrode im Hippocampus"></svg>
+        <div class="readout"><span id="probe-readout">Aufnahme in CA1 · dorsaler Hippocampus</span><strong id="probe-region">CA1</strong></div>
+        <div class="caption" id="probe-caption">Die Elektrode wird durch den Kortex in den dorsalen Hippocampus geführt. Die Aufnahmen stammen aus CA1, CA4 und dem Gyrus dentatus.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Was noch getestet wurde</summary>
+        <div class="deep-body">
+          <p>Die Tiere wurden während spontanen Verhaltens beobachtet: Laufen, Fressen, Trinken, Putzen, ruhiges Sitzen und Schlafen. Dazu kamen gerichtete Verhaltensweisen wie Orientieren, Schnüffeln an Watte oder Gerüchen, Beißen an einem Plastikschlauch und in einigen Fällen Hebeldrücken für Futter.</p>
+          <p>Zusätzlich wurden auditive Reize (Klicks, Pfiffe, Kratzgeräusche), visuelle Reize (bewegtes Licht, Hand, schwarz-weiß gestreifte Tafel), olfaktorische Reize (Gerüche, Rattenkot) und taktile Reize (Berührung, Druck auf die Körperoberfläche) getestet. Jede Einheit wurde mindestens 15 Minuten beobachtet, die meisten länger als 30 Minuten.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal" id="fund">
+      <div class="section-head"><span class="sec-num">03 · Der Fund</span></div>
+      <h2>Acht Zellen mit einem Ort</h2>
+      <div class="prose">
+        <p>Von den 76 Einheiten reagierten <span class="accent">8</span> ausschließlich oder maximal, wenn die Ratte an einem bestimmten Teil der Plattform stand und in eine bestimmte Richtung zeigte. Fünf davon waren sonst wie die „stillen“ Einheiten: Sie feuerten nicht, außer bei mittlerer Erregung, am richtigen Ort und, bei vier von fünf, zusätzlich bei einem passenden sensorischen Reiz. Die anderen drei hatten eine spontane Feuerrate, die an einer bestimmten Stelle maximal war.</p>
+        <p>Die klarste Einheit (Fig. 1) lag in CA1. Sie hatte keine Spontanaktivität und feuerte nur, wenn die Ratte in Richtung A oder B zeigte und gleichzeitig mit einer Hand am Rücken leicht festgehalten wurde. <span class="accent">Ort, Richtung und taktiler Reiz</span> waren gemeinsam nötig. Bei diesem Tier verschwand die Antwort, als das Licht ausgeschaltet wurde.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Einheit aus Fig. 1, interaktiv</div>
+            <div class="demo-sub">Schematische Nachbildung. Die echten Zellen waren komplexer.</div>
+          </div>
+        </div>
+        <div class="cell-panel">
+          <div>
+            <svg class="arena-svg" id="cell-arena" viewBox="0 0 520 400" role="img" aria-label="Aufnahmefläche mit Ratte, Wegen und zwei Ortsfeldern"></svg>
+          </div>
+          <div class="cell-side">
+            <div class="segmented" role="group" aria-label="Bedingungen">
+              <button class="seg" type="button" data-cellmode="place" aria-pressed="false">Ort</button>
+              <button class="seg" type="button" data-cellmode="orient" aria-pressed="false">Ort + Richtung</button>
+              <button class="seg active" type="button" data-cellmode="full" aria-pressed="true">Ort + Richtung + Reiz</button>
+            </div>
+            <label class="slider-row"><span>Position</span><input id="cell-pos" type="range" min="0" max="100" step="1" value="0" aria-label="Position auf dem Weg"><output id="cell-pos-out">0%</output></label>
+            <label class="slider-row"><span>Richtung</span><input id="cell-heading" type="range" min="0" max="360" step="1" value="0" aria-label="Blickrichtung"><output id="cell-heading-out">0°</output></label>
+            <label class="switch">
+              <input type="checkbox" id="cell-stim" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span class="switch-label">Taktiler Reiz</span>
+            </label>
+            <div class="cond-chips">
+              <span class="chip-status" id="cond-place">Ort</span>
+              <span class="chip-status" id="cond-dir">Richtung</span>
+              <span class="chip-status" id="cond-stim">Reiz</span>
+            </div>
+            <div class="readout" style="margin-top:4px">
+              <span id="cell-status">still</span>
+              <strong id="cell-rate">0 Hz</strong>
+            </div>
+            <svg class="raster" id="cell-raster" viewBox="0 0 320 120" role="img" aria-label="Schematisches Spike-Raster"></svg>
+          </div>
+        </div>
+        <div class="caption" id="cell-caption">Der Ort allein reicht nicht. Die Zelle braucht die richtige Richtung, und bei diesem Tier zusätzlich den taktilen Reiz.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Was Fig. 1 genau zeigt</summary>
+        <div class="deep-body">
+          <p>Die Ratte wurde gegen den Uhrzeigersinn um die Plattform geführt, begann und endete bei A. An jeder markierten Position wurde sie einige Sekunden festgehalten, dann in der beschriebenen Weise gehalten und wieder losgelassen. Die Einheit feuerte nur bei A und B und beim Übergang von B nach D. Die kleinere Antwort bei H zeigt, dass neben der Richtung auch die Position zählt. Zwischen A und B, solange die Ratte ruhig, aber nicht festgehalten war, blieb die Einheit still: Der taktile Reiz war nötig.</p>
+          <p>Für diese Einheit waren die räumlichen Hinweise visuell: Licht aus, Antwort weg. Es war aber kein einfaches visuelles Rezeptivfeld im Sinne von Hubel und Wiesel. Kein einzelner visueller Reiz war groß genug, um bei der Drehung von A nach B auf demselben Teil der Retina zu bleiben. Die Autoren vermuten mehrere gleichwertige Hinweise, von denen keiner allein ausreicht.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal" id="ausbeute">
+      <div class="section-head"><span class="sec-num">04 · Die Ausbeute</span></div>
+      <h2>76 Einheiten, 8 mit einem Ort</h2>
+      <div class="prose">
+        <p>Das Paper zerlegt die 76 Einheiten in Gruppen. Die räumlichen Einheiten sind nur ein kleiner Teil. Das ist wichtig: Der Hippocampus war damals kein reiner „Ortscomputer“, sondern ein Gemisch aus Bewegungs-, Erregungs-, Erwartungs- und stillen Zellen.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die 76 Einheiten</div>
+            <div class="demo-sub">Jeder Punkt ist eine Einheit. Klicke die Gruppen an.</div>
+          </div>
+          <div class="readout" style="border:none;margin:0;padding:0"><span>Räumlich</span><strong class="big">8 / 76</strong></div>
+        </div>
+        <div class="unit-grid" id="unit-grid" role="img" aria-label="Raster von 76 Einheiten, farbig nach Klasse"></div>
+        <div class="unit-legend" id="unit-legend">
+          <button class="unit-btn active" type="button" data-unit="spatial"><i class="unit-dot" style="background:var(--teal)"></i>Räumlich · 8</button>
+          <button class="unit-btn" type="button" data-unit="arousal"><i class="unit-dot" style="background:var(--amber)"></i>Arousal · 14</button>
+          <button class="unit-btn" type="button" data-unit="movement"><i class="unit-dot" style="background:var(--violet)"></i>Bewegung · 21</button>
+          <button class="unit-btn" type="button" data-unit="expectation"><i class="unit-dot" style="background:var(--coral)"></i>Erwartung · 2</button>
+          <button class="unit-btn" type="button" data-unit="unclassified"><i class="unit-dot" style="background:var(--muted)"></i>Unklar · 31</button>
+        </div>
+        <div class="unit-desc" id="unit-desc"><b>Räumlich (8):</b> Sie feuerten ausschließlich oder maximal an einem bestimmten Ort und in einer bestimmten Richtung. Fünf davon brauchten zusätzlich einen passenden sensorischen Reiz.</div>
+        <div class="caption">15 der 31 unklaren Einheiten blieben trotz intensiver Versuche fast völlig still. Sie sind im Raster als offene Ringe gezeichnet.</div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal" id="karte">
+      <div class="section-head"><span class="sec-num">05 · Die Karte</span></div>
+      <h2>Viele Zellen, ein Ort</h2>
+      <div class="prose">
+        <p>Eine einzelne Zelle sagt wenig. Die Idee der Karte entsteht aus der <span class="accent">Kombination</span>: Jede Zelle hat ihr eigenes Feld. Ist die Ratte an einem Ort, feuert eine bestimmte Gruppe von Zellen. Diese Kombination ist der Code für den Ort.</p>
+        <p>So wird aus 8 Einheiten mit einem Ort langsam ein Bild: Der Hippocampus könnte eine Landkarte enthalten, in der verschiedene Zellen verschiedene Orte markieren. Das Paper nennt das eine <span class="accent">spatial reference map</span>.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Bevölkerungskarte</div>
+            <div class="demo-sub">Bewege die Ratte. Die aktiven Zellen bilden den Code.</div>
+          </div>
+          <div class="readout" style="border:none;margin:0;padding:0"><span>Aktiv</span><strong id="map-count">0 / 8</strong></div>
+        </div>
+        <svg class="map-svg" id="map-svg" viewBox="0 0 520 380" role="img" aria-label="Aufnahmefläche mit acht Ortsfeldern und einer beweglichen Ratte"></svg>
+        <label class="slider-row"><span>Position</span><input id="map-pos" type="range" min="0" max="100" step="1" value="32" aria-label="Position der Ratte"><output id="map-pos-out">32%</output></label>
+        <div class="activity" id="map-bars"></div>
+        <div class="map-code" id="map-code">Code: 0 0 0 0 0 0 0 0</div>
+        <div class="caption" id="map-caption">Jede Zelle hat ein Feld. Die aktiven Zellen zusammen sind der Ortscode.</div>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section class="section reveal" id="grenzen">
+      <div class="section-head"><span class="sec-num">06 · Was die Arbeit zeigt</span></div>
+      <h2>Pionierarbeit mit offenen Fragen</h2>
+      <div class="take-grid">
+        <div class="take">
+          <div class="glyph">Was sie zeigt</div>
+          <h3>Der erste zelluläre Beleg</h3>
+          <ul>
+            <li>8 von 76 Einheiten hatten ein räumliches Muster.</li>
+            <li>Die Antwort hing von Ort, Richtung und oft einem Reiz ab.</li>
+            <li>Das Muster war nicht durch ein einfaches visuelles Rezeptivfeld erklärbar.</li>
+            <li>Die Autoren schlugen eine räumliche Referenzkarte vor.</li>
+          </ul>
+        </div>
+        <div class="take">
+          <div class="glyph">Was sie nicht zeigt</div>
+          <h3>Eine Hypothese, kein fertiges Bild</h3>
+          <ul>
+            <li>Die Stichprobe ist klein: 8 Einheiten, eine klare Figur.</li>
+            <li>Die Zellen waren orts- und richtungsabhängig, nicht reine Ortsdetektoren.</li>
+            <li>Die genauen Hinweise ließen sich nicht isolieren.</li>
+            <li>Der Begriff „Place Cell“ und die breite Charakterisierung kamen später.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note"><b>Zur Einordnung:</b> Das Paper ist eine kurze vorläufige Mitteilung („Preliminary evidence“). Es behauptet nicht, die Karte bewiesen zu haben. Es sagt, die Befunde <i>legen nahe</i>, dass der Hippocampus eine räumliche Referenzkarte liefert. Genau diese vorsichtige Formulierung ist der historische Kern.</div>
+
+      <details class="deep">
+        <summary>Die Zellen waren keine reinen Ortsdetektoren</summary>
+        <div class="deep-body">
+          <p>In der modernen Sprache denkt man bei „Place Cell“ oft an eine Zelle, die nur von der Position abhängt. Die Einheiten von 1971 waren reicher: Sie hatten eine bevorzugte räumliche Orientierung, oft zusätzlich einen sensorischen Trigger, und sie brauchten einen mittleren Erregungszustand. Das Paper spricht deshalb von „preferred spatial orientations“, nicht von einem reinen Ortsfeld.</p>
+          <p>O'Keefe hat die Eigenschaften der Ortszellen 1976 in „Place units in the hippocampus of the freely moving rat“ ausführlicher beschrieben. Die 1971er Arbeit ist der erste Hinweis, nicht die vollständige Karte.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 07 -->
+    <section class="section reveal" id="warum">
+      <div class="section-head"><span class="sec-num">07 · Warum es zählt</span></div>
+      <h2>Vom Vorhang zur Nobelpreis-Karte</h2>
+      <div class="prose">
+        <p>Aus der kleinen Beobachtung wurde ein Forschungsfeld. 2005 fanden May-Britt und Edvard Moser im entorhinalen Kortex die <span class="accent">Grid Cells</span>, ein hexagonales Koordinatensystem. Zusammen mit den Ortszellen bilden sie ein inneres GPS. 2014 erhielten O'Keefe und die Mosers dafür den Nobelpreis für Physiologie oder Medizin.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Linie</div>
+            <div class="demo-sub">Klicke einen Punkt an</div>
+          </div>
+        </div>
+        <div class="timeline" id="timeline">
+          <div class="tl-line"></div>
+          <button class="tl-stop active" type="button" data-tl="0" aria-pressed="true"><span class="tl-dot"></span><span class="tl-year">1948</span><span class="tl-name">Tolman</span></button>
+          <button class="tl-stop" type="button" data-tl="1" aria-pressed="false"><span class="tl-dot"></span><span class="tl-year">1971</span><span class="tl-name">O'Keefe &amp; Dostrovsky</span></button>
+          <button class="tl-stop" type="button" data-tl="2" aria-pressed="false"><span class="tl-dot"></span><span class="tl-year">1976</span><span class="tl-name">Place Units</span></button>
+          <button class="tl-stop" type="button" data-tl="3" aria-pressed="false"><span class="tl-dot"></span><span class="tl-year">2005</span><span class="tl-name">Grid Cells</span></button>
+          <button class="tl-stop" type="button" data-tl="4" aria-pressed="false"><span class="tl-dot"></span><span class="tl-year">2014</span><span class="tl-name">Nobelpreis</span></button>
+        </div>
+        <div class="tl-desc" id="tl-desc"><b>1948 · Tolman:</b> „Cognitive maps in rats and men“. Tolman schlägt vor, dass Tiere beim Lernen eine kartenartige Repräsentation ihrer Umgebung aufbauen, die Routen und Beziehungen zwischen Orten festhält.</div>
+        <div class="caption">Die 1971er Arbeit ist der Punkt, an dem die kognitive Karte eine zelluläre Spur bekommt.</div>
+      </div>
+
+      <div class="note"><b>Die große Linie:</b> Eine Ratte, ein Vorhang, acht Zellen. Daraus wurde die Frage, wie das Gehirn überhaupt Raum, Erinnerung und Navigation berechnet.</div>
+    </section>
+
+    <!-- 08 -->
+    <section class="section reveal" id="glossar">
+      <div class="section-head"><span class="sec-num">08 · Glossar</span></div>
+      <h2>Die Begriffe</h2>
+      <details class="deep" open>
+        <summary>Begriffe aus dem Paper</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>Hippocampus</dt><dd>Eine Struktur im medialen Temporallappen. 1971 wurde dort in der CA1-Region die erste Ortszelle beschrieben.</dd></div>
+            <div><dt>CA1</dt><dd>Eine Schicht des Hippocampus. Die klarste Einheit aus Fig. 1 lag in CA1.</dd></div>
+            <div><dt>Gyrus dentatus</dt><dd>Teil des Hippocampus. Auch dort wurden Einheiten aufgenommen.</dd></div>
+            <div><dt>Einheit (unit)</dt><dd>Die Aktivität einer einzelnen Nervenzelle, abgeleitet mit einer Mikroelektrode.</dd></div>
+            <div><dt>Mikroantrieb</dt><dd>Ein kleiner mechanischer Antrieb auf dem Schädel, der die Elektroden unabhängig vorschiebt.</dd></div>
+            <div><dt>Ortsfeld</dt><dd>Der Bereich der Umgebung, in dem eine Zelle bevorzugt feuert. 1971 war das Feld zusätzlich an eine Richtung und oft an einen Reiz gebunden.</dd></div>
+            <div><dt>Räumliche Orientierung</dt><dd>Die bevorzugte Blick- oder Körperrichtung einer Einheit. Das Paper spricht von „preferred spatial orientations“.</dd></div>
+            <div><dt>Kognitive Karte</dt><dd>Tolmans Idee einer inneren Karte, die Orte und Wege repräsentiert, nicht nur einzelne Reiz-Reaktions-Ketten.</dd></div>
+            <div><dt>Grid Cell</dt><dd>2005 entdeckte Zelle im entorhinalen Kortex mit einem hexagonalen Feuerfeld. Sie liefert ein Koordinatensystem.</dd></div>
+            <div><dt>Theta</dt><dd>Eine 7-10-Hz-Schwingung im Hippocampus, die mit Bewegung und Erregung zusammenhängt.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Primärquelle</h4>
+      <p>J. O'Keefe, J. Dostrovsky.<br>
+      <a href="https://doi.org/10.1016/0006-8993(71)90358-1" target="_blank" rel="noopener">The hippocampus as a spatial map. Preliminary evidence from unit activity in the freely-moving rat</a>.<br>
+      Brain Research 34 (1971) 171-175. DOI: 10.1016/0006-8993(71)90358-1. PMID: 5124915.</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Lesehilfe, keine eigene Forschung. Die Schemata sind Nachbildungen, keine Originalfiguren. Der Originaltext ist kostenpflichtig; die Darstellung stützt sich auf den Primärtext und auf O'Keefes Nobelmaterial (2014). Die Demos vereinfachen die echten Experimente.</p>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function norm360(a) { return ((a % 360) + 360) % 360; }
+  function angDiff(a, b) {
+    var d = Math.abs(norm360(a) - norm360(b));
+    return Math.min(d, 360 - d);
+  }
+
+  var ARENA = { x: 150, y: 35, w: 220, h: 330, cx: 260, cy: 200, rx: 72, ry: 112 };
+  function pathPoint(t) {
+    var th = -t * Math.PI * 2;
+    return { x: ARENA.cx + ARENA.rx * Math.cos(th), y: ARENA.cy + ARENA.ry * Math.sin(th) };
+  }
+  function pathHeading(t) {
+    var th = -t * Math.PI * 2;
+    var tx = ARENA.rx * Math.sin(th), ty = -ARENA.ry * Math.cos(th);
+    return norm360(Math.atan2(tx, -ty) * 180 / Math.PI);
+  }
+  function headingVec(h) {
+    var r = h * Math.PI / 180;
+    return { x: Math.sin(r), y: -Math.cos(r) };
+  }
+
+  function renderArena(svg, cfg) {
+    cfg = cfg || {};
+    var parts = [];
+    parts.push('<rect class="arena-floor" x="' + ARENA.x + '" y="' + ARENA.y + '" width="' + ARENA.w + '" height="' + ARENA.h + '" rx="12"/>');
+    for (var gx = ARENA.x + 20; gx < ARENA.x + ARENA.w; gx += 28) {
+      parts.push('<line class="arena-grid" x1="' + gx + '" y1="' + (ARENA.y + 8) + '" x2="' + gx + '" y2="' + (ARENA.y + ARENA.h - 8) + '"/>');
+    }
+    for (var gy = ARENA.y + 20; gy < ARENA.y + ARENA.h; gy += 28) {
+      parts.push('<line class="arena-grid" x1="' + (ARENA.x + 8) + '" y1="' + gy + '" x2="' + (ARENA.x + ARENA.w - 8) + '" y2="' + gy + '"/>');
+    }
+    parts.push('<line class="arena-curtain" x1="' + ARENA.x + '" y1="' + ARENA.y + '" x2="' + (ARENA.x + ARENA.w) + '" y2="' + ARENA.y + '"/>');
+    parts.push('<line class="arena-curtain" x1="' + ARENA.x + '" y1="' + ARENA.y + '" x2="' + ARENA.x + '" y2="' + (ARENA.y + ARENA.h) + '"/>');
+    parts.push('<line class="arena-curtain" x1="' + (ARENA.x + ARENA.w) + '" y1="' + ARENA.y + '" x2="' + (ARENA.x + ARENA.w) + '" y2="' + (ARENA.y + ARENA.h) + '"/>');
+    parts.push('<line class="arena-open" x1="' + ARENA.x + '" y1="' + (ARENA.y + ARENA.h) + '" x2="' + (ARENA.x + ARENA.w) + '" y2="' + (ARENA.y + ARENA.h) + '"/>');
+    if (cfg.labels !== false) {
+      parts.push('<text class="arena-label" x="' + (ARENA.x + ARENA.w / 2) + '" y="' + (ARENA.y - 10) + '" text-anchor="middle">Vorhang</text>');
+      parts.push('<text class="arena-label" x="' + (ARENA.x + ARENA.w / 2) + '" y="' + (ARENA.y + ARENA.h + 18) + '" text-anchor="middle">offen zum Labor</text>');
+    }
+    var pathPts = [];
+    for (var i = 0; i <= 120; i++) {
+      var p = pathPoint(i / 120);
+      pathPts.push(p.x.toFixed(1) + "," + p.y.toFixed(1));
+    }
+    parts.push('<polyline class="path-faint" points="' + pathPts.join(" ") + '"/>');
+    if (cfg.positions !== false) {
+      for (var k = 0; k < 8; k++) {
+        var pp = pathPoint(k / 8);
+        var label = String.fromCharCode(65 + k);
+        var lx = pp.x + (pp.x > ARENA.cx ? 14 : -14);
+        var ly = pp.y + (pp.y > ARENA.cy ? 18 : -10);
+        parts.push('<text class="arena-label" x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + (pp.x > ARENA.cx ? "start" : "end") + '">' + label + '</text>');
+      }
+    }
+    (cfg.fields || []).forEach(function (f) {
+      var color = f.color || "teal";
+      var op = f.active ? 1 : 0.35;
+      parts.push('<circle class="field" cx="' + f.x.toFixed(1) + '" cy="' + f.y.toFixed(1) + '" r="' + f.r + '" fill="url(#field-' + color + ')" opacity="' + op + '" ' + (f.active ? 'filter="url(#glow-main)"' : '') + '/>');
+      parts.push('<circle class="field-ring" cx="' + f.x.toFixed(1) + '" cy="' + f.y.toFixed(1) + '" r="' + f.r + '" stroke="var(--' + color + ')" opacity="' + (f.active ? 0.8 : 0.3) + '"/>');
+      if (f.label) {
+        parts.push('<text class="field-label" fill="var(--' + color + ')" x="' + f.x.toFixed(1) + '" y="' + (f.y + 4).toFixed(1) + '" text-anchor="middle">' + f.label + '</text>');
+      }
+    });
+    (cfg.preferred || []).forEach(function (a) {
+      var v = headingVec(a.angle);
+      var ex = a.x + v.x * 30, ey = a.y + v.y * 30;
+      parts.push('<line class="pref-arrow" x1="' + a.x.toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + (ex - v.x * 7).toFixed(1) + '" y2="' + (ey - v.y * 7).toFixed(1) + '"/>');
+      var px = -v.y, py = v.x;
+      parts.push('<polygon class="pref-head" points="' + ex.toFixed(1) + ',' + ey.toFixed(1) + ' ' + (ex - v.x * 9 + px * 4).toFixed(1) + ',' + (ey - v.y * 9 + py * 4).toFixed(1) + ' ' + (ex - v.x * 9 - px * 4).toFixed(1) + ',' + (ey - v.y * 9 - py * 4).toFixed(1) + '"/>');
+    });
+    if (cfg.t !== undefined) {
+      var live = [];
+      for (var j = 0; j <= 60; j++) {
+        var tt = cfg.t * (j / 60);
+        var q = pathPoint(tt);
+        live.push(q.x.toFixed(1) + "," + q.y.toFixed(1));
+      }
+      parts.push('<polyline class="path-live" points="' + live.join(" ") + '"/>');
+      var rp = pathPoint(cfg.t);
+      var h = cfg.heading !== undefined ? cfg.heading : pathHeading(cfg.t);
+      var hv = headingVec(h);
+      parts.push('<line class="rat-heading" x1="' + rp.x.toFixed(1) + '" y1="' + rp.y.toFixed(1) + '" x2="' + (rp.x + hv.x * 16).toFixed(1) + '" y2="' + (rp.y + hv.y * 16).toFixed(1) + '"/>');
+      parts.push('<circle class="rat-body" cx="' + rp.x.toFixed(1) + '" cy="' + rp.y.toFixed(1) + '" r="6" ' + (cfg.fire ? 'filter="url(#glow-main)"' : '') + '/>');
+    }
+    svg.innerHTML = parts.join("");
+    return cfg.t !== undefined ? pathPoint(cfg.t) : null;
+  }
+
+  /* ---------- hero ---------- */
+  var heroSvg = document.getElementById("hero-arena");
+  var heroT = 0.1;
+  function drawHero() {
+    var rp = pathPoint(heroT);
+    var fields = [
+      { x: pathPoint(0).x, y: pathPoint(0).y, r: 46, color: "teal", active: false },
+      { x: pathPoint(0.34).x, y: pathPoint(0.34).y, r: 50, color: "amber", active: false },
+      { x: pathPoint(0.67).x, y: pathPoint(0.67).y, r: 46, color: "violet", active: false }
+    ];
+    fields.forEach(function (f) {
+      f.active = Math.hypot(rp.x - f.x, rp.y - f.y) < f.r;
+    });
+    renderArena(heroSvg, {
+      t: heroT,
+      heading: pathHeading(heroT),
+      fields: fields,
+      positions: true,
+      fire: fields.some(function (f) { return f.active; })
+    });
+  }
+  if (heroSvg) {
+    if (reduceMotion) {
+      heroT = 0.1;
+      drawHero();
+    } else {
+      var heroLast = 0;
+      var heroLoop = function (now) {
+        if (!heroLast) heroLast = now;
+        var dt = (now - heroLast) / 1000;
+        heroLast = now;
+        heroT = (heroT + dt * 0.055) % 1;
+        drawHero();
+        requestAnimationFrame(heroLoop);
+      };
+      drawHero();
+      requestAnimationFrame(heroLoop);
+    }
+  }
+
+  /* ---------- Tolman ---------- */
+  var tolmanSvg = document.getElementById("tolman-svg");
+  var tolmanState = "map";
+  function renderTolman() {
+    var parts = [];
+    parts.push('<rect x="70" y="40" width="420" height="200" rx="10" fill="none" stroke="var(--line2)" stroke-width="1.4"/>');
+    parts.push('<line class="tolman-wall" x1="280" y1="40" x2="280" y2="170"/>');
+    parts.push('<text class="tolman-label" x="286" y="60">Wand</text>');
+    parts.push('<text class="tolman-label" x="110" y="258" text-anchor="middle">Start</text>');
+    parts.push('<text class="tolman-label" x="470" y="52" text-anchor="middle">Ziel</text>');
+    parts.push('<path class="tolman-map" d="M110,220 C160,230 230,225 280,195 C340,160 410,95 470,70" opacity="' + (tolmanState === "map" ? 1 : 0.12) + '"/>');
+    parts.push('<path class="tolman-reflex" d="M110,220 C160,230 220,210 270,170 L270,82" opacity="' + (tolmanState === "reflex" ? 1 : 0.12) + '"/>');
+    parts.push('<circle class="tolman-start" cx="110" cy="220" r="6"/>');
+    parts.push('<circle class="tolman-goal" cx="470" cy="70" r="7"/>');
+    parts.push('<path d="M270,82 l-6,-9 l12,0 z" fill="var(--coral)" opacity="' + (tolmanState === "reflex" ? 1 : 0.12) + '"/>');
+    tolmanSvg.innerHTML = parts.join("");
+    document.getElementById("tolman-status").textContent = tolmanState === "map" ? "Karte" : "Reflex";
+    document.getElementById("tolman-readout").textContent = tolmanState === "map"
+      ? "Die Karte erlaubt den direkten Weg um das Hindernis."
+      : "Die feste Route endet an der Wand. Ein neuer Start hilft nicht.";
+    document.getElementById("tolman-caption").textContent = tolmanState === "map"
+      ? "Eine kognitive Karte erlaubt einen neuen Weg von einem neuen Start. Sie repräsentiert Beziehungen zwischen Orten, nicht nur eine gelernte Route."
+      : "Eine Stimulus-Response-Kette kennt nur die gelernte Route. Ändert sich der Start oder das Hindernis, bricht sie zusammen.";
+  }
+  document.querySelectorAll("[data-tolman]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      tolmanState = btn.getAttribute("data-tolman");
+      document.querySelectorAll("[data-tolman]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderTolman();
+    });
+  });
+  renderTolman();
+
+  /* ---------- probe ---------- */
+  var probeSvg = document.getElementById("probe-svg");
+  var probeRange = document.getElementById("probe-depth");
+  function probeRegion(y) {
+    if (y < 160) return { name: "Kortex", key: "cortex" };
+    if (y < 175) return { name: "Marklager", key: "white" };
+    if (y < 215) return { name: "CA1", key: "ca1" };
+    if (y < 275) return { name: "CA4 / Gyrus dentatus", key: "ca4" };
+    return { name: "unterhalb", key: "below" };
+  }
+  function renderProbe() {
+    var v = parseInt(probeRange.value, 10);
+    document.getElementById("probe-depth-out").textContent = v + "%";
+    var yTip = 115 + (v / 100) * 160;
+    var reg = probeRegion(yTip);
+    var parts = [];
+    parts.push('<ellipse cx="260" cy="190" rx="150" ry="110" fill="rgba(124,201,255,.03)" stroke="var(--line2)" stroke-width="1.4"/>');
+    parts.push('<path d="M120,190 C120,88 400,88 400,190" stroke="rgba(124,201,255,.12)" stroke-width="26" fill="none" stroke-linecap="round"/>');
+    parts.push('<path d="M120,190 C120,88 400,88 400,190" stroke="rgba(124,201,255,.35)" stroke-width="1" fill="none"/>');
+    parts.push('<path class="probe-hipp" d="M210,250 C160,230 160,160 220,150 C280,140 320,180 300,230"/>');
+    parts.push('<path class="probe-hipp-line" d="M210,250 C160,230 160,160 220,150 C280,140 320,180 300,230"/>');
+    parts.push('<rect class="probe-drive" x="242" y="36" width="36" height="28" rx="5"/>');
+    parts.push('<text class="probe-label" x="260" y="30" text-anchor="middle">Mikroantrieb · 8 Elektroden</text>');
+    parts.push('<line class="probe-line" x1="260" y1="64" x2="260" y2="' + (yTip - 4).toFixed(1) + '"/>');
+    parts.push('<circle class="probe-tip" cx="260" cy="' + yTip.toFixed(1) + '" r="4.5"/>');
+    var labels = [
+      { key: "cortex", name: "Kortex", y: 138 },
+      { key: "white", name: "Marklager", y: 168 },
+      { key: "ca1", name: "CA1", y: 198 },
+      { key: "ca4", name: "CA4 / DG", y: 248 }
+    ];
+    labels.forEach(function (l) {
+      parts.push('<text class="probe-label' + (reg.key === l.key ? ' active' : '') + '" x="430" y="' + l.y + '">' + l.name + '</text>');
+    });
+    parts.push('<text class="probe-label" x="430" y="80">dorsaler Hippocampus</text>');
+    probeSvg.innerHTML = parts.join("");
+    document.getElementById("probe-region").textContent = reg.name;
+    document.getElementById("probe-readout").textContent = "Aufnahme in " + reg.name + " · schematischer Querschnitt";
+    document.getElementById("probe-caption").textContent = reg.key === "ca1"
+      ? "CA1: Hier lag die klarste Einheit aus Fig. 1. Die Elektrode liegt im dorsalen Hippocampus."
+      : "Die Elektrode wird durch den Kortex in den dorsalen Hippocampus geführt. Die Aufnahmen stammen aus CA1, CA4 und dem Gyrus dentatus.";
+  }
+  probeRange.addEventListener("input", renderProbe);
+  renderProbe();
+
+  /* ---------- cell demo ---------- */
+  var cellSvg = document.getElementById("cell-arena");
+  var cellState = { mode: "full", pos: 0, heading: 0, stim: true };
+  var cellPos = document.getElementById("cell-pos");
+  var cellHeading = document.getElementById("cell-heading");
+  var cellStim = document.getElementById("cell-stim");
+  var cellFields = [
+    { x: pathPoint(0).x, y: pathPoint(0).y, r: 46, color: "teal" },
+    { x: pathPoint(0.125).x, y: pathPoint(0.125).y, r: 46, color: "teal" }
+  ];
+  function cellMetrics() {
+    var rp = pathPoint(cellState.pos);
+    var dmin = Math.min.apply(null, cellFields.map(function (f) {
+      return Math.hypot(rp.x - f.x, rp.y - f.y);
+    }));
+    var placeFactor = Math.exp(-Math.pow(dmin / 28, 2));
+    var diff = angDiff(cellState.heading, 0);
+    var dirFactor = Math.exp(-Math.pow(diff / 24, 2));
+    var placeOk = dmin < 46;
+    var dirOk = diff < 30;
+    var rate;
+    if (cellState.mode === "place") rate = 22 * placeFactor;
+    else if (cellState.mode === "orient") rate = 22 * placeFactor * dirFactor;
+    else rate = 22 * placeFactor * dirFactor * (cellState.stim ? 1 : 0);
+    if (placeFactor < 0.04) rate = 0;
+    return { rp: rp, dmin: dmin, placeFactor: placeFactor, diff: diff, dirFactor: dirFactor, placeOk: placeOk, dirOk: dirOk, rate: rate };
+  }
+  function renderCell() {
+    var m = cellMetrics();
+    var fire = m.rate > 2;
+    renderArena(cellSvg, {
+      t: cellState.pos,
+      heading: cellState.heading,
+      fields: cellFields.map(function (f) { return { x: f.x, y: f.y, r: f.r, color: f.color, active: m.placeFactor > 0.2 }; }),
+      preferred: cellFields.map(function (f) { return { x: f.x, y: f.y, angle: 0 }; }),
+      positions: true,
+      fire: fire
+    });
+    document.getElementById("cell-pos-out").textContent = Math.round(cellState.pos * 100) + "%";
+    document.getElementById("cell-heading-out").textContent = Math.round(cellState.heading) + "°";
+    document.getElementById("cell-rate").textContent = m.rate.toFixed(1) + " Hz";
+    document.getElementById("cell-status").textContent = fire ? "feuert" : "still";
+    var cp = document.getElementById("cond-place");
+    var cd = document.getElementById("cond-dir");
+    var cs = document.getElementById("cond-stim");
+    cp.textContent = m.placeOk ? "Ort ✓" : "Ort ✗";
+    cd.textContent = m.dirOk ? "Richtung ✓" : "Richtung ✗";
+    cs.textContent = cellState.stim ? "Reiz ✓" : "Reiz ✗";
+    cp.className = "chip-status " + (m.placeOk ? "ok" : "no");
+    cd.className = "chip-status " + (m.dirOk ? "ok" : "no");
+    cs.className = "chip-status " + (cellState.stim ? "ok" : "no");
+    var parts = [];
+    for (var i = 0; i < 24; i++) {
+      var x = 12 + i * 12.6;
+      parts.push('<line class="spike-bg" x1="' + x + '" y1="92" x2="' + x + '" y2="102"/>');
+    }
+    var spikes = Math.round(m.rate / 22 * 24);
+    for (var j = 0; j < spikes; j++) {
+      var xx = 12 + j * 12.6;
+      var h = 18 + ((j * 7) % 20);
+      parts.push('<line class="spike" x1="' + xx + '" y1="92" x2="' + xx + '" y2="' + (92 - h) + '"/>');
+    }
+    parts.push('<line x1="8" y1="106" x2="312" y2="106" stroke="var(--line2)" stroke-width="1"/>');
+    parts.push('<text class="raster-label" x="8" y="118">Spikes (schematisch)</text>');
+    parts.push('<text class="raster-label" x="312" y="118" text-anchor="end">' + spikes + ' / 24</text>');
+    document.getElementById("cell-raster").innerHTML = parts.join("");
+    var cap;
+    if (cellState.mode === "place") {
+      cap = m.placeOk
+        ? "Im Modus „Ort“ reicht die Position. Die Zelle feuert auch ohne passende Richtung und ohne Reiz."
+        : "Die Ratte ist außerhalb der beiden Felder. Ohne Ort feuert die Zelle nicht.";
+    } else if (cellState.mode === "orient") {
+      cap = m.placeOk && m.dirOk
+        ? "Ort und Richtung passen. Im Modus „Ort + Richtung“ feuert die Zelle."
+        : (!m.placeOk ? "Die Ratte ist außerhalb der Felder." : "Die Richtung passt nicht. Die Zelle bleibt still.");
+    } else {
+      cap = m.placeOk && m.dirOk && cellState.stim
+        ? "Ort, Richtung und taktiler Reiz passen. Die Zelle feuert."
+        : (!m.placeOk ? "Die Ratte ist außerhalb der Felder." : (!m.dirOk ? "Die Richtung passt nicht." : "Der taktile Reiz fehlt."));
+    }
+    document.getElementById("cell-caption").textContent = cap;
+  }
+  cellPos.addEventListener("input", function () {
+    cellState.pos = parseInt(cellPos.value, 10) / 100;
+    renderCell();
+  });
+  cellHeading.addEventListener("input", function () {
+    cellState.heading = parseInt(cellHeading.value, 10);
+    renderCell();
+  });
+  cellStim.addEventListener("change", function () {
+    cellState.stim = cellStim.checked;
+    renderCell();
+  });
+  document.querySelectorAll("[data-cellmode]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      cellState.mode = btn.getAttribute("data-cellmode");
+      document.querySelectorAll("[data-cellmode]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderCell();
+    });
+  });
+  cellPos.value = 0;
+  cellHeading.value = 0;
+  cellStim.checked = true;
+  renderCell();
+
+  /* ---------- unit census ---------- */
+  var UNIT_DATA = [
+    { key: "spatial", n: 8, label: "Räumlich", desc: "<b>Räumlich (8):</b> Sie feuerten ausschließlich oder maximal an einem bestimmten Ort und in einer bestimmten Richtung. Fünf davon brauchten zusätzlich einen passenden sensorischen Reiz." },
+    { key: "arousal", n: 14, label: "Arousal", desc: "<b>Arousal (14):</b> „Arousal“- oder „attentional“-Einheiten, ähnlich den von Vinogradova et al. beschriebenen Zellen." },
+    { key: "movement", n: 21, label: "Bewegung", desc: "<b>Bewegung (21):</b> Die Aktivität war direkt mit dem Verhalten verbunden. Sie feuerten beim Orientieren, Schnüffeln, Hebeldrücken und Laufen, aber nicht beim Fressen, Trinken, Putzen, ruhigen Sitzen oder im Slow-Wave-Schlaf." },
+    { key: "expectation", n: 2, label: "Erwartung", desc: "<b>Erwartung (2):</b> Zwei Einheiten hatten Eigenschaften, die mit der Erwartung des Tieres zusammenhingen. Das Paper beschreibt sie nur kurz." },
+    { key: "unclassified", n: 31, label: "Unklar", desc: "<b>Unklar (31):</b> Für sie wurde kein adäquater Reiz oder kein konsistentes Verhalten gefunden, oder die Antworten waren unzuverlässig. Darunter sind 15 Einheiten, die trotz intensiver Versuche fast völlig still blieben." }
+  ];
+  var unitGrid = document.getElementById("unit-grid");
+  var unitDots = [];
+  UNIT_DATA.forEach(function (group) {
+    for (var i = 0; i < group.n; i++) {
+      var d = document.createElement("div");
+      var isSilent = group.key === "unclassified" && i < 15;
+      d.className = "unit " + group.key + (isSilent ? " silent" : "");
+      d.title = group.label + (isSilent ? " · still" : "");
+      d.setAttribute("data-group", group.key);
+      unitGrid.appendChild(d);
+      unitDots.push(d);
+    }
+  });
+  function selectUnit(key) {
+    unitDots.forEach(function (d) {
+      var on = d.getAttribute("data-group") === key;
+      d.classList.toggle("hot", on);
+      d.classList.toggle("dim", !on);
+    });
+    document.querySelectorAll("[data-unit]").forEach(function (b) {
+      var on = b.getAttribute("data-unit") === key;
+      b.classList.toggle("active", on);
+    });
+    var g = UNIT_DATA.filter(function (x) { return x.key === key; })[0];
+    if (g) document.getElementById("unit-desc").innerHTML = g.desc;
+  }
+  document.querySelectorAll("[data-unit]").forEach(function (b) {
+    b.addEventListener("click", function () { selectUnit(b.getAttribute("data-unit")); });
+  });
+  selectUnit("spatial");
+
+  /* ---------- population map ---------- */
+  var MAP_FIELDS = [
+    { t: 0.0, r: 48, color: "teal", label: "1" },
+    { t: 0.125, r: 48, color: "amber", label: "2" },
+    { t: 0.25, r: 48, color: "coral", label: "3" },
+    { t: 0.375, r: 48, color: "violet", label: "4" },
+    { t: 0.5, r: 48, color: "teal", label: "5" },
+    { t: 0.625, r: 48, color: "amber", label: "6" },
+    { t: 0.75, r: 48, color: "violet", label: "7" },
+    { t: 0.875, r: 48, color: "coral", label: "8" }
+  ];
+  MAP_FIELDS.forEach(function (f) {
+    var p = pathPoint(f.t);
+    f.x = p.x;
+    f.y = p.y;
+  });
+  var mapSvg = document.getElementById("map-svg");
+  var mapPos = document.getElementById("map-pos");
+  var mapBars = document.getElementById("map-bars");
+  var mapBarRows = [];
+  for (var mi = 0; mi < 8; mi++) {
+    var row = document.createElement("div");
+    row.className = "abar";
+    row.innerHTML = '<span>Z' + (mi + 1) + '</span><div class="abar-track"><span class="abar-fill"></span></div><span class="abar-val">0</span>';
+    mapBars.appendChild(row);
+    mapBarRows.push(row);
+  }
+  function renderMap() {
+    var t = parseInt(mapPos.value, 10) / 100;
+    var rp = pathPoint(t);
+    var active = [];
+    MAP_FIELDS.forEach(function (f, i) {
+      f.active = Math.hypot(rp.x - f.x, rp.y - f.y) < f.r;
+      if (f.active) active.push(i);
+    });
+    renderArena(mapSvg, {
+      t: t,
+      heading: pathHeading(t),
+      fields: MAP_FIELDS,
+      positions: false,
+      labels: true,
+      fire: active.length > 0
+    });
+    mapBarRows.forEach(function (r, i) {
+      var on = MAP_FIELDS[i].active;
+      r.classList.toggle("on", on);
+      r.querySelector(".abar-fill").style.width = on ? "100%" : "0%";
+      r.querySelector(".abar-val").textContent = on ? "1" : "0";
+    });
+    document.getElementById("map-count").textContent = active.length + " / 8";
+    document.getElementById("map-code").textContent = "Code: " + MAP_FIELDS.map(function (f) { return f.active ? "1" : "0"; }).join(" ");
+    document.getElementById("map-pos-out").textContent = Math.round(t * 100) + "%";
+    document.getElementById("map-caption").textContent = active.length
+      ? "Die aktiven Zellen zusammen sind der Ortscode. Eine andere Position ergibt eine andere Kombination."
+      : "Keine Zelle aktiv. Der Code ist leer.";
+  }
+  mapPos.addEventListener("input", renderMap);
+  renderMap();
+
+  /* ---------- timeline ---------- */
+  var TL_DATA = [
+    { year: "1948", name: "Tolman", text: "<b>1948 · Tolman:</b> „Cognitive maps in rats and men“. Tolman schlägt vor, dass Tiere beim Lernen eine kartenartige Repräsentation ihrer Umgebung aufbauen, die Routen und Beziehungen zwischen Orten festhält." },
+    { year: "1971", name: "O'Keefe & Dostrovsky", text: "<b>1971 · O'Keefe & Dostrovsky:</b> Acht von 76 Einheiten reagieren auf Ort, Richtung und oft einen Reiz. Die Autoren schlagen eine räumliche Referenzkarte im Hippocampus vor." },
+    { year: "1976", name: "Place Units", text: "<b>1976 · O'Keefe:</b> „Place units in the hippocampus of the freely moving rat“. Die Eigenschaften der Ortszellen werden ausführlicher charakterisiert." },
+    { year: "2005", name: "Grid Cells", text: "<b>2005 · Moser & Moser:</b> Im entorhinalen Kortex werden Grid Cells entdeckt. Ihre hexagonalen Felder bilden ein Koordinatensystem für Distanz und Richtung." },
+    { year: "2014", name: "Nobelpreis", text: "<b>2014 · Nobelpreis:</b> John O'Keefe, May-Britt Moser und Edvard Moser erhalten den Nobelpreis für Physiologie oder Medizin für die Entdeckung des positionierenden Systems im Gehirn." }
+  ];
+  function selectTL(i) {
+    document.querySelectorAll("[data-tl]").forEach(function (b, j) {
+      var on = j === i;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
+    document.getElementById("tl-desc").innerHTML = TL_DATA[i].text;
+  }
+  document.querySelectorAll("[data-tl]").forEach(function (b) {
+    b.addEventListener("click", function () { selectTL(parseInt(b.getAttribute("data-tl"), 10)); });
+  });
+  selectTL(0);
+
+})();
+</script>
+</body>
+</html>

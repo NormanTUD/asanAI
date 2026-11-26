@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flach gespeichert, krumm gerechnet · Die Kurvenfalle</title>
+<meta name="description" content="Interaktive Lesehilfe zu Jose Crespo: AI Is Short-Sighted by Design. Jacobi-Blöcke, Holonomie, Twist-Zonen und die verborgene Krümmung in neuronalen Netzen.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+    --bg:#06070f; --bg2:#0a0c1a;
+    --panel:rgba(18,22,44,.66); --panel2:rgba(10,12,28,.78);
+    --ink:#eef0ff; --muted:#9aa3c7;
+    --line:rgba(160,180,255,.10); --line2:rgba(160,180,255,.18);
+    --cyan:#5ad1ff; --violet:#a78bfa; --magenta:#ff6ec7; --amber:#ffd166; --mint:#6ef0b8; --coral:#ff8a7a;
+    --good:#6ef0b8; --bad:#ff7a8a;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 26px 64px -30px rgba(0,0,0,.95);
+    --ring:rgba(90,209,255,.2); --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f5f4fb; --bg2:#e9e7f4;
+    --panel:rgba(255,255,255,.78); --panel2:rgba(255,255,255,.9);
+    --ink:#171a33; --muted:#5c6280;
+    --line:rgba(30,40,90,.12); --line2:rgba(30,40,90,.21);
+    --cyan:#0e7490; --violet:#6d28d9; --magenta:#b3247a; --amber:#a16207; --mint:#0f766e; --coral:#c2410c;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,50,90,.06),0 26px 64px -34px rgba(40,50,90,.45);
+    --ring:rgba(14,116,144,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:radial-gradient(1200px 800px at 80% -10%,rgba(90,209,255,.10),transparent 60%),radial-gradient(900px 700px at -10% 20%,rgba(167,139,250,.10),transparent 60%),radial-gradient(1000px 900px at 50% 120%,rgba(255,110,199,.08),transparent 60%),var(--bg);
+    line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:54px 54px;opacity:.5;
+    -webkit-mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%);mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%)}
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.26;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(90,209,255,.55),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(255,110,199,.45),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(167,139,250,.45),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--cyan)} strong{font-weight:650}
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--magenta))}
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--cyan);transform:translateY(-1px)}
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.2vw,5rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--cyan),var(--violet) 50%,var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:42ch;margin:0 0 28px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--cyan),var(--mint));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f5f4fb}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+  .hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .hero-loop{width:min(470px,100%);height:auto;overflow:visible}
+  .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .hero-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--magenta);font-weight:600}
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 15px 14px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--cyan),var(--magenta));opacity:.75}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.68rem;color:var(--cyan);letter-spacing:.14em;margin-bottom:9px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.5}
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--cyan);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+  .segmented{display:inline-flex;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--cyan);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f5f4fb}
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 14px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--cyan)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--cyan);outline-offset:6px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--cyan);border:1px solid var(--cyan);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f5f4fb}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--cyan)}
+  .demo-actions{display:flex;flex-wrap:wrap;gap:10px}
+  .readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+  .readout strong{font-family:var(--serif);font-size:1.25rem;color:var(--cyan);font-weight:600}
+  .readout .big{font-family:var(--serif);font-size:1.7rem;color:var(--magenta);font-weight:600}
+  .formula-card{margin-top:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line2);border-radius:18px;background:linear-gradient(120deg,rgba(90,209,255,.08),rgba(255,110,199,.07));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.15rem,2.6vw,1.7rem);letter-spacing:.01em;line-height:1.5}
+  .formula sub{font-size:.6em}
+  .formula .op{color:var(--cyan)}
+  .formula-note{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted);margin-top:12px}
+  .note{border-left:2px solid var(--amber);padding:14px 18px;background:rgba(255,209,102,.05);border-radius:0 12px 12px 0;color:var(--muted);font-size:.9rem;margin-top:22px}
+  .note b{color:var(--ink)}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 28px}
+  .stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),var(--magenta))}
+  .stat-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .stat-values{font-family:var(--serif);font-size:1.35rem;font-weight:600;letter-spacing:-.02em}
+  .stat-values .to{color:var(--cyan)}
+  .stat-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+  .take-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.88rem}
+  .take .glyph{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase;margin-bottom:10px}
+  .take ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.86rem}
+  .take li{margin:5px 0}
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--cyan);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .deep-body code{font-family:var(--mono);font-size:.86em;color:var(--cyan);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  svg{overflow:visible}
+  .loop-svg,.dagloop-svg,.twist-svg,.twopath-svg,.geo-svg{width:100%;height:auto;display:block}
+  .loop-bg{fill:none;stroke:var(--line2);stroke-width:.6;opacity:.25}
+  .loop-edge{stroke:var(--cyan);stroke-width:2;fill:none}
+  .loop-edge-head{fill:var(--cyan)}
+  .loop-edge-back{stroke:var(--magenta);stroke-width:2;fill:none;stroke-dasharray:6 5}
+  .loop-edge-back-head{fill:var(--magenta)}
+  .loop-node{fill:var(--bg);stroke:var(--cyan);stroke-width:1.8}
+  .loop-node.active{stroke:var(--amber);stroke-width:3}
+  .loop-node-label{fill:var(--ink);font-family:var(--serif);font-size:19px;font-style:italic}
+  .loop-edge-label{fill:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+  .loop-edge-label-back{fill:var(--magenta);font-family:var(--mono);font-size:10px;letter-spacing:.04em}
+  .loop-vec{stroke-width:2.6;stroke-linecap:round;fill:none}
+  .loop-vec-head{stroke:none}
+  .loop-vec-ghost{stroke:var(--muted);stroke-width:1.8;stroke-dasharray:4 4;fill:none}
+  .loop-vec-ghost-head{fill:var(--muted)}
+  .loop-vec-amber{stroke:var(--amber);fill:none}
+  .loop-vec-amber-head{fill:var(--amber)}
+  .loop-vec-violet{stroke:var(--violet);fill:none}
+  .loop-vec-violet-head{fill:var(--violet)}
+  .loop-vec-final{stroke:var(--magenta);fill:none;filter:url(#glow-main)}
+  .loop-vec-final-head{fill:var(--magenta)}
+  .loop-pulse{fill:var(--amber);filter:url(#glow-main)}
+  .loop-arc{fill:none;stroke:var(--amber);stroke-width:1.5;stroke-dasharray:3 3;opacity:.9}
+  .loop-angle{fill:var(--amber);font-family:var(--mono);font-size:12px;letter-spacing:.05em}
+  .loop-stage{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+  .matrix-box{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 4px}
+  .matrix-cell{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-family:var(--mono);font-size:.82rem;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+  .matrix-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .loop-panel{display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start}
+  .loop-side{display:flex;flex-direction:column;gap:4px}
+  .loop-side .readout{margin-top:6px;padding-top:10px}
+  .status-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+  .status-pill.flat{color:var(--good);border-color:var(--good)}
+  .status-pill.twist{color:var(--magenta);border-color:var(--magenta)}
+  .dagloop-node{fill:var(--bg);stroke:var(--cyan);stroke-width:1.7}
+  .dagloop-node-b{stroke:var(--violet)}
+  .dagloop-label{fill:var(--ink);font-family:var(--serif);font-size:18px;font-style:italic}
+  .dagloop-edge{stroke:var(--cyan);stroke-width:2;fill:none}
+  .dagloop-edge-head{fill:var(--cyan)}
+  .dagloop-back{stroke:var(--magenta);stroke-width:2;fill:none;stroke-dasharray:6 5}
+  .dagloop-back-head{fill:var(--magenta)}
+  .dagloop-caption{fill:var(--muted);font-family:var(--mono);font-size:11px}
+  .twist-cell{stroke:none}
+  .twist-site{fill:var(--ink);opacity:.55}
+  .twist-ring{fill:none;stroke:var(--amber);stroke-width:2.2;filter:url(#glow-main)}
+  .twist-label{fill:var(--ink);font-family:var(--mono);font-size:10px;letter-spacing:.05em}
+  .twist-legend{display:flex;align-items:center;gap:12px;margin-top:10px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+  .twist-bar{flex:1;height:10px;border-radius:99px;background:linear-gradient(90deg,#5eead4,#ffd166,#ff6ec7)}
+  .twist-bar-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.64rem;color:var(--muted);margin-top:4px}
+  .twopath-path{fill:none;stroke-width:2.4;stroke-linecap:round}
+  .twopath-path.active{stroke:var(--cyan);opacity:1}
+  .twopath-path.other{stroke:var(--muted);opacity:.3;stroke-dasharray:4 5}
+  .twopath-node{fill:var(--bg);stroke:var(--line2);stroke-width:1.4}
+  .twopath-label{fill:var(--ink);font-family:var(--serif);font-size:16px;font-style:italic}
+  .twopath-vec{stroke-width:2.6;stroke-linecap:round;fill:none}
+  .twopath-vec-head{stroke:none}
+  .twopath-arc{fill:none;stroke:var(--amber);stroke-width:1.4;stroke-dasharray:3 3}
+  .twopath-angle{fill:var(--amber);font-family:var(--mono);font-size:12px}
+  .twopath-note{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .geo-grid{stroke:var(--line2);stroke-width:1;opacity:.5}
+  .geo-border{fill:none;stroke:var(--line2);stroke-width:1.4}
+  .geo-path{fill:none;stroke:var(--cyan);stroke-width:2.6;stroke-linecap:round}
+  .geo-path-other{fill:none;stroke:var(--magenta);stroke-width:2;stroke-dasharray:5 5;opacity:.8}
+  .geo-wall{stroke:var(--coral);stroke-width:3;stroke-linecap:round}
+  .geo-label{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.05em}
+  .geo-disc{fill:rgba(167,139,250,.06);stroke:var(--violet);stroke-width:1.4}
+  .geo-tree{stroke:var(--amber);stroke-width:1.4;fill:none;opacity:.85}
+  .geo-tree-node{fill:var(--amber)}
+  .geo-torus-edge{stroke:var(--magenta);stroke-width:1.4;stroke-dasharray:4 4;opacity:.8}
+  .geo-desc{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:.88rem;color:var(--muted);min-height:3.4em}
+  .geo-desc b{color:var(--ink)}
+  .os-grid{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
+  .os-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--line);font-size:.88rem;align-items:start}
+  .os-row:first-child{border-top:none}
+  .os-row.head{background:var(--bg);font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .os-bad{color:var(--coral)}
+  .os-good{color:var(--good)}
+  @media (max-width:980px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{order:-1}
+    .hero-loop{width:min(340px,84%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .take-grid{grid-template-columns:1fr}
+    .loop-panel{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .tldr-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .gloss-grid{grid-template-columns:1fr}
+    .os-row{grid-template-columns:1fr;gap:4px}
+    .os-row.head{display:none}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <filter id="glow-main" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Jose Crespo PhD · AI Advances · 24. November 2025</div>
+      <h1>Flach gespeichert,<br><span class="grad">krumm gerechnet</span></h1>
+      <p class="lede">Jedes Embedding liegt in R<sup>d</sup>. Aber ein nichtlineares Netz transportiert Bedeutung über <b>Jacobi-Blöcke</b>. Um eine kleine Schleife kommt der Vektor nicht unverändert zurück. Das ist <b>Holonomie</b>, und sie entsteht automatisch.</p>
+      <div class="byline">
+        <span>AI Is Short-Sighted by Design</span><span class="dot-sep"></span>
+        <span>The Curvature Trap Nobody Sees</span>
+      </div>
+      <a class="cta" href="#schleife">Die Schleife öffnen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg class="hero-loop" id="hero-loop" viewBox="0 0 520 420"></svg>
+      <div class="hero-badge">Holonomie <strong>H ≠ I</strong></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>Krümmung ist gratis</h3><p>Generisch erzeugt sie jeder nichtlineare DAG. Man muss keine Mannigfaltigkeit deklarieren.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>Holonomie</h3><p>Der Vektor kommt nach einer Schleife gedreht oder geschert zurück.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Twist-Zonen</h3><p>Wo ||H − I|| groß ist, wird Bedeutung verdreht und neu interpretiert.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>Flach ist eine Lüge</h3><p>Die Koordinaten sind euklidisch, die effektive Geometrie nicht.</p></div>
+        <div class="tldr-card"><div class="tldr-num">05</div><h3>Geometrie wählen</h3><p>Torus, Hyperbel, kontrollierte Connection statt Zufall.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal" id="schleife">
+      <div class="section-head"><span class="sec-num">01 · Die Schleife</span></div>
+      <h2>Drei Orte, ein Vektor, kein flacher Rückweg</h2>
+      <div class="prose">
+        <p>Nimm drei Sites i, j und k in einer Schicht. An jedem Site liegt eine Faser V<sub>i</sub> ≅ R<sup>d</sup>, also der Raum der winzigen Änderungen, die dort ankommen können. Ein differenzierbares Layer F definiert für jedes Paar den <span class="accent">Jacobi-Block</span> Γ<sub>ij</sub> = ∂Y<sub>j</sub>/∂X<sub>i</sub>. Er sagt, wie eine infinitesimale Änderung bei i auf j wirkt.</p>
+        <p>Setze diese Blöcke zu einer Schleife zusammen: i → j → k → i. Das Ergebnis ist die <span class="accent">Holonomie</span> H<sub>ijk</sub> = Γ<sub>ki</sub> Γ<sub>jk</sub> Γ<sub>ij</sub>. Ist H die Identität, ist die Verbindung flach. Ist H ≠ I, gibt es einen Vektor, der am selben Site, aber verändert zurückkommt. Genau das ist die diskrete Signatur von Krümmung.</p>
+      </div>
+
+      <div class="formula-card reveal">
+        <div class="formula-kicker">Die Schleife</div>
+        <div class="formula">H<sub>ijk</sub> <span class="op">=</span> Γ<sub>ki</sub> · Γ<sub>jk</sub> · Γ<sub>ij</sub></div>
+        <div class="formula-note">Γ<sub>ij</sub> = ∂Y<sub>j</sub>/∂X<sub>i</sub>. Die Jacobi-Blöcke werden um den Loop komponiert.</div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Jacobi-Schleife</div>
+            <div class="demo-sub">Drei Sites, drei Blöcke, ein transportierter Vektor</div>
+          </div>
+          <span class="status-pill twist" id="loop-status">Twist</span>
+        </div>
+        <div class="loop-panel">
+          <div>
+            <svg class="loop-svg" id="loop-svg" viewBox="0 0 520 420" role="img" aria-label="Drei Sites mit Jacobi-Blöcken und einem transportierten Vektor"></svg>
+          </div>
+          <div class="loop-side">
+            <label class="slider-row"><span>Nichtlinearität</span><input id="loop-t" type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Nichtlinearität"><output id="loop-t-out">0.60</output></label>
+            <label class="slider-row"><span>Startvektor</span><input id="loop-phi" type="range" min="0" max="360" step="1" value="0" aria-label="Startvektor"><output id="loop-phi-out">0°</output></label>
+            <label class="slider-row"><span>Etappe</span><input id="loop-stage" type="range" min="0" max="3" step="1" value="3" aria-label="Etappe"><output id="loop-stage-out">zurück bei i</output></label>
+            <div class="demo-actions">
+              <button class="btn" type="button" id="loop-play">Abspielen</button>
+              <button class="btn ghost" type="button" id="loop-reset">Zurücksetzen</button>
+            </div>
+            <div style="margin-top:10px">
+              <div class="matrix-label">H = Γ<sub>ki</sub> Γ<sub>jk</sub> Γ<sub>ij</sub></div>
+              <div class="matrix-box" id="loop-matrix">
+                <div class="matrix-cell">1.00</div><div class="matrix-cell">0.00</div>
+                <div class="matrix-cell">0.00</div><div class="matrix-cell">1.00</div>
+              </div>
+            </div>
+            <div class="readout"><span id="loop-norm">||H − I|| = 0.00</span><strong id="loop-angle">0°</strong></div>
+          </div>
+        </div>
+        <div class="caption" id="loop-caption">Der Vorwärtsgraph ist ein DAG. Der Loop lebt in der Ebene der Jacobi-Blöcke.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Warum ein DAG einen Loop haben kann</summary>
+        <div class="deep-body">
+          <p>Der Vorwärtsgraph ist azyklisch: i → j → k, kein Weg zurück. Es gibt keinen computationalen Zyklus. Aber die Ableitung erzeugt <b>lineare Transportoperatoren</b>, die man unabhängig vom Vorwärtsgraphen komponieren kann. Die Architektur beschränkt, welche Vorwärtskanten existieren; die Jacobi-Blöcke existieren für alle relevanten Paare, weil Autodiff sie über JVP/VJP berechnet.</p>
+          <p>Der Loop ist deshalb ein Loop im <b>Operatorraum</b>, nicht im Datenfluss. Holonomie wird über Kompositionen von Differentialen berechnet, nicht über echte Rechenzyklen. Auch ein DAG kann eine Verbindung mit nichtverschwindender Krümmung induzieren.</p>
+          <p>Die formale Bedingung ist <code>Γ_ki Γ_jk Γ_ij = I</code>. In nichtlinearen Netzen scheitert sie fast immer, weil die Blöcke nicht kommutieren: <code>Γ_jk Γ_ij ≠ Γ_ij Γ_jk</code>.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal" id="dag">
+      <div class="section-head"><span class="sec-num">02 · Der Loop, den der DAG nicht hat</span></div>
+      <h2>Vorwärts azyklisch, rückwärts gekrümmt</h2>
+      <div class="prose">
+        <p>Moderne Netze sind als gerichtete azyklische Graphen gezeichnet. Doch die relevanten Transportregeln sind die Jacobi-Blöcke, und die bilden eine Verbindung auf den Sites. Ein Loop in dieser Verbindung ist kein Zyklus in der Architektur. Er ist ein Zyklus in der Art, wie winzige Änderungen weitergegeben werden.</p>
+        <p>Deshalb ist Krümmung kein exotischer Zusatz. Sie ist <span class="accent">strukturell erwartbar</span>, sobald Sites zustandsabhängig und nichtlinear interagieren.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">DAG oder Operator-Loop?</div>
+            <div class="demo-sub">Dieselben drei Sites, zwei Blickwinkel</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Ansicht">
+            <button class="seg active" type="button" data-loopview="dag" aria-pressed="true">Vorwärts-DAG</button>
+            <button class="seg" type="button" data-loopview="loop" aria-pressed="false">Jacobi-Loop</button>
+          </div>
+        </div>
+        <svg class="dagloop-svg" id="dagloop-svg" viewBox="0 0 520 220" role="img" aria-label="Drei Sites als DAG und als Jacobi-Loop"></svg>
+        <div class="readout"><span id="dagloop-readout">Vorwärts: i → j → k. Kein Zyklus.</span><strong id="dagloop-status">DAG</strong></div>
+        <div class="caption" id="dagloop-caption">Der Vorwärtsgraph ist azyklisch. Der Loop entsteht erst, wenn man die Jacobi-Blöcke komponiert.</div>
+      </div>
+
+      <div class="prose" style="margin-top:22px">
+        <p>Warum die Blöcke nicht kommutieren, hat konkrete Gründe:</p>
+        <ul>
+          <li><b>Aktivierungen</b> wie GELU oder ReLU verbiegen Tangentenrichtungen.</li>
+          <li><b>Attention</b> hängt von Inhalten ab und bricht Symmetrien.</li>
+          <li><b>LayerNorm</b> skaliert jedes Site unterschiedlich.</li>
+          <li><b>Residual-Mixing</b> mischt Jacobi-Blöcke, die sonst vielleicht vertauschen würden.</li>
+          <li><b>Tiefe</b> verstärkt die Nicht-Integrabilität über viele Schichten.</li>
+        </ul>
+        <p>Sobald diese Effekte zusammenkommen, ist die Bedingung Γ<sub>ki</sub> Γ<sub>jk</sub> Γ<sub>ij</sub> = I generisch verletzt. Krümmung ist dann kein Fehler, sondern der Normalfall.</p>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal" id="twist">
+      <div class="section-head"><span class="sec-num">03 · Twist-Zonen</span></div>
+      <h2>Wo das Netz Bedeutung verdreht</h2>
+      <div class="prose">
+        <p>Die Holonomie ist nicht nur ein Ja/Nein. Der Wert <span class="accent">||H − I||</span> sagt, wie stark der Transport um einen kleinen Loop von der Identität abweicht. Wo er groß ist, verdreht, schert und reinterpretiert das Netz Signale. Der Essay nennt diese Bereiche <span class="accent">Twist-Zonen</span>: Regionen mit komplexem, kontextabhängigem Verhalten.</p>
+        <p>Das folgende Bild ist ein synthetisches Modell, keine Messung eines echten LLM. Es zeigt, wie aus einer flachen Verbindung durch zunehmende Nichtlinearität ein Muster von Twist-Zonen wird.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Twist-Zonen-Karte</div>
+            <div class="demo-sub">Jede Zelle ist ein kleiner Loop zwischen vier Sites</div>
+          </div>
+          <div class="readout" style="border:none;margin:0;padding:0"><span>Maximum</span><strong id="twist-max">0.00</strong></div>
+        </div>
+        <label class="slider-row">
+          <span>Nichtlinearität</span>
+          <input id="twist-t" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Nichtlinearität">
+          <output id="twist-t-out">0.70</output>
+        </label>
+        <svg class="twist-svg" id="twist-svg" viewBox="0 0 560 380" role="img" aria-label="Heatmap der Holonomie-Norm über ein Gitter von Sites"></svg>
+        <div class="twist-legend"><span>flach</span><div class="twist-bar"></div><span>Twist</span></div>
+        <div class="twist-bar-labels"><span>0</span><span>||H − I||</span><span>hoch</span></div>
+        <div class="readout"><span id="twist-readout">Mittelwert 0.00</span><strong id="twist-mean">0.00</strong></div>
+        <div class="caption" id="twist-caption">Bei 0 ist die Verbindung flach. Mit steigender Nichtlinearität entstehen Zonen, in denen der Transport nicht mehr integrabel ist.</div>
+      </div>
+
+      <div class="note"><b>Wichtig:</b> Die Karte ist ein Diagnosebild, keine fertige Landkarte eines Modells. Sie zeigt das Prinzip: Krümmung ist dort, wo die lokalen Transportregeln nicht mehr sauber zusammenpassen.</div>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal" id="flach">
+      <div class="section-head"><span class="sec-num">04 · Flach ist eine Lüge</span></div>
+      <h2>Euklidische Koordinaten, nicht-euklidische Bedeutung</h2>
+      <div class="prose">
+        <p>Wir speichern Vektoren in euklidischen Tensoren. Das heißt aber nicht, dass das Netz sie als Bewohner eines global flachen Raums behandelt. Die Verbindung, die durch die Jacobi-Blöcke induziert wird, definiert eine eigene Geometrie auf dem Bündel der siteweisen Fasern.</p>
+        <p>Die Konsequenz: Die „Bedeutung“ einer Richtung im Embedding hängt davon ab, wo du bist und wie du dorthin gekommen bist. Die Koordinaten sind flach. Die effektive Geometrie ist es nicht. Der Essay nennt die flachen Embeddings eine bequeme Lüge.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Zwei Wege, ein Ziel</div>
+            <div class="demo-sub">Dieselbe lokale Regel, andere Reihenfolge</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Weg">
+            <button class="seg active" type="button" data-twopath="top" aria-pressed="true">Oben</button>
+            <button class="seg" type="button" data-twopath="bottom" aria-pressed="false">Unten</button>
+          </div>
+        </div>
+        <label class="slider-row"><span>Nichtlinearität</span><input id="twopath-t" type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Nichtlinearität"><output id="twopath-t-out">0.60</output></label>
+        <svg class="twopath-svg" id="twopath-svg" viewBox="0 0 560 300" role="img" aria-label="Zwei Wege von A nach B mit unterschiedlich ankommenden Vektoren"></svg>
+        <div class="readout"><span id="twopath-readout">Beide Wege starten mit demselben Vektor.</span><strong id="twopath-angle">0°</strong></div>
+        <div class="caption" id="twopath-caption">Bei 0 ist die Regel flach und die Reihenfolge egal. Mit Nichtlinearität kommen die Vektoren unterschiedlich an.</div>
+      </div>
+
+      <div class="note"><b>Der Punkt:</b> Die beiden Wege sind ein Schema für zwei Reihenfolgen lokaler Transporte, nicht zwei gemessene Pfade in einem echten Modell. Der Unterschied entsteht, weil Rotation und Scherung nicht kommutieren.</div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal" id="geometrie">
+      <div class="section-head"><span class="sec-num">05 · Die richtige Geometrie</span></div>
+      <h2>Torus, Hyperbel, kontrollierte Connection</h2>
+      <div class="prose">
+        <p>Wenn Geometrie unvermeidlich ist, kann man sie auch wählen. Der Essay schlägt explizite Strukturen vor: <span class="accent">toroidale Speicher</span> für stabile, randlose Erinnerung, <span class="accent">hyperbolische Räume</span> für Hierarchie und Abstraktion, und eine kontrollierte Connection über Duale und Jets.</p>
+        <p>Statt zufälliger Krümmung aus einem Stapel nichtlinearer Layer bekommt das Modell eine Geometrie, die zur Aufgabe passt.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Welche Geometrie?</div>
+            <div class="demo-sub">Ränder, Wicklungen, Hierarchien</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Geometrie">
+            <button class="seg active" type="button" data-geo="flat" aria-pressed="true">Flach</button>
+            <button class="seg" type="button" data-geo="torus" aria-pressed="false">Torus</button>
+            <button class="seg" type="button" data-geo="hyper" aria-pressed="false">Hyperbolisch</button>
+          </div>
+        </div>
+        <svg class="geo-svg" id="geo-svg" viewBox="0 0 520 330" role="img" aria-label="Vergleich von flachem Raum, Torus und hyperbolischem Raum"></svg>
+        <div class="geo-desc" id="geo-desc"><b>Flach:</b> R<sup>n</sup> hat Ränder. Ein Pfad, der hinausläuft, endet an einer künstlichen Kante.</div>
+        <div class="caption" id="geo-caption">Die Bilder sind schematisch. Sie zeigen, welche Pfade und Strukturen eine Geometrie natürlich macht.</div>
+      </div>
+
+      <div class="note"><b>Die These:</b> Geometrie ist keine Dekoration. Sie entscheidet, welche Nachbarschaften, Erinnerungen und Hierarchien billig zu haben sind.</div>
+    </section>
+
+    <!-- 06 -->
+    <section class="section reveal" id="os">
+      <div class="section-head"><span class="sec-num">06 · Das geometrische OS</span></div>
+      <h2>Krümmung als Betriebsprinzip</h2>
+      <div class="prose">
+        <p>Heute entdeckt ein Modell seine Krümmung zufällig: undurchsichtig, emergent und schwer zu kontrollieren. Ein <span class="accent">geometrisches OS</span> dreht die Geschichte um. Man entwirft den Zustandsraum, spezifiziert die Connection und behandelt Γ und H als erstklassige, auditierbare Objekte, nicht als versteckte Nebenwirkungen von Backprop.</p>
+      </div>
+
+      <div class="os-grid reveal">
+        <div class="os-row head"><span>Baustein</span><span>Heute</span><span>Geometrisches OS</span></div>
+        <div class="os-row"><span>Zustandsraum</span><span class="os-bad">R<sup>n</sup>, zufällig</span><span class="os-good">Torus oder hyperbolisch, gewählt</span></div>
+        <div class="os-row"><span>Connection</span><span class="os-bad">emergiert aus Autodiff</span><span class="os-good">spezifiziert über Duale und Jets</span></div>
+        <div class="os-row"><span>Krümmung</span><span class="os-bad">versteckter Nebeneffekt</span><span class="os-good">auditierbares Objekt</span></div>
+        <div class="os-row"><span>Transport</span><span class="os-bad">implementationsabhängig</span><span class="os-good">implementationsunabhängig</span></div>
+        <div class="os-row"><span>Folge</span><span class="os-bad">semantische Drift, instabile Gradienten</span><span class="os-good">vorhersagbar und prüfbar</span></div>
+      </div>
+
+      <div class="note"><b>Einordnung:</b> Das ist das Programm des Essays, nicht ein bewiesener Ersatz für heutige Architekturen. Die Tabelle beschreibt die vorgeschlagene Richtung.</div>
+    </section>
+
+    <!-- 07 -->
+    <section class="section reveal" id="einordnung">
+      <div class="section-head"><span class="sec-num">07 · Einordnung</span></div>
+      <h2>Was die Demo zeigt, was nicht</h2>
+      <div class="take-grid">
+        <div class="take">
+          <div class="glyph">Was sie zeigt</div>
+          <h3>Der Mechanismus</h3>
+          <ul>
+            <li>Ein nichtlinearer Transport kann um einen Loop nichttrivial sein.</li>
+            <li>Die Holonomie H = Γ<sub>ki</sub> Γ<sub>jk</sub> Γ<sub>ij</sub> ist ein konkretes Diagnoseobjekt.</li>
+            <li>Wo ||H − I|| wächst, entstehen Twist-Zonen.</li>
+            <li>Pfad- und Reihenfolgeabhängigkeit folgt aus nicht-kommutierenden Blöcken.</li>
+          </ul>
+        </div>
+        <div class="take">
+          <div class="glyph">Was sie nicht zeigt</div>
+          <h3>Keine Messung eines LLM</h3>
+          <ul>
+            <li>Die Dreiecke und Heatmaps sind synthetische Illustrationen.</li>
+            <li>„Krümmung“ meint hier die diskrete Holonomie der Jacobi-Verbindung, nicht automatically den Riemann-Tensor einer Mannigfaltigkeit.</li>
+            <li>Dass dies die Hauptursache heutiger AI-Fehler ist, ist eine These.</li>
+            <li>Das geometrische OS ist ein Vorschlag, kein gemessener Sieg.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note"><b>Zur Quelle:</b> Der Medium-Artikel ist nur für Mitglieder vollständig lesbar. Diese Seite stützt sich auf den öffentlichen Einstieg und auf die frei zugängliche Begleitfassung des Autors auf Substack („Why AI Isn’t Flat: The Hidden Curvature“, 21. November 2025). Die Medium-Fassung ist vom 24. November 2025.</div>
+    </section>
+
+    <!-- 08 -->
+    <section class="section reveal" id="glossar">
+      <div class="section-head"><span class="sec-num">08 · Glossar</span></div>
+      <h2>Die Begriffe</h2>
+      <details class="deep" open>
+        <summary>Von Faser bis Twist-Zone</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>Faser</dt><dd>Der Raum der winzigen Änderungen an einem Site. Hier: V<sub>i</sub> ≅ R<sup>d</sup>.</dd></div>
+            <div><dt>Jacobi-Block</dt><dd>Γ<sub>ij</sub> = ∂Y<sub>j</sub>/∂X<sub>i</sub>. Die lineare Wirkung einer Änderung bei i auf j.</dd></div>
+            <div><dt>Connection</dt><dd>Die Regeln, wie Vektoren zwischen Sites transportiert werden.</dd></div>
+            <div><dt>Paralleltransport</dt><dd>Einen Vektor entlang eines Pfades bewegen, ohne ihn absichtlich zu drehen.</dd></div>
+            <div><dt>Holonomie</dt><dd>Die lineare Abbildung, die nach einem geschlossenen Loop übrig bleibt. H = Γ<sub>ki</sub> Γ<sub>jk</sub> Γ<sub>ij</sub>.</dd></div>
+            <div><dt>Krümmung</dt><dd>Die Failure der Transportregeln, um jeden kleinen Loop die Identität zu ergeben.</dd></div>
+            <div><dt>Twist-Zone</dt><dd>Ein Bereich, in dem ||H − I|| groß ist und Signale stark verdreht oder geschert werden.</dd></div>
+            <div><dt>JVP / VJP</dt><dd>Jacobian-Vektor-Produkt und Vektor-Jacobian-Produkt. Autodiff berechnet damit die Blöcke, ohne die volle Jacobi-Matrix zu materialisieren.</dd></div>
+            <div><dt>Gauge</dt><dd>Eine lokale Wahl der Beschreibung. Die Holonomie misst, was davon unabhängig bleibt.</dd></div>
+            <div><dt>Torus</dt><dd>Ein Raum, dessen Ränder zusammengeklebt sind. Ein Pfad, der rechts hinausläuft, kommt links wieder herein.</dd></div>
+            <div><dt>Hyperbolischer Raum</dt><dd>Ein Raum mit exponentiell wachsendem Volumen. Bäume und Hierarchien passen natürlich hinein.</dd></div>
+            <div><dt>Geometrisches OS</dt><dd>Die Idee, Zustandsraum, Connection und Krümmung explizit zu entwerfen und auditierbar zu machen.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Quellen</h4>
+      <p>Jose Crespo, PhD.<br>
+      <a href="https://aiadvances.org/the-fatally-short-sighted-ai-the-curvature-trap-inside-every-neural-network-46ee8204fb3c" target="_blank" rel="noopener">AI Is Short-Sighted by Design. The Curvature Trap Nobody Sees</a>. AI Advances, 24. November 2025. (Member-only.)<br>
+      <a href="https://josecrespo.substack.com/p/why-ai-isnt-flat-the-hidden-curvature" target="_blank" rel="noopener">Why AI Isn’t Flat: The Hidden Curvature</a>. Substack, 21. November 2025. (Frei zugängliche Begleitfassung.)</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Lesehilfe, keine eigene Forschung. Die Demos sind schematische Modelle, keine Messungen eines echten Netzes. Die mathematische Aussage ist die diskrete Holonomie der Jacobi-Verbindung; die Deutung als „Krümmung“ und die These vom geometrischen OS sind die Argumente des Essays.</p>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function normAngle(a) {
+    while (a > Math.PI) a -= Math.PI * 2;
+    while (a < -Math.PI) a += Math.PI * 2;
+    return a;
+  }
+
+  /* row-major 2x2: [a,b,c,d] = [[a,b],[c,d]] */
+  function mm(A, B) {
+    return [
+      A[0] * B[0] + A[1] * B[2],
+      A[0] * B[1] + A[1] * B[3],
+      A[2] * B[0] + A[3] * B[2],
+      A[2] * B[1] + A[3] * B[3]
+    ];
+  }
+  function mv(A, v) {
+    return [A[0] * v[0] + A[1] * v[1], A[2] * v[0] + A[3] * v[1]];
+  }
+  function rot(th) {
+    var c = Math.cos(th), s = Math.sin(th);
+    return [c, -s, s, c];
+  }
+  function shear(s) { return [1, s, 0, 1]; }
+  function normF(A) {
+    return Math.hypot(A[0] - 1, A[1], A[2], A[3] - 1);
+  }
+  function vecLen(v) { return Math.hypot(v[0], v[1]); }
+  function dot2(a, b) { return a[0] * b[0] + a[1] * b[1]; }
+
+  /* ---------- loop renderer ---------- */
+  var LOOP = {
+    i: { x: 170, y: 282 },
+    j: { x: 390, y: 282 },
+    k: { x: 280, y: 96 }
+  };
+  var LOOP_TH = [50 * Math.PI / 180, -20 * Math.PI / 180, -30 * Math.PI / 180];
+  var LOOP_K = [0.9, 0.6, 1.0];
+  function loopMatrices(t) {
+    var Gij = mm(rot(LOOP_TH[0]), shear(t * LOOP_K[0]));
+    var Gjk = mm(rot(LOOP_TH[1]), shear(t * LOOP_K[1]));
+    var Gki = mm(rot(LOOP_TH[2]), shear(t * LOOP_K[2]));
+    return { Gij: Gij, Gjk: Gjk, Gki: Gki, H: mm(mm(Gki, Gjk), Gij) };
+  }
+  function lerp2(a, b, s) {
+    return { x: a.x + (b.x - a.x) * s, y: a.y + (b.y - a.y) * s };
+  }
+  function lineArrow(x1, y1, x2, y2, cls, headCls) {
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    var bx = x2 - Math.cos(ang) * 12, by = y2 - Math.sin(ang) * 12;
+    var px = -Math.sin(ang), py = Math.cos(ang);
+    return '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + (x2 - Math.cos(ang) * 7) + '" y2="' + (y2 - Math.sin(ang) * 7) + '"/>' +
+      '<polygon class="' + headCls + '" points="' + x2 + ',' + y2 + ' ' + (bx + px * 5) + ',' + (by + py * 5) + ' ' + (bx - px * 5) + ',' + (by - py * 5) + '"/>';
+  }
+  function vecArrow(x, y, v, cls, headCls) {
+    var S = 50;
+    var ex = x + v[0] * S, ey = y - v[1] * S;
+    var dx = ex - x, dy = ey - y;
+    var L = Math.hypot(dx, dy);
+    if (L < 1) return "";
+    var ux = dx / L, uy = dy / L;
+    var bx = ex - ux * 10, by = ey - uy * 10;
+    var px = -uy, py = ux;
+    return '<line class="' + cls + '" x1="' + x + '" y1="' + y + '" x2="' + (ex - ux * 5).toFixed(1) + '" y2="' + (ey - uy * 5).toFixed(1) + '"/>' +
+      '<polygon class="' + headCls + '" points="' + ex.toFixed(1) + ',' + ey.toFixed(1) + ' ' + (bx + px * 4.5).toFixed(1) + ',' + (by + py * 4.5).toFixed(1) + ' ' + (bx - px * 4.5).toFixed(1) + ',' + (by - py * 4.5).toFixed(1) + '"/>';
+  }
+  function angleArc(cx, cy, v0, v3, angle) {
+    if (angle < 2) return "";
+    var a0 = Math.atan2(-v0[1], v0[0]);
+    var a1 = Math.atan2(-v3[1], v3[0]);
+    var d = normAngle(a1 - a0);
+    var sweep = d >= 0 ? 1 : 0;
+    var r = 44;
+    var x0 = cx + Math.cos(a0) * r, y0 = cy + Math.sin(a0) * r;
+    var x1 = cx + Math.cos(a1) * r, y1 = cy + Math.sin(a1) * r;
+    var am = a0 + d / 2;
+    var lx = cx + Math.cos(am) * (r + 18), ly = cy + Math.sin(am) * (r + 18);
+    return '<path class="loop-arc" d="M' + x0.toFixed(1) + ',' + y0.toFixed(1) + ' A' + r + ',' + r + ' 0 0 ' + sweep + ' ' + x1.toFixed(1) + ',' + y1.toFixed(1) + '"/>' +
+      '<text class="loop-angle" x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle">' + angle.toFixed(0) + '°</text>';
+  }
+  function pulsePos(p) {
+    if (p <= 0 || p >= 3) return LOOP.i;
+    var leg = Math.floor(p), s = p - leg;
+    if (leg === 0) return lerp2(LOOP.i, LOOP.j, s);
+    if (leg === 1) return lerp2(LOOP.j, LOOP.k, s);
+    return lerp2(LOOP.k, LOOP.i, s);
+  }
+  function renderLoop(svg, t, phiRad, p) {
+    var M = loopMatrices(t);
+    var v0 = [Math.cos(phiRad), Math.sin(phiRad)];
+    var v1 = mv(M.Gij, v0);
+    var v2 = mv(M.Gjk, v1);
+    var v3 = mv(M.Gki, v2);
+    var c = clamp(dot2(v0, v3) / ((vecLen(v0) * vecLen(v3)) || 1), -1, 1);
+    var angle = Math.acos(c) * 180 / Math.PI;
+    var norm = normF(M.H);
+    var parts = [];
+    for (var gx = 80; gx < 480; gx += 80) {
+      parts.push('<line class="loop-bg" x1="' + gx + '" y1="44" x2="' + gx + '" y2="380"/>');
+    }
+    for (var gy = 60; gy < 400; gy += 80) {
+      parts.push('<line class="loop-bg" x1="70" y1="' + gy + '" x2="450" y2="' + gy + '"/>');
+    }
+    parts.push(lineArrow(LOOP.i.x + 24, LOOP.i.y, LOOP.j.x - 24, LOOP.j.y, "loop-edge", "loop-edge-head"));
+    parts.push(lineArrow(LOOP.j.x - 14, LOOP.j.y - 24, LOOP.k.x + 14, LOOP.k.y + 24, "loop-edge", "loop-edge-head"));
+    parts.push(lineArrow(LOOP.k.x - 14, LOOP.k.y + 24, LOOP.i.x + 14, LOOP.i.y - 24, "loop-edge-back", "loop-edge-back-head"));
+    var active = Math.round(p);
+    [LOOP.i, LOOP.j, LOOP.k].forEach(function (n, idx) {
+      parts.push('<circle class="loop-node' + (idx === (active % 3) ? ' active' : '') + '" cx="' + n.x + '" cy="' + n.y + '" r="22"/>');
+    });
+    parts.push('<text class="loop-node-label" x="' + LOOP.i.x + '" y="' + (LOOP.i.y + 6) + '" text-anchor="middle">i</text>');
+    parts.push('<text class="loop-node-label" x="' + LOOP.j.x + '" y="' + (LOOP.j.y + 6) + '" text-anchor="middle">j</text>');
+    parts.push('<text class="loop-node-label" x="' + LOOP.k.x + '" y="' + (LOOP.k.y + 6) + '" text-anchor="middle">k</text>');
+    parts.push('<text class="loop-edge-label" x="' + ((LOOP.i.x + LOOP.j.x) / 2) + '" y="' + (LOOP.i.y + 28) + '" text-anchor="middle">Γ_ij</text>');
+    parts.push('<text class="loop-edge-label" x="' + (LOOP.j.x + 14) + '" y="' + ((LOOP.j.y + LOOP.k.y) / 2) + '">Γ_jk</text>');
+    parts.push('<text class="loop-edge-label-back" x="' + (LOOP.k.x - 16) + '" y="' + ((LOOP.k.y + LOOP.i.y) / 2) + '" text-anchor="end">Γ_ki · nur im Loop</text>');
+    parts.push(vecArrow(LOOP.i.x, LOOP.i.y, v0, "loop-vec-ghost", "loop-vec-ghost-head"));
+    parts.push(vecArrow(LOOP.j.x, LOOP.j.y, v1, "loop-vec-amber", "loop-vec-amber-head"));
+    parts.push(vecArrow(LOOP.k.x, LOOP.k.y, v2, "loop-vec-violet", "loop-vec-violet-head"));
+    if (p >= 2.999) {
+      parts.push(vecArrow(LOOP.i.x, LOOP.i.y, v3, "loop-vec-final", "loop-vec-final-head"));
+      parts.push(angleArc(LOOP.i.x, LOOP.i.y, v0, v3, angle));
+    }
+    var pp = pulsePos(p);
+    parts.push('<circle class="loop-pulse" cx="' + pp.x.toFixed(1) + '" cy="' + pp.y.toFixed(1) + '" r="5"/>');
+    svg.innerHTML = parts.join("");
+    return { M: M, v0: v0, v1: v1, v2: v2, v3: v3, angle: angle, norm: norm };
+  }
+
+  var heroLoop = document.getElementById("hero-loop");
+  if (heroLoop) renderLoop(heroLoop, 0.62, 0, 3);
+
+  /* ---------- loop demo ---------- */
+  var loopSvg = document.getElementById("loop-svg");
+  var loop = { t: 0.6, phi: 0, p: 3, playing: false, raf: null, last: 0 };
+  var loopT = document.getElementById("loop-t");
+  var loopPhi = document.getElementById("loop-phi");
+  var loopStage = document.getElementById("loop-stage");
+  var loopPlay = document.getElementById("loop-play");
+  var stageNames = ["Start bei i", "nach j", "nach k", "zurück bei i"];
+  function renderLoopDemo() {
+    var r = renderLoop(loopSvg, loop.t, loop.phi * Math.PI / 180, loop.p);
+    document.getElementById("loop-t-out").textContent = loop.t.toFixed(2);
+    document.getElementById("loop-phi-out").textContent = Math.round(loop.phi) + "°";
+    document.getElementById("loop-stage-out").textContent = stageNames[Math.round(loop.p)];
+    loopStage.value = Math.round(loop.p);
+    var cells = document.querySelectorAll("#loop-matrix .matrix-cell");
+    for (var k = 0; k < 4; k++) cells[k].textContent = (Math.abs(r.M.H[k]) < 0.005 ? 0 : r.M.H[k]).toFixed(2);
+    document.getElementById("loop-norm").textContent = "||H − I|| = " + r.norm.toFixed(2);
+    document.getElementById("loop-angle").textContent = r.angle.toFixed(0) + "°";
+    var st = document.getElementById("loop-status");
+    if (r.norm < 0.04) {
+      st.textContent = "flach";
+      st.className = "status-pill flat";
+    } else {
+      st.textContent = "Twist";
+      st.className = "status-pill twist";
+    }
+    document.getElementById("loop-caption").textContent = loop.t < 0.02
+      ? "Bei t = 0 sind alle Γ reine Rotationen. Sie heben sich um den Loop auf: H = I, der Vektor kommt unverändert zurück."
+      : "Die Shears kommutieren nicht mit den Rotationen. Der Vektor kommt am selben Site an, aber gedreht oder geschert. Das ist Holonomie.";
+  }
+  loopT.addEventListener("input", function () {
+    loop.t = parseFloat(loopT.value);
+    renderLoopDemo();
+  });
+  loopPhi.addEventListener("input", function () {
+    loop.phi = parseInt(loopPhi.value, 10);
+    renderLoopDemo();
+  });
+  loopStage.addEventListener("input", function () {
+    loop.p = parseInt(loopStage.value, 10);
+    if (loop.playing) {
+      loop.playing = false;
+      if (loop.raf) cancelAnimationFrame(loop.raf);
+      loopPlay.textContent = "Abspielen";
+    }
+    renderLoopDemo();
+  });
+  function loopTick(now) {
+    if (!loop.playing) return;
+    var dt = (now - loop.last) / 1000;
+    loop.last = now;
+    loop.p = Math.min(3, loop.p + dt * 1.2);
+    renderLoopDemo();
+    if (loop.p >= 3) {
+      loop.playing = false;
+      loopPlay.textContent = "Abspielen";
+      return;
+    }
+    loop.raf = requestAnimationFrame(loopTick);
+  }
+  loopPlay.addEventListener("click", function () {
+    loop.playing = !loop.playing;
+    if (loop.playing) {
+      if (loop.p >= 3) loop.p = 0;
+      loop.last = performance.now();
+      loop.raf = requestAnimationFrame(loopTick);
+      loopPlay.textContent = "Pause";
+    } else {
+      if (loop.raf) cancelAnimationFrame(loop.raf);
+      loopPlay.textContent = "Abspielen";
+    }
+  });
+  document.getElementById("loop-reset").addEventListener("click", function () {
+    loop.t = 0.6; loop.phi = 0; loop.p = 3;
+    loop.playing = false;
+    if (loop.raf) cancelAnimationFrame(loop.raf);
+    loopPlay.textContent = "Abspielen";
+    loopT.value = "0.6"; loopPhi.value = "0"; loopStage.value = "3";
+    renderLoopDemo();
+  });
+  loopT.value = "0.6"; loopPhi.value = "0"; loopStage.value = "3";
+  renderLoopDemo();
+
+  /* ---------- DAG / loop toggle ---------- */
+  var dagLoopState = "dag";
+  var dagLoopSvg = document.getElementById("dagloop-svg");
+  function renderDagLoop() {
+    var parts = [];
+    var I = { x: 110, y: 116 }, J = { x: 260, y: 116 }, K = { x: 410, y: 116 };
+    parts.push('<path class="dagloop-back" d="M' + (K.x - 8) + ',' + (K.y - 22) + ' C 340,30 180,30 ' + (I.x + 8) + ',' + (I.y - 22) + '" opacity="' + (dagLoopState === "loop" ? 1 : 0) + '"/>');
+    var ang = Math.atan2((I.y - 22) - 30, (I.x + 8) - 180);
+    if (dagLoopState === "loop") {
+      var bx = (I.x + 8) - Math.cos(ang) * 12, by = (I.y - 22) - Math.sin(ang) * 12;
+      var px = -Math.sin(ang), py = Math.cos(ang);
+      parts.push('<polygon class="dagloop-back-head" points="' + (I.x + 8) + ',' + (I.y - 22) + ' ' + (bx + px * 5) + ',' + (by + py * 5) + ' ' + (bx - px * 5) + ',' + (by - py * 5) + '"/>');
+      parts.push('<text class="dagloop-caption" x="260" y="44" text-anchor="middle">Loop im Operatorraum: i → j → k → i</text>');
+    } else {
+      parts.push('<text class="dagloop-caption" x="260" y="44" text-anchor="middle">Vorwärts: i → j → k (azyklisch)</text>');
+    }
+    parts.push(lineArrow(I.x + 24, I.y, J.x - 24, J.y, "dagloop-edge", "dagloop-edge-head"));
+    parts.push(lineArrow(J.x + 24, J.y, K.x - 24, K.y, "dagloop-edge", "dagloop-edge-head"));
+    [I, J, K].forEach(function (n, idx) {
+      parts.push('<circle class="dagloop-node' + (idx === 1 ? ' dagloop-node-b' : '') + '" cx="' + n.x + '" cy="' + n.y + '" r="24"/>');
+    });
+    parts.push('<text class="dagloop-label" x="' + I.x + '" y="' + (I.y + 6) + '" text-anchor="middle">i</text>');
+    parts.push('<text class="dagloop-label" x="' + J.x + '" y="' + (J.y + 6) + '" text-anchor="middle">j</text>');
+    parts.push('<text class="dagloop-label" x="' + K.x + '" y="' + (K.y + 6) + '" text-anchor="middle">k</text>');
+    dagLoopSvg.innerHTML = parts.join("");
+    document.getElementById("dagloop-status").textContent = dagLoopState === "loop" ? "Loop" : "DAG";
+    document.getElementById("dagloop-readout").textContent = dagLoopState === "loop"
+      ? "Jacobi-Loop: Γ_ki Γ_jk Γ_ij. Die Rückkante ist keine Vorwärtskante."
+      : "Vorwärts: i → j → k. Kein Zyklus.";
+    document.getElementById("dagloop-caption").textContent = dagLoopState === "loop"
+      ? "Der Loop entsteht erst, wenn man die Jacobi-Blöcke komponiert. Er ist kein Zyklus im Datenfluss."
+      : "Der Vorwärtsgraph ist azyklisch. Die Architektur hat keinen computationalen Loop.";
+  }
+  document.querySelectorAll("[data-loopview]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      dagLoopState = btn.getAttribute("data-loopview");
+      document.querySelectorAll("[data-loopview]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderDagLoop();
+    });
+  });
+  renderDagLoop();
+
+  /* ---------- twist-zone heatmap ---------- */
+  var twistSvg = document.getElementById("twist-svg");
+  var twistT = document.getElementById("twist-t");
+  function inv2(A) {
+    var det = A[0] * A[3] - A[1] * A[2] || 1;
+    return [A[3] / det, -A[1] / det, -A[2] / det, A[0] / det];
+  }
+  function edgeX(x, y, t) {
+    var s = t * (0.55 * Math.sin(0.7 * x + 0.4 * y) + 0.25 * Math.cos(0.3 * x - 0.5 * y));
+    return mm(rot(0.4), shear(s));
+  }
+  function edgeY(x, y, t) {
+    var s = t * (0.45 * Math.cos(0.5 * x - 0.6 * y) + 0.25 * Math.sin(0.2 * x + 0.7 * y));
+    return mm(rot(0.4), shear(s));
+  }
+  function twistColor(v) {
+    var u = clamp(v / 0.8, 0, 1);
+    if (u < 0.5) {
+      var q = u * 2;
+      return "rgb(" + Math.round(94 + 161 * q) + "," + Math.round(234 - 25 * q) + "," + Math.round(212 - 110 * q) + ")";
+    }
+    var p = (u - 0.5) * 2;
+    return "rgb(255," + Math.round(209 - 99 * p) + "," + Math.round(102 + 97 * p) + ")";
+  }
+  function renderTwist() {
+    var t = parseFloat(twistT.value);
+    document.getElementById("twist-t-out").textContent = t.toFixed(2);
+    var cols = 10, rows = 7;
+    var x0 = 60, y0 = 40, x1 = 500, y1 = 320;
+    var dx = (x1 - x0) / (cols - 1), dy = (y1 - y0) / (rows - 1);
+    var parts = [];
+    var vals = [];
+    var maxV = 0, sum = 0, maxCell = { cx: 0, cy: 0 };
+    for (var cx = 0; cx < cols - 1; cx++) {
+      for (var cy = 0; cy < rows - 1; cy++) {
+        var Hp = mm(mm(mm(edgeX(cx, cy, t), edgeY(cx + 1, cy, t)), inv2(edgeX(cx, cy + 1, t))), inv2(edgeY(cx, cy, t)));
+        var v = normF(Hp);
+        vals.push(v);
+        sum += v;
+        if (v > maxV) { maxV = v; maxCell = { cx: cx, cy: cy }; }
+      }
+    }
+    for (var cx2 = 0; cx2 < cols - 1; cx2++) {
+      for (var cy2 = 0; cy2 < rows - 1; cy2++) {
+        var v2 = vals[cy2 * (cols - 1) + cx2];
+        parts.push('<rect class="twist-cell" x="' + (x0 + cx2 * dx + 1).toFixed(1) + '" y="' + (y0 + cy2 * dy + 1).toFixed(1) + '" width="' + (dx - 2).toFixed(1) + '" height="' + (dy - 2).toFixed(1) + '" rx="4" fill="' + twistColor(v2) + '" opacity=".86"/>');
+      }
+    }
+    for (var sx = 0; sx < cols; sx++) {
+      for (var sy = 0; sy < rows; sy++) {
+        parts.push('<circle class="twist-site" cx="' + (x0 + sx * dx).toFixed(1) + '" cy="' + (y0 + sy * dy).toFixed(1) + '" r="2.2"/>');
+      }
+    }
+    if (maxV > 0.02) {
+      parts.push('<rect class="geo-border" x="' + (x0 + maxCell.cx * dx + 1) + '" y="' + (y0 + maxCell.cy * dy + 1) + '" width="' + (dx - 2).toFixed(1) + '" height="' + (dy - 2).toFixed(1) + '" rx="4" stroke="var(--amber)" stroke-width="2.2"/>');
+      parts.push('<text class="twist-label" x="' + (x0 + maxCell.cx * dx + dx / 2) + '" y="' + (y0 + maxCell.cy * dy - 4) + '" text-anchor="middle">Twist-Zone</text>');
+    }
+    twistSvg.innerHTML = parts.join("");
+    document.getElementById("twist-max").textContent = maxV.toFixed(2);
+    document.getElementById("twist-mean").textContent = (sum / vals.length).toFixed(2);
+    document.getElementById("twist-readout").textContent = "Mittelwert " + (sum / vals.length).toFixed(2) + " · Maximum " + maxV.toFixed(2);
+    document.getElementById("twist-caption").textContent = t < 0.02
+      ? "Bei 0 ist die Verbindung flach: Jede Zelle hat H = I. Die Karte ist einfarbig."
+      : "Twist-Zonen entstehen dort, wo die lokalen Transportregeln nicht mehr sauber zusammenpassen. Der Slider erhöht die Nichtlinearität.";
+  }
+  twistT.addEventListener("input", renderTwist);
+  renderTwist();
+
+  /* ---------- two paths ---------- */
+  var twoSvg = document.getElementById("twopath-svg");
+  var twoT = document.getElementById("twopath-t");
+  var twoState = "top";
+  var TWO_TH = 30 * Math.PI / 180;
+  function renderTwoPaths() {
+    var t = parseFloat(twoT.value);
+    document.getElementById("twopath-t-out").textContent = t.toFixed(2);
+    var A = { x: 100, y: 150 }, B = { x: 460, y: 150 };
+    var Ttop = mm(rot(TWO_TH), shear(t));
+    var Tbot = mm(shear(t), rot(TWO_TH));
+    var v0 = [1, 0];
+    var vTop = mv(Ttop, v0);
+    var vBot = mv(Tbot, v0);
+    var c = clamp(dot2(vTop, vBot) / ((vecLen(vTop) * vecLen(vBot)) || 1), -1, 1);
+    var angle = Math.acos(c) * 180 / Math.PI;
+    var parts = [];
+    parts.push('<path class="twopath-path ' + (twoState === "top" ? "active" : "other") + '" d="M100,150 C180,70 380,70 460,150"/>');
+    parts.push('<path class="twopath-path ' + (twoState === "bottom" ? "active" : "other") + '" d="M100,150 C180,230 380,230 460,150"/>');
+    parts.push('<circle class="twopath-node" cx="' + A.x + '" cy="' + A.y + '" r="7"/>');
+    parts.push('<circle class="twopath-node" cx="' + B.x + '" cy="' + B.y + '" r="7"/>');
+    parts.push('<text class="twopath-label" x="' + (A.x - 18) + '" y="' + (A.y + 6) + '" text-anchor="end">A</text>');
+    parts.push('<text class="twopath-label" x="' + (B.x + 18) + '" y="' + (B.y + 6) + '">B</text>');
+    parts.push(vecArrow(A.x, A.y, v0, "twopath-vec", "twopath-vec-head"));
+    var topCls = twoState === "top" ? "twopath-vec" : "loop-vec-ghost";
+    var topHead = twoState === "top" ? "twopath-vec-head" : "loop-vec-ghost-head";
+    var botCls = twoState === "bottom" ? "twopath-vec" : "loop-vec-ghost";
+    var botHead = twoState === "bottom" ? "twopath-vec-head" : "loop-vec-ghost-head";
+    parts.push(vecArrow(B.x, B.y, vTop, topCls, topHead));
+    parts.push(vecArrow(B.x, B.y, vBot, botCls, botHead));
+    if (angle > 1.5) {
+      var a0 = Math.atan2(-vTop[1], vTop[0]);
+      var a1 = Math.atan2(-vBot[1], vBot[0]);
+      var d = normAngle(a1 - a0);
+      var sweep = d >= 0 ? 1 : 0;
+      var r = 56;
+      var x0 = B.x + Math.cos(a0) * r, y0 = B.y + Math.sin(a0) * r;
+      var x1 = B.x + Math.cos(a1) * r, y1 = B.y + Math.sin(a1) * r;
+      var am = a0 + d / 2;
+      parts.push('<path class="twopath-arc" d="M' + x0.toFixed(1) + "," + y0.toFixed(1) + ' A' + r + ',' + r + ' 0 0 ' + sweep + ' ' + x1.toFixed(1) + ',' + y1.toFixed(1) + '"/>');
+      parts.push('<text class="twopath-angle" x="' + (B.x + Math.cos(am) * (r + 18)).toFixed(1) + '" y="' + (B.y + Math.sin(am) * (r + 18)).toFixed(1) + '" text-anchor="middle">' + angle.toFixed(1) + '°</text>');
+    }
+    parts.push('<text class="twopath-note" x="100" y="280">oben: rot ∘ shear</text>');
+    parts.push('<text class="twopath-note" x="100" y="296">unten: shear ∘ rot</text>');
+    twoSvg.innerHTML = parts.join("");
+    document.getElementById("twopath-angle").textContent = angle.toFixed(1) + "°";
+    document.getElementById("twopath-readout").textContent = angle < 0.5
+      ? "Beide Wege kommen mit demselben Vektor an."
+      : "Winkel zwischen den Ankünften: " + angle.toFixed(1) + "°";
+    document.getElementById("twopath-caption").textContent = angle < 0.5
+      ? "Bei 0 ist die Regel flach: Rotation und Scherung vertauschen, beide Reihenfolgen liefern denselben Vektor."
+      : "Dieselbe lokale Regel, andere Reihenfolge: Die Vektoren kommen unterschiedlich an. Die Koordinaten sind flach, die Bedeutung ist es nicht.";
+  }
+  twoT.addEventListener("input", renderTwoPaths);
+  document.querySelectorAll("[data-twopath]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      twoState = btn.getAttribute("data-twopath");
+      document.querySelectorAll("[data-twopath]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderTwoPaths();
+    });
+  });
+  renderTwoPaths();
+
+  /* ---------- geometry chooser ---------- */
+  var geoSvg = document.getElementById("geo-svg");
+  var geoState = "flat";
+  var GEO_DESC = {
+    flat: "<b>Flach:</b> R<sup>n</sup> hat Ränder. Ein Pfad, der hinausläuft, endet an einer künstlichen Kante.",
+    torus: "<b>Torus:</b> Die Ränder sind zusammengeklebt. Rechts hinaus, links herein. Keine künstlichen Kanten.",
+    hyper: "<b>Hyperbolisch:</b> Der Raum wächst exponentiell. Bäume und Hierarchien passen hinein, ohne dass die Blätter kollabieren."
+  };
+  function geoGrid(parts, x0, y0, x1, y1, cols, rows) {
+    for (var i = 0; i <= cols; i++) {
+      var x = x0 + (x1 - x0) * i / cols;
+      parts.push('<line class="geo-grid" x1="' + x + '" y1="' + y0 + '" x2="' + x + '" y2="' + y1 + '"/>');
+    }
+    for (var j = 0; j <= rows; j++) {
+      var y = y0 + (y1 - y0) * j / rows;
+      parts.push('<line class="geo-grid" x1="' + x0 + '" y1="' + y + '" x2="' + x1 + '" y2="' + y + '"/>');
+    }
+    parts.push('<rect class="geo-border" x="' + x0 + '" y="' + y0 + '" width="' + (x1 - x0) + '" height="' + (y1 - y0) + '"/>');
+  }
+  function treeParts(cx, cy, angle, len, depth) {
+    if (depth <= 0) return [];
+    var x2 = cx + Math.cos(angle) * len;
+    var y2 = cy - Math.sin(angle) * len;
+    var parts = ['<line class="geo-tree" x1="' + cx.toFixed(1) + '" y1="' + cy.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '"/>'];
+    parts.push('<circle class="geo-tree-node" cx="' + x2.toFixed(1) + '" cy="' + y2.toFixed(1) + '" r="2.4"/>');
+    return parts.concat(treeParts(x2, y2, angle + 0.52, len * 0.64, depth - 1)).concat(treeParts(x2, y2, angle - 0.52, len * 0.64, depth - 1));
+  }
+  function renderGeo() {
+    var parts = [];
+    if (geoState === "hyper") {
+      parts.push('<circle class="geo-disc" cx="260" cy="170" r="132"/>');
+      parts = parts.concat(treeParts(260, 232, Math.PI / 2, 58, 4));
+      parts.push('<text class="geo-label" x="260" y="318" text-anchor="middle">Poincaré-Disk · schematisch</text>');
+    } else {
+      geoGrid(parts, 110, 60, 410, 280, 6, 5);
+      parts.push('<path class="geo-path" d="M140,220 C220,150 330,190 410,160"/>');
+      if (geoState === "flat") {
+        parts.push('<line class="geo-wall" x1="410" y1="120" x2="410" y2="210"/>');
+        parts.push('<text class="geo-label" x="410" y="110" text-anchor="middle">Rand</text>');
+        parts.push('<text class="geo-label" x="110" y="300">Der Pfad endet an der Wand.</text>');
+      } else {
+        parts.push('<line class="geo-torus-edge" x1="410" y1="160" x2="110" y2="160"/>');
+        parts.push('<text class="geo-label" x="260" y="152" text-anchor="middle">wrap</text>');
+        parts.push('<path class="geo-path-other" d="M110,160 C160,140 220,120 260,112"/>');
+        parts.push('<text class="geo-label" x="110" y="300">Rechts hinaus, links herein.</text>');
+      }
+    }
+    geoSvg.innerHTML = parts.join("");
+    document.getElementById("geo-desc").innerHTML = GEO_DESC[geoState];
+    document.getElementById("geo-caption").textContent = geoState === "flat"
+      ? "Flache Koordinaten haben Ränder. Für Speicher bedeutet das künstliche Kanten."
+      : (geoState === "torus"
+        ? "Ein Torus schließt die Ränder. Erinnerung kann ohne künstliche Kante zirkulieren."
+        : "Hyperbolischer Raum bietet Platz für exponentielle Verzweigung. Hierarchien bleiben unterscheidbar.");
+  }
+  document.querySelectorAll("[data-geo]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      geoState = btn.getAttribute("data-geo");
+      document.querySelectorAll("[data-geo]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderGeo();
+    });
+  });
+  renderGeo();
+
+})();
+</script>
+</body>
+</html>

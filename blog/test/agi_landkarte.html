@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eine Landkarte für AGI-Architekturen · arXiv:2603.28906</title>
+<meta name="description" content="Interaktive Lesehilfe zu de los Riscos, Corbacho und Arbib: Ein kategorientheoretischer Rahmen, um AGI-Architekturen zu vergleichen. Syntax, Wissen, Constraints, Agenten als Fasern.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+    --bg:#070b14; --bg2:#0b1224;
+    --panel:rgba(18,26,48,.66); --panel2:rgba(10,16,32,.78);
+    --ink:#eef2ff; --muted:#9aa8c7;
+    --line:rgba(150,180,255,.10); --line2:rgba(150,180,255,.18);
+    --cyan:#5ad1ff; --teal:#5eead4; --amber:#ffd166; --rose:#ff8fb1; --violet:#a78bfa; --mint:#6ef0b8;
+    --good:#6ef0b8; --bad:#ff7a8a;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 26px 64px -30px rgba(0,0,0,.95);
+    --ring:rgba(90,209,255,.2); --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f5f6fb; --bg2:#e9ecf6;
+    --panel:rgba(255,255,255,.78); --panel2:rgba(255,255,255,.9);
+    --ink:#161b33; --muted:#5b647f;
+    --line:rgba(25,40,85,.12); --line2:rgba(25,40,85,.21);
+    --cyan:#0e7490; --teal:#0f766e; --amber:#a16207; --rose:#b3245a; --violet:#6d28d9; --mint:#0f766e;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,50,90,.06),0 26px 64px -34px rgba(40,50,90,.45);
+    --ring:rgba(14,116,144,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:radial-gradient(1200px 800px at 80% -10%,rgba(90,209,255,.10),transparent 60%),radial-gradient(900px 700px at -10% 20%,rgba(167,139,250,.09),transparent 60%),radial-gradient(1000px 900px at 50% 120%,rgba(255,143,177,.07),transparent 60%),var(--bg);
+    line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:56px 56px;opacity:.5;
+    -webkit-mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%);mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%)}
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.26;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(90,209,255,.55),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(255,143,177,.42),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(167,139,250,.45),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--cyan)} strong{font-weight:650}
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--rose))}
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--cyan);transform:translateY(-1px)}
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.2vw,5rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--cyan),var(--violet) 52%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:43ch;margin:0 0 28px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--cyan),var(--mint));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f5f6fb}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+  .hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .hero-fib{width:min(470px,100%);height:auto;overflow:visible}
+  .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .hero-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--amber);font-weight:600}
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 15px 14px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--cyan),var(--rose));opacity:.75}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.68rem;color:var(--cyan);letter-spacing:.14em;margin-bottom:9px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.5}
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--cyan);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+  .prose ul{margin:10px 0;padding-left:20px;color:var(--muted)}
+  .prose li{margin:6px 0}
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+  .segmented{display:inline-flex;flex-wrap:wrap;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--cyan);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f5f6fb}
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 14px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--cyan)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--cyan);outline-offset:6px}
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch-track{width:50px;height:28px;border-radius:999px;background:var(--line2);position:relative;transition:background .2s;flex:0 0 auto}
+  .switch-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
+  .switch input:checked + .switch-track{background:var(--cyan)}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(22px);background:var(--bg)}
+  .switch input:focus-visible + .switch-track{outline:2px solid var(--cyan);outline-offset:3px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--cyan);border:1px solid var(--cyan);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f5f6fb}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--cyan)}
+  .demo-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+  .readout strong{font-family:var(--serif);font-size:1.25rem;color:var(--cyan);font-weight:600}
+  .readout .big{font-family:var(--serif);font-size:1.7rem;color:var(--amber);font-weight:600}
+  .formula-card{margin-top:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line2);border-radius:18px;background:linear-gradient(120deg,rgba(90,209,255,.08),rgba(255,143,177,.07));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.15rem,2.6vw,1.7rem);letter-spacing:.01em;line-height:1.5}
+  .formula sub{font-size:.6em}
+  .formula .op{color:var(--cyan)}
+  .formula-note{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted);margin-top:12px}
+  .note{border-left:2px solid var(--amber);padding:14px 18px;background:rgba(255,209,102,.05);border-radius:0 12px 12px 0;color:var(--muted);font-size:.9rem;margin-top:22px}
+  .note b{color:var(--ink)}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 28px}
+  .stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),var(--rose))}
+  .stat-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .stat-values{font-family:var(--serif);font-size:1.35rem;font-weight:600;letter-spacing:-.02em}
+  .stat-values .to{color:var(--cyan)}
+  .stat-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+  .take-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.88rem}
+  .take .glyph{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase;margin-bottom:10px}
+  .take ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.86rem}
+  .take li{margin:5px 0}
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--cyan);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .deep-body code{font-family:var(--mono);font-size:.86em;color:var(--cyan);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  svg{overflow:visible}
+  .layer-svg,.fib-svg,.step-svg,.map-svg{width:100%;height:auto;display:block}
+  .layer-box{fill:var(--bg);stroke:var(--line2);stroke-width:1.4}
+  .layer-box.active{stroke:var(--amber);stroke-width:2.4;filter:url(#glow-main)}
+  .layer-box.mono{fill:rgba(90,209,255,.06);stroke:var(--cyan);stroke-width:1.8}
+  .layer-label{fill:var(--ink);font-family:var(--sans);font-size:10.5px;font-weight:600}
+  .layer-sub{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  .layer-arrow{stroke:var(--cyan);stroke-width:1.6;fill:none}
+  .layer-arrow-head{fill:var(--cyan)}
+  .layer-dash{stroke:var(--amber);stroke-width:1.2;stroke-dasharray:4 5;fill:none;opacity:.8}
+  .layer-panel{fill:rgba(10,16,32,.55);stroke:var(--line2);stroke-width:1.2}
+  .layer-kbox{fill:var(--bg);stroke:var(--violet);stroke-width:1.4}
+  .layer-kbox.alt{stroke:var(--rose)}
+  .layer-klabel{fill:var(--ink);font-family:var(--sans);font-size:10px;font-weight:600}
+  .layer-ksub{fill:var(--muted);font-family:var(--mono);font-size:8.5px}
+  .layer-head{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .layer-badge{fill:var(--amber);font-family:var(--mono);font-size:9px}
+  .fib-base{stroke:var(--line2);stroke-width:1.4}
+  .fib-node{fill:var(--bg);stroke:var(--cyan);stroke-width:1.6}
+  .fib-node.active{stroke:var(--amber);stroke-width:2.6;filter:url(#glow-main)}
+  .fib-nodelabel{fill:var(--ink);font-family:var(--serif);font-size:16px;font-style:italic}
+  .fib-fibre{fill:rgba(90,209,255,.035);stroke:var(--line2);stroke-width:1.2;stroke-dasharray:5 5}
+  .fib-fibre.active{fill:rgba(90,209,255,.07);stroke:var(--cyan)}
+  .fib-fibrelabel{fill:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:.05em}
+  .fib-agent{fill:var(--teal);opacity:.85}
+  .fib-agent.bad{fill:var(--bad);opacity:.9}
+  .fib-agent.new{stroke:var(--bg);stroke-width:1}
+  .fib-arrow{stroke:var(--cyan);stroke-width:1.6;fill:none}
+  .fib-arrow-head{fill:var(--cyan)}
+  .fib-reindex{stroke:var(--amber);stroke-width:1.6;fill:none;stroke-dasharray:5 4}
+  .fib-reindex-head{fill:var(--amber)}
+  .fib-caption{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  .step-node{fill:var(--bg);stroke:var(--line2);stroke-width:1.4}
+  .step-node.base{stroke:var(--cyan);stroke-width:1.8}
+  .step-node.new{stroke:var(--amber);stroke-width:2.2;filter:url(#glow-main)}
+  .step-nodelabel{fill:var(--ink);font-family:var(--sans);font-size:10px;font-weight:600}
+  .step-edge{stroke:var(--cyan);stroke-width:1.4;fill:none;opacity:.75}
+  .step-edge-head{fill:var(--cyan)}
+  .step-frame{fill:none;stroke:var(--violet);stroke-width:1.4;stroke-dasharray:5 5}
+  .step-frame-label{fill:var(--violet);font-family:var(--mono);font-size:9px}
+  .step-mem{fill:rgba(255,209,102,.06);stroke:var(--amber);stroke-width:1.6}
+  .step-chip{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  .step-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+  .step-btn{text-align:left;font-family:var(--mono);font-size:.7rem;letter-spacing:.02em;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .step-btn:hover{color:var(--ink);border-color:var(--line2)}
+  .step-btn.active{color:var(--amber);border-color:var(--amber);background:rgba(255,209,102,.06)}
+  .check-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+  .check-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+  .check-item .ct{font-family:var(--sans);font-size:.84rem;color:var(--ink);font-weight:600}
+  .check-item .cs{font-family:var(--mono);font-size:.64rem;color:var(--muted);margin-top:2px}
+  .check-summary{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .check-status{font-family:var(--mono);font-size:.8rem;letter-spacing:.04em;padding:8px 14px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+  .check-status.ok{color:var(--good);border-color:var(--good)}
+  .check-status.no{color:var(--bad);border-color:var(--bad)}
+  .map-node{fill:var(--bg);stroke:var(--cyan);stroke-width:1.6;cursor:pointer;transition:stroke .2s}
+  .map-node.active{stroke:var(--amber);stroke-width:2.8;filter:url(#glow-main)}
+  .map-nodelabel{fill:var(--ink);font-family:var(--serif);font-size:15px;font-style:italic;pointer-events:none}
+  .map-edge{stroke:var(--line2);stroke-width:1.5;fill:none;cursor:pointer;transition:stroke .2s}
+  .map-edge.active{stroke:var(--amber);stroke-width:2.4}
+  .map-edge.dashed{stroke-dasharray:5 5}
+  .map-label{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  .map-desc{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:.88rem;color:var(--muted);min-height:3.6em}
+  .map-desc b{color:var(--ink)}
+  @media (max-width:980px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{order:-1}
+    .hero-fib{width:min(340px,84%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .take-grid{grid-template-columns:1fr}
+    .step-list{grid-template-columns:repeat(2,1fr)}
+    .check-list{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .tldr-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .gloss-grid{grid-template-columns:1fr}
+    .step-list{grid-template-columns:1fr}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <filter id="glow-main" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Working Paper · arXiv:2603.28906 · Juli 2026</div>
+      <h1>Eine Landkarte<br><span class="grad">für AGI-Architekturen</span></h1>
+      <p class="lede">RL, Causal RL, Schema-Based Learning, AIXI: lauter verschiedene Rezepte. Das Papier trennt <b>Syntax</b>, <b>Wissen</b> und <b>Constraints</b> und macht daraus eine Kategorie. So lassen sich Architekturen vergleichen, übersetzen und auf gemeinsame Eigenschaften prüfen.</p>
+      <div class="byline">
+        <span>Pablo de los Riscos</span><span class="dot-sep"></span>
+        <span>Fernando J. Corbacho</span><span class="dot-sep"></span>
+        <span>Michael A. Arbib</span>
+      </div>
+      <a class="cta" href="#schichten">Die Landkarte öffnen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg class="hero-fib" id="hero-fib" viewBox="0 0 560 400"></svg>
+      <div class="hero-badge">Agents <strong>↓</strong> ArchAgents</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>Drei Schichten</h3><p>Syntax, Wissen, Constraints. Erst die Trennung macht Architekturen vergleichbar.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>ArchAgents</h3><p>Architekturen sind Objekte. Strukturerhaltende Übersetzungen sind Morphismen.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Agents</h3><p>Konkrete Agenten sind semantische Funktoren in eine Implementierungskategorie.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>Fibration</h3><p>Agenten liegen über Architekturen. Reindexierung transportiert sie.</p></div>
+        <div class="tldr-card"><div class="tldr-num">05</div><h3>Vergleich</h3><p>RL, CRL, SBL und AIXI werden zu Punkten und Pfaden in einem Raum.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal" id="schichten">
+      <div class="section-head"><span class="sec-num">01 · Drei Schichten</span></div>
+      <h2>Was eine Architektur wirklich festlegt</h2>
+      <div class="prose">
+        <p>Eine Architektur ist kein Algorithmus. Sie ist ein <span class="accent">Bauplan</span> mit drei Schichten. Die <span class="accent">Syntax</span> legt fest, welche Module es gibt und wie sie verdrahtet werden dürfen. Das <span class="accent">Wissen</span> legt fest, welche Wissenseinheiten und Transformationen erlaubt sind. Die <span class="accent">Constraints</span> legen fest, welche konkreten Realisierungen als admissibel gelten.</p>
+        <p>Die Trennung ist nicht akademisch. Zwei Agenten können dieselbe Syntax haben und sich im Wissen unterscheiden. Oder dasselbe Wissen und dieselbe Update-Regel haben und sich in der Syntax unterscheiden. Genau das sind die drei Beispiele des Papers.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Dieselbe Architektur, drei Lesarten</div>
+            <div class="demo-sub">Ford, Arzt, Roboter</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Szenario">
+            <button class="seg active" type="button" data-scen="ford" aria-pressed="true">Ford</button>
+            <button class="seg" type="button" data-scen="doctor" aria-pressed="false">Arzt</button>
+            <button class="seg" type="button" data-scen="robot" aria-pressed="false">Roboter</button>
+          </div>
+        </div>
+        <div class="demo-top" style="margin-top:-6px">
+          <div class="segmented" id="var-seg" role="group" aria-label="Variante"></div>
+          <span class="check-status" id="layer-badge" style="padding:4px 10px;font-size:.68rem">gleiche Syntax</span>
+        </div>
+        <svg class="layer-svg" id="layer-svg" viewBox="0 0 560 360" role="img" aria-label="Syntaxfluss und Wissensstruktur für ein Szenario"></svg>
+        <div class="readout"><span id="layer-readout">Gleiche Syntax, anderes Wissen.</span><strong id="layer-constraint">Reihenfolge</strong></div>
+        <div class="caption" id="layer-caption">Die Montagelinie bleibt dieselbe. Nur die Realisierung einer Stufe ändert sich.</div>
+      </div>
+
+      <div class="note"><b>Die Pointe:</b> Syntax und Wissen sind orthogonal, aber gekoppelt. Die Syntax bestimmt, welche Wissensschnittstellen es gibt. Das Wissen bestimmt, welche Realisierungen an diesen Schnittstellen möglich sind. Die Constraints entscheiden, welche davon zählen.</div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal" id="archagents">
+      <div class="section-head"><span class="sec-num">02 · ArchAgents und Agents</span></div>
+      <h2>Architekturen als Objekte, Agenten als Fasern</h2>
+      <div class="prose">
+        <p>Die Kategorie <span class="accent">ArchAgents</span> hat Architekturen als Objekte. Eine Architektur ist ein Tripel A = (G<sub>A</sub>, Know<sub>A</sub>, T<sub>A</sub>): das syntaktische Diagramm, die Wissenskategorie und die Constraint-Schicht. Ein Morphismus F: A → B ist eine strukturerhaltende Übersetzung: monoidale Funktoren auf Syntax und Wissen, eine natürliche Transformation auf der relationalen Schnittstelle und eine Übersetzung der Scopes und Constraints.</p>
+        <p>Ein konkreter <span class="accent">Agent</span> ist ein Paar von starken monoidalen Funktoren I: G<sub>A</sub> → E und J: Know<sub>A</sub> → E in eine semantische Kategorie E, etwa Set, Stoch, FinStoch oder eine Kleisli-Kategorie. Er muss die Schnittstellen und die Constraints erfüllen. Agents(A, E) ist die Kategorie der Agenten von A in E.</p>
+        <p>Die Grothendieck-Konstruktion macht daraus eine <span class="accent">Fibration</span> Agents(E) → ArchAgents. Die Faser über A enthält alle Agenten, die A implementieren. Ein Architektur-Morphismus F: A → B reindexiert Agenten von B nach A. Ob sie in A admissibel bleiben, hängt davon ab, ob F die Constraints erhält.</p>
+      </div>
+
+      <div class="formula-card reveal">
+        <div class="formula-kicker">Die zwei Ebenen</div>
+        <div class="formula">A = (G<sub>A</sub>, Know<sub>A</sub>, T<sub>A</sub>) &nbsp;&nbsp;·&nbsp;&nbsp; Agents(E) <span class="op">=</span> ∫<sub>A ∈ ArchAgents</sub> Agents(A, E)</div>
+        <div class="formula-note">Architektur = Syntax + Wissen + Constraints. Agent = semantische Realisierung in E.</div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Fibration</div>
+            <div class="demo-sub">Agenten über Architekturen, Reindexierung inklusive</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Architekturpaar">
+            <button class="seg active" type="button" data-fibpair="0" aria-pressed="true">RL → CRL</button>
+            <button class="seg" type="button" data-fibpair="1" aria-pressed="false">CRL → SBL</button>
+          </div>
+        </div>
+        <div class="demo-actions" style="margin-bottom:10px">
+          <label class="switch">
+            <input type="checkbox" id="fib-reindex">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Reindexieren</span>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="fib-preserve" checked>
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Constraints erhalten</span>
+          </label>
+        </div>
+        <svg class="fib-svg" id="fib-svg" viewBox="0 0 560 400" role="img" aria-label="Fibration mit zwei Architekturen und ihren Agentenfasern"></svg>
+        <div class="readout"><span id="fib-readout">F: RL → CRL. Die Faser über RL enthält die RL-Agenten.</span><strong id="fib-status">Fibration</strong></div>
+        <div class="caption" id="fib-caption">Die Projektion ist eine Fibration über den admissibilitätserhaltenden Morphismen. Reindexierung liefert einen Agenten der Quellarchitektur, aber nur bei erhaltenden Constraints bleibt er admissibel.</div>
+      </div>
+
+      <div class="note"><b>Drei Ebenen:</b> Architektur (Basis), admissible Realisierung (Faser) und Transport unter Architekturwandel (cartesian lifting). Der Constraint-Layer ist das Auswahlprinzip, das aus der Faser die zulässigen Agenten herausschneidet.</div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal" id="eigenschaften">
+      <div class="section-head"><span class="sec-num">03 · Eigenschaften</span></div>
+      <h2>Strukturell, informativ, semantisch</h2>
+      <div class="prose">
+        <p>Das Papier unterscheidet drei Arten von Eigenschaften. <span class="accent">Strukturelle</span> Eigenschaften sind Gleichungen und Kommutationsgesetze, die sich aus der Hypergraph-Präsentation ableiten lassen: Gibt es Rückkopplungen? Sind bestimmte Typen erreichbar? Lässt sich ein Diagramm faktorisieren? Sie sind unter Architektur-Morphismen funktoriell stabil.</p>
+        <p><span class="accent">Informationale</span> Eigenschaften betreffen die Informationskategorie Info<sub>A</sub> und den Interpretationsfunktor Ω<sub>A</sub>: Wie wird Information gekapselt, weitergegeben und wiederverwendet? <span class="accent">Semantische</span> Eigenschaften betreffen konkrete Agenten. Sie werden über Institutionen und Zertifikate modelliert: Ein externer Satz wird auf einen Agenten instantiiert, die Evidenz prüft die Hypothesen, und die Konklusion folgt aus der Soundness des externen Beweises.</p>
+      </div>
+
+      <div class="take-grid">
+        <div class="take"><div class="glyph">Strukturell</div><h3>Was die Verdrahtung erzwingt</h3><p>Feedback, Erreichbarkeit, Faktorisierbarkeit, Äquivalenz von Zerlegungen. Beweis durch Diagramm-Reasoning.</p></div>
+        <div class="take"><div class="glyph">Informational</div><h3>Wie Information lebt</h3><p>Kapselung, Weitergabe, Wiederverwendung. Eine Eigenschaft der Informationskategorie und ihrer Interpretation.</p></div>
+        <div class="take"><div class="glyph">Semantisch</div><h3>Was der Agent garantiert</h3><p>Ein Zertifikat verbindet einen externen Satz mit dem Modell des Agenten. Die Hypothese wird geprüft, die Konklusion geerbt.</p></div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Admissibilität ist eine Checkliste</div>
+            <div class="demo-sub">Die fünf Constraints der RL-Architektur</div>
+          </div>
+          <span class="check-status ok" id="check-status">admissibel</span>
+        </div>
+        <div class="check-list" id="check-list">
+          <label class="check-item"><div><div class="ct">Value/Action Representability</div><div class="cs">Werte und Aktionen sind im Träger darstellbar.</div></div><input type="checkbox" data-constraint="0" checked style="accent-color:var(--cyan);width:18px;height:18px"></label>
+          <label class="check-item"><div><div class="ct">Bellman Consistency</div><div class="cs">Der Update-Operator erfüllt die Bellman-Gleichung.</div></div><input type="checkbox" data-constraint="1" checked style="accent-color:var(--cyan);width:18px;height:18px"></label>
+          <label class="check-item"><div><div class="ct">Policy-Value Compatibility</div><div class="cs">Die Policy passt zur Wertfunktion.</div></div><input type="checkbox" data-constraint="2" checked style="accent-color:var(--cyan);width:18px;height:18px"></label>
+          <label class="check-item"><div><div class="ct">Markovian Transition Admissibility</div><div class="cs">Der Übergang ist Markov.</div></div><input type="checkbox" data-constraint="3" checked style="accent-color:var(--cyan);width:18px;height:18px"></label>
+          <label class="check-item"><div><div class="ct">Ontological Constraints on Types</div><div class="cs">Die Typen erfüllen die geforderte Struktur.</div></div><input type="checkbox" data-constraint="4" checked style="accent-color:var(--cyan);width:18px;height:18px"></label>
+        </div>
+        <div class="check-summary">
+          <span id="check-missing">Alle fünf Constraints erfüllt.</span>
+          <button class="btn ghost" type="button" id="check-reset">Zurücksetzen</button>
+        </div>
+        <div class="caption">Der Constraint-Layer entscheidet, welche Realisierungen als Agenten der Architektur zählen. Fehlt ein Constraint, ist der Agent nicht admissibel.</div>
+      </div>
+
+      <div class="note"><b>Hinweis aus dem Paper:</b> Abschnitt 5 ist in der vorliegenden Fassung als „deprecated“ markiert und soll künftig überarbeitet werden. Die konzeptionelle Dreiteilung bleibt aber das Gerüst des Frameworks.</div>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal" id="rl-sbl">
+      <div class="section-head"><span class="sec-num">04 · Von RL zu SBL</span></div>
+      <h2>Fünf Lockerungen, eine Architektur</h2>
+      <div class="prose">
+        <p><span class="accent">RL</span> ist der flache Baseline: eine Policy, eine Umgebung, ein globaler Update und ein einziger parametrischer Träger. <span class="accent">Causal RL</span> ergänzt ein kausales Modell und Do-Interventionen. <span class="accent">SBL</span> entsteht aus CRL, indem fünf Design-Annahmen schrittweise gelockert werden.</p>
+        <p>Der Stepper zeigt die Richtung: von einem globalen Modell zu faktorisierten Interfaces, getrennten Modellen, kognitiven Modulen, Gedächtnis und Körpervermittlung. <span class="accent">AIXI</span> ist ein weiterer Fall: universelle Prädiktion über eine History H, ein universeller Kernel ε, Bayes-Update und eine Policy.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Von CRL zu SBL</div>
+            <div class="demo-sub">Klicke einen Schritt</div>
+          </div>
+          <div class="readout" style="border:none;margin:0;padding:0"><span>Schritt</span><strong id="step-count">0 / 5</strong></div>
+        </div>
+        <svg class="step-svg" id="step-svg" viewBox="0 0 560 340" role="img" aria-label="Architekturdiagramm, das von CRL zu SBL wächst"></svg>
+        <div class="step-list" id="step-list"></div>
+        <div class="readout"><span id="step-desc">Ein globales kausales Modell, eine Policy, ein Update-Loop.</span><strong id="step-title">CRL</strong></div>
+        <div class="caption">Die Schritte sind schematisch. Im Paper werden die Annahmen einzeln relaxiert, sodass SBL als gemeinsame Verallgemeinerung sichtbar wird.</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">RL</div><div class="stat-values">flach</div><div class="stat-note">Ein parametrischer Träger, ein globaler Update-Loop, keine explizite Wissensstruktur.</div></div>
+        <div class="stat"><div class="stat-label">CRL</div><div class="stat-values">kausal</div><div class="stat-note">Kausales Modell, Do-Interventionen, kausales Update. Zusätzliche Constraints.</div></div>
+        <div class="stat"><div class="stat-label">SBL</div><div class="stat-values">modular</div><div class="stat-note">Faktorisierte Interfaces, Multi-Modelle, kognitive Module, Gedächtnis, Körper.</div></div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal" id="raum">
+      <div class="section-head"><span class="sec-num">05 · Der Raum der Architekturen</span></div>
+      <h2>Pfade, Übersetzungen, Vergleiche</h2>
+      <div class="prose">
+        <p>Wenn Architekturen Objekte einer Kategorie sind, kann man über <span class="accent">Pfade</span> zwischen ihnen sprechen. Das Papier zeigt in seiner Abbildung 8 einen topologischen Raum von Architekturvarianten, mit Präfixen wie O (offline), F (faktorisiert), FMM (faktoriesierte Multi-Modelle), CogMem (kognitive Module mit Gedächtnis) und Emb (verkörpert).</p>
+        <p>Die Landkarte ist der Punkt des Papers: Nicht jede Architektur isoliert analysieren, sondern Übersetzungen, Äquivalenzen und gemeinsame Eigenschaften sichtbar machen. Langfristig sollen daraus Aussagen über Expressivität, Universalität und Designprinzipien für AGI werden.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Landkarte</div>
+            <div class="demo-sub">Klicke Knoten oder Kanten</div>
+          </div>
+        </div>
+        <svg class="map-svg" id="map-svg" viewBox="0 0 560 340" role="img" aria-label="Schematische Landkarte der Architekturen RL, CRL, SBL und AIXI"></svg>
+        <div class="map-desc" id="map-desc"><b>RL:</b> Der flache Baseline. Eine Policy, ein globaler Update, ein parametrischer Träger.</div>
+        <div class="caption">Die Kanten sind eine schematische Lesart der Fallstudien, keine vollständige Liste formaler Morphismen. Das Paper selbst markiert viele Vergleichsrichtungen als zukünftige Arbeit.</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Kurzfristig</div><div class="stat-values">Theoreme</div><div class="stat-note">Architekturäquivalenz, Admissibilitätserhalt, Realisierbarkeit, Expressivität.</div></div>
+        <div class="stat"><div class="stat-label">Mittelfristig</div><div class="stat-values">World</div><div class="stat-note">Ein World-Layer für Umgebungen, Interaktionen, Tester und empirische Scores.</div></div>
+        <div class="stat"><div class="stat-label">Langfristig</div><div class="stat-values">AGI-Prinzipien</div><div class="stat-note">Notwendige oder hinreichende Strukturprinzipien für allgemeine Intelligenz.</div></div>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section class="section reveal" id="einordnung">
+      <div class="section-head"><span class="sec-num">06 · Einordnung</span></div>
+      <h2>Ein Rahmen, kein fertiges Gesetz</h2>
+      <div class="take-grid">
+        <div class="take">
+          <div class="glyph">Was es zeigt</div>
+          <h3>Eine gemeinsame Sprache</h3>
+          <ul>
+            <li>Syntax, Wissen und Constraints werden sauber getrennt.</li>
+            <li>Architekturen werden zu Objekten, Übersetzungen zu Morphismen.</li>
+            <li>Agenten werden als semantische Funktoren in eine Faser gelegt.</li>
+            <li>RL, CRL, SBL und AIXI werden im selben Vokabular beschreibbar.</li>
+          </ul>
+        </div>
+        <div class="take">
+          <div class="glyph">Was es nicht zeigt</div>
+          <h3>Kein empirischer Sieger</h3>
+          <ul>
+            <li>Es ist ein Working Paper und Position Paper, kein Benchmark.</li>
+            <li>Die strukturellen Theoreme sind großteils Zukunftsmusik.</li>
+            <li>Abschnitt 5 ist als überarbeitungsbedürftig markiert.</li>
+            <li>Dass eine Architektur „AGI“ ist, wird nicht gemessen, sondern als Forschungsprogramm behandelt.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note"><b>Der Wert:</b> Das Framework zwingt dazu, bei jedem Architekturvergleich zu sagen, welche Schicht sich ändert. Es macht aus einem Sammelsurium von Algorithmen eine Landkarte von Strukturen, Übersetzungen und Zulässigkeitsbedingungen.</div>
+    </section>
+
+    <!-- 07 -->
+    <section class="section reveal" id="glossar">
+      <div class="section-head"><span class="sec-num">07 · Glossar</span></div>
+      <h2>Die Begriffe</h2>
+      <details class="deep" open>
+        <summary>Von Hypergraph bis Zertifikat</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>Kategorie</dt><dd>Objekte, Morphismen, Komposition, Identität.</dd></div>
+            <div><dt>Funktor</dt><dd>Eine strukturerhaltende Abbildung zwischen Kategorien.</dd></div>
+            <div><dt>Natürliche Transformation</dt><dd>Eine Familie von Morphismen, die zwei Funktoren verträglich verbindet.</dd></div>
+            <div><dt>Symmetrische monoidale Kategorie</dt><dd>Eine Kategorie mit Tensorprodukt und Symmetrie. Grundlage für parallele Verdrahtung.</dd></div>
+            <div><dt>Hypergraph-Kategorie</dt><dd>Eine symmetrische monoidale Kategorie mit speziellen Frobenius-Strukturen. Erlaubt Kopieren, Verschmelzen und Feedback in String-Diagrammen.</dd></div>
+            <div><dt>String-Diagramm</dt><dd>Eine grafische Notation für Morphismen in einer monoidalen Kategorie.</dd></div>
+            <div><dt>Profunktor</dt><dd>Eine relationale Schnittstelle zwischen zwei Kategorien. Hier: Syntax ↔ Wissen.</dd></div>
+            <div><dt>Fibration</dt><dd>Eine Projektion, bei der sich Fasern entlang von Morphismen transportieren lassen.</dd></div>
+            <div><dt>Grothendieck-Konstruktion</dt><dd>Baut aus einer indexierten Kategorie eine totale Kategorie mit Projektion auf die Basis.</dd></div>
+            <div><dt>Faser</dt><dd>Alle Agenten, die über einer festen Architektur liegen.</dd></div>
+            <div><dt>Reindexierung</dt><dd>Transport eines Agenten entlang eines Architektur-Morphismus.</dd></div>
+            <div><dt>Institution</dt><dd>Ein abstraktes logisches System aus Signaturen, Sätzen, Modellen und Erfüllung.</dd></div>
+            <div><dt>Semantisches Zertifikat</dt><dd>Ein externer Satz plus Instantiation plus Evidenz, dass der Agent die Hypothesen erfüllt.</dd></div>
+            <div><dt>Admissibel</dt><dd>Eine Realisierung, die die Constraints der Architektur erfüllt.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Quelle</h4>
+      <p>Pablo de los Riscos, Fernando J. Corbacho, Michael A. Arbib.<br>
+      <a href="https://arxiv.org/abs/2603.28906" target="_blank" rel="noopener">Towards a Category-theoretic Comparative Framework for Artificial General Intelligence</a>.<br>
+      arXiv:2603.28906v4, 1. Juli 2026. Working Paper, 37 Seiten, 7 Abbildungen, 1 Tabelle. Lizenz CC BY 4.0.</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Lesehilfe, keine eigene Forschung. Die Diagramme sind schematische Nachbildungen, keine Originalabbildungen. Die Fallstudien und die Landkarte vereinfachen das Paper; die formalen Definitionen stehen dort.</p>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  function arrow(x1, y1, x2, y2, cls, headCls) {
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    var bx = x2 - Math.cos(ang) * 11, by = y2 - Math.sin(ang) * 11;
+    var px = -Math.sin(ang), py = Math.cos(ang);
+    return '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + (x2 - Math.cos(ang) * 6) + '" y2="' + (y2 - Math.sin(ang) * 6) + '"/>' +
+      '<polygon class="' + headCls + '" points="' + x2 + ',' + y2 + ' ' + (bx + px * 4.5) + ',' + (by + py * 4.5) + ' ' + (bx - px * 4.5) + ',' + (by - py * 4.5) + '"/>';
+  }
+
+  /* ---------- three layers ---------- */
+  var LAYER = {
+    ford: {
+      name: "Ford",
+      variants: ["Hand", "Roboter"],
+      modules: ["Chassis", "Motor", "Elektrik", "Räder"],
+      highlight: 3,
+      same: "syntax",
+      knowledge: [
+        [{ title: "Hand", sub: "Bolzen in Reihenfolge, von Hand." }],
+        [{ title: "Roboter", sub: "Alle Bolzen gleichzeitig, automatisch." }]
+      ],
+      constraint: "Reihenfolge: Räder erst nach Achse",
+      caption: "Die Montagelinie bleibt dieselbe. Nur die Realisierung der einen Stufe ändert sich."
+    },
+    doctor: {
+      name: "Arzt",
+      variants: ["parametrisch", "strukturell"],
+      modules: ["Beobachten", "Entscheiden", "Behandeln", "Auswerten"],
+      highlight: 1,
+      same: "syntax",
+      knowledge: [
+        [{ title: "Ein Modell", sub: "Nur Konfidenzen werden angepasst." }],
+        [{ title: "Krankheit A", sub: "Erklärung A" }, { title: "Krankheit B", sub: "Erklärung B" }]
+      ],
+      constraint: "Klinischer Ablauf",
+      caption: "Der Ablauf bleibt gleich. Das Wissen wird strukturell angereichert oder nicht."
+    },
+    robot: {
+      name: "Roboter",
+      variants: ["monolithisch", "modular"],
+      modules: ["Wahrnehmung", "Entscheidung", "Aktion", "Update"],
+      highlight: -1,
+      same: "knowledge",
+      knowledge: [
+        [{ title: "Gleiche Update-Regel", sub: "Reisezeit wird nach jeder Fahrt angepasst." }],
+        [{ title: "Gleiche Update-Regel", sub: "Reisezeit wird nach jeder Fahrt angepasst." }]
+      ],
+      constraint: "Update: Reisezeit",
+      caption: "Das Wissen und die Update-Regel bleiben gleich. Die Syntax wird modular oder bleibt global."
+    }
+  };
+  var layerState = { scen: "ford", variant: 0 };
+  var layerSvg = document.getElementById("layer-svg");
+  var varSeg = document.getElementById("var-seg");
+  function layerBox(x, y, w, h, title, cls) {
+    var s = '<rect class="layer-box ' + (cls || "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="10"/>';
+    s += '<text class="layer-label" x="' + (x + w / 2) + '" y="' + (y + h / 2 + 4) + '" text-anchor="middle">' + title + '</text>';
+    return s;
+  }
+  function renderLayer() {
+    var d = LAYER[layerState.scen];
+    var v = layerState.variant;
+    var parts = [];
+    parts.push('<text class="layer-head" x="24" y="34">Syntax</text>');
+    if (layerState.scen === "robot" && v === 0) {
+      parts.push('<rect class="layer-box mono" x="55" y="55" width="450" height="72" rx="12"/>');
+      parts.push('<text class="layer-label" x="280" y="86" text-anchor="middle">Global: Wahrnehmung + Entscheidung + Aktion + Update</text>');
+      parts.push('<text class="layer-sub" x="280" y="104" text-anchor="middle">ein großer Loop, keine lokale Aufteilung</text>');
+      parts.push('<path class="layer-arrow" d="M505,91 C545,91 545,140 505,140" fill="none"/>');
+      parts.push('<text class="layer-sub" x="524" y="118" text-anchor="middle">Loop</text>');
+    } else {
+      var x0 = 35, w = 110, gap = 20, y = 60, h = 56;
+      for (var i = 0; i < 4; i++) {
+        var x = x0 + i * (w + gap);
+        var cls = (d.highlight === i ? "active" : "");
+        parts.push(layerBox(x, y, w, h, d.modules[i], cls));
+        if (i < 3) parts.push(arrow(x + w + 2, y + h / 2, x + w + gap - 2, y + h / 2, "layer-arrow", "layer-arrow-head"));
+      }
+      if (layerState.scen === "robot" && v === 1) {
+        parts.push('<text class="layer-sub" x="190" y="132" text-anchor="middle">Verkehr · Wetter · Zeit</text>');
+      }
+      if (layerState.scen === "doctor" && v === 1) {
+        parts.push('<text class="layer-sub" x="255" y="132" text-anchor="middle">differenziert</text>');
+      }
+    }
+    var panelY = 205;
+    parts.push('<text class="layer-head" x="30" y="196">Wissen</text>');
+    parts.push('<rect class="layer-panel" x="30" y="' + panelY + '" width="500" height="132" rx="14"/>');
+    var boxes = d.knowledge[v];
+    var bw = boxes.length === 1 ? 330 : 205;
+    var totalW = boxes.length * bw + (boxes.length - 1) * 20;
+    var startX = 280 - totalW / 2;
+    boxes.forEach(function (b, i) {
+      var bx = startX + i * (bw + 20);
+      parts.push('<rect class="layer-kbox ' + (i === 1 ? "alt" : "") + '" x="' + bx + '" y="240" width="' + bw + '" height="62" rx="10"/>');
+      parts.push('<text class="layer-klabel" x="' + (bx + bw / 2) + '" y="266" text-anchor="middle">' + b.title + '</text>');
+      parts.push('<text class="layer-ksub" x="' + (bx + bw / 2) + '" y="284" text-anchor="middle">' + b.sub + '</text>');
+    });
+    var connX = 280;
+    if (layerState.scen === "ford" || layerState.scen === "doctor") {
+      var idx = d.highlight;
+      connX = 35 + idx * 130 + 55;
+    }
+    parts.push('<path class="layer-dash" d="M' + connX + ',118 C' + connX + ',160 280,165 280,205"/>');
+    parts.push('<text class="layer-badge" x="280" y="' + (panelY + 122) + '" text-anchor="middle">Constraints: ' + d.constraint + '</text>');
+    layerSvg.innerHTML = parts.join("");
+    var badge = document.getElementById("layer-badge");
+    if (d.same === "syntax") {
+      badge.textContent = "gleiche Syntax";
+      badge.className = "check-status ok";
+    } else {
+      badge.textContent = "gleiches Wissen";
+      badge.className = "check-status ok";
+    }
+    document.getElementById("layer-constraint").textContent = d.constraint;
+    document.getElementById("layer-readout").textContent = d.same === "syntax"
+      ? "Gleiche Syntax, anderes Wissen."
+      : "Gleiches Wissen, andere Syntax.";
+    document.getElementById("layer-caption").textContent = d.caption;
+  }
+  function buildVarSeg() {
+    var d = LAYER[layerState.scen];
+    varSeg.innerHTML = "";
+    d.variants.forEach(function (name, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "seg" + (i === layerState.variant ? " active" : "");
+      b.textContent = name;
+      b.setAttribute("aria-pressed", String(i === layerState.variant));
+      b.addEventListener("click", function () {
+        layerState.variant = i;
+        buildVarSeg();
+        renderLayer();
+      });
+      varSeg.appendChild(b);
+    });
+  }
+  document.querySelectorAll("[data-scen]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      layerState.scen = btn.getAttribute("data-scen");
+      layerState.variant = 0;
+      document.querySelectorAll("[data-scen]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      buildVarSeg();
+      renderLayer();
+    });
+  });
+  buildVarSeg();
+  renderLayer();
+
+  /* ---------- fibration ---------- */
+  var FIB_PAIRS = [
+    { a: "RL", b: "CRL", adesc: "flache Policy", bdesc: "kausales Modell + Do" },
+    { a: "CRL", b: "SBL", adesc: "kausal", bdesc: "faktorisiert + modular" }
+  ];
+  var fibState = { pair: 0, reindex: false, preserve: true };
+  var fibSvg = document.getElementById("fib-svg");
+  function renderFib(svg, cfg) {
+    var pair = FIB_PAIRS[cfg.pair];
+    var parts = [];
+    var lx = 150, rx = 410, by = 352;
+    parts.push('<line class="fib-base" x1="60" y1="' + by + '" x2="500" y2="' + by + '"/>');
+    parts.push('<text class="fib-caption" x="60" y="376">ArchAgents (Basis)</text>');
+    parts.push('<circle class="fib-node" cx="' + lx + '" cy="' + by + '" r="27"/>');
+    parts.push('<circle class="fib-node" cx="' + rx + '" cy="' + by + '" r="27"/>');
+    parts.push('<text class="fib-nodelabel" x="' + lx + '" y="' + (by + 6) + '" text-anchor="middle">' + pair.a + '</text>');
+    parts.push('<text class="fib-nodelabel" x="' + rx + '" y="' + (by + 6) + '" text-anchor="middle">' + pair.b + '</text>');
+    parts.push(arrow(lx + 30, by, rx - 30, by, "fib-arrow", "fib-arrow-head"));
+    parts.push('<text class="fib-caption" x="280" y="' + (by - 10) + '" text-anchor="middle">F: ' + pair.a + ' → ' + pair.b + '</text>');
+    parts.push('<rect class="fib-fibre active" x="95" y="120" width="110" height="180" rx="12"/>');
+    parts.push('<rect class="fib-fibre" x="355" y="120" width="110" height="180" rx="12"/>');
+    parts.push('<text class="fib-fibrelabel" x="150" y="110" text-anchor="middle">Agents(' + pair.a + ', E)</text>');
+    parts.push('<text class="fib-fibrelabel" x="410" y="110" text-anchor="middle">Agents(' + pair.b + ', E)</text>');
+    var ys = [155, 187, 219, 251, 283];
+    ys.forEach(function (y, i) {
+      parts.push('<circle class="fib-agent" cx="125" cy="' + y + '" r="5"/>');
+      parts.push('<circle class="fib-agent" cx="410" cy="' + y + '" r="5"/>');
+    });
+    parts.push('<text class="fib-caption" x="150" y="318" text-anchor="middle">resident</text>');
+    if (cfg.reindex) {
+      parts.push('<path class="fib-reindex" d="M410,104 C320,42 240,42 150,104" fill="none"/>');
+      parts.push('<polygon class="fib-reindex-head" points="150,104 ' + (162) + ',' + (98) + ' ' + (160) + ',' + (110) + '"/>');
+      parts.push('<text class="fib-caption" x="280" y="56" text-anchor="middle">F*: Agents(' + pair.b + ') → Agents(' + pair.a + ')</text>');
+      ys.forEach(function (y, i) {
+        var bad = !cfg.preserve && (i === 1 || i === 3);
+        parts.push('<circle class="fib-agent new' + (bad ? " bad" : "") + '" cx="175" cy="' + y + '" r="5"/>');
+      });
+      parts.push('<text class="fib-caption" x="150" y="336" text-anchor="middle">reindexiert</text>');
+    }
+    svg.innerHTML = parts.join("");
+  }
+  var heroFib = document.getElementById("hero-fib");
+  if (heroFib) renderFib(heroFib, { pair: 0, reindex: true, preserve: true });
+  function updateFibDemo() {
+    renderFib(fibSvg, fibState);
+    var pair = FIB_PAIRS[fibState.pair];
+    document.getElementById("fib-readout").textContent = fibState.reindex
+      ? "F*: Agents(" + pair.b + ") → Agents(" + pair.a + "). Constraints " + (fibState.preserve ? "erhalten." : "verletzt: zwei Agenten werden inadmissibel.")
+      : "F: " + pair.a + " → " + pair.b + ". Die Faser über " + pair.a + " enthält die " + pair.a + "-Agenten.";
+    var st = document.getElementById("fib-status");
+    st.textContent = fibState.preserve ? "erhalten" : "verletzt";
+    st.style.color = fibState.preserve ? "var(--good)" : "var(--bad)";
+    document.getElementById("fib-caption").textContent = fibState.reindex
+      ? (fibState.preserve
+        ? "Die Reindexierung liefert admissibile Agenten der Quellarchitektur. Die Projektion ist über diesem Morphismus eine Fibration."
+        : "Die Reindexierung liefert Agenten, aber zwei verletzen die Constraints der Quellarchitektur. Der Morphismus erhält die Admissibilität nicht.")
+      : "Die Faser über einer Architektur enthält alle Agenten, die sie implementieren. Ein Architektur-Morphismus induziert eine Reindexierung zwischen den Fasern.";
+  }
+  document.querySelectorAll("[data-fibpair]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      fibState.pair = parseInt(btn.getAttribute("data-fibpair"), 10);
+      document.querySelectorAll("[data-fibpair]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      updateFibDemo();
+    });
+  });
+  document.getElementById("fib-reindex").addEventListener("change", function () {
+    fibState.reindex = this.checked;
+    updateFibDemo();
+  });
+  document.getElementById("fib-preserve").addEventListener("change", function () {
+    fibState.preserve = this.checked;
+    updateFibDemo();
+  });
+  updateFibDemo();
+
+  /* ---------- stepper ---------- */
+  var STEP_DATA = [
+    { title: "CRL", short: "CRL", desc: "Ein globales kausales Modell, eine Policy, ein Update-Loop." },
+    { title: "1 · Faktorisierte Interfaces", short: "CRL + 1", desc: "Beobachtungen und Entscheidungen werden in Komponenten {O_i}, {D_j} zerlegt." },
+    { title: "2 · Typisierte Multi-Modelle", short: "CRL + 2", desc: "Predictive Model und Policy Model werden getrennt." },
+    { title: "3 · Kognitive Module", short: "CRL + 3", desc: "Module kapseln Teilmodelle und ihre Updates." },
+    { title: "4 · Zeitliche Entkopplung + Gedächtnis", short: "CRL + 4", desc: "Ein Gedächtnis speichert über längere Zeiträume; der Update-Loop wird entkoppelt." },
+    { title: "5 · Body-Mind-Vermittlung", short: "SBL", desc: "Der Körper vermittelt zwischen Aktion und Umwelt. SBL ist erreicht." }
+  ];
+  var stepState = 0;
+  var stepSvg = document.getElementById("step-svg");
+  function stepNode(x, y, w, h, label, cls) {
+    return '<rect class="step-node ' + (cls || "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="9"/>' +
+      '<text class="step-nodelabel" x="' + (x + w / 2) + '" y="' + (y + h / 2 + 4) + '" text-anchor="middle">' + label + '</text>';
+  }
+  function renderStep() {
+    var s = stepState;
+    var parts = [];
+    var P = { x: 50, y: 190, w: 90, h: 48 };
+    var D = { x: 190, y: 190, w: 90, h: 48 };
+    var A = { x: 330, y: 190, w: 90, h: 48 };
+    var E = { x: 460, y: 120, w: 70, h: 48 };
+    var U = { x: 330, y: 60, w: 90, h: 48 };
+    var M = { x: 190, y: 60, w: 90, h: 48 };
+    parts.push(arrow(P.x + P.w, P.y + P.h / 2, D.x, D.y + D.h / 2, "step-edge", "step-edge-head"));
+    parts.push(arrow(D.x + D.w, D.y + D.h / 2, A.x, A.y + A.h / 2, "step-edge", "step-edge-head"));
+    parts.push(arrow(A.x + A.w - 6, A.y - 4, E.x + 8, E.y + E.h, "step-edge", "step-edge-head"));
+    parts.push(arrow(E.x, E.y + E.h / 2, U.x + U.w - 4, U.y + U.h / 2, "step-edge", "step-edge-head"));
+    parts.push(arrow(U.x, U.y + U.h / 2, M.x + M.w, M.y + M.h / 2, "step-edge", "step-edge-head"));
+    parts.push(arrow(M.x + M.w / 2, M.y + M.h, D.x + D.w / 2, D.y, "step-edge", "step-edge-head"));
+    parts.push(stepNode(P.x, P.y, P.w, P.h, "Perception", s === 1 ? "new" : "base"));
+    parts.push(stepNode(D.x, D.y, D.w, D.h, "Decision", s === 1 ? "new" : "base"));
+    parts.push(stepNode(A.x, A.y, A.w, A.h, "Action", "base"));
+    parts.push(stepNode(E.x, E.y, E.w, E.h, "Environment", "base"));
+    parts.push(stepNode(U.x, U.y, U.w, U.h, "Update", "base"));
+    if (s >= 2) {
+      parts.push(stepNode(170, 60, 70, 48, "Predictive", s === 2 ? "new" : "base"));
+      parts.push(stepNode(260, 60, 70, 48, "Policy", s === 2 ? "new" : "base"));
+    } else {
+      parts.push(stepNode(M.x, M.y, M.w, M.h, "Causal Model", "base"));
+    }
+    if (s === 1) {
+      parts.push('<text class="step-chip" x="95" y="255" text-anchor="middle">O_1 … O_n</text>');
+      parts.push('<text class="step-chip" x="235" y="255" text-anchor="middle">D_1 … D_n</text>');
+      parts.push('<rect class="step-frame" x="40" y="180" width="110" height="86" rx="12"/>');
+      parts.push('<rect class="step-frame" x="180" y="180" width="110" height="86" rx="12"/>');
+    }
+    if (s >= 3) {
+      parts.push('<rect class="step-frame" x="160" y="40" width="180" height="80" rx="12"/>');
+      parts.push('<text class="step-frame-label" x="250" y="34" text-anchor="middle">kognitive Module</text>');
+    }
+    if (s >= 4) {
+      parts.push('<rect class="step-mem" x="50" y="280" width="90" height="40" rx="9"/>');
+      parts.push('<text class="step-nodelabel" x="95" y="305" text-anchor="middle">Memory</text>');
+      parts.push(arrow(95, 280, 210, 240, "step-edge", "step-edge-head"));
+      parts.push('<line class="step-edge" x1="330" y1="108" x2="140" y2="280" stroke-dasharray="4 5" opacity=".45"/>');
+      parts.push('<text class="step-chip" x="95" y="338" text-anchor="middle">langsamer Speicher</text>');
+    }
+    if (s >= 5) {
+      parts.push('<rect class="step-mem" x="455" y="250" width="80" height="40" rx="9"/>');
+      parts.push('<text class="step-nodelabel" x="495" y="275" text-anchor="middle">Body</text>');
+      parts.push(arrow(410, 238, 470, 252, "step-edge", "step-edge-head"));
+      parts.push(arrow(490, 250, 490, 172, "step-edge", "step-edge-head"));
+    }
+    stepSvg.innerHTML = parts.join("");
+    document.getElementById("step-count").textContent = s + " / 5";
+    document.getElementById("step-title").textContent = STEP_DATA[s].short;
+    document.getElementById("step-desc").textContent = STEP_DATA[s].desc;
+  }
+  function buildSteps() {
+    var list = document.getElementById("step-list");
+    STEP_DATA.forEach(function (d, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "step-btn" + (i === stepState ? " active" : "");
+      b.textContent = d.title;
+      b.addEventListener("click", function () {
+        stepState = i;
+        document.querySelectorAll(".step-btn").forEach(function (x, j) {
+          x.classList.toggle("active", j === i);
+        });
+        renderStep();
+      });
+      list.appendChild(b);
+    });
+  }
+  buildSteps();
+  renderStep();
+
+  /* ---------- RL constraint checklist ---------- */
+  var CONSTRAINT_NAMES = [
+    "Value/Action Representability",
+    "Bellman Consistency",
+    "Policy-Value Compatibility",
+    "Markovian Transition Admissibility",
+    "Ontological Constraints on Types"
+  ];
+  var constraintInputs = document.querySelectorAll("[data-constraint]");
+  function updateCheck() {
+    var missing = [];
+    var checked = 0;
+    constraintInputs.forEach(function (inp, i) {
+      if (inp.checked) checked++;
+      else missing.push(CONSTRAINT_NAMES[i]);
+    });
+    var st = document.getElementById("check-status");
+    var msg = document.getElementById("check-missing");
+    if (missing.length === 0) {
+      st.textContent = "admissibel";
+      st.className = "check-status ok";
+      msg.textContent = "Alle fünf Constraints erfüllt. Der Agent ist admissibel.";
+    } else {
+      st.textContent = "nicht admissibel";
+      st.className = "check-status no";
+      msg.textContent = "Fehlt: " + missing.join(", ") + ".";
+    }
+  }
+  constraintInputs.forEach(function (inp) {
+    inp.addEventListener("change", updateCheck);
+  });
+  document.getElementById("check-reset").addEventListener("click", function () {
+    constraintInputs.forEach(function (inp) { inp.checked = true; });
+    updateCheck();
+  });
+  updateCheck();
+
+  /* ---------- architecture map ---------- */
+  var MAP_NODES = {
+    rl: { x: 100, y: 250, label: "RL", desc: "<b>RL:</b> Der flache Baseline. Eine Policy, ein globaler Update, ein parametrischer Träger. Keine explizite Wissensstruktur." },
+    crl: { x: 260, y: 250, label: "CRL", desc: "<b>CRL:</b> RL plus kausales Modell, Do-Interventionen und kausales Update. Zusätzliche Constraints wie kausale Einheiten." },
+    sbl: { x: 420, y: 250, label: "SBL", desc: "<b>SBL:</b> CRL mit fünf Lockerungen: faktorisierte Interfaces, Multi-Modelle, kognitive Module, Gedächtnis und Körpervermittlung." },
+    aixi: { x: 260, y: 80, label: "AIXI", desc: "<b>AIXI:</b> Universelle Prädiktion über eine History H, ein universeller Kernel ε, Bayes-Update und eine Policy." }
+  };
+  var MAP_EDGES = {
+    "rl-crl": { from: "rl", to: "crl", label: "adds causal", desc: "<b>RL → CRL:</b> Ein kausales Modell und Do-Interventionen kommen hinzu. Die Constraints werden strenger." },
+    "crl-sbl": { from: "crl", to: "sbl", label: "relaxes 5", desc: "<b>CRL → SBL:</b> Fünf Annahmen werden schrittweise gelockert: Interfaces, Modelle, Module, Gedächtnis, Körper." },
+    "crl-aixi": { from: "crl", to: "aixi", label: "universal", desc: "<b>CRL ∼ AIXI:</b> Statt eines flachen parametrischen Trägers arbeitet AIXI mit einer History und einem universellen Prädiktionskern. Verwandt, aber ein anderer Architekturtyp." }
+  };
+  var mapSvg = document.getElementById("map-svg");
+  var mapDesc = document.getElementById("map-desc");
+  var mapActive = "rl";
+  function renderMap() {
+    var parts = [];
+    Object.keys(MAP_EDGES).forEach(function (key) {
+      var e = MAP_EDGES[key];
+      var a = MAP_NODES[e.from], b = MAP_NODES[e.to];
+      var dx = b.x - a.x, dy = b.y - a.y;
+      var len = Math.hypot(dx, dy) || 1;
+      var ux = dx / len, uy = dy / len;
+      var x1 = a.x + ux * 34, y1 = a.y + uy * 34;
+      var x2 = b.x - ux * 34, y2 = b.y - uy * 34;
+      var dashed = key === "crl-aixi" ? " dashed" : "";
+      parts.push('<line class="map-edge' + dashed + (mapActive === key ? " active" : "") + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '"/>');
+      var ang = Math.atan2(y2 - y1, x2 - x1);
+      var bx = x2 - Math.cos(ang) * 10, by = y2 - Math.sin(ang) * 10;
+      var px = -Math.sin(ang), py = Math.cos(ang);
+      parts.push('<polygon class="step-edge-head" points="' + x2 + ',' + y2 + ' ' + (bx + px * 4.5) + ',' + (by + py * 4.5) + ' ' + (bx - px * 4.5) + ',' + (by - py * 4.5) + '"/>');
+      parts.push('<text class="map-label" x="' + ((x1 + x2) / 2) + '" y="' + ((y1 + y2) / 2 - 6) + '" text-anchor="middle">' + e.label + '</text>');
+      parts.push('<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="transparent" stroke-width="18" data-edge="' + key + '" pointer-events="stroke" style="cursor:pointer"/>');
+    });
+    Object.keys(MAP_NODES).forEach(function (key) {
+      var n = MAP_NODES[key];
+      parts.push('<circle class="map-node' + (mapActive === key ? " active" : "") + '" cx="' + n.x + '" cy="' + n.y + '" r="32" data-node="' + key + '" style="cursor:pointer"/>');
+      parts.push('<text class="map-nodelabel" x="' + n.x + '" y="' + (n.y + 5) + '" text-anchor="middle">' + n.label + '</text>');
+    });
+    mapSvg.innerHTML = parts.join("");
+  }
+  mapSvg.addEventListener("click", function (ev) {
+    var t = ev.target;
+    var node = t.getAttribute && t.getAttribute("data-node");
+    var edge = t.getAttribute && t.getAttribute("data-edge");
+    if (node) {
+      mapActive = node;
+      mapDesc.innerHTML = MAP_NODES[node].desc;
+    } else if (edge) {
+      mapActive = edge;
+      mapDesc.innerHTML = MAP_EDGES[edge].desc;
+    } else {
+      return;
+    }
+    renderMap();
+  });
+  mapDesc.innerHTML = MAP_NODES.rl.desc;
+  renderMap();
+
+})();
+</script>
+</body>
+</html>
