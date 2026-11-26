@@ -3,7 +3,7 @@
   var core = window.LearnSysDemoCore;
   if (!core) return;
 
-  var RES = 50;
+  var RES = 100;
   var PIXELS = RES * RES;
   var OCTAVES = 5;
   var INPUT_DIM = 2 + 4 * OCTAVES;
@@ -11,7 +11,7 @@
   var BATCH = 256;
   var LR = 0.01;
   var SPS = 50;
-  var VIEW_N = 72;
+  var VIEW_N = 120;
   var HISTORY_MAX = 520;
   var OPERA = "opera.jpg";
 
@@ -136,18 +136,18 @@
     el.innerHTML =
       '<div class="ls-il-topline">' +
         '<span class="ls-il-kicker">' + L("Bild als Funktion", "An image as a function") + '</span>' +
-        '<span class="ls-il-formula">' + L("Input 50 &times; 50 &times; 3 &middot; Output 50 &times; 50 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 Eingaben (20 Fourier)", "Input 50 &times; 50 &times; 3 &middot; Output 50 &times; 50 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 inputs (20 Fourier)") + '</span>' +
+        '<span class="ls-il-formula">' + L("Input 100 &times; 100 &times; 3 &middot; Output 100 &times; 100 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 Eingaben (20 Fourier)", "Input 100 &times; 100 &times; 3 &middot; Output 100 &times; 100 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 inputs (20 Fourier)") + '</span>' +
       '</div>' +
       '<div class="ls-il-grid">' +
         '<figure class="ls-il-card ls-il-target">' +
-          '<div class="ls-il-cardhead"><span>Input</span><span class="ls-il-meta">50 &times; 50 &times; 3</span></div>' +
-          '<div class="ls-il-canvaswrap"><canvas class="ls-il-target-canvas" role="img" aria-label="' + L("Input: das Beispiel, zentriert auf 50 mal 50 Pixel und in Farbe.", "Input: the example, centre-cropped to 50 by 50 pixels and in colour.") + '"></canvas></div>' +
-          '<figcaption class="ls-il-caption"><span class="ls-il-name">' + L("Opera (Beispiel)", "Opera (example)") + '</span><span>' + L("2.500 Pixel", "2,500 pixels") + '</span></figcaption>' +
+          '<div class="ls-il-cardhead"><span>Input</span><span class="ls-il-meta">100 &times; 100 &times; 3</span></div>' +
+          '<div class="ls-il-canvaswrap"><canvas class="ls-il-target-canvas" role="img" aria-label="' + L("Input: das Beispiel, zentriert auf 100 mal 100 Pixel und in Farbe.", "Input: the example, centre-cropped to 100 by 100 pixels and in colour.") + '"></canvas></div>' +
+          '<figcaption class="ls-il-caption"><span class="ls-il-name">' + L("Opera (Beispiel)", "Opera (example)") + '</span><span>' + L("10.000 Pixel", "10,000 pixels") + '</span></figcaption>' +
         '</figure>' +
         '<figure class="ls-il-card ls-il-pred">' +
           '<div class="ls-il-cardhead"><span>Output</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
           '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Output: für jede Koordinate eine Farbe.", "Output: a colour for every coordinate.") + '"></canvas><span class="ls-il-badge">' + L("Netz", "net") + '</span></div>' +
-          '<figcaption class="ls-il-caption"><span>50 &times; 50 &times; 3</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0</b></span></figcaption>' +
+          '<figcaption class="ls-il-caption"><span>100 &times; 100 &times; 3</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0</b></span></figcaption>' +
         '</figure>' +
         '<div class="ls-il-card ls-il-loss">' +
           '<div class="ls-il-cardhead"><span>Loss</span><span class="ls-il-lossval">–</span></div>' +
@@ -170,7 +170,7 @@
             '<button type="button" class="ls-btn ls-btn--tiny ls-il-restore">Opera</button>' +
             '<span class="ls-il-filename">' + L("Opera (Beispiel)", "Opera (example)") + '</span>' +
           '</div>' +
-          '<p class="ls-il-hint">' + L("Zentriert auf 50 × 50 × 3. Uploads bleiben im Browser.", "Centre-cropped to 50 × 50 × 3. Uploads stay in the browser.") + '</p>' +
+          '<p class="ls-il-hint">' + L("Zentriert auf 100 × 100 × 3. Uploads bleiben im Browser.", "Centre-cropped to 100 × 100 × 3. Uploads stay in the browser.") + '</p>' +
           '<div class="ls-il-extrarow">' +
             '<label class="ls-il-check"><input type="checkbox" class="ls-il-extrap"> ' + L("Außerhalb des gelernten Bereichs", "Outside the trained region") + '</label>' +
             '<label class="ls-il-range">' + L("Rand", "Margin") + ' <output class="ls-il-factor">1,5×</output><input type="range" class="ls-il-factorinput" min="1.05" max="3" step="0.05" value="1.5" disabled></label>' +
@@ -199,6 +199,7 @@
     var resetBtn = el.querySelector(".ls-il-reset");
     var fileInput = el.querySelector(".ls-il-file");
     var fileName = el.querySelector(".ls-il-filename");
+    var targetName = el.querySelector(".ls-il-target .ls-il-name");
     var restoreBtn = el.querySelector(".ls-il-restore");
     var extrapCheck = el.querySelector(".ls-il-extrap");
     var factorOut = el.querySelector(".ls-il-factor");
@@ -543,7 +544,7 @@
       var f = api.fit(targetCv, targetCv.parentElement);
       if (!f.w || !f.h) return;
       f.ctx.clearRect(0, 0, f.w, f.h);
-      var src = st.previewOff || st.targetOff;
+      var src = st.targetOff;
       if (src) {
         f.ctx.imageSmoothingEnabled = true;
         f.ctx.imageSmoothingQuality = "high";
@@ -965,6 +966,7 @@
     function adoptImage(img, name) {
       if (!img || !preprocess(img)) return false;
       if (fileName) fileName.textContent = name;
+      if (targetName) targetName.textContent = name;
       drawTarget();
       if (!st.ready) return true;
       st.userPaused = false;
@@ -1040,6 +1042,7 @@
           if (st.dead || !img) return;
           if (!preprocess(img)) throw new Error("image");
           if (fileName) fileName.textContent = L("Opera (Beispiel)", "Opera (example)");
+          if (targetName) targetName.textContent = L("Opera (Beispiel)", "Opera (example)");
           buildTrainTensors();
           st.ready = true;
           st.booting = false;
