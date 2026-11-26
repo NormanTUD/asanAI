@@ -140,6 +140,7 @@
   var editorDoc = null;
   var editorCtx = null;
   var editorSaveTimer = 0;
+  var editFormMode = false;
   var typesetTimer = 0;
   var demo = null;
   var palette = null;
@@ -1123,9 +1124,20 @@
   function questionId(q, path) {
     return (q && q.id) ? q.id : "q-" + String(path || "0").replace(/\./g, "-");
   }
-  function renderSources(sources) {
-    var visible = (sources || []).filter(sourceHasContent);
+  function renderSources(sources, gi) {
+    var editing = state.edit && !editFormMode;
+    var visible = editing ? (sources || []) : (sources || []).filter(sourceHasContent);
     if (!visible.length) return "";
+    if (editing) {
+      return '<ul class="ls-sources ls-sources--edit">' + visible.map(function (src, si) {
+        var why = src.why && typeof src.why === "object" ? src.why[LANG] : src.why;
+        return '<li class="ls-inline-source">' +
+          '<span class="ls-inline-edit ls-inline-source-label" contenteditable="true" spellcheck="true" data-edit-source-g="' + gi + '" data-edit-source-s="' + si + '" data-edit-source-field="label">' + esc(src.label || "") + '</span>' +
+          '<span class="ls-inline-edit ls-inline-source-url" contenteditable="true" spellcheck="false" data-edit-source-g="' + gi + '" data-edit-source-s="' + si + '" data-edit-source-field="url">' + esc(src.url || "") + '</span>' +
+          '<span class="ls-inline-edit ls-inline-source-why" contenteditable="true" spellcheck="true" data-edit-source-g="' + gi + '" data-edit-source-s="' + si + '" data-edit-source-field="why">' + esc(why || "") + '</span>' +
+        '</li>';
+      }).join("") + '</ul>';
+    }
     return '<ul class="ls-sources">' + visible.map(function (src) {
       var why = src.why && typeof src.why === "object" ? src.why[LANG] : src.why;
       return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a>' +
@@ -1135,13 +1147,23 @@
   function renderQuestionNode(q, path, depth, open) {
     var id = questionId(q, path);
     var children = countQuestions(q.questions);
+    var editing = state.edit && !editFormMode;
+    var titleContent = editing
+      ? '<span class="ls-inline-edit ls-inline-qtitle" contenteditable="true" spellcheck="true" data-edit-question-title-path="' + esc(path) + '">' + esc(q.title || t("question")) + '</span>'
+      : titleHTML(q.title || t("question"));
+    var bodyContent = !q.body ? "" : (editing
+      ? '<div class="ls-qbody ls-inline-edit ls-inline-raw" contenteditable="true" spellcheck="true" data-edit-question-path="' + esc(path) + '" data-edit-question-field="body">' + esc(q.body) + '</div>'
+      : '<div class="ls-qbody" data-edit-question-path="' + esc(path) + '" data-edit-question-field="body">' + proseBlock(q.body) + '</div>');
+    var texContent = !q.tex ? "" : (editing
+      ? '<div class="ls-qtex ls-inline-edit ls-inline-tex" contenteditable="true" spellcheck="false" data-edit-question-path="' + esc(path) + '" data-edit-question-field="tex"><code>' + esc(q.tex) + '</code></div>'
+      : '<div class="ls-qtex" data-edit-question-path="' + esc(path) + '" data-edit-question-field="tex">' + mathBlock(q.tex) + '</div>');
     var html = '<details class="ls-deepbox ls-qnested ls-qnested--' + depth + '" data-qid="' + esc(id) + '"' + (open ? " open" : "") + '>' +
       '<summary>' +
-        titleHTML(q.title || t("question")) +
+        titleContent +
         (children ? ' <span class="ls-depth-count">' + children + '</span>' : '') +
       '</summary>' +
-      (q.body ? '<div class="ls-qbody" data-edit-question-path="' + esc(path) + '" data-edit-question-field="body">' + proseBlock(q.body) + '</div>' : '') +
-      (q.tex ? '<div class="ls-qtex" data-edit-question-path="' + esc(path) + '" data-edit-question-field="tex">' + mathBlock(q.tex) + '</div>' : '') +
+      bodyContent +
+      texContent +
       (q.control ? '<label class="ls-box-control"><input type="checkbox" data-control="' + esc(q.control) + '" checked> ' + esc(q.controlLabel || "") + '</label>' : '');
     if (q.questions && q.questions.length) {
       html += '<div class="ls-qchildren">' +
@@ -1172,13 +1194,16 @@
         html += renderQuestionNode(questions[0], gi + ".0", 1, firstQuestionOpen);
         return;
       }
+      var groupTitle = (state.edit && !editFormMode)
+        ? '<span class="ls-inline-edit ls-inline-gtitle" contenteditable="true" spellcheck="true" data-edit-group-title="' + gi + '">' + esc(g.title || t("moreKnowledge")) + '</span>'
+        : titleHTML(g.title || t("moreKnowledge"));
       html += '<details class="ls-deepbox ls-qgroup" data-qid="' + esc(g.id) + '"' + (gi === 0 ? firstGroupOpen : "") + '>' +
-        '<summary>' + titleHTML(g.title || t("moreKnowledge")) +
+        '<summary>' + groupTitle +
           (g.sources ? ' <span class="ls-depth-count">' + g.sources.length + '</span>' : '') +
         '</summary>' +
         '<div class="ls-qgroup-body">';
       if (g.sources) {
-        html += renderSources(g.sources);
+        html += renderSources(g.sources, gi);
       } else {
         questions.forEach(function (q, qi) {
           html += renderQuestionNode(q, gi + "." + qi, 1, gi === 0 && qi === 0 ? firstQuestionOpen : "");
@@ -1334,11 +1359,14 @@
       els.editBtn.classList.toggle("is-on", state.edit);
       els.editBtn.textContent = state.edit ? t("exitEdit") : t("edit");
     }
+    var view = composeText(doc);
+    clearInlineModeUi();
     if (state.edit) {
-      renderEditor();
+      if (editFormMode) { renderEditor(); return; }
+      renderInlineEditor(view, doc);
+      scheduleTypeset();
       return;
     }
-    var view = composeText(doc);
     var bodyHTML = view.head ? proseBlock(view.head) : "";
     if (els.body.innerHTML !== bodyHTML) {
       els.body.innerHTML = bodyHTML;
@@ -1368,11 +1396,79 @@
     scheduleTypeset();
   }
 
+  function clearInlineModeUi() {
+    if (els.textBody) {
+      var bar = els.textBody.querySelector(".ls-inline-editbar");
+      if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
+    }
+    [els.kicker, els.title, els.watch].forEach(function (el) {
+      if (!el) return;
+      el.removeAttribute("contenteditable");
+      el.removeAttribute("data-edit-field");
+      el.classList.remove("ls-inline-edit");
+    });
+  }
+  function markInlineEditable(el, field) {
+    if (!el) return;
+    el.setAttribute("contenteditable", "true");
+    el.setAttribute("spellcheck", "true");
+    el.setAttribute("data-edit-field", field);
+    el.classList.add("ls-inline-edit");
+  }
+  function renderInlineEditBar() {
+    if (!els.textBody) return;
+    var bar = els.textBody.querySelector(".ls-inline-editbar");
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.className = "ls-edit-bar ls-inline-editbar";
+      els.textBody.insertBefore(bar, els.textBody.firstChild);
+    }
+    bar.innerHTML = '<span class="ls-edit-kicker">' + esc(t("editing")) + '</span>' +
+      '<span class="ls-edit-count" id="ls-edit-count"></span>' +
+      '<span class="ls-edit-status" id="ls-edit-status" aria-live="polite"></span>' +
+      '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="save">' + esc(t("save")) + '</button>' +
+      '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="copy">' + esc(t("copy")) + '</button>' +
+      '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="reset">' + esc(t("reset")) + '</button>' +
+      '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="form">' + (LANG === "de" ? "Formular" : "Form") + '</button>' +
+      '<button type="button" class="ls-btn ls-btn--tiny ls-btn--primary" data-edit-action="exit">' + esc(t("exitEdit")) + '</button>';
+    bar.querySelectorAll("[data-edit-action]").forEach(function (btn) {
+      btn.addEventListener("click", function () { editorAction(btn.getAttribute("data-edit-action")); });
+    });
+  }
+  function renderInlineEditor(view, doc) {
+    var d = activeDay();
+    var s = activeView();
+    renderInlineEditBar();
+    els.kicker.textContent = doc.kicker || s.kicker || (d && d.kicker) || "";
+    els.title.textContent = doc.title || s.title || "";
+    markInlineEditable(els.kicker, "kicker");
+    markInlineEditable(els.title, "title");
+    els.body.innerHTML = '<div class="ls-inline-edit ls-inline-body" contenteditable="true" spellcheck="true" data-edit-field="body"></div>';
+    var bodyEl = els.body.firstChild;
+    if (bodyEl) bodyEl.textContent = doc.body || "";
+    if (els.cues) { els.cues.innerHTML = ""; els.cues.hidden = true; }
+    var depth = depthTree(view.groups);
+    els.extras.innerHTML = depth;
+    bindTerms(els.extras);
+    els.extras.querySelectorAll("details").forEach(function (det) { det.open = true; });
+    els.extras.hidden = !depth;
+    els.watch.innerHTML = doc.watch ? '<b>' + esc(t("watch")) + '</b> <span class="ls-inline-edit ls-inline-watch" contenteditable="true" spellcheck="true" data-edit-field="watch"></span>' : "";
+    var watchEl = els.watch.querySelector("[data-edit-field=watch]");
+    if (watchEl) watchEl.textContent = doc.watch || "";
+    els.watch.hidden = !doc.watch;
+    updateEditorCount();
+    setEditorStatus("");
+  }
+
   function updateEditorCount() {
+    var out = (els.textBody && els.textBody.querySelector("#ls-edit-count")) || (els.body && els.body.querySelector("#ls-edit-count"));
+    if (!out) return;
+    var value = "";
     var ta = els.body && els.body.querySelector("#ls-edit-body");
-    var out = els.body && els.body.querySelector("#ls-edit-count");
-    if (!ta || !out) return;
-    var n = splitSentences(ta.value).length;
+    if (ta) value = ta.value;
+    else if (editorDoc) value = editorDoc.body || "";
+    else return;
+    var n = splitSentences(value).length;
     out.textContent = t("sentenceCount", { n: n }) +
       (n > MAX_TEASER_SENTENCES ? " · " + t("sentenceOver", { n: MAX_TEASER_SENTENCES }) : "");
     out.classList.toggle("is-over", n > MAX_TEASER_SENTENCES);
@@ -1486,6 +1582,7 @@
         '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="save">' + esc(t("save")) + '</button>' +
         '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="copy">' + esc(t("copy")) + '</button>' +
         '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="reset">' + esc(t("reset")) + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="inline">Inline</button>' +
         '<button type="button" class="ls-btn ls-btn--tiny ls-btn--primary" data-edit-action="exit">' + esc(t("exitEdit")) + '</button>' +
       '</div>' +
       '<div class="ls-edit-meta">' +
@@ -1951,8 +2048,16 @@
       persistTextOverlay();
       editorCtx = editorContext();
       editorDoc = currentTextDoc();
-      renderEditor();
+      renderText();
       setEditorStatus(t("resetDone"));
+    } else if (action === "form") {
+      saveEditorDoc();
+      editFormMode = true;
+      renderText();
+    } else if (action === "inline") {
+      saveEditorDoc();
+      editFormMode = false;
+      renderText();
     } else if (action === "exit") {
       toggleEdit(false);
     }
@@ -1960,7 +2065,13 @@
   function focusEditorTarget(target) {
     if (!target) return;
     var el = null;
-    if (target.kind === "question") {
+    if (!editFormMode) {
+      if (target.kind === "question") {
+        el = els.extras.querySelector('[data-edit-question-path="' + target.path + '"][data-edit-question-field="' + (target.field || "body") + '"]');
+      } else {
+        el = els.textBody.querySelector('[data-edit-field="' + target.kind + '"]');
+      }
+    } else if (target.kind === "question") {
       el = els.extras.querySelector('[data-field="' + (target.field || "body") + '"][data-path="' + target.path + '"]');
     } else {
       el = els.body.querySelector("#ls-edit-" + target.kind);
@@ -1978,6 +2089,7 @@
     var next = typeof force === "boolean" ? force : !state.edit;
     if (state.edit && !next) saveEditorDoc();
     state.edit = next;
+    editFormMode = false;
     if (state.edit) {
       editorCtx = editorContext();
       editorDoc = currentTextDoc();
@@ -1991,7 +2103,8 @@
         focusEditorTarget(target);
       } else {
         if (els.textScroll) els.textScroll.scrollTo({ top: 0, behavior: "smooth" });
-        var ta = els.body.querySelector("#ls-edit-body");
+        var inlineBody = els.textBody.querySelector('[data-edit-field="body"]');
+        var ta = inlineBody || els.body.querySelector("#ls-edit-body");
         if (ta) { try { ta.focus({ preventScroll: true }); } catch (e) {} }
       }
     }
@@ -3475,6 +3588,47 @@
         if (e.target.closest("#ls-body")) { editFocus({ kind: "body" }); return; }
         if (e.target.closest("#ls-watch")) { editFocus({ kind: "watch" }); return; }
       });
+      els.textScroll.addEventListener("input", function (e) {
+        if (!state.edit || editFormMode || !editorDoc) return;
+        var t = e.target && e.target.closest ? e.target.closest('[contenteditable="true"]') : null;
+        if (!t) return;
+        if (t.hasAttribute("data-edit-field")) {
+          var field = t.getAttribute("data-edit-field");
+          editorDoc[field] = (field === "body" || field === "watch") ? t.innerText : t.textContent;
+        } else if (t.hasAttribute("data-edit-question-path")) {
+          var q = questionAt(t.getAttribute("data-edit-question-path"));
+          if (q) q[t.getAttribute("data-edit-question-field") || "body"] = t.innerText;
+        } else if (t.hasAttribute("data-edit-question-title-path")) {
+          var qt = questionAt(t.getAttribute("data-edit-question-title-path"));
+          if (qt) qt.title = t.textContent;
+        } else if (t.hasAttribute("data-edit-group-title")) {
+          var gi = parseInt(t.getAttribute("data-edit-group-title"), 10);
+          if (editorDoc.groups[gi]) editorDoc.groups[gi].title = t.textContent;
+        } else if (t.hasAttribute("data-edit-source-g")) {
+          var g = parseInt(t.getAttribute("data-edit-source-g"), 10);
+          var si = parseInt(t.getAttribute("data-edit-source-s"), 10);
+          var group = editorDoc.groups[g];
+          var src = group && group.sources && group.sources[si];
+          if (src) {
+            var sf = t.getAttribute("data-edit-source-field");
+            if (sf === "label") src.label = t.textContent;
+            else if (sf === "url") src.url = t.textContent;
+            else if (sf === "why") {
+              if (src.why && typeof src.why === "object") src.why[LANG] = t.textContent;
+              else src.why = t.textContent;
+            }
+          }
+        } else {
+          return;
+        }
+        scheduleEditorSave();
+        setEditorStatus("");
+        updateEditorCount();
+      });
+      els.textScroll.addEventListener("click", function (e) {
+        if (!state.edit || editFormMode || !e.target.closest) return;
+        if (e.target.closest('[contenteditable="true"]')) { e.preventDefault(); e.stopPropagation(); }
+      }, true);
     }
     var swipeStart = null;
     function swipeExcluded(t) {
