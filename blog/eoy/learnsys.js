@@ -1803,6 +1803,77 @@
     }
     return doc;
   }
+  function sourceWhyText(src, lang) {
+    var why = src && src.why;
+    if (why && typeof why === "object") return why[lang] || "";
+    return typeof why === "string" ? why : "";
+  }
+  function diffQuestionListMinimal(base, next, path, out) {
+    if (!Array.isArray(base) || !Array.isArray(next) || base.length !== next.length) return false;
+    var fields = ["title", "body", "tex", "control", "controlLabel", "kind"];
+    for (var i = 0; i < base.length; i++) {
+      var b = base[i] || {}, n = next[i] || {}, p = path + i;
+      for (var fi = 0; fi < fields.length; fi++) {
+        var f = fields[fi];
+        if ((b[f] || "") !== (n[f] || "")) out[p + "." + f] = n[f];
+      }
+      var bq = Array.isArray(b.questions) ? b.questions : null;
+      var nq = Array.isArray(n.questions) ? n.questions : null;
+      if (!!bq !== !!nq) return false;
+      if (bq && !diffQuestionListMinimal(bq, nq, p + ".questions.", out)) return false;
+    }
+    return true;
+  }
+  function diffGroupsMinimal(base, next, lang) {
+    if (!Array.isArray(base) || !Array.isArray(next) || base.length !== next.length) return { replace: next };
+    var out = {};
+    for (var gi = 0; gi < base.length; gi++) {
+      var b = base[gi] || {}, n = next[gi] || {}, p = String(gi);
+      if ((b.title || "") !== (n.title || "")) out[p + ".title"] = n.title;
+      var bs = Array.isArray(b.sources) ? b.sources : null;
+      var ns = Array.isArray(n.sources) ? n.sources : null;
+      if (!!bs !== !!ns) return { replace: next };
+      if (bs) {
+        if (bs.length !== ns.length) return { replace: next };
+        for (var si = 0; si < bs.length; si++) {
+          var bS = bs[si] || {}, nS = ns[si] || {}, sp = p + ".sources." + si;
+          if ((bS.label || "") !== (nS.label || "")) out[sp + ".label"] = nS.label;
+          if ((bS.url || "") !== (nS.url || "")) out[sp + ".url"] = nS.url;
+          var bw = sourceWhyText(bS, lang), nw = sourceWhyText(nS, lang);
+          if (bw !== nw) out[sp + ".why"] = nw;
+        }
+      } else {
+        var bq = Array.isArray(b.questions) ? b.questions : null;
+        var nq = Array.isArray(n.questions) ? n.questions : null;
+        if (!!bq !== !!nq) return { replace: next };
+        if (bq && bq.length !== nq.length) return { replace: next };
+        if (bq && !diffQuestionListMinimal(bq, nq, p + ".questions.", out)) return { replace: next };
+      }
+    }
+    return { patch: out };
+  }
+  function applyGroupPatch(groups, patch, lang) {
+    Object.keys(patch || {}).forEach(function (path) {
+      var parts = String(path).split(".");
+      var gi = parseInt(parts.shift(), 10);
+      var target = groups[gi];
+      if (!target) return;
+      var last = parts.pop();
+      while (parts.length) {
+        var kind = parts.shift();
+        var idx = parseInt(parts.shift(), 10);
+        var list = target[kind];
+        if (!list || !list[idx]) return;
+        target = list[idx];
+      }
+      if (last === "why") {
+        if (target.why && typeof target.why === "object") target.why[lang] = patch[path];
+        else target.why = patch[path];
+      } else {
+        target[last] = patch[path];
+      }
+    });
+  }
   function changeFor(lang, day, key, entry) {
     if (!day || !entry) return null;
     var source = sourceDocFor(lang, day, key);
@@ -1814,41 +1885,31 @@
       groups: Array.isArray(entry.groups) ? cloneData(entry.groups) : []
     };
     var changed = [];
+    var diff = {};
     ["title", "kicker", "watch", "body"].forEach(function (field) {
-      if ((edit[field] || "") !== (source[field] || "")) changed.push(field);
+      if ((edit[field] || "") !== (source[field] || "")) {
+        changed.push(field);
+        diff[field] = edit[field];
+      }
     });
-    if (JSON.stringify(edit.groups) !== JSON.stringify(source.groups || [])) changed.push("groups");
+    if (JSON.stringify(edit.groups) !== JSON.stringify(source.groups || [])) {
+      changed.push("groups");
+      var gd = diffGroupsMinimal(source.groups || [], edit.groups || [], lang);
+      if (gd.replace) diff.groups_replace = gd.replace;
+      else if (gd.patch && Object.keys(gd.patch).length) diff.groups_patch = gd.patch;
+      else diff.groups_replace = edit.groups;
+    }
     if (!changed.length) return null;
     var parts = String(key).split(".");
-    var stepIndex = parseInt(parts[0], 10) || 0;
-    var subIndex = parts.length > 1 ? (parseInt(parts[1], 10) || 0) : 0;
-    var parent = day.steps[stepIndex];
-    var substepCount = parent && parent.substeps ? parent.substeps.length : 1;
-    var sourceOut = {
-      title: source.title || "",
-      kicker: source.kicker || "",
-      watch: source.watch || "",
-      body: source.body || ""
-    };
-    if (changed.indexOf("groups") >= 0) sourceOut.groups = cloneData(source.groups || []);
     return {
-      id: lang + ":" + day.id + ":" + key,
       lang: lang,
-      translate_to: lang === "de" ? "en" : "de",
-      apply_to: ["de", "en"],
-      data_file: "intuition_learnsys-data.js",
       page: day.id,
-      day_title: day.title || "",
-      track: day.track || "",
-      step: stepIndex,
-      substep: subIndex,
-      substep_count: substepCount,
+      step: parseInt(parts[0], 10) || 0,
+      substep: parts.length > 1 ? (parseInt(parts[1], 10) || 0) : 0,
       text_key: String(key),
       slide_title: edit.title || source.title || "",
-      slide_kicker: edit.kicker || source.kicker || "",
       changed_fields: changed,
-      source: sourceOut,
-      edit: edit
+      diff: diff
     };
   }
   function copyEditorPayload() {
@@ -1944,18 +2005,39 @@
     var found = false;
     if (obj.kind === "learnsys-changes" && Array.isArray(obj.changes)) {
       obj.changes.forEach(function (ch) {
-        if (!ch || !ch.lang || !ch.page || !ch.text_key || !ch.edit) return;
+        if (!ch || !ch.lang || !ch.page || !ch.text_key || (!ch.edit && !ch.diff)) return;
         var lang = ch.lang === "en" ? "en" : "de";
+        var e = null;
+        if (ch.edit) {
+          e = {
+            body: typeof ch.edit.body === "string" ? ch.edit.body : "",
+            title: typeof ch.edit.title === "string" ? ch.edit.title : "",
+            kicker: typeof ch.edit.kicker === "string" ? ch.edit.kicker : "",
+            watch: typeof ch.edit.watch === "string" ? ch.edit.watch : "",
+            groups: Array.isArray(ch.edit.groups) ? ch.edit.groups : []
+          };
+        } else {
+          var day = null;
+          for (var di = 0; di < cfg.days.length; di++) if (cfg.days[di].id === ch.page) { day = cfg.days[di]; break; }
+          if (!day) return;
+          var base = sourceDocFor(lang, day, String(ch.text_key));
+          e = {
+            body: base.body || "",
+            title: base.title || "",
+            kicker: base.kicker || "",
+            watch: base.watch || "",
+            groups: cloneData(base.groups || [])
+          };
+          var d = ch.diff || {};
+          ["title", "kicker", "watch", "body"].forEach(function (f) {
+            if (Object.prototype.hasOwnProperty.call(d, f)) e[f] = d[f];
+          });
+          if (Array.isArray(d.groups_replace)) e.groups = cloneData(d.groups_replace);
+          else if (d.groups_patch) applyGroupPatch(e.groups, d.groups_patch, lang);
+        }
         if (!textOverlay[lang]) textOverlay[lang] = {};
         if (!textOverlay[lang][ch.page]) textOverlay[lang][ch.page] = {};
-        var e = ch.edit;
-        textOverlay[lang][ch.page][String(ch.text_key)] = {
-          body: typeof e.body === "string" ? e.body : "",
-          title: typeof e.title === "string" ? e.title : "",
-          kicker: typeof e.kicker === "string" ? e.kicker : "",
-          watch: typeof e.watch === "string" ? e.watch : "",
-          groups: Array.isArray(e.groups) ? e.groups : []
-        };
+        textOverlay[lang][ch.page][String(ch.text_key)] = e;
         found = true;
       });
     }
