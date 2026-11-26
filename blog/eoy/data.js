@@ -1161,7 +1161,7 @@
     {
       kicker: "Großes Netz",
       title: "Was sind neuronale Netze?",
-      body: "Das Netz in dieser Demo hat die Form 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viele Parameter und Richtungen, mehr als wir zeichnen können. Das Prinzip ist: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen.",
+      body: "Das Netz hat 4 Layer: drei versteckte Layer mit je 32 Neuronen und ein Ausgabelayer mit 1 Neuron, weil die Funktion einen Ausgabewert hat. Mit einem Eingabewert ergibt das 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viele Parameter und Richtungen, mehr als wir zeichnen können. Das Prinzip ist: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen.",
       watch: "Starte das Training. Wann biegt die Kurve den Sinus? Was passiert außerhalb der Trainingsdaten?",
       demoState: { scene: "model", phase: "net" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
@@ -1181,7 +1181,7 @@
     {
       kicker: "Larger network",
       title: "What are neural networks?",
-      body: "The network in this demo has the form 1 → 32 → 32 → 32 → 1, dense with ReLU. It has many parameters and directions, more than we can draw. The principle is: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live.",
+      body: "The network has 4 layers: three hidden layers with 32 neurons each and an output layer with 1 neuron, because the function has one output value. With one input value that gives 1 → 32 → 32 → 32 → 1, dense with ReLU. It has many parameters and directions, more than we can draw. The principle is: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live.",
       watch: "Start training. When does the curve bend the sine? What happens outside the training data?",
       demoState: { scene: "model", phase: "net" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",

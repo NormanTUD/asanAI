@@ -151,6 +151,10 @@
   var visitedDemoPositions = {};
   var lastAppliedScene = null;
   var lastAppliedPositionKey = null;
+  // Number of forward steps a demo took inside the current slide position.
+  // Used to undo demo-internal steps before falling back to a page change.
+  var demoStepDepth = 0;
+  var currentDemoConfig = null;
   var demoLoaderShownAt = 0;
   var demoLoaderTimer = 0;
   var els = {};
@@ -2074,7 +2078,7 @@
       meta.dir = state.step - lastDemoStep;
       if (sameSlide && lastDemoSub != null) meta.subDir = state.substep - lastDemoSub;
     }
-    if (!samePosition) visitedDemoPositions[positionKey] = true;
+    if (!samePosition) { visitedDemoPositions[positionKey] = true; demoStepDepth = 0; }
     lastDemoDay = state.day;
     lastDemoStep = state.step;
     lastDemoSub = state.substep;
@@ -2092,6 +2096,7 @@
       demo = null;
       currentDemoDay = null;
       lastMountedScene = null;
+      demoStepDepth = 0;
       els.demo.innerHTML = "";
       hideDemoLoader();
       return;
@@ -2114,6 +2119,7 @@
       try { demo.destroy(); } catch (e) {}
     }
     demo = null;
+    demoStepDepth = 0;
     currentDemoDay = d.id;
     els.demo.innerHTML = "";
     var fn = DEMOS[d.demo];
@@ -2161,11 +2167,50 @@
         }
       }
     };
+    currentDemoConfig = demoConfig;
     try { demo = fn(els.demo, demoConfig); } catch (err) { demo = null; els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + '</div>'; hideDemoLoader(); return; }
     try { if (demo && demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
     if (nextScene) { lastMountedScene = nextScene; lastAppliedScene = nextScene; lastAppliedPositionKey = positionKey; }
     preloadNextScene(d);
     if (needsLoader) hideDemoLoaderWhenReady();
+  }
+
+  // Rebuild the current demo and replay its internal next() steps. This is the
+  // generic fallback for demos that do not implement a working prev().
+  function recreateDemoForReplay() {
+    var d = activeDay();
+    var s = activeView();
+    if (!d || !s || !d.demo || !currentDemoConfig) return false;
+    var fn = DEMOS[d.demo];
+    var nextScene = s.demoState && s.demoState.scene ? s.demoState.scene : null;
+    if (!fn || !nextScene) return false;
+    if (demo && demo.destroy) { try { demo.destroy(); } catch (e) {} }
+    demo = null;
+    currentDemoDay = d.id;
+    els.demo.innerHTML = "";
+    try { demo = fn(els.demo, currentDemoConfig); } catch (err) { demo = null; return false; }
+    if (!demo) return false;
+    try { if (demo.update) demo.update(s.demoState || {}, { step: state.step, dir: 0, substep: state.substep, subDir: 0, revisit: false }); } catch (err) {}
+    if (els.demo) els.demo.setAttribute("data-scene", nextScene);
+    lastMountedScene = nextScene;
+    lastAppliedScene = nextScene;
+    lastAppliedPositionKey = state.day + "." + state.step + "." + state.substep;
+    return true;
+  }
+  function replayDemoTo(depth) {
+    depth = Math.max(0, depth | 0);
+    if (!recreateDemoForReplay()) return false;
+    var reached = 0;
+    for (var i = 0; i < depth; i++) {
+      if (demo && typeof demo.next === "function" && demo.next()) reached++;
+      else break;
+    }
+    demoStepDepth = reached;
+    if (demo && typeof demo.speedUp === "function" && typeof demo.busy === "function" && demo.busy()) {
+      try { demo.speedUp(); } catch (e) {}
+    }
+    try { if (demo.resize) demo.resize(); } catch (e) {}
+    return true;
   }
 
   function renderCalendar() {
@@ -2399,6 +2444,8 @@
       if (base && base.substeps) return state.substep > 0;
       return !!(demo && typeof demo.prev === "function");
     }
+    if (demo && typeof demo.hasPrev === "function" && demo.hasPrev()) return true;
+    if (demoStepDepth > 0) return true;
     if (base && base.substeps && state.substep > 0) return true;
     if (state.step > 0) return true;
     return cfg.days.indexOf(day) > 0;
@@ -2415,6 +2462,7 @@
       if (base && base.substeps) return state.substep < base.substeps.length - 1;
       return !!(demo && typeof demo.next === "function");
     }
+    if (demo && typeof demo.hasNext === "function" && demo.hasNext()) return true;
     if (base && base.substeps && state.substep < base.substeps.length - 1) return true;
     if (state.step < visibleCount(day) - 1) return true;
     var pos = cfg.days.indexOf(day);
@@ -2957,7 +3005,7 @@
         if (typeof demo.finish === "function") demo.finish();
         return;
       }
-      if (!forcePage && demo && typeof demo.next === "function" && demo.next()) { lastNav = "demo-next"; updateBottomNav(); return; }
+      if (!forcePage && demo && typeof demo.next === "function" && demo.next()) { lastNav = "demo-next"; demoStepDepth++; updateBottomNav(); return; }
       if (singleNext && singleNext.substeps && state.substep < singleNext.substeps.length - 1) {
         state.substep++;
         lastNav = "page-next";
@@ -2973,7 +3021,7 @@
       if (typeof demo.finish === "function") demo.finish();
       return;
     }
-    if (!forcePage && !cfg.eoySingle && demo && typeof demo.next === "function" && demo.next()) { lastNav = "demo-next"; return; }
+    if (!forcePage && !cfg.eoySingle && demo && typeof demo.next === "function" && demo.next()) { lastNav = "demo-next"; demoStepDepth++; return; }
     var d = activeDay();
     var base = activeStep();
     if (base && base.substeps && state.substep < base.substeps.length - 1) {
@@ -3009,7 +3057,12 @@
     lastNav = "";
     if (cfg.eoySingle) {
       var singlePrev = activeStep();
-      if (!forcePage && demo && typeof demo.prev === "function" && demo.prev()) { lastNav = "demo-prev"; updateBottomNav(); return; }
+      if (!forcePage && demo && typeof demo.prev === "function" && demo.prev()) { lastNav = "demo-prev"; if (demoStepDepth > 0) demoStepDepth--; updateBottomNav(); return; }
+      if (!forcePage && demoStepDepth > 0) {
+        if (replayDemoTo(demoStepDepth - 1)) { lastNav = "demo-prev"; updateBottomNav(); }
+        else demoStepDepth = 0;
+        return;
+      }
       if (singlePrev && singlePrev.substeps && state.substep > 0) {
         state.substep--;
         lastNav = "page-prev";
@@ -3020,7 +3073,12 @@
       }
       return;
     }
-    if (!forcePage && !cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) { lastNav = "demo-prev"; return; }
+    if (!forcePage && !cfg.eoySingle && demo && typeof demo.prev === "function" && demo.prev()) { lastNav = "demo-prev"; if (demoStepDepth > 0) demoStepDepth--; return; }
+    if (!forcePage && !cfg.eoySingle && demoStepDepth > 0) {
+      if (replayDemoTo(demoStepDepth - 1)) { lastNav = "demo-prev"; updateBottomNav(); }
+      else demoStepDepth = 0;
+      return;
+    }
     var d = activeDay();
     var base = activeStep();
     if (base && base.substeps && state.substep > 0) {
@@ -5587,10 +5645,23 @@
     var A = rgb(a), B = rgb(b);
     return "rgb(" + Math.round(A[0] + (B[0] - A[0]) * t) + "," + Math.round(A[1] + (B[1] - A[1]) * t) + "," + Math.round(A[2] + (B[2] - A[2]) * t) + ")";
   }
+  function noteDemoNavigation(dir) {
+    if (dir > 0) { demoStepDepth++; lastNav = "demo-next"; }
+    else { if (demoStepDepth > 0) demoStepDepth--; lastNav = "demo-prev"; }
+    updateBottomNav();
+  }
   function arrowKey(e, next, prev) {
     if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-    if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return !!next();
-    if (e.key === "ArrowLeft" || e.key === "PageUp") return !!prev();
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+      var advanced = !!next();
+      if (advanced) noteDemoNavigation(1);
+      return advanced;
+    }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") {
+      var receded = !!prev();
+      if (receded) noteDemoNavigation(-1);
+      return receded;
+    }
     return false;
   }
   LS.util = {
