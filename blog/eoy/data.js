@@ -1115,15 +1115,10 @@
     {
       kicker: "Der Raum",
       title: "Tausende Dimensionen",
-      body: "Drei Dimensionen sind ein gutes Bild, aber nicht genug: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt aus einem hypothetischen 4096-dimensionalen Modell, nicht GPT-2 small; von diesen 4096 Spalten sind 16 sichtbar. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
-      teaser: "Drei Dimensionen sind ein gutes Bild, aber nicht genug: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt aus einem hypothetischen 4096-dimensionalen Modell, nicht GPT-2 small; von diesen 4096 Spalten sind 16 sichtbar. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      body: "Drei Dimensionen sind visuell vorstellbar, aber reichen nicht.\n\nFür das Verstehen echter Sprache braucht man mehr Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt aus einem hypothetischen 4096-dimensionalen Modell.\n\nVon diesen 4096 Spalten sind 16 sichtbar. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
       watch: "",
       demoState: { scene: "highdim" },
-      context: "Mehr Dimensionen erlauben mehr unabhängige Unterschiede. Die 3D-Demos sind Projektionen; die Tabelle ist die ehrliche Darstellung für den Rechner.",
-      deep: "Die Zahlen sind didaktisch, keine echten GPT-Gewichte. In einem echten Modell wird jede Koordinate aus Text gelernt; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
       boxes: [
-        box("hd-new-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann weitere Richtungen für Unterschiede öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, auch wenn sie sich bei wenigen Dimensionen überlagern (Superposition)."),
-        box("hd-new-2", "Grenze", "Was zeigt die Tabelle nicht?", "Sie zeigt einen Ausschnitt, keine echten Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; die Tabelle ist eine didaktische Darstellung.")
       ],
       sources: sources
     }
@@ -1131,15 +1126,10 @@
     {
       kicker: "The space",
       title: "Thousands of dimensions",
-      body: "Three dimensions are a useful picture, but not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice of a hypothetical 4096-dimensional model, not GPT-2 small; 16 of its 4096 columns are visible. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
-      teaser: "Three dimensions are a useful picture, but not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice of a hypothetical 4096-dimensional model, not GPT-2 small; 16 of its 4096 columns are visible. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
+      body: "Three dimensions are visually imaginable, but not enough.\n\nUnderstanding real language needs more directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice of a hypothetical 4096-dimensional model.\n\n16 of these 4096 columns are visible. Each row is a token position, each column a dimension. You can no longer picture this, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
       watch: "",
       demoState: { scene: "highdim" },
-      context: "More dimensions allow more independent differences. The 3D demos are projections; the table is the honest view for the computer.",
-      deep: "The numbers are didactic, not real GPT weights. In a real model every coordinate is learned from text; no single column means anything on its own. The geometry comes from the interaction.",
       boxes: [
-        box("hd-new-1", "Technique", "Why so many dimensions?", "Every extra dimension can open more directions for differences. With thousands of coordinates many relations can exist side by side, even if they overlap when there are few dimensions (superposition)."),
-        box("hd-new-2", "Limit", "What does the table not show?", "It shows a slice, not real weights. A real model learns every coordinate from text; the table is a didactic view.")
       ],
       sources: sources
     }
