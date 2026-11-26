@@ -14,10 +14,6 @@
         pros: DE ? ["glatt und differenzierbar", "gute Gradienten", "in Transformern bewährt"] : ["smooth and differentiable", "good gradients", "proven in transformers"],
         cons: DE ? ["teurer durch exp/tanh", "nicht monoton", "keine harte Sparsity"] : ["more expensive due to exp/tanh", "not monotonic", "no hard sparsity"],
         uses: DE ? ["Transformer/LLMs (BERT, GPT)", "moderne tiefe Netze", "Sprachmodelle"] : ["transformers/LLMs (BERT, GPT)", "modern deep networks", "language models"] },
-      { id: "silu", label: "SiLU", color: "sky", tex: "\\operatorname{SiLU}(x)=x\\,\\sigma(x)=\\frac{x}{1+e^{-x}}",
-        pros: DE ? ["glatt und differenzierbar", "selbst-gated mit nur einem Sigmoid", "gute Gradienten, auch für kleine negative Werte"] : ["smooth and differentiable", "self-gated with a single sigmoid", "good gradients, even for small negative values"],
-        cons: DE ? ["nicht monoton", "nicht nullzentriert", "etwas teurer als ReLU"] : ["not monotonic", "not zero-centred", "slightly more expensive than ReLU"],
-        uses: DE ? ["moderne Vision-Modelle", "Stable Diffusion (ResBlocks)", "SwiGLU in LLMs (Llama, PaLM)"] : ["modern vision models", "Stable Diffusion (ResBlocks)", "SwiGLU in LLMs (Llama, PaLM)"] },
       { id: "sigmoid", label: "Sigmoid", color: "blue", tex: "\\sigma(x)=\\frac{1}{1+e^{-x}}",
         pros: DE ? ["Ausgabe zwischen 0 und 1", "als Wahrscheinlichkeit interpretierbar", "glatt"] : ["output between 0 and 1", "interpretable as a probability", "smooth"],
         cons: DE ? ["sättigt stark", "Vanishing Gradients", "nicht nullzentriert"] : ["saturates strongly", "vanishing gradients", "not zero-centred"],
@@ -25,7 +21,11 @@
       { id: "tanh", label: "tanh", color: "lilac", tex: "\\tanh(x)=\\frac{e^{2x}-1}{e^{2x}+1}",
         pros: DE ? ["nullzentriert", "glatt", "Wertebereich −1 bis 1"] : ["zero-centred", "smooth", "range −1 to 1"],
         cons: DE ? ["sättigt stark", "Vanishing Gradients", "exp ist teurer"] : ["saturates strongly", "vanishing gradients", "exp is more expensive"],
-        uses: DE ? ["RNNs/LSTMs", "kleine MLPs", "Merkmals-Transformation"] : ["RNNs/LSTMs", "small MLPs", "feature transformation"] }
+        uses: DE ? ["RNNs/LSTMs", "kleine MLPs", "Merkmals-Transformation"] : ["RNNs/LSTMs", "small MLPs", "feature transformation"] },
+      { id: "silu", label: "SiLU", color: "sky", tex: "\\operatorname{SiLU}(x)=x\\,\\sigma(x)=\\frac{x}{1+e^{-x}}",
+        pros: DE ? ["glatt und differenzierbar", "selbst-gated mit nur einem Sigmoid", "gute Gradienten, auch für kleine negative Werte"] : ["smooth and differentiable", "self-gated with a single sigmoid", "good gradients, even for small negative values"],
+        cons: DE ? ["nicht monoton", "nicht nullzentriert", "etwas teurer als ReLU"] : ["not monotonic", "not zero-centred", "slightly more expensive than ReLU"],
+        uses: DE ? ["moderne Vision-Modelle", "Stable Diffusion (ResBlocks)", "SwiGLU in LLMs (Llama, PaLM)"] : ["modern vision models", "Stable Diffusion (ResBlocks)", "SwiGLU in LLMs (Llama, PaLM)"] },
     ];
     var softmaxInfo = {
       pros: DE ? ["Ausgabe ist eine Verteilung (0 bis 1, Summe 1)", "Unterschiede werden verstärkt", "als Wahrscheinlichkeit interpretierbar"] : ["output is a distribution (0 to 1, sum 1)", "differences are amplified", "interpretable as a probability"],
