@@ -50,8 +50,8 @@
         ? "Vier Attention-Head-Typen: Induktion, Duplicate, Successor und Name-Mover."
         : "Four attention-head types: induction, duplicate, successor, and name-mover.",
       emergence: DE
-        ? "Schematischer Trainingsverlauf mit drei Kurven und einem Phasenfenster zwischen 2,5 und 5 Milliarden Tokens. Fahre über die Kurven für Werte und Erklärungen."
-        : "Schematic training curves with three curves and a phase window between 2.5 and 5 billion tokens. Hover the curves for values and explanations."
+        ? "Schematischer Trainingsverlauf mit drei Kurven und einem Phasenfenster zwischen 2,5 und 5 Milliarden Tokens. x ist die Trainingsdatenmenge in Tokens auf log-Skala; y ist Score, ICL beziehungsweise Loss in nats. Fahre über die Kurven für Werte und Erklärungen."
+        : "Schematic training curves with three curves and a phase window between 2.5 and 5 billion tokens. x is the amount of training data in tokens on a log scale; y is score, ICL, or loss in nats. Hover the curves for values and explanations."
     };
 
     function txt(c, s, x, y, o) {
@@ -67,6 +67,14 @@
         bg: opt.bg === undefined ? false : opt.bg,
         bgAlpha: opt.bgAlpha
       });
+    }
+
+    function rotLabel(c, s, x, y, o) {
+      c.save();
+      c.translate(x, y);
+      c.rotate(-Math.PI / 2);
+      txt(c, s, 0, 0, o);
+      c.restore();
     }
 
     function head(c, s, x, y, o) {
@@ -1109,7 +1117,7 @@
       var x0 = pad + (small ? 40 : 54);
       var x1 = W - pad - 10;
       var yTop = 104;
-      var yBottom = H - (small ? 78 : 86);
+      var yBottom = H - (small ? 88 : 96);
       var gap = small ? 8 : 12;
       var panelH = Math.max(64, (yBottom - yTop - 2 * gap) / 3);
       var pw = x1 - x0;
@@ -1196,6 +1204,12 @@
       line(loss, C.green, 2.4, false, py[2], 2.2, 3.0);
       line(oneLoss, C.muted, 1.2, true, py[2], 2.2, 3.0);
 
+      var yLabelX = pad + (small ? 5 : 6);
+      var yLabelOpt = { align: "center", size: small ? 7.6 : 8.6, color: C.muted };
+      rotLabel(c, DE ? "y: Score" : "y: score", yLabelX, py[0] + panelH / 2, yLabelOpt);
+      rotLabel(c, DE ? "y: ICL (nats)" : "y: ICL (nats)", yLabelX, py[1] + panelH / 2, yLabelOpt);
+      rotLabel(c, DE ? "y: Loss (nats)" : "y: loss (nats)", yLabelX, py[2] + panelH / 2, yLabelOpt);
+
       txt(c, DE ? "Phase Change · ~2,5–5B Tokens" : "phase change · ~2.5–5B tokens", wc, yTop - 10, {
         align: "center", size: small ? 9 : 10.5, color: C.gold,
         font: '700 ' + (small ? 9 : 10.5) + 'px "Barlow", "Open Sans", sans-serif',
@@ -1233,8 +1247,11 @@
         c.restore();
         txt(c, ticks[k].l, tx, baseY + 18, { align: "center", size: small ? 7.6 : 8.4, color: C.muted });
       }
+      txt(c, DE ? "x: Trainingsdaten (Tokens, log-Skala)" : "x: training data (tokens, log scale)", (x0 + x1) / 2, baseY + 33, {
+        align: "center", size: small ? 7.6 : 8.6, color: C.muted
+      });
 
-      var ly = baseY + 34;
+      var ly = baseY + 50;
       var l1 = DE ? "mehrschichtiges Modell" : "multi-layer model";
       var l2 = DE ? "1-Schicht-Modell" : "1-layer model";
       var adv = legendWidth(c, l1, small ? 7.8 : 8.6);
