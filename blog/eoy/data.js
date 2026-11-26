@@ -1753,7 +1753,11 @@
     substeps: [
       Object.assign({}, neuralLargeSteps[0], {
         kicker: DE ? "Tiefe" : "Depth",
-        title: DE ? "Tiefe Netze biegen die Kurve" : "Deep networks bend the curve"
+        title: DE ? "Tiefe Netze biegen die Kurve" : "Deep networks bend the curve",
+        body: DE ? "Das Netz hat 4 Layer: drei versteckte Layer mit je 32 Neuronen und ein Ausgabelayer mit 1 Neuron, weil die Funktion nur einen Ausgabewert hat. \n\n\n$$\\begin{aligned}\nf(x) &= \\underbrace{\\text{Layer}_4}_{\\substack{1 \\text{ Neuron} \\\\ \\text{linear}}} \\left( \n\\underbrace{\\text{Layer}_3}_{\\substack{32 \\text{ Neuronen} \\\\ \\text{ReLU}}} \\left( \n\\underbrace{\\text{Layer}_2}_{\\substack{32 \\text{ Neuronen} \\\\ \\text{ReLU}}} \\left( \n\\underbrace{\\text{Layer}_1}_{\\substack{32 \\text{ Neuronen} \\\\ \\text{ReLU}}} (x) \n\\right) \\right) \\right)\n\\end{aligned}$$\n\nMit einem Eingabewert ergibt das 1 → 32 → 32 → 32 → 1. Es hat viele Parameter und Richtungen, mehr als wir zeichnen können. Mehr Neuronen und Schichten geben dem Netz mehr Möglichkeiten, Knicke zu machen.\n\nIm grünen Bereich gibt es Daten, auf denen er lernt, im grauen nicht. Man sieht deutlich, wie dieses Netz im Bereich mit Daten gut approximiert, aber außerdem gar nicht mehr. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation." : "The network has 4 layers: three hidden layers with 32 neurons each and an output layer with 1 neuron, because the function has only one output value. \n\n\n$$\\begin{aligned}\nf(x) &= \\underbrace{\\text{Layer}_4}_{\\substack{1 \\text{ neuron} \\\\ \\text{linear}}} \\left( \n\\underbrace{\\text{Layer}_3}_{\\substack{32 \\text{ neurons} \\\\ \\text{ReLU}}} \\left( \n\\underbrace{\\text{Layer}_2}_{\\substack{32 \\text{ neurons} \\\\ \\text{ReLU}}} \\left( \n\\underbrace{\\text{Layer}_1}_{\\substack{32 \\text{ neurons} \\\\ \\text{ReLU}}} (x) \n\\right) \\right) \\right)\n\\end{aligned}$$\n\nWith one input value that gives 1 → 32 → 32 → 32 → 1. It has many parameters and directions, more than we can draw. More neurons and layers give the network more ways to create bends.\n\nIn the green region there is data on which it learns, in the grey region there is none. You can clearly see how this network approximates well in the region with data, but not at all outside it. A small training loss does not guarantee good extrapolation.",
+        context: "",
+        deep: "",
+        boxes: []
       }),
       neuralLargeImageStep
     ]
