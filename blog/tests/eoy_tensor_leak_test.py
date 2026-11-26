@@ -20,6 +20,7 @@ Run from the repository root:
     uv run blog/tests/eoy_tensor_leak_test.py --lang de --passes 2
     uv run blog/tests/eoy_tensor_leak_test.py --only 16 --verbose
     uv run blog/tests/eoy_tensor_leak_test.py --tolerance 0 --max-seconds 900
+    uv run blog/tests/eoy_tensor_leak_test.py --only 16 --self-test-leak  # must fail
 """
 
 from __future__ import annotations
@@ -232,6 +233,8 @@ def discover_slides(page, steps: list[int], args) -> list[dict]:
                 break
             scene = active_scene(page)
             memory = visit_slide(page, args, scene)
+            if args.self_test_leak:
+                page.evaluate("() => { if (window.tf) tf.keep(tf.tensor1d([1])); }")
             slides.append({
                 "step": step,
                 "sub": sub,
@@ -254,6 +257,8 @@ def traverse(page, slides: list[dict], direction: str, label: str, args) -> dict
         page.wait_for_timeout(args.settle)
         scene = active_scene(page)
         memory = visit_slide(page, args, scene)
+        if args.self_test_leak:
+            page.evaluate("() => { if (window.tf) tf.keep(tf.tensor1d([1])); }")
         key = (slide["step"], slide["sub"])
         records[key] = {"scene": scene, "memory": memory, "direction": direction}
         if args.verbose:
@@ -266,8 +271,9 @@ def traverse(page, slides: list[dict], direction: str, label: str, args) -> dict
 def compare(previous: dict, current: dict, left: str, right: str, tolerance: int) -> list[dict]:
     findings = []
     for key in sorted(set(previous) & set(current)):
+        record = current[key]
         before = previous[key]["memory"]
-        after = current[key]["memory"]
+        after = record["memory"]
         if before is None or after is None:
             continue
         delta = after["tensors"] - before["tensors"]
@@ -275,7 +281,7 @@ def compare(previous: dict, current: dict, left: str, right: str, tolerance: int
         if delta > tolerance:
             findings.append({
                 "key": key,
-                "scene": after["scene"],
+                "scene": record["scene"],
                 "left": left,
                 "right": right,
                 "before": before,
@@ -352,6 +358,7 @@ def main() -> None:
     parser.add_argument("--max-seconds", type=float, default=900.0, help="hard time budget per language")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--no-fail", action="store_true")
+    parser.add_argument("--self-test-leak", action="store_true", help="intentionally leak one tensor per slide")
     args = parser.parse_args()
 
     if args.only:
