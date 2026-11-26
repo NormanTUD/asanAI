@@ -161,6 +161,8 @@ a:hover {
 #ls-title,
 .ls-title {
 	color: var(--scads-dark-blue);
+	letter-spacing: 0;
+	line-height: 1.12;
 }
 
 #ls-body h1,
@@ -175,11 +177,11 @@ a:hover {
 }
 
 .ls-body a {
-	color: var(--scads-blue);
+	color: var(--scads-dark-blue);
 }
 
 .ls-body a:hover {
-	color: var(--scads-dark-blue);
+	color: var(--scads-blue);
 }
 
 .ls-now-title {
@@ -429,7 +431,7 @@ body.adv-page::before {
 }
 
 .adv-face-title {
-	color: var(--scads-ink);
+	color: var(--scads-dark-blue);
 }
 
 .adv-face-state {
