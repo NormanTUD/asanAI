@@ -59,6 +59,8 @@
     var csvInput = el.querySelector(".ls-act-csv");
     var csvStatus = el.querySelector(".ls-act-csv-status");
     var formulaEl = el.querySelector(".ls-act-formula");
+    var cdfEl = el.querySelector(".ls-act-cdf");
+    var lastCdfWidth = 0;
     var softPositive = [1, 2, 3, 4];
     var softNegative = [-3, -2, -1, 0];
     var softFrom = softPositive.slice();
@@ -232,6 +234,27 @@
         cell.innerHTML = '<ul>' + info[key].map(function (item) { return '<li>' + item + '</li>'; }).join('') + '</ul>';
       });
     }
+    function updateVisibility() {
+      var showCdf = mode !== "softmax" && active === "gelu";
+      el.classList.add("is-show-table");
+      el.classList.toggle("is-show-cdf", showCdf);
+    }
+    function reserveCdfHeight(force) {
+      if (!cdfEl) return;
+      var width = cdfEl.getBoundingClientRect().width;
+      if (!width) return;
+      var current = parseFloat(cdfEl.style.minHeight) || 0;
+      if (!force && Math.abs(width - lastCdfWidth) < 2 && current) return;
+      var previous = cdfEl.style.minHeight;
+      var wasOpen = cdfEl.open;
+      cdfEl.style.minHeight = "0px";
+      cdfEl.open = true;
+      var height = cdfEl.offsetHeight + 10;
+      cdfEl.open = wasOpen;
+      cdfEl.style.minHeight = previous;
+      if (force || height > current) cdfEl.style.minHeight = height + "px";
+      lastCdfWidth = width;
+    }
     function updateReadout() {
       if (mode === "softmax") {
         var ps = softmax(softDisplay());
@@ -245,6 +268,7 @@
         if (api.typeset) { try { api.typeset(readout); } catch (e) {} }
         updateTable(info);
       }
+      updateVisibility();
     }
     function updatePresetChips() {
       softChips.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-soft") === softPreset); });
@@ -407,7 +431,7 @@
         ? fn.label + " bei x = " + num(x, 2) + ": f(x) = " + num(value, 3) + ". Steigung ≈ " + num(slope, 2) + zero
         : fn.label + " at x = " + num(x, 2) + ": f(x) = " + num(value, 3) + ". Slope ≈ " + num(slope, 2) + zero;
     });
-    function resize() { size = api.fit(canvas, stage); draw(); }
+    function resize() { size = api.fit(canvas, stage); reserveCdfHeight(); draw(); }
     window.addEventListener("resize", resize);
     canvas.setAttribute("data-tip", DE ? "Zeigt die Aktivierungskurve; achte auf Nullpunkt und Steigung." : "Shows the activation curve; watch the zero crossing and slope.");
     canvas.setAttribute("aria-label", DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh." : "Activation functions: ReLU, GELU, sigmoid, tanh.");
@@ -447,8 +471,15 @@
       if (mode === "softmax") return softPreset !== "positive";
       return activeIndex() > 0;
     }
+    if (cdfEl) cdfEl.addEventListener("toggle", function () { if (cdfEl.open) reserveCdfHeight(true); });
     updateReadout();
+    reserveCdfHeight();
     resize();
+    setTimeout(function () { reserveCdfHeight(true); }, 300);
+    if (window.addEventListener) window.addEventListener("load", function () { reserveCdfHeight(true); });
+    if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+      document.fonts.ready.then(function () { reserveCdfHeight(true); });
+    }
     return {
       update: function (s) {
         if (!s) return;

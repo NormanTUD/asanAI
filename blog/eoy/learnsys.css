@@ -1308,6 +1308,7 @@ h1,h2,h3,h4{
 .ls-act-readout .ls-act-item{text-transform:none;letter-spacing:0}
 .ls-act-readout .ls-act-item.is-on b{color:var(--ls-gold,#c8a24a)}
 .ls-act-readout .ls-act-f{font-family:"Cambria Math","STIX Two Math",Georgia,serif;color:var(--ls-petrol)}
+.ls-act-readout .ls-math{font-size:1.4em}
 .ls-act-controls{display:grid;height:68px;min-height:68px;overflow:hidden}
 .ls-act-controls>*{grid-area:1/1;transition:opacity .34s ease,transform .34s ease}
 .ls-act-softmax{display:flex;flex-wrap:wrap;align-items:center;gap:5px;opacity:0;pointer-events:none;transform:translateY(5px)}
@@ -1331,6 +1332,8 @@ h1,h2,h3,h4{
 .ls-act-cdf{font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);border-top:1px solid var(--ls-line);padding-top:4px}
 .ls-act-cdf summary{cursor:pointer;color:var(--ls-petrol);font-weight:600}
 .ls-act-cdf p{margin:4px 0 0;line-height:1.35}
+.ls-act-scene:not(.is-show-table) .ls-act-table-wrap,
+.ls-act-scene:not(.is-show-cdf) .ls-act-cdf{visibility:hidden;pointer-events:none}
 .ls-tunnel-top{min-height:3.2em}
 .ls-tunnel-sentence{min-height:2.4em;max-height:2.4em;overflow:auto;overflow-x:hidden}
 .ls-tunnel-info{min-height:2.6em}
