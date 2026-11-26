@@ -146,7 +146,7 @@
         '</figure>' +
         '<figure class="ls-il-card ls-il-pred">' +
           '<div class="ls-il-cardhead"><span>Output</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
-          '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Output: für jede Koordinate eine Farbe.", "Output: a colour for every coordinate.") + '"></canvas><span class="ls-il-badge">' + L("Netz", "net") + '</span></div>' +
+          '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Output: für jede Koordinate eine Farbe.", "Output: a colour for every coordinate.") + '"></canvas></div>' +
           '<figcaption class="ls-il-caption"><span>100 &times; 100 &times; 3</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0</b></span></figcaption>' +
         '</figure>' +
         '<div class="ls-il-card ls-il-loss">' +
@@ -235,7 +235,6 @@
       pendingLoss: null,
       target: null,
       targetOff: null,
-      previewOff: null,
       step: 0,
       seen: 0,
       loss: NaN,
@@ -253,6 +252,7 @@
       startTimer: 0,
       predTimer: 0,
       hoverStep: null,
+      hoverTrained: false,
       webgl: true,
       lr: LR
     };
@@ -298,7 +298,6 @@
       }
       st.target = target;
       st.targetOff = c;
-      st.previewOff = preview;
       return true;
     }
 
@@ -451,19 +450,66 @@
       }
     }
 
+    function predictChunks(input, gen, token, onData, onDone) {
+      var rows = input.shape[0];
+      var chunk = st.webgl ? rows : 2500;
+      var start = 0;
+      var parts = [];
+      var settled = false;
+      function finish() {
+        if (settled) return;
+        settled = true;
+        if (onDone) onDone();
+      }
+      function valid() {
+        return !st.dead && st.active && !document.hidden && gen === st.gen && (token == null || token === st.viewToken);
+      }
+      function step() {
+        if (!valid()) {
+          finish();
+          return;
+        }
+        var count = Math.min(chunk, rows - start);
+        var sub = input.slice([start, 0], [count, INPUT_DIM]);
+        var out = null;
+        try {
+          out = st.model.apply(sub);
+        } catch (e) {
+          try { sub.dispose(); } catch (err) {}
+          finish();
+          return;
+        }
+        out.data().then(function (data) {
+          parts.push(data);
+          start += count;
+          if (start < rows) {
+            setTimeout(step, 0);
+            return;
+          }
+          var all = new Float32Array(rows * 3);
+          var off = 0;
+          for (var i = 0; i < parts.length; i++) {
+            all.set(parts[i], off);
+            off += parts[i].length;
+          }
+          if (valid() && onData) onData(all);
+          finish();
+        }).catch(function () {
+          finish();
+        }).finally(function () {
+          try { out.dispose(); } catch (e) {}
+          try { sub.dispose(); } catch (e) {}
+        });
+      }
+      step();
+    }
+
     function requestTrainPrediction(force) {
       if (!st.model || !st.xTrain || st.predBusy || st.dead) return;
       if (!force && (document.hidden || !st.active)) return;
       var gen = st.gen;
       st.predBusy = true;
-      var out = null;
-      try {
-        out = st.model.apply(st.xTrain);
-      } catch (e) {
-        st.predBusy = false;
-        return;
-      }
-      out.data().then(function (data) {
+      predictChunks(st.xTrain, gen, null, function (data) {
         if (gen !== st.gen || st.dead) return;
         st.pred = data;
         st.predDirty = false;
@@ -476,9 +522,11 @@
         drawPrediction();
         drawLoss();
         updateReadout();
-      }).catch(function () {}).finally(function () {
-        try { out.dispose(); } catch (e) {}
-        if (gen === st.gen) st.predBusy = false;
+      }, function () {
+        if (gen === st.gen) {
+          st.predBusy = false;
+          st.lastTrainPred = performance.now();
+        }
       });
     }
 
@@ -511,20 +559,15 @@
       var token = st.viewToken;
       var factor = st.viewFactor;
       st.viewBusy = true;
-      var out = null;
-      try {
-        out = st.model.apply(st.xView);
-      } catch (e) {
-        st.viewBusy = false;
-        return;
-      }
-      out.data().then(function (data) {
+      predictChunks(st.xView, gen, token, function (data) {
         if (gen !== st.gen || token !== st.viewToken || factor !== st.viewFactor || st.dead) return;
         st.viewData = data;
         drawPrediction();
-      }).catch(function () {}).finally(function () {
-        try { out.dispose(); } catch (e) {}
-        if (gen === st.gen && token === st.viewToken && factor === st.viewFactor) st.viewBusy = false;
+      }, function () {
+        if (gen === st.gen && token === st.viewToken && factor === st.viewFactor) {
+          st.viewBusy = false;
+          st.lastViewPred = performance.now();
+        }
       });
     }
 
@@ -568,17 +611,19 @@
       ctx.strokeRect(x + 0.5, y + 0.5, sw - 1, sh - 1);
       ctx.globalAlpha = 1;
       ctx.setLineDash([]);
-      var label = L("gelernt", "trained");
-      ctx.font = '600 9px ui-monospace, SFMono-Regular, Menlo, monospace';
-      var tw = ctx.measureText(label).width;
-      ctx.globalAlpha = 0.88;
-      ctx.fillStyle = C.paper || "#ffffff";
-      ctx.fillRect(x + 7, y + 7, tw + 12, 18);
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = C.petrol || "#004b6f";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "middle";
-      ctx.fillText(label, x + 13, y + 16.5);
+      if (st.hoverTrained) {
+        var label = L("gelernt", "trained");
+        ctx.font = '600 9px ui-monospace, SFMono-Regular, Menlo, monospace';
+        var tw = ctx.measureText(label).width;
+        ctx.globalAlpha = 0.88;
+        ctx.fillStyle = C.paper || "#ffffff";
+        ctx.fillRect(x + 7, y + 7, tw + 12, 18);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = C.petrol || "#004b6f";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, x + 13, y + 16.5);
+      }
       ctx.restore();
     }
 
@@ -794,7 +839,7 @@
       if (!st.lastTs) st.lastTs = now;
       var dt = Math.min(120, now - st.lastTs);
       st.lastTs = now;
-      if (st.running && !document.hidden) {
+      if (st.running && !document.hidden && !st.predBusy && !st.viewBusy) {
         var sps = st.webgl ? SPS : 16;
         var cap = st.webgl ? 4 : 1;
         var dtStep = Math.min(0.03, dt / 1000);
@@ -812,8 +857,8 @@
           st.pendingLoss = null;
         }
       }
-      var predInterval = st.webgl ? 650 : 1500;
-      var viewInterval = st.webgl ? 1000 : 2200;
+      var predInterval = st.webgl ? 900 : 2200;
+      var viewInterval = st.webgl ? 1400 : 3200;
       if ((st.running || st.predDirty) && !st.predBusy && now - st.lastTrainPred > predInterval) {
         st.lastTrainPred = now;
         requestTrainPrediction(false);
@@ -933,6 +978,7 @@
 
     function setExtrap(on) {
       st.extrap = !!on;
+      st.hoverTrained = false;
       if (factorInput) factorInput.disabled = !st.extrap;
       if (st.extrap) {
         buildViewInput();
@@ -950,6 +996,7 @@
     function setFactor(value) {
       var f = clamp(Number(value) || 1.5, 1.05, 3);
       st.viewFactor = f;
+      st.hoverTrained = false;
       if (factorOut) factorOut.textContent = formatFactor(f) + "×";
       if (!st.extrap) {
         updateExtraNote();
@@ -1122,6 +1169,27 @@
       }
     });
     if (core.canvasTip) lossTip = core.canvasTip(lossCv, lossTipText);
+    predCv.addEventListener("pointermove", function (e) {
+      if (!st.extrap) return;
+      var r = predCv.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      var x = e.clientX - r.left;
+      var y = e.clientY - r.top;
+      var m = (st.viewFactor - 1) / (2 * st.viewFactor);
+      var x0 = m * r.width;
+      var y0 = m * r.height;
+      var inside = x >= x0 && x <= r.width - x0 && y >= y0 && y <= r.height - y0;
+      if (inside !== st.hoverTrained) {
+        st.hoverTrained = inside;
+        drawPrediction();
+      }
+    });
+    predCv.addEventListener("pointerleave", function () {
+      if (st.hoverTrained) {
+        st.hoverTrained = false;
+        drawPrediction();
+      }
+    });
     document.addEventListener("visibilitychange", onVisibility);
     grid.addEventListener("dragover", function (e) {
       e.preventDefault();
