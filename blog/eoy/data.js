@@ -1658,22 +1658,12 @@
     kicker: DE ? "Bild als Funktion" : "An image as a function",
     title: DE ? "Neuronale Netze approximieren jede Funktion" : "Neural networks approximate any function",
     body: DE
-      ? "Ein Bild ist eine Funktion. Für jede Koordinate $(x, y)$ sagt das Netz eine Farbe voraus.\n\n$$\n\\underbrace{\\begin{pmatrix} r \\\\ g \\\\ b \\end{pmatrix}}_{\\text{Farbe des }(x,y)\\text{-Pixels}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{Koordinaten}}\\right)}_{\\text{gelerntes Netz}}\n$$\n\nDas ist die ganze Funktion: Koordinate rein, drei Farbwerte raus. 50 × 50 Pixel ergeben 2.500 Punkte, jeder mit drei Zielwerten. Das Netz hat vier versteckte Schichten mit je 96 tanh-Neuronen und bekommt 22 Eingaben: $x, y$ und 20 Fourier-Werte. Diese Architektur ist fest.\n\nEs speichert keine Pixel, sondern lernt die Funktion. Mit genug Neuronen approximiert ein Netz jede stetige Funktion auf einem begrenzten Bereich. Außerhalb des gelernten Quadrats gibt es keine Daten; dort extrapoliert das Netz."
-      : "An image is a function. For every coordinate $(x, y)$ the network predicts a colour.\n\n$$\n\\underbrace{\\begin{pmatrix} r \\\\ g \\\\ b \\end{pmatrix}}_{\\text{colour of the }(x,y)\\text{ pixel}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{coordinates}}\\right)}_{\\text{learned network}}\n$$\n\nThat is the whole function: coordinate in, three colour values out. 50 × 50 pixels make 2,500 points, each with three targets. The network has four hidden layers with 96 tanh neurons each and receives 22 inputs: $x, y$ and 20 Fourier values. This architecture is fixed.\n\nIt stores no pixels; it learns the function. With enough neurons a network can approximate any continuous function on a bounded domain. Outside the trained square there is no data; there the network extrapolates.",
+      ? "$$\n\\underbrace{\\begin{pmatrix} \\text{rot} \\\\ \\text{grün} \\\\ \\text{blau} \\end{pmatrix}}_{\\text{Pixel}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{Koordinaten}}\\right)}_{\\text{gelerntes Netz}}\n$$\n\nEin Bild ist eine Funktion: Koordinate $(x, y)$ rein, drei Farbwerte raus. 50 × 50 Pixel ergeben 2.500 Punkte. Das Netz hat vier versteckte Schichten mit je 96 tanh-Neuronen und bekommt 22 Eingaben: $x, y$ und 20 Fourier-Werte. Diese Architektur ist fest.\n\nEs speichert keine Pixel, sondern lernt die Funktion. Mit genug Neuronen approximiert ein Netz jede stetige Funktion auf einem begrenzten Bereich. Außerhalb des gelernten Quadrats extrapoliert es."
+      : "$$\n\\underbrace{\\begin{pmatrix} \\text{red} \\\\ \\text{green} \\\\ \\text{blue} \\end{pmatrix}}_{\\text{pixel}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{coordinates}}\\right)}_{\\text{learned network}}\n$$\n\nAn image is a function: coordinate $(x, y)$ in, three colour values out. 50 × 50 pixels make 2,500 points. The network has four hidden layers with 96 tanh neurons each and receives 22 inputs: $x, y$ and 20 Fourier values. This architecture is fixed.\n\nIt stores no pixels; it learns the function. With enough neurons a network can approximate any continuous function on a bounded domain. Outside the trained square it extrapolates.",
     watch: DE
-      ? "Beobachte Loss und Bild. Unten: eigenes Bild, Extrapolation, Lernrate, Neustart."
-      : "Watch the loss and the image. Below: own image, extrapolation, learning rate, restart.",
+      ? "Beobachte Loss und Bild. Unten: eigenes Bild, Grenzen, Lernrate."
+      : "Watch the loss and the image. Below: own image, limits, learning rate.",
     demoState: { scene: "imagelab" },
-    context: DE
-      ? "Trainiert wird nur im Quadrat $x, y \\in [-1, 1]$. Außerhalb gibt es keine Daten."
-      : "Training happens only inside the square $x, y \\in [-1, 1]$. Outside there is no data.",
-    deep: DE
-      ? "Universal Approximation: Ein Netz mit genug Neuronen approximiert jede stetige Funktion auf einem kompakten Bereich (Cybenko, 1989; Hornik, 1991). Fourier-Features helfen bei hohen Frequenzen (Tancik et al., 2020). Außerhalb des Trainingsbereichs extrapoliert das Netz."
-      : "Universal approximation: a network with enough neurons approximates any continuous function on a compact domain (Cybenko, 1989; Hornik, 1991). Fourier features help with high frequencies (Tancik et al., 2020). Outside the training region the network extrapolates.",
-    boxes: [
-      box("img-fourier", DE ? "Technik" : "Technique", DE ? "Fourier-Features" : "Fourier features", DE ? "Fünf Oktaven Sinus/Cosinus geben hohe Frequenzen; ohne sie bleibt das Bild weich." : "Five octaves of sine/cosine give high frequencies; without them the image stays soft."),
-      box("img-limit", DE ? "Grenze" : "Limit", DE ? "Grenze" : "Limit", DE ? "Außerhalb von $x, y \\in [-1, 1]$ gibt es keine Trainingsdaten. Die Ausgabe ist eine Extrapolation, kein Wissen." : "Outside $x, y \\in [-1, 1]$ there is no training data. The output is an extrapolation, not knowledge.")
-    ],
     sources: [
       { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für ein Netz mit einer versteckten Schicht.", en: "Universal approximation for a network with one hidden layer." } },
       { label: "Hornik (1991), Approximation Capabilities of Multilayer Feedforward Networks", url: "https://doi.org/10.1016/0893-6080(91)90009-T", why: { de: "Mehrschichtige Netze sind universelle Approximatoren.", en: "Multilayer networks are universal approximators." } },
@@ -2409,7 +2399,7 @@
     eoyResetState: !!singleStep,
     eoyNoHash: !!singleStep,
     eoySingle: !!singleStep,
-    overlayRevision: "2026-11-17-spacetime-after-worldmodel-9",
+    overlayRevision: "2026-11-26-image-fn-formula-2",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

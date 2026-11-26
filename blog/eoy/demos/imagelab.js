@@ -147,7 +147,7 @@
         '<figure class="ls-il-card ls-il-pred">' +
           '<div class="ls-il-cardhead"><span>Output</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
           '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Output: für jede Koordinate eine Farbe.", "Output: a colour for every coordinate.") + '"></canvas><span class="ls-il-badge">' + L("Netz", "net") + '</span></div>' +
-          '<figcaption class="ls-il-caption"><span>' + L("nur (x, y)", "only (x, y)") + '</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0</b></span></figcaption>' +
+          '<figcaption class="ls-il-caption"><span>50 &times; 50 &times; 3</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0</b></span></figcaption>' +
         '</figure>' +
         '<div class="ls-il-card ls-il-loss">' +
           '<div class="ls-il-cardhead"><span>Loss</span><span class="ls-il-lossval">–</span></div>' +
@@ -234,6 +234,7 @@
       pendingLoss: null,
       target: null,
       targetOff: null,
+      previewOff: null,
       step: 0,
       seen: 0,
       loss: NaN,
@@ -250,10 +251,13 @@
       lastViewPred: 0,
       startTimer: 0,
       predTimer: 0,
+      hoverStep: null,
       webgl: true,
       lr: LR
     };
     var rng = mulberry32(1);
+    var lossGeom = null;
+    var lossTip = null;
 
     function preprocess(img) {
       if (!img) return false;
@@ -263,6 +267,14 @@
       var side = Math.min(iw, ih);
       var sx = (iw - side) / 2;
       var sy = (ih - side) / 2;
+      var preview = document.createElement("canvas");
+      preview.width = 256;
+      preview.height = 256;
+      var pctx = preview.getContext("2d");
+      if (!pctx) return false;
+      pctx.imageSmoothingEnabled = true;
+      pctx.imageSmoothingQuality = "high";
+      pctx.drawImage(img, sx, sy, side, side, 0, 0, 256, 256);
       var c = document.createElement("canvas");
       c.width = RES;
       c.height = RES;
@@ -270,7 +282,7 @@
       if (!ctx) return false;
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, sx, sy, side, side, 0, 0, RES, RES);
+      ctx.drawImage(preview, 0, 0, 256, 256, 0, 0, RES, RES);
       var data;
       try {
         data = ctx.getImageData(0, 0, RES, RES).data;
@@ -285,6 +297,7 @@
       }
       st.target = target;
       st.targetOff = c;
+      st.previewOff = preview;
       return true;
     }
 
@@ -351,6 +364,8 @@
       st.loss = NaN;
       st.best = Infinity;
       st.history = [];
+      st.hoverStep = null;
+      if (lossTip) lossTip.hide();
       st.pred = null;
       st.viewData = null;
       st.predBusy = false;
@@ -528,10 +543,11 @@
       var f = api.fit(targetCv, targetCv.parentElement);
       if (!f.w || !f.h) return;
       f.ctx.clearRect(0, 0, f.w, f.h);
-      if (st.targetOff) {
+      var src = st.previewOff || st.targetOff;
+      if (src) {
         f.ctx.imageSmoothingEnabled = true;
         f.ctx.imageSmoothingQuality = "high";
-        f.ctx.drawImage(st.targetOff, 0, 0, RES, RES, 0, 0, f.w, f.h);
+        f.ctx.drawImage(src, 0, 0, src.width, src.height, 0, 0, f.w, f.h);
       } else {
         placeholder(f.ctx, f.w, f.h, L("Bild lädt …", "Image loading …"));
       }
@@ -613,6 +629,7 @@
       }
       var hist = st.history;
       if (hist.length < 2) {
+        lossGeom = null;
         placeholder(ctx, f.w, f.h, L("warte auf Loss …", "waiting for loss …"));
         return;
       }
@@ -635,6 +652,7 @@
       var s0 = hist[0].s;
       var s1 = hist[hist.length - 1].s;
       if (s1 === s0) s1 = s0 + 1;
+      lossGeom = { x0: x0, x1: x1, y0: y0, y1: y1, s0: s0, s1: s1 };
       function px(s) { return x0 + ((s - s0) / (s1 - s0)) * (x1 - x0); }
       function py(l) { return y1 - ((l - min) / (max - min)) * (y1 - y0); }
       ctx.beginPath();
@@ -660,6 +678,68 @@
       ctx.arc(px(last.s), py(last.l), 3.2, 0, Math.PI * 2);
       ctx.fillStyle = C.green || "#63a44b";
       ctx.fill();
+      if (st.hoverStep != null) {
+        var hi = -1;
+        var hd = Infinity;
+        for (var h = 0; h < hist.length; h++) {
+          var hdist = Math.abs(hist[h].s - st.hoverStep);
+          if (hdist < hd) {
+            hd = hdist;
+            hi = h;
+          }
+        }
+        if (hi >= 0) {
+          var hx = px(hist[hi].s);
+          var hy = py(hist[hi].l);
+          ctx.save();
+          ctx.setLineDash([3, 3]);
+          ctx.strokeStyle = C.petrol || "#004b6f";
+          ctx.globalAlpha = 0.55;
+          ctx.beginPath();
+          ctx.moveTo(hx, y0);
+          ctx.lineTo(hx, y1);
+          ctx.stroke();
+          ctx.restore();
+          ctx.beginPath();
+          ctx.arc(hx, hy, 4, 0, Math.PI * 2);
+          ctx.fillStyle = C.petrol || "#004b6f";
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(hx, hy, 2, 0, Math.PI * 2);
+          ctx.fillStyle = C.paper || "#ffffff";
+          ctx.fill();
+        }
+      }
+    }
+
+    function lossTipText(x, y) {
+      if (!lossGeom || st.history.length < 2) return "";
+      var g = lossGeom;
+      if (x < g.x0 - 4 || x > g.x1 + 4) {
+        if (st.hoverStep !== null) {
+          st.hoverStep = null;
+          drawLoss();
+        }
+        return "";
+      }
+      var step = g.s0 + ((clamp(x, g.x0, g.x1) - g.x0) / (g.x1 - g.x0)) * (g.s1 - g.s0);
+      var hist = st.history;
+      var at = 0;
+      var dist = Infinity;
+      for (var i = 0; i < hist.length; i++) {
+        var d = Math.abs(hist[i].s - step);
+        if (d < dist) {
+          dist = d;
+          at = i;
+        }
+      }
+      var p = hist[at];
+      if (!p) return "";
+      if (st.hoverStep !== p.s) {
+        st.hoverStep = p.s;
+        drawLoss();
+      }
+      return L("Loss", "Loss") + " " + p.l.toFixed(6) + " · " + L("Epoche", "Epoch") + " " + Math.floor((p.s * BATCH) / PIXELS);
     }
 
     function updateReadout() {
@@ -980,9 +1060,13 @@
     function onVisibility() {
       if (document.hidden) {
         stopLoop();
-      } else if (st.active && st.running) {
-        st.lastTs = 0;
-        ensureLoop();
+      } else if (st.active) {
+        if (st.running) {
+          st.lastTs = 0;
+          ensureLoop();
+        } else if (!st.userPaused && st.ready) {
+          scheduleStart();
+        }
       }
     }
 
@@ -1006,6 +1090,8 @@
       if (st.xTrain) { try { st.xTrain.dispose(); } catch (e) {} st.xTrain = null; }
       if (st.yTrain) { try { st.yTrain.dispose(); } catch (e) {} st.yTrain = null; }
       if (st.xView) { try { st.xView.dispose(); } catch (e) {} st.xView = null; }
+      if (lossTip && lossTip.destroy) { try { lossTip.destroy(); } catch (e) {} }
+      lossTip = null;
       if (el.parentNode) el.parentNode.removeChild(el);
     }
 
@@ -1026,6 +1112,13 @@
     lrInput.addEventListener("input", function () { if (lrOut) lrOut.textContent = formatLr(lrInput.value); });
     lrInput.addEventListener("change", function () { setLearningRate(lrInput.value); });
     closeBtn.addEventListener("click", function () { optionalEl.open = false; });
+    lossCv.addEventListener("pointerleave", function () {
+      if (st.hoverStep !== null) {
+        st.hoverStep = null;
+        drawLoss();
+      }
+    });
+    if (core.canvasTip) lossTip = core.canvasTip(lossCv, lossTipText);
     document.addEventListener("visibilitychange", onVisibility);
     grid.addEventListener("dragover", function (e) {
       e.preventDefault();
