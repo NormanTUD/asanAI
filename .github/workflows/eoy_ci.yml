@@ -67,3 +67,8 @@ jobs:
       - name: Run eoy page walk
         run: |
           uv run blog/tests/eoy_pages_test.py --langs en,de
+
+      - name: Run eoy tensor leak walk
+        timeout-minutes: 30
+        run: |
+          uv run blog/tests/eoy_tensor_leak_test.py --lang de --passes 2
