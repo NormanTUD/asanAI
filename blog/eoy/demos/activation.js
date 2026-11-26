@@ -6,11 +6,28 @@
   function activationScene(root, api) {
     var DE = api.lang === "de";
     var fns = [
-      { id: "relu", label: "ReLU", color: "green", tex: "\\operatorname{ReLU}(x)=\\max(0,x)", use: DE ? "Standard in tiefen CNNs/MLPs: billig und spärlich; viele negative Eingaben können Neuronen dauerhaft auf 0 legen (Dead ReLU)." : "Standard in deep CNNs/MLPs: cheap and sparse; many negative inputs can permanently push neurons to 0 (dead ReLU)." },
-      { id: "gelu", label: "GELU", color: "gold", tex: "\\operatorname{GELU}(x)=x\\,\\Phi(x)", use: DE ? "Transformer/LLMs: glatt, gute Gradienten. Exakt x·Φ(x) (Φ = CDF der Standardnormalverteilung); die in der Demo verwendete tanh-Näherung mit 0.044715 ist eine Approximation (Hendrycks & Gimpel, 2016)." : "Transformers/LLMs: smooth, good gradients. Exactly x·Φ(x) (Φ = standard normal CDF); the tanh approximation used in the demo with 0.044715 is an approximation (Hendrycks & Gimpel, 2016)." },
-      { id: "sigmoid", label: "Sigmoid", color: "blue", tex: "\\sigma(x)=\\frac{1}{1+e^{-x}}", use: DE ? "Binäre Ausgaben und Gates (z. B. LSTM): sättigt bei großen Beträgen, dadurch kleine Gradienten; in tiefen Hidden Layers oft durch ReLU/GELU ersetzt." : "Binary outputs and gates (e.g. LSTM): saturates for large magnitudes, giving small gradients; often replaced by ReLU/GELU in deep hidden layers." },
-      { id: "tanh", label: "tanh", color: "lilac", tex: "\\tanh(x)=\\frac{e^{2x}-1}{e^{2x}+1}", use: DE ? "RNNs und kleine MLPs: nullzentriert und glatt; sättigt bei großen Werten." : "RNNs and small MLPs: zero-centred and smooth; saturates for large values." }
+      { id: "relu", label: "ReLU", color: "green", tex: "\\operatorname{ReLU}(x)=\\max(0,x)",
+        pros: DE ? ["billig und schnell", "spärlich (viele Nullen)", "keine Sättigung für positive Werte"] : ["cheap and fast", "sparse (many zeros)", "no saturation for positive values"],
+        cons: DE ? ["Dead ReLU: Neuronen können dauerhaft 0 liefern", "nicht differenzierbar bei 0", "negative Information geht verloren"] : ["dead ReLU: neurons can output 0 forever", "not differentiable at 0", "negative information is lost"],
+        uses: DE ? ["tiefe CNNs/MLPs", "Standard-Hidden-Layer", "Computer Vision"] : ["deep CNNs/MLPs", "standard hidden layer", "computer vision"] },
+      { id: "gelu", label: "GELU", color: "gold", tex: "\\operatorname{GELU}(x)=x\\,\\Phi(x)",
+        pros: DE ? ["glatt und differenzierbar", "gute Gradienten", "in Transformern bewährt"] : ["smooth and differentiable", "good gradients", "proven in transformers"],
+        cons: DE ? ["teurer durch exp/tanh", "nicht monoton", "keine harte Sparsity"] : ["more expensive due to exp/tanh", "not monotonic", "no hard sparsity"],
+        uses: DE ? ["Transformer/LLMs (BERT, GPT)", "moderne tiefe Netze", "Sprachmodelle"] : ["transformers/LLMs (BERT, GPT)", "modern deep networks", "language models"] },
+      { id: "sigmoid", label: "Sigmoid", color: "blue", tex: "\\sigma(x)=\\frac{1}{1+e^{-x}}",
+        pros: DE ? ["Ausgabe zwischen 0 und 1", "als Wahrscheinlichkeit interpretierbar", "glatt"] : ["output between 0 and 1", "interpretable as a probability", "smooth"],
+        cons: DE ? ["sättigt stark", "Vanishing Gradients", "nicht nullzentriert"] : ["saturates strongly", "vanishing gradients", "not zero-centred"],
+        uses: DE ? ["binäre Klassifikation", "Gates in LSTM/GRU", "Ausgabeschicht"] : ["binary classification", "gates in LSTM/GRU", "output layer"] },
+      { id: "tanh", label: "tanh", color: "lilac", tex: "\\tanh(x)=\\frac{e^{2x}-1}{e^{2x}+1}",
+        pros: DE ? ["nullzentriert", "glatt", "Wertebereich −1 bis 1"] : ["zero-centred", "smooth", "range −1 to 1"],
+        cons: DE ? ["sättigt stark", "Vanishing Gradients", "exp ist teurer"] : ["saturates strongly", "vanishing gradients", "exp is more expensive"],
+        uses: DE ? ["RNNs/LSTMs", "kleine MLPs", "Merkmals-Transformation"] : ["RNNs/LSTMs", "small MLPs", "feature transformation"] }
     ];
+    var softmaxInfo = {
+      pros: DE ? ["Ausgabe ist eine Verteilung (0 bis 1, Summe 1)", "Unterschiede werden verstärkt", "als Wahrscheinlichkeit interpretierbar"] : ["output is a distribution (0 to 1, sum 1)", "differences are amplified", "interpretable as a probability"],
+      cons: DE ? ["kann überkonfident werden", "numerisch instabil ohne Max-Abzug", "sättigt bei großen Logits"] : ["can become overconfident", "numerically unstable without max subtraction", "saturates for large logits"],
+      uses: DE ? ["Klassifikation", "nächstes Token im LLM", "Attention-Gewichte"] : ["classification", "next token in an LLM", "attention weights"]
+    };
     var el = document.createElement("div");
     el.className = "ls-act-scene";
     el.innerHTML = '<div class="ls-act-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-act-formula" aria-hidden="true">p<sub>i</sub> = e<sup>z<sub>i</sub></sup> / Σ<sub>j</sub> e<sup>z<sub>j</sub></sup></div></div>' +
@@ -25,12 +42,19 @@
           '<span class="ls-act-csv-status" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-act-readout" aria-live="polite"></div>';
+      '<div class="ls-act-readout" aria-live="polite"></div>' +
+      '<div class="ls-act-table-wrap"><table class="ls-act-table"><thead><tr><th>' + (DE ? "Vorteile" : "Pros") + '</th><th>' + (DE ? "Nachteile" : "Cons") + '</th><th>' + (DE ? "Anwendung" : "Use") + '</th></tr></thead><tbody><tr><td data-cell="pros"></td><td data-cell="cons"></td><td data-cell="uses"></td></tr></tbody></table></div>' +
+      '<details class="ls-act-cdf"><summary>' + (DE ? "Optional: Was ist Φ (CDF)?" : "Optional: what is Φ (CDF)?") + '</summary><p>' + (DE ? "Φ(x) ist die kumulative Verteilungsfunktion (CDF) der Standardnormalverteilung: Φ(x) = P(Z ≤ x). GELU gewichtet x mit dieser Wahrscheinlichkeit; die Demo nutzt dafür die tanh-Näherung mit 0.044715." : "Φ(x) is the cumulative distribution function (CDF) of the standard normal distribution: Φ(x) = P(Z ≤ x). GELU weights x by this probability; the demo uses the tanh approximation with 0.044715 for it.") + '</p></details>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-act-stage");
     var canvas = el.querySelector("canvas");
     var chips = el.querySelector(".ls-act-chips");
     var readout = el.querySelector(".ls-act-readout");
+    var tableCells = {
+      pros: el.querySelector('[data-cell="pros"]'),
+      cons: el.querySelector('[data-cell="cons"]'),
+      uses: el.querySelector('[data-cell="uses"]')
+    };
     var softChips = el.querySelectorAll("[data-soft]");
     var csvInput = el.querySelector(".ls-act-csv");
     var csvStatus = el.querySelector(".ls-act-csv-status");
@@ -135,9 +159,10 @@
       ctx.save();
       ctx.globalAlpha = alpha;
       ctx.fillStyle = C[front.color];
-      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(front.label, g.sx(2.65), endY + 3);
+      var labelY = endY + (front.id === "sigmoid" || front.id === "tanh" ? -10 : 3);
+      ctx.fillText(front.label, g.sx(2.65), labelY);
       ctx.restore();
       if (modeT < 0.35) hits.push({ id: front.id, x: g.sx(2.65) + 12, y: endY, r: 18 });
     }
@@ -200,16 +225,25 @@
       drawActivation(g);
       drawSoftmax(g);
     }
+    function updateTable(info) {
+      ["pros", "cons", "uses"].forEach(function (key) {
+        var cell = tableCells[key];
+        if (!cell) return;
+        cell.innerHTML = '<ul>' + info[key].map(function (item) { return '<li>' + item + '</li>'; }).join('') + '</ul>';
+      });
+    }
     function updateReadout() {
       if (mode === "softmax") {
         var ps = softmax(softDisplay());
         var sum = ps.reduce(function (a, b) { return a + b; }, 0);
         var label = softPreset === "positive" ? (DE ? "positive Werte" : "positive values") : softPreset === "negative" ? (DE ? "negative Werte" : "negative values") : (DE ? "eigene CSV" : "own CSV");
         readout.innerHTML = '<span><b>Softmax</b> ' + label + ' · ' + (DE ? "Summe p = " : "sum p = ") + num(sum, 2) + '</span><span>' + (DE ? "Große Abstände werden verstärkt; negative Werte sind erlaubt, ein Offset kürzt sich heraus." : "Large gaps are amplified; negative values are allowed, and an offset cancels out.") + '</span>';
+        updateTable(softmaxInfo);
       } else {
         var info = fns.filter(function (fn) { return fn.id === active; })[0];
-        readout.innerHTML = '<span class="ls-act-active"><b>' + info.label + '</b> ' + mathHTML(info.tex) + '</span><span>' + info.use + '</span>';
+        readout.innerHTML = mathHTML(info.tex);
         if (api.typeset) { try { api.typeset(readout); } catch (e) {} }
+        updateTable(info);
       }
     }
     function updatePresetChips() {
