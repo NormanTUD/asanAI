@@ -1670,6 +1670,16 @@
     ]
   };
 
+  function boxesById(list, ids) {
+    return ids.map(function (id) {
+      var found = null;
+      (list || []).forEach(function (b) {
+        if (b && b.id === id) found = Object.assign({}, b);
+      });
+      return found;
+    }).filter(Boolean);
+  }
+
   var qkvArcs = {
     kicker: DE ? "Q · K · V" : "Q · K · V",
     title: DE ? "Wie Attention rechnet" : "How attention computes",
@@ -1696,8 +1706,8 @@
 
   var qkvArcsIntro = Object.assign({}, qkvArcs, {
     body: DE
-      ? "Jedes Token erzeugt $Q, K, V$ aus der Eingabe $X$ durch <b>gelernte Matrizen</b> ($W_i^Q, W_i^K, W_i^V$):\n\n$$ r_i = \\text{Attention}_i(X) = \\underbrace{\\text{softmax}\\left( \\frac{\\overbrace{(X W_i^Q)(X W_i^K)^T}^{\\text{Frage vs. Antwort}}}{\\underbrace{\\sqrt{d_k}}_{\\text{Skalierung}}} \\right)}_{\\text{Aufmerksamkeits-Gewichte}} \\underbrace{(X \\cdot W_i^V)}_{\\text{Inhalt}}  $$\n\nZusammenführung über die gelernte Output-Matrix $W_O$:\n\n$$ y_i = \\underbrace{W_O}_{\\text{gelerntes Mischen}} \\cdot \\underbrace{r_i}_{\\text{Head-Ergebnis}} $$\n\n\nJeder Attention-Head hat 100% Aufmerksamkeit, die er mit diesem Mechanismus auf alle Tokens verteilen kann. Erhält ein einziges Token beispielsweise 80% Aufmerksamkeit, müssen sich die anderen die restlichen 20% teilen. Das hat den Vorteil, dass das Netzwerk sich nicht absolut festlegen muss und flexibel bleiben kann, aber dennoch klare Tendenzen darstellen kann, welches Wort wie wichtig ist im gesamten Kontext für alle anderen Worte."
-      : "Every token produces $Q, K, V$ from the input $X$ through <b>learned matrices</b> ($W_i^Q, W_i^K, W_i^V$):\n\n$$ r_i = \\text{Attention}_i(X) = \\underbrace{\\text{softmax}\\left( \\frac{\\overbrace{(X W_i^Q)(X W_i^K)^T}^{\\text{question vs. answer}}}{\\underbrace{\\sqrt{d_k}}_{\\text{scaling}}} \\right)}_{\\text{attention weights}} \\underbrace{(X \\cdot W_i^V)}_{\\text{content}}  $$\n\nCombining them through the learned output matrix $W_O$:\n\n$$ y_i = \\underbrace{W_O}_{\\text{learned mixing}} \\cdot \\underbrace{r_i}_{\\text{head result}} $$\n\n\nEach attention head has 100% attention, which it can distribute across all tokens with this mechanism. If a single token receives 80% attention, for example, the others must share the remaining 20%. The advantage is that the network does not have to commit absolutely and can stay flexible, while still showing clear tendencies for how important each word is in the overall context for all other words.",
+      ? "Jedes Token erzeugt $Q, K, V$ aus der Eingabe $X$ durch <b>gelernte Matrizen</b> ($W_i^Q, W_i^K, W_i^V$):\n\n$$ r_i = \\text{Attention}_i(\\underbrace{X}_{\\text{Eingabe-Token}}) = \\underbrace{\\text{softmax}\\left( \\frac{\\overbrace{(X W_i^Q)(X W_i^K)^T}^{\\text{Frage vs. Antwort}}}{\\underbrace{\\sqrt{d_k}}_{\\text{Skalierung}}} \\right)}_{\\text{Aufmerksamkeits-Gewichte}} \\underbrace{(X \\cdot W_i^V)}_{\\text{Inhalt}}  $$\n\nZusammenführung über die gelernte Output-Matrix $W_O$:\n\n$$ y_i = \\underbrace{W_O}_{\\text{gelerntes Mischen}} \\cdot \\underbrace{r_i}_{\\text{Head-Ergebnis}} $$\n\n\nJeder Attention-Head hat 100% Aufmerksamkeit, die er mit diesem Mechanismus auf alle Tokens verteilen kann. Erhält ein einziges Token beispielsweise 80% Aufmerksamkeit, müssen sich die anderen die restlichen 20% teilen. Das hat den Vorteil, dass das Netzwerk sich nicht absolut festlegen muss und flexibel bleiben kann, aber dennoch klare Tendenzen darstellen kann, welches Wort wie wichtig ist im gesamten Kontext für alle anderen Worte."
+      : "Every token produces $Q, K, V$ from the input $X$ through <b>learned matrices</b> ($W_i^Q, W_i^K, W_i^V$):\n\n$$ r_i = \\text{Attention}_i(\\underbrace{X}_{\\text{input token}}) = \\underbrace{\\text{softmax}\\left( \\frac{\\overbrace{(X W_i^Q)(X W_i^K)^T}^{\\text{question vs. answer}}}{\\underbrace{\\sqrt{d_k}}_{\\text{scaling}}} \\right)}_{\\text{attention weights}} \\underbrace{(X \\cdot W_i^V)}_{\\text{content}}  $$\n\nCombining them through the learned output matrix $W_O$:\n\n$$ y_i = \\underbrace{W_O}_{\\text{learned mixing}} \\cdot \\underbrace{r_i}_{\\text{head result}} $$\n\n\nEach attention head has 100% attention, which it can distribute across all tokens with this mechanism. If a single token receives 80% attention, for example, the others must share the remaining 20%. The advantage is that the network does not have to commit absolutely and can stay flexible, while still showing clear tendencies for how important each word is in the overall context for all other words.",
     watch: "",
     context: "",
     deep: "",
@@ -1988,6 +1998,21 @@
     ]
   };
 
+  var qkvSimplexIntro = Object.assign({}, qkvSimplex, {
+    watch: "",
+    body: DE
+      ? "Die drei Ecken sind die gelernten Value-Vektoren dreier Tokens. Attention mischt sie mit Gewichten: $r_i = \\sum_j \\alpha_{ij} v_j$, mit $\\alpha_{ij}\\ge 0$ und Summe 1. Der Mischungspunkt bleibt in der konvexen Hülle der Values; $W_O$ verschiebt ihn danach linear.\n\nDie drei Punkte sind keine Tokens, sondern die gelernten Value-Vektoren \n$v_j = W_V x_j$ von drei Tokens. Jeder Token trägt über $W_V$ einen Vektor bei.\n\nWIr haben hier eine kleine Auswahl der gesamten Tokens dieses Satzes, damit es darstellbar bleibt. Mit jedem Punkt mehr wird es ein höherdimensionalerer sogenannter Simplex."
+      : "The three corners are the learned value vectors of three tokens. Attention mixes them with weights: $r_i = \\sum_j \\alpha_{ij} v_j$, with $\\alpha_{ij}\\ge 0$ and sum 1. The mixture point stays in the convex hull of the values; $W_O$ then shifts it linearly.\n\nThe three points are not tokens; they are the learned value vectors \n$v_j = W_V x_j$ of three tokens. Each token contributes a vector through $W_V$.\n\nHere we show a small selection of all the tokens in this sentence so that it stays visualisable. With every additional point it becomes a higher-dimensional so-called simplex.",
+    context: "",
+    deep: "",
+    boxes: boxesById(qkvSimplex.boxes, ["qkv-s6", "qkv-s2", "qkv-s4"]).map(function (b) {
+      if (b.id === "qkv-s2") {
+        b.body = DE ? "Ein Simplex ist die die einfachste eine Fläche oder ein Volumen umschließende Struktur aus $n$ Punkten." : "A simplex is the simplest structure of $n$ points that encloses a surface or a volume.";
+      }
+      return b;
+    })
+  });
+
   var qkvArcs2 = Object.assign({}, qkvArcs, {
     title: DE ? "Head 2: Wo ist es?" : "Head 2: where is it?",
     body: DE
@@ -1995,14 +2020,21 @@
       : "Head 2 asks for the location. The query from “it” now meets the keys of “street” and “animal”; the weights flip. Again, the percentages are softmax weights, not probabilities of truth.",
     watch: DE ? "Head 2: Der Ort gewinnt. Vergleiche die Bögen mit Head 1." : "Head 2: the location wins. Compare the arcs with head 1.",
     demoState: { scene: "qkv", head: 1, view: "arcs" },
-    boxes: qkvArcs.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
+    context: "",
+    deep: DE
+      ? "Die spezifischen Gewichte der Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort."
+      : "The specific weights of the heads are not hand-programmed; they specialise during training. The two patterns in the demo are didactic: head 1 asks for the subject, head 2 for the location.",
+    boxes: boxesById(qkvArcs.boxes, ["qkv-3", "qkv-5", "qkv-2"]).map(function (b) {
+      b.id = b.id + "-h2";
+      return b;
+    })
   });
 
   var qkvSimplex2 = Object.assign({}, qkvSimplex, {
     title: DE ? "Head 2 als Value-Mischung" : "Head 2 as a value mixture",
     body: DE
-      ? "Dieselben drei Value-Vektoren, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt der Value von „Straße“ mehr Gewicht; der Mischungspunkt $r_i$ wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Im gezeigten Drei-Werte-Ausschnitt bleibt das Dreieck die Grenze für $r_i$; der echte Mischungsvektor nutzt alle Values. Die Head-Ausgabe ist $y_i = W_O r_i$. Du kannst den Punkt auch hier ziehen und die Mischung direkt verändern."
-      : "The same three value vectors, different weights. Because head 2 asks for the location, the value of “street” gets more weight; the mixture point $r_i$ moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. In the three-value view shown here the triangle remains the boundary for $r_i$; the real mixture uses all values. The head output is $y_i = W_O r_i$. You can also drag the point here to change the mixture directly.",
+      ? "Dieselben drei Value-Vektoren, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt der Value von „Straße“ mehr Gewicht; der Mischungspunkt $r_i$ wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Im gezeigten Drei-Werte-Ausschnitt bleibt das Dreieck die Grenze für $r_i$; der echte Mischungsvektor nutzt alle Values. Die Head-Ausgabe ist $y_i = W_O r_i$. Du kannst den Punkt auch hier ziehen und die Mischung direkt verändern.\n\n\nEin Head ist ein Graph. Viele Heads sind viele Graphen mit eigenen \nKantengewichten; die Ausgaben werden konkateniert und projiziert. \nDeshalb kann ein Head auf Syntax achten, ein anderer auf Position oder \nBedeutung."
+      : "The same three value vectors, different weights. Because head 2 asks for the location, the value of “street” gets more weight; the mixture point $r_i$ moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. In the three-value view shown here the triangle remains the boundary for $r_i$; the real mixture uses all values. The head output is $y_i = W_O r_i$. You can also drag the point here to change the mixture directly.\n\n\nOne head is one graph. Many heads are many graphs with their own \nedge weights; the outputs are concatenated and projected. \nThat is why one head can attend to syntax, another to position or \nmeaning.",
     demoState: { scene: "qkv", head: 1, view: "simplex" },
     boxes: qkvSimplex.boxes.map(function (b) {
       var copy = Object.assign({}, b, { id: b.id + "-h2" });
