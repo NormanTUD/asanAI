@@ -1664,6 +1664,9 @@
       ? "Beobachte Loss und Bild. Unten: eigenes Bild, Grenzen, Lernrate."
       : "Watch the loss and the image. Below: own image, limits, learning rate.",
     demoState: { scene: "imagelab" },
+    boxes: [
+      box("img-fourier", DE ? "Fourier" : "Fourier", DE ? "Warum Fourier?" : "Why Fourier?", DE ? "Ein normales Netz bekommt nur $x$ und $y$. Damit kann es große, weiche Formen malen; feine Kanten und Muster sind schwer. Fourier-Features geben ihm zusätzlich Wellen in verschiedenen Größen: langsame Wellen für die grobe Form, schnelle Wellen für Details.\n\nMan kann es sich wie Pinsel vorstellen: breite Pinsel für Flächen, feine Pinsel für Kanten. Für jede Koordinate bekommt das Netz Sinus- und Cosinus-Werte in fünf Frequenzen. Welche Wellen es wie stark mischt, lernt es selbst." : "A plain network sees only $x$ and $y$. That is enough for broad, soft shapes; fine edges and patterns are hard. Fourier features add waves at different scales: slow waves for the large shape, fast waves for detail.\n\nThink of it as a set of brushes: broad brushes for areas, fine brushes for edges. For every coordinate the network also receives sine and cosine values at five frequencies. It learns which waves to mix and how strongly.")
+    ],
     sources: [
       { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für ein Netz mit einer versteckten Schicht.", en: "Universal approximation for a network with one hidden layer." } },
       { label: "Hornik (1991), Approximation Capabilities of Multilayer Feedforward Networks", url: "https://doi.org/10.1016/0893-6080(91)90009-T", why: { de: "Mehrschichtige Netze sind universelle Approximatoren.", en: "Multilayer networks are universal approximators." } },
