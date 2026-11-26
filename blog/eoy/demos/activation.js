@@ -43,7 +43,7 @@
         '</div>' +
       '</div>' +
       '<div class="ls-act-readout" aria-live="polite"></div>' +
-      '<div class="ls-act-table-wrap"><table class="ls-act-table"><thead><tr><th>' + (DE ? "Vorteile" : "Pros") + '</th><th>' + (DE ? "Nachteile" : "Cons") + '</th><th>' + (DE ? "Anwendung" : "Use") + '</th></tr></thead><tbody><tr><td data-cell="pros"></td><td data-cell="cons"></td><td data-cell="uses"></td></tr></tbody></table></div>' +
+      '<div class="ls-act-table-wrap"><table class="ls-act-table"><thead><tr><th>' + (DE ? "Vorteile" : "Pros") + '</th><th>' + (DE ? "Nachteile" : "Cons") + '</th><th>' + (DE ? "Anwendungsbereiche" : "Applications") + '</th></tr></thead><tbody><tr><td data-cell="pros"></td><td data-cell="cons"></td><td data-cell="uses"></td></tr></tbody></table></div>' +
       '<details class="ls-act-cdf"><summary>' + (DE ? "Optional: Was ist Φ (CDF)?" : "Optional: what is Φ (CDF)?") + '</summary><p>' + (DE ? "Φ(x) ist die kumulative Verteilungsfunktion (CDF) der Standardnormalverteilung: Φ(x) = P(Z ≤ x). GELU gewichtet x mit dieser Wahrscheinlichkeit; die Demo nutzt dafür die tanh-Näherung mit 0.044715." : "Φ(x) is the cumulative distribution function (CDF) of the standard normal distribution: Φ(x) = P(Z ≤ x). GELU weights x by this probability; the demo uses the tanh approximation with 0.044715 for it.") + '</p></details>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-act-stage");
