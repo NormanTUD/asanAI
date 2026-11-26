@@ -1169,9 +1169,14 @@
     return html + '</details>';
   }
   function depthTree(groups) {
-    groups = groups.filter(groupHasContent);
-    if (!groups.length) return "";
-    var count = questionCount(groups);
+    // Keep the original group index for edit paths: filtering out empty groups
+    // must not shift the indices used to find and delete questions/sources.
+    var visible = [];
+    groups.forEach(function (g, gi) {
+      if (groupHasContent(g)) visible.push({ group: g, index: gi });
+    });
+    if (!visible.length) return "";
+    var count = questionCount(visible.map(function (x) { return x.group; }));
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
     var firstGroupOpen = " open";
     var firstQuestionOpen = count === 1 || state.depth === "deep" ? " open" : "";
@@ -1180,7 +1185,8 @@
         '<summary>' + esc(t("moreKnowledge")) +
           (count ? ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span>' : '') +
         '</summary>';
-    groups.forEach(function (g, gi) {
+    visible.forEach(function (entry, fi) {
+      var g = entry.group, gi = entry.index;
       var questions = g.questions || [];
       var flatSingle = !g.sources && countQuestions(questions) === 1 &&
         (g.id === "g-basics" || g.title === t("oneLevel"));
@@ -1191,7 +1197,7 @@
       var groupTitle = (state.edit && !editFormMode)
         ? '<span class="ls-inline-edit ls-inline-gtitle" contenteditable="true" spellcheck="true" data-edit-group-title="' + gi + '">' + esc(g.title || t("moreKnowledge")) + '</span>'
         : titleHTML(g.title || t("moreKnowledge"));
-      html += '<details class="ls-deepbox ls-qgroup" data-qid="' + esc(g.id) + '"' + (gi === 0 ? firstGroupOpen : "") + '>' +
+      html += '<details class="ls-deepbox ls-qgroup" data-qid="' + esc(g.id) + '"' + (fi === 0 ? firstGroupOpen : "") + '>' +
         '<summary>' + groupTitle +
           (g.sources ? ' <span class="ls-depth-count">' + g.sources.length + '</span>' : '') +
           ((state.edit && !editFormMode) ? ' <button type="button" class="ls-inline-del" data-edit-remove-group="' + gi + '" aria-label="' + esc(LANG === "de" ? "Gruppe löschen" : "Delete group") + '" title="' + esc(LANG === "de" ? "Gruppe löschen" : "Delete group") + '">×</button>' : '') +
@@ -1201,7 +1207,7 @@
         html += renderSources(g.sources, gi);
       } else {
         questions.forEach(function (q, qi) {
-          html += renderQuestionNode(q, gi + "." + qi, 1, gi === 0 && qi === 0 ? firstQuestionOpen : "");
+          html += renderQuestionNode(q, gi + "." + qi, 1, fi === 0 && qi === 0 ? firstQuestionOpen : "");
         });
       }
       html += '</div></details>';
