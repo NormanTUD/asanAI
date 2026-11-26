@@ -697,9 +697,9 @@ h1,h2,h3,h4{
 .ls-code-body{margin:0;padding:10px;overflow:auto;font:var(--ls-fs-ui)/1.55 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;color:#e9f2ee;white-space:pre-wrap;flex:1;min-height:0}
 .ls-code-token{opacity:0}
 .ls-code-token.is-visible{opacity:1}
-.ls-code-term{padding:10px;font:var(--ls-fs-ui)/1.55 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;color:#e9f2ee;display:grid;gap:6px;flex:1;min-height:0;overflow:auto}
+.ls-code-term{padding:10px;font:var(--ls-fs-ui)/1.55 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;color:#e9f2ee;display:grid;align-content:start;grid-auto-rows:max-content;justify-items:start;gap:0;flex:1;min-height:0;overflow:auto;text-align:left}
 .ls-code-term b{display:block;min-height:1.2em;color:var(--ls-green);font-weight:600}
-.ls-code-term span{color:#eef7f4;min-height:1.2em;white-space:pre-wrap}
+.ls-code-term span{color:#eef7f4;min-height:1.2em;white-space:pre-wrap;text-align:left}
 .ls-code-replay{justify-self:center;background:transparent;border-color:rgba(0,75,111,.16);color:var(--ls-muted);min-height:26px;padding:2px 8px;font-size:var(--ls-fs-micro);letter-spacing:.04em}
 .ls-code-replay:disabled{opacity:.42;cursor:default;border-color:rgba(0,75,111,.10)}
 .ls-code-replay:not(:disabled):hover{border-color:var(--ls-green);color:var(--ls-green)}
