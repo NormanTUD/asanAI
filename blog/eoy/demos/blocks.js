@@ -776,12 +776,21 @@
       function onLeave() {
         if (trajHover !== -1) { trajHover = -1; canvas.style.cursor = "default"; draw(); }
       }
+      function jumpToEnd() {
+        queue = [];
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        state.step = 4; state.from = 4; state.to = 4; state.t = 1;
+        draw();
+        updateReadout();
+      }
       function nextLayer() {
-        var base = raf ? (queue.length ? queue[queue.length - 1] : state.to) : state.step;
-        var next = Math.min(4, base + 1);
-        if (next <= base) return false;
-        if (raf) queue.push(next);
-        else animate(next);
+        // While the points are still being drawn, advancing again jumps
+        // straight to the end of their movement instead of queueing more
+        // animations.
+        if (raf || queue.length) { jumpToEnd(); return true; }
+        if (state.step >= 4) return false;
+        animate(state.step + 1);
         updateReadout();
         return true;
       }
@@ -939,9 +948,25 @@
       if (btn && !btn.disabled) return true;
       return !trajApi.isDone();
     }
+    function onPositionOverview() {
+      var page = pages[index];
+      return !!(page && !page.sub && page.block && page.block.position);
+    }
+    function positionBlocking() {
+      // On the positional-embedding page, "Weiter" first builds up the
+      // position points before the page may be left.
+      if (!positionDemo || !onPositionOverview()) return false;
+      return !positionDemo.isDone();
+    }
+    function advancePosition() {
+      if (positionDemo.busy()) { positionDemo.finish(); return true; }
+      positionDemo.start();
+      return true;
+    }
     function nextInternal() {
       // HARD RULE (1/5): a direct internal advance is also blocked until the
       // trajectory has reached the last layer and the button is greyed out.
+      if (positionBlocking()) { advancePosition(); return true; }
       if (trajectoryBlocking()) { trajApi.next(); return true; }
       if (index < pages.length - 1) { setIndex(index + 1); return true; }
       return false;
@@ -980,13 +1005,15 @@
       },
       next: function () {
         // HARD RULE (2/5): the public Next (button, arrow key, LearnSys.next)
-        // uses this guard, so it cannot bypass the step button.
-        if (trajectoryBlocking()) { trajApi.next(); return true; }
+        // uses this guard, so it cannot bypass the step button or the position
+        // build-up.
         return nextInternal();
       },
       prev: prevInternal,
       hasNext: function () {
-        // HARD RULE (3/5): keep Next enabled while the trajectory is unfinished.
+        // HARD RULE (3/5): keep Next enabled while the trajectory or the
+        // position build-up is unfinished.
+        if (positionBlocking()) return true;
         if (trajectoryBlocking()) return true;
         return index < pages.length - 1;
       },
@@ -995,10 +1022,7 @@
       prevFull: prevBlock,
       onKey: function (e) {
         // HARD RULE (5/5): right arrow uses the same guarded path as Next.
-        return api.util.arrowKey(e, function () {
-          if (trajectoryBlocking()) { trajApi.next(); return true; }
-          return nextInternal();
-        }, prevInternal);
+        return api.util.arrowKey(e, function () { return nextInternal(); }, prevInternal);
       },
       resize: function () { drawMinis(); },
       destroy: function () { lastBlocksIndex = index; if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } if (trajApi) { try { trajApi.cleanup(); } catch (e) {} trajApi = null; } window.removeEventListener("resize", onResize); el.remove(); }

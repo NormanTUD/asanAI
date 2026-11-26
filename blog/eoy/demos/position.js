@@ -485,6 +485,12 @@
       drawCurve();
       return true;
     }
+    function startBuildUp() {
+      if (sweep) return true;
+      reveal = true;
+      resetToStart();
+      return startSweep();
+    }
     function next() {
       if (sweep) { finishSweep(); return true; }
       if (!reveal) {
@@ -508,6 +514,8 @@
     return {
       update: function () {},
       busy: function () { return !!sweep; },
+      isDone: function () { return reveal && !sweep && pos >= 100000; },
+      start: startBuildUp,
       speedUp: function () {
         if (!sweep) return false;
         var now = performance.now();
