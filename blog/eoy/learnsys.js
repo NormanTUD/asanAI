@@ -53,7 +53,7 @@
       newSource: "Neue Quelle", removeSource: "Quelle entfernen", editHint: "E bearbeiten",
       copyHint: "Kopiere die Bearbeitung und schicke sie weiter.", exportEmpty: "Noch nichts bearbeitet.",
       exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Geänderte Texte als JSON speichern", importTitle: "JSON laden", exportOk: "JSON gespeichert", importOk: "JSON geladen", importError: "JSON konnte nicht gelesen werden",
-      soloDemo: "Demo solo", jsonTitle: "Alle Änderungen", jsonHint: "Nur geänderte Texte und das Layout. Kopiere den JSON-Text oder lade ihn herunter.", download: "Herunterladen", layoutSlides: "Folien", copyLink: "Link", linkCopied: "Link kopiert", layoutTitle: "Folien anordnen", layoutHint: "Verschieben, ausblenden, Unterfolien zu Folien machen.", splitSubsteps: "Aufteilen", mergeSubsteps: "Zusammenführen", hiddenSlides: "Ausgeblendet", resetLayout: "Layout zurücksetzen", promoted: "Unterfolie", moveUp: "Nach oben", moveDown: "Nach unten", hideSlide: "Ausblenden", showSlide: "Einblenden"
+      soloDemo: "Demo solo", jsonTitle: "Alle Änderungen", jsonHint: "Nur minimale Änderungen. Jede Änderung auf Deutsch und Englisch anwenden; fehlende Sprache übersetzen.", download: "Herunterladen", layoutSlides: "Folien", copyLink: "Link", linkCopied: "Link kopiert", layoutTitle: "Folien anordnen", layoutHint: "Verschieben, ausblenden, Unterfolien zu Folien machen.", splitSubsteps: "Aufteilen", mergeSubsteps: "Zusammenführen", hiddenSlides: "Ausgeblendet", resetLayout: "Layout zurücksetzen", promoted: "Unterfolie", moveUp: "Nach oben", moveDown: "Nach unten", hideSlide: "Ausblenden", showSlide: "Einblenden"
     },
     en: {
       position: "Position", positionOf: "Position {n} of {total}",
@@ -95,7 +95,7 @@
       newSource: "New source", removeSource: "Remove source", editHint: "E to edit",
       copyHint: "Copy the edit and pass it on.", exportEmpty: "Nothing edited yet.",
       exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Save changed texts as JSON", importTitle: "Load JSON", exportOk: "JSON saved", importOk: "JSON loaded", importError: "Could not read JSON",
-      soloDemo: "Demo solo", jsonTitle: "All changes", jsonHint: "Only changed texts and the layout. Copy the JSON or download it.", download: "Download", layoutSlides: "Slides", copyLink: "Link", linkCopied: "Link copied", layoutTitle: "Arrange slides", layoutHint: "Move, hide, and turn sub-slides into slides.", splitSubsteps: "Split", mergeSubsteps: "Merge", hiddenSlides: "Hidden", resetLayout: "Reset layout", promoted: "Sub-slide", moveUp: "Move up", moveDown: "Move down", hideSlide: "Hide", showSlide: "Show"
+      soloDemo: "Demo solo", jsonTitle: "All changes", jsonHint: "Minimal changes only. Apply every change to German and English; translate the missing language.", download: "Download", layoutSlides: "Slides", copyLink: "Link", linkCopied: "Link copied", layoutTitle: "Arrange slides", layoutHint: "Move, hide, and turn sub-slides into slides.", splitSubsteps: "Split", mergeSubsteps: "Merge", hiddenSlides: "Hidden", resetLayout: "Reset layout", promoted: "Sub-slide", moveUp: "Move up", moveDown: "Move down", hideSlide: "Hide", showSlide: "Show"
     }
   };
   function setLang(lang) {
@@ -1903,6 +1903,7 @@
     var parts = String(key).split(".");
     return {
       lang: lang,
+      translate_to: lang === "de" ? "en" : "de",
       page: day.id,
       step: parseInt(parts[0], 10) || 0,
       substep: parts.length > 1 ? (parseInt(parts[1], 10) || 0) : 0,
@@ -1926,6 +1927,9 @@
       data_file: "intuition_learnsys-data.js",
       generated_at: new Date().toISOString(),
       overlay_revision: cfg && cfg.overlayRevision || "",
+      apply_to: ["de", "en"],
+      multi_language: true,
+      translation_note: "Apply every change to both languages; translate the missing language.",
       changes: change ? [change] : []
     };
     copyText(JSON.stringify(payload, null, 2), function () {
@@ -1967,6 +1971,8 @@
       overlay_revision: cfg && cfg.overlayRevision || "",
       pages: cfg.days.map(function (d) { return d.id; }),
       apply_to: ["de", "en"],
+      multi_language: true,
+      translation_note: "Apply every change to both languages; translate the missing language.",
       changes: changes
     };
     if (Object.keys(layoutOverlay).length) data.layout = cloneData(layoutOverlay);
