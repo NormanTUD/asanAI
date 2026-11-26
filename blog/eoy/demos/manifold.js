@@ -71,10 +71,19 @@
           base.push([u * 1.15, v * 0.88, 0.56 * (u * u - v * v) + 0.07 * Math.sin(2.2 * u + 0.4) * Math.cos(2.0 * v - 0.2)]);
         }
       }
-      var rs = rng(17), rt = rng(41);
+      // Shared low-frequency warp so both clouds get the same irregular
+      // surface, then equally strong individual jitter (different seeds).
+      var rb = rng(73);
       base.forEach(function (p) {
-        jitterS.push([(rs() - 0.5) * 0.024, (rs() - 0.5) * 0.024, (rs() - 0.5) * 0.030]);
-        jitterT.push([(rt() - 0.5) * 0.034, (rt() - 0.5) * 0.034, (rt() - 0.5) * 0.042]);
+        p[0] += (rb() - 0.5) * 0.16;
+        p[1] += (rb() - 0.5) * 0.14;
+        p[2] += (rb() - 0.5) * 0.10;
+      });
+      var rs = rng(17), rt = rng(41);
+      var jxy = 0.07, jz = 0.09;
+      base.forEach(function (p) {
+        jitterS.push([(rs() - 0.5) * jxy, (rs() - 0.5) * jxy, (rs() - 0.5) * jz]);
+        jitterT.push([(rt() - 0.5) * jxy, (rt() - 0.5) * jxy, (rt() - 0.5) * jz]);
       });
       base.forEach(function (p, i) {
         source.push([p[0] + jitterS[i][0], p[1] + jitterS[i][1], p[2] + jitterS[i][2]]);
