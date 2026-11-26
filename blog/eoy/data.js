@@ -1276,41 +1276,6 @@
       {
         kicker: "Daten",
         title: "Gauß, Ceres und die Daten",
-        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis.\n\nDie grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
-        teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis. ",
-        watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
-        sources: gaussSteps[0].sources
-      },
-      {
-        kicker: "Daten",
-        title: "Gauß, Ceres und die Daten",
-        body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
-        teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
-        watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
-        sources: gaussSteps[0].sources
-      },
-      {
-        kicker: "Daten",
-        title: "Gauß, Ceres und die Daten",
-        body: "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskope besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand ihren Weg in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein neuronales Netz auf seinen Daten ist, und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
-        teaser: "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskop besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein Neuronales Netz ist auf seinen Daten und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
-        watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 0.1 },
-        sources: gaussSteps[0].sources
-      },
-      {
-        kicker: "Daten",
-        title: "Gauß, Ceres und die Daten",
-        body: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body + "\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
-        teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body + "\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
-        watch: "",
-        demoState: dataTruthStep.demoState,
-      },
-      {
-        kicker: "Daten",
-        title: "Gauß, Ceres und die Daten",
         body: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. Eine Wahrheit ist eine Kurve, viele Beschreibungen liegen darum. Je näher ein Satz an der Kurve liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich, wie die Messungen aus der Astronomie.",
         teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. Eine Wahrheit ist eine Kurve, viele Beschreibungen liegen darum. Je näher ein Satz an der Kurve liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich, wie die Messungen aus der Astronomie.",
         watch: "",
@@ -1342,47 +1307,47 @@
             sources: gaussSteps[0].sources
           }
         ]
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis.\n\nDie grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
+        teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Gauß nutzte die Methode der kleinsten Quadrate (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), die Legendre 1805 publiziert hatte, und trug zu ihrer Verbreitung bei. LLM nutzen zwar Cross-Entropy statt MSE, aber die Entwicklung von MSE war dennoch wichtig für die Entwicklung weiterer Loss-Funktionen und hilft beim Verständnis. ",
+        watch: "",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        watch: "",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskope besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand ihren Weg in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein neuronales Netz auf seinen Daten ist, und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
+        teaser: "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).\n\nWenn die Teleskop besser werden, zieht die Wolke sich zusammen und die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte.\n\nDie Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. MSE ist eine Loss-Funktion für Regression. Loss-Funktionen bestimmen, wie gut ein Neuronales Netz ist auf seinen Daten und geben dem Computer einen wichtigen Hinweis, wie er sich verbessern muss.",
+        watch: "",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.1 },
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body + "\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
+        teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body + "\n\nDie Abbildung ist symbolisch und keine reale Messung. Sie soll zeigen, dass manche Sätze näher an der Wahrheit liegen als andere und manche weit weg von ihr sind, ähnlich wie die Messungen aus der Astronomie.",
+        watch: "",
+        demoState: dataTruthStep.demoState,
       }
     ]
   } : {
     title: "Gauss, Ceres, and the data",
     kicker: "Ceres",
     substeps: [
-      {
-        kicker: "Data",
-        title: "Gauss, Ceres, and the data",
-        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short period of observation it disappeared behind the Sun, and nobody knew where to search, because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used the method of least squares (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), which Legendre had published in 1805, and helped spread it. LLMs use cross-entropy instead of MSE, but the development of MSE was still important for later loss functions and helps with understanding.\n\nThe green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
-        teaser: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
-        watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
-        sources: gaussSteps[0].sources
-      },
-      {
-        kicker: "Data",
-        title: "Gauss, Ceres, and the data",
-        body: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is broad. A single point would be useless as an orbit. Press Next: the telescope gets better.",
-        teaser: "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981).\n\nAs the telescopes get better, the cloud contracts and the bell curve narrows. The true orbit stays in the middle.\n\nThe method came from astronomy and entered machine learning because the same problem returned: putting a simple curve through imperfect measurements. MSE is a loss function for regression. Loss functions determine how good a neural network is on its data and give the computer an important signal for how it must improve.",
-        watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
-        sources: gaussSteps[0].sources
-      },
-      {
-        kicker: "Data",
-        title: "Gauss, Ceres, and the data",
-        body: "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss used least squares to predict where it would reappear (Stigler, 1981).\n\nAs the telescopes get better, the cloud contracts and the bell curve gets narrower. The true orbit stays in the middle.\n\nThe method came from astronomy and entered machine learning because the same problem returned: fit a simple curve through imperfect measurements. MSE is a loss function for regression. Loss functions measure how good a neural network is on its data and give the computer an important signal for how to improve.",
-        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement decides alone.",
-        watch: "",
-        demoState: { scene: "gauss", phase: "demo", sigma: 0.1 },
-        sources: gaussSteps[0].sources
-      },
-      {
-        kicker: "Data",
-        title: "Gauss, Ceres, and the data",
-        body: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body + "\n\nThe figure is symbolic and not a real measurement. It is meant to show that some sentences lie closer to the truth than others and some far away from it, similar to the measurements from astronomy.",
-        teaser: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body + "\n\nThe figure is symbolic and not a real measurement. It is meant to show that some sentences lie closer to the truth than others and some far away from it, similar to the measurements from astronomy.",
-        watch: "",
-        demoState: dataTruthStep.demoState,
-      },
       {
         kicker: "Data",
         title: "Gauss, Ceres, and the data",
@@ -1417,6 +1382,41 @@
             sources: gaussSteps[0].sources
           }
         ]
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short period of observation it disappeared behind the Sun, and nobody knew where to search, because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. Gauss used the method of least squares (<b>M</b>ean <b>S</b>quared <b>E</b>rror, <b>MSE</b>), which Legendre had published in 1805, and helped spread it. LLMs use cross-entropy instead of MSE, but the development of MSE was still important for later loss functions and helps with understanding.\n\nThe green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
+        teaser: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
+        watch: "",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is broad. A single point would be useless as an orbit. Press Next: the telescope gets better.",
+        teaser: "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981).\n\nAs the telescopes get better, the cloud contracts and the bell curve narrows. The true orbit stays in the middle.\n\nThe method came from astronomy and entered machine learning because the same problem returned: putting a simple curve through imperfect measurements. MSE is a loss function for regression. Loss functions determine how good a neural network is on its data and give the computer an important signal for how it must improve.",
+        watch: "",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss used least squares to predict where it would reappear (Stigler, 1981).\n\nAs the telescopes get better, the cloud contracts and the bell curve gets narrower. The true orbit stays in the middle.\n\nThe method came from astronomy and entered machine learning because the same problem returned: fit a simple curve through imperfect measurements. MSE is a loss function for regression. Loss functions measure how good a neural network is on its data and give the computer an important signal for how to improve.",
+        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement decides alone.",
+        watch: "",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.1 },
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body + "\n\nThe figure is symbolic and not a real measurement. It is meant to show that some sentences lie closer to the truth than others and some far away from it, similar to the measurements from astronomy.",
+        teaser: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body + "\n\nThe figure is symbolic and not a real measurement. It is meant to show that some sentences lie closer to the truth than others and some far away from it, similar to the measurements from astronomy.",
+        watch: "",
+        demoState: dataTruthStep.demoState,
       }
     ]
   };

@@ -767,30 +767,22 @@
       localStorage.setItem(REV_KEY, cfg.overlayRevision);
     } catch (e) {}
   }
+  // Local editor changes are intentionally session-only. A reload must always
+  // show the actual content from data.js, never a stale overlay from an earlier
+  // edit session.
   function loadTextOverlay() {
-    try {
-      var raw = JSON.parse(localStorage.getItem(TEXT_KEY) || "{}");
-      textOverlay = {
-        de: raw && raw.de && typeof raw.de === "object" ? raw.de : {},
-        en: raw && raw.en && typeof raw.en === "object" ? raw.en : {}
-      };
-    } catch (e) {
-      textOverlay = { de: {}, en: {} };
-    }
+    textOverlay = { de: {}, en: {} };
+    try { localStorage.removeItem(TEXT_KEY); } catch (e) {}
   }
   function persistTextOverlay() {
-    try { localStorage.setItem(TEXT_KEY, JSON.stringify(textOverlay)); } catch (e) {}
+    try { localStorage.removeItem(TEXT_KEY); } catch (e) {}
   }
   function loadLayout() {
-    try {
-      var raw = JSON.parse(localStorage.getItem(LAYOUT_KEY) || "{}");
-      layoutOverlay = raw && typeof raw === "object" ? raw : {};
-    } catch (e) {
-      layoutOverlay = {};
-    }
+    layoutOverlay = {};
+    try { localStorage.removeItem(LAYOUT_KEY); } catch (e) {}
   }
   function persistLayout() {
-    try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(layoutOverlay)); } catch (e) {}
+    try { localStorage.removeItem(LAYOUT_KEY); } catch (e) {}
   }
   function editorContext() {
     return { lang: LANG, day: activeDay().id, key: textStepKey() };
