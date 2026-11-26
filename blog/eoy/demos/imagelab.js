@@ -136,13 +136,13 @@
     el.innerHTML =
       '<div class="ls-il-topline">' +
         '<span class="ls-il-kicker">' + L("Bild als Funktion", "An image as a function") + '</span>' +
-        '<span class="ls-il-formula">' + L("Input 100 &times; 100 &times; 3 &middot; Output 100 &times; 100 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 Eingaben (20 Fourier)", "Input 100 &times; 100 &times; 3 &middot; Output 100 &times; 100 &times; 3 &middot; 4 &times; 96 tanh &middot; 22 inputs (20 Fourier)") + '</span>' +
+        '<span class="ls-il-formula">' + L("Ziel 100 &times; 100 &times; 3 &middot; Output 100 &times; 100 &times; 3 &middot; 4 &times; 96 tanh &middot; Fourier-Features", "Target 100 &times; 100 &times; 3 &middot; Output 100 &times; 100 &times; 3 &middot; 4 &times; 96 tanh &middot; Fourier features") + '</span>' +
       '</div>' +
       '<div class="ls-il-grid">' +
         '<figure class="ls-il-card ls-il-target">' +
-          '<div class="ls-il-cardhead"><span>Input</span><span class="ls-il-meta">100 &times; 100 &times; 3</span></div>' +
-          '<div class="ls-il-canvaswrap"><canvas class="ls-il-target-canvas" role="img" aria-label="' + L("Input: das Beispiel, zentriert auf 100 mal 100 Pixel und in Farbe.", "Input: the example, centre-cropped to 100 by 100 pixels and in colour.") + '"></canvas></div>' +
-          '<figcaption class="ls-il-caption"><span class="ls-il-name">' + L("Opera (Beispiel)", "Opera (example)") + '</span><span>' + L("10.000 Pixel", "10,000 pixels") + '</span></figcaption>' +
+          '<div class="ls-il-cardhead"><span>' + L("Ziel", "Target") + '</span><span class="ls-il-meta">100 &times; 100 &times; 3</span></div>' +
+          '<div class="ls-il-canvaswrap"><canvas class="ls-il-target-canvas" role="img" aria-label="' + L("Zielbild: das Beispiel, zentriert auf 100 mal 100 Pixel und in Farbe.", "Target image: the example, centre-cropped to 100 by 100 pixels and in colour.") + '"></canvas></div>' +
+          '<figcaption class="ls-il-caption"><span class="ls-il-name">' + L("Opera (Beispiel)", "Opera (example)") + '</span><span>' + L("RGB", "RGB") + '</span></figcaption>' +
         '</figure>' +
         '<figure class="ls-il-card ls-il-pred">' +
           '<div class="ls-il-cardhead"><span>Output</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
