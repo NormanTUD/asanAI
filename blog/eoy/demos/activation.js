@@ -6,10 +6,10 @@
   function activationScene(root, api) {
     var DE = api.lang === "de";
     var fns = [
-      { id: "relu", label: "ReLU", color: "green", formula: "max(0, x)", short: DE ? "tiefe Netze" : "deep nets", use: DE ? "tiefe CNNs/MLPs: billig, spärlich, Dead-ReLU-Risiko" : "deep CNNs/MLPs: cheap, sparse, dead-ReLU risk" },
-      { id: "gelu", label: "GELU", color: "gold", formula: "0.5x(1 + tanh(√(2/π)(x + 0.044715x<sup>3</sup>)))", short: DE ? "Transformer" : "transformers", use: DE ? "Transformer/LLMs: glatt, gute Gradienten" : "transformers/LLMs: smooth, good gradients" },
-      { id: "sigmoid", label: "Sigmoid", color: "blue", formula: "1 / (1 + e<sup>−x</sup>)", short: DE ? "binär/Gates" : "binary/gates", use: DE ? "binäre Ausgaben/Gates: sättigt, kleine Gradienten" : "binary outputs/gates: saturates, small gradients" },
-      { id: "tanh", label: "tanh", color: "lilac", formula: "(e<sup>2x</sup> − 1) / (e<sup>2x</sup> + 1)", short: DE ? "RNNs" : "RNNs", use: DE ? "RNNs/kleine MLPs: nullzentriert, sättigt" : "RNNs/small MLPs: zero-centred, saturates" }
+      { id: "relu", label: "ReLU", color: "green", tex: "\\operatorname{ReLU}(x)=\\max(0,x)", use: DE ? "Standard in tiefen CNNs/MLPs: billig und spärlich; viele negative Eingaben können Neuronen dauerhaft auf 0 legen (Dead ReLU)." : "Standard in deep CNNs/MLPs: cheap and sparse; many negative inputs can permanently push neurons to 0 (dead ReLU)." },
+      { id: "gelu", label: "GELU", color: "gold", tex: "\\operatorname{GELU}(x)=x\\,\\Phi(x)", use: DE ? "Transformer/LLMs: glatt, gute Gradienten. Exakt x·Φ(x) (Φ = CDF der Standardnormalverteilung); die in der Demo verwendete tanh-Näherung mit 0.044715 ist eine Approximation (Hendrycks & Gimpel, 2016)." : "Transformers/LLMs: smooth, good gradients. Exactly x·Φ(x) (Φ = standard normal CDF); the tanh approximation used in the demo with 0.044715 is an approximation (Hendrycks & Gimpel, 2016)." },
+      { id: "sigmoid", label: "Sigmoid", color: "blue", tex: "\\sigma(x)=\\frac{1}{1+e^{-x}}", use: DE ? "Binäre Ausgaben und Gates (z. B. LSTM): sättigt bei großen Beträgen, dadurch kleine Gradienten; in tiefen Hidden Layers oft durch ReLU/GELU ersetzt." : "Binary outputs and gates (e.g. LSTM): saturates for large magnitudes, giving small gradients; often replaced by ReLU/GELU in deep hidden layers." },
+      { id: "tanh", label: "tanh", color: "lilac", tex: "\\tanh(x)=\\frac{e^{2x}-1}{e^{2x}+1}", use: DE ? "RNNs und kleine MLPs: nullzentriert und glatt; sättigt bei großen Werten." : "RNNs and small MLPs: zero-centred and smooth; saturates for large values." }
     ];
     var el = document.createElement("div");
     el.className = "ls-act-scene";
@@ -56,6 +56,10 @@
     function num(v, digits) {
       var s = v.toFixed(digits);
       return DE ? s.replace(".", ",") : s;
+    }
+    function mathHTML(tex) {
+      var safe = esc(tex);
+      return '<span class="ls-math ls-math--inline" data-tex="' + safe + '" data-tex-display="false"><code class="ls-tex-source">' + safe + '</code></span>';
     }
     function softmax(vals) {
       var max = Math.max.apply(null, vals);
@@ -203,10 +207,9 @@
         var label = softPreset === "positive" ? (DE ? "positive Werte" : "positive values") : softPreset === "negative" ? (DE ? "negative Werte" : "negative values") : (DE ? "eigene CSV" : "own CSV");
         readout.innerHTML = '<span><b>Softmax</b> ' + label + ' · ' + (DE ? "Summe p = " : "sum p = ") + num(sum, 2) + '</span><span>' + (DE ? "Große Abstände werden verstärkt; negative Werte sind erlaubt, ein Offset kürzt sich heraus." : "Large gaps are amplified; negative values are allowed, and an offset cancels out.") + '</span>';
       } else {
-        readout.innerHTML = fns.map(function (fn) {
-          var on = fn.id === active ? " is-on" : "";
-          return '<span class="ls-act-item' + on + '"><b>' + fn.label + '</b> <span class="ls-act-f">' + fn.formula + '</span> · ' + fn.short + '</span>';
-        }).join("");
+        var info = fns.filter(function (fn) { return fn.id === active; })[0];
+        readout.innerHTML = '<span class="ls-act-active"><b>' + info.label + '</b> ' + mathHTML(info.tex) + '</span><span>' + info.use + '</span>';
+        if (api.typeset) { try { api.typeset(readout); } catch (e) {} }
       }
     }
     function updatePresetChips() {
@@ -288,6 +291,10 @@
       morphStart = performance.now();
       if (morphRaf) cancelAnimationFrame(morphRaf);
       if (!reducedMotion) morphRaf = requestAnimationFrame(morphFrame);
+      chips.querySelectorAll(".ls-chip").forEach(function (b) {
+        var fn = fns.filter(function (f2) { return f2.id === id; })[0];
+        if (fn) b.classList.toggle("is-on", b.textContent === fn.label);
+      });
       updateReadout();
       draw();
     }
@@ -370,6 +377,42 @@
     window.addEventListener("resize", resize);
     canvas.setAttribute("data-tip", DE ? "Zeigt die Aktivierungskurve; achte auf Nullpunkt und Steigung." : "Shows the activation curve; watch the zero crossing and slope.");
     canvas.setAttribute("aria-label", DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh." : "Activation functions: ReLU, GELU, sigmoid, tanh.");
+    function activeIndex() {
+      var ids = fns.map(function (fn) { return fn.id; });
+      return ids.indexOf(active);
+    }
+    function next() {
+      if (mode === "softmax") {
+        if (softPreset === "negative") return false;
+        if (softPreset === "custom") { setSoftValues(softPositive, "positive"); return true; }
+        setSoftValues(softNegative, "negative");
+        return true;
+      }
+      var idx = activeIndex();
+      if (idx < 0 || idx >= fns.length - 1) return false;
+      setActive(fns[idx + 1].id);
+      return true;
+    }
+    function prev() {
+      if (mode === "softmax") {
+        if (softPreset === "positive") return false;
+        if (softPreset === "custom") { setSoftValues(softNegative, "negative"); return true; }
+        setSoftValues(softPositive, "positive");
+        return true;
+      }
+      var idx = activeIndex();
+      if (idx <= 0) return false;
+      setActive(fns[idx - 1].id);
+      return true;
+    }
+    function hasNext() {
+      if (mode === "softmax") return softPreset !== "negative";
+      return activeIndex() < fns.length - 1;
+    }
+    function hasPrev() {
+      if (mode === "softmax") return softPreset !== "positive";
+      return activeIndex() > 0;
+    }
     updateReadout();
     resize();
     return {
@@ -378,6 +421,10 @@
         if (s.mode === "softmax") setMode("softmax");
         else if (s.mode === "activation") setMode("activation");
       },
+      next: next,
+      prev: prev,
+      hasNext: hasNext,
+      hasPrev: hasPrev,
       resize: resize,
       destroy: function () {
         if (morphRaf) cancelAnimationFrame(morphRaf);
