@@ -658,7 +658,7 @@
 
       if (groupAlpha > 0.01) {
         ctx.globalAlpha = groupAlpha;
-        powerGroups().forEach(function (g) {
+        powerGroups().forEach(function (g, gi) {
           var p = project(g.x, 0, 0);
           var key = g.ids.join("+");
           var on = (st.group && st.group.length === g.ids.length && st.group.every(function (id) { return g.ids.indexOf(id) >= 0; })) ||
@@ -689,8 +689,10 @@
             ctx.stroke();
           }
           var label = wordLabel(g.ids[0]) + (g.ids.length > 1 ? " +" + (g.ids.length - 1) : "");
-          drawLabel(label, p.x, p.y - 17, on ? C.petrol : C.soft, "center", 10);
-          if (g.ids.length > 1) drawLabel("×" + g.ids.length, p.x, p.y + 21, C.muted, "center", 9);
+          // In 1D the groups sit close together on one line, so alternate the
+          // labels above and below the axis to keep them from overlapping.
+          var above = gi % 2 === 0;
+          drawLabel(label, p.x, above ? p.y - 17 : p.y + 31, on ? C.petrol : C.soft, "center", 10);
           if (groupAlpha > 0.5) hits.push({ id: key, ids: g.ids.slice(), x: p.x, y: p.y, r: 18, kind: "group" });
         });
         if (result && groupAlpha > 0.5) {

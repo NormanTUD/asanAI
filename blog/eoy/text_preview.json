@@ -63,7 +63,7 @@
     "13": {
       "kicker": "",
       "title": "Was sind neuronale Netze?",
-      "body": "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w · x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft."
+      "body": "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w · x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Aus diesen Fehlern berechnet das Training den Loss."
     },
     "14": {
       "kicker": "Optimizer",
@@ -78,12 +78,12 @@
     "16": {
       "kicker": "",
       "title": "Was sind neuronale Netze?",
-      "body": "Jetzt ein größeres Netz: 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viel mehr Parameter und Richtungen, als wir zeichnen können; das Prinzip bleibt dasselbe: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen."
+      "body": "Das Netz in dieser Demo hat die Form 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viele Parameter und Richtungen, mehr als wir zeichnen können. Das Prinzip ist: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen."
     },
     "17": {
       "kicker": "Raum biegen",
       "title": "Der Raum biegt sich",
-      "body": "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: In der Demo hebt eine Schicht die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Das FFN wendet pro Token eine gelernte nichtlineare Transformation an; die Biegung ist eine Intuition, kein wörtliches Falten."
+      "body": "Ein neuronales Netz mit nichtlinearen Aktivierungen kann den Raum falten: In der Demo hebt eine Schicht die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Das FFN wendet pro Token eine gelernte nichtlineare Transformation an; die Biegung ist eine Intuition, kein wörtliches Falten."
     },
     "18": {
       "kicker": "Feed-Forward-Netzwerk (FFN)",
@@ -93,7 +93,7 @@
     "19": {
       "kicker": "Residual",
       "title": "Das gemeinsame Notizbuch wird zum Stream",
-      "body": "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Jedes Token hat einen eigenen Residual Stream. Stell dir jeden Stream als Notizbuch vor: Das Token steht schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich."
+      "body": "Die Notizbuch-Vorstellung ist eine stark vereinfachte, vermenschlichte Sichtweise. Jedes Token hat einen eigenen Residual Stream. Stell dir jeden Stream als Notizbuch vor: Das Token steht schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich."
     },
     "20": {
       "kicker": "Unembedding",
@@ -108,7 +108,7 @@
     "22": {
       "kicker": "Die Schleife",
       "title": "Ein Wort nach dem anderen",
-      "body": "Jetzt schließt sich der Kreis. Der letzte Vektor des letzten Tokens in der letzten Schicht wird über W_U zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo."
+      "body": "Der letzte Vektor des letzten Tokens in der letzten Schicht wird über W_U zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo."
     },
     "23": {
       "kicker": "Die Wiese",
@@ -153,7 +153,7 @@
     "31": {
       "kicker": "Bewusstsein",
       "title": "Bewusstsein: die offene Frage",
-      "body": "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein. Auf der nächsten Folie wird daraus die Frage, ob Regeln allein schon Verstehen sind."
+      "body": "Hat eine KI Bewusstsein? Die Frage klingt nach Ja oder Nein, aber schon der Zugang ist unklar. Wir können Aufgaben, Verhalten und Selbstberichte prüfen; ob dahinter Erleben steht, sehen wir von außen nicht. Die Unfinishable Map schlägt deshalb vor, nach der Art des Bewusstseins zu fragen, statt nur nach Ja oder Nein."
     }
   },
   "en": {
@@ -220,7 +220,7 @@
     "13": {
       "kicker": "",
       "title": "What are neural networks?",
-      "body": "A neural network is first a parameterised function. The smallest example is one neuron: ŷ = w · x + b. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape."
+      "body": "A neural network is first a parameterised function. The smallest example is one neuron: ŷ = w · x + b. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. From these errors the training computes the loss."
     },
     "14": {
       "kicker": "Optimizer",
@@ -235,12 +235,12 @@
     "16": {
       "kicker": "",
       "title": "What are neural networks?",
-      "body": "Now a larger network: 1 → 32 → 32 → 32 → 1, dense with ReLU. It has far more parameters and directions than we can draw; the principle stays the same: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live."
+      "body": "The network in this demo has the form 1 → 32 → 32 → 32 → 1, dense with ReLU. It has many parameters and directions, more than we can draw. The principle is: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live."
     },
     "17": {
       "kicker": "Bending space",
       "title": "Space bends",
-      "body": "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. The FFN applies a learned nonlinear transformation per token; the bend is an intuition, not a literal fold."
+      "body": "A neural network with nonlinear activations can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. The FFN applies a learned nonlinear transformation per token; the bend is an intuition, not a literal fold."
     },
     "18": {
       "kicker": "Feed-forward network (FFN)",
@@ -250,7 +250,7 @@
     "19": {
       "kicker": "Residual",
       "title": "The shared notebook becomes the stream",
-      "body": "This is a strongly simplified, humanised view. Each token has its own residual stream. Think of each stream as a notebook: the token is already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same."
+      "body": "The notebook picture is a strongly simplified, humanised view. Each token has its own residual stream. Think of each stream as a notebook: the token is already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same."
     },
     "20": {
       "kicker": "Unembedding",
@@ -265,7 +265,7 @@
     "22": {
       "kicker": "The loop",
       "title": "One word after another",
-      "body": "Now the circle closes. The final vector of the last token in the last layer becomes logits through W_U, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo."
+      "body": "The final vector of the last token in the last layer becomes logits through W_U, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo."
     },
     "23": {
       "kicker": "The meadow",
@@ -310,7 +310,7 @@
     "31": {
       "kicker": "Consciousness",
       "title": "Consciousness: the open question",
-      "body": "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is. The next slide turns this into the question of whether rules alone are already understanding."
+      "body": "Does an AI have consciousness? The question sounds like yes or no, but access is already unclear. We can test tasks, behaviour, and self-reports; whether experience lies behind them is not visible from outside. The Unfinishable Map therefore asks what kind of consciousness might be present, rather than only whether it is."
     }
   }
 }

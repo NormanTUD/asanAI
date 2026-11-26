@@ -49,7 +49,7 @@
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div>' +
             '<div class="ls-code-term"><b class="ls-code-command" data-tip="' + (DE ? "Der Befehl, der das Python-Programm startet." : "The command that starts the Python program.") + '"></b><span data-tip="' + (DE ? "Ausgabe des Modells: Label und Konfidenz pro Klasse." : "Model output: label and confidence per class.") + '"></span></div>' +
           '</div>' +
-          '<div class="ls-code-startmenu" hidden><button type="button" data-start="agent" data-tip="' + (DE ? "Öffnet das Agentenfenster mit dem Code." : "Opens the agent window with the code.") + '">Agent</button><button type="button" data-start="run" data-tip="' + (DE ? "Öffnet das Terminalfenster mit der Ausführung." : "Opens the terminal window with the run.") + '">Terminal</button><div class="ls-code-startjoke">' + (DE ? "Keine Updates verfügbar. Alles läuft lokal." : "No updates available. Everything runs locally.") + '</div></div>' +
+          '<div class="ls-code-startmenu" hidden><button type="button" data-start="agent" data-tip="' + (DE ? "Öffnet das Agentenfenster mit dem Code." : "Opens the agent window with the code.") + '">Agent</button><button type="button" data-start="run" data-tip="' + (DE ? "Öffnet das Terminalfenster mit der Ausführung." : "Opens the terminal window with the run.") + '">Terminal</button></div>' +
           '<div class="ls-code-taskbar"><button type="button" class="ls-code-start" aria-label="Start" data-tip="' + (DE ? "Menü zum Umschalten zwischen Agent und Terminal." : "Menu to switch between agent and terminal.") + '">▦</button><button type="button" class="ls-code-task is-on" data-task="agent" data-tip="' + (DE ? "Bringt das Agentenfenster nach vorn." : "Brings the agent window to the front.") + '">Agent</button><button type="button" class="ls-code-task" data-task="run" data-tip="' + (DE ? "Bringt das Terminalfenster nach vorn." : "Brings the terminal window to the front.") + '">Terminal</button><span class="ls-code-clock">14:32</span></div>' +
         '</div>' +
       '</div></div>' +
@@ -67,6 +67,7 @@
     var thinkingEl = el.querySelector(".ls-code-thinking");
     var agentWin = el.querySelector(".ls-code-window--agent");
     var runWin = el.querySelector(".ls-code-window--run");
+    var frontWin = null;
     var runMsgEl = el.querySelector(".ls-code-run-msg");
     var replayBtn = el.querySelector(".ls-code-replay");
     var taskButtons = el.querySelectorAll("[data-task]");
@@ -120,10 +121,17 @@
       if (!win) return;
       win.hidden = !on;
       if (on) {
+        frontWin = win;
         win.classList.remove("is-open");
         void win.offsetWidth;
         win.classList.add("is-open");
       }
+      syncFront();
+    }
+    function syncFront() {
+      if (agentWin) agentWin.classList.toggle("is-front", agentWin === frontWin && !agentWin.hidden);
+      if (runWin) runWin.classList.toggle("is-front", runWin === frontWin && !runWin.hidden);
+      syncTasks();
     }
     function setButton(label, disabled) {
       replayBtn.textContent = label;
@@ -248,7 +256,7 @@
     function syncTasks() {
       taskButtons.forEach(function (b) {
         var win = b.getAttribute("data-task") === "agent" ? agentWin : runWin;
-        b.classList.toggle("is-on", win && !win.hidden);
+        b.classList.toggle("is-on", win && win === frontWin && !win.hidden);
       });
     }
     taskButtons.forEach(function (b) {

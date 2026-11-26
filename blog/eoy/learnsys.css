@@ -687,6 +687,7 @@ h1,h2,h3,h4{
 .ls-code-window.is-open{animation:lsWindowIn var(--ls-motion-enter) cubic-bezier(.22,1,.36,1) both}
 .ls-code-window--agent{left:4%;top:4%;width:62%;height:60%}
 .ls-code-window--run{right:4%;bottom:32px;width:54%;height:42%;animation-delay:.1s}
+.ls-code-window.is-front{z-index:3;box-shadow:0 22px 48px rgba(0,0,0,.48)}
 @keyframes lsWindowIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
 .ls-code-bar{display:flex;align-items:center;gap:4px;padding:5px 9px;background:transparent;border-bottom:1px solid rgba(238,247,244,.06);flex:0 0 auto}
 .ls-code-bar i{width:4px;height:4px;border-radius:50%;background:rgba(238,247,244,.24)}
