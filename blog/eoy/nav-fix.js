@@ -17,12 +17,7 @@
     s.setProperty("align-items", "center", "important");
     s.setProperty("justify-content", "center", "important");
     s.setProperty("text-align", "center", "important");
-    s.setProperty("border", "1px solid #4f8b3c", "important");
-    s.setProperty("background", "#63a44b", "important");
-    s.setProperty("color", "#fff", "important");
-    s.setProperty("font", "600 15px/1 'Open Sans', system-ui, sans-serif", "important");
-    s.setProperty("cursor", "pointer", "important");
-    s.setProperty("box-shadow", "0 3px 14px rgba(0,20,30,.18)", "important");
+
   }
 
   function removeStray() {

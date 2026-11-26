@@ -85,10 +85,11 @@ $pageTitle = $isDe ? 'Adventskalender 2026' : 'Advent calendar 2026';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="<?php echo eoy_h($isDe ? '31 Tage vom 1. bis 31. Dezember 2026: ein interaktiver Adventskalender durch die Ideen hinter großen Sprachmodellen.' : '31 days from 1 to 31 December 2026: an interactive advent calendar through the ideas behind large language models.'); ?>">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#004b6f">
     <title><?php echo eoy_h($pageTitle); ?></title>
     <link rel="stylesheet" href="assets/site.css?v=<?php echo (int) @filemtime(__DIR__ . '/assets/site.css'); ?>">
     <link rel="stylesheet" href="advent.css?v=<?php echo (int) @filemtime(__DIR__ . '/advent.css'); ?>">
+    <link rel="stylesheet" href="scads-theme.css?v=<?php echo (int) @filemtime(__DIR__ . '/scads-theme.css'); ?>">
 </head>
 <body class="adv-page">
     <main class="adv-shell">

@@ -13,14 +13,21 @@
   min-width: 120px !important;
   min-height: 44px !important;
   padding: 0 16px !important;
-  border: 1px solid #4f8b3c !important;
+  border: 1px solid #63a44b !important;
   background: #63a44b !important;
   color: #fff !important;
-  font: 600 15px/1 "Open Sans", system-ui, sans-serif !important;
+  font: 700 15px/1 "Open Sans", system-ui, sans-serif !important;
+  letter-spacing: .02em !important;
   cursor: pointer !important;
   pointer-events: auto !important;
-  box-shadow: 0 3px 14px rgba(0,20,30,.18) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.10) !important;
   z-index: 2147483000 !important;
+}
+#ls-quick-prev:hover, #ls-quick-next:hover, #navfix-prev:hover, #navfix-next:hover,
+#eoy-embed-nav button:hover, .eoy-nav button:hover {
+  border-color: #066fa1 !important;
+  background: #066fa1 !important;
+  color: #fff !important;
 }
 #ls-quick-prev, #navfix-prev,
 #eoy-embed-nav [data-eoy-prev], #eoy-embed-nav .eoy-prev,

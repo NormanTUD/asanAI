@@ -39,10 +39,11 @@ function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUT
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="theme-color" content="#ffffff">
+	<meta name="theme-color" content="#004b6f">
 	<title><?php echo h(($labels[$scene] ?? $scene).' · LearnSys demo'); ?></title>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 	<link rel="stylesheet" href="learnsys.css?v=<?php echo filemtime(__DIR__.'/learnsys.css'); ?>">
+	<link rel="stylesheet" href="scads-theme.css?v=<?php echo filemtime(__DIR__.'/scads-theme.css'); ?>">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<style>
 		#tm-lang-switch { display: none !important; }

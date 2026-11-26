@@ -6152,12 +6152,6 @@
       st.setProperty("align-items", "center", "important");
       st.setProperty("justify-content", "center", "important");
       st.setProperty("text-align", "center", "important");
-      st.setProperty("border", "1px solid #4f8b3c", "important");
-      st.setProperty("background", "#63a44b", "important");
-      st.setProperty("color", "#fff", "important");
-      st.setProperty("font", "600 15px/1 'Open Sans', system-ui, sans-serif", "important");
-      st.setProperty("cursor", "pointer", "important");
-      st.setProperty("box-shadow", "0 3px 14px rgba(0,20,30,.18)", "important");
       st.setProperty("display", "none", "important");
       document.body.appendChild(b);
       return b;

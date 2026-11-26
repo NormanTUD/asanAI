@@ -66,13 +66,8 @@
       btn.style.minWidth = "120px";
       btn.style.minHeight = "44px";
       btn.style.padding = "0 16px";
-      btn.style.border = "1px solid #4f8b3c";
-      btn.style.background = "#63a44b";
-      btn.style.color = "#fff";
-      btn.style.font = "600 15px/1 'Open Sans', system-ui, sans-serif";
       btn.style.cursor = "pointer";
       btn.style.pointerEvents = "auto";
-      btn.style.boxShadow = "0 3px 14px rgba(0,20,30,.18)";
       btn.style.zIndex = "2147483000";
     }
     place(b.prev, "left");

@@ -8,7 +8,7 @@
  */
 
 function asanai_lesson_build($lessonDir) {
-	$files = ['learnsys.js', 'learnsys.css', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php'];
+	$files = ['learnsys.js', 'learnsys.css', 'scads-theme.css', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php'];
 	$build = 0;
 	foreach ($files as $f) {
 		$build = max($build, (int) @filemtime(rtrim($lessonDir, '/') . '/' . $f));

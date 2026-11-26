@@ -46,7 +46,7 @@ if (isset($_GET['height']) && is_numeric($_GET['height'])) {
 }
 
 $lsBuild = 0;
-foreach (['learnsys.js', 'learnsys.css', 'eoy-loading.js', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php', 'text_preview.json'] as $lsBuildFile) {
+foreach (['learnsys.js', 'learnsys.css', 'scads-theme.css', 'eoy-loading.js', 'data.js', 'frame-height.js', 'nav-fix.js', '_page.php', 'text_preview.json'] as $lsBuildFile) {
 	$lsBuild = max($lsBuild, (int) @filemtime(__DIR__ . '/' . $lsBuildFile));
 }
 
@@ -69,7 +69,7 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A 31-day interactive introduction to how large language models work: data, tokens, embeddings, attention, training, agents, society, and consciousness.">
-	<meta name="theme-color" content="#ffffff">
+	<meta name="theme-color" content="#004b6f">
 	<meta name="ls-build" content="<?php echo $lsBuild; ?>">
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 	<meta http-equiv="Pragma" content="no-cache">
@@ -90,6 +90,7 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 	<link rel="stylesheet" href="learnsys.css?v=<?php echo filemtime(__DIR__.'/learnsys.css'); ?>">
 	<link rel="stylesheet" href="eoy-nav.css?v=<?php echo filemtime(__DIR__.'/eoy-nav.css'); ?>">
 	<link rel="stylesheet" href="nav-fix.css?v=<?php echo filemtime(__DIR__.'/nav-fix.css'); ?>">
+	<link rel="stylesheet" href="scads-theme.css?v=<?php echo filemtime(__DIR__.'/scads-theme.css'); ?>">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<style>
 		#tm-lang-switch { display: none !important; }
@@ -123,11 +124,11 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 		#eoy-embed-nav button {
 			position: fixed; bottom: 14px; display: inline-flex; align-items: center; justify-content: center;
 			min-width: 120px; min-height: 44px; padding: 0 16px; pointer-events: auto;
-			border: 1px solid #4f8b3c; background: #63a44b; color: #fff;
-			font: 600 15px/1 "Open Sans", system-ui, sans-serif; cursor: pointer;
-			box-shadow: 0 3px 14px rgba(0,20,30,.18);
+			border: 1px solid #63a44b; background: #63a44b; color: #fff;
+			font: 700 15px/1 "Open Sans", system-ui, sans-serif; letter-spacing: .02em; cursor: pointer;
+			box-shadow: 0 1px 2px rgba(0,0,0,.10);
 		}
-		#eoy-embed-nav button:hover { background: #558c3f; }
+		#eoy-embed-nav button:hover { background: #066fa1; border-color: #066fa1; }
 		#eoy-embed-nav button[hidden] { display: none !important; }
 		#eoy-embed-nav [data-eoy-prev] { left: 14px; }
 		#eoy-embed-nav [data-eoy-next] { right: 14px; }
@@ -190,8 +191,8 @@ if ($eoyDay !== null && is_file(__DIR__ . '/text_preview.json')) {
 		<?php endif; ?>
 	</div>
 	<div id="eoy-embed-nav" style="position:fixed;left:0;right:0;bottom:0;z-index:2147483000;pointer-events:none">
-		<button type="button" class="eoy-prev" data-eoy-prev style="position:fixed;left:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18);pointer-events:auto">← Zurück</button>
-		<button type="button" class="eoy-next" data-eoy-next style="position:fixed;right:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #4f8b3c;background:#63a44b;color:#fff;font:600 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 14px rgba(0,20,30,.18);pointer-events:auto">Weiter →</button>
+		<button type="button" class="eoy-prev" data-eoy-prev style="position:fixed;left:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #63a44b;background:#63a44b;color:#fff;font:700 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;letter-spacing:.02em;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.10);pointer-events:auto">← Zurück</button>
+		<button type="button" class="eoy-next" data-eoy-next style="position:fixed;right:14px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;justify-content:center;min-width:120px;min-height:44px;padding:0 16px;border:1px solid #63a44b;background:#63a44b;color:#fff;font:700 15px/1 &quot;Open Sans&quot;,system-ui,sans-serif;letter-spacing:.02em;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.10);pointer-events:auto">Weiter →</button>
 	</div>
 	<?php if ($showSnow): ?><canvas class="season-layer" id="season-snow" aria-hidden="true"></canvas><?php endif; ?>
 	<?php if ($showFireworks): ?><canvas class="season-layer" id="season-fireworks" aria-hidden="true"></canvas><?php endif; ?>

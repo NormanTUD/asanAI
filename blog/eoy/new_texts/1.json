@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "schema": "learnsys-changes/v2",
+  "kind": "learnsys-changes",
+  "data_file": "intuition_learnsys-data.js",
+  "generated_at": "2026-11-26T16:30:36.486Z",
+  "overlay_revision": "2026-11-26-image-fn-formula-6",
+  "pages": [
+    "intuition"
+  ],
+  "apply_to": [
+    "de",
+    "en"
+  ],
+  "multi_language": true,
+  "translation_note": "Apply every change to both languages; translate the missing language.",
+  "changes": [
+    {
+      "lang": "de",
+      "translate_to": "en",
+      "page": "intuition",
+      "step": 9,
+      "substep": 0,
+      "text_key": "9.0",
+      "slide_title": "Wie Attention rechnet",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "diff": {
+        "body": "Jedes Token erzeugt $Q, K, V$ aus der Eingabe $X$ durch <b>gelernte Matrizen</b> ($W_i^Q, W_i^K, W_i^V$):\n\n$$ r_i = \\text{Attention}_i(X) = \\underbrace{\\text{softmax}\\left( \\frac{\\overbrace{(X W_i^Q)(X W_i^K)^T}^{\\text{Frage vs. Antwort}}}{\\underbrace{\\sqrt{d_k}}_{\\text{Skalierung}}} \\right)}_{\\text{Aufmerksamkeits-Gewichte}} \\underbrace{(X \\cdot W_i^V)}_{\\text{Inhalt}}  $$\n\nZusammenführung über die gelernte Output-Matrix $W_O$:\n\n$$ y_i = \\underbrace{W_O}_{\\text{gelerntes Mischen}} \\cdot \\underbrace{r_i}_{\\text{Head-Ergebnis}} $$\n\n\nJeder Attention-Head hat 100% Aufmerksamkeit, die er mit diesem Mechanismus auf alle Tokens verteilen kann. Erhält ein einziges Token beispielsweise 80% Aufmerksamkeit, müssen sich die anderen die restlichen 20% teilen. Das hat den Vorteil, dass das Netzwerk sich nicht absolut festlegen muss und flexibel bleiben kann, aber dennoch klare Tendenzen darstellen kann, welches Wort wie wichtig ist im gesamten Kontext für alle anderen Worte.",
+        "groups_patch": {
+          "0.questions.0.body": "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden. $d_k$ ist die Anzahl der Dimensionen des Modells."
+        },
+        "groups_remove": [
+          "0.questions.1"
+        ]
+      }
+    }
+  ]
+}
