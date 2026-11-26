@@ -1135,6 +1135,7 @@
           '<span class="ls-inline-edit ls-inline-source-label" contenteditable="true" spellcheck="true" data-edit-source-g="' + gi + '" data-edit-source-s="' + si + '" data-edit-source-field="label">' + esc(src.label || "") + '</span>' +
           '<span class="ls-inline-edit ls-inline-source-url" contenteditable="true" spellcheck="false" data-edit-source-g="' + gi + '" data-edit-source-s="' + si + '" data-edit-source-field="url">' + esc(src.url || "") + '</span>' +
           '<span class="ls-inline-edit ls-inline-source-why" contenteditable="true" spellcheck="true" data-edit-source-g="' + gi + '" data-edit-source-s="' + si + '" data-edit-source-field="why">' + esc(why || "") + '</span>' +
+          '<button type="button" class="ls-inline-del" data-edit-remove-source="' + gi + '.' + si + '" aria-label="' + esc(t("removeSource")) + '" title="' + esc(t("removeSource")) + '">×</button>' +
         '</li>';
       }).join("") + '</ul>';
     }
@@ -1161,6 +1162,7 @@
       '<summary>' +
         titleContent +
         (children ? ' <span class="ls-depth-count">' + children + '</span>' : '') +
+        (editing ? ' <button type="button" class="ls-inline-del" data-edit-remove-question="' + esc(path) + '" aria-label="' + esc(LANG === "de" ? "Frage löschen" : "Delete question") + '" title="' + esc(LANG === "de" ? "Frage löschen" : "Delete question") + '">×</button>' : '') +
       '</summary>' +
       bodyContent +
       texContent +
@@ -1200,6 +1202,7 @@
       html += '<details class="ls-deepbox ls-qgroup" data-qid="' + esc(g.id) + '"' + (gi === 0 ? firstGroupOpen : "") + '>' +
         '<summary>' + groupTitle +
           (g.sources ? ' <span class="ls-depth-count">' + g.sources.length + '</span>' : '') +
+          ((state.edit && !editFormMode) ? ' <button type="button" class="ls-inline-del" data-edit-remove-group="' + gi + '" aria-label="' + esc(LANG === "de" ? "Gruppe löschen" : "Delete group") + '" title="' + esc(LANG === "de" ? "Gruppe löschen" : "Delete group") + '">×</button>' : '') +
         '</summary>' +
         '<div class="ls-qgroup-body">';
       if (g.sources) {
@@ -1734,7 +1737,7 @@
       questions: [makeQuestion("q-edit-" + stamp, t("newQuestion"), "")]
     });
     saveEditorDoc();
-    renderEditor();
+    renderText();
   }
   function addEditorSourceGroup() {
     for (var i = 0; i < editorDoc.groups.length; i++) {
@@ -1746,7 +1749,7 @@
       sources: [{ label: t("newSource"), url: "", why: "" }]
     });
     saveEditorDoc();
-    renderEditor();
+    renderText();
     var input = els.extras.querySelector('[data-field="source-label"]');
     if (input) { try { input.focus(); } catch (e) {} }
   }
@@ -1755,7 +1758,7 @@
     if (!group || !group.sources) return;
     group.sources.push({ label: t("newSource"), url: "", why: "" });
     saveEditorDoc();
-    renderEditor();
+    renderText();
     var input = els.extras.querySelector('[data-field="source-label"][data-g="' + gi + '"][data-s="' + (group.sources.length - 1) + '"]');
     if (input) { try { input.focus(); } catch (e) {} }
   }
@@ -1766,14 +1769,14 @@
     if (!group || !group.sources || isNaN(si)) return;
     group.sources.splice(si, 1);
     saveEditorDoc();
-    renderEditor();
+    renderText();
   }
   function addEditorQuestion(path) {
     var list = questionListAt(path);
     if (!list) return;
     list.push(makeQuestion("q-edit-" + Date.now() + "-" + list.length, t("newQuestion"), ""));
     saveEditorDoc();
-    renderEditor();
+    renderText();
   }
   function removeEditorQuestion(path) {
     var parts = String(path).split(".").map(Number);
@@ -1782,7 +1785,7 @@
     if (!list || isNaN(index)) return;
     list.splice(index, 1);
     saveEditorDoc();
-    renderEditor();
+    renderText();
   }
   function sourceDocFor(lang, day, key) {
     var dayIndex = cfg.days.indexOf(day);
@@ -1808,49 +1811,77 @@
     if (why && typeof why === "object") return why[lang] || "";
     return typeof why === "string" ? why : "";
   }
-  function diffQuestionListMinimal(base, next, path, out) {
-    if (!Array.isArray(base) || !Array.isArray(next) || base.length !== next.length) return false;
+  function idValue(item) { return item && item.id != null ? String(item.id) : ""; }
+  function idsAreSubsequence(base, next) {
+    if (!Array.isArray(base) || !Array.isArray(next)) return false;
+    var nextIds = next.map(idValue);
+    if (nextIds.some(function (id) { return !id; })) return false;
+    var i = 0;
+    for (var j = 0; j < base.length && i < nextIds.length; j++) {
+      if (idValue(base[j]) === nextIds[i]) i++;
+    }
+    return i === nextIds.length;
+  }
+  function diffQuestionListMinimal(base, next, basePrefix, nextPrefix, patch, remove) {
+    if (!Array.isArray(base) || !Array.isArray(next)) return false;
+    if (!idsAreSubsequence(base, next)) return false;
+    var nextIds = next.map(idValue);
     var fields = ["title", "body", "tex", "control", "controlLabel", "kind"];
-    for (var i = 0; i < base.length; i++) {
-      var b = base[i] || {}, n = next[i] || {}, p = path + i;
+    for (var bi = 0; bi < base.length; bi++) {
+      var b = base[bi] || {};
+      var id = idValue(b);
+      var ni = nextIds.indexOf(id);
+      if (ni < 0) { remove.push(basePrefix + ".questions." + bi); continue; }
+      var n = next[ni] || {};
+      var bp = basePrefix + ".questions." + bi;
+      var np = nextPrefix + ".questions." + ni;
       for (var fi = 0; fi < fields.length; fi++) {
         var f = fields[fi];
-        if ((b[f] || "") !== (n[f] || "")) out[p + "." + f] = n[f];
+        if ((b[f] || "") !== (n[f] || "")) patch[np + "." + f] = n[f];
       }
       var bq = Array.isArray(b.questions) ? b.questions : null;
       var nq = Array.isArray(n.questions) ? n.questions : null;
       if (!!bq !== !!nq) return false;
-      if (bq && !diffQuestionListMinimal(bq, nq, p + ".questions.", out)) return false;
+      if (bq && !diffQuestionListMinimal(bq, nq, bp, np, patch, remove)) return false;
     }
     return true;
   }
   function diffGroupsMinimal(base, next, lang) {
-    if (!Array.isArray(base) || !Array.isArray(next) || base.length !== next.length) return { replace: next };
-    var out = {};
-    for (var gi = 0; gi < base.length; gi++) {
-      var b = base[gi] || {}, n = next[gi] || {}, p = String(gi);
-      if ((b.title || "") !== (n.title || "")) out[p + ".title"] = n.title;
+    if (!Array.isArray(base) || !Array.isArray(next)) return { replace: next };
+    if (!idsAreSubsequence(base, next)) return { replace: next };
+    var patch = {}, remove = [];
+    var nextIds = next.map(idValue);
+    for (var bi = 0; bi < base.length; bi++) {
+      var b = base[bi] || {};
+      var id = idValue(b);
+      var ni = nextIds.indexOf(id);
+      if (ni < 0) { remove.push(String(bi)); continue; }
+      var n = next[ni] || {};
+      var bp = String(bi), np = String(ni);
+      if ((b.title || "") !== (n.title || "")) patch[np + ".title"] = n.title;
       var bs = Array.isArray(b.sources) ? b.sources : null;
       var ns = Array.isArray(n.sources) ? n.sources : null;
       if (!!bs !== !!ns) return { replace: next };
       if (bs) {
         if (bs.length !== ns.length) return { replace: next };
         for (var si = 0; si < bs.length; si++) {
-          var bS = bs[si] || {}, nS = ns[si] || {}, sp = p + ".sources." + si;
-          if ((bS.label || "") !== (nS.label || "")) out[sp + ".label"] = nS.label;
-          if ((bS.url || "") !== (nS.url || "")) out[sp + ".url"] = nS.url;
+          var bS = bs[si] || {}, nS = ns[si] || {}, sp = np + ".sources." + si;
+          if ((bS.label || "") !== (nS.label || "")) patch[sp + ".label"] = nS.label;
+          if ((bS.url || "") !== (nS.url || "")) patch[sp + ".url"] = nS.url;
           var bw = sourceWhyText(bS, lang), nw = sourceWhyText(nS, lang);
-          if (bw !== nw) out[sp + ".why"] = nw;
+          if (bw !== nw) patch[sp + ".why"] = nw;
         }
       } else {
         var bq = Array.isArray(b.questions) ? b.questions : null;
         var nq = Array.isArray(n.questions) ? n.questions : null;
         if (!!bq !== !!nq) return { replace: next };
-        if (bq && bq.length !== nq.length) return { replace: next };
-        if (bq && !diffQuestionListMinimal(bq, nq, p + ".questions.", out)) return { replace: next };
+        if (bq && !diffQuestionListMinimal(bq, nq, bp, np, patch, remove)) return { replace: next };
       }
     }
-    return { patch: out };
+    var result = {};
+    if (Object.keys(patch).length) result.patch = patch;
+    if (remove.length) result.remove = remove;
+    return result;
   }
   function applyGroupPatch(groups, patch, lang) {
     Object.keys(patch || {}).forEach(function (path) {
@@ -1871,6 +1902,34 @@
         else target.why = patch[path];
       } else {
         target[last] = patch[path];
+      }
+    });
+  }
+  function removalPathIndices(path) {
+    return String(path).split(".").filter(function (x) { return /^\d+$/.test(x); }).map(Number);
+  }
+  function compareRemovalPath(a, b) {
+    var A = removalPathIndices(a), B = removalPathIndices(b);
+    if (A.length !== B.length) return B.length - A.length;
+    for (var i = 0; i < A.length; i++) {
+      if (A[i] !== B[i]) return B[i] - A[i];
+    }
+    return 0;
+  }
+  function applyGroupRemovals(groups, paths) {
+    (paths || []).slice().sort(compareRemovalPath).forEach(function (path) {
+      var parts = String(path).split(".");
+      var gi = parseInt(parts.shift(), 10);
+      if (!groups[gi]) return;
+      if (!parts.length) { groups.splice(gi, 1); return; }
+      var target = groups[gi];
+      while (parts.length) {
+        var kind = parts.shift();
+        var idx = parseInt(parts.shift(), 10);
+        var list = target && target[kind];
+        if (!list || !list[idx]) return;
+        if (!parts.length) { list.splice(idx, 1); return; }
+        target = list[idx];
       }
     });
   }
@@ -1895,9 +1954,13 @@
     if (JSON.stringify(edit.groups) !== JSON.stringify(source.groups || [])) {
       changed.push("groups");
       var gd = diffGroupsMinimal(source.groups || [], edit.groups || [], lang);
-      if (gd.replace) diff.groups_replace = gd.replace;
-      else if (gd.patch && Object.keys(gd.patch).length) diff.groups_patch = gd.patch;
-      else diff.groups_replace = edit.groups;
+      if (gd.replace) {
+        diff.groups_replace = gd.replace;
+      } else {
+        if (gd.patch && Object.keys(gd.patch).length) diff.groups_patch = gd.patch;
+        if (gd.remove && gd.remove.length) diff.groups_remove = gd.remove;
+        if (!diff.groups_patch && !diff.groups_remove) diff.groups_replace = edit.groups;
+      }
     }
     if (!changed.length) return null;
     var parts = String(key).split(".");
@@ -2038,8 +2101,12 @@
           ["title", "kicker", "watch", "body"].forEach(function (f) {
             if (Object.prototype.hasOwnProperty.call(d, f)) e[f] = d[f];
           });
-          if (Array.isArray(d.groups_replace)) e.groups = cloneData(d.groups_replace);
-          else if (d.groups_patch) applyGroupPatch(e.groups, d.groups_patch, lang);
+          if (Array.isArray(d.groups_replace)) {
+            e.groups = cloneData(d.groups_replace);
+          } else {
+            if (Array.isArray(d.groups_remove)) applyGroupRemovals(e.groups, d.groups_remove);
+            if (d.groups_patch) applyGroupPatch(e.groups, d.groups_patch, lang);
+          }
         }
         if (!textOverlay[lang]) textOverlay[lang] = {};
         if (!textOverlay[lang][ch.page]) textOverlay[lang][ch.page] = {};
@@ -3717,6 +3784,25 @@
         if (!state.edit || editFormMode || !e.target.closest) return;
         if (e.target.closest('[contenteditable="true"]')) { e.preventDefault(); e.stopPropagation(); }
       }, true);
+      els.textScroll.addEventListener("click", function (e) {
+        if (!state.edit || editFormMode || !e.target.closest) return;
+        var btn = e.target.closest("[data-edit-remove-question],[data-edit-remove-group],[data-edit-remove-source]");
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (btn.hasAttribute("data-edit-remove-question")) {
+          removeEditorQuestion(btn.getAttribute("data-edit-remove-question"));
+        } else if (btn.hasAttribute("data-edit-remove-group")) {
+          var gi = parseInt(btn.getAttribute("data-edit-remove-group"), 10);
+          if (editorDoc.groups[gi]) {
+            editorDoc.groups.splice(gi, 1);
+            saveEditorDoc();
+            renderText();
+          }
+        } else if (btn.hasAttribute("data-edit-remove-source")) {
+          removeEditorSource(btn.getAttribute("data-edit-remove-source"));
+        }
+      });
     }
     var swipeStart = null;
     function swipeExcluded(t) {

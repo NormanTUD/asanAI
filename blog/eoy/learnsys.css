@@ -440,6 +440,11 @@ html.dark .ls-eoy-tip,html[data-theme="dark"] .ls-eoy-tip,html.dark .ls-canvas-t
 .ls-sources--edit{list-style:none;padding-left:0}
 .ls-sources--edit>li{margin:0}
 .ls-inline-edit:empty::before{content:"…";color:var(--ls-muted)}
+.ls-inline-del{appearance:none;border:1px solid var(--ls-line-strong);background:rgba(255,255,255,.9);color:var(--ls-muted);width:20px;height:20px;min-width:20px;padding:0;margin-left:4px;font:700 12px/1 "Open Sans",sans-serif;cursor:pointer;vertical-align:middle;border-radius:3px}
+.ls-inline-del:hover,.ls-inline-del:focus-visible{background:var(--ls-coral,#c95656);border-color:var(--ls-coral,#c95656);color:#fff;outline:none}
+.ls-inline-source{position:relative;padding-right:24px}
+.ls-inline-source>.ls-inline-del{position:absolute;right:0;top:0;margin:0}
+
 summary .ls-inline-edit{cursor:text}
 .ls-cues{margin-top:26px}
 .ls-cue{padding:6px 0 6px 16px;border-left:1px solid rgba(0,75,111,.10);margin:18px 0;transition:border-color .3s ease,opacity .3s ease}
