@@ -1658,8 +1658,8 @@
     kicker: DE ? "Bild als Funktion" : "An image as a function",
     title: DE ? "Neuronale Netze approximieren jede Funktion" : "Neural networks approximate any function",
     body: DE
-      ? "$$\n\\underbrace{\\begin{pmatrix} \\text{rot} \\\\ \\text{grün} \\\\ \\text{blau} \\end{pmatrix}}_{\\text{Pixel}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{Koordinaten}}\\right)}_{\\text{gelerntes Netz}}\n$$\n\nEin Bild ist eine Funktion: Koordinate $(x, y)$ rein, drei Farbwerte raus. Das Zielbild ist 100 × 100 Pixel groß. Das Netz bekommt pro Pixel die Koordinate plus Fourier-Werte und sagt daraus die drei Farben voraus. Es hat vier versteckte Schichten mit je 96 tanh-Neuronen; diese Architektur ist fest.\n\nEs speichert keine Pixel, sondern lernt die Funktion. Mit genug Neuronen approximiert ein Netz jede stetige Funktion auf einem begrenzten Bereich. Außerhalb des gelernten Quadrats extrapoliert es."
-      : "$$\n\\underbrace{\\begin{pmatrix} \\text{red} \\\\ \\text{green} \\\\ \\text{blue} \\end{pmatrix}}_{\\text{pixel}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{coordinates}}\\right)}_{\\text{learned network}}\n$$\n\nAn image is a function: coordinate $(x, y)$ in, three colour values out. The target image is 100 × 100 pixels. For every pixel the network receives the coordinate plus Fourier values and predicts the three colours. It has four hidden layers with 96 tanh neurons each; this architecture is fixed.\n\nIt stores no pixels; it learns the function. With enough neurons a network can approximate any continuous function on a bounded domain. Outside the trained square it extrapolates.",
+      ? "$$\n\\underbrace{\\begin{pmatrix} \\text{rot} \\\\ \\text{grün} \\\\ \\text{blau} \\end{pmatrix}}_{\\text{Pixel}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{Koordinaten}}\\right)}_{\\text{gelerntes Netz}}\n$$\n\nEin Bild ist eine Funktion: Koordinate $(x, y)$ rein, drei Farbwerte raus. Das Zielbild ist 100 × 100 Pixel groß. Das Netz bekommt pro Pixel die Koordinate plus Fourier-Werte und sagt daraus die drei Farben voraus. Es hat vier versteckte Schichten mit je 96 tanh-Neuronen; diese Architektur ist fest.\n\nEs speichert keine Pixel. Es lernt eine Funktion, die jeder Koordinate $(x, y)$ eine Farbe zuordnet und damit das Bild approximiert. Mit genug Neuronen approximiert ein Netz jede stetige Funktion auf einem begrenzten Bereich. Außerhalb des gelernten Quadrats extrapoliert es."
+      : "$$\n\\underbrace{\\begin{pmatrix} \\text{red} \\\\ \\text{green} \\\\ \\text{blue} \\end{pmatrix}}_{\\text{pixel}} = \\underbrace{f_\\theta\\!\\left(\\underbrace{x,y}_{\\text{coordinates}}\\right)}_{\\text{learned network}}\n$$\n\nAn image is a function: coordinate $(x, y)$ in, three colour values out. The target image is 100 × 100 pixels. For every pixel the network receives the coordinate plus Fourier values and predicts the three colours. It has four hidden layers with 96 tanh neurons each; this architecture is fixed.\n\nIt stores no pixels. It learns a function that maps every coordinate $(x, y)$ to a colour and thereby approximates the image. With enough neurons a network can approximate any continuous function on a bounded domain. Outside the trained square it extrapolates.",
     watch: DE
       ? "Beobachte Loss und Bild. Unten: eigenes Bild, Grenzen, Lernrate."
       : "Watch the loss and the image. Below: own image, limits, learning rate.",
@@ -2402,7 +2402,7 @@
     eoyResetState: !!singleStep,
     eoyNoHash: !!singleStep,
     eoySingle: !!singleStep,
-    overlayRevision: "2026-11-26-image-fn-formula-2",
+    overlayRevision: "2026-11-26-image-fn-formula-6",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

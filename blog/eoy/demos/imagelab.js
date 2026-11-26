@@ -142,7 +142,7 @@
         '<figure class="ls-il-card ls-il-target">' +
           '<div class="ls-il-cardhead"><span>' + L("Ziel", "Target") + '</span><span class="ls-il-meta">100 &times; 100 &times; 3</span></div>' +
           '<div class="ls-il-canvaswrap"><canvas class="ls-il-target-canvas" role="img" aria-label="' + L("Zielbild: das Beispiel, zentriert auf 100 mal 100 Pixel und in Farbe.", "Target image: the example, centre-cropped to 100 by 100 pixels and in colour.") + '"></canvas></div>' +
-          '<figcaption class="ls-il-caption"><span class="ls-il-name">' + L("Opera (Beispiel)", "Opera (example)") + '</span><span>' + L("RGB", "RGB") + '</span></figcaption>' +
+          '<figcaption class="ls-il-caption"><span class="ls-il-name">' + L("Opera (Beispiel)", "Opera (example)") + '</span><span>' + L("30.000 Werte", "30,000 values") + '</span></figcaption>' +
         '</figure>' +
         '<figure class="ls-il-card ls-il-pred">' +
           '<div class="ls-il-cardhead"><span>Output</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
