@@ -600,10 +600,6 @@
           ctx.moveTo(p.x - 7, p.y + 14); ctx.lineTo(p.x + 7, p.y + 14);
           ctx.stroke();
           ctx.restore();
-          ctx.fillStyle = C.lilac;
-          ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-          ctx.textAlign = "center";
-          ctx.fillText(g.ids.length + (DE ? " Wörter teilen sich eine Stelle" : " words share one position"), p.x, p.y + 28);
         });
         ctx.fillStyle = C.lilac;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';

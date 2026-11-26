@@ -57,6 +57,7 @@
     el.innerHTML =
       '<div class="ls-sinus-stage">' +
         '<canvas class="ls-sinus-canvas" role="img"></canvas>' +
+        '<div class="ls-sinus-losschart"><canvas class="ls-sinus-loss-canvas" aria-label="Loss curve"></canvas></div>' +
         '<div class="ls-sinus-matrices" hidden>' +
           '<div class="ls-sinus-matrices-head"><b>' + (DE ? "Gewichte live" : "Live weights") + '</b><span>' + (DE ? "live" : "live") + '</span><button type="button" class="ls-btn ls-btn--tiny ls-sinus-matrices-close" aria-label="' + (DE ? "Schließen" : "Close") + '">×</button></div>' +
           '<p class="ls-sinus-matrices-note"></p>' +
@@ -64,7 +65,6 @@
           '<div class="ls-sinus-matrix-legend"><span>' + (DE ? "Zahlen live" : "live numbers") + '</span><span>' + (DE ? "scrollen" : "scroll") + '</span></div>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-sinus-losschart"><canvas class="ls-sinus-loss-canvas" aria-label="Loss curve"></canvas></div>' +
       '<div class="ls-sinus-formula" hidden></div>' +
       '<div class="ls-sinus-controls">' +
         '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-sinus-train">' + (DE ? "Training pausieren" : "Pause training") + '</button>' +

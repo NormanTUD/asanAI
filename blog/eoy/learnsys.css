@@ -1712,7 +1712,7 @@ h1,h2,h3,h4{
 .ia-chat-input{flex:1;min-width:0;color:#202124;font:var(--ls-fs-ui-sm)/1.35 "Open Sans",sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:4.5em;overflow-y:auto}
 
 .ls-sinus-scene{display:flex}
-.ls-sinus-losschart{position:relative;height:54px;flex:0 0 54px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
+.ls-sinus-losschart{position:absolute;right:10px;top:40px;z-index:3;width:min(34%,230px);height:82px;border:1px solid var(--ls-line);background:rgba(255,255,255,.94);overflow:hidden;box-shadow:0 8px 20px rgba(0,20,30,.14)}
 .ls-sinus-formula{min-height:56px;max-height:96px;overflow:auto;padding:4px 6px;border:1px solid var(--ls-line);background:rgba(255,255,255,.7);font-size:var(--ls-fs-ui);color:var(--ls-soft)}
 .ls-sinus-losschart canvas{display:block;width:100%;height:100%}
 
@@ -2277,7 +2277,7 @@ h1,h2,h3,h4{
 .ls-sinus-loss-panel[hidden]{display:none}
 .ls-sinus-scene.is-loss{display:flex}
 .ls-sinus-scene.is-loss .ls-sinus-stage,.ls-sinus-scene.is-loss .ls-sinus-losschart,.ls-sinus-scene.is-loss .ls-sinus-controls,.ls-sinus-scene.is-loss .ls-sinus-readout,.ls-sinus-scene.is-loss .ls-sinus-formula{display:none}
-.ls-sinus-scene.is-net .ls-sinus-losschart,.ls-sinus-scene.is-net .ls-sinus-formula{display:none}
+.ls-sinus-scene.is-net .ls-sinus-formula{display:none}
 .ls-sinus-scene.is-net .ls-sinus-stage{min-height:340px}
 
 .ls-mlp-scene .ism-dense-presets{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:2px 0 4px;font:var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-soft)}
