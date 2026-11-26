@@ -162,6 +162,14 @@
           '<button type="button" class="ls-btn ls-btn--tiny ls-il-reset" disabled data-tip="' + L("Baut das Netz mit neuen Zufallsgewichten neu und startet das Training von vorn.", "Rebuilds the network with new random weights and starts training from scratch.") + '">' + L("Training neu starten", "Restart training") + '</button>' +
         '</div>' +
       '</div>' +
+      '<details class="ls-il-formulas">' +
+        '<summary><span>' + L("Formeln (live)", "Formulas (live)") + '</span><span class="ls-il-formulas-hint"><i></i><span class="ls-il-formulas-hint-text">' + L("live", "live") + '</span></span></summary>' +
+        '<div class="ls-il-formulas-body">' +
+          '<div class="ls-il-formulas-meta" aria-live="polite"></div>' +
+          '<div class="ls-il-formulas-math"></div>' +
+          '<div class="ls-il-closebar"><button type="button" class="ls-btn ls-btn--tiny ls-il-formula-close">' + L("Schließen", "Close") + '</button></div>' +
+        '</div>' +
+      '</details>' +
       '<details class="ls-il-optional">' +
         '<summary><span>' + L("Eigenes Bild, Grenzen, Lernrate", "Own image, limits, learning rate") + '</span><span class="ls-il-optional-hint">' + L("optional", "optional") + '</span></summary>' +
         '<div class="ls-il-optional-body">' +
@@ -209,9 +217,16 @@
     var lrOut = el.querySelector(".ls-il-lrout");
     var closeBtn = el.querySelector(".ls-il-close");
     var optionalEl = el.querySelector(".ls-il-optional");
+    var formulasEl = el.querySelector(".ls-il-formulas");
+    var formulasBody = el.querySelector(".ls-il-formulas-body");
+    var formulasMath = el.querySelector(".ls-il-formulas-math");
+    var formulasMeta = el.querySelector(".ls-il-formulas-meta");
+    var formulasHint = el.querySelector(".ls-il-formulas-hint");
+    var formulaCloseBtn = el.querySelector(".ls-il-formula-close");
     var grid = el.querySelector(".ls-il-grid");
 
     var C = api.colors();
+    var formulasOpen = false, formulasVisible = false, lastFormulaAt = 0, formulaIO = null;
     var st = {
       dead: false,
       booting: false,
@@ -829,6 +844,95 @@
       el.classList.toggle("is-training", st.running);
     }
 
+    function formulaNumber(v) {
+      if (!isFinite(v)) return "0.000";
+      return (v < 0 ? "-" : "") + Math.abs(v).toFixed(3);
+    }
+    function sampleMatrix(data, outUnits, inUnits, maxRows, maxCols) {
+      var rows = Math.min(outUnits, maxRows);
+      var cols = Math.min(inUnits, maxCols);
+      var lines = [];
+      for (var r = 0; r < rows; r++) {
+        var parts = [];
+        for (var c = 0; c < cols; c++) parts.push(formulaNumber(data[c * outUnits + r]));
+        if (inUnits > cols) parts.push("\\cdots");
+        lines.push(parts.join(" & "));
+      }
+      if (outUnits > rows) {
+        var dots = [];
+        for (var c2 = 0; c2 < cols; c2++) dots.push("\\vdots");
+        if (inUnits > cols) dots.push("\\ddots");
+        lines.push(dots.join(" & "));
+      }
+      return "\\begin{pmatrix}" + lines.join(" \\\\ ") + "\\end{pmatrix}";
+    }
+    function sampleBias(data, units, maxVals) {
+      var n = Math.min(units, maxVals);
+      var parts = [];
+      for (var i = 0; i < n; i++) parts.push(formulaNumber(data[i]));
+      if (units > n) parts.push("\\vdots");
+      return "\\begin{pmatrix}" + parts.join(" \\\\ ") + "\\end{pmatrix}";
+    }
+    function mathRow(tex) {
+      return '<div class="ls-il-formula-row"><div class="ls-math" data-tex="' + core.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + core.esc(tex) + '</code></div></div>';
+    }
+    function formulaTexs() {
+      var out = [];
+      out.push('u(x,y) = \\left( x,\\ y,\\ \\sin(2^0\\pi x),\\ \\cos(2^0\\pi x),\\ \\dots,\\ \\sin(2^4\\pi y),\\ \\cos(2^4\\pi y) \\right) \\in \\mathbb{R}^{22}');
+      if (!st.model) return out;
+      var layers = st.model.layers || [];
+      var featureLabel = DE ? '\\text{22 Merkmale}' : '\\text{22 features}';
+      for (var i = 0; i < layers.length; i++) {
+        var weights = layers[i].getWeights();
+        var kernel = weights[0];
+        var bias = weights[1];
+        if (!kernel) continue;
+        var shape = kernel.shape;
+        var inUnits = shape[0];
+        var outUnits = shape[1];
+        var kdata = kernel.dataSync();
+        var bdata = bias ? bias.dataSync() : [];
+        var wtex = sampleMatrix(kdata, outUnits, inUnits, 4, 4);
+        var btex = sampleBias(bdata, outUnits, 4);
+        var wlabel = (DE ? '\\text{Gewichte}' : '\\text{weights}') + '^{\\mathrm{[' + outUnits + ' \\times ' + inUnits + ']}}';
+        var blabel = '\\text{Bias}^{\\mathrm{[' + outUnits + ']}}';
+        var lhs, prev;
+        if (i === 0) {
+          lhs = '\\text{Layer}_1(x,y)';
+          prev = '\\underbrace{u(x,y)}_{' + featureLabel + '}';
+        } else {
+          lhs = '\\text{Layer}_{' + (i + 1) + '}(h_{' + i + '})';
+          prev = '\\underbrace{h_{' + i + '}}_{' + inUnits + '}';
+        }
+        var rhs = '\\underbrace{' + wtex + '}_{' + wlabel + '} \\cdot ' + prev + ' + \\underbrace{' + btex + '}_{' + blabel + '}';
+        if (i < layers.length - 1) rhs = '\\tanh\\left( ' + rhs + ' \\right)';
+        out.push(lhs + ' = ' + rhs);
+      }
+      return out;
+    }
+    function renderFormulas(force) {
+      if (!formulasOpen || !formulasVisible) return;
+      if (!st.ready || !st.model) {
+        if (formulasMath && !formulasMath.textContent) formulasMath.textContent = L("Netz wird vorbereitet …", "Preparing network …");
+        return;
+      }
+      var now = performance.now();
+      if (!force && now - lastFormulaAt < 1200) return;
+      lastFormulaAt = now;
+      formulasMath.innerHTML = formulaTexs().map(mathRow).join("");
+      if (api.typeset) api.typeset(formulasMath);
+      var epoch = Math.floor(st.seen / PIXELS);
+      formulasMeta.textContent = L("Schritt ", "Step ") + st.step + " · " + L("Epoche ", "Epoch ") + epoch;
+      if (formulasHint) {
+        formulasHint.classList.toggle("is-live", st.running);
+        formulasHint.classList.toggle("is-paused", !st.running);
+      }
+    }
+    function formulasOnScreen() {
+      if (!formulasBody) return true;
+      var r = formulasBody.getBoundingClientRect();
+      return r.bottom > 0 && r.top < (window.innerHeight || document.documentElement.clientHeight);
+    }
     function frame(ts) {
       if (!st.active || st.dead) {
         st.raf = 0;
@@ -867,6 +971,7 @@
         st.lastViewPred = now;
         requestViewPrediction(false);
       }
+      if (formulasOpen && formulasVisible) renderFormulas(false);
     }
 
     function ensureLoop() {
@@ -1130,6 +1235,7 @@
 
     function destroy() {
       st.dead = true;
+      if (formulaIO) { try { formulaIO.disconnect(); } catch (e) {} formulaIO = null; }
       clearStart();
       if (st.predTimer) clearTimeout(st.predTimer);
       st.predTimer = 0;
@@ -1163,6 +1269,27 @@
     lrInput.addEventListener("input", function () { if (lrOut) lrOut.textContent = formatLr(lrInput.value); });
     lrInput.addEventListener("change", function () { setLearningRate(lrInput.value); });
     closeBtn.addEventListener("click", function () { optionalEl.open = false; });
+    formulasEl.addEventListener("toggle", function () {
+      formulasOpen = formulasEl.open;
+      if (formulasOpen) {
+        formulasVisible = formulasOnScreen();
+        renderFormulas(true);
+      } else {
+        formulasMath.innerHTML = "";
+        formulasMeta.textContent = "";
+        lastFormulaAt = 0;
+      }
+    });
+    formulaCloseBtn.addEventListener("click", function () { formulasEl.open = false; });
+    if (window.IntersectionObserver) {
+      formulaIO = new IntersectionObserver(function (entries) {
+        formulasVisible = !!(entries[0] && entries[0].isIntersecting);
+        if (formulasVisible && formulasOpen) renderFormulas(true);
+      }, { threshold: 0.1 });
+      formulaIO.observe(formulasBody);
+    } else {
+      formulasVisible = true;
+    }
     lossCv.addEventListener("pointerleave", function () {
       if (st.hoverStep !== null) {
         st.hoverStep = null;

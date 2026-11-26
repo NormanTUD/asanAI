@@ -6259,6 +6259,24 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-il-optional[open] summary{border-bottom:1px solid var(--ls-line);box-shadow:0 5px 12px -12px rgba(0,20,30,.45)}
 .ls-il-optional-hint{font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em;color:var(--ls-muted)}
 .ls-il-optional-body{display:flex;flex-direction:column;gap:7px;padding:8px 10px 10px}
+.ls-il-formulas{margin-top:2px;border:1px solid var(--ls-line);background:rgba(255,255,255,.55)}
+.ls-il-formulas summary{position:sticky;top:0;z-index:4;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;list-style:none;cursor:pointer;background:var(--ls-paper);font:600 10px/1.2 "Open Sans",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ls-petrol)}
+.ls-il-formulas summary::-webkit-details-marker{display:none}
+.ls-il-formulas summary::after{content:"+";font:700 13px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-petrol)}
+.ls-il-formulas[open] summary::after{content:"−"}
+.ls-il-formulas[open] summary{border-bottom:1px solid var(--ls-line);box-shadow:0 5px 12px -12px rgba(0,20,30,.45)}
+.ls-il-formulas-hint{display:inline-flex;align-items:center;gap:5px;font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em;color:var(--ls-muted);text-transform:uppercase}
+.ls-il-formulas-hint i{display:block;width:6px;height:6px;border-radius:50%;background:var(--ls-line-strong)}
+.ls-il-formulas-hint.is-live i{background:var(--ls-green);animation:ls-il-pulse 1.6s ease-in-out infinite}
+.ls-il-formulas-hint.is-paused i{background:var(--ls-gold)}
+.ls-il-formulas-body{display:flex;flex-direction:column;gap:6px;padding:8px 10px 10px;max-height:360px;overflow:auto}
+.ls-il-formulas-meta{font:600 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em;color:var(--ls-muted)}
+.ls-il-formulas-math{display:flex;flex-direction:column;gap:6px;min-width:0;font-size:11px;color:var(--ls-ink)}
+.ls-il-formula-row{width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;padding:2px 0;border-bottom:1px solid rgba(0,75,111,.06)}
+.ls-il-formula-row:last-child{border-bottom:0}
+.ls-il-formulas-math .ls-math{max-width:none}
+@media (prefers-reduced-motion:reduce){.ls-il-formulas-hint.is-live i{animation:none}}
+
 .ls-il-uploadrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ls-il-upload{position:relative;overflow:hidden}
 .ls-il-file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}

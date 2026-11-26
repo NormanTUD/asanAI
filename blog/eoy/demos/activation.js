@@ -14,6 +14,10 @@
         pros: DE ? ["glatt und differenzierbar", "gute Gradienten", "in Transformern bewährt"] : ["smooth and differentiable", "good gradients", "proven in transformers"],
         cons: DE ? ["teurer durch exp/tanh", "nicht monoton", "keine harte Sparsity"] : ["more expensive due to exp/tanh", "not monotonic", "no hard sparsity"],
         uses: DE ? ["Transformer/LLMs (BERT, GPT)", "moderne tiefe Netze", "Sprachmodelle"] : ["transformers/LLMs (BERT, GPT)", "modern deep networks", "language models"] },
+      { id: "silu", label: "SiLU", color: "sky", tex: "\\operatorname{SiLU}(x)=x\\,\\sigma(x)=\\frac{x}{1+e^{-x}}",
+        pros: DE ? ["glatt und differenzierbar", "selbst-gated mit nur einem Sigmoid", "gute Gradienten, auch für kleine negative Werte"] : ["smooth and differentiable", "self-gated with a single sigmoid", "good gradients, even for small negative values"],
+        cons: DE ? ["nicht monoton", "nicht nullzentriert", "etwas teurer als ReLU"] : ["not monotonic", "not zero-centred", "slightly more expensive than ReLU"],
+        uses: DE ? ["moderne Vision-Modelle", "Stable Diffusion (ResBlocks)", "SwiGLU in LLMs (Llama, PaLM)"] : ["modern vision models", "Stable Diffusion (ResBlocks)", "SwiGLU in LLMs (Llama, PaLM)"] },
       { id: "sigmoid", label: "Sigmoid", color: "blue", tex: "\\sigma(x)=\\frac{1}{1+e^{-x}}",
         pros: DE ? ["Ausgabe zwischen 0 und 1", "als Wahrscheinlichkeit interpretierbar", "glatt"] : ["output between 0 and 1", "interpretable as a probability", "smooth"],
         cons: DE ? ["sättigt stark", "Vanishing Gradients", "nicht nullzentriert"] : ["saturates strongly", "vanishing gradients", "not zero-centred"],
@@ -75,6 +79,7 @@
     function f(id, x) {
       if (id === "relu") return Math.max(0, x);
       if (id === "gelu") return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x * x * x)));
+      if (id === "silu") return x / (1 + Math.exp(-x));
       if (id === "sigmoid") return 1 / (1 + Math.exp(-x));
       return Math.tanh(x);
     }
