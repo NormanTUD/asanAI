@@ -5031,7 +5031,7 @@ html.dark .ls-cr2-room {
   .ls-cr2-book-stack { display: none; }
   .ls-cr2-options { justify-content: stretch; }
   .ls-cr2-choice { flex: 1 1 140px; }
-  .ls-cr2-feedback { min-height: 0; }
+  .ls-cr2-feedback { min-height: 2.8em; }
   .ls-cr2-hud { top: 10px; left: 10px; right: auto; align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
 }
 
@@ -5079,7 +5079,9 @@ html.dark .ls-cr2-room {
   position: relative;
   left: auto; right: auto; bottom: auto;
   grid-column: 1 / -1; grid-row: 3;
-  min-height: 0;
+  /* Reserve two lines so feedback text does not grow the desk and shift the
+     room above it when it appears. */
+  min-height: 2.8em;
 }
 .ls-cr2-scene.is-compact .ls-cr2-choice { flex: 0 0 auto; min-width: 0; }
 

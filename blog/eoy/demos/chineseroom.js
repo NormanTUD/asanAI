@@ -12,8 +12,8 @@
     el.className = "ls-cr2-scene";
     el.innerHTML =
       '<p class="ls-cr2-note">' + T(
-        "Du verstehst die Zeichen nicht. Wenn du zufällig Chinesisch kannst, tue so, als könntest du es nicht.",
-        "You do not understand the characters. If you happen to know Chinese, pretend you do not."
+        "Wenn du zufällig Chinesisch kannst, tue so, als könntest du es nicht.",
+        "If you happen to know Chinese, pretend you do not."
       ) + '</p>' +
       '<div class="ls-cr2-room" data-tip="' + T("Das chinesische Zimmer: Du bekommst Zeichen durch den Schlitz und antwortest nur nach dem Regelbuch.", "The Chinese room: characters arrive through the slot and you answer only from the rulebook.") + '">' +
         '<div class="ls-cr2-wall" aria-hidden="true"></div>' +
