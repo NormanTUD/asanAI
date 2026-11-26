@@ -205,7 +205,7 @@
               {
                 "id": "q-deep",
                 "title": "Warum ist das so?",
-                "body": "Der Nudge ist der Trainingsschritt: Vergleiche die Vorhersage mit dem nächsten Token in den Daten und verschiebe die Gewichte ein wenig in die Richtung, die den Fehler senkt. Pretraining lernt die Fakten; Fine-tuning lernt die Form, in der das Wissen als Antwort erscheint. Ohne Daten gibt es kein Ziel und keinen Nudge.",
+                "body": "Der Trainingsschritt vergleicht die Vorhersage mit dem nächsten Token in den Daten und verschiebt die Gewichte ein wenig in die Richtung, die den Fehler senkt. Pretraining lernt die Fakten; Fine-tuning lernt die Form, in der das Wissen als Antwort erscheint. Ohne Daten gibt es kein Ziel und keinen Trainingsschritt.",
                 "tex": "",
                 "kind": "question"
               }
@@ -231,7 +231,7 @@
               {
                 "id": "q-box-fx-2",
                 "title": "Pretraining",
-                "body": "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged dieselben Gewichte.",
+                "body": "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Trainingsschritt passt dieselben Gewichte an.",
                 "tex": "",
                 "kind": "trivia"
               },
@@ -251,7 +251,7 @@
               {
                 "id": "q-box-fx-4",
                 "title": "Warum sind Daten so wichtig?",
-                "body": "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Nudge; das Modell kann nur raten.",
+                "body": "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Trainingsschritt; das Modell kann nur raten.",
                 "tex": "",
                 "kind": "question"
               }
@@ -293,7 +293,7 @@
         "body": "Die ganze Architektur ist eine Funktion $f_\theta(x)$: Daten rein, eine Verteilung über das nächste Token raus. Pretraining nutzt fast das ganze Internet; Fine-tuning nutzt wenige, spezifische Fragen. Die Beispiele zeigen, warum die Daten den Unterschied machen.\n\nDie Form der Funktion bleibt beim Training gleich. Ein einfaches Beispiel ist $f_\theta(x) = ax + b$. Hier sind $a$ und $b$ die gelernten Gewichte, also $\theta$; das Training ändert nur diese Werte, nicht die Form der Funktion.",
         "title": "Die Architektur als Funktion",
         "kicker": "Architektur",
-        "watch": "Drücke Weiter: Daten, Frage an Rohdaten, 1. Trainingsdatensatz, 2. Trainingsdatensatz. Bei jedem Beispiel zeigt der Nudge, wie sich die Kandidaten verschieben; welche Option in den Daten steht, welche nur plausibel ist und welche nicht passt.",
+        "watch": "Drücke Weiter: Daten, Frage an Rohdaten, 1. Trainingsdatensatz, 2. Trainingsdatensatz. Bei jedem Beispiel zeigt der Trainingsschritt, wie sich die Kandidaten verschieben; welche Option in den Daten steht, welche nur plausibel ist und welche nicht passt.",
         "groups": [
           {
             "id": "g-basics",
@@ -309,7 +309,7 @@
               {
                 "id": "q-deep",
                 "title": "Warum ist das so?",
-                "body": "Der Nudge ist der Trainingsschritt: Vergleiche die Vorhersage mit dem nächsten Token in den Daten und verschiebe die Gewichte ein wenig in die Richtung, die den Fehler senkt. Ohne Daten gibt es kein Ziel und keinen Nudge.",
+                "body": "Der Trainingsschritt vergleicht die Vorhersage mit dem nächsten Token in den Daten und verschiebt die Gewichte ein wenig in die Richtung, die den Fehler senkt. Ohne Daten gibt es kein Ziel und keinen Trainingsschritt.",
                 "tex": "",
                 "kind": "question"
               }
@@ -335,14 +335,14 @@
               {
                 "id": "q-box-fx-2",
                 "title": "Pretraining",
-                "body": "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Vergleich nudged dieselben Gewichte.",
+                "body": "Fast das ganze Internet liefert Milliarden von nächsten Tokens. Jeder Trainingsschritt passt dieselben Gewichte an.",
                 "tex": "",
                 "kind": "trivia"
               },
               {
                 "id": "q-box-fx-3",
                 "title": "Fine-tuning",
-                "body": "Wenige, gezielte Fragen nudged dieselben Gewichte in Richtung hilfreicher Antworten.",
+                "body": "Wenige, gezielte Fragen passen dieselben Gewichte in Richtung hilfreicher Antworten an.",
                 "tex": "",
                 "kind": "trivia"
               }
@@ -355,7 +355,7 @@
               {
                 "id": "q-box-fx-4",
                 "title": "Warum sind Daten so wichtig?",
-                "body": "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Nudge; das Modell kann nur raten.",
+                "body": "Der nächste Token in den Daten ist das Ziel. Fehlt er, gibt es keinen Vergleich und keinen Trainingsschritt; das Modell kann nur raten.",
                 "tex": "",
                 "kind": "question"
               }
