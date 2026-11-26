@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbifold Transformer</title>
+<style>
+html, body { margin: 0; height: 100%; overflow: hidden; background: #03030a; }
+body::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(58% 48% at 23% 27%, rgba(56, 110, 255, 0.16), transparent 72%),
+		radial-gradient(52% 44% at 79% 21%, rgba(255, 64, 170, 0.12), transparent 72%),
+		radial-gradient(50% 46% at 55% 83%, rgba(40, 220, 200, 0.09), transparent 72%);
+	mix-blend-mode: screen;
+}
+canvas { display: block; width: 100vw; height: 100vh; touch-action: none; cursor: grab; }
+body.dragging canvas { cursor: grabbing; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<script>
+"use strict";
+
+const N = 12;
+const D = 16;
+const F = 64;
+const L = 10;
+const SEED = 11;
+const LN_EPS = 1e-5;
+
+function mulberry32(seed) {
+	let a = seed >>> 0;
+	return function () {
+		a = (a + 0x6D2B79F5) >>> 0;
+		let t = a;
+		t = Math.imul(t ^ (t >>> 15), t | 1);
+		t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+}
+
+function gaussFactory(random) {
+	let spare = null;
+	return function () {
+		if (spare !== null) {
+			const value = spare;
+			spare = null;
+			return value;
+		}
+		let u = 0;
+		let v = 0;
+		while (u === 0) u = random();
+		while (v === 0) v = random();
+		const mag = Math.sqrt(-2 * Math.log(u));
+		spare = mag * Math.sin(Math.PI * 2 * v);
+		return mag * Math.cos(Math.PI * 2 * v);
+	};
+}
+
+function randomMatrix(rows, cols, scale, gauss) {
+	const out = new Array(rows);
+	for (let i = 0; i < rows; i++) {
+		const row = new Array(cols);
+		for (let j = 0; j < cols; j++) row[j] = gauss() * scale;
+		out[i] = row;
+	}
+	return out;
+}
+
+function cloneMatrix(source) {
+	return source.map(function (row) { return row.slice(); });
+}
+
+function transpose(source) {
+	const rows = source.length;
+	const cols = source[0].length;
+	const out = new Array(cols);
+	for (let j = 0; j < cols; j++) {
+		const row = new Array(rows);
+		for (let i = 0; i < rows; i++) row[i] = source[i][j];
+		out[j] = row;
+	}
+	return out;
+}
+
+function matmul(left, right) {
+	const rows = left.length;
+	const inner = right.length;
+	const cols = right[0].length;
+	const out = new Array(rows);
+	for (let i = 0; i < rows; i++) {
+		const row = new Array(cols);
+		const source = left[i];
+		for (let j = 0; j < cols; j++) {
+			let sum = 0;
+			for (let k = 0; k < inner; k++) sum += source[k] * right[k][j];
+			row[j] = sum;
+		}
+		out[i] = row;
+	}
+	return out;
+}
+
+function addScaled(base, delta, scale) {
+	const out = new Array(base.length);
+	for (let i = 0; i < base.length; i++) {
+		const row = new Array(base[i].length);
+		for (let j = 0; j < row.length; j++) row[j] = base[i][j] + delta[i][j] * scale;
+		out[i] = row;
+	}
+	return out;
+}
+
+function layerNorm(source) {
+	const out = new Array(source.length);
+	for (let i = 0; i < source.length; i++) {
+		const row = source[i];
+		let mean = 0;
+		for (let j = 0; j < row.length; j++) mean += row[j];
+		mean /= row.length;
+		let variance = 0;
+		for (let j = 0; j < row.length; j++) {
+			const d = row[j] - mean;
+			variance += d * d;
+		}
+		variance /= row.length;
+		const inv = 1 / Math.sqrt(variance + LN_EPS);
+		const normed = new Array(row.length);
+		for (let j = 0; j < row.length; j++) normed[j] = (row[j] - mean) * inv;
+		out[i] = normed;
+	}
+	return out;
+}
+
+function reluMatrix(source) {
+	return source.map(function (row) {
+		return row.map(function (value) { return value > 0 ? value : 0; });
+	});
+}
+
+function softmaxRows(source) {
+	return source.map(function (row) {
+		let max = -Infinity;
+		for (let j = 0; j < row.length; j++) if (row[j] > max) max = row[j];
+		let sum = 0;
+		const exps = new Array(row.length);
+		for (let j = 0; j < row.length; j++) {
+			const value = Math.exp(row[j] - max);
+			exps[j] = value;
+			sum += value;
+		}
+		for (let j = 0; j < row.length; j++) exps[j] /= sum;
+		return exps;
+	});
+}
+
+function dot(left, right) {
+	let sum = 0;
+	for (let i = 0; i < left.length; i++) sum += left[i] * right[i];
+	return sum;
+}
+
+function buildModel() {
+	const random = mulberry32(SEED);
+	const gauss = gaussFactory(random);
+	const sqrtD = Math.sqrt(D);
+	let X = randomMatrix(N, D, 1, gauss);
+	const levelStates = [cloneMatrix(X)];
+	const layers = [];
+
+	for (let layer = 0; layer < L; layer++) {
+		const Wq = randomMatrix(D, D, 1 / sqrtD, gauss);
+		const Wk = randomMatrix(D, D, 1 / sqrtD, gauss);
+		const Wv = randomMatrix(D, D, 1 / sqrtD, gauss);
+		const W1 = randomMatrix(D, F, 1 / sqrtD, gauss);
+		const W2 = randomMatrix(F, D, 1 / Math.sqrt(F), gauss);
+
+		const normed = layerNorm(X);
+		const Q = matmul(normed, Wq);
+		const K = matmul(normed, Wk);
+		const V = matmul(normed, Wv);
+		const scores = matmul(Q, transpose(K)).map(function (row) {
+			return row.map(function (value) { return value / sqrtD; });
+		});
+		const attn = softmaxRows(scores);
+		X = addScaled(X, matmul(attn, V), 0.5);
+
+		const normedFfn = layerNorm(X);
+		const ffn = reluMatrix(matmul(normedFfn, W1));
+		X = addScaled(X, matmul(ffn, W2), 0.5);
+
+		layers.push({ attn: attn, ffn: ffn, state: cloneMatrix(X) });
+		levelStates.push(cloneMatrix(X));
+	}
+
+	const Pm = randomMatrix(D, 3, 1 / sqrtD, gauss);
+	const Qd = new Array(F);
+	for (let f = 0; f < F; f++) {
+		let x = gauss();
+		let y = gauss();
+		let z = gauss();
+		const len = Math.hypot(x, y, z) || 1;
+		Qd[f] = { x: x / len, y: y / len, z: z / len };
+	}
+
+	const focus = layers.map(function (layer) {
+		let index = 0;
+		let best = -Infinity;
+		for (let j = 0; j < N; j++) {
+			let sum = 0;
+			for (let i = 0; i < N; i++) sum += layer.attn[i][j];
+			if (sum > best) {
+				best = sum;
+				index = j;
+			}
+		}
+		return { index: index, sum: best };
+	});
+
+	return {
+		layers: layers,
+		levelStates: levelStates,
+		Pm: Pm,
+		Qd: Qd,
+		focus: focus
+	};
+}
+
+const model = buildModel();
+
+const TWO_PI = Math.PI * 2;
+const TOWER_SCALE = 1.6;
+
+function hOf(layer) {
+	return (layer - L / 2) * 0.9;
+}
+
+function hueOf(token) {
+	return token * 360 / N;
+}
+
+function tokenHsl(token, alpha, lightness) {
+	return "hsla(" + hueOf(token) + ",100%," + (lightness || 65) + "%," + alpha + ")";
+}
+
+function hueHsl(hue, alpha, lightness) {
+	return "hsla(" + hue + ",100%," + (lightness || 65) + "%," + alpha + ")";
+}
+
+function buildLevelPositions(states, Pm) {
+	const raw = new Array(states.length);
+	for (let layer = 0; layer < states.length; layer++) {
+		const level = new Array(N);
+		for (let token = 0; token < N; token++) {
+			const row = states[layer][token];
+			let x = 0;
+			let y = 0;
+			let z = 0;
+			for (let d = 0; d < D; d++) {
+				const value = row[d];
+				x += value * Pm[d][0];
+				y += value * Pm[d][1];
+				z += value * Pm[d][2];
+			}
+			level[token] = { x: x, y: y, z: z };
+		}
+		raw[layer] = level;
+	}
+
+	for (let layer = 0; layer < raw.length; layer++) {
+		let cx = 0;
+		let cy = 0;
+		let cz = 0;
+		for (let token = 0; token < N; token++) {
+			cx += raw[layer][token].x;
+			cy += raw[layer][token].y;
+			cz += raw[layer][token].z;
+		}
+		cx /= N;
+		cy /= N;
+		cz /= N;
+		for (let token = 0; token < N; token++) {
+			raw[layer][token].x -= cx;
+			raw[layer][token].y -= cy;
+			raw[layer][token].z -= cz;
+		}
+	}
+
+	let maxRadius = 1e-9;
+	for (let layer = 0; layer < raw.length; layer++) {
+		for (let token = 0; token < N; token++) {
+			const point = raw[layer][token];
+			const radius = Math.hypot(point.x, point.z);
+			if (radius > maxRadius) maxRadius = radius;
+		}
+	}
+
+	const out = new Array(raw.length);
+	for (let layer = 0; layer < raw.length; layer++) {
+		const level = new Array(N);
+		for (let token = 0; token < N; token++) {
+			const point = raw[layer][token];
+			const radiusNorm = Math.min(1, Math.hypot(point.x, point.z) / maxRadius);
+			const angle = token * TWO_PI / N
+				+ 0.08 * Math.atan2(point.z, point.x)
+				+ layer * 0.04;
+			const radius = TOWER_SCALE * (0.62 + 0.38 * radiusNorm);
+			const vertical = Math.max(-1, Math.min(1, point.y / maxRadius));
+			level[token] = {
+				x: Math.cos(angle) * radius,
+				y: 0.13 * vertical,
+				z: Math.sin(angle) * radius
+			};
+		}
+		out[layer] = level;
+	}
+	return out;
+}
+
+const levelPos = buildLevelPositions(model.levelStates, model.Pm);
+window.__ORBIFOLD = {
+	N: N,
+	D: D,
+	F: F,
+	L: L,
+	seed: SEED,
+	model: model,
+	levelPos: levelPos,
+	hOf: hOf,
+	hueOf: hueOf,
+	getState: reportState,
+	setProgress: setProgress
+};
+
+const canvas = document.getElementById("stage");
+const ctx = canvas.getContext("2d", { alpha: false });
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
+
+function makeGlowSprite() {
+	const size = 96;
+	const sprite = document.createElement("canvas");
+	sprite.width = size;
+	sprite.height = size;
+	const g = sprite.getContext("2d");
+	g.shadowBlur = 18;
+	g.shadowColor = "rgba(255,255,255,0.95)";
+	g.fillStyle = "rgba(255,255,255,0.96)";
+	g.beginPath();
+	g.arc(size * 0.5, size * 0.5, 4.5, 0, Math.PI * 2);
+	g.fill();
+	g.shadowBlur = 0;
+	g.fillStyle = "rgba(255,255,255,1)";
+	g.beginPath();
+	g.arc(size * 0.5, size * 0.5, 3.4, 0, Math.PI * 2);
+	g.fill();
+	return sprite;
+}
+
+const glowSprite = makeGlowSprite();
+
+const camera = {
+	yaw: 0.6,
+	pitch: 0.42,
+	zoom: 0.8,
+	camY: 0,
+	targetZoom: 0.8,
+	targetCamY: 0
+};
+
+const view = {
+	cyaw: 1,
+	syaw: 0,
+	cpitch: 1,
+	spitch: 0,
+	zoom: 0.8,
+	camY: 0,
+	screenX: 0,
+	screenY: 0
+};
+
+let W = 0;
+let H = 0;
+let DPR = 1;
+let last = 0;
+let time = 0;
+
+const timing = {
+	auto: true,
+	mode: "whole",
+	tT: 0,
+	t: 0,
+	hold: 0
+};
+
+function currentFrame() {
+	const layer = Math.min(L - 1, Math.floor(timing.t + 1e-9));
+	const progress = Math.max(0, Math.min(1, timing.t - layer));
+	const morph = smoothstep(0.7, 1, progress);
+	const height = hOf(layer) + (hOf(layer + 1) - hOf(layer)) * morph;
+	return { layer: layer, progress: progress, morph: morph, height: height };
+}
+
+function updateTiming(dt) {
+	if (timing.auto) {
+		if (timing.tT < L) {
+			timing.tT = Math.min(L, timing.tT + dt * 0.35);
+		} else {
+			timing.hold += dt;
+			if (timing.hold >= 3) {
+				timing.tT = 0;
+				timing.hold = 0;
+			}
+		}
+	}
+	timing.t += (timing.tT - timing.t) * Math.min(1, dt * 5);
+	if (Math.abs(timing.tT - timing.t) < 1e-4) timing.t = timing.tT;
+}
+
+function updateCamera(dt, frameState) {
+	const stepping = timing.mode === "step";
+	camera.targetZoom = stepping ? 1.5 : 0.8;
+	camera.targetCamY = stepping ? frameState.height : 0;
+	const ease = Math.min(1, dt * 2);
+	camera.zoom += (camera.targetZoom - camera.zoom) * ease;
+	camera.camY += (camera.targetCamY - camera.camY) * ease;
+}
+
+function reportState() {
+	return {
+		auto: timing.auto,
+		mode: timing.mode,
+		tT: timing.tT,
+		t: timing.t,
+		hold: timing.hold,
+		yaw: camera.yaw,
+		pitch: camera.pitch,
+		zoom: camera.zoom,
+		camY: camera.camY
+	};
+}
+
+function setProgress(value) {
+	const next = Math.max(0, Math.min(L, Number(value) || 0));
+	timing.tT = next;
+	timing.t = next;
+	timing.hold = 0;
+	timing.auto = false;
+}
+
+function resize() {
+	DPR = Math.min(window.devicePixelRatio || 1, 1.25);
+	W = window.innerWidth;
+	H = window.innerHeight;
+	canvas.width = Math.max(1, Math.round(W * DPR));
+	canvas.height = Math.max(1, Math.round(H * DPR));
+	canvas.style.width = W + "px";
+	canvas.style.height = H + "px";
+	ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+	ctx.fillStyle = "#03030a";
+	ctx.fillRect(0, 0, W, H);
+	buildNebula();
+}
+
+function updateView() {
+	view.cyaw = Math.cos(camera.yaw);
+	view.syaw = Math.sin(camera.yaw);
+	view.cpitch = Math.cos(camera.pitch);
+	view.spitch = Math.sin(camera.pitch);
+	view.zoom = camera.zoom;
+	view.camY = camera.camY;
+	view.screenX = W * 0.5;
+	view.screenY = H * 0.5;
+}
+
+function project(x, y, z) {
+	const rx = x * view.cyaw - z * view.syaw;
+	const rz0 = x * view.syaw + z * view.cyaw;
+	const ry = y - view.camY;
+	const ry2 = ry * view.cpitch - rz0 * view.spitch;
+	const rz2 = ry * view.spitch + rz0 * view.cpitch;
+	const s = view.zoom * 700 / (rz2 + 7.5);
+	return { x: view.screenX + rx * s, y: view.screenY - ry2 * s, s: s, z: rz2 };
+}
+
+function smoothstep(a, b, x) {
+	const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+	return t * t * (3 - 2 * t);
+}
+
+let nebulaCanvas = null;
+
+function buildNebula() {
+	const sprite = document.createElement("canvas");
+	sprite.width = Math.max(2, Math.round(W * 0.125));
+	sprite.height = Math.max(2, Math.round(H * 0.125));
+	const g = sprite.getContext("2d");
+	const radius = Math.max(sprite.width, sprite.height) * 0.9;
+	const blobs = [
+		{ x: 0.24, y: 0.28, c: "56,110,255", a: 0.035 },
+		{ x: 0.78, y: 0.22, c: "255,64,170", a: 0.028 },
+		{ x: 0.55, y: 0.82, c: "40,220,200", a: 0.024 }
+	];
+	for (let i = 0; i < blobs.length; i++) {
+		const blob = blobs[i];
+		const gx = sprite.width * blob.x;
+		const gy = sprite.height * blob.y;
+		const gradient = g.createRadialGradient(gx, gy, 0, gx, gy, radius);
+		gradient.addColorStop(0, "rgba(" + blob.c + "," + blob.a + ")");
+		gradient.addColorStop(1, "rgba(" + blob.c + ",0)");
+		g.fillStyle = gradient;
+		g.fillRect(0, 0, sprite.width, sprite.height);
+	}
+	nebulaCanvas = sprite;
+}
+
+function drawBackdrop() {
+	if (nebulaCanvas) ctx.drawImage(nebulaCanvas, 0, 0, W, H);
+}
+
+const starRandom = mulberry32(SEED);
+const stars = new Array(180);
+for (let i = 0; i < stars.length; i++) {
+	const pick = starRandom();
+	stars[i] = {
+		x: starRandom(),
+		y: starRandom(),
+		depth: 0.25 + starRandom() * 0.75,
+		size: 0.35 + starRandom() * 1.45,
+		phase: starRandom() * TWO_PI,
+		speed: 0.35 + starRandom() * 1.9,
+		alpha: 0.12 + starRandom() * 0.55,
+		tint: pick < 0.16 ? "170,205,255"
+			: pick < 0.3 ? "255,188,232"
+				: pick < 0.4 ? "180,255,235"
+					: "246,248,255"
+	};
+}
+
+function drawStars() {
+	const drift = camera.yaw * 0.025;
+	for (let i = 0; i < stars.length; i++) {
+		const star = stars[i];
+		const sx = ((star.x + drift * star.depth) % 1 + 1) % 1;
+		const twinkle = 0.55 + 0.45 * Math.sin(time * star.speed + star.phase);
+		const alpha = star.alpha * twinkle;
+		ctx.fillStyle = "rgba(" + star.tint + "," + alpha + ")";
+		ctx.beginPath();
+		ctx.arc(sx * W, star.y * H, star.size, 0, TWO_PI);
+		ctx.fill();
+		if (star.size > 1.35) {
+			ctx.fillStyle = "rgba(" + star.tint + "," + alpha * 0.14 + ")";
+			ctx.beginPath();
+			ctx.arc(sx * W, star.y * H, star.size * 3.4, 0, TWO_PI);
+			ctx.fill();
+		}
+	}
+}
+
+function drawFaintRing(screen, alpha, glow) {
+	let minX = Infinity;
+	let minY = Infinity;
+	let maxX = -Infinity;
+	let maxY = -Infinity;
+	for (let token = 0; token < N; token++) {
+		const point = screen[token];
+		if (point.x < minX) minX = point.x;
+		if (point.y < minY) minY = point.y;
+		if (point.x > maxX) maxX = point.x;
+		if (point.y > maxY) maxY = point.y;
+	}
+	if (maxX - minX < 1) maxX = minX + 1;
+	if (maxY - minY < 1) maxY = minY + 1;
+	const gradient = ctx.createLinearGradient(minX, minY, maxX, maxY);
+	for (let k = 0; k <= 6; k++) {
+		gradient.addColorStop(k / 6, hueHsl(k * 60, alpha * 0.62, 64));
+	}
+	ctx.beginPath();
+	for (let token = 0; token < N; token++) {
+		const a = screen[token];
+		const b = screen[(token + 1) % N];
+		ctx.moveTo(a.x, a.y);
+		ctx.lineTo(b.x, b.y);
+	}
+	ctx.strokeStyle = gradient;
+	if (glow) {
+		ctx.globalAlpha = 0.2;
+		ctx.lineWidth = 4.2;
+		ctx.stroke();
+		ctx.globalAlpha = 1;
+		ctx.lineWidth = 1.15;
+		ctx.stroke();
+	} else {
+		ctx.globalAlpha = 1;
+		ctx.lineWidth = 0.8;
+		ctx.stroke();
+	}
+	for (let token = 0; token < N; token++) {
+		const point = screen[token];
+		const scale = Math.max(0.45, point.s / 75);
+		ctx.fillStyle = tokenHsl(token, alpha * 0.92, 67);
+		ctx.beginPath();
+		ctx.arc(point.x, point.y, Math.max(0.6, (glow ? 2.0 : 1.35) * scale), 0, TWO_PI);
+		ctx.fill();
+	}
+}
+
+function drawFibers(levelScreen, currentScreen, layer) {
+	for (let token = 0; token < N; token++) {
+		const points = [];
+		for (let l = 0; l < layer; l++) points.push(levelScreen[l][token]);
+		points.push(currentScreen[token]);
+		if (points.length < 2) continue;
+		ctx.beginPath();
+		ctx.moveTo(points[0].x, points[0].y);
+		for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+		ctx.strokeStyle = tokenHsl(token, 0.34, 70);
+		ctx.lineWidth = 1.15;
+		ctx.stroke();
+	}
+}
+
+function drawAttention(phase, screen, world, layer) {
+	if (phase <= 0.002) return;
+	const attn = model.layers[layer].attn;
+	for (let i = 0; i < N; i++) {
+		for (let j = 0; j < N; j++) {
+			const weight = attn[i][j];
+			if (weight < 0.03) continue;
+			const a = screen[i];
+			const b = screen[j];
+			const midX = (world[i].x + world[j].x) * 0.5;
+			const midY = (world[i].y + world[j].y) * 0.5 + 0.25 + 0.7 * weight;
+			const midZ = (world[i].z + world[j].z) * 0.5;
+			const mid = project(midX, midY, midZ);
+			const alpha = phase * (0.16 + 0.62 * Math.min(1, weight * 5));
+			const width = 0.4 + 6 * weight;
+			ctx.strokeStyle = tokenHsl(j, 1, 66);
+			ctx.beginPath();
+			ctx.moveTo(a.x, a.y);
+			ctx.quadraticCurveTo(mid.x, mid.y, b.x, b.y);
+			ctx.globalAlpha = alpha * 0.22;
+			ctx.lineWidth = width * 3.6;
+			ctx.stroke();
+			ctx.globalAlpha = alpha;
+			ctx.lineWidth = width;
+			ctx.stroke();
+			if (weight > 0.105) {
+				const travel = (time * 0.5 + i * 0.137 + j * 0.311) % 1;
+				const u = 1 - travel;
+				const sx = u * u * a.x + 2 * u * travel * mid.x + travel * travel * b.x;
+				const sy = u * u * a.y + 2 * u * travel * mid.y + travel * travel * b.y;
+				ctx.globalAlpha = phase * (0.25 + 0.55 * Math.min(1, weight * 4));
+				ctx.fillStyle = "#ffffff";
+				ctx.beginPath();
+				ctx.arc(sx, sy, 1.35, 0, TWO_PI);
+				ctx.fill();
+			}
+		}
+	}
+	ctx.globalAlpha = 1;
+}
+
+function drawFocus(phase, screen, layer) {
+	if (phase <= 0.002) return;
+	const focus = model.focus[layer];
+	const point = screen[focus.index];
+	if (!point) return;
+	const scale = Math.max(0.45, point.s / 75);
+	const pulse = 0.5 + 0.5 * Math.sin(time * 3.4);
+	const radius = (46 + 24 * pulse) * scale;
+	const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
+	gradient.addColorStop(0, "rgba(255,255,255," + (0.55 * phase) + ")");
+	gradient.addColorStop(0.3, "rgba(220,240,255," + (0.18 * phase) + ")");
+	gradient.addColorStop(1, "rgba(255,255,255,0)");
+	ctx.fillStyle = gradient;
+	ctx.fillRect(point.x - radius, point.y - radius, radius * 2, radius * 2);
+	const ringTravel = (time * 0.7) % 1;
+	const ringRadius = (8 + 36 * ringTravel) * scale;
+	ctx.strokeStyle = "rgba(255,255,255," + (0.26 * phase * (1 - ringTravel)) + ")";
+	ctx.lineWidth = 1.3 * scale;
+	ctx.beginPath();
+	ctx.arc(point.x, point.y, ringRadius, 0, TWO_PI);
+	ctx.stroke();
+}
+
+function drawFfn(phase, screen, world, layer) {
+	if (phase <= 0.002) return;
+	const ffn = model.layers[layer].ffn;
+	const Qd = model.Qd;
+	for (let token = 0; token < N; token++) {
+		const point = screen[token];
+		const scale = Math.max(0.5, point.s / 75);
+		const radius = (14 + 34 * phase) * scale;
+		const aura = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
+		aura.addColorStop(0, tokenHsl(token, 0.16 * phase, 63));
+		aura.addColorStop(1, tokenHsl(token, 0, 63));
+		ctx.fillStyle = aura;
+		ctx.fillRect(point.x - radius, point.y - radius, radius * 2, radius * 2);
+	}
+	for (let token = 0; token < N; token++) {
+		const base = world[token];
+		const baseScreen = screen[token];
+		const spokes = [];
+		for (let f = 0; f < F; f++) {
+			const value = ffn[token][f];
+			if (value < 0.15) continue;
+			const direction = Qd[f];
+			const point = project(
+				base.x + direction.x * 0.9 * value,
+				base.y + direction.y * 0.9 * value,
+				base.z + direction.z * 0.9 * value
+			);
+			const strength = Math.min(1, value / 1.8);
+			const alpha = phase * (0.08 + 0.62 * strength);
+			const scale = Math.max(0.45, point.s / 75);
+			const core = Math.max(0.45, (0.65 + 1.25 * strength) * scale);
+			ctx.fillStyle = tokenHsl(token, alpha * 0.22, 58);
+			ctx.beginPath();
+			ctx.arc(point.x, point.y, core * 2.7, 0, TWO_PI);
+			ctx.fill();
+			ctx.fillStyle = tokenHsl(token, alpha, 71);
+			ctx.beginPath();
+			ctx.arc(point.x, point.y, core, 0, TWO_PI);
+			ctx.fill();
+			if (value > 1.05) spokes.push(point);
+		}
+		if (spokes.length) {
+			ctx.strokeStyle = tokenHsl(token, phase * 0.055, 62);
+			ctx.lineWidth = 0.55;
+			ctx.beginPath();
+			for (let k = 0; k < spokes.length; k++) {
+				ctx.moveTo(baseScreen.x, baseScreen.y);
+				ctx.lineTo(spokes[k].x, spokes[k].y);
+			}
+			ctx.stroke();
+		}
+	}
+}
+
+function drawCurrentCloud(screen) {
+	for (let token = 0; token < N; token++) {
+		const a = screen[token];
+		const b = screen[(token + 1) % N];
+		const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+		gradient.addColorStop(0, tokenHsl(token, 0.85, 62));
+		gradient.addColorStop(1, tokenHsl((token + 1) % N, 0.85, 62));
+		ctx.strokeStyle = gradient;
+		ctx.beginPath();
+		ctx.moveTo(a.x, a.y);
+		ctx.lineTo(b.x, b.y);
+		ctx.globalAlpha = 0.16;
+		ctx.lineWidth = 7;
+		ctx.stroke();
+		ctx.globalAlpha = 0.95;
+		ctx.lineWidth = 1.7;
+		ctx.stroke();
+	}
+	ctx.globalAlpha = 1;
+	for (let token = 0; token < N; token++) {
+		const point = screen[token];
+		const scale = Math.max(0.45, point.s / 75);
+		const radius = 28 * scale;
+		const halo = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
+		halo.addColorStop(0, tokenHsl(token, 0.55, 64));
+		halo.addColorStop(0.35, tokenHsl(token, 0.2, 60));
+		halo.addColorStop(1, tokenHsl(token, 0, 60));
+		ctx.fillStyle = halo;
+		ctx.fillRect(point.x - radius, point.y - radius, radius * 2, radius * 2);
+	}
+	for (let token = 0; token < N; token++) {
+		const point = screen[token];
+		const scale = Math.max(0.45, point.s / 75);
+		const glowSize = 96 * scale;
+		ctx.drawImage(
+			glowSprite,
+			point.x - glowSize * 0.5,
+			point.y - glowSize * 0.5,
+			glowSize,
+			glowSize
+		);
+	}
+	ctx.fillStyle = "rgba(255,255,255,0.96)";
+	for (let token = 0; token < N; token++) {
+		const point = screen[token];
+		const radius = Math.max(1.8, 3.4 * point.s / 75);
+		ctx.beginPath();
+		ctx.arc(point.x, point.y, radius, 0, TWO_PI);
+		ctx.fill();
+	}
+	ctx.lineWidth = 0.9;
+	for (let token = 0; token < N; token++) {
+		const point = screen[token];
+		const radius = Math.max(1.8, 3.4 * point.s / 75) + 2.2;
+		ctx.strokeStyle = tokenHsl(token, 0.6, 68);
+		ctx.beginPath();
+		ctx.arc(point.x, point.y, radius, 0, TWO_PI);
+		ctx.stroke();
+	}
+}
+
+function drawMorphStreaks(morph, oldScreen, screen) {
+	if (morph <= 0.001) return;
+	const fade = Math.sin(Math.PI * Math.min(1, morph));
+	if (fade <= 0.001) return;
+	for (let token = 0; token < N; token++) {
+		const a = oldScreen[token];
+		const b = screen[token];
+		ctx.strokeStyle = tokenHsl(token, 0.34 * fade, 74);
+		ctx.lineWidth = 1.15;
+		ctx.beginPath();
+		ctx.moveTo(a.x, a.y);
+		ctx.lineTo(b.x, b.y);
+		ctx.stroke();
+	}
+}
+
+function renderScene(frameState) {
+	const layer = frameState.layer;
+	const morph = frameState.morph;
+	const progress = frameState.progress;
+	const attnPhase = smoothstep(0.02, 0.1, progress) * (1 - smoothstep(0.3, 0.4, progress));
+	const ffnPhase = smoothstep(0.33, 0.42, progress) * (1 - smoothstep(0.66, 0.74, progress));
+
+	const levelScreen = new Array(L + 1);
+	for (let l = 0; l <= L; l++) {
+		const points = new Array(N);
+		for (let token = 0; token < N; token++) {
+			const point = levelPos[l][token];
+			points[token] = project(point.x, hOf(l) + point.y, point.z);
+		}
+		levelScreen[l] = points;
+	}
+
+	const currentWorld = new Array(N);
+	const currentScreen = new Array(N);
+	const here = levelPos[layer];
+	const next = levelPos[layer + 1];
+	for (let token = 0; token < N; token++) {
+		const a = here[token];
+		const b = next[token];
+		const ax = a.x;
+		const ay = hOf(layer) + a.y;
+		const az = a.z;
+		const bx = b.x;
+		const by = hOf(layer + 1) + b.y;
+		const bz = b.z;
+		const wx = ax + (bx - ax) * morph;
+		const wy = ay + (by - ay) * morph;
+		const wz = az + (bz - az) * morph;
+		currentWorld[token] = { x: wx, y: wy, z: wz };
+		currentScreen[token] = project(wx, wy, wz);
+	}
+
+	for (let l = layer + 1; l <= L; l++) drawFaintRing(levelScreen[l], 0.06, false);
+	for (let l = 0; l < layer; l++) drawFaintRing(levelScreen[l], 0.5, true);
+	if (morph > 0.005 && morph < 0.995) {
+		drawFaintRing(levelScreen[layer], 0.24 * (1 - morph), true);
+	}
+	drawFibers(levelScreen, currentScreen, layer);
+	drawAttention(attnPhase, currentScreen, currentWorld, layer);
+	drawFfn(ffnPhase, currentScreen, currentWorld, layer);
+	drawFocus(attnPhase, currentScreen, layer);
+	drawCurrentCloud(currentScreen);
+	drawMorphStreaks(morph, levelScreen[layer], currentScreen);
+}
+
+function frame(now) {
+	requestAnimationFrame(frame);
+	let dt = (now - last) / 1000;
+	last = now;
+	if (!Number.isFinite(dt) || dt < 0) dt = 0;
+	dt = Math.min(dt, 0.05);
+	time += dt;
+
+	camera.yaw += dt * 0.07;
+	updateTiming(dt);
+	const frameState = currentFrame();
+	updateCamera(dt, frameState);
+	updateView();
+
+	ctx.globalAlpha = 1;
+	ctx.shadowBlur = 0;
+	ctx.shadowColor = "transparent";
+
+	ctx.globalCompositeOperation = "source-over";
+	ctx.fillStyle = "rgba(3,3,10,0.35)";
+	ctx.fillRect(0, 0, W, H);
+
+	ctx.globalCompositeOperation = "lighter";
+	drawBackdrop();
+	drawStars();
+	renderScene(frameState);
+}
+
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

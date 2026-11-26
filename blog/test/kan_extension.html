@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernen ist eine Kan-Erweiterung · arXiv:2502.13810</title>
+<meta name="description" content="Interaktive Lesehilfe zu Pugh, Grundy, Cirstea und Harris: Learning Is a Kan Extension. Kan-Erweiterungen einfach erklärt, Fehler als Informationsverlust, Adjungierte und Kan-Erweiterungen als Minimierer.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+    --bg:#070d14; --bg2:#0b1420;
+    --panel:rgba(16,30,44,.66); --panel2:rgba(8,18,28,.78);
+    --ink:#eef7f4; --muted:#93adbf;
+    --line:rgba(140,220,220,.10); --line2:rgba(140,220,220,.18);
+    --mint:#6ef0b8; --sky:#7cc9ff; --amber:#ffd166; --coral:#ff8a7a; --violet:#b39ddb;
+    --good:#6ef0b8; --bad:#ff7a8a;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 26px 64px -30px rgba(0,0,0,.95);
+    --ring:rgba(110,240,184,.2); --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f4f7f4; --bg2:#e8efe8;
+    --panel:rgba(255,255,255,.78); --panel2:rgba(255,255,255,.9);
+    --ink:#15221d; --muted:#5a6f68;
+    --line:rgba(25,60,50,.12); --line2:rgba(25,60,50,.21);
+    --mint:#0f766e; --sky:#0369a1; --amber:#a16207; --coral:#c2410c; --violet:#6d28d9;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,60,50,.06),0 26px 64px -34px rgba(40,60,50,.45);
+    --ring:rgba(15,118,110,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:radial-gradient(1200px 800px at 80% -10%,rgba(110,240,184,.10),transparent 60%),radial-gradient(900px 700px at -10% 20%,rgba(124,201,255,.09),transparent 60%),radial-gradient(1000px 900px at 50% 120%,rgba(179,157,219,.08),transparent 60%),var(--bg);
+    line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:52px 52px;opacity:.5;
+    -webkit-mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%);mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%)}
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.26;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(110,240,184,.5),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(124,201,255,.45),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(179,157,219,.45),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+  a{color:var(--mint);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--mint)} strong{font-weight:650}
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--mint),var(--sky),var(--amber))}
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--mint);transform:translateY(-1px)}
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mint);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--mint),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.2vw,5rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--mint),var(--sky) 52%,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:43ch;margin:0 0 28px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--mint),var(--sky));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f4f7f4}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+  .hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .hero-kan{width:min(470px,100%);height:auto;overflow:visible}
+  .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .hero-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--amber);font-weight:600}
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 15px 14px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--mint),var(--amber));opacity:.75}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.68rem;color:var(--mint);letter-spacing:.14em;margin-bottom:9px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.5}
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--mint);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+  .prose ul{margin:10px 0;padding-left:20px;color:var(--muted)}
+  .prose li{margin:6px 0}
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+  .segmented{display:inline-flex;flex-wrap:wrap;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--mint);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f4f7f4}
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 14px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--mint)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--mint);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--mint);outline-offset:6px}
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch-track{width:50px;height:28px;border-radius:999px;background:var(--line2);position:relative;transition:background .2s;flex:0 0 auto}
+  .switch-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
+  .switch input:checked + .switch-track{background:var(--mint)}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(22px);background:var(--bg)}
+  .switch input:focus-visible + .switch-track{outline:2px solid var(--mint);outline-offset:3px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f4f7f4}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--mint)}
+  .demo-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+  .readout strong{font-family:var(--serif);font-size:1.25rem;color:var(--mint);font-weight:600}
+  .readout .big{font-family:var(--serif);font-size:1.7rem;color:var(--amber);font-weight:600}
+  .formula-card{margin-top:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line2);border-radius:18px;background:linear-gradient(120deg,rgba(110,240,184,.08),rgba(124,201,255,.07));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.15rem,2.6vw,1.7rem);letter-spacing:.01em;line-height:1.5}
+  .formula sub{font-size:.6em}
+  .formula .op{color:var(--mint)}
+  .formula-note{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted);margin-top:12px}
+  .note{border-left:2px solid var(--amber);padding:14px 18px;background:rgba(255,209,102,.05);border-radius:0 12px 12px 0;color:var(--muted);font-size:.9rem;margin-top:22px}
+  .note b{color:var(--ink)}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 28px}
+  .stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--mint),var(--amber))}
+  .stat-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .stat-values{font-family:var(--serif);font-size:1.35rem;font-weight:600;letter-spacing:-.02em}
+  .stat-values .to{color:var(--mint)}
+  .stat-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+  .take-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.88rem}
+  .take .glyph{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--mint);text-transform:uppercase;margin-bottom:10px}
+  .take ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.86rem}
+  .take li{margin:5px 0}
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--mint);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .deep-body code{font-family:var(--mono);font-size:.86em;color:var(--mint);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  svg{overflow:visible}
+  .kan-svg,.loss-svg,.adj-svg,.tri-svg{width:100%;height:auto;display:block}
+  .kan-item{fill:var(--bg);stroke:var(--line2);stroke-width:1.2}
+  .kan-item-label{fill:var(--ink);font-family:var(--mono);font-size:12px}
+  .kan-item-val{fill:var(--mint);font-family:var(--mono);font-size:12px}
+  .kan-arrow{stroke:var(--line2);stroke-width:1.3;fill:none;opacity:.7}
+  .kan-arrow-head{fill:var(--line2)}
+  .kan-group{fill:rgba(110,240,184,.06);stroke:var(--mint);stroke-width:1.5}
+  .kan-group-label{fill:var(--ink);font-family:var(--sans);font-size:11px;font-weight:600}
+  .kan-group-val{fill:var(--mint);font-family:var(--serif);font-size:20px;font-weight:600}
+  .kan-group-bar{fill:var(--line)}
+  .kan-group-fill{fill:var(--mint)}
+  .kan-head{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .kan-note{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  .loss-dot{fill:var(--mint);opacity:.9}
+  .loss-dot.lost{fill:var(--line2);opacity:.45}
+  .loss-dot.lost-g{fill:var(--coral);opacity:.5}
+  .loss-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .loss-bar-bg{fill:var(--line)}
+  .loss-bar-f{fill:var(--sky)}
+  .loss-bar-g{fill:var(--violet)}
+  .loss-bar-c{fill:var(--amber)}
+  .loss-val{fill:var(--ink);font-family:var(--mono);font-size:11px}
+  .loss-head{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em}
+  .adj-line{stroke:var(--line2);stroke-width:1.6}
+  .adj-tick{stroke:var(--line2);stroke-width:1.2}
+  .adj-tick-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .adj-target{fill:var(--amber);filter:url(#glow-main)}
+  .adj-model{fill:var(--mint);filter:url(#glow-main)}
+  .adj-bracket{stroke:var(--mint);stroke-width:1.4;stroke-dasharray:3 3;fill:none}
+  .adj-label{fill:var(--ink);font-family:var(--mono);font-size:11px}
+  .adj-sub{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .tri-node{fill:var(--bg);stroke:var(--mint);stroke-width:1.6}
+  .tri-node.d{stroke:var(--sky)}
+  .tri-node.e{stroke:var(--amber)}
+  .tri-label{fill:var(--ink);font-family:var(--serif);font-size:16px;font-style:italic}
+  .tri-edge{stroke:var(--line2);stroke-width:1.6;fill:none}
+  .tri-edge-head{fill:var(--line2)}
+  .tri-edge-lan{stroke:var(--mint);stroke-width:2;fill:none}
+  .tri-edge-lan-head{fill:var(--mint)}
+  .tri-edge-h{stroke:var(--violet);stroke-width:1.6;fill:none;stroke-dasharray:5 5}
+  .tri-edge-h-head{fill:var(--violet)}
+  .tri-2{stroke:var(--amber);stroke-width:1.4;fill:none;stroke-dasharray:3 3}
+  .tri-2-head{fill:var(--amber)}
+  .tri-caption{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  @media (max-width:980px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{order:-1}
+    .hero-kan{width:min(340px,84%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .take-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .tldr-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .gloss-grid{grid-template-columns:1fr}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <filter id="glow-main" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">arXiv:2502.13810 · Category Theory + ML · Februar 2025</div>
+      <h1>Lernen ist eine<br><span class="grad">Kan-Erweiterung</span></h1>
+      <p class="lede">Jedes mengentheoretische Fehlerminimierungsproblem lässt sich als linke Kan-Erweiterung schreiben. Die Idee dahinter ist einfach: Fülle eine unvollständige Tabelle so auf, dass jede andere verträgliche Füllung durch deine hindurchgeht.</p>
+      <div class="byline">
+        <span>Matthew Pugh</span><span class="dot-sep"></span>
+        <span>Jo Grundy</span><span class="dot-sep"></span>
+        <span>Corina Cirstea</span><span class="dot-sep"></span>
+        <span>Nick Harris</span>
+      </div>
+      <a class="cta" href="#kan">Die Erweiterung öffnen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg class="hero-kan" id="hero-kan" viewBox="0 0 560 360"></svg>
+      <div class="hero-badge">Beste Ergänzung <strong>Lan<sub>f</sub> φ</strong></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>Kan = beste Ergänzung</h3><p>Fülle fehlende Werte so, dass jede andere verträgliche Füllung durch sie faktorisiert.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>Fehler = Verlust</h3><p>Ein Fehler ist der Informationsverlust einer Datentransformation, nicht nur ein Abstand.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Adjunction = Minimierer</h3><p>Die linke Adjungierte zu Inf liefert den besten Agenten, unabhängig vom gewählten Fehler.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>Kan = Minimierer</h3><p>Die linke Kan-Erweiterung ist, wenn sie existiert, ein globaler Minimierer.</p></div>
+        <div class="tldr-card"><div class="tldr-num">05</div><h3>Alles ist Kan</h3><p>Jedes mengentheoretische Fehlerminimierungsproblem hat eine 2-Kategorie-Darstellung.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal" id="kan">
+      <div class="section-head"><span class="sec-num">01 · Kan-Erweiterungen einfach</span></div>
+      <h2>Die beste Art, eine Tabelle aufzufüllen</h2>
+      <div class="prose">
+        <p>Stell dir vor, du hast Werte auf einer kleinen Menge C und eine Abbildung G: C → D in eine größere Menge. Du willst die Werte auf ganz D ausdehnen. Es gibt viele Möglichkeiten. Die <span class="accent">linke Kan-Erweiterung</span> ist die beste: Sie erfindet nichts, sie fasst die Werte entlang der Fasern zusammen.</p>
+        <p>Konkret: Fünf Items, fünf Werte. Eine Gruppierung f ordnet jedes Item einer Gruppe zu. Die linke Kan-Erweiterung von φ entlang f ist die <span class="accent">Summe der Werte pro Gruppe</span>. In Set wäre es die Vereinigung (ein Kolimes), in einer Ordnung das Supremum, in Zahlen mit Addition die Summe.</p>
+        <p>Die <span class="accent">universelle Eigenschaft</span> macht „beste“ präzise: Jede andere gruppenweise Zuweisung, die mit den Einzelwerten verträglich ist, faktorisiert eindeutig durch die Kan-Erweiterung. Es gibt also keinen vernünftigen Weg daran vorbei.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Kan-Erweiterung als Aggregation</div>
+            <div class="demo-sub">Fünf Items, drei Gruppierungen</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Gruppierung">
+            <button class="seg active" type="button" data-kan="category" aria-pressed="true">Kategorie</button>
+            <button class="seg" type="button" data-kan="parity" aria-pressed="false">Parität</button>
+            <button class="seg" type="button" data-kan="one" aria-pressed="false">Eine Gruppe</button>
+          </div>
+        </div>
+        <svg class="kan-svg" id="kan-svg" viewBox="0 0 560 360" role="img" aria-label="Items, Werte und Gruppen mit ihren Summen"></svg>
+        <div class="readout"><span id="kan-readout">Die Werte werden entlang f zu Gruppen summiert.</span><strong id="kan-total">Σ = 12</strong></div>
+        <div class="caption" id="kan-caption">Die linke Kan-Erweiterung fasst die Werte über die Fasern von f zusammen. Die Summe ist die universelle Lösung.</div>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Die Formel für dieses Beispiel</div>
+        <div class="formula">(Lan<sub>f</sub> φ)(b) <span class="op">=</span> Σ<sub>a : f(a) = b</sub> φ(a)</div>
+        <div class="formula-note">Allgemein: Lan<sub>G</sub> K(d) = colim über die Komma-Kategorie (G ↓ d) von K. Rechts nimmt man das Produkt oder Infimum.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Die formale Definition</summary>
+        <div class="deep-body">
+          <p>Gegeben seien Funktoren G: C → D und K: C → E. Eine <b>linke Kan-Erweiterung</b> von K entlang G ist ein Funktor Lan<sub>G</sub> K: D → E zusammen mit einer natürlichen Transformation η: K ⇒ (Lan<sub>G</sub> K)∘G, sodass es für jedes andere Paar (H: D → E, γ: K ⇒ H∘G) genau eine natürliche Transformation α: Lan<sub>G</sub> K ⇒ H gibt mit γ = (α∘G)η.</p>
+          <p>In angereicherten Kontexten ist Lan<sub>G</sub> K(d) ein Kolimes über die Komma-Kategorie der Paare (c, G(c) → d). In Set ist das die Vereinigung der Bilder; in einem numerischen Monoid die Summe; in einer Ordnung das Supremum. Die rechte Kan-Erweiterung ist dual: Sie nimmt das Produkt beziehungsweise das Infimum.</p>
+          <p>Die universelle Eigenschaft ist der Grund, warum die Kan-Erweiterung „die beste“ Ergänzung ist: Jede andere Ergänzung, die auf C mit K übereinstimmt, muss durch sie hindurch. Sie ist der universelle Empfänger aller verträglichen Ergänzungen.</p>
+        </div>
+      </details>
+
+      <div class="note"><b>Die Intuition:</b> Eine Kan-Erweiterung ist kein beliebiges Auffüllen. Sie ist das Auffüllen, das aus den vorhandenen Werten und den Verbindungen zwischen ihnen <i>erzwungen</i> wird.</div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal" id="fehler">
+      <div class="section-head"><span class="sec-num">02 · Fehler als Informationsverlust</span></div>
+      <h2>Was eine Transformation verliert</h2>
+      <div class="prose">
+        <p>Das Paper definiert Fehler nicht als Abstand zwischen zwei Ausgaben, sondern als Eigenschaft einer <span class="accent">Transformation zwischen Datensätzen</span>. Ein S-flavoured error ist ein laxer 2-Funktor Err: D → S in eine monoidale Präordnung S mit einem Bottom-Element. S sagt, wie Fehler verglichen und kombiniert werden.</p>
+        <p>Die Schlüsselungleichung ist <span class="accent">Err(g) · Err(f) ≤ Err(g ∘ f)</span>. Der Fehler einer Komposition ist also mindestens so groß wie die Kombination der Einzelfehler. Im Beispiel S = R<sub>∧</sub> (Maximum, übliche Ordnung) heißt das: Err(g∘f) ≥ max(Err(g), Err(f)).</p>
+        <p>Ein Funktor wäre zu streng. Zwei Transformationen können dieselbe Information verlieren, dann ist der Gesamtverlust nicht viel größer als der größte Einzelverlust. Oder sie verlieren verschiedene Information, dann ist er größer. Die lax-2-functorale Ungleichung fängt beides ein.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Fehler als verlorene Punkte</div>
+            <div class="demo-sub">Zehn Datenpunkte, zwei Transformationen</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="loss-mode">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Verluste disjunkt</span>
+          </label>
+        </div>
+        <label class="slider-row"><span>f verliert</span><input id="loss-e1" type="range" min="0" max="5" step="1" value="3" aria-label="Verlust von f"><output id="loss-e1-out">3 / 10</output></label>
+        <label class="slider-row"><span>g verliert</span><input id="loss-e2" type="range" min="0" max="5" step="1" value="2" aria-label="Verlust von g"><output id="loss-e2-out">2 / 10</output></label>
+        <svg class="loss-svg" id="loss-svg" viewBox="0 0 560 330" role="img" aria-label="Datenpunkte und Fehlerbalken für zwei Transformationen"></svg>
+        <div class="readout"><span id="loss-readout">Err(g∘f) ≥ max(Err(g), Err(f))</span><strong id="loss-composite">50 %</strong></div>
+        <div class="caption" id="loss-caption">Überlappen sich die Verluste, bleibt der Gesamtverlust beim Maximum. Sind sie disjunkt, addieren sie sich. Die Ungleichung gilt in beiden Fällen.</div>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Der lax-2-functorale Fehler</div>
+        <div class="formula">Err(g) · Err(f) <span class="op">≤</span> Err(g ∘ f)</div>
+        <div class="formula-note">Fehler ist eine Eigenschaft der Transformation. Aus dem Bottom-Element und der laxen Komposition wird eine Präordnung auf Datenpaaren.</div>
+      </div>
+
+      <div class="note"><b>Die Folge:</b> Abstand, Genauigkeit und Informationsverlust sind nach dieser Sicht Maße dafür, wie viel Transformation nötig ist, um einen Datensatz in einen anderen zu überführen. Der Fehler hängt von der Struktur der Datensätze ab, nicht nur von ihren Werten.</div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal" id="adjunktion">
+      <div class="section-head"><span class="sec-num">03 · Adjungiert = Minimierer</span></div>
+      <h2>Die linke Adjungierte ist der beste Agent</h2>
+      <div class="prose">
+        <p>Ein kategorientheoretisches Fehlerminimierungsproblem besteht aus Modellen M, Datensätzen D, einer Inferenzabbildung Inf: M → D, einem Fehler auf D und einem Ziel d ∈ D. Gesucht ist ein Modell, dessen Inferenz möglichst nahe an d liegt.</p>
+        <p>Der erste Hauptsatz des Papers: Hat Inf eine <span class="accent">linke Adjungierte</span> Alg: D → M, dann ist Alg(d) für jedes d ein globaler Fehlerminimierer. Die linke Adjungierte ist die beste „Pseudo-Inverse“ zur Inferenz. Bemerkenswert ist, dass das Ergebnis nicht von der konkreten Wahl des Fehlers abhängt: Die Struktur der Kategorie bestimmt den Minimierer.</p>
+        <p>Das einfachste Bild ist die Inklusion der ganzen Zahlen in die reellen Zahlen. Ihre linke Adjungierte ist die Abrundung. Für ein Ziel d ist floor(d) die beste Approximation von unten: Jede ganze Zahl m mit m ≤ d ist auch ≤ floor(d).</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die beste Approximation von unten</div>
+            <div class="demo-sub">Inklusion ℤ ↪ ℝ und ihre linke Adjungierte</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Adjunktion">
+            <button class="seg active" type="button" data-adj="floor" aria-pressed="true">von unten</button>
+            <button class="seg" type="button" data-adj="ceil" aria-pressed="false">von oben</button>
+          </div>
+        </div>
+        <label class="slider-row"><span>Ziel d</span><input id="adj-d" type="range" min="0" max="5" step="0.01" value="2.7" aria-label="Zielwert"><output id="adj-d-out">2.70</output></label>
+        <svg class="adj-svg" id="adj-svg" viewBox="0 0 560 260" role="img" aria-label="Zahlengerade mit Ziel und bester ganzzahliger Approximation"></svg>
+        <div class="readout"><span id="adj-readout">Für jedes ganze m ≤ 2.70 gilt m ≤ 2.</span><strong id="adj-model">Alg(d) = 2</strong></div>
+        <div class="caption" id="adj-caption">floor(d) ist die beste Approximation von unten, nicht der euklidisch nächste Integer. Die linke Adjungierte liefert die universelle Lösung.</div>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Der Satz</div>
+        <div class="formula">Alg <span class="op">⊣</span> Inf &nbsp;⟹&nbsp; Alg(d) ist globaler Minimierer für jedes d</div>
+        <div class="formula-note">Theorem 3.9. Die linke Adjungierte ist eine Pseudo-Inverse zur Inferenz. Corollary 3.10: der Minimierer ist unabhängig von der Fehlerwahl.</div>
+      </div>
+
+      <div class="note"><b>Die Grenze:</b> Eine Adjungierte muss nicht existieren. Dann hilft der allgemeinere Begriff der Kan-Erweiterung, der nur dann existiert, wenn für das konkrete Ziel ein Minimierer existiert.</div>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal" id="kan-min">
+      <div class="section-head"><span class="sec-num">04 · Kan = Minimierer</span></div>
+      <h2>Die universelle Erweiterung als Lösung</h2>
+      <div class="prose">
+        <p>Das Paper formt das Problem als <span class="accent">Erweiterungsdreieck</span>: Ein Morphismus ι: δ → μ und ein Objekt τ induzieren durch Präkomposition den Funktor T(ι, τ): T(μ, τ) → T(δ, τ). Das ist genau die Inferenz Inf. Die linke Kan-Erweiterung Lan<sub>ι</sub> d ist dann, wenn sie existiert, ein globaler Fehlerminimierer.</p>
+        <p>Der Repräsentationssatz (Theorem 4.1) geht weiter: Zu jedem mengentheoretischen Fehlerminimierungsproblem gibt es eine 2-Kategorie T, in der M = T(μ, τ), D = T(δ, τ) und Inf = T(ι, τ) gilt, und ein Modell m ist genau dann ein globaler Minimierer, wenn m ≅ Lan<sub>ι</sub> d. Jedes Fehlerminimierungsproblem ist also eine Kan-Erweiterung.</p>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Die zwei Ergebnisse</div>
+        <div class="formula">Lan<sub>ι</sub> d ist globaler Minimierer &nbsp;·&nbsp; m ≅ Lan<sub>ι</sub> d ⟺ m minimiert</div>
+        <div class="formula-note">Theorem 3.15 und Theorem 4.1. Die Kan-Erweiterung ist die universelle Lösung des Erweiterungsproblems.</div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die universelle Eigenschaft</div>
+            <div class="demo-sub">Lan<sub>G</sub> K und eine andere Erweiterung H</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="tri-h">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Andere Erweiterung H</span>
+          </label>
+        </div>
+        <svg class="tri-svg" id="tri-svg" viewBox="0 0 560 320" role="img" aria-label="Erweiterungsdreieck mit Kan-Erweiterung und universeller Eigenschaft"></svg>
+        <div class="readout"><span id="tri-readout">Lan<sub>G</sub> K ist die universelle Erweiterung von K entlang G.</span><strong id="tri-status">Lan</strong></div>
+        <div class="caption" id="tri-caption">Jede andere Erweiterung H mit einer Transformation K ⇒ H∘G faktorisiert eindeutig durch Lan<sub>G</sub> K. Das ist die universelle Eigenschaft.</div>
+      </div>
+
+      <div class="note"><b>Der Repräsentationssatz:</b> Das ist keine Analogie. Zu jedem mengentheoretischen Fehlerminimierungsproblem gibt es eine 2-Kategorie, in der die linken Kan-Erweiterungen genau die globalen Minimierer sind. Wenn kein Minimierer existiert, existiert auch keine Kan-Erweiterung.</div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal" id="fazit">
+      <div class="section-head"><span class="sec-num">05 · Was das heißt</span></div>
+      <h2>Drei Konsequenzen</h2>
+      <div class="take-grid">
+        <div class="take"><div class="glyph">Fehler</div><h3>Fehler ist Transformation</h3><p>Abstand, Genauigkeit und Informationsverlust sind Maße dafür, wie viel Transformation nötig ist, um einen Datensatz in einen anderen zu überführen. Der Fehler hängt an den Morphismen, nicht nur an den Ausgaben.</p></div>
+        <div class="take"><div class="glyph">Algorithmen</div><h3>Lernen als Pseudo-Inverse</h3><p>Wenn Algorithmen die linke Adjungierte zur Inferenz sind, dann ist Lernen das beste Zurückrechnen von Daten auf Modelle. Adjungierte funktionieren in jeder 2-Kategorie, nicht nur in Funktorkategorien.</p></div>
+        <div class="take"><div class="glyph">Erweiterung</div><h3>Modelle erweitern Daten</h3><p>ML-Modelle finden Muster und dehnen sie auf neue Daten aus. Genau dieses Ausdehnen ist die Struktur einer Kan-Erweiterung. Annahmen wie Linearität, Glattheit oder Maximum Likelihood sagen, <i>wie</i> erweitert wird.</p></div>
+        <div class="take"><div class="glyph">Grenze</div><h3>Kein Trainingsalgorithmus</h3><p>Das Paper ist ein Repräsentationssatz, kein neuer Optimierer. Es sagt, dass jedes Fehlerminimierungsproblem diese Form hat; es sagt nicht, wie man die Kan-Erweiterung effizient berechnet.</p></div>
+      </div>
+
+      <div class="note"><b>Die Einordnung:</b> Das Ergebnis ist ein Brückensatz zwischen Kategorientheorie und maschinellem Lernen. Es öffnet die Tür, Werkzeuge über Kan-Erweiterungen für ML-Probleme zu nutzen. Es ist kein Benchmark und kein empirischer Vergleich.</div>
+
+      <details class="deep">
+        <summary>Die drei Punkte der Schlussfolgerung</summary>
+        <div class="deep-body">
+          <p><b>1. Fehler als Verlust.</b> Die S-flavoured error legt nahe, Fehler an Transformationen zwischen Datensätzen zu binden. Distance, accuracy und information loss werden zu Maßen der minimalen Transformation, die einen Datensatz in einen anderen überführt.</p>
+          <p><b>2. Unabhängigkeit von der Fehlerwahl.</b> Die linke Adjungierte hängt nicht von der konkreten Fehlerfunktion ab. Das legt nahe, dass es fundamentalere Wege gibt, ein global optimales Modell zu wählen. Algorithmen werden zu Pseudo-Inversen der Inferenz; Adjungierte gibt es in jeder 2-Kategorie, also auch für Mannigfaltigkeiten oder Maßräume.</p>
+          <p><b>3. Lernen als Erweiterung.</b> ML-Modelle „extend“ Daten: Sie nehmen einen Aspekt der Daten und dehnen ihn auf einen neuen Kontext aus. Genau diese Struktur kodiert eine Kan-Erweiterung. Annahmen wie Linearität, Distanz, Glattheit oder Maximum Likelihood sind die zusätzlichen Annahmen, die diese Ausdehnung möglich machen.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 06 -->
+    <section class="section reveal" id="glossar">
+      <div class="section-head"><span class="sec-num">06 · Glossar</span></div>
+      <h2>Die Begriffe</h2>
+      <details class="deep" open>
+        <summary>Von Adjungiert bis universelle Eigenschaft</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>Kategorie</dt><dd>Objekte, Morphismen, Komposition, Identität.</dd></div>
+            <div><dt>Funktor</dt><dd>Eine strukturerhaltende Abbildung zwischen Kategorien.</dd></div>
+            <div><dt>Natürliche Transformation</dt><dd>Eine Familie von Morphismen, die zwei Funktoren verträglich verbindet.</dd></div>
+            <div><dt>2-Kategorie</dt><dd>Eine Kategorie mit 2-Morphismen zwischen 1-Morphismen. Cat ist das Standardbeispiel.</dd></div>
+            <div><dt>Adjunktion</dt><dd>Ein Paar von Funktoren L ⊣ R mit Einheit und Koinheit, die zueinander pseudo-invers sind.</dd></div>
+            <div><dt>Linke Adjungierte</dt><dd>Der linke Partner L einer Adjungierten. Im Text: Alg ⊣ Inf.</dd></div>
+            <div><dt>Kan-Erweiterung</dt><dd>Die beste Erweiterung eines Funktors K entlang eines Funktors G, definiert durch eine universelle Eigenschaft.</dd></div>
+            <div><dt>Kolimes</dt><dd>Ein universeller „Zusammenklebe“-Prozess. In Set: Vereinigung; in Zahlen: Summe; in einer Ordnung: Supremum.</dd></div>
+            <div><dt>Monoidale Präordnung</dt><dd>Eine Präordnung mit einem Tensorprodukt. Werte von Fehlern werden hier verglichen und kombiniert.</dd></div>
+            <div><dt>Laxer 2-Funktor</dt><dd>Ein 2-Funktor, bei dem die Komposition nur eine Vergleichsrichtung hat: F(g)F(f) ≤ F(gf).</dd></div>
+            <div><dt>S-flavoured error</dt><dd>Ein laxer 2-Funktor Err: D → S. Er ordnet jeder Datentransformation einen Fehler zu.</dd></div>
+            <div><dt>Komma-Kategorie</dt><dd>Die Kategorie der Paare (c, G(c) → d). Ihr Kolimes ist die allgemeine Formel für Lan<sub>G</sub> K(d).</dd></div>
+            <div><dt>Universelle Eigenschaft</dt><dd>Eine Charakterisierung durch „für jede andere Lösung gibt es genau einen Pfeil“. Sie macht „beste“ präzise.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Quelle</h4>
+      <p>Matthew Pugh, Jo Grundy, Corina Cirstea, Nick Harris.<br>
+      <a href="https://arxiv.org/abs/2502.13810" target="_blank" rel="noopener">Learning Is a Kan Extension</a>.<br>
+      arXiv:2502.13810v1, 19. Februar 2025. Lizenz CC BY 4.0.</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Lesehilfe, keine eigene Forschung. Die Diagramme und Zahlenbeispiele sind schematisch. Die formalen Definitionen, Sätze und Beweise stehen im Paper.</p>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  function lineArrow(x1, y1, x2, y2, cls, headCls) {
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    var bx = x2 - Math.cos(ang) * 11, by = y2 - Math.sin(ang) * 11;
+    var px = -Math.sin(ang), py = Math.cos(ang);
+    return '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + (x2 - Math.cos(ang) * 6) + '" y2="' + (y2 - Math.sin(ang) * 6) + '"/>' +
+      '<polygon class="' + headCls + '" points="' + x2 + ',' + y2 + ' ' + (bx + px * 4.5) + ',' + (by + py * 4.5) + ' ' + (bx - px * 4.5) + ',' + (by - py * 4.5) + '"/>';
+  }
+  function headAt(x, y, angle, cls) {
+    var bx = x - Math.cos(angle) * 10, by = y - Math.sin(angle) * 10;
+    var px = -Math.sin(angle), py = Math.cos(angle);
+    return '<polygon class="' + cls + '" points="' + x + ',' + y + ' ' + (bx + px * 4.5) + ',' + (by + py * 4.5) + ' ' + (bx - px * 4.5) + ',' + (by - py * 4.5) + '"/>';
+  }
+
+  /* ---------- Kan extension aggregation ---------- */
+  var KAN_ITEMS = [
+    { id: "a", value: 2 },
+    { id: "b", value: 3 },
+    { id: "c", value: 1 },
+    { id: "d", value: 4 },
+    { id: "e", value: 2 }
+  ];
+  var KAN_MAPS = {
+    category: { groups: ["Tiere", "Fahrzeuge", "Pflanzen"], map: { a: "Tiere", b: "Tiere", c: "Fahrzeuge", d: "Fahrzeuge", e: "Pflanzen" } },
+    parity: { groups: ["Gerade", "Ungerade"], map: { a: "Gerade", b: "Ungerade", c: "Ungerade", d: "Gerade", e: "Gerade" } },
+    one: { groups: ["Alle"], map: { a: "Alle", b: "Alle", c: "Alle", d: "Alle", e: "Alle" } }
+  };
+  var kanState = "category";
+  var kanSvg = document.getElementById("kan-svg");
+  function renderKan(svg, mode, update) {
+    var m = KAN_MAPS[mode];
+    var groups = m.groups;
+    var sums = {};
+    groups.forEach(function (g) { sums[g] = 0; });
+    KAN_ITEMS.forEach(function (it) { sums[m.map[it.id]] += it.value; });
+    var total = KAN_ITEMS.reduce(function (a, it) { return a + it.value; }, 0);
+    var itemY = function (i) { return 70 + i * 52; };
+    var groupY = function (j) {
+      if (groups.length === 3) return 70 + j * 80;
+      if (groups.length === 2) return 100 + j * 110;
+      return 150;
+    };
+    var colors = ["mint", "sky", "amber"];
+    var parts = [];
+    parts.push('<text class="kan-head" x="50" y="42">Items</text>');
+    parts.push('<text class="kan-head" x="360" y="42">Gruppen</text>');
+    KAN_ITEMS.forEach(function (it, i) {
+      var y = itemY(i);
+      parts.push('<rect class="kan-item" x="50" y="' + y + '" width="80" height="38" rx="9"/>');
+      parts.push('<text class="kan-item-label" x="62" y="' + (y + 24) + '">' + it.id + '</text>');
+      parts.push('<text class="kan-item-val" x="118" y="' + (y + 24) + '" text-anchor="end">' + it.value + '</text>');
+    });
+    groups.forEach(function (g, j) {
+      var y = groupY(j);
+      var col = colors[j % 3];
+      parts.push('<rect class="kan-group" x="360" y="' + y + '" width="150" height="58" rx="10" stroke="var(--' + col + ')"/>');
+      parts.push('<text class="kan-group-label" x="374" y="' + (y + 22) + '">' + g + '</text>');
+      parts.push('<text class="kan-group-val" x="496" y="' + (y + 26) + '" text-anchor="end">' + sums[g] + '</text>');
+      parts.push('<rect class="kan-group-bar" x="374" y="' + (y + 40) + '" width="122" height="7" rx="3.5"/>');
+      parts.push('<rect class="kan-group-fill" x="374" y="' + (y + 40) + '" width="' + (122 * sums[g] / total).toFixed(1) + '" height="7" rx="3.5" fill="var(--' + col + ')"/>');
+    });
+    KAN_ITEMS.forEach(function (it, i) {
+      var j = groups.indexOf(m.map[it.id]);
+      var y1 = itemY(i) + 19;
+      var y2 = groupY(j) + 29;
+      parts.push('<path class="kan-arrow" d="M130,' + y1 + ' C 230,' + y1 + ' 250,' + y2 + ' 360,' + y2 + '"/>');
+      parts.push(headAt(360, y2, 0, "kan-arrow-head"));
+    });
+    parts.push('<text class="kan-note" x="50" y="330">f: {a,b,c,d,e} → {' + groups.join(", ") + '}</text>');
+    parts.push('<text class="kan-note" x="360" y="330">Lan_f φ: ' + groups.map(function (g) { return g + " ↦ " + sums[g]; }).join(" · ") + '</text>');
+    svg.innerHTML = parts.join("");
+    if (update !== false) {
+      document.getElementById("kan-total").textContent = "Σ = " + total;
+      document.getElementById("kan-readout").textContent = groups.map(function (g) { return g + " = " + sums[g]; }).join(" · ");
+      document.getElementById("kan-caption").textContent = "Die linke Kan-Erweiterung fasst die Werte über die Fasern von f zusammen. Jede andere verträgliche Gruppenzuweisung faktorisiert durch diese Summe.";
+    }
+  }
+  var heroKan = document.getElementById("hero-kan");
+  if (heroKan) renderKan(heroKan, "category", false);
+  document.querySelectorAll("[data-kan]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      kanState = btn.getAttribute("data-kan");
+      document.querySelectorAll("[data-kan]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderKan(kanSvg, kanState, true);
+    });
+  });
+  renderKan(kanSvg, kanState, true);
+
+  /* ---------- lossy composition ---------- */
+  var lossState = { e1: 3, e2: 2, disjoint: false };
+  var lossSvg = document.getElementById("loss-svg");
+  var lossE1 = document.getElementById("loss-e1");
+  var lossE2 = document.getElementById("loss-e2");
+  var lossMode = document.getElementById("loss-mode");
+  function renderLoss() {
+    var e1 = lossState.e1, e2 = lossState.e2;
+    var lostF = {}, lostG = {};
+    for (var i = 0; i < e1; i++) lostF[i] = true;
+    if (lossState.disjoint) {
+      for (var j = 0; j < e2; j++) lostG[Math.min(9, e1 + j)] = true;
+    } else {
+      for (var k = 0; k < e2; k++) lostG[k] = true;
+    }
+    var union = {};
+    Object.keys(lostF).forEach(function (k) { union[k] = true; });
+    Object.keys(lostG).forEach(function (k) { union[k] = true; });
+    var uCount = Object.keys(union).length;
+    var bars = [
+      ["Err(f)", e1 / 10, "loss-bar-f"],
+      ["Err(g)", e2 / 10, "loss-bar-g"],
+      ["Err(g∘f)", uCount / 10, "loss-bar-c"]
+    ];
+    var parts = [];
+    bars.forEach(function (b, i) {
+      var y = 30 + i * 28;
+      parts.push('<text class="loss-head" x="130" y="' + (y + 11) + '" text-anchor="end">' + b[0] + '</text>');
+      parts.push('<rect class="loss-bar-bg" x="140" y="' + y + '" width="340" height="14" rx="7"/>');
+      parts.push('<rect class="' + b[2] + '" x="140" y="' + y + '" width="' + (340 * b[1]).toFixed(1) + '" height="14" rx="7"/>');
+      parts.push('<text class="loss-val" x="490" y="' + (y + 11) + '">' + (b[1] * 100).toFixed(0) + ' %</text>');
+    });
+    var rows = [["D0", 0], ["nach f", 1], ["nach g", 2]];
+    rows.forEach(function (r, ri) {
+      var y = 160 + ri * 52;
+      parts.push('<text class="loss-label" x="40" y="' + (y + 4) + '">' + r[0] + '</text>');
+      for (var d = 0; d < 10; d++) {
+        var x = 60 + d * 44;
+        var cls = "loss-dot";
+        if (ri >= 1 && lostF[d]) cls += " lost";
+        if (ri >= 2 && lostG[d] && !lostF[d]) cls += " lost-g";
+        parts.push('<circle class="' + cls + '" cx="' + x + '" cy="' + y + '" r="9"/>');
+      }
+    });
+    parts.push('<text class="loss-label" x="60" y="318">Err(g∘f) ≥ max(Err(f), Err(g))</text>');
+    parts.push('<text class="loss-val" x="490" y="318" text-anchor="end">' + (uCount * 10) + ' % ≥ ' + (Math.max(e1, e2) * 10) + ' %</text>');
+    lossSvg.innerHTML = parts.join("");
+    lossE1.value = e1;
+    lossE2.value = e2;
+    document.getElementById("loss-e1-out").textContent = e1 + " / 10";
+    document.getElementById("loss-e2-out").textContent = e2 + " / 10";
+    document.getElementById("loss-composite").textContent = (uCount * 10) + " %";
+    document.getElementById("loss-readout").textContent = "Err(g∘f) = " + (uCount * 10) + " % · max = " + (Math.max(e1, e2) * 10) + " %";
+    document.getElementById("loss-caption").textContent = lossState.disjoint
+      ? "Die Verluste sind disjunkt: Die Komposition verliert die Summe der beiden Verluste. Die Ungleichung gilt weiterhin."
+      : "Die Verluste überlappen: Die Komposition verliert nur das Maximum der beiden Verluste. Die Ungleichung gilt weiterhin.";
+  }
+  lossE1.addEventListener("input", function () {
+    lossState.e1 = parseInt(lossE1.value, 10);
+    renderLoss();
+  });
+  lossE2.addEventListener("input", function () {
+    lossState.e2 = parseInt(lossE2.value, 10);
+    renderLoss();
+  });
+  lossMode.addEventListener("change", function () {
+    lossState.disjoint = lossMode.checked;
+    renderLoss();
+  });
+  renderLoss();
+
+  /* ---------- adjunction ---------- */
+  var adjState = { mode: "floor", d: 2.7 };
+  var adjSvg = document.getElementById("adj-svg");
+  var adjD = document.getElementById("adj-d");
+  function renderAdj() {
+    var d = adjState.d;
+    var model = adjState.mode === "floor" ? Math.floor(d) : Math.ceil(d);
+    var x0 = 70, x1 = 510, y = 160;
+    var parts = [];
+    parts.push('<text class="adj-sub" x="' + x0 + '" y="34">' + (adjState.mode === "floor" ? "beste Approximation von unten" : "beste Approximation von oben") + '</text>');
+    parts.push('<text class="adj-sub" x="' + x1 + '" y="34" text-anchor="end">Inklusion ℤ ↪ ℝ</text>');
+    parts.push('<line class="adj-line" x1="' + x0 + '" y1="' + y + '" x2="' + x1 + '" y2="' + y + '"/>');
+    for (var i = 0; i <= 5; i++) {
+      var x = x0 + (x1 - x0) * i / 5;
+      parts.push('<line class="adj-tick" x1="' + x + '" y1="' + (y - 8) + '" x2="' + x + '" y2="' + (y + 8) + '"/>');
+      parts.push('<text class="adj-tick-label" x="' + x + '" y="' + (y + 26) + '" text-anchor="middle">' + i + '</text>');
+    }
+    var tx = x0 + (x1 - x0) * d / 5;
+    var mx = x0 + (x1 - x0) * model / 5;
+    parts.push('<line class="adj-bracket" x1="' + mx + '" y1="' + (y - 34) + '" x2="' + tx + '" y2="' + (y - 34) + '"/>');
+    parts.push('<text class="adj-sub" x="' + ((mx + tx) / 2) + '" y="' + (y - 40) + '" text-anchor="middle">' + Math.abs(d - model).toFixed(2) + '</text>');
+    parts.push('<circle class="adj-target" cx="' + tx + '" cy="' + (y - 34) + '" r="7"/>');
+    parts.push('<text class="adj-label" x="' + tx + '" y="' + (y - 52) + '" text-anchor="middle">d = ' + d.toFixed(2) + '</text>');
+    parts.push('<line class="adj-bracket" x1="' + mx + '" y1="' + (y - 26) + '" x2="' + mx + '" y2="' + (y + 34) + '"/>');
+    parts.push('<circle class="adj-model" cx="' + mx + '" cy="' + (y + 42) + '" r="7"/>');
+    parts.push('<text class="adj-label" x="' + mx + '" y="' + (y + 64) + '" text-anchor="middle">Alg(d) = ' + model + '</text>');
+    adjSvg.innerHTML = parts.join("");
+    adjD.value = d;
+    document.getElementById("adj-d-out").textContent = d.toFixed(2);
+    document.getElementById("adj-model").textContent = "Alg(d) = " + model;
+    document.getElementById("adj-readout").textContent = adjState.mode === "floor"
+      ? "Für jedes ganze m ≤ " + d.toFixed(2) + " gilt m ≤ " + model + "."
+      : "Für jedes ganze m ≥ " + d.toFixed(2) + " gilt m ≥ " + model + ".";
+    document.getElementById("adj-caption").textContent = adjState.mode === "floor"
+      ? "floor ist die linke Adjungierte zur Inklusion. Sie ist die beste Approximation von unten, nicht der euklidisch nächste Integer."
+      : "ceiling ist die rechte Adjungierte zur Inklusion. Die linke Adjungierte, floor, ist die beste Approximation von unten.";
+  }
+  adjD.addEventListener("input", function () {
+    adjState.d = parseFloat(adjD.value);
+    renderAdj();
+  });
+  document.querySelectorAll("[data-adj]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      adjState.mode = btn.getAttribute("data-adj");
+      document.querySelectorAll("[data-adj]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderAdj();
+    });
+  });
+  renderAdj();
+
+  /* ---------- universal property triangle ---------- */
+  var triState = { showH: false };
+  var triSvg = document.getElementById("tri-svg");
+  var triH = document.getElementById("tri-h");
+  function renderTri() {
+    var C = { x: 130, y: 248 }, D = { x: 430, y: 248 }, E = { x: 280, y: 72 };
+    var H = { x: 318, y: 82 };
+    var parts = [];
+    parts.push(lineArrow(C.x - 12, C.y - 18, E.x - 14, E.y + 20, "tri-edge", "tri-edge-head"));
+    parts.push(lineArrow(C.x + 20, C.y, D.x - 24, D.y, "tri-edge", "tri-edge-head"));
+    parts.push(lineArrow(D.x - 10, D.y - 18, E.x + 14, E.y + 20, "tri-edge-lan", "tri-edge-lan-head"));
+    if (triState.showH) {
+      parts.push(lineArrow(D.x - 4, D.y - 22, H.x, H.y + 20, "tri-edge-h", "tri-edge-h-head"));
+      var m1 = { x: (D.x + E.x) / 2 + 2, y: (D.y + E.y) / 2 };
+      var m2 = { x: (D.x + H.x) / 2 + 2, y: (D.y + H.y) / 2 };
+      parts.push('<line class="tri-2" x1="' + m1.x + '" y1="' + m1.y + '" x2="' + m2.x + '" y2="' + m2.y + '"/>');
+      parts.push(headAt(m2.x, m2.y, Math.atan2(m2.y - m1.y, m2.x - m1.x), "tri-2-head"));
+      parts.push('<text class="tri-caption" x="' + (m2.x + 12) + '" y="' + (m2.y + 4) + '">α</text>');
+    }
+    [C, D, E].forEach(function (n, i) {
+      parts.push('<circle class="tri-node ' + (i === 1 ? "d" : (i === 2 ? "e" : "")) + '" cx="' + n.x + '" cy="' + n.y + '" r="23"/>');
+    });
+    parts.push('<text class="tri-label" x="' + C.x + '" y="' + (C.y + 6) + '" text-anchor="middle">C</text>');
+    parts.push('<text class="tri-label" x="' + D.x + '" y="' + (D.y + 6) + '" text-anchor="middle">D</text>');
+    parts.push('<text class="tri-label" x="' + E.x + '" y="' + (E.y + 6) + '" text-anchor="middle">E</text>');
+    parts.push('<text class="tri-caption" x="' + ((C.x + E.x) / 2 - 18) + '" y="' + ((C.y + E.y) / 2) + '">K</text>');
+    parts.push('<text class="tri-caption" x="' + ((C.x + D.x) / 2) + '" y="' + (C.y + 18) + '" text-anchor="middle">G</text>');
+    parts.push('<text class="tri-caption" x="' + ((D.x + E.x) / 2 + 16) + '" y="' + ((D.y + E.y) / 2) + '">Lan_G K</text>');
+    if (triState.showH) parts.push('<text class="tri-caption" x="' + (H.x + 12) + '" y="' + (H.y + 18) + '">H</text>');
+    triSvg.innerHTML = parts.join("");
+    document.getElementById("tri-status").textContent = triState.showH ? "H" : "Lan";
+    document.getElementById("tri-readout").textContent = triState.showH
+      ? "H ist eine andere Erweiterung. Es gibt genau ein α: Lan_G K ⇒ H mit γ = (α∘G)η."
+      : "Lan_G K ist die universelle Erweiterung von K entlang G.";
+    document.getElementById("tri-caption").textContent = triState.showH
+      ? "Jede andere Erweiterung H faktorisiert eindeutig durch Lan_G K. Das ist die universelle Eigenschaft."
+      : "Die linke Kan-Erweiterung ist der universelle Empfänger aller verträglichen Erweiterungen von K entlang G.";
+  }
+  triH.addEventListener("change", function () {
+    triState.showH = triH.checked;
+    renderTri();
+  });
+  renderTri();
+
+})();
+</script>
+</body>
+</html>

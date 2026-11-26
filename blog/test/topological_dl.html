@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Form der Daten · Topological Deep Learning</title>
+<meta name="description" content="Interaktive Lesehilfe zu Papamarkou et al.: Topological Deep Learning is the New Frontier for Relational Learning. Höhere Beziehungen, persistente Homologie und die 11 offenen Probleme.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+    --bg:#06080f; --bg2:#0b0e1c;
+    --panel:rgba(18,22,44,.66); --panel2:rgba(9,12,26,.78);
+    --ink:#eef1ff; --muted:#98a4c4;
+    --line:rgba(150,170,255,.10); --line2:rgba(150,170,255,.18);
+    --mint:#6ef0b8; --sky:#7cc9ff; --amber:#ffd166; --coral:#ff8a7a; --violet:#b39ddb;
+    --good:#6ef0b8; --bad:#ff7a8a;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 26px 64px -30px rgba(0,0,0,.95);
+    --ring:rgba(110,240,184,.2); --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f5f6fc; --bg2:#e9ecf8;
+    --panel:rgba(255,255,255,.78); --panel2:rgba(255,255,255,.9);
+    --ink:#141a33; --muted:#5b6484;
+    --line:rgba(30,45,95,.12); --line2:rgba(30,45,95,.21);
+    --mint:#0f766e; --sky:#0369a1; --amber:#a16207; --coral:#c2410c; --violet:#6d28d9;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,50,90,.06),0 26px 64px -34px rgba(40,50,90,.45);
+    --ring:rgba(15,118,110,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:radial-gradient(1200px 800px at 80% -10%,rgba(110,240,184,.10),transparent 60%),radial-gradient(900px 700px at -10% 20%,rgba(124,201,255,.09),transparent 60%),radial-gradient(1000px 900px at 50% 120%,rgba(179,157,219,.08),transparent 60%),var(--bg);
+    line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:56px 56px;opacity:.5;
+    -webkit-mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%);mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%)}
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.26;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(110,240,184,.5),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(124,201,255,.45),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(179,157,219,.45),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+  a{color:var(--mint);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--mint)} strong{font-weight:650}
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--mint),var(--sky),var(--amber))}
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--mint);transform:translateY(-1px)}
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mint);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--mint),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.2vw,5rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--mint),var(--sky) 52%,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:43ch;margin:0 0 28px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--mint),var(--sky));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f5f6fc}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+  .hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .hero-persist{width:min(470px,100%);height:auto;overflow:visible}
+  .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .hero-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--amber);font-weight:600}
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 15px 14px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--mint),var(--amber));opacity:.75}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.68rem;color:var(--mint);letter-spacing:.14em;margin-bottom:9px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.5}
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--mint);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+  .prose ul{margin:10px 0;padding-left:20px;color:var(--muted)}
+  .prose li{margin:6px 0}
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+  .segmented{display:inline-flex;flex-wrap:wrap;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--mint);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f5f6fc}
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 14px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--mint)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--mint);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--mint);outline-offset:6px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f5f6fc}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--mint)}
+  .readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+  .readout strong{font-family:var(--serif);font-size:1.25rem;color:var(--mint);font-weight:600}
+  .readout .big{font-family:var(--serif);font-size:1.7rem;color:var(--amber);font-weight:600}
+  .formula-card{margin-top:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line2);border-radius:18px;background:linear-gradient(120deg,rgba(110,240,184,.08),rgba(124,201,255,.07));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.15rem,2.6vw,1.7rem);letter-spacing:.01em;line-height:1.5}
+  .formula sub{font-size:.6em}
+  .formula .op{color:var(--mint)}
+  .formula-note{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted);margin-top:12px}
+  .note{border-left:2px solid var(--amber);padding:14px 18px;background:rgba(255,209,102,.05);border-radius:0 12px 12px 0;color:var(--muted);font-size:.9rem;margin-top:22px}
+  .note b{color:var(--ink)}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 28px}
+  .stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--mint),var(--amber))}
+  .stat-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .stat-values{font-family:var(--serif);font-size:1.35rem;font-weight:600;letter-spacing:-.02em}
+  .stat-values .to{color:var(--mint)}
+  .stat-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+  .take-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.88rem}
+  .take .glyph{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--mint);text-transform:uppercase;margin-bottom:10px}
+  .take ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.86rem}
+  .take li{margin:5px 0}
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--mint);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  svg{overflow:visible}
+  .persist-svg,.ho-svg{width:100%;height:auto;display:block}
+  .persist-point{fill:var(--mint);opacity:.95}
+  .persist-edge{stroke:var(--line2);stroke-width:1.1}
+  .persist-tri{fill:var(--mint);opacity:.055}
+  .persist-ring{fill:none;stroke:var(--amber);stroke-width:1.4;stroke-dasharray:4 5;opacity:.8}
+  .persist-head{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .persist-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .persist-big{fill:var(--ink);font-family:var(--serif);font-size:26px;font-weight:600}
+  .persist-card{fill:var(--bg);stroke:var(--line2);stroke-width:1.2}
+  .ho-node{fill:var(--bg);stroke:var(--cyan,var(--sky));stroke-width:1.8;cursor:pointer;transition:stroke .2s}
+  .ho-node.active{stroke:var(--amber);stroke-width:3;filter:url(#glow-main)}
+  .ho-node-label{fill:var(--ink);font-family:var(--mono);font-size:12px;pointer-events:none}
+  .ho-edge{stroke:var(--line2);stroke-width:1.8;fill:none;transition:stroke .2s}
+  .ho-edge.active{stroke:var(--mint);stroke-width:2.6}
+  .ho-tri{fill:rgba(124,201,255,.14);stroke:var(--sky);stroke-width:1.4;opacity:0;transition:opacity .25s}
+  .ho-tri.on{opacity:1}
+  .ho-hyper{fill:rgba(179,157,219,.16);stroke:var(--violet);stroke-width:1.4;stroke-dasharray:5 5;opacity:0;transition:opacity .25s}
+  .ho-hyper.on{opacity:1}
+  .ho-label{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  .adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .adv-card{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .adv-card:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .adv-card .glyph{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;color:var(--mint);text-transform:uppercase;margin-bottom:8px}
+  .adv-card h3{font-family:var(--serif);font-size:1.05rem;font-weight:600;margin:0 0 6px}
+  .adv-card p{margin:0;color:var(--muted);font-size:.84rem}
+  .op-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+  .op-card{text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;cursor:pointer;transition:color .18s,border-color .18s,background .18s;color:var(--muted)}
+  .op-card:hover{border-color:var(--line2);color:var(--ink)}
+  .op-card.active{border-color:var(--amber);background:rgba(255,209,102,.06)}
+  .op-num{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--mint);margin-bottom:5px}
+  .op-title{font-family:var(--sans);font-size:.8rem;color:var(--ink);font-weight:600;line-height:1.3}
+  .op-theme{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;color:var(--muted);margin-top:4px}
+  .op-detail{margin-top:16px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:.9rem;color:var(--muted);min-height:5em}
+  .op-detail b{color:var(--ink)}
+  @media (max-width:980px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{order:-1}
+    .hero-persist{width:min(340px,84%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .take-grid{grid-template-columns:1fr}
+    .adv-grid{grid-template-columns:1fr}
+    .op-grid{grid-template-columns:repeat(3,1fr)}
+  }
+  @media (max-width:640px){
+    .tldr-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .gloss-grid{grid-template-columns:1fr}
+    .op-grid{grid-template-columns:repeat(2,1fr)}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <filter id="glow-main" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">ICML 2024 Position Paper · arXiv:2402.08871</div>
+      <h1>Die Form<br><span class="grad">der Daten</span></h1>
+      <p class="lede">Graphen sehen Paare. Die Welt hat aber auch Dreiecke, Hyperkanten und Löcher. <b>Topological Deep Learning</b> macht diese höheren Beziehungen sichtbar und rechnet auf ihnen.</p>
+      <div class="byline">
+        <span>Theodore Papamarkou et al.</span><span class="dot-sep"></span>
+        <span>22 Autor:innen</span><span class="dot-sep"></span>
+        <span>ICML 2024</span>
+      </div>
+      <a class="cta" href="#tdl">Die Form öffnen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg class="hero-persist" id="hero-persist" viewBox="0 0 560 360"></svg>
+      <div class="hero-badge">Komponenten <strong>b₀</strong> · Löcher <strong>b₁</strong></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>Mehr als Paare</h3><p>Graphen kennen Kanten. Simpliziale Komplexe kennen Flächen, Hypergraphen beliebige Gruppen.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>Topologie sehen</h3><p>Komponenten, Löcher und Hohlräume über alle Skalen. Persistent homology macht sie sichtbar.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Vier Vorteile</h3><p>Architekturwahl, Multi-Way-Beziehungen, Remeshing-Symmetrie, topologische Äquivarianz.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>11 offene Probleme</h3><p>Anwendungen, Daten, Software, Skalierung, Erklärbarkeit, Fairness, Theorie.</p></div>
+        <div class="tldr-card"><div class="tldr-num">05</div><h3>Ein Aufruf</h3><p>Das Paper ist eine Agenda, kein fertiges Ergebnis. Es lädt die Community ein.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal" id="tdl">
+      <div class="section-head"><span class="sec-num">01 · Was ist TDL?</span></div>
+      <h2>Beziehungen, die mehr als zwei Knoten verbinden</h2>
+      <div class="prose">
+        <p><span class="accent">Topological Deep Learning</span> (TDL) nutzt topologische Strukturen, um Deep-Learning-Modelle zu verstehen und zu entwerfen. Es ergänzt Graph Representation Learning und Geometric Deep Learning. Statt Daten nur als Merkmalsvektoren oder paarweise Kanten zu sehen, arbeitet TDL auf höheren Beziehungen: Dreiecken, Zellen, Hyperkanten, simplizialen Komplexen, Garben.</p>
+        <p>Der Unterschied ist handfest. Ein Graph kennt nur Paare. Ein simplizialer Komplex kennt eine Fläche, die drei Knoten gemeinsam tragen. Ein Hypergraph kennt eine beliebige Menge von Knoten als eine Beziehung. Diese höheren Einheiten können Nachrichten anders weitergeben und Strukturen tragen, die paarweise Kanten nicht sehen.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Paare, Dreiecke, Hyperkanten</div>
+            <div class="demo-sub">Klicke einen Knoten</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Struktur">
+            <button class="seg active" type="button" data-ho="graph" aria-pressed="true">Graph</button>
+            <button class="seg" type="button" data-ho="simplicial" aria-pressed="false">Simplizial</button>
+            <button class="seg" type="button" data-ho="hyper" aria-pressed="false">Hypergraph</button>
+          </div>
+        </div>
+        <svg class="ho-svg" id="ho-svg" viewBox="0 0 560 360" role="img" aria-label="Fünf Knoten als Graph, simplizialer Komplex oder Hypergraph"></svg>
+        <div class="readout"><span id="ho-readout">Graph: Knoten 1 ist mit 0 und 2 verbunden.</span><strong id="ho-count">5 Kanten</strong></div>
+        <div class="caption" id="ho-caption">Ein Graph kennt nur Paare. Ein simplizialer Komplex kennt Flächen. Ein Hypergraph kennt beliebige Teilmengen von Knoten.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Die topologischen Domänen</summary>
+        <div class="deep-body">
+          <ul>
+            <li><b>Graph:</b> Knoten und paarweise Kanten. Der Standard für relationale Daten.</li>
+            <li><b>Simplizialer Komplex:</b> Knoten, Kanten, Dreiecke, Tetraeder. Jede höhere Zelle ist durch ihre Seiten bestimmt.</li>
+            <li><b>Zellkomplex:</b> Zellen mit beliebiger Form, nicht nur Simplizes. Flexibel für Moleküle und Meshes.</li>
+            <li><b>Hypergraph:</b> Hyperkanten verbinden beliebig viele Knoten. Gut für Gruppenbeziehungen.</li>
+            <li><b>Kombinatorischer Komplex:</b> Eine gemeinsame Sprache für Zellen, Hypergraphen und simpliziale Komplexe.</li>
+            <li><b>Garbe:</b> Lokale Daten, die sich global konsistent verkleben lassen. Nützlich für Konsistenz und Diffusion.</li>
+          </ul>
+          <p>TDL kann Daten auf diesen Domänen verarbeiten und topologische Eigenschaften in die Architektur, die Nachrichtenweitergabe oder die Verlustfunktion einbauen.</p>
+        </div>
+      </details>
+
+      <div class="note"><b>Die Pointe:</b> Es geht nicht darum, mehr Kanten zu zeichnen. Es geht darum, Beziehungen als eigene Objekte zu behandeln, mit eigener Algebra und eigener Nachrichtenweitergabe.</div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal" id="topologie">
+      <div class="section-head"><span class="sec-num">02 · Topologie sehen</span></div>
+      <h2>Komponenten, Löcher und was bleibt</h2>
+      <div class="prose">
+        <p>Topologie ist die Mathematik der Eigenschaften, die unter stetiger Deformation erhalten bleiben. Ein Kreis bleibt ein Kreis, egal wie du ihn ziehst. Für Daten heißt das: <span class="accent">Persistent homology</span> verfolgt über alle Skalen, wann Punkte zu Komponenten verschmelzen, wann ein Loch entsteht und wann es sich wieder schließt.</p>
+        <p>Die Zahlen dahinter heißen <span class="accent">Betti-Zahlen</span>: b₀ zählt die Komponenten, b₁ die Löcher, b₂ die Hohlräume. Sie sind eine Zusammenfassung der Form, die von der konkreten Einbettung unabhängig ist. Genau diese Form kann eine Architektur nutzen oder erhalten.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Filtration</div>
+            <div class="demo-sub">Ein Radius, viele Skalen</div>
+          </div>
+          <div class="readout" style="border:none;margin:0;padding:0"><span>b₀ / b₁</span><strong class="big" id="persist-betti">1 / 1</strong></div>
+        </div>
+        <label class="slider-row"><span>Radius</span><input id="persist-radius" type="range" min="0" max="190" step="1" value="100" aria-label="Filtrationsradius"><output id="persist-radius-out">100</output></label>
+        <svg class="persist-svg" id="persist-svg" viewBox="0 0 560 360" role="img" aria-label="Punktwolke mit Kanten und Dreiecken bei einem Filtrationsradius"></svg>
+        <div class="readout"><span id="persist-readout">b₀ = 1 Komponente · b₁ = 1 Loch</span><strong id="persist-b0">b₀ = 1</strong></div>
+        <div class="caption" id="persist-caption">Kleiner Radius: viele Komponenten. Mittlerer Radius: der Ring schließt sich, ein Loch entsteht. Großer Radius: das Loch füllt sich.</div>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Euler-Charakteristik</div>
+        <div class="formula">χ <span class="op">=</span> V − E + F <span class="op">=</span> b₀ − b₁ + b₂</div>
+        <div class="formula-note">Die Demo berechnet b₀ über die Komponenten und b₁ über den Rang der Randabbildung.</div>
+      </div>
+
+      <div class="note"><b>Warum das für ML zählt:</b> Die Topologie der Daten kann die Wahl der Architektur bestimmen. Ein Modell, das die falsche Topologie annimmt, kann eine Struktur nicht lernen, die in den Daten steckt.</div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal" id="warum">
+      <div class="section-head"><span class="sec-num">03 · Warum TDL?</span></div>
+      <h2>Vier Vorteile, die über Graphen hinausgehen</h2>
+      <div class="prose">
+        <p>Das Position Paper nennt vier praktische Gründe, warum Topologie für Deep Learning zählt. Sie sind der Grund, warum TDL nicht nur ein Spezialfall von Graph Neural Networks ist.</p>
+      </div>
+
+      <div class="adv-grid">
+        <div class="adv-card"><div class="glyph">01 · Architektur</div><h3>Die Topologie bestimmt die Architektur</h3><p>Ein Knoten in R³ lässt sich nicht mit einem einzelnen MLP nach R² abbilden, ohne die topologische Information zu verlieren. Die Form des Datenraums schränkt ein, welche Architektur überhaupt funktionieren kann.</p></div>
+        <div class="adv-card"><div class="glyph">02 · Multi-Way</div><h3>Mehr als paarweise Beziehungen</h3><p>Dreiecke, Zellen und Hyperkanten tragen Beziehungen, die drei oder mehr Entitäten gleichzeitig verbinden. Genau diese höheren Beziehungen sind in relationalen Daten oft die interessante Struktur.</p></div>
+        <div class="adv-card"><div class="glyph">03 · Remeshing</div><h3>Regularitäten der Mannigfaltigkeit</h3><p>Dieselbe Kugel kann unterschiedlich trianguliert sein. Ein gutes Modell sollte auf die gleiche topologische Struktur gleich reagieren, auch wenn das Mesh anders ist.</p></div>
+        <div class="adv-card"><div class="glyph">04 · Äquivarianz</div><h3>Topologische Äquivarianzen</h3><p>GNNs nutzen Permutationen, GDL oft Euklidische Gruppen. TDL kann größere Homeomorphismengruppen und topologische Invarianten berücksichtigen.</p></div>
+      </div>
+
+      <div class="note"><b>Die Intuition:</b> Ein Graph sieht, wer mit wem verbunden ist. Die Topologie sieht, welche Form diese Verbindungen bilden. Manchmal ist die Form das Entscheidende.</div>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal" id="agenda">
+      <div class="section-head"><span class="sec-num">04 · Die Agenda</span></div>
+      <h2>Elf offene Probleme</h2>
+      <div class="prose">
+        <p>Das Paper ist eine <span class="accent">Position</span>, keine fertige Theorie. Sein Beitrag ist eine Landkarte offener Probleme, jeweils mit einer Forschungsrichtung. Die Probleme reichen von Anwendungen und Daten über Software und Skalierung bis zu Erklärbarkeit, Fairness und theoretischen Grundlagen.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Agenda</div>
+            <div class="demo-sub">Klicke ein Problem. Filtere nach Thema.</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Thema">
+            <button class="seg active" type="button" data-op="all" aria-pressed="true">Alle</button>
+            <button class="seg" type="button" data-op="app" aria-pressed="false">Anwendung</button>
+            <button class="seg" type="button" data-op="scale" aria-pressed="false">Software</button>
+            <button class="seg" type="button" data-op="trust" aria-pressed="false">Vertrauen</button>
+            <button class="seg" type="button" data-op="theory" aria-pressed="false">Theorie</button>
+          </div>
+        </div>
+        <div class="op-grid" id="op-grid"></div>
+        <div class="op-detail" id="op-detail"></div>
+        <div class="readout"><span id="op-readout">Wähle ein Problem für Problem und Forschungsrichtung.</span><strong id="op-count">11 / 11</strong></div>
+        <div class="caption">Die elf Probleme und Richtungen sind die Agenda des Papers. Sie sind keine Resultate, sondern Einladungen.</div>
+      </div>
+
+      <div class="note"><b>Die Struktur:</b> Die Probleme sind bewusst breit. Sie verbinden Anwendungen (1-3), Werkzeuge und Skalierung (4-6), Vertrauen und Verstehen (7, 8, 10, 11) und Theorie (9).</div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal" id="fazit">
+      <div class="section-head"><span class="sec-num">05 · Was das heißt</span></div>
+      <h2>Ein Aufruf, kein fertiges Rezept</h2>
+      <div class="take-grid">
+        <div class="take"><div class="glyph">Relational</div><h3>Topologie erweitert die Beziehungen</h3><p>Relationales Lernen ist mehr als Paare. TDL macht höhere Beziehungen zuerstklassig: Sie werden zu Objekten mit eigener Algebra, Nachrichtenweitergabe und Architektur.</p></div>
+        <div class="take"><div class="glyph">Agenda</div><h3>Die offenen Probleme sind der Beitrag</h3><p>Das Paper liefert keine neue Benchmark-Siegerin. Es liefert eine gemeinsame Sprache für Anwendungen, Daten, Software, Skalierung, Erklärbarkeit, Fairness und Theorie.</p></div>
+        <div class="take"><div class="glyph">Grenze</div><h3>Position, nicht Beweis</h3><p>Die Aussagen sind Forschungsrichtungen und Thesen. Ob TDL die „neue Grenze“ ist, entscheidet sich an Anwendungen, Benchmarks und Theorie, nicht an diesem Papier.</p></div>
+        <div class="take"><div class="glyph">Gemeinschaft</div><h3>22 Autor:innen, ein Aufruf</h3><p>Das Paper ist bewusst gemeinschaftlich. Es lädt Mathematik, Informatik und Anwendungsdisziplinen ein, die offenen Probleme gemeinsam anzugehen.</p></div>
+      </div>
+
+      <div class="note"><b>Die Einordnung:</b> Es ist ein ICML-2024-Position-Paper. Die Stärke ist die Landkarte, nicht ein einzelnes Ergebnis. Die 11 offenen Probleme sind der eigentliche Inhalt, und die Forschungsrichtungen sind konkrete nächste Schritte.</div>
+    </section>
+
+    <!-- 06 -->
+    <section class="section reveal" id="glossar">
+      <div class="section-head"><span class="sec-num">06 · Glossar</span></div>
+      <h2>Die Begriffe</h2>
+      <details class="deep" open>
+        <summary>Von Betti bis Zellkomplex</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>Topologie</dt><dd>Die Mathematik der Eigenschaften, die unter stetiger Deformation erhalten bleiben.</dd></div>
+            <div><dt>TDL</dt><dd>Topological Deep Learning: Deep Learning auf topologischen Domänen und mit topologischen Eigenschaften.</dd></div>
+            <div><dt>GDL / GRL</dt><dd>Geometric Deep Learning und Graph Representation Learning. TDL ergänzt beide.</dd></div>
+            <div><dt>Simplizialer Komplex</dt><dd>Knoten, Kanten, Dreiecke und höhere Simplizes. Jede Zelle ist durch ihre Seiten bestimmt.</dd></div>
+            <div><dt>Zellkomplex</dt><dd>Zellen mit beliebiger Form, nicht nur Simplizes. Flexibel für Moleküle und Meshes.</dd></div>
+            <div><dt>Hypergraph</dt><dd>Hyperkanten verbinden beliebig viele Knoten. Gut für Gruppenbeziehungen.</dd></div>
+            <div><dt>Garbe</dt><dd>Lokale Daten, die sich global konsistent verkleben lassen. Nützlich für Konsistenz und Diffusion.</dd></div>
+            <div><dt>Kombinatorischer Komplex</dt><dd>Eine gemeinsame Sprache für Zellen, Hypergraphen und simpliziale Komplexe.</dd></div>
+            <div><dt>Persistente Homologie</dt><dd>Verfolgt topologische Merkmale über eine Filtration von Skalen.</dd></div>
+            <div><dt>Betti-Zahlen</dt><dd>b₀ zählt Komponenten, b₁ Löcher, b₂ Hohlräume.</dd></div>
+            <div><dt>Filtration</dt><dd>Eine Familie wachsender Räume, parametrisiert durch einen Radius oder eine Skala.</dd></div>
+            <div><dt>Höhere Beziehung</dt><dd>Eine Relation zwischen drei oder mehr Entitäten, zum Beispiel eine Fläche oder eine Hyperkante.</dd></div>
+            <div><dt>Remeshing-Symmetrie</dt><dd>Die Idee, dass dieselbe Mannigfaltigkeit unter verschiedenen Triangulierungen gleich behandelt werden sollte.</dd></div>
+            <div><dt>Topologische Äquivarianz</dt><dd>Invarianten unter Homeomorphismen und topologischen Transformationen, nicht nur unter Permutationen.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Quelle</h4>
+      <p>Theodore Papamarkou, Tolga Birdal, Michael Bronstein, et al.<br>
+      <a href="https://arxiv.org/abs/2402.08871" target="_blank" rel="noopener">Position: Topological Deep Learning is the New Frontier for Relational Learning</a>.<br>
+      ICML 2024, PMLR 235. arXiv:2402.08871v3, 6. August 2024. Lizenz CC BY-NC-ND 4.0.</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Lesehilfe, keine eigene Forschung. Die Diagramme und die Filtrationsdemo sind schematisch. Die 11 Probleme und Forschungsrichtungen sind aus dem Paper zusammengefasst; die vollständigen Formulierungen stehen dort.</p>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  /* ---------- higher-order relations ---------- */
+  var HO_NODES = [
+    { x: 280, y: 75 },
+    { x: 380, y: 148 },
+    { x: 342, y: 265 },
+    { x: 218, y: 265 },
+    { x: 180, y: 148 }
+  ];
+  var HO_EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]];
+  var HO_STATE = { mode: "graph", node: 1 };
+  var hoSvg = document.getElementById("ho-svg");
+  function renderHO() {
+    var mode = HO_STATE.mode;
+    var sel = HO_STATE.node;
+    var parts = [];
+    var centroid = { x: (HO_NODES[0].x + HO_NODES[1].x + HO_NODES[2].x) / 3, y: (HO_NODES[0].y + HO_NODES[1].y + HO_NODES[2].y) / 3 };
+    if (mode === "simplicial") {
+      parts.push('<polygon class="ho-tri ' + (sel <= 2 ? "on" : "") + '" points="' + HO_NODES[0].x + ',' + HO_NODES[0].y + ' ' + HO_NODES[1].x + ',' + HO_NODES[1].y + ' ' + HO_NODES[2].x + ',' + HO_NODES[2].y + '"/>');
+    }
+    if (mode === "hyper") {
+      parts.push('<circle class="ho-hyper ' + (sel <= 2 ? "on" : "") + '" cx="' + centroid.x.toFixed(1) + '" cy="' + centroid.y.toFixed(1) + '" r="124"/>');
+    }
+    HO_EDGES.forEach(function (e) {
+      var a = HO_NODES[e[0]], b = HO_NODES[e[1]];
+      var on = (sel === e[0] || sel === e[1]);
+      parts.push('<line class="ho-edge' + (on ? " active" : "") + '" x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '"/>');
+    });
+    HO_NODES.forEach(function (n, i) {
+      parts.push('<circle class="ho-node' + (i === sel ? " active" : "") + '" cx="' + n.x + '" cy="' + n.y + '" r="23" data-node="' + i + '"/>');
+      parts.push('<text class="ho-node-label" x="' + n.x + '" y="' + (n.y + 4) + '" text-anchor="middle">' + i + '</text>');
+    });
+    if (mode === "simplicial") {
+      parts.push('<text class="ho-label" x="' + (centroid.x + 10) + '" y="' + (centroid.y + 6) + '">2-Simplex {0,1,2}</text>');
+    }
+    if (mode === "hyper") {
+      parts.push('<text class="ho-label" x="' + (centroid.x + 10) + '" y="' + (centroid.y + 6) + '">Hyperkante {0,1,2}</text>');
+    }
+    hoSvg.innerHTML = parts.join("");
+    var inHigh = sel <= 2;
+    var readout = document.getElementById("ho-readout");
+    var count = document.getElementById("ho-count");
+    if (mode === "graph") {
+      var neigh = HO_EDGES.filter(function (e) { return e[0] === sel || e[1] === sel; }).map(function (e) { return e[0] === sel ? e[1] : e[0]; });
+      readout.textContent = "Graph: Knoten " + sel + " ist mit " + neigh.join(" und ") + " verbunden.";
+      count.textContent = "5 Kanten";
+    } else if (mode === "simplicial") {
+      readout.textContent = inHigh ? "Simplizial: Knoten " + sel + " liegt in der 2-Simplex {0,1,2}." : "Knoten " + sel + " liegt in keiner 2-Simplex; nur in Kanten.";
+      count.textContent = inHigh ? "5 Kanten + 1 Fläche" : "5 Kanten";
+    } else {
+      readout.textContent = inHigh ? "Hypergraph: Knoten " + sel + " liegt in der Hyperkante {0,1,2}." : "Knoten " + sel + " liegt in keiner Hyperkante.";
+      count.textContent = inHigh ? "5 Kanten + 1 Hyperkante" : "5 Kanten";
+    }
+    document.getElementById("ho-caption").textContent = mode === "graph"
+      ? "Ein Graph kennt nur Paare. Die Beziehung zwischen 0, 1 und 2 ist in drei Kanten zerlegt."
+      : (mode === "simplicial"
+        ? "Ein simplizialer Komplex kennt die Fläche {0,1,2} als eigene Zelle. Die drei Knoten tragen sie gemeinsam."
+        : "Ein Hypergraph kennt die Menge {0,1,2} als eine Hyperkante. Die Beziehung ist nicht in Paare zerlegt.");
+  }
+  hoSvg.addEventListener("click", function (ev) {
+    var n = ev.target.getAttribute && ev.target.getAttribute("data-node");
+    if (n !== null && n !== undefined) {
+      HO_STATE.node = parseInt(n, 10);
+      renderHO();
+    }
+  });
+  document.querySelectorAll("[data-ho]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      HO_STATE.mode = btn.getAttribute("data-ho");
+      document.querySelectorAll("[data-ho]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderHO();
+    });
+  });
+  renderHO();
+
+  /* ---------- persistent homology ---------- */
+  var PERSIST_POINTS = [];
+  for (var p = 0; p < 12; p++) {
+    var a = p * Math.PI * 2 / 12 + 0.06 * Math.sin(p * 2.1);
+    var rr = 90 + 3 * Math.sin(p * 1.7);
+    PERSIST_POINTS.push({ x: 280 + Math.cos(a) * rr, y: 180 + Math.sin(a) * rr });
+  }
+  var persistSvg = document.getElementById("persist-svg");
+  var persistRadius = document.getElementById("persist-radius");
+  function findParent(parent, x) {
+    while (parent[x] !== x) {
+      parent[x] = parent[parent[x]];
+      x = parent[x];
+    }
+    return x;
+  }
+  function renderPersist(svg, radius, update) {
+    var pts = PERSIST_POINTS, n = pts.length;
+    var edges = [], edgeIndex = {};
+    var parent = [];
+    for (var i = 0; i < n; i++) parent.push(i);
+    for (var i2 = 0; i2 < n; i2++) {
+      for (var j2 = i2 + 1; j2 < n; j2++) {
+        var d = Math.hypot(pts[i2].x - pts[j2].x, pts[i2].y - pts[j2].y);
+        if (d <= radius) {
+          edges.push([i2, j2]);
+          edgeIndex[i2 + "_" + j2] = edges.length - 1;
+          var ra = findParent(parent, i2), rb = findParent(parent, j2);
+          if (ra !== rb) parent[ra] = rb;
+        }
+      }
+    }
+    var comps = {};
+    for (var c = 0; c < n; c++) comps[findParent(parent, c)] = true;
+    var b0 = Object.keys(comps).length;
+    var E = edges.length;
+    var tris = [];
+    for (var t1 = 0; t1 < n; t1++) {
+      for (var t2 = t1 + 1; t2 < n; t2++) {
+        for (var t3 = t2 + 1; t3 < n; t3++) {
+          if (edgeIndex[t1 + "_" + t2] !== undefined && edgeIndex[t1 + "_" + t3] !== undefined && edgeIndex[t2 + "_" + t3] !== undefined) {
+            tris.push([t1, t2, t3]);
+          }
+        }
+      }
+    }
+    var basis = new Array(E);
+    for (var b = 0; b < E; b++) basis[b] = null;
+    var rank2 = 0;
+    tris.forEach(function (tr) {
+      var row = new Uint8Array(E);
+      row[edgeIndex[tr[0] + "_" + tr[1]]] = 1;
+      row[edgeIndex[tr[0] + "_" + tr[2]]] = 1;
+      row[edgeIndex[tr[1] + "_" + tr[2]]] = 1;
+      for (var pivot = 0; pivot < E; pivot++) {
+        if (!row[pivot]) continue;
+        if (basis[pivot]) {
+          for (var q = pivot; q < E; q++) row[q] ^= basis[pivot][q];
+        } else {
+          basis[pivot] = row;
+          rank2++;
+          break;
+        }
+      }
+    });
+    var b1 = E - (n - b0) - rank2;
+    if (b1 < 0) b1 = 0;
+    var parts = [];
+    tris.forEach(function (tr) {
+      parts.push('<polygon class="persist-tri" points="' + pts[tr[0]].x.toFixed(1) + ',' + pts[tr[0]].y.toFixed(1) + ' ' + pts[tr[1]].x.toFixed(1) + ',' + pts[tr[1]].y.toFixed(1) + ' ' + pts[tr[2]].x.toFixed(1) + ',' + pts[tr[2]].y.toFixed(1) + '"/>');
+    });
+    edges.forEach(function (e) {
+      parts.push('<line class="persist-edge" x1="' + pts[e[0]].x.toFixed(1) + '" y1="' + pts[e[0]].y.toFixed(1) + '" x2="' + pts[e[1]].x.toFixed(1) + '" y2="' + pts[e[1]].y.toFixed(1) + '"/>');
+    });
+    parts.push('<circle class="persist-ring" cx="280" cy="180" r="90"/>');
+    pts.forEach(function (pt) {
+      parts.push('<circle class="persist-point" cx="' + pt.x.toFixed(1) + '" cy="' + pt.y.toFixed(1) + '" r="5.5"/>');
+    });
+    svg.innerHTML = parts.join("");
+    if (update !== false) {
+      document.getElementById("persist-radius-out").textContent = radius;
+      document.getElementById("persist-betti").textContent = b0 + " / " + b1;
+      document.getElementById("persist-b0").textContent = "b₀ = " + b0;
+      document.getElementById("persist-readout").textContent = "b₀ = " + b0 + " Komponente" + (b0 === 1 ? "" : "n") + " · b₁ = " + b1 + " Loch" + (b1 === 1 ? "" : "er");
+      document.getElementById("persist-caption").textContent = b1 > 0
+        ? "Ein Loch: Der Ring ist geschlossen, aber noch nicht gefüllt. b₁ = 1."
+        : (radius < 46 ? "Kleiner Radius: Die Punkte sind noch viele Komponenten. b₀ ist groß, b₁ = 0." : "Der Ring ist gefüllt. Es bleibt keine eindimensionale Schleife: b₁ = 0.");
+    }
+  }
+  var heroPersist = document.getElementById("hero-persist");
+  if (heroPersist) renderPersist(heroPersist, 100, false);
+  persistRadius.addEventListener("input", function () {
+    renderPersist(persistSvg, parseInt(persistRadius.value, 10), true);
+  });
+  renderPersist(persistSvg, parseInt(persistRadius.value, 10), true);
+
+  /* ---------- open problems ---------- */
+  var THEMES = {
+    app: "Anwendung & Daten",
+    scale: "Software & Skalierung",
+    trust: "Vertrauen & Verstehen",
+    theory: "Theorie"
+  };
+  var OP_DATA = [
+    { n: 1, title: "Breite Anwendung", theme: "app", problem: "TDL hat starke Beispiele, aber die breite reale Adaption fehlt.", direction: "Synergien mit wissenschaftlichen Disziplinen: Kompression, NLP, Vision, Grafik, Chemie, Biologie, Virus-Evolution, Drug Design, Neuroscience, Protein-Engineering, Chip-Design, Materialien." },
+    { n: 2, title: "Höhere Daten", theme: "app", problem: "Es gibt zu wenige öffentliche höherstufige Datensätze.", direction: "Höherstufige Daten sammeln oder synthetisch erzeugen; Graph-Lifting und Rewiring systematisch untersuchen." },
+    { n: 3, title: "Benchmarks", theme: "app", problem: "Es fehlen Benchmark-Suiten für TDL.", direction: "Höherstufige Datensätze, Lifting-Algorithmen und prädiktive plus Stabilitätsmetriken." },
+    { n: 4, title: "Software", theme: "scale", problem: "Die Softwarelandschaft für höhere Domänen ist dünn.", direction: "Mehr Ressourcen, Hardware-Freundlichkeit, Trade-offs und leichter zugängliche Implementierungen." },
+    { n: 5, title: "Komplexität", theme: "scale", problem: "Es gibt keinen Cost-Benefit-Rahmen für TDL.", direction: "Performance-Komplexitäts-Trade-offs; Propagation topologischer Information durch Schichten." },
+    { n: 6, title: "Skalierung", theme: "scale", problem: "Skalierbare Modelle über mehrere höhere Domänen fehlen.", direction: "Ressourceneffiziente Modelle, Subsampling und verteiltes Training." },
+    { n: 7, title: "Erklärbarkeit", theme: "trust", problem: "Topologie für Erklärbarkeit und Generalisierung ist offen.", direction: "TDL auf Rechengraphen und Trainingspfaden; topologische Eigenschaften der Repräsentationen steuern." },
+    { n: 8, title: "Fairness", theme: "trust", problem: "TDL-Fairness ist kaum untersucht.", direction: "Homophilie, assortative Mischung und dyadische Fairness auf höhere Strukturen erweitern." },
+    { n: 9, title: "Theorie", theme: "theory", problem: "Die theoretischen Grundlagen der TDL-Vorteile sind unvollständig.", direction: "Expressivitätsbeweise, Over-Smoothing/Over-Squashing, Hodge-Laplacian und Garbentheorie." },
+    { n: 10, title: "Topologische Repräsentation", theme: "trust", problem: "Wie lernt man topologische Repräsentationen automatisch?", direction: "Latente topologische Inferenz, Architektur-Suche und topologische Regularisierer." },
+    { n: 11, title: "Transformer", theme: "trust", problem: "Es gibt noch keinen Transformer für TDL.", direction: "Domänenspezifische topologische Transformer; Diffusion und State-Space-Modelle." }
+  ];
+  var opState = { filter: "all", selected: 1 };
+  var opGrid = document.getElementById("op-grid");
+  function themeLabel(k) { return THEMES[k] || k; }
+  function renderOP() {
+    opGrid.innerHTML = "";
+    var visible = 0;
+    OP_DATA.forEach(function (d) {
+      var match = opState.filter === "all" || d.theme === opState.filter;
+      var card = document.createElement("button");
+      card.type = "button";
+      card.className = "op-card" + (opState.selected === d.n ? " active" : "");
+      card.innerHTML = '<div class="op-num">PROBLEM ' + d.n + '</div><div class="op-title">' + d.title + '</div><div class="op-theme">' + themeLabel(d.theme) + '</div>';
+      card.style.display = match ? "" : "none";
+      card.addEventListener("click", function () {
+        opState.selected = d.n;
+        renderOP();
+      });
+      opGrid.appendChild(card);
+      if (match) visible++;
+    });
+    var d = OP_DATA.filter(function (x) { return x.n === opState.selected; })[0];
+    if (!d || (opState.filter !== "all" && d.theme !== opState.filter)) {
+      d = OP_DATA.filter(function (x) { return opState.filter === "all" || x.theme === opState.filter; })[0];
+      opState.selected = d.n;
+    }
+    document.getElementById("op-detail").innerHTML = "<b>Problem " + d.n + ": " + d.title + ".</b> " + d.problem + "<br><br><b>Research direction:</b> " + d.direction;
+    document.getElementById("op-count").textContent = visible + " / 11";
+    document.getElementById("op-readout").textContent = "Problem " + d.n + " · " + themeLabel(d.theme);
+  }
+  document.querySelectorAll("[data-op]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      opState.filter = btn.getAttribute("data-op");
+      document.querySelectorAll("[data-op]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderOP();
+    });
+  });
+  renderOP();
+
+})();
+</script>
+</body>
+</html>

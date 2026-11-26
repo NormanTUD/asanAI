@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logik in Fasern · Fibered Universal Algebra</title>
+<meta name="description" content="Interaktive Lesehilfe zu Bloomfield und Maruyama: Fibered Universal Algebra for First-Order Logics. Kontexte, Prop-Kategorien, Substitution, fibered HSP und USP.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+    --bg:#070812; --bg2:#0c0f20;
+    --panel:rgba(20,22,46,.66); --panel2:rgba(10,12,28,.78);
+    --ink:#eef0ff; --muted:#9aa4c7;
+    --line:rgba(160,170,255,.10); --line2:rgba(160,170,255,.18);
+    --mint:#6ef0b8; --sky:#7cc9ff; --amber:#ffd166; --rose:#ff8fb1; --violet:#b39ddb;
+    --good:#6ef0b8; --bad:#ff7a8a;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 26px 64px -30px rgba(0,0,0,.95);
+    --ring:rgba(110,240,184,.2); --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f5f6fc; --bg2:#e9ecf8;
+    --panel:rgba(255,255,255,.78); --panel2:rgba(255,255,255,.9);
+    --ink:#151a33; --muted:#5b6484;
+    --line:rgba(30,45,95,.12); --line2:rgba(30,45,95,.21);
+    --mint:#0f766e; --sky:#0369a1; --amber:#a16207; --rose:#b3245a; --violet:#6d28d9;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,50,90,.06),0 26px 64px -34px rgba(40,50,90,.45);
+    --ring:rgba(15,118,110,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:radial-gradient(1200px 800px at 80% -10%,rgba(110,240,184,.10),transparent 60%),radial-gradient(900px 700px at -10% 20%,rgba(124,201,255,.09),transparent 60%),radial-gradient(1000px 900px at 50% 120%,rgba(179,157,219,.08),transparent 60%),var(--bg);
+    line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:54px 54px;opacity:.5;
+    -webkit-mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%);mask-image:radial-gradient(circle at 50% 25%,#000,transparent 76%)}
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.26;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(110,240,184,.5),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(124,201,255,.45),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(179,157,219,.45),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+  a{color:var(--mint);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--mint)} strong{font-weight:650}
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--mint),var(--sky),var(--amber))}
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--mint);transform:translateY(-1px)}
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mint);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--mint),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.2vw,5rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--mint),var(--sky) 52%,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:43ch;margin:0 0 28px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--mint),var(--sky));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f5f6fc}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+  .hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .hero-subst{width:min(480px,100%);height:auto;overflow:visible}
+  .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .hero-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--amber);font-weight:600}
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 15px 14px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--mint),var(--amber));opacity:.75}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.68rem;color:var(--mint);letter-spacing:.14em;margin-bottom:9px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.5}
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--mint);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+  .prose ul{margin:10px 0;padding-left:20px;color:var(--muted)}
+  .prose li{margin:6px 0}
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+  .segmented{display:inline-flex;flex-wrap:wrap;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--mint);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f5f6fc}
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 14px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--mint)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--mint);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--mint);outline-offset:6px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f5f6fc}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--mint)}
+  .readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+  .readout strong{font-family:var(--serif);font-size:1.25rem;color:var(--mint);font-weight:600}
+  .readout .big{font-family:var(--serif);font-size:1.7rem;color:var(--amber);font-weight:600}
+  .formula-card{margin-top:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line2);border-radius:18px;background:linear-gradient(120deg,rgba(110,240,184,.08),rgba(124,201,255,.07));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.15rem,2.6vw,1.7rem);letter-spacing:.01em;line-height:1.5}
+  .formula sub{font-size:.6em}
+  .formula .op{color:var(--mint)}
+  .formula-note{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted);margin-top:12px}
+  .note{border-left:2px solid var(--amber);padding:14px 18px;background:rgba(255,209,102,.05);border-radius:0 12px 12px 0;color:var(--muted);font-size:.9rem;margin-top:22px}
+  .note b{color:var(--ink)}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 28px}
+  .stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--mint),var(--amber))}
+  .stat-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .stat-values{font-family:var(--serif);font-size:1.35rem;font-weight:600;letter-spacing:-.02em}
+  .stat-values .to{color:var(--mint)}
+  .stat-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+  .take-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.88rem}
+  .take .glyph{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--mint);text-transform:uppercase;margin-bottom:10px}
+  .take ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.86rem}
+  .take li{margin:5px 0}
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--mint);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  svg{overflow:visible}
+  .subst-svg,.quant-svg,.fa-svg,.closure-svg{width:100%;height:auto;display:block}
+  .ctx-card{fill:var(--bg);stroke:var(--line2);stroke-width:1.4}
+  .ctx-title{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .ctx-var{fill:rgba(124,201,255,.10);stroke:var(--sky);stroke-width:1.2}
+  .ctx-varlabel{fill:var(--ink);font-family:var(--mono);font-size:11px}
+  .ctx-formula{fill:rgba(110,240,184,.07);stroke:var(--mint);stroke-width:1.3}
+  .ctx-formulalabel{fill:var(--mint);font-family:var(--mono);font-size:13px}
+  .ctx-arrow{stroke:var(--amber);stroke-width:1.6;fill:none}
+  .ctx-arrow-head{fill:var(--amber)}
+  .ctx-pull{stroke:var(--violet);stroke-width:1.4;fill:none;stroke-dasharray:5 5}
+  .ctx-pull-head{fill:var(--violet)}
+  .ctx-label{fill:var(--muted);font-family:var(--mono);font-size:9px}
+  .ctx-sum{fill:var(--ink);font-family:var(--serif);font-size:12px;font-style:italic}
+  .quant-cell{stroke:var(--line2);stroke-width:1.2}
+  .quant-head{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+  .quant-val{fill:var(--ink);font-family:var(--mono);font-size:13px}
+  .quant-bar-bg{fill:var(--line)}
+  .quant-bar-e{fill:var(--mint)}
+  .quant-bar-a{fill:var(--violet)}
+  .quant-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .fa-node{fill:var(--bg);stroke:var(--mint);stroke-width:1.8;transition:stroke .2s}
+  .fa-node.active{stroke:var(--amber);stroke-width:3;filter:url(#glow-main)}
+  .fa-nodelabel{fill:var(--ink);font-family:var(--serif);font-size:17px;font-style:italic}
+  .fa-edge{stroke:var(--line2);stroke-width:1.6;fill:none;transition:stroke .2s}
+  .fa-edge.active{stroke:var(--amber);stroke-width:2.6}
+  .fa-edge-head{fill:var(--line2);transition:fill .2s}
+  .fa-edge-head.active{fill:var(--amber)}
+  .fa-2{stroke:var(--sky);stroke-width:1.5;fill:none;stroke-dasharray:5 4;transition:stroke .2s}
+  .fa-2.active{stroke:var(--amber);stroke-width:2.4}
+  .fa-2-head{fill:var(--sky)}
+  .fa-2-head.active{fill:var(--amber)}
+  .fa-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .cl-ring{fill:none;stroke:var(--line2);stroke-width:1.2;stroke-dasharray:5 5;opacity:.5;transition:stroke .2s,opacity .2s}
+  .cl-ring.on{stroke:var(--mint);opacity:1}
+  .cl-core{fill:rgba(110,240,184,.10);stroke:var(--mint);stroke-width:1.6}
+  .cl-dot{fill:var(--mint);opacity:.95}
+  .cl-dot.new{fill:var(--amber)}
+  .cl-label{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .cl-big{fill:var(--ink);font-family:var(--serif);font-size:17px}
+  @media (max-width:980px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{order:-1}
+    .hero-subst{width:min(340px,84%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .take-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .tldr-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .gloss-grid{grid-template-columns:1fr}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <filter id="glow-main" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Journal of Pure and Applied Algebra · arXiv:2205.05657</div>
+      <h1>Logik in<br><span class="grad">Fasern</span></h1>
+      <p class="lede">Eine Formel lebt immer in einem Kontext. Eine <b>Prop-Kategorie</b> macht aus Kontexten Typen und aus Formeln Fasern. Substitution wird zum Zurückziehen entlang eines Terms.</p>
+      <div class="byline">
+        <span>Colin Bloomfield</span><span class="dot-sep"></span>
+        <span>Yoshihiro Maruyama</span><span class="dot-sep"></span>
+        <span>JPAA 228(2), 2024</span>
+      </div>
+      <a class="cta" href="#kontext">Die Faser öffnen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg class="hero-subst" id="hero-subst" viewBox="0 0 560 360"></svg>
+      <div class="hero-badge">Pullback <strong>P(⟨f, id⟩)(R)</strong></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>Kontext statt Variablen</h3><p>Jede Formel lebt in einem Kontext. Der Kontext macht die Semantik eindeutig.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>Prop-Kategorie</h3><p>Typen und Terme bilden eine Basis. Formeln sind Fasern über dieser Basis.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Substitution = Pullback</h3><p>Ein Term-Morphismus zieht Formeln zurück. Das ist strukturell, nicht syntaktisch.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>Fibered HSP</h3><p>Die Hülle einer Strukturklasse unter ihrer gemeinsamen Theorie ist H·S·P.</p></div>
+        <div class="tldr-card"><div class="tldr-num">05</div><h3>Fibered USP</h3><p>Die Hülle unter logischer Konsequenz ist U·S·P, analog zu Blok und Jónsson.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal" id="kontext">
+      <div class="section-head"><span class="sec-num">01 · Kontexte</span></div>
+      <h2>Formeln leben nicht allein</h2>
+      <div class="prose">
+        <p>In der klassischen Logik schreibt man eine Formel hin und interpretiert sie später mit einer Belegung. Die Prop-Kategorie-Semantik macht das explizit: Jede Formel lebt in einem <span class="accent">Kontext</span>, einer Liste von Variablen mit ihren Sorten. Der Kontext ist der Typ, über dem die Formel eine Faser bildet.</p>
+        <p>Ein Term-in-Kontext ist ein Morphismus zwischen Kontexten. Eine Formel-in-Kontext ist ein Element der Faser über ihrem Kontext. <span class="accent">Substitution</span> ist dann kein syntaktischer Trick, sondern das Zurückziehen der Formel entlang eines Term-Morphismus. Genau das macht die Semantik strukturell.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Substitution als Zurückziehen</div>
+            <div class="demo-sub">Formel R(x,y) im Kontext [x:A, y:B]</div>
+          </div>
+          <div class="demo-actions">
+            <label class="slider-row" style="margin:0;gap:8px"><span>x :=</span><select id="subst-x" style="font-family:var(--mono);font-size:.74rem;background:var(--bg);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:5px 8px"><option value="f">f(z)</option><option value="x">x</option><option value="c">c</option></select></label>
+            <label class="slider-row" style="margin:0;gap:8px"><span>y :=</span><select id="subst-y" style="font-family:var(--mono);font-size:.74rem;background:var(--bg);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:5px 8px"><option value="y">y</option><option value="g">g(z)</option></select></label>
+          </div>
+        </div>
+        <svg class="subst-svg" id="subst-svg" viewBox="0 0 560 360" role="img" aria-label="Kontext, Term-Morphismus und zurückgezogene Formel"></svg>
+        <div class="readout"><span id="subst-readout">P(⟨f(z), y⟩)(R) = R(f(z), y)</span><strong id="subst-ctx">[z:C, y:B]</strong></div>
+        <div class="caption" id="subst-caption">Der Term-Morphismus läuft vom neuen Kontext zurück in den alten. Die Formel wird entlang dieses Pfeils zurückgezogen.</div>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Der Pullback</div>
+        <div class="formula">P(⟨t<sub>1</sub>, t<sub>2</sub>⟩)(R) <span class="op">=</span> R(t<sub>1</sub>, t<sub>2</sub>)</div>
+        <div class="formula-note">Die Formel R wird entlang des Term-Morphismus ⟨t₁,t₂⟩ in den neuen Kontext gezogen.</div>
+      </div>
+
+      <div class="note"><b>Die Pointe:</b> Substitution ist strukturell, weil sie ein Funktor ist. Sie hängt nicht von der konkreten Syntax ab, sondern nur von den Term-Morphismen zwischen Kontexten.</div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal" id="semantik">
+      <div class="section-head"><span class="sec-num">02 · Prop-Kategorien</span></div>
+      <h2>Dieselbe Formel, viele Logiken</h2>
+      <div class="prose">
+        <p>Eine <span class="accent">Prop-Kategorie</span> (C, P) besteht aus einer Kategorie C mit endlichen Produkten und einem kontravarianten Funktor P: C<sup>op</sup> → <b>Pos</b>. Die Objekte von C sind Typen und Kontexte, die Morphismen sind Terme-in-Kontext, und die Posets P(c) sind die Formeln-in-Kontext mit ihrer Ablehnungsordnung.</p>
+        <p>Eine Struktur ist ein Morphismus aus der klassifizierenden Prop-Kategorie in eine semantische Prop-Kategorie. Erfüllung heißt: Der Wert der Formel liegt über dem Bottom-Element der Faser. Indem man die Zielkategorie variiert, bekommt man klassische, intuitionistische, fuzzy und viele andere Logiken aus demselben Schema.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Dieselbe Formel, viele Logiken</div>
+            <div class="demo-sub">∃y R(x,y) und ∀y R(x,y) auf einer Zwei-Elemente-Welt</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Semantik">
+            <button class="seg active" type="button" data-quant="bool" aria-pressed="true">Boolesch</button>
+            <button class="seg" type="button" data-quant="minmax" aria-pressed="false">Min/Max</button>
+            <button class="seg" type="button" data-quant="product" aria-pressed="false">Produkt</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px 22px">
+          <label class="slider-row" style="margin:0"><span>R(a,a)</span><input id="q-aa" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="R(a,a)"><output id="q-aa-out">0.70</output></label>
+          <label class="slider-row" style="margin:0"><span>R(a,b)</span><input id="q-ab" type="range" min="0" max="1" step="0.01" value="0.2" aria-label="R(a,b)"><output id="q-ab-out">0.20</output></label>
+          <label class="slider-row" style="margin:0"><span>R(b,a)</span><input id="q-ba" type="range" min="0" max="1" step="0.01" value="0.1" aria-label="R(b,a)"><output id="q-ba-out">0.10</output></label>
+          <label class="slider-row" style="margin:0"><span>R(b,b)</span><input id="q-bb" type="range" min="0" max="1" step="0.01" value="0.9" aria-label="R(b,b)"><output id="q-bb-out">0.90</output></label>
+        </div>
+        <svg class="quant-svg" id="quant-svg" viewBox="0 0 560 340" role="img" aria-label="Wahrheitsmatrix und Quantifizierung unter verschiedenen Semantiken"></svg>
+        <div class="readout"><span id="quant-readout">Boolesch: ∃ = OR, ∀ = AND.</span><strong id="quant-mode">Boolesch</strong></div>
+        <div class="caption" id="quant-caption">Dieselbe Formel, dieselbe Matrix, verschiedene Rechenarten. Die Prop-Kategorie-Semantik macht den Unterschied explizit.</div>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Die Quantoren</div>
+        <div class="formula">∃y R(x,y) <span class="op">=</span> ⋁<sub>y</sub> R(x,y) &nbsp;·&nbsp; ∀y R(x,y) <span class="op">=</span> ⋀<sub>y</sub> R(x,y)</div>
+        <div class="formula-note">In einer vollständigen Heyting-Algebra sind ∃ und ∀ die linken und rechten Adjungierten zur Projektion. In [0,1] mit einer T-Norm werden daraus Supremum und Infimum über endliche Produkte.</div>
+      </div>
+
+      <div class="note"><b>Der Rahmen:</b> Klassische Logik ist der Fall L = 2. Fuzzy-Logik ist L = [0,1] mit einer T-Norm. Mostowski-Quantoren, integrale Quantoren und viele andere passen in dasselbe Prop-Kategorie-Schema.</div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal" id="fa">
+      <div class="section-head"><span class="sec-num">03 · Die 2-Kategorie FA</span></div>
+      <h2>Theorien, Strukturen, Übersetzungen</h2>
+      <div class="prose">
+        <p>Die Prop-Kategorien bilden eine <span class="accent">2-Kategorie</span> FA<sub>ℒ</sub>. Die Objekte sind Theorien, also Prop-Kategorien. Die 1-Morphismen sind Strukturen, also semantische Interpretationen. Die 2-Zellen sind strukturerhaltende Abbildungen zwischen Strukturen.</p>
+        <p>Jede Theorie T hat eine klassifizierende Prop-Kategorie, die ein generisches T-Modell enthält. Damit bekommt man Vollständigkeitssätze: Eine Aussage ist genau dann ableitbar, wenn sie in allen Modellen gilt. Die 2-Kategorie macht aus Modelltheorie eine algebraische Struktur.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die 2-Kategorie FA</div>
+            <div class="demo-sub">Klicke Objekt, 1-Morphismus oder 2-Zelle</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Ebene">
+            <button class="seg active" type="button" data-fa="obj" aria-pressed="true">Objekt</button>
+            <button class="seg" type="button" data-fa="mor" aria-pressed="false">1-Morphismus</button>
+            <button class="seg" type="button" data-fa="two" aria-pressed="false">2-Zelle</button>
+          </div>
+        </div>
+        <svg class="fa-svg" id="fa-svg" viewBox="0 0 560 300" role="img" aria-label="Zwei Prop-Kategorien mit 1-Morphismen und einer 2-Zelle"></svg>
+        <div class="readout"><span id="fa-readout">Objekte sind Theorien: Prop-Kategorien.</span><strong id="fa-status">Objekt</strong></div>
+        <div class="caption" id="fa-caption">Die 2-Kategorie FA macht aus Theorien, Strukturen und Übersetzungen ein algebraisches Objekt.</div>
+      </div>
+
+      <div class="note"><b>Die Rolle der Klassifizierung:</b> Die klassifizierende Prop-Kategorie einer Theorie ist der kanonische Ort, an dem das generische Modell lebt. Strukturen sind Morphismen aus ihr heraus. Dadurch wird Erfüllung zu einem Pfeil, nicht zu einer externen Belegung.</div>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal" id="hsp">
+      <div class="section-head"><span class="sec-num">04 · Fibered HSP und USP</span></div>
+      <h2>Hüllen, die wie Algebra aussehen</h2>
+      <div class="prose">
+        <p>Die innere Logik einer Prop-Kategorie ist eine Theorie. Subprop-Kategorien, morphische Bilder und Produkte sind die fibered Analoga von Subalgebren, homomorphen Bildern und Produkten. Damit lässt sich der Homomorphiesatz der universellen Algebra in die Faser heben.</p>
+        <p>Das erste Hauptresultat: Die Hülle einer Klasse von Strukturen unter ihrer gemeinsamen ersten Ordnung ist <span class="accent">H·S·P</span>. Das ist das fibered Analogon von Birkhoffs HSP-Satz. Das zweite: Die Hülle einer Klasse von Prop-Kategorien unter logischer Konsequenz ist <span class="accent">U·S·P</span>, analog zu Blok und Jónsson. Der Operator U nimmt alle Objekte, deren kleine erzeugte Subobjekte in der Klasse liegen.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Die Hüllen-Operatoren</div>
+            <div class="demo-sub">Schematisch. Klicke die Operatoren.</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Objektart">
+            <button class="seg active" type="button" data-clmode="struct" aria-pressed="true">Strukturen</button>
+            <button class="seg" type="button" data-clmode="prop" aria-pressed="false">Prop-Kategorien</button>
+          </div>
+        </div>
+        <div class="demo-actions" style="margin-bottom:8px">
+          <button class="btn" type="button" data-cl="S">S</button>
+          <button class="btn" type="button" data-cl="P">P</button>
+          <button class="btn" type="button" data-cl="top">H</button>
+        </div>
+        <svg class="closure-svg" id="closure-svg" viewBox="0 0 560 340" role="img" aria-label="Konzentrische Hüllen einer Klasse von Strukturen"></svg>
+        <div class="readout"><span id="closure-readout">Starte mit einer Klasse X. Wende S, P und H an.</span><strong id="closure-result">X</strong></div>
+        <div class="caption" id="closure-caption">Die Hülle unter der gemeinsamen Theorie ist H·S·P(X). Für Prop-Kategorien ist die Hülle unter logischer Konsequenz U·S·P(X).</div>
+      </div>
+
+      <div class="formula-card">
+        <div class="formula-kicker">Die zwei Charakterisierungen</div>
+        <div class="formula">H·S·P(X) <span class="op">=</span> Mod(Th(X)) &nbsp;·&nbsp; U·S·P(𝒳) <span class="op">=</span> { 𝒴 : ⊢<sub>𝒴</sub> = ⊢<sub>𝒳</sub> }</div>
+        <div class="formula-note">Theorem 7 und Theorem 9. Die erste Hülle ist die Klasse aller Modelle der gemeinsamen Theorie, die zweite die Klasse aller Prop-Kategorien mit derselben ersten Ordnung.</div>
+      </div>
+
+      <div class="note"><b>Warum das überrascht:</b> In der Tarskian-Semantik der klassischen ersten Ordnung erhalten Submodelle, homomorphe Bilder und Produkte die Erfüllung einer Theorie nicht. In der Prop-Kategorie-Semantik schon. Genau deshalb gibt es dort ein fibered HSP.</div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal" id="fazit">
+      <div class="section-head"><span class="sec-num">05 · Was das heißt</span></div>
+      <h2>Ein algebraischer Rahmen für die erste Ordnung</h2>
+      <div class="take-grid">
+        <div class="take"><div class="glyph">Rahmen</div><h3>Viele Logiken, ein Schema</h3><p>Klassisch, intuitionistisch, fuzzy, Mostowski-Quantoren, integrale Quantoren: Alles sind Prop-Kategorien mit unterschiedlichen Fasern und Quantoren.</p></div>
+        <div class="take"><div class="glyph">Substitution</div><h3>Strukturell statt syntaktisch</h3><p>Terme sind Morphismen, Formeln werden entlang ihnen zurückgezogen. Damit wird Substitution zu einem Funktor und die Logik strukturell.</p></div>
+        <div class="take"><div class="glyph">Hüllen</div><h3>HSP und USP in der Faser</h3><p>Die klassischen algebraischen Charakterisierungen bekommen fibered Analoga. Das ist neu, auch für intuitionistische Prop-Kategorien und Triposes.</p></div>
+        <div class="take"><div class="glyph">Grenze</div><h3>Fundament, kein Werkzeug</h3><p>Das Paper ist eine mathematische Grundlagenarbeit. Es liefert keinen Algorithmus und keinen Benchmark, sondern einen Rahmen für weitere Theorie.</p></div>
+      </div>
+
+      <div class="note"><b>Die Einordnung:</b> Die ScienceDirect-Fassung ist die Journalversion in JPAA 228(2), 2024. Der Volltext ist dort kostenpflichtig; diese Seite stützt sich auf die frei zugängliche arXiv-Fassung (arXiv:2205.05657v4).</div>
+    </section>
+
+    <!-- 06 -->
+    <section class="section reveal" id="glossar">
+      <div class="section-head"><span class="sec-num">06 · Glossar</span></div>
+      <h2>Die Begriffe</h2>
+      <details class="deep" open>
+        <summary>Von Kontext bis USP</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>Kontext</dt><dd>Eine Liste von Variablen mit ihren Sorten. Der Typ, über dem eine Formel lebt.</dd></div>
+            <div><dt>Term-in-Kontext</dt><dd>Ein Term mit einem Kontext, in dem alle seine Variablen deklariert sind.</dd></div>
+            <div><dt>Formel-in-Kontext</dt><dd>Eine Formel mit einem Kontext, in dem alle freien Variablen deklariert sind.</dd></div>
+            <div><dt>Prop-Kategorie</dt><dd>Eine Kategorie mit endlichen Produkten plus einem kontravarianten Funktor in die Posets. Lawvere-Pitts-Hyperdoktrien.</dd></div>
+            <div><dt>Hyperdoktrien</dt><dd>Lawveres Semantik für Logik: eine Basis von Typen und Fasern von Attributen.</dd></div>
+            <div><dt>Faser</dt><dd>Die Poset-Struktur P(c) über einem Kontext c. Sie enthält die Formeln in diesem Kontext.</dd></div>
+            <div><dt>Substitution</dt><dd>Das Zurückziehen einer Formel entlang eines Term-Morphismus. Ein Funktor auf den Fasern.</dd></div>
+            <div><dt>Struktur</dt><dd>Ein Morphismus von der klassifizierenden Prop-Kategorie in eine semantische Prop-Kategorie.</dd></div>
+            <div><dt>FA</dt><dd>Die 2-Kategorie der Prop-Kategorien: Theorien, Strukturen, strukturerhaltende Abbildungen.</dd></div>
+            <div><dt>HSP</dt><dd>Hülle unter homomorphen Bildern, Substrukturen und Produkten. Birkhoffs Varietäten-Satz.</dd></div>
+            <div><dt>USP</dt><dd>Hülle unter U, Subobjekten und Produkten. Blok-Jónssons Charakterisierung der Konsequenz.</dd></div>
+            <div><dt>T-Norm</dt><dd>Eine assoziative, kommutative, monotone Operation auf [0,1] mit neutralem Element 1. Fuzzy-Konjunktion.</dd></div>
+            <div><dt>Mostowski-Quantor</dt><dd>Ein verallgemeinerter Quantor, der für jede Menge eine Familie von Teilmengen auswählt.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Quellen</h4>
+      <p>Colin Bloomfield, Yoshihiro Maruyama.<br>
+      <a href="https://www.sciencedirect.com/science/article/abs/pii/S0022404923000981" target="_blank" rel="noopener">Fibered universal algebra for first-order logics</a>.<br>
+      Journal of Pure and Applied Algebra 228(2), 2024, 107415.<br>
+      <a href="https://arxiv.org/abs/2205.05657" target="_blank" rel="noopener">arXiv:2205.05657v4</a> (frei zugängliche Fassung, CC BY-NC-SA 4.0).</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Lesehilfe, keine eigene Forschung. Die Diagramme und die Hüllen-Demo sind schematisch. Die formalen Definitionen, Sätze und Beweise stehen im Paper.</p>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  function lineArrow(x1, y1, x2, y2, cls, headCls) {
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    var bx = x2 - Math.cos(ang) * 11, by = y2 - Math.sin(ang) * 11;
+    var px = -Math.sin(ang), py = Math.cos(ang);
+    return '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + (x2 - Math.cos(ang) * 6) + '" y2="' + (y2 - Math.sin(ang) * 6) + '"/>' +
+      '<polygon class="' + headCls + '" points="' + x2 + ',' + y2 + ' ' + (bx + px * 4.5) + ',' + (by + py * 4.5) + ' ' + (bx - px * 4.5) + ',' + (by - py * 4.5) + '"/>';
+  }
+  function headAt(x, y, ang, cls) {
+    var bx = x - Math.cos(ang) * 10, by = y - Math.sin(ang) * 10;
+    var px = -Math.sin(ang), py = Math.cos(ang);
+    return '<polygon class="' + cls + '" points="' + x + ',' + y + ' ' + (bx + px * 4.5) + ',' + (by + py * 4.5) + ' ' + (bx - px * 4.5) + ',' + (by - py * 4.5) + '"/>';
+  }
+
+  /* ---------- substitution ---------- */
+  var SUBST_X = {
+    f: { expr: "f(z)", vars: ["z:C"], label: "f(z)" },
+    x: { expr: "x", vars: ["x:A"], label: "x" },
+    c: { expr: "c", vars: [], label: "c" }
+  };
+  var SUBST_Y = {
+    y: { expr: "y", vars: ["y:B"], label: "y" },
+    g: { expr: "g(z)", vars: ["z:C"], label: "g(z)" }
+  };
+  var substSvg = document.getElementById("subst-svg");
+  function chips(vars, x, y) {
+    var s = "";
+    vars.forEach(function (v, i) {
+      var cx = x + i * 74;
+      s += '<rect class="ctx-var" x="' + cx + '" y="' + y + '" width="64" height="24" rx="7"/>';
+      s += '<text class="ctx-varlabel" x="' + (cx + 32) + '" y="' + (y + 16) + '" text-anchor="middle">' + v + '</text>';
+    });
+    return s;
+  }
+  function renderSubst(svg, xKey, yKey, update) {
+    var X = SUBST_X[xKey], Y = SUBST_Y[yKey];
+    var vars = [];
+    X.vars.concat(Y.vars).forEach(function (v) { if (vars.indexOf(v) < 0) vars.push(v); });
+    var ctx = "[" + vars.join(", ") + "]";
+    var formula = "R(" + X.label + ", " + Y.label + ")";
+    var morph = "⟨" + X.label + ", " + Y.label + "⟩";
+    var parts = [];
+    parts.push('<rect class="ctx-card" x="40" y="60" width="220" height="150" rx="12"/>');
+    parts.push('<text class="ctx-title" x="56" y="84">Kontext Γ</text>');
+    parts.push(chips(["x:A", "y:B"], 56, 98));
+    parts.push('<rect class="ctx-formula" x="56" y="142" width="188" height="42" rx="8"/>');
+    parts.push('<text class="ctx-formulalabel" x="150" y="168" text-anchor="middle">R(x, y)</text>');
+    parts.push('<rect class="ctx-card" x="300" y="60" width="220" height="150" rx="12"/>');
+    parts.push('<text class="ctx-title" x="316" y="84">Kontext Δ</text>');
+    parts.push(chips(vars, 316, 98));
+    parts.push('<rect class="ctx-formula" x="316" y="142" width="188" height="42" rx="8"/>');
+    parts.push('<text class="ctx-formulalabel" x="410" y="168" text-anchor="middle">' + formula + '</text>');
+    parts.push('<path class="ctx-pull" d="M244,163 L296,163"/>');
+    parts.push('<polygon class="ctx-pull-head" points="300,163 290,158.5 290,167.5"/>');
+    parts.push('<text class="ctx-label" x="270" y="154" text-anchor="middle">P</text>');
+    parts.push('<path class="ctx-arrow" d="M410,214 C 410,255 150,255 150,216"/>');
+    parts.push('<polygon class="ctx-arrow-head" points="150,214 158,225 142,225"/>');
+    parts.push('<text class="ctx-label" x="280" y="262" text-anchor="middle">' + morph + ' : Δ → Γ</text>');
+    parts.push('<text class="ctx-label" x="280" y="306" text-anchor="middle">f : C → A   ·   g : C → B   ·   c : A</text>');
+    parts.push('<text class="ctx-sum" x="280" y="330" text-anchor="middle">Substitution = Zurückziehen entlang eines Terms</text>');
+    svg.innerHTML = parts.join("");
+    if (update !== false) {
+      document.getElementById("subst-readout").textContent = "P(" + morph + ")(R) = " + formula;
+      document.getElementById("subst-ctx").textContent = ctx;
+      document.getElementById("subst-caption").textContent = vars.length
+        ? "Der Term-Morphismus läuft vom neuen Kontext " + ctx + " zurück in den alten Kontext [x:A, y:B]. Die Formel wird entlang dieses Pfeils zurückgezogen."
+        : "Der Term-Morphismus ist konstant; die Formel wird zu einer Formel ohne freie Variablen.";
+    }
+  }
+  var heroSubst = document.getElementById("hero-subst");
+  if (heroSubst) renderSubst(heroSubst, "f", "y", false);
+  var substX = document.getElementById("subst-x");
+  var substY = document.getElementById("subst-y");
+  substX.addEventListener("change", function () {
+    renderSubst(substSvg, substX.value, substY.value, true);
+  });
+  substY.addEventListener("change", function () {
+    renderSubst(substSvg, substX.value, substY.value, true);
+  });
+  renderSubst(substSvg, substX.value, substY.value, true);
+
+  /* ---------- quantifiers ---------- */
+  var quantState = { mode: "bool", aa: 0.7, ab: 0.2, ba: 0.1, bb: 0.9 };
+  var quantSvg = document.getElementById("quant-svg");
+  var qSliders = {
+    aa: document.getElementById("q-aa"),
+    ab: document.getElementById("q-ab"),
+    ba: document.getElementById("q-ba"),
+    bb: document.getElementById("q-bb")
+  };
+  function quantVal(v, mode) {
+    return mode === "bool" ? (v >= 0.5 ? 1 : 0) : v;
+  }
+  function quantCombine(v1, v2, mode, kind) {
+    if (mode === "product") {
+      return kind === "ex" ? 1 - (1 - v1) * (1 - v2) : v1 * v2;
+    }
+    return kind === "ex" ? Math.max(v1, v2) : Math.min(v1, v2);
+  }
+  function fmtQ(v, mode) { return mode === "bool" ? String(Math.round(v)) : v.toFixed(2); }
+  function renderQuant() {
+    var m = quantState.mode;
+    var aa = quantVal(quantState.aa, m), ab = quantVal(quantState.ab, m);
+    var ba = quantVal(quantState.ba, m), bb = quantVal(quantState.bb, m);
+    var exA = quantCombine(aa, ab, m, "ex"), alA = quantCombine(aa, ab, m, "all");
+    var exB = quantCombine(ba, bb, m, "ex"), alB = quantCombine(ba, bb, m, "all");
+    var parts = [];
+    parts.push('<text class="quant-head" x="120" y="46" text-anchor="middle">y = a</text>');
+    parts.push('<text class="quant-head" x="230" y="46" text-anchor="middle">y = b</text>');
+    parts.push('<text class="quant-head" x="44" y="94" text-anchor="middle">x = a</text>');
+    parts.push('<text class="quant-head" x="44" y="194" text-anchor="middle">x = b</text>');
+    parts.push('<rect class="quant-cell" x="70" y="60" width="110" height="80" rx="8" fill="rgba(110,240,184,' + (0.10 + 0.65 * aa).toFixed(2) + ')"/>');
+    parts.push('<rect class="quant-cell" x="180" y="60" width="110" height="80" rx="8" fill="rgba(110,240,184,' + (0.10 + 0.65 * ab).toFixed(2) + ')"/>');
+    parts.push('<rect class="quant-cell" x="70" y="160" width="110" height="80" rx="8" fill="rgba(110,240,184,' + (0.10 + 0.65 * ba).toFixed(2) + ')"/>');
+    parts.push('<rect class="quant-cell" x="180" y="160" width="110" height="80" rx="8" fill="rgba(110,240,184,' + (0.10 + 0.65 * bb).toFixed(2) + ')"/>');
+    parts.push('<text class="quant-val" x="125" y="104" text-anchor="middle">R(a,a) = ' + fmtQ(aa, m) + '</text>');
+    parts.push('<text class="quant-val" x="235" y="104" text-anchor="middle">R(a,b) = ' + fmtQ(ab, m) + '</text>');
+    parts.push('<text class="quant-val" x="125" y="204" text-anchor="middle">R(b,a) = ' + fmtQ(ba, m) + '</text>');
+    parts.push('<text class="quant-val" x="235" y="204" text-anchor="middle">R(b,b) = ' + fmtQ(bb, m) + '</text>');
+    parts.push('<text class="quant-head" x="410" y="46" text-anchor="middle">Ergebnis für x</text>');
+    function row(label, y, ex, al) {
+      var s = '<text class="quant-label" x="340" y="' + (y + 4) + '">' + label + '</text>';
+      s += '<text class="quant-label" x="372" y="' + (y - 8) + '">∃y</text>';
+      s += '<rect class="quant-bar-bg" x="400" y="' + (y - 18) + '" width="120" height="10" rx="5"/>';
+      s += '<rect class="quant-bar-e" x="400" y="' + (y - 18) + '" width="' + (120 * ex).toFixed(1) + '" height="10" rx="5"/>';
+      s += '<text class="quant-label" x="528" y="' + (y - 8) + '">' + fmtQ(ex, m) + '</text>';
+      s += '<text class="quant-label" x="372" y="' + (y + 14) + '">∀y</text>';
+      s += '<rect class="quant-bar-bg" x="400" y="' + (y + 4) + '" width="120" height="10" rx="5"/>';
+      s += '<rect class="quant-bar-a" x="400" y="' + (y + 4) + '" width="' + (120 * al).toFixed(1) + '" height="10" rx="5"/>';
+      s += '<text class="quant-label" x="528" y="' + (y + 14) + '">' + fmtQ(al, m) + '</text>';
+      return s;
+    }
+    parts.push(row("x = a", 100, exA, alA));
+    parts.push(row("x = b", 200, exB, alB));
+    parts.push('<text class="quant-label" x="340" y="292">Formel:</text>');
+    parts.push('<text class="quant-val" x="400" y="292">∃y R(x,y) und ∀y R(x,y)</text>');
+    quantSvg.innerHTML = parts.join("");
+    document.getElementById("quant-readout").textContent = m === "bool"
+      ? "Boolesch: ∃ = OR, ∀ = AND (Schwelle 0.5)."
+      : (m === "minmax" ? "Min/Max: ∃ = max, ∀ = min auf [0,1]." : "Produkt: ∃ = 1 − ∏(1−v), ∀ = ∏v.");
+    document.getElementById("quant-mode").textContent = m === "bool" ? "Boolesch" : (m === "minmax" ? "Min/Max" : "Produkt");
+    document.getElementById("quant-caption").textContent = m === "bool"
+      ? "Dieselbe Matrix, boolesch gelesen. Die Quantoren sind OR und AND."
+      : (m === "minmax" ? "Dieselbe Matrix, fuzzy gelesen. Existenz ist das Supremum, Allquantor das Infimum."
+        : "Dieselbe Matrix, Produkt-Logik. Existenz ist die probabilistische Summe, Allquantor das Produkt.");
+  }
+  ["aa", "ab", "ba", "bb"].forEach(function (key) {
+    qSliders[key].addEventListener("input", function () {
+      quantState[key] = parseFloat(qSliders[key].value);
+      document.getElementById("q-" + key + "-out").textContent = quantState[key].toFixed(2);
+      renderQuant();
+    });
+  });
+  document.querySelectorAll("[data-quant]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      quantState.mode = btn.getAttribute("data-quant");
+      document.querySelectorAll("[data-quant]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderQuant();
+    });
+  });
+  renderQuant();
+
+  /* ---------- FA 2-category ---------- */
+  var faState = "obj";
+  var faSvg = document.getElementById("fa-svg");
+  function renderFA() {
+    var A = { x: 90, y: 160 }, B = { x: 300, y: 160 }, C = { x: 480, y: 160 };
+    var parts = [];
+    var objActive = faState === "obj" ? " active" : "";
+    var morActive = faState === "mor" ? " active" : "";
+    var twoActive = faState === "two" ? " active" : "";
+    parts.push('<line class="fa-edge' + morActive + '" x1="' + (A.x + 26) + '" y1="140" x2="' + (B.x - 28) + '" y2="140"/>');
+    parts.push(headAt(B.x - 24, 140, 0, "fa-edge-head" + morActive));
+    parts.push('<line class="fa-edge' + morActive + '" x1="' + (A.x + 26) + '" y1="180" x2="' + (B.x - 28) + '" y2="180"/>');
+    parts.push(headAt(B.x - 24, 180, 0, "fa-edge-head" + morActive));
+    parts.push('<line class="fa-edge' + morActive + '" x1="' + (B.x + 26) + '" y1="160" x2="' + (C.x - 28) + '" y2="160"/>');
+    parts.push(headAt(C.x - 24, 160, 0, "fa-edge-head" + morActive));
+    parts.push('<line class="fa-2' + twoActive + '" x1="195" y1="147" x2="195" y2="173"/>');
+    parts.push(headAt(195, 176, Math.PI / 2, "fa-2-head" + twoActive));
+    parts.push('<circle class="fa-node' + objActive + '" cx="' + A.x + '" cy="' + A.y + '" r="24"/>');
+    parts.push('<circle class="fa-node' + objActive + '" cx="' + B.x + '" cy="' + B.y + '" r="24"/>');
+    parts.push('<circle class="fa-node' + objActive + '" cx="' + C.x + '" cy="' + C.y + '" r="24"/>');
+    parts.push('<text class="fa-nodelabel" x="' + A.x + '" y="' + (A.y + 5) + '" text-anchor="middle">A</text>');
+    parts.push('<text class="fa-nodelabel" x="' + B.x + '" y="' + (B.y + 5) + '" text-anchor="middle">B</text>');
+    parts.push('<text class="fa-nodelabel" x="' + C.x + '" y="' + (C.y + 5) + '" text-anchor="middle">C</text>');
+    parts.push('<text class="fa-label" x="' + ((A.x + B.x) / 2) + '" y="128" text-anchor="middle">F</text>');
+    parts.push('<text class="fa-label" x="' + ((A.x + B.x) / 2) + '" y="198" text-anchor="middle">G</text>');
+    parts.push('<text class="fa-label" x="' + ((B.x + C.x) / 2) + '" y="148" text-anchor="middle">H</text>');
+    parts.push('<text class="fa-label" x="208" y="164">α</text>');
+    faSvg.innerHTML = parts.join("");
+    var readout = document.getElementById("fa-readout");
+    var status = document.getElementById("fa-status");
+    if (faState === "obj") {
+      readout.textContent = "Objekte sind Theorien: Prop-Kategorien.";
+      status.textContent = "Objekt";
+    } else if (faState === "mor") {
+      readout.textContent = "1-Morphismen sind Strukturen: semantische Interpretationen einer Theorie.";
+      status.textContent = "1-Morphismus";
+    } else {
+      readout.textContent = "2-Zellen sind strukturerhaltende Abbildungen zwischen Strukturen.";
+      status.textContent = "2-Zelle";
+    }
+    document.getElementById("fa-caption").textContent = faState === "obj"
+      ? "Die Objekte von FA sind die Theorien. Jede Theorie ist eine Prop-Kategorie."
+      : (faState === "mor" ? "Die 1-Morphismen sind Strukturen. Sie interpretieren die Symbole der Theorie in einer semantischen Prop-Kategorie."
+        : "Die 2-Zellen sind natürliche Transformationen zwischen Strukturen. Sie machen FA zu einer 2-Kategorie.");
+  }
+  document.querySelectorAll("[data-fa]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      faState = btn.getAttribute("data-fa");
+      document.querySelectorAll("[data-fa]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderFA();
+    });
+  });
+  renderFA();
+
+  /* ---------- closure lab ---------- */
+  var clState = { mode: "struct", S: false, P: false, top: false };
+  var clSvg = document.getElementById("closure-svg");
+  var clTopBtn = document.querySelector('[data-cl="top"]');
+  function ringDots(cx, cy, r, n, on, color) {
+    if (!on) return "";
+    var s = "";
+    for (var i = 0; i < n; i++) {
+      var a = i * Math.PI * 2 / n + 0.2;
+      var x = cx + Math.cos(a) * r;
+      var y = cy + Math.sin(a) * r;
+      s += '<circle class="cl-dot" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" fill="' + color + '"/>';
+    }
+    return s;
+  }
+  function renderClosure() {
+    var cx = 280, cy = 180;
+    var parts = [];
+    parts.push('<circle class="cl-ring' + (clState.S ? " on" : "") + '" cx="' + cx + '" cy="' + cy + '" r="60"/>');
+    parts.push('<circle class="cl-ring' + (clState.P ? " on" : "") + '" cx="' + cx + '" cy="' + cy + '" r="100"/>');
+    parts.push('<circle class="cl-ring' + (clState.top ? " on" : "") + '" cx="' + cx + '" cy="' + cy + '" r="140"/>');
+    parts.push('<circle class="cl-core" cx="' + cx + '" cy="' + cy + '" r="26"/>');
+    [0, 1, 2].forEach(function (i) {
+      var a = i * Math.PI * 2 / 3 - Math.PI / 2;
+      parts.push('<circle class="cl-dot" cx="' + (cx + Math.cos(a) * 12).toFixed(1) + '" cy="' + (cy + Math.sin(a) * 12).toFixed(1) + '" r="4"/>');
+    });
+    parts.push('<text class="cl-label" x="' + cx + '" y="' + (cy + 44) + '" text-anchor="middle">X</text>');
+    parts.push('<text class="cl-label" x="' + (cx + 68) + '" y="' + (cy - 4) + '">S</text>');
+    parts.push('<text class="cl-label" x="' + (cx + 108) + '" y="' + (cy - 4) + '">P</text>');
+    parts.push('<text class="cl-label" x="' + (cx + 148) + '" y="' + (cy - 4) + '">' + (clState.mode === "struct" ? "H" : "U") + '</text>');
+    parts.push(ringDots(cx, cy, 60, 6, clState.S, "var(--mint)"));
+    parts.push(ringDots(cx, cy, 100, 10, clState.P, "var(--violet)"));
+    parts.push(ringDots(cx, cy, 140, 14, clState.top, "var(--amber)"));
+    parts.push('<text class="cl-big" x="' + cx + '" y="24" text-anchor="middle">' + (clState.mode === "struct" ? "H·S·P(X)" : "U·S·P(𝒳)") + '</text>');
+    clSvg.innerHTML = parts.join("");
+    var applied = [];
+    if (clState.S) applied.push("S");
+    if (clState.P) applied.push("P");
+    if (clState.top) applied.push(clState.mode === "struct" ? "H" : "U");
+    var result = document.getElementById("closure-result");
+    var readout = document.getElementById("closure-readout");
+    if (clState.S && clState.P && clState.top) {
+      result.textContent = clState.mode === "struct" ? "= Mod(Th(X))" : "= gleiche Konsequenz";
+      readout.textContent = clState.mode === "struct"
+        ? "Alle drei angewendet: H·S·P(X) ist die Klasse aller Modelle der gemeinsamen Theorie."
+        : "Alle drei angewendet: U·S·P(𝒳) ist die Klasse aller Prop-Kategorien mit derselben ersten Ordnung.";
+    } else {
+      result.textContent = applied.length ? "X + " + applied.join(" + ") : "X";
+      readout.textContent = "Starte mit einer Klasse X. Wende S, P und " + (clState.mode === "struct" ? "H" : "U") + " an.";
+    }
+    document.getElementById("closure-caption").textContent = clState.mode === "struct"
+      ? "Die Hülle unter der gemeinsamen Theorie ist H·S·P(X). Das ist das fibered Analogon von Birkhoffs HSP-Satz."
+      : "Die Hülle unter logischer Konsequenz ist U·S·P(𝒳). Das ist das fibered Analogon des Blok-Jónsson-Resultats.";
+  }
+  document.querySelectorAll("[data-cl]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var key = btn.getAttribute("data-cl");
+      clState[key] = !clState[key];
+      btn.classList.toggle("ghost", !clState[key]);
+      renderClosure();
+    });
+  });
+  document.querySelectorAll("[data-clmode]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      clState.mode = btn.getAttribute("data-clmode");
+      document.querySelectorAll("[data-clmode]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      clTopBtn.textContent = clState.mode === "struct" ? "H" : "U";
+      renderClosure();
+    });
+  });
+  document.querySelectorAll("[data-cl]").forEach(function (btn) { btn.classList.add("ghost"); });
+  renderClosure();
+
+})();
+</script>
+</body>
+</html>
