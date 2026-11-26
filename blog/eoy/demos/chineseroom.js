@@ -52,6 +52,32 @@
     var activeFly = null;
     var activeAnim = null;
 
+    // The room sits in demos that can be much shorter than a full lesson stage
+    // (e.g. the WordPress embed). When there is not enough room, the absolute
+    // layout would let the answer buttons overlap the rulebook; switch to the
+    // stacked desk layout instead.
+    var compact = false;
+    var compactRaf = 0;
+    var compactObserver = null;
+    function updateCompact() {
+      var r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return;
+      var next = r.width < 640 || r.height < 620;
+      if (next === compact) return;
+      compact = next;
+      el.classList.toggle("is-compact", compact);
+    }
+    function onCompactResize() {
+      if (compactRaf) return;
+      compactRaf = requestAnimationFrame(function () { compactRaf = 0; updateCompact(); });
+    }
+    if (window.ResizeObserver) {
+      compactObserver = new ResizeObserver(onCompactResize);
+      compactObserver.observe(el);
+    } else {
+      window.addEventListener("resize", onCompactResize);
+    }
+
     function clearTimers() {
       timers.forEach(function (id) { clearTimeout(id); });
       timers = [];
@@ -208,7 +234,7 @@
     }
 
     function scrollNeeded() {
-      return window.matchMedia && window.matchMedia("(max-width: 780px)").matches;
+      return compact || (window.matchMedia && window.matchMedia("(max-width: 780px)").matches);
     }
 
     function flyIn() {
@@ -377,6 +403,7 @@
       return true;
     }
 
+    updateCompact();
     renderRound();
 
     return {
@@ -395,6 +422,9 @@
       destroy: function () {
         clearTimers();
         clearFly();
+        if (compactObserver) compactObserver.disconnect();
+        else window.removeEventListener("resize", onCompactResize);
+        if (compactRaf) cancelAnimationFrame(compactRaf);
         el.remove();
       }
     };

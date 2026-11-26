@@ -5034,6 +5034,40 @@ html.dark .ls-cr2-room {
   .ls-cr2-hud { top: 10px; left: 10px; right: auto; align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
 }
 
+/* The demo box can be short even when the viewport is wide (e.g. WordPress
+   embed). Use the same stacked desk layout so answer buttons never overlap
+   the rulebook. */
+.ls-cr2-scene.is-compact .ls-cr2-room { flex: 0 0 auto; height: auto; min-height: 0; padding-bottom: 0; overflow: visible; }
+.ls-cr2-scene.is-compact .ls-cr2-window,
+.ls-cr2-scene.is-compact .ls-cr2-lamp,
+.ls-cr2-scene.is-compact .ls-cr2-slot,
+.ls-cr2-scene.is-compact .ls-cr2-floor { display: none; }
+.ls-cr2-scene.is-compact .ls-cr2-desk {
+  position: relative;
+  left: auto; right: auto; bottom: auto;
+  margin: 74px 10px 12px;
+  height: auto;
+  transform: none;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ls-cr2-scene.is-compact .ls-cr2-slip,
+.ls-cr2-scene.is-compact .ls-cr2-book,
+.ls-cr2-scene.is-compact .ls-cr2-options,
+.ls-cr2-scene.is-compact .ls-cr2-feedback {
+  position: static;
+  width: auto;
+  right: auto; left: auto; top: auto; bottom: auto;
+  transform: none;
+}
+.ls-cr2-scene.is-compact .ls-cr2-slip.is-arriving { transform: translateY(-24px) scale(0.96); }
+.ls-cr2-scene.is-compact .ls-cr2-options { justify-content: stretch; }
+.ls-cr2-scene.is-compact .ls-cr2-choice { flex: 1 1 140px; }
+.ls-cr2-scene.is-compact .ls-cr2-feedback { min-height: 0; }
+.ls-cr2-scene.is-compact .ls-cr2-hud { top: 10px; left: 10px; right: auto; align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
+
 .ls-cr2-note { margin: 0 0 14px; width: 100%; max-width: none; }
 
 @media (max-width: 780px) {
