@@ -1554,7 +1554,16 @@
 
   var neuralNeuronStep = Object.assign({}, insideSteps[0], {
     kicker: DE ? "Neuron" : "Neuron",
-    title: DE ? "Ein Neuron als Gerade" : "A neuron as a line"
+    title: DE ? "Ein Neuron als Gerade" : "A neuron as a line",
+    watch: "",
+    body: DE
+      ? "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein lineares Neuron: $\\hat y = w\\cdot x + b$. Es hat zwei Parameter und kann nur eine Gerade zeichnen und sie rauf und runter schieben.\n\n\nDen Fehler berechnen wir, wie beim vorherigen Beispiel mit Gauß und Ceres, über die quadratische mittlere Abweichung. Dadurch sagen wir wenn das Netzwerk grob in der Region liegt wo es hin soll dass es schon ganz gut ist (indem wir es quadratisch mehr \"bestrafen\" wenn es weiter weg liegt), aber je näher es an den realen Punkten ist, desto besser wird es am Ende im Detail. \n\n\nBeim Trainieren eines neuronalen Netzes werden die Parameter (wie $w$ und $b$) immer wieder angepasst, um einen möglichst geringen Fehler zu haben auf den Daten, die es sieht.\n\n\nDie Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, weil sie nicht komplex genug ist.\n\n\nDer grüne Bereich ist der Bereich, aus dem das Netzwerk lernt. Die grauen Bereiche zeigen, dass es nur innerhalb des grünen Bereichs halbwegs passt, aber außerhalb ist es sehr schlecht."
+      : "A neural network is first a parameterised function. The smallest example is a linear neuron: $\\hat y = w\\cdot x + b$. It has two parameters and can only draw a straight line and move it up and down.\n\n\nWe compute the error, as in the previous example with Gauss and Ceres, through the mean squared deviation. This tells us that when the network lies roughly in the region where it should be, it is already quite good (because we “punish” it quadratically more when it is further away), but the closer it is to the real points, the better it becomes in detail in the end. \n\n\nWhen training a neural network, the parameters (such as $w$ and $b$) are adjusted again and again to have the smallest possible error on the data it sees.\n\n\nThe line adapts to the points, but it can only approximate the sine roughly because it is not complex enough.\n\n\nThe green area is the area from which the network learns. The grey areas show that it only fits reasonably inside the green area, but outside it is very bad.",
+    context: "",
+    deep: "",
+    boxes: insideSteps[0].boxes.filter(function (b) {
+      return b.id === "mod-0" || b.id === "mod-loss" || b.id === "mod-extra";
+    })
   });
   var neuralLossStep = Object.assign({}, gradientSteps[0], {
     title: DE ? "Wie findet man gute Punkte?" : "How do you find good points?",
