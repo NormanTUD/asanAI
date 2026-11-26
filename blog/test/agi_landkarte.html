@@ -346,7 +346,7 @@
       <h2>Architekturen als Objekte, Agenten als Fasern</h2>
       <div class="prose">
         <p>Die Kategorie <span class="accent">ArchAgents</span> hat Architekturen als Objekte. Eine Architektur ist ein Tripel A = (G<sub>A</sub>, Know<sub>A</sub>, T<sub>A</sub>): das syntaktische Diagramm, die Wissenskategorie und die Constraint-Schicht. Ein Morphismus F: A → B ist eine strukturerhaltende Übersetzung: monoidale Funktoren auf Syntax und Wissen, eine natürliche Transformation auf der relationalen Schnittstelle und eine Übersetzung der Scopes und Constraints.</p>
-        <p>Ein konkreter <span class="accent">Agent</span> ist ein Paar von starken monoidalen Funktoren I: G<sub>A</sub> → E und J: Know<sub>A</sub> → E in eine semantische Kategorie E, etwa Set, Stoch, FinStoch oder eine Kleisli-Kategorie. Er muss die Schnittstellen und die Constraints erfüllen. Agents(A, E) ist die Kategorie der Agenten von A in E.</p>
+        <p>Ein konkreter <span class="accent">Agent</span> ist ein Paar von starken symmetrisch-monoidalen Funktoren I: G<sub>A</sub> → E und J: Know<sub>A</sub> → E in eine semantische Kategorie E, etwa Set, Stoch, FinStoch oder eine Kleisli-Kategorie. Er muss die Schnittstellen und die Constraints erfüllen. Agents(A, E) ist die Kategorie der Agenten von A in E.</p>
         <p>Die Grothendieck-Konstruktion macht daraus eine <span class="accent">Fibration</span> Agents(E) → ArchAgents. Die Faser über A enthält alle Agenten, die A implementieren. Ein Architektur-Morphismus F: A → B reindexiert Agenten von B nach A. Ob sie in A admissibel bleiben, hängt davon ab, ob F die Constraints erhält.</p>
       </div>
 
@@ -462,7 +462,7 @@
       <div class="section-head"><span class="sec-num">05 · Der Raum der Architekturen</span></div>
       <h2>Pfade, Übersetzungen, Vergleiche</h2>
       <div class="prose">
-        <p>Wenn Architekturen Objekte einer Kategorie sind, kann man über <span class="accent">Pfade</span> zwischen ihnen sprechen. Das Papier zeigt in seiner Abbildung 8 einen topologischen Raum von Architekturvarianten, mit Präfixen wie O (offline), F (faktorisiert), FMM (faktoriesierte Multi-Modelle), CogMem (kognitive Module mit Gedächtnis) und Emb (verkörpert).</p>
+        <p>Wenn Architekturen Objekte einer Kategorie sind, kann man über <span class="accent">Pfade</span> zwischen ihnen sprechen. Das Papier zeigt in seiner Abbildung 8 einen topologischen Raum von Architekturvarianten, mit Präfixen wie O (offline), F (faktorisiert), FMM (faktorisierte Multi-Modelle), CogMem (kognitive Module mit Gedächtnis) und Emb (verkörpert).</p>
         <p>Die Landkarte ist der Punkt des Papers: Nicht jede Architektur isoliert analysieren, sondern Übersetzungen, Äquivalenzen und gemeinsame Eigenschaften sichtbar machen. Langfristig sollen daraus Aussagen über Expressivität, Universalität und Designprinzipien für AGI werden.</p>
       </div>
 
@@ -537,6 +537,8 @@
             <div><dt>Institution</dt><dd>Ein abstraktes logisches System aus Signaturen, Sätzen, Modellen und Erfüllung.</dd></div>
             <div><dt>Semantisches Zertifikat</dt><dd>Ein externer Satz plus Instantiation plus Evidenz, dass der Agent die Hypothesen erfüllt.</dd></div>
             <div><dt>Admissibel</dt><dd>Eine Realisierung, die die Constraints der Architektur erfüllt.</dd></div>
+            <div><dt>RL / CRL / SBL</dt><dd>Reinforcement Learning, Causal Reinforcement Learning, Schema-Based Learning.</dd></div>
+            <div><dt>AIXI</dt><dd>Ein universeller AI-Agent von Marcus Hutter: Prädiktion über eine History mit einem universalen Kernel und eine erwartungsmaximierende Policy.</dd></div>
           </dl>
         </div>
       </details>
