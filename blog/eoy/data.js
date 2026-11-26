@@ -821,7 +821,13 @@
         box("act-3", "Formeln", "Die vier Funktionen", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU ist ein glatter Durchlass, der kleine negative Werte noch passieren lässt."),
         box("act-4", "Satz", "Beliebig genau?", "Mit genügend Neuronen und einer nichtlinearen Aktivierung kann ein Netz jede stetige Funktion auf einem begrenzten Bereich beliebig genau annähern. Tiefe hilft, weil sie dieselbe Zahl von Neuronen effizienter nutzt.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }]
+      sources: [
+        { label: "Nair & Hinton (2010), Rectified Linear Units Improve Restricted Boltzmann Machines", url: "https://www.cs.toronto.edu/~fritz/absps/reluICML.pdf", why: { de: "ReLU: spärliche, schnelle Aktivierung für tiefe Netze.", en: "ReLU: sparse, fast activation for deep networks." } },
+        { label: "Hendrycks & Gimpel (2016), Gaussian Error Linear Units (GELUs)", url: "https://arxiv.org/abs/1606.08415", why: { de: "GELU: glatte Aktivierung, heute Standard in vielen Transformer-Modellen.", en: "GELU: smooth activation, now standard in many transformer models." } },
+        { label: "Glorot & Bengio (2010), Understanding the difficulty of training deep feedforward neural networks", url: "https://proceedings.mlr.press/v9/glorot10a.html", why: { de: "Sigmoid/tanh sättigen; Initialisierung und Gradientenfluss.", en: "Sigmoid/tanh saturation; initialisation and gradient flow." } },
+        { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } },
+        { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }
+      ]
     }
   ] : [
     {
@@ -839,7 +845,13 @@
         box("act-3", "Formulas", "The four functions", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU is a smooth gate that still lets small negative values through."),
         box("act-4", "Theorem", "Arbitrarily close?", "With enough neurons and a nonlinear activation, a network can approximate any continuous function on a bounded region arbitrarily closely. Depth helps because it uses the same number of neurons more efficiently.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }]
+      sources: [
+        { label: "Nair & Hinton (2010), Rectified Linear Units Improve Restricted Boltzmann Machines", url: "https://www.cs.toronto.edu/~fritz/absps/reluICML.pdf", why: { de: "ReLU: spärliche, schnelle Aktivierung für tiefe Netze.", en: "ReLU: sparse, fast activation for deep networks." } },
+        { label: "Hendrycks & Gimpel (2016), Gaussian Error Linear Units (GELUs)", url: "https://arxiv.org/abs/1606.08415", why: { de: "GELU: glatte Aktivierung, heute Standard in vielen Transformer-Modellen.", en: "GELU: smooth activation, now standard in many transformer models." } },
+        { label: "Glorot & Bengio (2010), Understanding the difficulty of training deep feedforward neural networks", url: "https://proceedings.mlr.press/v9/glorot10a.html", why: { de: "Sigmoid/tanh sättigen; Initialisierung und Gradientenfluss.", en: "Sigmoid/tanh saturation; initialisation and gradient flow." } },
+        { label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } },
+        { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }
+      ]
     }
   ];
 
@@ -1624,10 +1636,47 @@
       }
     ]
   });
-  var neuralActivationStep = Object.assign({}, activationSteps[0], {
+  var activationBendSubstep = Object.assign({}, activationSteps[0], {
     kicker: DE ? "Aktivierung" : "Activation",
-    title: DE ? "Aktivierungen machen den Knick" : "Activations create the bend"
+    title: DE ? "Aktivierungen machen den Knick" : "Activations create the bend",
+    body: DE ? "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU knickt bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix:\n\n$$ \\begin{aligned}\n\\text{dense}_n(x) &= w_n \\cdot x + b_n \\\\[1em]\n\\text{dense}_1(\\text{dense}_2(x)) &= w_1 \\cdot (w_2 \\cdot x + b_2) + b_1 \\\\\n&= w_1 \\cdot w_2 \\cdot x + w_1 \\cdot b_2 + b_1 \\\\\n&= \\underbrace{(w_1 \\cdot w_2)}_{w} \\cdot x + \\underbrace{(w_1 \\cdot b_2 + b_1)}_{b} \\\\\n&= w \\cdot x + b\n\\end{aligned} $$\n\n\nAktivierungsfunktionen erlauben es, dass Layer nicht mehr kollabieren und tatsächlich nichtlineare Funktionne approximieren können." : "A nonlinearity is applied to each coordinate after the projection. ReLU kinks at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix:\n\n$$ \\begin{aligned}\n\\text{dense}_n(x) &= w_n \\cdot x + b_n \\\\[1em]\n\\text{dense}_1(\\text{dense}_2(x)) &= w_1 \\cdot (w_2 \\cdot x + b_2) + b_1 \\\\\n&= w_1 \\cdot w_2 \\cdot x + w_1 \\cdot b_2 + b_1 \\\\\n&= \\underbrace{(w_1 \\cdot w_2)}_{w} \\cdot x + \\underbrace{(w_1 \\cdot b_2 + b_1)}_{b} \\\\\n&= w \\cdot x + b\n\\end{aligned} $$\n\n\nActivation functions allow layers to stop collapsing and actually approximate nonlinear functions.",
+    context: "",
+    deep: DE ? "ReLU ist nicht injektiv: Alle negativen Eingaben landen bei 0. Dieser Informationsverlust kann beim Entwirren helfen, indem mehrere Punkte (die kleiner Null sind) auf einen Punkt zusammenbrechen. Sigmoid und tanh sind für endliche Eingaben umkehrbar; GELU ist glatt, aber nicht injektiv: Verschiedene Eingaben können denselben Ausgabewert treffen. Sättigung und niedrige Präzision können auch sie zu einer Treppe machen." : "ReLU is not injective: all negative inputs land at 0. This loss of information can help untangle by collapsing several points (those below zero) onto one point. Sigmoid and tanh are invertible for finite inputs; GELU is smooth but not injective: different inputs can hit the same output value. Saturation and low precision can turn even them into a staircase.",
+    boxes: activationSteps[0].boxes.filter(function (b) { return b.id === "act-4"; }).map(function (b) {
+      return Object.assign({}, b, { body: DE ? "Mit genügend Neuronen, einer nichtlinearen Aktivierungsfunktion und einem Hidden Layer (also der Form $\\text{dense}_1(\\text{akt.}(\\text{dense}_2(\\text{akt.}(\\text{dense}_3()))))$) kann ein Netz jede stetige Funktion auf einem begrenzten Bereich beliebig genau annähern. Tiefe hilft, weil sie dieselbe Zahl von Neuronen effizienter nutzt." : "With enough neurons, a nonlinear activation function, and a hidden layer (i.e. the form $\\text{dense}_1(\\text{act.}(\\text{dense}_2(\\text{act.}(\\text{dense}_3()))))$), a network can approximate any continuous function on a bounded region arbitrarily closely. Depth helps because it uses the same number of neurons more efficiently." });
+    }),
+    demoState: { scene: "activation", mode: "activation" }
   });
+  var softmaxSubstep = {
+    kicker: DE ? "Softmax" : "Softmax",
+    title: DE ? "Softmax: aus Logits werden Wahrscheinlichkeiten" : "Softmax: from logits to probabilities",
+    body: DE
+      ? "Softmax macht aus beliebigen Zahlen – den <b>Logits</b> – eine Wahrscheinlichkeitsverteilung. Zuerst wird jeder Wert exponiert, dadurch ist jeder Wert positiv. Dann teilt man durch die Summe, dadurch ist die Summe der Ausgaben genau 1.\n\n$$p_i = \\operatorname{softmax}(z)_i = \\frac{e^{z_i}}{\\sum_j e^{z_j}}$$\n\nGroße Unterschiede zwischen den Logits werden verstärkt, kleine abgeschwächt. Negative Zahlen sind kein Problem: Ein konstanter Offset $c$ kürzt sich heraus, denn $e^{z_i+c}/(\\sum_j e^{z_j+c}) = e^{z_i}/\\sum_j e^{z_j}$. In der Praxis zieht man vor dem Exponentieren das Maximum ab, damit nichts überläuft.\n\nIn der Demo kannst du zwischen positiven und negativen Werten wechseln oder eigene Werte als CSV eingeben. Beobachte, wie aus den Eingaben $z_i$ die Wahrscheinlichkeiten $p_i$ werden."
+      : "Softmax turns arbitrary numbers – the <b>logits</b> – into a probability distribution. First every value is exponentiated, which makes every value positive. Then you divide by the sum, so the outputs sum to exactly 1.\n\n$$p_i = \\operatorname{softmax}(z)_i = \\frac{e^{z_i}}{\\sum_j e^{z_j}}$$\n\nLarge differences between logits are amplified, small ones are attenuated. Negative numbers are no problem: a constant offset $c$ cancels out, because $e^{z_i+c}/(\\sum_j e^{z_j+c}) = e^{z_i}/\\sum_j e^{z_j}$. In practice you subtract the maximum before exponentiating so nothing overflows.\n\nIn the demo you can switch between positive and negative values or enter your own values as CSV. Watch how the inputs $z_i$ become the probabilities $p_i$.",
+    watch: DE
+      ? "Schalte zwischen positiven und negativen Werten um oder gib eigene CSV-Werte ein. Beobachte, wie aus z die Wahrscheinlichkeiten p werden."
+      : "Switch between positive and negative values or enter your own CSV values. Watch how z becomes the probabilities p.",
+    demoState: { scene: "activation", mode: "softmax" },
+    context: DE
+      ? "Softmax ist die Standard-Ausgabe für Klassifikation und für das nächste Token: eine Verteilung über Klassen bzw. das Vokabular. Jede Ausgabe liegt zwischen 0 und 1, und die Summe ist 1."
+      : "Softmax is the standard output for classification and for the next token: a distribution over classes or the vocabulary. Every output lies between 0 and 1, and the sum is 1.",
+    deep: DE
+      ? "Ein Temperaturparameter $T$ teilt die Logits vor der Softmax: $T\\to0$ macht die Verteilung scharf (fast argmax), ein großes $T$ macht sie flach. Für die numerische Stabilität zieht man das Maximum der Logits ab; das ändert die Wahrscheinlichkeiten nicht."
+      : "A temperature parameter $T$ divides the logits before softmax: $T\\to0$ makes the distribution sharp (almost argmax), a large $T$ makes it flat. For numerical stability you subtract the maximum logit; that does not change the probabilities.",
+    boxes: [
+      box("smx-1", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Jeder Logit wird exponiert und durch die Summe aller Exponenten geteilt. Dadurch entsteht eine Verteilung." : "Every logit is exponentiated and divided by the sum of all exponentials. That produces a distribution.", DE ? "p_i = \\operatorname{softmax}(z)_i = \\frac{e^{z_i}}{\\sum_j e^{z_j}}" : "p_i = \\operatorname{softmax}(z)_i = \\frac{e^{z_i}}{\\sum_j e^{z_j}}"),
+      box("smx-2", DE ? "Stabilität" : "Stability", DE ? "Warum das Maximum abziehen?" : "Why subtract the max?", DE ? "Für große Logits kann $e^{z_i}$ überlaufen. Zieht man vorher $\\max_j z_j$ ab, bleiben die Exponenten klein; die Wahrscheinlichkeiten ändern sich nicht, weil sich der Offset herauskürzt." : "For large logits $e^{z_i}$ can overflow. Subtracting $\\max_j z_j$ first keeps the exponentials small; the probabilities do not change because the offset cancels.")
+    ],
+    sources: [
+      { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Softmax als Ausgabe für Klassifikation und Log-Likelihood.", en: "Softmax as an output for classification and log-likelihood." } },
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Softmax in Attention: Gewichte als Verteilung.", en: "Softmax in attention: weights as a distribution." } }
+    ]
+  };
+  var neuralActivationStep = {
+    kicker: DE ? "Aktivierung" : "Activation",
+    title: DE ? "Aktivierungen machen den Knick" : "Activations create the bend",
+    substeps: [activationBendSubstep, softmaxSubstep]
+  };
   var neuralLargeImageStep = {
     kicker: DE ? "Bild als Funktion" : "An image as a function",
     title: DE ? "Neuronale Netze approximieren jede Funktion" : "Neural networks approximate any function",

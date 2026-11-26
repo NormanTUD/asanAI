@@ -2,27 +2,49 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
-  var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function activationScene(root, api) {
     var DE = api.lang === "de";
     var fns = [
-      { id: "relu", label: "ReLU", color: "green", desc: DE ? "flat, dann ein Anstieg" : "flat, then a rise" },
-      { id: "gelu", label: "GELU", color: "gold", desc: DE ? "glatt, kleiner Dip" : "smooth, small dip" },
-      { id: "sigmoid", label: "Sigmoid", color: "blue", desc: DE ? "S-Kurve, 0 bis 1" : "S-shape, 0 to 1" },
-      { id: "tanh", label: "tanh", color: "lilac", desc: DE ? "S-Kurve, -1 bis 1" : "S-shape, -1 to 1" }
+      { id: "relu", label: "ReLU", color: "green", formula: "max(0, x)", short: DE ? "tiefe Netze" : "deep nets", use: DE ? "tiefe CNNs/MLPs: billig, spärlich, Dead-ReLU-Risiko" : "deep CNNs/MLPs: cheap, sparse, dead-ReLU risk" },
+      { id: "gelu", label: "GELU", color: "gold", formula: "0.5x(1 + tanh(√(2/π)(x + 0.044715x<sup>3</sup>)))", short: DE ? "Transformer" : "transformers", use: DE ? "Transformer/LLMs: glatt, gute Gradienten" : "transformers/LLMs: smooth, good gradients" },
+      { id: "sigmoid", label: "Sigmoid", color: "blue", formula: "1 / (1 + e<sup>−x</sup>)", short: DE ? "binär/Gates" : "binary/gates", use: DE ? "binäre Ausgaben/Gates: sättigt, kleine Gradienten" : "binary outputs/gates: saturates, small gradients" },
+      { id: "tanh", label: "tanh", color: "lilac", formula: "(e<sup>2x</sup> − 1) / (e<sup>2x</sup> + 1)", short: DE ? "RNNs" : "RNNs", use: DE ? "RNNs/kleine MLPs: nullzentriert, sättigt" : "RNNs/small MLPs: zero-centred, saturates" }
     ];
     var el = document.createElement("div");
     el.className = "ls-act-scene";
-    el.innerHTML = '<div class="ls-act-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row ls-act-chips"></div><div class="ls-act-readout" aria-live="polite"></div>';
+    el.innerHTML = '<div class="ls-act-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-act-formula" aria-hidden="true">p<sub>i</sub> = e<sup>z<sub>i</sub></sup> / Σ<sub>j</sub> e<sup>z<sub>j</sub></sup></div></div>' +
+      '<div class="ls-act-controls">' +
+        '<div class="ls-act-chips"></div>' +
+        '<div class="ls-act-softmax">' +
+          '<div class="ls-act-presets" role="group" aria-label="' + (DE ? "Beispieldaten" : "Example data") + '">' +
+            '<button type="button" class="ls-chip is-on" data-soft="positive">' + (DE ? "Positiv" : "Positive") + '</button>' +
+            '<button type="button" class="ls-chip" data-soft="negative">' + (DE ? "Negativ" : "Negative") + '</button>' +
+          '</div>' +
+          '<label class="ls-act-csv-label">' + (DE ? "Eigene CSV" : "Own CSV") + '<input type="text" class="ls-act-csv" inputmode="decimal" spellcheck="false" placeholder="1, 2, 3, 4" aria-label="' + (DE ? "Eigene Werte als CSV" : "Own values as CSV") + '"></label>' +
+          '<span class="ls-act-csv-status" aria-live="polite"></span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ls-act-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-act-stage");
     var canvas = el.querySelector("canvas");
     var chips = el.querySelector(".ls-act-chips");
     var readout = el.querySelector(".ls-act-readout");
-    canvas.setAttribute("data-tip", DE ? "Zeigt die Aktivierungskurve; achte auf Nullpunkt und Steigung." : "Shows the activation curve; watch the zero crossing and slope.");
+    var softChips = el.querySelectorAll("[data-soft]");
+    var csvInput = el.querySelector(".ls-act-csv");
+    var csvStatus = el.querySelector(".ls-act-csv-status");
+    var formulaEl = el.querySelector(".ls-act-formula");
+    var softPositive = [1, 2, 3, 4];
+    var softNegative = [-3, -2, -1, 0];
+    var softFrom = softPositive.slice();
+    var softTo = softPositive.slice();
+    var softMix = 1, softStart = 0, softPreset = "positive", softHits = [];
     var ctx = null, size = null, active = window.__lsActLast || "relu", hits = [];
     var fromId = active, morph = 1, morphStart = 0, morphRaf = 0;
+    var mode = "activation", modeT = 0, modeFrom = 0, modeTarget = 0, modeStart = 0, modeRaf = 0;
+    var csvTimer = 0;
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var C = api.colors();
     function f(id, x) {
       if (id === "relu") return Math.max(0, x);
@@ -30,49 +52,226 @@
       if (id === "sigmoid") return 1 / (1 + Math.exp(-x));
       return Math.tanh(x);
     }
+    function smooth(t) { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); }
+    function num(v, digits) {
+      var s = v.toFixed(digits);
+      return DE ? s.replace(".", ",") : s;
+    }
+    function softmax(vals) {
+      var max = Math.max.apply(null, vals);
+      var exps = vals.map(function (v) { return Math.exp(v - max); });
+      var sum = exps.reduce(function (a, b) { return a + b; }, 0) || 1;
+      return exps.map(function (e) { return e / sum; });
+    }
+    function softDisplay() {
+      var out = [];
+      var mix = ease(clamp(softMix, 0, 1));
+      for (var i = 0; i < softTo.length; i++) {
+        var from = softFrom[i] == null ? softTo[i] : softFrom[i];
+        out.push(lerp(from, softTo[i], mix));
+      }
+      return out;
+    }
+    function parseCsv(text) {
+      var parts = String(text).split(/[\s,;]+/).filter(Boolean);
+      if (parts.length < 2 || parts.length > 8) return null;
+      var vals = parts.map(function (p) { return Number(p); });
+      for (var i = 0; i < vals.length; i++) if (!isFinite(vals[i])) return null;
+      return vals;
+    }
+    function geometry() {
+      var pad = 34, w = size.w, h = size.h;
+      var x0 = pad, x1 = w - pad, y0 = h - pad, y1 = pad;
+      var base0 = y0 - (1.2 / 4.4) * (y0 - y1);
+      var baseY = lerp(base0, y0 - 0.56 * (y0 - y1), smooth(modeT));
+      return {
+        pad: pad, x0: x0, x1: x1, y0: y0, y1: y1, base0: base0, baseY: baseY,
+        sx: function (x) { return x0 + (x + 3) / 6 * (x1 - x0); },
+        sy: function (y) { return y0 - (y + 1.2) / 4.4 * (y0 - y1); }
+      };
+    }
+    function drawActivation(g) {
+      var t = smooth(modeT), alpha = 1 - t;
+      hits = [];
+      if (alpha <= 0.001) return;
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.7;
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      for (var gx = -3; gx <= 3; gx++) { ctx.beginPath(); ctx.moveTo(g.sx(gx), g.y1); ctx.lineTo(g.sx(gx), g.y0); ctx.stroke(); }
+      for (var gy = -1; gy <= 3; gy++) { ctx.beginPath(); ctx.moveTo(g.x0, g.sy(gy)); ctx.lineTo(g.x1, g.sy(gy)); ctx.stroke(); }
+      ctx.strokeStyle = C.lineStrong;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(g.x0, g.base0); ctx.lineTo(g.x1, g.base0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(g.sx(0), g.y0); ctx.lineTo(g.sx(0), g.y1); ctx.stroke();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText("x", g.x1 - 4, g.base0 - 6);
+      ctx.fillText("y", g.sx(0) + 8, g.y1 + 8);
+      ctx.restore();
+      var front = fns.filter(function (fn) { return fn.id === active; })[0];
+      if (!front) return;
+      var morphEase = ease(clamp(morph, 0, 1));
+      ctx.save();
+      ctx.beginPath();
+      for (var i = 0; i <= 120; i++) {
+        var x = -3 + 6 * i / 120;
+        var value = morph < 1 ? lerp(f(fromId, x), f(front.id, x), morphEase) : f(front.id, x);
+        var px = g.sx(x), py = lerp(g.sy(value), g.baseY, t);
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = C[front.color];
+      ctx.globalAlpha = alpha * (morph < 1 ? 0.55 + 0.45 * morphEase : 1);
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
+      ctx.restore();
+      var endY = lerp(g.sy(f(front.id, 2.6)), g.baseY, t);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = C[front.color];
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(front.label, g.sx(2.65), endY + 3);
+      ctx.restore();
+      if (modeT < 0.35) hits.push({ id: front.id, x: g.sx(2.65) + 12, y: endY, r: 18 });
+    }
+    function drawSoftmax(g) {
+      var t = smooth(modeT);
+      softHits = [];
+      if (t <= 0.001) return;
+      var vals = softDisplay();
+      var ps = softmax(vals);
+      var n = vals.length;
+      var maxAbs = Math.max.apply(null, vals.map(function (v) { return Math.abs(v); }).concat([1e-9]));
+      var x0 = g.x0 + 18, x1 = g.x1 - 18;
+      var slotW = (x1 - x0) / n;
+      var top = g.y1 + 28, bottom = g.y0 - 12;
+      var upper = Math.max(24, g.baseY - top);
+      var lower = Math.max(16, bottom - g.baseY);
+      var unit = Math.min(upper, lower) * 0.92 / maxAbs;
+      var barW = Math.min(20, slotW * 0.26);
+      var stagger = Math.min(0.045, 0.28 / Math.max(1, n - 1));
+      var denom = Math.max(0.01, 1 - (n - 1) * stagger);
+      ctx.save();
+      ctx.globalAlpha = t;
+      ctx.strokeStyle = C.lineStrong;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(x0, g.baseY); ctx.lineTo(x1, g.baseY); ctx.stroke();
+      ctx.globalAlpha = t * 0.9;
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText("z = " + (DE ? "Eingabe" : "input") + " · p = " + (DE ? "Wahrscheinlichkeit" : "probability"), x0, g.y1 + 10);
+      for (var i = 0; i < n; i++) {
+        var z = vals[i], p = ps[i];
+        var cx = x0 + slotW * (i + 0.5);
+        var grow = smooth(clamp((t - i * stagger) / denom, 0, 1));
+        var zh = Math.abs(z) * unit * grow;
+        var ph = p * upper * grow;
+        var zTop = z >= 0 ? g.baseY - zh : g.baseY;
+        ctx.globalAlpha = t * 0.55;
+        ctx.fillStyle = C.blue;
+        ctx.fillRect(cx - barW - 2, zTop, barW, zh);
+        ctx.globalAlpha = t * 0.95;
+        ctx.fillStyle = C.gold;
+        ctx.fillRect(cx + 2, g.baseY - ph, barW, ph);
+        ctx.globalAlpha = t * grow;
+        ctx.textAlign = "center";
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.fillStyle = C.blue;
+        ctx.fillText(num(z, 2), cx - barW / 2 - 1, z >= 0 ? g.baseY - zh - 6 : g.baseY + 12);
+        ctx.fillStyle = C.gold;
+        ctx.fillText(Math.round(p * 100) + "%", cx + barW / 2 + 1, g.baseY - ph - 6);
+        softHits.push({ i: i, cx: cx, x0: x0 + slotW * i, x1: x0 + slotW * (i + 1), z: z, p: p });
+      }
+      ctx.restore();
+    }
     function draw() {
       if (!size) return;
       ctx = size.ctx;
       ctx.clearRect(0, 0, size.w, size.h);
-      var pad = 34, w = size.w, h = size.h;
-      var x0 = pad, x1 = w - pad, y0 = h - pad, y1 = pad;
-      function sx(x) { return x0 + (x + 3) / 6 * (x1 - x0); }
-      function sy(y) { return y0 - (y + 1.2) / 4.4 * (y0 - y1); }
-      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
-      for (var g = -3; g <= 3; g++) { ctx.beginPath(); ctx.moveTo(sx(g), y1); ctx.lineTo(sx(g), y0); ctx.stroke(); }
-      for (var gy = -1; gy <= 3; gy++) { ctx.beginPath(); ctx.moveTo(x0, sy(gy)); ctx.lineTo(x1, sy(gy)); ctx.stroke(); }
-      ctx.strokeStyle = C.lineStrong; ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.moveTo(x0, sy(0)); ctx.lineTo(x1, sy(0)); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(sx(0), y0); ctx.lineTo(sx(0), y1); ctx.stroke();
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
-      ctx.fillText("x", x1 - 4, sy(0) - 6); ctx.fillText("y", sx(0) + 8, y1 + 8);
-      hits = [];
-      var front = fns.filter(function (fn) { return fn.id === active; })[0];
-      if (front) {
-        var fn = front;
-        var morphEase = ease(clamp(morph, 0, 1));
-        ctx.beginPath();
-        for (var i = 0; i <= 120; i++) {
-          var x = -3 + 6 * i / 120;
-          var value = morph < 1 ? lerp(f(fromId, x), f(fn.id, x), morphEase) : f(fn.id, x);
-          var px = sx(x), py = sy(value);
-          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
-        ctx.strokeStyle = C[fn.color];
-        ctx.globalAlpha = morph < 1 ? 0.55 + 0.45 * morphEase : 1;
-        ctx.lineWidth = 2.6;
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-        var end = sy(f(fn.id, 2.6));
-        ctx.fillStyle = C[fn.color];
-        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText(fn.label, sx(2.65), end + 3);
-        hits.push({ id: fn.id, x: sx(2.65) + 12, y: end, r: 18 });
+      var g = geometry();
+      drawActivation(g);
+      drawSoftmax(g);
+    }
+    function updateReadout() {
+      if (mode === "softmax") {
+        var ps = softmax(softDisplay());
+        var sum = ps.reduce(function (a, b) { return a + b; }, 0);
+        var label = softPreset === "positive" ? (DE ? "positive Werte" : "positive values") : softPreset === "negative" ? (DE ? "negative Werte" : "negative values") : (DE ? "eigene CSV" : "own CSV");
+        readout.innerHTML = '<span><b>Softmax</b> ' + label + ' · ' + (DE ? "Summe p = " : "sum p = ") + num(sum, 2) + '</span><span>' + (DE ? "Große Abstände werden verstärkt; negative Werte sind erlaubt, ein Offset kürzt sich heraus." : "Large gaps are amplified; negative values are allowed, and an offset cancels out.") + '</span>';
+      } else {
+        readout.innerHTML = fns.map(function (fn) {
+          var on = fn.id === active ? " is-on" : "";
+          return '<span class="ls-act-item' + on + '"><b>' + fn.label + '</b> <span class="ls-act-f">' + fn.formula + '</span> · ' + fn.short + '</span>';
+        }).join("");
       }
-      var info = fns.filter(function (fn) { return fn.id === active; })[0];
-      readout.innerHTML = '<span><b>' + info.label + '</b> ' + info.desc + '</span><span>' + (DE ? "Schritt " : "Step ") + (fns.indexOf(info) + 1) + " / " + fns.length + '</span><span>' + (DE ? "Sigmoid und tanh sind umkehrbar; GELU ist glatt, aber nicht monoton." : "Sigmoid and tanh are invertible; GELU is smooth but not monotonic.") + '</span>';
-      canvas.setAttribute("aria-label", DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh" : "Activation functions: ReLU, GELU, sigmoid, tanh");
+    }
+    function updatePresetChips() {
+      softChips.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-soft") === softPreset); });
+    }
+    function setSoftValues(vals, preset) {
+      if (!vals || vals.length < 2) return;
+      softFrom = softDisplay();
+      softTo = vals.slice();
+      softPreset = preset || "custom";
+      softMix = reducedMotion ? 1 : 0;
+      softStart = performance.now();
+      updatePresetChips();
+      updateReadout();
+      if (reducedMotion) {
+        softFrom = softTo.slice();
+        draw();
+      } else {
+        startAnim();
+      }
+    }
+    function stepAnim(now) {
+      var p = clamp((now - modeStart) / 560, 0, 1);
+      modeT = lerp(modeFrom, modeTarget, ease(p));
+      var s = 1;
+      if (softMix < 1) {
+        s = clamp((now - softStart) / 420, 0, 1);
+        softMix = s;
+      }
+      draw();
+      if (p < 1 || s < 1) modeRaf = requestAnimationFrame(stepAnim);
+      else {
+        modeRaf = 0;
+        softMix = 1;
+        softFrom = softTo.slice();
+        updateReadout();
+      }
+    }
+    function startAnim() {
+      if (reducedMotion) {
+        modeT = modeTarget;
+        softMix = 1;
+        softFrom = softTo.slice();
+        draw();
+        return;
+      }
+      modeFrom = modeT;
+      modeStart = performance.now();
+      if (!modeRaf) modeRaf = requestAnimationFrame(stepAnim);
+    }
+    function setMode(next) {
+      next = next === "softmax" ? "softmax" : "activation";
+      if (next === mode) { updateReadout(); return; }
+      mode = next;
+      el.classList.toggle("is-softmax", mode === "softmax");
+      canvas.setAttribute("data-tip", mode === "softmax"
+        ? (DE ? "Softmax: Eingaben z werden zu Wahrscheinlichkeiten p; Summe p = 1." : "Softmax: inputs z become probabilities p; sum p = 1.")
+        : (DE ? "Aktivierungskurve; achte auf Nullpunkt und Steigung." : "Activation curve; watch the zero crossing and slope."));
+      canvas.setAttribute("aria-label", mode === "softmax"
+        ? (DE ? "Softmax: Eingabewerte und ihre Wahrscheinlichkeiten." : "Softmax: input values and their probabilities.")
+        : (DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh." : "Activation functions: ReLU, GELU, sigmoid, tanh."));
+      if (formulaEl) formulaEl.setAttribute("aria-hidden", mode === "softmax" ? "false" : "true");
+      modeTarget = mode === "softmax" ? 1 : 0;
+      updateReadout();
+      startAnim();
     }
     function morphFrame(now) {
       morph = Math.min(1, (now - morphStart) / 420);
@@ -89,10 +288,9 @@
       morphStart = performance.now();
       if (morphRaf) cancelAnimationFrame(morphRaf);
       if (!reducedMotion) morphRaf = requestAnimationFrame(morphFrame);
+      updateReadout();
       draw();
     }
-    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    function resize() { size = api.fit(canvas, stage); draw(); }
     fns.forEach(function (fn) {
       var b = document.createElement("button");
       b.type = "button";
@@ -105,43 +303,89 @@
       });
       chips.appendChild(b);
     });
+    softChips.forEach(function (b) {
+      var isNeg = b.getAttribute("data-soft") === "negative";
+      b.setAttribute("data-tip", isNeg ? "z = [-3, -2, -1, 0]" : "z = [1, 2, 3, 4]");
+      b.addEventListener("click", function () {
+        var preset = b.getAttribute("data-soft");
+        setSoftValues(preset === "negative" ? softNegative : softPositive, preset);
+      });
+    });
+    csvInput.addEventListener("input", function () {
+      clearTimeout(csvTimer);
+      csvTimer = setTimeout(function () {
+        var text = csvInput.value.trim();
+        if (!text) { csvStatus.textContent = ""; csvStatus.classList.remove("is-error"); return; }
+        var vals = parseCsv(text);
+        if (!vals) {
+          csvStatus.textContent = DE ? "Bitte 2–8 Zahlen mit Komma trennen." : "Enter 2–8 numbers separated by commas.";
+          csvStatus.classList.add("is-error");
+          return;
+        }
+        csvStatus.textContent = DE ? "Übernommen: " + vals.length + " Werte" : "Applied: " + vals.length + " values";
+        csvStatus.classList.remove("is-error");
+        setSoftValues(vals, "custom");
+      }, 220);
+    });
     canvas.addEventListener("pointerup", function (e) {
+      if (modeT > 0.35) return;
       var r = canvas.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
-      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) { setActive(h.id); chips.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.textContent === fns.filter(function (f2) { return f2.id === h.id; })[0].label); }); } });
+      hits.forEach(function (h) {
+        if (Math.hypot(h.x - x, h.y - y) < h.r) {
+          setActive(h.id);
+          chips.querySelectorAll(".ls-chip").forEach(function (b) {
+            var fn = fns.filter(function (f2) { return f2.id === h.id; })[0];
+            if (fn) b.classList.toggle("is-on", b.textContent === fn.label);
+          });
+        }
+      });
     });
-    function stepFn(delta) {
-      var idx = fns.map(function (fn) { return fn.id; }).indexOf(active) + delta;
-      if (idx < 0 || idx >= fns.length) return false;
-      setActive(fns[idx].id);
-      chips.querySelectorAll(".ls-chip").forEach(function (x, i) { x.classList.toggle("is-on", i === idx); });
-      return true;
-    }
     core.canvasTip(canvas, function (px, py) {
       if (!size) return "";
-      var pad = 34, x0 = pad, x1 = size.w - pad, y0 = size.h - pad, y1 = pad;
-      if (px < x0 - 8 || px > x1 + 8 || py < y1 - 8 || py > y0 + 8) return "";
-      var x = clamp(-3 + (px - x0) / (x1 - x0) * 6, -3, 3);
+      var g = geometry();
+      if (modeT > 0.5) {
+        if (px < g.x0 - 8 || px > g.x1 + 8 || py < g.y1 - 8 || py > g.y0 + 8) return "";
+        var best = null, bd = Infinity;
+        softHits.forEach(function (h) {
+          var d = px >= h.x0 && px <= h.x1 ? Math.abs(px - h.cx) : Math.min(Math.abs(px - h.x0), Math.abs(px - h.x1)) + 40;
+          if (d < bd) { bd = d; best = h; }
+        });
+        if (!best) return DE ? "Softmax: Eingaben z werden zu Wahrscheinlichkeiten p." : "Softmax: inputs z become probabilities p.";
+        return DE
+          ? "z_" + (best.i + 1) + " = " + num(best.z, 2) + " → p_" + (best.i + 1) + " = " + (best.p * 100).toFixed(1) + " %. Summe p = 1."
+          : "z_" + (best.i + 1) + " = " + num(best.z, 2) + " → p_" + (best.i + 1) + " = " + (best.p * 100).toFixed(1) + " %. Sum p = 1.";
+      }
+      if (px < g.x0 - 8 || px > g.x1 + 8 || py < g.y1 - 8 || py > g.y0 + 8) return "";
+      var x = clamp(-3 + (px - g.x0) / (g.x1 - g.x0) * 6, -3, 3);
       var fn = fns.filter(function (item) { return item.id === active; })[0] || fns[0];
       var value = f(active, x);
       var slope = (f(active, x + 0.01) - f(active, x - 0.01)) / 0.02;
-      var name = fn.label;
       var zero = Math.abs(x) < 0.04 ? (DE ? " · hier liegt der Nullpunkt." : " · this is the zero crossing.") : "";
       return DE
-        ? name + " bei x = " + x.toFixed(2) + ": f(x) = " + value.toFixed(3) + ". Steigung ≈ " + slope.toFixed(2) + zero
-        : name + " at x = " + x.toFixed(2) + ": f(x) = " + value.toFixed(3) + ". Slope ≈ " + slope.toFixed(2) + zero;
+        ? fn.label + " bei x = " + num(x, 2) + ": f(x) = " + num(value, 3) + ". Steigung ≈ " + num(slope, 2) + zero
+        : fn.label + " at x = " + num(x, 2) + ": f(x) = " + num(value, 3) + ". Slope ≈ " + num(slope, 2) + zero;
     });
+    function resize() { size = api.fit(canvas, stage); draw(); }
     window.addEventListener("resize", resize);
+    canvas.setAttribute("data-tip", DE ? "Zeigt die Aktivierungskurve; achte auf Nullpunkt und Steigung." : "Shows the activation curve; watch the zero crossing and slope.");
+    canvas.setAttribute("aria-label", DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh." : "Activation functions: ReLU, GELU, sigmoid, tanh.");
+    updateReadout();
     resize();
     return {
-      update: function () {},
-      next: function () { return stepFn(1); },
-      prev: function () { return stepFn(-1); },
-      hasNext: function () { return fns.map(function (fn) { return fn.id; }).indexOf(active) < fns.length - 1; },
-      hasPrev: function () { return fns.map(function (fn) { return fn.id; }).indexOf(active) > 0; },
-      onKey: function (e) { return api.util.arrowKey(e, function () { return stepFn(1); }, function () { return stepFn(-1); }); },
+      update: function (s) {
+        if (!s) return;
+        if (s.mode === "softmax") setMode("softmax");
+        else if (s.mode === "activation") setMode("activation");
+      },
       resize: resize,
-      destroy: function () { if (morphRaf) cancelAnimationFrame(morphRaf); window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () {
+        if (morphRaf) cancelAnimationFrame(morphRaf);
+        if (modeRaf) cancelAnimationFrame(modeRaf);
+        clearTimeout(csvTimer);
+        window.removeEventListener("resize", resize);
+        el.remove();
+      }
     };
   }
 
