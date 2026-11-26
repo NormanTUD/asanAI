@@ -3018,7 +3018,7 @@
         ]
       },
       "edit": {
-        "body": "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort.\n\nDie Formel dafür ist:\n\n$$ \\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}}\\right) V $$\n\nOder, aus Sicht eines einzelnen Tokens:\n\n$$\\underbrace{x'_i}_{\\substack{\\text{neuer Vektor} \\\\ \\text{für Position } i}} \n\\;=\\; \n\\sum_j \n\\underbrace{\n  \\frac{\\exp\\left( \\frac{q_i \\cdot k_j}{\\sqrt{d_k}} \\right)}{\\sum_k \\exp\\left( \\frac{q_i \\cdot k_k}{\\sqrt{d_k}} \\right)}\n}_{\\alpha_{ij}} \n\\;\\cdot\\; \n\\underbrace{v_j}_{\\text{Value von } j}$$",
+        "body": "Jedes Token erzeugt $Q, K, V$ aus der Eingabe $X$ durch <b>gelernte Matrizen</b> ($W_i^Q, W_i^K, W_i^V$):\n\n$$ r_i = \\text{Attention}_i(X) = \\underbrace{\\text{softmax}\\left( \\frac{\\overbrace{(X W_i^Q)(X W_i^K)^T}^{\\text{Frage vs. Antwort}}}{\\underbrace{\\sqrt{d_k}}_{\\text{Skalierung}}} \\right)}_{\\text{Aufmerksamkeits-Gewichte}} \\underbrace{(X \\cdot W_i^V)}_{\\text{Inhalt}}  $$\n\nZusammenführung über die gelernte Output-Matrix $W_O$:\n\n$$ y_i = \\underbrace{W_O}_{\\text{gelerntes Mischen}} \\cdot \\underbrace{r_i}_{\\text{Head-Ergebnis}} $$\n\n\nJeder Attention-Head hat 100% Aufmerksamkeit, die er mit diesem Mechanismus auf alle Tokens verteilen kann. Erhält ein einziges Token beispielsweise 80% Aufmerksamkeit, müssen sich die anderen die restlichen 20% teilen. Das hat den Vorteil, dass das Netzwerk sich nicht absolut festlegen muss und flexibel bleiben kann, aber dennoch klare Tendenzen darstellen kann, welches Wort wie wichtig ist im gesamten Kontext für alle anderen Worte.",
         "title": "Wie Attention rechnet",
         "kicker": "Q · K · V",
         "watch": "",
@@ -3030,14 +3030,7 @@
               {
                 "id": "q-context",
                 "title": "Warum $\\sqrt{d_k}$?",
-                "body": "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden.",
-                "tex": "",
-                "kind": "question"
-              },
-              {
-                "id": "q-deep",
-                "title": "Woher kommen Q, K und V?",
-                "body": "$Q$, $K$ und $V$ sind gelernte Gewichte, die der Computer sich selbst beibringt wie er sich andere Gewichte beibringt, um den Loss zu reduzieren am Ende. Wir werden auf später auf den Prozess des Trainings eingehen.",
+                "body": "Die Scores werden durch $\\sqrt{d_k}$ geteilt, damit sie in hohen Dimensionen nicht zu groß werden. $d_k$ ist die Anzahl der Dimensionen des Modells.",
                 "tex": "",
                 "kind": "question"
               }
