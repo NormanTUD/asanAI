@@ -1285,23 +1285,22 @@
         ? "Induktionskopf: schematischer Score dafür, wie stark der Kopf an der Vorhersage beteiligt ist. Grau gestrichelt: 1-Schicht-Modell ohne Induktionsköpfe."
         : "Induction head: schematic score for how much the head contributes to prediction. Grey dashed: one-layer model without induction heads.");
       addHover(x0, py[1], pw, panelH, DE
-        ? "In-Context-Learning-Score: Loss-Unterschied zwischen frühen und späten Tokens im selben Kontext. Unter 0,15 nats vor dem Fenster, etwa 0,4 nats danach."
-        : "In-context-learning score: loss difference between early and late tokens in the same context. Below 0.15 nats before the window, about 0.4 nats after.");
+        ? "In-Context-Learning-Score: Loss-Unterschied zwischen frühen und späten Tokens im selben Kontext. Unter 0,15 nats vor dem Fenster, etwa 0,4 nats danach. nats sind Einheiten im natürlichen Logarithmus: 1 nat ≈ 1,44 Bit; höher heißt besser."
+        : "In-context-learning score: loss difference between early and late tokens in the same context. Below 0.15 nats before the window, about 0.4 nats after. nats are natural-log units: 1 nat ≈ 1.44 bits; higher is better.");
       addHover(x0, py[2], pw, panelH, DE
-        ? "Trainings-Loss in nats, gemittelt über viele Tokens. Grün: mehrschichtiges Modell. Grau gestrichelt: 1-Schicht-Modell. Im Fenster wird die Steigung erst flacher, dann steiler, dann wieder flacher."
-        : "Training loss in nats, averaged over many tokens. Green: multi-layer model. Grey dashed: one-layer model. In the window the slope flattens, then steepens, then flattens again.");
+        ? "Trainings-Loss in nats, gemittelt über viele Tokens. Grün: mehrschichtiges Modell. Grau gestrichelt: 1-Schicht-Modell. Im Fenster wird die Steigung erst flacher, dann steiler, dann wieder flacher. nats sind Einheiten im natürlichen Logarithmus: 1 nat ≈ 1,44 Bit; niedriger heißt besser."
+        : "Training loss in nats, averaged over many tokens. Green: multi-layer model. Grey dashed: one-layer model. In the window the slope flattens, then steepens, then flattens again. nats are natural-log units: 1 nat ≈ 1.44 bits; lower is better.");
       addHover(wa, yTop, wb - wa, yBottom - yTop, windowText);
       addHover(wc - 95, yTop - 24, 190, 22, windowText);
       addHover(x0 + 0.43 * pw, py[2] + panelH * 0.08, 0.28 * pw, panelH * 0.62, bumpText);
+      addHover(x0, py[2], pw, panelH, function (px) {
+        var t = Math.max(0, Math.min(1, (px - x0) / pw));
+        var idx = Math.round(t * N);
+        return DE
+          ? "Mehrschichtiges Modell: Loss " + num(loss[idx], 2) + " nats bei " + tokenText(idx / N) + ". 1-Schicht-Modell: " + num(oneLoss[idx], 2) + " nats."
+          : "Multi-layer model: loss " + num(loss[idx], 2) + " nats at " + tokenText(idx / N) + ". One-layer model: " + num(oneLoss[idx], 2) + " nats.";
+      });
 
-      addSeriesHovers(oneLoss, py[2], 2.2, 3.0, function (v, t) {
-        return DE ? "1-Schicht-Modell: Loss " + num(v, 2) + " nats bei " + tokenText(t) + "; kein Phase Change."
-                  : "One-layer model: loss " + num(v, 2) + " nats at " + tokenText(t) + "; no phase change.";
-      });
-      addSeriesHovers(loss, py[2], 2.2, 3.0, function (v, t) {
-        return DE ? "Mehrschichtiges Modell: Loss " + num(v, 2) + " nats bei " + tokenText(t) + "."
-                  : "Multi-layer model: loss " + num(v, 2) + " nats at " + tokenText(t) + ".";
-      });
       addSeriesHovers(new Array(N + 1).fill(0.05), py[0], 0, 1, function (v, t) {
         return DE ? "1-Schicht-Modell: Induktionskopf-Score bleibt bei " + num(v, 2) + " (" + tokenText(t) + ")."
                   : "One-layer model: induction-head score stays at " + num(v, 2) + " (" + tokenText(t) + ").";
@@ -1330,8 +1329,8 @@
       }
       var axisTicks = [
         { py: py[0], labels: ["0", DE ? "0,5" : "0.5", "1"], text: DE ? "Induktionskopf-Score: 0 bis 1 (schematisch)." : "Induction-head score: 0 to 1 (schematic)." },
-        { py: py[1], labels: ["0", DE ? "0,25" : "0.25", DE ? "0,5" : "0.5"], text: DE ? "ICL-Score in nats: 0 bis 0,5." : "ICL score in nats: 0 to 0.5." },
-        { py: py[2], labels: [DE ? "2,2" : "2.2", DE ? "2,6" : "2.6", DE ? "3,0" : "3.0"], text: DE ? "Trainings-Loss in nats: 2,2 bis 3,0." : "Training loss in nats: 2.2 to 3.0." }
+        { py: py[1], labels: ["0", DE ? "0,25" : "0.25", DE ? "0,5" : "0.5"], text: DE ? "ICL-Score in nats: 0 bis 0,5. 1 nat ≈ 1,44 Bit; höher heißt besser." : "ICL score in nats: 0 to 0.5. 1 nat ≈ 1.44 bits; higher is better." },
+        { py: py[2], labels: [DE ? "2,2" : "2.2", DE ? "2,6" : "2.6", DE ? "3,0" : "3.0"], text: DE ? "Trainings-Loss in nats: 2,2 bis 3,0. 1 nat ≈ 1,44 Bit; niedriger heißt besser." : "Training loss in nats: 2.2 to 3.0. 1 nat ≈ 1.44 bits; lower is better." }
       ];
       axisTicks.forEach(function (axis) {
         axis.labels.forEach(function (label, i) {
@@ -1349,6 +1348,10 @@
         : "The curves are schematic. The paper shows similar behaviour for small multi-layer models; a one-layer model does not show the jump.");
     }
     function addHover(x, y, w, h, text) {
+      if (typeof text === "function") {
+        hoverHits.push({ x: x, y: y, w: w, h: h, resolve: text });
+        return;
+      }
       if (!text) return;
       hoverHits.push({ x: x, y: y, w: w, h: h, text: text });
     }
@@ -1357,7 +1360,16 @@
       var hit = null;
       for (var i = hoverHits.length - 1; i >= 0; i--) {
         var h = hoverHits[i];
-        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) { hit = h; break; }
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
+          if (h.resolve) {
+            var resolved = h.resolve(x, y);
+            if (!resolved) continue;
+            hit = { text: resolved };
+          } else {
+            hit = h;
+          }
+          break;
+        }
       }
       if (!hit) {
         tipEl.textContent = mode === "heads"
