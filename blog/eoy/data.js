@@ -759,12 +759,10 @@
     {
       kicker: "Mannigfaltigkeiten",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Worten. Man nennt solche Gebilde Mannigfaltigkeit, etwas, das lokal einem klassisch-euklidischem Raum ähnelt, aber global eine ganz andere Struktur haben kann. Übersetzung ist dann das Gleiche wie Verschieben, Skalieren und Drehen dieser Mannigfaltigkeit.\n\nDiese Demo ist stark vereinfacht. Es sind in realen Modellen tausende Dimensionen und die Relationen sind nicht so ähnlich wie hier, aber es ist das gleiche Prinzip. \n\nWas wichtig ist sind nicht die konkreten Punkte, sondern ihre Nachbarschaften. ",
+      body: "Die Bedeutung liegt nicht in den einzelnen Punkten, sondern in der Relation der Punkte zueinander. Verschiedene Sprachen haben ungefähr die gleichen Relationen zwischen den Worten. Man nennt solche Gebilde Mannigfaltigkeit, etwas, das lokal einem klassisch-euklidischem Raum ähnelt, aber global eine ganz andere Struktur haben kann. Übersetzung ist dann das Gleiche wie Verschieben, Skalieren und Drehen dieser Mannigfaltigkeit.\n\nDiese Demo ist stark vereinfacht. Es sind in realen Modellen tausende Dimensionen und die Relationen sind nicht so einfach wie hier, aber das Prinzip ist ähnlich.\n\nWas wichtig ist sind nicht die konkreten Punkte, sondern wie die Beziehung, in der sie zueinander stehen.",
       watch: "",
       demoState: { scene: "manifold" },
-      deep: "Die Demo zeigt eine Ähnlichkeitstransformation aus Rotation und Translation. Das ist eine didaktische Übersetzung, keine Aussage über alle Sprachen oder über die globale Struktur des Wortraums.",
       boxes: [
-        box("man-4", "Mathematik", "Was zeigt die Demo?", "Zwei Punktwolken mit ähnlichen Nachbarschaften. Die Demo dreht und verschiebt die japanische Wolke, bis sie auf der englischen liegt. Das ist eine didaktische Übersetzung, keine Aussage über alle Sprachen.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
@@ -776,12 +774,10 @@
     {
       kicker: "Manifolds",
       title: "From relations to translation",
-      body: "Meaning lies not in the individual points but in the relations between them. Different languages have roughly the same relations between words. Such an object is called a manifold: something that looks locally like a classical Euclidean space but can have a completely different global structure. Translation is then the same as shifting, scaling, and rotating this manifold.\n\nThis demo is strongly simplified. Real models have thousands of dimensions and the relations are not as similar as here, but the principle is the same.\n\nWhat matters is not the concrete points but their neighbourhoods.",
+      body: "Meaning lies not in the individual points but in the relation of the points to each other. Different languages have roughly the same relations between words. Such objects are called manifolds: something that locally resembles a classical Euclidean space but can have a completely different global structure. Translation is then the same as shifting, scaling, and rotating this manifold.\n\nThis demo is strongly simplified. Real models have thousands of dimensions and the relations are not as simple as here, but the principle is similar.\n\nWhat matters is not the concrete points but how they relate to each other.",
       watch: "",
       demoState: { scene: "manifold" },
-      deep: "The demo shows a similarity transformation made of rotation and translation. It is a didactic translation, not a claim about all languages or about the global structure of word space.",
       boxes: [
-        box("man-4", "Mathematics", "What does the demo show?", "Two point clouds with similar neighbourhoods. The demo rotates and shifts the Japanese cloud until it sits on the English one. It is a didactic translation, not a claim about all languages.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
