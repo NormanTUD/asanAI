@@ -2049,38 +2049,32 @@
     kicker: DE ? "Graph" : "Graph",
     title: DE ? "Attention als vollverbundener Graph (ohne Causal Mask)" : "Attention as a fully connected graph (without causal mask)",
     body: DE
-      ? "In dieser Darstellung ohne Causal Mask kann jedes Token auf jedes andere schauen: Die Attention-Matrix hat keine fehlenden Einträge. In einem GPT-Decoder maskiert die Causal Mask die Zukunft; dort sieht ein Token nur die Vergangenheit. Im Kreis siehst du alle Token; die Kanten von der Query „es“ zu jedem anderen Token sind die Softmax-Gewichte. Dick und hell heißt viel, dünn und blass heißt wenig. Fahre mit der Maus über eine Kante oder ein Token: Die Demo zeigt die Verbindung und den Prozentwert. Jedes Token hat außerdem eine Selbstkante. Klicke ein Token an, um seine Verbindungen zu sehen; für jede Query gibt es eine eigene Verteilung."
-      : "In this view without a causal mask, every token can attend to every other token: the attention matrix has no missing entries. In a GPT decoder the causal mask hides the future; there a token sees only the past. You see all tokens in a circle; the edges from the query “it” to every other token are the softmax weights. Thick and bright means a lot, thin and pale means little. Hover over an edge or a token: the demo shows the connection and the percentage. Every token also has a self-loop. Click a token to see its connections; every query has its own distribution.",
-    watch: DE ? "Fahre über die Kanten. Welche Verbindung ist am stärksten? Vergleiche Head 1 und Head 2." : "Hover over the edges. Which connection is strongest? Compare head 1 and head 2.",
+      ? "In dieser Darstellung ohne Causal Mask kann jedes Token auf jedes andere schauen: Die Attention-Matrix hat keine fehlenden Einträge. In einem GPT-Decoder maskiert die Causal Mask die Zukunft; dort sieht ein Token nur die Tokens, die vor ihm standen. Das erlaubt im Training das Netz darauf zu spezialisieren, dass es Sätze beenden kann, deren Ende es noch nciht kennt.\n\n\nDie Linienbreite und Helligkeit sind das Softmax-Gewicht. Eine dicke Kante bedeutet: Diese Query liest viel von diesem Token.\n\n\nIm Kreis siehst du alle Token; die Kanten von der Query „es“ zu jedem anderen Token sind die Softmax-Gewichte. Dick und hell heißt viel, dünn und blass heißt wenig. Fahre mit der Maus über eine Kante oder ein Token: Die Demo zeigt die Verbindung und den Prozentwert. Jedes Token hat außerdem eine Selbstkante. Klicke ein Token an, um seine Verbindungen zu sehen; für jede Query gibt es eine eigene Verteilung.\n"
+      : "In this view without a causal mask, every token can attend to every other token: the attention matrix has no missing entries. In a GPT decoder the causal mask hides the future; there a token sees only the tokens that came before it. In training this lets the network specialise in finishing sentences whose ending it does not yet know.\n\n\nLine width and brightness are the softmax weight. A thick edge means: this query reads a lot from this token.\n\n\nIn the circle you see all tokens; the edges from the query “it” to every other token are the softmax weights. Thick and bright means a lot, thin and pale means little. Hover over an edge or a token: the demo shows the connection and the percentage. Every token also has a self-loop. Click a token to see its connections; every query has its own distribution.\n",
+    watch: "",
     demoState: { scene: "qkv", head: 0, view: "graph" },
-    context: DE ? "In dieser Darstellung ist die Matrix voll besetzt: Jede Query bekommt zu jedem Key einen Score, auch wenn viele Scores klein sind. Softmax macht daraus Gewichte. In einem kausalen Decoder ist die obere Dreiecksmatrix maskiert. Die blassen Linien zeigen die vollständige Topologie dieser Darstellung; die farbigen Kanten zeigen die Gewichte dieser Query." : "In this view the matrix is fully populated: every query gets a score for every key, even if many scores are small. Softmax turns them into weights. In a causal decoder the upper triangle is masked. The faint lines show the complete topology of this view; the coloured edges show the weights for this query.",
+    context: "",
     deep: DE ? "Ein Head ist ein Graph. Viele Heads sind viele Graphen mit eigenen Kantengewichten; die Ausgaben werden konkateniert und projiziert. Deshalb kann ein Head auf Syntax achten, ein anderer auf Position oder Bedeutung." : "One head is one graph. Many heads are many graphs with their own edge weights; the outputs are concatenated and projected. That is why one head can attend to syntax, another to position or meaning.",
-    boxes: DE ? [
-      box("qkv-g1", "Graph", "Vollverbunden in dieser Darstellung", "In dieser Darstellung ohne Causal Mask ist jedes Token mit jedem anderen verbunden. Die Attention-Matrix hat keine fehlenden Einträge; viele Gewichte sind nur sehr klein. Ein GPT-Decoder maskiert die Zukunft."),
-      box("qkv-g2", "Graph", "Kantenstärke", "Die Linienbreite und Helligkeit sind das Softmax-Gewicht. Eine dicke Kante bedeutet: Diese Query liest viel von diesem Token."),
-      box("qkv-g3", "Graph", "Pro Query", "Gezeigt ist eine Zeile der Matrix, nämlich die Query „es“. Jede andere Query hat ihre eigene Verteilung und damit ihre eigenen Kantengewichte.")
-    ] : [
-      box("qkv-g1", "Graph", "Fully connected in this view", "In this view without a causal mask, every token is connected to every other token. The attention matrix has no missing entries; many weights are just very small. A GPT decoder masks the future."),
-      box("qkv-g2", "Graph", "Edge strength", "Line width and brightness are the softmax weight. A thick edge means this query reads a lot from that token."),
-      box("qkv-g3", "Graph", "Per query", "This shows one row of the matrix, the query “it”. Every other query has its own distribution and therefore its own edge weights.")
-    ],
+    boxes: [],
     sources: qkvArcs.sources
   });
 
   var qkvGraph2 = Object.assign({}, qkvGraph, {
     title: DE ? "Head 2 als Graph" : "Head 2 as a graph",
     body: DE
-      ? "Derselbe vollverbundene Graph in dieser Darstellung, andere Kantengewichte. Head 2 fragt nach dem Ort, deshalb wird die Kante von „es“ zu „Straße“ dick und hell; die Kante zu „Tier“ wird dünner. In dieser Darstellung bleibt die Topologie vollständig; in einem GPT-Decoder ist sie kausal maskiert. Nur die Stärke der Verbindung ändert sich."
-      : "The same fully connected graph in this view, different edge weights. Head 2 asks for the location, so the edge from “it” to “street” becomes thick and bright; the edge to “animal” gets thinner. In this view the topology stays complete; in a GPT decoder it is causally masked. Only the strength of the connection changes.",
+      ? "Derselbe vollverbundene Graph in dieser Darstellung, andere Kantengewichte. Head 2 fragt nach dem Ort, deshalb wird die Kante von „es“ zu „Straße“ dick und hell; die Kante zu „Tier“ wird dünner. In dieser Darstellung ist keine Causal Mask, jedes Token kann jedes Andere sehen. Bei generativen Modellen kann jedes Token nur die vorherigen Tokens sehen."
+      : "The same fully connected graph in this view, different edge weights. Head 2 asks for the location, so the edge from “it” to “street” becomes thick and bright; the edge to “animal” gets thinner. In this view there is no causal mask; every token can see every other token. In generative models each token can see only the preceding tokens.",
     watch: DE ? "Vergleiche die Kanten mit Head 1. Welche Verbindung gewinnt jetzt?" : "Compare the edges with head 1. Which connection wins now?",
     demoState: { scene: "qkv", head: 1, view: "graph" },
+    context: "",
+    deep: "",
     boxes: qkvGraph.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
   });
 
   var qkvStep = {
     title: DE ? "Wie Attention rechnet" : "How attention computes",
     kicker: DE ? "Q · K · V" : "Q · K · V",
-    substeps: [qkvArcsIntro, qkvGraph, qkvSimplex, qkvArcs2, qkvGraph2, qkvSimplex2]
+    substeps: [qkvArcsIntro, qkvGraph, qkvSimplexIntro, qkvArcs2, qkvGraph2, qkvSimplex2]
   };
 
   var agentRagStep = {
