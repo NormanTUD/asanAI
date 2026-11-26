@@ -71,9 +71,9 @@
       "body": "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, f(x) = w · x + b. Der Plot hat 3 Achsen: w, b und Loss. Für jeden Parameterpunkt in diesem Raum gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre. Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nHier sind es zwei Parameter und damit zwei Dimensionen. Ein großes Sprachmodell hat Milliarden davon, zu viele, um es sich vorzustellen, aber die Idee ist die gleiche."
     },
     "15": {
-      "kicker": "",
-      "title": "Was sind neuronale Netze?",
-      "body": "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix."
+      "kicker": "Aktivierung",
+      "title": "Aktivierungen machen den Knick",
+      "body": "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU knickt bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton; SiLU ist selbst-gated und glatt, aber ebenfalls nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix."
     },
     "16": {
       "kicker": "Tiefe",
@@ -228,9 +228,9 @@
       "body": "We see a small real network training here. It has only two parameters, f(x) = w · x + b. The plot has 3 axes: w, b, and loss. For every parameter point in this space there is a loss, that is, a value for how good the network would be with those values. Training means: the computer looks at how good the current point is and in which directions it has to move the point so that the result gets better. Then it moves the point and looks again.\n\nHere there are two parameters and therefore two dimensions. A large language model has billions of them, too many to picture, but the idea is the same."
     },
     "15": {
-      "kicker": "",
-      "title": "What are neural networks?",
-      "body": "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix."
+      "kicker": "Activation",
+      "title": "Activations create the bend",
+      "body": "A nonlinearity is applied to each coordinate after the projection. ReLU kinks at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic; SiLU is self-gated and smooth, but also not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix."
     },
     "16": {
       "kicker": "Depth",
