@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Symmetrie hinter dem Reasoning Shortcut</title>
+<meta name="description" content="Interaktive Lesehilfe zu arXiv:2606.17851: neurosymbolisches Schließen über Typen statt Mengen, Homotopie-Kardinalität und Orbit-Mittelung gegen Reasoning Shortcuts.">
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+
+    --bg:#070b14;
+    --bg2:#0b1324;
+    --panel:rgba(18,28,48,.62);
+    --panel2:rgba(12,20,36,.72);
+    --ink:#f2ecdd;
+    --muted:#9aa8bf;
+    --line:rgba(255,255,255,.09);
+    --line2:rgba(255,255,255,.16);
+
+    --teal:#5eead4;
+    --teal-deep:#0f766e;
+    --coral:#ff9e7a;
+    --violet:#b7a6ff;
+    --amber:#f5c66b;
+    --good:#6ee7a8;
+    --bad:#ff7a6b;
+
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 24px 60px -28px rgba(0,0,0,.85);
+    --ring:rgba(94,234,212,.18);
+    --radius:22px;
+  }
+  [data-theme="light"]{
+    --bg:#f7f3e8;
+    --bg2:#efe8d8;
+    --panel:rgba(255,253,247,.74);
+    --panel2:rgba(255,253,247,.88);
+    --ink:#28231b;
+    --muted:#6f675a;
+    --line:rgba(40,35,25,.13);
+    --line2:rgba(40,35,25,.22);
+
+    --teal:#0f766e;
+    --teal-deep:#0b5f59;
+    --coral:#c94f2a;
+    --violet:#5d4bc4;
+    --amber:#a9761a;
+    --good:#1f8a5b;
+    --bad:#c0392b;
+
+    --shadow:0 1px 2px rgba(60,50,30,.06),0 24px 60px -30px rgba(60,50,30,.4);
+    --ring:rgba(15,118,110,.16);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 800px at 80% -10%, rgba(94,234,212,.10), transparent 60%),
+      radial-gradient(900px 700px at -10% 20%, rgba(183,166,255,.10), transparent 60%),
+      radial-gradient(1000px 900px at 50% 120%, rgba(255,158,122,.08), transparent 60%),
+      var(--bg);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;opacity:.22;
+    -webkit-mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%);
+    mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%);
+  }
+
+  .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;animation:drift 30s ease-in-out infinite alternate}
+  [data-theme="light"] .blob{opacity:.30;filter:blur(80px)}
+  .b1{width:58vmax;height:58vmax;left:-12vmax;top:-20vmax;background:radial-gradient(circle at 30% 30%,rgba(94,234,212,.55),transparent 60%)}
+  .b2{width:54vmax;height:54vmax;right:-16vmax;top:8vmax;background:radial-gradient(circle at 60% 40%,rgba(183,166,255,.5),transparent 62%);animation-duration:36s;animation-direction:alternate-reverse}
+  .b3{width:50vmax;height:50vmax;left:18vmax;bottom:-26vmax;background:radial-gradient(circle at 50% 50%,rgba(255,158,122,.42),transparent 62%);animation-duration:44s}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vmax,-3vmax,0) scale(1.08)}}
+
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--teal)}
+  strong{font-weight:650}
+
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--teal),var(--violet),var(--coral))}
+
+  .theme-btn{position:fixed;top:18px;right:18px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--teal);transform:translateY(-1px)}
+
+  .to-top{position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s;backdrop-filter:blur(10px)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+
+  /* ---------- hero ---------- */
+  .hero{min-height:94vh;display:flex;align-items:center;padding:88px 0 56px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(24px,5vw,64px);align-items:center;width:100%}
+  .kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+  .kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--teal),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.7rem,6.4vw,5.1rem);line-height:1.01;letter-spacing:-.025em;margin:0 0 .34em}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--teal),var(--violet) 54%,var(--coral));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--muted);max-width:38ch;margin:0 0 30px}
+  .lede b{color:var(--ink);font-weight:600}
+  .byline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:.86rem;color:var(--muted);margin-bottom:26px}
+  .byline .dot-sep{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--teal),var(--good));border:none;border-radius:999px;padding:13px 22px;cursor:pointer;box-shadow:0 12px 30px -12px var(--ring);transition:transform .2s,box-shadow .2s}
+  [data-theme="light"] .cta{color:#f7f3e8}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -14px var(--ring)}
+  .cta svg{width:16px;height:16px}
+
+  .hero-orbit{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .orbit-svg{width:min(440px,94%);height:auto;overflow:visible}
+  .ring{fill:none;stroke:var(--line2);stroke-width:1}
+  .orbit-dash{fill:none;stroke:var(--line2);stroke-width:1;stroke-dasharray:3 9;animation:dashspin 60s linear infinite}
+  .arc{fill:none;stroke:url(#arcGrad);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:7 7;animation:dashmove 3.4s linear infinite;filter:url(#glow)}
+  .node{fill:var(--teal);filter:url(#glow)}
+  .node.v{fill:var(--violet)}
+  .node.c{fill:var(--coral)}
+  .node.a{fill:var(--amber)}
+  .node-label{fill:var(--muted);font-family:var(--mono);font-size:13px;letter-spacing:.06em}
+  .arc-label{fill:var(--coral);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+  .core-label{fill:var(--ink);font-family:var(--serif);font-size:34px;font-style:italic}
+  .core-sub{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.18em}
+  .orbit-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.74rem;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);backdrop-filter:blur(10px)}
+  .orbit-badge strong{font-family:var(--serif);font-size:1.05rem;color:var(--teal);font-weight:600}
+  @keyframes dashmove{to{stroke-dashoffset:-28}}
+  @keyframes dashspin{to{stroke-dashoffset:-240}}
+
+  /* ---------- tldr ---------- */
+  .tldr{padding:6px 0 26px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--teal),var(--violet));opacity:.7}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line2)}
+  .tldr-num{font-family:var(--mono);font-size:.7rem;color:var(--teal);letter-spacing:.14em;margin-bottom:10px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:1.08rem;margin:0 0 6px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.86rem;line-height:1.5}
+
+  /* ---------- sections ---------- */
+  .section{padding:clamp(48px,7vw,92px) 0;position:relative}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:.76rem;color:var(--teal);letter-spacing:.14em;white-space:nowrap}
+  .section h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:62ch;margin:14px 0 30px;font-size:clamp(1rem,1.3vw,1.08rem)}
+  .prose{max-width:68ch;font-size:1.02rem}
+  .prose p{margin:0 0 16px}
+  .prose p:last-child{margin-bottom:0}
+  .prose .accent{color:var(--ink);font-weight:600}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+  .pad{padding:clamp(18px,2.6vw,30px)}
+
+  .demo{margin-top:26px;padding:clamp(16px,2.4vw,26px);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.22rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.84rem;margin-top:3px}
+  .caption{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55}
+  .caption b{color:var(--ink);font-weight:600}
+
+  .segmented{display:inline-flex;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--teal);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f7f3e8}
+
+  .slider-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin:6px 0 18px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+  .slider-row output{color:var(--ink);min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums}
+  .slider-row.compact{margin:0}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line2);outline:none;cursor:pointer;accent-color:var(--teal)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--teal);border:2px solid var(--bg);box-shadow:0 0 0 4px var(--ring);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid var(--bg);border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px var(--ring)}
+  input[type="range"]:focus-visible{outline:2px solid var(--teal);outline-offset:6px}
+
+  /* worlds */
+  .worlds{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:4px}
+  .world{position:relative;border:1px solid var(--line);border-radius:16px;padding:14px 12px 12px;background:var(--bg);transition:border-color .25s,background .25s,transform .25s,opacity .25s}
+  .world.sat{border-color:var(--teal);background:linear-gradient(180deg,rgba(94,234,212,.10),transparent)}
+  .world.dim{opacity:.55}
+  .world-key{font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:.14em}
+  .world-dots{display:flex;gap:6px;margin:8px 0 6px}
+  .dot{width:11px;height:11px;border-radius:50%;border:1px solid var(--line2);background:transparent}
+  .dot.on{background:var(--coral);border-color:var(--coral);box-shadow:0 0 10px rgba(255,158,122,.5)}
+  .world-name{font-size:.86rem;color:var(--ink);margin-bottom:8px}
+  .world-bar{height:7px;border-radius:99px;background:var(--line);overflow:hidden}
+  .world-bar span{display:block;height:100%;width:0;border-radius:99px;background:var(--muted);transition:width .16s ease}
+  .world.sat .world-bar span{background:linear-gradient(90deg,var(--teal),var(--good))}
+  .world-val{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-top:7px;font-variant-numeric:tabular-nums}
+  .world-sat{position:absolute;top:12px;right:12px;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);opacity:0;transition:opacity .2s}
+  .world.sat .world-sat{opacity:1}
+
+  .demo-readout{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  .readout-label{font-size:.84rem;color:var(--muted)}
+  .readout-value{font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--teal);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+  /* symmetry stage */
+  .sym-stage{min-height:150px;display:flex;align-items:center;margin:6px 0 4px}
+  .chips{display:flex;flex-wrap:wrap;gap:12px;width:100%}
+  .chip{flex:1 1 90px;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px;border:1px solid var(--line2);border-radius:14px;background:var(--bg);transition:transform .2s,border-color .2s}
+  .chip:hover{transform:translateY(-3px);border-color:var(--teal)}
+  .chip-key{font-family:var(--mono);font-size:1.15rem;letter-spacing:.1em;color:var(--ink)}
+  .chip-w{font-family:var(--serif);font-size:1.15rem;color:var(--teal)}
+  .chip.fixed{border-color:var(--violet)}
+  .chip.fixed .chip-w{color:var(--violet)}
+  .orbits{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:12px;width:100%}
+  .orbit-card{border:1px solid var(--line2);border-radius:14px;padding:12px;background:var(--bg);display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+  .orbit-tag{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+  .orbit-card.wide{border-color:var(--teal);background:linear-gradient(180deg,rgba(94,234,212,.09),transparent)}
+  .chips.small{display:flex;align-items:center;gap:8px}
+  .chips.small .chip{flex:0 0 auto;min-width:66px;padding:10px 8px}
+  .orbit-weight{font-family:var(--serif);font-size:1.3rem;color:var(--teal);margin-left:4px}
+  .sym-summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .sym-sum{font-size:.86rem;color:var(--muted)}
+  .sym-sum strong{font-family:var(--serif);font-size:1.7rem;color:var(--teal);margin-left:6px;font-weight:600}
+  .sym-eq{font-family:var(--mono);font-size:.84rem;color:var(--ink)}
+  .stage-enter{animation:stageIn .42s cubic-bezier(.2,.8,.2,1)}
+  @keyframes stageIn{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
+
+  /* formula cards */
+  .formula-card{margin-top:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line2);border-radius:18px;background:linear-gradient(120deg,rgba(94,234,212,.08),rgba(183,166,255,.08));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.3rem,3vw,2rem);letter-spacing:.01em;line-height:1.4}
+  .formula sub{font-size:.6em}
+  .formula .op{color:var(--teal)}
+  .formula-note{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted);margin-top:12px}
+  .lean-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;color:var(--good);border:1px solid color-mix(in srgb,var(--good) 40%,transparent);border-radius:999px;padding:4px 10px;margin-top:10px}
+  @supports not (color:color-mix(in srgb,red,blue)){.lean-badge{border-color:var(--line2)}}
+
+  /* lift table */
+  .lift{margin-top:24px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel)}
+  .lift-row{display:grid;grid-template-columns:.8fr 1.1fr 1.4fr;gap:14px;padding:14px 18px;border-top:1px solid var(--line);font-size:.9rem;align-items:start}
+  .lift-row:first-child{border-top:none}
+  .lift-row.head{background:var(--bg);font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .lift-row .old{color:var(--muted)}
+  .lift-row .new{color:var(--ink)}
+  .lift-row .new b{color:var(--teal)}
+
+  /* symmetry check */
+  .check-card{margin-top:22px;padding:clamp(16px,2.4vw,24px);border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+  .check-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}
+  .status{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;padding:5px 11px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+  .status.ok{color:var(--good);border-color:var(--good)}
+  .status.bad{color:var(--bad);border-color:var(--bad)}
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .check-readout{display:flex;flex-wrap:wrap;gap:28px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+  .check-readout div{display:flex;flex-direction:column;gap:2px}
+  .check-readout .muted{font-size:.74rem;color:var(--muted)}
+  .check-readout strong{font-family:var(--serif);font-size:1.5rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .check-readout strong.valid{color:var(--teal)}
+
+  /* orbit demo */
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch-track{width:50px;height:28px;border-radius:999px;background:var(--line2);position:relative;transition:background .2s;flex:0 0 auto}
+  .switch-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
+  .switch input:checked + .switch-track{background:var(--teal)}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(22px);background:var(--bg)}
+  .switch input:focus-visible + .switch-track{outline:2px solid var(--teal);outline-offset:3px}
+
+  .digit-hint{font-size:.78rem;color:var(--muted);margin:0 0 10px}
+  .digit-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 20px;margin:6px 0 20px;padding-top:4px}
+  .digit-slider{display:grid;grid-template-columns:18px 1fr 42px;align-items:center;gap:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+  .digit-slider output{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+
+  .shortcut-panels{display:grid;grid-template-columns:1.35fr 1fr;gap:18px}
+  .panel{border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--bg)}
+  .panel-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .digit-bars,.label-bars{display:flex;flex-direction:column;gap:8px}
+  .drow{display:grid;grid-template-columns:22px 1fr 46px;align-items:center;gap:9px}
+  .dname,.lname{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+  .dbar-wrap,.lbar-wrap{height:13px;border-radius:99px;background:var(--line);overflow:hidden}
+  .dbar,.lbar{display:block;height:100%;width:0;border-radius:99px;transition:width .2s cubic-bezier(.2,.8,.2,1)}
+  .drow[data-group="0"] .dbar{background:linear-gradient(90deg,var(--teal),#8cf5e8)}
+  .drow[data-group="1"] .dbar{background:linear-gradient(90deg,var(--coral),#ffc3ab)}
+  .drow[data-group="2"] .dbar{background:linear-gradient(90deg,var(--violet),#d6ccff)}
+  .lbar{background:linear-gradient(90deg,var(--muted),var(--line2))}
+  .dval,.lval{font-family:var(--mono);font-size:.74rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;font-size:.72rem;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .sw.teal{background:var(--teal)} .sw.coral{background:var(--coral)} .sw.violet{background:var(--violet)}
+  .delta{margin-top:14px;font-size:.76rem;color:var(--muted)}
+  .delta strong{color:var(--good);font-family:var(--mono)}
+
+  .meter-block{margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+  .meter-head{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--muted);margin-bottom:10px}
+  .meter-head strong{font-family:var(--serif);font-size:1.4rem;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .meter{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+  .meter span{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--good),var(--amber),var(--coral));transition:width .25s ease}
+  .meter-foot{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:7px;font-family:var(--mono)}
+  .entropy{margin-top:12px;font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+  .demo-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--bg);background:var(--teal);border:1px solid var(--teal);border-radius:999px;padding:9px 16px;cursor:pointer;transition:transform .15s,background .15s}
+  [data-theme="light"] .btn{color:#f7f3e8}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--teal)}
+
+  /* chart */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:8px 0 28px}
+  .stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal),var(--violet))}
+  .stat-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .stat-values{font-family:var(--serif);font-size:1.55rem;font-weight:600;letter-spacing:-.02em}
+  .stat-values .arrow{color:var(--muted);font-size:1rem;margin:0 .28em}
+  .stat-values .to{color:var(--teal)}
+  .stat-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+
+  .chart{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .chart-row{display:grid;grid-template-columns:210px 1fr 66px;align-items:center;gap:14px;padding:7px 10px;border-radius:12px;transition:background .2s}
+  .chart-row:hover{background:var(--bg)}
+  .chart-row.ours{background:linear-gradient(90deg,rgba(94,234,212,.12),transparent);box-shadow:inset 0 0 0 1px var(--ring)}
+  .chart-method{display:flex;flex-direction:column;gap:1px}
+  .cm-name{font-size:.86rem;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .chart-row.ours .cm-name{color:var(--teal);font-weight:600}
+  .cm-note{font-family:var(--mono);font-size:.64rem;color:var(--muted)}
+  .chart-track{height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+  .chart-bar{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--muted),var(--line2));transition:width .55s cubic-bezier(.2,.8,.2,1)}
+  .chart-row.ours .chart-bar{background:linear-gradient(90deg,var(--teal),var(--good));box-shadow:0 0 18px -2px var(--ring)}
+  .chart-val{font-family:var(--mono);font-size:.78rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .chart-row.ours .chart-val{color:var(--teal)}
+  .chart-note{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:14px;letter-spacing:.03em}
+  .paper-tag{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--bg);background:var(--teal);border-radius:99px;padding:2px 7px}
+  [data-theme="light"] .paper-tag{color:#f7f3e8}
+
+  /* takeaways */
+  .take-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:8px}
+  .take{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--panel);position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+  .take:hover{transform:translateY(-3px);border-color:var(--line2)}
+  .take h3{font-family:var(--serif);font-size:1.18rem;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  .take p{margin:0;color:var(--muted);font-size:.9rem}
+  .take .glyph{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;color:var(--teal);text-transform:uppercase;margin-bottom:10px}
+
+  /* details */
+  .deep{margin-top:20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .deep summary{cursor:pointer;list-style:none;padding:15px 20px;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+  .deep summary:hover{color:var(--ink)}
+  .deep summary::-webkit-details-marker{display:none}
+  .deep summary::before{content:"+";font-size:1rem;color:var(--teal);width:1em;text-align:center}
+  .deep[open] summary::before{content:"−"}
+  .deep-body{padding:0 20px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  .deep-body p{margin:14px 0}
+  .deep-body .formula{font-size:1.1rem;margin:14px 0;text-align:left}
+  .deep-body ul{margin:10px 0;padding-left:20px}
+  .deep-body li{margin:7px 0}
+  .deep-body b{color:var(--ink)}
+  .deep-body code{font-family:var(--mono);font-size:.86em;color:var(--teal);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+
+  /* gf plot */
+  .gf-wrap{margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg);padding:10px}
+  #gf-svg{width:100%;height:auto;display:block}
+  .gf-grid{stroke:var(--line2);stroke-width:1;opacity:.5}
+  .gf-axis{fill:var(--muted);font-family:var(--mono);font-size:11px}
+  .gf-axis-title{fill:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.08em}
+  .gf-line-a{fill:none;stroke:var(--teal);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+  .gf-line-b{fill:none;stroke:var(--violet);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 0}
+  .gf-dot-a{fill:var(--teal)}
+  .gf-dot-b{fill:var(--violet)}
+  .gf-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+  .gf-legend span{display:inline-flex;align-items:center;gap:8px}
+  .gf-line-swatch{width:22px;height:2px;border-radius:2px;display:inline-block}
+
+  /* glossary */
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:6px}
+  .gloss dt{font-family:var(--serif);font-size:1rem;color:var(--ink);font-weight:600;margin-top:8px}
+  .gloss dd{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+
+  /* footer */
+  .footer{border-top:1px solid var(--line);margin-top:40px;padding:40px 0 60px;color:var(--muted);font-size:.82rem}
+  .footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+  .footer h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .footer a{color:var(--ink)}
+  .footer .disclaimer{max-width:52ch;line-height:1.6}
+
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:900px){
+    .hero{min-height:auto;padding-top:70px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-orbit{order:-1}
+    .orbit-svg{width:min(300px,70%)}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .orbits{grid-template-columns:1fr}
+    .shortcut-panels{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .worlds{grid-template-columns:repeat(2,1fr)}
+    .lift-row{grid-template-columns:1fr;gap:4px}
+    .lift-row.head{display:none}
+    .check-grid{grid-template-columns:1fr}
+    .digit-controls{grid-template-columns:1fr 1fr}
+    .chart-row{grid-template-columns:130px 1fr 52px;gap:8px}
+    .take-grid,.gloss-grid{grid-template-columns:1fr}
+    .tldr-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .theme-btn{top:12px;right:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<button class="theme-btn" id="theme-btn" type="button" aria-pressed="true">Hell</button>
+<button class="to-top" id="to-top" type="button" aria-label="Nach oben">↑</button>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">arXiv:2606.17851 · interaktive Lesehilfe</div>
+      <h1>Die Symmetrie<br><span class="grad">hinter dem Shortcut</span></h1>
+      <p class="lede">Diese Arbeit hebt neurosymbolisches Schließen von <b>Mengen</b> auf <b>Typen</b>. Dadurch wird eine Symmetrie sichtbar, die einen bekannten Trainingsfehler erklärt: den <b>Reasoning Shortcut</b>. Die Korrektur passt in eine Zeile und braucht kein Ensemble.</p>
+      <div class="byline">
+        <span>Fernando Zhapa-Camacho</span><span class="dot-sep"></span>
+        <span>Robert Hoehndorf</span><span class="dot-sep"></span>
+        <span>KAUST</span>
+      </div>
+      <a class="cta" href="#rezept">In 6 Minuten verstehen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-orbit" aria-hidden="true">
+      <svg class="orbit-svg" viewBox="0 0 420 420">
+        <defs>
+          <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#7ff0e6"/>
+            <stop offset="100%" stop-color="#2aa79b" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffb27a"/>
+            <stop offset="100%" stop-color="#b7a6ff"/>
+          </linearGradient>
+          <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="4" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <circle class="orbit-dash" cx="210" cy="210" r="168"/>
+        <circle class="ring" cx="210" cy="210" r="140"/>
+        <circle class="ring" cx="210" cy="210" r="96" opacity=".6"/>
+        <path class="arc" d="M309 111 Q 405 210 309 309"/>
+        <g>
+          <circle class="node c" cx="309" cy="111" r="6"/>
+          <circle class="node a" cx="309" cy="309" r="6"/>
+          <circle class="node v" cx="111" cy="111" r="6"/>
+          <circle class="node v" cx="111" cy="309" r="6"/>
+        </g>
+        <text class="node-label" x="322" y="108">10</text>
+        <text class="node-label" x="322" y="318">01</text>
+        <text class="node-label" x="84" y="108" text-anchor="end">00</text>
+        <text class="node-label" x="84" y="318" text-anchor="end">11</text>
+        <text class="arc-label" x="372" y="205">swap</text>
+        <circle cx="210" cy="210" r="52" fill="url(#coreGrad)"/>
+        <text class="core-label" x="210" y="219" text-anchor="middle">G</text>
+        <text class="core-sub" x="210" y="238" text-anchor="middle">Aut(T)</text>
+      </svg>
+      <div class="orbit-badge">Typ-Größe <strong>2</strong> statt 4</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="tldr reveal" aria-label="Kurzfassung">
+      <div class="tldr-grid">
+        <div class="tldr-card"><div class="tldr-num">01</div><h3>Das Rezept</h3><p>Ein Netz verteilt Glauben auf mögliche Welten. Die Logik filtert. Eine Summe aggregiert.</p></div>
+        <div class="tldr-card"><div class="tldr-num">02</div><h3>Der blinde Fleck</h3><p>Eine Menge zählt austauschbare Welten doppelt. Sie merkt sich ihre Symmetrien nicht.</p></div>
+        <div class="tldr-card"><div class="tldr-num">03</div><h3>Der Satz</h3><p>Typen liefern einen symmetrie-korrigierten Count. Bei trivialer Symmetrie kommt exakt die alte Formel zurück.</p></div>
+        <div class="tldr-card"><div class="tldr-num">04</div><h3>Der Nutzen</h3><p>Die Symmetrie ist der Reasoning Shortcut. Einmal über die Gruppe mitteln korrigiert ihn.</p></div>
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section class="section reveal" id="rezept">
+      <div class="section-head"><span class="sec-num">01 · Das Rezept</span></div>
+      <h2>Eine Formel, viele Systeme</h2>
+      <div class="prose">
+        <p>Fast jedes neurosymbolische System rechnet dieselbe Formel. Ein neuronales Netz verteilt <span class="accent">Glauben</span> über mögliche Welten. Eine logische Theorie sagt, welche Welten eine Anfrage erfüllen. Die Inferenz summiert die Glauben der erfüllenden Welten.</p>
+        <p>Je nach Rechenart heißt das gewichtetes Modellzählen, probabilistische Logik oder Fuzzy-Logik. Das Objekt bleibt gleich. Nur der Blick darauf ändert sich.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Zwei Personen, vier Welten</div>
+            <div class="demo-sub">Anfrage: „jemand raucht“</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Rechenart">
+            <button class="seg active" type="button" data-semiring="sum" aria-pressed="true">Summe</button>
+            <button class="seg" type="button" data-semiring="max" aria-pressed="false">Maximum</button>
+          </div>
+        </div>
+        <label class="slider-row">
+          <span>p</span>
+          <input id="p-range" type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Rauchwahrscheinlichkeit">
+          <output id="p-out">0.60</output>
+        </label>
+        <div class="worlds" id="recipe-worlds"></div>
+        <div class="demo-readout">
+          <span class="readout-label" id="recipe-label">Glaubenssumme über erfüllende Welten</span>
+          <span class="readout-value" id="recipe-value">0.840</span>
+        </div>
+        <div class="caption" id="recipe-caption">Summe im Semiring (+,×): die Wahrscheinlichkeit, dass die Anfrage gilt.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Warum dieselbe Formel alles ist</summary>
+        <div class="deep-body">
+          <p>Die Formel ist ein <b>algebraisches Modellzählen</b>. Man ersetzt die Zahlen durch einen kommutativen Semiring, also eine Rechenart mit zwei Verknüpfungen. Jede Wahl liest einen anderen Wert aus demselben Objekt.</p>
+          <ul>
+            <li><b>Wahrscheinlichkeit</b> (+,×): die Summe der Glauben.</li>
+            <li><b>Fuzzy-Logik</b> (max,min): der Grad der Erfüllung.</li>
+            <li><b>MPE und Viterbi</b> (max,+): das wahrscheinlichste Modell.</li>
+            <li><b>SAT</b> (∨,∧): ob überhaupt ein Modell existiert.</li>
+            <li><b>Provenance</b>: die Menge der Beweise, nicht nur ihre Zahl.</li>
+          </ul>
+          <p>Der letzte Punkt ist der Übergang zum Paper. Eine Menge kann „wahr“ nicht von „auf drei Weisen wahr“ unterscheiden. Ein Typ schon.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 2 -->
+    <section class="section reveal" id="symmetrie">
+      <div class="section-head"><span class="sec-num">02 · Der blinde Fleck</span></div>
+      <h2>Was eine Menge vergisst</h2>
+      <div class="prose">
+        <p>Die Formel lebt auf einer <span class="accent">Menge</span> von Welten. Eine Menge merkt sich nur, welche Elemente da sind. Sie vergisst zwei Dinge: wann zwei Welten durch eine Umbenennung ineinander übergehen, und wie viele Beweise eine Anfrage stützen.</p>
+        <p>Für das Erste gibt es einen sauberen Ersatz. Man zählt nicht Welten, sondern <span class="accent">Bahnen</span>. Jede Welt zählt eins geteilt durch die Zahl ihrer Symmetrien. Das ist die <span class="accent">Homotopie-Kardinalität</span>.</p>
+      </div>
+
+      <div class="formula-card reveal">
+        <div class="formula">|X| <span class="op">=</span> Σ<sub>[x]</sub> 1 / |Aut(x)|</div>
+        <div class="formula-note">Jede Isomorphieklasse zählt eins durch die Größe ihrer Automorphismengruppe.</div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Vier Welten, zwei Zählweisen</div>
+            <div class="demo-sub">Vertauschung der beiden Personen</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Zählweise">
+            <button class="seg active" type="button" data-sym="set" aria-pressed="true">Menge</button>
+            <button class="seg" type="button" data-sym="type" aria-pressed="false">Typ</button>
+          </div>
+        </div>
+        <div class="sym-stage" id="sym-stage"></div>
+        <div class="sym-summary">
+          <div class="sym-sum">Größe<strong id="sym-total">4</strong></div>
+          <div class="sym-eq" id="sym-eq">1 + 1 + 1 + 1 = 4</div>
+        </div>
+        <div class="caption" id="sym-caption">Die Menge zählt jede Welt einmal. Auch dann, wenn zwei Welten nur durch das Vertauschen der Personen verschieden sind.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Bahn, Stabilisator, Bahn-Stabilisator-Satz</summary>
+        <div class="deep-body">
+          <p>Eine endliche Gruppe G wirkt auf einer Menge X von Welten. Für eine Welt x gilt:</p>
+          <ul>
+            <li><b>Bahn</b> G·x: alle Welten, die durch eine Symmetrie aus x hervorgehen. Das ist die Menge der verwechselbaren Fälle.</li>
+            <li><b>Stabilisator</b> Stab(x): alle Symmetrien, die x fest lassen.</li>
+            <li><b>Bahngröße</b>: |G·x| = |G| / |Stab(x)|.</li>
+          </ul>
+          <p>Für den Aktionsgroupoid X//G gilt |X//G| = Σ<sub>Bahnen</sub> 1/|Stab(x)| = |X|/|G|. Im Beispiel: 1/2 + 1 + 1/2 = 2 = 4/2. Die Zahl 2 ist weder die Zahl der Welten (4) noch die Zahl der Bahnen (3). Sie ist die symmetrie-gewichtete Größe.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 3 -->
+    <section class="section reveal" id="lift">
+      <div class="section-head"><span class="sec-num">03 · Der Lift</span></div>
+      <h2>Jede Zutat eine Stufe höher</h2>
+      <div class="prose">
+        <p>Das Paper hebt jede Zutat der Formel um eine Stufe. Aus Welten werden Typen, aus Wahrheitswerten Beweisfamilien, aus dem Integral eine Homotopie-Kardinalität. Die Rechenart bleibt wählbar.</p>
+      </div>
+
+      <div class="lift reveal" role="table" aria-label="Lift der Formel">
+        <div class="lift-row head" role="row"><span>Zutat</span><span>Menge, klassisch</span><span>Typ, dieses Paper</span></div>
+        <div class="lift-row" role="row"><span>Struktur</span><span class="old">Menge Ω</span><span class="new">Typ Ω, merkt sich <b>Symmetrien</b></span></div>
+        <div class="lift-row" role="row"><span>Wahrheitswert</span><span class="old">Zahl ℓ(φ,ω) ∈ V</span><span class="new">Beweisfamilie <b>P : Ω → 𝒰</b></span></div>
+        <div class="lift-row" role="row"><span>Aggregat</span><span class="old">Integral ∫ ℓ b dm</span><span class="new">Homotopie-Kardinalität von <b>Σ<sub>ω</sub> P(ω)</b></span></div>
+        <div class="lift-row" role="row"><span>Rechenart</span><span class="old">Semiring V</span><span class="new">Valuation <b>‖·‖<sub>V</sub></b></span></div>
+      </div>
+
+      <div class="formula-card reveal">
+        <div class="formula-kicker">Das Ergebnis</div>
+        <div class="formula">|X // G|<sub>b</sub> <span class="op">=</span> (1/|G|) · Σ<sub>x∈X</sub> b(x)</div>
+        <div class="formula-note">Konservativitätssatz. Gilt, wenn der Glaube b die Symmetrie G respektiert.</div>
+        <div class="lean-badge">Lean 4 + Mathlib ✓</div>
+      </div>
+
+      <div class="prose" style="margin-top:22px">
+        <p>Ist die Symmetrie trivial oder die Rechenart idempotent, fällt alles auf die alte Formel zurück. Deshalb ist der Lift <span class="accent">konservativ</span>: er verliert nichts, er macht nur eine zusätzliche Struktur sichtbar.</p>
+      </div>
+
+      <div class="check-card reveal">
+        <div class="check-head">
+          <div class="demo-title">Der Preis: der Glaube muss die Symmetrie teilen</div>
+          <span class="status ok" id="sym-check-status">Symmetrie gültig</span>
+        </div>
+        <div class="check-grid">
+          <label class="slider-row compact"><span>p₁</span><input id="p1" type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Rauchwahrscheinlichkeit Person 1"><output id="p1-out">0.60</output></label>
+          <label class="slider-row compact"><span>p₂</span><input id="p2" type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Rauchwahrscheinlichkeit Person 2"><output id="p2-out">0.60</output></label>
+        </div>
+        <div class="check-readout">
+          <div><span class="muted">Mengen-Summe</span><strong id="check-set">0.840</strong></div>
+          <div><span class="muted">Typ-Größe, G = Sym(2)</span><strong class="valid" id="check-type">0.420</strong></div>
+        </div>
+        <div class="caption" id="check-caption">p₁ = p₂: der Glaube ist invariant. Die Vertauschung ist eine echte Symmetrie, G = Sym(2) ist erlaubt.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Zwei neue Parameter: Symmetrie und Trunkierung</summary>
+        <div class="deep-body">
+          <p>Der Lift macht zwei Dinge benennbar, die die klassische Formel nicht ausdrücken kann.</p>
+          <ul>
+            <li><b>Symmetrie G.</b> Man darf Ω nach einer Untergruppe der Theoriesymmetrien quotieren. G = {id} zählt jede Grundierung. G = Aut(T) zählt bis auf Isomorphie. Die Wahl ist nicht frei: der Glaube muss G-invariant sein.</li>
+            <li><b>Trunkierungsstufe von P.</b> Eine Proposition sagt nur, <i>ob</i> eine Anfrage gilt. Eine Menge zählt, <i>wie viele</i> Beweise sie hat (Provenance). Ein Groupoid identifiziert Beweise, die durch Symmetrie auseinander hervorgehen.</li>
+          </ul>
+          <p>Was Typen zusätzlich kaufen, aber noch nicht in Experimenten realisiert ist: <b>Beweis-Relevanz</b> (wahr vs. auf drei Weisen wahr) und <b>Repräsentations-Invarianz</b> über Univalenz. Zwei isomorphe Kodierungen derselben Theorie liefern dann ohne separaten Beweis dieselbe Inferenz.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4 -->
+    <section class="section reveal" id="shortcut">
+      <div class="section-head"><span class="sec-num">04 · Der Nutzen</span></div>
+      <h2>Reasoning Shortcuts sind Bahnen</h2>
+      <div class="prose">
+        <p>Ein <span class="accent">Reasoning Shortcut</span> entsteht, wenn das Netz die falschen Konzepte lernt, aber die logische Ausgabe trotzdem stimmt. Beispiel: Ein Bild zeigt eine Ziffer aus {1, 2}, beide werden auf Label 1 abgebildet. Das Netz kann sich sicher für die 2 entscheiden, obwohl die Daten die 1 nicht ausschließen. Für das Label ist das egal, für das Konzept ist es falsch.</p>
+        <p>Die verwechselbaren Konzepte bilden eine <span class="accent">Bahn</span> unter der Symmetriegruppe. Die einzige Verteilung auf einer Bahn, die die Symmetrie respektiert, ist die uniforme. Genau das ist die kalibrierte Antwort: unsicher, wo die Daten nichts entscheiden.</p>
+      </div>
+
+      <div class="formula-card reveal">
+        <div class="formula-kicker">Die Methode</div>
+        <div class="formula">p̄(c | x) <span class="op">=</span> (1/|G|) · Σ<sub>g∈G</sub> p<sub>θ</sub>(g<sup>−1</sup>·c | x)</div>
+        <div class="formula-note">Orbit-Mittelung. Ein Vorwärtspass plus eine Summe über die Gruppe.</div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Reasoning Shortcut, live</div>
+            <div class="demo-sub">Ziffern 0 bis 5, Labels: 0 → 0, {1,2} → 1, {3,4,5} → 2</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="orbit-toggle">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Orbit-Mittelung</span>
+          </label>
+        </div>
+
+        <div class="digit-hint">Rohgewichte des Netzes, vor der Normalisierung. Die Balken zeigen die normalisierte Posterior.</div>
+        <div class="digit-controls" id="digit-controls"></div>
+
+        <div class="shortcut-panels">
+          <div class="panel">
+            <div class="panel-title">Konzept-Posterior pro Ziffer</div>
+            <div class="digit-bars" id="digit-bars"></div>
+            <div class="legend">
+              <span><i class="sw teal"></i>Label 0</span>
+              <span><i class="sw coral"></i>Label 1</span>
+              <span><i class="sw violet"></i>Label 2</span>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Label-Posterior, invariant</div>
+            <div class="label-bars" id="label-bars"></div>
+            <div class="delta">Δ gegenüber roher Meinung: <strong id="label-delta">0.000</strong></div>
+          </div>
+        </div>
+
+        <div class="meter-block">
+          <div class="meter-head"><span>Shortcut-Stärke</span><strong id="shortcut-val">0.00</strong></div>
+          <div class="meter"><span id="shortcut-meter"></span></div>
+          <div class="meter-foot"><span>0 = kalibriert unsicher</span><span>1 = festgelegt</span></div>
+          <div class="entropy" id="entropy-out"></div>
+        </div>
+
+        <div class="demo-actions">
+          <button class="btn" type="button" id="reset-shortcut">Shortcut-Szenario</button>
+          <button class="btn ghost" type="button" id="reset-even">Gleichverteilt</button>
+        </div>
+        <div class="caption" id="shortcut-caption">Rohmeinung des Netzes: hohe Konfidenz auf einzelne Ziffern, obwohl 1 und 2 (und 3, 4, 5) für das Label nicht unterscheidbar sind.</div>
+      </div>
+
+      <details class="deep">
+        <summary>Warum die uniforme Verteilung erzwungen ist</summary>
+        <div class="deep-body">
+          <p>Die Konzept-Posteriors auf einer Bahn bilden einen Simplex. Die Gruppenaktion permutiert seine Ecken. Der einzige Punkt, den alle Permutationen fest lassen, ist der Schwerpunkt: die uniforme Verteilung. Das ist die Maximum-Entropie-Verteilung auf der Bahn.</p>
+          <p>Orbit-Mittelung erreicht diesen Punkt in geschlossener Form. Sie ist exakt, wenn G eine echte Symmetrie der Daten ist. Ist G nur teilweise bekannt, deckt ein Ensemble oder ein expressives Modell den Rest des Simplex ab.</p>
+          <p>Wichtig: In einem idempotenten Semiring, etwa (max,+), fällt die uniforme Antwort mit einer überconfidenten Festlegung zusammen. Die Korrektur ist nur dort sichtbar, wo die Rechenart nicht idempotent ist, also in der probabilistischen (+,×), im Zählen und in der Provenance.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5 -->
+    <section class="section reveal" id="evidenz">
+      <div class="section-head"><span class="sec-num">05 · Die Evidenz</span></div>
+      <h2>Ein Modell schlägt das Ensemble</h2>
+      <div class="prose">
+        <p>Getestet auf MNIST mit bekannter Symmetriegruppe der Ordnung 12. Ziffer 0 ist eindeutig, {1, 2} und {3, 4, 5} sind verwechselbar. Die Zahlen stammen aus Tabelle 2 des Papers.</p>
+      </div>
+
+      <div class="stat-grid reveal">
+        <div class="stat"><div class="stat-label">conf-ECE</div><div class="stat-values"><span>0.588</span><span class="arrow">→</span><span class="to">0.013</span></div><div class="stat-note">rund 45× weniger Fehlkalibrierung</div></div>
+        <div class="stat"><div class="stat-label">Label-Genauigkeit</div><div class="stat-values"><span>0.996</span><span class="arrow">→</span><span class="to">0.996</span></div><div class="stat-note">unverändert</div></div>
+        <div class="stat"><div class="stat-label">Modelle</div><div class="stat-values"><span>5</span><span class="arrow">→</span><span class="to">1</span></div><div class="stat-note">ein Modell statt Ensemble</div></div>
+        <div class="stat"><div class="stat-label">Epochen</div><div class="stat-values"><span>20</span><span class="arrow">→</span><span class="to">4</span></div><div class="stat-note">ein Fünftel des Budgets</div></div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-top">
+          <div>
+            <div class="demo-title">Methoden im Vergleich</div>
+            <div class="demo-sub">Mittelwert über 20 Seeds. Kleiner Balken ist nicht immer besser: die Richtung steht unten.</div>
+          </div>
+          <div class="segmented" role="group" aria-label="Metrik">
+            <button class="seg active" type="button" data-metric="confECE" aria-pressed="true">conf-ECE</button>
+            <button class="seg" type="button" data-metric="confEnt" aria-pressed="false">conf-Entropie</button>
+            <button class="seg" type="button" data-metric="label" aria-pressed="false">Label</button>
+          </div>
+        </div>
+        <div class="chart" id="chart"></div>
+        <div class="chart-note" id="chart-note">conf-ECE · niedriger ist besser</div>
+      </div>
+
+      <details class="deep">
+        <summary>Was die Baselines tun</summary>
+        <div class="deep-body">
+          <ul>
+            <li><b>Basis:</b> ein Modell, nur mit dem zusammengefassten Label trainiert. Es committet sich auf einen Vertreter der Bahn und ist dort falsch kalibriert.</li>
+            <li><b>RS-Independence:</b> ein Regularisierer zieht die Konzepte während des Trainings zur uniformen Verteilung. Gradientenabstieg approximiert, was die geschlossene Form direkt hinsetzt.</li>
+            <li><b>NeSyDM:</b> ein expressives Dichtemodell über Konzepte. Es braucht mehr Budget, um in die Nähe zu kommen.</li>
+            <li><b>Bears:</b> ein diversitätstrainiertes Ensemble aus fünf Modellen. Die Diversitätsstrafe wirkt global. In der aggressiven Einstellung verliert sie Label-Genauigkeit, ohne die Kalibrierung zuverlässig zu verbessern.</li>
+          </ul>
+          <p>Der Vergleich misst, was die <i>explizite</i> Nutzung der Symmetrie bringt. Die Gruppe ist in diesem Task aus der Wissensbasis bekannt. Ob man sie aus Daten lernen kann, ist eine andere Frage.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 6 -->
+    <section class="section reveal" id="fazit">
+      <div class="section-head"><span class="sec-num">06 · Was du mitnimmst</span></div>
+      <h2>Die Idee in vier Sätzen</h2>
+
+      <div class="take-grid">
+        <div class="take reveal"><div class="glyph">Symmetrie</div><h3>Shortcut heißt Bahn</h3><p>Ein Reasoning Shortcut ist kein Trainingsunfall. Er ist eine Bahn der Theorie unter ihrer eigenen Symmetriegruppe.</p></div>
+        <div class="take reveal"><div class="glyph">Geschlossene Form</div><h3>Mitteln statt trainieren</h3><p>Orbit-Mittelung ist exakt, billig und modellunabhängig. Sie braucht nur die Gruppe, kein Diversity-Training und kein Dichtemodell.</p></div>
+        <div class="take reveal"><div class="glyph">Grenze</div><h3>Die Gruppe muss bekannt sein</h3><p>Ist die Symmetrie nur teilweise bekannt, deckt ein Ensemble oder ein expressives Modell den Rest des Simplex ab. Eine falsch gewählte Gruppe zeigt sich in der Label-Genauigkeit, nicht in der Kalibrierung.</p></div>
+        <div class="take reveal"><div class="glyph">Offen</div><h3>Der kontinuierliche Fall</h3><p>Der Rahmen ist endlich. Homotopie-Kardinalität braucht π-endliche Typen. Weighted model integration über einem kontinuierlichen Ω ist nicht abgedeckt.</p></div>
+      </div>
+
+      <details class="deep">
+        <summary>Dessert: erzeugende Funktionen</summary>
+        <div class="deep-body">
+          <p>Für das austauschbare Modell mit n Personen ist die flache Summe (1+β)<sup>n</sup>. Setzt man diese Zahlen in eine gewöhnliche erzeugende Funktion, entsteht 1/(1−(1+β)x). Die Homotopie-Kardinalität teilt jede Zahl durch n!, die Größe der Symmetriegruppe der Labels. Ihre erzeugende Funktion ist e<sup>(1+β)x</sup>.</p>
+          <p>Das ist die Signatur kombinatorischer Spezies: Typen komponieren wie gelabelte Strukturen. Die Korrektur ist keine Konvention, sie ist dieselbe 1/|Aut|-Regel, diesmal auf die Labels angewandt.</p>
+          <label class="slider-row"><span>β</span><input id="beta-range" type="range" min="0" max="2" step="0.05" value="1" aria-label="Beta"><output id="beta-out">1.00</output></label>
+          <div class="gf-wrap">
+            <svg id="gf-svg" viewBox="0 0 560 320" role="img" aria-label="Logarithmische Darstellung der Koeffizienten der gewöhnlichen und der exponentiellen erzeugenden Funktion"></svg>
+          </div>
+          <div class="gf-legend">
+            <span><i class="gf-line-swatch" style="background:var(--teal)"></i>gewöhnlich: (1+β)<sup>n</sup></span>
+            <span><i class="gf-line-swatch" style="background:var(--violet)"></i>homotop: (1+β)<sup>n</sup>/n!</span>
+            <span>y-Achse: log₁₀</span>
+          </div>
+        </div>
+      </details>
+
+      <details class="deep">
+        <summary>Glossar</summary>
+        <div class="deep-body">
+          <dl class="gloss-grid">
+            <div><dt>σ-Struktur</dt><dd>Belegung der Symbole einer logischen Signatur. Eine mögliche Welt.</dd></div>
+            <div><dt>Semiring</dt><dd>Rechenart mit zwei Verknüpfungen, etwa (+,×) für Wahrscheinlichkeit oder (max,+) für den wahrscheinlichsten Fall.</dd></div>
+            <div><dt>Automorphismus</dt><dd>Umbenennung, die eine Welt auf sich selbst abbildet. Ihre Anzahl ist die Symmetrie der Welt.</dd></div>
+            <div><dt>Bahn (Orbit)</dt><dd>Alle Welten, die durch Symmetrien auseinander hervorgehen.</dd></div>
+            <div><dt>Stabilisator</dt><dd>Die Symmetrien, die eine Welt fest lassen.</dd></div>
+            <div><dt>Homotopie-Kardinalität</dt><dd>Größe eines Typs. Jede Welt zählt 1/|Aut|.</dd></div>
+            <div><dt>Trunkierung</dt><dd>Wie viel Struktur ein Typ behält: Proposition (wahr/falsch), Menge (Beweise zählbar), Groupoid (Beweise bis auf Symmetrie).</dd></div>
+            <div><dt>Reasoning Shortcut</dt><dd>Falsches Konzept, richtiges Label. Das Netz nutzt eine Ausgabe-Invarianz als Abkürzung.</dd></div>
+            <div><dt>Orbit-Mittelung</dt><dd>Das Modell über die Symmetriegruppe mitteln. Ergibt die uniforme Verteilung auf jeder Bahn.</dd></div>
+            <div><dt>conf-ECE</dt><dd>Erwarteter Kalibrierungsfehler auf den verwechselbaren Ziffern. Kleiner ist besser.</dd></div>
+          </dl>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Quelle</h4>
+      <p>Fernando Zhapa-Camacho, Robert Hoehndorf.<br>
+      <a href="https://arxiv.org/abs/2606.17851" target="_blank" rel="noopener">A homotopy-type-theoretic generalization of neurosymbolic inference</a>.<br>
+      arXiv:2606.17851. KAUST.<br>
+      <a href="https://github.com/bio-ontology-research-group/hott-nesy" target="_blank" rel="noopener">Code und Lean-Formalisierung</a>.</p>
+    </div>
+    <div class="disclaimer">
+      <h4>Hinweis</h4>
+      <p>Interaktive Zusammenfassung, keine eigene Forschung. Alle Zahlen aus Tabelle 2 des Papers. Die Demos sind Lehrmodelle und vereinfachen die tatsächlichen Experimente.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var themeBtn = document.getElementById("theme-btn");
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+  }
+  setTheme("dark");
+  themeBtn.addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  var progressBar = document.getElementById("progress-bar");
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var p = max > 0 ? doc.scrollTop / max : 0;
+    progressBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    toTop.classList.toggle("show", doc.scrollTop > 600);
+  }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  /* ---------------- demo 1: recipe ---------------- */
+  var recipeWorlds = [
+    { bits: [0, 0], name: "niemand", sat: false, key: "00" },
+    { bits: [1, 0], name: "nur 1", sat: true, key: "10" },
+    { bits: [0, 1], name: "nur 2", sat: true, key: "01" },
+    { bits: [1, 1], name: "beide", sat: true, key: "11" }
+  ];
+  var recipeEl = document.getElementById("recipe-worlds");
+  var pRange = document.getElementById("p-range");
+  var pOut = document.getElementById("p-out");
+  var recipeLabel = document.getElementById("recipe-label");
+  var recipeValue = document.getElementById("recipe-value");
+  var recipeCaption = document.getElementById("recipe-caption");
+  var semiring = "sum";
+
+  recipeWorlds.forEach(function (w) {
+    var el = document.createElement("div");
+    el.className = "world" + (w.sat ? " sat" : " dim");
+    el.innerHTML =
+      '<div class="world-key">' + w.key + '</div>' +
+      '<div class="world-dots"><span class="dot ' + (w.bits[0] ? "on" : "") + '"></span><span class="dot ' + (w.bits[1] ? "on" : "") + '"></span></div>' +
+      '<div class="world-name">' + w.name + '</div>' +
+      '<div class="world-bar"><span></span></div>' +
+      '<div class="world-val">0.000</div>' +
+      '<div class="world-sat">erfüllt</div>';
+    recipeEl.appendChild(el);
+  });
+
+  function belief(bits, p) {
+    return bits.reduce(function (acc, bit) { return acc * (bit ? p : 1 - p); }, 1);
+  }
+
+  function renderRecipe() {
+    var p = parseFloat(pRange.value);
+    pOut.textContent = p.toFixed(2);
+    var bs = recipeWorlds.map(function (w) { return belief(w.bits, p); });
+    var maxB = Math.max.apply(null, bs.concat([0.0001]));
+    recipeWorlds.forEach(function (w, i) {
+      var el = recipeEl.children[i];
+      el.querySelector(".world-bar span").style.width = (100 * bs[i] / maxB).toFixed(2) + "%";
+      el.querySelector(".world-val").textContent = bs[i].toFixed(3);
+    });
+    var sat = bs.filter(function (b, i) { return recipeWorlds[i].sat; });
+    if (semiring === "sum") {
+      recipeValue.textContent = sat.reduce(function (a, b) { return a + b; }, 0).toFixed(3);
+      recipeLabel.textContent = "Glaubenssumme über erfüllende Welten";
+      recipeCaption.textContent = "Summe im Semiring (+,×): die Wahrscheinlichkeit, dass die Anfrage gilt.";
+    } else {
+      recipeValue.textContent = Math.max.apply(null, sat).toFixed(3);
+      recipeLabel.textContent = "Glaube der wahrscheinlichsten erfüllenden Welt";
+      recipeCaption.textContent = "Maximum im tropischen Semiring (max,+): das wahrscheinlichste Modell (MPE).";
+    }
+  }
+
+  pRange.addEventListener("input", renderRecipe);
+  document.querySelectorAll("[data-semiring]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      semiring = btn.getAttribute("data-semiring");
+      document.querySelectorAll("[data-semiring]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderRecipe();
+    });
+  });
+  renderRecipe();
+
+  /* ---------------- demo 2: set vs type ---------------- */
+  var symStage = document.getElementById("sym-stage");
+  var symTotal = document.getElementById("sym-total");
+  var symEq = document.getElementById("sym-eq");
+  var symCaption = document.getElementById("sym-caption");
+  var symMode = "set";
+
+  function renderSym() {
+    if (symMode === "set") {
+      symStage.innerHTML =
+        '<div class="chips">' +
+          ["00", "10", "01", "11"].map(function (k) {
+            return '<div class="chip"><span class="chip-key">' + k + '</span><span class="chip-w">1</span></div>';
+          }).join("") +
+        '</div>';
+      symTotal.textContent = "4";
+      symEq.textContent = "1 + 1 + 1 + 1 = 4";
+      symCaption.textContent = "Die Menge zählt jede Welt einmal. Auch dann, wenn zwei Welten nur durch das Vertauschen der Personen verschieden sind.";
+    } else {
+      symStage.innerHTML =
+        '<div class="orbits">' +
+          '<div class="orbit-card">' +
+            '<div class="orbit-tag">Bahn {00} · Stabilisator 2</div>' +
+            '<div class="chip fixed"><span class="chip-key">00</span><span class="chip-w">1/2</span></div>' +
+          '</div>' +
+          '<div class="orbit-card wide">' +
+            '<div class="orbit-tag">Bahn {10, 01} · Stabilisator 1</div>' +
+            '<div class="chips small">' +
+              '<div class="chip"><span class="chip-key">10</span></div>' +
+              '<div class="chip"><span class="chip-key">01</span></div>' +
+              '<span class="orbit-weight">1</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="orbit-card">' +
+            '<div class="orbit-tag">Bahn {11} · Stabilisator 2</div>' +
+            '<div class="chip fixed"><span class="chip-key">11</span><span class="chip-w">1/2</span></div>' +
+          '</div>' +
+        '</div>';
+      symTotal.textContent = "2";
+      symEq.textContent = "1/2 + 1 + 1/2 = 2 = 4 / 2";
+      symCaption.textContent = "Der Typ zählt Bahnen. Jede Welt zählt eins geteilt durch ihre Symmetrien. Die beiden vertauschbaren Welten bilden eine Bahn und zählen zusammen eins.";
+    }
+    symStage.classList.remove("stage-enter");
+    void symStage.offsetWidth;
+    symStage.classList.add("stage-enter");
+  }
+
+  document.querySelectorAll("[data-sym]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      symMode = btn.getAttribute("data-sym");
+      document.querySelectorAll("[data-sym]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderSym();
+    });
+  });
+  renderSym();
+
+  /* ---------------- demo 3: belief invariance ---------------- */
+  var p1 = document.getElementById("p1");
+  var p2 = document.getElementById("p2");
+  var p1Out = document.getElementById("p1-out");
+  var p2Out = document.getElementById("p2-out");
+  var checkSet = document.getElementById("check-set");
+  var checkType = document.getElementById("check-type");
+  var checkStatus = document.getElementById("sym-check-status");
+  var checkCaption = document.getElementById("check-caption");
+
+  function renderCheck() {
+    var a = parseFloat(p1.value);
+    var b = parseFloat(p2.value);
+    p1Out.textContent = a.toFixed(2);
+    p2Out.textContent = b.toFixed(2);
+    var invariant = Math.abs(a - b) < 1e-9;
+    var setVal = 1 - (1 - a) * (1 - b);
+    var typeVal = invariant ? setVal / 2 : setVal;
+    checkSet.textContent = setVal.toFixed(3);
+    checkType.textContent = typeVal.toFixed(3);
+    checkType.classList.toggle("valid", invariant);
+    checkStatus.textContent = invariant ? "Symmetrie gültig" : "Symmetrie verletzt";
+    checkStatus.classList.toggle("ok", invariant);
+    checkStatus.classList.toggle("bad", !invariant);
+    checkCaption.textContent = invariant
+      ? "p₁ = p₂: der Glaube ist invariant. Die Vertauschung ist eine echte Symmetrie, G = Sym(2) ist erlaubt. Die Typ-Größe ist die halbe Mengen-Summe."
+      : "p₁ ≠ p₂: der Glaube unterscheidet die Personen. Die Vertauschung ist keine Symmetrie des Glaubens. Nur G = {id} ist erlaubt, und die Typ-Größe fällt auf die Mengen-Summe zurück.";
+  }
+  p1.addEventListener("input", renderCheck);
+  p2.addEventListener("input", renderCheck);
+  renderCheck();
+
+  /* ---------------- demo 4: orbit averaging ---------------- */
+  var GROUP = { 0: [0], 1: [1, 2], 2: [3, 4, 5] };
+  var digitDefaults = [7, 0.2, 6.5, 1.2, 0.1, 0.1];
+  var digitControls = document.getElementById("digit-controls");
+  var digitSliders = [];
+  var orbitToggle = document.getElementById("orbit-toggle");
+  var orbitOn = false;
+
+  function labelOf(d) {
+    if (d === 0) return 0;
+    if (d === 1 || d === 2) return 1;
+    return 2;
+  }
+
+  for (var d = 0; d < 6; d++) {
+    var lab = document.createElement("label");
+    lab.className = "digit-slider";
+    lab.innerHTML =
+      '<span>' + d + '</span>' +
+      '<input type="range" min="0" max="10" step="0.05" value="' + digitDefaults[d] + '" data-digit="' + d + '" aria-label="Rohgewicht Ziffer ' + d + '">' +
+      '<output>' + digitDefaults[d].toFixed(2) + '</output>';
+    digitControls.appendChild(lab);
+    digitSliders.push(lab.querySelector("input"));
+  }
+
+  var digitBarsEl = document.getElementById("digit-bars");
+  var digitRows = [];
+  for (var i2 = 0; i2 < 6; i2++) {
+    var row = document.createElement("div");
+    row.className = "drow";
+    row.setAttribute("data-group", String(labelOf(i2)));
+    row.innerHTML = '<span class="dname">' + i2 + '</span><div class="dbar-wrap"><span class="dbar"></span></div><span class="dval">0.00</span>';
+    digitBarsEl.appendChild(row);
+    digitRows.push(row);
+  }
+
+  var labelBarsEl = document.getElementById("label-bars");
+  var labelRows = [];
+  for (var j = 0; j < 3; j++) {
+    var lrow = document.createElement("div");
+    lrow.className = "lrow";
+    lrow.innerHTML = '<span class="lname">Label ' + j + '</span><div class="lbar-wrap"><span class="lbar"></span></div><span class="lval">0.00</span>';
+    labelBarsEl.appendChild(lrow);
+    labelRows.push(lrow);
+  }
+
+  function normalize(arr) {
+    var s = arr.reduce(function (a, b) { return a + b; }, 0) || 1;
+    return arr.map(function (x) { return x / s; });
+  }
+  function orbitAverage(p) {
+    var q = p.slice();
+    Object.keys(GROUP).forEach(function (k) {
+      var idx = GROUP[k];
+      var avg = idx.reduce(function (a, i) { return a + p[i]; }, 0) / idx.length;
+      idx.forEach(function (i) { q[i] = avg; });
+    });
+    return q;
+  }
+  function entropyBits(arr) {
+    var s = arr.reduce(function (a, b) { return a + b; }, 0) || 1;
+    return arr.reduce(function (h, x) {
+      var q = x / s;
+      return h - (q > 0 ? q * Math.log2(q) : 0);
+    }, 0);
+  }
+
+  var shortcutVal = document.getElementById("shortcut-val");
+  var shortcutMeter = document.getElementById("shortcut-meter");
+  var entropyOut = document.getElementById("entropy-out");
+  var labelDelta = document.getElementById("label-delta");
+  var shortcutCaption = document.getElementById("shortcut-caption");
+
+  function renderShortcut() {
+    var raw = normalize(digitSliders.map(function (s) { return parseFloat(s.value); }));
+    var shown = orbitOn ? orbitAverage(raw) : raw;
+
+    digitSliders.forEach(function (s) {
+      s.parentElement.querySelector("output").textContent = parseFloat(s.value).toFixed(2);
+    });
+
+    for (var k = 0; k < 6; k++) {
+      var r = digitRows[k];
+      r.querySelector(".dbar").style.width = (shown[k] * 100).toFixed(2) + "%";
+      r.querySelector(".dval").textContent = shown[k].toFixed(3);
+    }
+
+    var labelProbs = [0, 1, 2].map(function (l) {
+      return GROUP[l].reduce(function (a, idx) { return a + shown[idx]; }, 0);
+    });
+    labelRows.forEach(function (r, l) {
+      r.querySelector(".lbar").style.width = (labelProbs[l] * 100).toFixed(2) + "%";
+      r.querySelector(".lval").textContent = labelProbs[l].toFixed(3);
+    });
+
+    var rawLabels = [0, 1, 2].map(function (l) {
+      return GROUP[l].reduce(function (a, idx) { return a + raw[idx]; }, 0);
+    });
+    var delta = 0;
+    for (var m = 0; m < 3; m++) {
+      delta = Math.max(delta, Math.abs(labelProbs[m] - rawLabels[m]));
+    }
+    labelDelta.textContent = delta.toFixed(3);
+
+    var scores = [];
+    var ents = [];
+    [1, 2].forEach(function (l) {
+      var idx = GROUP[l];
+      var cond = idx.map(function (t) { return shown[t]; });
+      var h = entropyBits(cond);
+      var hmax = Math.log2(idx.length);
+      scores.push(1 - (hmax > 0 ? h / hmax : 0));
+      ents.push("H(" + idx.join(",") + ") = " + h.toFixed(2) + " / " + hmax.toFixed(2) + " bit");
+    });
+    var score = scores.reduce(function (a, b) { return a + b; }, 0) / scores.length;
+    shortcutVal.textContent = score.toFixed(2);
+    shortcutMeter.style.width = (score * 100).toFixed(1) + "%";
+    entropyOut.textContent = ents.join("   ·   ");
+
+    shortcutCaption.textContent = orbitOn
+      ? "Orbit-Mittelung: innerhalb jeder Bahn ist die Verteilung jetzt uniform. Die Label-Wahrscheinlichkeiten sind exakt dieselben geblieben. Das ist die kalibrierte Antwort: unsicher, wo die Daten nichts entscheiden."
+      : "Rohmeinung des Netzes: hohe Konfidenz auf einzelne Ziffern, obwohl 1 und 2 (und 3, 4, 5) für das Label nicht unterscheidbar sind. Das ist der Reasoning Shortcut.";
+  }
+
+  digitSliders.forEach(function (s) { s.addEventListener("input", renderShortcut); });
+  orbitToggle.addEventListener("change", function () {
+    orbitOn = orbitToggle.checked;
+    renderShortcut();
+  });
+  document.getElementById("reset-shortcut").addEventListener("click", function () {
+    digitSliders.forEach(function (s, idx) { s.value = digitDefaults[idx]; });
+    orbitToggle.checked = false;
+    orbitOn = false;
+    renderShortcut();
+  });
+  document.getElementById("reset-even").addEventListener("click", function () {
+    digitSliders.forEach(function (s) { s.value = 1; });
+    orbitToggle.checked = false;
+    orbitOn = false;
+    renderShortcut();
+  });
+  renderShortcut();
+
+  /* ---------------- demo 5: results chart ---------------- */
+  var RESULTS = [
+    { name: "Basis", note: "1 Modell · 4 Epochen", confECE: 0.588, label: 0.996, confEnt: 0.05, ours: false },
+    { name: "Orbit-Mittelung", note: "1 Modell · 4 Epochen", confECE: 0.013, label: 0.996, confEnt: 0.94, ours: true },
+    { name: "RS-Independence", note: "1 Modell · 4 Epochen", confECE: 0.054, label: 0.995, confEnt: 0.94, ours: false },
+    { name: "NeSyDM", note: "1 Modell · 4 Epochen", confECE: 0.049, label: 0.993, confEnt: 0.96, ours: false },
+    { name: "NeSyDM", note: "1 Modell · 40 Epochen", confECE: 0.021, label: 0.997, confEnt: 0.93, ours: false },
+    { name: "Bears (fair)", note: "5 Modelle · 20 Epochen", confECE: 0.102, label: 0.997, confEnt: 0.91, ours: false },
+    { name: "Bears (aggressiv)", note: "5 Modelle · 20 Epochen", confECE: 0.185, label: 0.678, confEnt: 1.65, ours: false }
+  ];
+  var METRICS = {
+    confECE: { max: 0.6, title: "conf-ECE", dir: "niedriger ist besser", type: "num" },
+    confEnt: { max: 1.7, title: "conf-Entropie", dir: "höher ist besser", type: "num" },
+    label: { max: 1.0, title: "Label-Genauigkeit", dir: "höher ist besser", type: "pct" }
+  };
+  var chartEl = document.getElementById("chart");
+  var chartNote = document.getElementById("chart-note");
+  var metric = "confECE";
+  var chartRows = [];
+
+  RESULTS.forEach(function (r) {
+    var cr = document.createElement("div");
+    cr.className = "chart-row" + (r.ours ? " ours" : "");
+    cr.innerHTML =
+      '<div class="chart-method">' +
+        '<span class="cm-name">' + r.name + (r.ours ? ' <span class="paper-tag">Paper</span>' : '') + '</span>' +
+        '<span class="cm-note">' + r.note + '</span>' +
+      '</div>' +
+      '<div class="chart-track"><span class="chart-bar"></span></div>' +
+      '<div class="chart-val"></div>';
+    chartEl.appendChild(cr);
+    chartRows.push(cr);
+  });
+
+  function renderChart() {
+    var meta = METRICS[metric];
+    RESULTS.forEach(function (r, i) {
+      var v = r[metric];
+      var pct = Math.max(0.8, Math.min(100, (v / meta.max) * 100));
+      var row = chartRows[i];
+      row.querySelector(".chart-bar").style.width = pct.toFixed(2) + "%";
+      row.querySelector(".chart-val").textContent = meta.type === "pct"
+        ? (v * 100).toFixed(1) + "%"
+        : v.toFixed(3);
+    });
+    chartNote.textContent = meta.title + " · " + meta.dir;
+  }
+
+  document.querySelectorAll("[data-metric]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      metric = btn.getAttribute("data-metric");
+      document.querySelectorAll("[data-metric]").forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      renderChart();
+    });
+  });
+  renderChart();
+
+  /* ---------------- demo 6: generating functions ---------------- */
+  var gfSvg = document.getElementById("gf-svg");
+  var betaRange = document.getElementById("beta-range");
+  var betaOut = document.getElementById("beta-out");
+
+  function factorial(n) {
+    var r = 1;
+    for (var f = 2; f <= n; f++) r *= f;
+    return r;
+  }
+
+  function renderGF() {
+    var beta = parseFloat(betaRange.value);
+    betaOut.textContent = beta.toFixed(2);
+    var N = 8;
+    var ord = [];
+    var exp = [];
+    for (var n = 0; n <= N; n++) {
+      var a = Math.pow(1 + beta, n);
+      ord.push(a);
+      exp.push(a / factorial(n));
+    }
+
+    var logs = [];
+    for (var q = 0; q <= N; q++) {
+      logs.push(Math.log10(Math.max(ord[q], 1e-9)));
+      logs.push(Math.log10(Math.max(exp[q], 1e-9)));
+    }
+    var min = Math.floor(Math.min.apply(null, logs));
+    var max = Math.ceil(Math.max.apply(null, logs));
+    if (max - min < 2) max = min + 2;
+
+    var W = 560, H = 320;
+    var padL = 60, padR = 24, padT = 24, padB = 48;
+    var plotW = W - padL - padR;
+    var plotH = H - padT - padB;
+
+    function X(n) { return padL + (n / N) * plotW; }
+    function Y(l) { return padT + (1 - (l - min) / (max - min)) * plotH; }
+
+    var parts = [];
+    var step = Math.max(1, Math.ceil((max - min) / 5));
+    for (var k = min; k <= max; k += step) {
+      var yy = Y(k);
+      parts.push('<line class="gf-grid" x1="' + padL + '" y1="' + yy.toFixed(2) + '" x2="' + (W - padR) + '" y2="' + yy.toFixed(2) + '"/>');
+      parts.push('<text class="gf-axis" x="' + (padL - 10) + '" y="' + (yy + 4).toFixed(2) + '" text-anchor="end">10^' + k + '</text>');
+    }
+    for (var t = 0; t <= N; t++) {
+      parts.push('<text class="gf-axis" x="' + X(t).toFixed(2) + '" y="' + (H - padB + 22) + '" text-anchor="middle">' + t + '</text>');
+    }
+    parts.push('<text class="gf-axis-title" x="' + (padL + plotW / 2) + '" y="' + (H - 6) + '" text-anchor="middle">n, Anzahl der Personen</text>');
+
+    function linePath(vals) {
+      return vals.map(function (v, n) {
+        return X(n).toFixed(2) + "," + Y(Math.log10(Math.max(v, 1e-9))).toFixed(2);
+      }).join(" ");
+    }
+
+    parts.push('<polyline class="gf-line-a" points="' + linePath(ord) + '"/>');
+    parts.push('<polyline class="gf-line-b" points="' + linePath(exp) + '"/>');
+
+    for (var p = 0; p <= N; p++) {
+      parts.push('<circle class="gf-dot-a" cx="' + X(p).toFixed(2) + '" cy="' + Y(Math.log10(Math.max(ord[p], 1e-9))).toFixed(2) + '" r="3.5"/>');
+      parts.push('<circle class="gf-dot-b" cx="' + X(p).toFixed(2) + '" cy="' + Y(Math.log10(Math.max(exp[p], 1e-9))).toFixed(2) + '" r="3.5"/>');
+    }
+
+    gfSvg.innerHTML = parts.join("");
+  }
+
+  betaRange.addEventListener("input", renderGF);
+  renderGF();
+})();
+</script>
+</body>
+</html>
