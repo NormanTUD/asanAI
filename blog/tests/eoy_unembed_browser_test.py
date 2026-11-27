@@ -89,6 +89,7 @@ def main() -> int:
                 check(f"{tag} LayerNorm in prose", "LayerNorm" in body, body[-180:])
                 check(f"{tag} Temml rendered in prose", page.locator("#ls-body math").count() > 0, str(page.locator("#ls-body math").count()))
                 check(f"{tag} Temml formula under bars", page.locator(".ls-sim-formula math").count() > 0, str(page.locator(".ls-sim-formula math").count()))
+                check(f"{tag} directions caption is gone", page.locator(".ls-sim-caption").is_hidden() or not page.locator(".ls-sim-caption").inner_text().strip(), page.locator(".ls-sim-caption").inner_text())
 
                 stage = page.locator(".ls-sim-stage").bounding_box()
                 formula = page.locator(".ls-sim-formula").bounding_box()
@@ -104,6 +105,7 @@ def main() -> int:
                 check(f"{tag} default word is Fluss", selected_before == ("Fluss" if lang == "de" else "river"), selected_before)
                 check(f"{tag} five separate bar cards", cards.count() == 5, str(cards.count()))
                 check(f"{tag} row w_i is Temml", page.locator(".ls-sim-bar-card .ls-math math").count() >= 5, str(page.locator(".ls-sim-bar-card .ls-math math").count()))
+                check(f"{tag} row w_i is inline", page.locator(".ls-sim-bar-card .ls-math[data-tex-display=\"false\"]").count() >= 5, str(page.locator(".ls-sim-bar-card .ls-math[data-tex-display=\"false\"]").count()))
                 clicked = cards.nth(1)
                 clicked_name = clicked.locator(".ls-sim-bar-head b").inner_text()
                 clicked.click()

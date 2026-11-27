@@ -7502,6 +7502,6 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-sim-bar-track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--ls-green),var(--ls-gold));transition:width .28s cubic-bezier(.22,1,.36,1)}
 .ls-sim-bar-meta{display:block;font:600 9.5px/1.35 "Open Sans",sans-serif;color:var(--ls-muted);overflow-wrap:anywhere}
 .ls-sim-bar-meta b{font-weight:700;color:var(--ls-soft)}
-.ls-sim-bar-meta .ls-math{font-size:.92em;color:var(--ls-petrol)}
+.ls-sim-bar-meta .ls-math{display:inline-flex;vertical-align:baseline;font-size:.92em;color:var(--ls-petrol)}
 .ls-sim-bar-meta .ls-math math{font-size:1em}
 @media(max-width:760px){.ls-sim-bars{width:46%;min-width:170px;padding:6px}.ls-sim-bar-card{padding:6px 7px}.ls-sim-bar-meta{font-size:8.5px}}

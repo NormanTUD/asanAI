@@ -198,7 +198,7 @@
           return '<button type="button" class="ls-sim-bar-card" data-bar-i="' + t.i + '" role="listitem">' +
             '<span class="ls-sim-bar-head"><b>' + api.esc(word(t.w)) + '</b><em>' + Math.round(t.deg) + '°</em></span>' +
             '<span class="ls-sim-bar-track"><i></i></span>' +
-            '<span class="ls-sim-bar-meta"><span class="ls-math" data-tex="|w_i|"></span> <b data-bar-len></b> · logit <b data-bar-logit></b> · <b data-bar-prob></b></span>' +
+            '<span class="ls-sim-bar-meta"><span class="ls-math ls-math--inline" data-tex="|w_i|" data-tex-display="false"><code class="ls-tex-source">|w_i|</code></span> <b data-bar-len></b> · logit <b data-bar-logit></b> · <b data-bar-prob></b></span>' +
           '</button>';
         }).join("");
         if (api.typeset) { try { api.typeset(barPanel); } catch (e) {} }
@@ -359,7 +359,8 @@
       var topRow = top[0];
       var topRow = top[0];
       readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "Länge" : "length") + ' <b>' + scaleMag.toFixed(2) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span>' + (focusRow ? '<span>' + (DE ? "Winkel zu " : "angle to ") + '<b>' + word(focusRow.w) + ' · ' + Math.round(focusRow.deg) + '°</b></span>' : '') + '<span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
-      caption.textContent = DE ? "Ziehe den Längenregler: Der grüne Vektor wird länger oder kürzer; seine Richtung und damit der Kosinus-Winkel zu den anderen Wörtern bleiben gleich." : "Drag the length slider: the green vector grows or shrinks; its direction, and therefore the cosine angle to the other words, stays the same.";
+      caption.textContent = "";
+      caption.hidden = true;
       caption.setAttribute("data-caption-mode", "directions");
       canvas.setAttribute("aria-label", DE ? "3D-Kugel schematischer Wortrichtungen; der grüne Vektor ist das gewählte Wort, der Längenregler verändert nur seine Länge, nicht die Winkel." : "3D sphere of schematic word directions; the green vector is the chosen word, and the length slider changes only its length, not the angles.");
     }
