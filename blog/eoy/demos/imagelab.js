@@ -166,6 +166,15 @@
         '<summary><span>' + L("Formeln (live)", "Formulas (live)") + '</span><span class="ls-il-formulas-hint"><i></i><span class="ls-il-formulas-hint-text">' + L("live", "live") + '</span></span></summary>' +
         '<div class="ls-il-formulas-body">' +
           '<div class="ls-il-formulas-meta" aria-live="polite"></div>' +
+          '<div class="ls-il-heatmaps" id="ls-il-heatmaps" hidden>' +
+            '<div class="ls-il-heat-title"><span>' + L("Gewichte live", "Weights live") + '</span><span class="ls-il-heat-live"><i></i>' + L("live", "live") + '</span></div>' +
+            '<div class="ls-il-heat-grid" id="ls-il-heat-grid"></div>' +
+          '</div>' +
+          '<div class="ls-il-formula-toolbar">' +
+            '<label class="ls-il-check"><input type="checkbox" id="ls-il-formula-full"> <span>' + L("Vollständige Matrizen", "Full matrices") + '</span></label>' +
+            '<button type="button" class="ls-btn ls-btn--tiny" id="ls-il-formula-refresh" hidden>' + L("Aktualisieren", "Refresh") + '</button>' +
+            '<span class="ls-il-formula-snapshot" id="ls-il-formula-snapshot" hidden></span>' +
+          '</div>' +
           '<div class="ls-il-formulas-math"></div>' +
           '<div class="ls-il-closebar"><button type="button" class="ls-btn ls-btn--tiny ls-il-formula-close">' + L("Schließen", "Close") + '</button></div>' +
         '</div>' +
@@ -225,10 +234,17 @@
     var formulasMeta = el.querySelector(".ls-il-formulas-meta");
     var formulasHint = el.querySelector(".ls-il-formulas-hint");
     var formulaCloseBtn = el.querySelector(".ls-il-formula-close");
+    var heatmapsEl = el.querySelector("#ls-il-heatmaps");
+    var heatGrid = el.querySelector("#ls-il-heat-grid");
+    var formulaFullToggle = el.querySelector("#ls-il-formula-full");
+    var formulaRefresh = el.querySelector("#ls-il-formula-refresh");
+    var formulaSnapshotEl = el.querySelector("#ls-il-formula-snapshot");
     var grid = el.querySelector(".ls-il-grid");
 
     var C = api.colors();
     var formulasOpen = false, formulasVisible = false, lastFormulaAt = 0, formulaIO = null;
+    var formulaFull = false, formulaFullDirty = true, formulaSnapshot = null;
+    var formulaHeatSignature = "", heatSlots = [];
     var st = {
       dead: false,
       booting: false,
@@ -880,6 +896,15 @@
       }
       return "\\begin{pmatrix}" + lines.join(" \\\\ ") + "\\end{pmatrix}";
     }
+    function fullPmatrix(data, outUnits, inUnits) {
+      var lines = [];
+      for (var r = 0; r < outUnits; r++) {
+        var parts = [];
+        for (var c = 0; c < inUnits; c++) parts.push(formulaNumber(data[c * outUnits + r]));
+        lines.push(parts.join(" & "));
+      }
+      return "\\begin{pmatrix}" + lines.join(" \\\\ ") + "\\end{pmatrix}";
+    }
     function sampleBias(data, units, maxVals) {
       var n = Math.min(units, maxVals);
       var parts = [];
@@ -887,12 +912,29 @@
       if (units > n) parts.push("\\vdots");
       return "\\begin{pmatrix}" + parts.join(" \\\\ ") + "\\end{pmatrix}";
     }
-    function mathRow(tex) {
-      return '<div class="ls-il-formula-row"><div class="ls-math" data-tex="' + core.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + core.esc(tex) + '</code></div></div>';
+    function fullBiasPmatrix(data, units) {
+      var parts = [];
+      for (var i = 0; i < units; i++) parts.push(formulaNumber(data[i]));
+      return "\\begin{pmatrix}" + parts.join(" \\\\ ") + "\\end{pmatrix}";
     }
-    function formulaTexs() {
+    function featureTexs() {
+      var parts = ["x", "y"];
+      for (var k = 0; k < OCTAVES; k++) {
+        var f = "2^{" + k + "}\\pi";
+        parts.push("\\sin(" + f + "x)", "\\cos(" + f + "x)", "\\sin(" + f + "y)", "\\cos(" + f + "y)");
+      }
+      return parts;
+    }
+    function mathRow(tex, scrollable) {
+      var cls = "ls-il-formula-row" + (scrollable ? " ls-il-formula-row--full" : "");
+      return '<div class="' + cls + '"><div class="ls-math" data-tex="' + core.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + core.esc(tex) + '</code></div></div>';
+    }
+    function formulaTexs(full) {
       var out = [];
-      out.push('u(x,y) = \\left( x,\\ y,\\ \\sin(2^0\\pi x),\\ \\cos(2^0\\pi x),\\ \\dots,\\ \\sin(2^4\\pi y),\\ \\cos(2^4\\pi y) \\right) \\in \\mathbb{R}^{22}');
+      var uTex = full
+        ? 'u(x,y) = \\left( ' + featureTexs().join(',\\ ') + ' \\right) \\in \\mathbb{R}^{22}'
+        : 'u(x,y) = \\left( x,\\ y,\\ \\sin(2^0\\pi x),\\ \\cos(2^0\\pi x),\\ \\dots,\\ \\sin(2^4\\pi y),\\ \\cos(2^4\\pi y) \\right) \\in \\mathbb{R}^{22}';
+      out.push(uTex);
       if (!st.model) return out;
       var layers = st.model.layers || [];
       var featureLabel = DE ? '\\text{22 Merkmale}' : '\\text{22 features}';
@@ -906,8 +948,8 @@
         var outUnits = shape[1];
         var kdata = kernel.dataSync();
         var bdata = bias ? bias.dataSync() : [];
-        var wtex = sampleMatrix(kdata, outUnits, inUnits, 4, 4);
-        var btex = sampleBias(bdata, outUnits, 4);
+        var wtex = full ? fullPmatrix(kdata, outUnits, inUnits) : sampleMatrix(kdata, outUnits, inUnits, 8, 8);
+        var btex = full ? fullBiasPmatrix(bdata, outUnits) : sampleBias(bdata, outUnits, 8);
         var wlabel = (DE ? '\\text{Gewichte}' : '\\text{weights}') + '^{\\mathrm{[' + outUnits + ' \\times ' + inUnits + ']}}';
         var blabel = '\\text{Bias}^{\\mathrm{[' + outUnits + ']}}';
         var lhs, prev;
@@ -924,17 +966,179 @@
       }
       return out;
     }
+    var HEAT_STOPS = [
+      [-1, 12, 37, 54],
+      [-0.55, 18, 93, 140],
+      [-0.18, 70, 155, 175],
+      [0, 16, 32, 40],
+      [0.18, 99, 164, 76],
+      [0.55, 178, 191, 60],
+      [1, 250, 204, 76]
+    ];
+    function heatColor(t) {
+      t = clamp(t, -1, 1);
+      for (var i = 1; i < HEAT_STOPS.length; i++) {
+        var a = HEAT_STOPS[i - 1];
+        var b = HEAT_STOPS[i];
+        if (t <= b[0]) {
+          var f = (t - a[0]) / (b[0] - a[0] || 1);
+          return [
+            Math.round(a[1] + (b[1] - a[1]) * f),
+            Math.round(a[2] + (b[2] - a[2]) * f),
+            Math.round(a[3] + (b[3] - a[3]) * f)
+          ];
+        }
+      }
+      var last = HEAT_STOPS[HEAT_STOPS.length - 1];
+      return [last[1], last[2], last[3]];
+    }
+    function drawWeightHeatmap(canvas, kernel) {
+      var shape = kernel.shape;
+      var inUnits = shape[0];
+      var outUnits = shape[1];
+      var data = kernel.dataSync();
+      var GRID = 64;
+      var maxAbs = 1e-6;
+      var values = new Float32Array(GRID * GRID);
+      for (var gy = 0; gy < GRID; gy++) {
+        var r0 = Math.floor(gy * outUnits / GRID);
+        var r1 = Math.max(r0 + 1, Math.floor((gy + 1) * outUnits / GRID));
+        for (var gx = 0; gx < GRID; gx++) {
+          var c0 = Math.floor(gx * inUnits / GRID);
+          var c1 = Math.max(c0 + 1, Math.floor((gx + 1) * inUnits / GRID));
+          var sum = 0;
+          var count = 0;
+          for (var r = r0; r < r1; r++) {
+            for (var c = c0; c < c1; c++) {
+              sum += data[c * outUnits + r];
+              count++;
+            }
+          }
+          var v = count ? sum / count : 0;
+          values[gy * GRID + gx] = v;
+          var a = Math.abs(v);
+          if (a > maxAbs) maxAbs = a;
+        }
+      }
+      var ctx = canvas.getContext("2d");
+      var img = ctx.createImageData(GRID, GRID);
+      for (var j = 0; j < values.length; j++) {
+        var color = heatColor(values[j] / maxAbs);
+        var q = j * 4;
+        img.data[q] = color[0];
+        img.data[q + 1] = color[1];
+        img.data[q + 2] = color[2];
+        img.data[q + 3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      return maxAbs;
+    }
+    function heatSignature() {
+      if (!st.model) return "";
+      return (st.model.layers || []).map(function (layer) {
+        var weights = layer.getWeights ? layer.getWeights() : [];
+        var kernel = weights[0];
+        return kernel ? kernel.shape.join("x") : "";
+      }).join("|");
+    }
+    function buildHeatmaps() {
+      if (!heatGrid) return;
+      var layers = st.model.layers || [];
+      var html = [];
+      layers.forEach(function (layer, i) {
+        var weights = layer.getWeights ? layer.getWeights() : [];
+        var kernel = weights[0];
+        if (!kernel) return;
+        html.push('<figure class="ls-il-heat-card"><canvas data-heat-layer="' + i + '" width="64" height="64" role="img" aria-label="' + L("Gewichte von Layer ", "Weights of layer ") + (i + 1) + '"></canvas><figcaption><b>W<sub>' + (i + 1) + '</sub></b><span class="ls-il-heat-scale" data-heat-scale="' + i + '"></span></figcaption></figure>');
+      });
+      heatGrid.innerHTML = html.join("");
+      heatSlots = [];
+      Array.prototype.forEach.call(heatGrid.querySelectorAll("canvas[data-heat-layer]"), function (canvas) {
+        var i = parseInt(canvas.getAttribute("data-heat-layer"), 10);
+        heatSlots.push({ layer: i, canvas: canvas, scale: heatGrid.querySelector('[data-heat-scale="' + i + '"]') });
+      });
+    }
+    function updateHeatmaps() {
+      if (!heatmapsEl || !heatGrid) return;
+      var sig = heatSignature();
+      if (!sig) {
+        heatmapsEl.hidden = true;
+        formulaHeatSignature = "";
+        heatSlots = [];
+        return;
+      }
+      if (sig !== formulaHeatSignature) {
+        formulaHeatSignature = sig;
+        buildHeatmaps();
+      }
+      heatmapsEl.hidden = false;
+      var layers = st.model.layers || [];
+      heatSlots.forEach(function (slot) {
+        var layer = layers[slot.layer];
+        if (!layer || !layer.getWeights) return;
+        var weights = layer.getWeights();
+        var kernel = weights[0];
+        if (!kernel) return;
+        var maxAbs = drawWeightHeatmap(slot.canvas, kernel);
+        if (slot.scale) slot.scale.textContent = "±" + maxAbs.toFixed(2);
+      });
+    }
+    function saveFormulaScroll() {
+      if (!formulasMath) return [];
+      return Array.prototype.map.call(formulasMath.querySelectorAll(".ls-il-formula-row"), function (row) {
+        return row.scrollLeft;
+      });
+    }
+    function restoreFormulaScroll(values) {
+      if (!values || !values.length || !formulasMath) return;
+      Array.prototype.forEach.call(formulasMath.querySelectorAll(".ls-il-formula-row"), function (row, i) {
+        if (values[i]) row.scrollLeft = values[i];
+      });
+    }
+    function updateSnapshotLabel() {
+      if (!formulaSnapshotEl) return;
+      if (formulasFull && formulaSnapshot) {
+        formulaSnapshotEl.textContent = L("Stand ", "Snapshot ") + formulaSnapshot.step + " · " + L("Epoche ", "Epoch ") + formulaSnapshot.epoch;
+        formulaSnapshotEl.hidden = false;
+      } else {
+        formulaSnapshotEl.hidden = true;
+      }
+    }
     function renderFormulas(force) {
       if (!formulasOpen || !formulasVisible) return;
       if (!st.ready || !st.model) {
         if (formulasMath && !formulasMath.textContent) formulasMath.textContent = L("Netz wird vorbereitet …", "Preparing network …");
+        formulaHeatSignature = "";
+        heatSlots = [];
+        if (heatmapsEl) heatmapsEl.hidden = true;
         return;
       }
       var now = performance.now();
       if (!force && now - lastFormulaAt < 1200) return;
       lastFormulaAt = now;
-      formulasMath.innerHTML = formulaTexs().map(mathRow).join("");
-      if (api.typeset) api.typeset(formulasMath);
+      updateHeatmaps();
+      if (formulasFull) {
+        if (force || formulaFullDirty) {
+          formulaFullDirty = false;
+          var fullScroll = saveFormulaScroll();
+          formulasMath.innerHTML = formulaTexs(true).map(function (tex, i) {
+            return mathRow(tex, i > 0);
+          }).join("");
+          if (api.typeset) api.typeset(formulasMath);
+          restoreFormulaScroll(fullScroll);
+          formulaSnapshot = { step: st.step, epoch: Math.floor(st.seen / PIXELS) };
+          updateSnapshotLabel();
+        }
+      } else {
+        var sampleScroll = saveFormulaScroll();
+        formulasMath.innerHTML = formulaTexs(false).map(function (tex) {
+          return mathRow(tex, false);
+        }).join("");
+        if (api.typeset) api.typeset(formulasMath);
+        restoreFormulaScroll(sampleScroll);
+        formulaSnapshot = null;
+        updateSnapshotLabel();
+      }
       var epoch = Math.floor(st.seen / PIXELS);
       formulasMeta.textContent = L("Schritt ", "Step ") + st.step + " · " + L("Epoche ", "Epoch ") + epoch;
       if (formulasHint) {
