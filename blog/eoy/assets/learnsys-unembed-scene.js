@@ -804,21 +804,6 @@
         ctx.restore();
         rayLabels.push({ text: tok.t.trim(), x: x, y: y, active: isFocus, top: isTop });
       });
-      if (focus) {
-        var angleR = Math.max(18, r * 0.30);
-        var fd = focus.diff;
-        ctx.save();
-        ctx.strokeStyle = V.alpha(C.petrol, 0.88);
-        ctx.lineWidth = 1.7;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(cx, cy, angleR, -UN_ANGLE, -UN_ANGLE - fd, fd > 0);
-        ctx.stroke();
-        ctx.restore();
-        var mid = UN_ANGLE + fd / 2;
-        var angleFs = Math.max(12, api.font("canvas") + 1);
-        pill(Math.round(Math.abs(fd) * 180 / Math.PI) + "°", cx + Math.cos(mid) * (angleR + 16), cy - Math.sin(mid) * (angleR + 16), C.petrol, angleFs);
-      }
       ctx.save();
       ctx.lineCap = "round";
       ctx.shadowColor = V.alpha(C.petrol, 0.55);
@@ -848,6 +833,21 @@
       }
       pill(DE ? "letzter Vektor" : "last vector", lastLabelX, lastLabelY, C.petrol, fsSmall);
       rayLabels.forEach(function (l) { drawRayLabel(l.text, l.x, l.y, cx, cy, w, h, l.active, labelMaxX, l.top); });
+      if (focus) {
+        var angleR = Math.max(18, r * 0.30);
+        var fd = focus.diff;
+        ctx.save();
+        ctx.strokeStyle = V.alpha(C.petrol, 0.88);
+        ctx.lineWidth = 1.7;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(cx, cy, angleR, -UN_ANGLE, -UN_ANGLE - fd, fd > 0);
+        ctx.stroke();
+        ctx.restore();
+        var mid = UN_ANGLE + fd / 2;
+        var angleFs = Math.max(12, api.font("canvas") + 1);
+        pill(Math.round(Math.abs(fd) * 180 / Math.PI) + "°", cx + Math.cos(mid) * (angleR + 16), cy - Math.sin(mid) * (angleR + 16), C.petrol, angleFs);
+      }
       ctx.save();
       ctx.shadowColor = V.alpha(C.petrol, 0.10);
       ctx.shadowBlur = 22;
