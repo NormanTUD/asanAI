@@ -7346,3 +7346,5 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 @media (max-width:980px){.ls-time-stage.is-small-hero{grid-template-columns:1fr}}
 .ls-time-hero-grid.has-two.is-stacked{grid-template-columns:1fr;grid-template-rows:minmax(0,.86fr) minmax(0,1.14fr)}
 .ls-time-hero-grid.has-two.is-stacked .is-side{min-height:0}
+.ls-time-hero-grid.has-two.is-stacked{display:flex;flex-direction:column;gap:6px;height:100%;min-height:0;overflow:hidden}
+.ls-time-hero-grid.has-two.is-stacked .ls-time-hero-img{width:100%;height:auto;max-height:calc(50% - 3px);min-height:0;object-fit:contain;background:#fff}
