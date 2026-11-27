@@ -5,17 +5,11 @@
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function crossEntropyScene(root, api) {
     var DE = api.lang === "de";
-    var tokens = ["Paris", "London", "Berlin", "Rome"];
+    var tokens = ["Paris", "Lyon", "Marseille", "Nizza"];
     var sentences = DE ? [
-      "Die Hauptstadt von Frankreich ist ___",
-      "Die Hauptstadt des Vereinigten Königreichs ist ___",
-      "Die Hauptstadt von Deutschland ist ___",
-      "Die Hauptstadt von Italien ist ___"
+      "Die Hauptstadt von Frankreich ist ___"
     ] : [
-      "The capital of France is ___",
-      "The capital of the UK is ___",
-      "The capital of Germany is ___",
-      "The capital of Italy is ___"
+      "The capital of France is ___"
     ];
     var initial = [1.69, 2.2, 0.77, 0.37];
     var logits = initial.slice();
@@ -62,6 +56,7 @@
     function buildTargets() {
       targetsEl.innerHTML = "";
       tokens.forEach(function (tok, i) {
+        if (i !== 0) return;
         var b = document.createElement("button");
         b.type = "button";
         b.className = "ls-chip" + (i === target ? " is-on" : "");
@@ -357,7 +352,7 @@
         var batchInfo = batchTotal > 0
           ? '<span><b>' + (DE ? "Schritte" : "steps") + '</b> ' + Math.min(batchTotal, batchDone + 1) + ' / ' + batchTotal + '</span>'
           : '';
-        readout.innerHTML = '<span><b>' + (DE ? "Ziel" : "target") + ' ' + (target + 1) + '/' + tokens.length + ' · ' + tokens[target] + '</b></span>' +
+        readout.innerHTML = '<span><b>' + (DE ? "Ziel" : "target") + ' · ' + tokens[target] + '</b></span>' +
           '<span><b>Loss</b> ' + loss.toFixed(4) + '</span>' +
           '<span><b>p(' + tokens[target] + ')</b> ' + (p[target] * 100).toFixed(1) + '%</span>' +
           '<span><b>∇ ' + tokens[target] + '</b> ' + (g[target] >= 0 ? "+" : "") + g[target].toFixed(3) + '</span>' + batchInfo;
@@ -399,22 +394,8 @@
     function nextTarget() {
       if (dragBar >= 0) return true;
       if (tween || batchLeft > 0) return true;
-      var isLast = target >= tokens.length - 1;
-      if (isLast && sequenceDone) return false;
-      var next = isLast ? target : target + 1;
-      runBatch(BATCH_STEPS, function () {
-        if (isLast) {
-          sequenceDone = true;
-        } else {
-          target = next;
-          sequenceDone = false;
-          prevProbs = null;
-          pulseStart = 0;
-          history = [lossOf(softmax(logits))];
-          buildTargets();
-          draw();
-        }
-      });
+      if (sequenceDone) return false;
+      runBatch(BATCH_STEPS, function () { sequenceDone = true; });
       return true;
     }
     function prevTarget() {
