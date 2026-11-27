@@ -7489,3 +7489,19 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-sim-scene{grid-template-rows:minmax(0,1fr) auto auto auto auto}
 .ls-sim-scene>.ls-sim-stage{min-height:260px}
 @media(max-width:760px){.ls-sim-scene{grid-template-rows:minmax(220px,1fr) auto auto auto auto}}
+
+/* Clickable, separated logit cards over the right side of the direction stage. */
+.ls-sim-bars{position:absolute;right:8px;top:8px;bottom:8px;width:40%;min-width:220px;display:flex;flex-direction:column;gap:7px;padding:9px;border:1px solid var(--ls-line-strong);border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--ls-paper) 94%,transparent),color-mix(in srgb,var(--ls-paper-2) 92%,transparent));box-shadow:0 14px 30px rgba(0,35,50,.10);overflow:auto;z-index:4}
+.ls-sim-bar-card{appearance:none;display:flex;flex-direction:column;gap:5px;width:100%;padding:8px 9px;border:1px solid var(--ls-line);border-radius:10px;background:var(--ls-paper);color:var(--ls-ink);text-align:left;cursor:pointer;font:inherit;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease,transform .15s ease}
+.ls-sim-bar-card:hover{border-color:var(--ls-gold);transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,35,50,.08)}
+.ls-sim-bar-card.is-focused{border-color:var(--ls-gold);background:color-mix(in srgb,var(--ls-gold) 10%,var(--ls-paper));box-shadow:0 0 0 2px color-mix(in srgb,var(--ls-gold) 25%,transparent)}
+.ls-sim-bar-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.ls-sim-bar-head b{font:700 13px/1.1 "Barlow",sans-serif;color:var(--ls-ink)}
+.ls-sim-bar-head em{font:700 10px/1 "Open Sans",sans-serif;font-style:normal;color:var(--ls-gold)}
+.ls-sim-bar-track{display:block;height:8px;border-radius:999px;background:var(--ls-line);overflow:hidden}
+.ls-sim-bar-track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--ls-green),var(--ls-gold));transition:width .28s cubic-bezier(.22,1,.36,1)}
+.ls-sim-bar-meta{display:block;font:600 9.5px/1.35 "Open Sans",sans-serif;color:var(--ls-muted);overflow-wrap:anywhere}
+.ls-sim-bar-meta b{font-weight:700;color:var(--ls-soft)}
+.ls-sim-bar-meta .ls-math{font-size:.92em;color:var(--ls-petrol)}
+.ls-sim-bar-meta .ls-math math{font-size:1em}
+@media(max-width:760px){.ls-sim-bars{width:46%;min-width:170px;padding:6px}.ls-sim-bar-card{padding:6px 7px}.ls-sim-bar-meta{font-size:8.5px}}

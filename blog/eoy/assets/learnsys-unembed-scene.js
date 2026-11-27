@@ -7,7 +7,7 @@
     var el = document.createElement("div");
     el.className = "ls-sim-scene";
     el.innerHTML =
-      '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
+      '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas><div class="ls-sim-bars" role="list" aria-label="' + (DE ? "Nächste Token, Logits und Winkel" : "Next tokens, logits and angles") + '"></div></div>' +
       '<div class="ls-sim-controls ls-sim-map-controls">' +
         '<label class="ls-sim-pick">' + (DE ? "Wort" : "Word") + ' <select class="ls-sim-select"></select></label>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sim-pause">' + (DE ? "Drehung stoppen" : "Stop rotation") + '</button>' +
@@ -23,6 +23,8 @@
     root.appendChild(el);
     var stage = el.querySelector(".ls-sim-stage");
     var canvas = el.querySelector("canvas");
+    var barPanel = el.querySelector(".ls-sim-bars");
+    var barPanelKey = "";
     var select = el.querySelector(".ls-sim-select");
     var tabBtns = Array.prototype.slice.call(el.querySelectorAll(".ls-sim-tab"));
     var mapControls = el.querySelector(".ls-sim-map-controls");
@@ -64,7 +66,6 @@
     var LENGTH_VALUES = [0.40, 1.00, 1.60, 1.00, 0.40];
     var lengthIndex = 0;
     var hits = [];
-    var barHits = [];
     var C = api.colors();
     var clamp = api.util.clamp;
     var formulaTex = DE
@@ -128,7 +129,9 @@
       option.textContent = DE ? w.w : w.e;
       select.appendChild(option);
     });
-    selected = 0;
+    var defaultSelected = 0;
+    WORDS.forEach(function (w, i) { if (w.w === "Fluss" || w.e === "river") defaultSelected = i; });
+    selected = defaultSelected;
 
     function word(w) { return DE ? w.w : w.e; }
     function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
@@ -186,6 +189,45 @@
         ctx.stroke();
       }
     }
+    function renderBarPanel(top, lens, logits, probs) {
+      if (!barPanel) return;
+      var key = top.map(function (t) { return t.i; }).join(",");
+      if (key !== barPanelKey) {
+        barPanelKey = key;
+        barPanel.innerHTML = top.map(function (t) {
+          return '<button type="button" class="ls-sim-bar-card" data-bar-i="' + t.i + '" role="listitem">' +
+            '<span class="ls-sim-bar-head"><b>' + api.esc(word(t.w)) + '</b><em>' + Math.round(t.deg) + '°</em></span>' +
+            '<span class="ls-sim-bar-track"><i></i></span>' +
+            '<span class="ls-sim-bar-meta"><span class="ls-math" data-tex="|w_i|"></span> <b data-bar-len></b> · logit <b data-bar-logit></b> · <b data-bar-prob></b></span>' +
+          '</button>';
+        }).join("");
+        if (api.typeset) { try { api.typeset(barPanel); } catch (e) {} }
+        barPanel.querySelectorAll("[data-bar-i]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var i = parseInt(btn.getAttribute("data-bar-i"), 10);
+            if (isNaN(i)) return;
+            barFocus = barFocus === i ? -1 : i;
+            drawDirections();
+          });
+        });
+      }
+      var maxProb = Math.max.apply(null, probs) || 1;
+      var cards = barPanel.querySelectorAll("[data-bar-i]");
+      top.forEach(function (t, i) {
+        var card = cards[i];
+        if (!card) return;
+        card.classList.toggle("is-focused", barFocus === t.i);
+        var fill = card.querySelector(".ls-sim-bar-track i");
+        if (fill) fill.style.width = Math.max(3, Math.round(probs[i] / maxProb * 100)) + "%";
+        var len = card.querySelector("[data-bar-len]");
+        var logit = card.querySelector("[data-bar-logit]");
+        var prob = card.querySelector("[data-bar-prob]");
+        if (len) len.textContent = lens[i].toFixed(2);
+        if (logit) logit.textContent = logits[i].toFixed(2);
+        if (prob) prob.textContent = Math.round(probs[i] * 100) + "%";
+      });
+    }
+
     function drawDirections() {
       if (!size) return;
       C = api.colors();
@@ -221,7 +263,6 @@
       }).sort(function (a, b) { return a.z - b.z; });
 
       hits = [];
-      barHits = [];
       pts.forEach(function (pt) {
         var isSel = pt.i === selected;
         var isTop = topIds.indexOf(pt.i) >= 0;
@@ -308,68 +349,13 @@
       ctx.font = '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
       ctx.fillText(DE ? "Winkel = Kosinus-Ähnlichkeit · normalisierte Richtungen · ziehen zum Drehen" : "angle = cosine similarity · normalised directions · drag to rotate", 18, 45);
 
-      var bx = w * .62, by = 62, bw = w - bx - 18;
-      var rowH = Math.min(72, (h - by - 20) / Math.max(1, top.length));
       var lens = top.map(function (t) { return norm(vec(t.w)); });
       var logits = top.map(function (t, i) { return lens[i] * scaleMag * t.cos; });
       var maxLogit = Math.max.apply(null, logits);
       var exps = logits.map(function (z) { return Math.exp(z - maxLogit); });
       var sumExp = exps.reduce(function (a, b) { return a + b; }, 0) || 1;
       var probs = exps.map(function (e) { return e / sumExp; });
-      var maxProb = Math.max.apply(null, probs);
-      ctx.textAlign = "left";
-      ctx.fillStyle = C.petrol;
-      ctx.font = '700 ' + Math.max(11, api.font("canvas-sm") + 1) + 'px "Barlow", sans-serif';
-      ctx.fillText(DE ? "nächste Token · Logits" : "next tokens · logits", bx, 28);
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "LayerNorm → x · Logit = |w_i| · |x| · cos · Softmax → %" : "LayerNorm → x · logit = |w_i| · |x| · cos · softmax → %", bx, 45);
-      top.forEach(function (t, i) {
-        var y = by + i * rowH;
-        var prob = probs[i];
-        var barMax = Math.max(24, bw * 0.48);
-        var barW = Math.max(2, barMax * (prob / (maxProb || 1)));
-        var barY = y + 25;
-        barHits.push({ x: bx - 9, y: y - 6, w: bw + 18, h: rowH - 10, i: t.i });
-        var focused = barFocus === t.i;
-        ctx.save();
-        ctx.fillStyle = V.alpha(focused ? C.gold : C.paper, focused ? 0.12 : 0.76);
-        ctx.strokeStyle = focused ? C.gold : V.alpha(C.line, 0.58);
-        ctx.lineWidth = focused ? 2 : 1;
-        if (focused) { ctx.shadowColor = V.alpha(C.gold, 0.25); ctx.shadowBlur = 10; }
-        if (ctx.roundRect) {
-          ctx.beginPath(); ctx.roundRect(bx - 9, y - 6, bw + 18, rowH - 10, 10); ctx.fill(); ctx.stroke();
-        } else {
-          ctx.fillRect(bx - 9, y - 6, bw + 18, rowH - 10);
-          ctx.strokeRect(bx - 9, y - 6, bw + 18, rowH - 10);
-        }
-        ctx.restore();
-        ctx.fillStyle = V.alpha(C.line, 0.42);
-        ctx.fillRect(bx, barY, barMax, 9);
-        var grad = ctx.createLinearGradient(bx, barY, bx + barW, barY);
-        grad.addColorStop(0, i === 0 ? C.green : C.gold);
-        grad.addColorStop(1, V.alpha(i === 0 ? C.green : C.gold, 0.55));
-        ctx.fillStyle = grad;
-        ctx.fillRect(bx, barY, barW, 9);
-        ctx.fillStyle = i === 0 ? C.green : C.ink;
-        ctx.font = '700 ' + Math.max(10, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
-        ctx.fillText(word(t.w), bx, y + 12);
-        ctx.fillStyle = C.gold;
-        ctx.textAlign = "right";
-        ctx.font = '700 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-        ctx.fillText(Math.round(t.deg) + "°", bx + bw, y + 12);
-        ctx.textAlign = "left";
-        ctx.fillStyle = C.muted;
-        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
-        ctx.fillText("|w_i| " + lens[i].toFixed(2) + "  ·  logit " + logits[i].toFixed(2) + "  ·  " + (prob * 100).toFixed(0) + "%", bx, barY + 22);
-        if (i < top.length - 1) {
-          ctx.strokeStyle = V.alpha(C.line, 0.34);
-          ctx.beginPath();
-          ctx.moveTo(bx, y + rowH - 8);
-          ctx.lineTo(bx + bw, y + rowH - 8);
-          ctx.stroke();
-        }
-      });
+      renderBarPanel(top, lens, logits, probs);
       var topRow = top[0];
       var topRow = top[0];
       readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "Länge" : "length") + ' <b>' + scaleMag.toFixed(2) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span>' + (focusRow ? '<span>' + (DE ? "Winkel zu " : "angle to ") + '<b>' + word(focusRow.w) + ' · ' + Math.round(focusRow.deg) + '°</b></span>' : '') + '<span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
@@ -682,13 +668,6 @@
       return null;
     }
 
-    function barHitAt(x, y) {
-      for (var i = 0; i < barHits.length; i++) {
-        var h = barHits[i];
-        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) return h;
-      }
-      return null;
-    }
     function stepUnembed(dir) {
       var rows = unembedData();
       if (!rows.length) return false;
@@ -1143,10 +1122,6 @@
         canvas.style.cursor = unembedRowAt(e.clientX - rr.left, e.clientY - rr.top) ? "pointer" : "";
         return;
       }
-      if (mode === "directions") {
-        var cr = canvas.getBoundingClientRect();
-        canvas.style.cursor = barHitAt(e.clientX - cr.left, e.clientY - cr.top) ? "pointer" : "";
-      }
       if (!dragging) return;
       var dx = e.clientX - lastPX, dy = e.clientY - lastPY;
       if (Math.abs(dx) + Math.abs(dy) > 2) dragMoved = true;
@@ -1174,8 +1149,6 @@
         }
         return;
       }
-      var bh = barHitAt(x, y);
-      if (bh) { barFocus = barFocus === bh.i ? -1 : bh.i; drawDirections(); return; }
       var best = null, bestD = 1e9;
       hits.forEach(function (hit) {
         var d = Math.hypot(hit.x - x, hit.y - y);
@@ -1192,10 +1165,6 @@
           if (!uh) return "";
           var ur = unembedData()[uh.i];
           return ur ? (DE ? "Klicken zeigt den Winkel zu " + ur.t.trim() + "." : "Click to show the angle to " + ur.t.trim() + ".") : "";
-        }
-        if (mode === "directions") {
-          var bh = barHitAt(x, y);
-          if (bh) return (DE ? "Klicken zeigt nur den Winkel von " : "Click only shows the angle from ") + word(WORDS[bh.i]) + (DE ? " zum grünen Vektor." : " to the green vector.");
         }
         if (mode !== "directions" || !hits.length) return "";
         var best = null, bestD = 22;
@@ -1216,7 +1185,7 @@
       });
       ro.observe(stage);
     }
-    choose(0);
+    choose(defaultSelected);
     setMode("directions");
     resize();
     return {
