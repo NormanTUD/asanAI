@@ -863,7 +863,7 @@
         var trueX = mapX[2] + mapSize + sepGap;
         var labelY = mapTop - (narrow ? 10 : 12);
         for (var mo = 0; mo < 3; mo++) {
-          txt(c, stateLabels[mo], mapX[mo] + mapSize / 2, labelY, { align: "center", size: narrow ? 9 : 10, color: mo === 1 ? C.gold : mo === 2 ? C.ink : C.muted });
+          txt(c, stateLabels[mo], mapX[mo] + mapSize / 2, labelY, { align: "center", size: narrow ? 9.6 : 11, color: mo === 1 ? C.gold : mo === 2 ? C.ink : C.muted, font: '700 ' + (narrow ? 9.6 : 11) + 'px "Barlow", "Open Sans", sans-serif' });
           drawProbGrid(c, mapX[mo], mapTop, mapSize, mo, e4, true);
         }
         c.save();
@@ -875,7 +875,7 @@
         c.stroke();
         c.restore();
         drawBoard(c, TRUTH, trueX, mapTop, mapSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
-        txt(c, DE ? "wahrer Zustand" : "true state", trueX + mapSize / 2, labelY, { align: "center", size: narrow ? 9 : 10, color: C.muted });
+        txt(c, DE ? "wahrer Zustand" : "true state", trueX + mapSize / 2, labelY, { align: "center", size: narrow ? 9.6 : 11, color: C.muted, font: '700 ' + (narrow ? 9.6 : 11) + 'px "Barlow", "Open Sans", sans-serif' });
         txt(c, DE ? "Feld " + squareLabel(e4) : "square " + squareLabel(e4), trueX + mapSize / 2, mapTop + mapSize + (narrow ? 14 : 18), { align: "center", size: narrow ? 9.6 : 10.4, color: C.ink });
         txt(c, DE ? "x (512) · W (64×3×512) → z (64×3) → Softmax → p (64×3)" : "x (512) · W (64×3×512) → z (64×3) → softmax → p (64×3)", pad, 102, { size: narrow ? 8.2 : 9.2, color: C.petrol, font: '700 ' + (narrow ? 8.2 : 9.2) + 'px "Barlow", "Open Sans", sans-serif' });
 
@@ -884,44 +884,59 @@
         var probeX = pad + (narrow ? 90 : 100);
         var probeW = narrow ? Math.max(120, W - probeX - pad - 56) : Math.min(330, W * .32);
         txt(c, DE ? "x = dieselbe L6-Aktivierung · 512 Werte" : "x = the same L6 activation · 512 values", pad, probeTop - 7, { size: narrow ? 8.8 : 9.8, color: C.blue, font: '700 ' + (narrow ? 8.8 : 9.8) + 'px "Barlow", "Open Sans", sans-serif' });
-        drawStrip(c, X, pad, probeTop + 2, Math.min(280, probeW), narrow ? 11 : 15, C.blue, C.green, DE ? "x: 512 Aktivierungen, derselbe Vektor für alle drei Zustände" : "x: 512 activations, the same vector for all three states");
+        drawStrip(c, X, pad, probeTop + 2, Math.min(280, probeW), narrow ? 13 : 17, C.blue, C.green, DE ? "x: 512 Aktivierungen, derselbe Vektor für alle drei Zustände" : "x: 512 activations, the same vector for all three states");
         for (var po = 0; po < 3; po++) {
           var dir = [];
           for (var pd = 0; pd < 512; pd++) dir.push(probeDir(e4, po, pd));
           var prod = [];
           for (var qd = 0; qd < 512; qd++) prod.push(X[qd] * dir[qd]);
-          var py = probeTop + (narrow ? 24 : 30) + po * (narrow ? 36 : 44);
-          txt(c, DE ? "W[" + squareLabel(e4) + ", " + stateName(po) + "]" : "W[" + squareLabel(e4) + ", " + stateName(po) + "]", pad, py + 8, { size: narrow ? 9 : 9.8, color: po === e4State ? C.gold : C.muted });
-          drawStrip(c, dir, probeX, py, probeW, narrow ? 8 : 10, C.blue, C.gold, DE ? "W[E4, " + stateName(po) + "]: 512 gelernte Gewichte" : "W[E4, " + stateName(po) + "]: 512 learned weights");
-          drawStrip(c, prod, probeX, py + (narrow ? 9 : 12), probeW, narrow ? 4 : 6, C.blue, C.green, DE ? "Produkt x[d]·W[E4, " + stateName(po) + "][d]" : "product x[d]·W[E4, " + stateName(po) + "][d]");
-          txt(c, "z = " + V.fmt(scores[po], 2), probeX + probeW + 8, py + 8, { size: narrow ? 9.6 : 11, color: po === e4State ? C.gold : C.ink, font: '700 ' + (narrow ? 9.6 : 11) + 'px "Barlow", "Open Sans", sans-serif' });
+          var py = probeTop + (narrow ? 28 : 34) + po * (narrow ? 38 : 48);
+          txt(c, DE ? "W[" + squareLabel(e4) + ", " + stateName(po) + "]" : "W[" + squareLabel(e4) + ", " + stateName(po) + "]", pad, py + 8, { size: narrow ? 9.4 : 10.2, color: po === e4State ? C.gold : C.muted });
+          drawStrip(c, dir, probeX, py, probeW, narrow ? 10 : 12, C.blue, C.gold, DE ? "W[E4, " + stateName(po) + "]: 512 gelernte Gewichte" : "W[E4, " + stateName(po) + "]: 512 learned weights");
+          drawStrip(c, prod, probeX, py + (narrow ? 11 : 14), probeW, narrow ? 6 : 7, C.blue, C.green, DE ? "Produkt x[d]·W[E4, " + stateName(po) + "][d]" : "product x[d]·W[E4, " + stateName(po) + "][d]");
+          txt(c, "z = " + V.fmt(scores[po], 2), probeX + probeW + 8, py + 10, { size: narrow ? 10 : 11.2, color: po === e4State ? C.gold : C.ink, font: '700 ' + (narrow ? 10 : 11.2) + 'px "Barlow", "Open Sans", sans-serif' });
         }
 
         // Bottom: z (before softmax) and p (after softmax) for the three states.
-        var cardH = narrow ? 126 : 144;
-        var cardY = Math.max(probeTop + (narrow ? 156 : 170), H - (narrow ? 170 : 210));
-        var cardW = Math.min(150, (W * .64 - 24) / 3);
-        var ck = cardH / 144;
-        txt(c, DE ? "z (vor Softmax) → Softmax → p (nach Softmax)" : "z (before softmax) → softmax → p (after softmax)", pad, cardY - 16, { size: narrow ? 8.8 : 9.4, color: C.petrol, font: '700 ' + (narrow ? 8.8 : 9.4) + 'px "Barlow", "Open Sans", sans-serif' });
         var fieldWinner = winIndex(probs);
-        for (var oc = 0; oc < 3; oc++) {
-          var cardX2 = pad + oc * (cardW + 10);
-          var isW = oc === fieldWinner;
+        function drawStateCard(cx, cy, cw, ch, oc, isW) {
+          var ck = ch / 144;
           c.fillStyle = isW ? V.alpha(C.gold, .11) : V.alpha(C.paper2, .72);
           c.strokeStyle = isW ? C.gold : V.alpha(C.line, .75);
           c.lineWidth = isW ? 2 : 1;
-          c.fillRect(cardX2, cardY, cardW, cardH);
-          c.strokeRect(cardX2 + .5, cardY + .5, cardW - 1, cardH - 1);
-          txt(c, stateName(oc), cardX2 + cardW / 2, cardY + 16 * ck, { align: "center", size: narrow ? 9.2 : 9.8, color: isW ? C.gold : C.muted });
-          txt(c, DE ? "z (vor Softmax)" : "z (before softmax)", cardX2 + cardW / 2, cardY + 32 * ck, { align: "center", size: narrow ? 7.8 : 8.2, color: C.muted });
-          txt(c, "z = " + V.fmt(scores[oc], 2), cardX2 + cardW / 2, cardY + 48 * ck, { align: "center", size: narrow ? 11 : 11.5, color: C.ink, font: '700 ' + (narrow ? 11 : 11.5) + 'px "Barlow", "Open Sans", sans-serif' });
-          txt(c, DE ? "p (nach Softmax)" : "p (after softmax)", cardX2 + cardW / 2, cardY + 65 * ck, { align: "center", size: narrow ? 7.8 : 8.2, color: C.muted });
+          c.fillRect(cx, cy, cw, ch);
+          c.strokeRect(cx + .5, cy + .5, cw - 1, ch - 1);
+          txt(c, stateName(oc), cx + cw / 2, cy + 16 * ck, { align: "center", size: ch < 110 ? 10 : 11.2, color: isW ? C.gold : C.muted, font: '700 ' + (ch < 110 ? 10 : 11.2) + 'px "Barlow", "Open Sans", sans-serif' });
+          txt(c, DE ? "z (vor Softmax)" : "z (before softmax)", cx + cw / 2, cy + 32 * ck, { align: "center", size: ch < 110 ? 8.2 : 8.6, color: C.muted });
+          txt(c, "z = " + V.fmt(scores[oc], 2), cx + cw / 2, cy + 48 * ck, { align: "center", size: ch < 110 ? 11.5 : 12.2, color: C.ink, font: '700 ' + (ch < 110 ? 11.5 : 12.2) + 'px "Barlow", "Open Sans", sans-serif' });
+          txt(c, DE ? "p (nach Softmax)" : "p (after softmax)", cx + cw / 2, cy + 65 * ck, { align: "center", size: ch < 110 ? 8.2 : 8.6, color: C.muted });
           c.fillStyle = V.alpha(C.line, .35);
-          c.fillRect(cardX2 + 12, cardY + 80 * ck, cardW - 24, 8);
+          c.fillRect(cx + 12, cy + 80 * ck, cw - 24, 6);
           c.fillStyle = isW ? C.gold : C.blue;
-          c.fillRect(cardX2 + 12, cardY + 80 * ck, (cardW - 24) * Math.max(0, Math.min(1, probs[oc])), 8);
-          txt(c, (probs[oc] * 100).toFixed(0) + "%", cardX2 + cardW / 2, cardY + 108 * ck, { align: "center", size: narrow ? 16 : 17, color: isW ? C.gold : C.ink, font: '700 ' + (narrow ? 16 : 17) + 'px "Barlow", "Open Sans", sans-serif' });
-          addHit(cardX2, cardY, cardW, cardH, DE ? "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (vor Softmax). Softmax macht daraus p = " + (probs[oc] * 100).toFixed(1) + "%." : "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (before softmax). Softmax turns this into p = " + (probs[oc] * 100).toFixed(1) + "%.");
+          c.fillRect(cx + 12, cy + 80 * ck, (cw - 24) * Math.max(0, Math.min(1, probs[oc])), 6);
+          txt(c, (probs[oc] * 100).toFixed(0) + "%", cx + cw / 2, cy + 108 * ck, { align: "center", size: ch < 110 ? 16 : 18, color: isW ? C.gold : C.ink, font: '700 ' + (ch < 110 ? 16 : 18) + 'px "Barlow", "Open Sans", sans-serif' });
+          addHit(cx, cy, cw, ch, DE ? "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (vor Softmax). Softmax macht daraus p = " + (probs[oc] * 100).toFixed(1) + "%." : "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (before softmax). Softmax turns this into p = " + (probs[oc] * 100).toFixed(1) + "%.");
+        }
+
+        if (!narrow) {
+          // Horizontally beside the W rows: one readable row of three boxes.
+          var cardGap = W > 760 ? 80 : 56;
+          var cardX = probeX + probeW + cardGap;
+          var cardW = Math.min(128, (W - pad - cardX - 20) / 3);
+          var cardH = 220;
+          var cardTop = Math.max(probeTop + 24, H - 260);
+          txt(c, DE ? "z (vor Softmax) → Softmax → p (nach Softmax)" : "z (before softmax) → softmax → p (after softmax)", cardX, cardTop - 18, { size: 9, color: C.petrol, font: '700 9px "Barlow", "Open Sans", sans-serif' });
+          for (var oc = 0; oc < 3; oc++) {
+            drawStateCard(cardX + oc * (cardW + 10), cardTop, cardW, cardH, oc, oc === fieldWinner);
+          }
+        } else {
+          var cardW = Math.min(150, (W * .64 - 24) / 3);
+          var cardH = 126;
+          var cardY = Math.max(probeTop + 156, H - 170);
+          txt(c, DE ? "z (vor Softmax) → Softmax → p (nach Softmax)" : "z (before softmax) → softmax → p (after softmax)", pad, cardY - 16, { size: 8.8, color: C.petrol, font: '700 8.8px "Barlow", "Open Sans", sans-serif' });
+          for (var oc2 = 0; oc2 < 3; oc2++) {
+            drawStateCard(pad + oc2 * (cardW + 10), cardY, cardW, cardH, oc2, oc2 === fieldWinner);
+          }
         }
         setWmFormula("");
       } else if (phase === 2) {
