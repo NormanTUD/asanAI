@@ -354,7 +354,7 @@
         s.classList.toggle("is-done", i < state.step);
       });
       progressEl.textContent = (state.step + 1) + " / " + STEPS.length;
-      picker.hidden = state.step !== 0;
+      picker.hidden = true;
       docEl.classList.toggle("is-on", state.step >= 1);
       anglePanel.classList.toggle("is-on", state.step >= 3);
       setChat();
