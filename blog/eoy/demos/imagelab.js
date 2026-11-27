@@ -1491,13 +1491,39 @@
       formulasOpen = formulasEl.open;
       if (formulasOpen) {
         formulasVisible = formulasOnScreen();
+        if (formulaFullToggle) formulaFullToggle.checked = formulaFull;
+        if (formulaRefresh) formulaRefresh.hidden = !formulaFull;
+        formulaFullDirty = true;
         renderFormulas(true);
       } else {
         formulasMath.innerHTML = "";
         formulasMeta.textContent = "";
+        if (heatmapsEl) heatmapsEl.hidden = true;
+        if (heatGrid) heatGrid.innerHTML = "";
+        formulaHeatSignature = "";
+        heatSlots = [];
+        formulaFullDirty = true;
         lastFormulaAt = 0;
       }
     });
+    if (formulaFullToggle) {
+      formulaFullToggle.addEventListener("change", function () {
+        formulaFull = !!formulaFullToggle.checked;
+        formulaFullDirty = true;
+        formulaSnapshot = null;
+        if (formulaRefresh) formulaRefresh.hidden = !formulaFull;
+        lastFormulaAt = 0;
+        updateSnapshotLabel();
+        renderFormulas(true);
+      });
+    }
+    if (formulaRefresh) {
+      formulaRefresh.addEventListener("click", function () {
+        formulaFullDirty = true;
+        lastFormulaAt = 0;
+        renderFormulas(true);
+      });
+    }
     formulaCloseBtn.addEventListener("click", function () { formulasEl.open = false; });
     if (window.IntersectionObserver) {
       formulaIO = new IntersectionObserver(function (entries) {
