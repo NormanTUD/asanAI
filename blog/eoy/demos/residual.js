@@ -322,9 +322,10 @@
       var cardX = pad, cardY = pad, cardW = w - pad * 2, cardH = h - pad * 2;
       var colors = noteColors(C);
       g.save();
-      g.shadowColor = V.alpha(C.petrol, 0.16);
-      g.shadowBlur = 20;
-      g.shadowOffsetY = 7;
+      g.shadowColor = "rgba(0,0,0,0.22)";
+      g.shadowBlur = 26;
+      g.shadowOffsetX = 2;
+      g.shadowOffsetY = 10;
       g.fillStyle = C.paper;
       g.fillRect(cardX, cardY, cardW, cardH);
       g.restore();
@@ -341,13 +342,6 @@
       g.fillStyle = paper; g.fillRect(cardX, cardY, cardW, cardH);
       g.strokeStyle = V.alpha(C.lilac, 0.28);
       g.beginPath(); g.moveTo(cardX + 34, cardY + 14); g.lineTo(cardX + 34, cardY + cardH - 14); g.stroke();
-      for (var hole = 0; hole < 7; hole++) {
-        g.fillStyle = V.alpha(C.paper2, 0.9);
-        g.strokeStyle = V.alpha(C.lineStrong, 0.45);
-        g.beginPath();
-        g.arc(cardX + 17, cardY + 58 + hole * ((cardH - 90) / 7), 2.5, 0, Math.PI * 2);
-        g.fill(); g.stroke();
-      }
       var titleSize = Math.max(13, Math.min(19, cardW * 0.024));
       g.fillStyle = C.ink;
       g.font = '700 ' + titleSize + 'px "Barlow", sans-serif';
@@ -364,13 +358,20 @@
       var lineYs = [];
       rects.forEach(function (q) { if (lineYs.indexOf(q.y) === -1) lineYs.push(q.y); });
       lineYs.sort(function (a, b) { return a - b; });
-      g.strokeStyle = V.alpha(C.line, 0.55);
-      g.lineWidth = 1.25;
+      var ruleYs = [];
       if (lineYs.length) {
-        g.beginPath(); g.moveTo(cardX + 14, lineYs[0] - fs * 1.12); g.lineTo(cardX + cardW - 14, lineYs[0] - fs * 1.12); g.stroke();
-        lineYs.forEach(function (yy) {
-          g.beginPath(); g.moveTo(cardX + 14, yy + fs * 0.36); g.lineTo(cardX + cardW - 14, yy + fs * 0.36); g.stroke();
-        });
+        var lineH = lineYs.length > 1 ? lineYs[1] - lineYs[0] : Math.max(fs * 1.7, 56);
+        var lineOffset = fs * 0.36;
+        var baseLine = lineYs[0] + lineOffset;
+        g.strokeStyle = V.alpha(C.ink, 0.42);
+        g.lineWidth = 1.15;
+        function drawRule(yy) {
+          g.beginPath(); g.moveTo(cardX + 1, yy); g.lineTo(cardX + cardW - 14, yy); g.stroke();
+          ruleYs.push(yy);
+        }
+        for (var up = baseLine - lineH; up > cardY + 58; up -= lineH) drawRule(up);
+        for (var down = baseLine; down < cardY + cardH - 34; down += lineH) drawRule(down);
+        ruleYs.sort(function (a, b) { return a - b; });
       }
       g.fillStyle = C.ink;
       g.textAlign = "left"; g.textBaseline = "alphabetic";
@@ -397,6 +398,46 @@
           ? (DE ? "Weiter: Schicht " + (layer + 1) + " schreibt." : "Next: layer " + (layer + 1) + " writes.")
           : (DE ? "Weiter: aus dem Notizbuch wird der Stream." : "Next: the notebook becomes the stream.");
       if (hint) g.fillText(hint, cardX + 50, hintY);
+      var holes = [];
+      var gapMidpoints = [];
+      for (var ri = 0; ri < ruleYs.length - 1; ri++) {
+        gapMidpoints.push((ruleYs[ri] + ruleYs[ri + 1]) / 2);
+      }
+      if (gapMidpoints.length) {
+        var holeCount = Math.min(7, gapMidpoints.length);
+        for (var hi = 0; hi < holeCount; hi++) {
+          var idx = holeCount === 1 ? 0 : Math.round(hi * (gapMidpoints.length - 1) / (holeCount - 1));
+          holes.push({ x: cardX + 17, y: gapMidpoints[idx] });
+        }
+      } else {
+        for (var hole = 0; hole < 7; hole++) {
+          holes.push({ x: cardX + 17, y: cardY + 58 + hole * ((cardH - 90) / 7) });
+        }
+      }
+      holes.forEach(function (h) {
+        var grad = g.createRadialGradient(h.x + 1, h.y + 1, 1, h.x + 1, h.y + 1, 7);
+        grad.addColorStop(0, "rgba(0,0,0,0.20)");
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        g.fillStyle = grad;
+        g.beginPath();
+        g.arc(h.x + 1, h.y + 1, 7, 0, Math.PI * 2);
+        g.fill();
+      });
+      g.save();
+      g.globalCompositeOperation = "destination-out";
+      holes.forEach(function (h) {
+        g.beginPath();
+        g.arc(h.x, h.y, 2.6, 0, Math.PI * 2);
+        g.fill();
+      });
+      g.restore();
+      holes.forEach(function (h) {
+        g.strokeStyle = V.alpha(C.lineStrong, 0.55);
+        g.lineWidth = 0.8;
+        g.beginPath();
+        g.arc(h.x, h.y, 2.6, 0, Math.PI * 2);
+        g.stroke();
+      });
       g.restore();
     }
     function drawLegend(g, x, y, C, onPaper) {
