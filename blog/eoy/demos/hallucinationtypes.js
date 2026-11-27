@@ -281,7 +281,6 @@
           citation: { status: "none", note: L("Kein Zitatproblem.", "No citation problem.") }
         },
         cite: "Manakul et al. (2023); Farquhar et al. (2024)"
-      },
       }
     ];
 
