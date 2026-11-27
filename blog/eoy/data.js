@@ -489,31 +489,19 @@
     {
       kicker: "Residual",
       title: "Das gemeinsame Notizbuch wird zum Stream",
-      body: "Die Notizbuch-Vorstellung ist eine stark vereinfachte, vermenschlichte Sichtweise. Jedes Token hat einen eigenen Residual Stream. Stell dir jeden Stream als Notizbuch vor: Das Token steht schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich.",
-      watch: "Drücke Weiter: erst schreibt die erste Schicht, dann wächst der Stream.",
+      body: "Man kann sich den Residual Stream als ein gemeinsames Notizbuch vorstellen, auf den jeder der Layer seine Informationen addiert, ohne vorheriges zu überschreiben. Jeder Layer besitzt durch die Heads eine Reihe von \"Experten\", die auf verschiedenste Dinge achten können, und ihre Ergebnisse auf den Residualstream schreiben.\n\nMathematisch ist es so, dass der Residual-Stream, statt einfach $x_1 = \\text{Layer}(x_0)$ zu machen, das $x_0$ auf den Layer-Output addiert:\n\n$$\\underbrace{x_1}_{\\text{Ergebnis}} = \\underbrace{x_0}_{\\text{Eingabe}} + \n\\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Output der Schicht}}$$\n\nDiese Technik wurde eigentlich entwickelt, um wirklich tiefe Netze zu trainieren. Die hatten das Problem, dass das Signal während des Trainings immer schwächer wurde, je tiefer man das Netz gemacht hat. Die ersten Layer wurden noch trainiert, aber die späteren kaum noch, weil die Signalstärke durch Backpropagation sich multipliziert. Hat jeder Layer nur eine Signalstärke von $0.9$ wären nach bereits 10 Layern die Signalstärke nur noch auf $0.9^{10} \\approx 0.35$, und nach 50 auf $0.9^{50} \\approx 0.005$. Es würde beim ersten Layer kaum noch ein Trainingssignal ankommen. Daher hat man einen einfachen Weg für das Netz hinzugefügt, auch einen \"kurzen\" Pfad zu gehen (den Identitätspfad), wodurch der Gradient viel tiefer Layer erreichen kann. Der Loss kann entweder über den Layer fließen, oder über $x_0$ direkt.\n\nDas erlaubt dem Netz, wirklich viele Layer zu verschachteln, hält aber auch die Information aus früheren Schichten im Stream verfügbar.",
+      watch: "",
       demoState: { scene: "residual" },
-      context: "Die Notizbuch-Analogie ist eine stark vereinfachte, vermenschlichte Sichtweise. Mathematisch ist der Stream ein Vektor pro Token; die Streams werden getrennt geführt, und jede Schicht addiert pro Token ein Update: x ← x + Layer(x). Frühere Informationen bleiben als Summand erhalten; ob sie lesbar bleiben, hängt von den späteren Projektionen ab.",
-      deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben. Jedes Token hat seinen eigenen Stream; Attention mischt Information zwischen ihnen, und FFN schreibt Updates hinein; die Identität bleibt erhalten.",
-      boxes: [
-        box("res-nb", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", DE ? "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}" : "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
-        box("res-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar."),
-        box("res-2", "Grenze", "Was ist das nicht?", "Kein Speicher im Sinne einer Datenbank und keine wörtliche Expertenrunde. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird.")
-      ]
+      inherit: false
     }
   ] : [
     {
       kicker: "Residual",
       title: "The shared notebook becomes the stream",
-      body: "The notebook picture is a strongly simplified, humanised view. Each token has its own residual stream. Think of each stream as a notebook: the token is already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same.",
-      watch: "Press Next: first the first layer writes, then the stream grows.",
+      body: "One can imagine the residual stream as a shared notebook to which each layer adds its information without overwriting previous information. Through the heads, each layer has a series of \"experts\" that can attend to very different things and write their results onto the residual stream.\n\nMathematically, instead of simply computing $x_1 = \\text{Layer}(x_0)$, the residual stream adds $x_0$ to the layer output:\n\n$$\\underbrace{x_1}_{\\text{result}} = \\underbrace{x_0}_{\\text{input}} + \n\\underbrace{\\operatorname{Layer}(x_0)}_{\\text{output of the layer}}$$\n\nThis technique was originally developed to train very deep networks. They had the problem that the signal became weaker and weaker during training the deeper the network was made. The first layers were still trained, but the later ones barely, because the signal strength is multiplied through backpropagation. If every layer has a signal strength of only $0.9$, after 10 layers the signal strength would be only $0.9^{10} \\approx 0.35$, and after 50 it would be $0.9^{50} \\approx 0.005$. Almost no training signal would reach the first layer. That is why a simple way was added for the network to also take a \"short\" path (the identity path), through which the gradient can reach much deeper layers. The loss can flow either through the layer or directly through $x_0$.\n\nThat allows the network to nest very many layers, but also keeps the information from earlier layers available in the stream.",
+      watch: "",
       demoState: { scene: "residual" },
-      context: "The notebook analogy is a strongly simplified, humanised view. Mathematically the stream is one vector per token; the streams are kept separately, and every layer adds an update per token: x ← x + Layer(x). Earlier information remains present as a summand; whether it stays readable depends on later projections.",
-      deep: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information. Each token has its own stream; attention mixes information between them, and the FFN writes updates into them; the identity survives.",
-      boxes: [
-        box("res-nb", "Mathematics", "The notebook", "x₁ = x₀ + Layer(x₀). The identity stays; every layer adds only its change. Each layer reads the current state.", "\\underbrace{x_1}_{\\text{new}} = \\underbrace{x_0}_{\\text{old}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{layer's note}}"),
-        box("res-1", "Mathematics", "Why addition?", "x ← x + f(x). The identity stays; the layer learns only the change. That makes deep stacks trainable."),
-        box("res-2", "Limit", "What is it not?", "Not a database and not a literal panel of experts. The stream is one vector per token carried through the layers.")
-      ]
+      inherit: false
     }
   ];
 
