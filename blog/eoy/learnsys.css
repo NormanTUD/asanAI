@@ -5158,9 +5158,6 @@ html.dark .ls-cr2-room {
   .ls-hx-thread{max-height:260px}
   .ls-hx-verify-body{max-height:none}
 }
-.ls-hx-lab-head{display:flex;align-items:baseline;gap:8px;margin:4px 0 0;padding-top:8px;border-top:1px solid var(--ls-line)}
-.ls-hx-lab-head b{font:700 10px/1 "Barlow",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-petrol)}
-.ls-hx-lab-head span{font:var(--ls-fs-micro)/1.3 "Open Sans",sans-serif;color:var(--ls-muted)}
 
 /* ── Shared window chrome: mac/Windows/X11 controls, rounded corners ── */
 .ls-code-window{border-radius:10px;border:1px solid rgba(238,247,244,.16);box-shadow:0 18px 40px rgba(0,0,0,.40)}
@@ -5257,8 +5254,6 @@ html.dark .ls-hx-measure b,html[data-theme="dark"] .ls-hx-measure b{color:#e7eef
 html.dark .ls-hx-measure p,html[data-theme="dark"] .ls-hx-measure p{color:#93a6b2}
 html.dark .ls-hx-measure-icon,html[data-theme="dark"] .ls-hx-measure-icon{background:#101822;border-color:#2a3d52;color:#9fc7df}
 html.dark .ls-hx-takeaway,html[data-theme="dark"] .ls-hx-takeaway{background:rgba(99,164,75,.10);color:#c2d0da}
-html.dark .ls-hx-lab-head,html[data-theme="dark"] .ls-hx-lab-head{border-top-color:#2a3d52}
-html.dark .ls-hx-lab-head b,html[data-theme="dark"] .ls-hx-lab-head b{color:#9fc7df}
 
 /* ── Agent tools window: same chrome as the other demo windows ── */
 .ls-agents-scene{height:100%;min-height:0;display:flex;flex-direction:column;padding:2px;overflow-y:auto}
@@ -6713,7 +6708,6 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-hx-axis-pill{display:inline-flex;align-items:center;gap:4px;font:600 9px/1 "Open Sans",sans-serif;color:var(--ls-soft);padding:3px 6px;border:1px solid var(--ls-line);background:#fff;border-radius:999px;cursor:help;white-space:nowrap}
 .ls-hx-axis-pill i{width:5px;height:5px;border-radius:50%;background:var(--ls-green);box-shadow:0 0 0 2px rgba(99,164,75,.12);flex:0 0 auto}
 .ls-hx-axes-note{margin-left:auto;font:600 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
-.ls-hx-lab-head{flex-wrap:wrap}
 @media (max-width:760px){
   .ls-hx-research-band{grid-template-columns:1fr}
   .ls-hx-research-items{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -6739,8 +6733,6 @@ html.dark .ls-hx-axes-note,html[data-theme="dark"] .ls-hx-axes-note{color:#7a8f9
 .ls-hx-research-item{cursor:help}
 
 /* Hallucination lab: sub-tabs, dedicated RAG panel, readable risk matrix. */
-.ls-hx-lab{display:flex;flex-direction:column;gap:7px;min-width:0}
-.ls-hx-tabs{display:flex;align-items:stretch;gap:2px;border-bottom:1px solid var(--ls-line);min-width:0}
 .ls-hx-tab{appearance:none;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--ls-muted);font:700 10.5px/1 "Barlow",sans-serif;padding:8px 11px 7px;cursor:pointer;display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap;transition:color .15s ease,border-color .15s ease}
 .ls-hx-tab>span{font:700 8px/1 "Open Sans",sans-serif;letter-spacing:.06em;color:var(--ls-muted)}
 .ls-hx-tab:hover{color:var(--ls-petrol)}
@@ -6832,7 +6824,6 @@ html.dark .ls-hx-axes-note,html[data-theme="dark"] .ls-hx-axes-note{color:#7a8f9
   .ls-hx-risktab .ls-hx-measures{grid-template-columns:1fr 1fr}
   .ls-hx-tab{padding:7px 8px 6px;font-size:9.5px}
 }
-html.dark .ls-hx-tabs,html[data-theme="dark"] .ls-hx-tabs{border-bottom-color:#2a3d52}
 html.dark .ls-hx-tab,html[data-theme="dark"] .ls-hx-tab{color:#93a6b2}
 html.dark .ls-hx-tab.is-on,html[data-theme="dark"] .ls-hx-tab.is-on{color:#e7eef2}
 html.dark .ls-hx-ragtab,html[data-theme="dark"] .ls-hx-ragtab{background:#141c26;border-color:#2a3d52}
