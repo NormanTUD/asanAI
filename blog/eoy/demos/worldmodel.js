@@ -591,38 +591,6 @@
       return DE ? ["leer", "mein Spieler", "Gegner"][idx] : ["empty", "my player", "opponent"][idx];
     }
 
-    function probeDir(sq, stateIdx, d) {
-      var s = sq * 3 + stateIdx;
-      var base = hash(s + 3, d + 7, 13) * 2 - 1;
-      var band = Math.exp(-Math.pow((d - ((s * 37) % 512)) / 38, 2));
-      return base * .55 + band * .95;
-    }
-
-    function drawStrip(c, values, x, y, w, h, pos, neg, tip) {
-      var n = values.length;
-      var max = 0;
-      for (var i = 0; i < n; i++) max = Math.max(max, Math.abs(values[i]));
-      max = max || 1;
-      for (var k = 0; k < n; k++) {
-        var v = values[k] / max;
-        var col = v >= 0 ? mixRgb(C.paper2, pos, Math.abs(v)) : mixRgb(C.paper2, neg, Math.abs(v));
-        c.fillStyle = "rgb(" + col.join(",") + ")";
-        c.fillRect(x + k * (w / n), y, w / n + .45, h);
-      }
-      c.strokeStyle = V.alpha(C.lineStrong, .5);
-      c.lineWidth = 1;
-      c.strokeRect(x + .5, y + .5, w - 1, h - 1);
-      for (var hi = 0; hi < n; hi++) {
-        var htext = (tip ? tip + " · " : "") + (DE ? "Dimension " : "dimension ") + hi + ": " + V.fmt(values[hi], 3) + (DE ? " · genau dieser einzelne Wert; keine Gruppe." : " · exactly this single value; not a range.");
-        addHit(x + hi / n * w, y, Math.max(1, w / n), h, htext);
-      }
-    }
-
-    function drawActivationStrip(c, x, y, w, h, label) {
-      txt(c, label || "x · 512", x, y - 10, { size: 9.5, color: C.muted });
-      drawStrip(c, X, x, y, w, h, C.blue, C.green, (DE ? "Aktivierung " : "activation ") + (label || "x"));
-    }
-
     function drawActivationGrid(c, x, y, w, h) {
       var cols = 32, rows = 16;
       var cw = w / cols, ch = h / rows;
@@ -832,18 +800,18 @@
       var boardY = narrow ? 330 : 132;
       var questions = DE ? [
         ["Was ist die Aktivierung?", "Layer 6 gibt dem aktuellen Token x: 512 Zahlen. Das ist die Aktivierung, noch kein lesbares Brett."],
-        ["Was macht die Probe pro Feld?", "Für E4 liest dieselbe L6-Aktivierung x mit drei gelernten Zeilen W[E4, leer/mein/Gegner]; Softmax und Argmax machen daraus p und den Feldzustand."],
+        ["Was macht die Probe pro Feld?", "x (512) · W (64×3×512): pro Feld gibt es drei Zeilen W[Feld, leer/mein/Gegner] mit je 512 Gewichten; z = x·W, Softmax → p, Argmax → Feld."],
         ["Wie entsteht ein Score?", "Ziel: Wie gut passt x zur gelernten Richtung? Der Score ist die Projektion von x auf W; groß bei ähnlicher Richtung."],
         ["Warum Softmax?", "Drei Roh-Scores werden zu drei Wahrscheinlichkeiten, die zusammen 100% ergeben. Die Reihenfolge bleibt."],
         ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten für E4. Argmax nimmt die größte; das ist der Zustand des Feldes."],
-        ["Und das ganze Brett?", "x (512) · W (64×3×512) → 192 Logits; je Zeile softmax, dann argmax → 64 Zustände → 8×8-Brett."]
+        ["Und das ganze Brett?", "x (512) · W (64×3×512) → 192 Logits; W[E4] ist nur die 3×512-Scheibe für E4; jede Zeile softmax, dann argmax → 64 Zustände → 8×8-Brett."]
       ] : [
         ["What is the activation?", "Layer 6 gives the current token x: 512 numbers. That is the activation, not yet a readable board."],
-        ["What does the probe do per square?", "For E4 it reads the same L6 activation x with three learned rows W[E4, empty/my/opponent]; softmax and argmax turn them into p and the square state."],
+        ["What does the probe do per square?", "x (512) · W (64×3×512): every square has three rows W[square, empty/my/opponent] of 512 weights; z = x·W, softmax → p, argmax → square."],
         ["How does a score arise?", "Goal: how well does x fit the learned direction? The score is the projection of x onto W; large when the directions align."],
         ["Why softmax?", "Three raw scores become three probabilities that sum to 100%. The order stays the same."],
         ["How does that become a square?", "Three probabilities for E4. Argmax takes the largest; that is the state of the square."],
-        ["And the whole board?", "x (512) · W (64×3×512) → 192 logits; each row softmax, then argmax → 64 states → 8×8 board."]
+        ["And the whole board?", "x (512) · W (64×3×512) → 192 logits; W[E4] is only the 3×512 slice for E4; each row softmax, then argmax → 64 states → 8×8 board."]
       ];
       head(c, DE ? "Vom Zug zum Brett" : "From move to board", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
       txt(c, questions[phase][0], pad, 60, { size: narrow ? 13 : 15, font: '700 ' + (narrow ? 13 : 15) + 'px "Barlow", "Open Sans", sans-serif', color: C.ink });
@@ -857,35 +825,18 @@
         txt(c, "32 × 16 = 512 · dieselben Werte, nur als Raster", pad, 122 + gh + 16, { size: 9, color: C.muted });
         txt(c, DE ? "x = L6-Aktivierung (512 Werte pro Token); das Modell gibt nur den nächsten Zug aus, die Probe liest x." : "x = L6 activation (512 values per token); the model outputs only the next move, the probe reads x.", pad, H - 52, { size: 9, color: C.ink });
       } else if (phase === 1) {
-        var xW = Math.min(W * .48, 430);
-        var probeW = Math.min(W * .37, 330);
-        var dirs = [];
-        for (var o = 0; o < 3; o++) {
-          var dir = [];
-          for (var d = 0; d < 512; d++) dir.push(probeDir(e4, o, d));
-          dirs.push(dir);
-        }
-        txt(c, DE ? "x = dieselbe L6-Aktivierung · 512 Zahlen · NICHT die Probe" : "x = the same L6 activation · 512 numbers · NOT the probe", pad, 96, { size: 9.6, color: C.blue, font: '700 9.6px "Barlow", "Open Sans", sans-serif' });
-        drawStrip(c, X, pad, 108, xW, 16, C.blue, C.green, DE ? "x: 512 Aktivierungen, derselbe Vektor für alle drei Zustände" : "x: 512 activations, the same vector for all three states");
-        // Three learned probe rows, one per state, each compared with the same x.
-        for (var o3 = 0; o3 < 3; o3++) {
-          var y3 = 160 + o3 * 58;
-          var prod3 = [];
-          for (var pd = 0; pd < 512; pd++) prod3.push(X[pd] * dirs[o3][pd]);
-          txt(c, DE ? "W[E4, " + stateName(o3) + "] · 512 gelernte Gewichte" : "W[E4, " + stateName(o3) + "] · 512 learned weights", pad, y3 - 9, { size: 9, color: o3 === e4State ? C.gold : C.muted });
-          drawStrip(c, dirs[o3], pad + 84, y3, probeW, 13, C.blue, C.gold, DE ? "Probe-Richtung W[E4, " + stateName(o3) + "]: 512 gelernte Gewichte" : "probe direction W[E4, " + stateName(o3) + "]: 512 learned weights");
-          drawStrip(c, prod3, pad + 84, y3 + 17, probeW, 7, C.blue, C.green, DE ? "Produkt x[d]·W[E4, " + stateName(o3) + "][d] · alle 512 Produkte werden summiert" : "product x[d]·W[E4, " + stateName(o3) + "][d] · all 512 products are summed");
-          c.save();
-          c.strokeStyle = V.alpha(C.gold, .5);
-          c.lineWidth = 1;
-          c.beginPath(); c.moveTo(pad + 84 + probeW + 6, y3 + 11); c.lineTo(pad + 84 + probeW + 24, y3 + 11); c.stroke();
-          c.restore();
-          txt(c, "z = " + V.fmt(scores[o3], 2), pad + 84 + probeW + 30, y3 + 11, { size: 10.5, color: o3 === e4State ? C.gold : C.ink, font: '700 10.5px "Barlow", "Open Sans", sans-serif' });
-          addHit(pad + 84 + probeW, y3 - 8, 118, 42, DE ? "z[E4, " + stateName(o3) + "] = Σ_d x[d]·W[E4, " + stateName(o3) + "][d] = " + V.fmt(scores[o3], 2) + ". Das ist ein Logit; vor Softmax ist es noch keine Wahrscheinlichkeit." : "z[E4, " + stateName(o3) + "] = Σ_d x[d]·W[E4, " + stateName(o3) + "][d] = " + V.fmt(scores[o3], 2) + ". This is a logit; before softmax it is not yet a probability.");
-        }
+        // The 64×3 representation is the destination: three rows per square,
+        // one shared x, one softmax/argmax readout per row. E4 is marked.
+        var matrixW = Math.min(150, W * .13);
+        var matrixH = Math.min(180, H - 420);
+        if (matrixH < 120) matrixH = 120;
+        drawLogitsColumn(c, pad, 122, matrixW, matrixH, e4);
+        txt(c, DE ? "x (512) · W (64×3×512) → z (64×3) → Softmax → p (64×3) → Argmax" : "x (512) · W (64×3×512) → z (64×3) → softmax → p (64×3) → argmax", pad, 102, { size: 8.6, color: C.petrol, font: '700 8.6px "Barlow", "Open Sans", sans-serif' });
+        txt(c, DE ? "E4 markiert: drei der 192 Zeilen. Dieselbe Rechnung für jedes Feld, mit eigener W-Zeile." : "E4 marked: three of the 192 rows. Same computation for every square, with its own W rows.", pad, 122 + matrixH + 12, { size: 8.2, color: C.muted });
         // The three outputs fill the three state cards; the board is the ground truth.
         var cardW = Math.min(116, (W * .56 - 24) / 3);
-        var cardY2 = 340;
+        var cardY2 = 342;
+        txt(c, DE ? "z (vor Softmax) → Softmax → p (nach Softmax) → Argmax" : "z (before softmax) → softmax → p (after softmax) → argmax", pad, cardY2 - 15, { size: 8.4, color: C.petrol, font: '700 8.4px "Barlow", "Open Sans", sans-serif' });
         var fieldWinner = winIndex(probs);
         for (var oc = 0; oc < 3; oc++) {
           var cardX2 = pad + oc * (cardW + 10);
@@ -910,8 +861,8 @@
         drawBoard(c, TRUTH, boardX, boardY, boardSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
         txt(c, DE ? "W gelernt: wahrer Zustand soll höchsten Score haben" : "W learned: the true state should get the highest score", boardX + boardSize / 2, boardY - 34, { align: "center", size: 8.4, color: C.muted });
         txt(c, "Feld E4 · klicke ein anderes Feld", boardX + boardSize / 2, boardY - 12, { align: "center", size: 9, color: C.ink });
-        txt(c, DE ? "W: 64×3 Zeilen à 512 (pro Feld drei Zustände). x·W[E4,z] → z; Softmax → p; Argmax → Feld. Gleiches x, andere W-Zeile pro Feld." : "W: 64×3 rows of 512 (three states per square). x·W[E4,z] → z; softmax → p; argmax → square. Same x, another W row per square.", pad, H - 128, { size: 8.2, color: C.muted });
-        setWmFormula("\\underbrace{\\operatorname{logit}[E4,z]}_{x \\cdot W[E4,z]} \\xrightarrow{\\text{softmax}} \\underbrace{p[E4,z]}_{\\text{Wahrscheinlichkeit}} \\xrightarrow{\\arg\\max} \\underbrace{\\hat b[E4]}_{\\text{Feldzustand}}");
+        var sqF = squareLabel(e4);
+        setWmFormula("\\underbrace{\\operatorname{logit}[" + sqF + ",z]}_{x \\cdot W[" + sqF + ",z]} \\xrightarrow{\\text{softmax}} \\underbrace{p[" + sqF + ",z]}_{\\text{Wahrscheinlichkeit}} \\xrightarrow{\\arg\\max} \\underbrace{\\hat b[" + sqF + "]}_{\\text{Feldzustand}}");
       } else if (phase === 2) {
         var cx = pad + Math.min(310, W * 0.38);
         var cy = 255;
