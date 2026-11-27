@@ -37,14 +37,18 @@
         ragRisk: 18
       }
     };
-    var factKey = "rare";
+    var factKey = "common";
     var fact = FACTS[factKey];
     var rag = false, cot = false, verify = false;
     var GUARD_PHASES = [
-      { rag: false, cot: false, verify: false },
-      { rag: true, cot: false, verify: false },
-      { rag: true, cot: true, verify: false },
-      { rag: true, cot: true, verify: true }
+      { fact: "common", rag: false, cot: false, verify: false },
+      { fact: "common", rag: true, cot: false, verify: false },
+      { fact: "common", rag: true, cot: true, verify: false },
+      { fact: "common", rag: true, cot: true, verify: true },
+      { fact: "rare", rag: false, cot: false, verify: false },
+      { fact: "rare", rag: true, cot: false, verify: false },
+      { fact: "rare", rag: true, cot: true, verify: false },
+      { fact: "rare", rag: true, cot: true, verify: true }
     ];
     var el = document.createElement("div");
     el.className = "ls-guard-scene";
@@ -55,16 +59,16 @@
           '<span class="ls-guard-addr">' + L("guard · zwei Fakten", "guard · two facts") + '</span>' +
           '<div class="ls-hx-tour ls-guard-tour" data-tip="' + L("Erst ohne RAG, dann mit RAG, Denkweg und Gegenprüfung.", "First without RAG, then with RAG, reasoning, and verification.") + '">' +
             '<button type="button" class="ls-hx-tour-play" aria-label="' + L("Schutzschichten abspielen", "Play defence layers") + '">▶</button>' +
-            '<span class="ls-hx-tour-track"><i></i><i></i><i></i><i></i></span>' +
-            '<span class="ls-hx-tour-label">1 / 4</span>' +
+            '<span class="ls-hx-tour-track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>' +
+            '<span class="ls-hx-tour-label">1 / 8</span>' +
           '</div>' +
           '<span class="ls-guard-status" data-tip="' + L("Kurzurteil: gedeckt, ehrlich oder ungedeckt.", "Short verdict: grounded, honest, or ungrounded.") + '"></span>' +
         '</div>' +
         '<div class="ls-guard-body">' +
           '<section class="ls-guard-chat">' +
             '<div class="ls-guard-facts" role="group" aria-label="' + L("Beispiele", "Examples") + '">' +
-              '<button type="button" class="ls-guard-fact" data-fact="common" aria-pressed="false"><span>' + L("Häufig", "Common") + '</span><b>' + L("Hauptstadt", "Capital") + '</b><em class="is-low">' + L("Grundrisiko: niedrig", "base risk: low") + '</em></button>' +
-              '<button type="button" class="ls-guard-fact is-on" data-fact="rare" aria-pressed="true"><span>' + L("Selten", "Rare") + '</span><b>Ishango</b><em class="is-veryhigh">' + L("Grundrisiko: sehr hoch", "base risk: very high") + '</em></button>' +
+              '<button type="button" class="ls-guard-fact is-on" data-fact="common" aria-pressed="true"><span>' + L("Häufig", "Common") + '</span><b>' + L("Hauptstadt", "Capital") + '</b><em class="is-low">' + L("Grundrisiko: niedrig", "base risk: low") + '</em></button>' +
+              '<button type="button" class="ls-guard-fact" data-fact="rare" aria-pressed="false"><span>' + L("Selten", "Rare") + '</span><b>Ishango</b><em class="is-veryhigh">' + L("Grundrisiko: sehr hoch", "base risk: very high") + '</em></button>' +
             '</div>' +
             '<div class="ls-guard-question"><span>' + L("Frage", "Question") + '</span><b class="ls-guard-question-text">' + fact.question + '</b></div>' +
             '<article class="ls-guard-answer">' +
@@ -168,6 +172,8 @@
     }
     function applyGuardPhase() {
       var p = GUARD_PHASES[guardPhase] || GUARD_PHASES[0];
+      factKey = p.fact;
+      fact = FACTS[factKey];
       rag = p.rag;
       cot = p.cot;
       verify = p.verify;
@@ -299,6 +305,9 @@
         stopGuardTour();
         factKey = b.getAttribute("data-fact");
         fact = FACTS[factKey];
+        rag = false;
+        cot = false;
+        verify = false;
         render();
       });
     });
@@ -330,7 +339,13 @@
         if (!rag) rag = true;
         else if (!cot) cot = true;
         else if (!verify) verify = true;
-        else return false;
+        else if (factKey === "common") {
+          factKey = "rare";
+          fact = FACTS.rare;
+          rag = false;
+          cot = false;
+          verify = false;
+        } else return false;
         render();
         return true;
       },
@@ -339,12 +354,18 @@
         if (verify) verify = false;
         else if (cot) cot = false;
         else if (rag) rag = false;
-        else return false;
+        else if (factKey === "rare") {
+          factKey = "common";
+          fact = FACTS.common;
+          rag = true;
+          cot = true;
+          verify = true;
+        } else return false;
         render();
         return true;
       },
-      hasNext: function () { return !rag || !cot || !verify; },
-      hasPrev: function () { return verify || cot || rag; },
+      hasNext: function () { return !rag || !cot || !verify || factKey === "common"; },
+      hasPrev: function () { return verify || cot || rag || factKey === "rare"; },
       resize: function () {},
       destroy: function () { stopGuardTour(); el.remove(); }
     };

@@ -908,7 +908,7 @@
         }
         if (selected < TYPES.length - 1) {
           selected++;
-          activeMeasure = { source: true };
+          activeMeasure = {};
           activeClaim = 0;
           render();
           return true;
@@ -926,7 +926,7 @@
         }
         if (selected > 0) {
           selected--;
-          activeMeasure = {};
+          activeMeasure = { source: true };
           activeClaim = 0;
           render();
           return true;
