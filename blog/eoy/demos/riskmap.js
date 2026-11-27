@@ -312,6 +312,15 @@
       '</div>' +
       '<span class="ls-rm-cite"><b>' + L("Quelle", "Source") + ':</b> ' + linkCites(item.cite || "") + '</span>';
     }
+    function measureSocChain() {
+      if (state.mode !== "society" || state.socKind !== "chain") return;
+      var nodes = el.querySelectorAll(".ls-rm-soc-node");
+      if (!nodes.length) return;
+      nodes.forEach(function (node) { node.style.minHeight = ""; });
+      var max = 0;
+      nodes.forEach(function (node) { max = Math.max(max, node.offsetHeight); });
+      if (max > 0) nodes.forEach(function (node) { node.style.minHeight = Math.ceil(max) + "px"; });
+    }
     function measureSocDetail() {
       if (state.mode !== "society") return;
       var holder = el.querySelector(".ls-rm-soc-detail");
@@ -357,12 +366,17 @@
             var l = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
             var num = (idx + 1 < 10 ? "0" : "") + (idx + 1);
             return '<button type="button" class="ls-rm-soc-node is-l' + l + (idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="chain" role="listitem" data-tip="' + L("Eine Stufe der Kette. Klick zeigt, wer sie kontrolliert und was hilft.", "One stage of the chain. Click shows who controls it and what helps.") + '">' +
-              '<span class="ls-rm-soc-num">' + num + '</span>' +
-              socIcon(idx) +
-              '<b>' + esc(c.title) + '</b>' +
-              '<span class="ls-rm-soc-who">' + esc(c.who) + '</span>' +
-              '<span class="ls-rm-soc-meter"><i style="width:' + (l * 25) + '%"></i></span>' +
-              '<span class="ls-rm-soc-conc">' + esc(c.conc) + '</span>' +
+              '<div class="ls-rm-soc-top">' +
+                socIcon(idx) +
+                '<div class="ls-rm-soc-copy">' +
+                  '<div class="ls-rm-soc-line"><span class="ls-rm-soc-num">' + num + '</span><b>' + esc(c.title) + '</b></div>' +
+                  '<span class="ls-rm-soc-who">' + esc(c.who) + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="ls-rm-soc-foot">' +
+                '<span class="ls-rm-soc-meter"><i style="width:' + (l * 25) + '%"></i></span>' +
+                '<span class="ls-rm-soc-conc">' + esc(c.conc) + '</span>' +
+              '</div>' +
             '</button>';
           }).join("") + '</div>' +
         '</div>';
@@ -386,6 +400,7 @@
         '</p></div>';
       el.innerHTML = header(d) + switchHTML + hero + detail + takeaway;
       measureSocDetail();
+      measureSocChain();
     }
     function render() {
       var d = modeData();
@@ -555,7 +570,7 @@
         if (state.mode === "society" && state.socKind === "cross") return modeData().chain.length > 0;
         return state.active > 0;
       },
-      resize: function () { if (state.mode === "society") measureSocDetail(); if (state.mode === "risks") measureRiskDetail(); },
+      resize: function () { if (state.mode === "society") { measureSocDetail(); measureSocChain(); } if (state.mode === "risks") measureRiskDetail(); },
       destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
     };
   }
