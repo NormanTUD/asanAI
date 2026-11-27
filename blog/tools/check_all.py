@@ -122,6 +122,12 @@ STAGES: tuple[Stage, ...] = (
         needs=("uv",),
     ),
     Stage(
+        "eoy-unembed-guards",
+        "static",
+        (uv("blog/tests/eoy_unembed_guard_test.py"),),
+        needs=("uv",),
+    ),
+    Stage(
         "course-order",
         "static",
         (uv("blog/tests/course_order_test.py", "blog/"),),

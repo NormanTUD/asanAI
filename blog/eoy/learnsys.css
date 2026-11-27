@@ -7484,3 +7484,8 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-rm--society .ls-rm-soc-chain:before{display:none}
 .ls-rm--society .ls-rm-soc-cross{grid-template-columns:repeat(2,minmax(0,1fr))}
 .ls-rm--society .ls-rm-soc-hero,.ls-rm--society .ls-rm-soc-detail{height:100%;min-height:0}
+
+/* Merged unembedding scene: the stage owns the free height; controls sit below. */
+.ls-sim-scene{grid-template-rows:minmax(0,1fr) auto auto auto auto}
+.ls-sim-scene>.ls-sim-stage{min-height:260px}
+@media(max-width:760px){.ls-sim-scene{grid-template-rows:minmax(220px,1fr) auto auto auto auto}}

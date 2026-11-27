@@ -13,7 +13,7 @@
       if (node) node.setAttribute("data-tip", DE ? de : en);
     }
     set(".ls-sim-tabs", "Zwei Ansichten: Länge vs. Richtung und Unembedding.", "Two views: length vs. direction and unembedding.");
-    set(".ls-sim-canvas", "Punktwolke der Wörter; der Längenregler verändert den grünen Vektor, die Winkel bleiben gleich.", "Word point cloud; the length slider changes the green vector while the angles stay the same.");
+    set(".ls-sim-canvas", "Punktwolke der Wörter; rechts die Logit-Balken, der Längenregler verändert den grünen Vektor, die Winkel bleiben gleich.", "Word point cloud; logit bars on the right, and the length slider changes the green vector while the angles stay the same.");
     set(".ls-sim-select", "Wählt das Wort, dessen Vektor und Nachbarn untersucht werden.", "Chooses the word whose vector and neighbours are inspected.");
     set(".ls-sim-pause", "Hält die Drehung der Punktwolke an, ohne die Auswahl zu ändern.", "Stops the rotation of the point cloud without changing the selection.");
     set(".ls-sim-scale", "Verändert die Länge des grünen Vektors; die Kosinus-Winkel zu den anderen Wörtern bleiben gleich.", "Changes the length of the green vector; the cosine angles to the other words stay the same.");

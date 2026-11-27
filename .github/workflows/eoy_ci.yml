@@ -64,6 +64,11 @@ jobs:
         run: |
           uv run --with playwright python3 blog/tests/eoy_media_interactions_test.py
 
+      - name: Run eoy unembed guardrails
+        run: |
+          uv run blog/tests/eoy_unembed_guard_test.py
+          uv run --with playwright python3 blog/tests/eoy_unembed_browser_test.py --langs de,en
+
       - name: Run eoy page walk
         run: |
           uv run blog/tests/eoy_pages_test.py --langs en,de
