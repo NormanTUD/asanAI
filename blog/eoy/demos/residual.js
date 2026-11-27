@@ -477,33 +477,32 @@
     function drawLegend(g, x, y, C, onPaper) {
       var items = [
         { col: C.blue, label: DE ? "vorherige Outputs" : "previous outputs" },
-        { col: C.petrol, label: "Transformer-Block" }
+        { col: C.petrol, label: "Transformer-Block" },
+        { col: C.green, label: "LayerNorm" }
       ];
       g.font = '600 ' + Math.max(8, Math.min(10, api.font("canvas-sm"))) + 'px "Open Sans", sans-serif';
       g.textAlign = "left"; g.textBaseline = "middle";
       items.forEach(function (item, i) {
-        var xx = x + i * 124;
+        var xx = x + i * 118;
         g.fillStyle = item.col;
         g.fillRect(xx, y - 4, 8, 8);
         g.fillStyle = onPaper ? C.ink : V.alpha(C.paper, 0.88);
         g.fillText(item.label, xx + 12, y + 0.5);
       });
     }
-    function drawMiniBars(g, x, y, w, h, parts, C, max) {
-      var total = totalParts(parts);
+    function drawMiniBars(g, x, y, w, h, values, C) {
       var slot = w / 6;
       var barW = Math.max(2, slot * 0.5);
+      var zero = y + h / 2;
+      g.strokeStyle = V.alpha(C.lineStrong, 0.35);
+      g.lineWidth = 0.8;
+      g.beginPath(); g.moveTo(x, zero); g.lineTo(x + w, zero); g.stroke();
       for (var j = 0; j < 6; j++) {
         var xx = x + slot * (j + 0.5) - barW / 2;
-        var baseH = parts.base[j] / max * h;
-        var updH = (parts.attn[j] + parts.ffn[j]) / max * h;
-        var yy = y + h;
-        g.fillStyle = V.alpha(C.blue, 0.8); g.fillRect(xx, yy - baseH, barW, baseH); yy -= baseH;
-        g.fillStyle = V.alpha(C.petrol, 0.88); g.fillRect(xx, yy - updH, barW, updH);
-        if (total[j] === 0) {
-          g.strokeStyle = V.alpha(C.paper, 0.24);
-          g.beginPath(); g.moveTo(xx, y + h - 0.5); g.lineTo(xx + barW, y + h - 0.5); g.stroke();
-        }
+        var v = values[j] || 0;
+        var bh = v * (h / 2 - 2);
+        g.fillStyle = V.alpha(v >= 0 ? C.petrol : C.petrol, 0.82);
+        g.fillRect(xx, Math.min(zero, zero - bh), barW, Math.max(1, Math.abs(bh)));
       }
     }
     function drawSentenceStrip(g, x, y, w, C, onDark) {
@@ -570,7 +569,6 @@
       var stages = STREAM_LAYERS.length;
       var sw = (panelW - 28 - gap * (stages - 1)) / stages;
       var sh = wide ? Math.max(64, riverH - sy + panelY - 10) : Math.max(48, riverH - sy + panelY - 8);
-      var totalsMax = maxTotal();
       var streamPalette = streamColors(C);
       streamBoxHits = [];
       for (var i = 0; i < STREAM_LAYERS.length; i++) {
@@ -596,7 +594,8 @@
         g.textAlign = "left"; g.textBaseline = "middle";
         g.fillText(label, x + 8, sy + 13);
         var p = partsAt(i);
-        drawMiniBars(g, x + 8, sy + sh - Math.max(16, sh * 0.34), sw - 16, Math.max(10, sh * 0.26), p, C, totalsMax);
+        var miniVals = i === 0 ? START_BASE : p.norm;
+        drawMiniBars(g, x + 8, sy + sh - Math.max(18, sh * 0.34), sw - 16, Math.max(12, sh * 0.28), miniVals, C);
         streamBoxHits.push({ x: x, y: sy, w: sw, h: sh, i: i });
       }
       for (var gi = 0; gi < STREAM_LAYERS.length - 1; gi++) {
@@ -619,54 +618,88 @@
       g.fillText(DE ? "Sechs Dimensionen" : "Six dimensions", panelX + 16, barY + 24);
       g.fillStyle = C.soft;
       g.font = '600 ' + Math.max(8, Math.min(10, panelW * 0.0125)) + 'px "Open Sans", sans-serif';
-      var layerText = streamLayer === 0 ? (DE ? "Start: sechs konstruierte Dimensionen" : "Start: six constructed dimensions") : (DE ? "Schicht " + streamLayer + " · vorherige Outputs + Transformer-Block" : "Layer " + streamLayer + " · previous outputs + transformer block");
+      var layerText;
+      if (streamLayer === 0) layerText = DE ? "Start: sechs konstruierte Dimensionen" : "Start: six constructed dimensions";
+      else if (normStep === 0) layerText = DE ? "Block " + streamLayer + " · Schritt 1/2: Addition (vor LayerNorm)" : "Block " + streamLayer + " · step 1/2: addition (before LayerNorm)";
+      else layerText = DE ? "Block " + streamLayer + " · Schritt 2/2: LayerNorm · Mittelwert 0, Bereich [-1,1]" : "Block " + streamLayer + " · step 2/2: LayerNorm · mean 0, range [-1,1]";
       g.fillText(layerText, panelX + 16, barY + 40);
-      if (panelW > 430) drawLegend(g, panelX + panelW - 286, barY + 26, C, true);
+      if (panelW > 430) drawLegend(g, panelX + panelW - 390, barY + 26, C, true);
       var plotX = panelX + 24;
       var plotW = panelW - 48;
       var plotTop = barY + (panelW > 430 ? 58 : 48);
-      var baseline = barY + barH - 28;
-      var plotH = Math.max(36, baseline - plotTop - 10);
-      var maxVal = Math.max(1, maxTotal());
-      var scale = plotH / Math.max(maxVal, 1.2);
+      var plotBottom = barY + barH - 34;
+      var plotH = Math.max(60, plotBottom - plotTop);
+      var zeroY = plotTop + plotH / 2;
+      var halfH = plotH / 2 - 8;
+      var maxAbs = maxAbsStream();
+      var scale = halfH / Math.max(maxAbs, 0.8);
       var slot = plotW / 6;
       barHits = [];
+      function yFor(v) { return zeroY - v * scale; }
+      function drawSeg(x, w, y1, y2, color, alpha) {
+        var top = Math.min(y1, y2);
+        var hh = Math.abs(y2 - y1);
+        if (hh < 0.4) return;
+        g.save();
+        g.globalAlpha = alpha;
+        g.fillStyle = color;
+        g.fillRect(x, top, w, hh);
+        g.restore();
+      }
+      g.strokeStyle = V.alpha(C.lineStrong, 0.55);
+      g.setLineDash([3, 4]);
+      g.beginPath(); g.moveTo(plotX, zeroY); g.lineTo(plotX + plotW, zeroY); g.stroke();
+      g.setLineDash([]);
+      g.fillStyle = C.muted;
+      g.font = '600 ' + Math.max(8, Math.min(10, slot * 0.22)) + 'px "Open Sans", sans-serif';
+      g.textAlign = "left"; g.textBaseline = "middle";
+      g.fillText("0", plotX - 12, zeroY);
       for (var d = 0; d < 6; d++) {
         var cx = plotX + slot * (d + 0.5);
         var bw = Math.min(46, slot * 0.54);
         var baseV = baseShown[d], attnV = attnShown[d], ffnV = ffnShown[d];
         var updV = attnV + ffnV;
-        var baseH = baseV * scale, updH = updV * scale;
-        var totalV = baseV + updV;
+        var rawV = baseV + updV;
+        var y0 = zeroY, yb = yFor(baseV), yr = yFor(rawV);
         if (d === hoverDim) {
           g.fillStyle = V.alpha(C.line, 0.16);
-          g.fillRect(plotX + slot * d, plotTop, slot, baseline - plotTop);
+          g.fillRect(plotX + slot * d, plotTop, slot, plotBottom - plotTop);
         }
-        var y = baseline;
-        g.fillStyle = V.alpha(C.blue, 0.80); g.fillRect(cx - bw / 2, y - baseH, bw, baseH); y -= baseH;
-        g.fillStyle = V.alpha(C.petrol, 0.88); g.fillRect(cx - bw / 2, y - updH, bw, updH);
-        if (totalV > 0.001) {
+        if (normStep === 0) {
+          drawSeg(cx - bw / 2, bw, y0, yb, C.blue, 0.80);
+          drawSeg(cx - bw / 2, bw, yb, yr, C.petrol, 0.88);
           g.strokeStyle = d === hoverDim ? C.petrol : V.alpha(C.lineStrong, 0.7);
           g.lineWidth = d === hoverDim ? 1.6 : 0.8;
-          g.strokeRect(cx - bw / 2 + 0.5, baseline - totalV * scale + 0.5, bw - 1, Math.max(1, totalV * scale - 1));
+          g.beginPath(); g.moveTo(cx - bw / 2 - 3, yr); g.lineTo(cx + bw / 2 + 3, yr); g.stroke();
           g.fillStyle = d === hoverDim ? C.petrol : C.soft;
           g.font = '700 ' + Math.max(8, Math.min(10, slot * 0.2)) + 'px "Open Sans", sans-serif';
           g.textAlign = "center"; g.textBaseline = "alphabetic";
-          g.fillText(totalV.toFixed(2), cx, Math.max(plotTop + 8, baseline - totalV * scale - 5));
+          var ly = rawV >= 0 ? yr - 5 : yr + 12;
+          ly = Math.max(plotTop + 10, Math.min(plotBottom - 4, ly));
+          g.fillText(rawV.toFixed(2), cx, ly);
         } else {
-          g.strokeStyle = V.alpha(C.lineStrong, 0.55);
-          g.setLineDash([2, 3]);
-          g.beginPath(); g.moveTo(cx - bw / 2, baseline); g.lineTo(cx + bw / 2, baseline); g.stroke();
-          g.setLineDash([]);
+          drawSeg(cx - bw / 2, bw, y0, yb, C.blue, 0.14);
+          drawSeg(cx - bw / 2, bw, yb, yr, C.petrol, 0.14);
+          var yn = yFor(normShown[d]);
+          drawSeg(cx - bw / 2, bw, zeroY, yn, C.green, 0.90);
+          g.strokeStyle = d === hoverDim ? C.green : V.alpha(C.lineStrong, 0.7);
+          g.lineWidth = d === hoverDim ? 1.6 : 0.8;
+          g.beginPath(); g.moveTo(cx - bw / 2 - 3, yn); g.lineTo(cx + bw / 2 + 3, yn); g.stroke();
+          g.fillStyle = d === hoverDim ? C.green : C.soft;
+          g.font = '700 ' + Math.max(8, Math.min(10, slot * 0.2)) + 'px "Open Sans", sans-serif';
+          g.textAlign = "center"; g.textBaseline = "alphabetic";
+          var ny = normShown[d] >= 0 ? yn - 5 : yn + 12;
+          ny = Math.max(plotTop + 10, Math.min(plotBottom - 4, ny));
+          g.fillText(normShown[d].toFixed(2), cx, ny);
         }
         g.fillStyle = d === hoverDim ? C.petrol : C.muted;
         g.font = '600 ' + Math.max(8, Math.min(10, slot * 0.22)) + 'px "Open Sans", sans-serif';
         g.textAlign = "center"; g.textBaseline = "alphabetic";
-        g.fillText("d" + (d + 1), cx, baseline + 16);
-        barHits.push({ x: plotX + slot * d, y: plotTop, w: slot, h: plotH + 18, i: d });
+        g.fillText("d" + (d + 1), cx, plotBottom + 16);
+        barHits.push({ x: plotX + slot * d, y: plotTop, w: slot, h: plotBottom - plotTop + 18, i: d });
       }
       g.strokeStyle = V.alpha(C.lineStrong, 0.9);
-      g.beginPath(); g.moveTo(plotX, baseline); g.lineTo(plotX + plotW, baseline); g.stroke();
+      g.beginPath(); g.moveTo(plotX, plotBottom); g.lineTo(plotX + plotW, plotBottom); g.stroke();
     }
     function draw(now) {
       if (!size) return;
@@ -753,7 +786,8 @@
           b.addEventListener("click", function () {
             phase = "stream";
             streamLayer = i;
-            setStreamTarget(i, true);
+            normStep = 0;
+            setStreamTarget(i, true, 0);
             sync();
             draw();
             ensureLoop();
@@ -893,8 +927,9 @@
         startNote();
       } else {
         streamLayer = 0;
+        normStep = 0;
         resetStream();
-        setStreamTarget(0, false);
+        setStreamTarget(0, false, 0);
         ensureLoop();
       }
       sync();
@@ -912,16 +947,33 @@
         if (separate) return false;
         phase = "stream";
         streamLayer = 0;
+        normStep = 0;
         resetStream();
-        setStreamTarget(0, false);
+        setStreamTarget(0, false, 0);
         sync();
         draw();
         ensureLoop();
         return true;
       }
+      if (streamLayer === 0) {
+        streamLayer = 1;
+        normStep = 0;
+        setStreamTarget(1, true, 0);
+        sync();
+        draw();
+        return true;
+      }
+      if (normStep === 0) {
+        normStep = 1;
+        setStreamTarget(streamLayer, true, 1);
+        sync();
+        draw();
+        return true;
+      }
       if (streamLayer < STREAM_LAYERS.length - 1) {
         streamLayer++;
-        setStreamTarget(streamLayer, true);
+        normStep = 0;
+        setStreamTarget(streamLayer, true, 0);
         sync();
         draw();
         return true;
@@ -931,8 +983,18 @@
     function prev() {
       if (phase === "stream") {
         if (streamLayer > 0) {
-          streamLayer--;
-          setStreamTarget(streamLayer, true);
+          if (normStep === 1) {
+            normStep = 0;
+            setStreamTarget(streamLayer, false, 0);
+          } else if (streamLayer === 1) {
+            streamLayer = 0;
+            normStep = 0;
+            setStreamTarget(0, false, 0);
+          } else {
+            streamLayer--;
+            normStep = 1;
+            setStreamTarget(streamLayer, true, 1);
+          }
           sync();
           draw();
           return true;
@@ -1014,7 +1076,8 @@
       var box = pointerStreamBox(e);
       if (box < 0 || phase !== "stream") return;
       streamLayer = box;
-      setStreamTarget(streamLayer, true);
+      normStep = 0;
+      setStreamTarget(streamLayer, true, 0);
       sync();
       draw();
       ensureLoop();
@@ -1032,7 +1095,7 @@
           layer = 0;
           streamLayer = 0;
           resetStream();
-          if (phase === "stream") setStreamTarget(0, false);
+          if (phase === "stream") { streamLayer = 0; normStep = 0; setStreamTarget(0, false, 0); }
           sync();
           draw();
           ensureLoop();
@@ -1042,6 +1105,8 @@
       prev: prev,
       hasNext: function () {
         if (phase === "notebook") return !separate || layer < NOTE_LAYERS.length;
+        if (streamLayer === 0) return true;
+        if (normStep === 0) return true;
         return streamLayer < STREAM_LAYERS.length - 1;
       },
       hasPrev: function () {

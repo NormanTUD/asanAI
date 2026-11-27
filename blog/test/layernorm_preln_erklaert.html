@@ -264,7 +264,7 @@
       <div class="demo-top">
         <div>
           <div class="demo-title">Ein Vektor vor und nach der Normierung</div>
-          <div class="demo-sub">Ziehe an Streuung und Ausreißer. Die Balken zeigen die einzelnen Zahlen.</div>
+          <div class="demo-sub">Ziehe an Streuung und Ausreißer. Die Balken zeigen die einzelnen Zahlen (im Demo γ = 1, β = 0).</div>
         </div>
         <button class="seg" id="aShuffle" type="button">Neu mischen</button>
       </div>
@@ -400,7 +400,7 @@
         <div class="status-head"><span class="status-title">Stabil, aber langsam</span><span class="status-metric">≈ 34 BLEU</span></div>
         <div class="status-text">Der Warm-up fängt die großen Startgradienten ab. Das ist der übliche Weg.</div>
       </div>
-      <p class="caption">Die Kurve zeigt die Lernrate, nicht den Loss. Der Status darunter nennt das Ergebnis aus dem Paper für IWSLT14 De-En.</p>
+      <p class="caption">Die Kurve zeigt die Lernrate, nicht den Loss. Der Status fasst die Kombination zusammen; die BLEU-Zahlen stammen aus dem Paper (IWSLT14 De-En).</p>
     </div>
 
     <div class="stat-grid">
@@ -417,7 +417,7 @@
       <div class="stat">
         <div class="stat-label">Tempo</div>
         <div class="stat-value">9 : 15 <small>Checkpoints</small></div>
-        <div class="stat-text">Pre-LN erreicht das Niveau des Post-LN früher. Beim BERT-Pretraining rund 40 % schneller.</div>
+        <div class="stat-text">Auf IWSLT14 erreicht Pre-LN das Niveau des Post-LN im 9. statt 15. Checkpoint. Beim BERT-Pretraining rund 40 % schneller.</div>
       </div>
     </div>
   </section>
@@ -728,20 +728,13 @@
       return yJoin;
     }
 
-    var segs;
     var pathTop = 18;
+    var segs;
     var pathBot;
     if (kind === "post") {
-      postBranch(44, 46, "Attention");
-      lnOnMain(118, 36);
-      postBranch(166, 46, "FFN");
-      lnOnMain(240, 36);
       segs = [[pathTop, 118], [154, 240], [276, 304]];
       pathBot = 304;
     } else {
-      preBranch(44, 54, 22, 84, 42, "Attention");
-      preBranch(162, 172, 22, 202, 42, "FFN");
-      lnOnMain(278, 36);
       segs = [[pathTop, 278], [314, 326]];
       pathBot = 326;
     }
@@ -764,6 +757,17 @@
       ctx.lineTo(mainX, s[1]);
       ctx.stroke();
     });
+
+    if (kind === "post") {
+      postBranch(44, 46, "Attention");
+      lnOnMain(118, 36);
+      postBranch(166, 46, "FFN");
+      lnOnMain(240, 36);
+    } else {
+      preBranch(44, 54, 22, 84, 42, "Attention");
+      preBranch(162, 172, 22, 202, 42, "FFN");
+      lnOnMain(278, 36);
+    }
 
     var y = pathTop + t * (pathBot - pathTop);
     var dotColor = P.teal;
@@ -1027,7 +1031,7 @@
       title = "Stabil, Warm-up unnötig";
       text = "Es funktioniert, aber die Gradienten brauchen die Rampe nicht.";
       tone = "neutral";
-      metric = "≈ 34 BLEU";
+      metric = "kein Vorteil";
     } else {
       title = "Stabil und schnell";
       text = "Genau das zeigt das Paper: gleiche Qualität ohne Warm-up.";
