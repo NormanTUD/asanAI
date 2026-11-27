@@ -1177,6 +1177,17 @@
     boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-unembed" }); })
   });
 
+  // 19.0 local-editor overlay: shorter directions text, no duplicate boxes; keep the other substeps intact.
+  unembedSteps[0].watch = "";
+  unembedSteps[0].body = DE
+    ? "<b>Tokens sind Richtungen, keine bloßen Punkte.</b> Der grüne Vektor zeigt das letzte Token nach der letzten LLM-Schicht. Der <b>Winkel</b> zu anderen Tokens bestimmt ihre rein richtungsbasierte Ähnlichkeit, korreliert aber durch die zusätzliche Längenskalierung nicht 1:1 direkt mit der Wahrscheinlichkeit.\n\nDer letzte Token in der letzten Schicht kommt aus den Transformer-Blöcken. In ihn haben Attention und FFN den gesamten Kontext über viele Schichten und Heads eingemischt.\n\nDurch die Berechnung\n\n$$\\text{Logit}_i = \\underbrace{w_i}_{\\text{Gewicht}} \\cdot \\underbrace{\\mathbf{x}}_{\\text{letztes Token}}$$\n\n$$ \\underbrace{p_i}_{\\text{Prozent}} = \\underbrace{\\operatorname{softmax}(\\text{Logit})_i}_{\\text{Verteilung}} $$\n\nbekommt man eine Liste von <b>Logits</b>, das sind die noch nicht normalisierten Werte, die bestimmen, welches Wort als Nächstes kommen könnte. Diese werden dann durch <b>SoftMax</b> normiert, so dass sie in Summe 1 ergeben.\n\nDer Vektor $w_i$ ist die im Training gelernte \"Zielrichtung\" eines einzelnen Wortes aus dem Vokabular, mit der der aktuelle Kontext verglichen wird, um zu prüfen, wie gut dieses Wort als Nächstes passt."
+    : "<b>Tokens are directions, not mere points.</b> The green vector shows the last token after the last LLM layer. The <b>angle</b> to other tokens determines their purely direction-based similarity, but because length also scales the logit, it does not correlate 1:1 directly with probability.\n\nThe last token in the last layer comes from the transformer blocks. Attention and the FFN have mixed the entire context into it across many layers and heads.\n\nThrough the calculation\n\n$$\\text{Logit}_i = \\underbrace{w_i}_{\\text{weight}} \\cdot \\underbrace{\\mathbf{x}}_{\\text{last token}}$$\n\n$$ \\underbrace{p_i}_{\\text{percent}} = \\underbrace{\\operatorname{softmax}(\\text{Logit})_i}_{\\text{distribution}} $$\n\nyou get a list of <b>logits</b>, the not-yet-normalised values that determine which word could come next. They are then normalised by <b>softmax</b> so that they sum to 1.\n\nThe vector $w_i$ is the learned target direction of a single vocabulary word, used to compare the current context and check how well that word fits as the next token.";
+  unembedSteps[0].context = "";
+  unembedSteps[0].deep = "";
+  unembedSteps[0].boxes = [
+    DE ? box("un-4", "Unembedding", "Von $n$ Vektoren zu Prozenten", "Jede Zeile von $W_U$ ist ein gelernter Token-Vektor. $z = W_U h$ rechnet ein Skalarprodukt pro Token, also $n$ Werte. Der Winkel steckt im Skalarprodukt; Softmax macht aus den $n$ Logits eine Verteilung.", "") : box("un-4", "Unembedding", "From $n$ vectors to percentages", "Every row of $W_U$ is a learned token vector. $z = W_U h$ computes one dot product per token, so $n$ values. The angle sits inside the dot product; softmax turns the $n$ logits into a distribution.", "")
+  ];
+
   var unembedStep = {
     title: DE ? "Ähnliche Worte finden" : "Finding similar words",
     kicker: "Unembedding",
