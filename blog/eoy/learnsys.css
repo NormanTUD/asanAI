@@ -7123,3 +7123,28 @@ html.dark .ls-time-stop-copy b{color:#dbe5ec}
 html.dark .ls-guard-fact,html[data-theme="dark"] .ls-guard-fact{background:rgba(255,255,255,.04);border-color:#2a3d52}
 html.dark .ls-guard-fact.is-on,html[data-theme="dark"] .ls-guard-fact.is-on{background:#141c26}
 html.dark .ls-guard-fact b,html[data-theme="dark"] .ls-guard-fact b{color:#e7eef2}
+
+/* Arten von Halluzinationen: two stops, Chat with RAG drawer, Risiko with source map. */
+.ls-hx-winbody{position:relative}
+.ls-hx-ragstrip{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:6px 14px;border-bottom:1px solid var(--ls-line);background:var(--ls-paper-2);font:600 9px/1.2 "Open Sans",sans-serif;color:var(--ls-muted);min-width:0}
+.ls-hx-ragopen{appearance:none;border:1px solid var(--ls-line-strong);border-radius:5px;background:#fff;color:var(--ls-green);padding:3px 6px;font:700 8.5px/1 "Open Sans",sans-serif;cursor:pointer;letter-spacing:.06em}
+.ls-hx-ragopen:hover{background:rgba(99,164,75,.08)}
+.ls-hx-ragflow{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-hx-ragflow i{font-style:normal;color:var(--ls-line-strong)}
+.ls-hx-ragstrip em{margin-left:auto;font:600 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted);white-space:nowrap}
+.ls-hx-ragdrawer{position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;background:var(--ls-paper);padding:10px 12px 12px;overflow:auto;box-shadow:0 0 0 1px var(--ls-line)}
+.ls-hx-ragdrawer[hidden]{display:none}
+.ls-hx-ragdrawer-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--ls-line);flex:0 0 auto}
+.ls-hx-ragdrawer-head b{font:700 10px/1 "Barlow",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol)}
+.ls-hx-ragclose{appearance:none;border:1px solid var(--ls-line);border-radius:6px;background:#fff;color:var(--ls-petrol);width:24px;height:22px;font:700 13px/1 "Open Sans",sans-serif;cursor:pointer;display:grid;place-items:center}
+.ls-hx-ragclose:hover{background:var(--ls-paper-2)}
+.ls-hx-ragdrawer .ls-hx-ragtab{padding:6px 0 0;border:0;background:transparent}
+.ls-hx-winpanel .ls-hx-sourcelead{padding:0 0 6px}
+.ls-hx-winpanel .ls-hx-sources{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);gap:5px}
+.ls-hx-winpanel .ls-hx-source-card{padding:6px 8px}
+.ls-hx-winpanel .ls-hx-source-card>p{font-size:9.5px;line-height:1.3}
+html.dark .ls-hx-ragstrip,html[data-theme="dark"] .ls-hx-ragstrip{background:#0f1722;border-bottom-color:#2a3d52}
+html.dark .ls-hx-ragopen,html[data-theme="dark"] .ls-hx-ragopen,
+html.dark .ls-hx-ragclose,html[data-theme="dark"] .ls-hx-ragclose{background:#141c26;border-color:#3a536a;color:#a7e08f}
+html.dark .ls-hx-ragdrawer,html[data-theme="dark"] .ls-hx-ragdrawer{background:#101822;box-shadow:0 0 0 1px #2a3d52}
+html.dark .ls-hx-ragdrawer-head,html[data-theme="dark"] .ls-hx-ragdrawer-head{border-bottom-color:#2a3d52}

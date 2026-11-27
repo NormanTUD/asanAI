@@ -479,6 +479,10 @@
     var tourTimer = null, tourAutoTimer = null, tourActive = false, tourType = 0, tourPhase = 0;
     var tabButtons = el.querySelectorAll("[data-hx-tab]");
     var tabPanels = el.querySelectorAll("[data-hx-panel]");
+    var currentTab = "chat";
+    var ragDrawer = el.querySelector(".ls-hx-ragdrawer");
+    var ragOpen = el.querySelector(".ls-hx-ragopen");
+    var ragClose = el.querySelector(".ls-hx-ragclose");
     var riskCaptionEl = el.querySelector(".ls-hx-risk-caption");
     var ragRange = el.querySelector(".ls-hx-ragtab-range");
     var ragAngle = el.querySelector(".ls-hx-ragtab-angle");
@@ -860,6 +864,8 @@
       updateTourUI();
     }
     function selectTab(name) {
+      currentTab = name;
+      if (ragDrawer && name !== "chat") ragDrawer.hidden = true;
       Array.prototype.forEach.call(tabButtons, function (b) {
         var on = b.getAttribute("data-hx-tab") === name;
         b.classList.toggle("is-on", on);
@@ -888,6 +894,18 @@
     render();
     renderRag();
     selectTab("chat");
+    if (ragOpen) ragOpen.addEventListener("click", function () {
+      stopTour();
+      if (ragDrawer) {
+        ragDrawer.hidden = false;
+        var opener = ragDrawer.querySelector(".ls-hx-ragclose");
+        if (opener) opener.focus();
+      }
+    });
+    if (ragClose) ragClose.addEventListener("click", function () {
+      if (ragDrawer) ragDrawer.hidden = true;
+      if (ragOpen) ragOpen.focus();
+    });
     if (tourPlay) tourPlay.addEventListener("click", function () {
       if (tourActive) stopTour(); else startTour();
     });
@@ -901,42 +919,72 @@
       update: function () {},
       next: function () {
         stopTour();
-        selectTab("chat");
-        if (!activeMeasure.source) {
-          activeMeasure.source = true;
-          activeClaim = 0;
-          render();
-          return true;
-        }
-        if (selected < TYPES.length - 1) {
-          selected++;
+        if (currentTab === "chat") {
+          if (!activeMeasure.source) {
+            activeMeasure.source = true;
+            activeClaim = 0;
+            render();
+            return true;
+          }
+          selectTab("risk");
           activeMeasure = {};
           activeClaim = 0;
           render();
           return true;
+        }
+        if (currentTab === "risk") {
+          if (!activeMeasure.source) {
+            activeMeasure.source = true;
+            activeClaim = 0;
+            render();
+            return true;
+          }
+          if (selected < TYPES.length - 1) {
+            selected++;
+            activeMeasure = {};
+            activeClaim = 0;
+            selectTab("chat");
+            render();
+            return true;
+          }
         }
         return false;
       },
       prev: function () {
         stopTour();
-        selectTab("chat");
-        if (activeMeasure.source) {
-          activeMeasure = {};
+        if (currentTab === "risk") {
+          if (activeMeasure.source) {
+            activeMeasure = {};
+            activeClaim = 0;
+            render();
+            return true;
+          }
+          activeMeasure = { source: true };
           activeClaim = 0;
+          selectTab("chat");
           render();
           return true;
         }
-        if (selected > 0) {
-          selected--;
-          activeMeasure = { source: true };
-          activeClaim = 0;
-          render();
-          return true;
+        if (currentTab === "chat") {
+          if (activeMeasure.source) {
+            activeMeasure = {};
+            activeClaim = 0;
+            render();
+            return true;
+          }
+          if (selected > 0) {
+            selected--;
+            activeMeasure = { source: true };
+            activeClaim = 0;
+            selectTab("risk");
+            render();
+            return true;
+          }
         }
         return false;
       },
-      hasNext: function () { return !activeMeasure.source || selected < TYPES.length - 1; },
-      hasPrev: function () { return !!activeMeasure.source || selected > 0; },
+      hasNext: function () { return !(currentTab === "risk" && activeMeasure.source && selected === TYPES.length - 1); },
+      hasPrev: function () { return !(currentTab === "chat" && !activeMeasure.source && selected === 0); },
       resize: function () {},
       destroy: function () { stopTour(); el.remove(); }
     };
