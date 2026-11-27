@@ -104,6 +104,11 @@
       var safe = api.esc(tex);
       return '<span class="ls-math ls-math--inline" data-tex="' + safe + '" data-tex-display="false"><code class="ls-tex-source">' + safe + '</code></span>';
     }
+    function contextTitle(text) {
+      var safe = api.esc(text);
+      var token = DE ? "Schloss" : "apple";
+      return safe.replace(new RegExp(token, "i"), function (m) { return '<span class="ls-ffn-token">' + m + '</span>'; });
+    }
     var el = document.createElement("div");
     el.className = "ls-ffn-scene";
     el.innerHTML =
@@ -167,7 +172,7 @@
       card.setAttribute("data-mode", mode);
       card.setAttribute("data-tip", DE ? "Kontextkarte: zeigt, welche Muster in W₁ und W₂ reagieren." : "Context card: shows which patterns react in W₁ and W₂.");
       card.innerHTML =
-        '<div class="ls-ffn-context-head"><span class="ls-ffn-stream-pill">' + labels.stream + '</span><span class="ls-ffn-context-title">' + api.esc(title) + '</span></div>' +
+        '<div class="ls-ffn-context-head"><span class="ls-ffn-stream-pill">' + labels.stream + '</span><span class="ls-ffn-context-title">' + contextTitle(title) + '</span></div>' +
         '<div class="ls-ffn-flow">' +
           '<div class="ls-ffn-group"><div class="ls-ffn-head">' + (DE ? "Muster in W₁" : "Patterns in W₁") + '</div><div class="ls-ffn-chips">' + d.keys.map(function (k) { return pill(k, true); }).join("") + '</div></div>' +
           '<span class="ls-ffn-arrow" aria-hidden="true">→</span>' +
@@ -440,51 +445,53 @@
       var bot = ease(clamp((t - 0.55) / 0.45, 0, 1));
       var font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       var fontBold = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
-      var top = { x: cx, y: h * 0.16 };
-      var mid = { x: cx, y: h * 0.46 };
+      var top = { x: cx, y: h * 0.17 };
       var groundY = h * 0.54;
       var liftedY = lerp(groundY, h * 0.37, rise);
       var gx0 = w * 0.12, gx1 = w * 0.88, gy0 = h * 0.66, gy1 = h * 0.94;
-      var tgtA = { x: gx0 + (gx1 - gx0) * 0.28, y: gy0 + (gy1 - gy0) * 0.52 };
-      var tgtB = { x: gx0 + (gx1 - gx0) * 0.72, y: gy0 + (gy1 - gy0) * 0.42 };
-      function outline(x, y, rx, ry, angle, color, alpha) {
+      var rowY = gy0 + (gy1 - gy0) * 0.52;
+      var tgtA = { x: gx0 + (gx1 - gx0) * 0.30, y: rowY };
+      var tgtB = { x: gx0 + (gx1 - gx0) * 0.70, y: rowY };
+      function eggOutline(x, y, rx, ry, alpha) {
         ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(angle || 0);
-        ctx.strokeStyle = color;
+        ctx.strokeStyle = C.lineStrong;
         ctx.globalAlpha = alpha;
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 4]);
+        ctx.lineWidth = 1.1;
         ctx.beginPath();
-        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+        for (var a = 0; a <= Math.PI * 2 + 0.01; a += 0.12) {
+          var s = Math.sin(a);
+          var wf = 0.78 + 0.22 * ((s + 1) / 2);
+          var px = x + rx * wf * Math.cos(a);
+          var py = y + ry * s;
+          if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
         ctx.stroke();
         ctx.restore();
       }
-      function cluster(x, y, rx, ry, angle, color, alpha) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(angle);
-        for (var k = 0; k < 26; k++) {
-          var a = k * 2.399963229728653;
-          var rr = Math.sqrt((k + 0.5) / 26);
+      function eggPoints(x, y, rx, ry, alpha) {
+        for (var k = 0; k < 84; k++) {
+          var s = -1 + 2 * (((k * 37) % 84) + 0.5) / 84;
+          var wf = 0.78 + 0.22 * ((s + 1) / 2);
+          var half = rx * wf * Math.sqrt(Math.max(0, 1 - s * s));
+          var u = Math.sin(k * 12.9898) * 43758.5453;
+          u = u - Math.floor(u);
+          var px = x + half * (u * 2 - 1);
+          var py = y + ry * s;
           ctx.beginPath();
-          ctx.arc(Math.cos(a) * rr * rx, Math.sin(a) * rr * ry, 1.7, 0, Math.PI * 2);
-          ctx.fillStyle = color;
-          ctx.globalAlpha = alpha * (0.45 + 0.5 * (1 - rr));
+          ctx.arc(px, py, 1.7, 0, Math.PI * 2);
+          ctx.fillStyle = k % 2 ? C.gold : C.green;
+          ctx.globalAlpha = alpha * (0.5 + 0.45 * (1 - Math.abs(s)));
           ctx.fill();
         }
-        ctx.restore();
       }
-      function mixedEgg(x, y, rx, ry, alpha) {
-        outline(x, y, rx, ry, 0, C.line, 0.6 * alpha);
-        outline(x, y, rx * 0.36, ry * 0.36, 0, C.line, 0.4 * alpha);
-        for (var k = 0; k < 84; k++) {
+      function cluster(x, y, radius, color, alpha) {
+        for (var k = 0; k < 28; k++) {
           var a = k * 2.399963229728653;
-          var inner = k < 34;
-          var rr = inner ? 0.32 * Math.sqrt((k + 0.5) / 34) : 0.55 + 0.40 * Math.sqrt((k - 34 + 0.5) / 50);
+          var rr = Math.sqrt((k + 0.5) / 28);
           ctx.beginPath();
-          ctx.arc(x + Math.cos(a) * rr * rx, y + Math.sin(a) * rr * ry, 1.7, 0, Math.PI * 2);
-          ctx.fillStyle = k % 2 ? C.gold : C.green;
+          ctx.arc(x + Math.cos(a) * rr * radius, y + Math.sin(a) * rr * radius, 1.7, 0, Math.PI * 2);
+          ctx.fillStyle = color;
           ctx.globalAlpha = alpha * (0.45 + 0.5 * (1 - rr));
           ctx.fill();
         }
@@ -514,21 +521,19 @@
       ctx.globalAlpha = 0.9;
       ctx.font = fontBold;
       ctx.textAlign = "center";
-      ctx.fillText(labels.backMixed, cx, h * 0.05);
+      ctx.fillText(labels.backMixed, cx, h * 0.045);
       ctx.restore();
-      mixedEgg(top.x, top.y, w * 0.18, h * 0.055, 1);
+      eggOutline(top.x, top.y, w * 0.15, h * 0.08, 0.55);
+      eggPoints(top.x, top.y, w * 0.15, h * 0.08, 1);
       ctx.save();
       ctx.strokeStyle = C.line;
       ctx.globalAlpha = 0.25;
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.ellipse(cx, groundY, w * 0.20, h * 0.045, 0, 0, Math.PI * 2); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx - w * 0.23, groundY); ctx.lineTo(cx + w * 0.23, groundY); ctx.stroke();
-      ctx.restore();
-      ctx.save();
       ctx.strokeStyle = C.lineStrong;
       ctx.fillStyle = C.muted;
       ctx.globalAlpha = 0.6;
-      ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(cx - w * 0.25, groundY); ctx.lineTo(cx - w * 0.25, h * 0.33); ctx.stroke();
       ctx.font = font;
       ctx.textAlign = "left";
@@ -540,9 +545,8 @@
       if (planeAlpha > 0.01) {
         ctx.save();
         ctx.strokeStyle = C.petrol;
-        ctx.globalAlpha = 0.55 * planeAlpha;
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([6, 4]);
+        ctx.globalAlpha = 0.32 * planeAlpha;
+        ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(cx - w * 0.22, planeY); ctx.lineTo(cx + w * 0.22, planeY); ctx.stroke();
         ctx.fillStyle = C.petrol;
         ctx.globalAlpha = planeAlpha;
@@ -556,18 +560,17 @@
       ctx.globalAlpha = 0.85;
       ctx.font = fontBold;
       ctx.textAlign = "center";
-      ctx.fillText(labels.backHighDim, cx, h * 0.30);
+      ctx.fillText(labels.backHighDim, cx, h * 0.29);
       ctx.font = font;
       ctx.globalAlpha = 0.65;
-      ctx.fillText(labels.backSide, cx, h * 0.34);
+      ctx.fillText(labels.backSide, cx, h * 0.33);
       ctx.restore();
+      var midR = Math.max(12, Math.min(w * 0.07, h * 0.09));
       var midAlpha = 0.25 + 0.75 * rise;
-      outline(cx, groundY, w * 0.16, h * 0.040, 0, C.gold, 0.55 * midAlpha);
-      cluster(cx, groundY, w * 0.15, h * 0.038, 0.15, C.gold, 0.55 + 0.35 * midAlpha);
-      outline(cx, liftedY, w * 0.085, h * 0.026, 0, C.green, 0.65 * midAlpha);
-      cluster(cx, liftedY, w * 0.075, h * 0.023, -0.25, C.green, 0.55 + 0.45 * midAlpha);
-      arrow(top.x - 6, top.y, mid.x, groundY, C.gold, rise);
-      arrow(top.x + 6, top.y, mid.x, liftedY, C.green, rise);
+      cluster(cx, groundY, midR, C.gold, 0.55 + 0.35 * midAlpha);
+      cluster(cx, liftedY, midR * 0.8, C.green, 0.55 + 0.45 * midAlpha);
+      arrow(top.x - 6, top.y, cx, groundY, C.gold, rise);
+      arrow(top.x + 6, top.y, cx, liftedY, C.green, rise);
       ctx.save();
       ctx.strokeStyle = C.line;
       ctx.globalAlpha = 0.20;
@@ -607,12 +610,11 @@
       ctx.beginPath(); ctx.moveTo(gapX, gy0 + 6); ctx.lineTo(gapX, gy1 - 4); ctx.stroke();
       ctx.restore();
       var targetAlpha = 0.15 + 0.85 * bot;
-      outline(tgtA.x, tgtA.y, w * 0.085, h * 0.030, -0.35, C.green, 0.6 * targetAlpha);
-      cluster(tgtA.x, tgtA.y, w * 0.075, h * 0.028, -0.35, C.green, targetAlpha);
-      outline(tgtB.x, tgtB.y, w * 0.085, h * 0.030, 0.45, C.gold, 0.6 * targetAlpha);
-      cluster(tgtB.x, tgtB.y, w * 0.075, h * 0.028, 0.45, C.gold, targetAlpha);
-      arrow(mid.x, liftedY, tgtA.x, tgtA.y, C.green, bot);
-      arrow(mid.x, groundY, tgtB.x, tgtB.y, C.gold, bot);
+      var bottomR = Math.max(10, Math.min(w * 0.055, h * 0.09));
+      cluster(tgtA.x, tgtA.y, bottomR, C.green, targetAlpha);
+      cluster(tgtB.x, tgtB.y, bottomR, C.gold, targetAlpha);
+      arrow(cx, liftedY, tgtA.x, tgtA.y, C.green, bot);
+      arrow(cx, groundY, tgtB.x, tgtB.y, C.gold, bot);
       ctx.save();
       ctx.fillStyle = C.soft;
       ctx.globalAlpha = 0.8 * bot;
@@ -631,7 +633,7 @@
       ctx.fillText(labels.backRight, tgtB.x, tgtB.y + labelOffset);
       ctx.restore();
       bendProjected = [];
-      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion: oben gemischte Egg-Verteilung, in der Mitte als 3D-Seitenansicht getrennt und gedreht, unten zwei klar getrennte 2D-Ergebnisse." : "Back-projection: mixed egg-shaped distribution at the top, separated and rotated in a 3D side view in the middle, two clearly separated 2D results at the bottom.");
+      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion: oben gemischte Egg-Verteilung, in der Mitte als gerade 3D-Seitenansicht getrennt, unten zwei klar getrennte, gerade 2D-Punktwolken links und rechts der gestrichelten Linie." : "Back-projection: mixed egg-shaped distribution at the top, separated in a level 3D side view in the middle, two clearly separated level 2D point clouds left and right of the dashed line at the bottom.");
     }
     function updateBendReadout() {
       if (activeMode === "back") {

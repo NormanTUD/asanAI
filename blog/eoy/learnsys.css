@@ -1184,6 +1184,7 @@ h1,h2,h3,h4{
 .ls-ffn-context-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .ls-ffn-stream-pill{border:1px solid rgba(0,75,111,.14);background:rgba(255,255,255,.82);padding:2px 6px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-petrol);white-space:nowrap}
 .ls-ffn-context-title{font:600 var(--ls-fs-ui) "Open Sans",sans-serif;color:var(--ls-ink);line-height:1.25}
+.ls-ffn-token{display:inline-block;padding:0 2px;border-bottom:2px solid var(--ls-gold);background:rgba(200,162,74,.16);border-radius:2px;color:var(--ls-ink);font-weight:600}
 .ls-ffn-flow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto;gap:6px;align-items:start}
 .ls-ffn-group{display:grid;gap:3px;min-width:0}
 .ls-ffn-head{font:var(--ls-fs-ui-sm) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-muted);border-bottom:1px solid rgba(0,75,111,.10);padding-bottom:2px}
