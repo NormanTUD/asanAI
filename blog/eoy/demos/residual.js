@@ -544,8 +544,9 @@
       var sx = panelX + 14;
       var sy = panelY + (wide ? 58 : 48);
       var gap = wide ? 10 : 6;
-      var sw = (panelW - 28 - gap * 2) / 3;
-      var sh = wide ? Math.min(130, riverH - sy + panelY - 10) : Math.min(72, riverH - sy + panelY - 8);
+      var stages = STREAM_LAYERS.length;
+      var sw = (panelW - 28 - gap * (stages - 1)) / stages;
+      var sh = wide ? Math.max(64, riverH - sy + panelY - 10) : Math.max(48, riverH - sy + panelY - 8);
       var totalsMax = maxTotal();
       var streamPalette = streamColors(C);
       streamBoxHits = [];

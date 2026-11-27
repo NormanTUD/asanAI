@@ -2262,7 +2262,7 @@ h1,h2,h3,h4{
 .ls-mlp-scene .ism-weight-slider{width:4.5em !important}
 
 .ls-res-scene{grid-template-rows:auto minmax(0,1fr) auto auto auto}
-.ls-res-stage{min-height:280px}
+.ls-res-stage{min-height:300px}
 .ls-res-caption{display:grid;margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-res-note{margin:0;font:600 var(--ls-fs-ui-sm)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-res-caption-view{grid-area:1/1}
@@ -2274,6 +2274,7 @@ h1,h2,h3,h4{
 .ls-res-phase{border:1px solid var(--ls-line-strong);background:var(--ls-paper);color:var(--ls-soft);font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;padding:5px 9px;cursor:pointer;white-space:nowrap}
 .ls-res-phase:hover{border-color:var(--ls-blue);color:var(--ls-petrol)}
 .ls-res-phase.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
+.ls-res-phase,.ls-res-layers .ls-chip{display:inline-flex;align-items:center;justify-content:center;height:30px;min-height:30px;padding:0 9px;box-sizing:border-box;font:600 var(--ls-fs-ui-sm)/1 "Open Sans",sans-serif;border-radius:0}
 .ls-res-readout{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:4.6em;text-transform:none;letter-spacing:0}
 .ls-res-phase-label{font:700 8px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol)}
 .ls-res-eq-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;min-width:0}
