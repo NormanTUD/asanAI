@@ -194,11 +194,27 @@
       }).join("");
       return '<div class="ls-rm-detail ls-rm-detail--risk" data-tip="' + L("Details zum gewählten Risiko, inklusive Quelle.", "Details on the selected risk, including its source.") + '"><div class="ls-rm-detail-stack">' + items + '</div></div>';
     }
+    function riskDefenseInner(meta) {
+      var layers = DATA.safety.items.map(function (layer, idx) {
+        var on = !!meta.layers[idx];
+        return '<div class="ls-rm-defense-card' + (on ? ' is-on' : ' is-off') + '" data-tip="' + L("Zeigt, welche Verteidigungsebene gegen dieses Risiko greift.", "Shows which defence layer acts against this risk.") + '">' +
+          '<span class="ls-rm-defense-num">' + esc(layer.level) + '</span>' +
+          '<b>' + esc(layer.title) + '</b>' +
+          '<span class="ls-rm-defense-pill">' + (on ? (DE ? "greift" : "acts") : (DE ? "greift kaum" : "barely acts")) + '</span>' +
+          '<p>' + esc(meta.notes[idx] || layer.short) + '</p></div>';
+      }).join("");
+      return '<div class="ls-rm-defense-head"><b>' + (DE ? "Verteidigung in der Tiefe" : "Defence in depth") + '</b><span>' + esc(meta.line) + '</span></div>' +
+        '<div class="ls-rm-defense-grid">' + layers + '</div>';
+    }
+    function riskDefenseHTML(active) {
+      var items = RISK_META.map(function (meta, idx) {
+        return '<div class="ls-rm-defense-item' + (idx === active ? ' is-active' : '') + '"' + (idx === active ? '' : ' aria-hidden="true" inert') + '>' + riskDefenseInner(meta) + '</div>';
+      }).join("");
+      return '<div class="ls-rm-defense"><div class="ls-rm-defense-stack">' + items + '</div></div>';
+    }
     function renderRisks(d) {
       var active = Math.min(state.active, d.items.length - 1);
       state.active = active;
-      var item = d.items[active];
-      var meta = RISK_META[active] || RISK_META[0];
       var pos = { tl: [100, 66], tr: [300, 66], bl: [100, 176], br: [300, 176] };
       var bubbles = d.items.map(function (it, idx) {
         var m = RISK_META[idx] || RISK_META[0];
@@ -225,18 +241,7 @@
         bubbles +
       '</svg>';
       var detail = riskDetailHTML(d, active);
-      var layers = DATA.safety.items.map(function (layer, idx) {
-        var on = !!meta.layers[idx];
-        return '<div class="ls-rm-defense-card' + (on ? ' is-on' : ' is-off') + '" data-tip="' + L("Zeigt, welche Verteidigungsebene gegen dieses Risiko greift.", "Shows which defence layer acts against this risk.") + '">' +
-          '<span class="ls-rm-defense-num">' + esc(layer.level) + '</span>' +
-          '<b>' + esc(layer.title) + '</b>' +
-          '<span class="ls-rm-defense-pill">' + (on ? (DE ? "greift" : "acts") : (DE ? "greift kaum" : "barely acts")) + '</span>' +
-          '<p>' + esc(meta.notes[idx] || layer.short) + '</p></div>';
-      }).join("");
-      var defense = '<div class="ls-rm-defense">' +
-        '<div class="ls-rm-defense-head"><b>' + (DE ? "Verteidigung in der Tiefe" : "Defence in depth") + '</b><span>' + esc(meta.line) + '</span></div>' +
-        '<div class="ls-rm-defense-grid">' + layers + '</div>' +
-      '</div>';
+      var defense = riskDefenseHTML(active);
       el.innerHTML = header(d) + svg + detail + defense;
     }
     function renderLimits(d) {
@@ -334,18 +339,9 @@
         '<button type="button" class="' + (kind === "chain" ? "is-on" : "") + '" data-soc-mode="chain" role="tab" aria-selected="' + (kind === "chain") + '" data-tip="' + L("Zeigt die fünf Stufen vom Chip bis zur Regel.", "Shows the five stages from chip to rule.") + '">' + L("Wertschöpfungskette", "Value chain") + '</button>' +
         '<button type="button" class="' + (kind === "cross" ? "is-on" : "") + '" data-soc-mode="cross" role="tab" aria-selected="' + (kind === "cross") + '" data-tip="' + L("Zeigt vier Querschnittsthemen: Arbeit, Wahrheit, Urheberrecht, Macht.", "Shows four cross-cutting topics: work, truth, copyright, power.") + '">' + L("Querschnitt", "Cross-section") + '</button>' +
       '</div>';
-      var power = "";
       var hero = "";
       if (kind === "chain") {
-        power = '<div class="ls-rm-soc-power" data-tip="' + L("Fünf Stufen; die Füllung zeigt, wie stark die Konzentration ist.", "Five stages; the fill shows how strong the concentration is.") + '">' +
-          '<div class="ls-rm-soc-power-head"><span>' + L("Konzentration in der Kette", "Concentration in the chain") + '</span><em>' + L("klick eine Stufe", "click a stage") + '</em></div>' +
-          '<div class="ls-rm-soc-power-track">' + chain.map(function (c, idx) {
-            var l = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
-            return '<i class="is-l' + l + (idx === active ? ' is-on' : '') + '" style="--fill:' + (l * 25) + '%"></i>';
-          }).join("") + '</div>' +
-          '<div class="ls-rm-soc-power-legend"><span><i class="is-l4"></i>' + L("sehr hoch", "very high") + '</span><span><i class="is-l3"></i>' + L("hoch", "high") + '</span><span><i class="is-l2"></i>' + L("politisch", "political") + '</span></div>' +
-        '</div>';
-        hero = '<div class="ls-rm-soc-hero">' + power +
+        hero = '<div class="ls-rm-soc-hero">' +
           '<div class="ls-rm-soc-chain" role="list">' + chain.map(function (c, idx) {
             var l = Math.max(1, Math.min(4, parseInt(c.level, 10) || 1));
             var num = (idx + 1 < 10 ? "0" : "") + (idx + 1);
@@ -368,10 +364,14 @@
         hero = '<div class="ls-rm-soc-hero ls-rm-soc-hero--cross">' +
           '<div class="ls-rm-soc-cross" role="list">' + cross.map(function (c, idx) {
             return '<button type="button" class="ls-rm-soc-cross-card' + (idx === active ? ' is-active' : '') + '" data-soc-item="' + idx + '" data-soc-kind="cross" role="listitem" data-tip="' + L("Ein Querschnittsthema. Klick zeigt, wer das Risiko trägt.", "A cross-cutting topic. Click shows who carries the risk.") + '">' +
-              crossIcon(idx) +
-              '<span class="ls-rm-tag">' + esc(c.tag) + '</span>' +
-              '<b>' + esc(c.title) + '</b>' +
-              '<span class="ls-rm-soc-cross-short">' + esc(c.short) + '</span>' +
+              '<div class="ls-rm-soc-top">' +
+                crossIcon(idx) +
+                '<div class="ls-rm-soc-copy">' +
+                  '<span class="ls-rm-tag">' + esc(c.tag) + '</span>' +
+                  '<b>' + esc(c.title) + '</b>' +
+                  '<span class="ls-rm-soc-cross-short">' + esc(c.short) + '</span>' +
+                '</div>' +
+              '</div>' +
             '</button>';
           }).join("") + '</div>' +
         '</div>';

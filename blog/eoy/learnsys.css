@@ -3013,7 +3013,7 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 @media (max-width:480px){.ls-con-list{grid-template-columns:1fr}.ls-con-split{grid-template-columns:1fr}.ls-con-detail{padding:12px}}
 
 /* AI and society: four-lens risk map. */
-.ls-rm{height:100%;min-height:0;display:flex;flex-direction:column;gap:10px;padding:4px 2px;overflow-y:auto;overflow-x:hidden;position:relative;max-width:100%}
+.ls-rm{height:100%;min-height:0;display:flex;flex-direction:column;gap:10px;padding:4px 2px;overflow-y:auto;overflow-x:hidden;position:relative;max-width:100%;scrollbar-gutter:stable}
 .ls-rm::before{content:"";position:absolute;inset:-20px 0 auto 0;height:180px;background:radial-gradient(ellipse at 20% 0%,rgba(99,164,75,.10),transparent 62%),radial-gradient(ellipse at 90% 10%,rgba(18,117,172,.10),transparent 58%);pointer-events:none}
 .ls-rm-head{position:relative;display:flex;flex-direction:column;gap:2px;padding:2px 0 4px}
 .ls-rm-kicker{font:700 9px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--ls-petrol)}
@@ -3818,6 +3818,9 @@ body.ls-demo-loading .ls-bottom-nav{visibility:hidden!important;opacity:0!import
 .ls-rm-bubble-tag{font:600 7px "Open Sans",sans-serif;fill:var(--ls-muted);text-transform:uppercase;letter-spacing:.05em}
 .ls-rm-bubble-title{font:700 9px "Barlow",sans-serif;fill:var(--ls-ink)}
 .ls-rm-defense{display:flex;flex-direction:column;gap:5px;margin-top:2px}
+.ls-rm-defense-stack{display:grid}
+.ls-rm-defense-item{grid-area:1/1;display:flex;flex-direction:column;gap:5px;min-width:0;visibility:hidden;pointer-events:none}
+.ls-rm-defense-item.is-active{visibility:visible;pointer-events:auto}
 .ls-rm-defense-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px}
 .ls-rm-defense-head b{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
 .ls-rm-defense-head span{font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-muted)}
