@@ -795,19 +795,19 @@
       var scores = SCORES[e4];
       var probs = PROBS[e4];
       var e4State = winIndex(scores);
-      var boardSize = narrow ? 170 : Math.min(260, W * .24, H * .38);
-      var boardX = narrow ? (W - boardSize) / 2 : W - pad - boardSize;
-      var boardY = narrow ? 330 : 132;
+      var boardSize = narrow ? 132 : Math.min(260, W * .24, H * .38);
+      var boardX = W - pad - boardSize;
+      var boardY = narrow ? 128 : 132;
       var questions = DE ? [
         ["Was ist die Aktivierung?", "Layer 6 gibt dem aktuellen Token x: 512 Zahlen. Das ist die Aktivierung, noch kein lesbares Brett."],
-        ["Was macht die Probe pro Feld?", "x (512) · W (64×3×512): pro Feld gibt es drei Zeilen W[Feld, leer/mein/Gegner] mit je 512 Gewichten; z = x·W, Softmax → p, Argmax → Feld."],
+        ["Was macht die Probe pro Feld?", "x (512) · W (64×3×512): pro Feld drei Zeilen W[Feld, leer/mein/Gegner] à 512; z[Feld,z] = Σ_d x[d]·W[Feld,z,d]; Softmax → p; Argmax → Feld."],
         ["Wie entsteht ein Score?", "Ziel: Wie gut passt x zur gelernten Richtung? Der Score ist die Projektion von x auf W; groß bei ähnlicher Richtung."],
         ["Warum Softmax?", "Drei Roh-Scores werden zu drei Wahrscheinlichkeiten, die zusammen 100% ergeben. Die Reihenfolge bleibt."],
         ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten für E4. Argmax nimmt die größte; das ist der Zustand des Feldes."],
         ["Und das ganze Brett?", "x (512) · W (64×3×512) → 192 Logits; W[E4] ist nur die 3×512-Scheibe für E4; jede Zeile softmax, dann argmax → 64 Zustände → 8×8-Brett."]
       ] : [
         ["What is the activation?", "Layer 6 gives the current token x: 512 numbers. That is the activation, not yet a readable board."],
-        ["What does the probe do per square?", "x (512) · W (64×3×512): every square has three rows W[square, empty/my/opponent] of 512 weights; z = x·W, softmax → p, argmax → square."],
+        ["What does the probe do per square?", "x (512) · W (64×3×512): every square has three rows W[square, empty/my/opponent] of 512; z[square,z] = Σ_d x[d]·W[square,z,d]; softmax → p; argmax → square."],
         ["How does a score arise?", "Goal: how well does x fit the learned direction? The score is the projection of x onto W; large when the directions align."],
         ["Why softmax?", "Three raw scores become three probabilities that sum to 100%. The order stays the same."],
         ["How does that become a square?", "Three probabilities for E4. Argmax takes the largest; that is the state of the square."],
@@ -861,8 +861,7 @@
         drawBoard(c, TRUTH, boardX, boardY, boardSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
         txt(c, DE ? "W gelernt: wahrer Zustand soll höchsten Score haben" : "W learned: the true state should get the highest score", boardX + boardSize / 2, boardY - 34, { align: "center", size: 8.4, color: C.muted });
         txt(c, "Feld E4 · klicke ein anderes Feld", boardX + boardSize / 2, boardY - 12, { align: "center", size: 9, color: C.ink });
-        var sqF = squareLabel(e4);
-        setWmFormula("\\underbrace{\\operatorname{logit}[" + sqF + ",z]}_{x \\cdot W[" + sqF + ",z]} \\xrightarrow{\\text{softmax}} \\underbrace{p[" + sqF + ",z]}_{\\text{Wahrscheinlichkeit}} \\xrightarrow{\\arg\\max} \\underbrace{\\hat b[" + sqF + "]}_{\\text{Feldzustand}}");
+        setWmFormula("");
       } else if (phase === 2) {
         var cx = pad + Math.min(310, W * 0.38);
         var cy = 255;
