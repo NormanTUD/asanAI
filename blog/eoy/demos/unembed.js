@@ -17,7 +17,6 @@
     set(".ls-sim-select", "Wählt das Wort, dessen Vektor und Nachbarn untersucht werden.", "Chooses the word whose vector and neighbours are inspected.");
     set(".ls-sim-pause", "Hält die Drehung der Punktwolke an, ohne die Auswahl zu ändern.", "Stops the rotation of the point cloud without changing the selection.");
     set(".ls-sim-scale", "Verkürzt oder verlängert Vektor B, um zu zeigen, dass die Richtung erhalten bleibt.", "Shortens or lengthens vector B to show that its direction is preserved.");
-    set(".ls-sim-replay", "Wiederholt das Unembedding Schritt für Schritt.", "Replays the unembedding step by step.");
     set(".ls-sim-next-angle", "Springt zum nächsten Winkel im Unembedding-Lauf.", "Jumps to the next angle in the unembedding run.");
     set(".ls-sim-readout", "Aktuelle Winkel, Skalen und die daraus folgenden Token-Logits.", "Current angles, scales, and the resulting token logits.");
     set(".ls-sim-unembed-list", "Die konkurrierenden nächsten Token mit ihrem Score.", "The competing next tokens with their scores.");

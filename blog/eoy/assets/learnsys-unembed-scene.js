@@ -39,7 +39,6 @@
     var scaleInput = el.querySelector(".ls-sim-scale");
     var scaleOut = scaleInput ? scaleInput.nextElementSibling : null;
     var unembedControls = el.querySelector(".ls-sim-unembed-controls");
-    var unembedReplay = el.querySelector(".ls-sim-replay");
     var unembedList = el.querySelector(".ls-sim-unembed-list");
     var nextAngleBtn = el.querySelector(".ls-sim-next-angle");
     var unembedRaf = 0, unembedStart = 0;
@@ -312,6 +311,7 @@
       var topRow = top[0];
       readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span><span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
       caption.textContent = DE ? "Die Kugel ist eine schematische 3D-Projektion von Wortrichtungen. Der Winkel ist die Ähnlichkeit; ein kurzer und ein langer Vektor in dieselbe Richtung haben 0°, ein Punkt daneben hat einen größeren Winkel." : "The sphere is a schematic 3D projection of word directions. The angle is the similarity; a short and a long vector in the same direction have 0°, while a point off the line has a larger angle.";
+      caption.setAttribute("data-caption-mode", "directions");
       canvas.setAttribute("aria-label", DE ? "3D-Kugel schematischer Wortrichtungen; der grüne Vektor ist das gewählte Wort, die Winkel zu den nächsten Richtungen stehen daneben." : "3D sphere of schematic word directions; the green vector is the chosen word, with angles to the nearest directions.");
     }
 
@@ -348,6 +348,7 @@
       var stat = dotv > 0.9 ? (DE ? "sehr ähnlich" : "very similar") : dotv > 0.1 ? (DE ? "verwandt" : "related") : dotv > -0.1 ? (DE ? "neutral" : "neutral") : (DE ? "entgegengesetzt" : "opposite");
       readout.innerHTML = '<span>Vector A <b>[' + Math.cos(a).toFixed(2) + ', ' + Math.sin(a).toFixed(2) + ']</b></span><span>Vector B <b>[' + Math.cos(b).toFixed(2) + ', ' + Math.sin(b).toFixed(2) + ']</b></span><span>Dot <b>' + dotv.toFixed(3) + '</b></span><span><b>' + stat + '</b></span>';
       caption.textContent = DE ? "Der Winkel ist die Ähnlichkeit der Richtungen. Dot nahe 1: ähnlich; nahe 0: neutral; negativ: entgegengesetzt. Das ist eine Interpretation der gezeigten Richtungen, kein Wahrheitsbeweis." : "The angle is the similarity of directions. Dot near 1: similar; near 0: neutral; negative: opposite. This is an interpretation of the shown directions, not a proof of truth.";
+      caption.setAttribute("data-caption-mode", "angle");
     }
     function dirLoop(now) {
       if (mode !== "directions" || api.reducedMotion || dirPaused) { dirRaf = 0; return; }
@@ -591,6 +592,7 @@
       var dist = Math.hypot(dx, dy);
       readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + Math.round(angleDeg) + '.0°</b></span><span>|A−B| <b>' + dist.toFixed(3) + '</b></span><span>Cos <b>' + Math.cos(aB - aA).toFixed(3) + '</b></span>';
       caption.textContent = DE ? "A und B zeigen in verschiedene Richtungen. Wenn du B länger machst, ändert sich die euklidische Distanz |A−B|, aber nicht der Winkel. Für den Winkel zählen nur die Richtungen; im Logit zählt auch die Länge." : "A and B point in different directions. Making B longer changes the Euclidean distance |A−B|, but not the angle. For the angle only the directions count; in the logit the length also counts.";
+      caption.setAttribute("data-caption-mode", "scale");
     }
     function unembedData() {
       return UN_TOKENS.map(function (tok) {
@@ -618,6 +620,17 @@
       updateAngleList();
       drawUnembed(performance.now());
     }
+    function stepUnembed(dir) {
+      var rows = unembedData();
+      if (!rows.length) return false;
+      var from = unembedStep < 0 ? (dir > 0 ? -1 : 0) : unembedStep;
+      var next = from + dir;
+      if (next < 0 || next >= rows.length) return false;
+      unembedStep = next;
+      unembedPinned = next;
+      setUnembedFocus(next);
+      return true;
+    }
     function renderUnembedList() {
       if (!unembedList) return;
       var rows = unembedData();
@@ -633,6 +646,7 @@
         btn.addEventListener("blur", function () { if (unembedPinned < 0) setUnembedFocus(-1); });
         btn.addEventListener("click", function () {
           unembedPinned = unembedPinned === i ? -1 : i;
+          if (unembedPinned >= 0) unembedStep = unembedPinned;
           setUnembedFocus(unembedPinned);
         });
       });
@@ -673,15 +687,15 @@
       roundPath(c, px, py, pw, ph, ph / 2);
       c.fill();
       c.restore();
-      c.strokeStyle = active ? V.alpha(C.green, 0.65) : top ? V.alpha(C.gold, 0.55) : V.alpha(C.lineStrong, 0.28);
+      c.strokeStyle = active ? V.alpha(C.blue, 0.70) : top ? V.alpha(C.blue, 0.52) : V.alpha(C.lineStrong, 0.28);
       c.lineWidth = 1;
       roundPath(c, px, py, pw, ph, ph / 2);
       c.stroke();
-      c.fillStyle = active ? C.green : top ? C.gold : C.muted;
+      c.fillStyle = active || top ? C.blue : C.muted;
       c.beginPath();
       c.arc(px + 9, py + ph / 2, 2.5, 0, Math.PI * 2);
       c.fill();
-      c.fillStyle = active ? C.green : top ? C.gold : C.ink;
+      c.fillStyle = active ? C.petrol : top ? C.ink : C.ink;
       c.textAlign = "left";
       c.textBaseline = "middle";
       c.fillText(text, px + 15, py + ph / 2 + 0.5);
@@ -691,10 +705,10 @@
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       var compact = w < 620;
-      var panelW = Math.min(380, Math.max(170, w * (compact ? 0.48 : 0.38)));
+      var panelW = Math.min(380, Math.max(170, w * (compact ? 0.44 : 0.35)));
       var bx = w - 14 - panelW;
       var panelTop = 14, panelH = h - panelTop - 14;
-      var cx = Math.min(w * (compact ? 0.27 : 0.30), bx - 40);
+      var cx = Math.min(w * (compact ? 0.24 : 0.27), bx - 40);
       var cy = h * 0.53;
       var r = Math.min(w * (compact ? 0.19 : 0.23), h * 0.36);
       r = Math.max(38, Math.min(r, bx - cx - 42));
@@ -737,36 +751,11 @@
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
       ctx.save();
-      var disk = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      disk.addColorStop(0, V.alpha(C.paper, 0.70));
-      disk.addColorStop(0.65, V.alpha(C.paper, 0.28));
-      disk.addColorStop(1, V.alpha(C.paper, 0.02));
-      ctx.fillStyle = disk;
-      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = V.alpha(C.lineStrong, 0.55);
-      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = V.alpha(C.green, 0.74);
+      ctx.lineWidth = 1.6;
+      ctx.shadowColor = V.alpha(C.green, 0.22);
+      ctx.shadowBlur = 12;
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-      ctx.strokeStyle = V.alpha(C.line, 0.55);
-      ctx.lineWidth = 0.9;
-      [0.33, 0.66].forEach(function (rad) {
-        ctx.beginPath(); ctx.arc(cx, cy, r * rad, 0, Math.PI * 2); ctx.stroke();
-      });
-      for (var sIdx = 0; sIdx < 12; sIdx++) {
-        var sa = sIdx * Math.PI / 6;
-        ctx.strokeStyle = V.alpha(C.line, 0.42);
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(sa) * r * 0.14, cy - Math.sin(sa) * r * 0.14);
-        ctx.lineTo(cx + Math.cos(sa) * r, cy - Math.sin(sa) * r);
-        ctx.stroke();
-      }
-      for (var tIdx = 0; tIdx < 24; tIdx++) {
-        var ta = tIdx * Math.PI / 12;
-        ctx.strokeStyle = V.alpha(C.lineStrong, 0.30);
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(ta) * r * 0.985, cy - Math.sin(ta) * r * 0.985);
-        ctx.lineTo(cx + Math.cos(ta) * (tIdx % 2 ? r * 0.955 : r * 0.94), cy - Math.sin(ta) * (tIdx % 2 ? r * 0.955 : r * 0.94));
-        ctx.stroke();
-      }
       ctx.restore();
       ctx.save();
       ctx.fillStyle = C.gold;
@@ -779,47 +768,25 @@
       ctx.fillText(DE ? "Vektor → Token" : "vector → token", 18, 45);
       ctx.restore();
       var probs = V.softmax(rows.map(function (x) { return x.cos; }), 0.35);
-      var probByText = {};
-      rows.forEach(function (row, i) { probByText[row.t] = probs[i] || 0; });
-      var arcPalette = [C.blue, C.green, C.gold, C.lilac, C.sky, C.petrol, C.green, C.blue];
       var rayLabels = [];
       UN_TOKENS.forEach(function (tok, i) {
         var a = tok.a * Math.PI / 180;
         var x = cx + Math.cos(a) * r, y = cy - Math.sin(a) * r;
-        var d = a - UN_ANGLE;
-        while (d > Math.PI) d -= Math.PI * 2;
-        while (d < -Math.PI) d += Math.PI * 2;
         var isFocus = !!(focus && tok.t === focus.t);
         var isTop = !!(top && tok.t === top.t);
         var reveal = Math.max(0, Math.min(1, t * UN_TOKENS.length - i));
-        var col = isFocus ? C.green : isTop ? C.gold : C.blue;
         ctx.save();
-        ctx.strokeStyle = V.alpha(col, isFocus ? 0.95 : 0.28 + 0.32 * reveal);
-        ctx.lineWidth = isFocus ? 2.4 : 1.1;
+        ctx.strokeStyle = V.alpha(C.blue, isFocus ? 0.96 : isTop ? 0.72 : 0.22 + 0.38 * reveal);
+        ctx.lineWidth = isFocus ? 2.6 : isTop ? 1.8 : 1.1;
+        ctx.lineCap = "round";
+        if (isFocus) { ctx.shadowColor = V.alpha(C.blue, 0.42); ctx.shadowBlur = 10; }
         ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke();
         ctx.restore();
-        var arcR = r * 0.66;
-        var arcColor = isFocus ? C.green : isTop ? C.gold : arcPalette[i % arcPalette.length];
-        var arcWidth = isFocus ? 4.6 : isTop ? 3.4 : 1 + 4.2 * (probByText[tok.t] || 0) / Math.max(0.001, probs[0]);
-        ctx.save();
-        ctx.strokeStyle = V.alpha(arcColor, isFocus || isTop ? 0.95 : 0.25 + 0.55 * reveal);
-        ctx.lineWidth = arcWidth;
-        ctx.lineCap = "round";
-        if (isFocus) { ctx.shadowColor = V.alpha(C.green, 0.45); ctx.shadowBlur = 10; }
-        else if (isTop) { ctx.shadowColor = V.alpha(C.gold, 0.35); ctx.shadowBlur = 8; }
-        ctx.beginPath();
-        ctx.arc(cx, cy, arcR, -UN_ANGLE, -UN_ANGLE - d, d > 0);
-        ctx.stroke();
-        ctx.restore();
-        if (isFocus) {
-          var fmid = UN_ANGLE + d / 2;
-          pill(Math.round(Math.abs(d) * 180 / Math.PI) + "°", cx + Math.cos(fmid) * (arcR + 14), cy - Math.sin(fmid) * (arcR + 14), C.green, fsSmall);
-        }
         ctx.save();
         ctx.globalAlpha = 0.35 + 0.65 * reveal;
         ctx.beginPath();
-        ctx.arc(x, y, isFocus ? 5 : isTop ? 4.2 : 2.8, 0, Math.PI * 2);
-        ctx.fillStyle = isFocus ? C.green : isTop ? C.gold : C.muted;
+        ctx.arc(x, y, isFocus ? 5 : isTop ? 4 : 2.8, 0, Math.PI * 2);
+        ctx.fillStyle = C.blue;
         ctx.fill();
         if (isFocus || isTop) {
           ctx.strokeStyle = C.paper;
@@ -846,7 +813,17 @@
       ctx.strokeStyle = C.paper;
       ctx.lineWidth = 1.2;
       ctx.stroke();
-      pill(DE ? "letzter Vektor" : "last vector", hx, hy - 26, C.petrol, fsSmall);
+      var lastLabelX, lastLabelY;
+      if (compact || w < 720) {
+        lastLabelX = Math.min(hx, bx - 58);
+        var lastEdgeY = cy - Math.sqrt(Math.max(0, r * r - (lastLabelX - cx) * (lastLabelX - cx)));
+        lastLabelY = lastEdgeY - 18;
+      } else {
+        var lastLabelDist = r + 50;
+        lastLabelX = cx + Math.cos(UN_ANGLE) * lastLabelDist;
+        lastLabelY = cy - Math.sin(UN_ANGLE) * lastLabelDist;
+      }
+      pill(DE ? "letzter Vektor" : "last vector", lastLabelX, lastLabelY, C.petrol, fsSmall);
       rayLabels.forEach(function (l) { drawRayLabel(l.text, l.x, l.y, cx, cy, w, h, l.active, labelMaxX, l.top); });
       ctx.save();
       ctx.shadowColor = V.alpha(C.petrol, 0.10);
@@ -921,7 +898,13 @@
       });
       var focusTxt = focus ? '<span>' + (DE ? "Winkel" : "angle") + ' <b>' + focus.t + ' · ' + Math.round(Math.abs(focus.diff) * 180 / Math.PI) + '°</b></span>' : '';
       readout.innerHTML = '<span><b>letzter Vektor</b> ' + (DE ? "des letzten Tokens in der letzten Schicht" : "of the last token in the last layer") + '</span><span>letzter Vektor → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "größter Kosinus" : "largest cosine") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "kleinster Kosinus" : "smallest cosine") + ' <b>' + rows[rows.length - 1].t + ' · ' + Math.round(Math.abs(rows[rows.length - 1].diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
-      caption.textContent = DE ? "Der letzte Vektor des letzten Tokens in der letzten Schicht kommt aus den Transformer-Blöcken. In ihn ist der gesamte Kontext wieder und wieder unter verschiedenen Heads eingemischt worden. In dieser normalisierten Demo vergleicht W_U diesen Vektor mit jeder Token-Richtung; der größte Kosinus wird zum höchsten Wert, Softmax macht daraus eine Verteilung. Im echten Logit skaliert zusätzlich die Länge der Token-Zeile. Fahre über einen Vorschlag oder klicke ihn an: Der Winkel wird hervorgehoben." : "The final vector of the last token in the last layer comes out of the transformer blocks. The entire context has been mixed into it again and again under different heads. In this normalised demo W_U compares this vector with every token direction; the largest cosine becomes the highest value, and softmax turns that into a distribution. In the real logit the length of the token row also scales the result. Hover or click a suggestion to highlight its angle.";
+      if (caption.getAttribute("data-caption-mode") !== "unembed") {
+        caption.innerHTML = DE
+          ? 'Der letzte Vektor des letzten Tokens in der letzten Schicht kommt aus den Transformer-Blöcken. In ihn ist der gesamte Kontext wieder und wieder unter verschiedenen Heads eingemischt worden. In dieser normalisierten Demo vergleicht <span class="ls-math ls-math--inline" data-tex="W_U" data-tex-display="false"><code class="ls-tex-source">W_U</code></span> diesen Vektor mit jeder Token-Richtung; der größte Kosinus wird zum höchsten Wert, Softmax macht daraus eine Verteilung. Im echten Logit skaliert zusätzlich die Länge der Token-Zeile. Fahre über einen Vorschlag, klicke ihn an oder gehe mit „Nächster Winkel“ bzw. den Pfeiltasten weiter, um seinen Winkel zu sehen.'
+          : 'The final vector of the last token in the last layer comes out of the transformer blocks. The entire context has been mixed into it again and again under different heads. In this normalised demo <span class="ls-math ls-math--inline" data-tex="W_U" data-tex-display="false"><code class="ls-tex-source">W_U</code></span> compares this vector with every token direction; the largest cosine becomes the highest value, and softmax turns that into a distribution. In the real logit the length of the token row also scales the result. Hover over or click a suggestion, or step through them with “Next angle” or the arrow keys, to see each angle.';
+        caption.setAttribute("data-caption-mode", "unembed");
+        if (api.typeset) { try { api.typeset(caption); } catch (e) {} }
+      }
       if (unembedRaf) { if (t < 1) unembedRaf = requestAnimationFrame(drawUnembed); else unembedRaf = 0; }
     }
     function startUnembed() {
@@ -957,11 +940,13 @@
       if (angleControls) angleControls.hidden = mode !== "angle";
       if (scaleControls) scaleControls.hidden = mode !== "scale";
       if (unembedControls) unembedControls.hidden = mode !== "unembed";
+      if (mode === "unembed" && modeChanged) { unembedFocus = -1; unembedPinned = -1; unembedStep = -1; }
       if (unembedList) {
         unembedList.hidden = mode !== "unembed";
         if (mode === "unembed") renderUnembedList();
       }
-      if (mode === "unembed") startUnembed(); else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
+      if (mode === "unembed") startUnembed();
+      else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
       if (mode === "scale" && modeChanged) {
         scaleMag = SCALE_VALUES[2];
         scaleIndex = 2;
@@ -1034,17 +1019,8 @@
     if (angleAInput) angleAInput.addEventListener("input", function () { angleA = parseFloat(angleAInput.value) || 0; if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°"; draw(); });
     if (angleBInput) angleBInput.addEventListener("input", function () { angleB = parseFloat(angleBInput.value) || 0; if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°"; draw(); });
     if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 0.08; scaleIndex = -1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2); draw(); });
-    if (unembedReplay) unembedReplay.addEventListener("click", function () {
-      unembedFocus = -1; unembedPinned = -1; unembedStep = -1;
-      updateAngleList();
-      startUnembed();
-    });
     if (nextAngleBtn) nextAngleBtn.addEventListener("click", function () {
-      var rows = unembedData();
-      if (!rows.length) return;
-      unembedStep = (unembedStep + 1) % rows.length;
-      unembedPinned = unembedStep;
-      setUnembedFocus(unembedStep);
+      stepUnembed(1);
     });
     if (pauseBtn) pauseBtn.addEventListener("click", function () {
       dirPaused = !dirPaused;
@@ -1126,6 +1102,7 @@
     return {
       update: function (s) { if (s && s.mode) setMode(s.mode); },
       next: function () {
+        if (mode === "unembed") return stepUnembed(1);
         if (mode !== "scale") return false;
         if (scaleIndex < 0) scaleIndex = 0;
         if (scaleIndex >= SCALE_VALUES.length - 1) return false;
@@ -1134,6 +1111,7 @@
         return true;
       },
       prev: function () {
+        if (mode === "unembed") return stepUnembed(-1);
         if (mode !== "scale") return false;
         if (scaleIndex < 0) scaleIndex = SCALE_VALUES.length - 2;
         if (scaleIndex <= 0) return false;
@@ -1142,10 +1120,19 @@
         return true;
       },
       hasNext: function () {
+        if (mode === "unembed") return unembedStep < unembedData().length - 1;
         return mode === "scale" && scaleIndex < SCALE_VALUES.length - 1;
       },
       hasPrev: function () {
+        if (mode === "unembed") return unembedStep > 0;
         return mode === "scale" && scaleIndex !== 0;
+      },
+      ownsKeys: function () { return mode === "unembed"; },
+      onKey: function (e) {
+        if (mode !== "unembed" || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return false;
+        if (e.key === "ArrowRight") return stepUnembed(1);
+        if (e.key === "ArrowLeft") return stepUnembed(-1);
+        return false;
       },
       resize: resize,
       pause: function () { if (dirRaf) { cancelAnimationFrame(dirRaf); dirRaf = 0; } },
