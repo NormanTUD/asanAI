@@ -20,8 +20,8 @@
       '</header>' +
       '<div class="ls-mi2-stages" role="tablist" aria-label="' + L("Bewusstseins-Ansichten", "Consciousness views") + '">' +
         '<button type="button" class="ls-mi2-stage-tab is-on" data-mi-stage="red" role="tab" aria-selected="true"><span>01</span>' + L("Die Röte des Roten", "The redness of red") + '</button>' +
-        '<button type="button" class="ls-mi2-stage-tab" data-mi-stage="mary" role="tab" aria-selected="false"><span>02</span>' + L("Marys Zimmer", "Mary's Room") + '</button>' +
-        '<button type="button" class="ls-mi2-stage-tab" data-mi-stage="inverted" role="tab" aria-selected="false"><span>03</span>' + L("Invertierte Qualia", "Inverted qualia") + '</button>' +
+        '<button type="button" class="ls-mi2-stage-tab" data-mi-stage="inverted" role="tab" aria-selected="false"><span>02</span>' + L("Invertierte Qualia", "Inverted qualia") + '</button>' +
+        '<button type="button" class="ls-mi2-stage-tab" data-mi-stage="mary" role="tab" aria-selected="false"><span>03</span>' + L("Marys Zimmer", "Mary's Room") + '</button>' +
       '</div>' +
       '<div class="ls-mi2-main">' +
         '<section class="ls-mi2-qualia" data-tip="' + L("Qualia sind die gefühlten Eigenschaften einer Erfahrung; Messungen erreichen nur ihre Bedingungen.", "Qualia are the felt qualities of an experience; measurements reach only their conditions.") + '">' +
@@ -118,22 +118,25 @@
     return {
       update: function () {},
       next: function () {
-        if (stage === "red") { setStage("mary"); return true; }
+        if (stage === "red") { setStage("inverted"); return true; }
+        if (stage === "inverted") { setStage("mary"); return true; }
         if (stage === "mary") {
           if (!maryRevealed) { revealMary(); return true; }
           if (maryAnswerState === 0) { setMaryAnswer(true); return true; }
           if (maryAnswerState === 1) { setMaryAnswer(false); return true; }
-          setStage("inverted");
-          return true;
         }
         return false;
       },
       prev: function () {
-        if (stage === "inverted") { setStage("mary"); return true; }
-        if (stage === "mary") { setStage("red"); return true; }
+        if (stage === "mary") { setStage("inverted"); return true; }
+        if (stage === "inverted") { setStage("red"); return true; }
         return false;
       },
-      hasNext: function () { return stage !== "inverted"; },
+      hasNext: function () {
+        if (stage === "red" || stage === "inverted") return true;
+        if (stage === "mary") return !maryRevealed || maryAnswerState < 2;
+        return false;
+      },
       hasPrev: function () { return stage !== "red"; },
       resize: function () {},
       destroy: function () { el.remove(); }
