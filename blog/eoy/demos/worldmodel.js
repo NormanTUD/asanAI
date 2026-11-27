@@ -13,7 +13,7 @@
   if (!document.getElementById("ls-wm-style")) {
     var st = document.createElement("style");
     st.id = "ls-wm-style";
-    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:hidden;background:transparent}.ls-wm-scene canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:320px;padding:8px 10px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 13px/1.45 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none;white-space:pre-line}.ls-wm-tip[hidden]{display:none}.ls-wm-play{position:absolute;right:12px;bottom:12px;z-index:9;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-green,#63a44b);color:#fff;padding:7px 11px;font:600 12px 'Open Sans',sans-serif;cursor:pointer}.ls-wm-play:hover{background:var(--tm-petrol,#004b6f)}.ls-wm-game-status{position:absolute;left:14px;bottom:14px;z-index:9;max-width:min(52%,420px);font:600 11px/1.4 'Open Sans',sans-serif;color:var(--tm-ink,#000);background:rgba(255,255,255,.92);border:1px solid var(--tm-line,#b9c8c3);padding:6px 8px}";
+    st.textContent = ".ls-wm-scene{position:relative;width:100%;height:100%;min-height:380px;overflow:auto;background:transparent}.ls-wm-canvas-wrap{position:relative;width:100%;height:100%;min-height:0}.ls-wm-canvas-wrap canvas{display:block;width:100%;height:100%}.ls-wm-tip{position:absolute;z-index:8;max-width:320px;padding:8px 10px;background:rgba(255,255,255,.97);border:1px solid var(--tm-line-strong,#b9c8c3);box-shadow:0 10px 26px rgba(0,20,30,.14);font:400 13px/1.45 'Open Sans',sans-serif;color:var(--tm-ink,#000);pointer-events:none;white-space:pre-line}.ls-wm-tip[hidden]{display:none}.ls-wm-play{position:absolute;right:12px;bottom:12px;z-index:9;border:1px solid var(--tm-line-strong,#b9c8c3);background:var(--tm-green,#63a44b);color:#fff;padding:7px 11px;font:600 12px 'Open Sans',sans-serif;cursor:pointer}.ls-wm-play:hover{background:var(--tm-petrol,#004b6f)}.ls-wm-game-status{position:absolute;left:14px;bottom:14px;z-index:9;max-width:min(52%,420px);font:600 11px/1.4 'Open Sans',sans-serif;color:var(--tm-ink,#000);background:rgba(255,255,255,.92);border:1px solid var(--tm-line,#b9c8c3);padding:6px 8px}";
     document.head.appendChild(st);
   }
 
@@ -90,7 +90,10 @@
     host.setAttribute("data-tip", DE ? "Vom Zugstrom über die Probe bis zum rekonstruierten Brett." : "From the move stream through the probe to the reconstructed board.");
     var canvas = document.createElement("canvas");
     canvas.setAttribute("data-tip", DE ? "Interaktive Grafik: im Spiel markieren goldene Punkte gültige Züge." : "Interactive graphic: in the game, gold dots mark valid moves.");
-    host.appendChild(canvas);
+    var canvasWrap = document.createElement("div");
+    canvasWrap.className = "ls-wm-canvas-wrap";
+    canvasWrap.appendChild(canvas);
+    host.appendChild(canvasWrap);
     var tip = document.createElement("div");
     tip.className = "ls-wm-tip";
     tip.hidden = true;
@@ -591,6 +594,28 @@
       return DE ? ["leer", "mein Spieler", "Gegner"][idx] : ["empty", "my player", "opponent"][idx];
     }
 
+    function probeDir(sq, stateIdx, d) {
+      return .55 * Math.sin((sq * 37 + stateIdx * 91 + d * 13) * .017)
+        + .30 * Math.cos((sq * 11 + stateIdx * 29 + d * 7) * .031);
+    }
+
+    function drawStrip(c, values, x, y, w, h, pos, neg, tip) {
+      var n = values.length || 1;
+      var cw = w / n;
+      for (var i = 0; i < n; i++) {
+        var v = values[i];
+        var col = v >= 0
+          ? mixRgb(C.paper2, pos, .10 + .55 * Math.abs(v))
+          : mixRgb(C.paper2, neg, .10 + .45 * Math.abs(v));
+        c.fillStyle = "rgb(" + col.join(",") + ")";
+        c.fillRect(x + i * cw, y, cw + .4, h);
+      }
+      c.strokeStyle = V.alpha(C.lineStrong, .55);
+      c.lineWidth = 1;
+      c.strokeRect(x + .5, y + .5, w - 1, h - 1);
+      addHit(x, y, w, h, tip);
+    }
+
     function drawActivationGrid(c, x, y, w, h) {
       var cols = 32, rows = 16;
       var cw = w / cols, ch = h / rows;
@@ -654,7 +679,7 @@
       txt(c, "64 × 3", x + w / 2, y - 10, { align: "center", size: 9.5, color: C.muted });
     }
 
-    function drawProbGrid(c, x, y, size, stateIdx, row) {
+    function drawProbGrid(c, x, y, size, stateIdx, row, pick) {
       var cell = size / 8;
       for (var r = 0; r < 8; r++) {
         for (var col = 0; col < 8; col++) {
@@ -682,6 +707,7 @@
       for (var pr = 0; pr < 8; pr++) {
         for (var pc = 0; pc < 8; pc++) {
           var pi = pr * 8 + pc;
+          if (pick) boardPicks.push({ x: x + pc * cell, y: y + pr * cell, w: cell, h: cell, i: pi });
           addHit(x + pc * cell, y + pr * cell, cell, cell,
             (DE ? "Feld " : "square ") + squareLabel(pi) + " · " + stateName(stateIdx) + ": " + (PROBS[pi][stateIdx] * 100).toFixed(1) + "%"
               + (DE ? " · im 64×3: Zeile " + (pi + 1) + ", Spalte " + (stateIdx + 1) + " · aus x ∈ ℝ^512 und Probe-Zeile W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]" : " · in 64×3: row " + (pi + 1) + ", column " + (stateIdx + 1) + " · from x ∈ ℝ^512 and probe row W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]"),
@@ -800,14 +826,14 @@
       var boardY = narrow ? 128 : 132;
       var questions = DE ? [
         ["Was ist die Aktivierung?", "Layer 6 gibt dem aktuellen Token x: 512 Zahlen. Das ist die Aktivierung, noch kein lesbares Brett."],
-        ["Wie das LLM Zustände speichert", "Drei Karten zeigen p(leer), p(mein) und p(Gegner) für jedes Feld. Klick ein Feld, um den wahren Zustand zu prüfen."],
+        ["Wie das LLM Zustände speichert", "Drei Karten: p(leer), p(mein), p(Gegner). Klick ein Feld."],
         ["Wie entsteht ein Score?", "Ziel: Wie gut passt x zur gelernten Richtung? Der Score ist die Projektion von x auf W; groß bei ähnlicher Richtung."],
         ["Warum Softmax?", "Drei Roh-Scores werden zu drei Wahrscheinlichkeiten, die zusammen 100% ergeben. Die Reihenfolge bleibt."],
         ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten für E4. Argmax nimmt die größte; das ist der Zustand des Feldes."],
         ["Und das ganze Brett?", "x (512) · W (64×3×512) → 192 Logits; W[E4] ist nur die 3×512-Scheibe für E4; jede Zeile softmax, dann argmax → 64 Zustände → 8×8-Brett."]
       ] : [
         ["What is the activation?", "Layer 6 gives the current token x: 512 numbers. That is the activation, not yet a readable board."],
-        ["How the LLM stores states", "Three maps show p(empty), p(mine), and p(opponent) for every square. Click a square to check the true state."],
+        ["How the LLM stores states", "Three maps: p(empty), p(mine), p(opponent). Click a square."],
         ["How does a score arise?", "Goal: how well does x fit the learned direction? The score is the projection of x onto W; large when the directions align."],
         ["Why softmax?", "Three raw scores become three probabilities that sum to 100%. The order stays the same."],
         ["How does that become a square?", "Three probabilities for E4. Argmax takes the largest; that is the state of the square."],
@@ -815,7 +841,7 @@
       ];
       head(c, DE ? "Vom Zug zum Brett" : "From move to board", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
       txt(c, questions[phase][0], pad, 60, { size: narrow ? 13 : 15, font: '700 ' + (narrow ? 13 : 15) + 'px "Barlow", "Open Sans", sans-serif', color: C.ink });
-      txt(c, questions[phase][1], pad, 78, { size: 10.2, color: C.muted });
+      txt(c, questions[phase][1], pad, 80, { size: narrow ? 11 : 11.4, color: C.muted });
       if (phase === 0) {
         txt(c, DE ? "L6-Aktivierung · x (512 Werte als Heatmap)" : "L6 activation · x (512 values as a heatmap)", pad, 100, { size: 11, color: C.ink, font: '700 11px "Barlow", "Open Sans", sans-serif' });
         var gw = Math.max(220, W - 2 * pad);
@@ -825,39 +851,78 @@
         txt(c, "32 × 16 = 512 · dieselben Werte, nur als Raster", pad, 122 + gh + 16, { size: 9, color: C.muted });
         txt(c, DE ? "x = L6-Aktivierung (512 Werte pro Token); das Brett ist ab Layer 4 vollständig, die Probe liest L6." : "x = L6 activation (512 values per token); the board is complete by layer 4, the probe reads L6.", pad, H - 52, { size: 9, color: C.ink });
       } else if (phase === 1) {
-        // The three 8×8 probability maps from the former whole-board slide.
+        // Top: three equal state maps on the left and the equal true board on the right.
         var stateLabels = DE ? ["leer", "mein Spieler", "Gegner"] : ["empty", "my player", "opponent"];
-        if (narrow) {
-          var mapGap = 7;
-          var mapBoard = Math.min(110, W * .24);
-          var mapAvail = W - 2 * pad - mapBoard - 14;
-          var mapSize = Math.max(54, Math.min(86, (mapAvail - 2 * mapGap) / 3));
-          var mapTop = 128;
-          for (var mo = 0; mo < 3; mo++) {
-            var mx = pad + mo * (mapSize + mapGap);
-            txt(c, stateLabels[mo], mx + mapSize / 2, mapTop - 10, { align: "center", size: 8.5, color: mo === 1 ? C.gold : mo === 2 ? C.ink : C.muted });
-            drawProbGrid(c, mx, mapTop, mapSize, mo, e4);
-          }
-          var bx1 = W - pad - mapBoard;
-          drawBoard(c, TRUTH, bx1, mapTop, mapBoard, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
-          txt(c, DE ? "wahr" : "true", bx1 + mapBoard / 2, mapTop - 10, { align: "center", size: 8.5, color: C.muted });
-          txt(c, DE ? "Feld " + squareLabel(e4) : "square " + squareLabel(e4), bx1 + mapBoard / 2, mapTop + mapBoard + 16, { align: "center", size: 8.5, color: C.ink });
-        } else {
-          var mapTop2 = 128;
-          var mapBoard2 = Math.min(280, W * .25, H * .4);
-          var mapLeft = W - pad - mapBoard2;
-          var mapAvail2 = mapLeft - pad - 24;
-          var mapSize2 = Math.min(170, (mapAvail2 - 32) / 3, H * .35);
-          for (var mo2 = 0; mo2 < 3; mo2++) {
-            var mx2 = pad + mo2 * (mapSize2 + 16);
-            txt(c, stateLabels[mo2], mx2 + mapSize2 / 2, mapTop2 - 12, { align: "center", size: 9.2, color: mo2 === 1 ? C.gold : mo2 === 2 ? C.ink : C.muted });
-            drawProbGrid(c, mx2, mapTop2, mapSize2, mo2, e4);
-          }
-          drawBoard(c, TRUTH, mapLeft, mapTop2, mapBoard2, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
-          txt(c, DE ? "wahrer Zustand" : "true state", mapLeft + mapBoard2 / 2, mapTop2 - 12, { align: "center", size: 9.2, color: C.muted });
-          txt(c, DE ? "Feld " + squareLabel(e4) : "square " + squareLabel(e4), mapLeft + mapBoard2 / 2, mapTop2 + mapBoard2 + 22, { align: "center", size: 10, color: C.ink });
+        var mapGap = narrow ? 6 : 10;
+        var sepGap = narrow ? 10 : 18;
+        var mapTop = 128;
+        var mapSize = Math.max(48, Math.min(180, Math.floor((W - 2 * pad - 3 * mapGap - sepGap) / 4)));
+        var mapX = [];
+        for (var mi = 0; mi < 3; mi++) mapX.push(pad + mi * (mapSize + mapGap));
+        var sepX = mapX[2] + mapSize + sepGap / 2;
+        var trueX = mapX[2] + mapSize + sepGap;
+        var labelY = mapTop - (narrow ? 10 : 12);
+        for (var mo = 0; mo < 3; mo++) {
+          txt(c, stateLabels[mo], mapX[mo] + mapSize / 2, labelY, { align: "center", size: narrow ? 9 : 10, color: mo === 1 ? C.gold : mo === 2 ? C.ink : C.muted });
+          drawProbGrid(c, mapX[mo], mapTop, mapSize, mo, e4, true);
         }
-        txt(c, DE ? "Drei Karten: p(leer), p(mein), p(Gegner); je heller, desto wahrscheinlicher. Klick ein Feld." : "Three maps: p(empty), p(mine), p(opponent); brighter means more likely. Click a square.", pad, 102, { size: 9.2, color: C.petrol });
+        c.save();
+        c.strokeStyle = V.alpha(C.lineStrong, .75);
+        c.lineWidth = 1.2;
+        c.beginPath();
+        c.moveTo(sepX, mapTop - 14);
+        c.lineTo(sepX, mapTop + mapSize + 14);
+        c.stroke();
+        c.restore();
+        drawBoard(c, TRUTH, trueX, mapTop, mapSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
+        txt(c, DE ? "wahrer Zustand" : "true state", trueX + mapSize / 2, labelY, { align: "center", size: narrow ? 9 : 10, color: C.muted });
+        txt(c, DE ? "Feld " + squareLabel(e4) : "square " + squareLabel(e4), trueX + mapSize / 2, mapTop + mapSize + (narrow ? 14 : 18), { align: "center", size: narrow ? 9.6 : 10.4, color: C.ink });
+        txt(c, DE ? "x (512) · W (64×3×512) → z (64×3) → Softmax → p (64×3)" : "x (512) · W (64×3×512) → z (64×3) → softmax → p (64×3)", pad, 102, { size: narrow ? 8.2 : 9.2, color: C.petrol, font: '700 ' + (narrow ? 8.2 : 9.2) + 'px "Barlow", "Open Sans", sans-serif' });
+
+        // Bottom: the same x, three learned W[E4] rows, their products and z values.
+        var probeTop = mapTop + mapSize + (narrow ? 22 : 28);
+        var probeX = pad + (narrow ? 90 : 100);
+        var probeW = narrow ? Math.max(120, W - probeX - pad - 56) : Math.min(330, W * .32);
+        txt(c, DE ? "x = dieselbe L6-Aktivierung · 512 Werte" : "x = the same L6 activation · 512 values", pad, probeTop - 7, { size: narrow ? 8.8 : 9.8, color: C.blue, font: '700 ' + (narrow ? 8.8 : 9.8) + 'px "Barlow", "Open Sans", sans-serif' });
+        drawStrip(c, X, pad, probeTop + 2, Math.min(280, probeW), narrow ? 11 : 15, C.blue, C.green, DE ? "x: 512 Aktivierungen, derselbe Vektor für alle drei Zustände" : "x: 512 activations, the same vector for all three states");
+        for (var po = 0; po < 3; po++) {
+          var dir = [];
+          for (var pd = 0; pd < 512; pd++) dir.push(probeDir(e4, po, pd));
+          var prod = [];
+          for (var qd = 0; qd < 512; qd++) prod.push(X[qd] * dir[qd]);
+          var py = probeTop + (narrow ? 24 : 30) + po * (narrow ? 36 : 44);
+          txt(c, DE ? "W[" + squareLabel(e4) + ", " + stateName(po) + "]" : "W[" + squareLabel(e4) + ", " + stateName(po) + "]", pad, py + 8, { size: narrow ? 9 : 9.8, color: po === e4State ? C.gold : C.muted });
+          drawStrip(c, dir, probeX, py, probeW, narrow ? 8 : 10, C.blue, C.gold, DE ? "W[E4, " + stateName(po) + "]: 512 gelernte Gewichte" : "W[E4, " + stateName(po) + "]: 512 learned weights");
+          drawStrip(c, prod, probeX, py + (narrow ? 9 : 12), probeW, narrow ? 4 : 6, C.blue, C.green, DE ? "Produkt x[d]·W[E4, " + stateName(po) + "][d]" : "product x[d]·W[E4, " + stateName(po) + "][d]");
+          txt(c, "z = " + V.fmt(scores[po], 2), probeX + probeW + 8, py + 8, { size: narrow ? 9.6 : 11, color: po === e4State ? C.gold : C.ink, font: '700 ' + (narrow ? 9.6 : 11) + 'px "Barlow", "Open Sans", sans-serif' });
+        }
+
+        // Bottom: z (before softmax) and p (after softmax) for the three states.
+        var cardH = narrow ? 126 : 144;
+        var cardY = Math.max(probeTop + (narrow ? 156 : 170), H - (narrow ? 170 : 210));
+        var cardW = Math.min(150, (W * .64 - 24) / 3);
+        var ck = cardH / 144;
+        txt(c, DE ? "z (vor Softmax) → Softmax → p (nach Softmax)" : "z (before softmax) → softmax → p (after softmax)", pad, cardY - 16, { size: narrow ? 8.8 : 9.4, color: C.petrol, font: '700 ' + (narrow ? 8.8 : 9.4) + 'px "Barlow", "Open Sans", sans-serif' });
+        var fieldWinner = winIndex(probs);
+        for (var oc = 0; oc < 3; oc++) {
+          var cardX2 = pad + oc * (cardW + 10);
+          var isW = oc === fieldWinner;
+          c.fillStyle = isW ? V.alpha(C.gold, .11) : V.alpha(C.paper2, .72);
+          c.strokeStyle = isW ? C.gold : V.alpha(C.line, .75);
+          c.lineWidth = isW ? 2 : 1;
+          c.fillRect(cardX2, cardY, cardW, cardH);
+          c.strokeRect(cardX2 + .5, cardY + .5, cardW - 1, cardH - 1);
+          txt(c, stateName(oc), cardX2 + cardW / 2, cardY + 16 * ck, { align: "center", size: narrow ? 9.2 : 9.8, color: isW ? C.gold : C.muted });
+          txt(c, DE ? "z (vor Softmax)" : "z (before softmax)", cardX2 + cardW / 2, cardY + 32 * ck, { align: "center", size: narrow ? 7.8 : 8.2, color: C.muted });
+          txt(c, "z = " + V.fmt(scores[oc], 2), cardX2 + cardW / 2, cardY + 48 * ck, { align: "center", size: narrow ? 11 : 11.5, color: C.ink, font: '700 ' + (narrow ? 11 : 11.5) + 'px "Barlow", "Open Sans", sans-serif' });
+          txt(c, DE ? "p (nach Softmax)" : "p (after softmax)", cardX2 + cardW / 2, cardY + 65 * ck, { align: "center", size: narrow ? 7.8 : 8.2, color: C.muted });
+          c.fillStyle = V.alpha(C.line, .35);
+          c.fillRect(cardX2 + 12, cardY + 80 * ck, cardW - 24, 8);
+          c.fillStyle = isW ? C.gold : C.blue;
+          c.fillRect(cardX2 + 12, cardY + 80 * ck, (cardW - 24) * Math.max(0, Math.min(1, probs[oc])), 8);
+          txt(c, (probs[oc] * 100).toFixed(0) + "%", cardX2 + cardW / 2, cardY + 108 * ck, { align: "center", size: narrow ? 16 : 17, color: isW ? C.gold : C.ink, font: '700 ' + (narrow ? 16 : 17) + 'px "Barlow", "Open Sans", sans-serif' });
+          addHit(cardX2, cardY, cardW, cardH, DE ? "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (vor Softmax). Softmax macht daraus p = " + (probs[oc] * 100).toFixed(1) + "%." : "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (before softmax). Softmax turns this into p = " + (probs[oc] * 100).toFixed(1) + "%.");
+        }
         setWmFormula("");
       } else if (phase === 2) {
         var cx = pad + Math.min(310, W * 0.38);
@@ -1231,6 +1296,13 @@
 
     function draw() {
       if (!W || !H) return;
+      var minH = state.step === 1 ? 740 : 0;
+      var minCss = minH ? minH + "px" : "0px";
+      if (canvasWrap.style.minHeight !== minCss) {
+        canvasWrap.style.minHeight = minCss;
+        fit();
+        return;
+      }
       playBtn.hidden = state.step !== 0;
       canvas.setAttribute("data-tip", state.step === 0
         ? (DE ? "Othello-Brett und Zugfolge: hier spielst du gegen den Computer." : "Othello board and move stream: here you play against the computer.")
@@ -1269,7 +1341,7 @@
     }
 
     function fit() {
-      var r = api.fit(canvas, host);
+      var r = api.fit(canvas, canvasWrap);
       W = r.w;
       H = r.h;
       ctx = r.ctx;
