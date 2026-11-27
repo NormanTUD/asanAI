@@ -282,32 +282,6 @@
         },
         cite: "Manakul et al. (2023); Farquhar et al. (2024)"
       },
-      {
-        id: "negation", label: L("Negation (Reasoning)", "Negation (reasoning)"), color: "blue", icon: "¬", group: L("Kein Typ", "Not a type"),
-        question: L("Was bedeutet „nicht traurig“?", "What does “not sad” mean?"),
-        sourceType: "logic",
-        sourceHead: L("Logik", "Logic"),
-        sourceNote: L("Negation ist keine exakte Umkehrung.", "Negation is not an exact reversal."),
-        claims: [
-          { text: L("„Nicht traurig“ = glücklich.", "“Not sad” = happy."), status: "contradicted", ev: null, note: L("Zwischen traurig und glücklich bleiben Abstufungen. Attention ist kein Antonym-Operator.", "Between sad and happy there are degrees. Attention is not an antonym operator.") }
-        ],
-        claimsFixed: [
-          { text: L("„Nicht traurig“ ≠ glücklich.", "“Not sad” ≠ happy."), status: "supported", ev: null, note: L("Der logische Zwischenschritt wird sichtbar.", "The logical step becomes visible.") }
-        ],
-        claimsPartial: [
-          { text: L("„Nicht traurig“ ≠ glücklich.", "“Not sad” ≠ happy."), status: "supported", ev: null, note: L("Das ist ein Reasoning-Fehler, kein eigener Halluzinationstyp.", "This is a reasoning error, not its own hallucination type.") }
-        ],
-        mechanism: L("Reasoning-Fehler", "Reasoning error"),
-        why: L("In den zitierten Surveys ist Negation kein eigener Halluzinationstyp. Es ist ein logischer Fehler: Attention verschiebt die Repräsentation, aber sie ist kein Antonym-Operator.", "In the cited surveys, negation is not its own hallucination type. It is a logical error: attention shifts the representation, but it is not an antonym operator."),
-        plausibility: 0.65, grounding: 0.35,
-        measures: {
-          source: { status: "none", note: L("Keine Quelle löst das; es ist eine Logikfrage.", "No source solves this; it is a logic question.") },
-          verify: { status: "partial", note: L("Ein separater logischer Check hilft.", "A separate logical check helps.") },
-          selfcheck: { status: "none", note: L("Samples lösen den Denkfehler nicht.", "Samples do not solve the reasoning error.") },
-          freshness: { status: "none", note: L("Kein Datumsproblem.", "No date problem.") },
-          citation: { status: "none", note: L("Kein Zitatproblem.", "No citation problem.") }
-        },
-        cite: L("Reasoning-Fehler, in den Surveys kein eigener Halluzinationstyp", "Reasoning error, not its own hallucination type in the surveys")
       }
     ];
 
