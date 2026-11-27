@@ -40,13 +40,6 @@
         body: [
           L("Spezialisierte Subsysteme broadcasten Ergebnisse in einen globalen Arbeitsraum. Nur was dort ankommt, ist für Bericht, Kontrolle und Handlung verfügbar.", "Specialised subsystems broadcast results into a global workspace. Only what arrives there is available for report, control, and action.")
         ],
-        qa: [
-          { q: L("Was ist der globale Arbeitsraum?", "What is the global workspace?"), a: L("Ein System, in dem Ergebnisse für Bericht, Kontrolle und Handlung global verfügbar werden.", "A system in which results become globally available for report, control, and action.") },
-          { q: L("Was erklärt GWT?", "What does GWT explain?"), a: L("Zugang und Broadcast; nicht, warum Zugang sich anfühlt.", "Access and broadcast, not why access feels like anything.") },
-          { q: L("Was zeigt der J-Space?", "What does the J-space show?"), a: L("Sprachliche Repräsentationen mit arbeitsraumartigem Zugang; nicht phänomenales Erleben.", "Verbal representations with workspace-like access; not phenomenal experience.") },
-          { q: L("Was würde eine KI zeigen?", "What would an AI need to show?"), a: L("Einen stabilen globalen Arbeitsraum und berichtbare Integration; der J-Space ist ein Kandidat.", "A stable global workspace and reportable integration; the J-space is a candidate.") },
-          { q: L("Was bleibt offen?", "What remains open?"), a: L("Der Sprung von Zugang zu Erleben; das harte Problem.", "The step from access to experience: the hard problem.") },
-        ],
         cite: '<a href="https://archive.org/details/cognitivetheoryo0000baar" target="_blank" rel="noopener">Baars (1988)</a>; <a href="https://doi.org/10.1016/S0010-0277(00)00123-2" target="_blank" rel="noopener">Dehaene &amp; Naccache (2001)</a>; <a href="https://doi.org/10.1016/0004-3702(85)90063-3" target="_blank" rel="noopener">Hayes-Roth (1985)</a>',
         hint: L("Klick ein Subsystem: sein Ergebnis erscheint auf der Tafel. Broadcast macht es global.", "Click a subsystem: its result appears on the board. Broadcast makes it global."),
         status: L("Noch nichts auf der Tafel. Weiter fügt Subsysteme hinzu.", "Nothing on the board yet. Next adds subsystems.")
@@ -58,13 +51,6 @@
         lead: L("Bewusstsein ist die integrierte Ursache-Wirkungs-Struktur eines Systems; Rekurrenz macht aus Teilen ein Ganzes.", "Consciousness is a system's integrated cause-effect structure; recurrence turns parts into a whole."),
         body: [
           L("Bewusstsein ist die integrierte Ursache-Wirkungs-Struktur eines Systems. Rekurrenz macht aus Teilen ein Ganzes; Phi misst, wie untrennbar es ist.", "Consciousness is a system's integrated cause-effect structure. Recurrence turns parts into a whole; Phi measures how irreducible it is.")
-        ],
-        qa: [
-          { q: L("Was behauptet IIT?", "What does IIT claim?"), a: L("Bewusstsein ist die integrierte Ursache-Wirkungs-Struktur eines Systems.", "Consciousness is a system's integrated cause-effect structure.") },
-          { q: L("Was misst Phi?", "What does Phi measure?"), a: L("Wie untrennbar das Ganze ist; Feedforward fällt auf 0.", "How irreducible the whole is; feedforward falls to zero.") },
-          { q: L("Was macht der Schnitt?", "What does the cut do?"), a: L("Er kappt Verbindungen; der Puls stoppt, das Ganze wird zerlegbar.", "It cuts connections; the pulse stops and the whole becomes separable.") },
-          { q: L("Kann man Phi für LLMs messen?", "Can Phi be measured for LLMs?"), a: L("Nicht belastbar; die Berechnung ist für große Systeme kaum möglich und umstritten.", "Not robustly; the computation is hard for large systems and contested.") },
-          { q: L("Was bleibt offen?", "What remains open?"), a: L("Warum eine Struktur sich anfühlt; das harte Problem.", "Why a structure feels like something: the hard problem.") },
         ],
         cite: '<a href="https://doi.org/10.1186/1471-2202-5-42" target="_blank" rel="noopener">Tononi (2004)</a>; <a href="https://doi.org/10.1038/nrn.2016.44" target="_blank" rel="noopener">Tononi et al. (2016)</a>',
         hint: L("Drücke Puls. Schalte auf Feedforward: der Puls kehrt nicht zurück, Phi fällt. Ziehe den Schnitt.", "Press Pulse. Switch to feedforward: the pulse does not return, Phi falls. Pull the cut."),
@@ -79,12 +65,6 @@
           L("Das Gehirn versucht ständig vorherzusagen, was als Nächstes über die Sinne hereinkommt. Trifft die Vorhersage daneben, entsteht ein Vorhersagefehler. Diesen Fehler kann es auf zwei Wegen verkleinern: das innere Modell anpassen oder handeln, damit der erwartete Reiz wirklich eintrifft (Active Inference).", "The brain continuously tries to predict what will arrive next through the senses. When the prediction misses, a prediction error arises. It can reduce that error in two ways: update the internal model, or act so that the expected signal actually arrives (active inference)."),
           L("Präzision legt fest, wie stark es dabei der aktuellen Sinnesinformation oder seiner bisherigen Erwartung vertraut. Ist die Erwartung sehr stark, sieht man eher, was das Modell erwartet; Wahrnehmung wird zur kontrollierten Halluzination.", "Precision sets how strongly the system trusts current sensory information versus its existing expectation. When the expectation is very strong, you see more of what the model expects; perception becomes controlled hallucination.")
         ],
-        qa: [
-          { q: L("Was ist Präzision?", "What is precision?"), a: L("Wie stark das System Vorhersage oder Eingang vertraut.", "How strongly the system trusts prediction or input.") },
-          { q: L("Warum kontrollierte Halluzination?", "Why controlled hallucination?"), a: L("Bei hoher Präzision dominiert die Vorhersage; der Eingang korrigiert kaum.", "At high precision the prediction dominates; input barely corrects it.") },
-          { q: L("Was fehlt LLMs?", "What do LLMs lack?"), a: L("Ein sensomotorischer Körper und eine Handlungsschleife; sie sagen Text voraus.", "A sensorimotor body and an action loop; they predict text.") },
-          { q: L("Was bleibt offen?", "What remains open?"), a: L("Warum Vorhersage sich anfühlt; das harte Problem.", "Why prediction feels like anything: the hard problem.") },
-        ],
         cite: '<a href="https://doi.org/10.1017/S0140525X12000477" target="_blank" rel="noopener">Clark (2013)</a>; <a href="https://doi.org/10.1038/nrn2787" target="_blank" rel="noopener">Friston (2010)</a>',
         hint: L("Wähle einen Eingang und zieh an der Präzision. Bei hoher Präzision dominiert die Vorhersage.", "Choose an input and drag precision. At high precision the prediction dominates."),
         status: L("Mittlere Präzision. Weiter aktualisiert das Modell.", "Medium precision. Next updates the model.")
@@ -97,14 +77,6 @@
         body: [
           L("Das Fundament ist Bewusstsein, nicht Materie; Materie ist eine Erscheinung in ihm. Jedes Ich, jedes Lebewesen ist eine lokale, vorübergehende Dissoziation dieses einen Bewusstseins, wie ein Wirbel im Ozean: von innen erlebt er sich als getrennt und begrenzt, von außen ist er nur eine lokale Bewegung des einen Wassers.", "The foundation is consciousness, not matter; matter is an appearance within it. Every “I”, every living being, is a local, temporary dissociation of this one consciousness, like a vortex in the ocean: from inside it experiences itself as separate and bounded; from outside it is only a local movement of the one water."),
           L("Du bist nicht im Bewusstsein wie ein Fisch im Wasser; du bist das Bewusstsein, geformt zu einem Wirbel. Löst sich der Wirbel auf, wirst du nicht vernichtet, denn du warst nie ein getrenntes Ding.", "You are not in consciousness like a fish in water; you are consciousness, shaped into a vortex. When the vortex dissolves, you are not destroyed, because you were never a separate thing.")
-        ],
-        qa: [
-          { q: L("Was ist Bewusstsein?", "What is consciousness?"), a: L("Das Fundament; Materie ist eine Erscheinung in Bewusstsein.", "The foundation; matter is an appearance within consciousness.") },
-          { q: L("Was ist ein Ich?", "What is an “I”?"), a: L("Eine lokale, temporäre Dissoziation, wie ein Wirbel im Wasser.", "A local, temporary dissociation, like a vortex in water.") },
-          { q: L("Was ist der Tod?", "What is death?"), a: L("Das Ende der Dissoziation; das eine Bewusstsein bleibt.", "The end of the dissociation; the one consciousness remains.") },
-          { q: L("Was ist das Dashboard?", "What is the dashboard?"), a: L("Nach Hoffmans Interface-Theorie ist Wahrnehmung eine Benutzeroberfläche, kein Fenster zur Wirklichkeit: So wie ein Datei-Icon nützlich ist, ohne die Bits und Bytes auf der Festplatte zu zeigen, zeigt auch unser Wahrnehmungsbild nur das, was für Handeln nützlich ist, nicht die Welt an sich. Hoffman, Singh und Prakash (2015).", "On Hoffman's interface theory, perception is a user interface, not a window onto reality: just as a file icon is useful without showing the bits and bytes on the hard drive, our perceptual image shows what is useful for action, not the world as it is. Hoffman, Singh, and Prakash (2015).") },
-          { q: L("Was ist der Einwand?", "What is the objection?"), a: L("Metaphysisch und schwer falsifizierbar; konkrete Mechanismen erklärt sie weniger.", "Metaphysical and hard to falsify; concrete mechanisms are less explained.") },
-          { q: L("Wie passt Atman/Brahman?", "How do Atman and Brahman fit?"), a: L("Advaita Vedanta: Das individuelle Selbst (Atman) ist letztlich eins mit dem universalen Bewusstsein (Brahman). Kastrups Bild passt strukturell: persönliche Bewusstseine sind Dissoziationen eines universalen Bewusstseins. Das ist eine Analogie, keine Eins-zu-eins-Identität; Kastrup argumentiert philosophisch, nicht aus der Schrift.", "Advaita Vedanta: the individual self (Atman) is ultimately one with universal consciousness (Brahman). Kastrup's picture fits structurally: personal consciousnesses are dissociations of one universal consciousness. This is an analogy, not a one-to-one identity; Kastrup argues philosophically, not from scripture.") },
         ],
         cite: '<a href="https://www.bernardokastrup.com/p/papers.html" target="_blank" rel="noopener">Kastrup (2018/2019)</a>; <a href="https://doi.org/10.3758/s13423-015-0890-8" target="_blank" rel="noopener">Hoffman, Singh &amp; Prakash (2015)</a>; <a href="https://iep.utm.edu/advaita-vedanta/" target="_blank" rel="noopener">Advaita Vedanta (IEP)</a>',
         hint: L("Zieh an der Dissoziation. Weiter löst die Dissoziation auf: Der Tod beendet die Grenzen, nicht die Wirbel.", "Drag dissociation. Next dissolves the dissociation: death ends the boundaries, not the vortices."),
@@ -119,13 +91,6 @@
         body: [
           L("4E Cognition beschreibt Denken als biologische und situierte Tätigkeit. Ein LLM lebt nur in der Extended-Dimension: Textwerkzeug, aber ohne Körper, Welt und Handlung.", "4E Cognition describes thinking as a biological and situated activity. An LLM lives only in the extended dimension: a text tool without a body, world, or action.")
         ],
-        qa: [
-          { q: L("Was sind die vier E's?", "What are the four E's?"), a: L("Embodied, Embedded, Enacted, Extended: Körper, Welt, Handlung, Werkzeug.", "Embodied, Embedded, Enacted, Extended: body, world, action, tool.") },
-          { q: L("Warum fehlt KI die Erdung?", "Why does AI lack grounding?"), a: L("Ihr fehlen Körper, geteilte physische Welt und Handlungsschleife; sie lebt nur im Extended-Modus.", "It lacks a body, a shared physical world, and an action loop; it lives only in the extended mode.") },
-          { q: L("Was heißt „heiß“ für Mensch und LLM?", "What does “hot” mean for a human and an LLM?"), a: L("Für uns ein verbrannter Finger; für ein LLM nur Tokens in der Nähe von Ofen, Sonne und scharf.", "For us, a burnt finger; for an LLM, just tokens near stove, sun, and spicy.") },
-          { q: L("Ist 4E ein Bewusstseinstest?", "Is 4E a test for consciousness?"), a: L("Nein, eine Familie von Ansätzen; sie zeigt, was Erdung verlangt.", "No, a family of approaches; it shows what grounding requires.") },
-          { q: L("Was zeigt der Vergleich mit dem LLM?", "What does the comparison with an LLM show?"), a: L("Das LLM hat Text und Werkzeug, aber keinen Körper, keine geteilte Welt und keine Handlungsschleife.", "The LLM has text and tools, but no body, no shared world, and no action loop.") },
-        ],
         cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
         hint: L("Weiter aktiviert die vier E's. KI zeigt, welche davon fehlen; beobachte, was „heiß“ beim Menschen verankert.", "Next activates the four E's. AI shows which are missing; watch what anchors “hot” for a human."),
         status: L("Mensch: 1 von 4 aktiv. Weiter aktiviert Embedded.", "Human: 1 of 4 active. Next activates Embedded."),
@@ -137,12 +102,6 @@
         lead: L("Vielleicht liegt Bewusstsein jenseits unserer Begriffe – wie Differentialgleichungen für eine Ratte.", "Perhaps consciousness lies beyond our concepts – like differential equations for a rat."),
         body: [
           L("Ratten lernen Labyrinthe. In einer Puzzlebox-Studie mit Mäusen wurden mechanische Verriegelungen stufenweise schwerer, bis die Tiere scheiterten (Ben Abdallah et al., 2011); das zeigt eine Grenze des Problemlösens. Ratten haben ihre intellektuellen Grenzen; die des Menschen liegen weiter, sind aber auch endlich. Eine unserer Grenzen könnte das Bewusstsein sein; McGinn fragt, ob es jenseits unserer Begriffe liegt.", "Rats learn mazes. In a puzzle-box study with mice, mechanical locks became progressively harder until the animals failed (Ben Abdallah et al., 2011); that shows a limit of problem solving. Rats have their intellectual limits; human limits reach further but are finite too. One of our limits could be consciousness; McGinn asks whether it lies beyond our concepts.")
-        ],
-        qa: [
-          { q: L("Was behauptet McGinn?", "What does McGinn claim?"), a: L("Bewusstsein könnte jenseits unserer Begriffe liegen.", "Consciousness may lie beyond our concepts.") },
-          { q: L("Ist das falsifizierbar?", "Is that falsifiable?"), a: L("Nein; keine Beobachtung kann die Grenze zeigen.", "No; no observation can demonstrate the limit.") },
-          { q: L("Was folgt für KI?", "What follows for AI?"), a: L("Kein Test; die Frage verschiebt sich in unsere Erkenntnisgrenzen.", "No test; the question moves into our cognitive limits.") },
-          { q: L("Was ist der Einwand?", "What is the objection?"), a: L("Eine Grenze zu behaupten erklärt Bewusstsein nicht.", "Claiming a limit does not explain consciousness.") },
         ],
         cite: '<a href="https://doi.org/10.1093/mind/XCVIII.391.349" target="_blank" rel="noopener">McGinn (1989)</a>; <a href="https://doi.org/10.1037/h0060262" target="_blank" rel="noopener">Tolman, Ritchie &amp; Kalish (1946)</a>; <a href="https://doi.org/10.1037/0097-7403.2.2.97" target="_blank" rel="noopener">Olton &amp; Samuelson (1976)</a>; <a href="https://doi.org/10.1016/j.expneurol.2010.09.008" target="_blank" rel="noopener">Ben Abdallah et al. (2011)</a>',
         hint: L("Die Fragezeichen stehen für das, was unsere Begriffe nicht fassen.", "The question marks stand for what our concepts cannot capture."),
@@ -177,7 +136,7 @@
     var C = api.colors();
     var ROSE = "#b24a4e";
     var reduce = !!api.reducedMotion;
-    var active = 0, qaOpen = 0, activeSince = performance.now(), start = performance.now();
+    var active = 0, activeSince = performance.now(), start = performance.now();
     var size = null, ctx = null, raf = 0, paused = false;
     var stars = [];
     for (var si = 0; si < 64; si++) stars.push({ x: (si * 0.37 + 0.05) % 1, y: (si * 0.31 + 0.09) % 1, r: 0.5 + (si % 3) * 0.5, a: 0.05 + (si % 6) * 0.025 });
@@ -1007,26 +966,12 @@
       titleEl.textContent = th.title;
       leadEl.textContent = th.lead;
       writeTheoryParam(th);
-      var qa = th.qa || [];
-      if (qaOpen >= qa.length) qaOpen = 0;
       detail.innerHTML =
         '<div class="ls-con2-detail-head"><span>' + esc(th.tag) + '</span><b>' + esc(th.title) + '</b></div>' +
         (th.caption && th.caption.length ? '<div class="ls-con2-caption ls-con2-caption--top">' + th.caption.map(function (p, i) { return '<p' + (i ? ' class="is-callout"' : '') + '>' + esc(p) + '</p>'; }).join("") + '</div>' : '') +
         '<div class="ls-con2-detail-body">' + th.body.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join("") + '</div>' +
-        '<div class="ls-con2-qa">' +
-          '<div class="ls-con2-qa-questions">' + qa.map(function (item, i) {
-            return '<button type="button" class="ls-con2-q' + (i === qaOpen ? " is-on" : "") + '" data-con-qa="' + i + '">' + esc(item.q) + '</button>';
-          }).join("") + '</div>' +
-          (qa[qaOpen] ? '<p class="ls-con2-a">' + esc(qa[qaOpen].a) + '</p>' : '') +
-        '</div>' +
         '<p class="ls-con2-cite">' + th.cite + '</p>' +
         (th.quote ? '<blockquote class="ls-con2-quote"><p>“' + esc(th.quote.text) + '”</p><cite><a href="' + esc(th.quote.url) + '" target="_blank" rel="noopener">' + esc(th.quote.author) + ', ' + esc(th.quote.work) + '</a></cite></blockquote>' : '');
-      detail.querySelectorAll("[data-con-qa]").forEach(function (b) {
-        b.addEventListener("click", function () {
-          qaOpen = parseInt(b.getAttribute("data-con-qa"), 10) || 0;
-          renderChrome();
-        });
-      });
       canvas.setAttribute("aria-label", th.title + ". " + th.lead);
     }
     function setIitMode(ff) {
@@ -1265,38 +1210,19 @@
       return false;
     }
     function goNext() {
-      var qa = THEORIES[active].qa || [];
-      if (qaOpen > 0) {
-        if (qaOpen < qa.length - 1) { qaOpen++; renderChrome(); return true; }
-        if (active < THEORIES.length - 1) { setTheory(active + 1); return true; }
-        return false;
-      }
       if (active === 0 && wsNextAction()) return true;
       if (active === 1 && iitNextAction()) return true;
       if (active === 2 && !predModelFresh()) { updatePredModel(); return true; }
       if (active === 3 && kastNextAction()) return true;
       if (active === 4 && fourNextAction()) return true;
-      if (active === 2 && pred.priorTarget !== null) { setTheory(3); return true; }
-      if (active === 3 && kast.dissolving) { setTheory(4); return true; }
-      if (qaOpen < qa.length - 1) {
-        qaOpen++;
-        renderChrome();
-        return true;
-      }
-      if (active < THEORIES.length - 1) { setTheory(active + 1); return true; }
       return false;
     }
     function goPrev() {
-      var qa = THEORIES[active].qa || [];
-      if (qaOpen > 0) { qaOpen--; renderChrome(); return true; }
-      if (active > 0) { setTheory(active - 1, true); return true; }
       return false;
     }
-    function setTheory(i, back) {
+    function setTheory(i) {
       active = clamp(i, 0, THEORIES.length - 1);
       if (active === 4) four = { mode: "human", focus: 0, word: "hot", active: 1 };
-      var targetQa = THEORIES[active].qa || [];
-      qaOpen = back && targetQa.length ? targetQa.length - 1 : 0;
       activeSince = performance.now();
       renderChrome();
       renderControls();
@@ -1425,7 +1351,7 @@
     fit();
     startLoop();
     return {
-      update: function () {},
+      update: function (s) { if (s && typeof s.theory === "number") setTheory(s.theory); },
       next: goNext,
       prev: goPrev,
       hasNext: function () { return active < THEORIES.length - 1; },
