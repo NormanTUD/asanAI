@@ -413,7 +413,7 @@
         var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "") + (e.stackImages ? " is-stacked" : "");
         return '<figure class="ls-time-hero is-media" style="' + style + '">' +
           '<div class="' + gridClass + '">' + images.map(function (im, i) {
-            return '<img class="ls-time-hero-img' + (i === 0 ? ' is-main' : ' is-side') + '" src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(im.cap) + '">';
+            return '<span class="ls-time-media' + (i === 0 ? ' is-main' : ' is-side') + '"><img class="ls-time-hero-img' + (i === 0 ? ' is-main' : ' is-side') + '" src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(im.cap) + '"><span class="ls-time-media-spinner" aria-hidden="true"></span></span>';
           }).join("") + '</div>' +
           '<figcaption class="ls-time-hero-caption">' + caption + '</figcaption>' +
         '</figure>';
@@ -458,6 +458,16 @@
           (hasInlineDiagram ? '<div class="ls-time-diagram-inline">' + diagramHTML(e.diagram) + '</div>' : '') +
           sourcesHTML(e) +
         '</div>';
+      Array.prototype.forEach.call(stage.querySelectorAll(".ls-time-media"), function (media) {
+        var img = media.querySelector(".ls-time-hero-img");
+        if (!img) return;
+        var loaded = function () { media.classList.add("is-loaded"); };
+        if (img.complete) loaded();
+        else {
+          img.addEventListener("load", loaded, { once: true });
+          img.addEventListener("error", loaded, { once: true });
+        }
+      });
       progress.textContent = (index + 1) + ' / ' + tabs.length;
       prevBtn.disabled = index === 0;
       nextBtn.textContent = index === tabs.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
