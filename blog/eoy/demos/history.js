@@ -8,8 +8,8 @@
     var DE = api.lang === "de";
     var tabs = DE ? [
       {
-        year: "vor 13,8 Mrd. Jahren", label: "Ursprung", title: "Vor dem Urknall: Warum überhaupt etwas?",
-        text: "Die Frage ist älter als die Physik und bis heute ungeklärt: Warum ist überhaupt etwas und nicht vielmehr nichts? Leibniz (1714) verlangt einen zureichenden Grund und findet ihn in einem notwendigen Wesen. Heidegger (1935) hält die Frage offen: „Warum ist überhaupt Seiendes und nicht vielmehr Nichts?“ Der philosophische Exzentriker Jocax (2020) dreht sie um: Wenn absolut nichts existiert, gibt es auch keine Regel, die etwas verbietet, denn Regeln wären selbst etwas. Reines Nichts hätte keine Kraft, sich zu halten; es sei deshalb instabil, und etwas könne entstehen. Statt „Warum etwas?“ fragt er: „Was könnte etwas verhindern?“ Die Antwort sei: nichts. Dieser Anfang, die Entstehung der Sterne und Planeten und die Entwicklung des Lebens sind gleichermaßen die Grundlage dafür, dass so etwas wie KI überhaupt existieren konnte, und weil alles mit allem zusammenhängt, lässt sich eine wirklich vollständige Geschichte nicht erzählen. Dann der Urknall: Vor 13,8 Milliarden Jahren expandiert das Universum aus einem heißen, dichten Zustand. Die WMAP-Karte zeigt die Temperaturschwankungen 380.000 Jahre danach.",
+        year: "vor 13,8 Mrd. Jahren", label: "Ursprung", smallImage: true, title: "Vor dem Urknall: Warum überhaupt etwas?",
+        text: "Alles hängt mit allem zusammen. Diese Einsicht ist der Grund, warum eine Geschichte der KI nicht erst bei Computern beginnt; sie führt zurück bis zur Frage, warum überhaupt etwas existiert.\n\nDie Frage ist älter als die Physik und bis heute ungeklärt: Warum ist überhaupt etwas und nicht vielmehr nichts? Leibniz (1714) verlangt einen zureichenden Grund und findet ihn in einem notwendigen Wesen. Heidegger (1935) hält die Frage offen: „Warum ist überhaupt Seiendes und nicht vielmehr Nichts?“\n\nDer philosophische Exzentriker Jocax (2020) dreht sie um: Wenn absolut nichts existiert, gibt es auch keine Regel, die etwas verbietet, denn Regeln wären selbst etwas. Reines Nichts hätte keine Kraft, sich zu halten; es sei deshalb instabil, und etwas könne entstehen. Statt „Warum etwas?“ fragt er: „Was könnte etwas verhindern?“ Die Antwort sei: nichts.\n\nDann der Urknall: Vor 13,8 Milliarden Jahren expandiert das Universum aus einem heißen, dichten Zustand. Die WMAP-Karte zeigt die Temperaturschwankungen 380.000 Jahre danach.\n\nAus diesem Anfang entstehen die ersten Sterne, aus ihren Resten Planeten, auf einem davon Leben; diese Kette ist die Grundlage dafür, dass so etwas wie KI überhaupt existieren konnte.\n\nWeil alles mit allem zusammenhängt, lässt sich eine wirklich vollständige Geschichte nicht erzählen.",
         images: [{ src: "../wmap_cmb.png", alt: "WMAP-Karte der Temperaturschwankungen des kosmischen Mikrowellenhintergrunds", cap: "WMAP-Himmelskarte des kosmischen Mikrowellenhintergrunds. NASA / WMAP Science Team, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png" }],
         sources: [
           { label: "Leibniz (1714), Monadologie", url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf" },
@@ -178,8 +178,8 @@
       }
     ] : [
       {
-        year: "13.8 billion years ago", label: "Origin", title: "Before the Big Bang: Why is there anything?",
-        text: "The question is older than physics and remains unresolved: why is there something rather than nothing? Leibniz (1714) demands a sufficient reason and finds it in a necessary being. Heidegger (1935) holds the question open: “Why are there beings at all, and not rather nothing?” The philosophical eccentric Jocax (2020) inverts it: if absolutely nothing exists, there is also no rule forbidding something, because rules would themselves be something. Pure nothingness would have no power to sustain itself; it is therefore unstable, and something could arise. Instead of “Why something?” he asks: “What could prevent something?” The answer, he says, is nothing. This beginning, the formation of stars and planets, and the development of life are equally the foundation for something like AI to exist at all, and because everything is connected to everything else, a truly complete history cannot be told. Then the Big Bang: 13.8 billion years ago the universe expands from a hot, dense state. The WMAP map shows the temperature fluctuations 380,000 years later.",
+        year: "13.8 billion years ago", label: "Origin", smallImage: true, title: "Before the Big Bang: Why is there anything?",
+        text: "Everything is connected to everything else. That is why a history of AI does not begin with computers; it reaches back to the question of why anything exists at all.\n\nThe question is older than physics and remains unresolved: why is there something rather than nothing? Leibniz (1714) demands a sufficient reason and finds it in a necessary being. Heidegger (1935) holds the question open: “Why are there beings at all, and not rather nothing?”\n\nThe philosophical eccentric Jocax (2020) inverts it: if absolutely nothing exists, there is also no rule forbidding something, because rules would themselves be something. Pure nothingness would have no power to sustain itself; it is therefore unstable, and something could arise. Instead of “Why something?” he asks: “What could prevent something?” The answer, he says, is nothing.\n\nThen the Big Bang: 13.8 billion years ago the universe expands from a hot, dense state. The WMAP map shows the temperature fluctuations 380,000 years later.\n\nFrom this beginning come the first stars, then planets, then life; this chain is the foundation for something like AI to exist at all.\n\nBecause everything is connected to everything else, a truly complete history cannot be told.",
         images: [{ src: "../wmap_cmb.png", alt: "WMAP map of the cosmic microwave background temperature fluctuations", cap: "WMAP map of the cosmic microwave background. NASA / WMAP Science Team, public domain.", href: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png" }],
         sources: [
           { label: "Leibniz (1714), Monadology", url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf" },
@@ -423,6 +423,11 @@
       }
       return '<div class="ls-time-hero is-poster" style="' + style + '"><span class="ls-time-hero-year">' + api.esc(e.year) + '</span><b class="ls-time-poster-label">' + api.esc(e.label) + '</b><i></i></div>';
     }
+    function textHTML(text) {
+      return String(text || "").split(/\n\s*\n/).map(function (part) {
+        return '<p class="ls-time-text">' + api.esc(part.replace(/\n+/g, " ")) + '</p>';
+      }).join("");
+    }
     function sourcesHTML(e) {
       var ss = e.sources || (e.source ? [e.source] : []);
       if (!ss.length) return "";
@@ -442,13 +447,14 @@
       var e = tabs[index];
       var activeStrand = STRANDS[TAB_STRAND[index] || 0];
       stage.style.setProperty("--history-accent", activeStrand.color);
+      stage.classList.toggle("is-small-hero", !!e.smallImage);
       var hasInlineDiagram = e.diagram && e.images && e.images.length;
       stage.innerHTML = heroHTML(e, activeStrand.color) +
         '<div class="ls-time-story">' +
           '<div class="ls-time-story-meta"><span>' + (DE ? "Schritt " : "Step ") + (index + 1) + ' / ' + tabs.length + '</span><span class="ls-time-strand">' + api.esc(activeStrand.label) + '</span></div>' +
           '<div class="ls-time-year">' + api.esc(e.year) + '</div>' +
           '<h3 class="ls-time-title">' + api.esc(e.title) + '</h3>' +
-          '<p class="ls-time-text">' + api.esc(e.text) + '</p>' +
+          textHTML(e.text) +
           (hasInlineDiagram ? '<div class="ls-time-diagram-inline">' + diagramHTML(e.diagram) + '</div>' : '') +
           sourcesHTML(e) +
         '</div>';

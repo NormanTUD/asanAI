@@ -7342,3 +7342,5 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-cn .ls-cn-quote{padding-left:54px}
 .ls-cn .ls-cn-quote:before{left:14px;top:4px}
 @media (max-width:640px){.ls-cn .ls-cn-quote{padding-left:42px}.ls-cn .ls-cn-quote:before{left:9px;font-size:42px}}
+.ls-time-stage.is-small-hero{grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr)}
+@media (max-width:980px){.ls-time-stage.is-small-hero{grid-template-columns:1fr}}
