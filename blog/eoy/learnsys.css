@@ -7363,3 +7363,79 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-time-hero-grid.has-two.is-stacked.is-second-large .ls-time-media{height:100%;max-height:none;min-height:0}
 .ls-time-hero-grid.has-two.is-stacked.is-second-large .ls-time-hero-img{height:100%;max-height:none;object-fit:contain;background:#fff}
 .ls-time-hero-grid.has-two.is-stacked.is-second-large .ls-time-media.is-side .ls-time-hero-img{object-fit:cover}
+
+/* First consciousness slide: clean white stage, full-width hero, three views. */
+.ls-mi2{background:#fff;gap:16px;padding:14px 16px 22px}
+.ls-mi2-hero{border:0;border-bottom:1px solid var(--ls-line);border-radius:0;padding:24px 4px 20px;background:#fff;box-shadow:none;grid-template-columns:1fr;overflow:visible}
+.ls-mi2-hero:before{display:none}
+.ls-mi2-hero-text>b{font-size:clamp(38px,5vw,58px);line-height:1.02}
+.ls-mi2-hero-text>p{font-size:17px;line-height:1.55;max-width:none;color:var(--ls-soft)}
+.ls-mi2-hero-note{font-size:13px;color:var(--ls-muted);max-width:none}
+.ls-mi2-hero-hint{color:#b24a4e;font-size:10.5px}
+.ls-mi2-kicker{color:#b24a4e}
+.ls-mi2-stages{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--ls-line)}
+.ls-mi2-stage-tab{appearance:none;border:0;border-bottom:2px solid transparent;background:transparent;padding:9px 12px 8px;font:700 12px/1 "Barlow",sans-serif;color:var(--ls-muted);cursor:pointer;display:inline-flex;gap:7px;align-items:baseline;white-space:nowrap}
+.ls-mi2-stage-tab span{font:700 8px/1 "Open Sans",sans-serif;letter-spacing:.08em;color:var(--ls-muted)}
+.ls-mi2-stage-tab:hover{color:var(--ls-petrol)}
+.ls-mi2-stage-tab.is-on{color:var(--mi-accent);border-bottom-color:var(--mi-accent)}
+.ls-mi2-stage-tab.is-on span{color:var(--mi-accent)}
+.ls-mi2[data-stage="red"]{--mi-accent:#b24a4e}
+.ls-mi2[data-stage="mary"]{--mi-accent:var(--ls-blue)}
+.ls-mi2[data-stage="inverted"]{--mi-accent:#7667a8}
+.ls-mi2[data-stage="red"] .ls-mi2-main,.ls-mi2[data-stage="mary"] .ls-mi2-main,.ls-mi2[data-stage="inverted"] .ls-mi2-main{grid-template-columns:1fr}
+.ls-mi2[data-stage="red"] .ls-mi2-right{display:none}
+.ls-mi2[data-stage="mary"] .ls-mi2-qualia,.ls-mi2[data-stage="mary"] .ls-mi2-spectrum{display:none}
+.ls-mi2[data-stage="mary"] .ls-mi2-right{display:block}
+.ls-mi2[data-stage="inverted"] .ls-mi2-qualia,.ls-mi2[data-stage="inverted"] .ls-mi2-mary{display:none}
+.ls-mi2[data-stage="inverted"] .ls-mi2-right{display:block}
+.ls-mi2[data-stage="inverted"] .ls-mi2-spectrum{display:grid}
+.ls-mi2-qualia{position:relative;border:0;background:#fff;box-shadow:none;padding:0;gap:14px}
+.ls-mi2-qualia .ls-mi2-head{padding-right:132px}
+.ls-mi2-head span{color:var(--mi-accent);font-size:10px}
+.ls-mi2-head b{font-size:30px;color:var(--ls-ink)}
+.ls-mi2-qualia .ls-mi2-orb{position:absolute;right:14px;top:0;width:104px;height:104px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 38% 30%,#ffd9cf 0%,#ff6f61 25%,#e53935 55%,#8e0000 100%);box-shadow:0 12px 28px rgba(229,57,53,.22);z-index:1}
+.ls-mi2-qualia .ls-mi2-orb:before{inset:-8px;border-color:rgba(229,57,53,.25)}
+.ls-mi2-qualia .ls-mi2-orb span{font-size:38px}
+.ls-mi2-qualia .ls-mi2-orb em{color:#fff;bottom:5px;font-size:7.5px}
+.ls-mi2-split{grid-template-columns:minmax(0,1fr) 92px minmax(0,1fr);gap:14px;margin-top:2px}
+.ls-mi2-side{padding:13px;border-radius:14px;background:#fff;border-color:var(--ls-line);box-shadow:0 12px 28px -26px rgba(0,30,40,.3)}
+.ls-mi2-measure,.ls-mi2-felt{height:124px}
+.ls-mi2-gap{color:var(--ls-muted);background:linear-gradient(180deg,transparent,rgba(178,74,78,.045),transparent);border-color:var(--ls-line-strong)}
+.ls-mi2-gap span{color:var(--mi-accent)}
+.ls-mi2-gap b{color:var(--ls-muted)}
+.ls-mi2-def{font-size:16px;line-height:1.6;max-width:none}
+.ls-mi2-problems{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ls-mi2-problems p{padding:11px 13px;border:1px solid var(--ls-line);border-radius:12px;background:#fff;font-size:13.5px;line-height:1.55;margin:0}
+.ls-mi2-problems p.is-easy{border-color:rgba(18,117,172,.22);background:rgba(18,117,172,.045)}
+.ls-mi2-problems p.is-hard{border-color:rgba(178,74,78,.24);background:rgba(178,74,78,.05);font-size:14px}
+.ls-mi2-problems p.is-hard b{color:#a33}
+.ls-mi2-more{margin:2px 0 0;padding:13px 0 0;border-top:1px solid var(--ls-line);background:transparent}
+.ls-mi2-more>summary{padding:0 0 10px;color:var(--mi-accent)}
+.ls-mi2-qa{gap:7px}
+.ls-mi2-qa-questions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.ls-mi2-q{padding:8px 9px;font-size:10px}
+.ls-mi2-q.is-on{border-color:var(--mi-accent);background:rgba(178,74,78,.06);color:var(--ls-ink)}
+.ls-mi2-qa-answer{border-left-color:var(--mi-accent);background:rgba(178,74,78,.045);font-size:14.5px;padding:10px 12px}
+.ls-mi2-right{display:block}
+.ls-mi2-mary{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:20px;align-items:stretch;min-height:340px;border:0;background:#fff;box-shadow:none;padding:0}
+.ls-mi2-room{height:100%;min-height:320px;border-radius:18px}
+.ls-mi2-mary-text{display:flex;flex-direction:column;justify-content:center;gap:10px}
+.ls-mi2-mary b{font-size:28px;color:var(--ls-ink)}
+.ls-mi2-mary p{font-size:15.5px;line-height:1.55;max-width:none}
+.ls-mi2-reveal{font-size:11px;padding:10px 14px}
+.ls-mi2-spectrum{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);grid-template-areas:"fig head" "fig lead";gap:16px 20px;align-items:start;border:0;background:#fff;box-shadow:none;padding:0}
+.ls-mi2-spectrum-head{grid-area:head;display:flex;flex-direction:column;gap:3px}
+.ls-mi2-spectrum-head span{color:var(--mi-accent)}
+.ls-mi2-spectrum-head b{font-size:28px;color:var(--ls-ink)}
+.ls-mi2-spectrum-lead{grid-area:lead;margin:0;font-size:15.5px;line-height:1.6;color:var(--ls-soft);max-width:none}
+.ls-mi2-spectrum-fig{grid-area:fig;margin:0;border-radius:18px;overflow:hidden;background:var(--ls-paper-2)}
+.ls-mi2-spectrum-fig img{display:block;width:100%;height:100%;max-height:380px;object-fit:cover;border-radius:18px}
+.ls-mi2-spectrum-fig figcaption{padding:8px 10px;font-size:9px}
+@media (max-width:900px){
+  .ls-mi2-qualia .ls-mi2-head{padding-right:0}
+  .ls-mi2-qualia .ls-mi2-orb{position:relative;right:auto;top:auto;width:90px;height:90px;margin-left:auto}
+  .ls-mi2-problems{grid-template-columns:1fr}
+  .ls-mi2[data-stage="mary"] .ls-mi2-mary,.ls-mi2[data-stage="inverted"] .ls-mi2-spectrum{grid-template-columns:1fr;grid-template-areas:"head" "lead" "fig"}
+  .ls-mi2-room{min-height:220px}
+  .ls-mi2-qa-questions{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

@@ -715,10 +715,363 @@ footer a:hover{color:var(--ochre)}
   </div>
 </footer>
 <script>
-/*@@JS1@@*/
-/*@@JS2@@*/
-/*@@JS3@@*/
-/*@@JS4@@*/
+const $ = (s, root = document) => root.querySelector(s);
+const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+
+const G = [11, 13, 17, 19];
+const D_ORIG = [11, 21, 19, 9];
+const D_ADJ = [21, 11, 19, 9];
+
+const M_STAGES = [
+  [[3, 6], [4, 8], [4, 9], [5, 7]],
+  [[4, 8], [3, 6], [4, 9], [5, 7]],
+  [[4, 8], [4, 6], [4, 9], [4, 7]]
+];
+
+const ROWS = [
+  { g: 11, d: 21, sec: 4, prim: 8 },
+  { g: 13, d: 11, sec: 4, prim: 6 },
+  { g: 17, d: 19, sec: 4, prim: 9 },
+  { g: 19, d: 9, sec: 4, prim: 7 }
+];
+
+const PATTERN = [9, 11, 13, 17, 19, 21];
+const PAIRS = { 9: 21, 21: 9, 11: 19, 19: 11, 13: 17, 17: 13 };
+
+const state = {
+  dSwapped: false,
+  mStage: 0,
+  numSel: null,
+  pairMode: false,
+  rowSel: 0,
+  storyStep: 0
+};
+
+function ticks(n, sm = false) {
+  return `<span class="ticks ${sm ? 'sm' : ''}">${'<i></i>'.repeat(n)}</span>`;
+}
+
+function pairCls(n) {
+  if (n === 9 || n === 21) return 'p0';
+  if (n === 11 || n === 19) return 'p1';
+  if (n === 13 || n === 17) return 'p2';
+  if (n === 15) return 'p3';
+  return '';
+}
+
+function dupCls(n) {
+  return n === 11 ? 'dup-a' : n === 19 ? 'dup-b' : '';
+}
+
+function buildHeroTicks() {
+  const g = $('#heroTicks');
+  if (!g) return;
+  const cols = [
+    { x: 155, groups: [5, 6, 5, 7] },
+    { x: 285, groups: [5, 7, 4, 6] },
+    { x: 415, groups: [4, 5, 4, 6] }
+  ];
+  let html = '';
+  cols.forEach(col => {
+    col.groups.forEach((n, row) => {
+      const y = 104 + row * 16;
+      const start = col.x - (n - 1) * 2.5;
+      for (let i = 0; i < n; i++) {
+        html += `<line x1="${start + i * 5}" y1="${y - 5}" x2="${start + i * 5}" y2="${y + 5}"/>`;
+      }
+    });
+  });
+  g.innerHTML = html;
+}
+
+function renderNumline() {
+  const box = $('#numline');
+  if (!box) return;
+  const partner = state.numSel != null && PATTERN.includes(state.numSel) ? PAIRS[state.numSel] : null;
+  box.innerHTML = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21].map(n => {
+    let cls = 'numchip';
+    if (!PATTERN.includes(n)) cls += ' out';
+    if (n === 15) cls += ' special';
+    if (n === state.numSel) cls += ' sel';
+    else if (n === partner) cls += ' partner';
+    if (state.pairMode) cls += ' ' + pairCls(n);
+    return `<button type="button" class="${cls}" data-n="${n}">${n}</button>`;
+  }).join('');
+}
+
+function updateNumStatus() {
+  const el = $('#numStatus');
+  if (!el) return;
+  const n = state.numSel;
+  if (n == null) {
+    el.innerHTML = 'Klicke auf eine Zahl, um ihr Gegenstück zu finden.';
+    return;
+  }
+  if (n === 15) {
+    el.innerHTML = '<b style="color:var(--ochre)">15</b> ist der Mittelwert der Reihe 9, 11, 13, 17, 19, 21: 90 ÷ 6 = 15. Genau diese Zahl fehlt in G und D – und kehrt in Spalte M zurück.';
+    return;
+  }
+  if (PATTERN.includes(n)) {
+    el.innerHTML = `<b>${n}</b> + <b>${PAIRS[n]}</b> = <b style="color:var(--teal)">30</b> &nbsp;·&nbsp; Gegenstück gefunden.`;
+    return;
+  }
+  el.innerHTML = `<b>${n}</b> ist gerade und gehört nicht zum Muster. G und D nutzen nur ungerade bzw. Primzahlen – außer 15.`;
+}
+function renderGD() {
+  const rowsEl = $('#gdRows');
+  if (!rowsEl) return;
+  const d = state.dSwapped ? D_ADJ : D_ORIG;
+
+  rowsEl.innerHTML = G.map((gv, i) => {
+    const dv = d[i];
+    const sum = gv + dv;
+    return `<div class="gd-cell left ${dupCls(gv)}">${ticks(gv, true)}<b>${gv}</b></div>
+      <div class="gd-sum ${state.dSwapped ? 'ok' : 'warn'}">${sum}</div>
+      <div class="gd-cell right ${dupCls(dv)}"><b>${dv}</b>${ticks(dv, true)}</div>`;
+  }).join('');
+
+  const gOuter = G[0] + G[3], gInner = G[1] + G[2];
+  const dOuter = d[0] + d[3], dInner = d[1] + d[2];
+  $('#gdTags').innerHTML = `
+    <div class="tagcol"><span class="tag good">außen ${G[0]}+${G[3]}=${gOuter}</span><span class="tag good">innen ${G[1]}+${G[2]}=${gInner}</span></div>
+    <div></div>
+    <div class="tagcol"><span class="tag ${dOuter === 30 ? 'good' : 'bad'}">außen ${d[0]}+${d[3]}=${dOuter}</span><span class="tag ${dInner === 30 ? 'good' : 'bad'}">innen ${d[1]}+${d[2]}=${dInner}</span></div>`;
+
+  $('#gdNote').innerHTML = state.dSwapped
+    ? '<b style="color:var(--teal)">Ausgerichtet:</b> Die Zeilensummen sind 32, 24, 36, 28 – als Menge <b>24, 28, 32, 36</b> (Schritt +4). Die doppelten Zahlen 11 und 19 liegen jetzt diagonal.'
+    : '<b style="color:var(--rose)">Original:</b> Die Zeilensummen 22, 34, 36, 28 und die D-Paare (außen 20, innen 40) passen nicht. Erst der Tausch 11 ↔ 21 macht die Symmetrie sichtbar.';
+
+  const btn = $('#swapD');
+  if (btn) {
+    btn.setAttribute('aria-pressed', String(state.dSwapped));
+    btn.textContent = state.dSwapped ? 'Zurück zum Original' : '11 ↔ 21 tauschen';
+  }
+  const ex = $('#swapExplain');
+  if (ex) {
+    ex.innerHTML = state.dSwapped
+      ? 'Ausgerichtet: In D ergeben jetzt <b>außen 21+9</b> und <b>innen 11+19</b> jeweils <b>30</b>.'
+      : 'Im Original ergeben die Paare in D <b>20</b> (außen) und <b>40</b> (innen) – keine Symmetrie.';
+  }
+}
+
+const M_TEXT = [
+  'Original: (3,6) · (4,8) · (4,9) · (5,7). Das Paar (4,9) ist beschädigt – die Kerben könnten auch 5 und 10 gewesen sein.',
+  'Spiegelung des Tauschs aus Spalte D: Das erste Paar (3,6) wechselt mit (4,8) den Platz.',
+  'Eine Einheit wandert von der 5 zur 3: Jetzt sind alle Sekundärzahlen 4. Die Primärzahlen sind 6, 7, 8, 9.'
+];
+
+function renderM() {
+  const pairs = M_STAGES[state.mStage];
+  const cards = pairs.map(([sec, prim], i) => `
+    <div class="mcard ${state.mStage === 2 && sec === 4 ? 'good' : ''}">
+      <div class="mcard-head">Paar ${i + 1}</div>
+      <div class="mline"><span class="mlab">Sek.</span><b>${sec}</b>${ticks(sec, true)}</div>
+      <div class="mline"><span class="mlab">Pri.</span><b>${prim}</b>${ticks(prim, true)}</div>
+    </div>`).join('');
+  $('#mCards').innerHTML = cards;
+  $('#mStageText').innerHTML = M_TEXT[state.mStage];
+
+  const res = $('#mResult');
+  if (state.mStage === 2) {
+    res.hidden = false;
+    res.innerHTML = '<b>15 kehrt zurück:</b> 8 + 7 = 15 und 6 + 9 = 15, zusammen 30. Die Primärzahlen {6,7,8,9} bilden wieder ein 30er-Paar.';
+  } else {
+    res.hidden = true;
+    res.innerHTML = '';
+  }
+
+  $$('.stepbtn').forEach(b => b.classList.toggle('active', +b.dataset.stage === state.mStage));
+}
+function renderArith() {
+  const body = $('#arithBody');
+  if (!body) return;
+  body.innerHTML = ROWS.map((r, i) => {
+    const sum = r.g + r.d;
+    return `<tr data-row="${i}" tabindex="0" class="${i === state.rowSel ? 'active' : ''}">
+      <td>${i + 1}</td>
+      <td>${r.g}</td>
+      <td>${r.d}</td>
+      <td class="hl">${sum}</td>
+      <td>${r.sec} × ${r.prim}</td>
+      <td class="hl">${r.sec * r.prim}</td>
+      <td>${sum} ÷ ${r.prim} = ${r.sec}</td>
+    </tr>`;
+  }).join('');
+  updateRowDetail();
+}
+
+function updateRowDetail() {
+  const i = state.rowSel, r = ROWS[i], sum = r.g + r.d;
+  const el = $('#rowDetail');
+  if (!el) return;
+  el.innerHTML = `<div class="rd-top">Reihe ${i + 1}</div>
+    <div class="rd-eq">${r.g} + ${r.d} = <span class="hl">${sum}</span> = ${r.sec} × ${r.prim}</div>
+    <div class="rd-sub">${sum} ÷ ${r.prim} = ${r.sec} &nbsp;·&nbsp; ${sum} ÷ ${r.sec} = ${r.prim}</div>`;
+}
+
+const STORY = [
+  {
+    t: 'Der Ausgangspunkt',
+    d: 'Auf dem Knochen stehen 16 Notch-Gruppen in drei Spalten. Die Kerben sind die Partitur – noch liegt kein Stein auf dem Boden.',
+    v: `<div class="mini-cols">
+          <div class="mini-col"><b>G</b><span>11 · 13 · 17 · 19</span></div>
+          <div class="mini-col"><b>D</b><span>11 · 21 · 19 · 9</span></div>
+          <div class="mini-col"><b>M</b><span>Rückseite, 8 Gruppen</span></div>
+        </div>`
+  },
+  {
+    t: 'Gleiche Mengen zeigen',
+    d: 'Die Sekundärzahlen in M sind 3, 4, 4, 5. Außen 3+5=8, innen 4+4=8. Bewegt man eine Einheit von der 5 zur 3, sind alle vier gleich.',
+    v: `<div class="mini-chips">
+          <span class="mini-chip hot">3</span><span class="mini-chip">4</span><span class="mini-chip">4</span><span class="mini-chip hot">5</span>
+          <span class="arrow">→</span>
+          <span class="mini-chip cool">4</span><span class="mini-chip cool">4</span><span class="mini-chip cool">4</span><span class="mini-chip cool">4</span>
+        </div>
+        <div class="mini-note">3 + 5 = 8 · 4 + 4 = 8 · nach dem Verschieben: 4 = 4</div>`
+  },
+  {
+    t: 'Plus und Minus',
+    d: 'Mit der Sekundärzahl 4 lassen sich aus den Primärzahlen 6, 7, 8, 9 zwei lückenlose Reihen legen – nach unten und nach oben.',
+    v: `<div class="mini-chips"><span class="mini-chip cool">2</span><span class="mini-chip cool">3</span><span class="mini-chip cool">4</span><span class="mini-chip cool">5</span><span class="arrow">← −4</span><span class="mini-chip">6</span><span class="mini-chip">7</span><span class="mini-chip">8</span><span class="mini-chip">9</span></div>
+        <div class="mini-chips"><span class="mini-chip">6</span><span class="mini-chip">7</span><span class="mini-chip">8</span><span class="mini-chip">9</span><span class="arrow">+4 →</span><span class="mini-chip hot">10</span><span class="mini-chip hot">11</span><span class="mini-chip hot">12</span><span class="mini-chip hot">13</span></div>`
+  },
+  {
+    t: 'Kosmos trifft Mathematik',
+    d: 'Die Paare aus D und M werden verschoben. So werden die beiden Erzählstränge verbunden: die Himmelszyklen (G, D) und die reine Rechenkunst (M).',
+    v: `<div class="mini-cols">
+          <div class="mini-col"><b>G + D</b><span>Kosmos · Zyklen · Zeit</span></div>
+          <div class="mini-col"><b>M</b><span>Mathematik · Rechnen</span></div>
+        </div>
+        <div class="mini-note">Zwei Handbewegungen genügen – so könnte die Vorführung ausgesehen haben.</div>`
+  },
+  {
+    t: 'Die Acht am Himmel',
+    d: 'Die Zeilensummen bilden eine Figur-8-Struktur. Sie erinnert an die Sonnenanalemma: vier Wendepunkte, je etwa 90 Tage auseinander.',
+    v: `<svg viewBox="0 0 120 160" style="width:86px;align-self:center" aria-hidden="true">
+          <path d="M60,10 C88,30 90,64 60,80 C30,96 32,130 60,150 C88,130 90,96 60,80 C30,64 32,30 60,10 Z" fill="none" stroke="#e6ad4a" stroke-width="2"/>
+        </svg>
+        <div class="mini-note">Zwei Solstitien, zwei Äquinoktien – zusammen 4 × 90 = 360.</div>`
+  },
+  {
+    t: 'Mal und geteilt',
+    d: 'Jetzt kommen die Zeilensummen ins Spiel: Sie sind das Produkt der M-Paare. Teilt man sie geschickt, kommen die Faktoren zurück.',
+    v: `<div class="mini-eq">32 = 4 × 8</div>
+        <div class="mini-note">32 ÷ 8 = 4 &nbsp;·&nbsp; 32 ÷ 4 = 8</div>
+        <div class="mini-note">Dasselbe funktioniert für 24, 36 und 28.</div>`
+  },
+  {
+    t: 'Das Finale',
+    d: 'Fünf 30er-Gruppen ergeben 150. Im 30-Tage-Kalender sind das fünf Monate – vielleicht ein zweiter Himmelsmarker nach dem Neujahr.',
+    v: `<div class="mini-big">5 × 30 = 150</div>
+        <div class="mini-note">150 Tage = fünf Monate zu 30 Tagen. Danach könnte ein zweiter Beobachtungspunkt folgen – etwa die Sonnenwende.</div>`
+  }
+];
+
+function renderStory() {
+  const s = STORY[state.storyStep];
+  $('#storyCount').textContent = `Schritt ${state.storyStep + 1} / ${STORY.length}`;
+  $('#storyCard').innerHTML = `<h3>${s.t}</h3><p>${s.d}</p><div class="story-visual">${s.v}</div>`;
+  $('#storyDots').innerHTML = STORY.map((_, i) =>
+    `<button class="dotbtn ${i === state.storyStep ? 'active' : ''}" data-i="${i}" aria-label="Schritt ${i + 1}"></button>`
+  ).join('');
+}
+function init() {
+  buildHeroTicks();
+  renderNumline();
+  updateNumStatus();
+  renderGD();
+  renderM();
+  renderArith();
+  renderStory();
+
+  const numline = $('#numline');
+  if (numline) {
+    numline.addEventListener('click', e => {
+      const b = e.target.closest('.numchip');
+      if (!b) return;
+      const n = Number(b.dataset.n);
+      state.numSel = state.numSel === n ? null : n;
+      renderNumline();
+      updateNumStatus();
+    });
+  }
+
+  const pairBtn = $('#pairBtn');
+  if (pairBtn) {
+    pairBtn.addEventListener('click', () => {
+      state.pairMode = !state.pairMode;
+      pairBtn.setAttribute('aria-pressed', String(state.pairMode));
+      pairBtn.textContent = state.pairMode ? 'Farben ausblenden' : 'Paare farbig zeigen';
+      renderNumline();
+    });
+  }
+
+  const swapD = $('#swapD');
+  if (swapD) {
+    swapD.addEventListener('click', () => {
+      state.dSwapped = !state.dSwapped;
+      renderGD();
+    });
+  }
+
+  $$('.stepbtn').forEach(b => {
+    b.addEventListener('click', () => {
+      state.mStage = Number(b.dataset.stage);
+      renderM();
+    });
+  });
+
+  const body = $('#arithBody');
+  if (body) {
+    const selectRow = tr => {
+      if (!tr) return;
+      state.rowSel = Number(tr.dataset.row);
+      renderArith();
+    };
+    body.addEventListener('click', e => selectRow(e.target.closest('tr')));
+    body.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectRow(e.target.closest('tr'));
+      }
+    });
+  }
+
+  const prev = $('#storyPrev');
+  const next = $('#storyNext');
+  const dots = $('#storyDots');
+  if (prev) prev.addEventListener('click', () => {
+    state.storyStep = (state.storyStep - 1 + STORY.length) % STORY.length;
+    renderStory();
+  });
+  if (next) next.addEventListener('click', () => {
+    state.storyStep = (state.storyStep + 1) % STORY.length;
+    renderStory();
+  });
+  if (dots) dots.addEventListener('click', e => {
+    const b = e.target.closest('.dotbtn');
+    if (!b) return;
+    state.storyStep = Number(b.dataset.i);
+    renderStory();
+  });
+
+  const links = $$('.nav a.navlink');
+  const sections = links
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id));
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    sections.forEach(s => io.observe(s));
+  }
+}
+
+init();
 </script>
 </body>
 </html>
