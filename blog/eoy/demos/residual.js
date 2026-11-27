@@ -815,7 +815,7 @@
       if (streamNote) {
         streamNote.hidden = phase !== "stream";
         streamNote.textContent = phase === "stream"
-          ? (DE ? "Hellblau: vorherige Outputs. Dunkelblau: Transformer-Block (Attention + FFN). LN (Post-LN): Nach jeder Addition folgt LayerNorm; GPT-2/Pre-LN normalisiert die Kopie vor Attention/FFN und am Ende (Vaswani et al., 2017; Xiong et al., 2020)." : "Light blue: previous outputs. Dark blue: transformer block (attention + FFN). LN (post-LN): LayerNorm follows each addition; GPT-2/pre-LN normalizes the copy before attention/FFN and at the end (Vaswani et al., 2017; Xiong et al., 2020).")
+          ? (DE ? "Hellblau: vorherige Outputs. Dunkelblau: Transformer-Block. Grün: nach LayerNorm. Zwei Schritte pro Block: 1) Addition (bleibt additiv, auch mit negativen Werten), 2) LayerNorm: Mittelwert 0, auf [-1,1] skaliert. Post-LN hier; GPT-2/Pre-LN normalisiert die Kopie vor Attention/FFN und am Ende (Vaswani et al., 2017; Xiong et al., 2020)." : "Light blue: previous outputs. Dark blue: transformer block. Green: after LayerNorm. Two steps per block: 1) addition (still additive, even with negative values), 2) LayerNorm: mean 0, scaled to [-1,1]. Post-LN here; GPT-2/pre-LN normalizes the copy before attention/FFN and at the end (Vaswani et al., 2017; Xiong et al., 2020).")
           : "";
       }
       if (phase === "notebook") {
@@ -1060,8 +1060,12 @@
           var d = h.i;
           var base = baseShown[d] || 0, attn = attnShown[d] || 0, ffn = ffnShown[d] || 0;
           var n = streamLayer;
-          var eq = n === 0 ? "x0 = 0" : "x" + n + " = x" + (n - 1) + " + A" + n + " + F" + n;
-          return eq + " · d" + (d + 1) + " " + base.toFixed(2) + " + " + attn.toFixed(2) + " + " + ffn.toFixed(2) + " = " + (base + attn + ffn).toFixed(2);
+          var raw = base + attn + ffn;
+          if (normStep === 1) {
+            return "LN(x" + n + ") · d" + (d + 1) + ": " + raw.toFixed(2) + " → " + normShown[d].toFixed(2) + (DE ? " (Mittelwert 0)" : " (mean 0)");
+          }
+          var eq = n === 0 ? "Start" : "x" + n + " = x" + (n - 1) + " + A" + n + " + F" + n;
+          return eq + " · d" + (d + 1) + " " + base.toFixed(2) + " + " + attn.toFixed(2) + " + " + ffn.toFixed(2) + " = " + raw.toFixed(2);
         }
       }
       return DE ? "Balken: vorherige Outputs plus Transformer-Block pro Dimension. Fahre über einen Balken." : "Bars: previous outputs plus transformer block per dimension. Hover a bar.";

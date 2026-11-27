@@ -505,6 +505,13 @@
       demoState: { scene: "residual" },
       inherit: false,
       questionGroups: [
+        {
+          id: "g-lens-layernorm",
+          title: DE ? "LayerNorm" : "LayerNorm",
+          questions: [
+            { id: "q-ln-preln-postln", title: DE ? "Post-LN oder Pre-LN?" : "Post-LN or pre-LN?", body: DE ? "Hier ist **Post-LN**: $x \\leftarrow \\operatorname{LN}(x + \\text{Block}(x))$. Es gibt auch **Pre-LN**: $x \\leftarrow x + \\text{Block}(\\operatorname{LN}(x))$ plus eine finale LayerNorm (z. B. GPT-2). LayerNorm zentriert den Vektor auf Mittelwert 0 und skaliert ihn; dadurch wachsen die Werte nicht unbegrenzt. Die Addition bleibt additiv, auch wenn die Werte nach der Normierung negativ sind." : "Here it is **post-LN**: $x \\leftarrow \\operatorname{LN}(x + \\text{block}(x))$. There is also **pre-LN**: $x \\leftarrow x + \\text{block}(\\operatorname{LN}(x))$ plus a final LayerNorm (e.g. GPT-2). LayerNorm centres the vector on mean 0 and scales it, so the values do not grow without bound. The addition stays additive, even when the values are negative after normalization.", tex: "", kind: "question" }
+          ]
+        },
         { id: "g-sources", title: DE ? "Quellen" : "Sources", sources: residualLayerSources }
       ]
     }
@@ -517,6 +524,13 @@
       demoState: { scene: "residual" },
       inherit: false,
       questionGroups: [
+        {
+          id: "g-lens-layernorm",
+          title: DE ? "LayerNorm" : "LayerNorm",
+          questions: [
+            { id: "q-ln-preln-postln", title: DE ? "Post-LN oder Pre-LN?" : "Post-LN or pre-LN?", body: DE ? "Hier ist **Post-LN**: $x \\leftarrow \\operatorname{LN}(x + \\text{Block}(x))$. Es gibt auch **Pre-LN**: $x \\leftarrow x + \\text{Block}(\\operatorname{LN}(x))$ plus eine finale LayerNorm (z. B. GPT-2). LayerNorm zentriert den Vektor auf Mittelwert 0 und skaliert ihn; dadurch wachsen die Werte nicht unbegrenzt. Die Addition bleibt additiv, auch wenn die Werte nach der Normierung negativ sind." : "Here it is **post-LN**: $x \\leftarrow \\operatorname{LN}(x + \\text{block}(x))$. There is also **pre-LN**: $x \\leftarrow x + \\text{block}(\\operatorname{LN}(x))$ plus a final LayerNorm (e.g. GPT-2). LayerNorm centres the vector on mean 0 and scales it, so the values do not grow without bound. The addition stays additive, even when the values are negative after normalization.", tex: "", kind: "question" }
+          ]
+        },
         { id: "g-sources", title: DE ? "Quellen" : "Sources", sources: residualLayerSources }
       ]
     }
