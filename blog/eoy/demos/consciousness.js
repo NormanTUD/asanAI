@@ -92,8 +92,8 @@
           L("4E Cognition beschreibt Denken als biologische und situierte Tätigkeit. Ein LLM lebt nur in der Extended-Dimension: Textwerkzeug, aber ohne Körper, Welt und Handlung.", "4E Cognition describes thinking as a biological and situated activity. An LLM lives only in the extended dimension: a text tool without a body, world, or action.")
         ],
         cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
-        hint: L("Weiter aktiviert die vier E's. KI zeigt, welche davon fehlen; beobachte, was „heiß“ beim Menschen verankert.", "Next activates the four E's. AI shows which are missing; watch what anchors “hot” for a human."),
-        status: L("Mensch: 1 von 4 aktiv. Weiter aktiviert Embedded.", "Human: 1 of 4 active. Next activates Embedded."),
+        hint: L("Alle vier E's sind beim Menschen gleichzeitig aktiv. Weiter zeigt die KI: nur Extended.", "All four E's are active in the human at once. Next shows the AI: Extended only."),
+        status: L("Mensch: 4 von 4 aktiv. Die vier Dimensionen sind gekoppelt. Weiter zeigt die KI.", "Human: 4 of 4 active. The four dimensions are coupled. Next shows the AI."),
       },
       {
         key: "myst", tone: "lilac",
@@ -148,7 +148,7 @@
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false };
     var kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 };
-    var four = { mode: "human", focus: 0, word: "hot", active: 1 };
+    var four = { mode: "human", word: "hot" };
     var FOUR_E = [
       { key: "embodied", label: "Embodied", subDe: "Körper", subEn: "Body", noteDe: "Sinne, Schmerz, Motorik: Denken ist an einen Körper gebunden.", noteEn: "Senses, pain, motor control: thought is tied to a body.", missingDe: "kein Körper, kein Nervensystem", missingEn: "no body, no nervous system", color: "#ffb36b" },
       { key: "embedded", label: "Embedded", subDe: "Welt", subEn: "World", noteDe: "Physische und soziale Lage: Denken findet in einer Welt statt.", noteEn: "Physical and social situation: thought happens in a world.", missingDe: "keine geteilte physische Welt", missingEn: "no shared physical world", color: "#7fe0b0" },
@@ -248,7 +248,7 @@
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false }; setStatus(THEORIES[2].status); }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 }; setStatus(THEORIES[3].status); }
-      if (active === 4) { four = { mode: "human", focus: 0, word: "hot" }; setStatus(THEORIES[4].status); }
+      if (active === 4) { four = { mode: "human", word: "hot" }; setStatus(THEORIES[4].status); }
       if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }
       renderControls(); draw(performance.now());
     }
@@ -702,8 +702,7 @@
       ctx.restore();
     }
     function fourCard(x, y, cw, ch, e, i) {
-      var on = four.mode === "ai" ? i === 3 : i < four.active;
-      var focus = four.focus === i;
+      var on = four.mode === "ai" ? i === 3 : true;
       ctx.save();
       rr(x, y, cw, ch, 12);
       var g = ctx.createLinearGradient(x, y, x, y + ch);
@@ -711,11 +710,9 @@
       g.addColorStop(1, on ? "rgba(241,251,252,.94)" : "rgba(255,255,255,.48)");
       ctx.fillStyle = g;
       ctx.fill();
-      ctx.strokeStyle = focus ? "#9f9700" : on ? e.color : "rgba(0,75,111,.18)";
-      ctx.lineWidth = focus ? 2 : 1;
-      if (focus) { ctx.shadowColor = "rgba(159,151,0,.22)"; ctx.shadowBlur = 9; }
+      ctx.strokeStyle = on ? e.color : "rgba(0,75,111,.18)";
+      ctx.lineWidth = 1;
       ctx.stroke();
-      ctx.shadowBlur = 0;
       ctx.beginPath(); ctx.arc(x + 15, y + ch / 2, 7, 0, Math.PI * 2);
       ctx.fillStyle = on ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.5)";
       ctx.fill();
@@ -869,7 +866,7 @@
       horizon.addColorStop(0, "rgba(0,146,153,0)"); horizon.addColorStop(1, "rgba(0,146,153,.08)");
       ctx.fillStyle = horizon; ctx.fillRect(0, bodyY + 54, lw, h - bodyY - 54);
       pos.forEach(function (p, i) {
-        fourLink(bodyX, bodyY, p.x + cardW / 2, p.y + cardH / 2, FOUR_E[i].color, four.mode === "ai" ? i === 3 : i < four.active, ai);
+        fourLink(bodyX, bodyY, p.x + cardW / 2, p.y + cardH / 2, FOUR_E[i].color, four.mode === "ai" ? i === 3 : true, ai);
       });
       if (panelW > 110) {
         var beamEnd = ai ? bodyX + 56 : bodyX;
@@ -1032,9 +1029,7 @@
     }
     function fourStatusText() {
       if (four.mode === "ai") return L("KI: 1 von 4. Extended ist aktiv; Embodied, Embedded und Enacted fehlen.", "AI: 1 of 4. Extended is active; Embodied, Embedded and Enacted are missing.");
-      if (four.active >= 4) return L("Mensch: 4 von 4 aktiv. Alle vier Dimensionen sind gekoppelt.", "Human: 4 of 4 active. All four dimensions are coupled.");
-      var next = FOUR_E[four.active].label;
-      return L("Mensch: " + four.active + " von 4 aktiv. Weiter aktiviert " + next + ".", "Human: " + four.active + " of 4 active. Next activates " + next + ".");
+      return L("Mensch: 4 von 4 aktiv. Alle vier Dimensionen sind gleichzeitig gekoppelt.", "Human: 4 of 4 active. All four dimensions are coupled at once.");
     }
     function fourWordStatus() {
       var w = FOUR_WORDS[four.word];
@@ -1044,19 +1039,7 @@
     }
     function fourSetMode(mode) {
       four.mode = mode === "ai" ? "ai" : "human";
-      four.active = 4;
-      four.focus = 3;
       setStatus(fourStatusText());
-      renderControls();
-      draw(performance.now());
-    }
-    function fourSetFocus(i) {
-      four.focus = clamp(i, 0, 3);
-      if (four.mode !== "ai") four.active = Math.max(four.active, four.focus + 1);
-      var e = FOUR_E[four.focus];
-      setStatus(four.mode === "ai"
-        ? L(e.label + ": " + e.missingDe, e.label + ": " + e.missingEn)
-        : L(e.label + ": " + e.noteDe, e.label + ": " + e.noteEn));
       renderControls();
       draw(performance.now());
     }
@@ -1068,13 +1051,8 @@
       draw(performance.now());
     }
     function fourNextAction() {
-      if (four.mode === "ai") return false;
-      if (four.active < 4) {
-        four.active++;
-        four.focus = four.active - 1;
-        setStatus(fourStatusText());
-        renderControls();
-        draw(performance.now());
+      if (four.mode !== "ai") {
+        fourSetMode("ai");
         return true;
       }
       return false;
@@ -1109,9 +1087,6 @@
             '<button type="button" class="ls-con2-chip' + (four.mode === "human" ? " is-on" : "") + '" data-four-mode="human">' + L("Mensch", "Human") + '</button>' +
             '<button type="button" class="ls-con2-chip' + (four.mode === "ai" ? " is-on" : "") + '" data-four-mode="ai">' + L("KI", "AI") + '</button>' +
           '</div>' +
-          '<div class="ls-con2-row">' + FOUR_E.map(function (e, i) {
-            return '<button type="button" class="ls-con2-chip' + (four.focus === i ? " is-on" : "") + '" data-four-focus="' + i + '" style="--chip:' + e.color + '">' + e.label + '</button>';
-          }).join("") + '</div>' +
           '<div class="ls-con2-row">' + Object.keys(FOUR_WORDS).map(function (k) {
             return '<button type="button" class="ls-con2-chip' + (four.word === k ? " is-on" : "") + '" data-four-word="' + k + '">' + L(FOUR_WORDS[k].de, FOUR_WORDS[k].en) + '</button>';
           }).join("") + '</div>' +
@@ -1175,9 +1150,6 @@
       controls.querySelectorAll("[data-four-mode]").forEach(function (b) {
         b.addEventListener("click", function () { fourSetMode(b.getAttribute("data-four-mode")); });
       });
-      controls.querySelectorAll("[data-four-focus]").forEach(function (b) {
-        b.addEventListener("click", function () { fourSetFocus(parseInt(b.getAttribute("data-four-focus"), 10) || 0); });
-      });
       controls.querySelectorAll("[data-four-word]").forEach(function (b) {
         b.addEventListener("click", function () { fourSetWord(b.getAttribute("data-four-word")); });
       });
@@ -1225,7 +1197,7 @@
     }
     function setTheory(i) {
       active = clamp(i, 0, THEORIES.length - 1);
-      if (active === 4) four = { mode: "human", focus: 0, word: "hot", active: 1 };
+      if (active === 4) four = { mode: "human", word: "hot" };
       activeSince = performance.now();
       renderChrome();
       renderControls();
