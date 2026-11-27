@@ -305,11 +305,14 @@
     function heroHTML(e, accent) {
       var style = '--history-accent:' + accent + ';';
       if (e.images && e.images.length) {
-        var main = e.images[0], second = e.images[1];
+        var images = e.images.slice(0, 3);
+        var main = images[0];
         var caption = '<span>' + api.esc(main.cap) + '</span> <a href="' + api.esc(main.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a>';
-        return '<figure class="ls-time-hero" style="' + style + '">' +
-          '<img class="ls-time-hero-img" src="' + api.esc(main.src) + '" alt="' + api.esc(main.alt) + '" loading="lazy" decoding="async">' +
-          (second ? '<img class="ls-time-hero-inset" src="' + api.esc(second.src) + '" alt="' + api.esc(second.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(second.cap) + '">' : '') +
+        var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "");
+        return '<figure class="ls-time-hero is-media" style="' + style + '">' +
+          '<div class="' + gridClass + '">' + images.map(function (im, i) {
+            return '<img class="ls-time-hero-img' + (i === 0 ? ' is-main' : ' is-side') + '" src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(im.cap) + '">';
+          }).join("") + '</div>' +
           '<span class="ls-time-hero-year">' + api.esc(e.year) + '</span>' +
           '<figcaption class="ls-time-hero-caption">' + caption + '</figcaption>' +
         '</figure>';
