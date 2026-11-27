@@ -3304,9 +3304,9 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 .ls-con2-navhint{position:absolute;right:0;top:2px;font:700 9px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted);border:1px solid var(--ls-line);border-radius:999px;padding:5px 8px;background:rgba(255,255,255,.7)}
 .ls-con2-stage{width:100%}
 
-.ls-con2-stage{position:relative;flex:0 0 auto;height:clamp(260px,32vh,380px);border:1px solid var(--ls-line);border-radius:16px;background:radial-gradient(80% 80% at 25% 15%,rgba(255,255,255,.92),transparent 65%),var(--ls-paper);box-shadow:0 14px 34px rgba(0,35,50,.07);overflow:hidden}
+.ls-con2-stage{position:relative;flex:0 0 auto;height:clamp(320px,40vh,480px);border:1px solid var(--ls-line);border-radius:16px;background:radial-gradient(80% 80% at 25% 15%,rgba(255,255,255,.92),transparent 65%),var(--ls-paper);box-shadow:0 14px 34px rgba(0,35,50,.07);overflow:hidden}
 .ls-con2[data-theory="myst"] .ls-con2-stage{background:#04070d;border-color:rgba(0,75,111,.35)}
-.ls-con2[data-theory="workspace"] .ls-con2-stage{height:clamp(320px,44vh,460px)}
+.ls-con2[data-theory="workspace"] .ls-con2-stage{height:clamp(380px,50vh,560px)}
 .ls-con2-canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 .ls-con2-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;border:1px solid var(--ls-line);border-radius:14px;background:linear-gradient(180deg,#fff,var(--ls-paper-2));padding:9px 12px;box-shadow:0 8px 22px rgba(0,35,50,.05);flex:0 0 auto}
 .ls-con2-row{display:flex;flex-wrap:wrap;gap:5px}
