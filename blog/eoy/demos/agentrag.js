@@ -13,8 +13,8 @@
     var STEPS = [
       L("Datei", "File"),
       L("Scan", "Scan"),
-      L("Frage", "Question"),
-      L("Winkel", "Angles")
+      L("Winkel", "Angles"),
+      L("Antwort", "Answer")
     ];
 
     var IMG = {
@@ -268,7 +268,7 @@
     var railTip = el.querySelector(".ls-rag-rail-tip");
     bindRailTips();
 
-    var state = { step: AGENT_RAG_LAST_STEP, timers: [], pickerOpen: false, textFitted: false };
+    var state = { step: AGENT_RAG_LAST_STEP, timers: [], pickerOpen: false, textFitted: false, anglesShown: false, answerShown: false };
 
     function clearTimers() {
       state.timers.forEach(function (id) { clearTimeout(id); });
@@ -323,17 +323,20 @@
       state.textFitted = true;
     }
 
-    function resetChunkStates() {
-      docEl.classList.remove("is-angling");
+    function resetChunkStates(keepAngles) {
+      if (!keepAngles) docEl.classList.remove("is-angling");
       Array.prototype.forEach.call(docEl.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
-        chunk.classList.remove("is-angle-in", "is-fit", "is-out", "is-context");
+        chunk.classList.remove("is-context");
+        if (!keepAngles) chunk.classList.remove("is-angle-in", "is-fit", "is-out");
       });
       Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-rail-row"), function (row) {
-        row.classList.remove("is-angle-in", "is-fit", "is-out", "is-context");
+        row.classList.remove("is-context");
+        if (!keepAngles) row.classList.remove("is-angle-in", "is-fit", "is-out");
       });
     }
 
-    function restoreStepThree() {
+    function restoreAngles() {
+      state.anglesShown = true;
       docEl.classList.add("is-angling");
       ARTICLE.paragraphs.forEach(function (p) {
         var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + p.id + '"]');
@@ -348,16 +351,12 @@
           row.classList.toggle("is-fit", fit);
           row.classList.toggle("is-out", !fit);
         }
-        if (SELECTED.indexOf(p.id) >= 0) {
-          if (chunk) chunk.classList.add("is-context");
-          if (row) row.classList.add("is-context");
-        }
       });
-      selfCheck();
-      requestAnimationFrame(drawCitationArrows);
     }
 
-    function stepThree() {
+    function stepTwoAngles() {
+      state.anglesShown = true;
+      state.answerShown = false;
       docEl.classList.add("is-angling");
       ARTICLE.paragraphs.forEach(function (p, i) {
         state.timers.push(setTimeout(function () {
@@ -379,16 +378,35 @@
             row.classList.toggle("is-out", !fit);
           }
         });
-        SELECTED.forEach(function (id) {
-          var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + id + '"]');
-          var row = el.querySelector('.ls-rag-rail-row[data-c="' + id + '"]');
-          if (chunk) chunk.classList.add("is-context");
-          if (row) row.classList.add("is-context");
-        });
         selfCheck();
       }, 1900));
-      state.timers.push(setTimeout(function () { flySelectedChunks(); }, 2100));
-      state.timers.push(setTimeout(function () { selfCheck(); }, 2400));
+      state.timers.push(setTimeout(function () { selfCheck(); }, 2300));
+    }
+
+    function addContextToChunks() {
+      SELECTED.forEach(function (id) {
+        var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + id + '"]');
+        var row = el.querySelector('.ls-rag-rail-row[data-c="' + id + '"]');
+        if (chunk) chunk.classList.add("is-context");
+        if (row) row.classList.add("is-context");
+      });
+    }
+
+    function restoreContext() {
+      restoreAngles();
+      addContextToChunks();
+      showAnswer();
+      requestAnimationFrame(drawCitationArrows);
+      selfCheck();
+    }
+
+    function stepThreeContext() {
+      restoreAngles();
+      addContextToChunks();
+      state.timers.push(setTimeout(flySelectedChunks, 200));
+      state.timers.push(setTimeout(function () { showAnswer(); }, 1000));
+      state.timers.push(setTimeout(function () { drawCitationArrows(); selfCheck(); }, 1150));
+      state.timers.push(setTimeout(function () { selfCheck(); }, 1700));
     }
     function clearFlyCards() {
       Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-fly-card"), function (c) { c.remove(); });
@@ -486,6 +504,7 @@
       });
     }
     function showAnswer() {
+      state.answerShown = true;
       typingEl.hidden = true;
       answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite" data-cite="4815" tabindex="0">[4815]</span><span class="ls-rag-cite" data-cite="4816" tabindex="0">[4816]</span>';
       bindCiteHover();
@@ -510,12 +529,13 @@
     function setChat() {
       var hasFile = state.step >= 1;
       var hasQuestion = state.step >= 2;
-      var hasAnswer = state.step >= 2;
+      var hasAnswer = state.step >= 3 && state.answerShown;
+      var thinking = state.step >= 3 && !state.answerShown;
       emptyEl.hidden = hasFile;
       fileMsg.hidden = !hasFile;
       questionMsg.hidden = !hasQuestion;
-      aiMsg.hidden = !hasAnswer;
-      typingEl.hidden = true;
+      aiMsg.hidden = !(hasAnswer || thinking);
+      typingEl.hidden = !thinking;
       answerEl.textContent = "";
       if (hasFile) {
         fileStatus.textContent = state.step === 1
@@ -523,6 +543,7 @@
           : L("Antwort bereit", "answer ready");
       }
       if (hasAnswer) showAnswer();
+      else if (thinking) answerEl.innerHTML = '<span class="ls-rag-partial">' + esc(L("Kontext geprüft, Antwort folgt …", "Context checked, answer follows …")) + '</span>';
     }
 
     function selectFile() {
