@@ -54,12 +54,16 @@
       ringState: "bleibt unten",
       demoBadge: "Schematische Demo · keine Messung",
       backTitle: "Rückprojektion nach 2D",
-      backCard: "W₂ projiziert beide Bedeutungen zurück in den ursprünglichen 2D-Raum. Weil die Muster vorher unterschiedlich getrennt und gedreht wurden, landen sie an verschiedenen Orten: „Schloss“ als Gebäude anders als „Schloss“ als Türverschluss.",
+      backCard: "Oben sind die Bedeutungen noch gemischt. Im höherdimensionalen Raum werden sie getrennt und gedreht; W₂ projiziert sie danach unterschiedlich in den ursprünglichen 2D-Raum.",
       backTag: "W₂ · zurück nach 2D",
       backReplay: "Nochmal",
       backLeft: "Gebäude · Turm · Graben",
       backRight: "Tür · Schlüssel · Metall",
+      backMixed: "2D · gemischt",
+      backHighDim: "höherdimensional getrennt + gedreht",
+      backSide: "3D · von der Seite",
       back2d: "ursprünglicher 2D-Raum",
+      back2dSeparated: "2D · getrennt",
       backW2: "W₂ projiziert zurück"
     } : {
       fruitTitle: "I ate the apple",
@@ -84,14 +88,22 @@
       ringState: "stays below",
       demoBadge: "Schematic demo · not a measurement",
       backTitle: "Back-projection to 2D",
-      backCard: "W₂ projects both meanings back into the original 2D space. Because the patterns were separated and rotated differently, they land in different places: apple the fruit in one place, Apple the company in another.",
+      backCard: "At the top the meanings are still mixed. In the higher-dimensional space they are separated and rotated; W₂ then projects them back differently into the original 2D space.",
       backTag: "W₂ · back to 2D",
       backReplay: "Replay",
       backLeft: "fruit · red · sweet",
       backRight: "company · laptop · iPhone",
+      backMixed: "2D · mixed",
+      backHighDim: "separated + rotated in higher dimensions",
+      backSide: "3D · side view",
       back2d: "original 2D space",
+      back2dSeparated: "2D · separated",
       backW2: "W₂ projects back"
     };
+    function mathInline(tex) {
+      var safe = api.esc(tex);
+      return '<span class="ls-math ls-math--inline" data-tex="' + safe + '" data-tex-display="false"><code class="ls-tex-source">' + safe + '</code></span>';
+    }
     var el = document.createElement("div");
     el.className = "ls-ffn-scene";
     el.innerHTML =
@@ -110,9 +122,10 @@
           '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Beides sind vollverbundene Schichten: W₁ hebt den Vektor auf d_ff, W₂ projiziert ihn zurück auf d_model. Das FFN arbeitet pro Token." : "Both are dense layers: W₁ lifts the vector to d_ff, W₂ projects it back to d_model. The FFN works per token.") + '</p></div>' +
-      '<details class="ls-ffn-more"><summary>' + (DE ? "Mehr zur Geometrie" : "More on the geometry") + '</summary><p class="ls-ffn-caveat">' + (DE ? "Die Punkte sind symbolisch: Im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen noch höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The points are symbolic: in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p></details>';
+      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Beides sind vollverbundene Schichten: " + mathInline("W_1") + " hebt den Vektor auf " + mathInline("d_{\\text{ff}}") + ", " + mathInline("W_2") + " projiziert ihn zurück auf " + mathInline("d_{\\text{model}}") + ". Das FFN arbeitet pro Token." : "Both are dense layers: " + mathInline("W_1") + " lifts the vector to " + mathInline("d_{\\text{ff}}") + ", " + mathInline("W_2") + " projects it back to " + mathInline("d_{\\text{model}}") + ". The FFN works per token.") + '</p></div>';
     root.appendChild(el);
+    var dimsCaption = el.querySelector(".ls-ffn-dims-caption");
+    if (dimsCaption && api.typeset) { try { api.typeset(dimsCaption); } catch (e) {} }
     var contextsEl = el.querySelector(".ls-ffn-contexts");
     var coreStateEl = el.querySelector(".ls-ffn-bend-legend span:nth-child(1) small");
     var ringStateEl = el.querySelector(".ls-ffn-bend-legend span:nth-child(2) small");
@@ -423,20 +436,149 @@
     function drawBackProjection(cx, cy, scale) {
       var w = size.w, h = size.h;
       var t = ease(clamp(backT, 0, 1));
-      var gx0 = w * 0.12, gx1 = w * 0.88, gy0 = h * 0.62, gy1 = h * 0.92;
+      var rise = ease(clamp((t - 0.10) / 0.50, 0, 1));
+      var bot = ease(clamp((t - 0.55) / 0.45, 0, 1));
       var font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       var fontBold = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
+      var top = { x: cx, y: h * 0.16 };
+      var mid = { x: cx, y: h * 0.46 };
+      var groundY = h * 0.54;
+      var liftedY = lerp(groundY, h * 0.37, rise);
+      var gx0 = w * 0.12, gx1 = w * 0.88, gy0 = h * 0.66, gy1 = h * 0.94;
+      var tgtA = { x: gx0 + (gx1 - gx0) * 0.28, y: gy0 + (gy1 - gy0) * 0.52 };
+      var tgtB = { x: gx0 + (gx1 - gx0) * 0.72, y: gy0 + (gy1 - gy0) * 0.42 };
+      function outline(x, y, rx, ry, angle, color, alpha) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle || 0);
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+      function cluster(x, y, rx, ry, angle, color, alpha) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        for (var k = 0; k < 26; k++) {
+          var a = k * 2.399963229728653;
+          var rr = Math.sqrt((k + 0.5) / 26);
+          ctx.beginPath();
+          ctx.arc(Math.cos(a) * rr * rx, Math.sin(a) * rr * ry, 1.7, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = alpha * (0.45 + 0.5 * (1 - rr));
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      function mixedEgg(x, y, rx, ry, alpha) {
+        outline(x, y, rx, ry, 0, C.line, 0.6 * alpha);
+        outline(x, y, rx * 0.36, ry * 0.36, 0, C.line, 0.4 * alpha);
+        for (var k = 0; k < 84; k++) {
+          var a = k * 2.399963229728653;
+          var inner = k < 34;
+          var rr = inner ? 0.32 * Math.sqrt((k + 0.5) / 34) : 0.55 + 0.40 * Math.sqrt((k - 34 + 0.5) / 50);
+          ctx.beginPath();
+          ctx.arc(x + Math.cos(a) * rr * rx, y + Math.sin(a) * rr * ry, 1.7, 0, Math.PI * 2);
+          ctx.fillStyle = k % 2 ? C.gold : C.green;
+          ctx.globalAlpha = alpha * (0.45 + 0.5 * (1 - rr));
+          ctx.fill();
+        }
+      }
+      function arrow(x0, y0, x1, y1, color, prog) {
+        var x = lerp(x0, x1, prog), y = lerp(y0, y1, prog);
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.5;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.stroke();
+        if (prog > 0.04) {
+          var ang = Math.atan2(y1 - y0, x1 - x0);
+          ctx.globalAlpha = 0.85;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x - Math.cos(ang - 0.45) * 8, y - Math.sin(ang - 0.45) * 8);
+          ctx.lineTo(x - Math.cos(ang + 0.45) * 8, y - Math.sin(ang + 0.45) * 8);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      ctx.save();
+      ctx.fillStyle = C.soft;
+      ctx.globalAlpha = 0.9;
+      ctx.font = fontBold;
+      ctx.textAlign = "center";
+      ctx.fillText(labels.backMixed, cx, h * 0.05);
+      ctx.restore();
+      mixedEgg(top.x, top.y, w * 0.18, h * 0.055, 1);
+      ctx.save();
+      ctx.strokeStyle = C.line;
+      ctx.globalAlpha = 0.25;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(cx, groundY, w * 0.20, h * 0.045, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx - w * 0.23, groundY); ctx.lineTo(cx + w * 0.23, groundY); ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.strokeStyle = C.lineStrong;
+      ctx.fillStyle = C.muted;
+      ctx.globalAlpha = 0.6;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx - w * 0.25, groundY); ctx.lineTo(cx - w * 0.25, h * 0.33); ctx.stroke();
+      ctx.font = font;
+      ctx.textAlign = "left";
+      ctx.fillText("z", cx - w * 0.25 - 12, h * 0.34);
+      ctx.fillText("x", cx + w * 0.23, groundY + 14);
+      ctx.restore();
+      var planeY = (groundY + liftedY) / 2;
+      var planeAlpha = Math.max(0, Math.min(1, (rise - 0.35) / 0.65));
+      if (planeAlpha > 0.01) {
+        ctx.save();
+        ctx.strokeStyle = C.petrol;
+        ctx.globalAlpha = 0.55 * planeAlpha;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(cx - w * 0.22, planeY); ctx.lineTo(cx + w * 0.22, planeY); ctx.stroke();
+        ctx.fillStyle = C.petrol;
+        ctx.globalAlpha = planeAlpha;
+        ctx.font = font;
+        ctx.textAlign = "right";
+        ctx.fillText(labels.plane, cx + w * 0.22, planeY - 7);
+        ctx.restore();
+      }
+      ctx.save();
+      ctx.fillStyle = C.petrol;
+      ctx.globalAlpha = 0.85;
+      ctx.font = fontBold;
+      ctx.textAlign = "center";
+      ctx.fillText(labels.backHighDim, cx, h * 0.30);
+      ctx.font = font;
+      ctx.globalAlpha = 0.65;
+      ctx.fillText(labels.backSide, cx, h * 0.34);
+      ctx.restore();
+      var midAlpha = 0.25 + 0.75 * rise;
+      outline(cx, groundY, w * 0.16, h * 0.040, 0, C.gold, 0.55 * midAlpha);
+      cluster(cx, groundY, w * 0.15, h * 0.038, 0.15, C.gold, 0.55 + 0.35 * midAlpha);
+      outline(cx, liftedY, w * 0.085, h * 0.026, 0, C.green, 0.65 * midAlpha);
+      cluster(cx, liftedY, w * 0.075, h * 0.023, -0.25, C.green, 0.55 + 0.45 * midAlpha);
+      arrow(top.x - 6, top.y, mid.x, groundY, C.gold, rise);
+      arrow(top.x + 6, top.y, mid.x, liftedY, C.green, rise);
       ctx.save();
       ctx.strokeStyle = C.line;
       ctx.globalAlpha = 0.20;
       ctx.lineWidth = 1;
-      for (var i = 0; i <= 6; i++) {
-        var gx = gx0 + (gx1 - gx0) * i / 6;
-        ctx.beginPath(); ctx.moveTo(gx, gy0); ctx.lineTo(gx, gy1); ctx.stroke();
+      for (var gx = 0; gx <= 6; gx++) {
+        var xLine = gx0 + (gx1 - gx0) * gx / 6;
+        ctx.beginPath(); ctx.moveTo(xLine, gy0); ctx.lineTo(xLine, gy1); ctx.stroke();
       }
-      for (var j = 0; j <= 4; j++) {
-        var gy = gy0 + (gy1 - gy0) * j / 4;
-        ctx.beginPath(); ctx.moveTo(gx0, gy); ctx.lineTo(gx1, gy); ctx.stroke();
+      for (var gy = 0; gy <= 4; gy++) {
+        var yLine = gy0 + (gy1 - gy0) * gy / 4;
+        ctx.beginPath(); ctx.moveTo(gx0, yLine); ctx.lineTo(gx1, yLine); ctx.stroke();
       }
       ctx.strokeStyle = C.lineStrong;
       ctx.globalAlpha = 0.55;
@@ -448,71 +590,48 @@
       ctx.textAlign = "left";
       ctx.fillText("x", gx1 - 10, gy1 - 6);
       ctx.fillText("y", gx0 - 14, gy0 + 8);
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.petrol;
-      ctx.globalAlpha = 0.75;
-      ctx.fillText(labels.back2d, cx, gy0 - 8);
-      ctx.globalAlpha = 0.9;
-      ctx.font = fontBold;
-      ctx.fillText(labels.backW2, cx, h * 0.10);
       ctx.restore();
-      var srcA = { x: cx - 74, y: h * 0.24 };
-      var srcB = { x: cx + 80, y: h * 0.19 };
-      var tgtA = { x: gx0 + (gx1 - gx0) * 0.30, y: gy0 + (gy1 - gy0) * 0.55 };
-      var tgtB = { x: gx0 + (gx1 - gx0) * 0.72, y: gy0 + (gy1 - gy0) * 0.40 };
-      function arrow(x0, y0, x1, y1, color, prog) {
-        var x = lerp(x0, x1, prog), y = lerp(y0, y1, prog);
-        ctx.save();
-        ctx.strokeStyle = color;
-        ctx.fillStyle = color;
-        ctx.globalAlpha = 0.55;
-        ctx.lineWidth = 1.6;
-        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.stroke();
-        if (prog > 0.04) {
-          var ang = Math.atan2(y1 - y0, x1 - x0);
-          ctx.globalAlpha = 0.85;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x - Math.cos(ang - 0.45) * 9, y - Math.sin(ang - 0.45) * 9);
-          ctx.lineTo(x - Math.cos(ang + 0.45) * 9, y - Math.sin(ang + 0.45) * 9);
-          ctx.closePath();
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-      arrow(srcA.x, srcA.y, tgtA.x, tgtA.y, C.green, t);
-      arrow(srcB.x, srcB.y, tgtB.x, tgtB.y, C.gold, t);
-      function cloud(x, y, rx, ry, angle, color, alpha) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(angle);
-        for (var k = 0; k < 22; k++) {
-          var a = k * 2.399963229728653;
-          var rr = Math.sqrt((k + 0.5) / 22);
-          ctx.beginPath();
-          ctx.arc(Math.cos(a) * rr * rx, Math.sin(a) * rr * ry, 1.6, 0, Math.PI * 2);
-          ctx.fillStyle = color;
-          ctx.globalAlpha = alpha * (0.45 + 0.5 * (1 - rr));
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-      cloud(srcA.x, srcA.y, 34, 18, -0.2, C.green, 0.75);
-      cloud(srcB.x, srcB.y, 36, 20, 0.35, C.gold, 0.75);
-      var rev = Math.max(0, Math.min(1, (t - 0.25) / 0.75));
-      cloud(tgtA.x, tgtA.y, 26, 13, -0.35, C.green, 0.15 + 0.75 * rev);
-      cloud(tgtB.x, tgtB.y, 28, 12, 0.45, C.gold, 0.15 + 0.75 * rev);
       ctx.save();
-      ctx.globalAlpha = rev;
+      ctx.fillStyle = C.petrol;
+      ctx.globalAlpha = 0.8 * bot;
+      ctx.font = fontBold;
+      ctx.textAlign = "center";
+      ctx.fillText(labels.back2dSeparated, cx, gy0 - 10);
+      ctx.restore();
+      var gapX = (tgtA.x + tgtB.x) / 2;
+      ctx.save();
+      ctx.strokeStyle = C.petrol;
+      ctx.globalAlpha = 0.35 * bot;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(gapX, gy0 + 6); ctx.lineTo(gapX, gy1 - 4); ctx.stroke();
+      ctx.restore();
+      var targetAlpha = 0.15 + 0.85 * bot;
+      outline(tgtA.x, tgtA.y, w * 0.085, h * 0.030, -0.35, C.green, 0.6 * targetAlpha);
+      cluster(tgtA.x, tgtA.y, w * 0.075, h * 0.028, -0.35, C.green, targetAlpha);
+      outline(tgtB.x, tgtB.y, w * 0.085, h * 0.030, 0.45, C.gold, 0.6 * targetAlpha);
+      cluster(tgtB.x, tgtB.y, w * 0.075, h * 0.028, 0.45, C.gold, targetAlpha);
+      arrow(mid.x, liftedY, tgtA.x, tgtA.y, C.green, bot);
+      arrow(mid.x, groundY, tgtB.x, tgtB.y, C.gold, bot);
+      ctx.save();
+      ctx.fillStyle = C.soft;
+      ctx.globalAlpha = 0.8 * bot;
+      ctx.font = fontBold;
+      ctx.textAlign = "right";
+      ctx.fillText(labels.backW2, w - 18, h * 0.585);
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = bot;
       ctx.font = font;
       ctx.textAlign = "center";
+      var labelOffset = Math.max(18, h * 0.055);
       ctx.fillStyle = C.green;
-      ctx.fillText(labels.backLeft, tgtA.x, tgtA.y + 30);
+      ctx.fillText(labels.backLeft, tgtA.x, tgtA.y + labelOffset);
       ctx.fillStyle = C.gold;
-      ctx.fillText(labels.backRight, tgtB.x, tgtB.y + 30);
+      ctx.fillText(labels.backRight, tgtB.x, tgtB.y + labelOffset);
       ctx.restore();
       bendProjected = [];
-      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion beider Bedeutungen in den ursprünglichen 2D-Raum. Die Punktwolken landen an unterschiedlichen Orten mit unterschiedlicher Ausrichtung." : "Back-projection of both meanings into the original 2D space. The point clouds land in different places with different orientations.");
+      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion: oben gemischte Egg-Verteilung, in der Mitte als 3D-Seitenansicht getrennt und gedreht, unten zwei klar getrennte 2D-Ergebnisse." : "Back-projection: mixed egg-shaped distribution at the top, separated and rotated in a 3D side view in the middle, two clearly separated 2D results at the bottom.");
     }
     function updateBendReadout() {
       if (activeMode === "back") {
@@ -573,7 +692,7 @@
     });
     function drawDims() {
       if (!dimsCanvas || !dimsCanvas.parentNode) return;
-      dimsSize = api.fit(dimsCanvas, dimsCanvas.parentNode);
+      dimsSize = api.fit(dimsCanvas, dimsCanvas);
       var g = dimsSize.ctx, w = dimsSize.w, h = dimsSize.h;
       g.clearRect(0, 0, w, h);
       g.fillStyle = C.paper; g.fillRect(0, 0, w, h);
@@ -600,32 +719,13 @@
         g.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; g.textAlign = "center";
         g.fillText(a[2], w * ((a[0] + a[1]) / 2), h * 0.50 - 6);
       });
-      var activeColor = activeMode === "fruit" ? C.green : C.gold;
-      var dots = 10;
-      for (var d = 0; d < dots; d++) {
-        var t = (dimsPhase + d / dots) % 1;
-        var dx, dy;
-        if (t < 0.5) dx = w * (0.16 + 0.34 * (t / 0.5));
-        else dx = w * (0.50 + 0.34 * ((t - 0.5) / 0.5));
-        dy = h * 0.5 + Math.sin(d * 1.7 + dimsPhase * Math.PI * 2) * h * 0.06;
-        g.beginPath(); g.arc(dx, dy, 2.2, 0, Math.PI * 2);
-        g.fillStyle = activeColor; g.globalAlpha = 0.8; g.fill();
-      }
       g.globalAlpha = 1;
       dimsCanvas.setAttribute("aria-label", DE ? "Eingabe d_model, verborgene d_ff und Ausgabe d_model als Balken." : "Input d_model, hidden d_ff and output d_model as bars.");
     }
     function pulseDims() {
       if (dimsRaf) cancelAnimationFrame(dimsRaf);
-      var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) { dimsPhase = 0.5; drawDims(); return; }
-      var t0 = performance.now();
-      function frame(now) {
-        var t = (now - t0) / 1100;
-        dimsPhase = t % 1;
-        drawDims();
-        if (t < 1.15) dimsRaf = requestAnimationFrame(frame); else dimsRaf = 0;
-      }
-      dimsRaf = requestAnimationFrame(frame);
+      dimsPhase = 0;
+      drawDims();
     }
     bendCanvas.addEventListener("pointermove", function (e) {
       if (!size) return;
