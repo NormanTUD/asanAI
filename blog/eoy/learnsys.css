@@ -6779,3 +6779,16 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-fx .ls-bs-fx-stage p{font-size:10.5px}
 .ls-fx .ls-fx-output{gap:8px;padding:14px 16px}
 .ls-fx .ls-fx-stage{gap:18px;min-height:320px}
+
+/* White surface for the hallucination lab. */
+.ls-stage:has(#ls-demo[data-scene="hallucinationtypes"]){background:#fff !important}
+.ls-hx-scene{background:#fff}
+.ls-hx-chatcol{background:#fff}
+.ls-hx-verifycol{background:#fff}
+.ls-hx-measure{background:#fff}
+.ls-highdim-card{position:relative}
+.ls-highdim-tip{position:absolute;z-index:6;display:inline-flex;align-items:baseline;gap:6px;padding:4px 7px;border:1px solid var(--ls-line-strong);background:var(--ls-paper);box-shadow:0 12px 26px -16px rgba(0,20,30,.45);font:600 10px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-petrol);pointer-events:none;white-space:nowrap}
+.ls-highdim-tip[hidden]{display:none}
+.ls-highdim-tip b{font:700 11px/1.2 "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-highdim-tip span{font:600 9px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-muted)}
+.ls-highdim-tip em{font-style:normal;font-weight:700;color:var(--ls-green-deep,var(--ls-green))}

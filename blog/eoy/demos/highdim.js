@@ -39,7 +39,7 @@
       var cells = "";
       for (var j = 0; j < DIMS; j++) {
         var v = value(ti, j);
-        cells += '<div class="ls-highdim-cell" data-token="' + ti + '" data-dim="' + j + '" style="background:' + cellColor(v) + '" title="' + esc(tokenLabel(tok.t)) + ' · d' + (j + 1) + ' = ' + valueText(ti, j) + '"></div>';
+        cells += '<div class="ls-highdim-cell" data-token="' + ti + '" data-dim="' + j + '" style="background:' + cellColor(v) + '"></div>';
       }
       return '<div class="ls-highdim-row' + (ti === selected ? " is-on" : "") + '" data-token="' + ti + '"><div class="ls-highdim-row-label"><span>' + esc(tokenLabel(tok.t)) + '</span><small>' + tok.id + '</small></div>' + cells + '</div>';
     }
@@ -61,9 +61,31 @@
         '<div class="ls-highdim-card-head"><b>' + esc(DE ? "16 von 4096 Dimensionen" : "16 of 4,096 dimensions") + '</b><span>' + esc(DE ? "Farbe = Wert · Klick = Token" : "colour = value · click = token") + '</span></div>' +
         '<div class="ls-highdim-grid">' + head + tokens.map(function (tok, ti) { return rowHTML(tok, ti); }).join("") + '</div>' +
         '<div class="ls-highdim-foot">' + esc(DE ? "… 4080 weitere Dimensionen" : "… 4,080 more dimensions") + '</div>' +
+        '<div class="ls-highdim-tip" hidden></div>' +
       '</div>';
     root.appendChild(el);
     var selectedEl = el.querySelector(".ls-highdim-selected");
+    var tipEl = el.querySelector(".ls-highdim-tip");
+    function showTip(cell) {
+      if (!tipEl) return;
+      var ti = parseInt(cell.getAttribute("data-token"), 10);
+      var d = parseInt(cell.getAttribute("data-dim"), 10);
+      var tok = tokens[ti];
+      if (!tok) return;
+      tipEl.innerHTML = '<b>' + esc(tok.name || tokenLabel(tok.t)) + '</b><span>d' + (d + 1) + '</span><em>' + valueText(ti, d) + '</em>';
+      tipEl.hidden = false;
+      var card = tipEl.parentNode;
+      var cr = card.getBoundingClientRect();
+      var rr = cell.getBoundingClientRect();
+      var left = rr.left - cr.left + rr.width / 2 - tipEl.offsetWidth / 2;
+      var top = rr.top - cr.top - tipEl.offsetHeight - 7;
+      if (top < 0) top = rr.bottom - cr.top + 7;
+      tipEl.style.left = Math.max(4, Math.min(cr.width - tipEl.offsetWidth - 4, left)) + "px";
+      tipEl.style.top = top + "px";
+    }
+    function hideTip() {
+      if (tipEl) tipEl.hidden = true;
+    }
     function showSelected(ti) {
       selected = ti;
       el.querySelectorAll(".ls-highdim-row[data-token]").forEach(function (row) {
@@ -77,6 +99,8 @@
         '<div class="ls-highdim-chips">' + chips.join("") + '</div>';
     }
     el.querySelectorAll(".ls-highdim-cell").forEach(function (cell) {
+      cell.addEventListener("mouseenter", function () { showTip(cell); });
+      cell.addEventListener("mouseleave", hideTip);
       cell.addEventListener("click", function () { showSelected(parseInt(cell.getAttribute("data-token"), 10)); });
     });
     showSelected(selected);
