@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LayerNorm im Transformer: Warum Pre-LN das Warm-up überflüssig macht</title>
+<meta name="description" content="Visuelle Kurzfassung von Xiong et al., On Layer Normalization in the Transformer Architecture (arXiv:2002.04745). Was LayerNorm macht, warum die Position zählt und wieso Pre-LN ohne Warm-up trainiert.">
+<style>
+  :root{
+    --bg:#070b14; --bg-2:#0b1224;
+    --panel:rgba(18,26,48,.72); --panel-2:rgba(10,16,32,.86);
+    --ink:#eef2ff; --muted:#a3afc9; --faint:#6f7d9e;
+    --line:rgba(150,180,255,.12); --line-2:rgba(150,180,255,.22);
+    --grid:rgba(150,180,255,.11);
+    --teal:#5eead4; --cyan:#5ad1ff; --amber:#ffd166; --rose:#ff8fb1; --violet:#a78bfa;
+    --good:#5eead4; --bad:#ff8fa3;
+    --shadow:0 1px 2px rgba(0,0,0,.42),0 30px 70px -42px rgba(0,0,0,.95);
+    --radius:20px;
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace;
+  }
+  [data-theme="light"]{
+    --bg:#f6f7fb; --bg-2:#e9edf6;
+    --panel:rgba(255,255,255,.82); --panel-2:rgba(255,255,255,.93);
+    --ink:#161b33; --muted:#56607b; --faint:#8791aa;
+    --line:rgba(25,40,85,.12); --line-2:rgba(25,40,85,.22);
+    --grid:rgba(25,40,85,.10);
+    --teal:#0f766e; --cyan:#0e7490; --amber:#a16207; --rose:#b3245a; --violet:#6d28d9;
+    --good:#0f766e; --bad:#c0392b;
+    --shadow:0 1px 2px rgba(40,50,90,.06),0 26px 64px -34px rgba(40,50,90,.4);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;font-family:var(--sans);color:var(--ink);line-height:1.65;
+    background:
+      radial-gradient(1100px 760px at 82% -12%,rgba(90,209,255,.10),transparent 62%),
+      radial-gradient(900px 700px at -8% 22%,rgba(167,139,250,.09),transparent 62%),
+      radial-gradient(1000px 800px at 50% 118%,rgba(255,143,177,.07),transparent 62%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
+  }
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  a:hover{border-color:var(--cyan)}
+  strong,b{font-weight:650;color:var(--ink)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+  .progress{position:fixed;inset:0 0 auto;height:3px;z-index:60;pointer-events:none}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--rose))}
+  .theme-btn{position:fixed;top:16px;right:16px;z-index:61;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line-2);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(10px);transition:color .2s,border-color .2s,transform .2s}
+  .theme-btn:hover{color:var(--ink);border-color:var(--cyan);transform:translateY(-1px)}
+  .theme-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+
+  .hero{padding:clamp(72px,11vw,132px) 0 40px}
+  .hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:clamp(26px,5vw,64px);align-items:center}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);display:inline-flex;align-items:center;gap:10px;margin-bottom:20px}
+  .kicker::before{content:"";width:32px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.35rem,5.6vw,4.3rem);line-height:1.03;letter-spacing:-.025em;margin:0 0 .35em}
+  h1 .grad{background:linear-gradient(100deg,var(--cyan),var(--violet) 55%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){h1 .grad{color:var(--ink)}}
+  .lede{font-size:clamp(1.02rem,1.5vw,1.2rem);color:var(--muted);max-width:46ch;margin:0 0 24px}
+  .byline{font-size:.82rem;color:var(--faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:24px}
+  .cta{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;color:var(--bg);background:linear-gradient(100deg,var(--cyan),var(--teal));border:none;border-radius:999px;padding:12px 20px;cursor:pointer;box-shadow:0 14px 32px -16px rgba(90,209,255,.6);transition:transform .2s}
+  [data-theme="light"] .cta{color:#f7fbff}
+  .cta:hover{transform:translateY(-2px)}
+
+  .hero-card{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .mini-head{display:flex;justify-content:space-between;align-items:baseline;font-size:.74rem;color:var(--muted);margin:2px 2px 6px}
+  .mini-head .mono{font-family:var(--mono);color:var(--faint);font-size:.7rem}
+  .mini-arrow{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin:10px 2px}
+  .mini-arrow::before,.mini-arrow::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--line-2))}
+  .mini-arrow::after{background:linear-gradient(90deg,var(--line-2),transparent)}
+  canvas{display:block;width:100%}
+  .mini{height:74px;border-radius:10px;background:color-mix(in srgb,var(--bg) 62%,transparent)}
+  @supports not (background:color-mix(in srgb,red,blue)){.mini{background:var(--bg-2)}}
+
+  .tldr{padding:8px 0 10px}
+  .tldr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .tldr-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 14px 13px;box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,border-color .25s}
+  .tldr-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--cyan),var(--rose));opacity:.7}
+  .tldr-card:hover{transform:translateY(-4px);border-color:var(--line-2)}
+  .tldr-num{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--cyan);margin-bottom:8px}
+  .tldr-card h3{font-family:var(--serif);font-weight:600;font-size:.98rem;margin:0 0 5px;letter-spacing:-.01em}
+  .tldr-card p{margin:0;color:var(--muted);font-size:.78rem;line-height:1.5}
+
+  .section{padding:clamp(46px,7vw,84px) 0;border-top:1px solid var(--line)}
+  .section-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .sec-num{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--cyan);white-space:nowrap}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.85rem,3.5vw,2.7rem);line-height:1.08;letter-spacing:-.02em;margin:0}
+  .section-sub{color:var(--muted);max-width:64ch;margin:12px 0 24px;font-size:clamp(.98rem,1.3vw,1.06rem)}
+  .prose{max-width:70ch}
+  .prose p{margin:0 0 14px;color:var(--muted);font-size:1rem}
+  .prose p:last-child{margin-bottom:0}
+  .prose b{color:var(--ink)}
+
+  .formula-card{margin:24px 0;padding:clamp(18px,3vw,28px);border:1px solid var(--line-2);border-radius:18px;background:linear-gradient(120deg,rgba(90,209,255,.08),rgba(255,143,177,.07));text-align:center}
+  .formula-kicker{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .formula{font-family:var(--serif);font-size:clamp(1.2rem,2.6vw,1.65rem);line-height:1.5;letter-spacing:.01em}
+  .formula .op{color:var(--cyan)}
+  .formula sub{font-size:.62em}
+  .formula-note{font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;color:var(--faint);margin-top:10px}
+
+  .demo{margin-top:24px;padding:clamp(16px,2.4vw,26px);background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .demo-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.18rem;letter-spacing:-.01em}
+  .demo-sub{color:var(--muted);font-size:.82rem;margin-top:3px}
+  .demo canvas{border-radius:12px;background:color-mix(in srgb,var(--bg) 55%,transparent)}
+  @supports not (background:color-mix(in srgb,red,blue)){.demo canvas{background:var(--bg-2)}}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;margin-top:16px}
+  .ctl{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+  .ctl-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .ctl-label b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line-2);outline:none;cursor:pointer;accent-color:var(--cyan)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg);box-shadow:0 0 0 4px rgba(90,209,255,.16)}
+  input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg)}
+  input[type="range"]:focus-visible{outline:2px solid var(--cyan);outline-offset:6px}
+  .readout{display:flex;flex-wrap:wrap;gap:12px 26px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+  .readout b{font-family:var(--serif);font-size:1.18rem;color:var(--cyan);font-weight:600;margin-left:4px}
+  .readout .big b{color:var(--amber)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+  .legend-item{display:inline-flex;align-items:center;gap:7px}
+  .legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .legend .bar{width:16px;height:3px;border-radius:2px;display:inline-block}
+
+  .arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+  .arch-card{padding:14px 14px 10px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--bg) 52%,transparent)}
+  @supports not (background:color-mix(in srgb,red,blue)){.arch-card{background:var(--bg-2)}}
+  .arch-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+  .arch-title{font-family:var(--serif);font-weight:600;font-size:1rem}
+  .arch-tag{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .arch-sub{color:var(--muted);font-size:.76rem;line-height:1.45;margin:2px 2px 0}
+
+  .note{border-left:3px solid var(--amber);background:rgba(255,209,102,.06);border-radius:0 12px 12px 0;padding:13px 16px;margin-top:20px;font-size:.9rem;color:var(--muted)}
+  .note b{color:var(--ink)}
+  .caption{color:var(--faint);font-size:.78rem;line-height:1.55;margin-top:12px}
+  .caption b{color:var(--muted);font-weight:600}
+
+  .formula-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 6px}
+  .formula-chip{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--panel);font-family:var(--serif);font-size:1.02rem;text-align:center;color:var(--ink)}
+  .formula-chip small{display:block;font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+  .formula-chip .hl{color:var(--amber)}
+  .formula-chip .hl2{color:var(--teal)}
+
+  .segmented{display:inline-flex;background:var(--bg);border:1px solid var(--line-2);border-radius:999px;padding:3px;gap:2px}
+  .seg{border:none;background:transparent;color:var(--muted);font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;padding:7px 12px;border-radius:999px;cursor:pointer;transition:color .18s,background .18s}
+  .seg:hover{color:var(--ink)}
+  .seg.active{background:var(--cyan);color:var(--bg);font-weight:600}
+  [data-theme="light"] .seg.active{color:#f7fbff}
+  .seg:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-top:12px}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch-track{width:48px;height:27px;border-radius:999px;background:var(--line-2);position:relative;transition:background .2s;flex:0 0 auto}
+  .switch-thumb{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
+  .switch input:checked + .switch-track{background:var(--cyan)}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(21px);background:var(--bg)}
+  .switch input:focus-visible + .switch-track{outline:2px solid var(--cyan);outline-offset:3px}
+
+  .status{margin-top:14px;padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}
+  .status-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .status-title{font-family:var(--serif);font-weight:600;font-size:1.05rem}
+  .status-metric{font-family:var(--mono);font-size:.78rem;font-weight:700;white-space:nowrap}
+  .status-text{color:var(--muted);font-size:.83rem;margin-top:3px}
+  .status.good{border-color:rgba(94,234,212,.35)}
+  .status.good .status-title,.status.good .status-metric{color:var(--good)}
+  .status.bad{border-color:rgba(255,143,163,.38)}
+  .status.bad .status-title,.status.bad .status-metric{color:var(--bad)}
+  .status.neutral .status-metric{color:var(--amber)}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:26px 0 0}
+  .stat{position:relative;padding:18px 16px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),var(--rose))}
+  .stat-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+  .stat-value{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.4rem);line-height:1;letter-spacing:-.02em;color:var(--ink)}
+  .stat-value small{font-family:var(--sans);font-size:.4em;letter-spacing:.02em;color:var(--muted);font-weight:500}
+  .stat-text{color:var(--muted);font-size:.78rem;line-height:1.5;margin-top:8px}
+
+  .final-card{padding:clamp(22px,4vw,38px);border:1px solid var(--line-2);border-radius:22px;background:linear-gradient(120deg,rgba(90,209,255,.08),rgba(167,139,250,.08) 55%,rgba(255,143,177,.07));box-shadow:var(--shadow)}
+  .final-card h3{font-family:var(--serif);font-weight:600;font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.15;letter-spacing:-.02em;margin:0 0 12px}
+  .final-card p{color:var(--muted);margin:0;max-width:66ch}
+  .takeaways{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+  .take{padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+  .take .k{font-family:var(--mono);font-size:.62rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:6px}
+  .take p{font-size:.82rem;color:var(--muted);margin:0}
+  .take b{color:var(--ink)}
+
+  .footer{padding:40px 0 64px;border-top:1px solid var(--line);color:var(--faint);font-size:.78rem;line-height:1.6}
+  .footer p{margin:0 0 6px}
+  .footer a{color:var(--muted)}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-visual{max-width:520px}
+    .tldr-grid{grid-template-columns:repeat(2,1fr)}
+    .arch-grid{grid-template-columns:1fr}
+    .stat-grid{grid-template-columns:1fr}
+    .takeaways{grid-template-columns:1fr}
+    .formula-row{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .tldr-grid{grid-template-columns:1fr}
+    .controls{grid-template-columns:1fr}
+    .hero{padding-top:64px}
+    .theme-btn{top:10px;right:10px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+  }
+</style>
+</head>
+<body>
+<div class="progress"><span id="progressBar"></span></div>
+<button class="theme-btn" id="themeBtn" type="button" aria-label="Zum hellen Design wechseln">Hell</button>
+
+<main>
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">arXiv:2002.04745 · ICML 2020</div>
+        <h1>LayerNorm entscheidet, ob der Transformer <span class="grad">Warm-up</span> braucht</h1>
+        <p class="lede">Ein Bauteil, zwei Einbauorte, ein großer Unterschied: Post-LN braucht eine vorsichtige Lernrate. Pre-LN nicht.</p>
+        <p class="byline">Visuelle Kurzfassung · On Layer Normalization in the Transformer Architecture</p>
+        <a class="cta" href="#ln">In zwei Minuten verstehen</a>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card" aria-hidden="true">
+          <div class="mini-head"><span>Eingabe</span><span class="mono">groß, schief, mit Ausreißer</span></div>
+          <canvas id="cvHeroIn" class="mini"></canvas>
+          <div class="mini-arrow">LayerNorm</div>
+          <div class="mini-head"><span>danach</span><span class="mono">μ = 0 · σ = 1</span></div>
+          <canvas id="cvHeroOut" class="mini"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap tldr" aria-label="Kurzfassung">
+    <div class="tldr-grid">
+      <div class="tldr-card"><div class="tldr-num">01 · LN</div><h3>Normieren</h3><p>Mittelwert 0, Streuung 1. Danach skalieren γ und β den Vektor wieder.</p></div>
+      <div class="tldr-card"><div class="tldr-num">02 · Post-LN</div><h3>Das Original</h3><p>Die LN sitzt auf dem Hauptpfad, hinter jedem Residualblock.</p></div>
+      <div class="tldr-card"><div class="tldr-num">03 · Pre-LN</div><h3>Der Umbau</h3><p>Die LN sitzt vor Attention und FFN. Der Hauptpfad bleibt frei, am Ende folgt eine letzte LN.</p></div>
+      <div class="tldr-card"><div class="tldr-num">04 · Problem</div><h3>Große Gradienten</h3><p>Post-LN hat beim Start große Gradienten nahe dem Ausgang. Eine große Lernrate macht das Training instabil.</p></div>
+      <div class="tldr-card"><div class="tldr-num">05 · Pointe</div><h3>Warm-up weg</h3><p>Pre-LN hält die Gradienten klein und gleichmäßig. Das Warm-up kann entfallen, das Training wird schneller.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="ln">
+    <div class="section-head"><span class="sec-num">01</span><h2>Was LayerNorm macht</h2></div>
+    <p class="section-sub">Aus einem beliebig großen Vektor wird ein standardisierter Vektor.</p>
+    <div class="prose">
+      <p>Ein Token ist ein Vektor mit <b>d Zahlen</b>. Diese Zahlen können groß, klein oder schief verteilt sein. LayerNorm zieht den Mittelwert ab und teilt durch die Streuung.</p>
+      <p>Das Ergebnis hat Mittelwert 0 und Streuung 1. Die gelernten Parameter <b>γ</b> und <b>β</b> geben ihm danach die Skala und Verschiebung zurück, die das Netz braucht.</p>
+    </div>
+
+    <div class="formula-card">
+      <div class="formula-kicker">LayerNorm</div>
+      <div class="formula">LN(x) <span class="op">=</span> γ <span class="op">·</span> (x <span class="op">−</span> μ) / σ <span class="op">+</span> β</div>
+      <div class="formula-note">μ = Mittelwert · σ = Streuung · γ, β gelernt</div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-top">
+        <div>
+          <div class="demo-title">Ein Vektor vor und nach der Normierung</div>
+          <div class="demo-sub">Ziehe an Streuung und Ausreißer. Die Balken zeigen die einzelnen Zahlen.</div>
+        </div>
+        <button class="seg" id="aShuffle" type="button">Neu mischen</button>
+      </div>
+      <canvas id="cvA" role="img" aria-label="Zwei Balkendiagramme: Eingabevektor mit Mittelwert und Streuung, danach normierter Vektor mit Mittelwert 0 und Streuung 1."></canvas>
+      <div class="controls">
+        <div class="ctl">
+          <div class="ctl-label"><label for="aSpread">Streuung</label><b id="aSpreadVal">1.4×</b></div>
+          <input id="aSpread" type="range" min="0.2" max="3" step="0.1" value="1.4">
+        </div>
+        <div class="ctl">
+          <div class="ctl-label"><label for="aOut">Ausreißer</label><b id="aOutVal">3.2</b></div>
+          <input id="aOut" type="range" min="0" max="8" step="0.2" value="3.2">
+        </div>
+      </div>
+      <div class="readout">
+        <span>Mittelwert der Eingabe μ<b id="aMu">0.00</b></span>
+        <span>Streuung der Eingabe σ<b id="aSd">1.00</b></span>
+        <span class="big">nach LN<b>0.00 / 1.00</b></span>
+      </div>
+      <p class="caption">Der Ausreißer wird mitgestaucht. Nach der Normierung hat jeder Vektor dieselbe Grundlautstärke; <b>γ</b> und <b>β</b> geben ihm die gelernte zurück.</p>
+    </div>
+
+    <div class="note"><b>Für später wichtig:</b> LayerNorm ist auch ein Gradienten-Regler. Ein großer Eingang wird stark gestaucht, der Gradient durch LN wird klein (J<sub>LN</sub> ≈ √d / ‖x‖). Ein kleiner Eingang wird verstärkt.</div>
+  </section>
+
+  <section class="wrap section" id="order">
+    <div class="section-head"><span class="sec-num">02</span><h2>Wo sitzt die LN?</h2></div>
+    <p class="section-sub">Der Block bleibt gleich. Nur die Reihenfolge ändert sich.</p>
+    <div class="prose">
+      <p>Jeder Block hat zwei Äste: <b>Attention</b> und <b>FFN</b>. Dazwischen läuft ein Residualpfad, der das Signal unverändert weiterreicht.</p>
+      <p><b>Post-LN</b> legt die LN auf diesen Hauptpfad, direkt hinter den Residualblock. <b>Pre-LN</b> legt sie auf die Äste, vor Attention und FFN, plus eine finale LN vor der Ausgabe.</p>
+    </div>
+
+    <div class="demo">
+      <div class="demo-top">
+        <div>
+          <div class="demo-title">Zwei Positionen, ein Block</div>
+          <div class="demo-sub">Der leuchtende Punkt ist das Signal auf dem Hauptpfad. Orange heißt: hier wird normiert.</div>
+        </div>
+      </div>
+      <div class="arch-grid">
+        <div class="arch-card">
+          <div class="arch-head"><span class="arch-title">Post-LN</span><span class="arch-tag">Original</span></div>
+          <canvas id="cvPost" role="img" aria-label="Post-LN-Block: Attention und FFN als Äste; die LayerNorm sitzt auf dem Hauptpfad nach jedem Residualblock."></canvas>
+          <div class="legend">
+            <span class="legend-item"><span class="bar" style="background:var(--teal)"></span>Hauptpfad</span>
+            <span class="legend-item"><span class="dot" style="background:var(--amber)"></span>LayerNorm</span>
+          </div>
+          <p class="arch-sub">LN auf dem Hauptpfad: Das Signal wird nach jedem Block neu normiert.</p>
+        </div>
+        <div class="arch-card">
+          <div class="arch-head"><span class="arch-title">Pre-LN</span><span class="arch-tag">Variante</span></div>
+          <canvas id="cvPre" role="img" aria-label="Pre-LN-Block: Die LayerNorm sitzt vor Attention und FFN in den Ästen; der Hauptpfad bleibt frei, am Ende folgt eine finale LayerNorm."></canvas>
+          <div class="legend">
+            <span class="legend-item"><span class="bar" style="background:var(--teal)"></span>Hauptpfad</span>
+            <span class="legend-item"><span class="dot" style="background:var(--amber)"></span>LayerNorm</span>
+          </div>
+          <p class="arch-sub">LN auf den Ästen: Der Hauptpfad bleibt unangetastet, die finale LN sitzt am Ende.</p>
+        </div>
+      </div>
+      <p class="caption">Post-LN: LN auf der Autobahn. Pre-LN: LN auf den Auffahrten. Der Unterschied sieht klein aus, er entscheidet aber über die Gradienten bei der Initialisierung.</p>
+    </div>
+  </section>
+
+  <section class="wrap section" id="grad">
+    <div class="section-head"><span class="sec-num">03</span><h2>Warum das die Gradienten ändert</h2></div>
+    <p class="section-sub">Die Position der LN bestimmt, wie stark sie am Ausgang staucht.</p>
+    <div class="prose">
+      <p>Beim Start sind die Gewichte zufällig. In <b>Post-LN</b> bleibt die Größe des Signals über die Tiefe ungefähr konstant. Die LN am Ausgang staucht deshalb wenig, und die Gradienten der letzten Schichten bleiben groß.</p>
+      <p>In <b>Pre-LN</b> wächst das Signal mit der Tiefe, ungefähr wie √L. Die finale LN teilt durch diese Größe. Damit werden die Gradienten um etwa √L kleiner und bleiben über alle Schichten ähnlich.</p>
+    </div>
+
+    <div class="formula-row">
+      <div class="formula-chip"><small>Post-LN</small><span class="hl">O(d√ln d)</span><br><span style="font-size:.72em;color:var(--muted)">unabhängig von der Tiefe L</span></div>
+      <div class="formula-chip"><small>Pre-LN</small><span class="hl2">O(d√(ln d / L))</span><br><span style="font-size:.72em;color:var(--muted)">sinkt mit mehr Schichten</span></div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-top">
+        <div>
+          <div class="demo-title">Gradientenstärke über die Tiefe</div>
+          <div class="demo-sub">Schematisch nach Theorem 1. Schicht 1 ist der Eingang, L der Ausgang.</div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="bar" style="background:var(--rose)"></span>Post-LN</span>
+          <span class="legend-item"><span class="bar" style="background:var(--teal)"></span>Pre-LN</span>
+        </div>
+      </div>
+      <canvas id="cvGrad" role="img" aria-label="Liniendiagramm der relativen Gradientenstärke über die Schichttiefe. Post-LN wächst zum Ausgang hin, Pre-LN bleibt flach und sinkt mit mehr Schichten."></canvas>
+      <div class="controls">
+        <div class="ctl">
+          <div class="ctl-label"><label for="gradL">Tiefe L</label><b id="gradLVal">24 Schichten</b></div>
+          <input id="gradL" type="range" min="6" max="48" step="6" value="24">
+        </div>
+      </div>
+      <div class="readout">
+        <span>Post-LN, letzte Schicht<b id="gradPostVal">1.00</b></span>
+        <span>Pre-LN, letzte Schicht<b id="gradPreVal">0.20</b></span>
+        <span>Verhältnis<b id="gradRatioVal">5×</b></span>
+      </div>
+      <p class="caption">Post-LN: gleich groß nahe dem Ausgang, unabhängig von der Tiefe. Pre-LN: mit mehr Schichten kleiner und über die Tiefe flach. Die Theorie gilt für die Initialisierung und vereinfacht das Modell; die Experimente im Paper bestätigen sie.</p>
+    </div>
+
+    <div class="note"><b>Große Gradienten plus große Lernrate</b> heißt: Ein Schritt kann die Gewichte weit verschieben. Das Training divergiert oder bleibt schlecht. Warm-up verhindert genau das, indem es klein anfängt.</div>
+  </section>
+
+  <section class="wrap section" id="warmup">
+    <div class="section-head"><span class="sec-num">04</span><h2>Der Preis: Warm-up</h2></div>
+    <p class="section-sub">Warm-up ist ein Pflaster für große Startgradienten.</p>
+    <div class="prose">
+      <p>Beim Warm-up startet die Lernrate bei fast null und steigt über Tausende Schritte. Das kostet Zeit, und die Zahl der Schritte muss eingestellt werden.</p>
+      <p>Der Grund ist der große Gradient am Anfang. Mit kleiner Lernrate richtet er keinen Schaden an. Ohne Warm-up trifft die volle Lernrate sofort auf die größten Gradienten.</p>
+    </div>
+
+    <div class="demo">
+      <div class="demo-top">
+        <div>
+          <div class="demo-title">Lernrate über die Zeit</div>
+          <div class="demo-sub">Schematisch: Warm-up-Rampe und inverser Wurzel-Abfall.</div>
+        </div>
+        <div class="segmented" id="modelSeg" role="group" aria-label="Architektur wählen">
+          <button class="seg active" type="button" data-model="post">Post-LN</button>
+          <button class="seg" type="button" data-model="pre">Pre-LN</button>
+        </div>
+      </div>
+      <canvas id="cvLR" role="img" aria-label="Liniendiagramm der Lernrate über die Trainingsschritte. Mit Warm-up steigt die Lernrate erst an; ohne Warm-up startet sie sofort auf dem Maximum."></canvas>
+      <label class="switch" for="warmToggle">
+        <input id="warmToggle" type="checkbox" checked>
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        <span>Warm-up</span>
+      </label>
+      <div class="status good" id="lrStatus" aria-live="polite">
+        <div class="status-head"><span class="status-title">Stabil, aber langsam</span><span class="status-metric">≈ 34 BLEU</span></div>
+        <div class="status-text">Der Warm-up fängt die großen Startgradienten ab. Das ist der übliche Weg.</div>
+      </div>
+      <p class="caption">Die Kurve zeigt die Lernrate, nicht den Loss. Der Status darunter nennt das Ergebnis aus dem Paper für IWSLT14 De-En.</p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Post-LN ohne Warm-up</div>
+        <div class="stat-value">8.45 <small>BLEU</small></div>
+        <div class="stat-text">Mit Warm-up sind es rund 34 BLEU. Ohne die Rampe bricht das Training ein.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Pre-LN ohne Warm-up</div>
+        <div class="stat-value">≈ 34 <small>BLEU</small></div>
+        <div class="stat-text">Validierungs-Loss rund 4. Praktisch gleiche Qualität, ohne Warm-up.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Tempo</div>
+        <div class="stat-value">9 : 15 <small>Checkpoints</small></div>
+        <div class="stat-text">Pre-LN erreicht das Niveau des Post-LN früher. Beim BERT-Pretraining rund 40 % schneller.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="fazit">
+    <div class="section-head"><span class="sec-num">05</span><h2>Fazit</h2></div>
+    <div class="final-card">
+      <h3>LN in den Residualblock verschieben, Warm-up streichen.</h3>
+      <p>Pre-LN erreicht vergleichbare Qualität, konvergiert schneller und spart einen empfindlichen Hyperparameter. Deshalb normalisieren viele moderne LLMs vor den Teilblöcken, oft mit RMSNorm statt LayerNorm.</p>
+      <div class="takeaways">
+        <div class="take"><div class="k">01</div><p><b>LayerNorm</b> normiert jedes Token und reguliert dabei die Gradientenstärke.</p></div>
+        <div class="take"><div class="k">02</div><p><b>Die Position zählt:</b> Post-LN staucht am Ausgang wenig, Pre-LN durch die finale LN deutlich mehr.</p></div>
+        <div class="take"><div class="k">03</div><p><b>Pre-LN</b> macht den Hauptpfad frei und das Warm-up überflüssig.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wrap footer">
+    <p>Quelle: Ruibin Xiong, Yunchang Yang, Di He, Kai Zheng, Shuxin Zheng, Chen Xing, Huishuai Zhang, Yanyan Lan, Liwei Wang, Tie-Yan Liu. <a href="https://arxiv.org/abs/2002.04745">On Layer Normalization in the Transformer Architecture</a>. ICML 2020. arXiv:2002.04745.</p>
+    <p>Interaktive Lesehilfe, keine offizielle Zusammenfassung. Zahlen aus dem Paper: IWSLT14 De-En, WMT14 En-De und BERT-Pretraining. Die Diagramme sind schematisch.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var themeBtn = document.getElementById("themeBtn");
+  var progressBar = document.getElementById("progressBar");
+  var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var LABEL_FONT = "600 11px system-ui, -apple-system, Segoe UI, sans-serif";
+  var MONO_FONT = "11px ui-monospace, Menlo, Consolas, monospace";
+  var SERIF_FONT = "600 12px Georgia, 'Times New Roman', serif";
+
+  function cssVar(name) {
+    return getComputedStyle(root).getPropertyValue(name).trim();
+  }
+
+  function palette() {
+    var s = getComputedStyle(root);
+    function g(n) { return s.getPropertyValue(n).trim(); }
+    return {
+      ink: g("--ink"), muted: g("--muted"), faint: g("--faint"),
+      line: g("--line-2"), grid: g("--grid"), panel: g("--panel-2"), bg: g("--bg"),
+      teal: g("--teal"), cyan: g("--cyan"), amber: g("--amber"),
+      rose: g("--rose"), violet: g("--violet")
+    };
+  }
+
+  function storedTheme() {
+    try { return localStorage.getItem("asanai_ln_theme"); } catch (e) { return null; }
+  }
+  function rememberTheme(t) {
+    try { localStorage.setItem("asanai_ln_theme", t); } catch (e) {}
+  }
+  function applyTheme(t, persist) {
+    root.setAttribute("data-theme", t);
+    themeBtn.textContent = t === "dark" ? "Hell" : "Dunkel";
+    themeBtn.setAttribute("aria-label", t === "dark" ? "Zum hellen Design wechseln" : "Zum dunklen Design wechseln");
+    if (persist) rememberTheme(t);
+    requestAnimationFrame(redrawAll);
+  }
+
+  var saved = storedTheme();
+  applyTheme(saved === "light" ? "light" : "dark", false);
+  themeBtn.addEventListener("click", function () {
+    applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark", true);
+  });
+
+  var canvases = {};
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function prep(id, cssH) {
+    var canvas = document.getElementById(id);
+    if (!canvas) return null;
+    var w = Math.max(180, canvas.clientWidth || (canvas.parentElement && canvas.parentElement.clientWidth) || 300);
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    canvases[id] = { ctx: ctx, w: w, h: cssH };
+    return canvases[id];
+  }
+
+  function prepAll() {
+    prep("cvHeroIn", 74);
+    prep("cvHeroOut", 74);
+    prep("cvA", 336);
+    prep("cvPost", 344);
+    prep("cvPre", 344);
+    prep("cvGrad", 330);
+    prep("cvLR", 230);
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    var rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
+    ctx.closePath();
+  }
+
+  function statsOf(values) {
+    var n = values.length;
+    var mu = values.reduce(function (a, b) { return a + b; }, 0) / n;
+    var sd = Math.sqrt(values.reduce(function (a, b) { return a + (b - mu) * (b - mu); }, 0) / n);
+    return {
+      mu: mu,
+      sd: sd,
+      out: values.map(function (v) { return sd > 1e-9 ? (v - mu) / sd : 0; })
+    };
+  }
+
+  function centeredBars(ctx, x0, y0, width, height, values, color, grid) {
+    var pad = 6;
+    var n = values.length;
+    var bw = (width - pad * 2) / n;
+    var maxAbs = Math.max(1e-6, Math.max.apply(null, values.map(function (v) { return Math.abs(v); })));
+    var mid = y0 + height / 2;
+    var scale = (height / 2 - 5) / maxAbs;
+    ctx.strokeStyle = grid;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x0 + pad, mid);
+    ctx.lineTo(x0 + width - pad, mid);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    values.forEach(function (v, i) {
+      var bh = Math.max(1, Math.abs(v) * scale);
+      var bx = x0 + pad + i * bw + bw * 0.16;
+      var bwid = bw * 0.68;
+      var by = v >= 0 ? mid - bh : mid;
+      ctx.fillStyle = color;
+      roundRect(ctx, bx, by, bwid, bh, Math.min(2.5, bwid / 2));
+      ctx.fill();
+    });
+  }
+
+  var heroIn = [1.1, -0.8, 0.5, 1.6, -1.2, 0.3, -0.4, 4.6, -1.4, 0.7, 0.2, -0.6];
+
+  function drawHero() {
+    var ci = canvases["cvHeroIn"];
+    var co = canvases["cvHeroOut"];
+    if (!ci || !co) return;
+    var P = palette();
+    centeredBars(ci.ctx, 4, 4, ci.w - 8, ci.h - 8, heroIn, P.amber, P.grid);
+    centeredBars(co.ctx, 4, 4, co.w - 8, co.h - 8, statsOf(heroIn).out, P.teal, P.grid);
+  }
+
+  var A = {
+    base: [0.8, -1.1, 0.4, 1.3, -0.7, 0.2, -0.5, 1.0, -0.9, 0.6, 0.1, -0.3],
+    spread: 1.4,
+    outlier: 3.2,
+    idx: 7
+  };
+  var aSpread = document.getElementById("aSpread");
+  var aOut = document.getElementById("aOut");
+  var aSpreadVal = document.getElementById("aSpreadVal");
+  var aOutVal = document.getElementById("aOutVal");
+  var aMu = document.getElementById("aMu");
+  var aSd = document.getElementById("aSd");
+
+  function vecA() {
+    return A.base.map(function (v, i) {
+      return v * A.spread + (i === A.idx ? A.outlier : 0);
+    });
+  }
+
+  function drawA() {
+    var c = canvases["cvA"];
+    if (!c) return;
+    var P = palette();
+    var x = vecA();
+    var st = statsOf(x);
+    centeredBars(c.ctx, 8, 26, c.w - 16, 118, x, P.amber, P.grid);
+    centeredBars(c.ctx, 8, 182, c.w - 16, 118, st.out, P.teal, P.grid);
+    c.ctx.font = LABEL_FONT;
+    c.ctx.textAlign = "left";
+    c.ctx.textBaseline = "alphabetic";
+    c.ctx.fillStyle = P.muted;
+    c.ctx.fillText("Eingabe x", 10, 17);
+    c.ctx.fillText("nach LayerNorm", 10, 173);
+    aSpreadVal.textContent = A.spread.toFixed(1) + "×";
+    aOutVal.textContent = A.outlier.toFixed(1);
+    aMu.textContent = st.mu.toFixed(2);
+    aSd.textContent = st.sd.toFixed(2);
+  }
+
+  aSpread.addEventListener("input", function () {
+    A.spread = parseFloat(aSpread.value);
+    drawA();
+  });
+  aOut.addEventListener("input", function () {
+    A.outlier = parseFloat(aOut.value);
+    drawA();
+  });
+  document.getElementById("aShuffle").addEventListener("click", function () {
+    A.base = A.base.map(function () {
+      return Math.round((Math.random() * 3 - 1.5) * 10) / 10;
+    });
+    drawA();
+  });
+
+  function drawArch(id, kind, t) {
+    var c = canvases[id];
+    if (!c) return;
+    var ctx = c.ctx;
+    var w = c.w;
+    var h = c.h;
+    ctx.clearRect(0, 0, w, h);
+    var P = palette();
+    var mainX = Math.max(28, w * 0.14);
+    var boxX = Math.max(mainX + 38, w * 0.30);
+    var boxW = Math.max(110, w - boxX - 8);
+    var cx = boxX + boxW / 2;
+
+    function box(x, y, bw, bh, label, stroke, fill, textColor, font) {
+      roundRect(ctx, x, y, bw, bh, 9);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+      ctx.fillStyle = textColor;
+      ctx.font = font || LABEL_FONT;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label, x + bw / 2, y + bh / 2 + 0.5);
+    }
+
+    function lnOnMain(y, bh) {
+      var bw = 80;
+      var x = Math.max(2, mainX - bw / 2);
+      box(x, y, bw, bh, "LN", P.amber, "rgba(255,209,102,0.10)", P.amber, MONO_FONT);
+    }
+
+    function addNode(y) {
+      ctx.beginPath();
+      ctx.arc(mainX, y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = P.panel;
+      ctx.fill();
+      ctx.strokeStyle = P.teal;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+      ctx.fillStyle = P.teal;
+      ctx.font = "600 13px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("+", mainX, y + 0.5);
+    }
+
+    function dotOnMain(y) {
+      ctx.beginPath();
+      ctx.arc(mainX, y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = P.teal;
+      ctx.fill();
+    }
+
+    function postBranch(yTop, bh, label) {
+      var yBot = yTop + bh;
+      var yJoin = yBot + 16;
+      var yIn = yTop + 15;
+      ctx.strokeStyle = P.line;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(mainX, yIn);
+      ctx.lineTo(boxX, yIn);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, yBot);
+      ctx.lineTo(cx, yJoin);
+      ctx.lineTo(mainX, yJoin);
+      ctx.stroke();
+      dotOnMain(yIn);
+      box(boxX, yTop, boxW, bh, label, P.line, P.panel, P.ink);
+      addNode(yJoin);
+      return yJoin;
+    }
+
+    function preBranch(yIn, lnY, lnH, boxY, boxH, label) {
+      var yJoin = boxY + boxH + 18;
+      ctx.strokeStyle = P.line;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(mainX, yIn);
+      ctx.lineTo(cx, yIn);
+      ctx.lineTo(cx, lnY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, lnY + lnH);
+      ctx.lineTo(cx, boxY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, boxY + boxH);
+      ctx.lineTo(cx, yJoin);
+      ctx.lineTo(mainX, yJoin);
+      ctx.stroke();
+      dotOnMain(yIn);
+      box(boxX, lnY, boxW, lnH, "LN", P.amber, "rgba(255,209,102,0.10)", P.amber, MONO_FONT);
+      box(boxX, boxY, boxW, boxH, label, P.line, P.panel, P.ink);
+      addNode(yJoin);
+      return yJoin;
+    }
+
+    var segs;
+    var pathTop = 18;
+    var pathBot;
+    if (kind === "post") {
+      postBranch(44, 46, "Attention");
+      lnOnMain(118, 36);
+      postBranch(166, 46, "FFN");
+      lnOnMain(240, 36);
+      segs = [[pathTop, 118], [154, 240], [276, 304]];
+      pathBot = 304;
+    } else {
+      preBranch(44, 54, 22, 84, 42, "Attention");
+      preBranch(162, 172, 22, 202, 42, "FFN");
+      lnOnMain(278, 36);
+      segs = [[pathTop, 278], [314, 326]];
+      pathBot = 326;
+    }
+
+    ctx.lineCap = "round";
+    ctx.strokeStyle = P.teal;
+    ctx.globalAlpha = 0.13;
+    ctx.lineWidth = 9;
+    segs.forEach(function (s) {
+      ctx.beginPath();
+      ctx.moveTo(mainX, s[0]);
+      ctx.lineTo(mainX, s[1]);
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 2.6;
+    segs.forEach(function (s) {
+      ctx.beginPath();
+      ctx.moveTo(mainX, s[0]);
+      ctx.lineTo(mainX, s[1]);
+      ctx.stroke();
+    });
+
+    var y = pathTop + t * (pathBot - pathTop);
+    var dotColor = P.teal;
+    if (kind === "post" && ((y > 118 && y < 154) || (y > 240 && y < 276))) dotColor = P.amber;
+    if (kind === "pre" && y > 278 && y < 314) dotColor = P.amber;
+    ctx.save();
+    ctx.shadowColor = dotColor;
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    ctx.arc(mainX, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = dotColor;
+    ctx.fill();
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(mainX, y, 1.9, 0, Math.PI * 2);
+    ctx.fillStyle = P.bg;
+    ctx.fill();
+
+    ctx.font = MONO_FONT;
+    ctx.fillStyle = P.faint;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("x", mainX, 9);
+    ctx.fillText("x′", mainX, kind === "post" ? 322 : 338);
+  }
+
+  var gradSlider = document.getElementById("gradL");
+  var gradLVal = document.getElementById("gradLVal");
+  var gradPostVal = document.getElementById("gradPostVal");
+  var gradPreVal = document.getElementById("gradPreVal");
+  var gradRatioVal = document.getElementById("gradRatioVal");
+
+  function drawGrad() {
+    var c = canvases["cvGrad"];
+    if (!c) return;
+    var ctx = c.ctx;
+    var w = c.w;
+    var h = c.h;
+    ctx.clearRect(0, 0, w, h);
+    var P = palette();
+    var L = parseInt(gradSlider.value, 10);
+    var left = 52;
+    var right = 14;
+    var top = 22;
+    var bottom = 36;
+    var plotW = w - left - right;
+    var plotH = h - top - bottom;
+    var vmin = 0.03;
+    var vmax = 2.2;
+    var lo = Math.log10(vmin);
+    var hi = Math.log10(vmax);
+
+    function yOf(v) {
+      return top + (hi - Math.log10(Math.max(v, vmin))) / (hi - lo) * plotH;
+    }
+    function xOf(l) {
+      return left + (l - 1) / (L - 1) * plotW;
+    }
+
+    [0.05, 0.1, 0.25, 0.5, 1, 2].forEach(function (v) {
+      var y = yOf(v);
+      ctx.strokeStyle = P.grid;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(left, y);
+      ctx.lineTo(w - right, y);
+      ctx.stroke();
+      ctx.fillStyle = P.faint;
+      ctx.font = MONO_FONT;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(v.toString(), left - 8, y);
+    });
+
+    ctx.strokeStyle = P.line;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, top + plotH);
+    ctx.lineTo(w - right, top + plotH);
+    ctx.stroke();
+
+    ctx.fillStyle = P.muted;
+    ctx.font = LABEL_FONT;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("relative Gradientenstärke (log)", left, 12);
+    ctx.textAlign = "center";
+    ctx.fillText("Schichten: 1 → L", left + plotW / 2, h - 10);
+
+    var pre = 1 / Math.sqrt(L);
+    var samples = 80;
+
+    function curve(fn, color) {
+      ctx.beginPath();
+      for (var i = 0; i <= samples; i++) {
+        var f = i / samples;
+        var x = xOf(1 + f * (L - 1));
+        var y = yOf(fn(f));
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.6;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 9;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    curve(function (f) { return Math.exp(-3 * (1 - f)); }, P.rose);
+    curve(function () { return pre; }, P.teal);
+
+    function endpoint(x, y, color) {
+      ctx.beginPath();
+      ctx.arc(x, y, 3.6, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = P.bg;
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    }
+    endpoint(xOf(L), yOf(1), P.rose);
+    endpoint(xOf(L), yOf(pre), P.teal);
+
+    gradLVal.textContent = L + " Schichten";
+    gradPostVal.textContent = "1.00";
+    gradPreVal.textContent = pre.toFixed(2);
+    gradRatioVal.textContent = Math.round(1 / pre) + "×";
+  }
+
+  gradSlider.addEventListener("input", drawGrad);
+
+  var model = "post";
+  var warmToggle = document.getElementById("warmToggle");
+  var modelSeg = document.getElementById("modelSeg");
+  var lrStatus = document.getElementById("lrStatus");
+
+  function drawLR() {
+    var c = canvases["cvLR"];
+    if (!c) return;
+    var ctx = c.ctx;
+    var w = c.w;
+    var h = c.h;
+    ctx.clearRect(0, 0, w, h);
+    var P = palette();
+    var left = 48;
+    var right = 14;
+    var top = 20;
+    var bottom = 34;
+    var plotW = w - left - right;
+    var plotH = h - top - bottom;
+    var T = 10000;
+    var Tw = 4000;
+    var warm = warmToggle.checked;
+    var bad = model === "post" && !warm;
+    var color = bad ? P.rose : P.teal;
+
+    function lrAt(t) {
+      t = Math.max(t, 1);
+      if (warm && t < Tw) return t / Tw;
+      var base = warm ? Math.sqrt(Tw / t) : (t < 4500 ? 1 : Math.sqrt(4500 / t));
+      return Math.min(1, base);
+    }
+    function xOf(t) { return left + (t / T) * plotW; }
+    function yOf(v) { return top + (1 - v) * plotH; }
+
+    if (warm) {
+      ctx.fillStyle = P.amber;
+      ctx.globalAlpha = 0.08;
+      ctx.fillRect(left, top, (Tw / T) * plotW, plotH);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = P.faint;
+      ctx.font = MONO_FONT;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText("Warm-up", left + (Tw / T) * plotW / 2, top + 13);
+    }
+
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
+      var y = yOf(v);
+      ctx.strokeStyle = P.grid;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(left, y);
+      ctx.lineTo(w - right, y);
+      ctx.stroke();
+      ctx.fillStyle = P.faint;
+      ctx.font = MONO_FONT;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(v.toFixed(2), left - 8, y);
+    });
+
+    ctx.strokeStyle = P.line;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, top + plotH);
+    ctx.lineTo(w - right, top + plotH);
+    ctx.stroke();
+
+    ctx.fillStyle = P.muted;
+    ctx.font = LABEL_FONT;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("Lernrate", left, 12);
+    ctx.textAlign = "center";
+    ctx.fillText("Trainingsschritte", left + plotW / 2, h - 9);
+
+    ctx.beginPath();
+    for (var i = 0; i <= 240; i++) {
+      var t = (i / 240) * T;
+      var x = xOf(t);
+      var y = yOf(lrAt(t));
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.lineTo(w - right, top + plotH);
+    ctx.lineTo(left, top + plotH);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.09;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    for (var j = 0; j <= 240; j++) {
+      var t2 = (j / 240) * T;
+      var x2 = xOf(t2);
+      var y2 = yOf(lrAt(t2));
+      if (j === 0) ctx.moveTo(x2, y2);
+      else ctx.lineTo(x2, y2);
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.6;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 9;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  function updateLR() {
+    var warm = warmToggle.checked;
+    var title, text, tone, metric;
+    if (model === "post" && warm) {
+      title = "Stabil, aber langsam";
+      text = "Der Warm-up fängt die großen Startgradienten ab. Das ist der übliche Weg.";
+      tone = "good";
+      metric = "≈ 34 BLEU";
+    } else if (model === "post" && !warm) {
+      title = "Instabil";
+      text = "Die volle Lernrate trifft sofort auf große Startgradienten. Das Training divergiert.";
+      tone = "bad";
+      metric = "8.45 BLEU";
+    } else if (model === "pre" && warm) {
+      title = "Stabil, Warm-up unnötig";
+      text = "Es funktioniert, aber die Gradienten brauchen die Rampe nicht.";
+      tone = "neutral";
+      metric = "≈ 34 BLEU";
+    } else {
+      title = "Stabil und schnell";
+      text = "Genau das zeigt das Paper: gleiche Qualität ohne Warm-up.";
+      tone = "good";
+      metric = "≈ 34 BLEU";
+    }
+    lrStatus.className = "status " + tone;
+    lrStatus.querySelector(".status-title").textContent = title;
+    lrStatus.querySelector(".status-text").textContent = text;
+    lrStatus.querySelector(".status-metric").textContent = metric;
+    drawLR();
+  }
+
+  modelSeg.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest(".seg") : null;
+    if (!btn) return;
+    model = btn.getAttribute("data-model");
+    Array.prototype.forEach.call(modelSeg.querySelectorAll(".seg"), function (b) {
+      b.classList.toggle("active", b === btn);
+    });
+    updateLR();
+  });
+  warmToggle.addEventListener("change", updateLR);
+
+  function redrawAll() {
+    drawHero();
+    drawA();
+    drawArch("cvPost", "post", 0.55);
+    drawArch("cvPre", "pre", 0.55);
+    drawGrad();
+    drawLR();
+  }
+
+  var archVisible = true;
+  var rafId = null;
+  var t0 = performance.now();
+
+  function frame(now) {
+    rafId = null;
+    if (!archVisible || prefersReduced) return;
+    var t = ((now - t0) / 7000) % 1;
+    drawArch("cvPost", "post", t);
+    drawArch("cvPre", "pre", t);
+    rafId = requestAnimationFrame(frame);
+  }
+  function startLoop() {
+    if (!rafId && archVisible && !prefersReduced) {
+      rafId = requestAnimationFrame(frame);
+    }
+  }
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      archVisible = entries[0].isIntersecting;
+      if (archVisible) startLoop();
+    }, { threshold: 0.05 });
+    io.observe(document.getElementById("order"));
+  }
+
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      prepAll();
+      redrawAll();
+      startLoop();
+    }, 150);
+  });
+
+  window.addEventListener("scroll", function () {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    progressBar.style.transform = "scaleX(" + p + ")";
+  }, { passive: true });
+
+  prepAll();
+  redrawAll();
+  updateLR();
+  startLoop();
+})();
+</script>
+</body>
+</html>

@@ -123,6 +123,9 @@
     var baseShown = START_BASE.slice(), attnShown = zeros(), ffnShown = zeros();
     var baseFrom = START_BASE.slice(), attnFrom = zeros(), ffnFrom = zeros();
     var baseTarget = START_BASE.slice(), attnTarget = zeros(), ffnTarget = zeros();
+    var normStep = 0;
+    var normShown = START_BASE.slice(), normFrom = START_BASE.slice(), normTarget = START_BASE.slice();
+    var normStart = 0;
     var streamStart = 0;
     var hoverDim = -1;
     var barHits = [];
@@ -136,35 +139,49 @@
       for (var i = 0; i < 6; i++) target[i] += source[i];
       return target;
     }
-    function totalAt(n) {
-      var v = START_BASE.slice();
-      for (var i = 0; i < n; i++) {
-        addInto(v, LAYER_UPDATES[i].attn);
-        addInto(v, LAYER_UPDATES[i].ffn);
+    function layerNormDisplay(v) {
+      var mean = v.reduce(function (a, b) { return a + b; }, 0) / v.length;
+      var centered = v.map(function (x) { return x - mean; });
+      var maxAbs = Math.max.apply(null, centered.map(function (x) { return Math.abs(x); }).concat([1e-6]));
+      return centered.map(function (x) { return x / maxAbs; });
+    }
+    var streamCache = null;
+    function buildStreamStates() {
+      if (streamCache) return streamCache;
+      var states = [START_BASE.slice()];
+      var raws = [START_BASE.slice()];
+      for (var n = 1; n < STREAM_LAYERS.length; n++) {
+        var base = states[n - 1];
+        var u = LAYER_UPDATES[n - 1];
+        var raw = base.map(function (v, j) { return v + u.attn[j] + u.ffn[j]; });
+        raws[n] = raw;
+        states[n] = layerNormDisplay(raw);
       }
-      return v;
+      streamCache = { states: states, raws: raws };
+      return streamCache;
     }
     function partsAt(n) {
-      if (n <= 0) return { base: START_BASE.slice(), attn: zeros(), ffn: zeros() };
-      var base = totalAt(n - 1);
-      var u = LAYER_UPDATES[n - 1];
-      return { base: base, attn: u.attn.slice(), ffn: u.ffn.slice() };
-    }
-    function totalParts(parts) {
-      var v = zeros();
-      addInto(v, parts.base);
-      addInto(v, parts.attn);
-      addInto(v, parts.ffn);
-      return v;
-    }
-    function maxTotal() {
-      var best = 0;
-      for (var n = 0; n < STREAM_LAYERS.length; n++) {
-        var p = partsAt(n);
-        var t = totalParts(p);
-        for (var j = 0; j < 6; j++) best = Math.max(best, t[j]);
+      var S = buildStreamStates();
+      if (n <= 0) {
+        return { base: START_BASE.slice(), attn: zeros(), ffn: zeros(), raw: START_BASE.slice(), norm: START_BASE.slice() };
       }
-      return Math.max(1, best);
+      var u = LAYER_UPDATES[n - 1];
+      return { base: S.states[n - 1].slice(), attn: u.attn.slice(), ffn: u.ffn.slice(), raw: S.raws[n].slice(), norm: S.states[n].slice() };
+    }
+    function maxAbsStream() {
+      var S = buildStreamStates();
+      var best = 1;
+      for (var n = 0; n < STREAM_LAYERS.length; n++) {
+        for (var j = 0; j < 6; j++) {
+          best = Math.max(best, Math.abs(S.states[n][j]), Math.abs(S.raws[n][j]));
+        }
+      }
+      for (var k = 0; k < LAYER_UPDATES.length; k++) {
+        for (var j2 = 0; j2 < 6; j2++) {
+          best = Math.max(best, Math.abs(LAYER_UPDATES[k].attn[j2]), Math.abs(LAYER_UPDATES[k].ffn[j2]));
+        }
+      }
+      return best;
     }
     function noteColors(C) { return [C.green, C.blue, C.gold, C.lilac, C.sky]; }
     function streamColors(C) { return [C.sky, C.green, C.gold, C.lilac, C.blue, C.petrol]; }
@@ -501,7 +518,7 @@
         xx += g.measureText(word).width;
       });
     }
-    function drawFlowGap(g, x1, x2, y, now, col) {
+    function drawFlowGap(g, x1, x2, y, now, col, showLn) {
       g.strokeStyle = V.alpha(col, 0.45);
       g.lineWidth = 1.2;
       g.beginPath(); g.moveTo(x1, y); g.lineTo(x2 - 6, y); g.stroke();
@@ -512,6 +529,12 @@
       g.lineTo(x2 - 6, y + 3);
       g.closePath();
       g.fill();
+      if (showLn) {
+        g.fillStyle = V.alpha(col, 0.82);
+        g.font = '700 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Barlow", sans-serif';
+        g.textAlign = "center"; g.textBaseline = "bottom";
+        g.fillText("LN", (x1 + x2) / 2, y - 5);
+      }
     }
     function drawStream(C, w, h, g, now) {
       var pad = Math.max(10, Math.min(18, w * 0.022));
@@ -543,7 +566,7 @@
       else g.fillText(DE ? "Derselbe Satz, jetzt als Stream." : "The same sentence, now as a stream.", panelX + 16, panelY + 38);
       var sx = panelX + 14;
       var sy = panelY + (wide ? 58 : 48);
-      var gap = wide ? 10 : 6;
+      var gap = wide ? 16 : 10;
       var stages = STREAM_LAYERS.length;
       var sw = (panelW - 28 - gap * (stages - 1)) / stages;
       var sh = wide ? Math.max(64, riverH - sy + panelY - 10) : Math.max(48, riverH - sy + panelY - 8);
@@ -579,7 +602,7 @@
       for (var gi = 0; gi < STREAM_LAYERS.length - 1; gi++) {
         var gx1 = sx + gi * (sw + gap) + sw;
         var gx2 = sx + (gi + 1) * (sw + gap);
-        drawFlowGap(g, gx1 + 2, gx2 - 2, sy + sh / 2, now, streamPalette[gi + 1]);
+        drawFlowGap(g, gx1 + 2, gx2 - 2, sy + sh / 2, now, streamPalette[gi + 1], gi > 0);
       }
       g.save();
       g.shadowColor = V.alpha(C.petrol, 0.14);
@@ -758,7 +781,7 @@
       if (streamNote) {
         streamNote.hidden = phase !== "stream";
         streamNote.textContent = phase === "stream"
-          ? (DE ? "Hellblau: vorherige Outputs. Dunkelblau: was der Transformer-Block (Attention + FFN) pro Dimension addiert." : "Light blue: previous outputs. Dark blue: what the transformer block (attention + FFN) adds per dimension.")
+          ? (DE ? "Hellblau: vorherige Outputs. Dunkelblau: Transformer-Block (Attention + FFN). LN (Post-LN): Nach jeder Addition folgt LayerNorm; GPT-2/Pre-LN normalisiert die Kopie vor Attention/FFN und am Ende (Vaswani et al., 2017; Xiong et al., 2020)." : "Light blue: previous outputs. Dark blue: transformer block (attention + FFN). LN (post-LN): LayerNorm follows each addition; GPT-2/pre-LN normalizes the copy before attention/FFN and at the end (Vaswani et al., 2017; Xiong et al., 2020).")
           : "";
       }
       if (phase === "notebook") {
@@ -793,7 +816,7 @@
       noteProgress = ease(t);
       if (t >= 1) noteStart = 0;
     }
-    function setStreamTarget(n, animate) {
+    function setStreamTarget(n, animate, step) {
       var p = partsAt(n);
       baseFrom = baseShown.slice();
       attnFrom = attnShown.slice();
@@ -801,6 +824,18 @@
       baseTarget = p.base;
       attnTarget = p.attn;
       ffnTarget = p.ffn;
+      if (step === 1) {
+        normFrom = normShown.slice();
+        normTarget = p.norm.slice();
+        if (animate && !reduced) normStart = performance.now();
+        else { normShown = normTarget.slice(); normStart = 0; }
+      } else {
+        normStep = 0;
+        normShown = p.raw.slice();
+        normFrom = normShown.slice();
+        normTarget = normShown.slice();
+        normStart = 0;
+      }
       if (animate && !reduced) {
         streamStart = performance.now();
       } else {
@@ -812,15 +847,22 @@
       if (phase === "stream") ensureLoop();
     }
     function stepStream(now) {
-      if (!streamStart) return;
-      var t = clamp((now - streamStart) / 420, 0, 1);
-      var e = ease(t);
-      for (var j = 0; j < 6; j++) {
-        baseShown[j] = baseFrom[j] + (baseTarget[j] - baseFrom[j]) * e;
-        attnShown[j] = attnFrom[j] + (attnTarget[j] - attnFrom[j]) * e;
-        ffnShown[j] = ffnFrom[j] + (ffnTarget[j] - ffnFrom[j]) * e;
+      if (streamStart) {
+        var t = clamp((now - streamStart) / 420, 0, 1);
+        var e = ease(t);
+        for (var j = 0; j < 6; j++) {
+          baseShown[j] = baseFrom[j] + (baseTarget[j] - baseFrom[j]) * e;
+          attnShown[j] = attnFrom[j] + (attnTarget[j] - attnFrom[j]) * e;
+          ffnShown[j] = ffnFrom[j] + (ffnTarget[j] - ffnFrom[j]) * e;
+        }
+        if (t >= 1) streamStart = 0;
       }
-      if (t >= 1) streamStart = 0;
+      if (normStart) {
+        var tn = clamp((now - normStart) / 420, 0, 1);
+        var en = ease(tn);
+        for (var k = 0; k < 6; k++) normShown[k] = normFrom[k] + (normTarget[k] - normFrom[k]) * en;
+        if (tn >= 1) normStart = 0;
+      }
     }
     function ensureLoop() {
       if (raf || !running) return;
@@ -838,6 +880,9 @@
       baseShown = START_BASE.slice(); attnShown = zeros(); ffnShown = zeros();
       baseFrom = START_BASE.slice(); attnFrom = zeros(); ffnFrom = zeros();
       baseTarget = START_BASE.slice(); attnTarget = zeros(); ffnTarget = zeros();
+      normStep = 0;
+      normShown = START_BASE.slice(); normFrom = START_BASE.slice(); normTarget = START_BASE.slice();
+      normStart = 0;
       streamStart = 0;
     }
     function setPhase(next) {
