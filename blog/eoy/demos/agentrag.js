@@ -316,7 +316,7 @@
       for (var k = 0; k < 9; k++) {
         var mid = (lo + hi) / 2;
         body.style.setProperty("--rag-pdf-fs", mid.toFixed(2) + "px");
-        if (flow.scrollWidth <= available + 1) { best = mid; lo = mid; } else { hi = mid; }
+        if (flow.scrollWidth <= available + 16) { best = mid; lo = mid; } else { hi = mid; }
       }
       body.style.setProperty("--rag-pdf-fs", best.toFixed(2) + "px");
       fillers.forEach(function (n) { n.style.display = ""; });
