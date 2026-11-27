@@ -6661,7 +6661,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 }
 
 /* High-dimensional embedding: a calm heatmap instead of a spreadsheet. */
-.ls-highdim-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:14px;padding:12px 14px;overflow:auto;background:radial-gradient(ellipse at 12% 0%,rgba(99,164,75,.10),transparent 55%),radial-gradient(ellipse at 92% 8%,rgba(18,117,172,.09),transparent 52%),var(--ls-paper)}
+.ls-highdim-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:14px;padding:12px 14px;overflow:auto;background:#fff}
 .ls-highdim-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
 .ls-highdim-hero-copy{min-width:0;max-width:58ch}
 .ls-highdim-kicker{font:700 10px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--ls-green-deep,var(--ls-petrol))}
