@@ -103,14 +103,12 @@
         '<div class="ls-rag-pdf-title"><span>' + esc(ARTICLE.kicker) + '</span><h2>' + esc(ARTICLE.title) + '</h2></div>' +
         '<div class="ls-rag-pdf-body">' +
           '<div class="ls-rag-pdf-media">' + figureHTML("colossal") + figureHTML("octopus") + '</div>' +
-          '<div class="ls-rag-pdf-col">' +
-            '<section class="ls-rag-pdf-chunk" data-c="C1"><h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="C2"><h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="C3"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
-          '</div>' +
-          '<div class="ls-rag-pdf-col">' +
-            '<section class="ls-rag-pdf-chunk" data-c="C4"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="C5"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
+          '<div class="ls-rag-pdf-flow">' +
+            '<section class="ls-rag-pdf-chunk" data-c="C1" data-angle="12" title="C1 · ' + esc(c1.heading) + '"><h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C2" data-angle="19" title="C2 · ' + esc(c2.heading) + '"><h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C3" data-angle="52" title="C3 · ' + esc(c3.heading) + '"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C4" data-angle="64" title="C4 · ' + esc(c4.heading) + '"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C5" data-angle="44" title="C5 · ' + esc(c5.heading) + '"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
           '</div>' +
         '</div>' +
         '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Meereskunde", "Encyclopædia · Marine life")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
@@ -119,7 +117,7 @@
 
     function railHTML() {
       return ARTICLE.paragraphs.map(function (p) {
-        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
+        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><div class="ls-rag-rail-top"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span></div><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
       }).join("");
     }
 
@@ -164,18 +162,15 @@
       '</div>' +
       '<div class="ls-rag-stage">' +
         '<div class="ls-rag-doc">' +
-          '<div class="ls-rag-doc-head"><span class="ls-rag-fileicon">PDF</span><div><b>kraken.pdf</b><small class="ls-rag-doc-status"></small></div><span class="ls-rag-doc-tag">' + esc(L("außerhalb des LLM", "outside the LLM")) + '</span></div>' +
+          '<div class="ls-rag-doc-head"><span class="ls-rag-fileicon">PDF</span><div><b>encyclopaedia.pdf</b><small class="ls-rag-doc-status"></small></div><span class="ls-rag-doc-tag">' + esc(L("außerhalb des LLM", "outside the LLM")) + '</span></div>' +
           '<div class="ls-rag-doc-body">' +
             '<div class="ls-rag-pdf-wrap">' + pdfHTML() + '<div class="ls-rag-scanfx" aria-hidden="true"><i></i></div></div>' +
             '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Nur Text · Chunk-Vektoren", "Text only · chunk vectors")) + '</div><div class="ls-rag-rail-list">' + railHTML() + '</div></div>' +
-            '<div class="ls-rag-angle-panel">' +
-              '<div class="ls-rag-angle-head"><span>🔒</span><b>' + esc(L("Nur Modell · für den Nutzer unsichtbar", "Model only · invisible to the user")) + '</b><em>' + esc(L("Winkel zum aktuellen Kontext", "Angles to the current context")) + '</em></div>' +
-              '<div class="ls-rag-angle-chart"></div>' +
-              '<div class="ls-rag-angle-grid"><div class="ls-rag-angle-list"></div><div class="ls-rag-context-slot"><div class="ls-rag-context-head"><span>🔒</span>' + esc(L("Unsichtbarer Kontext", "Invisible context")) + '</div><div class="ls-rag-context-body"><span class="ls-rag-context-empty">' + esc(L("Noch kein Chunk im Kontext.", "No chunk in the context yet.")) + '</span></div></div></div>' +
-              '<div class="ls-rag-angle-caption">' + esc(L("Der Check läuft bei jedem Token; der Nutzer sieht nur die Antwort.", "The check runs at every token; the user only sees the answer.")) + '</div>' +
-            '</div>' +
           '</div>' +
-          '<div class="ls-rag-doc-foot"><details class="ls-rag-note"><summary><span>' + esc(L("Was macht das Embedding-Modell?", "What does the embedding model do?")) + '</span><i>' + esc(L("optional", "optional")) + '</i></summary><p>' + esc(L("Das Embedding-Modell ist ein Transformer ohne Causal Mask. Es darf den ganzen Chunk auf einmal lesen und nutzt im Prinzip dieselben Gewichte wie das Sprachmodell; es sagt aber nicht das nächste Token voraus, sondern liefert einen Vektor pro Chunk.", "The embedding model is a transformer without a causal mask. It can read the whole chunk at once and in principle uses the same weights as the language model; it does not predict the next token, but returns one vector per chunk.")) + '</p></details></div>' +
+          '<div class="ls-rag-context-tray">' +
+            '<div class="ls-rag-tray-head"><span>🔒</span><b>' + esc(L("Unsichtbarer Kontext · nur Modell", "Invisible context · model only")) + '</b><em>35°</em></div>' +
+            '<div class="ls-rag-tray-body"><div class="ls-rag-tray-chart"></div><div class="ls-rag-tray-cards"></div></div>' +
+          '</div>' +
         '</div>' +
         '<div class="ls-rag-phone-col">' +
           '<div class="ls-rag-phone">' +
@@ -184,7 +179,7 @@
               '<div class="ls-rag-appbar"><span>KI-Chat</span><i></i></div>' +
               '<div class="ls-rag-thread">' +
                 '<div class="ls-rag-empty">' + esc(L("Öffne eine Datei mit 📎.", "Open a file with 📎.")) + '</div>' +
-                '<div class="ls-rag-filemsg" hidden><span class="ls-rag-user">' + esc(L("Du", "You")) + '</span><span class="ls-rag-bubble ls-rag-filebubble"><span class="ls-rag-pdficon">PDF</span><span><b>kraken.pdf</b><small class="ls-rag-file-status"></small></span></span></div>' +
+                '<div class="ls-rag-filemsg" hidden><span class="ls-rag-user">' + esc(L("Du", "You")) + '</span><span class="ls-rag-bubble ls-rag-filebubble"><span class="ls-rag-pdficon">PDF</span><span><b>encyclopaedia.pdf</b><small class="ls-rag-file-status"></small></span></span></div>' +
                 '<div class="ls-rag-questionmsg" hidden><span class="ls-rag-user">' + esc(L("Du", "You")) + '</span><span class="ls-rag-bubble">' + esc(QUESTION) + '</span></div>' +
                 '<div class="ls-rag-aimsg" hidden><span class="ls-rag-user">LLM</span><span class="ls-rag-bubble ls-rag-answer"></span><span class="ls-rag-typing" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '</div>' +
@@ -192,7 +187,7 @@
               '<div class="ls-rag-picker" hidden>' +
                 '<div class="ls-rag-picker-head"><b>' + esc(L("Datei auswählen", "Choose a file")) + '</b><span>PDF</span></div>' +
                 '<div class="ls-rag-picker-list">' +
-                  '<button type="button" class="ls-rag-pick" data-file="kraken"><span class="ls-rag-pdficon">PDF</span><span><b>kraken.pdf</b><small>' + esc(L("1,2 KB · Demo", "1.2 KB · demo")) + '</small></span><em>' + esc(L("öffnen", "open")) + '</em></button>' +
+                  '<button type="button" class="ls-rag-pick" data-file="encyclopaedia"><span class="ls-rag-pdficon">PDF</span><span><b>encyclopaedia.pdf</b><small>' + esc(L("1,2 KB · Demo", "1.2 KB · demo")) + '</small></span><em>' + esc(L("öffnen", "open")) + '</em></button>' +
                   '<button type="button" class="ls-rag-pick is-muted" data-file="zen"><span class="ls-rag-pdficon">PDF</span><span><b>' + esc(L("Zen und die Kunst, ein Motorrad zu warten.pdf", "Zen and the Art of Motorcycle Maintenance.pdf")) + '</b><small>4,1 MB</small></span></button>' +
                   '<button type="button" class="ls-rag-pick is-muted" data-file="hott"><span class="ls-rag-pdficon">PDF</span><span><b>Homotopy Type Theory.pdf</b><small>2,8 MB</small></span></button>' +
                 '</div>' +
@@ -221,17 +216,17 @@
     var aiMsg = el.querySelector(".ls-rag-aimsg");
     var answerEl = el.querySelector(".ls-rag-answer");
     var typingEl = el.querySelector(".ls-rag-typing");
-    var angularEl = el.querySelector(".ls-rag-angle-chart");
-    var angleListEl = el.querySelector(".ls-rag-angle-list");
-    var contextBody = el.querySelector(".ls-rag-context-body");
-    var anglePanel = el.querySelector(".ls-rag-angle-panel");
+    var trayEl = el.querySelector(".ls-rag-context-tray");
+    var trayChart = el.querySelector(".ls-rag-tray-chart");
+    var trayCards = el.querySelector(".ls-rag-tray-cards");
     var pdfWrap = el.querySelector(".ls-rag-pdf-wrap");
     var railRows = el.querySelectorAll(".ls-rag-rail-row");
     var picker = el.querySelector(".ls-rag-picker");
     var pickerNote = el.querySelector(".ls-rag-picker-note");
     var pickBtns = el.querySelectorAll(".ls-rag-pick");
+    var phoneEl = el.querySelector(".ls-rag-phone-screen");
 
-    var state = { step: 0, timers: [], picked: false };
+    var state = { step: 0, timers: [], pickerOpen: false };
 
     function clearTimers() {
       state.timers.forEach(function (id) { clearTimeout(id); });
@@ -268,49 +263,85 @@
 
     function fitPdfText() {
       var body = docEl.querySelector(".ls-rag-pdf-body");
-      if (!body) return;
-      var cols = body.querySelectorAll(".ls-rag-pdf-col");
-      if (!cols.length) return;
-      var available = body.clientHeight - 2;
+      var flow = docEl.querySelector(".ls-rag-pdf-flow");
+      if (!body || !flow) return;
+      var available = flow.clientWidth;
       if (available < 40) return;
-      var lo = 8.2, hi = 15, best = 8.2;
-      for (var k = 0; k < 8; k++) {
+      var lo = 7.2, hi = 9.8, best = 7.2;
+      for (var k = 0; k < 9; k++) {
         var mid = (lo + hi) / 2;
         body.style.setProperty("--rag-pdf-fs", mid.toFixed(2) + "px");
-        var maxH = 0;
-        Array.prototype.forEach.call(cols, function (c) { maxH = Math.max(maxH, c.scrollHeight); });
-        if (maxH <= available) { best = mid; lo = mid; } else { hi = mid; }
+        if (flow.scrollWidth <= available + 1) { best = mid; lo = mid; } else { hi = mid; }
       }
       body.style.setProperty("--rag-pdf-fs", best.toFixed(2) + "px");
     }
 
-    function renderAngle() {
-      angularEl.innerHTML = angleSVG();
-      angleListEl.innerHTML = ARTICLE.paragraphs.map(function (p) {
-        var fit = fits(p);
-        return '<div class="ls-rag-angle-row' + (fit ? " is-fit" : "") + '" data-c="' + p.id + '"><b>' + p.id + '</b><span>' + p.angle + '°</span><em>' + esc(fit ? L("passt", "fits") : L("verworfen", "discarded")) + '</em><p>' + esc(p.heading) + ' · ' + esc(p.text) + '</p></div>';
-      }).join("");
-      contextBody.innerHTML = '<span class="ls-rag-context-empty">' + esc(L("Noch kein Chunk im Kontext.", "No chunk in the context yet.")) + '</span>';
+    function resetChunkStates() {
+      docEl.classList.remove("is-angling");
+      if (trayEl) trayEl.classList.remove("is-on");
+      Array.prototype.forEach.call(docEl.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
+        chunk.classList.remove("is-angle-in", "is-fit", "is-out", "is-used");
+      });
     }
-    function insertContext() {
-      contextBody.innerHTML = SELECTED.map(function (id) {
-        var p = chunkById(id);
-        return '<div class="ls-rag-ctx-card" data-c="' + id + '"><b>' + id + '</b><span>' + esc(p.heading) + '</span><p>' + esc(p.text) + '</p></div>';
-      }).join("");
-      Array.prototype.forEach.call(contextBody.querySelectorAll(".ls-rag-ctx-card"), function (card) {
-        requestAnimationFrame(function () { card.classList.add("is-in"); });
+
+    function stepThree() {
+      docEl.classList.add("is-angling");
+      ARTICLE.paragraphs.forEach(function (p, i) {
+        state.timers.push(setTimeout(function () {
+          var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + p.id + '"]');
+          if (chunk) chunk.classList.add("is-angle-in");
+        }, 260 + i * 240));
       });
-      Array.prototype.forEach.call(angleListEl.querySelectorAll(".ls-rag-angle-row.is-fit"), function (row) {
-        row.classList.add("is-in");
-      });
+      state.timers.push(setTimeout(function () {
+        ARTICLE.paragraphs.forEach(function (p) {
+          var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + p.id + '"]');
+          if (!chunk) return;
+          chunk.classList.toggle("is-fit", fits(p));
+          chunk.classList.toggle("is-out", !fits(p));
+        });
+      }, 1700));
+      state.timers.push(setTimeout(function () {
+        trayChart.innerHTML = angleSVG();
+        trayCards.innerHTML = SELECTED.map(function (id) {
+          var p = chunkById(id);
+          return '<div class="ls-rag-tray-card" data-c="' + id + '"><b>' + id + '</b><span>' + esc(p.heading) + '</span><p>' + esc(p.text) + '</p></div>';
+        }).join("");
+        Array.prototype.forEach.call(trayCards.querySelectorAll(".ls-rag-tray-card"), function (card) {
+          requestAnimationFrame(function () { card.classList.add("is-in"); });
+        });
+        SELECTED.forEach(function (id) {
+          var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + id + '"]');
+          if (chunk) chunk.classList.add("is-used");
+        });
+        if (trayEl) trayEl.classList.add("is-on");
+        requestAnimationFrame(fitPdfText);
+        selfCheck();
+      }, 2250));
+      state.timers.push(setTimeout(function () { showAnswer(); selfCheck(); }, 3050));
     }
     function showAnswer() {
       typingEl.hidden = true;
       answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite">[C1]</span><span class="ls-rag-cite">[C2]</span>';
     }
-    function scheduleAngle() {
-      state.timers.push(setTimeout(function () { insertContext(); }, 560));
-      state.timers.push(setTimeout(function () { showAnswer(); }, 1250));
+
+    function selfCheck() {
+      var chunks = docEl.querySelectorAll(".ls-rag-pdf-chunk");
+      var rails = el.querySelectorAll(".ls-rag-rail-row");
+      var thread = el.querySelector(".ls-rag-thread");
+      var phoneText = thread ? thread.textContent : "";
+      var ok = chunks.length === ARTICLE.paragraphs.length && rails.length === ARTICLE.paragraphs.length;
+      if (phoneText.indexOf("Der Krake (Octopus)") >= 0 || phoneText.indexOf("The octopus (Octopus)") >= 0) ok = false;
+      var flow = docEl.querySelector(".ls-rag-pdf-flow");
+      if (flow && flow.clientWidth > 0 && flow.scrollWidth > flow.clientWidth + 2) {
+        fitPdfText();
+        ok = false;
+      }
+      if (state.step >= 3) {
+        var cards = trayCards ? trayCards.querySelectorAll(".ls-rag-tray-card") : [];
+        if (cards.length !== SELECTED.length) ok = false;
+      }
+      el.setAttribute("data-rag-ok", ok ? "1" : "0");
+      return ok;
     }
 
     function setChat() {
@@ -335,16 +366,27 @@
       }
     }
 
-    function openPicker() {
+    function selectFile() {
       if (state.step !== 0) return;
-      state.picked = false;
+      clearTimers();
+      state.pickerOpen = false;
+      var row = el.querySelector('.ls-rag-pick[data-file="encyclopaedia"]');
+      if (row) row.classList.add("is-selected");
+      state.timers.push(setTimeout(function () { go(1); }, 180));
+    }
+
+    function openPicker() {
+      if (state.step !== 0 || state.pickerOpen) return;
+      state.pickerOpen = true;
       picker.hidden = false;
       pickerNote.hidden = true;
       pickerNote.textContent = "";
+      Array.prototype.forEach.call(pickBtns, function (b) { b.classList.remove("is-selected"); });
       attachBtn.classList.remove("is-hint", "is-tap");
       void attachBtn.offsetWidth;
       attachBtn.classList.add("is-tap");
       state.timers.push(setTimeout(function () { attachBtn.classList.remove("is-tap"); }, 700));
+      state.timers.push(setTimeout(selectFile, 1000));
     }
 
     function applyStep() {
@@ -356,9 +398,10 @@
       progressEl.textContent = (state.step + 1) + " / " + STEPS.length;
       picker.hidden = true;
       docEl.classList.toggle("is-on", state.step >= 1);
-      anglePanel.classList.toggle("is-on", state.step >= 3);
+      resetChunkStates();
       setChat();
       if (state.step === 0) {
+        state.pickerOpen = false;
         docStatus.textContent = "";
         attachBtn.classList.add("is-hint");
       } else if (state.step === 1) {
@@ -370,22 +413,22 @@
       } else if (state.step === 3) {
         completeScan();
         docStatus.textContent = L("5 Chunks · 2 im Kontext", "5 chunks · 2 in context");
-        renderAngle();
-        scheduleAngle();
+        stepThree();
       }
       if (state.step >= 1) requestAnimationFrame(fitPdfText);
       statusEl.textContent = state.step === 0
-        ? L("Tippe auf 📎 und wähle kraken.pdf. Der Dialog zeigt auch andere PDFs.", "Tap 📎 and choose kraken.pdf. The dialog also shows other PDFs.")
+        ? ""
         : state.step === 1
           ? L("Der Agent scannt den Text außerhalb des LLM. Jeder Abschnitt wird ein Chunk mit eigenem Vektor.", "The agent scans the text outside the LLM. Each paragraph becomes a chunk with its own vector.")
           : state.step === 2
-            ? L("Die Frage steht im Chat. Jetzt vergleicht der Agent die Winkel der Chunks mit dem Kontext.", "The question is in the chat. Now the agent compares the chunk angles with the context.")
-            : L("C1 und C2 liegen unter 35°. Sie wandern still in den unsichtbaren Kontext; der Chat antwortet.", "C1 and C2 lie below 35°. They move silently into the invisible context; the chat answers.");
+            ? ""
+            : L("C1 und C2 liegen unter 35° und wandern in den unsichtbaren Kontext.", "C1 and C2 lie below 35° and move into the invisible context.");
       nextBtn.textContent = state.step === 0
-        ? L("Datei wählen", "Choose file")
+        ? L("Weiter", "Next")
         : state.step < 3
           ? L("Weiter: " + STEPS[state.step + 1], "Next: " + STEPS[state.step + 1])
           : L("Neu starten", "Restart");
+      selfCheck();
     }
 
     function go(step) {
@@ -398,31 +441,49 @@
     }
 
     nextBtn.addEventListener("click", function () {
-      if (state.step === 0) { openPicker(); return; }
+      if (state.step === 0) {
+        if (picker.hidden) openPicker();
+        else selectFile();
+        return;
+      }
       if (state.step < 3) go(state.step + 1);
       else go(0);
     });
     resetBtn.addEventListener("click", function () { go(0); });
-    attachBtn.addEventListener("click", openPicker);
+    attachBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      openPicker();
+    });
+    if (phoneEl) {
+      phoneEl.addEventListener("click", function (e) {
+        if (state.step !== 0) return;
+        if (e.target.closest && e.target.closest(".ls-rag-picker")) return;
+        if (picker.hidden) openPicker();
+      });
+    }
     Array.prototype.forEach.call(pickBtns, function (btn) {
       btn.addEventListener("click", function () {
         var file = btn.getAttribute("data-file");
-        if (file === "kraken") {
-          state.picked = true;
-          go(1);
+        if (file === "encyclopaedia") {
+          selectFile();
           return;
         }
         pickerNote.hidden = false;
-        pickerNote.textContent = L("In dieser Demo wird kraken.pdf geöffnet.", "This demo opens kraken.pdf.");
+        pickerNote.textContent = L("In dieser Demo wird encyclopaedia.pdf geöffnet.", "This demo opens encyclopaedia.pdf.");
       });
     });
 
     applyStep();
+    el.__lsRagSelfCheck = selfCheck;
 
     return {
       update: function () { go(0); },
       next: function () {
-        if (state.step === 0) { openPicker(); return true; }
+        if (state.step === 0) {
+          if (picker.hidden) openPicker();
+          else selectFile();
+          return true;
+        }
         if (state.step < 3) { go(state.step + 1); return true; }
         return false;
       },
@@ -432,7 +493,7 @@
       },
       hasNext: function () { return state.step < 3; },
       hasPrev: function () { return state.step > 0; },
-      resize: function () { requestAnimationFrame(fitPdfText); },
+      resize: function () { requestAnimationFrame(function () { fitPdfText(); selfCheck(); }); },
       destroy: function () { clearTimers(); el.remove(); }
     };
   }
