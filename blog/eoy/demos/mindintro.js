@@ -77,6 +77,8 @@
         '</aside>' +
       '</div>';
     root.appendChild(el);
+    var more = el.querySelector(".ls-mi2-more");
+    if (more) el.appendChild(more);
 
     var mary = el.querySelector("[data-mi-mary]");
     var reveal = el.querySelector("[data-mi-reveal]");
