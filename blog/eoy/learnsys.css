@@ -7359,3 +7359,7 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-time-hero-grid.has-two.is-stacked.is-equal{display:grid;grid-template-columns:1fr;grid-template-rows:1fr 1fr;gap:6px}
 .ls-time-hero-grid.has-two.is-stacked.is-equal .ls-time-media{height:100%;max-height:none;min-height:0}
 .ls-time-hero-grid.has-two.is-stacked.is-equal .ls-time-hero-img{height:100%;max-height:none;object-fit:contain;background:#fff}
+.ls-time-hero-grid.has-two.is-stacked.is-second-large{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,.8fr) minmax(0,1.2fr);gap:6px;height:100%}
+.ls-time-hero-grid.has-two.is-stacked.is-second-large .ls-time-media{height:100%;max-height:none;min-height:0}
+.ls-time-hero-grid.has-two.is-stacked.is-second-large .ls-time-hero-img{height:100%;max-height:none;object-fit:contain;background:#fff}
+.ls-time-hero-grid.has-two.is-stacked.is-second-large .ls-time-media.is-side .ls-time-hero-img{object-fit:cover}

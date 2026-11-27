@@ -103,7 +103,7 @@
         ]
       },
       {
-        year: "1943–1958", label: "Neuron", stackImages: true, equalImages: true, title: "Das Neuron als Recheneinheit",
+        year: "1943–1958", label: "Neuron", stackImages: true, secondImageLarge: true, title: "Das Neuron als Recheneinheit",
         text: "McCulloch und Pitts modellieren 1943 ein Neuron als logische Schwelle: ein Netz aus Alles-oder-nichts-Zellen, das Boolesche Funktionen berechnet. Pitts war ein autodidaktischer Logiker aus Detroit, der mit zwölf die Principia Mathematica las und mit fünfzehn von zu Hause weglief, um in Chicago Bertrand Russell zu hören; bei McCulloch fand er ein Zuhause und lieferte die Logik für das Neuron. Hebb formuliert 1949 in The Organization of Behavior die erste einflussreiche Lernregel: Wenn Zelle A Zelle B wiederholt feuert, wächst die Verbindung. Die später geprägte Kurzformel „neurons that fire together, wire together“ fasst das zusammen; sie steht so nicht in Hebbs Buch. 1958 baut Rosenblatt das Perzeptron, das Gewichte aus Fehlern anpasst. Pitts zog sich nach dem Bruch mit Wiener zurück, verbrannte seine Dissertation und starb 1969 mit 46.",
         images: [
           { src: "../mcculloch_pitts_neuron.png", alt: "Diagramm einer McCulloch-Pitts-Zelle", cap: "McCulloch-Pitts-Zelle. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" },
@@ -273,7 +273,7 @@
         ]
       },
       {
-        year: "1943–1958", label: "Neuron", stackImages: true, equalImages: true, title: "The neuron as a computing unit",
+        year: "1943–1958", label: "Neuron", stackImages: true, secondImageLarge: true, title: "The neuron as a computing unit",
         text: "McCulloch and Pitts model a neuron as a logical threshold in 1943: a network of all-or-none cells that computes Boolean functions. Pitts was a self-taught logician from Detroit who read Principia Mathematica at twelve and ran away from home at fifteen to hear Bertrand Russell in Chicago; McCulloch gave him a home, and Pitts supplied the logic for the neuron. Hebb formulates in 1949 in The Organization of Behavior the first influential learning rule: when cell A repeatedly fires cell B, the connection grows. The later slogan “neurons that fire together, wire together” summarises this; it is not Hebb's own wording. In 1958 Rosenblatt builds the perceptron, which adjusts weights from errors. Pitts withdrew after a break with Wiener, burned his dissertation, and died in 1969 at 46.",
         images: [
           { src: "../mcculloch_pitts_neuron.png", alt: "Diagram of a McCulloch-Pitts cell", cap: "McCulloch-Pitts cell. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" },
@@ -410,7 +410,7 @@
         var images = e.images.slice(0, 3);
         var main = images[0];
         var caption = '<span>' + api.esc(main.cap) + '</span> <a href="' + api.esc(main.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a>';
-        var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "") + (e.stackImages ? " is-stacked" : "") + (e.equalImages ? " is-equal" : "");
+        var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "") + (e.stackImages ? " is-stacked" : "") + (e.equalImages ? " is-equal" : "") + (e.secondImageLarge ? " is-second-large" : "");
         return '<figure class="ls-time-hero is-media" style="' + style + '">' +
           '<div class="' + gridClass + '">' + images.map(function (im, i) {
             return '<span class="ls-time-media' + (i === 0 ? ' is-main' : ' is-side') + '"><img class="ls-time-hero-img' + (i === 0 ? ' is-main' : ' is-side') + '" src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(im.cap) + '"><span class="ls-time-media-spinner" aria-hidden="true"></span></span>';
