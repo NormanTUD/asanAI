@@ -142,8 +142,9 @@
     function layerNormDisplay(v) {
       var mean = v.reduce(function (a, b) { return a + b; }, 0) / v.length;
       var centered = v.map(function (x) { return x - mean; });
-      var maxAbs = Math.max.apply(null, centered.map(function (x) { return Math.abs(x); }).concat([1e-6]));
-      return centered.map(function (x) { return x / maxAbs; });
+      var variance = centered.reduce(function (a, b) { return a + b * b; }, 0) / v.length;
+      var std = Math.sqrt(variance + 1e-5);
+      return centered.map(function (x) { return x / std; });
     }
     var streamCache = null;
     function buildStreamStates() {
@@ -494,14 +495,15 @@
       var slot = w / 6;
       var barW = Math.max(2, slot * 0.5);
       var zero = y + h / 2;
+      var maxAbs = Math.max.apply(null, values.map(function (v) { return Math.abs(v || 0); }).concat([1]));
       g.strokeStyle = V.alpha(C.lineStrong, 0.35);
       g.lineWidth = 0.8;
       g.beginPath(); g.moveTo(x, zero); g.lineTo(x + w, zero); g.stroke();
       for (var j = 0; j < 6; j++) {
         var xx = x + slot * (j + 0.5) - barW / 2;
         var v = values[j] || 0;
-        var bh = v * (h / 2 - 2);
-        g.fillStyle = V.alpha(v >= 0 ? C.petrol : C.petrol, 0.82);
+        var bh = v / maxAbs * (h / 2 - 2);
+        g.fillStyle = V.alpha(C.petrol, 0.82);
         g.fillRect(xx, Math.min(zero, zero - bh), barW, Math.max(1, Math.abs(bh)));
       }
     }
@@ -621,7 +623,7 @@
       var layerText;
       if (streamLayer === 0) layerText = DE ? "Start: sechs konstruierte Dimensionen" : "Start: six constructed dimensions";
       else if (normStep === 0) layerText = DE ? "Block " + streamLayer + " · Schritt 1/2: Addition (vor LayerNorm)" : "Block " + streamLayer + " · step 1/2: addition (before LayerNorm)";
-      else layerText = DE ? "Block " + streamLayer + " · Schritt 2/2: LayerNorm · Mittelwert 0, Bereich [-1,1]" : "Block " + streamLayer + " · step 2/2: LayerNorm · mean 0, range [-1,1]";
+      else layerText = DE ? "Block " + streamLayer + " · Schritt 2/2: LayerNorm · Mittelwert 0, Std 1" : "Block " + streamLayer + " · step 2/2: LayerNorm · mean 0, std 1";
       g.fillText(layerText, panelX + 16, barY + 40);
       if (panelW > 430) drawLegend(g, panelX + panelW - 390, barY + 26, C, true);
       var plotX = panelX + 24;
@@ -815,7 +817,7 @@
       if (streamNote) {
         streamNote.hidden = phase !== "stream";
         streamNote.textContent = phase === "stream"
-          ? (DE ? "Hellblau: vorherige Outputs. Dunkelblau: Transformer-Block. Grün: nach LayerNorm. Zwei Schritte pro Block: 1) Addition (bleibt additiv, auch mit negativen Werten), 2) LayerNorm: Mittelwert 0, auf [-1,1] skaliert. Post-LN hier; GPT-2/Pre-LN normalisiert die Kopie vor Attention/FFN und am Ende (Vaswani et al., 2017; Xiong et al., 2020)." : "Light blue: previous outputs. Dark blue: transformer block. Green: after LayerNorm. Two steps per block: 1) addition (still additive, even with negative values), 2) LayerNorm: mean 0, scaled to [-1,1]. Post-LN here; GPT-2/pre-LN normalizes the copy before attention/FFN and at the end (Vaswani et al., 2017; Xiong et al., 2020).")
+          ? (DE ? "Hellblau: vorherige Outputs. Dunkelblau: Transformer-Block. Grün: nach LayerNorm. Zwei Schritte pro Block: 1) Addition (bleibt additiv, auch mit negativen Werten), 2) LayerNorm: Mittelwert 0, Standardabweichung 1 (Werte können über ±1 hinausgehen). Post-LN hier; GPT-2/Pre-LN normalisiert die Kopie vor Attention/FFN und am Ende (Vaswani et al., 2017; Xiong et al., 2020)." : "Light blue: previous outputs. Dark blue: transformer block. Green: after LayerNorm. Two steps per block: 1) addition (still additive, even with negative values), 2) LayerNorm: mean 0, standard deviation 1 (values can go beyond ±1). Post-LN here; GPT-2/pre-LN normalizes the copy before attention/FFN and at the end (Vaswani et al., 2017; Xiong et al., 2020).")
           : "";
       }
       if (phase === "notebook") {
@@ -1062,7 +1064,7 @@
           var n = streamLayer;
           var raw = base + attn + ffn;
           if (normStep === 1) {
-            return "LN(x" + n + ") · d" + (d + 1) + ": " + raw.toFixed(2) + " → " + normShown[d].toFixed(2) + (DE ? " (Mittelwert 0)" : " (mean 0)");
+            return "LN(x" + n + ") · d" + (d + 1) + ": " + raw.toFixed(2) + " → " + normShown[d].toFixed(2) + (DE ? " (Mittelwert 0, Std 1)" : " (mean 0, std 1)");
           }
           var eq = n === 0 ? "Start" : "x" + n + " = x" + (n - 1) + " + A" + n + " + F" + n;
           return eq + " · d" + (d + 1) + " " + base.toFixed(2) + " + " + attn.toFixed(2) + " + " + ffn.toFixed(2) + " = " + raw.toFixed(2);

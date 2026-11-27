@@ -18,7 +18,7 @@
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sim-pause">' + (DE ? "Drehung stoppen" : "Stop rotation") + '</button>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
-        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.08" max="1.05" step="0.01" value="0.08"><output>0.08</output></label>' +
+        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.08" max="1.05" step="0.01" value="0.40"><output>0.40</output></label>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
@@ -58,7 +58,7 @@
     var yaw = -0.55, pitch = 0.33;
     var dirRaf = 0, dirLast = 0, dirPaused = false;
     var dragging = false, dragMoved = false, lastPX = 0, lastPY = 0;
-    var angleA = 360, angleB = 90, scaleMag = 0.08;
+    var angleA = 360, angleB = 90, scaleMag = 0.40;
     var scaleIndex = 0, scaleRaf = 0;
     var SCALE_VALUES = [0.08, 0.2, 0.4, 0.62, 0.85, 1.05];
     var hits = [];
@@ -388,48 +388,208 @@
     }
 
     function drawScale() {
-      var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
+      var w = size.w, h = size.h, ctx = size.ctx;
+      var cx = w * 0.47, cy = h * 0.56;
+      var R = Math.min(w * 0.29, h * 0.36);
       var aA = 25 * Math.PI / 180;
       var aB = 75 * Math.PI / 180;
       var magA = 0.62, magB = scaleMag;
-      var lenA = r * magA, lenB = r * magB;
+      var lenA = R * magA, lenB = R * magB;
       var ax = cx + Math.cos(aA) * lenA, ay = cy - Math.sin(aA) * lenA;
       var bx = cx + Math.cos(aB) * lenB, by = cy - Math.sin(aB) * lenB;
       var angleDeg = (aB - aA) * 180 / Math.PI;
+      ctx.clearRect(0, 0, w, h);
+      var bg = ctx.createLinearGradient(0, 0, w, h);
+      bg.addColorStop(0, "#061a24");
+      bg.addColorStop(0.55, "#0a3140");
+      bg.addColorStop(1, "#071e2a");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.72);
+      glow.addColorStop(0, V.alpha(C.blue, 0.18));
+      glow.addColorStop(0.45, V.alpha(C.green, 0.05));
+      glow.addColorStop(1, V.alpha(C.paper, 0));
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, w, h);
+      var goldGlow = ctx.createRadialGradient(cx + R * 0.2, cy - R * 0.55, 0, cx + R * 0.2, cy - R * 0.55, R * 0.8);
+      goldGlow.addColorStop(0, V.alpha(C.gold, 0.10));
+      goldGlow.addColorStop(1, V.alpha(C.gold, 0));
+      ctx.fillStyle = goldGlow;
+      ctx.fillRect(0, 0, w, h);
+      function rr(x, y, ww, hh, rad) {
+        var r0 = Math.min(rad, ww / 2, hh / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + r0, y);
+        ctx.lineTo(x + ww - r0, y);
+        ctx.quadraticCurveTo(x + ww, y, x + ww, y + r0);
+        ctx.lineTo(x + ww, y + hh - r0);
+        ctx.quadraticCurveTo(x + ww, y + hh, x + ww - r0, y + hh);
+        ctx.lineTo(x + r0, y + hh);
+        ctx.quadraticCurveTo(x, y + hh, x, y + hh - r0);
+        ctx.lineTo(x, y + r0);
+        ctx.quadraticCurveTo(x, y, x + r0, y);
+        ctx.closePath();
+      }
+      function pill(text, x, y, color, fs) {
+        var sizePx = fs || Math.max(8, api.font("canvas-sm") - 1);
+        ctx.font = '700 ' + sizePx + 'px "Barlow", "Open Sans", sans-serif';
+        var tw = ctx.measureText(text).width;
+        var pw = tw + 16, ph = sizePx + 11;
+        var px = Math.max(8, Math.min(w - pw - 8, x - pw / 2));
+        var py = Math.max(8, Math.min(h - ph - 8, y - ph / 2));
+        ctx.fillStyle = "rgba(3,18,26,0.82)";
+        rr(px, py, pw, ph, ph / 2);
+        ctx.fill();
+        ctx.strokeStyle = V.alpha(color, 0.6);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, px + pw / 2, py + ph / 2 + 0.5);
+      }
+      function halo(x, y, color, radius) {
+        var hg = ctx.createRadialGradient(x, y, 0, x, y, radius * 4.2);
+        hg.addColorStop(0, V.alpha(color, 0.55));
+        hg.addColorStop(0.35, V.alpha(color, 0.18));
+        hg.addColorStop(1, V.alpha(color, 0));
+        ctx.fillStyle = hg;
+        ctx.beginPath(); ctx.arc(x, y, radius * 4.2, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.85)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+      ctx.save();
+      ctx.strokeStyle = V.alpha(C.paper, 0.08);
+      ctx.lineWidth = 1;
+      for (var sIdx = 0; sIdx < 12; sIdx++) {
+        var ang = sIdx * Math.PI / 6;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(ang) * R * 0.12, cy - Math.sin(ang) * R * 0.12);
+        ctx.lineTo(cx + Math.cos(ang) * R, cy - Math.sin(ang) * R);
+        ctx.stroke();
+      }
+      [0.34, 0.67, 1].forEach(function (rad) {
+        ctx.strokeStyle = V.alpha(C.paper, rad === 1 ? 0.22 : 0.09);
+        ctx.lineWidth = rad === 1 ? 1.4 : 1;
+        ctx.beginPath(); ctx.arc(cx, cy, R * rad, 0, Math.PI * 2); ctx.stroke();
+      });
+      for (var tIdx = 0; tIdx < 24; tIdx++) {
+        var ta = tIdx * Math.PI / 12;
+        var tr0 = R * 0.985, tr1 = R * (tIdx % 2 ? 0.955 : 0.94);
+        ctx.strokeStyle = V.alpha(C.paper, 0.16);
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(ta) * tr0, cy - Math.sin(ta) * tr0);
+        ctx.lineTo(cx + Math.cos(ta) * tr1, cy - Math.sin(ta) * tr1);
+        ctx.stroke();
+      }
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle = V.alpha(C.paper, 0.48);
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(DE ? "Einheitskreis" : "unit circle", cx, cy - R - 6);
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle = V.alpha(C.blue, 0.05);
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, r * 0.42, -aA, -aB, true);
+      ctx.lineTo(ax, ay);
+      ctx.lineTo(bx, by);
       ctx.closePath();
-      ctx.fillStyle = V.alpha(C.gold, 0.16);
       ctx.fill();
-      ctx.strokeStyle = C.gold;
+      ctx.restore();
+      ctx.save();
+      ctx.strokeStyle = V.alpha(C.petrol, 0.55);
       ctx.lineWidth = 1.2;
+      ctx.setLineDash([6, 5]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.30, -aA, -aB, true);
       ctx.stroke();
-      V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
-      V.arrow(ctx, cx, cy, bx, by, C.green, 3);
-      ctx.fillStyle = C.blue;
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
-      ctx.textBaseline = "bottom";
-      ctx.fillText("A", ax + 7, ay - 3);
-      ctx.fillStyle = C.green;
-      ctx.fillText("B", bx + 7, by - 3);
-      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-      ctx.fillStyle = C.blue;
-      ctx.fillText("|A| = " + magA.toFixed(2), ax + 7, ay + 14);
-      ctx.fillStyle = C.green;
-      ctx.fillText("|B| = " + magB.toFixed(2), bx + 7, by + 14);
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.40, -aA, -aB, true);
+      ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      var wedge = ctx.createLinearGradient(cx, cy, cx + Math.cos((aA + aB) / 2) * R * 0.6, cy - Math.sin((aA + aB) / 2) * R * 0.6);
+      wedge.addColorStop(0, V.alpha(C.gold, 0.02));
+      wedge.addColorStop(1, V.alpha(C.gold, 0.24));
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.40, -aA, -aB, true);
+      ctx.arc(cx, cy, R * 0.30, -aB, -aA, false);
+      ctx.closePath();
+      ctx.fillStyle = wedge;
+      ctx.fill();
+      ctx.strokeStyle = V.alpha(C.gold, 0.65);
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.strokeStyle = V.alpha(C.blue, 0.30);
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(cx + Math.cos(aA) * R, cy - Math.sin(aA) * R);
+      ctx.stroke();
+      ctx.strokeStyle = V.alpha(C.green, 0.30);
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.lineTo(cx + Math.cos(aB) * R, cy - Math.sin(aB) * R);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = V.alpha(C.paper, 0.55);
+      ctx.beginPath(); ctx.arc(cx + Math.cos(aA) * R, cy - Math.sin(aA) * R, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + Math.cos(aB) * R, cy - Math.sin(aB) * R, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.shadowColor = V.alpha(C.blue, 0.75);
+      ctx.shadowBlur = 20;
+      V.arrow(ctx, cx, cy, ax, ay, C.blue, 3.6, 9);
+      ctx.restore();
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.shadowColor = V.alpha(C.green, 0.75);
+      ctx.shadowBlur = 20;
+      V.arrow(ctx, cx, cy, bx, by, C.green, 3.6, 9);
+      ctx.restore();
+      halo(ax, ay, C.blue, 4.6);
+      halo(bx, by, C.green, magB < 0.2 ? 4.2 : 4.6);
+      ctx.save();
+      ctx.strokeStyle = V.alpha(C.gold, 0.42);
+      ctx.lineWidth = 1.1;
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+      ctx.restore();
+      pill("A", ax + Math.cos(aA) * 18, ay - Math.sin(aA) * 18, C.blue);
+      pill("B", bx + Math.cos(aB) * 18, by - Math.sin(aB) * 18, C.green);
+      var midAng = (aA + aB) / 2;
+      pill(Math.round(angleDeg) + "°", cx + Math.cos(midAng) * R * 0.35, cy - Math.sin(midAng) * R * 0.35, C.gold);
+      var tpx = 16, tpy = 14, tpw = Math.min(300, w * 0.56), tph = 60;
+      ctx.save();
+      ctx.fillStyle = "rgba(3,18,26,0.55)";
+      rr(tpx, tpy, tpw, tph, 10);
+      ctx.fill();
+      ctx.strokeStyle = V.alpha(C.paper, 0.12);
+      ctx.lineWidth = 1;
+      ctx.stroke();
       ctx.fillStyle = C.gold;
-      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      var mid = (aA + aB) / 2;
-      ctx.fillText(Math.round(angleDeg) + "°", cx + Math.cos(mid) * r * 0.52, cy - Math.sin(mid) * r * 0.52);
-      ctx.fillStyle = C.petrol;
-      ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
-      ctx.fillText(DE ? "Länge vs. Richtung" : "Length vs. direction", 18, 28);
+      ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Barlow", sans-serif';
+      ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      ctx.fillText(DE ? "SKALENINVARIANZ" : "SCALE INVARIANCE", tpx + 14, tpy + 18);
+      ctx.fillStyle = C.paper;
+      ctx.font = '700 ' + Math.max(15, Math.min(21, w * 0.022)) + 'px "Barlow", sans-serif';
+      ctx.fillText(DE ? "Länge vs. Richtung" : "Length vs. direction", tpx + 14, tpy + 39);
+      ctx.fillStyle = V.alpha(C.paper, 0.60);
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.fillText(DE ? "Richtung bleibt · Länge verändert die Distanz" : "Direction stays · length changes the distance", tpx + 14, tpy + 53);
+      ctx.restore();
       var dx = Math.cos(aB) * magB - Math.cos(aA) * magA;
       var dy = Math.sin(aB) * magB - Math.sin(aA) * magA;
       var dist = Math.hypot(dx, dy);
@@ -603,8 +763,8 @@
       }
       if (mode === "unembed") startUnembed(); else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
       if (mode === "scale" && modeChanged) {
-        scaleMag = SCALE_VALUES[0];
-        scaleIndex = 0;
+        scaleMag = SCALE_VALUES[2];
+        scaleIndex = 2;
         if (scaleInput) scaleInput.value = String(scaleMag);
         if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2);
       }
