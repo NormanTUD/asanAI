@@ -403,17 +403,6 @@
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = C.paper;
       ctx.fillRect(0, 0, w, h);
-      var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.72);
-      glow.addColorStop(0, V.alpha(C.blue, 0.08));
-      glow.addColorStop(0.45, V.alpha(C.green, 0.025));
-      glow.addColorStop(1, V.alpha(C.paper, 0));
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, w, h);
-      var goldGlow = ctx.createRadialGradient(cx + R * 0.2, cy - R * 0.55, 0, cx + R * 0.2, cy - R * 0.55, R * 0.8);
-      goldGlow.addColorStop(0, V.alpha(C.gold, 0.05));
-      goldGlow.addColorStop(1, V.alpha(C.gold, 0));
-      ctx.fillStyle = goldGlow;
-      ctx.fillRect(0, 0, w, h);
       function rr(x, y, ww, hh, rad) {
         var r0 = Math.min(rad, ww / 2, hh / 2);
         ctx.beginPath();
@@ -756,12 +745,6 @@
         ctx.textBaseline = "middle";
         ctx.fillText(text, px + pw / 2, py + ph / 2 + 0.5);
       }
-      var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.66);
-      glow.addColorStop(0, V.alpha(C.blue, 0.07));
-      glow.addColorStop(0.5, V.alpha(C.gold, 0.025));
-      glow.addColorStop(1, V.alpha(C.paper, 0));
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, w, h);
       ctx.save();
       ctx.strokeStyle = V.alpha(C.green, 0.74);
       ctx.lineWidth = 1.6;

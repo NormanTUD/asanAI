@@ -1871,7 +1871,7 @@
       box("hct-4", "Kontext", "Konflikt und Zeit", "Kontext und Trainingsdaten können sich widersprechen; das Modell ignoriert den Kontext oder nutzt veraltetes Wissen. Gegenmittel: Kontext zitieren, Datum prüfen, Retrieval."),
       box("hct-5", "Sprache", "Entität und Negation (Reasoning)", "Namen oder Zahlen werden vertauscht; „nicht traurig“ ist nicht automatisch „glücklich“. Negation ist ein eigener Reasoning-Fehler und in den zitierten Surveys kein eigener Halluzinationstyp; Attention ist kein Antonym-Operator. Gegenmittel: Entitäten und logische Schritte separat prüfen."),
       box("hct-6", "Decoding", "Sampling", "Zufall wählt einen plausiblen, aber falschen Pfad. Nicht jede falsche Antwort ist eine Konfabulation; hohe semantische Entropie macht willkürliche Antworten sichtbar (Farquhar et al., 2024). Gegenmittel: Temperatur senken, mehrere Antworten vergleichen, Selbstkonsistenz."),
-      box("hct-7", "RAG", "Was RAG nicht garantiert", "RAG holt Sätze über Vektornähe. Ist der richtige Satz nicht dabei oder wird er ignoriert, bleibt die Antwort ungedeckt. Die Suche ersetzt kein Verstehen; prüfe Retrieval und Faithfulness getrennt.")
+      box("hct-7", "RAG", "Was RAG nicht garantiert", "RAG holt Sätze über Vektornähe. Ist der richtige Satz nicht dabei oder wird er ignoriert, bleibt die Antwort ungedeckt. Prüfe Retrieval und Faithfulness getrennt.")
     ] : [
       box("hct-1", "Data", "False facts", "The model repeats a false statement in a calm voice. Source: training data. Countermeasure: check the source, use RAG, require a citation."),
       box("hct-2", "Source", "Fabricated citations", "A DOI, author, or paper sounds real but does not exist. Source: training data, even though the shape looks like context. Countermeasure: check the link, cite only provided sources."),
@@ -1879,7 +1879,7 @@
       box("hct-4", "Context", "Conflict and time", "Context and training data can disagree; the model may ignore the context or use outdated knowledge. Countermeasure: quote the context, check the date, use retrieval."),
       box("hct-5", "Language", "Entity and negation (reasoning)", "Names or numbers get swapped; “not sad” is not automatically “happy”. Negation is a separate reasoning error and not its own hallucination type in the cited surveys; attention is not an antonym operator. Countermeasure: check entities and logical steps separately."),
       box("hct-6", "Decoding", "Sampling", "Randomness picks a plausible but false path. Not every wrong answer is a confabulation; high semantic entropy makes arbitrary answers visible (Farquhar et al., 2024). Countermeasure: lower temperature, compare several answers, use self-consistency."),
-      box("hct-7", "RAG", "What RAG does not guarantee", "RAG retrieves sentences by vector proximity. If the right sentence is not there or the model ignores it, the answer stays ungrounded. Search does not replace understanding; check retrieval and faithfulness separately.")
+      box("hct-7", "RAG", "What RAG does not guarantee", "RAG retrieves sentences by vector proximity. If the right sentence is not there or the model ignores it, the answer stays ungrounded. Check retrieval and faithfulness separately.")
     ],
     sources: [
       { label: "Ji et al. (2023), Survey of Hallucination in Natural Language Generation", url: "https://arxiv.org/abs/2202.03629", why: { de: "Überblick über Halluzinationsarten und -ursachen.", en: "Overview of hallucination types and causes." } },

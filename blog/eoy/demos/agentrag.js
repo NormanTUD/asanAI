@@ -23,8 +23,8 @@
     };
 
     var ARTICLE = {
-      brand: L("BROCKHAUS", "BROCKHAUS"),
-      series: L("Enzyklopädie · Band 12", "Encyclopædia · Volume 12"),
+      brand: L("KOMPENDIUM", "COMPENDIUM"),
+      series: L("Meereskunde · Band 12", "Marine life · Volume 12"),
       page: "417",
       kicker: L("Octopoda · Kopffüßer", "Octopoda · cephalopods"),
       title: L("Krake", "Octopus"),
@@ -114,7 +114,7 @@
             '<h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p>' +
           '</div>' +
         '</div>' +
-        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Brockhaus · Enzyklopädie", "Brockhaus · Encyclopædia")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
+        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Kompendium · Meereskunde", "Compendium · Marine life")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
       '</div>';
     }
 
@@ -176,6 +176,7 @@
             '<h3>' + esc(L("Winkel zum aktuellen Kontext", "Angles to the current context")) + '</h3>' +
             '<div class="ls-rag-scan-svg"></div>' +
             '<div class="ls-rag-scan-list"></div>' +
+            '<div class="ls-rag-scan-caption">' + esc(L("Der Check läuft bei jedem Token; der Nutzer sieht nur die Antwort.", "The check runs at every token; the user only sees the answer.")) + '</div>' +
             '<div class="ls-rag-context-slot"><div class="ls-rag-context-head"><span>🔒</span>' + esc(L("Unsichtbarer Kontext", "Invisible context")) + '</div><div class="ls-rag-context-body"><span class="ls-rag-context-empty">' + esc(L("Noch kein Chunk im Kontext.", "No chunk in the context yet.")) + '</span></div></div>' +
           '</aside>' +
           '<div class="ls-rag-phone-wrap">' +

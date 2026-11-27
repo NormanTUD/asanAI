@@ -1795,3 +1795,20 @@ Inverted_qualia_of_colour_strawberry.jpg
     Lokal: eoy/inverted_qualia_strawberry.jpg (1070x614)
     Genutzt in: eoy/31.php § Other Minds / Gleiche Worte, anderes Erleben
     Status: OK - Autor, Lizenz und Dateiseite im Caption verlinkt
+=== EOY: RAG-Lexikon, Kraken (eoy/data.js, agentrag demo) ===
+Le Poulpe Colossal.jpg
+    URL: https://commons.wikimedia.org/wiki/File:Le_Poulpe_Colossal.jpg
+    Lizenz: Public domain (PD-old-100)
+    Autor: Pierre Denys de Montfort (1766-1820) / Étienne Claude Voysard (1746-1812)
+    Lokal: eoy/assets/kraken-colossal.jpg (558x900)
+    Genutzt in: eoy/data.js, agentrag demo, Lexikon-Seite und Quellen
+    Status: OK - Public Domain, Autor, Bildtitel und Commons-Seite im PDF-Caption und in den Quellen.
+
+Rain. Giant Pacific Octopus. Male.
+    URL: https://www.flickr.com/photos/canopic/7882355920
+    Lizenz: CC BY-NC-ND 2.0
+    Autor: canopic
+    Lokal: eoy/assets/kraken-octopus.jpg (900x600)
+    Genutzt in: eoy/data.js, agentrag demo, Lexikon-Seite und Quellen
+    Status: OK - Autor, Lizenz, Lizenzseite und Flickr-Seite im PDF-Caption und in den Quellen.
+

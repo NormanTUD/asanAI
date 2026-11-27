@@ -128,7 +128,7 @@
     "26": {
       "kicker": "Agenten",
       "title": "Wie Modelle zu Agenten werden",
-      "body": "RAG heißt: Das Modell holt sich Ausschnitte aus einer Quelle, bevor es antwortet, statt nur aus dem Gedächtnis zu raten. Ein Agent kann dafür ein Buch öffnen. Er zerlegt den Text in Chunks, bewertet sie kurz (passt / nicht relevant) und gibt jedem Chunk einen Vektor. Dann vergleicht er den Winkel mit dem aktuellen Kontext, aus dem er gerade generieren soll. Chunks unter dem Grenzwinkel kommen in den unsichtbaren Kontext; dort liest sie das Modell beim nächsten Token. So kann es aus dem Buch weitererzählen, ohne den ganzen Text im Prompt zu haben."
+      "body": "RAG heißt: Das Modell holt sich Ausschnitte aus einer Quelle, bevor es antwortet, statt nur aus dem Gedächtnis zu raten. Ein Agent kann dafür eine Datei öffnen. Er zerlegt den Text in Chunks, bewertet sie kurz (passt / nicht relevant) und gibt jedem Chunk einen Vektor. Dann vergleicht er den Winkel mit dem aktuellen Kontext, aus dem er gerade generieren soll. Chunks unter dem Grenzwinkel kommen in den unsichtbaren Kontext; dort liest sie das Modell beim nächsten Token. So kann es aus dem Buch weitererzählen, ohne den ganzen Text im Prompt zu haben."
     },
     "27": {
       "kicker": "Grenze",
@@ -285,7 +285,7 @@
     "26": {
       "kicker": "Agents",
       "title": "How models become agents",
-      "body": "RAG means the model retrieves excerpts from a source before answering instead of guessing only from memory. For this, an agent can open a book. It splits the text into chunks, scores them briefly (fits / not relevant), and gives each chunk a vector. Then it compares the angle with the current context from which it is about to generate. Chunks below the threshold enter the invisible context; the model reads them at the next token. That is how it continues from the book without putting the whole text into the prompt."
+      "body": "RAG means: the model fetches excerpts from a source before it answers, instead of guessing only from memory. An agent can open a file for this. It splits the text into chunks, scores them briefly (fits / not relevant), and gives each chunk a vector. Then it compares the angle with the current context from which it is about to generate. Chunks below the threshold angle enter the invisible context; the model reads them there at the next token. That is how it can continue from the book without having the whole text in the prompt."
     },
     "27": {
       "kicker": "Limit",
