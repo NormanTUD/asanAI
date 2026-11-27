@@ -67,8 +67,8 @@
     ];
     var STREAM_LAYERS = [
       "Start",
-      DE ? "Attention + FFN 1" : "Attention + FFN 1",
-      DE ? "Attention + FFN 2" : "Attention + FFN 2"
+      DE ? "Transformer-Block 1" : "Transformer block 1",
+      DE ? "Transformer-Block 2" : "Transformer block 2"
     ];
     var START_BASE = [0.46, 0.24, 0.34, 0.18, 0.56, 0.30];
     var LAYER_UPDATES = [
@@ -107,9 +107,9 @@
     var baseFrom = START_BASE.slice(), attnFrom = zeros(), ffnFrom = zeros();
     var baseTarget = START_BASE.slice(), attnTarget = zeros(), ffnTarget = zeros();
     var streamStart = 0;
-    var selectedDim = 0;
     var hoverDim = -1;
     var barHits = [];
+    var streamBoxHits = [];
     var running = true;
     var raf = 0;
     var reduced = !!api.reducedMotion;
@@ -442,14 +442,13 @@
     }
     function drawLegend(g, x, y, C, onPaper) {
       var items = [
-        { col: C.blue, label: DE ? "getragen" : "carried" },
-        { col: C.green, label: "Attention" },
-        { col: C.gold, label: "FFN" }
+        { col: C.blue, label: DE ? "vorherige Outputs" : "previous outputs" },
+        { col: C.petrol, label: "Transformer-Block" }
       ];
       g.font = '600 ' + Math.max(8, Math.min(10, api.font("canvas-sm"))) + 'px "Open Sans", sans-serif';
       g.textAlign = "left"; g.textBaseline = "middle";
       items.forEach(function (item, i) {
-        var xx = x + i * 92;
+        var xx = x + i * 124;
         g.fillStyle = item.col;
         g.fillRect(xx, y - 4, 8, 8);
         g.fillStyle = onPaper ? C.ink : V.alpha(C.paper, 0.88);
@@ -463,12 +462,10 @@
       for (var j = 0; j < 6; j++) {
         var xx = x + slot * (j + 0.5) - barW / 2;
         var baseH = parts.base[j] / max * h;
-        var attnH = parts.attn[j] / max * h;
-        var ffnH = parts.ffn[j] / max * h;
+        var updH = (parts.attn[j] + parts.ffn[j]) / max * h;
         var yy = y + h;
         g.fillStyle = V.alpha(C.blue, 0.8); g.fillRect(xx, yy - baseH, barW, baseH); yy -= baseH;
-        g.fillStyle = V.alpha(C.green, 0.85); g.fillRect(xx, yy - attnH, barW, attnH); yy -= attnH;
-        g.fillStyle = V.alpha(C.gold, 0.9); g.fillRect(xx, yy - ffnH, barW, ffnH);
+        g.fillStyle = V.alpha(C.petrol, 0.88); g.fillRect(xx, yy - updH, barW, updH);
         if (total[j] === 0) {
           g.strokeStyle = V.alpha(C.paper, 0.24);
           g.beginPath(); g.moveTo(xx, y + h - 0.5); g.lineTo(xx + barW, y + h - 0.5); g.stroke();
@@ -526,16 +523,16 @@
       g.fillText(DE ? "Residual Stream" : "Residual stream", panelX + 16, panelY + 23);
       g.fillStyle = onDarkSoft;
       g.font = '600 ' + Math.max(9, Math.min(12, panelW * 0.014)) + 'px "Open Sans", sans-serif';
-      if (wide) g.fillText(DE ? "xₗ₊₁ = xₗ + Aₗ + Fₗ · dieselbe Dimension, nur Addition" : "xₗ₊₁ = xₗ + Aₗ + Fₗ · same dimension, only addition", panelX + 16, panelY + 40);
-      if (wide) drawSentenceStrip(g, panelX + 16, panelY + 56, panelW - 32, C, onDarkSoft);
-      else g.fillText(DE ? "Derselbe Satz, jetzt als Stream." : "The same sentence, now as a stream.", panelX + 16, panelY + 40);
+      if (wide) drawSentenceStrip(g, panelX + 16, panelY + 42, panelW - 32, C, onDarkSoft);
+      else g.fillText(DE ? "Derselbe Satz, jetzt als Stream." : "The same sentence, now as a stream.", panelX + 16, panelY + 38);
       var sx = panelX + 14;
-      var sy = panelY + (wide ? 68 : 50);
+      var sy = panelY + (wide ? 58 : 48);
       var gap = wide ? 10 : 6;
       var sw = (panelW - 28 - gap * 2) / 3;
-      var sh = wide ? Math.min(70, riverH - sy + panelY - 12) : Math.min(48, riverH - sy + panelY - 10);
+      var sh = wide ? Math.min(104, riverH - sy + panelY - 10) : Math.min(64, riverH - sy + panelY - 8);
       var totalsMax = maxTotal();
       var streamPalette = streamColors(C);
+      streamBoxHits = [];
       for (var i = 0; i < STREAM_LAYERS.length; i++) {
         var x = sx + i * (sw + gap);
         var active = i === streamLayer;
@@ -553,9 +550,9 @@
           g.strokeRect(x + 0.5, sy + 0.5, sw - 1, sh - 1);
           g.restore();
         }
-        var label = i === 0 ? "Start" : (wide ? STREAM_LAYERS[i] : "A + FFN " + i);
+        var label = i === 0 ? "Start" : (wide ? STREAM_LAYERS[i] : "Block " + i);
         g.fillStyle = active ? onDark : onDarkSoft;
-        g.font = '700 ' + Math.max(8, Math.min(11, sw * 0.048)) + 'px "Barlow", sans-serif';
+        g.font = '700 ' + Math.max(9, Math.min(12, sw * 0.052)) + 'px "Barlow", sans-serif';
         g.textAlign = "left"; g.textBaseline = "middle";
         g.fillText(label, x + 8, sy + 13);
         var p = partsAt(i);
@@ -565,6 +562,7 @@
         g.textAlign = "right"; g.textBaseline = "middle";
         var sum = totalParts(p).reduce(function (a, b) { return a + b; }, 0);
         g.fillText("Σ " + sum.toFixed(1), x + sw - 8, sy + 13);
+        streamBoxHits.push({ x: x, y: sy, w: sw, h: sh, i: i });
       }
       for (var gi = 0; gi < 2; gi++) {
         var gx1 = sx + gi * (sw + gap) + sw;
@@ -586,7 +584,7 @@
       g.fillText(DE ? "Sechs Dimensionen" : "Six dimensions", panelX + 16, barY + 24);
       g.fillStyle = C.soft;
       g.font = '600 ' + Math.max(8, Math.min(10, panelW * 0.0125)) + 'px "Open Sans", sans-serif';
-      var layerText = streamLayer === 0 ? (DE ? "Start: sechs konstruierte Dimensionen" : "Start: six constructed dimensions") : (DE ? "Schicht " + streamLayer + " · getragen + Attention + FFN" : "Layer " + streamLayer + " · carried + attention + FFN");
+      var layerText = streamLayer === 0 ? (DE ? "Start: sechs konstruierte Dimensionen" : "Start: six constructed dimensions") : (DE ? "Schicht " + streamLayer + " · vorherige Outputs + Transformer-Block" : "Layer " + streamLayer + " · previous outputs + transformer block");
       g.fillText(layerText, panelX + 16, barY + 40);
       if (panelW > 430) drawLegend(g, panelX + panelW - 286, barY + 26, C, true);
       var plotX = panelX + 24;
@@ -602,21 +600,21 @@
         var cx = plotX + slot * (d + 0.5);
         var bw = Math.min(46, slot * 0.54);
         var baseV = baseShown[d], attnV = attnShown[d], ffnV = ffnShown[d];
-        var baseH = baseV * scale, attnH = attnV * scale, ffnH = ffnV * scale;
-        var totalV = baseV + attnV + ffnV;
-        if (d === hoverDim || d === selectedDim) {
-          g.fillStyle = d === selectedDim ? V.alpha(C.petrol, 0.055) : V.alpha(C.line, 0.16);
-          g.fillRect(plotX + slot * d, plotTop, slot, plotH);
+        var updV = attnV + ffnV;
+        var baseH = baseV * scale, updH = updV * scale;
+        var totalV = baseV + updV;
+        if (d === hoverDim) {
+          g.fillStyle = V.alpha(C.line, 0.16);
+          g.fillRect(plotX + slot * d, plotTop, slot, baseline - plotTop);
         }
         var y = baseline;
         g.fillStyle = V.alpha(C.blue, 0.80); g.fillRect(cx - bw / 2, y - baseH, bw, baseH); y -= baseH;
-        g.fillStyle = V.alpha(C.green, 0.88); g.fillRect(cx - bw / 2, y - attnH, bw, attnH); y -= attnH;
-        g.fillStyle = V.alpha(C.gold, 0.92); g.fillRect(cx - bw / 2, y - ffnH, bw, ffnH);
+        g.fillStyle = V.alpha(C.petrol, 0.88); g.fillRect(cx - bw / 2, y - updH, bw, updH);
         if (totalV > 0.001) {
-          g.strokeStyle = d === selectedDim ? C.petrol : V.alpha(C.lineStrong, 0.7);
-          g.lineWidth = d === selectedDim ? 1.6 : 0.8;
+          g.strokeStyle = d === hoverDim ? C.petrol : V.alpha(C.lineStrong, 0.7);
+          g.lineWidth = d === hoverDim ? 1.6 : 0.8;
           g.strokeRect(cx - bw / 2 + 0.5, baseline - totalV * scale + 0.5, bw - 1, Math.max(1, totalV * scale - 1));
-          g.fillStyle = d === selectedDim ? C.petrol : C.soft;
+          g.fillStyle = d === hoverDim ? C.petrol : C.soft;
           g.font = '700 ' + Math.max(8, Math.min(10, slot * 0.2)) + 'px "Open Sans", sans-serif';
           g.textAlign = "center"; g.textBaseline = "alphabetic";
           g.fillText(totalV.toFixed(2), cx, Math.max(plotTop + 8, baseline - totalV * scale - 5));
@@ -626,7 +624,7 @@
           g.beginPath(); g.moveTo(cx - bw / 2, baseline); g.lineTo(cx + bw / 2, baseline); g.stroke();
           g.setLineDash([]);
         }
-        g.fillStyle = d === selectedDim ? C.petrol : C.muted;
+        g.fillStyle = d === hoverDim ? C.petrol : C.muted;
         g.font = '600 ' + Math.max(8, Math.min(10, slot * 0.22)) + 'px "Open Sans", sans-serif';
         g.textAlign = "center"; g.textBaseline = "alphabetic";
         g.fillText("d" + (d + 1), cx, baseline + 16);
@@ -653,16 +651,7 @@
     }
     function equationHTML(n) {
       if (n === 0) return '<span class="ls-res-eq"><b class="is-x">x<sub>0</sub></b> = 0</span>';
-      return '<span class="ls-res-eq"><b class="is-x">x<sub>' + n + '</sub></b> = <b class="is-base">x<sub>' + (n - 1) + '</sub></b> + <b class="is-att">A<sub>' + n + '</sub></b> + <b class="is-ffn">F<sub>' + n + '</sub></b></span>';
-    }
-    function dimDetailHTML(n) {
-      var p = partsAt(n);
-      var total = totalParts(p)[selectedDim];
-      return '<span class="ls-res-dim"><b>d' + (selectedDim + 1) + '</b>' +
-        '<span class="is-base">' + p.base[selectedDim].toFixed(2) + '</span> + ' +
-        '<span class="is-att">' + p.attn[selectedDim].toFixed(2) + '</span> + ' +
-        '<span class="is-ffn">' + p.ffn[selectedDim].toFixed(2) + '</span> = ' +
-        '<b>' + total.toFixed(2) + '</b></span>';
+      return '<span class="ls-res-eq"><b class="is-x">x<sub>' + n + '</sub></b> = <b class="is-base">x<sub>' + (n - 1) + '</sub></b> + <b class="is-att">Transformer-Block<sub>' + n + '</sub></b></span>';
     }
     function syncPhaseButtons(C) {
       phaseRow.innerHTML = "";
@@ -729,7 +718,7 @@
           b.textContent = l;
           b.setAttribute("data-tip", i === 0
             ? (DE ? "Zeigt den Ausgangszustand des Streams." : "Shows the initial state of the stream.")
-            : (DE ? "Zeigt den Stream nach Attention und FFN " + i + "." : "Shows the stream after attention and FFN " + i + "."));
+            : (DE ? "Zeigt den Stream nach Transformer-Block " + i + "." : "Shows the stream after transformer block " + i + "."));
           b.style.borderLeft = "3px solid " + sc[i];
           b.setAttribute("aria-pressed", i === streamLayer ? "true" : "false");
           b.addEventListener("click", function () {
@@ -759,7 +748,7 @@
       syncPhaseButtons(C);
       syncLayerButtons(C);
       var noteCaption = DE ? "Starke Vereinfachung, keine Messung: Die fünf Notizbuch-Schichten stehen für Gruppen vieler echter Schichten. In einem 32-Schichten-Modell arbeiten die ersten ~10 grob an Tokens, Positionen, lokalem Rauschen und ersten abstrakten Merkmalen; die nächsten ~15–20 an komplexeren, oft unbenannten Bedeutungsrichtungen; die letzten ~6–8 an Aufgabenausrichtung und nächster-Token-Vorhersage. Das ist modellabhängig (Tenney et al., 2019; Lad et al., 2024)." : "Strong simplification, not a measurement: the five notebook layers stand for groups of many real layers. In a 32-layer model, the first ~10 work roughly on tokens, positions, local noise, and first abstract features; the next ~15–20 on more complex meaning directions that often have no human label; the final ~6–8 on task alignment and next-token prediction. This depends on the model (Tenney et al., 2019; Lad et al., 2024).";
-      var streamCaption = DE ? "Attention und FFN lesen den Stream, berechnen getrennte Updates und addieren beide. Die Dimension bleibt gleich; jede Schicht trägt den alten Stand weiter." : "Attention and the FFN read the stream, compute separate updates, and add both. The dimension stays the same; every layer carries the old state forward.";
+      var streamCaption = DE ? "Blau: vorherige Outputs. Petrol: was der Transformer-Block (Attention + FFN) pro Dimension addiert." : "Blue: previous outputs. Petrol: what the transformer block (attention + FFN) adds per dimension.";
       if (phase === "notebook") {
         var colors = noteColors(C);
         var info = layer ? NOTE_LAYERS[layer - 1] : null;
@@ -767,17 +756,16 @@
           '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Vereinfachung" : "Simplification")) + '</b>' +
           '<span>' + (info ? info.desc : (DE ? "Fünf didaktische Gruppen für die vielen Schichten eines echten Modells." : "Five didactic groups for the many layers of a real model.")) + '</span>';
       } else {
-        readout.innerHTML = '<div class="ls-res-eq-row">' + equationHTML(streamLayer) + dimDetailHTML(streamLayer) + '</div>' +
-          '<span class="ls-res-hint">' + (DE ? "Ziehe über eine Dimension oder klicke sie an." : "Hover a dimension or click it.") + '</span>';
+        readout.innerHTML = '<div class="ls-res-eq-row">' + equationHTML(streamLayer) + '</div>';
       }
       setCaptions(noteCaption, streamCaption);
       var aria = phase === "notebook"
         ? (layer ? (DE ? "Notizbuch mit fünf Schichten. Schicht " + layer + " von 5." : "Notebook with five layers. Layer " + layer + " of 5.") : (DE ? "Notizbuch mit den Tokens und fünf Schichten. Noch keine Schicht geöffnet." : "Notebook with the tokens and five layers. No layer opened yet."))
-        : (DE ? "Residual Stream x " + streamLayer + " mit sechs Dimensionen: getragen plus Attention plus FFN." : "Residual stream x " + streamLayer + " with six dimensions: carried plus attention plus FFN.");
+        : (DE ? "Residual Stream x " + streamLayer + " mit sechs Dimensionen: vorherige Outputs plus Transformer-Block." : "Residual stream x " + streamLayer + " with six dimensions: previous outputs plus transformer block.");
       canvas.setAttribute("aria-label", aria);
       canvas.setAttribute("data-tip", phase === "notebook"
         ? (DE ? "Notizbuch: jede Schicht schreibt ihre Erkenntnis dazu, ohne zu löschen." : "Notebook: every layer adds its insight without deleting.")
-        : (DE ? "Stream: getragener Zustand plus Attention-Update plus FFN-Update." : "Stream: carried state plus attention update plus FFN update."));
+        : (DE ? "Stream: vorherige Outputs plus Transformer-Block-Update." : "Stream: previous outputs plus transformer block update."));
     }
     function startNote() {
       noteProgress = reduced ? 1 : 0;
@@ -918,11 +906,28 @@
       }
       return -1;
     }
+    function pointerStreamBox(e) {
+      if (phase !== "stream") return -1;
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left;
+      var y = e.clientY - r.top;
+      for (var i = 0; i < streamBoxHits.length; i++) {
+        var h = streamBoxHits[i];
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) return h.i;
+      }
+      return -1;
+    }
     canvas.addEventListener("pointermove", function (e) {
+      var box = pointerStreamBox(e);
+      if (box >= 0) {
+        canvas.style.cursor = "pointer";
+        if (hoverDim !== -1) { hoverDim = -1; draw(); }
+        return;
+      }
       var hit = pointerBar(e);
-      if (hit === hoverDim) return;
+      if (hit === hoverDim) { canvas.style.cursor = hit >= 0 ? "help" : "default"; return; }
       hoverDim = hit;
-      canvas.style.cursor = hit >= 0 ? "pointer" : "default";
+      canvas.style.cursor = hit >= 0 ? "help" : "default";
       draw();
     });
     core.canvasTip(canvas, function (x, y) {
@@ -932,10 +937,12 @@
         if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
           var d = h.i;
           var base = baseShown[d] || 0, attn = attnShown[d] || 0, ffn = ffnShown[d] || 0;
-          return (DE ? "Dimension " : "Dimension ") + (d + 1) + ": Residual " + base.toFixed(2) + " + Attention " + attn.toFixed(2) + " + FFN " + ffn.toFixed(2) + " = " + (base + attn + ffn).toFixed(2) + ". Klicken fixiert die Dimension.";
+          var n = streamLayer;
+          var eq = n === 0 ? "x0 = 0" : "x" + n + " = x" + (n - 1) + " + A" + n + " + F" + n;
+          return eq + " · d" + (d + 1) + " " + base.toFixed(2) + " + " + attn.toFixed(2) + " + " + ffn.toFixed(2) + " = " + (base + attn + ffn).toFixed(2);
         }
       }
-      return DE ? "Balken: Residual, Attention-Update und FFN-Update addieren sich pro Dimension. Fahre über einen Balken." : "Bars: residual, attention update, and FFN update add per dimension. Hover a bar.";
+      return DE ? "Balken: vorherige Outputs plus Transformer-Block pro Dimension. Fahre über einen Balken." : "Bars: previous outputs plus transformer block per dimension. Hover a bar.";
     });
     canvas.addEventListener("pointerleave", function () {
       if (hoverDim === -1) return;
@@ -944,11 +951,13 @@
       draw();
     });
     canvas.addEventListener("click", function (e) {
-      var hit = pointerBar(e);
-      if (hit < 0) return;
-      selectedDim = hit;
+      var box = pointerStreamBox(e);
+      if (box < 0 || phase !== "stream") return;
+      streamLayer = box;
+      setStreamTarget(streamLayer, true);
       sync();
       draw();
+      ensureLoop();
     });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { draw(); });
