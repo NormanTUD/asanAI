@@ -132,6 +132,9 @@
     var titleEl = el.querySelector("[data-con2-title]");
     var leadEl = el.querySelector("[data-con2-lead]");
     var statusEl = el.querySelector("[data-con2-status]");
+    var headEl = el.querySelector(".ls-con2-head");
+    if (headEl) headEl.style.display = "none";
+    if (detail) detail.style.display = "none";
 
     var C = api.colors();
     var ROSE = "#b24a4e";
