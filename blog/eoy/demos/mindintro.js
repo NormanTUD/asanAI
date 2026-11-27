@@ -6,14 +6,6 @@
     var DE = api.lang === "de";
     var esc = api.esc || function (s) { return String(s == null ? "" : s); };
     function L(de, en) { return DE ? de : en; }
-    var QA = [
-      { q: L("Was ist ein Quale?", "What is a quale?"), a: L("Die gefühlte Eigenschaft einer Erfahrung, etwa die Röte des Roten.", "The felt quality of an experience, such as the redness of red.") },
-      { q: L("Warum ist Bewusstsein nicht binär?", "Why is consciousness not binary?"), a: L("Es gibt phänomenale Typen und Stufen, keine einfache Ja/Nein-Achse.", "There are phenomenal types and levels, not a simple yes/no axis.") },
-      { q: L("Was zeigt Marys Zimmer?", "What does Mary's room show?"), a: L("Wissen über Farben ist nicht dasselbe wie das Erleben von Rot.", "Knowledge about colours is not the same as experiencing red.") },
-      { q: L("Was ist das Other-Minds-Problem?", "What is the other-minds problem?"), a: L("Wir sehen nur Worte und Verhalten, nicht das Erleben anderer.", "We see only words and behaviour, not the experience of others.") },
-      { q: L("Kann man Bewusstsein messen?", "Can consciousness be measured?"), a: L("Messbar sind Bedingungen und Berichte; das Erleben selbst bleibt indirekt.", "Conditions and reports are measurable; experience itself remains indirect.") }
-    ];
-    var miQa = 0;
     var el = document.createElement("div");
     el.className = "ls-mi2";
     el.innerHTML =
@@ -51,14 +43,6 @@
             '<p class="is-easy"><b>' + L("Leichtes Problem:", "Easy problem:") + '</b> ' + L("Muster erkennen, integrieren, berichten: Mechanismen sind denkbar; „easy“ ist relativ und kann Jahrhunderte kosten.", "Discriminate, integrate, report: mechanisms are conceivable; “easy” is relative and can take centuries.") + '</p>' +
             '<p class="is-hard"><b>' + L("Schweres Problem:", "Hard problem:") + '</b> ' + L("Warum wird Verarbeitung subjektiv erlebt? Wir haben nicht einmal den Hauch einer Richtung für eine Antwort. Chalmers (1995): „Why should physical processing give rise to a rich inner life at all?“", "Why is processing subjectively experienced? We do not even have a hint of a direction for an answer. Chalmers (1995): “Why should physical processing give rise to a rich inner life at all?”") + ' <a href="https://consc.net/papers/facing.pdf" target="_blank" rel="noopener">Originalarbeit (PDF)</a></p>' +
           '</div>' +
-          '<details class="ls-mi2-more" open><summary><b>' + L("Kurzfragen", "Short questions") + '</b><span>' + L("fünf Antworten", "five answers") + '</span></summary>' +
-          '<div class="ls-mi2-qa">' +
-        '<div class="ls-mi2-qa-head"><span>' + L("Fragen", "Questions") + '</span><b>' + L("Kurz beantwortet", "Brief answers") + '</b></div>' +
-        '<div class="ls-mi2-qa-questions">' + QA.map(function (item, i) {
-          return '<button type="button" class="ls-mi2-q' + (i === 0 ? " is-on" : "") + '" data-mi-q="' + i + '">' + esc(item.q) + '</button>';
-        }).join("") + '</div>' +
-        '<p class="ls-mi2-qa-answer" data-mi-qa-answer>' + esc(QA[0].a) + '</p>' +
-      '</div></details>' +
         '</section>' +
         '<aside class="ls-mi2-right">' +
           '<section class="ls-mi2-mary" data-mi-mary data-tip="' + L("Marys Zimmer: Klick zeigt ihr den roten Apfel.", "Mary's room: click to show her the red apple.") + '">' +
@@ -131,23 +115,6 @@
       });
     });
 
-    var qaAnswer = el.querySelector("[data-mi-qa-answer]");
-    var qaButtons = Array.prototype.slice.call(el.querySelectorAll("[data-mi-q]"));
-    function renderQA() {
-      qaButtons.forEach(function (b, i) { b.classList.toggle("is-on", i === miQa); });
-      if (qaAnswer) qaAnswer.textContent = QA[miQa].a;
-    }
-    function nextStep() {
-      if (!maryRevealed) { revealMary(); return true; }
-      if (maryAnswerState === 0) { setMaryAnswer(true); return true; }
-      if (maryAnswerState === 1) { setMaryAnswer(false); return true; }
-      if (miQa < QA.length - 1) { miQa++; renderQA(); return true; }
-      return false;
-    }
-    qaButtons.forEach(function (b) {
-      b.addEventListener("click", function () { miQa = parseInt(b.getAttribute("data-mi-q"), 10) || 0; renderQA(); });
-    });
-    renderQA();
     return {
       update: function () {},
       next: function () {

@@ -7472,3 +7472,15 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-mi2-qa{gap:5px}
 .ls-mi2-q{padding:5px 6px;font-size:9px}
 .ls-mi2-qa-answer{padding:6px 8px;font-size:13px}
+.ls-mi2[data-stage="inverted"] .ls-mi2-main{flex:1 1 auto;min-height:0}
+.ls-mi2[data-stage="inverted"] .ls-mi2-right{height:100%;min-height:0}
+.ls-mi2[data-stage="inverted"] .ls-mi2-spectrum{height:100%;min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+.ls-mi2[data-stage="inverted"] .ls-mi2-spectrum-fig{display:flex;flex-direction:column;height:100%;min-height:0}
+.ls-mi2[data-stage="inverted"] .ls-mi2-spectrum-fig img{flex:1 1 auto;width:100%;height:100%;max-height:none;min-height:0;object-fit:contain;background:#fff}
+.ls-mi2[data-stage="inverted"] .ls-mi2-spectrum-fig img{height:100%!important;max-height:100%!important;object-fit:contain!important}
+.ls-time-hero-grid.has-two.is-stacked.is-second-large .ls-time-media.is-side .ls-time-hero-img{object-position:center top}
+.ls-rm--society{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.ls-rm--society .ls-rm-soc-chain{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ls-rm--society .ls-rm-soc-chain:before{display:none}
+.ls-rm--society .ls-rm-soc-cross{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ls-rm--society .ls-rm-soc-hero,.ls-rm--society .ls-rm-soc-detail{height:100%;min-height:0}
