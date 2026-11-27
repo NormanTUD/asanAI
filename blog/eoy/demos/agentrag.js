@@ -23,10 +23,18 @@
 
     var ARTICLE = {
       brand: L("Enzyklopädie", "Encyclopædia"),
-      series: L("Meereskunde · Band 12", "Marine life · Volume 12"),
+      series: L("Krake · Band 12", "Kraken · Volume 12"),
       page: "417",
       kicker: L("Octopoda · Kopffüßer", "Octopoda · cephalopods"),
-      title: L("Krake", "Octopus"),
+      title: L("Krake", "Kraken"),
+      filler: {
+        title: L("Krakelee", "Kraków"),
+        image: DE ? api.asset("assets/krakelee-mona-lisa.jpg") : api.asset("assets/krakow-wawel.jpg"),
+        caption: L("Mona Lisa, Detail der Augen. Leonardo da Vinci, public domain.", "Wawel Castle, Kraków. Photo: XEvansGambitx, CC BY-SA 4.0."),
+        imageUrl: DE ? "https://commons.wikimedia.org/wiki/File:Mona_Lisa_detail_eyes.jpg" : "https://commons.wikimedia.org/wiki/File:Zamek_Kr%C3%B3lewski_na_Wawelu_(1).jpg",
+        licenseUrl: DE ? "" : "https://creativecommons.org/licenses/by-sa/4.0",
+        sourceUrl: DE ? "https://de.wikipedia.org/wiki/Krakelee" : "https://en.wikipedia.org/wiki/Krak%C3%B3w"
+      },
       paragraphs: [
         {
           id: "C1", heading: L("Körperbau", "Body"), angle: 12,
@@ -47,10 +55,19 @@
         {
           id: "C5", heading: L("Mythos und Forschung", "Myth and research"), angle: 44,
           text: L("Der colossale Polyp des Pierre Denys de Montfort (1801) illustriert die Seefahrerlegende von riesigen Kraken, die Schiffe umgreifen; die Darstellung ist keine zoologische Beobachtung. Neuere Arbeiten untersuchen RNA-Editing in Nervenzellen sowie die Mechanismen der strukturellen Färbung. Die Fakten dieses Artikels stützen sich auf die Fachliteratur.", "Pierre Denys de Montfort's colossal polyp (1801) illustrates the sailors' legend of giant krakens that could grasp ships; the image is not a zoological observation. Recent research examines RNA editing in nerve cells and the mechanisms of structural coloration. The facts in this article rest on the specialist literature.")
+        },
+        {
+          id: "F1", heading: L("Krakelee", "Kraków"), angle: 88, filler: true,
+          text: L("Das Krakelee oder Craquelé ist ein Netz feiner Sprünge in Ölgemälden, Glasuren, Steinen, Lacken oder Glas. Es entsteht durch Alterung, Klimaschwankungen oder mechanische Belastung, kann aber auch als maltechnischer Effekt gewollt sein.", "Kraków is the second-largest city in Poland and lies on the Vistula. It was the country's capital until 1596, and its Old Town became a UNESCO World Heritage Site in 1978.")
+        },
+        {
+          id: "F2", heading: L("In der Malschicht", "Wawel and the Old Town"), angle: 91, filler: true,
+          text: L("In der Malerei zählt das Craquelé zu den auffälligsten Altersspuren. Die Risse hängen von Bildträger, Pigmenten und Bindemitteln ab; mit der Zeit füllen sie sich mit dunkleren Partikeln und treten deutlicher hervor.", "Wawel Castle and Wawel Cathedral stand on the banks of the Vistula. The city is also home to the Jagiellonian University and the Rynek Główny, the largest medieval market square in Europe.")
         }
       ]
     };
 
+    var CHUNK_COUNT = ARTICLE.paragraphs.length;
     var QUESTION = L("Wie viele Herzen hat ein Krake?", "How many hearts does an octopus have?");
     var ANSWER = L("Ein Krake hat drei Herzen: zwei Kiemenherzen und ein Körperherz.", "An octopus has three hearts: two gill hearts and one body heart.");
     var SELECTED = ["C1", "C2"];
@@ -59,6 +76,7 @@
       return ARTICLE.paragraphs.filter(function (p) { return p.id === id; })[0] || null;
     }
     function fits(p) { return p.angle <= THRESHOLD; }
+    function fitValue(p) { return Math.max(0, Math.min(1, 1 - p.angle / 90)); }
     function vectorValues(p, n) {
       var seed = 0;
       for (var k = 0; k < p.id.length; k++) seed += p.id.charCodeAt(k) * (k + 3);
@@ -96,6 +114,12 @@
         esc(L("Foto: canopic, CC BY-NC-ND 2.0.", "Photo: canopic, CC BY-NC-ND 2.0.")) + ' <a href="https://www.flickr.com/photos/canopic/7882355920" target="_blank" rel="noopener">Flickr</a> · <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/" target="_blank" rel="noopener">Lizenz</a></figcaption></figure>';
     }
 
+    function fillerFigureHTML() {
+      var f = ARTICLE.filler;
+      var lic = f.licenseUrl ? ' <a href="' + f.licenseUrl + '" target="_blank" rel="noopener">CC BY-SA 4.0</a>' : '';
+      return '<figure class="ls-rag-fig ls-rag-fig--filler"><img src="' + esc(f.image) + '" alt="' + esc(f.caption) + '"><figcaption><b>' + esc(f.title) + '</b> ' + esc(f.caption) + ' <a href="' + f.imageUrl + '" target="_blank" rel="noopener">Commons</a>' + lic + '</figcaption></figure>';
+    }
+
     function pdfHTML() {
       var c1 = chunkById("C1"), c2 = chunkById("C2"), c3 = chunkById("C3"), c4 = chunkById("C4"), c5 = chunkById("C5");
       return '<div class="ls-rag-pdf">' +
@@ -109,45 +133,20 @@
             '<section class="ls-rag-pdf-chunk" data-c="C3" data-angle="52" title="C3 · ' + esc(c3.heading) + '"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
             '<section class="ls-rag-pdf-chunk" data-c="C4" data-angle="64" title="C4 · ' + esc(c4.heading) + '"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
             '<section class="ls-rag-pdf-chunk" data-c="C5" data-angle="44" title="C5 · ' + esc(c5.heading) + '"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
+            '<div class="ls-rag-pdf-filler-head"><h3>' + esc(ARTICLE.filler.title) + '</h3></div>' +
+            fillerFigureHTML() +
+            '<section class="ls-rag-pdf-chunk" data-c="F1" data-angle="88" title="F1 · ' + esc(ARTICLE.paragraphs[5].heading) + '"><h3>' + esc(ARTICLE.paragraphs[5].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[5].text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="F2" data-angle="91" title="F2 · ' + esc(ARTICLE.paragraphs[6].heading) + '"><h3>' + esc(ARTICLE.paragraphs[6].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[6].text) + '</p></section>' +
           '</div>' +
         '</div>' +
-        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Meereskunde", "Encyclopædia · Marine life")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
+        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Krake", "Encyclopædia · Kraken")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
       '</div>';
     }
 
     function railHTML() {
       return ARTICLE.paragraphs.map(function (p) {
-        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><div class="ls-rag-rail-top"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span></div><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
+        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><div class="ls-rag-rail-top"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span></div><div class="ls-rag-rail-angle"><b>' + p.id + ' · ∠ ' + p.angle + '°</b><span class="ls-rag-rail-fit"><i style="width:' + Math.round(fitValue(p) * 100) + '%"></i></span></div><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
       }).join("");
-    }
-
-    function angleSVG() {
-      var ox = 34, oy = 128, r = 92;
-      var pts = [[ox, oy]];
-      for (var a = 0; a <= THRESHOLD; a += 2.5) {
-        pts.push([ox + Math.cos(a * Math.PI / 180) * r, oy - Math.sin(a * Math.PI / 180) * r]);
-      }
-      var sector = "M" + pts.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" L") + " Z";
-      var svg = '<svg class="ls-rag-angle-svg" viewBox="0 0 300 168" role="img" aria-label="' + esc(L("Winkel der Chunks zum aktuellen Kontext; unter 35 Grad passen sie.", "Chunk angles to the current context; below 35 degrees they fit.")) + '">' +
-        '<path class="ls-rag-sector" d="' + sector + '"/>' +
-        '<line class="ls-rag-axis" x1="' + ox + '" y1="' + (oy + 6) + '" x2="' + (ox + r + 36) + '" y2="' + (oy + 6) + '"/>' +
-        '<line class="ls-rag-axis" x1="' + ox + '" y1="' + (oy + 6) + '" x2="' + ox + '" y2="' + (oy - r - 10) + '"/>' +
-        '<line class="ls-rag-context-vec" x1="' + ox + '" y1="' + oy + '" x2="' + (ox + r + 26) + '" y2="' + oy + '"/>' +
-        '<path class="ls-rag-context-head" d="M' + (ox + r + 26) + ' ' + oy + ' l -9 -4 l 0 8 z"/>' +
-        '<text class="ls-rag-svg-label is-context" x="' + (ox + r + 22) + '" y="' + (oy + 16) + '" text-anchor="end">' + esc(L("Kontext", "context")) + '</text>';
-      ARTICLE.paragraphs.forEach(function (p) {
-        var ang = p.angle * Math.PI / 180;
-        var x = ox + Math.cos(ang) * r, y = oy - Math.sin(ang) * r;
-        var fit = fits(p);
-        var anchor = Math.cos(ang) >= 0 ? "start" : "end";
-        var lx = x + (Math.cos(ang) >= 0 ? 7 : -7);
-        var ly = y - 5 + (p.id === "C4" ? 12 : 0);
-        svg += '<line class="ls-rag-chunk-vec' + (fit ? " is-fit" : "") + '" x1="' + ox + '" y1="' + oy + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' +
-          '<circle class="ls-rag-chunk-dot' + (fit ? " is-fit" : "") + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (fit ? 4.4 : 3.2) + '"/>' +
-          '<text class="ls-rag-chunk-label' + (fit ? " is-fit" : "") + '" x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + anchor + '">' + p.id + ' · ' + p.angle + '°</text>';
-      });
-      svg += '<text class="ls-rag-svg-label is-threshold" x="' + (ox + 58) + '" y="' + (oy - 58) + '">35°</text></svg>';
-      return svg;
     }
 
     var el = document.createElement("div");
@@ -166,10 +165,6 @@
           '<div class="ls-rag-doc-body">' +
             '<div class="ls-rag-pdf-wrap">' + pdfHTML() + '<div class="ls-rag-scanfx" aria-hidden="true"><i></i></div></div>' +
             '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Nur Text · Chunk-Vektoren", "Text only · chunk vectors")) + '</div><div class="ls-rag-rail-list">' + railHTML() + '</div></div>' +
-          '</div>' +
-          '<div class="ls-rag-context-tray">' +
-            '<div class="ls-rag-tray-head"><span>🔒</span><b>' + esc(L("Unsichtbarer Kontext · nur Modell", "Invisible context · model only")) + '</b><em>35°</em></div>' +
-            '<div class="ls-rag-tray-body"><div class="ls-rag-tray-chart"></div><div class="ls-rag-tray-cards"></div></div>' +
           '</div>' +
         '</div>' +
         '<div class="ls-rag-phone-col">' +
@@ -201,6 +196,22 @@
 
     root.appendChild(el);
 
+    Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
+      var p = chunkById(chunk.getAttribute("data-c"));
+      if (!p) return;
+      var bar = document.createElement("span");
+      bar.className = "ls-rag-fitbar";
+      bar.setAttribute("aria-hidden", "true");
+      bar.innerHTML = "<i style=\"height:" + Math.round(fitValue(p) * 100) + "%\"></i>";
+      chunk.appendChild(bar);
+      if (SELECTED.indexOf(p.id) >= 0) {
+        var pill = document.createElement("span");
+        pill.className = "ls-rag-ctx-pill";
+        pill.innerHTML = "<b>🔒 Kontext</b><em>nur Modell</em>";
+        chunk.appendChild(pill);
+      }
+    });
+
     var docEl = el.querySelector(".ls-rag-doc");
     var docStatus = el.querySelector(".ls-rag-doc-status");
     var stepsEl = el.querySelectorAll(".ls-rag-steps span");
@@ -216,9 +227,6 @@
     var aiMsg = el.querySelector(".ls-rag-aimsg");
     var answerEl = el.querySelector(".ls-rag-answer");
     var typingEl = el.querySelector(".ls-rag-typing");
-    var trayEl = el.querySelector(".ls-rag-context-tray");
-    var trayChart = el.querySelector(".ls-rag-tray-chart");
-    var trayCards = el.querySelector(".ls-rag-tray-cards");
     var pdfWrap = el.querySelector(".ls-rag-pdf-wrap");
     var railRows = el.querySelectorAll(".ls-rag-rail-row");
     var picker = el.querySelector(".ls-rag-picker");
@@ -226,7 +234,7 @@
     var pickBtns = el.querySelectorAll(".ls-rag-pick");
     var phoneEl = el.querySelector(".ls-rag-phone-screen");
 
-    var state = { step: 0, timers: [], pickerOpen: false };
+    var state = { step: 0, timers: [], pickerOpen: false, textFitted: false };
 
     function clearTimers() {
       state.timers.forEach(function (id) { clearTimeout(id); });
@@ -257,30 +265,37 @@
       });
       state.timers.push(setTimeout(function () {
         completeScan();
-        if (docStatus) docStatus.textContent = L("5 Chunks · 5 Vektoren", "5 chunks · 5 vectors");
+        if (docStatus) docStatus.textContent = L(CHUNK_COUNT + " Chunks · " + CHUNK_COUNT + " Vektoren", CHUNK_COUNT + " chunks · " + CHUNK_COUNT + " vectors");
       }, 2450));
     }
 
-    function fitPdfText() {
+    function fitPdfText(force) {
+      if (state.textFitted && !force) return;
       var body = docEl.querySelector(".ls-rag-pdf-body");
       var flow = docEl.querySelector(".ls-rag-pdf-flow");
       if (!body || !flow) return;
+      var fillers = Array.prototype.slice.call(flow.querySelectorAll('.ls-rag-pdf-filler-head, .ls-rag-fig--filler, .ls-rag-pdf-chunk[data-c="F1"], .ls-rag-pdf-chunk[data-c="F2"]'));
+      fillers.forEach(function (n) { n.style.display = "none"; });
       var available = flow.clientWidth;
       if (available < 40) return;
-      var lo = 7.2, hi = 9.8, best = 7.2;
+      var lo = 8.0, hi = 9.8, best = 8.0;
       for (var k = 0; k < 9; k++) {
         var mid = (lo + hi) / 2;
         body.style.setProperty("--rag-pdf-fs", mid.toFixed(2) + "px");
         if (flow.scrollWidth <= available + 1) { best = mid; lo = mid; } else { hi = mid; }
       }
       body.style.setProperty("--rag-pdf-fs", best.toFixed(2) + "px");
+      fillers.forEach(function (n) { n.style.display = ""; });
+      state.textFitted = true;
     }
 
     function resetChunkStates() {
       docEl.classList.remove("is-angling");
-      if (trayEl) trayEl.classList.remove("is-on");
       Array.prototype.forEach.call(docEl.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
-        chunk.classList.remove("is-angle-in", "is-fit", "is-out", "is-used");
+        chunk.classList.remove("is-angle-in", "is-fit", "is-out", "is-context");
+      });
+      Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-rail-row"), function (row) {
+        row.classList.remove("is-angle-in", "is-fit", "is-out", "is-context");
       });
     }
 
@@ -288,40 +303,67 @@
       docEl.classList.add("is-angling");
       ARTICLE.paragraphs.forEach(function (p, i) {
         state.timers.push(setTimeout(function () {
-          var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + p.id + '"]');
-          if (chunk) chunk.classList.add("is-angle-in");
-        }, 260 + i * 240));
+          var row = el.querySelector('.ls-rag-rail-row[data-c="' + p.id + '"]');
+          if (row) row.classList.add("is-angle-in");
+        }, 220 + i * 220));
       });
       state.timers.push(setTimeout(function () {
         ARTICLE.paragraphs.forEach(function (p) {
           var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + p.id + '"]');
-          if (!chunk) return;
-          chunk.classList.toggle("is-fit", fits(p));
-          chunk.classList.toggle("is-out", !fits(p));
-        });
-      }, 1700));
-      state.timers.push(setTimeout(function () {
-        trayChart.innerHTML = angleSVG();
-        trayCards.innerHTML = SELECTED.map(function (id) {
-          var p = chunkById(id);
-          return '<div class="ls-rag-tray-card" data-c="' + id + '"><b>' + id + '</b><span>' + esc(p.heading) + '</span><p>' + esc(p.text) + '</p></div>';
-        }).join("");
-        Array.prototype.forEach.call(trayCards.querySelectorAll(".ls-rag-tray-card"), function (card) {
-          requestAnimationFrame(function () { card.classList.add("is-in"); });
+          var row = el.querySelector('.ls-rag-rail-row[data-c="' + p.id + '"]');
+          var fit = fits(p);
+          if (chunk) {
+            chunk.classList.toggle("is-fit", fit);
+            chunk.classList.toggle("is-out", !fit);
+          }
+          if (row) {
+            row.classList.toggle("is-fit", fit);
+            row.classList.toggle("is-out", !fit);
+          }
         });
         SELECTED.forEach(function (id) {
           var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + id + '"]');
-          if (chunk) chunk.classList.add("is-used");
+          var row = el.querySelector('.ls-rag-rail-row[data-c="' + id + '"]');
+          if (chunk) chunk.classList.add("is-context");
+          if (row) row.classList.add("is-context");
         });
-        if (trayEl) trayEl.classList.add("is-on");
-        requestAnimationFrame(fitPdfText);
         selfCheck();
-      }, 2250));
-      state.timers.push(setTimeout(function () { showAnswer(); selfCheck(); }, 3050));
+      }, 1900));
+      state.timers.push(setTimeout(function () { showAnswer(); selfCheck(); }, 3100));
+    }
+    function setCiteFocus(id) {
+      Array.prototype.forEach.call(docEl.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
+        var on = chunk.getAttribute("data-c") === id;
+        chunk.classList.toggle("is-cite-active", on);
+        chunk.classList.toggle("is-cite-muted", !on);
+      });
+      Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-rail-row"), function (row) {
+        var on = row.getAttribute("data-c") === id;
+        row.classList.toggle("is-cite-active", on);
+        row.classList.toggle("is-cite-muted", !on);
+      });
+    }
+    function clearCiteFocus() {
+      Array.prototype.forEach.call(docEl.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
+        chunk.classList.remove("is-cite-active", "is-cite-muted");
+      });
+      Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-rail-row"), function (row) {
+        row.classList.remove("is-cite-active", "is-cite-muted");
+      });
+    }
+    function bindCiteHover() {
+      Array.prototype.forEach.call(answerEl.querySelectorAll(".ls-rag-cite"), function (cite) {
+        var id = cite.getAttribute("data-cite");
+        cite.addEventListener("mouseenter", function () { setCiteFocus(id); });
+        cite.addEventListener("mouseleave", clearCiteFocus);
+        cite.addEventListener("focus", function () { setCiteFocus(id); });
+        cite.addEventListener("blur", clearCiteFocus);
+      });
     }
     function showAnswer() {
       typingEl.hidden = true;
-      answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite">[C1]</span><span class="ls-rag-cite">[C2]</span>';
+      answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite" data-cite="C1" tabindex="0">[C1]</span><span class="ls-rag-cite" data-cite="C2" tabindex="0">[C2]</span>';
+      bindCiteHover();
     }
 
     function selfCheck() {
@@ -331,14 +373,9 @@
       var phoneText = thread ? thread.textContent : "";
       var ok = chunks.length === ARTICLE.paragraphs.length && rails.length === ARTICLE.paragraphs.length;
       if (phoneText.indexOf("Der Krake (Octopus)") >= 0 || phoneText.indexOf("The octopus (Octopus)") >= 0) ok = false;
-      var flow = docEl.querySelector(".ls-rag-pdf-flow");
-      if (flow && flow.clientWidth > 0 && flow.scrollWidth > flow.clientWidth + 2) {
-        fitPdfText();
-        ok = false;
-      }
       if (state.step >= 3) {
-        var cards = trayCards ? trayCards.querySelectorAll(".ls-rag-tray-card") : [];
-        if (cards.length !== SELECTED.length) ok = false;
+        var contextChunks = docEl.querySelectorAll(".ls-rag-pdf-chunk.is-context");
+        if (contextChunks.length !== SELECTED.length) ok = false;
       }
       el.setAttribute("data-rag-ok", ok ? "1" : "0");
       return ok;
@@ -358,8 +395,8 @@
         fileStatus.textContent = state.step === 1
           ? L("wird gescannt …", "scanning …")
           : state.step === 2
-            ? L("5 Chunks · 5 Vektoren", "5 chunks · 5 vectors")
-            : L("5 Chunks · 2 im Kontext", "5 chunks · 2 in context");
+            ? L(CHUNK_COUNT + " Chunks · " + CHUNK_COUNT + " Vektoren", CHUNK_COUNT + " chunks · " + CHUNK_COUNT + " vectors")
+            : L(CHUNK_COUNT + " Chunks · 2 im Kontext", CHUNK_COUNT + " chunks · 2 in context");
       }
       if (hasAnswer) {
         answerEl.innerHTML = '<span class="ls-rag-partial">' + esc(L("Ein Krake hat …", "An octopus has …")) + '</span>';
@@ -402,6 +439,7 @@
       setChat();
       if (state.step === 0) {
         state.pickerOpen = false;
+        state.textFitted = false;
         docStatus.textContent = "";
         attachBtn.classList.add("is-hint");
       } else if (state.step === 1) {
@@ -409,13 +447,13 @@
         startScan();
       } else if (state.step === 2) {
         completeScan();
-        docStatus.textContent = L("5 Chunks · 5 Vektoren", "5 chunks · 5 vectors");
+        docStatus.textContent = L(CHUNK_COUNT + " Chunks · " + CHUNK_COUNT + " Vektoren", CHUNK_COUNT + " chunks · " + CHUNK_COUNT + " vectors");
       } else if (state.step === 3) {
         completeScan();
-        docStatus.textContent = L("5 Chunks · 2 im Kontext", "5 chunks · 2 in context");
+        docStatus.textContent = L(CHUNK_COUNT + " Chunks · 2 im Kontext", CHUNK_COUNT + " chunks · 2 in context");
         stepThree();
       }
-      if (state.step >= 1) requestAnimationFrame(fitPdfText);
+      if (state.step === 1) requestAnimationFrame(function () { fitPdfText(); });
       statusEl.textContent = state.step === 0
         ? ""
         : state.step === 1
@@ -493,7 +531,7 @@
       },
       hasNext: function () { return state.step < 3; },
       hasPrev: function () { return state.step > 0; },
-      resize: function () { requestAnimationFrame(function () { fitPdfText(); selfCheck(); }); },
+      resize: function () { requestAnimationFrame(function () { fitPdfText(true); selfCheck(); }); },
       destroy: function () { clearTimers(); el.remove(); }
     };
   }

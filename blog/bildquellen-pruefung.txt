@@ -1811,4 +1811,19 @@ Rain. Giant Pacific Octopus. Male.
     Lokal: eoy/assets/kraken-octopus.jpg (900x600)
     Genutzt in: eoy/data.js, agentrag demo, Lexikon-Seite und Quellen
     Status: OK - Autor, Lizenz, Lizenzseite und Flickr-Seite im PDF-Caption und in den Quellen.
+Mona Lisa detail: eyes
+    URL: https://commons.wikimedia.org/wiki/File:Mona_Lisa_detail_eyes.jpg
+    Lizenz: Public domain
+    Autor: Leonardo da Vinci (Mona Lisa); Bilddetail
+    Lokal: eoy/assets/krakelee-mona-lisa.jpg (768x399)
+    Genutzt in: eoy/data.js, agentrag demo, Krakelee-Füllerartikel im Lexikon
+    Status: OK - Public Domain, Bildtitel und Commons-Seite im PDF-Caption und in den Quellen.
+
+Zamek Królewski na Wawelu (1).jpg
+    URL: https://commons.wikimedia.org/wiki/File:Zamek_Kr%C3%B3lewski_na_Wawelu_(1).jpg
+    Lizenz: CC BY-SA 4.0
+    Autor: XEvansGambitx
+    Lokal: eoy/assets/krakow-wawel.jpg (900x506)
+    Genutzt in: eoy/data.js, agentrag demo, Kraków-Füllerartikel im Lexikon
+    Status: OK - Autor, Lizenz, Lizenzseite und Commons-Seite im PDF-Caption und in den Quellen.
 
