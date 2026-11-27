@@ -20,7 +20,7 @@
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
         '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.08" max="1.05" step="0.01" value="0.40"><output>0.40</output></label>' +
       '</div>' +
-      '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
+      '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
       '<p class="ls-sim-caption"></p>';
     root.appendChild(el);
@@ -64,6 +64,7 @@
     var hits = [];
     var C = api.colors();
     var clamp = api.util.clamp;
+    function ease(t) { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); }
 
     var WORDS = [
       { w: "König", e: "king", x: 0.26, y: 0.22, z: 0.68, c: "royal" },
@@ -636,86 +637,290 @@
         });
       });
       updateAngleList();
+      requestAnimationFrame(function () { resize(); });
     }
-    function drawRayLabel(text, x, y, cx, cy, w, h, active, maxX) {
-      var dx = x - cx, dy = y - cy, len = Math.hypot(dx, dy) || 1;
-      var lx = x + dx / len * 9, ly = y + dy / len * 9;
-      var align = dx >= 0 ? "left" : "right";
+    function roundPath(c, x, y, w, h, r) {
+      var rad = Math.min(r, w / 2, h / 2);
+      c.beginPath();
+      c.moveTo(x + rad, y);
+      c.lineTo(x + w - rad, y);
+      c.quadraticCurveTo(x + w, y, x + w, y + rad);
+      c.lineTo(x + w, y + h - rad);
+      c.quadraticCurveTo(x + w, y + h, x + w - rad, y + h);
+      c.lineTo(x + rad, y + h);
+      c.quadraticCurveTo(x, y + h, x, y + h - rad);
+      c.lineTo(x, y + rad);
+      c.quadraticCurveTo(x, y, x + rad, y);
+      c.closePath();
+    }
+    function drawRayLabel(text, x, y, cx, cy, w, h, active, maxX, top) {
       var c = size.ctx;
-      c.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      var dx = x - cx, dy = y - cy, len = Math.hypot(dx, dy) || 1;
+      var ux = dx / len, uy = dy / len;
+      var fs = Math.max(8, api.font("canvas-sm") - 1);
+      c.font = '600 ' + fs + 'px "Open Sans", sans-serif';
       var tw = c.measureText(text).width;
-      if (align === "left") lx = Math.min(lx, maxX - tw);
-      else lx = Math.max(lx, 8);
-      ly = Math.max(14, Math.min(h - 14, ly));
-      var bx = align === "left" ? lx : lx - tw;
-      c.fillStyle = V.alpha(C.paper, .92);
-      c.fillRect(bx - 2, ly - 7, tw + 4, 14);
-      c.fillStyle = active ? C.green : C.soft;
-      c.textAlign = align;
+      var pw = tw + 24, ph = fs + 11;
+      var rawX = x + ux * 16;
+      var px = ux >= 0 ? rawX : rawX - pw;
+      px = Math.max(8, Math.min(maxX - pw, px));
+      var py = Math.max(8, Math.min(h - ph - 8, y + uy * 16 - ph / 2));
+      c.save();
+      c.shadowColor = V.alpha(C.petrol, 0.10);
+      c.shadowBlur = 9;
+      c.shadowOffsetY = 2;
+      c.fillStyle = V.alpha(C.paper, 0.92);
+      roundPath(c, px, py, pw, ph, ph / 2);
+      c.fill();
+      c.restore();
+      c.strokeStyle = active ? V.alpha(C.green, 0.65) : top ? V.alpha(C.gold, 0.55) : V.alpha(C.lineStrong, 0.28);
+      c.lineWidth = 1;
+      roundPath(c, px, py, pw, ph, ph / 2);
+      c.stroke();
+      c.fillStyle = active ? C.green : top ? C.gold : C.muted;
+      c.beginPath();
+      c.arc(px + 9, py + ph / 2, 2.5, 0, Math.PI * 2);
+      c.fill();
+      c.fillStyle = active ? C.green : top ? C.gold : C.ink;
+      c.textAlign = "left";
       c.textBaseline = "middle";
-      c.fillText(text, lx, ly);
+      c.fillText(text, px + 15, py + ph / 2 + 0.5);
     }
     function drawUnembed(now) {
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      var cx = w * 0.28, cy = h * 0.50, r = Math.min(w * 0.24, h * 0.38);
-      ctx.strokeStyle = C.line; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+      var compact = w < 620;
+      var panelW = Math.min(380, Math.max(170, w * (compact ? 0.48 : 0.38)));
+      var bx = w - 14 - panelW;
+      var panelTop = 14, panelH = h - panelTop - 14;
+      var cx = Math.min(w * (compact ? 0.27 : 0.30), bx - 40);
+      var cy = h * 0.53;
+      var r = Math.min(w * (compact ? 0.19 : 0.23), h * 0.36);
+      r = Math.max(38, Math.min(r, bx - cx - 42));
       var t = unembedStart ? Math.min(1, (now - unembedStart) / 650) : 1;
-      var scan = Math.floor(t * UN_TOKENS.length);
       var rows = unembedData();
       var focus = unembedFocus >= 0 && rows[unembedFocus] ? rows[unembedFocus] : null;
+      var top = rows[0];
       var hx = cx + Math.cos(UN_ANGLE) * r, hy = cy - Math.sin(UN_ANGLE) * r;
-      var panelW = Math.min(360, Math.max(150, w * 0.36));
-      var bx = w - 16 - panelW;
-      var barX = bx + Math.min(72, panelW * 0.30);
-      var bw = Math.min(210, panelW - (barX - bx) - 42);
-      var labelMaxX = bx - 8;
+      var labelMaxX = bx - 10;
+      var fsSmall = Math.max(8, api.font("canvas-sm") - 2);
+      var fsLabel = Math.max(8, api.font("canvas-sm") - 1);
+      function pill(text, x, y, color, fs) {
+        var sizePx = fs || fsLabel;
+        ctx.font = '700 ' + sizePx + 'px "Barlow", "Open Sans", sans-serif';
+        var tw = ctx.measureText(text).width;
+        var pw = tw + 18, ph = sizePx + 11;
+        var px = Math.max(8, Math.min(w - pw - 8, x - pw / 2));
+        var py = Math.max(8, Math.min(h - ph - 8, y - ph / 2));
+        ctx.save();
+        ctx.shadowColor = V.alpha(C.petrol, 0.10);
+        ctx.shadowBlur = 9;
+        ctx.shadowOffsetY = 2;
+        ctx.fillStyle = V.alpha(C.paper, 0.90);
+        roundPath(ctx, px, py, pw, ph, ph / 2);
+        ctx.fill();
+        ctx.restore();
+        ctx.strokeStyle = V.alpha(color, 0.55);
+        ctx.lineWidth = 1;
+        roundPath(ctx, px, py, pw, ph, ph / 2);
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, px + pw / 2, py + ph / 2 + 0.5);
+      }
+      var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.66);
+      glow.addColorStop(0, V.alpha(C.blue, 0.07));
+      glow.addColorStop(0.5, V.alpha(C.gold, 0.025));
+      glow.addColorStop(1, V.alpha(C.paper, 0));
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, w, h);
+      ctx.save();
+      var disk = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      disk.addColorStop(0, V.alpha(C.paper, 0.70));
+      disk.addColorStop(0.65, V.alpha(C.paper, 0.28));
+      disk.addColorStop(1, V.alpha(C.paper, 0.02));
+      ctx.fillStyle = disk;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = V.alpha(C.lineStrong, 0.55);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = V.alpha(C.line, 0.55);
+      ctx.lineWidth = 0.9;
+      [0.33, 0.66].forEach(function (rad) {
+        ctx.beginPath(); ctx.arc(cx, cy, r * rad, 0, Math.PI * 2); ctx.stroke();
+      });
+      for (var sIdx = 0; sIdx < 12; sIdx++) {
+        var sa = sIdx * Math.PI / 6;
+        ctx.strokeStyle = V.alpha(C.line, 0.42);
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(sa) * r * 0.14, cy - Math.sin(sa) * r * 0.14);
+        ctx.lineTo(cx + Math.cos(sa) * r, cy - Math.sin(sa) * r);
+        ctx.stroke();
+      }
+      for (var tIdx = 0; tIdx < 24; tIdx++) {
+        var ta = tIdx * Math.PI / 12;
+        ctx.strokeStyle = V.alpha(C.lineStrong, 0.30);
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(ta) * r * 0.985, cy - Math.sin(ta) * r * 0.985);
+        ctx.lineTo(cx + Math.cos(ta) * (tIdx % 2 ? r * 0.955 : r * 0.94), cy - Math.sin(ta) * (tIdx % 2 ? r * 0.955 : r * 0.94));
+        ctx.stroke();
+      }
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle = C.gold;
+      ctx.font = '700 ' + fsSmall + 'px "Barlow", sans-serif';
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText("UNEMBEDDING", 18, 24);
+      ctx.fillStyle = C.petrol;
+      ctx.font = '700 ' + Math.max(15, Math.min(21, w * 0.022)) + 'px "Barlow", sans-serif';
+      ctx.fillText(DE ? "Vektor → Token" : "vector → token", 18, 45);
+      ctx.restore();
+      var probs = V.softmax(rows.map(function (x) { return x.cos; }), 0.35);
+      var probByText = {};
+      rows.forEach(function (row, i) { probByText[row.t] = probs[i] || 0; });
+      var arcPalette = [C.blue, C.green, C.gold, C.lilac, C.sky, C.petrol, C.green, C.blue];
       var rayLabels = [];
       UN_TOKENS.forEach(function (tok, i) {
         var a = tok.a * Math.PI / 180;
         var x = cx + Math.cos(a) * r, y = cy - Math.sin(a) * r;
-        ctx.strokeStyle = C.line; ctx.globalAlpha = 0.28; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke(); ctx.globalAlpha = 1;
-        ctx.fillStyle = C.muted; ctx.beginPath(); ctx.arc(x, y, 2.3, 0, Math.PI * 2); ctx.fill();
-        rayLabels.push({ text: tok.t.trim(), x: x, y: y, active: !!(focus && tok.t === focus.t) });
-        if (i < scan || (focus && tok.t === focus.t)) {
-          var d = tok.a * Math.PI / 180 - UN_ANGLE;
-          while (d > Math.PI) d -= Math.PI * 2;
-          while (d < -Math.PI) d += Math.PI * 2;
-          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, focus && tok.t === focus.t ? r * 0.42 : r * 0.32, UN_ANGLE, UN_ANGLE + d, d < 0); ctx.closePath();
-          ctx.fillStyle = V.alpha(focus && tok.t === focus.t ? C.green : C.gold, 0.14); ctx.fill();
-          ctx.strokeStyle = focus && tok.t === focus.t ? C.green : C.gold; ctx.globalAlpha = focus && tok.t === focus.t ? 1 : 0.55; ctx.lineWidth = focus && tok.t === focus.t ? 2.4 : 1; ctx.stroke(); ctx.globalAlpha = 1;
+        var d = a - UN_ANGLE;
+        while (d > Math.PI) d -= Math.PI * 2;
+        while (d < -Math.PI) d += Math.PI * 2;
+        var isFocus = !!(focus && tok.t === focus.t);
+        var isTop = !!(top && tok.t === top.t);
+        var reveal = Math.max(0, Math.min(1, t * UN_TOKENS.length - i));
+        var col = isFocus ? C.green : isTop ? C.gold : C.blue;
+        ctx.save();
+        ctx.strokeStyle = V.alpha(col, isFocus ? 0.95 : 0.28 + 0.32 * reveal);
+        ctx.lineWidth = isFocus ? 2.4 : 1.1;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke();
+        ctx.restore();
+        var arcR = r * 0.66;
+        var arcColor = isFocus ? C.green : isTop ? C.gold : arcPalette[i % arcPalette.length];
+        var arcWidth = isFocus ? 4.6 : isTop ? 3.4 : 1 + 4.2 * (probByText[tok.t] || 0) / Math.max(0.001, probs[0]);
+        ctx.save();
+        ctx.strokeStyle = V.alpha(arcColor, isFocus || isTop ? 0.95 : 0.25 + 0.55 * reveal);
+        ctx.lineWidth = arcWidth;
+        ctx.lineCap = "round";
+        if (isFocus) { ctx.shadowColor = V.alpha(C.green, 0.45); ctx.shadowBlur = 10; }
+        else if (isTop) { ctx.shadowColor = V.alpha(C.gold, 0.35); ctx.shadowBlur = 8; }
+        ctx.beginPath();
+        ctx.arc(cx, cy, arcR, -UN_ANGLE, -UN_ANGLE - d, d > 0);
+        ctx.stroke();
+        ctx.restore();
+        if (isFocus) {
+          var fmid = UN_ANGLE + d / 2;
+          pill(Math.round(Math.abs(d) * 180 / Math.PI) + "°", cx + Math.cos(fmid) * (arcR + 14), cy - Math.sin(fmid) * (arcR + 14), C.green, fsSmall);
         }
-        if (focus && tok.t === focus.t) {
-          ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill();
-          ctx.strokeStyle = C.paper; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.save();
+        ctx.globalAlpha = 0.35 + 0.65 * reveal;
+        ctx.beginPath();
+        ctx.arc(x, y, isFocus ? 5 : isTop ? 4.2 : 2.8, 0, Math.PI * 2);
+        ctx.fillStyle = isFocus ? C.green : isTop ? C.gold : C.muted;
+        ctx.fill();
+        if (isFocus || isTop) {
+          ctx.strokeStyle = C.paper;
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
         }
+        ctx.restore();
+        rayLabels.push({ text: tok.t.trim(), x: x, y: y, active: isFocus, top: isTop });
       });
-      V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.2);
-      ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif'; ctx.textAlign = "center"; ctx.fillText(DE ? "letzter Vektor" : "last vector", hx, hy - 9);
-      rayLabels.forEach(function (l) { drawRayLabel(l.text, l.x, l.y, cx, cy, w, h, l.active, labelMaxX); });
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.shadowColor = V.alpha(C.petrol, 0.55);
+      ctx.shadowBlur = 18;
+      V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.1, 8);
+      ctx.restore();
+      var hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 16);
+      hg.addColorStop(0, V.alpha(C.petrol, 0.26));
+      hg.addColorStop(1, V.alpha(C.petrol, 0));
+      ctx.fillStyle = hg;
+      ctx.beginPath(); ctx.arc(hx, hy, 16, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(hx, hy, 4.2, 0, Math.PI * 2);
+      ctx.fillStyle = C.petrol;
+      ctx.fill();
+      ctx.strokeStyle = C.paper;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      pill(DE ? "letzter Vektor" : "last vector", hx, hy - 26, C.petrol, fsSmall);
+      rayLabels.forEach(function (l) { drawRayLabel(l.text, l.x, l.y, cx, cy, w, h, l.active, labelMaxX, l.top); });
+      ctx.save();
+      ctx.shadowColor = V.alpha(C.petrol, 0.10);
+      ctx.shadowBlur = 22;
+      ctx.shadowOffsetY = 8;
+      ctx.fillStyle = V.alpha(C.paper, 0.93);
+      roundPath(ctx, bx, panelTop, panelW, panelH, 14);
+      ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle = V.alpha(C.lineStrong, 0.22);
+      ctx.lineWidth = 1;
+      roundPath(ctx, bx, panelTop, panelW, panelH, 14);
+      ctx.stroke();
+      ctx.save();
+      ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
-      // right: sorted probabilities in a fixed-width panel
-      var probs = V.softmax(rows.map(function (x) { return x.cos; }), 0.35);
-      ctx.textAlign = "left"; ctx.fillStyle = C.petrol; ctx.font = '700 ' + Math.max(10, api.font("canvas-sm")) + 'px "Barlow", sans-serif'; ctx.fillText(DE ? "Wahrscheinlichkeit" : "probability", bx, 20);
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.fillText(DE ? "größter Kosinus → höchste (normiert)" : "largest cosine → highest (normalised)", bx, 34);
-      var listTop = 48;
-      var rowStep = Math.min(22, (h - listTop - 16) / Math.max(1, rows.length - 1));
+      ctx.fillStyle = C.gold;
+      ctx.font = '700 ' + fsSmall + 'px "Barlow", sans-serif';
+      ctx.fillText(DE ? "NÄCHSTE TOKEN" : "NEXT TOKENS", bx + 18, panelTop + 24);
+      ctx.fillStyle = C.petrol;
+      ctx.font = '700 ' + Math.max(13, Math.min(17, panelW * 0.055)) + 'px "Barlow", sans-serif';
+      ctx.fillText(DE ? "Wahrscheinlichkeit" : "Probability", bx + 18, panelTop + 46);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + fsSmall + 'px "Open Sans", sans-serif';
+      ctx.fillText(DE ? "größter Kosinus → höchste (normiert)" : "largest cosine → highest (normalised)", bx + 18, panelTop + 62);
+      ctx.strokeStyle = V.alpha(C.line, 0.65);
+      ctx.beginPath();
+      ctx.moveTo(bx + 18, panelTop + 72);
+      ctx.lineTo(bx + panelW - 18, panelTop + 72);
+      ctx.stroke();
+      ctx.restore();
+      var listTop = panelTop + 86;
+      var listBottom = panelTop + panelH - 16;
+      var rowStep = Math.max(14, Math.min(32, (listBottom - listTop) / Math.max(1, rows.length)));
+      var rowFont = rowStep < 19 ? 8 : 10;
+      var barW = Math.max(40, panelW - 104);
       rows.forEach(function (row, i) {
-        var y = listTop + i * rowStep;
+        var y = listTop + i * rowStep + rowStep * 0.45;
         var p = probs[i] || 0;
-        var grow = Math.max(0, Math.min(1, (t - 0.55) / 0.45));
-        if (focus && row.t === focus.t) { ctx.fillStyle = C.green; ctx.fillRect(bx - 4, y - 9, 3, 13); }
-        ctx.fillStyle = C.ink; ctx.font = '600 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(row.t, bx, y);
-        ctx.fillStyle = C.line; ctx.fillRect(barX, y - 6, bw, 7);
-        ctx.fillStyle = i === 0 ? C.green : C.blue; ctx.fillRect(barX, y - 6, bw * p * grow, 7);
-        ctx.fillStyle = C.muted; ctx.textAlign = "right"; ctx.fillText(Math.round(p * 100 * grow) + "%", barX + bw, y);
+        var grow = ease(clamp((t - 0.28 - i * 0.035) / 0.55, 0, 1));
+        var isFocus = !!(focus && row.t === focus.t);
+        var isTop = i === 0;
+        if (isFocus) {
+          ctx.fillStyle = V.alpha(C.green, 0.10);
+          roundPath(ctx, bx + 8, y - rowStep * 0.48, panelW - 16, rowStep - 2, 7);
+          ctx.fill();
+        }
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = isFocus ? C.green : C.ink;
+        ctx.font = '600 ' + rowFont + 'px "Open Sans", sans-serif';
+        ctx.fillText(row.t.trim(), bx + 20, y - 4);
+        ctx.textAlign = "right";
+        ctx.fillStyle = isFocus ? C.green : C.muted;
+        ctx.font = '700 ' + rowFont + 'px "Barlow", sans-serif';
+        ctx.fillText(Math.round(p * 100 * grow) + "%", bx + panelW - 18, y - 4);
+        var barX = bx + 20, barY = y + 5, barH = rowStep < 19 ? 3 : 4;
+        ctx.fillStyle = V.alpha(C.line, 0.70);
+        roundPath(ctx, barX, barY, barW, barH, barH / 2);
+        ctx.fill();
+        var fillW = Math.max(2, barW * p * grow);
+        var grad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+        grad.addColorStop(0, isTop ? C.green : C.blue);
+        grad.addColorStop(1, isTop ? C.gold : C.petrol);
+        ctx.fillStyle = grad;
+        roundPath(ctx, barX, barY, fillW, barH, barH / 2);
+        ctx.fill();
+        if (isFocus) {
+          ctx.fillStyle = C.green;
+          ctx.fillRect(bx + 9, y - rowStep * 0.34, 3, rowStep * 0.68);
+        }
       });
-      var top = rows[0], bottom = rows[rows.length - 1];
       var focusTxt = focus ? '<span>' + (DE ? "Winkel" : "angle") + ' <b>' + focus.t + ' · ' + Math.round(Math.abs(focus.diff) * 180 / Math.PI) + '°</b></span>' : '';
-      readout.innerHTML = '<span><b>letzter Vektor</b> ' + (DE ? "des letzten Tokens in der letzten Schicht" : "of the last token in the last layer") + '</span><span>letzter Vektor → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "größter Kosinus" : "largest cosine") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "kleinster Kosinus" : "smallest cosine") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
+      readout.innerHTML = '<span><b>letzter Vektor</b> ' + (DE ? "des letzten Tokens in der letzten Schicht" : "of the last token in the last layer") + '</span><span>letzter Vektor → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "größter Kosinus" : "largest cosine") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "kleinster Kosinus" : "smallest cosine") + ' <b>' + rows[rows.length - 1].t + ' · ' + Math.round(Math.abs(rows[rows.length - 1].diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
       caption.textContent = DE ? "Der letzte Vektor des letzten Tokens in der letzten Schicht kommt aus den Transformer-Blöcken. In ihn ist der gesamte Kontext wieder und wieder unter verschiedenen Heads eingemischt worden. In dieser normalisierten Demo vergleicht W_U diesen Vektor mit jeder Token-Richtung; der größte Kosinus wird zum höchsten Wert, Softmax macht daraus eine Verteilung. Im echten Logit skaliert zusätzlich die Länge der Token-Zeile. Fahre über einen Vorschlag oder klicke ihn an: Der Winkel wird hervorgehoben." : "The final vector of the last token in the last layer comes out of the transformer blocks. The entire context has been mixed into it again and again under different heads. In this normalised demo W_U compares this vector with every token direction; the largest cosine becomes the highest value, and softmax turns that into a distribution. In the real logit the length of the token row also scales the result. Hover or click a suggestion to highlight its angle.";
       if (unembedRaf) { if (t < 1) unembedRaf = requestAnimationFrame(drawUnembed); else unembedRaf = 0; }
     }
@@ -764,6 +969,7 @@
         if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2);
       }
       function apply() { draw(); }
+      if (modeChanged) requestAnimationFrame(function () { resize(); });
       if (modeChanged && size && V && V.crossfadeCanvas) V.crossfadeCanvas(canvas, apply, { dir: dir, duration: 280 });
       else apply();
       ensureDirLoop();
@@ -906,6 +1112,14 @@
           (DE ? "Richtung auf der Einheitskugel. Klicken wählt das Wort; die Winkel zu den Nachbarn stehen im Plot." : "Direction on the unit sphere. Click to choose the word; the angles to its neighbours are shown in the plot.");
       });
     }
+    var ro = null, roRaf = 0;
+    if (window.ResizeObserver) {
+      ro = new ResizeObserver(function () {
+        if (roRaf) return;
+        roRaf = requestAnimationFrame(function () { roRaf = 0; resize(); });
+      });
+      ro.observe(stage);
+    }
     choose(0);
     setMode("directions");
     resize();
@@ -936,7 +1150,7 @@
       resize: resize,
       pause: function () { if (dirRaf) { cancelAnimationFrame(dirRaf); dirRaf = 0; } },
       resume: function () { draw(); ensureDirLoop(); },
-      destroy: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); if (dirRaf) cancelAnimationFrame(dirRaf); if (scaleRaf) cancelAnimationFrame(scaleRaf); window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
+      destroy: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); if (dirRaf) cancelAnimationFrame(dirRaf); if (scaleRaf) cancelAnimationFrame(scaleRaf); if (ro) ro.disconnect(); if (roRaf) cancelAnimationFrame(roRaf); window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
     };
   };
 })();
