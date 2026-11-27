@@ -425,9 +425,10 @@
     {
       kicker: "Feed-Forward-Netzwerk (FFN)",
       title: "Die Rolle von neuronalen Netzen im Transformer",
-      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch, und Burg wie Mechanik sind Platzhalter, keine echten Modellfeatures; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.\n\nJedes Token wird nach jeder Attention durch dasselbe neuronale Netz geschickt, das dann die kontextualisierten Tokens unabhängig voneinander verschiebt. Die Rolle im LLM: verworrene Muster trennbar machen.",
+      body: "Nachdem der Tokenizer die Texte getrennt, die Embedding-Schicht daraus Punkte im hochdimensionalen Raum gemacht und Attention sie im Kontext verschoben hat, gehen diese Punkte ans FFN. Das FFN versucht, die Punkte unter verschiedenen Gesichtspunkten durch Projektion in einen höherdimensionalen Raum und dann wieder zurück in den Originalraum so zu verschieben, dass Teile von ihnen besser trennbar werden, und sie so zu verschieben, dass am Ende das letzte Token des letzten Transformer-Blocks den geringsten Winkel zum nächsten Wort hat.\n\nJeder Punkt in der symbolischen Darstellung rechts steht für ein Token, also für einen hochdimensionalen Punkt mit Tausenden Dimensionen.\n\nIm Beispiel rechts werden die Trennung und die Verschiebung daraus gezeigt. Die Sätze „I ate the apple“ und „I bought an Apple laptop“ haben beide als letztes Token „apple“, bedeuten aber etwas ganz anderes. Im hochdimensionalen Raum wird versucht, diese Bedeutungen anhand des Kontextes und der anderen Tokens immer weiter zu entwirren, bis das Netzwerk sie klar genug getrennt hat, um die Punkte in Richtung des nächsten Wortes zu verschieben.",
       watch: "",
       demoState: { scene: "ffn", mode: "fruit" },
+      inherit: false,
       context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
       deep: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂. Die Demo zeigt die Idee, nicht die exakten Gewichte.",
       boxes: [
@@ -436,20 +437,6 @@
       ],
       questionGroups: [
         { id: "g-basics", title: "Eine Ebene tiefer", questions: [] },
-        {
-          id: "g-lens-technik",
-          title: "Technik",
-          questions: [
-            { id: "q-box-ffn-2", title: "Warum das FFN?", body: "Attention bewegt Information zwischen Tokens. Das FFN ist ein MLP pro Token und trennt Muster, die sonst verworren bleiben. Beide zusammen bilden einen Block.", tex: "", kind: "question" }
-          ]
-        },
-        {
-          id: "g-lens-geometrie",
-          title: "Geometrie",
-          questions: [
-            { id: "q-box-ffn-4", title: "Ist der reichere Vektor hochdimensional?", body: "Ja. Jeder Punkt hier steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in $W_1$ und der Pull in $W_2$ sind Richtungen in diesem hochdimensionalen Raum.", tex: "", kind: "question" }
-          ]
-        },
         {
           id: "g-sources",
           title: "Quellen",
@@ -468,9 +455,10 @@
     {
       kicker: "Feed-forward network (FFN)",
       title: "The role of neural networks in the transformer",
-      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic, and castle and mechanism are placeholders, not real model features; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.\n\nAfter every attention step, each token is passed through the same neural network, which then shifts the contextualised tokens independently of one another. The role in the LLM: make entangled patterns separable.",
+      body: "After the tokenizer has split the texts, the embedding layer has turned them into points in a high-dimensional space, and attention has shifted them in context, these points go to the FFN. The FFN tries to shift the points from different perspectives: by projecting them into a higher-dimensional space and then back into the original space, so that parts of them become more separable, and by shifting them so that the last token of the last transformer block has the smallest angle to the next word.\n\nEvery point in the symbolic representation on the right stands for a token, which is again a high-dimensional point with thousands of dimensions.\n\nThe example on the right shows the separation and the shift that follows. The sentences “I ate the apple” and “I bought an Apple laptop” both end with the token “apple”, but mean very different things. In the very high-dimensional space, the network tries to untangle these meanings using the context and the other tokens until it has separated them clearly enough to shift the points towards the next word.",
       watch: "",
       demoState: { scene: "ffn", mode: "fruit" },
+      inherit: false,
       context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
       deep: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂. The demo shows the idea, not the exact weights.",
       boxes: [
@@ -479,20 +467,6 @@
       ],
       questionGroups: [
         { id: "g-basics", title: "One level deeper", questions: [] },
-        {
-          id: "g-lens-technique",
-          title: "Technique",
-          questions: [
-            { id: "q-box-ffn-2", title: "Why the FFN?", body: "Attention moves information between tokens. The FFN is an MLP per token and separates patterns that would otherwise stay entangled. Together they form one block.", tex: "", kind: "question" }
-          ]
-        },
-        {
-          id: "g-lens-geometry",
-          title: "Geometry",
-          questions: [
-            { id: "q-box-ffn-4", title: "Is the richer vector high-dimensional?", body: "Yes. Every point here stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in $W_1$ and the pull in $W_2$ are directions in that high-dimensional space.", tex: "", kind: "question" }
-          ]
-        },
         {
           id: "g-sources",
           title: "Sources",

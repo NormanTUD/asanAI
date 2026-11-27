@@ -10,36 +10,39 @@
     var C = api.colors();
     var data = DE ? {
       fruit: {
-        keys: [{ label: "Mechanik · Tür · öffnen", on: false }, { label: "Burg · Turm · König", on: true }, { label: "alt · prächtig · Garten", on: true }],
-        values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: false }, { label: "Hinweis: König, Turm, Burg", on: true }, { label: "Hinweis: alt, prächtig, Garten", on: true }],
-        desc: "Die Burg-, Turm- und Königs-Muster passen; das Mechanik-Muster bleibt still."
+        keys: [{ label: "Frucht · rot · süß", on: true }, { label: "Baum · Obst · Saft", on: true }, { label: "Firma · Laptop · iPhone", on: false }],
+        values: [{ label: "Hinweis: Frucht, rot, süß", on: true }, { label: "Hinweis: Baum, Obst, Saft", on: true }, { label: "Hinweis: Firma, Laptop, iPhone", on: false }],
+        desc: "Die Frucht-, Rot- und Süß-Muster passen; das Firmen-Muster bleibt still."
       },
       tech: {
-        keys: [{ label: "Mechanik · Tür · öffnen", on: true }, { label: "Burg · Turm · König", on: false }, { label: "alt · prächtig · Garten", on: false }],
-        values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: true }, { label: "Hinweis: König, Turm, Burg", on: false }, { label: "Hinweis: alt, prächtig, Garten", on: false }],
-        desc: "Jetzt passt das Mechanik-Muster; die Burg-, Turm- und Königs-Muster bleiben still."
+        keys: [{ label: "Firma · Laptop · iPhone", on: true }, { label: "Frucht · rot · süß", on: false }, { label: "Baum · Obst · Saft", on: false }],
+        values: [{ label: "Hinweis: Firma, Laptop, iPhone", on: true }, { label: "Hinweis: Frucht, rot, süß", on: false }, { label: "Hinweis: Baum, Obst, Saft", on: false }],
+        desc: "Jetzt passt das Firmen-Muster; die Frucht-Muster bleiben still."
       }
     } : {
       fruit: {
-        keys: [{ label: "mechanism · door · open", on: false }, { label: "castle · tower · king", on: true }, { label: "old · grand · garden", on: true }],
-        values: [{ label: "Pull: key, door, open", on: false }, { label: "Pull: king, tower, castle", on: true }, { label: "Pull: old, grand, garden", on: true }],
-        desc: "The castle, tower, and king patterns match; the mechanism pattern stays silent."
+        keys: [{ label: "fruit · red · sweet", on: true }, { label: "tree · orchard · pie", on: true }, { label: "company · laptop · iPhone", on: false }],
+        values: [{ label: "Pull: fruit, red, sweet", on: true }, { label: "Pull: tree, orchard, pie", on: true }, { label: "Pull: company, laptop, iPhone", on: false }],
+        desc: "The fruit, red, and sweet patterns match; the company pattern stays silent."
       },
       tech: {
-        keys: [{ label: "mechanism · door · open", on: true }, { label: "castle · tower · king", on: false }, { label: "old · grand · garden", on: false }],
-        values: [{ label: "Pull: key, door, open", on: true }, { label: "Pull: king, tower, castle", on: false }, { label: "Pull: old, grand, garden", on: false }],
-        desc: "Now the mechanism pattern matches; the castle, tower, and king patterns stay silent."
+        keys: [{ label: "company · laptop · iPhone", on: true }, { label: "fruit · red · sweet", on: false }, { label: "tree · orchard · pie", on: false }],
+        values: [{ label: "Pull: company, laptop, iPhone", on: true }, { label: "Pull: fruit, red, sweet", on: false }, { label: "Pull: tree, orchard, pie", on: false }],
+        desc: "Now the company pattern matches; the fruit patterns stay silent."
       }
     };
     var labels = DE ? {
-      fruitTitle: "Ich besichtige das Schloss",
-      techTitle: "Ich öffne das Schloss",
-      stream: "„Schloss“ + Kontext",
+      fruitTitle: "I ate the apple",
+      techTitle: "I bought an Apple laptop",
+      stream: "„apple“ + Kontext",
       output: "reicherer Vektor",
-      core: "Burg · Turm · König · Mauer · Thron · Krone",
-      ring: "Mechanik · Tür · öffnen · Schloss · Schlüssel · Hebel",
+      core: "Frucht · rot · süß · Baum · Obst · Saft",
+      ring: "Firma · Laptop · iPhone · Cupertino · Logo · Aktie",
       bend: "Biegung",
       bendButton: "Raum biegen",
+      returnButton: "W₂ zurück",
+      liftTag: "W₁ hebt an",
+      returnTag: "W₂ projiziert zurück",
       separated: "getrennt",
       notSeparated: "noch nicht getrennt",
       plane: "Trennebene",
@@ -55,10 +58,13 @@
       techTitle: "I bought an Apple laptop",
       stream: "“apple” + context",
       output: "richer vector",
-      core: "castle · tower · king · wall · throne · crown",
-      ring: "mechanism · door · open · lock · key · lever",
+      core: "fruit · red · sweet · tree · orchard · pie",
+      ring: "company · laptop · iPhone · Cupertino · logo · stock",
       bend: "Bend",
       bendButton: "Bend space",
+      returnButton: "W₂ back",
+      liftTag: "W₁ lifts",
+      returnTag: "W₂ projects back",
       separated: "separated",
       notSeparated: "not separated",
       plane: "separating plane",
@@ -88,10 +94,12 @@
           '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Input und Output bleiben d_model; das FFN dehnt den Vektor auf d_ff und projiziert ihn zurück. Es arbeitet pro Token." : "Input and output stay at d_model; the FFN expands the vector to d_ff and projects it back. It works per token.") + '</p></div>' +
+      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Beides sind Dense-Schichten: W₁ hebt den Vektor auf d_ff, W₂ projiziert ihn zurück auf d_model. Das FFN arbeitet pro Token." : "Both are dense layers: W₁ lifts the vector to d_ff, W₂ projects it back to d_model. The FFN works per token.") + '</p></div>' +
       '<details class="ls-ffn-more"><summary>' + (DE ? "Mehr zur Geometrie" : "More on the geometry") + '</summary><p class="ls-ffn-caveat">' + (DE ? "Die Punkte sind symbolisch: Im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen noch höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The points are symbolic: in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p></details>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
+    var coreStateEl = el.querySelector(".ls-ffn-bend-legend span:nth-child(1) small");
+    var ringStateEl = el.querySelector(".ls-ffn-bend-legend span:nth-child(2) small");
     var stepperEl = el.querySelector(".ls-ffn-stepper");
     var prevBtn = el.querySelector(".ls-ffn-prev");
     var nextBtn = el.querySelector(".ls-ffn-next");
@@ -104,7 +112,7 @@
     var bendToggle = el.querySelector(".ls-ffn-bend-toggle");
     var dimsCanvas = el.querySelector(".ls-ffn-dims-canvas");
     var dimsSize = null;
-    var bend = 0, bendRaf = 0, size = null, ctx = null;
+    var bend = 0, bendRaf = 0, bendDir = 1, dimsPhase = 0, dimsRaf = 0, size = null, ctx = null;
     var modeOrder = ["fruit", "tech"];
     var activeMode = "fruit";
     function pill(item, withState) {
@@ -144,6 +152,9 @@
       prevBtn.disabled = idx <= 0;
       nextBtn.disabled = idx >= modeOrder.length - 1;
       drawBend();
+      if (coreStateEl) coreStateEl.textContent = activeMode === "fruit" ? labels.coreState : labels.ringState;
+      if (ringStateEl) ringStateEl.textContent = activeMode === "tech" ? labels.coreState : labels.ringState;
+      pulseDims();
     }
     function stepContext(delta) {
       var idx = modeOrder.indexOf(activeMode) + delta;
@@ -201,11 +212,17 @@
       halo.addColorStop(1, V.alpha(C.paper || "#fff", 0));
       ctx.fillStyle = halo;
       ctx.fillRect(0, 0, w, h);
-      function warp(x, y) {
+      function warp(x, y, c, liftVal) {
+        var b = (liftVal == null) ? bend : liftVal;
         var r = Math.hypot(x, y);
-        var t = Math.max(0, Math.min(1, (r - 0.30) / 0.24));
-        var ringDamp = 1 - 0.45 * (t * t * (3 - 2 * t));
-        return { x: x, y: y, z: bend * (0.10 + 1.35 * Math.exp(-(r * r) / 0.20) * ringDamp) };
+        if (activeMode === "fruit") {
+          var t = Math.max(0, Math.min(1, (r - 0.30) / 0.24));
+          var ringDamp = 1 - 0.45 * (t * t * (3 - 2 * t));
+          var coreZ = b * (0.10 + 1.35 * Math.exp(-(r * r) / 0.20) * ringDamp);
+          return { x: x, y: y, z: c === 1 ? coreZ * 0.12 : coreZ };
+        }
+        var ringZ = b * (0.10 + 1.35 * Math.exp(-Math.pow((r - 0.72) / 0.22, 2)));
+        return { x: x, y: y, z: c === 0 ? ringZ * 0.12 : ringZ };
       }
       function project(x, y, z) {
         return { x: cx + x * scale + z * scale * 0.25, y: cy + y * scale * 0.35 - z * scale * 0.98, z: z };
@@ -217,14 +234,14 @@
       for (var i = 0; i <= N; i++) {
         ctx.beginPath();
         for (var j = 0; j <= N; j++) {
-          var wp = warp(-1 + 2 * i / N, -1 + 2 * j / N);
+          var wp = warp(-1 + 2 * i / N, -1 + 2 * j / N, activeMode === "fruit" ? 0 : 1);
           var p = project(wp.x, wp.y, wp.z);
           if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
         }
         ctx.stroke();
         ctx.beginPath();
         for (var j2 = 0; j2 <= N; j2++) {
-          var wp2 = warp(-1 + 2 * j2 / N, -1 + 2 * i / N);
+          var wp2 = warp(-1 + 2 * j2 / N, -1 + 2 * i / N, activeMode === "fruit" ? 0 : 1);
           var p2 = project(wp2.x, wp2.y, wp2.z);
           if (j2 === 0) ctx.moveTo(p2.x, p2.y); else ctx.lineTo(p2.x, p2.y);
         }
@@ -232,15 +249,43 @@
       }
       ctx.globalAlpha = 1;
       var projected = ffnPoints.map(function (pt) {
-        var wp = warp(pt.x, pt.y);
+        var wp = warp(pt.x, pt.y, pt.c);
         var p = project(wp.x, wp.y, wp.z);
         return { x: p.x, y: p.y, z: p.z, c: pt.c, label: pt.label };
       });
       bendProjected = projected;
-      var center = project(0, 0, bend * 1.45);
+      var activeC = activeMode === "fruit" ? 0 : 1;
+      var activeColor = activeMode === "fruit" ? C.green : C.gold;
+      if (bend > 0.02 && bendDir < 0) {
+        ctx.save();
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = activeColor;
+        ctx.globalAlpha = 0.22;
+        ctx.lineWidth = 0.8;
+        for (var gi = 0; gi < ffnPoints.length; gi += 4) {
+          var gp = ffnPoints[gi];
+          if (gp.c !== activeC) continue;
+          var gwp = warp(gp.x, gp.y, gp.c, 1);
+          var gpr = project(gwp.x, gwp.y, gwp.z);
+          var cwp = warp(gp.x, gp.y, gp.c);
+          var cpr = project(cwp.x, cwp.y, cwp.z);
+          ctx.beginPath(); ctx.arc(gpr.x, gpr.y, 1.4, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(gpr.x, gpr.y); ctx.lineTo(cpr.x, cpr.y); ctx.stroke();
+        }
+        ctx.restore();
+        ctx.save();
+        ctx.fillStyle = activeColor;
+        ctx.globalAlpha = 0.85;
+        ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
+        ctx.textAlign = "right";
+        ctx.fillText(labels.returnTag, w - 14, 18);
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      }
+      var liftCenter = activeMode === "fruit" ? project(0, 0, bend * 1.45) : project(0.72, 0, bend * 1.45);
+      var center = liftCenter;
       var baseCenter = project(0, 0, 0);
       var coreR = 0.42 * scale, ringR = 0.95 * scale;
-      var activeColor = activeMode === "fruit" ? C.green : C.gold;
       ctx.save();
       ctx.strokeStyle = activeColor;
       ctx.lineWidth = 1.2;
@@ -251,7 +296,7 @@
       ctx.globalAlpha = 1;
       var haloTag = activeMode === "fruit" ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0];
       var haloR = activeMode === "fruit" ? coreR : ringR;
-      var haloCenter = activeMode === "fruit" ? center : baseCenter;
+      var haloCenter = activeMode === "fruit" ? liftCenter : project(0.72, 0, bend * 1.45);
       ctx.fillStyle = activeColor;
       ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
       ctx.textAlign = "center";
@@ -315,13 +360,24 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(labels.bend + " " + bend.toFixed(2), 14, 18);
+      if (bend > 0.02 && bendDir >= 0) {
+        ctx.textAlign = "right";
+        ctx.fillStyle = activeColor;
+        ctx.globalAlpha = 0.85;
+        ctx.fillText(labels.liftTag, w - 14, 18);
+        ctx.textAlign = "left";
+        ctx.globalAlpha = 1;
+      }
       bendCanvas.setAttribute("aria-label", (DE ? "Feine Punktwolke des FFN-Raums. " : "Fine point cloud of the FFN space. ") + labels.hint + " " + (bend > 0.6 ? labels.separated : labels.notSeparated) + ".");
     }
     function updateBendReadout() {
       bendOut.textContent = bend.toFixed(2);
-      bendReadout.textContent = labels.bend + " " + bend.toFixed(2) + " · " + (bend > 0.6 ? labels.separated : labels.notSeparated);
+      bendToggle.textContent = bend > 0.5 ? labels.returnButton : labels.bendButton;
+      var extra = bend > 0.02 ? " · " + (bendDir < 0 ? labels.returnTag : labels.liftTag) : "";
+      bendReadout.textContent = labels.bend + " " + bend.toFixed(2) + " · " + (bend > 0.6 ? labels.separated : labels.notSeparated) + extra;
     }
     function setBend(v) {
+      bendDir = v >= bend ? 1 : -1;
       bend = Math.max(0, Math.min(1, v));
       bendRange.value = String(bend);
       updateBendReadout();
@@ -329,6 +385,7 @@
     }
     function animateBend(target) {
       if (bendRaf) cancelAnimationFrame(bendRaf);
+      bendDir = target >= bend ? 1 : -1;
       var from = bend, t0 = performance.now(), dur = (api.motion && api.motion.scale) ? api.motion.scale(620) : 620;
       function frame(now) {
         var t = Math.max(0, Math.min(1, (now - t0) / dur));
@@ -337,6 +394,8 @@
         bendRange.value = String(bend);
         updateBendReadout();
         drawBend();
+        dimsPhase = (dimsPhase + 0.05) % 1;
+        drawDims();
         if (t < 1) bendRaf = requestAnimationFrame(frame);
         else bendRaf = 0;
       }
@@ -373,7 +432,32 @@
         g.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; g.textAlign = "center";
         g.fillText(a[2], w * ((a[0] + a[1]) / 2), h * 0.50 - 6);
       });
+      var activeColor = activeMode === "fruit" ? C.green : C.gold;
+      var dots = 10;
+      for (var d = 0; d < dots; d++) {
+        var t = (dimsPhase + d / dots) % 1;
+        var dx, dy;
+        if (t < 0.5) dx = w * (0.16 + 0.34 * (t / 0.5));
+        else dx = w * (0.50 + 0.34 * ((t - 0.5) / 0.5));
+        dy = h * 0.5 + Math.sin(d * 1.7 + dimsPhase * Math.PI * 2) * h * 0.06;
+        g.beginPath(); g.arc(dx, dy, 2.2, 0, Math.PI * 2);
+        g.fillStyle = activeColor; g.globalAlpha = 0.8; g.fill();
+      }
+      g.globalAlpha = 1;
       dimsCanvas.setAttribute("aria-label", DE ? "Input d_model, verborgenes d_ff und Output d_model als Balken." : "Input d_model, hidden d_ff and output d_model as bars.");
+    }
+    function pulseDims() {
+      if (dimsRaf) cancelAnimationFrame(dimsRaf);
+      var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) { dimsPhase = 0.5; drawDims(); return; }
+      var t0 = performance.now();
+      function frame(now) {
+        var t = (now - t0) / 1100;
+        dimsPhase = t % 1;
+        drawDims();
+        if (t < 1.15) dimsRaf = requestAnimationFrame(frame); else dimsRaf = 0;
+      }
+      dimsRaf = requestAnimationFrame(frame);
     }
     bendCanvas.addEventListener("pointermove", function (e) {
       if (!size) return;
@@ -396,12 +480,12 @@
         var d = Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2);
         if (d < bestD) { bestD = d; best = i; }
       });
-      if (best < 0) return DE ? "Punktwolke: Kern und Ring liegen übereinander; die Biegung hebt den Kern an, bis eine Ebene trennt. Fahre über einen Punkt." : "Point cloud: core and ring overlap; the bend lifts the core until a plane separates them. Hover a point.";
+      if (best < 0) return DE ? "Punktwolke: Die aktive Gruppe wird angehoben, bis eine Ebene trennt. Fahre über einen Punkt." : "Point cloud: the active group is lifted until a plane separates it. Hover a point.";
       var p = bendProjected[best];
       var isCore = p.c === 0;
       return p.label + (DE ? " · " : " · ") + (isCore ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0]) +
         ". " + (DE ? "Biegung " : "Bend ") + bend.toFixed(2) + ". " +
-        (DE ? (isCore ? "Kernmuster: wird angehoben und lässt sich von den Mechanik-Punkten trennen." : "Ringmuster: bleibt unten; die Biegung trennt es vom Kern.") : (isCore ? "Core pattern: lifted so the separating plane can cut it from the mechanism points." : "Ring pattern: stays low; the bend separates it from the core."));
+        (DE ? (isCore ? "Kernmuster: wird angehoben und lässt sich von den Firmen-Punkten trennen." : "Ringmuster: bleibt unten; die Biegung trennt es vom Kern.") : (isCore ? "Core pattern: lifted so the separating plane can cut it from the company points." : "Ring pattern: stays low; the bend separates it from the core."));
     });
     function resize() {
       size = api.fit(bendCanvas, bendStage);
@@ -436,6 +520,7 @@
       resize: resize,
       destroy: function () {
         if (bendRaf) cancelAnimationFrame(bendRaf);
+        if (dimsRaf) cancelAnimationFrame(dimsRaf);
         if (ro) ro.disconnect();
         window.removeEventListener("resize", resize);
         window.removeEventListener("tm:theme", onTheme);
