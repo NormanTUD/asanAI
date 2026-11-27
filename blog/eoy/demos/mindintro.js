@@ -152,7 +152,13 @@
       update: function () {},
       next: function () {
         if (stage === "red") { setStage("mary"); return true; }
-        if (stage === "mary") { setStage("inverted"); return true; }
+        if (stage === "mary") {
+          if (!maryRevealed) { revealMary(); return true; }
+          if (maryAnswerState === 0) { setMaryAnswer(true); return true; }
+          if (maryAnswerState === 1) { setMaryAnswer(false); return true; }
+          setStage("inverted");
+          return true;
+        }
         return false;
       },
       prev: function () {
