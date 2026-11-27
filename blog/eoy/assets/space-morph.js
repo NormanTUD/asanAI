@@ -37,7 +37,7 @@
 		return {
 			x: x * (1 - 0.12 * t * r2),
 			y: y * (1 - 0.12 * t * r2),
-			z: (r2 * KZ - KB) * t
+			z: (r2 * KZ - KB) * t * 0.8
 		};
 	};
 
@@ -614,26 +614,7 @@
 
 	function drawBox(alpha, C) {
 		if (alpha < 0.01) return;
-		const E = 1.12, ZT = 1.35, G = 10;
-
-		ctx.globalAlpha = alpha * 0.40;
-		ctx.strokeStyle = C.axis;
-		ctx.lineWidth = 0.9;
-		for (let i = 0; i <= G; i++) {
-			const v = -E + 2 * E * i / G;
-			let p = proj({ x: -E, y: v, z: 0 });
-			let q = proj({ x: E, y: v, z: 0 });
-			ctx.beginPath();
-			ctx.moveTo(p.X, p.Y);
-			ctx.lineTo(q.X, q.Y);
-			ctx.stroke();
-			p = proj({ x: v, y: -E, z: 0 });
-			q = proj({ x: v, y: E, z: 0 });
-			ctx.beginPath();
-			ctx.moveTo(p.X, p.Y);
-			ctx.lineTo(q.X, q.Y);
-			ctx.stroke();
-		}
+		const ZT = 1.35;
 
 		ctx.globalAlpha = alpha * 0.35;
 		ctx.strokeStyle = C.axis;
@@ -750,8 +731,8 @@
 	}
 
 	function gridSegments(lift, project) {
-		const ext = 1.12 + (1 - clamp(project, 0, 1)) * 0.78 * clamp(lift, 0, 1);
-		const n = Math.max(14, Math.round(14 * ext / 1.12));
+		const ext = 1.12 + (1 - clamp(project, 0, 1)) * 0.08 * clamp(lift, 0, 1);
+		const n = 14;
 		const RES = 56;
 		const out = [];
 		for (let i = 0; i <= n; i++) {
