@@ -10,11 +10,10 @@
 
     var THRESHOLD = 35;
     var STEPS = [
-      L("Handy", "Phone"),
-      L("Lexikon", "Lexicon"),
-      L("Chunks", "Chunks"),
-      L("Vektoren", "Vectors"),
-      L("Kontext", "Context")
+      L("Datei", "File"),
+      L("Scan", "Scan"),
+      L("Frage", "Question"),
+      L("Winkel", "Angles")
     ];
 
     var IMG = {
@@ -23,12 +22,11 @@
     };
 
     var ARTICLE = {
-      brand: L("KOMPENDIUM", "COMPENDIUM"),
+      brand: L("Enzyklopädie", "Encyclopædia"),
       series: L("Meereskunde · Band 12", "Marine life · Volume 12"),
       page: "417",
       kicker: L("Octopoda · Kopffüßer", "Octopoda · cephalopods"),
       title: L("Krake", "Octopus"),
-      lead: L("Kraken sind Kopffüßer mit acht Armen, drei Herzen und einem hochentwickelten Nervensystem. Ihre Haut wechselt Farbe und Struktur; ein großer Teil ihrer Neuronen sitzt in den Armen.", "Octopuses are cephalopods with eight arms, three hearts, and a highly developed nervous system. Their skin changes colour and texture; a large share of their neurons sits in the arms."),
       paragraphs: [
         {
           id: "C1", heading: L("Körperbau", "Body"), angle: 12,
@@ -78,20 +76,23 @@
       if (v <= 0.45) return "#8fbf5a";
       return "#c8a24a";
     }
-    function vectorHTML(p, cls) {
-      var values = vectorValues(p, 14);
-      var cells = values.map(function (v) {
+    function vectorText(p) {
+      return vectorValues(p, 4).map(function (v) {
+        return (v >= 0 ? " " : "") + v.toFixed(2);
+      }).join(", ") + ", …";
+    }
+    function vectorStrip(p) {
+      return vectorValues(p, 10).map(function (v) {
         return '<i style="background:' + vectorColor(v) + '"></i>';
       }).join("");
-      return '<span class="ls-rag-vector ' + (cls || "") + '" aria-hidden="true">' + cells + '</span>';
     }
 
     function figureHTML(kind) {
       if (kind === "colossal") {
-        return '<figure class="ls-rag-fig ls-rag-fig--old"><img src="' + esc(IMG.colossal) + '" alt="' + esc(L("Historische Darstellung eines kolossalen Polypen, der ein Schiff umgreift.", "Historical depiction of a colossal polyp grasping a ship.")) + '" loading="lazy"><figcaption><b>' + esc(L("Le Poulpe Colossal", "Le Poulpe Colossal")) + '</b> ' +
+        return '<figure class="ls-rag-fig ls-rag-fig--old"><img src="' + esc(IMG.colossal) + '" alt="' + esc(L("Historische Darstellung eines kolossalen Polypen, der ein Schiff umgreift.", "Historical depiction of a colossal polyp grasping a ship.")) + '"><figcaption><b>Le Poulpe Colossal</b> ' +
           esc(L("Pierre Denys de Montfort, 1801. Public domain.", "Pierre Denys de Montfort, 1801. Public domain.")) + ' <a href="https://commons.wikimedia.org/wiki/File:Le_Poulpe_Colossal.jpg" target="_blank" rel="noopener">Commons</a></figcaption></figure>';
       }
-      return '<figure class="ls-rag-fig ls-rag-fig--photo"><img src="' + esc(IMG.octopus) + '" alt="' + esc(L("Riesenkrake im Wasser.", "Giant Pacific octopus in the water.")) + '" loading="lazy"><figcaption><b>' + esc(L("Riesenkrake", "Giant Pacific octopus")) + '</b> ' +
+      return '<figure class="ls-rag-fig ls-rag-fig--photo"><img src="' + esc(IMG.octopus) + '" alt="' + esc(L("Riesenkrake im Wasser.", "Giant Pacific octopus in the water.")) + '"><figcaption><b>' + esc(L("Riesenkrake", "Giant Pacific octopus")) + '</b> ' +
         esc(L("Foto: canopic, CC BY-NC-ND 2.0.", "Photo: canopic, CC BY-NC-ND 2.0.")) + ' <a href="https://www.flickr.com/photos/canopic/7882355920" target="_blank" rel="noopener">Flickr</a> · <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/" target="_blank" rel="noopener">Lizenz</a></figcaption></figure>';
     }
 
@@ -100,37 +101,30 @@
       return '<div class="ls-rag-pdf">' +
         '<header class="ls-rag-pdf-head"><span class="ls-rag-pdf-brand">' + esc(ARTICLE.brand) + '</span><span class="ls-rag-pdf-series">' + esc(ARTICLE.series) + '</span><span class="ls-rag-pdf-page">' + esc(ARTICLE.page) + '</span></header>' +
         '<div class="ls-rag-pdf-title"><span>' + esc(ARTICLE.kicker) + '</span><h2>' + esc(ARTICLE.title) + '</h2></div>' +
-        '<div class="ls-rag-pdf-grid">' +
+        '<div class="ls-rag-pdf-body">' +
+          '<div class="ls-rag-pdf-media">' + figureHTML("colossal") + figureHTML("octopus") + '<div class="ls-rag-media-note">' + esc(L("Nur Text wird gechunkt.", "Only text is chunked.")) + '</div></div>' +
           '<div class="ls-rag-pdf-col">' +
-            figureHTML("colossal") +
-            '<p class="ls-rag-lead">' + esc(ARTICLE.lead) + '</p>' +
-            '<h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p>' +
-            '<h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p>' +
+            '<h3>' + esc(c1.heading) + '</h3><p data-c="C1">' + esc(c1.text) + '</p>' +
+            '<h3>' + esc(c2.heading) + '</h3><p data-c="C2">' + esc(c2.text) + '</p>' +
+            '<h3>' + esc(c3.heading) + '</h3><p data-c="C3">' + esc(c3.text) + '</p>' +
           '</div>' +
           '<div class="ls-rag-pdf-col">' +
-            '<h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p>' +
-            figureHTML("octopus") +
-            '<h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p>' +
-            '<h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p>' +
+            '<h3>' + esc(c4.heading) + '</h3><p data-c="C4">' + esc(c4.text) + '</p>' +
+            '<h3>' + esc(c5.heading) + '</h3><p data-c="C5">' + esc(c5.text) + '</p>' +
+            '<div class="ls-rag-pdf-endnote">' + esc(L("Die fünf Fakten sind in den Quellen belegt.", "The five facts are sourced in the references.")) + '</div>' +
           '</div>' +
         '</div>' +
-        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Kompendium · Meereskunde", "Compendium · Marine life")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
+        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Meereskunde", "Encyclopædia · Marine life")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
       '</div>';
     }
 
-    function chunkCardsHTML() {
+    function railHTML() {
       return ARTICLE.paragraphs.map(function (p) {
-        return '<article class="ls-rag-chunk" data-c="' + p.id + '"><header><span>' + p.id + '</span><b>' + esc(p.heading) + '</b><em>' + esc(L("Text", "text")) + '</em></header><p>' + esc(p.text) + '</p></article>';
+        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><b>' + p.id + '</b><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
       }).join("");
     }
 
-    function embedRowsHTML() {
-      return ARTICLE.paragraphs.map(function (p) {
-        return '<div class="ls-rag-embed-row" data-c="' + p.id + '"><span class="ls-rag-embed-id">' + p.id + '</span><p>' + esc(p.text) + '</p><span class="ls-rag-embed-arrow">→</span>' + vectorHTML(p, "is-embed") + '<b class="ls-rag-embed-vec">v' + p.id.slice(1) + '</b></div>';
-      }).join("");
-    }
-
-    function scanSVG() {
+    function angleSVG() {
       var ox = 34, oy = 128, r = 92;
       var pts = [[ox, oy]];
       for (var a = 0; a <= THRESHOLD; a += 2.5) {
@@ -170,50 +164,51 @@
         '<span class="ls-rag-progress"></span>' +
       '</div>' +
       '<div class="ls-rag-stage">' +
-        '<div class="ls-rag-layer ls-rag-phone-layer">' +
-          '<aside class="ls-rag-scan">' +
-            '<div class="ls-rag-scan-kicker"><span>🔒</span>' + esc(L("Nur Modell · für den Nutzer unsichtbar", "Model only · invisible to the user")) + '</div>' +
-            '<h3>' + esc(L("Winkel zum aktuellen Kontext", "Angles to the current context")) + '</h3>' +
-            '<div class="ls-rag-scan-svg"></div>' +
-            '<div class="ls-rag-scan-list"></div>' +
-            '<div class="ls-rag-scan-caption">' + esc(L("Der Check läuft bei jedem Token; der Nutzer sieht nur die Antwort.", "The check runs at every token; the user only sees the answer.")) + '</div>' +
-            '<div class="ls-rag-context-slot"><div class="ls-rag-context-head"><span>🔒</span>' + esc(L("Unsichtbarer Kontext", "Invisible context")) + '</div><div class="ls-rag-context-body"><span class="ls-rag-context-empty">' + esc(L("Noch kein Chunk im Kontext.", "No chunk in the context yet.")) + '</span></div></div>' +
-          '</aside>' +
-          '<div class="ls-rag-phone-wrap">' +
-            '<div class="ls-rag-phone">' +
-              '<div class="ls-rag-phone-notch"></div>' +
-              '<div class="ls-rag-phone-screen">' +
-                '<div class="ls-rag-appbar"><span>KI-Chat</span><i></i></div>' +
-                '<div class="ls-rag-thread">' +
-                  '<div class="ls-rag-empty">' + esc(L("Lade kraken.pdf hoch, um aus dem Buch zu antworten.", "Upload kraken.pdf to answer from the book.")) + '</div>' +
-                  '<div class="ls-rag-filemsg" hidden><span class="ls-rag-user">' + esc(L("Du", "You")) + '</span><span class="ls-rag-bubble ls-rag-filebubble"><span class="ls-rag-pdficon">PDF</span><span><b>kraken.pdf</b><small>' + esc(L("5 Absätze · Lexikon", "5 paragraphs · lexicon")) + '</small></span></span></div>' +
-                  '<div class="ls-rag-questionmsg" hidden><span class="ls-rag-user">' + esc(L("Du", "You")) + '</span><span class="ls-rag-bubble">' + esc(QUESTION) + '</span></div>' +
-                  '<div class="ls-rag-aimsg" hidden><span class="ls-rag-user">LLM</span><span class="ls-rag-bubble ls-rag-answer"></span><span class="ls-rag-typing" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
+        '<div class="ls-rag-doc">' +
+          '<div class="ls-rag-doc-head"><span class="ls-rag-fileicon">PDF</span><div><b>kraken.pdf</b><small class="ls-rag-doc-status"></small></div><span class="ls-rag-doc-tag">' + esc(L("außerhalb des LLM", "outside the LLM")) + '</span></div>' +
+          '<div class="ls-rag-doc-body">' +
+            '<div class="ls-rag-pdf-wrap">' + pdfHTML() + '<div class="ls-rag-scanfx" aria-hidden="true"><i></i></div></div>' +
+            '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Chunk-Vektoren", "Chunk vectors")) + '</div><div class="ls-rag-rail-list">' + railHTML() + '</div></div>' +
+            '<div class="ls-rag-angle-panel">' +
+              '<div class="ls-rag-angle-head"><span>🔒</span><b>' + esc(L("Nur Modell · für den Nutzer unsichtbar", "Model only · invisible to the user")) + '</b><em>' + esc(L("Winkel zum aktuellen Kontext", "Angles to the current context")) + '</em></div>' +
+              '<div class="ls-rag-angle-chart"></div>' +
+              '<div class="ls-rag-angle-grid"><div class="ls-rag-angle-list"></div><div class="ls-rag-context-slot"><div class="ls-rag-context-head"><span>🔒</span>' + esc(L("Unsichtbarer Kontext", "Invisible context")) + '</div><div class="ls-rag-context-body"><span class="ls-rag-context-empty">' + esc(L("Noch kein Chunk im Kontext.", "No chunk in the context yet.")) + '</span></div></div></div>' +
+              '<div class="ls-rag-angle-caption">' + esc(L("Der Check läuft bei jedem Token; der Nutzer sieht nur die Antwort.", "The check runs at every token; the user only sees the answer.")) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ls-rag-doc-foot"><details class="ls-rag-note"><summary><span>' + esc(L("Was macht das Embedding-Modell?", "What does the embedding model do?")) + '</span><i>' + esc(L("optional", "optional")) + '</i></summary><p>' + esc(L("Das Embedding-Modell ist ein Transformer ohne Causal Mask. Es darf den ganzen Chunk auf einmal lesen und nutzt im Prinzip dieselben Gewichte wie das Sprachmodell; es sagt aber nicht das nächste Token voraus, sondern liefert einen Vektor pro Chunk.", "The embedding model is a transformer without a causal mask. It can read the whole chunk at once and in principle uses the same weights as the language model; it does not predict the next token, but returns one vector per chunk.")) + '</p></details></div>' +
+        '</div>' +
+        '<div class="ls-rag-phone-col">' +
+          '<div class="ls-rag-phone">' +
+            '<div class="ls-rag-phone-notch"></div>' +
+            '<div class="ls-rag-phone-screen">' +
+              '<div class="ls-rag-appbar"><span>KI-Chat</span><i></i></div>' +
+              '<div class="ls-rag-thread">' +
+                '<div class="ls-rag-empty">' + esc(L("Öffne eine Datei mit 📎.", "Open a file with 📎.")) + '</div>' +
+                '<div class="ls-rag-filemsg" hidden><span class="ls-rag-user">' + esc(L("Du", "You")) + '</span><span class="ls-rag-bubble ls-rag-filebubble"><span class="ls-rag-pdficon">PDF</span><span><b>kraken.pdf</b><small class="ls-rag-file-status"></small></span></span></div>' +
+                '<div class="ls-rag-questionmsg" hidden><span class="ls-rag-user">' + esc(L("Du", "You")) + '</span><span class="ls-rag-bubble">' + esc(QUESTION) + '</span></div>' +
+                '<div class="ls-rag-aimsg" hidden><span class="ls-rag-user">LLM</span><span class="ls-rag-bubble ls-rag-answer"></span><span class="ls-rag-typing" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
+              '</div>' +
+              '<div class="ls-rag-compose"><button type="button" class="ls-rag-attach" aria-label="' + esc(L("Datei öffnen", "Open a file")) + '">📎</button><span>' + esc(L("Nachricht", "Message")) + '</span><i></i></div>' +
+              '<div class="ls-rag-picker" hidden>' +
+                '<div class="ls-rag-picker-head"><b>' + esc(L("Datei auswählen", "Choose a file")) + '</b><span>PDF</span></div>' +
+                '<div class="ls-rag-picker-list">' +
+                  '<button type="button" class="ls-rag-pick" data-file="kraken"><span class="ls-rag-pdficon">PDF</span><span><b>kraken.pdf</b><small>' + esc(L("1,2 KB · Demo", "1.2 KB · demo")) + '</small></span><em>' + esc(L("öffnen", "open")) + '</em></button>' +
+                  '<button type="button" class="ls-rag-pick is-muted" data-file="zen"><span class="ls-rag-pdficon">PDF</span><span><b>' + esc(L("Zen und die Kunst, ein Motorrad zu warten.pdf", "Zen and the Art of Motorcycle Maintenance.pdf")) + '</b><small>4,1 MB</small></span></button>' +
+                  '<button type="button" class="ls-rag-pick is-muted" data-file="hott"><span class="ls-rag-pdficon">PDF</span><span><b>Homotopy Type Theory.pdf</b><small>2,8 MB</small></span></button>' +
                 '</div>' +
-                '<div class="ls-rag-compose"><button type="button" class="ls-rag-attach" aria-label="' + esc(L("kraken.pdf anhängen", "Attach kraken.pdf")) + '">📎</button><span>' + esc(L("Nachricht", "Message")) + '</span><i></i></div>' +
+                '<div class="ls-rag-picker-note" hidden></div>' +
               '</div>' +
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="ls-rag-layer ls-rag-pdf-layer">' + pdfHTML() + '</div>' +
-        '<div class="ls-rag-layer ls-rag-chunk-layer">' +
-          '<div class="ls-rag-chunk-head"><div><span class="ls-rag-kicker">' + esc(L("Nur Text wird gechunkt", "Only text is chunked")) + '</span><h3>' + esc(L("Der Artikel zerfällt in fünf Abschnitte", "The article breaks into five sections")) + '</h3></div><span class="ls-rag-noimg">' + esc(L("Bilder bleiben außen vor", "Images stay outside")) + '</span></div>' +
-          '<div class="ls-rag-chunk-grid">' + chunkCardsHTML() + '</div>' +
-          '<div class="ls-rag-chunk-cut"><i></i><span>' + esc(L("Schnittkanten an Absatzgrenzen", "Cut lines at paragraph boundaries")) + '</span><i></i></div>' +
-        '</div>' +
-        '<div class="ls-rag-layer ls-rag-embed-layer">' +
-          '<div class="ls-rag-embed-core"><span class="ls-rag-core-glow"></span><span class="ls-rag-kicker">Embedding-Modell</span><b>embed(chunk)</b><small>' + esc(L("Transformer · ohne Causal Mask", "Transformer · without a causal mask")) + '</small><span class="ls-rag-core-down">↓</span></div>' +
-          '<div class="ls-rag-embed-list">' + embedRowsHTML() + '</div>' +
-          '<details class="ls-rag-note"><summary><span>' + esc(L("Was macht das Embedding-Modell?", "What does the embedding model do?")) + '</span><i>' + esc(L("optional", "optional")) + '</i></summary><p>' + esc(L("Das Embedding-Modell ist ein Transformer ohne Causal Mask. Es darf den ganzen Chunk auf einmal lesen und nutzt im Prinzip dieselben Gewichte wie das Sprachmodell; es sagt aber nicht das nächste Token voraus, sondern liefert einen Vektor pro Chunk.", "The embedding model is a transformer without a causal mask. It can read the whole chunk at once and in principle uses the same weights as the language model; it does not predict the next token, but returns one vector per chunk.")) + '</p></details>' +
-        '</div>' +
-        '<div class="ls-rag-veil"></div>' +
       '</div>' +
       '<div class="ls-rag-bottom"><span class="ls-rag-status"></span><button type="button" class="ls-btn ls-btn--tiny ls-rag-next"></button><button type="button" class="ls-btn ls-btn--tiny ls-rag-reset">' + esc(L("Zurücksetzen", "Reset")) + '</button></div>';
 
     root.appendChild(el);
 
-    var stage = el.querySelector(".ls-rag-stage");
-    var veil = el.querySelector(".ls-rag-veil");
+    var docEl = el.querySelector(".ls-rag-doc");
+    var docStatus = el.querySelector(".ls-rag-doc-status");
     var stepsEl = el.querySelectorAll(".ls-rag-steps span");
     var progressEl = el.querySelector(".ls-rag-progress");
     var statusEl = el.querySelector(".ls-rag-status");
@@ -222,136 +217,198 @@
     var attachBtn = el.querySelector(".ls-rag-attach");
     var emptyEl = el.querySelector(".ls-rag-empty");
     var fileMsg = el.querySelector(".ls-rag-filemsg");
+    var fileStatus = el.querySelector(".ls-rag-file-status");
     var questionMsg = el.querySelector(".ls-rag-questionmsg");
     var aiMsg = el.querySelector(".ls-rag-aimsg");
     var answerEl = el.querySelector(".ls-rag-answer");
     var typingEl = el.querySelector(".ls-rag-typing");
-    var scanSVGEl = el.querySelector(".ls-rag-scan-svg");
-    var scanListEl = el.querySelector(".ls-rag-scan-list");
+    var angularEl = el.querySelector(".ls-rag-angle-chart");
+    var angleListEl = el.querySelector(".ls-rag-angle-list");
     var contextBody = el.querySelector(".ls-rag-context-body");
-    var scanEl = el.querySelector(".ls-rag-scan");
-    var phoneLayer = el.querySelector(".ls-rag-phone-layer");
-    var chunkLayer = el.querySelector(".ls-rag-chunk-layer");
-    var pdfLayer = el.querySelector(".ls-rag-pdf-layer");
+    var anglePanel = el.querySelector(".ls-rag-angle-panel");
+    var pdfWrap = el.querySelector(".ls-rag-pdf-wrap");
+    var railRows = el.querySelectorAll(".ls-rag-rail-row");
+    var picker = el.querySelector(".ls-rag-picker");
+    var pickerNote = el.querySelector(".ls-rag-picker-note");
+    var pickBtns = el.querySelectorAll(".ls-rag-pick");
 
-    var state = { step: 0, timers: [] };
+    var state = { step: 0, timers: [], picked: false };
 
     function clearTimers() {
       state.timers.forEach(function (id) { clearTimeout(id); });
       state.timers = [];
     }
 
-    function renderScan() {
-      scanSVGEl.innerHTML = scanSVG();
-      scanListEl.innerHTML = ARTICLE.paragraphs.map(function (p) {
+    function markScanned(id) {
+      var p = docEl.querySelector('p[data-c="' + id + '"]');
+      if (p) p.classList.add("is-scanned");
+      var row = el.querySelector('.ls-rag-rail-row[data-c="' + id + '"]');
+      if (row) row.classList.add("is-in");
+    }
+    function completeScan() {
+      ARTICLE.paragraphs.forEach(function (p) { markScanned(p.id); });
+      pdfWrap.classList.remove("is-scanning");
+    }
+    function startScan() {
+      completeScan();
+      ARTICLE.paragraphs.forEach(function (p) {
+        var pEl = docEl.querySelector('p[data-c="' + p.id + '"]');
+        if (pEl) pEl.classList.remove("is-scanned");
+        var row = el.querySelector('.ls-rag-rail-row[data-c="' + p.id + '"]');
+        if (row) row.classList.remove("is-in");
+      });
+      pdfWrap.classList.add("is-scanning");
+      ARTICLE.paragraphs.forEach(function (p, i) {
+        state.timers.push(setTimeout(function () { markScanned(p.id); }, 330 + i * 390));
+      });
+      state.timers.push(setTimeout(function () {
+        completeScan();
+        if (docStatus) docStatus.textContent = L("5 Chunks · 5 Vektoren", "5 chunks · 5 vectors");
+      }, 2450));
+    }
+
+    function renderAngle() {
+      angularEl.innerHTML = angleSVG();
+      angleListEl.innerHTML = ARTICLE.paragraphs.map(function (p) {
         var fit = fits(p);
-        return '<div class="ls-rag-scan-row' + (fit ? " is-fit" : "") + '" data-c="' + p.id + '"><b>' + p.id + '</b><span>' + p.angle + '°</span><em>' + esc(fit ? L("passt", "fits") : L("verworfen", "discarded")) + '</em></div>';
+        return '<div class="ls-rag-angle-row' + (fit ? " is-fit" : "") + '" data-c="' + p.id + '"><b>' + p.id + '</b><span>' + p.angle + '°</span><em>' + esc(fit ? L("passt", "fits") : L("verworfen", "discarded")) + '</em></div>';
       }).join("");
       contextBody.innerHTML = '<span class="ls-rag-context-empty">' + esc(L("Noch kein Chunk im Kontext.", "No chunk in the context yet.")) + '</span>';
     }
-
     function insertContext() {
-      var cards = SELECTED.map(function (id) {
+      contextBody.innerHTML = SELECTED.map(function (id) {
         var p = chunkById(id);
         return '<div class="ls-rag-ctx-card" data-c="' + id + '"><b>' + id + '</b><span>' + esc(p.heading) + '</span><p>' + esc(p.text) + '</p></div>';
       }).join("");
-      contextBody.innerHTML = cards;
       Array.prototype.forEach.call(contextBody.querySelectorAll(".ls-rag-ctx-card"), function (card) {
         requestAnimationFrame(function () { card.classList.add("is-in"); });
       });
-      Array.prototype.forEach.call(scanListEl.querySelectorAll(".ls-rag-scan-row.is-fit"), function (row) {
+      Array.prototype.forEach.call(angleListEl.querySelectorAll(".ls-rag-angle-row.is-fit"), function (row) {
         row.classList.add("is-in");
       });
     }
-
     function showAnswer() {
       typingEl.hidden = true;
       answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite">[C1]</span><span class="ls-rag-cite">[C2]</span>';
     }
+    function scheduleAngle() {
+      state.timers.push(setTimeout(function () { insertContext(); }, 560));
+      state.timers.push(setTimeout(function () { showAnswer(); }, 1250));
+    }
 
     function setChat() {
-      var atEnd = state.step === 4;
-      emptyEl.hidden = atEnd;
-      fileMsg.hidden = !atEnd;
-      questionMsg.hidden = !atEnd;
-      aiMsg.hidden = !atEnd;
-      typingEl.hidden = true;
+      var hasFile = state.step >= 1;
+      var hasQuestion = state.step >= 2;
+      var hasAnswer = state.step >= 3;
+      emptyEl.hidden = hasFile;
+      fileMsg.hidden = !hasFile;
+      questionMsg.hidden = !hasQuestion;
+      aiMsg.hidden = !hasAnswer;
+      typingEl.hidden = !hasAnswer;
       answerEl.textContent = "";
-      if (atEnd) {
-        typingEl.hidden = false;
+      if (hasFile) {
+        fileStatus.textContent = state.step === 1
+          ? L("wird gescannt …", "scanning …")
+          : state.step === 2
+            ? L("5 Chunks · 5 Vektoren", "5 chunks · 5 vectors")
+            : L("5 Chunks · 2 im Kontext", "5 chunks · 2 in context");
+      }
+      if (hasAnswer) {
         answerEl.innerHTML = '<span class="ls-rag-partial">' + esc(L("Ein Krake hat …", "An octopus has …")) + '</span>';
       }
     }
 
-    function scheduleContext() {
-      clearTimers();
-      state.timers.push(setTimeout(function () { insertContext(); }, 520));
-      state.timers.push(setTimeout(function () { showAnswer(); }, 1180));
+    function openPicker() {
+      if (state.step !== 0) return;
+      state.picked = false;
+      picker.hidden = false;
+      pickerNote.hidden = true;
+      pickerNote.textContent = "";
+      attachBtn.classList.remove("is-tap");
+      void attachBtn.offsetWidth;
+      attachBtn.classList.add("is-tap");
+      state.timers.push(setTimeout(function () { attachBtn.classList.remove("is-tap"); }, 700));
     }
 
     function applyStep() {
       el.setAttribute("data-step", String(state.step));
-      el.classList.toggle("is-scan", state.step === 4);
       Array.prototype.forEach.call(stepsEl, function (s, i) {
         s.classList.toggle("is-on", i === state.step);
         s.classList.toggle("is-done", i < state.step);
       });
       progressEl.textContent = (state.step + 1) + " / " + STEPS.length;
-      scanEl.setAttribute("aria-hidden", state.step === 4 ? "false" : "true");
+      picker.hidden = state.step !== 0;
+      docEl.classList.toggle("is-on", state.step >= 1);
+      anglePanel.classList.toggle("is-on", state.step >= 3);
       setChat();
-      if (state.step === 4) {
-        renderScan();
-        scheduleContext();
-      } else {
-        clearTimers();
+      if (state.step === 0) {
+        docStatus.textContent = "";
+        state.timers.push(setTimeout(openPicker, 650));
+      } else if (state.step === 1) {
+        docStatus.textContent = L("Scan läuft …", "Scanning …");
+        startScan();
+      } else if (state.step === 2) {
+        completeScan();
+        docStatus.textContent = L("5 Chunks · 5 Vektoren", "5 chunks · 5 vectors");
+      } else if (state.step === 3) {
+        completeScan();
+        docStatus.textContent = L("5 Chunks · 2 im Kontext", "5 chunks · 2 in context");
+        renderAngle();
+        scheduleAngle();
       }
       statusEl.textContent = state.step === 0
-        ? L("Die Datei liegt außerhalb des Modells. Drücke Weiter, um in das Lexikon zu zoomen.", "The file sits outside the model. Press Next to zoom into the lexicon.")
+        ? L("Tippe auf 📎 und wähle kraken.pdf. Der Dialog zeigt auch andere PDFs.", "Tap 📎 and choose kraken.pdf. The dialog also shows other PDFs.")
         : state.step === 1
-          ? L("Zoom ins Lexikon. Die Bildtafeln bleiben außen vor; gechunkt wird nur der Text.", "Zoom into the lexicon. The plates stay outside; only the text is chunked.")
+          ? L("Der Agent scannt den Text außerhalb des LLM. Jeder Abschnitt wird ein Chunk mit eigenem Vektor.", "The agent scans the text outside the LLM. Each paragraph becomes a chunk with its own vector.")
           : state.step === 2
-            ? L("Der Text zerfällt an Absatzgrenzen in fünf Chunks mit Füllwörtern und Kontext.", "The text breaks at paragraph boundaries into five chunks with filler words and context.")
-            : state.step === 3
-              ? L("Jeder Chunk läuft durch das Embedding-Modell und kommt als eigener Vektor heraus.", "Each chunk runs through the embedding model and comes out as its own vector.")
-              : L("Der Agent prüft unsichtbar die Winkel. C1 und C2 liegen unter 35° und wandern still in den Kontext.", "The agent checks the angles invisibly. C1 and C2 lie below 35° and move silently into the context.");
-      nextBtn.textContent = state.step < 4
+            ? L("Die Frage steht im Chat. Jetzt vergleicht der Agent die Winkel der Chunks mit dem Kontext.", "The question is in the chat. Now the agent compares the chunk angles with the context.")
+            : L("C1 und C2 liegen unter 35°. Sie wandern still in den unsichtbaren Kontext; der Chat antwortet.", "C1 and C2 lie below 35°. They move silently into the invisible context; the chat answers.");
+      nextBtn.textContent = state.step < 3
         ? L("Weiter: " + STEPS[state.step + 1], "Next: " + STEPS[state.step + 1])
         : L("Neu starten", "Restart");
     }
 
     function go(step) {
-      var next = Math.max(0, Math.min(4, step));
+      var next = Math.max(0, Math.min(3, step));
       if (next === state.step) return false;
       clearTimers();
       state.step = next;
-      veil.classList.remove("is-flash");
-      void veil.offsetWidth;
-      veil.classList.add("is-flash");
-      state.timers.push(setTimeout(function () { veil.classList.remove("is-flash"); }, 380));
       applyStep();
       return true;
     }
 
     nextBtn.addEventListener("click", function () {
-      if (state.step < 4) go(state.step + 1);
+      if (state.step < 3) go(state.step + 1);
       else go(0);
     });
     resetBtn.addEventListener("click", function () { go(0); });
-    attachBtn.addEventListener("click", function () { go(1); });
+    attachBtn.addEventListener("click", openPicker);
+    Array.prototype.forEach.call(pickBtns, function (btn) {
+      btn.addEventListener("click", function () {
+        var file = btn.getAttribute("data-file");
+        if (file === "kraken") {
+          state.picked = true;
+          go(1);
+          return;
+        }
+        pickerNote.hidden = false;
+        pickerNote.textContent = L("In dieser Demo wird kraken.pdf geöffnet.", "This demo opens kraken.pdf.");
+      });
+    });
 
     applyStep();
 
     return {
       update: function () { go(0); },
       next: function () {
-        if (state.step < 4) { go(state.step + 1); return true; }
+        if (state.step < 3) { go(state.step + 1); return true; }
         return false;
       },
       prev: function () {
         if (state.step > 0) { go(state.step - 1); return true; }
         return false;
       },
-      hasNext: function () { return state.step < 4; },
+      hasNext: function () { return state.step < 3; },
       hasPrev: function () { return state.step > 0; },
       resize: function () {},
       destroy: function () { clearTimers(); el.remove(); }
