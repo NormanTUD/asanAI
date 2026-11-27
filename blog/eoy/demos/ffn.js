@@ -10,25 +10,25 @@
     var C = api.colors();
     var data = DE ? {
       fruit: {
-        keys: [{ label: "Gebäude · Turm · Graben", on: true }, { label: "Stein · Hügel · alt", on: true }, { label: "Tür · Schlüssel · Metall", on: false }],
-        values: [{ label: "Hinweis: Gebäude, Turm, Graben", on: true }, { label: "Hinweis: Stein, Hügel, alt", on: true }, { label: "Hinweis: Tür, Schlüssel, Metall", on: false }],
-        desc: "Die Gebäude-, Turm- und Graben-Muster passen; das Tür-/Schlüssel-Muster bleibt still."
+        keys: [{ label: "Gebäude · Turm · Graben", on: true }, { label: "Tür · Schlüssel · Metall", on: false }],
+        values: [{ label: "Hinweis: Gebäude, Turm, Graben", on: true }, { label: "Hinweis: Tür, Schlüssel, Metall", on: false }],
+        desc: "Das Gebäude-Muster passt; das Tür-Muster bleibt still."
       },
       tech: {
-        keys: [{ label: "Tür · Schlüssel · Metall", on: true }, { label: "Gebäude · Turm · Graben", on: false }, { label: "Stein · Hügel · alt", on: false }],
-        values: [{ label: "Hinweis: Tür, Schlüssel, Metall", on: true }, { label: "Hinweis: Gebäude, Turm, Graben", on: false }, { label: "Hinweis: Stein, Hügel, alt", on: false }],
-        desc: "Jetzt passt das Tür-/Schlüssel-Muster; die Gebäude-Muster bleiben still."
+        keys: [{ label: "Gebäude · Turm · Graben", on: false }, { label: "Tür · Schlüssel · Metall", on: true }],
+        values: [{ label: "Hinweis: Gebäude, Turm, Graben", on: false }, { label: "Hinweis: Tür, Schlüssel, Metall", on: true }],
+        desc: "Jetzt passt das Tür-Muster; das Gebäude-Muster bleibt still."
       }
     } : {
       fruit: {
-        keys: [{ label: "fruit · red · sweet", on: true }, { label: "tree · orchard · pie", on: true }, { label: "company · laptop · iPhone", on: false }],
-        values: [{ label: "Pull: fruit, red, sweet", on: true }, { label: "Pull: tree, orchard, pie", on: true }, { label: "Pull: company, laptop, iPhone", on: false }],
-        desc: "The fruit, red, and sweet patterns match; the company pattern stays silent."
+        keys: [{ label: "fruit · red · sweet", on: true }, { label: "company · laptop · iPhone", on: false }],
+        values: [{ label: "Pull: fruit, red, sweet", on: true }, { label: "Pull: company, laptop, iPhone", on: false }],
+        desc: "The fruit pattern matches; the company pattern stays silent."
       },
       tech: {
-        keys: [{ label: "company · laptop · iPhone", on: true }, { label: "fruit · red · sweet", on: false }, { label: "tree · orchard · pie", on: false }],
-        values: [{ label: "Pull: company, laptop, iPhone", on: true }, { label: "Pull: fruit, red, sweet", on: false }, { label: "Pull: tree, orchard, pie", on: false }],
-        desc: "Now the company pattern matches; the fruit patterns stay silent."
+        keys: [{ label: "fruit · red · sweet", on: false }, { label: "company · laptop · iPhone", on: true }],
+        values: [{ label: "Pull: fruit, red, sweet", on: false }, { label: "Pull: company, laptop, iPhone", on: true }],
+        desc: "Now the company pattern matches; the fruit pattern stays silent."
       }
     };
     var labels = DE ? {
@@ -59,6 +59,8 @@
       backReplay: "Nochmal",
       backLeft: "Gebäude · Turm · Graben",
       backRight: "Tür · Schlüssel · Metall",
+      backLeftShort: "Gebäude",
+      backRightShort: "Tür",
       backMixed: "2D · gemischt",
       backHighDim: "höherdimensional getrennt + gedreht",
       backSide: "3D · von der Seite",
@@ -93,6 +95,8 @@
       backReplay: "Replay",
       backLeft: "fruit · red · sweet",
       backRight: "company · laptop · iPhone",
+      backLeftShort: "fruit",
+      backRightShort: "company",
       backMixed: "2D · mixed",
       backHighDim: "separated + rotated in higher dimensions",
       backSide: "3D · side view",
@@ -216,8 +220,8 @@
         updateBendReadout();
       }
       drawBend();
-      if (coreStateEl) coreStateEl.textContent = activeMode === "back" ? labels.back2d : activeMode === "fruit" ? labels.coreState : labels.ringState;
-      if (ringStateEl) ringStateEl.textContent = activeMode === "back" ? labels.back2d : activeMode === "tech" ? labels.coreState : labels.ringState;
+      if (coreStateEl) coreStateEl.textContent = activeMode === "back" ? labels.back2d : labels.coreState;
+      if (ringStateEl) ringStateEl.textContent = activeMode === "back" ? labels.back2d : labels.ringState;
       pulseDims();
     }
     function stepContext(delta) {
@@ -283,14 +287,10 @@
       function warp(x, y, c, liftVal) {
         var b = (liftVal == null) ? bend : liftVal;
         var r = Math.hypot(x, y);
-        if (activeMode === "fruit") {
-          var t = Math.max(0, Math.min(1, (r - 0.30) / 0.24));
-          var ringDamp = 1 - 0.45 * (t * t * (3 - 2 * t));
-          var coreZ = b * (0.10 + 1.35 * Math.exp(-(r * r) / 0.20) * ringDamp);
-          return { x: x, y: y, z: c === 1 ? coreZ * 0.12 : coreZ };
-        }
-        var ringZ = b * (0.10 + 1.35 * Math.exp(-Math.pow((r - 0.72) / 0.22, 2)));
-        return { x: x, y: y, z: c === 0 ? ringZ * 0.12 : ringZ };
+        var t = Math.max(0, Math.min(1, (r - 0.30) / 0.24));
+        var ringDamp = 1 - 0.45 * (t * t * (3 - 2 * t));
+        var coreZ = b * (0.10 + 1.35 * Math.exp(-(r * r) / 0.20) * ringDamp);
+        return { x: x, y: y, z: c === 1 ? coreZ * 0.12 : coreZ };
       }
       function project(x, y, z) {
         return { x: cx + x * scale + z * scale * 0.25, y: cy + y * scale * 0.35 - z * scale * 0.98, z: z };
@@ -302,14 +302,14 @@
       for (var i = 0; i <= N; i++) {
         ctx.beginPath();
         for (var j = 0; j <= N; j++) {
-          var wp = warp(-1 + 2 * i / N, -1 + 2 * j / N, activeMode === "fruit" ? 0 : 1);
+          var wp = warp(-1 + 2 * i / N, -1 + 2 * j / N, 0);
           var p = project(wp.x, wp.y, wp.z);
           if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
         }
         ctx.stroke();
         ctx.beginPath();
         for (var j2 = 0; j2 <= N; j2++) {
-          var wp2 = warp(-1 + 2 * j2 / N, -1 + 2 * i / N, activeMode === "fruit" ? 0 : 1);
+          var wp2 = warp(-1 + 2 * j2 / N, -1 + 2 * i / N, 0);
           var p2 = project(wp2.x, wp2.y, wp2.z);
           if (j2 === 0) ctx.moveTo(p2.x, p2.y); else ctx.lineTo(p2.x, p2.y);
         }
@@ -350,7 +350,7 @@
         ctx.restore();
         ctx.globalAlpha = 1;
       }
-      var liftCenter = activeMode === "fruit" ? project(0, 0, bend * 1.45) : project(0.72, 0, bend * 1.45);
+      var liftCenter = project(0, 0, bend * 1.45);
       var center = liftCenter;
       var baseCenter = project(0, 0, 0);
       var coreR = 0.42 * scale, ringR = 0.95 * scale;
@@ -364,7 +364,7 @@
       ctx.globalAlpha = 1;
       var haloTag = activeMode === "fruit" ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0];
       var haloR = activeMode === "fruit" ? coreR : ringR;
-      var haloCenter = activeMode === "fruit" ? liftCenter : project(0.72, 0, bend * 1.45);
+      var haloCenter = activeMode === "fruit" ? liftCenter : baseCenter;
       ctx.fillStyle = activeColor;
       ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
       ctx.textAlign = "center";
@@ -450,51 +450,15 @@
       var liftedY = lerp(groundY, h * 0.37, rise);
       var gx0 = w * 0.12, gx1 = w * 0.88, gy0 = h * 0.66, gy1 = h * 0.94;
       var rowY = gy0 + (gy1 - gy0) * 0.52;
-      var tgtA = { x: gx0 + (gx1 - gx0) * 0.30, y: rowY };
-      var tgtB = { x: gx0 + (gx1 - gx0) * 0.70, y: rowY };
-      function eggOutline(x, y, rx, ry, alpha) {
-        ctx.save();
-        ctx.strokeStyle = C.lineStrong;
-        ctx.globalAlpha = alpha;
-        ctx.lineWidth = 1.1;
+      var tgtA = { x: gx0 + (gx1 - gx0) * 0.38, y: rowY };
+      var tgtB = { x: gx0 + (gx1 - gx0) * 0.62, y: rowY };
+      var topR = w * 0.15;
+      function point(x, y, color, alpha) {
         ctx.beginPath();
-        for (var a = 0; a <= Math.PI * 2 + 0.01; a += 0.12) {
-          var s = Math.sin(a);
-          var wf = 0.78 + 0.22 * ((s + 1) / 2);
-          var px = x + rx * wf * Math.cos(a);
-          var py = y + ry * s;
-          if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
-        ctx.closePath();
-        ctx.stroke();
-        ctx.restore();
-      }
-      function eggPoints(x, y, rx, ry, alpha) {
-        for (var k = 0; k < 84; k++) {
-          var s = -1 + 2 * (((k * 37) % 84) + 0.5) / 84;
-          var wf = 0.78 + 0.22 * ((s + 1) / 2);
-          var half = rx * wf * Math.sqrt(Math.max(0, 1 - s * s));
-          var u = Math.sin(k * 12.9898) * 43758.5453;
-          u = u - Math.floor(u);
-          var px = x + half * (u * 2 - 1);
-          var py = y + ry * s;
-          ctx.beginPath();
-          ctx.arc(px, py, 1.7, 0, Math.PI * 2);
-          ctx.fillStyle = k % 2 ? C.gold : C.green;
-          ctx.globalAlpha = alpha * (0.5 + 0.45 * (1 - Math.abs(s)));
-          ctx.fill();
-        }
-      }
-      function cluster(x, y, radius, color, alpha) {
-        for (var k = 0; k < 28; k++) {
-          var a = k * 2.399963229728653;
-          var rr = Math.sqrt((k + 0.5) / 28);
-          ctx.beginPath();
-          ctx.arc(x + Math.cos(a) * rr * radius, y + Math.sin(a) * rr * radius, 1.7, 0, Math.PI * 2);
-          ctx.fillStyle = color;
-          ctx.globalAlpha = alpha * (0.45 + 0.5 * (1 - rr));
-          ctx.fill();
-        }
+        ctx.arc(x, y, 1.7, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = alpha;
+        ctx.fill();
       }
       function arrow(x0, y0, x1, y1, color, prog) {
         var x = lerp(x0, x1, prog), y = lerp(y0, y1, prog);
@@ -523,8 +487,16 @@
       ctx.textAlign = "center";
       ctx.fillText(labels.backMixed, cx, h * 0.045);
       ctx.restore();
-      eggOutline(top.x, top.y, w * 0.15, h * 0.08, 0.55);
-      eggPoints(top.x, top.y, w * 0.15, h * 0.08, 1);
+      ctx.save();
+      ctx.strokeStyle = C.lineStrong;
+      ctx.globalAlpha = 0.45;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(top.x, top.y, topR * 0.95, topR * 0.42 * 0.95, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(top.x, top.y, topR * 0.34, topR * 0.42 * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+      ffnPoints.forEach(function (pt) {
+        point(top.x + pt.x * topR, top.y + pt.y * topR * 0.42, pt.c === 0 ? C.green : C.gold, 0.55 + 0.4 * (1 - Math.min(1, Math.hypot(pt.x, pt.y))));
+      });
       ctx.save();
       ctx.strokeStyle = C.line;
       ctx.globalAlpha = 0.25;
@@ -565,10 +537,11 @@
       ctx.globalAlpha = 0.65;
       ctx.fillText(labels.backSide, cx, h * 0.33);
       ctx.restore();
-      var midR = Math.max(12, Math.min(w * 0.07, h * 0.09));
       var midAlpha = 0.25 + 0.75 * rise;
-      cluster(cx, groundY, midR, C.gold, 0.55 + 0.35 * midAlpha);
-      cluster(cx, liftedY, midR * 0.8, C.green, 0.55 + 0.45 * midAlpha);
+      ffnPoints.forEach(function (pt) {
+        if (pt.c === 0) point(cx + pt.x * w * 0.10, liftedY + pt.y * h * 0.020, C.green, 0.55 + 0.4 * midAlpha);
+        else point(cx + pt.x * w * 0.18, groundY + pt.y * h * 0.020, C.gold, 0.45 + 0.4 * midAlpha);
+      });
       arrow(top.x - 6, top.y, cx, groundY, C.gold, rise);
       arrow(top.x + 6, top.y, cx, liftedY, C.green, rise);
       ctx.save();
@@ -609,10 +582,11 @@
       ctx.setLineDash([4, 5]);
       ctx.beginPath(); ctx.moveTo(gapX, gy0 + 6); ctx.lineTo(gapX, gy1 - 4); ctx.stroke();
       ctx.restore();
-      var targetAlpha = 0.15 + 0.85 * bot;
-      var bottomR = Math.max(10, Math.min(w * 0.055, h * 0.09));
-      cluster(tgtA.x, tgtA.y, bottomR, C.green, targetAlpha);
-      cluster(tgtB.x, tgtB.y, bottomR, C.gold, targetAlpha);
+      var bottomScale = Math.max(14, Math.min(w * 0.09, h * 0.14));
+      ffnPoints.forEach(function (pt) {
+        var tx = pt.c === 0 ? tgtA.x : tgtB.x;
+        point(tx + pt.x * bottomScale, rowY + pt.y * bottomScale, pt.c === 0 ? C.green : C.gold, 0.15 + 0.85 * bot);
+      });
       arrow(cx, liftedY, tgtA.x, tgtA.y, C.green, bot);
       arrow(cx, groundY, tgtB.x, tgtB.y, C.gold, bot);
       ctx.save();
@@ -628,12 +602,12 @@
       ctx.textAlign = "center";
       var labelOffset = Math.max(18, h * 0.055);
       ctx.fillStyle = C.green;
-      ctx.fillText(labels.backLeft, tgtA.x, tgtA.y + labelOffset);
+      ctx.fillText(labels.backLeftShort, tgtA.x, tgtA.y + labelOffset);
       ctx.fillStyle = C.gold;
-      ctx.fillText(labels.backRight, tgtB.x, tgtB.y + labelOffset);
+      ctx.fillText(labels.backRightShort, tgtB.x, tgtB.y + labelOffset);
       ctx.restore();
       bendProjected = [];
-      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion: oben gemischte Egg-Verteilung, in der Mitte als gerade 3D-Seitenansicht getrennt, unten zwei klar getrennte, gerade 2D-Punktwolken links und rechts der gestrichelten Linie." : "Back-projection: mixed egg-shaped distribution at the top, separated in a level 3D side view in the middle, two clearly separated level 2D point clouds left and right of the dashed line at the bottom.");
+      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion mit denselben Punkten: oben gemischte Egg-Verteilung, in der Mitte wie in den Kontexten getrennt, unten links und rechts der gestrichelten Linie getrennt." : "Back-projection with the same points: mixed egg-shaped distribution at the top, separated as in the contexts in the middle, separated left and right of the dashed line at the bottom.");
     }
     function updateBendReadout() {
       if (activeMode === "back") {
