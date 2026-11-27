@@ -1139,7 +1139,7 @@
   ];
 
   unembedSteps[0].title = DE ? "Länge vs. Richtung" : "Length vs. direction";
-  unembedSteps[0].watch = DE ? "Ziehe den Längenregler oder drücke Weiter: Der grüne Vektor wird länger und kürzer, auch über die Kugel hinaus; sein Winkel zu den anderen Wörtern bleibt gleich." : "Drag the length slider or press Next: the green vector grows and shrinks, including beyond the sphere; its angle to the other words stays the same.";
+  unembedSteps[0].watch = "";
   var unembedStep = {
     title: DE ? "Länge vs. Richtung" : "Length vs. direction",
     kicker: "Unembedding",

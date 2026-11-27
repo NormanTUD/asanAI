@@ -47,6 +47,7 @@ def main() -> int:
     check("Temml formula is present", "formulaTex" in scene and "api.typeset" in scene)
     check("Temml w_i in each bar row", 'data-tex="|w_i|"' in scene and 'data-tex-display="false"' in scene)
     check("directions caption is removed", 'caption.textContent = ""' in scene and "caption.hidden = true" in scene)
+    check("19.0 watch is empty", 'unembedSteps[0].watch = "";' in data and "unembedSteps[0].watch = DE ?" not in data)
     check("default example is Fluss", 'w.w === "Fluss"' in scene and "defaultSelected" in scene)
     check("formula is mounted under the bars", 'class="ls-scene-formula ls-sim-formula"' in scene)
     check("LayerNorm and w_i are explained", "LayerNorm" in data and "lVert w_i" in data)
