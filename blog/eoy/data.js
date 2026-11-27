@@ -918,8 +918,8 @@
 
     {
       kicker: "Geschichte",
-      title: "Geschichte in dreizehn Schritten",
-      body: "Von den Kerben im Wolfsknochen bis zu GPT. Rechnen als Zählen mit Steinen und Kerben: externe Tools, mit denen man Gedanken auf physische Objekte auslagern kann. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
+      title: "Geschichte in fünfzehn Schritten",
+      body: "Vom Urknall und der Frage, warum überhaupt etwas ist, bis zu GPT. Die ersten Schritte führen vom ersten Gehirn über Zählen mit Steinen und Kerben zu externen Werkzeugen, mit denen man Gedanken auf physische Objekte auslagert. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
       watch: "",
       demoState: { scene: "history", tab: 0 },
       context: "Die Geschichte ist keine gerade Linie. Mehrere Stränge laufen parallel: formale Logik, mechanisches Rechnen, statistisches Lernen und Hardware. Der Transformer ist ein Knoten, an dem viele davon zusammenkommen.",
@@ -927,6 +927,11 @@
         box("hist-2", "Geschichte", "Roter Faden", "Jede Station macht einen Schritt von gegenständlichem Zählen zu lernenden Vektoren: Regeln, Maschinen, Neuronen, Gradienten, Aufmerksamkeit.")
       ],
       sources: [
+        { label: "Leibniz (1714), Monadologie", url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf", why: { de: "Warum ist überhaupt etwas und nicht vielmehr nichts?", en: "Why is there something rather than nothing?" } },
+        { label: "Heidegger (1935), Einführung in die Metaphysik", url: "https://plato.stanford.edu/entries/heidegger/", why: { de: "Warum ist überhaupt Seiendes und nicht vielmehr Nichts?", en: "Why are there beings at all, and not rather nothing?" } },
+        { label: "Jocax (2020), The Jocaxian's Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html", why: { de: "Der philosophische Exzentriker Jocax: Das Nichts ist instabil, weil es keine Regeln hat.", en: "The philosophical eccentric Jocax: nothingness is unstable because it has no rules." } },
+        { label: "NASA / WMAP, Cosmic Microwave Background", url: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png", why: { de: "Die WMAP-Karte zeigt die Temperaturschwankungen 380.000 Jahre nach dem Urknall.", en: "The WMAP map shows temperature fluctuations 380,000 years after the Big Bang." } },
+        { label: "Ma et al. (2012), Complex Brain and Optic Lobes in an Early Cambrian Arthropod", url: "https://doi.org/10.1038/nature11495", why: { de: "Fuxianhuia protensa bewahrt ein frühes zentralisiertes Gehirn.", en: "Fuxianhuia protensa preserves an early centralized brain." } },
         { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
         { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick", why: { de: "Datierung und umstrittene Deutung der 55 Kerben.", en: "Dating and the disputed interpretation of the 55 notches." } },
         { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze und der erste KI-Winter.", en: "The XOR limit and the first AI winter." } },
@@ -944,8 +949,8 @@
   ] : [
     {
       kicker: "History",
-      title: "History in thirteen steps",
-      body: "From the notches in a wolf bone to GPT. Arithmetic as counting with stones and notches: external tools that let us outsource thoughts onto physical objects. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
+      title: "History in fifteen steps",
+      body: "From the Big Bang and the question of why anything exists to GPT. The first steps run from the first brain through counting with stones and notches to external tools that let us outsource thoughts onto physical objects. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
       watch: "",
       demoState: { scene: "history", tab: 0 },
       context: "History is not a straight line. Several strands run in parallel: formal logic, mechanical calculation, statistical learning, and hardware. The transformer is a node where many of them meet.",
@@ -953,6 +958,11 @@
         box("hist-2", "History", "The thread", "Each station moves from embodied counting toward learned vectors: rules, machines, neurons, gradients, attention.")
       ],
       sources: [
+        { label: "Leibniz (1714), Monadologie", url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf", why: { de: "Warum ist überhaupt etwas und nicht vielmehr nichts?", en: "Why is there something rather than nothing?" } },
+        { label: "Heidegger (1935), Einführung in die Metaphysik", url: "https://plato.stanford.edu/entries/heidegger/", why: { de: "Warum ist überhaupt Seiendes und nicht vielmehr Nichts?", en: "Why are there beings at all, and not rather nothing?" } },
+        { label: "Jocax (2020), The Jocaxian's Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html", why: { de: "Der philosophische Exzentriker Jocax: Das Nichts ist instabil, weil es keine Regeln hat.", en: "The philosophical eccentric Jocax: nothingness is unstable because it has no rules." } },
+        { label: "NASA / WMAP, Cosmic Microwave Background", url: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png", why: { de: "Die WMAP-Karte zeigt die Temperaturschwankungen 380.000 Jahre nach dem Urknall.", en: "The WMAP map shows temperature fluctuations 380,000 years after the Big Bang." } },
+        { label: "Ma et al. (2012), Complex Brain and Optic Lobes in an Early Cambrian Arthropod", url: "https://doi.org/10.1038/nature11495", why: { de: "Fuxianhuia protensa bewahrt ein frühes zentralisiertes Gehirn.", en: "Fuxianhuia protensa preserves an early centralized brain." } },
         { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
         { label: "Wikipedia: Tally stick", url: "https://en.wikipedia.org/wiki/Tally_stick", why: { de: "Datierung und umstrittene Deutung der 55 Kerben.", en: "Dating and the disputed interpretation of the 55 notches." } },
         { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze und der erste KI-Winter.", en: "The XOR limit and the first AI winter." } },

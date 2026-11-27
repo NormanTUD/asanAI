@@ -8,6 +8,30 @@
     var DE = api.lang === "de";
     var tabs = DE ? [
       {
+        year: "vor 13,8 Mrd. Jahren", label: "Ursprung", title: "Vor dem Urknall: Warum überhaupt etwas?",
+        text: "Die Frage ist älter als die Physik: Warum ist überhaupt etwas und nicht vielmehr nichts? Leibniz (1714) verlangt einen zureichenden Grund und findet ihn in einem notwendigen Wesen. Heidegger (1935) hält die Frage offen: „Warum ist überhaupt Seiendes und nicht vielmehr Nichts?“ Der philosophische Exzentriker Jocax (2020) dreht sie um: Reines Nichts hat keine Regeln, die etwas verhindern; es ist instabil, weil nichts es halten kann. Dann der Urknall: Vor 13,8 Milliarden Jahren expandiert das Universum aus einem heißen, dichten Zustand. Die WMAP-Karte zeigt die Temperaturschwankungen 380.000 Jahre danach.",
+        images: [{ src: "../wmap_cmb.png", alt: "WMAP-Karte der Temperaturschwankungen des kosmischen Mikrowellenhintergrunds", cap: "WMAP-Himmelskarte des kosmischen Mikrowellenhintergrunds. NASA / WMAP Science Team, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png" }],
+        sources: [
+          { label: "Leibniz (1714), Monadologie", url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf" },
+          { label: "Heidegger (1935), Einführung in die Metaphysik", url: "https://plato.stanford.edu/entries/heidegger/" },
+          { label: "Jocax (2020), The Jocaxian's Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html" },
+          { label: "NASA / WMAP, Cosmic Microwave Background", url: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png" }
+        ]
+      },
+      {
+        year: "vor 520 Mio. Jahren", label: "Erstes Gehirn", title: "Ein Nervensystem wird zum Steuerungsorgan",
+        text: "Fuxianhuia protensa, ein früher Gliederfüßer aus dem Kambrium, zeigt vor rund 520 Millionen Jahren ein zentralisiertes Gehirn mit Augenlappen und einem segmentierten Nervenstrang. Wahrnehmen, Entscheiden und Bewegen laufen an einem Ort zusammen. Das ist kein Denken, aber ein Sprung von Reiz zu Verhalten: Aus einem Nervennetz wird ein Steuerungsorgan.",
+        images: [
+          { src: "../fuxianhuia_protensa_fossil.jpg", alt: "Fossil von Fuxianhuia protensa aus Chengjiang", cap: "Fuxianhuia protensa, Fossil aus Chengjiang. Jessica Utrup (2021), CC0.", href: "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg" },
+          { src: "../fuxianhuiid_cns.png", alt: "Rekonstruktion des Zentralnervensystems eines Fuxianhuiiden", cap: "Zentralnervensystem eines Fuxianhuiiden. Junnn11 (2021), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:20211113_Fuxianhuiid_central_nervous_system.png" }
+        ],
+        sources: [
+          { label: "Ma et al. (2012), Complex Brain and Optic Lobes in an Early Cambrian Arthropod", url: "https://doi.org/10.1038/nature11495" },
+          { label: "Fuxianhuia protensa fossil (YPM IP 421686), Jessica Utrup (2021), CC0", url: "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg" },
+          { label: "Central nervous system of Fuxianhuiida, Junnn11 (2021), CC BY-SA 4.0", url: "https://commons.wikimedia.org/wiki/File:20211113_Fuxianhuiid_central_nervous_system.png" }
+        ]
+      },
+      {
         year: "ca. 30.000 BP", label: "Ganz früh", title: "Kerben im Wolfsknochen",
         text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben, in zwei Gruppen von 30 und 25; die Datierung liegt bei etwa 27.000 Jahren vor heute. Die Kerben sind keine Schrift, sondern wahrscheinlich Zählmarken, und die Deutung ist umstritten. Der Ishango-Knochen aus dem Kongo, rund 20.000 Jahre alt, zeigt ebenfalls Gruppen von Kerben; manche lesen darin Primzahlen oder einen Mondkalender. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
         images: [
@@ -153,6 +177,30 @@
         ]
       }
     ] : [
+      {
+        year: "13.8 billion years ago", label: "Origin", title: "Before the Big Bang: Why is there anything?",
+        text: "The question is older than physics: why is there something rather than nothing? Leibniz (1714) demands a sufficient reason and finds it in a necessary being. Heidegger (1935) holds the question open: “Why are there beings at all, and not rather nothing?” The philosophical eccentric Jocax (2020) inverts it: pure nothingness has no rules to prevent something; it is unstable because nothing can hold it. Then the Big Bang: 13.8 billion years ago the universe expands from a hot, dense state. The WMAP map shows the temperature fluctuations 380,000 years later.",
+        images: [{ src: "../wmap_cmb.png", alt: "WMAP map of the cosmic microwave background temperature fluctuations", cap: "WMAP map of the cosmic microwave background. NASA / WMAP Science Team, public domain.", href: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png" }],
+        sources: [
+          { label: "Leibniz (1714), Monadology", url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf" },
+          { label: "Heidegger (1935), Introduction to Metaphysics", url: "https://plato.stanford.edu/entries/heidegger/" },
+          { label: "Jocax (2020), The Jocaxian's Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html" },
+          { label: "NASA / WMAP, Cosmic Microwave Background", url: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png" }
+        ]
+      },
+      {
+        year: "about 520 million years ago", label: "First brain", title: "A nervous system becomes a control organ",
+        text: "Fuxianhuia protensa, an early Cambrian arthropod, shows a centralized brain with optic lobes and a segmented nerve cord about 520 million years ago. Sensing, deciding, and moving come together in one place. This is not thinking, but a leap from stimulus to behaviour: a nerve net becomes a control organ.",
+        images: [
+          { src: "../fuxianhuia_protensa_fossil.jpg", alt: "Fossil of Fuxianhuia protensa from Chengjiang", cap: "Fuxianhuia protensa fossil from Chengjiang. Jessica Utrup (2021), CC0.", href: "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg" },
+          { src: "../fuxianhuiid_cns.png", alt: "Reconstruction of the central nervous system of a fuxianhuiid", cap: "Central nervous system of a fuxianhuiid. Junnn11 (2021), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:20211113_Fuxianhuiid_central_nervous_system.png" }
+        ],
+        sources: [
+          { label: "Ma et al. (2012), Complex Brain and Optic Lobes in an Early Cambrian Arthropod", url: "https://doi.org/10.1038/nature11495" },
+          { label: "Fuxianhuia protensa fossil (YPM IP 421686), Jessica Utrup (2021), CC0", url: "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg" },
+          { label: "Central nervous system of Fuxianhuiida, Junnn11 (2021), CC BY-SA 4.0", url: "https://commons.wikimedia.org/wiki/File:20211113_Fuxianhuiid_central_nervous_system.png" }
+        ]
+      },
       {
         year: "ca. 30,000 BP", label: "Deep past", title: "Notches in a wolf bone",
         text: "The wolf bone from Dolní Věstonice carries 55 notches in two groups of 30 and 25; it is about 27,000 years old. The notches are not writing; they are probably tally marks, and the interpretation is disputed. The Ishango bone from the Congo, about 20,000 years old, also carries grouped notches; some read primes or a lunar calendar into them. Arithmetic begins as embodied counting, long before computers.",
@@ -307,12 +355,12 @@
       { label: DE ? "Lernen" : "Learning", color: "#63a44b" },
       { label: DE ? "Hardware" : "Hardware", color: "#9185be" }
     ];
-    var TAB_STRAND = [0, 0, 1, 1, 2, 1, 2, 3, 3, 3, 4, 2, 3];
+    var TAB_STRAND = [1, 3, 0, 0, 1, 1, 2, 1, 2, 3, 3, 3, 4, 2, 3];
     var index = 0;
     var el = document.createElement("div");
     el.className = "ls-time-scene";
     el.innerHTML = '<header class="ls-time-head">' +
-        '<div class="ls-time-head-copy"><span class="ls-time-kicker">' + (DE ? "Geschichte in dreizehn Schritten" : "History in thirteen steps") + '</span><span class="ls-time-sub">' + (DE ? "Dreizehn Stationen, ein Fluss." : "Thirteen stations, one river.") + '</span></div>' +
+        '<div class="ls-time-head-copy"><span class="ls-time-kicker">' + (DE ? "Geschichte in fünfzehn Schritten" : "History in fifteen steps") + '</span><span class="ls-time-sub">' + (DE ? "Fünfzehn Stationen, ein Fluss." : "Fifteen stations, one river.") + '</span></div>' +
         '<div class="ls-time-legend" aria-hidden="true">' + STRANDS.map(function (st) { return '<span data-tip="' + (DE ? "Farbe der Stränge: zeigt, zu welchem Themenstrang dieser Schritt gehört." : "Strand colour: shows which theme this step belongs to.") + '"><i style="background:' + st.color + '"></i>' + st.label + '</span>'; }).join("") + '</div>' +
       '</header>' +
       '<div class="ls-time-layout">' +
