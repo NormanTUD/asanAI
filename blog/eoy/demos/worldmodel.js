@@ -823,7 +823,7 @@
         if (gh < 120) gh = Math.max(90, H - 240);
         drawActivationGrid(c, pad, 122, gw, gh);
         txt(c, "32 × 16 = 512 · dieselben Werte, nur als Raster", pad, 122 + gh + 16, { size: 9, color: C.muted });
-        txt(c, DE ? "x = L6-Aktivierung (512 Werte pro Token); das Modell gibt nur den nächsten Zug aus, die Probe liest x." : "x = L6 activation (512 values per token); the model outputs only the next move, the probe reads x.", pad, H - 52, { size: 9, color: C.ink });
+        txt(c, DE ? "x = L6-Aktivierung (512 Werte pro Token); das Brett ist ab Layer 4 vollständig, die Probe liest L6." : "x = L6 activation (512 values per token); the board is complete by layer 4, the probe reads L6.", pad, H - 52, { size: 9, color: C.ink });
       } else if (phase === 1) {
         // The 64×3 representation is the destination: three rows per square,
         // one shared x, one softmax/argmax readout per row. E4 is marked.
