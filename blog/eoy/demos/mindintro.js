@@ -25,10 +25,15 @@
           '<span class="ls-mi2-hero-note">' + L("Du bist die einzige Person mit direktem Zugang zu deinem Erleben.", "You are the only person with direct access to your experience.") + '</span>' +
           '<span class="ls-mi2-hero-hint">' + L("Schau auf den roten Punkt. Wo ist das Rot?", "Look at the red dot. Where is the red?") + '</span>' +
         '</div>' +
-        '<div class="ls-mi2-orb" aria-hidden="true"><span>?</span><em>' + L("Quale", "quale") + '</em></div>' +
       '</header>' +
+      '<div class="ls-mi2-stages" role="tablist" aria-label="' + L("Bewusstseins-Ansichten", "Consciousness views") + '">' +
+        '<button type="button" class="ls-mi2-stage-tab is-on" data-mi-stage="red" role="tab" aria-selected="true"><span>01</span>' + L("Die Röte des Roten", "The redness of red") + '</button>' +
+        '<button type="button" class="ls-mi2-stage-tab" data-mi-stage="mary" role="tab" aria-selected="false"><span>02</span>' + L("Marys Zimmer", "Mary's Room") + '</button>' +
+        '<button type="button" class="ls-mi2-stage-tab" data-mi-stage="inverted" role="tab" aria-selected="false"><span>03</span>' + L("Invertierte Qualia", "Inverted qualia") + '</button>' +
+      '</div>' +
       '<div class="ls-mi2-main">' +
         '<section class="ls-mi2-qualia" data-tip="' + L("Qualia sind die gefühlten Eigenschaften einer Erfahrung; Messungen erreichen nur ihre Bedingungen.", "Qualia are the felt qualities of an experience; measurements reach only their conditions.") + '">' +
+        '<div class="ls-mi2-orb" aria-hidden="true"><span>?</span><em>' + L("Quale", "quale") + '</em></div>' +
           '<div class="ls-mi2-head"><span>Qualia</span><b>' + L("Die Röte des Roten", "The redness of red") + '</b></div>' +
           '<div class="ls-mi2-split">' +
             '<div class="ls-mi2-side is-out" data-tip="' + L("Von außen messbar: Wellenlänge, Zapfen, Neuronen und Bericht.", "Measurable from outside: wavelength, cones, neurons, and report.") + '">' +
@@ -77,8 +82,22 @@
         '</aside>' +
       '</div>';
     root.appendChild(el);
-    var more = el.querySelector(".ls-mi2-more");
-    if (more) el.appendChild(more);
+
+    var stage = "red";
+    var stageBtns = Array.prototype.slice.call(el.querySelectorAll("[data-mi-stage]"));
+    function setStage(name) {
+      stage = name;
+      el.setAttribute("data-stage", name);
+      stageBtns.forEach(function (b) {
+        var on = b.getAttribute("data-mi-stage") === name;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", String(on));
+      });
+    }
+    stageBtns.forEach(function (b) {
+      b.addEventListener("click", function () { setStage(b.getAttribute("data-mi-stage")); });
+    });
+    setStage("red");
 
     var mary = el.querySelector("[data-mi-mary]");
     var reveal = el.querySelector("[data-mi-reveal]");
@@ -131,8 +150,18 @@
     renderQA();
     return {
       update: function () {},
-      next: nextStep,
-      hasNext: function () { return !maryRevealed || maryAnswerState < 2 || miQa < QA.length - 1; },
+      next: function () {
+        if (stage === "red") { setStage("mary"); return true; }
+        if (stage === "mary") { setStage("inverted"); return true; }
+        return false;
+      },
+      prev: function () {
+        if (stage === "inverted") { setStage("mary"); return true; }
+        if (stage === "mary") { setStage("red"); return true; }
+        return false;
+      },
+      hasNext: function () { return stage !== "inverted"; },
+      hasPrev: function () { return stage !== "red"; },
       resize: function () {},
       destroy: function () { el.remove(); }
     };

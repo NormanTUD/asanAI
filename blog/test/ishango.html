@@ -341,16 +341,379 @@ footer a:hover{color:var(--ochre)}
   </div>
 </header>
 <main>
-<!--@@SEC_OVERVIEW@@-->
-<!--@@SEC_MUSTER@@-->
-<!--@@SEC_AUSRICHTUNG@@-->
-<!--@@SEC_M@@-->
-<!--@@SEC_RECHNEN@@-->
-<!--@@SEC_KOSMOS@@-->
-<!--@@SEC_STORY@@-->
-<!--@@SEC_FAZIT@@-->
+<section class="section" id="ueberblick">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">01 · Überblick</div>
+      <h2>Ein Knochen, der seit 75 Jahren Fragen stellt</h2>
+      <p class="lead">1950 fand der Geologe Jean de Heinzelin den Knochen am Semliki-Fluss im heutigen DR Kongo. Seitdem streiten Forschende: Kalender? Kerbholz? Oder viel mehr?</p>
+    </div>
+    <div class="grid2 wide-left">
+      <div class="stack">
+        <div class="card">
+          <h3>Was man sicher weiß</h3>
+          <p class="note">Der Ishango-Knochen ist etwa 20.000 Jahre alt, rund 10 cm lang und trägt an einem Ende ein Stück Quarz. Auf ihm sitzen <b>16 Kerbgruppen in drei Spalten</b> – G und D auf der Vorderseite, M auf der Rückseite. Er liegt heute im Königlichen Belgischen Institut für Naturwissenschaften in Brüssel.</p>
+          <hr class="soft">
+          <h4 style="margin:0 0 8px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)">Bisherige Deutungen</h4>
+          <div class="seq">
+            <span class="chip">Mond-/Zeitkalender</span>
+            <span class="chip">Basis-12-System</span>
+            <span class="chip">mathematisches Sieb</span>
+            <span class="chip">einfaches Kerbholz</span>
+          </div>
+        </div>
+        <div class="callout warm">
+          <b>Die neue Lesart:</b> Die Autorin sieht in den Kerben kein zufälliges Zählen, sondern ein geplantes Design aus Primzahlen, Symmetrie und Rechenbeziehungen – eine frühe Form von <b>mathematischer Kunst</b>, die beim Erzählen und Lehren vorgeführt worden sein könnte.
+        </div>
+      </div>
+      <div class="card">
+        <h3>So arbeitet die Studie</h3>
+        <p class="note" style="margin-bottom:14px">Kein Ausgrabungsbericht, sondern eine <b>explorative Musteranalyse</b> am vorhandenen Datensatz.</p>
+        <div class="stack" style="gap:10px">
+          <div class="callout cool"><b>Heuristisch:</b> suchen, testen, Hypothesen bilden – kein starrer statistischer Test.</div>
+          <div class="callout"><b>Dokumentiert:</b> jeder Eingriff wird offengelegt und visualisiert.</div>
+          <div class="callout"><b>Konservativ:</b> keine Zahl wird erfunden oder entfernt; nur bei einem klaren Bruch der Regel wird umsortiert.</div>
+          <div class="callout"><b>Ehrlich:</b> beschädigte Kerben und alternative Lesarten werden mitgedacht.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="muster">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">02 · Kernidee</div>
+      <h2>Die Spalten G und D sind kein Zufall</h2>
+      <p class="lead">Der Ausgangspunkt: In G und D stehen – bis auf eine Ausnahme – genau alle ungeraden bzw. Primzahlen zwischen 9 und 21. Tippe die Zahlen an und finde die Paare, die zusammen 30 ergeben.</p>
+    </div>
+    <div class="grid2 wide-left">
+      <div class="card">
+        <div id="numline" class="numline" aria-label="Zahlenreihe 9 bis 21"></div>
+        <div id="numStatus" class="num-status" aria-live="polite"></div>
+        <div class="eq-row">
+          <div class="eq">9 + 21 = <b>30</b></div>
+          <div class="eq">11 + 19 = <b>30</b></div>
+          <div class="eq">13 + 17 = <b>30</b></div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="pairBtn" aria-pressed="false">Paare farbig zeigen</button>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Die Symmetrie in Worten</h3>
+          <p class="note">Die relevante Reihe lautet <b>9, 11, 13, 15, 17, 19, 21</b> (Schrittweite 2). Bildet man äußeres, mittleres und inneres Paar, ergibt jedes <b>30</b>:</p>
+          <div class="seq" style="margin-top:10px">
+            <span class="mini-chip hot">9+21</span>
+            <span class="mini-chip hot">11+19</span>
+            <span class="mini-chip hot">13+17</span>
+            <span class="arrow">→</span>
+            <span class="mini-chip cool">30</span>
+          </div>
+          <hr class="soft">
+          <p class="note">In G und D stehen also sechs der sieben Zahlen. Jede Spalte hat vier Zahlen und ergibt <b>60</b>, jeweils zwei Paare ergeben <b>30</b>. Das mittlere Paar (11, 19) kommt sogar doppelt vor.</p>
+        </div>
+        <div class="callout bad">
+          <b>Und die 15?</b> Sie ist das arithmetische Mittel der Reihe (90 ÷ 6 = 15) – und fehlt in G und D. Später taucht sie in Spalte M wieder auf. Genau dieser „fehlende Kern“ macht das Muster so auffällig.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="ausrichtung">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">03 · Ausrichtung</div>
+      <h2>Ein Tausch genügt – und D wird symmetrisch</h2>
+      <p class="lead">In Spalte D wirken die Gruppen zunächst leicht verschoben. Die Studie testet einen einzigen Tausch: 11 und 21 wechseln ihre Position.</p>
+    </div>
+    <div class="grid2 wide-left">
+      <div class="stack">
+        <div class="board">
+          <div class="gd-head"><span>Spalte G</span><span class="mid">G + D</span><span>Spalte D</span></div>
+          <div id="gdRows" class="gd-rows"></div>
+          <div id="gdTags" class="gd-tags"></div>
+        </div>
+        <div class="legend">
+          <span><i class="dot t"></i> 11 – kommt doppelt vor</span>
+          <span><i class="dot r"></i> 19 – kommt doppelt vor</span>
+          <span><i class="dot o"></i> Zeilensumme</span>
+        </div>
+        <div id="gdNote" class="callout" aria-live="polite"></div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Der Schalter</h3>
+          <p class="note" style="margin-bottom:14px">Ordne die Original-Situation neu und beobachte, was mit den Zeilensummen und den doppelten Zahlen passiert.</p>
+          <button class="btn primary" id="swapD" aria-pressed="false">11 ↔ 21 tauschen</button>
+          <hr class="soft">
+          <p class="note" id="swapExplain">Im Original ergeben die Paare in D <b>20</b> (außen) und <b>40</b> (innen) – keine Symmetrie.</p>
+        </div>
+        <div class="callout cool">
+          <b>Nach dem Tausch:</b> Die Zeilensummen lauten 32, 24, 36, 28 – als Menge <b>24, 28, 32, 36</b>, also eine Reihe mit Schrittweite <b>+4</b>. Die doppelten Primzahlen 11 (türkis) und 19 (rosa) liegen nun diagonal.
+        </div>
+        <div class="callout">
+          <b>Vorsicht:</b> Ob das Absicht, ein Überlieferungsfehler oder eine spätere Korrektur war, lässt sich nicht beweisen. Die Studie nutzt den Tausch als <b>heuristischen Test</b> – und dokumentiert ihn transparent.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="spaltem">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">04 · Rückseite</div>
+      <h2>Spalte M fügt sich erst nach zwei Eingriffen</h2>
+      <p class="lead">M sieht zunächst unstrukturiert aus. Die Paare werden gespiegelt und eine Einheit verschoben – dann entsteht eine klare Ordnung. Spiele die drei Stufen durch.</p>
+    </div>
+    <div class="grid2 wide-left">
+      <div class="card">
+        <div class="stepper" role="group" aria-label="Stufen der Spalte M">
+          <button class="stepbtn active" data-stage="0">Original</button>
+          <button class="stepbtn" data-stage="1">Paare tauschen</button>
+          <button class="stepbtn" data-stage="2">1 Einheit verschieben</button>
+        </div>
+        <div id="mCards" class="mgrid"></div>
+        <p id="mStageText" class="stage-text" aria-live="polite"></p>
+        <div id="mResult" class="result" hidden></div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Was dabei passiert</h3>
+          <p class="note"><b>Stufe 1:</b> Die Paare (3, 6) und (4, 8) tauschen – als Spiegelung des Tauschs in Spalte D.</p>
+          <p class="note" style="margin-top:8px"><b>Stufe 2:</b> Eine Einheit wandert von der 5 zur 3. Ergebnis: Alle Sekundärzahlen sind <b>4</b>, die Primärzahlen lauten <b>6, 7, 8, 9</b>.</p>
+          <hr class="soft">
+          <p class="note">Nun gilt wieder die gleiche Gruppenregel wie in G und D: <b>6 + 9 = 15</b> und <b>8 + 7 = 15</b>, zusammen <b>30</b>. Die 15, die in G und D fehlte, ist zurück.</p>
+        </div>
+        <div class="callout warm">
+          <b>Fünf Gruppen von 30:</b> Zwei in G, zwei in D und eine in M. Zusammen ergibt das <b>150</b> – ein Wert, der im Kosmos-Teil noch einmal auftaucht.
+        </div>
+        <div class="callout">
+          <b>Die beschädigte Stelle:</b> Das Paar „10(−1) und 5(−1)“ ist schlecht erhalten. Die Studie testet die Lesart <b>(4, 9)</b> – alternativ wären auch (5, 10) denkbar.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="rechnen">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">05 · Rechenarten</div>
+      <h2>Plötzlich funktionieren alle vier Grundrechenarten</h2>
+      <p class="lead">Die Zeilensummen von G und D entsprechen genau dem Produkt der zugehörigen M-Paare. Klicke eine Reihe an und sieh dir die Beziehung an.</p>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Reihe</th><th>G</th><th>D</th><th>G + D</th><th>M-Paar</th><th>= Produkt</th><th>Division</th></tr>
+          </thead>
+          <tbody id="arithBody"></tbody>
+        </table>
+      </div>
+      <div id="rowDetail" class="row-detail" aria-live="polite"></div>
+    </div>
+    <div class="ops" style="margin-top:18px">
+      <div class="opcard">
+        <div class="sym">+ &nbsp;−</div>
+        <h4>Addieren & Subtrahieren</h4>
+        <p>Die Sekundärzahl 4 verschiebt die Primärzahlen 6–9 nach unten und oben:</p>
+        <div class="seq">
+          <span class="mini-chip cool">6−4=2</span><span class="mini-chip cool">7−4=3</span><span class="mini-chip cool">8−4=4</span><span class="mini-chip cool">9−4=5</span>
+        </div>
+        <div class="seq">
+          <span class="mini-chip hot">6+4=10</span><span class="mini-chip hot">7+4=11</span><span class="mini-chip hot">8+4=12</span><span class="mini-chip hot">9+4=13</span>
+        </div>
+      </div>
+      <div class="opcard">
+        <div class="sym">×</div>
+        <h4>Multiplizieren</h4>
+        <p>Jede Zeilensumme ist das Produkt des M-Paares:</p>
+        <div class="seq">
+          <span class="mini-chip hot">32 = 4×8</span><span class="mini-chip hot">24 = 4×6</span>
+          <span class="mini-chip hot">36 = 4×9</span><span class="mini-chip hot">28 = 4×7</span>
+        </div>
+      </div>
+      <div class="opcard">
+        <div class="sym">÷</div>
+        <h4>Dividieren</h4>
+        <p>Zeilensumme geteilt durch eine Zahl des Paares ergibt die andere:</p>
+        <div class="seq">
+          <span class="mini-chip cool">32 ÷ 8 = 4</span><span class="mini-chip cool">24 ÷ 6 = 4</span>
+          <span class="mini-chip cool">36 ÷ 9 = 4</span><span class="mini-chip cool">28 ÷ 7 = 4</span>
+        </div>
+      </div>
+    </div>
+    <div class="prog">
+      <div class="prog-row">
+        <span class="prog-label">G + D, sortiert</span>
+        <div class="prog-seq"><b>24</b><i>+4</i><b>28</b><i>+4</i><b>32</b><i>+4</i><b>36</b></div>
+      </div>
+      <div class="prog-row">
+        <span class="prog-label">+ Primärzahl aus M</span>
+        <div class="prog-seq"><b>30</b><i>+5</i><b>35</b><i>+5</i><b>40</b><i>+5</i><b>45</b></div>
+      </div>
+      <p class="note" style="margin-top:8px">Die erste Reihe wächst in Viererschritten, die zweite in Fünferschritten. Auch das wirkt eher konstruiert als zufällig gekerbt.</p>
+    </div>
+  </div>
+</section>
+<section class="section" id="kosmos">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">06 · Kosmos</div>
+      <h2>Und steckt ein Kalender dahinter?</h2>
+      <p class="lead">Die Autorin legt die Zahlen neben altägyptische Zeit- und Zahlensymbolik. Das ist der spekulativste Teil – aber der, der die Geschichte rund macht.</p>
+    </div>
+    <div class="caveat">
+      <span class="ic">!</span>
+      <div><b>Wichtig:</b> Zwischen dem Ishango-Knochen und den ersten Schriftzeugnissen Ägyptens liegen rund 15.000 Jahre. Die Parallelen sind ausdrücklich <b>heuristische Analogien</b>, kein historischer Beweis.</div>
+    </div>
+    <div class="cosmos-grid">
+      <div class="cos-card"><div class="big">24</div><h4>Stunden des Tages</h4><p>Die Ägypter teilten den Tag in 24 Stunden – eine mögliche Spur für die Zeilensumme 24.</p></div>
+      <div class="cos-card"><div class="big">28</div><h4>Mondzyklus</h4><p>Neben dem 30-Tage-Modell gab es ein symmetrisches 28-Tage-Modell mit zwei 14-Tage-Hälften.</p></div>
+      <div class="cos-card"><div class="big">36 + 5</div><h4>Dekane + Zusatztage</h4><p>36 Dekaden zu 10 Tagen plus 5 Epagomenen ergeben den 365-Tage-Kalender.</p></div>
+      <div class="cos-card"><div class="big">4</div><h4>Vollständigkeit</h4><p>Vier Himmelsrichtungen, vier Quadranten – und ein auffällig häufiges Verdoppeln.</p></div>
+      <div class="cos-card"><div class="big">150</div><h4>5 × 30 Tage</h4><p>Fünf Gruppen zu je 30 ergeben 150 – fünf Monate im 30-Tage-Kalender.</p></div>
+      <div class="cos-card"><div class="big">360</div><h4>Sonnenjahr</h4><p>Aus der Figur-8-Rechnung: 2 × 45 = 90, mal 4 Jahrespunkte = 360.</p></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <div class="analemma-wrap">
+        <div class="analemma-box">
+          <svg viewBox="0 0 300 360" role="img" aria-label="Schematische Sonnenanalemma in Form einer Acht">
+            <defs>
+              <linearGradient id="anaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#f0c77a"/><stop offset="1" stop-color="#e6ad4a"/>
+              </linearGradient>
+            </defs>
+            <path id="anaPath" d="M150,26 C214,58 220,132 150,172 C80,212 86,290 150,326 C214,290 220,212 150,172 C80,132 86,58 150,26 Z" fill="none" stroke="url(#anaGrad)" stroke-width="2.4" stroke-dasharray="5 5" opacity=".85"/>
+            <line x1="150" y1="150" x2="150" y2="194" stroke="#6fd6c8" stroke-width="1" opacity=".5" stroke-dasharray="3 3"/>
+            <circle cx="150" cy="172" r="4" fill="#6fd6c8"/>
+            <circle r="5" fill="#fff3d6">
+              <animateMotion dur="14s" repeatCount="indefinite">
+                <mpath href="#anaPath"/>
+              </animateMotion>
+            </circle>
+            <text x="150" y="18" text-anchor="middle" fill="#bdb19b" font-size="11" font-family="ui-sans-serif, system-ui">Sommer-Sonnenwende</text>
+            <text x="150" y="346" text-anchor="middle" fill="#bdb19b" font-size="11" font-family="ui-sans-serif, system-ui">Winter-Sonnenwende</text>
+            <text x="150" y="192" text-anchor="end" fill="#6fd6c8" font-size="10" font-family="ui-sans-serif, system-ui">Äquinoktien</text>
+          </svg>
+        </div>
+        <div>
+          <h3 style="margin:0 0 10px">Die Acht als Jahresuhr</h3>
+          <div class="calc">
+            <div class="calc-line"><span>Obere vier Zahlen</span><b>11+13+21+11 = 56</b></div>
+            <div class="calc-line"><span>minus die doppelte 11</span><b>56 − 11 = 45</b></div>
+            <div class="calc-line"><span>Untere vier Zahlen</span><b>17+19+19+9 = 64</b></div>
+            <div class="calc-line"><span>minus die doppelte 19</span><b>64 − 19 = 45</b></div>
+            <div class="calc-line total"><span>45 + 45 = 90 · × 4 Jahrespunkte</span><b>= 360</b></div>
+          </div>
+          <p class="note" style="margin-top:12px">Die Sonnenanalemma beschreibt die Acht, die die Sonne im Laufe eines Jahres am Himmel zieht. Die vier Wendepunkte (zwei Solstitien, zwei Äquinoktien) liegen je etwa 90 Tage auseinander.</p>
+        </div>
+      </div>
+      <p class="cosmos-note">Die Rechnung geht auf, wenn man die doppelten Zahlen 11 bzw. 19 jeweils einmal abzieht. Das ist elegant – aber auch ein gutes Beispiel dafür, wie viele Wege es gibt, Zahlen passend zu machen.</p>
+    </div>
+  </div>
+</section>
+<section class="section" id="story">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">07 · Erzählen</div>
+      <h2>Die vielleicht schönste Hypothese: eine Erzählvorlage</h2>
+      <p class="lead">Die Kerben könnten als Gedächtnisstütze gedient haben, um Werte mit Steinen oder Markern auf dem Boden auszulegen – Schritt für Schritt, je nach Publikum. Blättere durch die mögliche Vorführung.</p>
+    </div>
+    <div class="story">
+      <div class="story-top">
+        <span class="story-num" id="storyCount">Schritt 1 / 7</span>
+        <span class="chip">Hypothese · keine belegte Aufführung</span>
+      </div>
+      <div id="storyCard"></div>
+      <div class="story-nav">
+        <button class="btn" id="storyPrev">← Zurück</button>
+        <div class="dots" id="storyDots" aria-label="Schritte"></div>
+        <button class="btn primary" id="storyNext">Weiter →</button>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:18px">
+      <div class="card">
+        <h3>Die Requisiten</h3>
+        <p class="note">Der Quarz am Ende könnte als Zeigestock gedient haben, die Kerben als „Partitur“. Steine auf Leder oder in Gefäßen ließen sich verschieben, gruppieren und wieder abräumen. So konnte dieselbe Vorlage unterschiedlich schwere Geschichten erzählen.</p>
+      </div>
+      <div class="card">
+        <h3>Der Anlass?</h3>
+        <p class="note">Denkbar wäre ein Neujahrsfest – in Ägypten markierte der heliakische Aufgang des Sirius den Jahresbeginn. 150 Tage später, also fünf Monate zu je 30 Tagen, könnte ein zweiter Beobachtungspunkt gefolgt sein, etwa die Sonnenwende. Auch das bleibt Spekulation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="fazit">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">08 · Fazit</div>
+      <h2>Was davon wirklich trägt – und was nicht</h2>
+      <p class="lead">Die Studie ist stark, wo sie Muster beschreibt, und vorsichtig, wo sie deutet. Die wichtigste Tugend beim Lesen: Beobachtung, Interpretation und Spekulation auseinanderhalten.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier solid">
+        <h4>Beobachtung</h4>
+        <ul>
+          <li>16 Kerbgruppen in drei Spalten</li>
+          <li>G und D: alle ungeraden/Primzahlen 9–21 außer 15</li>
+          <li>Jede Spalte summiert zu 60, Paare zu 30</li>
+          <li>Nach dem Tausch: Zeilensummen 24, 28, 32, 36</li>
+        </ul>
+      </div>
+      <div class="tier mid">
+        <h4>Deutung</h4>
+        <ul>
+          <li>Spalte M ergänzt das Design über Verdopplung</li>
+          <li>Zeilensumme = Produkt des M-Paares</li>
+          <li>Alle vier Grundrechenarten sind abbildbar</li>
+          <li>Fünf 30er-Gruppen ergeben 150</li>
+          <li>15 kehrt in M zurück</li>
+        </ul>
+      </div>
+      <div class="tier spec">
+        <h4>Spekulation</h4>
+        <ul>
+          <li>Ägyptische Kalender- und Zahlensymbolik</li>
+          <li>Sonnenanalemma und 360 Tage</li>
+          <li>Neujahr, Sirius, 150 Tage später</li>
+          <li>Die konkrete Nutzung als Erzählvorlage</li>
+          <li>15.000+ Jahre Abstand, beschädigte Kerben</li>
+        </ul>
+      </div>
+    </div>
+    <div class="debate" style="margin-top:18px">
+      <div class="card">
+        <div class="who">Die Skepsis · Olivier Keller</div>
+        <p>Kerbknochen wie der Ishango seien überinterpretiert. Manche Kerben, gerade auf der Rückseite, seien kaum sichtbar; aus einer Ansammlung von Strichen lasse sich keine eindeutige Mathematik ableiten. Die Gefahr mathematischer Fiktion sei groß.</p>
+      </div>
+      <div class="card">
+        <div class="who">Die Antwort der Autorin</div>
+        <p>Der Ishango-Knochen sei kein einzelner Strich, sondern <b>16 Gruppen in drei getrennten Spalten</b> – erst dadurch werden Beziehungen zwischen den Spalten lesbar. Die Regelmäßigkeit, Symmetrie und die vier Rechenarten sprächen für mehr als ein simples Kerbholz und für eine fortgeschrittene Zahlenabstraktion.</p>
+      </div>
+    </div>
+    <div class="takeaway">
+      <p>„Vielleicht ist der Ishango-Knochen kein Kerbholz, sondern eine steinzeitliche Tafel: Mathematik zum Anfassen, zum Erzählen und zum Staunen.“</p>
+      <div class="small">Die provokante Pointe: Rechnen, Symmetrie und kosmische Zyklen könnten schon lange vor den ersten Hochkulturen gedacht worden sein – auch wenn sich das nie sicher beweisen lässt.</div>
+    </div>
+    <div class="open">
+      <div><b>Offen 1</b>Mikroskopische Spurenanalyse: Wurden alle drei Spalten gleichzeitig gekerbt?</div>
+      <div><b>Offen 2</b>Die beschädigte Stelle 10(−1)/5(−1) bleibt mehrdeutig.</div>
+      <div><b>Offen 3</b>Gibt es weitere Funde mit ähnlich strukturierten Kerben?</div>
+    </div>
+  </div>
+</section>
 </main>
-<!--@@FOOTER@@-->
+<footer>
+  <div class="wrap">
+    <div>
+      <b style="color:var(--muted)">Quelle:</b> Jenny Baur, „Decoding the Ishango Bone: Unveiling Prehistoric Mathematical Art“, arXiv:2504.06412v3 (math.HO), Dez. 2025, CC BY 4.0.
+      <br>Diese Seite ist eine unabhängige, vereinfachte Zusammenfassung. Alle Knochen- und Kerb-Darstellungen sind schematisch, nicht maßstabsgetreu.
+    </div>
+    <div><a href="https://arxiv.org/abs/2504.06412v3" target="_blank" rel="noopener">Original auf arXiv öffnen ↗</a></div>
+  </div>
+</footer>
 <script>
 /*@@JS1@@*/
 /*@@JS2@@*/
