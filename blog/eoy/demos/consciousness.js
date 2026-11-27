@@ -1114,11 +1114,15 @@
         controls.innerHTML = '';
       }
       if (statusEl) {
-        var dissRange = controls.querySelector("[data-con-diss]");
-        if (dissRange && dissRange.closest(".ls-con2-range")) {
-          dissRange.closest(".ls-con2-range").insertAdjacentElement("afterend", statusEl);
-        } else {
-          controls.appendChild(statusEl);
+        statusEl.hidden = active === 4;
+        statusEl.textContent = active === 4 ? "" : statusEl.textContent;
+        if (active !== 4) {
+          var dissRange = controls.querySelector("[data-con-diss]");
+          if (dissRange && dissRange.closest(".ls-con2-range")) {
+            dissRange.closest(".ls-con2-range").insertAdjacentElement("afterend", statusEl);
+          } else {
+            controls.appendChild(statusEl);
+          }
         }
       }
       controls.querySelectorAll("[data-con-mod]").forEach(function (b) {
