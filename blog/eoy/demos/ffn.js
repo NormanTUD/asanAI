@@ -54,7 +54,7 @@
       ringState: "bleibt unten",
       demoBadge: "Schematische Demo · keine Messung",
       backTitle: "Rückprojektion nach 2D",
-      backCard: "Oben sind die Bedeutungen noch gemischt. Im höherdimensionalen Raum werden sie getrennt und gedreht; W₂ projiziert sie danach unterschiedlich in den ursprünglichen 2D-Raum.",
+      backCard: "Links sind die Bedeutungen noch gemischt. Im höherdimensionalen Raum werden sie auf einem gebogenen Gitter getrennt; rechts projiziert W₂ sie unterschiedlich in den ursprünglichen 2D-Raum.",
       backTag: "W₂ · zurück nach 2D",
       backReplay: "Nochmal",
       backLeft: "Gebäude · Turm · Geist",
@@ -90,7 +90,7 @@
       ringState: "stays below",
       demoBadge: "Schematic demo · not a measurement",
       backTitle: "Back-projection to 2D",
-      backCard: "At the top the meanings are still mixed. In the higher-dimensional space they are separated and rotated; W₂ then projects them back differently into the original 2D space.",
+      backCard: "On the left the meanings are still mixed. In the higher-dimensional space they are separated on a curved grid; on the right W₂ projects them back differently into the original 2D space.",
       backTag: "W₂ · back to 2D",
       backReplay: "Replay",
       backLeft: "fruit · red · sweet",
@@ -124,7 +124,7 @@
       '<div class="ls-ffn-contexts"></div>' +
       '<div class="ls-ffn-bend">' +
         '<div class="ls-ffn-bend-legend" data-tip-de="Legende: Kernmuster gegen Ringmuster." data-tip-en="Legend: core pattern versus ring pattern."><span><i class="is-core"></i>' + labels.core + ' <small>' + labels.coreState + '</small></span><span><i class="is-ring"></i>' + labels.ring + ' <small>' + labels.ringState + '</small></span></div>' +
-        '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img" data-tip-de="Punktwolke im FFN-Raum; beobachte, wie die Biegung Kern und Ring trennt." data-tip-en="Point cloud in FFN space; watch how the bend separates core and ring."></canvas><span class="ls-ffn-demo-badge">' + labels.demoBadge + '</span></div>' +
+        '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img" data-tip-de="Punktwolke im FFN-Raum; beobachte, wie die Biegung Kern und Ring trennt." data-tip-en="Point cloud in FFN space; watch how the bend separates core and ring."></canvas></div>' +
         '<div class="ls-ffn-bend-bar">' +
           '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0" data-tip-de="Hebt den Kernbereich an; höhere Werte machen die Trennebene sichtbar." data-tip-en="Lifts the core region; higher values reveal the separating plane."><output>0.00</output></label>' +
           '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-bend-toggle" data-tip-de="Animiert die Biegung bis zur Trennebene oder zurück." data-tip-en="Animates the bend to the separating plane or back.">' + labels.bendButton + '</button>' +
@@ -443,21 +443,18 @@
     function drawBackProjection(cx, cy, scale) {
       var w = size.w, h = size.h;
       var t = ease(clamp(backT, 0, 1));
-      var rise = ease(clamp((t - 0.10) / 0.50, 0, 1));
+      var rise = ease(clamp((t - 0.10) / 0.55, 0, 1));
       var bot = ease(clamp((t - 0.55) / 0.45, 0, 1));
       var font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       var fontBold = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
-      var top = { x: cx, y: h * 0.14 };
-      var midCy = h * 0.50;
-      var gx0 = w * 0.12, gx1 = w * 0.88, gy0 = h * 0.66, gy1 = h * 0.94;
-      var rowY = gy0 + (gy1 - gy0) * 0.52;
-      var tgtA = { x: gx0 + (gx1 - gx0) * 0.40, y: rowY };
-      var tgtB = { x: gx0 + (gx1 - gx0) * 0.60, y: rowY };
-      var topR = Math.min(w * 0.16, h * 0.18);
-      var midSx = w * 0.18, midSy = h * 0.055, liftPx = h * 0.14;
+      var left = { x: w * 0.18, y: h * 0.52 };
+      var mid = { x: w * 0.50, y: h * 0.54 };
+      var right = { x: w * 0.82, y: h * 0.52 };
+      var midS = Math.min(w * 0.11, h * 0.32);
       bendProjected = [];
+      function midZ(x, y) { return rise * 0.24 * (x * x + y * y); }
       function midProject(x, y, z) {
-        return { x: cx + x * midSx + z * w * 0.025, y: midCy + y * midSy - z * liftPx };
+        return { x: mid.x + x * midS + y * midS * 0.22 + z * midS * 0.18, y: mid.y + y * midS * 0.32 - z * midS * 0.95 };
       }
       function point(x, y, color, alpha) {
         ctx.beginPath();
@@ -466,177 +463,121 @@
         ctx.globalAlpha = alpha;
         ctx.fill();
       }
-      function arrow(x0, y0, x1, y1, color, prog) {
-        var x = lerp(x0, x1, prog), y = lerp(y0, y1, prog);
-        ctx.save();
-        ctx.strokeStyle = color;
-        ctx.fillStyle = color;
-        ctx.globalAlpha = 0.5;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.stroke();
-        if (prog > 0.04) {
-          var ang = Math.atan2(y1 - y0, x1 - x0);
-          ctx.globalAlpha = 0.85;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x - Math.cos(ang - 0.45) * 8, y - Math.sin(ang - 0.45) * 8);
-          ctx.lineTo(x - Math.cos(ang + 0.45) * 8, y - Math.sin(ang + 0.45) * 8);
-          ctx.closePath();
-          ctx.fill();
-        }
-        ctx.restore();
-      }
       ctx.save();
-      ctx.fillStyle = C.soft;
-      ctx.globalAlpha = 0.9;
       ctx.font = fontBold;
       ctx.textAlign = "center";
-      ctx.fillText(labels.backMixed, cx, h * 0.045);
+      ctx.fillStyle = C.soft;
+      ctx.globalAlpha = 0.9;
+      ctx.fillText(labels.backMixed, left.x, h * 0.07);
+      ctx.fillStyle = C.petrol;
+      ctx.fillText(labels.backHighDim, mid.x, h * 0.07);
+      ctx.font = font;
+      ctx.globalAlpha = 0.65;
+      ctx.fillText(labels.backSide, mid.x, h * 0.12);
+      ctx.font = fontBold;
+      ctx.fillStyle = C.petrol;
+      ctx.globalAlpha = 0.8;
+      ctx.fillText(labels.back2dSeparated, right.x, h * 0.07);
       ctx.restore();
+      var leftR = Math.min(w * 0.10, h * 0.20);
       ctx.save();
       ctx.strokeStyle = C.lineStrong;
       ctx.globalAlpha = 0.45;
       ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.ellipse(top.x, top.y, topR * 0.95, topR * 0.42 * 0.95, 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(top.x, top.y, topR * 0.34, topR * 0.42 * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(left.x, left.y, leftR * 0.95, leftR * 0.55 * 0.95, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(left.x, left.y, leftR * 0.34, leftR * 0.55 * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
       ctx.restore();
       ffnPoints.forEach(function (pt) {
-        var px = top.x + pt.x * topR;
-        var py = top.y + pt.y * topR * 0.42;
+        var px = left.x + pt.x * leftR;
+        var py = left.y + pt.y * leftR * 0.55;
         point(px, py, pt.c === 0 ? C.green : C.gold, 0.55 + 0.4 * (1 - Math.min(1, Math.hypot(pt.x, pt.y))));
         bendProjected.push({ x: px, y: py, c: pt.c, label: pt.label, stage: labels.backMixed });
       });
+      var gridAlpha = 0.16 + 0.10 * rise;
       ctx.save();
       ctx.strokeStyle = C.line;
-      ctx.globalAlpha = 0.22;
+      ctx.globalAlpha = gridAlpha;
       ctx.lineWidth = 1;
-      for (var gi = 0; gi <= 6; gi++) {
-        var v = -1 + 2 * gi / 6;
-        var a1 = midProject(-1, v, 0), b1 = midProject(1, v, 0);
-        ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(b1.x, b1.y); ctx.stroke();
-        var a2 = midProject(v, -1, 0), b2 = midProject(v, 1, 0);
-        ctx.beginPath(); ctx.moveTo(a2.x, a2.y); ctx.lineTo(b2.x, b2.y); ctx.stroke();
+      for (var gi = 0; gi <= 8; gi++) {
+        ctx.beginPath();
+        for (var gj = 0; gj <= 20; gj++) {
+          var u = -1 + 2 * gi / 8, v = -1 + 2 * gj / 20;
+          var q = midProject(u, v, midZ(u, v));
+          if (gj === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+        }
+        ctx.stroke();
+        ctx.beginPath();
+        for (var gj2 = 0; gj2 <= 20; gj2++) {
+          var u2 = -1 + 2 * gj2 / 20, v2 = -1 + 2 * gi / 8;
+          var q2 = midProject(u2, v2, midZ(u2, v2));
+          if (gj2 === 0) ctx.moveTo(q2.x, q2.y); else ctx.lineTo(q2.x, q2.y);
+        }
+        ctx.stroke();
       }
+      ctx.restore();
+      var zBase = midProject(-1.15, -1.15, 0);
+      var zTop = midProject(-1.15, -1.15, 1.25);
+      ctx.save();
       ctx.strokeStyle = C.lineStrong;
+      ctx.fillStyle = C.muted;
       ctx.globalAlpha = 0.55;
       ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(cx - w * 0.25, midCy); ctx.lineTo(cx - w * 0.25, h * 0.27); ctx.stroke();
-      ctx.fillStyle = C.muted;
-      ctx.globalAlpha = 0.6;
+      ctx.beginPath(); ctx.moveTo(zBase.x, zBase.y); ctx.lineTo(zTop.x, zTop.y); ctx.stroke();
       ctx.font = font;
       ctx.textAlign = "left";
-      ctx.fillText("z", cx - w * 0.25 - 12, h * 0.28);
-      ctx.fillText("x", cx + w * 0.21, midCy + 14);
-      ctx.restore();
-      var sepZ = rise * 0.52;
-      if (rise > 0.08) {
-        ctx.save();
-        ctx.strokeStyle = C.petrol;
-        ctx.globalAlpha = 0.18;
-        ctx.lineWidth = 1;
-        for (var pi = 0; pi <= 4; pi++) {
-          var pv = -1 + 2 * pi / 4;
-          var q1 = midProject(-1, pv, sepZ), q2 = midProject(1, pv, sepZ);
-          var q3 = midProject(pv, -1, sepZ), q4 = midProject(pv, 1, sepZ);
-          ctx.beginPath(); ctx.moveTo(q1.x, q1.y); ctx.lineTo(q2.x, q2.y); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(q3.x, q3.y); ctx.lineTo(q4.x, q4.y); ctx.stroke();
-        }
-        ctx.globalAlpha = 0.55;
-        ctx.fillStyle = C.petrol;
-        ctx.textAlign = "center";
-        ctx.fillText(labels.plane, cx, midProject(0, -1, sepZ).y - 5);
-        ctx.restore();
-      }
-      ctx.save();
-      ctx.fillStyle = C.petrol;
-      ctx.globalAlpha = 0.85;
-      ctx.font = fontBold;
-      ctx.textAlign = "center";
-      ctx.fillText(labels.backHighDim, cx, h * 0.25);
-      ctx.font = font;
-      ctx.globalAlpha = 0.65;
-      ctx.fillText(labels.backSide, cx, h * 0.29);
+      ctx.fillText("z", zTop.x - 12, zTop.y + 7);
       ctx.restore();
       var midAlpha = 0.25 + 0.75 * rise;
       ffnPoints.forEach(function (pt) {
-        var z = pt.c === 0 ? rise : rise * 0.08;
+        var z = midZ(pt.x, pt.y) + (pt.c === 0 ? rise * 0.55 : 0);
         var q = midProject(pt.x, pt.y, z);
         point(q.x, q.y, pt.c === 0 ? C.green : C.gold, 0.5 + 0.4 * midAlpha);
         bendProjected.push({ x: q.x, y: q.y, c: pt.c, label: pt.label, stage: labels.backHighDim });
       });
-      arrow(top.x - 6, top.y, cx, midProject(0, 0, rise * 0.08).y, C.gold, rise);
-      arrow(top.x + 6, top.y, cx, midProject(0, 0, rise).y, C.green, rise);
+      var rpx0 = right.x - w * 0.10, rpx1 = right.x + w * 0.10;
+      var rpy0 = h * 0.36, rpy1 = h * 0.72;
       ctx.save();
       ctx.strokeStyle = C.line;
       ctx.globalAlpha = 0.20;
       ctx.lineWidth = 1;
-      for (var gx = 0; gx <= 6; gx++) {
-        var xLine = gx0 + (gx1 - gx0) * gx / 6;
-        ctx.beginPath(); ctx.moveTo(xLine, gy0); ctx.lineTo(xLine, gy1); ctx.stroke();
+      for (var rx = 0; rx <= 4; rx++) {
+        var xLine = rpx0 + (rpx1 - rpx0) * rx / 4;
+        ctx.beginPath(); ctx.moveTo(xLine, rpy0); ctx.lineTo(xLine, rpy1); ctx.stroke();
       }
-      for (var gy = 0; gy <= 4; gy++) {
-        var yLine = gy0 + (gy1 - gy0) * gy / 4;
-        ctx.beginPath(); ctx.moveTo(gx0, yLine); ctx.lineTo(gx1, yLine); ctx.stroke();
+      for (var ry = 0; ry <= 3; ry++) {
+        var yLine = rpy0 + (rpy1 - rpy0) * ry / 3;
+        ctx.beginPath(); ctx.moveTo(rpx0, yLine); ctx.lineTo(rpx1, yLine); ctx.stroke();
       }
-      ctx.strokeStyle = C.lineStrong;
-      ctx.globalAlpha = 0.55;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(gx0, gy1); ctx.lineTo(gx1, gy1); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(gx0, gy1); ctx.lineTo(gx0, gy0); ctx.stroke();
-      ctx.fillStyle = C.muted;
-      ctx.font = font;
-      ctx.textAlign = "left";
-      ctx.fillText("x", gx1 - 10, gy1 - 6);
-      ctx.fillText("y", gx0 - 14, gy0 + 8);
-      ctx.restore();
-      ctx.save();
-      ctx.fillStyle = C.petrol;
-      ctx.globalAlpha = 0.8 * bot;
-      ctx.font = fontBold;
-      ctx.textAlign = "center";
-      ctx.fillText(labels.back2dSeparated, cx, gy0 - 10);
-      ctx.restore();
-      var gapX = (tgtA.x + tgtB.x) / 2;
-      ctx.save();
       ctx.strokeStyle = C.petrol;
       ctx.globalAlpha = 0.35 * bot;
-      ctx.lineWidth = 1;
       ctx.setLineDash([4, 5]);
-      ctx.beginPath(); ctx.moveTo(gapX, gy0 + 6); ctx.lineTo(gapX, gy1 - 4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(right.x, rpy0 + 6); ctx.lineTo(right.x, rpy1 - 4); ctx.stroke();
       ctx.restore();
       var totals = [0, 0], done = [0, 0];
       ffnPoints.forEach(function (pt) { totals[pt.c]++; });
-      var bottomR = Math.max(14, Math.min(w * 0.07, h * 0.12));
+      var rightR = Math.min(w * 0.045, h * 0.08);
+      var rightSpread = w * 0.045;
       ffnPoints.forEach(function (pt) {
-        var tx = pt.c === 0 ? tgtA.x : tgtB.x;
+        var tx = right.x + (pt.c === 0 ? -rightSpread : rightSpread);
         var idx = done[pt.c]++;
         var ang = Math.atan2(pt.y, pt.x);
         var rr = Math.sqrt((idx + 0.5) / Math.max(1, totals[pt.c]));
-        var px = tx + Math.cos(ang) * rr * bottomR;
-        var py = rowY + Math.sin(ang) * rr * bottomR;
+        var px = tx + Math.cos(ang) * rr * rightR;
+        var py = right.y + Math.sin(ang) * rr * rightR;
         point(px, py, pt.c === 0 ? C.green : C.gold, 0.15 + 0.85 * bot);
         bendProjected.push({ x: px, y: py, c: pt.c, label: pt.label, stage: labels.back2dSeparated });
       });
-      arrow(cx, midProject(0, 0, rise).y, tgtA.x, tgtA.y, C.green, bot);
-      arrow(cx, midProject(0, 0, rise * 0.08).y, tgtB.x, tgtB.y, C.gold, bot);
-      ctx.save();
-      ctx.fillStyle = C.soft;
-      ctx.globalAlpha = 0.8 * bot;
-      ctx.font = fontBold;
-      ctx.textAlign = "right";
-      ctx.fillText(labels.backW2, w - 18, h * 0.585);
-      ctx.restore();
       ctx.save();
       ctx.globalAlpha = bot;
       ctx.font = font;
       ctx.textAlign = "center";
-      var labelOffset = Math.max(18, h * 0.055);
+      var labelOffset = Math.max(16, h * 0.055);
       ctx.fillStyle = C.green;
-      ctx.fillText(labels.backLeftShort, tgtA.x, tgtA.y + labelOffset);
+      ctx.fillText(labels.backLeftShort, right.x - rightSpread, right.y + labelOffset);
       ctx.fillStyle = C.gold;
-      ctx.fillText(labels.backRightShort, tgtB.x, tgtB.y + labelOffset);
+      ctx.fillText(labels.backRightShort, right.x + rightSpread, right.y + labelOffset);
       ctx.restore();
-      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion mit denselben Punkten: oben gemischte Egg-Verteilung, in der Mitte als 3D-Punktwolke getrennt, unten als gefüllte Punktgruppen links und rechts der gestrichelten Linie." : "Back-projection with the same points: mixed egg-shaped distribution at the top, separated as a 3D point cloud in the middle, filled point groups left and right of the dashed line at the bottom.");
+      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion von links nach rechts: gemischte Egg-Verteilung, gebogenes 3D-Gitter mit getrennten Punkten, getrennte 2D-Punkte links und rechts der gestrichelten Linie." : "Back-projection from left to right: mixed egg-shaped distribution, curved 3D grid with separated points, separated 2D points left and right of the dashed line.");
     }
     function updateBendReadout() {
       if (activeMode === "back") {
@@ -755,7 +696,8 @@
       var p = bendProjected[best];
       var isCore = p.c === 0;
       if (activeMode === "back") {
-        return p.label + " · " + (isCore ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0]) + " · " + (p.stage || "");
+        var cat = isCore ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0];
+        return p.label + (p.label === cat ? "" : " · " + cat) + " · " + (p.stage || "");
       }
       return p.label + (DE ? " · " : " · ") + (isCore ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0]) +
         ". " + (DE ? "Biegung " : "Bend ") + bend.toFixed(2) + ". " +
