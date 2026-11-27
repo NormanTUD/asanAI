@@ -1850,9 +1850,10 @@
   };
 
   crossEntropyStep.watch = "";
-  crossEntropyStep.boxes = (crossEntropyStep.boxes || []).filter(function (b) {
-    return b && (b.id === "ce-2" || b.id === "ce-4");
-  });
+  crossEntropyStep.context = "";
+  crossEntropyStep.deep = "";
+  crossEntropyStep.boxes = [];
+  crossEntropyStep.body = DE ? "Ein LLM soll den Satz „Die Hauptstadt von Frankreich ist“ vervollständigen. Richtig ist „Paris“, aber das Modell gibt „Lyon“ (50 %) und „Paris“ (30 %) aus. Das Netz soll lernen, das richtige Wort mit hoher Wahrscheinlichkeit vorherzusagen.\n\nStatt des bereits bekannten <b>M</b>ean <b>S</b>quared <b>E</b>rror (<b>MSE</b>) nutzt man für LLMs die <b>C</b>ategorical <b>C</b>ross <b>E</b>ntropy (<b>CCE</b>).\n\nDafür wird das Zielwort per One-Hot-Encoding als Vektor dargestellt, bei dem exakt der richtige Eintrag 1 (Paris) und alle anderen 0 sind. Als Funktion $\\text{CCE}(y, \\hat{y})$, die über alle Kategorien $i$ iteriert:\n\n$$\\text{CCE}(y, \\hat{y}) = -\\sum_{i} \\underbrace{y_i}_{\\substack{\\text{Wahrer Wert} \\\\ (0 \\text{ oder } 1)}} \\cdot \\log(\\underbrace{\\hat{y}_i}_{\\substack{\\text{Vorhersage} \\\\ \\text{des Modells}}})$$\n\nDa alle 0-Werte in der Summe wegfallen, bestraft die CCE das Modell rein dafür, wenn es dem wahren Token zu wenig Wahrscheinlichkeit zuordnet. Weil alle ausgegebenen Wahrscheinlichkeiten zusammen immer 100 % ergeben, sinken die Werte für falsche Wörter (wie Lyon) automatisch, sobald die Wahrscheinlichkeit für Paris steigt." : "An LLM should complete the sentence “The capital of France is”. The correct answer is “Paris”, but the model outputs “Lyon” (50%) and “Paris” (30%). The network should learn to predict the correct word with high probability.\n\nInstead of the familiar <b>M</b>ean <b>S</b>quared <b>E</b>rror (<b>MSE</b>), LLMs use <b>C</b>ategorical <b>C</b>ross <b>E</b>ntropy (<b>CCE</b>).\n\nFor this, the target word is represented as a one-hot vector, with exactly the correct entry 1 (Paris) and all others 0. As a function $\\text{CCE}(y, \\hat{y})$ that iterates over all categories $i$:\n\n$$\\text{CCE}(y, \\hat{y}) = -\\sum_{i} \\underbrace{y_i}_{\\substack{\\text{true value} \\\\ (0 \\text{ or } 1)}} \\cdot \\log(\\underbrace{\\hat{y}_i}_{\\substack{\\text{model} \\\\ \\text{prediction}}})$$\n\nSince all zero values drop out of the sum, CCE only penalises the model for assigning too little probability to the true token. Because all output probabilities always sum to 100%, the values for wrong words (like Lyon) automatically fall as the probability for Paris rises.";
 
   var qkvArcs = {
     kicker: DE ? "Q · K · V" : "Q · K · V",
