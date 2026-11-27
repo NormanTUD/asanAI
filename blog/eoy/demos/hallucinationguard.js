@@ -8,17 +8,17 @@
     var FACTS = {
       common: {
         kicker: L("Häufig", "Common"),
-        label: L("Hauptstadt", "Capital"),
-        question: L("Was ist die Hauptstadt von Frankreich?", "What is the capital of France?"),
-        memory: L("Paris.", "Paris."),
-        memoryNote: L("Keine Quelle · häufig in den Daten · wahrscheinlich richtig", "No source · common in the data · probably right"),
-        sourceHead: L("Paris", "Paris"),
-        sourceText: L("Paris ist die Hauptstadt von Frankreich.", "Paris is the capital of France."),
-        sourceAnswer: L("Paris. [S1]", "Paris. [S1]"),
-        cite: "S1 · Wikipedia: Paris",
-        stepMemory: L("Ich erinnere mich: Paris.", "I recall: Paris."),
-        stepSource: L("S1 sagt: Paris.", "S1 says: Paris."),
-        risk: 26,
+        label: L("Eiffelturm", "Eiffel Tower"),
+        question: L("Wie hoch ist der Eiffelturm mit Antenne?", "How tall is the Eiffel Tower with its antenna?"),
+        memory: L("330 m mit Antenne.", "330 m with its antenna."),
+        memoryNote: L("Keine Quelle · sehr häufig in den Daten · wahrscheinlich richtig", "No source · very common in the data · probably right"),
+        sourceHead: L("Eiffelturm", "Eiffel Tower"),
+        sourceText: L("Der Eiffelturm ist mit Antenne 330 Meter hoch.", "The Eiffel Tower is 330 metres tall including its antenna."),
+        sourceAnswer: L("330 m mit Antenne. [S1]", "330 m with its antenna. [S1]"),
+        cite: "S1 · Wikipedia: Eiffelturm",
+        stepMemory: L("Ich erinnere mich: 330 m mit Antenne.", "I recall: 330 m with its antenna."),
+        stepSource: L("S1 sagt: 330 m mit Antenne.", "S1 says: 330 m with its antenna."),
+        risk: 24,
         ragRisk: 12
       },
       rare: {
@@ -67,8 +67,8 @@
         '<div class="ls-guard-body">' +
           '<section class="ls-guard-chat">' +
             '<div class="ls-guard-facts" role="group" aria-label="' + L("Beispiele", "Examples") + '">' +
-              '<button type="button" class="ls-guard-fact is-on" data-fact="common" aria-pressed="true"><span>' + L("Häufig", "Common") + '</span><b>' + L("Hauptstadt", "Capital") + '</b><em class="is-low">' + L("Grundrisiko: niedrig", "base risk: low") + '</em></button>' +
-              '<button type="button" class="ls-guard-fact" data-fact="rare" aria-pressed="false"><span>' + L("Selten", "Rare") + '</span><b>Ishango</b><em class="is-veryhigh">' + L("Grundrisiko: sehr hoch", "base risk: very high") + '</em></button>' +
+              '<button type="button" class="ls-guard-fact is-on" data-fact="common" aria-pressed="true"><span>' + L("Häufig", "Common") + '</span><b>' + L("Eiffelturm", "Eiffel Tower") + '</b><em class="is-low">' + L("Grundrisiko: niedrig", "base risk: low") + '</em><i class="ls-guard-fact-bar" aria-hidden="true"><i style="width:100%"></i></i></button>' +
+              '<button type="button" class="ls-guard-fact" data-fact="rare" aria-pressed="false"><span>' + L("Selten", "Rare") + '</span><b>Ishango</b><em class="is-veryhigh">' + L("Grundrisiko: sehr hoch", "base risk: very high") + '</em><i class="ls-guard-fact-bar" aria-hidden="true"><i style="width:16%"></i></i></button>' +
             '</div>' +
             '<div class="ls-guard-question"><span>' + L("Frage", "Question") + '</span><b class="ls-guard-question-text">' + fact.question + '</b></div>' +
             '<article class="ls-guard-answer">' +
@@ -77,6 +77,11 @@
               '<div class="ls-guard-cite" data-tip="' + L("Belegt die Antwort oder benennt die fehlende Quelle.", "Supports the answer or names the missing source.") + '"></div>' +
               '<div class="ls-guard-steps" data-tip="' + L("Der sichtbare Denkweg, wenn schrittweises Denken an ist.", "The visible reasoning path when step-by-step thinking is on.") + '"></div>' +
             '</article>' +
+            '<div class="ls-guard-hidden" data-tip="' + L("Die Antwort allein verrät weder die Trainingshäufigkeit noch das Halluzinationsrisiko.", "The answer alone reveals neither training frequency nor hallucination risk.") + '">' +
+              '<span class="ls-guard-hidden-head">' + L("Was die Antwort nicht zeigt", "What the answer does not show") + '</span>' +
+              '<div class="ls-guard-hidden-row"><span>?</span><b>' + L("Datenhäufigkeit", "Training frequency") + '</b><em>' + L("nicht sichtbar", "not visible") + '</em></div>' +
+              '<div class="ls-guard-hidden-row"><span>?</span><b>' + L("Halluzinationsrisiko", "Hallucination risk") + '</b><em>' + L("nicht sichtbar", "not visible") + '</em></div>' +
+            '</div>' +
             '<div class="ls-guard-verdict"></div>' +
           '</section>' +
           '<aside class="ls-guard-defence">' +

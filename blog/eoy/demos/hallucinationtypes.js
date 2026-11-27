@@ -345,12 +345,15 @@
           '</div>' +
           '<div class="ls-hx-wintabs" role="tablist" aria-label="' + L("Fensterbereiche", "Window sections") + '">' +
             '<button type="button" class="ls-hx-tab is-on" role="tab" aria-selected="true" data-hx-tab="chat"><span>01</span>' + L("Chat", "Chat") + '</button>' +
-            '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="sources"><span>02</span>' + L("Quellen", "Sources") + '</button>' +
-            '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="rag"><span>03</span>RAG</button>' +
-            '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="risk"><span>04</span>' + L("Risiko", "Risk") + '</button>' +
+            '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="risk"><span>02</span>' + L("Risiko", "Risk") + '</button>' +
           '</div>' +
           '<div class="ls-hx-winbody ls-hx-tabpanel is-on" data-hx-panel="chat" role="tabpanel">' +
             '<div class="ls-hx-chatcol">' +
+              '<div class="ls-hx-ragstrip">' +
+                '<button type="button" class="ls-hx-ragopen" data-tip="' + L("RAG-Abruf öffnen: Frage, Ähnlichkeit, Kontext, Antwort.", "Open RAG retrieval: question, similarity, context, answer.") + '">RAG</button>' +
+                '<span class="ls-hx-ragflow">' + L("Frage", "Question") + ' <i>→</i> ' + L("Ähnlichkeit 35°", "similarity 35°") + ' <i>→</i> ' + L("Kontext", "Context") + ' <i>→</i> ' + L("Antwort", "Answer") + '</span>' +
+                '<em>' + L("Abruf", "Retrieval") + '</em>' +
+              '</div>' +
               '<div class="ls-hx-thread" data-tip="' + L("Frage und Modellantwort; die Antwort zerfällt in prüfbare Aussagen.", "Question and model answer; the answer splits into checkable claims.") + '">' +
                 '<div class="ls-hx-msg is-user">' +
                   '<span class="ls-hx-role">' + L("Du", "You") + '</span>' +
@@ -380,16 +383,9 @@
               '</div>' +
             '</aside>' +
           '</div>' +
-        '<section class="ls-hx-winpanel ls-hx-tabpanel" data-hx-panel="sources" hidden role="tabpanel">' +
-          '<div class="ls-hx-sourcelead"><b>' + L("Woher kommt die Behauptung?", "Where does the claim come from?") + '</b><p>' + L("Die Prüfung entscheidet, welche Quelle die Aussage deckt.", "The check decides which source supports the claim.") + '</p></div>' +
-      '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
-        '<div class="ls-hx-source-card is-weights" data-source-kind="weights" data-tip="' + L("Was das Modell aus dem Training mitbringt; hier sitzen Fakten und alte Zahlen.", "What the model brings from training; facts and old numbers live here.") + '"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
-        '<div class="ls-hx-source-claim" data-tip="' + L("Die geprüfte Aussage steht zwischen beiden möglichen Quellen.", "The checked claim sits between the two possible sources.") + '"><span>' + L("Behauptung", "Claim") + '</span></div>' +
-        '<div class="ls-hx-source-card is-context" data-source-kind="context" data-tip="' + L("Was im Prompt oder in der abgerufenen Quelle steht; RAG füllt diesen Teil.", "What is in the prompt or the retrieved source; RAG fills this side.") + '"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
-      '</div>' +
-        '</section>' +
-        '<section class="ls-hx-winpanel ls-hx-tabpanel" data-hx-panel="rag" role="tabpanel" hidden>' +
-          '<div class="ls-hx-ragtab">' +
+          '<div class="ls-hx-ragdrawer" hidden>' +
+            '<div class="ls-hx-ragdrawer-head"><b>RAG · ' + L("Abruf", "retrieval") + '</b><button type="button" class="ls-hx-ragclose" aria-label="' + L("Abruf schließen", "Close retrieval") + '">×</button></div>' +
+            '<div class="ls-hx-ragtab">' +
             '<div class="ls-hx-ragtab-copy">' +
               '<span class="ls-hx-ragtab-kicker">RAG</span>' +
               '<h3>' + L("Frage → Ähnlichkeit → Kontext → Antwort", "Question → similarity → context → answer") + '</h3>' +
@@ -411,8 +407,14 @@
               '<div class="ls-hx-ragtab-context"><div class="ls-hx-ragtab-context-head"><b>' + L("Im Kontext", "In the context") + '</b><span class="ls-hx-ragtab-count"></span></div><div class="ls-hx-ragtab-list"></div></div>' +
             '</div>' +
           '</div>' +
-        '</section>' +
+          '</div>' +
         '<section class="ls-hx-winpanel ls-hx-tabpanel" data-hx-panel="risk" role="tabpanel" hidden>' +
+          '<div class="ls-hx-sourcelead"><b>' + L("Woher kommt die Behauptung?", "Where does the claim come from?") + '</b><p>' + L("Die Prüfung entscheidet, welche Quelle die Aussage deckt.", "The check decides which source supports the claim.") + '</p></div>' +
+      '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
+        '<div class="ls-hx-source-card is-weights" data-source-kind="weights" data-tip="' + L("Was das Modell aus dem Training mitbringt; hier sitzen Fakten und alte Zahlen.", "What the model brings from training; facts and old numbers live here.") + '"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
+        '<div class="ls-hx-source-claim" data-tip="' + L("Die geprüfte Aussage steht zwischen beiden möglichen Quellen.", "The checked claim sits between the two possible sources.") + '"><span>' + L("Behauptung", "Claim") + '</span></div>' +
+        '<div class="ls-hx-source-card is-context" data-source-kind="context" data-tip="' + L("Was im Prompt oder in der abgerufenen Quelle steht; RAG füllt diesen Teil.", "What is in the prompt or the retrieved source; RAG fills this side.") + '"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
+      '</div>' +
           '<div class="ls-hx-risktab">' +
             '<div class="ls-hx-risk" data-tip="' + L("Die zwei Achsen zeigen, ob eine Antwort plausibel klingt und ob eine Quelle sie deckt.", "The two axes show whether an answer sounds plausible and whether a source grounds it.") + '">' +
               '<div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("Plausibilität gegen Deckung", "plausibility against grounding") + '</span></div>' +
