@@ -2430,7 +2430,11 @@ h1,h2,h3,h4{
 @media (max-width:640px){.ls-bs-traj-full{height:420px;min-height:360px}.ls-bs-position-full{height:420px;min-height:360px}}
 
 .ls-ffn-dims{margin-top:6px;border:1px solid var(--ls-line);background:rgba(255,255,255,.72);padding:6px}
-.ls-ffn-dims canvas{display:block;width:100%;max-width:560px;height:120px;margin:0 auto;background:#fff}
+.ls-ffn-dims-canvas-wrap{position:relative;width:100%;max-width:560px;height:120px;margin:0 auto}
+.ls-ffn-dims-canvas{display:block;width:100%;height:100%;background:#fff}
+.ls-ffn-dims-labels{position:absolute;left:0;right:0;top:3px;height:18px;pointer-events:none}
+.ls-ffn-dims-label{position:absolute;top:0;transform:translateX(-50%);font:600 10px/1.2 "Open Sans",sans-serif;color:var(--ls-soft);white-space:nowrap}
+.ls-ffn-dims-label .ls-math{font-size:1em}
 .ls-ffn-dims-caption{margin:4px 0 0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 
 .ls-steer-scene{display:grid;gap:10px;min-width:0;width:100%}
