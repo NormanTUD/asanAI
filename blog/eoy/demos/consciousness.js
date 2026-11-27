@@ -1034,6 +1034,13 @@
       if (four.mode === "ai") return L("KI: 1 von 4. Extended ist aktiv. " + ex + ".", "AI: 1 of 4. Extended is active. " + ex + ".");
       return L("Mensch: 4 von 4 aktiv. Alle Dimensionen gekoppelt. " + ex + ".", "Human: 4 of 4 active. All dimensions coupled. " + ex + ".");
     }
+    function fourSetWord(key) {
+      if (!FOUR_WORDS[key]) return;
+      four.word = key;
+      setStatus(fourStatusText());
+      renderControls();
+      draw(performance.now());
+    }
     function fourNextAction() {
       var keys = Object.keys(FOUR_WORDS);
       var idx = Math.max(0, keys.indexOf(four.word));
@@ -1099,7 +1106,10 @@
           '<label class="ls-con2-range"><span>' + L("Dissoziation", "Dissociation") + '</span><input type="range" data-con-diss min="0" max="100" step="1" value="' + kast.diss + '"><output>' + kast.diss + ' %</output></label>' +
           '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
       } else if (active === 4) {
-        controls.innerHTML = '';
+        controls.innerHTML =
+          '<div class="ls-con2-row">' + Object.keys(FOUR_WORDS).map(function (k) {
+            return '<button type="button" class="ls-con2-chip' + (four.word === k ? " is-on" : "") + '" data-four-word="' + k + '">' + L(FOUR_WORDS[k].de, FOUR_WORDS[k].en) + '</button>';
+          }).join("") + '</div>';
       } else {
         controls.innerHTML = '';
       }
@@ -1155,6 +1165,9 @@
       });
       controls.querySelectorAll("[data-con-diss]").forEach(function (inp) {
         inp.addEventListener("input", function () { setKastDiss(inp.value); });
+      });
+      controls.querySelectorAll("[data-four-word]").forEach(function (b) {
+        b.addEventListener("click", function () { fourSetWord(b.getAttribute("data-four-word")); });
       });
       controls.querySelectorAll("[data-con-reset]").forEach(function (b) {
         b.addEventListener("click", resetTheory);
