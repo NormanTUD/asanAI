@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XLM-R – die Idee in einer Seite</title>
+<style>
+:root{
+  --bg:#04060e;--text:#eef4ff;--muted:#9fb0c9;--dim:#5f718c;
+  --cyan:#5ee7ff;--violet:#a78bfa;--lime:#b8ff7a;--rose:#ff7ab6;--gold:#ffd166;
+  --glass:rgba(255,255,255,.055);--line:rgba(255,255,255,.12);
+  --max:1280px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;background:var(--bg);color:var(--text);overflow-x:hidden;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-image:linear-gradient(rgba(120,170,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,170,255,.05) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 75%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 50% -10%,transparent 0%,rgba(4,6,14,.55) 55%,rgba(4,6,14,.92) 100%);
+}
+.aurora{position:fixed;inset:-25%;z-index:-3;filter:blur(80px);opacity:.8;pointer-events:none}
+.blob{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 22s ease-in-out infinite alternate}
+.b1{width:58vw;height:58vw;left:-14%;top:-16%;background:radial-gradient(circle,#1558ff 0%,transparent 66%)}
+.b2{width:52vw;height:52vw;right:-12%;top:0%;background:radial-gradient(circle,#7b2cff 0%,transparent 66%);animation-delay:-7s}
+.b3{width:48vw;height:48vw;left:28%;bottom:-24%;background:radial-gradient(circle,#00cfc0 0%,transparent 66%);animation-delay:-14s}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(3%,-4%,0) scale(1.08)}
+  100%{transform:translate3d(-3%,5%,0) scale(.96)}
+}
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 28px}
+.topbar{max-width:var(--max);margin:0 auto;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text);font-weight:800;letter-spacing:-.02em}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:conic-gradient(from 210deg,var(--cyan),var(--violet),var(--rose),var(--cyan));box-shadow:0 0 24px #5ee7ff66;position:relative;flex:0 0 auto}
+.brand-mark::after{content:"";position:absolute;inset:6px;border-radius:5px;background:#070b16}
+.brand small{display:block;font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.paper-nav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px}
+.paper-nav a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:rgba(255,255,255,.03);padding:6px 10px;border-radius:999px;transition:.18s;white-space:nowrap}
+.paper-nav a:hover{color:var(--text);border-color:rgba(94,231,255,.45);background:rgba(94,231,255,.08)}
+.paper-nav a.on{color:#06121c;background:linear-gradient(180deg,#9be9ff,var(--cyan));border-color:transparent;font-weight:800}
+.hero{max-width:var(--max);margin:0 auto;padding:12px 28px 20px;display:grid;grid-template-columns:1.04fr .96fr;gap:38px;align-items:center;min-height:calc(100vh - 96px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:800;color:var(--cyan)}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.hero h1{
+  margin:14px 0 14px;font-size:clamp(70px,11.5vw,176px);line-height:.82;letter-spacing:-.075em;font-weight:900;
+  background:linear-gradient(105deg,#fff 4%,#c9f7ff 36%,#8fe8ff 55%,#b9a4ff 92%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 18px 60px rgba(94,231,255,.18));
+}
+.hero h1 .dash{color:var(--cyan);-webkit-text-fill-color:var(--cyan)}
+.tagline{margin:0 0 14px;font-size:clamp(22px,2.5vw,38px);line-height:1.08;font-weight:800;letter-spacing:-.035em;max-width:22ch}
+.tagline b{color:var(--cyan)}
+.tagline em{font-style:normal;color:var(--gold)}
+.lede{margin:0;max-width:52ch;color:var(--muted);font-size:16.5px;line-height:1.6}
+.lede b{color:var(--text)}
+.stats{display:flex;flex-wrap:wrap;gap:9px;margin:24px 0 18px}
+.stat{
+  border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.018));
+  border-radius:14px;padding:10px 14px;min-width:104px;backdrop-filter:blur(10px);
+}
+.stat b{display:block;font-size:20px;line-height:1.05;letter-spacing:-.03em;color:#fff}
+.stat span{display:block;margin-top:3px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.hint{display:inline-flex;align-items:center;gap:9px;font-size:12px;color:var(--dim);letter-spacing:.06em}
+.hint i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25;transform:scale(.7)}}
+.globe-wrap{position:relative;width:100%;max-width:640px;aspect-ratio:1/1;justify-self:center;max-height:min(76vh,660px)}
+.globe-wrap::before{
+  content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle at 38% 30%,rgba(94,231,255,.18),rgba(167,139,250,.08) 45%,transparent 68%);
+  filter:blur(28px);z-index:0;
+}
+#globe{position:relative;z-index:1;width:100%;height:100%;display:block;cursor:crosshair;touch-action:manipulation}
+.globe-hud{
+  position:absolute;left:6%;bottom:7%;z-index:2;min-width:150px;max-width:230px;
+  border:1px solid rgba(94,231,255,.28);background:rgba(6,12,24,.72);backdrop-filter:blur(14px);
+  border-radius:14px;padding:10px 13px;box-shadow:0 18px 50px -20px #000;transition:.2s;
+}
+.globe-hud .code{font-size:20px;font-weight:900;letter-spacing:-.03em;line-height:1}
+.globe-hud .name{font-size:11px;color:var(--muted);margin-top:3px}
+.globe-hud .gain{font-size:12px;font-weight:800;color:var(--lime);margin-top:6px}
+.globe-hud .gain.neutral{color:var(--dim);font-weight:600}
+.globe-hud .hintline{font-size:10.5px;color:var(--dim);margin-top:5px;line-height:1.35}
+.legend{position:absolute;right:3%;bottom:7%;z-index:2;display:flex;flex-direction:column;gap:5px;font-size:10.5px;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.section-lead{max-width:var(--max);margin:0 auto;padding:26px 28px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.section-lead h2{margin:0;font-size:clamp(22px,2.4vw,32px);letter-spacing:-.04em;line-height:1.1}
+.section-lead p{margin:0;color:var(--dim);font-size:13px;max-width:46ch}
+.ideas{max-width:var(--max);margin:0 auto;padding:16px 28px 24px;display:grid;grid-template-columns:1fr 1fr 1.18fr;gap:16px;align-items:stretch}
+.card{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;padding:20px;
+  background:linear-gradient(155deg,rgba(255,255,255,.07),rgba(255,255,255,.022) 55%,rgba(94,231,255,.035));
+  backdrop-filter:blur(16px);box-shadow:0 26px 70px -40px #000;min-height:320px;
+  display:flex;flex-direction:column;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(94,231,255,.55),rgba(167,139,250,.55),transparent)}
+.card::after{content:"";position:absolute;width:180px;height:180px;right:-70px;top:-80px;border-radius:50%;background:radial-gradient(circle,rgba(94,231,255,.12),transparent 70%);pointer-events:none}
+.card .num{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--dim)}
+.card h3{margin:8px 0 6px;font-size:21px;letter-spacing:-.035em;line-height:1.15}
+.card .copy{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.5}
+.card .copy b{color:var(--text)}
+.card .metric{margin-top:auto;display:flex;align-items:flex-end;gap:9px}
+.card .metric b{font-size:clamp(30px,3.4vw,44px);letter-spacing:-.055em;line-height:.9;background:linear-gradient(180deg,#fff,#9be9ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.card .metric span{font-size:11px;color:var(--dim);line-height:1.3;padding-bottom:4px}
+.tiny{font-size:10.5px;color:var(--dim);line-height:1.4}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.tag.cy{color:#bff6ff;border-color:rgba(94,231,255,.35);background:rgba(94,231,255,.07)}
+.tag.vi{color:#ddd0ff;border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.08)}
+.tag.li{color:#d8ffbc;border-color:rgba(184,255,122,.32);background:rgba(184,255,122,.07)}
+
+/* card 1: scale */
+.scale-toggle{display:flex;gap:6px;margin-bottom:14px}
+.scale-toggle button{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:11px;font-weight:800;padding:6px 10px;border-radius:999px;cursor:pointer;transition:.18s}
+.scale-toggle button:hover{color:var(--text);border-color:rgba(94,231,255,.4)}
+.scale-toggle button.on{background:var(--cyan);border-color:transparent;color:#04131a}
+.bars{display:grid;gap:13px;margin:4px 0 14px}
+.bar-line{display:grid;gap:5px}
+.bar-label{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim);font-weight:700;letter-spacing:.04em}
+.bar-label b{color:var(--text);font-weight:800}
+.bar-track{height:10px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid rgba(255,255,255,.05)}
+.bar-fill{height:100%;border-radius:999px;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.bar-fill.wiki{background:linear-gradient(90deg,#41506b,#6b7f9e)}
+.bar-fill.cc{background:linear-gradient(90deg,var(--cyan),var(--violet));box-shadow:0 0 22px rgba(94,231,255,.45)}
+.bar-fill.cc.low{background:linear-gradient(90deg,var(--gold),var(--rose));box-shadow:0 0 22px rgba(255,122,182,.4)}
+.scale-note{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:11px;border:1px solid rgba(94,231,255,.18);background:rgba(94,231,255,.05);font-size:11.5px;color:#cdedf7}
+.scale-note b{color:#fff}
+
+/* card 2: transfer */
+.transfer{position:relative;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;margin:2px 0 12px;min-height:130px}
+.transfer-src{position:relative;z-index:2;width:62px;height:62px;border-radius:19px;display:grid;place-items:center;font-weight:900;font-size:20px;letter-spacing:-.03em;color:#07131a;background:linear-gradient(145deg,#d9fbff,var(--cyan));box-shadow:0 0 34px rgba(94,231,255,.4)}
+.transfer-src small{position:absolute;bottom:-17px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:.1em;color:var(--dim);font-weight:800}
+.transfer-lines{position:absolute;left:54px;top:50%;width:66px;height:110px;transform:translateY(-50%);pointer-events:none;z-index:1}
+.transfer-lines line{stroke:url(#tline);stroke-width:1.4;stroke-dasharray:4 4;animation:dashflow 4s linear infinite}
+@keyframes dashflow{to{stroke-dashoffset:-32}}
+.targets{position:relative;z-index:2;display:flex;flex-direction:column;gap:5px}
+.tchip{appearance:none;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:9px;padding:6px 9px;color:var(--muted);cursor:pointer;transition:.18s;font-size:11.5px;text-align:left}
+.tchip:hover,.tchip.on{border-color:rgba(184,255,122,.45);background:rgba(184,255,122,.07);color:var(--text);transform:translateX(2px)}
+.tchip b{color:var(--lime);font-size:11px;font-variant-numeric:tabular-nums}
+.tchip span{display:flex;align-items:center;gap:6px}
+.tchip i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;display:inline-block}
+.transfer-readout{font-size:11.5px;color:var(--dim);min-height:32px;border-top:1px solid var(--line);padding-top:9px}
+.transfer-readout b{color:var(--text)}
+
+/* card 3: curve */
+.curve-card{padding-bottom:16px}
+.curve-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.curve-readout{text-align:right;line-height:1}
+.curve-readout b{display:block;font-size:31px;letter-spacing:-.05em;background:linear-gradient(180deg,#fff,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.curve-readout span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.legend-inline{display:flex;gap:12px;flex-wrap:wrap;font-size:10.5px;color:var(--dim);margin:2px 0 0}
+.legend-inline span{display:flex;align-items:center;gap:5px}
+.legend-inline i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.chart-wrap{margin:6px 0 2px}
+.chart-wrap svg{display:block;width:100%;height:auto;overflow:visible}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:2px}
+.slider-row label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:800;white-space:nowrap}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;cursor:pointer;margin:0;
+}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--rose))}
+input[type=range]::-moz-range-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--rose))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #0a1220;box-shadow:0 0 16px var(--cyan);margin-top:-5px}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #0a1220;box-shadow:0 0 16px var(--cyan)}
+.curve-note{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;color:var(--dim);margin-top:-2px}
+.curve-note b{color:var(--cyan);font-weight:800}
+.curve-note i{color:var(--rose);font-style:normal;font-weight:800}
+
+/* closing */
+.closing{max-width:var(--max);margin:0 auto;padding:6px 28px 40px}
+.closing-card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;padding:22px 24px;background:linear-gradient(120deg,rgba(94,231,255,.08),rgba(167,139,250,.07) 50%,rgba(255,122,182,.06));backdrop-filter:blur(14px);display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center}
+.closing-card h3{margin:0 0 6px;font-size:clamp(20px,2.2vw,28px);letter-spacing:-.04em}
+.closing-card p{margin:0;color:var(--muted);font-size:13.5px;max-width:62ch}
+.closing-card p b{color:var(--text)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini-compare{border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:rgba(5,9,18,.35)}
+.mini-compare span{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.mini-compare .vals{display:flex;align-items:baseline;gap:6px;margin-top:2px;font-weight:900;letter-spacing:-.04em}
+.mini-compare .vals b{font-size:26px;color:#fff}
+.mini-compare .vals em{font-style:normal;font-size:11px;color:var(--dim);font-weight:700}
+.mini-compare .vals .win{color:var(--lime)}
+.foot{max-width:var(--max);margin:0 auto;padding:0 28px 36px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:11.5px}
+.foot a{color:var(--muted);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.22)}
+.foot a:hover{color:var(--cyan)}
+.js [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.js [data-reveal].in{opacity:1;transform:none}
+@media (max-width:1040px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:10px;gap:26px}
+  .globe-wrap{max-width:520px;max-height:520px}
+  .ideas{grid-template-columns:1fr 1fr}
+  .curve-card{grid-column:1/-1}
+  .closing-card{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .topbar{padding:18px 20px}
+  .wrap,.hero,.section-lead,.ideas,.closing,.foot{padding-left:20px;padding-right:20px}
+  .hero h1{font-size:clamp(72px,22vw,130px)}
+  .ideas{grid-template-columns:1fr}
+  .curve-card{grid-column:auto}
+  .globe-hud{left:4%;bottom:4%}
+  .legend{display:none}
+  .globe-wrap{max-width:420px;max-height:420px}
+  .duo{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+}
+button,input{font-family:inherit}
+#curveLangs{color:#fff;font-weight:800}
+::selection{background:rgba(94,231,255,.3);color:#fff}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.card{transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s}
+.card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.2)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (max-width:420px){
+  .stat{min-width:calc(50% - 5px);flex:1}
+  .duo{grid-template-columns:1fr}
+  .transfer{grid-template-columns:1fr;justify-items:start}
+  .transfer-lines{display:none}
+  .targets{width:100%}
+}
+@media (hover:none){
+  .card:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+</div>
+<header class="topbar">
+  <a class="brand" href="xlm_r_ideas.html">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>Paper Visuals<small>Drei Ideen, drei Seiten</small></span>
+  </a>
+  <nav class="paper-nav" aria-label="Paper">
+    <a class="on" href="xlm_r_ideas.html">01 · XLM-R</a>
+    <a href="fibered_algebra_ideas.html">02 · Fibered Algebra</a>
+    <a href="categorical_dl_ideas.html">03 · Categorical DL</a>
+  </nav>
+</header>
+<main>
+<section class="hero">
+  <div>
+    <div class="eyebrow">arXiv:1911.02116 · Conneau et al. · ACL 2020</div>
+    <h1>XLM<span class="dash">-</span>R</h1>
+    <p class="tagline">Ein Modell. <b>100 Sprachen.</b><br><em>Null</em> Paralleltexte.</p>
+    <p class="lede">Ein multilinguales Masked-Language-Model, trainiert auf <b>2,5 TB</b> gefiltertem CommonCrawl. Die Pointe: Skalierung allein macht aus unüberwachtem Text einen erstaunlich guten cross-lingualen Transfer – ganz ohne Übersetzungen.</p>
+    <div class="stats">
+      <div class="stat"><b>100</b><span>Sprachen</span></div>
+      <div class="stat"><b>2,5 TB</b><span>CC-100 Text</span></div>
+      <div class="stat"><b>550 M</b><span>Parameter</span></div>
+      <div class="stat"><b>250 k</b><span>SPM-Vokabular</span></div>
+    </div>
+    <div class="hint"><i></i> Dreh den Globus · klick einen Sprachpunkt</div>
+  </div>
+  <div class="globe-wrap">
+    <canvas id="globe" aria-label="Rotierender Globus mit 100 Sprachpunkten; hervorgehoben sind Low-Resource-Sprachen"></canvas>
+    <div class="globe-hud" id="globeHud" aria-live="polite">
+      <div class="code">EN</div>
+      <div class="name">Englisch · Ausgangssprache</div>
+      <div class="gain neutral">Fine-tune hier → Transfer überall</div>
+      <div class="hintline">Die Leuchtpunkte sind Low-Resource-Sprachen mit den größten Gewinnen.</div>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span><i style="background:#5ee7ff"></i> High-Resource</span>
+      <span><i style="background:#ffd166"></i> Low-Resource</span>
+      <span><i style="background:#a78bfa"></i> andere Sprachen</span>
+    </div>
+  </div>
+</section>
+<div class="section-lead">
+  <h2>Drei Ideen, die den Unterschied machen</h2>
+  <p>Jede Karte ist eine Kernaussage. Die Kurve ist interaktiv – zieh den Regler.</p>
+</div>
+<section class="ideas">
+
+  <article class="card" data-reveal>
+    <div class="num">Idee 01 · Skalierung</div>
+    <h3>Daten schlagen Wikipedia</h3>
+    <p class="copy">Statt Wikipedia: <b>CC-100</b>, ein gefilterter CommonCrawl-Korpus. Für Low-Resource-Sprachen bedeutet das oft <b>zwei Größenordnungen</b> mehr Text.</p>
+    <div class="scale-toggle" role="group" aria-label="Datenvergleich">
+      <button class="on" data-mode="low">Low-Resource</button>
+      <button data-mode="high">High-Resource</button>
+    </div>
+    <div class="bars">
+      <div class="bar-line">
+        <div class="bar-label"><span>Wikipedia</span><b id="wikiVal">×1</b></div>
+        <div class="bar-track"><div class="bar-fill wiki" id="wikiBar"></div></div>
+      </div>
+      <div class="bar-line">
+        <div class="bar-label"><span>CC-100</span><b id="ccVal">×100</b></div>
+        <div class="bar-track"><div class="bar-fill cc low" id="ccBar"></div></div>
+      </div>
+    </div>
+    <div class="metric"><b id="scaleBig">×100</b><span>mehr Trainings&shy;text<br><span id="scaleScope">für Low-Resource</span></span></div>
+    <p class="tiny" style="margin:8px 0 0">Schematisch, logarithmisch gedacht – die realen Verhältnisse variieren je Sprache stark.</p>
+  </article>
+
+  <article class="card" data-reveal>
+    <div class="num">Idee 02 · Transfer</div>
+    <h3>Ein Fine-Tune reicht</h3>
+    <p class="copy">Nur auf <b>Englisch</b> überwacht fine-tunen – und dann in anderen Sprachen evaluieren. Der gemeinsame Vektorraum macht es möglich.</p>
+    <div class="transfer">
+      <div class="transfer-src">EN<small>ENGLISH</small></div>
+      <svg class="transfer-lines" viewBox="0 0 70 120" aria-hidden="true">
+        <defs>
+          <linearGradient id="tline" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#5ee7ff"/><stop offset="1" stop-color="#b8ff7a"/>
+          </linearGradient>
+        </defs>
+        <line x1="2" y1="60" x2="66" y2="14"/>
+        <line x1="2" y1="60" x2="66" y2="42"/>
+        <line x1="2" y1="60" x2="66" y2="78"/>
+        <line x1="2" y1="60" x2="66" y2="106"/>
+      </svg>
+      <div class="targets" id="targets">
+        <button class="tchip" data-lang="SW" data-name="Swahili" data-gain="+23,5 %"><span><i></i>Swahili</span><b>+23,5</b></button>
+        <button class="tchip" data-lang="UR" data-name="Urdu" data-gain="+15,8 %"><span><i></i>Urdu</span><b>+15,8</b></button>
+        <button class="tchip" data-lang="HI" data-name="Hindi" data-gain="+16,9 %"><span><i></i>Hindi</span><b>+16,9</b></button>
+        <button class="tchip" data-lang="AR" data-name="Arabisch" data-gain="+14,9 %"><span><i></i>Arabisch</span><b>+14,9</b></button>
+      </div>
+    </div>
+    <div class="transfer-readout" id="transferReadout">Gewinn gegenüber mBERT auf XNLI. Klick eine Sprache.</div>
+    <div class="tag-row"><span class="tag cy">XNLI Ø +14,6 %</span><span class="tag vi">MLQA +13 % F1</span></div>
+  </article>
+
+  <article class="card curve-card" data-reveal>
+    <div class="curve-top">
+      <div>
+        <div class="num">Idee 03 · Grenze</div>
+        <h3>Der Fluch der Vielsprachigkeit</h3>
+      </div>
+      <div class="curve-readout"><b id="curveVal">73,5</b><span>XNLI · <span id="curveLangs">15</span> Sprachen</span></div>
+    </div>
+    <p class="copy">Mehr Sprachen helfen zunächst – bis <b>Kapazitätsverwässerung</b> den Gewinn auffrisst. Mehr Modellkapazität verschiebt die Grenze nach oben.</p>
+    <div class="legend-inline">
+      <span><i style="background:linear-gradient(90deg,#5ee7ff,#a78bfa)"></i>1× Kapazität</span>
+      <span><i style="background:linear-gradient(90deg,#b8ff7a,#ffd166)"></i>2× Kapazität</span>
+    </div>
+    <div class="chart-wrap">
+      <svg id="curveSvg" viewBox="0 0 420 190" role="img" aria-label="Schematische XNLI-Kurve: Performance steigt mit mehr Sprachen, fällt dann durch Kapazitätsverwässerung; doppelte Kapazität hebt die Kurve.">
+        <defs>
+          <linearGradient id="c1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#5ee7ff"/><stop offset="1" stop-color="#a78bfa"/>
+          </linearGradient>
+          <linearGradient id="c2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#b8ff7a"/><stop offset="1" stop-color="#ffd166"/>
+          </linearGradient>
+          <linearGradient id="fill1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#5ee7ff" stop-opacity=".22"/><stop offset="1" stop-color="#5ee7ff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <g stroke="rgba(255,255,255,.09)" stroke-width="1">
+          <line x1="34" y1="22" x2="406" y2="22"/>
+          <line x1="34" y1="62" x2="406" y2="62"/>
+          <line x1="34" y1="102" x2="406" y2="102"/>
+          <line x1="34" y1="142" x2="406" y2="142"/>
+        </g>
+        <text x="34" y="184" fill="#5f718c" font-size="9" font-family="ui-sans-serif, system-ui">7</text>
+        <text x="219" y="184" fill="#5f718c" font-size="9" text-anchor="middle" font-family="ui-sans-serif, system-ui">53</text>
+        <text x="406" y="184" fill="#5f718c" font-size="9" text-anchor="end" font-family="ui-sans-serif, system-ui">100 Sprachen</text>
+        <text x="34" y="16" fill="#5f718c" font-size="9" font-family="ui-sans-serif, system-ui">XNLI</text>
+        <path id="fillPath" fill="url(#fill1)" d=""/>
+        <path id="curveA" fill="none" stroke="url(#c1)" stroke-width="3" stroke-linecap="round" d=""/>
+        <path id="curveB" fill="none" stroke="url(#c2)" stroke-width="2.4" stroke-dasharray="7 5" stroke-linecap="round" d=""/>
+        <line id="guide" x1="0" y1="18" x2="0" y2="142" stroke="rgba(255,255,255,.25)" stroke-width="1" stroke-dasharray="3 3"/>
+        <circle id="dotA" r="5" fill="#fff" stroke="#5ee7ff" stroke-width="3"/>
+        <circle id="dotB" r="4" fill="#fff" stroke="#b8ff7a" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div class="slider-row">
+      <label for="langSlider">Sprachen</label>
+      <input id="langSlider" type="range" min="7" max="100" step="1" value="15">
+    </div>
+    <div class="curve-note"><span><b>← Transfer</b></span><span><i>Dilution →</i></span></div>
+    <p class="tiny" id="curveHint" style="margin:6px 0 0">Bei 15 Sprachen liegt die schematische Kurve nahe am Optimum. Zieh weiter nach rechts.</p>
+  </article>
+
+</section>
+<section class="closing">
+  <div class="closing-card" data-reveal>
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px">Die Botschaft</div>
+      <h3>Ein Modell für alle – ohne echten Sprachverlust</h3>
+      <p>Multilinguales Vortraining skaliert nicht nur, es <b>ersetzt</b> für viele Sprachen das eigene Modell. XLM-R ist auf GLUE fast so stark wie das monolinguale RoBERTa – und auf XNLI deutlich besser als mBERT. Der Preis: Der „Fluch der Vielsprachigkeit“ bleibt ein reales Limit.</p>
+    </div>
+    <div class="duo">
+      <div class="mini-compare">
+        <span>GLUE · Englisch</span>
+        <div class="vals"><b>91,8</b><em>vs 92,8 RoBERTa</em></div>
+      </div>
+      <div class="mini-compare">
+        <span>XNLI · Transfer</span>
+        <div class="vals"><b class="win">80,9</b><em>vs 66,3 mBERT</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="foot">
+  <div>
+    <b style="color:var(--muted)">Quelle:</b> Conneau et al., „Unsupervised Cross-lingual Representation Learning at Scale“, arXiv:1911.02116 (ACL 2020).
+    <br>Vereinfachte, schematische Visualisierung. Globus und Kurve sind didaktische Modelle, keine Originaldaten.
+  </div>
+  <div><a href="https://arxiv.org/abs/1911.02116" target="_blank" rel="noopener">Original auf arXiv ↗</a></div>
+</footer>
+<script>
+document.documentElement.classList.add('js');
+
+/* ---------- Globe ---------- */
+(function () {
+  const canvas = document.getElementById('globe');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const hud = document.getElementById('globeHud');
+  const defaultHud = hud ? hud.innerHTML : '';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const N = 100;
+  const LOW = [
+    { code: 'SW', name: 'Swahili', gain: '+23,5 % XNLI vs. mBERT' },
+    { code: 'UR', name: 'Urdu', gain: '+15,8 % XNLI vs. mBERT' },
+    { code: 'HI', name: 'Hindi', gain: '+16,9 % XNLI vs. mBERT' },
+    { code: 'AR', name: 'Arabisch', gain: '+14,9 % XNLI vs. mBERT' },
+    { code: 'BN', name: 'Bengalisch', gain: 'klarer Low-Resource-Gewinn' },
+    { code: 'YO', name: 'Yoruba', gain: 'klarer Low-Resource-Gewinn' },
+    { code: 'MY', name: 'Birmanisch', gain: 'klarer Low-Resource-Gewinn' },
+    { code: 'AM', name: 'Amharisch', gain: 'klarer Low-Resource-Gewinn' }
+  ];
+  const OTHER = ['FR','DE','ES','IT','PT','RU','ZH','JA','KO','TR','VI','TH','ID','NL','PL','UK','FA','HE','EL','CS','SV','DA','FI','NO','RO','HU','BG','HR','SK','SL','ET','LV','LT','CA','EU','AF','SQ','MK','SR','BS','BE','KK','KY','UZ','AZ','HY','KA','MN','NE','SI','TA','TE','ML','KN','MR','GU','PA','OR','AS','SD','PS','KU','TL','JV','MS','FIL','ZU','XH','ST','SN','NY','IG','HA','FF','WO','BM','LB','MG','CEB','CY','GA','GD','IS','MT','FO','RM','EO','LA','MI','SO','TK','TT','BA','CV','UG','SA','BO','DZ','KM','LO','JBO','GL','EU'];
+
+  function fib(n) {
+    const pts = [];
+    const ga = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < n; i++) {
+      const y = 1 - (i / (n - 1)) * 2;
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = ga * i;
+      pts.push({ x: Math.cos(th) * r, y, z: Math.sin(th) * r });
+    }
+    return pts;
+  }
+
+  const points = fib(N).map((p, i) => {
+    if (i === 0) return { ...p, type: 'en', code: 'EN', name: 'Englisch · Ausgangssprache', gain: 'Fine-tune hier → Transfer überall' };
+    if (i <= LOW.length) {
+      const l = LOW[i - 1];
+      return { ...p, type: 'low', code: l.code, name: l.name, gain: l.gain };
+    }
+    return { ...p, type: 'other', code: OTHER[(i - LOW.length - 1) % OTHER.length], name: 'Sprache im CC-100', gain: '' };
+  });
+
+  let W = 0, H = 0, R = 0, CX = 0, CY = 0, dpr = 1;
+  let rot = 0.4, tilt = -0.3, paused = false, hovered = null, projected = [];
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(1, rect.width);
+    H = Math.max(1, rect.height);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    R = Math.min(W, H) * 0.345;
+    CX = W / 2;
+    CY = H / 2;
+  }
+
+  function project(p) {
+    const cr = Math.cos(rot), sr = Math.sin(rot);
+    const x1 = p.x * cr + p.z * sr;
+    const z1 = -p.x * sr + p.z * cr;
+    const ct = Math.cos(tilt), st = Math.sin(tilt);
+    const y1 = p.y * ct - z1 * st;
+    const z2 = p.y * st + z1 * ct;
+    const persp = 1 / (1 - 0.16 * z2);
+    return { x: CX + x1 * R * persp, y: CY + y1 * R * persp, z: z2, k: persp };
+  }
+
+  const circles = [];
+  for (let k = -2; k <= 2; k++) {
+    const y = k * 0.33;
+    circles.push({ type: 'lat', y, r: Math.sqrt(Math.max(0, 1 - y * y)) });
+  }
+  for (let m = 0; m < 4; m++) circles.push({ type: 'lon', phi: (m * Math.PI) / 4 });
+
+  function drawWire() {
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(120,190,255,.10)';
+    circles.forEach(c => {
+      ctx.beginPath();
+      const steps = 72;
+      let started = false;
+      for (let i = 0; i <= steps; i++) {
+        const th = (i / steps) * Math.PI * 2;
+        let p;
+        if (c.type === 'lat') p = { x: c.r * Math.cos(th), y: c.y, z: c.r * Math.sin(th) };
+        else p = { x: Math.cos(th) * Math.cos(c.phi), y: Math.sin(th), z: Math.cos(th) * Math.sin(c.phi) };
+        const q = project(p);
+        if (!started) { ctx.moveTo(q.x, q.y); started = true; } else ctx.lineTo(q.x, q.y);
+      }
+      ctx.stroke();
+    });
+  }
+
+  function colorFor(p) {
+    if (p.type === 'en') return '#ffffff';
+    if (p.type === 'low') return '#ffd166';
+    return p.code.charCodeAt(0) % 2 === 0 ? '#a78bfa' : '#5ee7ff';
+  }
+
+  function setHud(p) {
+    if (!hud) return;
+    if (!p) { hud.innerHTML = defaultHud; return; }
+    let extra = 'Sprache im 100-Sprachen-Korpus';
+    if (p.type === 'en') extra = 'Ausgangssprache für den Transfer';
+    if (p.type === 'low') extra = 'Low-Resource · profitiert besonders von CC-100';
+    hud.innerHTML = `<div class="code">${p.code}</div><div class="name">${p.name}</div>` +
+      `<div class="gain ${p.type === 'en' ? 'neutral' : ''}">${p.gain || 'im gemeinsamen Vektorraum'}</div>` +
+      `<div class="hintline">${extra}</div>`;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    const atmo = ctx.createRadialGradient(CX, CY, R * 0.15, CX, CY, R * 1.14);
+    atmo.addColorStop(0, 'rgba(94,231,255,.13)');
+    atmo.addColorStop(0.55, 'rgba(120,90,255,.07)');
+    atmo.addColorStop(1, 'rgba(4,6,14,0)');
+    ctx.fillStyle = atmo;
+    ctx.beginPath(); ctx.arc(CX, CY, R * 1.14, 0, Math.PI * 2); ctx.fill();
+
+    drawWire();
+
+    const enQ = project(points[0]);
+    points.forEach(p => {
+      if (p.type !== 'low') return;
+      const q = project(p);
+      if (enQ.z < -0.2 && q.z < -0.2) return;
+      const mx = (enQ.x + q.x) / 2, my = (enQ.y + q.y) / 2;
+      const dx = q.x - enQ.x, dy = q.y - enQ.y;
+      ctx.beginPath();
+      ctx.moveTo(enQ.x, enQ.y);
+      ctx.quadraticCurveTo(mx - dy * 0.16, my + dx * 0.16, q.x, q.y);
+      ctx.strokeStyle = 'rgba(255,209,102,.10)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    const list = points.map(p => ({ p, q: project(p) })).sort((a, b) => a.q.z - b.q.z);
+    projected = list;
+
+    list.forEach(({ p, q }) => {
+      const front = (q.z + 1) / 2;
+      const isLow = p.type === 'low', isEn = p.type === 'en';
+      const base = isEn ? 4.6 : isLow ? 3.5 : 1.7;
+      const rad = (base + front * (isEn ? 2.6 : isLow ? 1.9 : 1.2)) * q.k;
+      const alpha = 0.18 + front * 0.82;
+      const isHover = hovered === p;
+
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(q.x, q.y, rad + (isHover ? 2.2 : 0), 0, Math.PI * 2);
+      ctx.fillStyle = colorFor(p);
+      if (isLow || isEn || isHover) {
+        ctx.shadowColor = colorFor(p);
+        ctx.shadowBlur = isEn ? 22 : isLow ? 14 : 10;
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      if (isEn) {
+        ctx.globalAlpha = 0.9;
+        ctx.strokeStyle = 'rgba(255,255,255,.55)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(q.x, q.y, rad + 6, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      if ((isLow || isEn) && q.z > 0.12) {
+        ctx.globalAlpha = Math.min(1, 0.35 + front);
+        ctx.fillStyle = isEn ? '#ffffff' : '#ffe6a3';
+        ctx.font = isEn ? '800 11px ui-sans-serif, system-ui' : '700 9.5px ui-sans-serif, system-ui';
+        ctx.textAlign = 'left';
+        ctx.fillText(p.code, q.x + rad + 5, q.y - rad - 2);
+      }
+    });
+
+    ctx.globalAlpha = 1;
+
+    const rim = ctx.createLinearGradient(CX - R, CY - R, CX + R, CY + R);
+    rim.addColorStop(0, 'rgba(94,231,255,.35)');
+    rim.addColorStop(0.5, 'rgba(167,139,250,.10)');
+    rim.addColorStop(1, 'rgba(255,122,182,.25)');
+    ctx.strokeStyle = rim;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(CX, CY, R * 1.02, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  function nearest(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left, y = clientY - rect.top;
+    let best = null, bd = 24 * 24;
+    projected.forEach(({ p, q }) => {
+      if (p.type === 'other') return;
+      const d = (q.x - x) * (q.x - x) + (q.y - y) * (q.y - y);
+      if (d < bd) { bd = d; best = p; }
+    });
+    return best;
+  }
+
+  canvas.addEventListener('pointermove', e => {
+    const p = nearest(e.clientX, e.clientY);
+    hovered = p;
+    setHud(p);
+    if (reduce) draw();
+  });
+  canvas.addEventListener('pointerleave', () => {
+    hovered = null;
+    paused = false;
+    setHud(null);
+    if (reduce) draw();
+  });
+  canvas.addEventListener('pointerenter', () => { paused = true; });
+  canvas.addEventListener('pointerup', () => { setTimeout(() => { paused = false; }, 2600); });
+  canvas.addEventListener('pointerdown', e => {
+    paused = true;
+    const p = nearest(e.clientX, e.clientY);
+    hovered = p;
+    setHud(p);
+    if (reduce) draw();
+  });
+
+  let last = 0;
+  function frame(ts) {
+    if (!last) last = ts;
+    const dt = Math.min(48, ts - last);
+    last = ts;
+    if (!paused) rot += dt * 0.00016;
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  const ro = new ResizeObserver(() => { resize(); draw(); });
+  ro.observe(canvas);
+  if (reduce) draw(); else requestAnimationFrame(frame);
+})();
+
+/* ---------- Scale card ---------- */
+(function () {
+  const buttons = [...document.querySelectorAll('.scale-toggle button')];
+  const wikiBar = document.getElementById('wikiBar');
+  const ccBar = document.getElementById('ccBar');
+  const wikiVal = document.getElementById('wikiVal');
+  const ccVal = document.getElementById('ccVal');
+  const big = document.getElementById('scaleBig');
+  const scope = document.getElementById('scaleScope');
+  if (!buttons.length) return;
+
+  const data = {
+    low: { wiki: 7, cc: 100, wv: '×1', cv: '×100', big: '×100', scope: 'für Low-Resource' },
+    high: { wiki: 15, cc: 100, wv: '×1', cv: '×10', big: '×10', scope: 'für High-Resource' }
+  };
+
+  function apply(mode, animate) {
+    const d = data[mode];
+    buttons.forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+    if (!animate) {
+      wikiBar.style.transition = 'none';
+      ccBar.style.transition = 'none';
+    }
+    wikiBar.style.width = d.wiki + '%';
+    ccBar.style.width = d.cc + '%';
+    wikiBar.classList.toggle('low', false);
+    ccBar.classList.toggle('low', mode === 'low');
+    wikiVal.textContent = d.wv;
+    ccVal.textContent = d.cv;
+    big.textContent = d.big;
+    scope.textContent = d.scope;
+    if (!animate) {
+      void wikiBar.offsetWidth;
+      wikiBar.style.transition = '';
+      ccBar.style.transition = '';
+    }
+  }
+
+  buttons.forEach(b => b.addEventListener('click', () => apply(b.dataset.mode, true)));
+  apply('low', false);
+})();
+
+/* ---------- Transfer card ---------- */
+(function () {
+  const chips = [...document.querySelectorAll('.tchip')];
+  const out = document.getElementById('transferReadout');
+  if (!chips.length || !out) return;
+
+  function activate(chip) {
+    chips.forEach(c => c.classList.toggle('on', c === chip));
+    const name = chip.dataset.name;
+    const gain = chip.dataset.gain;
+    out.innerHTML = `<b>${name}</b> · <b style="color:var(--lime)">${gain}</b> XNLI-Gewinn gegenüber mBERT – mit demselben auf Englisch fine-tunten Modell.`;
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => activate(chip));
+    chip.addEventListener('mouseenter', () => activate(chip));
+  });
+})();
+/* ---------- Multilinguality curve ---------- */
+(function () {
+  const svg = document.getElementById('curveSvg');
+  if (!svg) return;
+  const curveA = document.getElementById('curveA');
+  const curveB = document.getElementById('curveB');
+  const fillPath = document.getElementById('fillPath');
+  const dotA = document.getElementById('dotA');
+  const dotB = document.getElementById('dotB');
+  const guide = document.getElementById('guide');
+  const slider = document.getElementById('langSlider');
+  const valEl = document.getElementById('curveVal');
+  const langsEl = document.getElementById('curveLangs');
+  const hint = document.getElementById('curveHint');
+
+  const X0 = 34, X1 = 406, Y0 = 22, Y1 = 142;
+  const VMIN = 66, VMAX = 75;
+
+  const xFor = n => X0 + ((n - 7) / 93) * (X1 - X0);
+  const yFor = v => Y1 - ((v - VMIN) / (VMAX - VMIN)) * (Y1 - Y0);
+
+  function perf(n, cap) {
+    return 71.8 + 2.1 * (1 - Math.exp(-(n - 7) / 4.5)) - (6.5 * Math.pow((n - 7) / 93, 2)) / cap;
+  }
+
+  function fmt(v) { return v.toFixed(1).replace('.', ','); }
+
+  let pathA = '', pathB = '';
+  for (let n = 7; n <= 100; n += 1) {
+    const a = xFor(n), ya = yFor(perf(n, 1));
+    const yb = yFor(perf(n, 2));
+    pathA += (n === 7 ? 'M' : 'L') + a.toFixed(1) + ',' + ya.toFixed(1) + ' ';
+    pathB += (n === 7 ? 'M' : 'L') + a.toFixed(1) + ',' + yb.toFixed(1) + ' ';
+  }
+  curveA.setAttribute('d', pathA);
+  curveB.setAttribute('d', pathB);
+  fillPath.setAttribute('d', pathA + `L${X1},${Y1} L${X0},${Y1} Z`);
+
+  function update(n) {
+    const x = xFor(n);
+    const v1 = perf(n, 1), v2 = perf(n, 2);
+    dotA.setAttribute('cx', x); dotA.setAttribute('cy', yFor(v1));
+    dotB.setAttribute('cx', x); dotB.setAttribute('cy', yFor(v2));
+    guide.setAttribute('x1', x); guide.setAttribute('x2', x);
+    valEl.textContent = fmt(v1);
+    langsEl.textContent = n;
+    if (n <= 16) hint.innerHTML = `Bei ${n} Sprachen liegt die schematische Kurve nahe am Optimum: Transfer gewinnt, Dilution ist noch klein.`;
+    else if (n <= 40) hint.innerHTML = `Bei ${n} Sprachen beginnt die <b style="color:var(--rose)">Kapazitätsverwässerung</b> den Transfergewinn aufzufressen.`;
+    else hint.innerHTML = `Bei ${n} Sprachen dominiert die Dilution. Mehr Kapazität (gestrichelte Kurve) hebt das Niveau – löst das Problem aber nicht ganz.`;
+    const diff = v2 - v1;
+    hint.innerHTML += ` <span style="color:var(--dim)">1×: ${fmt(v1)} · 2×: ${fmt(v2)} (+${fmt(diff)})</span>`;
+  }
+
+  if (slider) {
+    slider.addEventListener('input', () => update(Number(slider.value)));
+    update(Number(slider.value));
+  } else {
+    update(15);
+  }
+})();
+
+/* ---------- Reveal on scroll ---------- */
+(function () {
+  const els = [...document.querySelectorAll('[data-reveal]')];
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  els.forEach((el, i) => {
+    el.style.transitionDelay = (i % 3) * 90 + 'ms';
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>

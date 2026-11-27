@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Categorical Deep Learning – die Idee in einer Seite</title>
+<style>
+:root{
+  --bg:#f3f0e7;--ink:#121216;--muted:#57544c;--dim:#8b867a;
+  --paper:#fffdf8;--line:rgba(18,18,22,.14);
+  --blue:#2447ff;--coral:#ff5a5f;--lime:#c8ff3d;--violet:#7b3ff2;--cyan:#00b8ae;
+  --max:1280px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);overflow-x:hidden;
+  background:
+    radial-gradient(900px 680px at 84% -12%, rgba(36,71,255,.14), transparent 62%),
+    radial-gradient(820px 620px at -10% 18%, rgba(255,90,95,.11), transparent 62%),
+    radial-gradient(760px 560px at 48% 112%, rgba(200,255,61,.18), transparent 66%),
+    var(--bg);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-image:radial-gradient(rgba(18,18,22,.14) 1px,transparent 1px);
+  background-size:24px 24px;opacity:.5;
+  mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 78%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(243,240,231,0) 0%,rgba(243,240,231,.35) 60%,rgba(243,240,231,.8) 100%);
+}
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 28px}
+.topbar{max-width:var(--max);margin:0 auto;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);font-weight:900;letter-spacing:-.03em}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:conic-gradient(from 200deg,var(--blue),var(--violet),var(--coral),var(--lime),var(--blue));box-shadow:0 6px 18px rgba(36,71,255,.25);position:relative;flex:0 0 auto}
+.brand-mark::after{content:"";position:absolute;inset:6px;border-radius:5px;background:var(--paper)}
+.brand small{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.paper-nav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px}
+.paper-nav a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:rgba(255,255,255,.5);padding:6px 10px;border-radius:999px;transition:.18s;white-space:nowrap}
+.paper-nav a:hover{color:var(--ink);border-color:rgba(18,18,22,.3);background:#fff}
+.paper-nav a.on{color:#fff;background:var(--ink);border-color:transparent;font-weight:800}
+.hero{max-width:var(--max);margin:0 auto;padding:12px 28px 16px;display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:center;min-height:calc(100vh - 96px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--blue);font-family:var(--mono)}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--blue),transparent)}
+.hero h1{margin:14px 0 14px;font-size:clamp(44px,6.2vw,88px);line-height:.9;letter-spacing:-.06em;font-weight:900}
+.hero h1 .hl{
+  display:inline-block;background:linear-gradient(100deg,var(--blue) 0%,var(--violet) 48%,var(--coral) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 16px 30px rgba(36,71,255,.16));
+}
+.hero h1 .q{display:inline-block;font-family:Georgia,serif;font-style:italic;font-weight:400;color:var(--coral);transform:translateY(-.08em)}
+.tagline{margin:0 0 14px;font-size:clamp(20px,2.1vw,30px);line-height:1.1;font-weight:800;letter-spacing:-.035em;max-width:24ch}
+.tagline b{color:var(--blue)}
+.tagline em{font-style:normal;background:linear-gradient(90deg,var(--coral),var(--violet));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lede{margin:0;max-width:54ch;color:var(--muted);font-size:15.5px;line-height:1.65}
+.lede b{color:var(--ink)}
+.stats{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 18px}
+.stat{border:1px solid var(--line);background:rgba(255,255,255,.58);border-radius:14px;padding:10px 14px;min-width:106px;backdrop-filter:blur(8px)}
+.stat b{display:block;font-size:19px;line-height:1.05;letter-spacing:-.02em;color:var(--ink);font-family:var(--mono)}
+.stat span{display:block;margin-top:3px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.hint{display:inline-flex;align-items:center;gap:9px;font-size:12px;color:var(--dim);letter-spacing:.05em}
+.hint i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px rgba(36,71,255,.12);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.65);opacity:.5}}
+.bridge-stage{
+  position:relative;width:100%;max-width:620px;justify-self:center;padding:14px;border-radius:30px;
+  border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.66),rgba(255,255,255,.34));
+  box-shadow:0 30px 70px -45px rgba(18,18,22,.5);backdrop-filter:blur(12px);
+}
+.tower{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:20px;padding:15px 18px;background:var(--paper);transition:opacity .35s,filter .35s,transform .35s,box-shadow .35s}
+.tower::after{content:"";position:absolute;width:170px;height:170px;right:-70px;top:-80px;border-radius:50%;pointer-events:none;opacity:.8}
+.tower.top::after{background:radial-gradient(circle,rgba(36,71,255,.14),transparent 70%)}
+.tower.bottom::after{background:radial-gradient(circle,rgba(255,90,95,.14),transparent 70%)}
+.tower-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tower-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--dim)}
+.tower-title{font-size:18px;font-weight:900;letter-spacing:-.03em;margin-top:3px}
+.tower-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.tower svg{display:block;width:118px;height:64px;flex:0 0 auto}
+.tower.active{transform:translateY(-2px);box-shadow:0 16px 36px -26px rgba(18,18,22,.6)}
+.bridge{position:relative;height:164px;display:grid;place-items:center;margin:-2px 0}
+.beam{position:absolute;left:50%;top:6px;bottom:6px;width:2px;transform:translateX(-50%);background:linear-gradient(180deg,transparent,var(--blue) 18%,var(--violet) 52%,var(--coral) 84%,transparent);opacity:.35;transition:opacity .4s}
+.beam::after{content:"";position:absolute;left:-4px;top:0;width:10px;height:42px;border-radius:999px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.9),transparent);animation:beamrun 3.4s linear infinite;opacity:0}
+.bridge-stage[data-mode="all"] .beam{opacity:.95}
+.bridge-stage[data-mode="all"] .beam::after{opacity:1}
+@keyframes beamrun{0%{top:-40px}100%{top:100%}}
+.bnodes{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;align-items:center}
+.bnodes span{
+  font-family:var(--mono);font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:5px 11px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(255,253,248,.92);color:var(--muted);transition:.3s;
+}
+.bridge-stage[data-mode="all"] .bnodes span{border-color:rgba(36,71,255,.35);color:var(--blue);box-shadow:0 8px 18px -12px rgba(36,71,255,.7)}
+.bridge-tag{position:absolute;left:50%;top:50%;transform:translate(70px,-50%);font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--dim);writing-mode:vertical-rl;text-transform:uppercase;white-space:nowrap}
+.bridge-controls{display:flex;gap:6px;justify-content:center;margin-top:2px;flex-wrap:wrap}
+.bridge-controls button{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.55);color:var(--muted);font-size:11px;font-weight:800;padding:7px 11px;border-radius:999px;cursor:pointer;transition:.18s;font-family:inherit}
+.bridge-controls button:hover{color:var(--ink);border-color:rgba(18,18,22,.3);background:#fff}
+.bridge-controls button.on{background:var(--ink);border-color:transparent;color:#fff}
+.bridge-caption{text-align:center;font-size:11.5px;color:var(--muted);margin:10px 6px 0;min-height:32px;line-height:1.4}
+.bridge-stage[data-mode="top"] .tower.bottom{opacity:.32;filter:saturate(.3);transform:scale(.985)}
+.bridge-stage[data-mode="top"] .tower.top{border-color:rgba(36,71,255,.4);box-shadow:0 16px 36px -26px rgba(36,71,255,.5)}
+.bridge-stage[data-mode="bottom"] .tower.top{opacity:.32;filter:saturate(.3);transform:scale(.985)}
+.bridge-stage[data-mode="bottom"] .tower.bottom{border-color:rgba(255,90,95,.4);box-shadow:0 16px 36px -26px rgba(255,90,95,.5)}
+.section-lead{max-width:var(--max);margin:0 auto;padding:26px 28px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.section-lead h2{margin:0;font-size:clamp(25px,2.7vw,36px);letter-spacing:-.05em;line-height:1.05;font-weight:900}
+.section-lead p{margin:0;color:var(--dim);font-size:13px;max-width:48ch}
+.ideas{max-width:var(--max);margin:0 auto;padding:16px 28px 24px;display:grid;grid-template-columns:1.08fr .96fr .96fr;gap:16px;align-items:stretch}
+.card{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:24px;padding:20px;
+  background:var(--paper);box-shadow:0 26px 55px -42px rgba(18,18,22,.55);
+  min-height:390px;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s;
+}
+.card:hover{transform:translateY(-3px);border-color:rgba(18,18,22,.24);box-shadow:0 30px 60px -40px rgba(18,18,22,.65)}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--blue),var(--violet),var(--coral),var(--lime))}
+.card .num{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;color:var(--dim)}
+.card h3{margin:8px 0 6px;font-size:21px;letter-spacing:-.045em;line-height:1.08;font-weight:900}
+.card .copy{margin:0 0 12px;color:var(--muted);font-size:12.8px;line-height:1.55}
+.card .copy b{color:var(--ink)}
+.card .copy code,.mono{font-family:var(--mono);font-size:.94em;color:var(--violet);background:rgba(123,63,242,.07);border:1px solid rgba(123,63,242,.16);border-radius:5px;padding:0 4px}
+.card .bottom{margin-top:auto}
+.tiny{font-size:10.5px;color:var(--dim);line-height:1.45}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-family:var(--mono)}
+.tag.bl{color:var(--blue);border-color:rgba(36,71,255,.3);background:rgba(36,71,255,.06)}
+.tag.co{color:#d63c42;border-color:rgba(255,90,95,.34);background:rgba(255,90,95,.07)}
+.tag.li{color:#4a7300;border-color:rgba(160,210,0,.4);background:rgba(200,255,61,.2)}
+.tag.vi{color:var(--violet);border-color:rgba(123,63,242,.3);background:rgba(123,63,242,.07)}
+
+/* architecture picker */
+.arch-tabs{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 10px}
+.arch-tab{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.6);color:var(--muted);font-size:10.5px;font-weight:800;padding:6px 9px;border-radius:8px;cursor:pointer;transition:.18s;font-family:var(--mono)}
+.arch-tab:hover{color:var(--ink);border-color:rgba(18,18,22,.3)}
+.arch-tab.on{background:var(--ink);border-color:transparent;color:#fff}
+.arch-panels{position:relative;flex:1}
+.arch-panel{display:none}
+.arch-panel.on{display:block;animation:fadeUp .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.arch-visual{height:112px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(135deg,rgba(36,71,255,.07),rgba(200,255,61,.09));display:grid;place-items:center;margin-bottom:10px;overflow:hidden}
+.arch-visual svg{width:100%;height:100%;display:block}
+.arch-formula{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.01em}
+.arch-name{font-weight:900;font-size:16px;letter-spacing:-.03em;margin-top:2px}
+.arch-desc{font-size:11.8px;color:var(--muted);line-height:1.45;margin:4px 0 0}
+.arch-out{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+
+/* para */
+.para-figure{position:relative;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(123,63,242,.05),rgba(255,255,255,.4));padding:6px 4px 0;margin:4px 0 8px}
+.para-figure svg{display:block;width:100%;height:auto}
+.para-figure:not(.tied) .tied-only{display:none}
+.para-figure.tied .untied-only{display:none}
+.pdata{stroke:var(--blue);stroke-width:2;fill:none}
+.pbox{fill:#fff;stroke:var(--ink);stroke-width:1.2}
+.pbox2{fill:#fff;stroke:var(--ink);stroke-width:1.2}
+.pparam{stroke:var(--coral);stroke-width:2;fill:none}
+.pparam2{stroke:var(--violet);stroke-width:2;fill:none}
+.pcopy{fill:rgba(200,255,61,.55);stroke:var(--ink);stroke-width:1.2}
+.ptext{font-family:var(--mono);font-size:11px;fill:var(--ink)}
+.ptext.mut{fill:var(--dim);font-size:9.5px}
+.para-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 8px}
+.para-toggle button{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.6);color:var(--muted);font-size:10.5px;font-weight:800;padding:6px 10px;border-radius:999px;cursor:pointer;transition:.18s;font-family:inherit}
+.para-toggle button.on{background:var(--coral);border-color:transparent;color:#fff}
+.para-toggle .state{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.para-readout{font-size:11.5px;color:var(--muted);min-height:38px;border-top:1px solid var(--line);padding-top:9px}
+.para-readout b{color:var(--ink)}
+
+/* vision */
+.vision-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 0}
+.vitem{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(255,255,255,.5);transition:.2s}
+.vitem:hover{border-color:rgba(36,71,255,.3);background:#fff}
+.vitem .vnum{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);font-weight:800}
+.vitem b{display:block;font-size:12px;letter-spacing:-.02em;margin-top:2px}
+.vitem span{display:block;font-size:10.5px;color:var(--muted);line-height:1.35;margin-top:3px}
+.vision-quote{margin:10px 0 0;padding:12px 14px;border-radius:12px;background:var(--ink);color:#f6f3ea;font-size:12px;line-height:1.5}
+.vision-quote b{color:var(--lime)}
+
+/* closing */
+.closing{max-width:var(--max);margin:0 auto;padding:6px 28px 40px}
+.closing-card{position:relative;overflow:hidden;border-radius:26px;padding:26px;background:var(--ink);color:#f6f3ea;display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;box-shadow:0 34px 70px -40px rgba(18,18,22,.7)}
+.closing-card::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 92% 0%,rgba(36,71,255,.25),transparent 60%),radial-gradient(500px 300px at 0% 100%,rgba(200,255,61,.12),transparent 60%);pointer-events:none}
+.closing-card .eyebrow{color:var(--lime)}
+.closing-card .eyebrow::before{background:linear-gradient(90deg,var(--lime),transparent)}
+.closing-card h3{margin:8px 0 6px;font-size:clamp(22px,2.5vw,32px);letter-spacing:-.045em;font-weight:900;line-height:1.05}
+.closing-card p{margin:0;color:#b9b4a8;font-size:13.5px;max-width:64ch}
+.closing-card p b{color:#fff}
+.bigformula{position:relative;text-align:center;padding:20px 16px;border:1px solid rgba(255,255,255,.18);border-radius:18px;background:rgba(255,255,255,.045);font-family:var(--mono);font-size:clamp(15px,1.7vw,21px);color:var(--lime);line-height:1.5}
+.bigformula span{color:#fff}
+.bigformula small{display:block;font-family:ui-sans-serif,system-ui;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#8f8a7f;margin-top:8px}
+.foot{max-width:var(--max);margin:0 auto;padding:0 28px 36px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:11.5px}
+.foot a{color:var(--muted);text-decoration:none;border-bottom:1px dotted rgba(18,18,22,.3)}
+.foot a:hover{color:var(--blue)}
+.js [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.js [data-reveal].in{opacity:1;transform:none}
+@media (max-width:1040px){
+  .hero{grid-template-columns:1fr;min-height:auto;gap:24px}
+  .bridge-stage{max-width:560px}
+  .ideas{grid-template-columns:1fr 1fr}
+  .card.vision-card{grid-column:1/-1}
+  .closing-card{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .topbar{padding:18px 20px}
+  .wrap,.hero,.section-lead,.ideas,.closing,.foot{padding-left:20px;padding-right:20px}
+  .hero h1{font-size:clamp(48px,15vw,86px)}
+  .ideas{grid-template-columns:1fr}
+  .card.vision-card{grid-column:auto}
+  .bridge-stage{max-width:440px;padding:10px}
+  .bridge{height:148px}
+  .tower svg{width:96px;height:56px}
+}
+@media (max-width:420px){
+  .stat{min-width:calc(50% - 5px);flex:1}
+  .vision-grid{grid-template-columns:1fr}
+  .arch-visual{height:100px}
+  .tower svg{display:none}
+}
+button,input{font-family:inherit}
+::selection{background:rgba(36,71,255,.2);color:var(--ink)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (hover:none){.card:hover{transform:none}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="xlm_r_ideas.html">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>Paper Visuals<small>Drei Ideen, drei Seiten</small></span>
+  </a>
+  <nav class="paper-nav" aria-label="Paper">
+    <a href="xlm_r_ideas.html">01 · XLM-R</a>
+    <a href="fibered_algebra_ideas.html">02 · Fibered Algebra</a>
+    <a class="on" href="categorical_dl_ideas.html">03 · Categorical DL</a>
+  </nav>
+</header>
+<main>
+<section class="hero">
+  <div>
+    <div class="eyebrow">ICML 2024 · Position Paper · arXiv:2402.15332</div>
+    <h1>Categorical<br><span class="hl">Deep Learning</span></h1>
+    <p class="tagline">Eine Theorie für <b>alle</b><br><em>Architekturen?</em></p>
+    <p class="lede">Oben die <b>Constraints</b> – Symmetrie, Struktur, Equivarianz. Unten die <b>Implementierung</b> – Tensoren, Autodiff, RNN-Zellen. Dazwischen fehlt die Brücke. Die These: Kategorientheorie ist genau diese Brücke.</p>
+    <div class="stats">
+      <div class="stat"><b>1</b><span>vereinende Theorie</span></div>
+      <div class="stat"><b>2</b><span>Ebenen</span></div>
+      <div class="stat"><b>Para</b><span>2-Kategorie</span></div>
+      <div class="stat"><b>∞</b><span>Architekturen</span></div>
+    </div>
+    <div class="hint"><i></i> Klick die Modi · die Karten unten sind interaktiv</div>
+  </div>
+  <div class="bridge-stage" id="bridgeStage" data-mode="all">
+    <div class="tower top" id="towerTop">
+      <div class="tower-head">
+        <div>
+          <div class="tower-label">Top-down</div>
+          <div class="tower-title">Constraints</div>
+          <div class="tower-sub">Symmetrie · Equivarianz · Struktur</div>
+        </div>
+        <svg viewBox="0 0 118 64" aria-hidden="true">
+          <circle cx="59" cy="32" r="19" fill="none" stroke="#2447ff" stroke-opacity=".3" stroke-dasharray="3 4"/>
+          <g fill="#2447ff">
+            <circle cx="59" cy="13" r="2.6"/><circle cx="75.5" cy="22.5" r="2.6"/><circle cx="75.5" cy="41.5" r="2.6"/>
+            <circle cx="59" cy="51" r="2.6"/><circle cx="42.5" cy="41.5" r="2.6"/><circle cx="42.5" cy="22.5" r="2.6"/>
+          </g>
+          <circle cx="59" cy="32" r="3.4" fill="#ff5a5f"/>
+          <path d="M59 50 A18 18 0 0 1 42.5 41" fill="none" stroke="#2447ff" stroke-width="1.4" stroke-opacity=".65"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <span class="beam" aria-hidden="true"></span>
+      <div class="bnodes" aria-hidden="true"><span>Monad</span><span>Algebra</span><span>Para</span></div>
+      <span class="bridge-tag" aria-hidden="true">Category Theory</span>
+    </div>
+
+    <div class="tower bottom" id="towerBottom">
+      <div class="tower-head">
+        <div>
+          <div class="tower-label">Bottom-up</div>
+          <div class="tower-title">Implementations</div>
+          <div class="tower-sub">Tensoren · Autodiff · RNN-Zellen</div>
+        </div>
+        <svg viewBox="0 0 118 64" aria-hidden="true">
+          <g stroke="#ff5a5f" stroke-width="1.2" opacity=".55">
+            <line x1="20" y1="18" x2="50" y2="32"/><line x1="20" y1="46" x2="50" y2="32"/>
+            <line x1="50" y1="32" x2="80" y2="18"/><line x1="50" y1="32" x2="80" y2="46"/>
+            <line x1="80" y1="18" x2="105" y2="32"/><line x1="80" y1="46" x2="105" y2="32"/>
+          </g>
+          <g fill="#fff" stroke="#121216" stroke-width="1.2">
+            <circle cx="20" cy="18" r="4.5"/><circle cx="20" cy="46" r="4.5"/><circle cx="50" cy="32" r="4.5"/>
+            <circle cx="80" cy="18" r="4.5"/><circle cx="80" cy="46" r="4.5"/><circle cx="105" cy="32" r="4.5"/>
+          </g>
+          <circle cx="50" cy="32" r="2" fill="#2447ff"/>
+          <circle cx="105" cy="32" r="2" fill="#ff5a5f"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="bridge-controls" role="group" aria-label="Ansicht">
+      <button data-mode="top">Top-down</button>
+      <button data-mode="bottom">Bottom-up</button>
+      <button class="on" data-mode="all">Unified</button>
+    </div>
+    <p class="bridge-caption" id="bridgeCaption" aria-live="polite">Beide Welten zusammen: Monaden, Algebren und parametrische Pfeile bilden die Brücke zwischen Constraints und Code.</p>
+  </div>
+</section>
+<div class="section-lead">
+  <h2>Drei Ideen, eine Brücke</h2>
+  <p>Die Grammatik der Architekturen, Parameter als Pfeile, und was daraus folgt.</p>
+</div>
+<section class="ideas">
+
+  <article class="card" data-reveal>
+    <div class="num">Idee 01 · Grammatik</div>
+    <h3>Eine Grammatik für Architekturen</h3>
+    <p class="copy">Datenstrukturen entstehen aus <b>Endofunktoren</b>. Ihre Algebren liefern die Rekursionsregel – und damit die Architektur. Wähle eine Struktur:</p>
+    <div class="arch-tabs" id="archTabs" role="group" aria-label="Datenstruktur">
+      <button class="arch-tab on" data-arch="list">Liste</button>
+      <button class="arch-tab" data-arch="tree">Baum</button>
+      <button class="arch-tab" data-arch="stream">Stream</button>
+      <button class="arch-tab" data-arch="mealy">Mealy</button>
+    </div>
+    <div class="arch-panels" id="archPanels">
+
+      <div class="arch-panel on" data-arch="list">
+        <div class="arch-visual">
+          <svg viewBox="0 0 360 100" aria-hidden="true">
+            <g stroke="#2447ff" stroke-width="1.5" fill="none">
+              <line x1="52" y1="36" x2="86" y2="36"/><line x1="112" y1="36" x2="146" y2="36"/>
+              <line x1="172" y1="36" x2="206" y2="36"/><line x1="232" y1="36" x2="266" y2="36"/>
+              <path d="M232 48 L232 72" marker-end="url(#arList)"/>
+            </g>
+            <defs><marker id="arList" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#2447ff"/></marker></defs>
+            <g fill="#fff" stroke="#121216" stroke-width="1.3">
+              <circle cx="40" cy="36" r="12"/><circle cx="100" cy="36" r="12"/><circle cx="160" cy="36" r="12"/><circle cx="220" cy="36" r="12"/>
+            </g>
+            <g font-family="ui-monospace, Menlo, monospace" font-size="9" fill="#121216" text-anchor="middle">
+              <text x="40" y="39">a</text><text x="100" y="39">b</text><text x="160" y="39">c</text><text x="220" y="39">…</text>
+            </g>
+            <rect x="212" y="70" width="40" height="20" rx="7" fill="#c8ff3d" stroke="#121216" stroke-width="1.2"/>
+            <text x="232" y="84" font-family="ui-monospace, Menlo, monospace" font-size="9" text-anchor="middle" fill="#121216">S</text>
+            <text x="40" y="18" font-family="ui-monospace, Menlo, monospace" font-size="8.5" fill="#8b867a">FOLD</text>
+          </svg>
+        </div>
+        <div class="arch-formula">1 + A × (−)</div>
+        <div class="arch-name">Fold-RNN</div>
+        <p class="arch-desc">Faltet eine Sequenz zu einem Zustand. Die Listenstruktur liefert die Rekursionsregel.</p>
+        <div class="arch-out"><span class="tag bl">Endofunktor</span><span class="tag li">Algebra</span><span class="tag co">RNN</span></div>
+      </div>
+
+      <div class="arch-panel" data-arch="tree">
+        <div class="arch-visual">
+          <svg viewBox="0 0 360 100" aria-hidden="true">
+            <g stroke="#7b3ff2" stroke-width="1.5" fill="none">
+              <line x1="180" y1="24" x2="120" y2="52"/><line x1="180" y1="24" x2="240" y2="52"/>
+              <line x1="120" y1="52" x2="85" y2="80"/><line x1="120" y1="52" x2="155" y2="80"/>
+              <line x1="240" y1="52" x2="205" y2="80"/><line x1="240" y1="52" x2="275" y2="80"/>
+            </g>
+            <g fill="#fff" stroke="#121216" stroke-width="1.3">
+              <circle cx="180" cy="24" r="10"/><circle cx="120" cy="52" r="10"/><circle cx="240" cy="52" r="10"/>
+              <circle cx="85" cy="80" r="9"/><circle cx="155" cy="80" r="9"/><circle cx="205" cy="80" r="9"/><circle cx="275" cy="80" r="9"/>
+            </g>
+            <circle cx="180" cy="24" r="3" fill="#7b3ff2"/>
+            <text x="300" y="82" font-family="ui-monospace, Menlo, monospace" font-size="8.5" fill="#8b867a">FOLD</text>
+          </svg>
+        </div>
+        <div class="arch-formula">A + (−)²</div>
+        <div class="arch-name">Rekursives Netz</div>
+        <p class="arch-desc">Faltet einen Baum rekursiv. Die Gewichte teilen sich über die Verzweigungen.</p>
+        <div class="arch-out"><span class="tag bl">Endofunktor</span><span class="tag vi">Algebra</span><span class="tag co">rekursiv</span></div>
+      </div>
+
+      <div class="arch-panel" data-arch="stream">
+        <div class="arch-visual">
+          <svg viewBox="0 0 360 100" aria-hidden="true">
+            <defs><marker id="arStream" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#00b8ae"/></marker></defs>
+            <g stroke="#00b8ae" stroke-width="1.5" fill="none">
+              <line x1="72" y1="46" x2="112" y2="46" marker-end="url(#arStream)"/>
+              <line x1="132" y1="46" x2="172" y2="46" marker-end="url(#arStream)"/>
+              <line x1="192" y1="46" x2="232" y2="46" marker-end="url(#arStream)"/>
+              <line x1="252" y1="46" x2="292" y2="46" marker-end="url(#arStream)"/>
+            </g>
+            <g fill="#fff" stroke="#121216" stroke-width="1.3">
+              <circle cx="60" cy="46" r="12"/><circle cx="122" cy="46" r="12"/><circle cx="182" cy="46" r="12"/><circle cx="242" cy="46" r="12"/>
+            </g>
+            <g font-family="ui-monospace, Menlo, monospace" font-size="9" fill="#121216" text-anchor="middle">
+              <text x="60" y="49">o₀</text><text x="122" y="49">o₁</text><text x="182" y="49">o₂</text><text x="242" y="49">o₃</text>
+            </g>
+            <text x="302" y="49" font-family="ui-monospace, Menlo, monospace" font-size="15" fill="#00b8ae">…</text>
+            <text x="60" y="26" font-family="ui-monospace, Menlo, monospace" font-size="8.5" fill="#8b867a">UNFOLD</text>
+          </svg>
+        </div>
+        <div class="arch-formula">O × (−)</div>
+        <div class="arch-name">Unfold-Netz</div>
+        <p class="arch-desc">Entfaltet einen Zustand zu einem unendlichen Output-Strom.</p>
+        <div class="arch-out"><span class="tag bl">Endofunktor</span><span class="tag li">Koalgebra</span><span class="tag co">Stream</span></div>
+      </div>
+
+      <div class="arch-panel" data-arch="mealy">
+        <div class="arch-visual">
+          <svg viewBox="0 0 360 100" aria-hidden="true">
+            <defs><marker id="arMealy" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#ff5a5f"/></marker></defs>
+            <circle cx="170" cy="50" r="24" fill="#fff" stroke="#121216" stroke-width="1.4"/>
+            <text x="170" y="53" font-family="ui-monospace, Menlo, monospace" font-size="9" text-anchor="middle" fill="#121216">S</text>
+            <path d="M170 26 C210 8 230 22 210 38" fill="none" stroke="#ff5a5f" stroke-width="1.5" marker-end="url(#arMealy)"/>
+            <line x1="62" y1="50" x2="138" y2="50" stroke="#2447ff" stroke-width="1.8" marker-end="url(#arMealy)"/>
+            <line x1="202" y1="50" x2="298" y2="50" stroke="#ff5a5f" stroke-width="1.8" marker-end="url(#arMealy)"/>
+            <text x="56" y="38" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#2447ff">I</text>
+            <text x="300" y="38" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#ff5a5f">O</text>
+            <text x="226" y="16" font-family="ui-monospace, Menlo, monospace" font-size="8.5" fill="#8b867a">NEXT</text>
+          </svg>
+        </div>
+        <div class="arch-formula">I → O × (−)</div>
+        <div class="arch-name">Volles RNN</div>
+        <p class="arch-desc">Zustand + Input → Output + neuer Zustand: die generische rekurrente Zelle.</p>
+        <div class="arch-out"><span class="tag bl">Endofunktor</span><span class="tag li">Koalgebra</span><span class="tag co">Mealy</span></div>
+      </div>
+
+    </div>
+  </article>
+
+  <article class="card" data-reveal>
+    <div class="num">Idee 02 · Parameter</div>
+    <h3>Parameter sind Pfeile</h3>
+    <p class="copy">Ein parametrischer Morphismus ist ein Paar <code>(P, f : P × A → B)</code>. 2-Zellen sind Reparametrisierungen – und Weight Tying wird zur Kopie <code>Δ_P</code>.</p>
+    <div class="para-figure" id="paraFigure">
+      <svg viewBox="0 0 360 190" role="img" aria-label="Parametrischer Morphismus mit zwei Zellen; Weight Tying verbindet die Parametersätze über eine Kopie.">
+        <defs>
+          <marker id="pArrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#2447ff"/></marker>
+          <marker id="pArrowC" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#ff5a5f"/></marker>
+        </defs>
+        <g class="pdata">
+          <line x1="26" y1="70" x2="86" y2="70" marker-end="url(#pArrow)"/>
+          <line x1="158" y1="70" x2="202" y2="70" marker-end="url(#pArrow)"/>
+          <line x1="274" y1="70" x2="334" y2="70" marker-end="url(#pArrow)"/>
+        </g>
+        <text class="ptext" x="16" y="74">A</text>
+        <text class="ptext" x="342" y="74">B</text>
+        <rect class="pbox" x="92" y="48" width="62" height="44" rx="9"/>
+        <rect class="pbox2" x="206" y="48" width="62" height="44" rx="9"/>
+        <text class="ptext" x="123" y="74" text-anchor="middle">f</text>
+        <text class="ptext" x="237" y="74" text-anchor="middle">g</text>
+
+        <g class="untied-only">
+          <line class="pparam" x1="123" y1="132" x2="123" y2="94" marker-end="url(#pArrowC)"/>
+          <line class="pparam2" x1="237" y1="132" x2="237" y2="94" marker-end="url(#pArrowC)"/>
+          <text class="ptext" x="116" y="148" fill="#ff5a5f">P₁</text>
+          <text class="ptext" x="230" y="148" fill="#7b3ff2">P₂</text>
+          <text class="ptext mut" x="180" y="166" text-anchor="middle">getrennte Parametersätze</text>
+        </g>
+
+        <g class="tied-only">
+          <line class="pparam" x1="123" y1="132" x2="123" y2="94"/>
+          <line class="pparam2" x1="237" y1="132" x2="237" y2="94"/>
+          <line class="pparam" x1="123" y1="132" x2="237" y2="132"/>
+          <line class="pparam" x1="180" y1="158" x2="180" y2="140"/>
+          <path class="pcopy" d="M180 132 L190 140 L180 148 L170 140 Z"/>
+          <text class="ptext" x="196" y="144" fill="#4a7300">Δ</text>
+          <text class="ptext" x="172" y="174" fill="#ff5a5f">P</text>
+          <text class="ptext mut" x="282" y="166" text-anchor="middle">ein geteilter Satz</text>
+        </g>
+      </svg>
+    </div>
+    <div class="para-toggle">
+      <button id="tieBtn" aria-pressed="false">Weight Tying</button>
+      <span class="state" id="tieState">getrennt</span>
+    </div>
+    <div class="para-readout" id="paraReadout"><b>Ohne Tying:</b> f und g haben eigene Parameter. Die 2-Zelle erlaubt Reparametrisierungen – aber keine gemeinsame Nutzung.</div>
+  </article>
+
+  <article class="card vision-card" data-reveal>
+    <div class="num">Idee 03 · Ausblick</div>
+    <h3>Was das öffnet</h3>
+    <p class="copy">Nicht nur einzelne Layer, sondern ganze Architektur-Blöcke – mit formalen Kriterien für ihre Konstruktion.</p>
+    <div class="vision-grid">
+      <div class="vitem"><div class="vnum">01</div><b>Mehr als Layer</b><span>Nonlinearitäten und mehrere Schichten als architektonische Blöcke.</span></div>
+      <div class="vitem"><div class="vnum">02</div><b>Tying mit Kriterien</b><span>Wann ist geteiltes Gewicht korrekt – und warum?</span></div>
+      <div class="vitem"><div class="vnum">03</div><b>Type-safe</b><span>Netze, die nur wohldefinierte Funktionen lernen.</span></div>
+      <div class="vitem"><div class="vnum">04</div><b>Verifizierbar</b><span>Invarianzen und Fairness by construction.</span></div>
+    </div>
+    <div class="vision-quote">„Nicht nur erklärbar, sondern <b>verifizierbar</b>: eine Logik des induktiven Bias.“</div>
+    <div class="bottom">
+      <div class="tag-row"><span class="tag bl">Monaden</span><span class="tag vi">Para</span><span class="tag li">Lax-Algebren</span><span class="tag co">Vision</span></div>
+    </div>
+  </article>
+
+</section>
+<section class="closing">
+  <div class="closing-card" data-reveal>
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px">Die Botschaft</div>
+      <h3>Constraints und Code, endlich in einer Sprache</h3>
+      <p>Die These ist groß: <b>Eine</b> kategorientheoretische Grammatik soll Constraints und Implementierungen zugleich beschreiben. Monaden und ihre Algebren liefern Equivarianz und Struktur; die 2-Kategorie <b>Para</b> liefert Parameter, Komposition und Weight Tying. Der Gewinn: Architekturen werden aus ersten Prinzipien <b>ableitbar</b> statt nur nachbaubar. Es ist ein Programm – noch kein fertiger Beweis für jede Architektur.</p>
+    </div>
+    <div class="bigformula">Lax algebras for<br><span>free parametric monads</span><small>RNNs · rekursive Netze · Automaten</small></div>
+  </div>
+</section>
+</main>
+<footer class="foot">
+  <div>
+    <b style="color:var(--muted)">Quelle:</b> Bruno Gavranović et al., „Position: Categorical Deep Learning is an Algebraic Theory of All Architectures“, ICML 2024; arXiv:2402.15332.
+    <br>Vereinfachte, schematische Visualisierung. Die Seite fasst die Position und Beispiele zusammen, nicht den vollen technischen Apparat.
+  </div>
+  <div><a href="https://arxiv.org/abs/2402.15332" target="_blank" rel="noopener">Original auf arXiv ↗</a></div>
+</footer>
+<script>
+document.documentElement.classList.add('js');
+
+/* ---------- Bridge modes ---------- */
+(function () {
+  const stage = document.getElementById('bridgeStage');
+  const caption = document.getElementById('bridgeCaption');
+  const buttons = [...document.querySelectorAll('.bridge-controls button')];
+  if (!stage || !caption || !buttons.length) return;
+
+  const text = {
+    top: 'Top-down: Constraints wie Symmetrie und Equivarianz legen fest, was das Modell respektieren soll. Die Implementierung ist noch offen.',
+    bottom: 'Bottom-up: Tensoren, Autodiff und Zellen legen fest, was gerechnet wird. Die Constraints bleiben dabei implizit.',
+    all: 'Beide Welten zusammen: Monaden, Algebren und parametrische Pfeile bilden die Brücke zwischen Constraints und Code.'
+  };
+
+  function apply(mode) {
+    stage.dataset.mode = mode;
+    buttons.forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+    caption.textContent = text[mode];
+  }
+  buttons.forEach(b => b.addEventListener('click', () => apply(b.dataset.mode)));
+  apply('all');
+})();
+
+/* ---------- Architecture picker ---------- */
+(function () {
+  const tabs = [...document.querySelectorAll('.arch-tab')];
+  const panels = [...document.querySelectorAll('.arch-panel')];
+  if (!tabs.length || !panels.length) return;
+
+  function apply(arch) {
+    tabs.forEach(t => t.classList.toggle('on', t.dataset.arch === arch));
+    panels.forEach(p => p.classList.toggle('on', p.dataset.arch === arch));
+  }
+  tabs.forEach(t => t.addEventListener('click', () => apply(t.dataset.arch)));
+  apply('list');
+})();
+
+/* ---------- Weight tying ---------- */
+(function () {
+  const fig = document.getElementById('paraFigure');
+  const btn = document.getElementById('tieBtn');
+  const state = document.getElementById('tieState');
+  const out = document.getElementById('paraReadout');
+  if (!fig || !btn || !state || !out) return;
+
+  let tied = false;
+  function apply() {
+    fig.classList.toggle('tied', tied);
+    btn.classList.toggle('on', tied);
+    btn.setAttribute('aria-pressed', String(tied));
+    btn.textContent = tied ? 'Tying lösen' : 'Weight Tying';
+    state.textContent = tied ? 'geteilt' : 'getrennt';
+    out.innerHTML = tied
+      ? '<b>Mit Tying:</b> Ein Parametersatz P wird über die Kopie Δ<sub>P</sub> auf beide Zellen verteilt. Genau diese Kopie ist die formale Struktur hinter geteilten Gewichten.'
+      : '<b>Ohne Tying:</b> f und g haben eigene Parameter. Die 2-Zelle erlaubt Reparametrisierungen – aber keine gemeinsame Nutzung.';
+  }
+  btn.addEventListener('click', () => { tied = !tied; apply(); });
+  apply();
+})();
+/* ---------- Reveal on scroll ---------- */
+(function () {
+  const els = [...document.querySelectorAll('[data-reveal]')];
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  els.forEach((el, i) => {
+    el.style.transitionDelay = (i % 3) * 90 + 'ms';
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fibered Universal Algebra – die Idee in einer Seite</title>
+<style>
+:root{
+  --bg:#08070e;--text:#f5eee0;--muted:#b9ad99;--dim:#7d715f;
+  --gold:#e8c07a;--mint:#8fe3c8;--plum:#b58cff;--coral:#ff9a8a;
+  --line:rgba(232,192,122,.18);--glass:rgba(255,255,255,.045);
+  --max:1280px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;background:var(--bg);color:var(--text);overflow-x:hidden;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    repeating-linear-gradient(115deg,rgba(232,192,122,.04) 0 1px,transparent 1px 96px),
+    repeating-linear-gradient(25deg,rgba(143,227,200,.03) 0 1px,transparent 1px 120px);
+  mask-image:radial-gradient(circle at 50% 35%,#000 0%,transparent 78%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 50% -8%,transparent 0%,rgba(8,7,14,.55) 58%,rgba(8,7,14,.94) 100%);
+}
+.bg{position:fixed;inset:-25%;z-index:-3;filter:blur(90px);opacity:.72;pointer-events:none}
+.orb{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 26s ease-in-out infinite alternate}
+.o1{width:54vw;height:54vw;left:-12%;top:-16%;background:radial-gradient(circle,#5b3a12 0%,transparent 64%)}
+.o2{width:50vw;height:50vw;right:-14%;top:4%;background:radial-gradient(circle,#143f3a 0%,transparent 66%);animation-delay:-9s}
+.o3{width:46vw;height:46vw;left:30%;bottom:-26%;background:radial-gradient(circle,#2c1a4d 0%,transparent 66%);animation-delay:-16s}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(3%,-3%,0) scale(1.07)}
+  100%{transform:translate3d(-3%,4%,0) scale(.95)}
+}
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 28px}
+.topbar{max-width:var(--max);margin:0 auto;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text);font-weight:800;letter-spacing:-.02em}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:conic-gradient(from 220deg,var(--gold),var(--mint),var(--plum),var(--gold));box-shadow:0 0 24px rgba(232,192,122,.4);position:relative;flex:0 0 auto}
+.brand-mark::after{content:"";position:absolute;inset:6px;border-radius:5px;background:#0a0812}
+.brand small{display:block;font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.paper-nav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px}
+.paper-nav a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:rgba(255,255,255,.03);padding:6px 10px;border-radius:999px;transition:.18s;white-space:nowrap}
+.paper-nav a:hover{color:var(--text);border-color:rgba(232,192,122,.5);background:rgba(232,192,122,.08)}
+.paper-nav a.on{color:#1a1307;background:linear-gradient(180deg,#f6dca6,var(--gold));border-color:transparent;font-weight:800}
+.hero{max-width:var(--max);margin:0 auto;padding:12px 28px 18px;display:grid;grid-template-columns:1.04fr .96fr;gap:30px;align-items:center;min-height:calc(100vh - 96px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--gold);font-family:var(--mono)}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.hero h1{
+  margin:16px 0 14px;font-family:Georgia,"Times New Roman",serif;font-weight:600;
+  font-size:clamp(40px,6.4vw,92px);line-height:.94;letter-spacing:-.045em;
+}
+.hero h1 em{
+  font-style:italic;background:linear-gradient(100deg,#f6dca6 4%,var(--gold) 30%,var(--mint) 70%,var(--plum) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 12px 40px rgba(232,192,122,.14));
+}
+.tagline{margin:0 0 14px;font-size:clamp(17px,1.8vw,24px);line-height:1.15;font-weight:700;letter-spacing:-.02em;color:#f1e6d2}
+.tagline b{color:var(--mint)}
+.lede{margin:0;max-width:55ch;color:var(--muted);font-size:15.5px;line-height:1.65}
+.lede b{color:var(--text)}
+.gl-formula{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:9px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(232,192,122,.05);font-family:var(--mono);font-size:13px;color:var(--gold);letter-spacing:.02em}
+.gl-formula span{color:var(--mint)}
+.stats{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 18px}
+.stat{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015));border-radius:14px;padding:10px 14px;min-width:104px;backdrop-filter:blur(10px)}
+.stat b{display:block;font-size:19px;line-height:1.05;letter-spacing:-.02em;color:#fff;font-family:var(--mono)}
+.stat span{display:block;margin-top:3px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.hint{display:inline-flex;align-items:center;gap:9px;font-size:12px;color:var(--dim);letter-spacing:.05em}
+.hint i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 14px var(--mint);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25;transform:scale(.7)}}
+.stack-wrap{position:relative;width:100%;max-width:600px;aspect-ratio:1/1;justify-self:center;max-height:min(78vh,660px);perspective:1100px}
+.stack-wrap::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle at 45% 40%,rgba(232,192,122,.18),rgba(143,227,200,.08) 48%,transparent 70%);filter:blur(34px)}
+.stack-tilt{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 55%;transition:transform .3s ease-out;will-change:transform}
+#fiberStack{position:relative;width:100%;height:100%;display:block;overflow:visible}
+.fl-plane{filter:drop-shadow(0 22px 30px rgba(0,0,0,.55))}
+.fl-plane .fill{transition:.3s}
+.fl-plane:hover .fill{fill-opacity:.16}
+.fiber-layer{animation:bob 7.5s ease-in-out infinite}
+.fiber-layer.l2{animation-delay:-2.4s}
+.fiber-layer.l3{animation-delay:-4.8s}
+@keyframes bob{50%{transform:translateY(-7px)}}
+.dashline{stroke-dasharray:4 7;animation:dashmove 6s linear infinite}
+@keyframes dashmove{to{stroke-dashoffset:-44}}
+.node-glow{filter:drop-shadow(0 0 10px rgba(143,227,200,.8))}
+.formula-float{animation:floatf 6s ease-in-out infinite}
+.formula-float.f2{animation-delay:-2s}
+.formula-float.f3{animation-delay:-4s}
+@keyframes floatf{50%{transform:translateY(-5px)}}
+.section-lead{max-width:var(--max);margin:0 auto;padding:26px 28px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.section-lead h2{margin:0;font-size:clamp(22px,2.4vw,32px);letter-spacing:-.03em;line-height:1.12;font-family:Georgia,serif;font-weight:600}
+.section-lead p{margin:0;color:var(--dim);font-size:13px;max-width:48ch}
+.ideas{max-width:var(--max);margin:0 auto;padding:16px 28px 24px;display:grid;grid-template-columns:1fr 1.08fr 1.1fr;gap:16px;align-items:stretch}
+.card{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;padding:20px;
+  background:linear-gradient(155deg,rgba(255,255,255,.06),rgba(255,255,255,.018) 56%,rgba(232,192,122,.035));
+  backdrop-filter:blur(16px);box-shadow:0 26px 70px -40px #000;min-height:330px;display:flex;flex-direction:column;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(232,192,122,.6),rgba(143,227,200,.5),transparent)}
+.card::after{content:"";position:absolute;width:190px;height:190px;right:-80px;top:-85px;border-radius:50%;background:radial-gradient(circle,rgba(232,192,122,.12),transparent 70%);pointer-events:none}
+.card .num{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--dim);font-family:var(--mono)}
+.card h3{margin:8px 0 6px;font-size:21px;letter-spacing:-.03em;line-height:1.15;font-family:Georgia,serif;font-weight:600}
+.card .copy{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.55}
+.card .copy b{color:var(--text)}
+.card .copy code,.mono{font-family:var(--mono);font-size:.94em;color:var(--mint);background:rgba(143,227,200,.07);border:1px solid rgba(143,227,200,.14);border-radius:5px;padding:0 4px}
+.card .bottom{margin-top:auto}
+.tiny{font-size:10.5px;color:var(--dim);line-height:1.45}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-family:var(--mono)}
+.tag.go{color:#f8e2b4;border-color:rgba(232,192,122,.38);background:rgba(232,192,122,.07)}
+.tag.mi{color:#c9f7e9;border-color:rgba(143,227,200,.35);background:rgba(143,227,200,.07)}
+.tag.pl{color:#e3d8ff;border-color:rgba(181,140,255,.35);background:rgba(181,140,255,.07)}
+
+/* card 1: propositional -> first-order */
+.prop-toggle{display:flex;gap:6px;margin:2px 0 12px}
+.prop-toggle button{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:11px;font-weight:800;padding:6px 10px;border-radius:999px;cursor:pointer;transition:.18s;font-family:inherit}
+.prop-toggle button:hover{color:var(--text);border-color:rgba(232,192,122,.5)}
+.prop-toggle button.on{background:var(--gold);border-color:transparent;color:#1a1307}
+.mini-stack{position:relative;height:132px;margin:2px 0 10px}
+.mini-fiber{
+  position:absolute;left:7%;right:7%;height:48px;border:1px solid rgba(232,192,122,.28);
+  background:linear-gradient(120deg,rgba(232,192,122,.10),rgba(143,227,200,.05));
+  border-radius:11px;transform:skewX(-9deg);transition:opacity .55s,transform .55s,top .55s;
+  display:flex;align-items:center;justify-content:space-between;padding:0 15px;z-index:3;
+  box-shadow:0 14px 30px -18px #000;
+}
+.mini-fiber .mf{transform:skewX(9deg);display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:#f2e5ca;white-space:nowrap}
+.mini-fiber small{transform:skewX(9deg);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.mini-fiber .dotm{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold);flex:0 0 auto}
+.mini-fiber.f0{top:76px;z-index:3}
+.mini-fiber.f1{top:42px;z-index:2;opacity:0;transform:translateY(-12px) skewX(-9deg)}
+.mini-fiber.f2{top:8px;z-index:1;opacity:0;transform:translateY(-24px) skewX(-9deg)}
+.mini-stack.fo .f1{opacity:1;transform:translateY(0) skewX(-9deg)}
+.mini-stack.fo .f2{opacity:1;transform:translateY(0) skewX(-9deg)}
+.mini-stack .spine{position:absolute;left:12%;top:18px;bottom:24px;width:1px;background:linear-gradient(var(--mint),transparent);opacity:.5}
+.mini-caption{font-size:11.5px;color:var(--muted);min-height:34px;border-top:1px solid var(--line);padding-top:9px}
+.mini-caption b{color:var(--text)}
+
+/* card 2: quantifier diagram */
+.qdiagram{position:relative;margin:0 0 6px}
+.qdiagram svg{display:block;width:100%;height:auto;overflow:visible}
+.qnode-box{fill:rgba(255,255,255,.035);stroke:rgba(232,192,122,.28);stroke-width:1}
+.qnode-box.mintbox{stroke:rgba(143,227,200,.3)}
+.qnode-text{fill:#f4ead7;font-family:var(--mono);font-size:12px}
+.qnode-sub{fill:#8d8170;font-family:var(--mono);font-size:10px}
+.qarrow{stroke:var(--gold);stroke-width:1.8;fill:none;transition:.25s}
+.qarrow.mint{stroke:var(--mint)}
+.qarrow.plum{stroke:var(--plum)}
+.qarrowhead{fill:var(--gold)}
+.qarrowhead.mint{fill:var(--mint)}
+.qarrowhead.plum{fill:var(--plum)}
+.qgroup{transition:.25s;cursor:pointer}
+.qgroup.dim{opacity:.22}
+.qgroup.active .qarrow{stroke-width:3;filter:drop-shadow(0 0 8px currentColor)}
+.qgroup.active .qlabel{fill:#fff}
+.qlabel{fill:#cbbfa9;font-family:var(--mono);font-size:11px;transition:.25s}
+.qbuttons{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.qbuttons button{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px;font-family:var(--mono);padding:6px 10px;border-radius:8px;cursor:pointer;transition:.18s}
+.qbuttons button:hover{color:var(--text);border-color:rgba(232,192,122,.45)}
+.qbuttons button.on{background:rgba(232,192,122,.14);border-color:rgba(232,192,122,.5);color:#fff}
+.qreadout{font-size:11.5px;color:var(--muted);min-height:38px;border-top:1px solid var(--line);padding-top:9px;margin-top:9px}
+.qreadout b{color:var(--text)}
+.qreadout code{font-family:var(--mono);color:var(--mint);font-size:11px}
+
+/* card 3: mirror */
+.mirror{display:grid;grid-template-columns:62px 1fr 1fr;gap:6px;margin-top:4px}
+.mhead{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:800;padding:2px 3px;font-family:var(--mono)}
+.mhead.gold{color:var(--gold)}
+.mhead.mint{color:var(--mint)}
+.mlabel{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);font-weight:800;display:flex;align-items:center;font-family:var(--mono)}
+.mcell{border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:rgba(255,255,255,.025);font-size:11px;color:var(--muted);line-height:1.35;transition:.2s}
+.mcell b{display:block;color:var(--text);font-size:11.5px;margin-bottom:2px;font-family:var(--mono);font-weight:700}
+.mcell.goldcell:hover{border-color:rgba(232,192,122,.55);background:rgba(232,192,122,.07)}
+.mcell.mintcell{border-color:rgba(143,227,200,.22);background:rgba(143,227,200,.035)}
+.mcell.mintcell:hover{border-color:rgba(143,227,200,.55);background:rgba(143,227,200,.08)}
+.mirror-note{font-size:10px;color:var(--dim);margin-top:9px;line-height:1.45}
+
+/* closing */
+.closing{max-width:var(--max);margin:0 auto;padding:6px 28px 40px}
+.closing-card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;padding:24px;background:linear-gradient(120deg,rgba(232,192,122,.09),rgba(143,227,200,.07) 52%,rgba(181,140,255,.06));backdrop-filter:blur(14px);display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+.closing-card h3{margin:0 0 6px;font-size:clamp(20px,2.3vw,29px);letter-spacing:-.03em;font-family:Georgia,serif;font-weight:600}
+.closing-card p{margin:0;color:var(--muted);font-size:13.5px;max-width:64ch}
+.closing-card p b{color:var(--text)}
+.bigformula{text-align:center;padding:18px 14px;border:1px solid var(--line);border-radius:16px;background:rgba(6,5,12,.4);font-family:var(--mono);font-size:clamp(20px,2.6vw,30px);color:var(--gold);letter-spacing:.02em;line-height:1.4}
+.bigformula span{color:var(--mint)}
+.bigformula small{display:block;font-family:ui-sans-serif,system-ui;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+.foot{max-width:var(--max);margin:0 auto;padding:0 28px 36px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:11.5px}
+.foot a{color:var(--muted);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.22)}
+.foot a:hover{color:var(--gold)}
+.js [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.js [data-reveal].in{opacity:1;transform:none}
+@media (max-width:1040px){
+  .hero{grid-template-columns:1fr;min-height:auto;gap:22px}
+  .stack-wrap{max-width:520px;max-height:520px}
+  .ideas{grid-template-columns:1fr 1fr}
+  .card.mirror-card{grid-column:1/-1}
+  .closing-card{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .topbar{padding:18px 20px}
+  .wrap,.hero,.section-lead,.ideas,.closing,.foot{padding-left:20px;padding-right:20px}
+  .ideas{grid-template-columns:1fr}
+  .card.mirror-card{grid-column:auto}
+  .stack-wrap{max-width:420px;max-height:420px}
+  .mirror{grid-template-columns:54px 1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+}
+button,input{font-family:inherit}
+::selection{background:rgba(232,192,122,.32);color:#fff}
+:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+.card{transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s}
+.card:hover{transform:translateY(-3px);border-color:rgba(232,192,122,.34)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (max-width:420px){
+  .stat{min-width:calc(50% - 5px);flex:1}
+  .mirror{grid-template-columns:48px 1fr 1fr;gap:4px}
+  .mcell{padding:7px 8px;font-size:10px}
+  .mcell b{font-size:10.5px}
+}
+@media (hover:none){.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true">
+  <span class="orb o1"></span>
+  <span class="orb o2"></span>
+  <span class="orb o3"></span>
+</div>
+<header class="topbar">
+  <a class="brand" href="xlm_r_ideas.html">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>Paper Visuals<small>Drei Ideen, drei Seiten</small></span>
+  </a>
+  <nav class="paper-nav" aria-label="Paper">
+    <a href="xlm_r_ideas.html">01 · XLM-R</a>
+    <a class="on" href="fibered_algebra_ideas.html">02 · Fibered Algebra</a>
+    <a href="categorical_dl_ideas.html">03 · Categorical DL</a>
+  </nav>
+</header>
+<main>
+<section class="hero">
+  <div>
+    <div class="eyebrow">JPAA 228(2) · arXiv:2205.05657</div>
+    <h1>Fibered<br><em>Universal Algebra</em></h1>
+    <p class="tagline">Erste Ordnung. <b>Algebraisch.</b><br>Faser für Faser.</p>
+    <p class="lede">First-Order-Logik muss nicht bei Tarski enden. Die Arbeit hebt sie in die <b>universelle Algebra</b>: Kontexte bilden die Basis, Formeln leben in Fasern darüber – und Substitution wird zu einem strukturellen Pfeil.</p>
+    <div class="gl-formula">f : Δ → Γ &nbsp;<span>⟹</span>&nbsp; f* : Fib(Γ) → Fib(Δ)</div>
+    <div class="stats">
+      <div class="stat"><b>FO</b><span>Semantik</span></div>
+      <div class="stat"><b>Prop-Kat.</b><span>Hyperdoctrine</span></div>
+      <div class="stat"><b>2</b><span>Abschluss-Sätze</span></div>
+      <div class="stat"><b>∃⊣f*⊣∀</b><span>Quantoren</span></div>
+    </div>
+    <div class="hint"><i></i> Maus über den Faserstapel · die Karten unten sind interaktiv</div>
+  </div>
+  <div class="stack-wrap" id="stackWrap">
+    <div class="stack-tilt" id="stackTilt">
+      <svg id="fiberStack" viewBox="0 0 560 580" role="img" aria-label="Schematischer Faserstapel: über der Basis der Kontexte liegen Fasern mit Formeln; Substitution verbindet die Kontexte.">
+        <defs>
+          <linearGradient id="fg0" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#e8c07a" stop-opacity=".20"/><stop offset="1" stop-color="#8fe3c8" stop-opacity=".05"/>
+          </linearGradient>
+          <linearGradient id="fg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#e8c07a" stop-opacity=".15"/><stop offset="1" stop-color="#b58cff" stop-opacity=".05"/>
+          </linearGradient>
+          <linearGradient id="fg2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#8fe3c8" stop-opacity=".16"/><stop offset="1" stop-color="#b58cff" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="baseGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#e8c07a" stop-opacity="0"/><stop offset=".25" stop-color="#e8c07a"/><stop offset=".78" stop-color="#8fe3c8"/><stop offset="1" stop-color="#8fe3c8" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="glowGold" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glowMint" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <marker id="mintArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 Z" fill="#8fe3c8"/></marker>
+          <marker id="goldArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 Z" fill="#e8c07a"/></marker>
+        </defs>
+
+        <circle cx="280" cy="290" r="205" fill="none" stroke="rgba(232,192,122,.13)" stroke-width="1" stroke-dasharray="2 6"/>
+        <circle cx="280" cy="290" r="245" fill="none" stroke="rgba(143,227,200,.08)" stroke-width="1"/>
+
+        <g class="fiber-layer l3">
+          <polygon class="fill" points="140,170 440,170 480,230 180,230" fill="url(#fg2)" stroke="rgba(143,227,200,.55)" stroke-width="1.2"/>
+          <polyline points="160,184 420,184" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <circle cx="178" cy="215" r="3" fill="#8fe3c8" class="node-glow"/>
+          <text x="196" y="209" fill="#d7fff3" font-family="ui-monospace, Menlo, monospace" font-size="14">χ(x, y)</text>
+          <text x="552" y="206" text-anchor="end" fill="#8fe3c8" font-family="ui-monospace, Menlo, monospace" font-size="11">Fib(Γ, x, y)</text>
+        </g>
+
+        <g class="fiber-layer l2">
+          <polygon class="fill" points="125,255 425,255 465,315 165,315" fill="url(#fg1)" stroke="rgba(232,192,122,.5)" stroke-width="1.2"/>
+          <polyline points="145,269 405,269" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <circle cx="163" cy="300" r="3" fill="#e8c07a" class="node-glow"/>
+          <text x="181" y="294" fill="#f6e2b7" font-family="ui-monospace, Menlo, monospace" font-size="14">ψ(x)</text>
+          <text x="552" y="291" text-anchor="end" fill="#e8c07a" font-family="ui-monospace, Menlo, monospace" font-size="11">Fib(Γ, x)</text>
+        </g>
+
+        <g class="fiber-layer l1">
+          <polygon class="fill" points="110,340 410,340 450,400 150,400" fill="url(#fg0)" stroke="rgba(232,192,122,.45)" stroke-width="1.2"/>
+          <polyline points="130,354 390,354" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <circle cx="148" cy="385" r="3" fill="#e8c07a" class="node-glow"/>
+          <text x="166" y="379" fill="#ffe7b6" font-family="ui-monospace, Menlo, monospace" font-size="14">φ</text>
+          <text x="552" y="376" text-anchor="end" fill="#e8c07a" font-family="ui-monospace, Menlo, monospace" font-size="11">Fib(Γ)</text>
+        </g>
+
+        <line x1="300" y1="402" x2="300" y2="500" stroke="rgba(143,227,200,.5)" stroke-width="1.2" class="dashline"/>
+        <text x="312" y="462" fill="#7d715f" font-family="ui-monospace, Menlo, monospace" font-size="9.5" letter-spacing="1">FASERUNG</text>
+
+        <line x1="100" y1="510" x2="480" y2="510" stroke="url(#baseGrad)" stroke-width="2"/>
+        <g font-family="ui-monospace, Menlo, monospace" font-size="12" text-anchor="middle">
+          <circle cx="170" cy="510" r="5" fill="#0b0912" stroke="#e8c07a" stroke-width="2"/>
+          <text x="170" y="536" fill="#e8c07a">Γ</text>
+          <circle cx="300" cy="510" r="5" fill="#0b0912" stroke="#8fe3c8" stroke-width="2"/>
+          <text x="300" y="536" fill="#8fe3c8">Γ, x</text>
+          <circle cx="430" cy="510" r="5" fill="#0b0912" stroke="#b58cff" stroke-width="2"/>
+          <text x="430" y="536" fill="#b58cff">Γ, x, y</text>
+        </g>
+        <g stroke="#8fe3c8" stroke-width="1.4" marker-end="url(#mintArrow)" opacity=".75">
+          <line x1="186" y1="510" x2="282" y2="510"/>
+          <line x1="316" y1="510" x2="412" y2="510"/>
+        </g>
+        <text x="234" y="500" fill="#7d715f" font-family="ui-monospace, Menlo, monospace" font-size="9" text-anchor="middle">subst</text>
+        <text x="364" y="500" fill="#7d715f" font-family="ui-monospace, Menlo, monospace" font-size="9" text-anchor="middle">subst</text>
+
+        <g class="formula-float">
+          <rect x="58" y="66" width="196" height="62" rx="10" fill="rgba(8,7,14,.78)" stroke="rgba(232,192,122,.35)"/>
+          <text x="74" y="94" fill="#e8c07a" font-family="ui-monospace, Menlo, monospace" font-size="15">∃<tspan fill="#8fe3c8"> ⊣ </tspan>π*<tspan fill="#8fe3c8"> ⊣ </tspan>∀</text>
+          <text x="74" y="116" fill="#7d715f" font-family="ui-monospace, Menlo, monospace" font-size="8.5" letter-spacing="1">QUANTOREN ALS ADJUNKTE</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+<div class="section-lead">
+  <h2>Drei Ideen, faserweise</h2>
+  <p>Der Sprung von einer Faser zu vielen, die Adjungierten der Quantoren, und zwei Birkhoff-artige Abschlusssätze.</p>
+</div>
+<section class="ideas">
+
+  <article class="card" data-reveal>
+    <div class="num">Idee 01 · Der Sprung</div>
+    <h3>Eine Faser wird viele</h3>
+    <p class="copy">Propositionale Logik hat einen Kontext. First-Order-Logik hat <b>viele</b> – für jede Variablenliste eine eigene Faser, verbunden durch Substitution.</p>
+    <div class="prop-toggle" role="group" aria-label="Logik-Modus">
+      <button class="on" data-mode="prop">Propositional</button>
+      <button data-mode="fo">First-Order</button>
+    </div>
+    <div class="mini-stack" id="miniStack">
+      <span class="spine" aria-hidden="true"></span>
+      <div class="mini-fiber f2"><span class="mf"><i class="dotm"></i>χ(x, y)</span><small>Γ, x, y</small></div>
+      <div class="mini-fiber f1"><span class="mf"><i class="dotm"></i>ψ(x)</span><small>Γ, x</small></div>
+      <div class="mini-fiber f0"><span class="mf"><i class="dotm"></i>φ</span><small>Γ</small></div>
+    </div>
+    <div class="bottom">
+      <div class="mini-caption" id="miniCaption"><b>Eine Faser:</b> Formeln ohne Variablen. Substitution ist trivial – es gibt ja nur einen Kontext.</div>
+    </div>
+  </article>
+
+  <article class="card" data-reveal>
+    <div class="num">Idee 02 · Maschinerie</div>
+    <h3>Quantoren sind Adjungierte</h3>
+    <p class="copy">Substitution <code>π*</code> ist der zentrale Pfeil. <code>∃</code> und <code>∀</code> sind ihr linkes bzw. rechtes Adjungiertes – das macht First-Order-Logik strukturell.</p>
+    <div class="qdiagram">
+      <svg viewBox="0 0 420 170" role="img" aria-label="Diagramm: Existenzquantor und Allquantor sind links bzw. rechts adjungiert zur Substitution zwischen zwei Fasern.">
+        <defs>
+          <marker id="qGold" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 Z" fill="#e8c07a"/></marker>
+          <marker id="qMint" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 Z" fill="#8fe3c8"/></marker>
+          <marker id="qPlum" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 Z" fill="#b58cff"/></marker>
+        </defs>
+        <rect class="qnode-box" x="8" y="42" width="134" height="88" rx="12"/>
+        <rect class="qnode-box mintbox" x="278" y="42" width="134" height="88" rx="12"/>
+        <text class="qnode-text" x="75" y="66" text-anchor="middle">Fib(Γ, x)</text>
+        <text class="qnode-sub" x="75" y="88" text-anchor="middle">φ(x)</text>
+        <text class="qnode-sub" x="75" y="108" text-anchor="middle">Variablenkontext</text>
+        <text class="qnode-text" x="345" y="66" text-anchor="middle">Fib(Γ)</text>
+        <text class="qnode-sub" x="345" y="88" text-anchor="middle">∃x φ &nbsp;·&nbsp; ∀x φ</text>
+        <text class="qnode-sub" x="345" y="108" text-anchor="middle">ohne x</text>
+
+        <g class="qgroup active" data-q="ex">
+          <line class="qarrow" x1="146" y1="72" x2="270" y2="72" marker-end="url(#qGold)"/>
+          <text class="qlabel" x="208" y="64" text-anchor="middle">∃π</text>
+        </g>
+        <g class="qgroup" data-q="sub">
+          <line class="qarrow mint" x1="278" y1="90" x2="152" y2="90" marker-end="url(#qMint)"/>
+          <text class="qlabel" x="214" y="106" text-anchor="middle">π*</text>
+        </g>
+        <g class="qgroup" data-q="all">
+          <line class="qarrow plum" x1="146" y1="112" x2="270" y2="112" marker-end="url(#qPlum)"/>
+          <text class="qlabel" x="208" y="130" text-anchor="middle">∀π</text>
+        </g>
+      </svg>
+    </div>
+    <div class="qbuttons" id="qButtons">
+      <button class="on" data-q="ex">∃π</button>
+      <button data-q="sub">π*</button>
+      <button data-q="all">∀π</button>
+    </div>
+    <div class="qreadout" id="qReadout"><b>∃π ⊣ π*:</b> Existenzquantifizierung ist linksadjungiert zur Substitution. Sie sammelt die Fasern über allen Werten von x ein.</div>
+  </article>
+
+  <article class="card mirror-card" data-reveal>
+    <div class="num">Idee 03 · Resultat</div>
+    <h3>Birkhoff, aber für Logik</h3>
+    <p class="copy">Zwei natürliche Abschlussoperatoren – und zwei klassische Vorbilder aus der universellen Algebra. <b>Jetzt für First-Order.</b></p>
+    <div class="mirror">
+      <div class="mhead"></div>
+      <div class="mhead gold">Klassisch</div>
+      <div class="mhead mint">First-Order</div>
+      <div class="mlabel">Theorie</div>
+      <div class="mcell goldcell"><b>Birkhoff</b>HSP: Varietäten = Klassen, die unter ihrer gemeinsamen Gleichungstheorie abgeschlossen sind.</div>
+      <div class="mcell mintcell"><b>Strukturen</b>Klassen von Strukturen, abgeschlossen unter ihrer gemeinsamen First-Order-Theorie.</div>
+      <div class="mlabel">Konsequenz</div>
+      <div class="mcell goldcell"><b>Blok–Jónsson</b>Abschluss einer Klasse unter Gleichungsfolgerung.</div>
+      <div class="mcell mintcell"><b>Prop-Kategorien</b>Abschluss einer Klasse unter First-Order-Konsequenz.</div>
+    </div>
+    <div class="bottom">
+      <div class="tag-row">
+        <span class="tag go">Homomorphie-Theorem</span>
+        <span class="tag mi">Substitution</span>
+        <span class="tag pl">Prop-Kategorien</span>
+      </div>
+      <p class="mirror-note">Die Charakterisierungen sind neu – sogar für intuitionistische Prop-Kategorien und Triposes, und ohne Analogon in der Tarskischen Semantik.</p>
+    </div>
+  </article>
+
+</section>
+<section class="closing">
+  <div class="closing-card" data-reveal>
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px">Die Botschaft</div>
+      <h3>First-Order-Logik, algebraisch ernst genommen</h3>
+      <p>Die Arbeit gibt nichtklassischen First-Order-Logiken eine <b>algebraische Semantik</b>, in der Substitution strukturell eingebaut ist. Zwei Abschlussoperatoren werden exakt charakterisiert – ein Birkhoff-Analogon für Theorien und ein Blok–Jónsson-Analogon für Konsequenz. Das ist mehr als eine Neuformulierung: Es macht First-Order-Logik mit den Werkzeugen der universellen Algebra behandelbar.</p>
+    </div>
+    <div class="bigformula">∃<span>π</span> ⊣ π* ⊣ ∀<span>π</span><small>die adjungierte Struktur der Quantoren</small></div>
+  </div>
+</section>
+</main>
+<footer class="foot">
+  <div>
+    <b style="color:var(--muted)">Quelle:</b> Colin Bloomfield &amp; Yoshihiro Maruyama, „Fibered universal algebra for first-order logics“, J. Pure Appl. Algebra 228(2), 107415 (2024); arXiv:2205.05657.
+    <br>Vereinfachte, schematische Visualisierung. Faserstapel und Diagramme sind didaktische Modelle, keine Originalabbildungen.
+  </div>
+  <div><a href="https://arxiv.org/abs/2205.05657" target="_blank" rel="noopener">Original auf arXiv ↗</a></div>
+</footer>
+<script>
+document.documentElement.classList.add('js');
+
+/* ---------- Hero stack parallax ---------- */
+(function () {
+  const wrap = document.getElementById('stackWrap');
+  const tilt = document.getElementById('stackTilt');
+  if (!wrap || !tilt) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+
+  wrap.addEventListener('pointermove', e => {
+    const r = wrap.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    tilt.style.transform = `rotateX(${(-y * 7).toFixed(2)}deg) rotateY(${(x * 9).toFixed(2)}deg)`;
+  });
+  wrap.addEventListener('pointerleave', () => { tilt.style.transform = ''; });
+})();
+
+/* ---------- Propositional vs first-order ---------- */
+(function () {
+  const buttons = [...document.querySelectorAll('.prop-toggle button')];
+  const stack = document.getElementById('miniStack');
+  const caption = document.getElementById('miniCaption');
+  if (!buttons.length || !stack || !caption) return;
+
+  const text = {
+    prop: '<b>Eine Faser:</b> Formeln ohne Variablen. Substitution ist trivial – es gibt ja nur einen Kontext.',
+    fo: '<b>Viele Fasern:</b> Jede Variablenliste Γ, x, … bekommt ihre eigene Faser. Substitution stiftet die Verbindung – und macht aus Logik eine strukturelle Algebra.'
+  };
+
+  function apply(mode) {
+    buttons.forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+    stack.classList.toggle('fo', mode === 'fo');
+    caption.innerHTML = text[mode];
+  }
+  buttons.forEach(b => b.addEventListener('click', () => apply(b.dataset.mode)));
+  apply('prop');
+})();
+
+/* ---------- Quantifier adjunction ---------- */
+(function () {
+  const buttons = [...document.querySelectorAll('#qButtons button')];
+  const groups = [...document.querySelectorAll('.qgroup')];
+  const out = document.getElementById('qReadout');
+  if (!buttons.length || !groups.length || !out) return;
+
+  const text = {
+    ex: '<b>∃π ⊣ π*:</b> Existenzquantifizierung ist linksadjungiert zur Substitution. Sie sammelt die Fasern über allen Werten von x ein.',
+    sub: '<b>π*:</b> Substitution entlang π: Γ, x → Γ. Sie zieht Formeln zwischen den Kontexten hin und her – der strukturelle Kern der Faserung.',
+    all: '<b>π* ⊣ ∀π:</b> Allquantifizierung ist rechtsadjungiert zur Substitution. Sie fasst alle Instanzen von x zu einer Aussage zusammen.'
+  };
+
+  function activate(q) {
+    buttons.forEach(b => b.classList.toggle('on', b.dataset.q === q));
+    groups.forEach(g => {
+      const on = g.dataset.q === q;
+      g.classList.toggle('active', on);
+      g.classList.toggle('dim', !on);
+    });
+    out.innerHTML = text[q];
+  }
+
+  buttons.forEach(b => b.addEventListener('click', () => activate(b.dataset.q)));
+  groups.forEach(g => {
+    g.addEventListener('pointerenter', () => activate(g.dataset.q));
+    g.addEventListener('click', () => activate(g.dataset.q));
+  });
+  activate('ex');
+})();
+/* ---------- Reveal on scroll ---------- */
+(function () {
+  const els = [...document.querySelectorAll('[data-reveal]')];
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  els.forEach((el, i) => {
+    el.style.transitionDelay = (i % 3) * 90 + 'ms';
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>
