@@ -12,17 +12,17 @@
       var node = root.querySelector(sel);
       if (node) node.setAttribute("data-tip", DE ? de : en);
     }
-    set(".ls-sim-tabs", "Drei Ansichten: Richtungen, Skaleninvarianz und Unembedding.", "Three views: directions, scale invariance, and unembedding.");
-    set(".ls-sim-canvas", "Punktwolke der Wörter; der aktuelle Tab bestimmt, ob Richtungen, Längen oder Token-Logits gezeigt werden.", "Word point cloud; the active tab decides whether directions, magnitudes, or token logits are shown.");
+    set(".ls-sim-tabs", "Zwei Ansichten: Länge vs. Richtung und Unembedding.", "Two views: length vs. direction and unembedding.");
+    set(".ls-sim-canvas", "Punktwolke der Wörter; der Längenregler verändert den grünen Vektor, die Winkel bleiben gleich.", "Word point cloud; the length slider changes the green vector while the angles stay the same.");
     set(".ls-sim-select", "Wählt das Wort, dessen Vektor und Nachbarn untersucht werden.", "Chooses the word whose vector and neighbours are inspected.");
     set(".ls-sim-pause", "Hält die Drehung der Punktwolke an, ohne die Auswahl zu ändern.", "Stops the rotation of the point cloud without changing the selection.");
-    set(".ls-sim-scale", "Verkürzt oder verlängert Vektor B, um zu zeigen, dass die Richtung erhalten bleibt.", "Shortens or lengthens vector B to show that its direction is preserved.");
+    set(".ls-sim-scale", "Verändert die Länge des grünen Vektors; die Kosinus-Winkel zu den anderen Wörtern bleiben gleich.", "Changes the length of the green vector; the cosine angles to the other words stay the same.");
     set(".ls-sim-next-angle", "Springt zum nächsten Winkel im Unembedding-Lauf.", "Jumps to the next angle in the unembedding run.");
     set(".ls-sim-readout", "Aktuelle Winkel, Skalen und die daraus folgenden Token-Logits.", "Current angles, scales, and the resulting token logits.");
     set(".ls-sim-unembed-list", "Die konkurrierenden nächsten Token mit ihrem Score. Klicke einen Token, um seinen Winkel im Plot zu sehen.", "The competing next tokens with their scores. Click a token to show its angle in the plot.");
     root.querySelectorAll(".ls-sim-tab").forEach(function (b, i) {
-      var de = ["Richtungen: Bedeutung liegt in der Richtung, nicht in der Länge.", "Skaleninvarianz: derselbe Vektor darf länger oder kürzer sein.", "Unembedding: das versteckte Vektor-Ergebnis wird zu Token-Logits."][i] || "Ansicht wechseln.";
-      var en = ["Directions: meaning lives in the direction, not the length.", "Scale invariance: the same vector may be longer or shorter.", "Unembedding: the hidden vector result becomes token logits."][i] || "Switch the view.";
+      var de = ["Länge vs. Richtung: Ziehe den Regler; die Richtung und die Kosinus-Winkel bleiben, nur die Länge ändert sich.", "Unembedding: das versteckte Vektor-Ergebnis wird zu Token-Logits."][i] || "Ansicht wechseln.";
+      var en = ["Length vs. direction: drag the slider; the direction and cosine angles stay, only the length changes.", "Unembedding: the hidden vector result becomes token logits."][i] || "Switch the view.";
       b.setAttribute("data-tip", DE ? de : en);
     });
     return inst;

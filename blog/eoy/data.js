@@ -1125,10 +1125,16 @@
     DE ? box("un-4", "Unembedding", "Von $n$ Vektoren zu Prozenten", "Jede Zeile von $W_U$ ist ein gelernter Token-Vektor. $z = W_U \\mathbf{x}_{\\text{letztes Token}}$ rechnet ein Skalarprodukt pro Token, also $n$ Werte. Der Winkel steckt im Skalarprodukt; Softmax macht aus den $n$ Logits eine Verteilung.", "") : box("un-4", "Unembedding", "From $n$ vectors to percentages", "Every row of $W_U$ is a learned token vector. $z = W_U \\mathbf{x}_{\\text{last token}}$ computes one dot product per token, so $n$ values. The angle sits inside the dot product; softmax turns the $n$ logits into a distribution.", "")
   ];
 
+  unembedSteps[0].title = DE ? "Länge vs. Richtung" : "Length vs. direction";
+  unembedSteps[0].watch = DE ? "Ziehe den Längenregler oder drücke Weiter: Der grüne Vektor wird länger und kürzer, auch über die Kugel hinaus; sein Winkel zu den anderen Wörtern bleibt gleich." : "Drag the length slider or press Next: the green vector grows and shrinks, including beyond the sphere; its angle to the other words stays the same.";
+  unembedSteps[0].body = unembedSteps[0].body + (DE
+    ? "\n\nZiehe den Längenregler: Der grüne Vektor wird länger oder kürzer; der Winkel zu den anderen Wörtern bleibt gleich, weil der Kosinus nur die Richtungen vergleicht. Weiter bewegt den Regler nach oben und unten, auch über die Kugel hinaus."
+    : "\n\nDrag the length slider: the green vector grows or shrinks; the angle to the other words stays the same, because cosine compares only the directions. Next moves the slider up and down, including beyond the sphere.");
+
   var unembedStep = {
-    title: DE ? "Ähnliche Worte finden" : "Finding similar words",
+    title: DE ? "Länge vs. Richtung" : "Length vs. direction",
     kicker: "Unembedding",
-    substeps: [unembedSteps[0], unembedScaleStep, unembedUnembedStep]
+    substeps: [unembedSteps[0], unembedUnembedStep]
   };
 
   var highdimSteps = DE ? [

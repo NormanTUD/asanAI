@@ -8,8 +8,7 @@
     el.className = "ls-sim-scene";
     el.innerHTML =
       '<div class="ls-sim-tabs" role="tablist">' +
-        '<button type="button" class="ls-sim-tab is-on" data-mode="directions" role="tab" aria-selected="true">' + (DE ? "Richtungen" : "Directions") + '</button>' +
-        '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">' + (DE ? "Skaleninvarianz" : "Scale invariance") + '</button>' +
+        '<button type="button" class="ls-sim-tab is-on" data-mode="directions" role="tab" aria-selected="true">' + (DE ? "Länge vs. Richtung" : "Length vs. direction") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="unembed" role="tab" aria-selected="false">Unembedding</button>' +
       '</div>' +
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
@@ -18,7 +17,7 @@
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sim-pause">' + (DE ? "Drehung stoppen" : "Stop rotation") + '</button>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
-        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.08" max="1.05" step="0.01" value="0.40"><output>0.40</output></label>' +
+        '<label class="ls-range">' + (DE ? "Länge des Vektors" : "Vector length") + ' <input type="range" class="ls-sim-scale" min="0.08" max="1.80" step="0.01" value="0.40"><output>0.40</output></label>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
@@ -60,6 +59,8 @@
     var angleA = 360, angleB = 90, scaleMag = 0.40;
     var scaleIndex = 0, scaleRaf = 0;
     var SCALE_VALUES = [0.08, 0.2, 0.4, 0.62, 0.85, 1.05];
+    var LENGTH_VALUES = [0.40, 1.00, 1.60, 1.00, 0.40];
+    var lengthIndex = 0;
     var hits = [];
     var C = api.colors();
     var clamp = api.util.clamp;
@@ -198,7 +199,9 @@
       sphereWire(ctx, cx, cy, R, C.petrol);
 
       var pts = WORDS.map(function (ww, i) {
-        var p = proj3(unit3(vec(ww)), cx, cy, R);
+        var vv = unit3(vec(ww));
+        if (i === selected) vv = [vv[0] * scaleMag, vv[1] * scaleMag, vv[2] * scaleMag];
+        var p = proj3(vv, cx, cy, R);
         return { i: i, w: ww, x: p.x, y: p.y, z: p.z };
       }).filter(function (pt) {
         return pt.i === selected || topIds.indexOf(pt.i) >= 0;
@@ -230,25 +233,23 @@
         if (isSel || isTop) drawRayLabel(word(pt.w), pt.x, pt.y, cx, cy, w, h, isSel, w * 0.63);
       });
 
-      // A short and a long green vector in the same direction: the angle stays 0°.
-      var longP = proj3(qv, cx, cy, R);
-      var shortP = proj3([qv[0] * 0.56, qv[1] * 0.56, qv[2] * 0.56], cx, cy, R);
-      V.arrow(ctx, cx, cy, shortP.x, shortP.y, C.green, 3.2, 7);
+      // The green vector changes length, but its direction—and therefore every cosine angle—stays the same.
+      var unitP = proj3(qv, cx, cy, R);
+      var selP = proj3([qv[0] * scaleMag, qv[1] * scaleMag, qv[2] * scaleMag], cx, cy, R);
       ctx.save();
       ctx.setLineDash([5, 4]);
-      ctx.strokeStyle = V.alpha(C.green, 0.55);
+      ctx.strokeStyle = V.alpha(C.green, 0.5);
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.moveTo(shortP.x, shortP.y);
-      ctx.lineTo(longP.x, longP.y);
+      ctx.moveTo(selP.x, selP.y);
+      ctx.lineTo(unitP.x, unitP.y);
       ctx.stroke();
       ctx.restore();
-      V.arrow(ctx, cx, cy, longP.x, longP.y, V.alpha(C.green, 0.72), 1.8, 6);
       ctx.fillStyle = C.green;
       ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      ctx.fillText(DE ? "gleiche Richtung · 0° · Länge egal für den Winkel" : "same direction · 0° · length irrelevant for the angle", Math.min(shortP.x + 8, w * 0.62 - 150), shortP.y + 12);
+      ctx.fillText((DE ? "Länge " : "length ") + scaleMag.toFixed(2) + (DE ? " · Richtung bleibt · Winkel bleibt" : " · direction stays · angle stays"), Math.min(selP.x + 8, w * 0.62 - 190), selP.y + 12);
 
       top.slice(0, 3).forEach(function (t, k) {
         var ptsArc = [];
@@ -309,10 +310,10 @@
         }
       });
       var topRow = top[0];
-      readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span><span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
-      caption.textContent = DE ? "Die Kugel ist eine schematische 3D-Projektion von Wortrichtungen. Der Winkel ist die Ähnlichkeit; ein kurzer und ein langer Vektor in dieselbe Richtung haben 0°, ein Punkt daneben hat einen größeren Winkel." : "The sphere is a schematic 3D projection of word directions. The angle is the similarity; a short and a long vector in the same direction have 0°, while a point off the line has a larger angle.";
+      readout.innerHTML = '<span>' + (DE ? "Wort" : "word") + ' <b>' + word(q) + '</b></span><span>' + (DE ? "Länge" : "length") + ' <b>' + scaleMag.toFixed(2) + '</b></span><span>' + (DE ? "nächste Richtung" : "nearest direction") + ' <b>' + word(topRow.w) + ' · ' + Math.round(topRow.deg) + '°</b></span><span>cos <b>' + topRow.cos.toFixed(2) + '</b></span>';
+      caption.textContent = DE ? "Ziehe den Längenregler: Der grüne Vektor wird länger oder kürzer; seine Richtung und damit der Kosinus-Winkel zu den anderen Wörtern bleiben gleich." : "Drag the length slider: the green vector grows or shrinks; its direction, and therefore the cosine angle to the other words, stays the same.";
       caption.setAttribute("data-caption-mode", "directions");
-      canvas.setAttribute("aria-label", DE ? "3D-Kugel schematischer Wortrichtungen; der grüne Vektor ist das gewählte Wort, die Winkel zu den nächsten Richtungen stehen daneben." : "3D sphere of schematic word directions; the green vector is the chosen word, with angles to the nearest directions.");
+      canvas.setAttribute("aria-label", DE ? "3D-Kugel schematischer Wortrichtungen; der grüne Vektor ist das gewählte Wort, der Längenregler verändert nur seine Länge, nicht die Winkel." : "3D sphere of schematic word directions; the green vector is the chosen word, and the length slider changes only its length, not the angles.");
     }
 
     function circleScene() {
@@ -382,9 +383,9 @@
         scaleMag = from + (target - from) * e;
         if (scaleInput) scaleInput.value = String(scaleMag);
         if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2);
-        drawScale();
+        draw();
         if (t < 1) scaleRaf = requestAnimationFrame(frame);
-        else { scaleMag = target; scaleRaf = 0; if (scaleInput) scaleInput.value = String(target); if (scaleOut) scaleOut.textContent = target.toFixed(2); drawScale(); }
+        else { scaleMag = target; scaleRaf = 0; if (scaleInput) scaleInput.value = String(target); if (scaleOut) scaleOut.textContent = target.toFixed(2); draw(); }
       }
       scaleRaf = requestAnimationFrame(frame);
     }
@@ -950,7 +951,7 @@
       tabBtns.forEach(function (b) { var on = b.getAttribute("data-mode") === mode; b.classList.toggle("is-on", on); b.setAttribute("aria-selected", String(on)); });
       if (mapControls) mapControls.hidden = mode !== "directions";
       if (angleControls) angleControls.hidden = mode !== "angle";
-      if (scaleControls) scaleControls.hidden = mode !== "scale";
+      if (scaleControls) scaleControls.hidden = mode !== "scale" && mode !== "directions";
       if (unembedControls) unembedControls.hidden = mode !== "unembed";
       if (mode === "unembed" && modeChanged) { unembedFocus = -1; unembedPinned = -1; unembedStep = -1; }
       if (unembedList) {
@@ -1013,6 +1014,7 @@
       unembedFocus = saved.focus;
       el.classList.toggle("is-unembed", mode === "unembed");
       groups.forEach(function (node) { if (node) node.hidden = node !== controlFor(mode); });
+      if (scaleControls) scaleControls.hidden = mode !== "scale" && mode !== "directions";
       rows.forEach(function (node, i) { if (node && max[i] > 0) node.style.minHeight = max[i] + "px"; });
       reservedWidth = width;
       size = api.fit(canvas, stage);
@@ -1030,7 +1032,7 @@
     });
     if (angleAInput) angleAInput.addEventListener("input", function () { angleA = parseFloat(angleAInput.value) || 0; if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°"; draw(); });
     if (angleBInput) angleBInput.addEventListener("input", function () { angleB = parseFloat(angleBInput.value) || 0; if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°"; draw(); });
-    if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 0.08; scaleIndex = -1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2); draw(); });
+    if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 0.08; scaleIndex = -1; lengthIndex = -1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2); draw(); });
     if (nextAngleBtn) nextAngleBtn.addEventListener("click", function () {
       stepUnembed(1);
     });
@@ -1135,6 +1137,13 @@
       update: function (s) { if (s && s.mode) setMode(s.mode); },
       next: function () {
         if (mode === "unembed") return stepUnembed(1);
+        if (mode === "directions") {
+          if (lengthIndex < 0) lengthIndex = 0;
+          if (lengthIndex >= LENGTH_VALUES.length - 1) return false;
+          lengthIndex++;
+          animateScale(LENGTH_VALUES[lengthIndex]);
+          return true;
+        }
         if (mode !== "scale") return false;
         if (scaleIndex < 0) scaleIndex = 0;
         if (scaleIndex >= SCALE_VALUES.length - 1) return false;
@@ -1144,6 +1153,12 @@
       },
       prev: function () {
         if (mode === "unembed") return stepUnembed(-1);
+        if (mode === "directions") {
+          if (lengthIndex <= 0) return false;
+          lengthIndex--;
+          animateScale(LENGTH_VALUES[lengthIndex]);
+          return true;
+        }
         if (mode !== "scale") return false;
         if (scaleIndex < 0) scaleIndex = SCALE_VALUES.length - 2;
         if (scaleIndex <= 0) return false;
@@ -1153,10 +1168,12 @@
       },
       hasNext: function () {
         if (mode === "unembed") return unembedStep < unembedData().length - 1;
+        if (mode === "directions") return lengthIndex < LENGTH_VALUES.length - 1;
         return mode === "scale" && scaleIndex < SCALE_VALUES.length - 1;
       },
       hasPrev: function () {
         if (mode === "unembed") return unembedStep > 0;
+        if (mode === "directions") return lengthIndex > 0;
         return mode === "scale" && scaleIndex !== 0;
       },
       ownsKeys: function () { return mode === "unembed"; },
