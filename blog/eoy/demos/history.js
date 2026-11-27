@@ -32,7 +32,7 @@
         ]
       },
       {
-        year: "ca. 30.000 BP", label: "Ganz früh", title: "Kerben im Wolfsknochen",
+        year: "ca. 30.000 BP", label: "Ganz früh", stackImages: true, title: "Kerben im Wolfsknochen",
         text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben, in zwei Gruppen von 30 und 25; die Datierung liegt bei etwa 27.000 Jahren vor heute. Die Kerben sind keine Schrift, sondern wahrscheinlich Zählmarken, und die Deutung ist umstritten. Der Ishango-Knochen aus dem Kongo, rund 20.000 Jahre alt, zeigt ebenfalls Gruppen von Kerben; manche lesen darin Primzahlen oder einen Mondkalender. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
         images: [
           { src: "../vestonice_wolf_bone.jpg", alt: "Der Wolfsknochen von Dolní Věstonice mit 55 Kerben", cap: "Der Wolfsknochen von Dolní Věstonice. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" },
@@ -72,7 +72,7 @@
         sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }, { label: "Wikipedia: Ramon Llull", url: "https://en.wikipedia.org/wiki/Ramon_Llull" }]
       },
       {
-        year: "1673–1854", label: "Maschinen", title: "Rechnen wird mechanisch",
+        year: "1673–1854", label: "Maschinen", stackImages: true, title: "Rechnen wird mechanisch",
         text: "Leibniz beginnt 1673 mit einer Rechenmaschine für alle vier Grundrechenarten; fertig wird sie 1694, arbeitet aber unzuverlässig. Babbage entwirft ab 1837 die Analytical Engine mit getrenntem Store und Mill; Ada Lovelace beschreibt 1843, wie darauf algorithmisch gerechnet werden kann. Boole schreibt 1854 die Logik als Algebra. Mechanik und formale Regeln rücken zusammen.",
         images: [
           { src: "../Leibnizrechenmaschine.jpg", alt: "Nachbau der Leibniz-Rechenmaschine", cap: "Leibniz-Rechenmaschine, Nachbau. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
@@ -202,7 +202,7 @@
         ]
       },
       {
-        year: "ca. 30,000 BP", label: "Deep past", title: "Notches in a wolf bone",
+        year: "ca. 30,000 BP", label: "Deep past", stackImages: true, title: "Notches in a wolf bone",
         text: "The wolf bone from Dolní Věstonice carries 55 notches in two groups of 30 and 25; it is about 27,000 years old. The notches are not writing; they are probably tally marks, and the interpretation is disputed. The Ishango bone from the Congo, about 20,000 years old, also carries grouped notches; some read primes or a lunar calendar into them. Arithmetic begins as embodied counting, long before computers.",
         images: [
           { src: "../vestonice_wolf_bone.jpg", alt: "The Dolní Věstonice wolf bone with 55 notches", cap: "The Dolní Věstonice wolf bone. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" },
@@ -242,7 +242,7 @@
         sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }, { label: "Wikipedia: Ramon Llull", url: "https://en.wikipedia.org/wiki/Ramon_Llull" }]
       },
       {
-        year: "1673–1854", label: "Machines", title: "Calculation becomes mechanical",
+        year: "1673–1854", label: "Machines", stackImages: true, title: "Calculation becomes mechanical",
         text: "Leibniz starts a calculator for all four arithmetic operations in 1673; it is finished in 1694 but works unreliably. Babbage designs the Analytical Engine from 1837 with separate store and mill; Ada Lovelace describes in 1843 how algorithms can run on it. Boole writes logic as algebra in 1854. Mechanism and formal rules move closer together.",
         images: [
           { src: "../Leibnizrechenmaschine.jpg", alt: "A replica of Leibniz's calculating machine", cap: "Leibniz calculating machine, replica. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
