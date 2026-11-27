@@ -5,15 +5,54 @@
   function hallucinationGuardScene(root, api) {
     var DE = api.lang === "de";
     function L(de, en) { return DE ? de : en; }
+    var FACTS = {
+      common: {
+        kicker: L("Häufig", "Common"),
+        label: L("Hauptstadt", "Capital"),
+        question: L("Was ist die Hauptstadt von Frankreich?", "What is the capital of France?"),
+        memory: L("Paris.", "Paris."),
+        memoryNote: L("Keine Quelle · häufig in den Daten · wahrscheinlich richtig", "No source · common in the data · probably right"),
+        sourceHead: L("Paris", "Paris"),
+        sourceText: L("Paris ist die Hauptstadt von Frankreich.", "Paris is the capital of France."),
+        sourceAnswer: L("Paris. [S1]", "Paris. [S1]"),
+        cite: "S1 · Wikipedia: Paris",
+        stepMemory: L("Ich erinnere mich: Paris.", "I recall: Paris."),
+        stepSource: L("S1 sagt: Paris.", "S1 says: Paris."),
+        risk: 26,
+        ragRisk: 12
+      },
+      rare: {
+        kicker: L("Selten", "Rare"),
+        label: L("Ishango", "Ishango"),
+        question: L("Wie alt ist der Ishango-Knochen?", "How old is the Ishango bone?"),
+        memory: L("Etwa 8.000 Jahre.", "About 8,000 years."),
+        memoryNote: L("Keine Quelle · selten in den Daten · leicht erfunden", "No source · rare in the data · easily invented"),
+        sourceHead: L("Ishango-Knochen", "Ishango bone"),
+        sourceText: L("Der Ishango-Knochen ist etwa 20.000 Jahre alt.", "The Ishango bone is about 20,000 years old."),
+        sourceAnswer: L("Etwa 20.000 Jahre. [S1]", "About 20,000 years. [S1]"),
+        cite: "S1 · Wikipedia: Ishango bone",
+        stepMemory: L("Ich erinnere mich an etwa 8.000 Jahre; das ist eine vage Schätzung.", "I recall about 8,000 years; that is a vague guess."),
+        stepSource: L("S1 sagt: etwa 20.000 Jahre.", "S1 says: about 20,000 years."),
+        risk: 86,
+        ragRisk: 18
+      }
+    };
+    var factKey = "rare";
+    var fact = FACTS[factKey];
     var rag = false, cot = false, verify = false;
-    var question = DE ? "Wie hoch ist der Eiffelturm mit Antenne?" : "How tall is the Eiffel Tower with its antenna?";
+    var GUARD_PHASES = [
+      { rag: false, cot: false, verify: false },
+      { rag: true, cot: false, verify: false },
+      { rag: true, cot: true, verify: false },
+      { rag: true, cot: true, verify: true }
+    ];
     var el = document.createElement("div");
     el.className = "ls-guard-scene";
     el.innerHTML =
       '<div class="ls-guard-console">' +
         '<div class="ls-guard-bar">' +
           '<span class="ls-guard-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
-          '<span class="ls-guard-addr">' + L("guard · Eiffelturm", "guard · Eiffel Tower") + '</span>' +
+          '<span class="ls-guard-addr">' + L("guard · zwei Fakten", "guard · two facts") + '</span>' +
           '<div class="ls-hx-tour ls-guard-tour" data-tip="' + L("Erst ohne RAG, dann mit RAG, Denkweg und Gegenprüfung.", "First without RAG, then with RAG, reasoning, and verification.") + '">' +
             '<button type="button" class="ls-hx-tour-play" aria-label="' + L("Schutzschichten abspielen", "Play defence layers") + '">▶</button>' +
             '<span class="ls-hx-tour-track"><i></i><i></i><i></i><i></i></span>' +
@@ -23,7 +62,11 @@
         '</div>' +
         '<div class="ls-guard-body">' +
           '<section class="ls-guard-chat">' +
-            '<div class="ls-guard-question"><span>' + L("Frage", "Question") + '</span><b>' + question + '</b></div>' +
+            '<div class="ls-guard-facts" role="group" aria-label="' + L("Beispiele", "Examples") + '">' +
+              '<button type="button" class="ls-guard-fact" data-fact="common" aria-pressed="false"><span>' + L("Häufig", "Common") + '</span><b>' + L("Hauptstadt", "Capital") + '</b><em class="is-low">' + L("Grundrisiko: niedrig", "base risk: low") + '</em></button>' +
+              '<button type="button" class="ls-guard-fact is-on" data-fact="rare" aria-pressed="true"><span>' + L("Selten", "Rare") + '</span><b>Ishango</b><em class="is-veryhigh">' + L("Grundrisiko: sehr hoch", "base risk: very high") + '</em></button>' +
+            '</div>' +
+            '<div class="ls-guard-question"><span>' + L("Frage", "Question") + '</span><b class="ls-guard-question-text">' + fact.question + '</b></div>' +
             '<article class="ls-guard-answer">' +
               '<div class="ls-guard-context"><span class="ls-guard-kicker">' + L("Kontext", "Context") + '</span><div class="ls-guard-source" data-tip="' + L("Was das Modell als Quelle sieht; leer heißt Antwort aus dem Gedächtnis.", "What the model sees as a source; empty means an answer from memory.") + '"></div></div>' +
               '<div class="ls-guard-answer-text" data-tip="' + L("Die Antwort des Modells mit oder ohne Deckung.", "The model answer with or without grounding.") + '"></div>' +
@@ -57,6 +100,7 @@
       '</div>';
     root.appendChild(el);
 
+    var questionEl = el.querySelector(".ls-guard-question-text");
     var sourceEl = el.querySelector(".ls-guard-source");
     var answerEl = el.querySelector(".ls-guard-answer-text");
     var citeEl = el.querySelector(".ls-guard-cite");
@@ -66,23 +110,32 @@
     var riskFill = el.querySelector(".ls-guard-risk-fill");
     var statusEl = el.querySelector(".ls-guard-status");
     var btns = Array.prototype.slice.call(el.querySelectorAll("[data-hg]"));
+    var factBtns = Array.prototype.slice.call(el.querySelectorAll("[data-fact]"));
     var guardTour = el.querySelector(".ls-guard-tour");
     var guardPlay = el.querySelector(".ls-guard-tour .ls-hx-tour-play");
     var guardDots = el.querySelectorAll(".ls-guard-tour .ls-hx-tour-track i");
     var guardLabel = el.querySelector(".ls-guard-tour .ls-hx-tour-label");
     var guardPhase = 0, guardActive = false, guardTimer = null, guardAutoTimer = null;
-    var GUARD_PHASES = [
-      { rag: false, cot: false, verify: false },
-      { rag: true, cot: false, verify: false },
-      { rag: true, cot: true, verify: false },
-      { rag: true, cot: true, verify: true }
-    ];
     var CIRC = 2 * Math.PI * 112;
     if (riskFill) {
       riskFill.style.strokeDasharray = String(CIRC);
       riskFill.style.strokeDashoffset = String(CIRC);
     }
 
+    function riskWord(risk) {
+      if (risk <= 20) return L("sehr niedrig", "very low");
+      if (risk <= 40) return L("niedrig", "low");
+      if (risk <= 60) return L("mittel", "medium");
+      if (risk <= 80) return L("hoch", "high");
+      return L("sehr hoch", "very high");
+    }
+    function riskClass(risk) {
+      if (risk <= 20) return "is-verylow";
+      if (risk <= 40) return "is-low";
+      if (risk <= 60) return "is-mid";
+      if (risk <= 80) return "is-high";
+      return "is-veryhigh";
+    }
     function setLayer(key, on, stateText) {
       var b = el.querySelector('[data-hg="' + key + '"]');
       if (b) {
@@ -94,7 +147,6 @@
       var ring = el.querySelector(".ls-guard-ring.is-" + key);
       if (ring) ring.classList.toggle("is-on", on);
     }
-
     function updateGuardTour() {
       if (!guardTour) return;
       guardTour.classList.toggle("is-running", guardActive);
@@ -143,64 +195,77 @@
       guardPhase = 0;
       runGuardPhase();
     }
+
     function render() {
-      btns.forEach(function (b) {
-        var key = b.getAttribute("data-hg");
-        var on = key === "rag" ? rag : key === "cot" ? cot : verify;
+      var common = factKey === "common";
+      factBtns.forEach(function (b) {
+        var on = b.getAttribute("data-fact") === factKey;
         b.classList.toggle("is-on", on);
         b.setAttribute("aria-pressed", String(on));
       });
+      questionEl.textContent = fact.question;
       sourceEl.innerHTML = rag
-        ? '<article class="ls-guard-doc"><div class="ls-guard-doc-head"><b>S1</b><span>' + L("vertrauenswürdig", "trusted") + '</span></div><p><b>Wikipedia</b> · ' + L("Eiffelturm", "Eiffel Tower") + '</p><p>' + L("Der Eiffelturm ist mit Antenne 330 Meter hoch.", "The Eiffel Tower is 330 metres tall including its antenna.") + '</p></article>'
+        ? '<article class="ls-guard-doc"><div class="ls-guard-doc-head"><b>S1</b><span>' + L("vertrauenswürdig", "trusted") + '</span></div><p><b>' + fact.sourceHead + '</b></p><p>' + fact.sourceText + '</p></article>'
         : '<div class="ls-guard-empty">' + L("Keine Quelle im Kontext. Das Modell antwortet aus dem Gedächtnis.", "No source in the context. The model answers from memory.") + '</div>';
 
-      var answer, cite, risk, htmlSteps = "";
+      var answer, cite, risk;
       if (verify && !rag) {
         answer = L("Keine Quelle im Kontext. Ich rate nicht.", "No source in the context. I will not guess.");
         cite = L("Keine Deckung · Eingeständnis statt Erfindung", "No support · admission instead of invention");
-        risk = 12;
-      } else if (rag) {
-        answer = L("Der Eiffelturm ist mit Antenne 330 m hoch. [S1]", "The Eiffel Tower is 330 m tall with its antenna. [S1]");
-        cite = "S1 · " + L("Wikipedia: Eiffelturm", "Wikipedia: Eiffel Tower");
         risk = 18;
+      } else if (rag) {
+        answer = fact.sourceAnswer;
+        cite = fact.cite;
+        risk = fact.ragRisk - (cot ? 2 : 0) - (verify ? 2 : 0);
       } else {
-        answer = L("Der Eiffelturm ist 300 m hoch.", "The Eiffel Tower is 300 m tall.");
-        cite = L("Keine Quelle · aus dem Gedächtnis · falsch (330 m mit Antenne)", "No source · from memory · wrong (330 m with antenna)");
-        risk = 86;
+        answer = fact.memory;
+        cite = fact.memoryNote;
+        risk = fact.risk - (cot ? 4 : 0);
       }
 
+      var htmlSteps = "";
       if (cot) {
         htmlSteps += '<div class="ls-guard-steps-head"><b>' + L("Denkweg", "Reasoning path") + '</b><span>' + L("Frage → Quelle → Schluss", "question → source → conclusion") + '</span></div>';
-        htmlSteps += '<div class="ls-guard-step"><b>1</b><span>' + L("Frage: Wie hoch ist der Eiffelturm mit Antenne?", "Question: how tall is the Eiffel Tower with its antenna?") + '</span></div>';
-        htmlSteps += '<div class="ls-guard-step"><b>2</b><span>' + (rag ? L("S1 sagt: 330 m mit Antenne.", "S1 says: 330 m with antenna.") : L("Ich erinnere mich an 300 m; das ist zu niedrig, aber keine Quelle im Kontext.", "I recall 300 m; that is too low, but no source is in the context.")) + '</span></div>';
+        htmlSteps += '<div class="ls-guard-step"><b>1</b><span>' + fact.question + '</span></div>';
+        htmlSteps += '<div class="ls-guard-step"><b>2</b><span>' + (rag ? fact.stepSource : fact.stepMemory) + '</span></div>';
         htmlSteps += '<div class="ls-guard-step"><b>3</b><span>' + L("Schluss: ", "Conclusion: ") + answer + '</span></div>';
       }
       if (verify) {
-        htmlSteps += '<div class="ls-guard-step is-check"><b>✓</b><span>' + (rag ? L("Gegenprüfung: Steht 330 in S1? Ja. Antwort bleibt gedeckt.", "Check: does S1 say 330? Yes. The answer stays grounded.") : L("Gegenprüfung: Keine Quelle. Also keine Behauptung.", "Check: no source. So no claim.")) + '</span></div>';
+        htmlSteps += '<div class="ls-guard-step is-check"><b>✓</b><span>' + (rag ? L("Gegenprüfung: Steht die Aussage in S1? Ja. Antwort bleibt gedeckt.", "Check: is the statement in S1? Yes. The answer stays grounded.") : L("Gegenprüfung: Keine Quelle. Also keine Behauptung.", "Check: no source. So no claim.")) + '</span></div>';
       }
       stepsEl.className = "ls-guard-steps" + (cot ? " is-on" : "");
       stepsEl.innerHTML = htmlSteps;
       answerEl.textContent = answer;
       citeEl.textContent = cite;
 
-      var riskClass = risk < 30 ? "is-low" : risk < 60 ? "is-mid" : "is-high";
-      if (riskVal) riskVal.textContent = risk < 30 ? L("niedrig", "low") : risk < 60 ? L("mittel", "medium") : L("hoch", "high");
+      var label = riskWord(risk);
+      var cls = riskClass(risk);
+      if (riskVal) {
+        riskVal.textContent = label;
+        riskVal.className = "ls-guard-risk " + cls;
+      }
       if (riskFill) {
         riskFill.style.strokeDashoffset = String(CIRC * (1 - risk / 100));
-        riskFill.setAttribute("class", "ls-guard-risk-fill " + riskClass);
+        riskFill.setAttribute("class", "ls-guard-risk-fill " + cls);
       }
-      statusEl.className = "ls-guard-status " + riskClass;
+      statusEl.className = "ls-guard-status " + cls;
       statusEl.textContent = rag ? L("gedeckt", "grounded") : verify ? L("ehrlich", "honest") : L("ungedeckt", "ungrounded");
 
-      setLayer("rag", rag, rag ? "S1 · 330 m" : L("keine", "none"));
+      setLayer("rag", rag, rag ? "S1 · " + fact.label : L("keine", "none"));
       setLayer("cot", cot, cot ? L("Frage → Quelle → Schluss", "question → source → conclusion") : L("unsichtbar", "invisible"));
       setLayer("verify", verify, verify ? L("geprüft", "checked") : L("aus", "off"));
 
       var title, text, vclass;
       if (!rag && !cot && !verify) {
-        title = L("Die Form ist kein Beweis.", "The shape is not proof.");
-        text = L("Ohne Quelle, ohne Zwischenschritte und ohne Prüfung bleibt die Antwort eine selbstsichere Vermutung.", "Without a source, steps, or verification, the answer is a confident guess.");
-        vclass = "is-bad";
+        if (common) {
+          title = L("Häufig, aber ungeprüft.", "Common, but unchecked.");
+          text = L("Häufige Fakten stehen oft in den Daten; die Antwort ist wahrscheinlich richtig, aber die Form allein ist kein Beweis.", "Common facts are often in the data; the answer is probably right, but the shape alone is not proof.");
+          vclass = "is-warn";
+        } else {
+          title = L("Selten und ungeprüft.", "Rare and unchecked.");
+          text = L("Wenig Daten: Die Antwort klingt sicher, ist aber leicht erfunden. Eine konkrete Quelle senkt das Risiko.", "Little data: the answer sounds confident but is easily invented. A concrete source lowers the risk.");
+          vclass = "is-bad";
+        }
       } else if (rag && verify) {
         title = L("Gedeckt und geprüft.", "Grounded and checked.");
         text = L("Quelle plus Gegenprüfung: Die Antwort ist gedeckt oder das Modell sagt, dass die Deckung fehlt.", "Source plus verification: the answer is grounded, or the model says support is missing.");
@@ -229,6 +294,14 @@
       updateGuardTour();
     }
 
+    factBtns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        stopGuardTour();
+        factKey = b.getAttribute("data-fact");
+        fact = FACTS[factKey];
+        render();
+      });
+    });
     btns.forEach(function (b) {
       b.addEventListener("click", function () {
         stopGuardTour();

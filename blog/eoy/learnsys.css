@@ -7100,3 +7100,26 @@ html.dark .ls-time-stop-copy b{color:#dbe5ec}
 .ls-guard-kicker{font-size:9px}
 .ls-hx-conf-track i.is-low{background:var(--ls-line-strong)}
 .ls-hx-conf-val{text-transform:none}
+.ls-guard-facts{display:flex;gap:6px;flex-wrap:wrap}
+.ls-guard-fact{display:flex;flex-direction:column;gap:1px;text-align:left;border:1px solid var(--ls-line);border-radius:10px;background:var(--ls-paper-2);padding:7px 10px;cursor:pointer;min-width:150px;color:var(--ls-soft);transition:background .15s ease,border-color .15s ease,box-shadow .15s ease}
+.ls-guard-fact:hover{background:#fff;border-color:var(--ls-line-strong)}
+.ls-guard-fact.is-on{background:#fff;border-color:var(--ls-green);box-shadow:inset 3px 0 0 var(--ls-green)}
+.ls-guard-fact span{font:700 8px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-muted)}
+.ls-guard-fact b{font:700 11.5px/1.1 "Barlow",sans-serif;color:var(--ls-ink)}
+.ls-guard-fact em{font:600 8.5px/1.2 "Open Sans",sans-serif;font-style:normal;color:var(--ls-petrol)}
+.ls-guard-fact em.is-low{color:var(--ls-green)}
+.ls-guard-fact em.is-veryhigh{color:#a33}
+.ls-guard-risk.is-verylow{color:var(--ls-green)}
+.ls-guard-risk.is-low{color:var(--ls-green)}
+.ls-guard-risk.is-mid{color:var(--ls-gold)}
+.ls-guard-risk.is-high{color:#b87900}
+.ls-guard-risk.is-veryhigh{color:#a33}
+.ls-guard-risk-fill.is-verylow{stroke:var(--ls-green)}
+.ls-guard-risk-fill.is-low{stroke:var(--ls-green)}
+.ls-guard-risk-fill.is-high{stroke:#b87900}
+.ls-guard-risk-fill.is-veryhigh{stroke:#a33}
+.ls-guard-status.is-verylow{color:#a7e08f;border-color:rgba(99,164,75,.55);background:rgba(99,164,75,.16)}
+.ls-guard-status.is-veryhigh{color:#e3898c;border-color:rgba(201,86,86,.55);background:rgba(201,86,86,.16)}
+html.dark .ls-guard-fact,html[data-theme="dark"] .ls-guard-fact{background:rgba(255,255,255,.04);border-color:#2a3d52}
+html.dark .ls-guard-fact.is-on,html[data-theme="dark"] .ls-guard-fact.is-on{background:#141c26}
+html.dark .ls-guard-fact b,html[data-theme="dark"] .ls-guard-fact b{color:#e7eef2}
