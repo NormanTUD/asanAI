@@ -6576,7 +6576,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-rag-doc .ls-rag-pdf-title h2{font-size:24px;line-height:1}
 .ls-rag-doc .ls-rag-pdf-title span{font-size:6px}
 .ls-rag-pdf-body{position:relative;display:flex;gap:12px;flex:1;min-height:0;overflow:hidden;font-size:var(--rag-pdf-fs,8.2px)}
-.ls-rag-pdf-media{flex:0 0 140px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ls-rag-pdf-media{flex:0 0 130px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .ls-rag-doc .ls-rag-fig{margin:0;padding:2px;background:transparent}
 .ls-rag-doc .ls-rag-fig img{max-height:140px;width:100%;object-fit:cover}
 .ls-rag-doc .ls-rag-fig--old img{width:auto;max-width:100%;max-height:200px;margin:0 auto;object-fit:contain;background:transparent}
@@ -6608,7 +6608,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-rag-scanfx i{position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,rgba(91,165,230,.95),transparent);box-shadow:0 0 12px rgba(91,165,230,.85);animation:ls-rag-scanline 2.4s linear forwards}
 @keyframes ls-rag-scanline{from{top:2%}to{top:96%}}
 @keyframes ls-rag-scanwash{0%,100%{opacity:0}20%,80%{opacity:1}}
-.ls-rag-rail{flex:0 0 115px;display:flex;flex-direction:column;gap:4px;min-height:0;overflow:auto;padding-right:2px;scrollbar-width:thin}
+.ls-rag-rail{flex:0 0 105px;display:flex;flex-direction:column;gap:4px;min-height:0;overflow:auto;padding-right:2px;scrollbar-width:thin}
 .ls-rag-rail-head{font:700 14px/1.15 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:var(--ls-petrol)}
 .ls-rag-rail-meta{margin:3px 0 2px;font:600 9px/1.35 "Open Sans",sans-serif;color:var(--ls-muted);text-transform:none;letter-spacing:0}
 .ls-rag-threshold{display:inline-flex;align-items:center;margin:0 0 4px;padding:2px 5px;border:1px solid var(--ls-gold);background:rgba(159,151,0,.12);font:700 10px/1.1 "Open Sans",sans-serif;color:var(--ls-petrol);text-transform:uppercase;letter-spacing:.04em}
