@@ -399,20 +399,14 @@
       var bx = cx + Math.cos(aB) * lenB, by = cy - Math.sin(aB) * lenB;
       var angleDeg = (aB - aA) * 180 / Math.PI;
       ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createLinearGradient(0, 0, w, h);
-      bg.addColorStop(0, "#061a24");
-      bg.addColorStop(0.55, "#0a3140");
-      bg.addColorStop(1, "#071e2a");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
       var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.72);
-      glow.addColorStop(0, V.alpha(C.blue, 0.18));
-      glow.addColorStop(0.45, V.alpha(C.green, 0.05));
+      glow.addColorStop(0, V.alpha(C.blue, 0.08));
+      glow.addColorStop(0.45, V.alpha(C.green, 0.025));
       glow.addColorStop(1, V.alpha(C.paper, 0));
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
       var goldGlow = ctx.createRadialGradient(cx + R * 0.2, cy - R * 0.55, 0, cx + R * 0.2, cy - R * 0.55, R * 0.8);
-      goldGlow.addColorStop(0, V.alpha(C.gold, 0.10));
+      goldGlow.addColorStop(0, V.alpha(C.gold, 0.05));
       goldGlow.addColorStop(1, V.alpha(C.gold, 0));
       ctx.fillStyle = goldGlow;
       ctx.fillRect(0, 0, w, h);
@@ -437,10 +431,10 @@
         var pw = tw + 16, ph = sizePx + 11;
         var px = Math.max(8, Math.min(w - pw - 8, x - pw / 2));
         var py = Math.max(8, Math.min(h - ph - 8, y - ph / 2));
-        ctx.fillStyle = "rgba(3,18,26,0.82)";
+        ctx.fillStyle = V.alpha(C.paper, 0.88);
         rr(px, py, pw, ph, ph / 2);
         ctx.fill();
-        ctx.strokeStyle = V.alpha(color, 0.6);
+        ctx.strokeStyle = V.alpha(color, 0.55);
         ctx.lineWidth = 1;
         ctx.stroke();
         ctx.fillStyle = color;
@@ -458,12 +452,12 @@
         ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.85)";
+        ctx.strokeStyle = V.alpha(C.paper, 0.9);
         ctx.lineWidth = 1.2;
         ctx.stroke();
       }
       ctx.save();
-      ctx.strokeStyle = V.alpha(C.paper, 0.08);
+      ctx.strokeStyle = V.alpha(C.line, 0.75);
       ctx.lineWidth = 1;
       for (var sIdx = 0; sIdx < 12; sIdx++) {
         var ang = sIdx * Math.PI / 6;
@@ -473,14 +467,14 @@
         ctx.stroke();
       }
       [0.34, 0.67, 1].forEach(function (rad) {
-        ctx.strokeStyle = V.alpha(C.paper, rad === 1 ? 0.22 : 0.09);
+        ctx.strokeStyle = V.alpha(rad === 1 ? C.lineStrong : C.line, rad === 1 ? 0.55 : 0.55);
         ctx.lineWidth = rad === 1 ? 1.4 : 1;
         ctx.beginPath(); ctx.arc(cx, cy, R * rad, 0, Math.PI * 2); ctx.stroke();
       });
       for (var tIdx = 0; tIdx < 24; tIdx++) {
         var ta = tIdx * Math.PI / 12;
         var tr0 = R * 0.985, tr1 = R * (tIdx % 2 ? 0.955 : 0.94);
-        ctx.strokeStyle = V.alpha(C.paper, 0.16);
+        ctx.strokeStyle = V.alpha(C.lineStrong, 0.38);
         ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.moveTo(cx + Math.cos(ta) * tr0, cy - Math.sin(ta) * tr0);
@@ -489,7 +483,7 @@
       }
       ctx.restore();
       ctx.save();
-      ctx.fillStyle = V.alpha(C.paper, 0.48);
+      ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.textAlign = "center";
       ctx.textBaseline = "bottom";
@@ -543,8 +537,9 @@
       ctx.lineTo(cx + Math.cos(aB) * R, cy - Math.sin(aB) * R);
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = V.alpha(C.paper, 0.55);
+      ctx.fillStyle = V.alpha(C.blue, 0.55);
       ctx.beginPath(); ctx.arc(cx + Math.cos(aA) * R, cy - Math.sin(aA) * R, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = V.alpha(C.green, 0.55);
       ctx.beginPath(); ctx.arc(cx + Math.cos(aB) * R, cy - Math.sin(aB) * R, 2.2, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
       ctx.save();
@@ -573,20 +568,20 @@
       pill(Math.round(angleDeg) + "°", cx + Math.cos(midAng) * R * 0.35, cy - Math.sin(midAng) * R * 0.35, C.gold);
       var tpx = 16, tpy = 14, tpw = Math.min(300, w * 0.56), tph = 60;
       ctx.save();
-      ctx.fillStyle = "rgba(3,18,26,0.55)";
+      ctx.fillStyle = V.alpha(C.paper, 0.78);
       rr(tpx, tpy, tpw, tph, 10);
       ctx.fill();
-      ctx.strokeStyle = V.alpha(C.paper, 0.12);
+      ctx.strokeStyle = V.alpha(C.lineStrong, 0.22);
       ctx.lineWidth = 1;
       ctx.stroke();
       ctx.fillStyle = C.gold;
       ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
       ctx.fillText(DE ? "SKALENINVARIANZ" : "SCALE INVARIANCE", tpx + 14, tpy + 18);
-      ctx.fillStyle = C.paper;
+      ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + Math.max(15, Math.min(21, w * 0.022)) + 'px "Barlow", sans-serif';
       ctx.fillText(DE ? "Länge vs. Richtung" : "Length vs. direction", tpx + 14, tpy + 39);
-      ctx.fillStyle = V.alpha(C.paper, 0.60);
+      ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.fillText(DE ? "Richtung bleibt · Länge verändert die Distanz" : "Direction stays · length changes the distance", tpx + 14, tpy + 53);
       ctx.restore();
