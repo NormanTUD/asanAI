@@ -338,7 +338,13 @@
             '<span class="ls-hx-addr">chat.example.com</span>' +
             '<span class="ls-hx-mode-badge"></span>' +
           '</div>' +
-          '<div class="ls-hx-winbody">' +
+          '<div class="ls-hx-wintabs" role="tablist" aria-label="' + L("Fensterbereiche", "Window sections") + '">' +
+            '<button type="button" class="ls-hx-tab is-on" role="tab" aria-selected="true" data-hx-tab="chat"><span>01</span>' + L("Chat", "Chat") + '</button>' +
+            '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="sources"><span>02</span>' + L("Quellen", "Sources") + '</button>' +
+            '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="rag"><span>03</span>RAG</button>' +
+            '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="risk"><span>04</span>' + L("Risiko", "Risk") + '</button>' +
+          '</div>' +
+          '<div class="ls-hx-winbody ls-hx-tabpanel is-on" data-hx-panel="chat" role="tabpanel">' +
             '<div class="ls-hx-chatcol">' +
               '<div class="ls-hx-thread" data-tip="' + L("Frage und Modellantwort; die Antwort zerfällt in prüfbare Aussagen.", "Question and model answer; the answer splits into checkable claims.") + '">' +
                 '<div class="ls-hx-msg is-user">' +
@@ -369,6 +375,49 @@
               '</div>' +
             '</aside>' +
           '</div>' +
+        '<section class="ls-hx-winpanel ls-hx-tabpanel" data-hx-panel="sources" hidden role="tabpanel">' +
+          '<div class="ls-hx-sourcelead"><b>' + L("Woher kommt die Behauptung?", "Where does the claim come from?") + '</b><p>' + L("Die Prüfung entscheidet, welche Quelle die Aussage deckt.", "The check decides which source supports the claim.") + '</p></div>' +
+      '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
+        '<div class="ls-hx-source-card is-weights" data-source-kind="weights" data-tip="' + L("Was das Modell aus dem Training mitbringt; hier sitzen Fakten und alte Zahlen.", "What the model brings from training; facts and old numbers live here.") + '"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
+        '<div class="ls-hx-source-claim" data-tip="' + L("Die geprüfte Aussage steht zwischen beiden möglichen Quellen.", "The checked claim sits between the two possible sources.") + '"><span>' + L("Behauptung", "Claim") + '</span></div>' +
+        '<div class="ls-hx-source-card is-context" data-source-kind="context" data-tip="' + L("Was im Prompt oder in der abgerufenen Quelle steht; RAG füllt diesen Teil.", "What is in the prompt or the retrieved source; RAG fills this side.") + '"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
+      '</div>' +
+        '</section>' +
+        '<section class="ls-hx-winpanel ls-hx-tabpanel" data-hx-panel="rag" role="tabpanel" hidden>' +
+          '<div class="ls-hx-ragtab">' +
+            '<div class="ls-hx-ragtab-copy">' +
+              '<span class="ls-hx-ragtab-kicker">RAG</span>' +
+              '<h3>' + L("Frage → Ähnlichkeit → Kontext → Antwort", "Question → similarity → context → answer") + '</h3>' +
+              '<p class="ls-hx-ragtab-lead">' + L("Vier Sätze, ein Grenzwinkel. Nur Treffer unter 35° kommen in den Kontext.", "Four sentences, one threshold. Only hits below 35° enter the context.") + '</p>' +
+              '<div class="ls-hx-ragsteps">' +
+                '<div><b>1</b><strong>' + L("Frage", "Question") + '</strong><span>' + L("An welchem Fluss liegt Berlin?", "Which river is Berlin on?") + '</span></div>' +
+                '<div><b>2</b><strong>' + L("Ähnlichkeit", "Similarity") + '</strong><span>' + L("Sätze vektorisieren, Winkel zur Frage messen.", "Embed sentences, measure the angle to the question.") + '</span></div>' +
+                '<div><b>3</b><strong>' + L("Kontext", "Context") + '</strong><span>' + L("Treffer unter dem Grenzwinkel kommen mit.", "Hits below the threshold come along.") + '</span></div>' +
+                '<div><b>4</b><strong>' + L("Antwort", "Answer") + '</strong><span>' + L("Das Modell liest den Kontext mit.", "The model reads the context along.") + '</span></div>' +
+              '</div>' +
+              '<p class="ls-hx-ragtab-note">' + L("Anfang und Ende eines langen Kontexts zählen mehr als die Mitte.", "The beginning and end of a long context count more than the middle.") + '</p>' +
+            '</div>' +
+            '<div class="ls-hx-ragtab-lab">' +
+              '<div class="ls-hx-ragtab-viz"><svg class="ls-hx-ragtab-svg" viewBox="0 0 300 185" role="img" aria-label="' + L("Abruf-Fächer: Frage und vier Sätze", "Retrieval fan: question and four sentences") + '"></svg></div>' +
+              '<label class="ls-hx-ragtab-threshold"><span>' + L("Grenzwinkel", "Angle threshold") + '</span><input type="range" class="ls-hx-ragtab-range" min="10" max="85" step="1" value="35"><output class="ls-hx-ragtab-angle">35°</output></label>' +
+              '<p class="ls-hx-ragtab-hint" aria-live="polite"></p>' +
+            '</div>' +
+            '<div class="ls-hx-ragtab-contextcol">' +
+              '<div class="ls-hx-ragtab-context"><div class="ls-hx-ragtab-context-head"><b>' + L("Im Kontext", "In the context") + '</b><span class="ls-hx-ragtab-count"></span></div><div class="ls-hx-ragtab-list"></div></div>' +
+            '</div>' +
+          '</div>' +
+        '</section>' +
+        '<section class="ls-hx-winpanel ls-hx-tabpanel" data-hx-panel="risk" role="tabpanel" hidden>' +
+          '<div class="ls-hx-risktab">' +
+            '<div class="ls-hx-risk" data-tip="' + L("Die zwei Achsen zeigen, ob eine Antwort plausibel klingt und ob eine Quelle sie deckt.", "The two axes show whether an answer sounds plausible and whether a source grounds it.") + '">' +
+              '<div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("Plausibilität gegen Deckung", "plausibility against grounding") + '</span></div>' +
+              '<div class="ls-hx-risk-svg"></div>' +
+              '<p class="ls-hx-risk-caption"></p>' +
+            '</div>' +
+            '<div class="ls-hx-measures" data-tip="' + L("Gegenmaßnahmen: Klick schaltet eine Prüfung ein oder aus.", "Countermeasures: click to turn a check on or off.") + '"></div>' +
+          '</div>' +
+          '<div class="ls-hx-takeaway"></div>' +
+        '</section>' +
           '<div class="ls-hx-winfoot">' +
             '<div class="ls-hx-research-band">' +
               '<span class="ls-hx-research-kicker">' + L("Forschung", "Research") + '</span>' +
@@ -389,58 +438,8 @@
             '</div>' +
           '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="ls-hx-lab">' +
-        '<div class="ls-hx-lab-head">' +
-          '<b>' + L("Labor", "Lab") + '</b><span>' + L("Typen, Evidenz und Gegenmaßnahmen", "types, evidence, and countermeasures") + '</span>' +
-        '</div>' +
-        '<div class="ls-hx-tabs" role="tablist" aria-label="' + L("Laborbereiche", "Lab sections") + '">' +
-          '<button type="button" class="ls-hx-tab is-on" role="tab" aria-selected="true" data-hx-tab="sources"><span>01</span>' + L("Quellen", "Sources") + '</button>' +
-          '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="rag"><span>02</span>RAG</button>' +
-          '<button type="button" class="ls-hx-tab" role="tab" aria-selected="false" data-hx-tab="risk"><span>03</span>' + L("Risiko & Maßnahmen", "Risk & countermeasures") + '</button>' +
-        '</div>' +
-        '<section class="ls-hx-tabpanel is-on" data-hx-panel="sources" role="tabpanel">' +
-          '<div class="ls-hx-sourcelead"><b>' + L("Woher kommt die Behauptung?", "Where does the claim come from?") + '</b><p>' + L("Die Prüfung entscheidet, welche Quelle die Aussage deckt.", "The check decides which source supports the claim.") + '</p></div>' +
-      '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
-        '<div class="ls-hx-source-card is-weights" data-source-kind="weights" data-tip="' + L("Was das Modell aus dem Training mitbringt; hier sitzen Fakten und alte Zahlen.", "What the model brings from training; facts and old numbers live here.") + '"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
-        '<div class="ls-hx-source-claim" data-tip="' + L("Die geprüfte Aussage steht zwischen beiden möglichen Quellen.", "The checked claim sits between the two possible sources.") + '"><span>' + L("Behauptung", "Claim") + '</span></div>' +
-        '<div class="ls-hx-source-card is-context" data-source-kind="context" data-tip="' + L("Was im Prompt oder in der abgerufenen Quelle steht; RAG füllt diesen Teil.", "What is in the prompt or the retrieved source; RAG fills this side.") + '"><span>' + L("Kontext", "Context") + '</span><b>' + L("Prompt / RAG-Quelle", "Prompt / RAG source") + '</b><p>' + L("Was im Prompt oder in der abgerufenen Quelle steht.", "What is in the prompt or the retrieved source.") + '</p></div>' +
-      '</div>' +
-        '</section>' +
-        '<section class="ls-hx-tabpanel" data-hx-panel="rag" role="tabpanel" hidden>' +
-          '<div class="ls-hx-ragtab">' +
-            '<div class="ls-hx-ragtab-copy">' +
-              '<span class="ls-hx-ragtab-kicker">RAG</span>' +
-              '<h3>' + L("Frage → Ähnlichkeit → Kontext → Antwort", "Question → similarity → context → answer") + '</h3>' +
-              '<p class="ls-hx-ragtab-lead">' + L("Vier Sätze, ein Grenzwinkel. Nur Treffer unter 35° kommen in den Kontext.", "Four sentences, one threshold. Only hits below 35° enter the context.") + '</p>' +
-              '<div class="ls-hx-ragsteps">' +
-                '<div><b>1</b><strong>' + L("Frage", "Question") + '</strong><span>' + L("An welchem Fluss liegt Berlin?", "Which river is Berlin on?") + '</span></div>' +
-                '<div><b>2</b><strong>' + L("Ähnlichkeit", "Similarity") + '</strong><span>' + L("Sätze vektorisieren, Winkel zur Frage messen.", "Embed sentences, measure the angle to the question.") + '</span></div>' +
-                '<div><b>3</b><strong>' + L("Kontext", "Context") + '</strong><span>' + L("Treffer unter dem Grenzwinkel kommen mit.", "Hits below the threshold come along.") + '</span></div>' +
-                '<div><b>4</b><strong>' + L("Antwort", "Answer") + '</strong><span>' + L("Das Modell liest den Kontext mit.", "The model reads the context along.") + '</span></div>' +
-              '</div>' +
-              '<p class="ls-hx-ragtab-note">' + L("Anfang und Ende eines langen Kontexts zählen mehr als die Mitte.", "The beginning and end of a long context count more than the middle.") + '</p>' +
-            '</div>' +
-            '<div class="ls-hx-ragtab-lab">' +
-              '<div class="ls-hx-ragtab-viz"><svg class="ls-hx-ragtab-svg" viewBox="0 0 300 185" role="img" aria-label="' + L("Abruf-Fächer: Frage und vier Sätze", "Retrieval fan: question and four sentences") + '"></svg></div>' +
-              '<label class="ls-hx-ragtab-threshold"><span>' + L("Grenzwinkel", "Angle threshold") + '</span><input type="range" class="ls-hx-ragtab-range" min="10" max="85" step="1" value="35"><output class="ls-hx-ragtab-angle">35°</output></label>' +
-              '<div class="ls-hx-ragtab-context"><div class="ls-hx-ragtab-context-head"><b>' + L("Im Kontext", "In the context") + '</b><span class="ls-hx-ragtab-count"></span></div><div class="ls-hx-ragtab-list"></div></div>' +
-              '<p class="ls-hx-ragtab-hint" aria-live="polite"></p>' +
-            '</div>' +
-          '</div>' +
-        '</section>' +
-        '<section class="ls-hx-tabpanel" data-hx-panel="risk" role="tabpanel" hidden>' +
-          '<div class="ls-hx-risktab">' +
-            '<div class="ls-hx-risk" data-tip="' + L("Die zwei Achsen zeigen, ob eine Antwort plausibel klingt und ob eine Quelle sie deckt.", "The two axes show whether an answer sounds plausible and whether a source grounds it.") + '">' +
-              '<div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("Plausibilität gegen Deckung", "plausibility against grounding") + '</span></div>' +
-              '<div class="ls-hx-risk-svg"></div>' +
-              '<p class="ls-hx-risk-caption"></p>' +
-            '</div>' +
-            '<div class="ls-hx-measures" data-tip="' + L("Gegenmaßnahmen: Klick schaltet eine Prüfung ein oder aus.", "Countermeasures: click to turn a check on or off.") + '"></div>' +
-          '</div>' +
-        '</section>' +
-      '</div>' +
-      '<div class="ls-hx-takeaway"></div>';
+      '</div>';
+
     root.appendChild(el);
 
     var chips = el.querySelector(".ls-hx-chips");
@@ -821,7 +820,7 @@
     });
     render();
     renderRag();
-    selectTab("sources");
+    selectTab("chat");
     return {
       update: function () {},
       next: function () {

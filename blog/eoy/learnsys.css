@@ -6851,3 +6851,48 @@ html.dark .ls-hx-risk-axis-title,html[data-theme="dark"] .ls-hx-risk-axis-title{
 html.dark .ls-hx-risk-dot text,html[data-theme="dark"] .ls-hx-risk-dot text{fill:#dbe5ec}
 html.dark .ls-hx-risk-axis,html[data-theme="dark"] .ls-hx-risk-axis{stroke:#3a536a}
 html.dark .ls-hx-risk-mid,html[data-theme="dark"] .ls-hx-risk-mid{stroke:#2a3d52}
+html.dark .ls-hx-ragtab-label,html[data-theme="dark"] .ls-hx-ragtab-label{fill:#93a6b2}
+html.dark .ls-hx-ragtab-label.is-in,html[data-theme="dark"] .ls-hx-ragtab-label.is-in{fill:#a7e08f}
+html.dark .ls-hx-ragtab-label.is-answer,html[data-theme="dark"] .ls-hx-ragtab-label.is-answer{fill:#e3b455}
+html.dark .ls-hx-ragtab-q,html[data-theme="dark"] .ls-hx-ragtab-q{fill:#8fc7ea}
+html.dark .ls-hx-ragtab-axis,html[data-theme="dark"] .ls-hx-ragtab-axis,
+html.dark .ls-hx-ragtab-doc,html[data-theme="dark"] .ls-hx-ragtab-doc{stroke:#3a536a}
+html.dark .ls-hx-ragtab-doc.is-in,html[data-theme="dark"] .ls-hx-ragtab-doc.is-in{stroke:#63a44b}
+html.dark .ls-hx-ragtab-dot,html[data-theme="dark"] .ls-hx-ragtab-dot{fill:#141c26;stroke:#3a536a}
+html.dark .ls-hx-ragtab-dot.is-in,html[data-theme="dark"] .ls-hx-ragtab-dot.is-in{fill:#63a44b;stroke:#63a44b}
+html.dark .ls-hx-ragtab-sector,html[data-theme="dark"] .ls-hx-ragtab-sector{fill:rgba(99,164,75,.20)}
+html.dark .ls-hx-ragtab-note,html[data-theme="dark"] .ls-hx-ragtab-note{color:#c2d0da;background:rgba(159,151,0,.10)}
+html.dark .ls-hx-ragtab-threshold output,html[data-theme="dark"] .ls-hx-ragtab-threshold output{color:#e7eef2}
+html.dark .ls-hx-q.is-grounded,html[data-theme="dark"] .ls-hx-q.is-grounded{fill:rgba(99,164,75,.16)}
+html.dark .ls-hx-q.is-hallucination,html[data-theme="dark"] .ls-hx-q.is-hallucination{fill:rgba(201,86,86,.16)}
+html.dark .ls-hx-q.is-neutral,html[data-theme="dark"] .ls-hx-q.is-neutral{fill:rgba(255,255,255,.03)}
+
+/* Window tabs and in-window inspectors (no page scroll). */
+.ls-hx-wintabs{display:flex;align-items:stretch;gap:2px;padding:0 10px;background:var(--ls-paper-2);border-bottom:1px solid var(--ls-line);flex:0 0 auto}
+.ls-hx-wintabs .ls-hx-tab{padding:6px 9px 5px;font-size:9.5px;border-bottom-width:2px}
+.ls-hx-wintabs .ls-hx-tab>span{font-size:7.5px}
+.ls-hx-winpanel{flex:1 1 auto;min-height:0;overflow:auto;padding:10px 12px;background:var(--ls-paper)}
+.ls-hx-winpanel[hidden]{display:none}
+.ls-hx-win .ls-hx-ragtab{grid-template-columns:minmax(0,.82fr) minmax(220px,.95fr) minmax(210px,.9fr);gap:10px;padding:8px 0 0;border:0;border-radius:0;background:transparent}
+.ls-hx-win .ls-hx-ragsteps{grid-template-columns:1fr;gap:5px}
+.ls-hx-win .ls-hx-ragsteps>div{padding:5px 7px}
+.ls-hx-win .ls-hx-ragtab h3{font-size:15px}
+.ls-hx-win .ls-hx-ragtab-lead{font-size:10px}
+.ls-hx-win .ls-hx-ragtab-note{padding:5px 7px;font-size:9px}
+.ls-hx-win .ls-hx-ragtab-viz{padding:2px 4px}
+.ls-hx-win .ls-hx-ragtab-hint{font-size:9px}
+.ls-hx-win .ls-hx-ragtab-contextcol{display:flex;flex-direction:column;min-width:0}
+.ls-hx-win .ls-hx-ragtab-context{background:var(--ls-paper-2)}
+.ls-hx-win .ls-hx-risktab{grid-template-columns:minmax(260px,.9fr) minmax(0,1.1fr);gap:10px}
+.ls-hx-win .ls-hx-risktab .ls-hx-risk{padding:8px 9px}
+.ls-hx-win .ls-hx-risk-svg{min-height:150px}
+.ls-hx-win .ls-hx-risk-svg svg{max-height:180px}
+.ls-hx-win .ls-hx-takeaway{margin-top:8px}
+.ls-hx-win .ls-hx-sourcelead{padding:0 0 8px}
+.ls-hx-win .ls-hx-sources{grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr)}
+.ls-hx-win .ls-hx-source-card{padding:12px 14px}
+.ls-hx-win .ls-hx-source-card>b{font-size:12.5px}
+.ls-hx-win .ls-hx-source-card>p{font-size:11px}
+html.dark .ls-hx-wintabs,html[data-theme="dark"] .ls-hx-wintabs{background:#0f1722;border-bottom-color:#2a3d52}
+html.dark .ls-hx-winpanel,html[data-theme="dark"] .ls-hx-winpanel{background:#101822}
+html.dark .ls-hx-win .ls-hx-ragtab-context,html[data-theme="dark"] .ls-hx-win .ls-hx-ragtab-context{background:#141c26}
