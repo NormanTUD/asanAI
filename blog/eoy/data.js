@@ -704,12 +704,14 @@
       {
         id: "g-sources",
         title: DE ? "Quellen" : "Sources",
-        sources: [
-          { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.", en: "Transformer blocks, residual connections, and layer normalisation." } },
-          { label: "Ba, Kiros & Hinton (2016), Layer Normalization", url: "https://arxiv.org/abs/1607.06450", why: { de: "LayerNorm: Mittelwert und Varianz pro Token, danach gelerntes γ/β.", en: "LayerNorm: per-token mean and variance, then learned γ/β." } },
-          { label: "Xiong et al. (2020), On Layer Normalization in the Transformer Architecture", url: "https://arxiv.org/abs/2002.04745", why: { de: "Pre-LN ist stabiler als Post-LN und erlaubt Training ohne Warm-up.", en: "Pre-LN is more stable than Post-LN and allows training without warm-up." } },
-          { label: "Radford et al. (2019), Language Models are Unsupervised Multitask Learners", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: LayerNorm vor den Subblöcken und final nach dem letzten Block.", en: "GPT-2: LayerNorm before the sub-blocks and a final one after the last block." } },
-          { label: "He et al. (2016), Deep Residual Learning", url: "https://arxiv.org/abs/1512.03385", why: { de: "Residualverbindungen: Updates werden addiert, nicht überschrieben.", en: "Residual connections: updates are added, not overwritten." } }
+                sources: [
+          {"label": "Wikipedia: Paris", "url": "https://de.wikipedia.org/wiki/Paris", "why": {"de": "Erster Absatz des Artikels; die Demo zeigt den HTML-Ausschnitt.", "en": "First paragraph of the article; the demo shows the HTML excerpt."}},
+          {"label": "Cisco (2016), The Zettabyte Era Officially Begins", "url": "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", "why": {"de": "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", "en": "Zettabyte era since 2016 and the 10²¹-byte scale."}},
+          {"label": "Brown et al. (2020), Language Models are Few-Shot Learners", "url": "https://arxiv.org/abs/2005.14165", "why": {"de": "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", "en": "GPT-3 data mix and few-shot results."}},
+          {"label": "Köpf et al. (2023), OpenAssistant Conversations", "url": "https://arxiv.org/abs/2304.07327", "why": {"de": "Offener Datensatz menschlicher Frage-Antwort-Konversationen.", "en": "Open dataset of human question-answer conversations."}},
+          {"label": "Zhou et al. (2023), LIMA: Less Is More for Alignment", "url": "https://arxiv.org/abs/2305.11206", "why": {"de": "Wenige, hochwertige Instruktionsdaten für Alignment.", "en": "A small, high-quality instruction set for alignment."}},
+          {"label": "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", "url": "https://arxiv.org/abs/2107.06499", "why": {"de": "Deduplizierung verbessert Sprachmodelle.", "en": "Deduplication improves language models."}},
+          {"label": "Ouyang et al. (2022), Training language models to follow instructions with human feedback", "url": "https://arxiv.org/abs/2203.02155", "why": {"de": "Instruction-Tuning mit menschlichem Feedback nach dem Vortraining.", "en": "Instruction tuning with human feedback after pretraining."}}
         ]
       }
     ]
@@ -2356,8 +2358,8 @@
       : "Different types of heads take on different tasks.\n\n\nThe network learns when to fall back on earlier text and simply copy it. In the example, the first “dog” was followed by “barks”; when “dog” appears again later, the model can take “barks” from there.\n\n\nThis takes two layers. An attention head is a small building block that compares vectors. It has three learned parts: query (Q, the question), key (K, what is offered), and value (V, the content). Layer 1 (previous-token head) writes the predecessor as a key at each position: at the position of “barks” it says “before: dog”. Layer 2 (induction head) compares the query of the current “dog” with these keys; the key matches, and the attention weights give that position a high weight. The OV part, the copier, writes the value there (“barks”) to the current position; that is why “barks” becomes more likely.\n\n\nThe head does not read meaning. It compares learned vectors: when two places are similar enough, it looks there.\n\n\nQK is the query-key comparison: it determines the attention weights, that is, where to look. OV is the value-output map: it determines what arrives at the target position. Both are learned matrices, not a table. Layer 1 builds the key, layer 2 finds it, OV copies the value. Why? For in-context learning: refer to earlier text without retraining the weights, and pick up concepts mentioned earlier, not just repeat words.",
     watch: DE ? "Lies den Beispieltext links. Verfolge, was Schicht 1 allein macht, was Schicht 2 allein, und was beide zusammen vorhersagen." : "Read the example text on the left. Follow what layer 1 does alone, what layer 2 does alone, and what both predict together.",
     demoState: { scene: "induction", mode: "sequence" },
-    context: "",
-    deep: "",
+    context: DE ? "Der Kopf liest keine Bedeutung. Er vergleicht gelernte Vektoren: Wenn zwei Stellen ähnlich genug sind, schaut er dorthin." : "The head does not read meaning. It compares learned vectors: when two places are similar enough, it looks there.",
+    deep: DE ? "Mechanisch ist der Schaltkreis eine K-Composition: Der Key des Induktionskopfs liest einen Unterraum, den der Previous-Token-Head geschrieben hat. Die OV-Matrix kopiert den Value des besuchten Tokens. Olsson et al. (2022) definieren Induktionsköpfe empirisch über Prefix-Matching und Copying; die Definition ist eine klare Teilmenge, keine perfekte Beschreibung jedes Heads." : "Mechanically, the circuit is a K composition: the induction head's key reads a subspace written by the previous-token head. The OV matrix copies the value of the attended token. Olsson et al. (2022) define induction heads empirically through prefix matching and copying; the definition is a clear subset, not a perfect description of every head.",
     boxes: [
       box("ind-1", DE ? "Regel" : "Rule", DE ? "Was wird kopiert?" : "What is copied?", DE ? "Nicht das aktuelle $A$, sondern das $B$, das beim vorherigen $A$ folgte. Der Kopf findet die Stelle und gibt ihr einen hohen Attention-Wert." : "Not the current $A$, but the $B$ that followed the previous $A$. The head finds the position and gives it a high attention value."),
       box("ind-2", DE ? "Mathematik" : "Mathematics", DE ? "QK wählt, OV kopiert" : "QK selects, OV copies", DE ? "Der QK-Schaltkreis $W_Q^\\top W_K$ entscheidet, wohin geschaut wird. Der OV-Schaltkreis $W_O W_V$ entscheidet, was an der aktuellen Position ankommt. Beide sind gelernt und pro Head verschieden." : "The QK circuit $W_Q^\\top W_K$ decides where to look. The OV circuit $W_O W_V$ decides what arrives at the current position. Both are learned and differ per head.", DE ? "\\underbrace{\\underbrace{\\operatorname{score}(i,j)}_{\\text{Attention}} = \\underbrace{\\mathbf{q}_i^\\top \\mathbf{k}_j}_{\\text{QK-Schaltkreis}}}_{\\text{wen besuchen?}} \\qquad \\underbrace{\\underbrace{\\Delta \\mathbf{x}_i}_{\\text{Kopie}} = \\underbrace{W_O}_{\\text{OV-Schaltkreis}} \\mathbf{v}_j}_{\\text{was ankommt?}}" : "\\underbrace{\\underbrace{\\operatorname{score}(i,j)}_{\\text{attention}} = \\underbrace{\\mathbf{q}_i^\\top \\mathbf{k}_j}_{\\text{QK circuit}}}_{\\text{where to attend?}} \\qquad \\underbrace{\\underbrace{\\Delta \\mathbf{x}_i}_{\\text{copy}} = \\underbrace{W_O}_{\\text{OV circuit}} \\mathbf{v}_j}_{\\text{what arrives?}}")
@@ -2368,6 +2370,27 @@
     ]
   };
 
+  var inductionCopySources = [
+    { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Prefix-Matching, Copying und der Zwei-Head-Schaltkreis.", en: "Prefix matching, copying, and the two-head circuit." } },
+    { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "QK/OV-Zerlegung und K-Composition.", en: "QK/OV decomposition and K-composition." } },
+    { label: "Ferrando et al. (2024), A Primer on the Inner Workings of Transformer-based Language Models", url: "https://arxiv.org/abs/2405.00208", why: { de: "Mechanismen von Previous-Token- und Induktionsköpfen.", en: "Mechanisms of previous-token and induction heads." } }
+  ];
+
+  var inductionCircuit = Object.assign({}, inductionSequence, {
+    kicker: DE ? "Schaltkreis" : "Circuit",
+    title: DE ? "Zwei Schichten, ein Trick" : "Two layers, one trick",
+    teaser: DE
+      ? "Zwei Schichten, ein Trick. Der Previous-Token-Head in Schicht 1 merkt sich für jede Position, welches Token davor stand. Der Induktionskopf in Schicht 2 fragt mit dem aktuellen $A$. Sein Key enthält das vorherige Token; deshalb trifft er die frühere Stelle, an der vor $A$ ebenfalls $A$ stand. Von dort kopiert er $B$.\n\n$A$ und $B$ sind Platzhalter für beliebige Wörter. Das ist K-Composition: Der Key hängt vom vorherigen Token ab. Deshalb braucht der Schaltkreis mindestens zwei Schichten."
+      : "Two layers, one trick. The previous-token head in layer 1 remembers, for every position, which token came before it. The induction head in layer 2 queries with the current $A$. Its key contains the previous token; that is how it hits the earlier position where $A$ also stood before $A$. From there it copies $B$.\n\n$A$ and $B$ are placeholders for arbitrary words. This is K-composition: the key depends on the previous token. That is why the circuit needs at least two layers.",
+    watch: DE ? "Klicke Weiter. Verfolge den Weg vom Previous-Token-Head zum Induktionskopf." : "Click Next. Follow the path from the previous-token head to the induction head.",
+    demoState: { scene: "induction", mode: "circuit" },
+    boxes: [
+      box("circ-1", DE ? "Mathematik" : "Mathematics", DE ? "Der Key ist verschoben" : "The key is shifted", DE ? "Der Induktionskopf liest einen Key, der aus Token plus Vorgänger besteht. Deshalb kann seine Query mit dem aktuellen $A$ eine Stelle treffen, an der vorher $A$ stand, obwohl dort jetzt $B$ steht." : "The induction head reads a key made of token plus predecessor. That is how its query with the current $A$ can hit a position where $A$ stood before, even though $B$ stands there now.", "\\underbrace{\\underbrace{\\mathbf{k}_j}_{\\text{Key}} = \\underbrace{W_K}_{\\text{gelernt}}\\,\\underbrace{(\\mathbf{x}_j + \\mathbf{h}^{\\mathrm{prev}}_j)}_{\\text{Token + Previous-Token-Head}}}_{\\text{Key mit Vorgänger}}"),
+      box("circ-2", DE ? "Schaltkreis" : "Circuit", DE ? "Zwei Schichten minimum" : "Two layers minimum", DE ? "Der Previous-Token-Head muss seinen Output in den Residualstrom schreiben, bevor der Induktionskopf ihn lesen kann. Ein einzelner Head hat keinen früheren Head, dessen Output er in seinen Key aufnehmen könnte." : "The previous-token head must write its output into the residual stream before the induction head can read it. A single head has no earlier head whose output it could include in its key.")
+    ],
+    sources: inductionCopySources
+  });
+
   var inductionHeads = {
     kicker: DE ? "Familie" : "Family",
     title: DE ? "Arten von Heads: Copy Heads" : "Types of heads: copy heads",
@@ -2376,8 +2399,8 @@
       : "Induction is one member of a family of copy heads. A duplicate-token head attends to an earlier occurrence of the same token and copies its position. A successor head increments an ordered token (Monday → Tuesday) through a learned direction. A name-mover head copies a name from the context into the answer. They share the same core: attention selects a source, OV writes its content. What differs is the rule that selects the source.\n\n\nThe label as a head type is not a fixed anatomical category but a functional description: one head can carry several roles, and one role can be spread across several heads.",
     watch: DE ? "Klicke eine Karte. Vergleiche, welche Quelle die Attention wählt und was kopiert wird." : "Click a card. Compare which source attention selects and what is copied.",
     demoState: { scene: "induction", mode: "heads" },
-    context: "",
-    deep: "",
+    context: DE ? "Die vier Köpfe sind keine vier Namen für dieselbe Schaltung. Sie teilen die Aufmerksamkeits-/OV-Struktur, aber die Quelle wird nach unterschiedlichen Regeln gewählt." : "The four heads are not four names for the same circuit. They share the attention/OV structure, but the source is selected by different rules.",
+    deep: DE ? "Duplicate- und Successor-Heads sind in der Primer-Literatur beschrieben; Name-Mover stammt aus dem IOI-Schaltkreis von GPT-2 small. Die Einordnung als Head-Typ ist eine funktionale Beschreibung, keine feste anatomische Kategorie: Ein Head kann mehrere Rollen tragen, und dieselbe Rolle kann über mehrere Heads verteilt sein." : "Duplicate and successor heads are described in the primer literature; name-movers come from the IOI circuit of GPT-2 small. The label is a functional description, not a fixed anatomical category: one head can carry several roles, and one role can be spread across several heads.",
     boxes: [
       box("heads-1", DE ? "Gemeinsam" : "Shared", DE ? "Der Kern" : "The core", DE ? "Alle vier benutzen Attention, um eine Quelle zu wählen, und eine OV-Matrix, um deren Inhalt in den Residualstrom zu schreiben. Der Unterschied liegt in der Query-Key-Regel." : "All four use attention to select a source and an OV matrix to write its content into the residual stream. The difference is in the query-key rule."),
       box("heads-2", DE ? "Duplicate" : "Duplicate", DE ? "Gleiches Token, frühere Stelle" : "Same token, earlier place", DE ? "Der Kopf schaut auf ein früheres Vorkommen desselben Tokens. Im IOI-Schaltkreis signalisiert das, dass ein Name wiederholt wurde; die Position des früheren Vorkommens wird weitergegeben." : "The head attends to an earlier occurrence of the same token. In the IOI circuit this signals that a name was repeated; the position of the earlier occurrence is passed on."),
@@ -2407,7 +2430,7 @@
   var inductionStep = {
     kicker: DE ? "In-Context" : "In-context",
     title: DE ? "Arten von Attention-Heads" : "Types of Attention Heads",
-    substeps: [inductionSequence, inductionHeads, inductionEmergence, headConcatSubstep]
+    substeps: [inductionSequence, inductionCircuit, inductionHeads, inductionEmergence, headConcatSubstep]
   };
 
   var spacetimeSpace = {
