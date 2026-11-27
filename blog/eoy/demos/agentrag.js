@@ -240,7 +240,6 @@
         row.addEventListener("mouseleave", function () { railTip.hidden = true; });
       });
     }
-    bindRailTips();
 
     var docEl = el.querySelector(".ls-rag-doc");
     var docStatus = el.querySelector(".ls-rag-doc-status");
@@ -267,6 +266,7 @@
     var stageEl = el.querySelector(".ls-rag-stage");
     var arrowsEl = el.querySelector(".ls-rag-arrows");
     var railTip = el.querySelector(".ls-rag-rail-tip");
+    bindRailTips();
 
     var state = { step: AGENT_RAG_LAST_STEP, timers: [], pickerOpen: false, textFitted: false };
 
@@ -387,6 +387,7 @@
         });
         selfCheck();
       }, 1900));
+      state.timers.push(setTimeout(function () { flySelectedChunks(); }, 2100));
       state.timers.push(setTimeout(function () { selfCheck(); }, 2400));
     }
     function clearFlyCards() {
