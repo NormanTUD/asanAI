@@ -24,10 +24,10 @@
 
     var ARTICLE = {
       brand: L("Enzyklopädie", "Encyclopædia"),
-      series: L("Krake · Band 12", "Kraken · Volume 12"),
+      series: L("Kraken und Oktopoden · Band 12", "Kraken and octopodes · Volume 12"),
       page: "417",
       kicker: L("Octopoda · Kopffüßer", "Octopoda · cephalopods"),
-      title: L("Krake", "Kraken"),
+      title: L("Kraken und Oktopoden", "Kraken and octopodes"),
       filler: {
         title: L("Krakelee", "Kraków"),
         image: DE ? api.asset("assets/krakelee-mona-lisa.jpg") : api.asset("assets/krakow-wawel.jpg"),
@@ -39,23 +39,23 @@
       paragraphs: [
         {
           id: "4815", heading: L("Körperbau", "Body"), angle: 12,
-          text: L("Der Krake (Octopus) ist ein Kopffüßer aus der Ordnung der Octopoda. Sein Körper besteht aus einem sackförmigen Mantel und acht muskulösen Armen mit Saugnäpfen. Er besitzt drei Herzen und blaues Blut; seine Haut kann Farbe und Oberflächenstruktur in Sekunden verändern.", "The octopus (Octopus) is a cephalopod of the order Octopoda. Its body consists of a sac-like mantle and eight muscular arms with suckers. It has three hearts and blue blood; its skin can change colour and surface texture within seconds.")
+          text: L("Der Krake (Octopus) ist ein Kopffüßer aus der Ordnung der Octopoda. Sein Körper besteht aus einem sackförmigen Mantel und acht muskulösen Armen mit Saugnäpfen. Er besitzt drei Herzen und blaues Blut.", "The octopus (Octopus) is a cephalopod of the order Octopoda. Its body consists of a sac-like mantle and eight muscular arms with suckers. It has three hearts and blue blood.")
         },
         {
           id: "4816", heading: L("Blut und Kreislauf", "Blood and circulation"), angle: 19,
-          text: L("Zwei Kiemenherzen treiben das Blut durch die Kiemen, ein Körperherz versorgt den übrigen Körper. Beim Schwimmen pausiert das Körperherz zeitweise, weshalb Kraken häufig über den Meeresboden kriechen. Der Sauerstoffträger Hämocyanin enthält Kupfer und verleiht dem Blut seine bläuliche Farbe.", "Two gill hearts pump blood through the gills, while one body heart supplies the rest of the body. When swimming, the body heart pauses at times, which is why octopuses often crawl over the sea floor. The oxygen carrier hemocyanin contains copper and gives the blood its bluish colour.")
+          text: L("Zwei Kiemenherzen treiben das Blut durch die Kiemen, ein Körperherz versorgt den übrigen Körper. Beim Schwimmen pausiert es zeitweise; Hämocyanin macht das Blut bläulich.", "Two gill hearts pump blood through the gills, while one body heart supplies the rest of the body. When swimming, the body heart pauses at times; hemocyanin gives the blood its bluish colour.")
         },
         {
           id: "4817", heading: L("Nervensystem", "Nervous system"), angle: 52,
-          text: L("Rund zwei Drittel der Neuronen eines Kraken liegen in den acht Armen. Jeder Arm verfügt über ein eigenes Nervennetz, und die Saugnäpfe können chemische Reize aufnehmen. Auf diese Weise prüft der Krake seine Umgebung, ohne den ganzen Körper bewegen zu müssen.", "About two thirds of an octopus's neurons lie in its eight arms. Each arm has its own nerve net, and the suckers can detect chemical stimuli. In this way the octopus examines its surroundings without moving its whole body.")
+          text: L("Rund zwei Drittel der Neuronen eines Kraken liegen in den acht Armen. Jeder Arm hat ein eigenes Nervennetz; die Saugnäpfe können chemische Reize aufnehmen.", "About two thirds of an octopus's neurons lie in its eight arms. Each arm has its own nerve net; the suckers can detect chemical stimuli.")
         },
         {
           id: "4818", heading: L("Tarnung", "Camouflage"), angle: 64,
-          text: L("Chromatophoren, Iridophoren und Papillen ermöglichen schnelle Farb- und Texturwechsel. Kraken gelten als neugierig und lernfähig; sie lösen einfache Probleme und nutzen Höhlen oder Schalen als Versteck. Ihre Tarnung zählt zu den vielseitigsten im Tierreich.", "Chromatophores, iridophores, and papillae allow rapid changes of colour and texture. Octopuses are considered curious and capable learners; they solve simple problems and use caves or shells as shelter. Their camouflage is one of the most versatile in the animal kingdom.")
+          text: L("Chromatophoren, Iridophoren und Papillen ermöglichen schnelle Farb- und Texturwechsel. Kraken sind neugierig, lernfähig und nutzen Höhlen als Versteck.", "Chromatophores, iridophores, and papillae allow rapid changes of colour and texture. Octopuses are curious, capable learners and use caves as shelter.")
         },
         {
           id: "4819", heading: L("Mythos und Forschung", "Myth and research"), angle: 44,
-          text: L("Der colossale Polyp des Pierre Denys de Montfort (1801) illustriert die Seefahrerlegende von riesigen Kraken, die Schiffe umgreifen; die Darstellung ist keine zoologische Beobachtung. Neuere Arbeiten untersuchen RNA-Editing in Nervenzellen sowie die Mechanismen der strukturellen Färbung. Die Fakten dieses Artikels stützen sich auf die Fachliteratur.", "Pierre Denys de Montfort's colossal polyp (1801) illustrates the sailors' legend of giant krakens that could grasp ships; the image is not a zoological observation. Recent research examines RNA editing in nerve cells and the mechanisms of structural coloration. The facts in this article rest on the specialist literature.")
+          text: L("Der colossale Polyp des Pierre Denys de Montfort (1801) illustriert die Seefahrerlegende von riesigen Kraken; die Darstellung ist keine zoologische Beobachtung. Neuere Arbeiten untersuchen RNA-Editing und strukturelle Färbung.", "Pierre Denys de Montfort's colossal polyp (1801) illustrates the sailors' legend of giant krakens; the image is not a zoological observation. Recent research examines RNA editing and structural coloration.")
         },
         {
           id: "4820", heading: L("Krakelee", "Kraków"), angle: 88, filler: true,
@@ -146,7 +146,7 @@
             '<section class="ls-rag-pdf-chunk" data-c="4821" data-angle="91" title="' + esc(chunkTitle("4821", ARTICLE.paragraphs[6].heading)) + '"><h3>' + esc(ARTICLE.paragraphs[6].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[6].text) + '</p></section>' +
           '</div>' +
         '</div>' +
-        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Krake", "Encyclopædia · Kraken")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
+        '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Kraken und Oktopoden", "Encyclopædia · Kraken and octopodes")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Kraken und Oktopoden · Seite 417", "Kraken and octopodes · page 417")) + '</span></footer>' +
       '</div>';
     }
 
@@ -172,7 +172,7 @@
           '<div class="ls-rag-doc-head"><span class="ls-rag-fileicon">PDF</span><div><b>encyclopaedia.pdf</b><small class="ls-rag-doc-status"></small></div><span class="ls-rag-doc-tag">' + esc(L("außerhalb des LLM", "outside the LLM")) + '</span></div>' +
           '<div class="ls-rag-doc-body">' +
             '<div class="ls-rag-pdf-wrap">' + pdfHTML() + '<div class="ls-rag-scanfx" aria-hidden="true"><i></i></div></div>' +
-            '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Nur Text · Chunk-Vektoren", "Text only · chunk vectors")) + '</div><div class="ls-rag-rail-meta">' + TOTAL_CHUNKS + ' ' + esc(L("Chunks gesamt", "chunks total")) + ' · ' + esc(L("Auszug 4815–4821", "excerpt 4815–4821")) + ' · ' + esc(L("Grenzwinkel 35°", "threshold 35°")) + '</div><div class="ls-rag-rail-more" title="' + esc(L("Davor: Chunks 1–4814", "Before: chunks 1–4814")) + '">…</div><div class="ls-rag-rail-list">' + railHTML() + '</div><div class="ls-rag-rail-more" title="' + esc(L("Danach: Chunks 4822–8151", "After: chunks 4822–8151")) + '">…</div></div>' +
+            '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Nur Text · Chunk-Vektoren", "Text only · chunk vectors")) + '</div><div class="ls-rag-rail-meta">' + TOTAL_CHUNKS + ' ' + esc(L("Chunks gesamt", "chunks total")) + ' · ' + esc(L("Auszug 4815–4821", "excerpt 4815–4821")) + '</div><div class="ls-rag-threshold">' + esc(L("Grenzwinkel 35°", "threshold 35°")) + '</div><div class="ls-rag-rail-more" title="' + esc(L("Davor: Chunks 1–4814", "Before: chunks 1–4814")) + '">…</div><div class="ls-rag-rail-list">' + railHTML() + '</div><div class="ls-rag-rail-more" title="' + esc(L("Danach: Chunks 4822–8151", "After: chunks 4822–8151")) + '">…</div></div>' +
           '</div>' +
         '</div>' +
         '<div class="ls-rag-phone-col">' +
@@ -199,6 +199,8 @@
             '</div>' +
           '</div>' +
         '</div>' +
+        '<svg class="ls-rag-arrows" aria-hidden="true"></svg>' +
+        '<div class="ls-rag-rail-tip" hidden></div>' +
       '</div>' +
       '<div class="ls-rag-bottom"><span class="ls-rag-status"></span><button type="button" class="ls-btn ls-btn--tiny ls-rag-next"></button><button type="button" class="ls-btn ls-btn--tiny ls-rag-reset">' + esc(L("Zurücksetzen", "Reset")) + '</button></div>';
 
@@ -219,6 +221,26 @@
         chunk.appendChild(pill);
       }
     });
+
+    function bindRailTips() {
+      if (!railTip || !stageEl) return;
+      Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-rail-row"), function (row) {
+        row.addEventListener("mouseenter", function () {
+          var p = chunkById(row.getAttribute("data-c"));
+          if (!p) return;
+          railTip.innerHTML = "<b>Chunk " + p.id + " · " + esc(p.heading) + "</b><p>" + esc(p.text) + "</p>";
+          railTip.hidden = false;
+          var sr = stageEl.getBoundingClientRect();
+          var rr = row.getBoundingClientRect();
+          var w = railTip.offsetWidth || 260;
+          var h = railTip.offsetHeight || 120;
+          railTip.style.left = Math.max(8, rr.left - sr.left - w - 10) + "px";
+          railTip.style.top = Math.max(8, Math.min(sr.height - h - 8, rr.top - sr.top)) + "px";
+        });
+        row.addEventListener("mouseleave", function () { railTip.hidden = true; });
+      });
+    }
+    bindRailTips();
 
     var docEl = el.querySelector(".ls-rag-doc");
     var docStatus = el.querySelector(".ls-rag-doc-status");
@@ -241,6 +263,10 @@
     var pickerNote = el.querySelector(".ls-rag-picker-note");
     var pickBtns = el.querySelectorAll(".ls-rag-pick");
     var phoneEl = el.querySelector(".ls-rag-phone-screen");
+    var phoneDevice = el.querySelector(".ls-rag-phone");
+    var stageEl = el.querySelector(".ls-rag-stage");
+    var arrowsEl = el.querySelector(".ls-rag-arrows");
+    var railTip = el.querySelector(".ls-rag-rail-tip");
 
     var state = { step: AGENT_RAG_LAST_STEP, timers: [], pickerOpen: false, textFitted: false };
 
@@ -328,6 +354,7 @@
         }
       });
       selfCheck();
+      requestAnimationFrame(drawCitationArrows);
     }
 
     function stepThree() {
@@ -362,7 +389,71 @@
       }, 1900));
       state.timers.push(setTimeout(function () { selfCheck(); }, 2400));
     }
+    function clearFlyCards() {
+      Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-fly-card"), function (c) { c.remove(); });
+    }
+    function flySelectedChunks() {
+      clearFlyCards();
+      if (!stageEl || !phoneDevice) return;
+      var sr = stageEl.getBoundingClientRect();
+      var pr = phoneDevice.getBoundingClientRect();
+      if (!sr.width || !pr.width) return;
+      var tx = pr.left + pr.width / 2 - sr.left;
+      var ty = pr.top + pr.height / 2 - sr.top;
+      SELECTED.forEach(function (id, idx) {
+        var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + id + '"]');
+        var p = chunkById(id);
+        if (!chunk || !p) return;
+        var cr = chunk.getBoundingClientRect();
+        var card = document.createElement("div");
+        card.className = "ls-rag-fly-card";
+        card.innerHTML = "<b>" + id + "</b><span>" + esc(p.heading) + "</span>";
+        card.style.left = (cr.left - sr.left + 4) + "px";
+        card.style.top = (cr.top - sr.top + 4) + "px";
+        card.style.width = Math.min(Math.max(cr.width, 120), 190) + "px";
+        stageEl.appendChild(card);
+        var x0 = cr.left - sr.left + card.offsetWidth / 2;
+        var y0 = cr.top - sr.top + card.offsetHeight / 2;
+        card.animate([
+          { transform: "translate(0,0) scale(1)", opacity: 1 },
+          { transform: "translate(" + (tx - x0).toFixed(1) + "px," + (ty - y0).toFixed(1) + "px) scale(.02)", opacity: 0 }
+        ], { duration: 1050, delay: idx * 170, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
+        state.timers.push(setTimeout(function () { card.remove(); }, 1100 + idx * 170));
+      });
+    }
+    function clearCitationArrows() {
+      if (arrowsEl) arrowsEl.innerHTML = "";
+    }
+    function drawCitationArrows() {
+      if (!arrowsEl || !stageEl) return;
+      if (state.step < 2) { clearCitationArrows(); return; }
+      var sr = stageEl.getBoundingClientRect();
+      if (!sr.width || !sr.height) return;
+      arrowsEl.setAttribute("viewBox", "0 0 " + sr.width + " " + sr.height);
+      arrowsEl.setAttribute("width", sr.width);
+      arrowsEl.setAttribute("height", sr.height);
+      var out = ['<defs><marker id="ls-rag-arrow-head" markerWidth="7" markerHeight="7" refX="6.4" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#3f8f5a"/></marker></defs>'];
+      Array.prototype.forEach.call(answerEl.querySelectorAll(".ls-rag-cite[data-cite]"), function (cite) {
+        var id = cite.getAttribute("data-cite");
+        var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + id + '"]');
+        if (!chunk) return;
+        var c = cite.getBoundingClientRect();
+        var t = chunk.getBoundingClientRect();
+        if (!c.width || !t.width) return;
+        var x1 = c.left - sr.left;
+        var y1 = c.top + c.height / 2 - sr.top;
+        var x2 = t.right - sr.left;
+        var y2 = t.top + Math.min(t.height * .45, 26) - sr.top;
+        var mx = (x1 + x2) / 2;
+        var my = Math.min(y1, y2) - 26;
+        out.push('<path d="M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '" fill="none" stroke="#3f8f5a" stroke-width="1.5" marker-end="url(#ls-rag-arrow-head)" opacity=".85"/>');
+        out.push('<circle cx="' + x1.toFixed(1) + '" cy="' + y1.toFixed(1) + '" r="2.2" fill="#3f8f5a"/>');
+      });
+      arrowsEl.innerHTML = out.join("");
+    }
+
     function setCiteFocus(id) {
+      if (arrowsEl) arrowsEl.classList.add("is-hidden");
       Array.prototype.forEach.call(docEl.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
         var on = chunk.getAttribute("data-c") === id;
         chunk.classList.toggle("is-cite-active", on);
@@ -381,6 +472,8 @@
       Array.prototype.forEach.call(el.querySelectorAll(".ls-rag-rail-row"), function (row) {
         row.classList.remove("is-cite-active", "is-cite-muted");
       });
+      if (arrowsEl) arrowsEl.classList.remove("is-hidden");
+      requestAnimationFrame(drawCitationArrows);
     }
     function bindCiteHover() {
       Array.prototype.forEach.call(answerEl.querySelectorAll(".ls-rag-cite"), function (cite) {
@@ -395,6 +488,7 @@
       typingEl.hidden = true;
       answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite" data-cite="4815" tabindex="0">[4815]</span><span class="ls-rag-cite" data-cite="4816" tabindex="0">[4816]</span>';
       bindCiteHover();
+      requestAnimationFrame(drawCitationArrows);
     }
 
     function selfCheck() {
@@ -462,6 +556,9 @@
       progressEl.textContent = (state.step + 1) + " / " + STEPS.length;
       picker.hidden = true;
       docEl.classList.toggle("is-on", state.step >= 1);
+      clearFlyCards();
+      clearCitationArrows();
+      if (railTip) railTip.hidden = true;
       resetChunkStates();
       setChat();
       if (state.step === 0) {
@@ -481,6 +578,7 @@
         if (restoring) restoreStepThree(); else stepThree();
       }
       if (state.step >= 1) requestAnimationFrame(function () { fitPdfText(); });
+      if (state.step >= 2) requestAnimationFrame(drawCitationArrows);
       statusEl.textContent = state.step === 0
         ? ""
         : state.step === 1
@@ -559,7 +657,7 @@
       },
       hasNext: function () { return state.step < 3; },
       hasPrev: function () { return state.step > 0; },
-      resize: function () { requestAnimationFrame(function () { fitPdfText(true); selfCheck(); }); },
+      resize: function () { requestAnimationFrame(function () { fitPdfText(true); drawCitationArrows(); selfCheck(); }); },
       destroy: function () { clearTimers(); el.remove(); }
     };
   }
