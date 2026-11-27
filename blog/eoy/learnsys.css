@@ -7460,3 +7460,15 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-mi2-more>summary{padding-bottom:6px;font-size:10px}
 .ls-mi2-q{padding:6px 7px;font-size:9.5px}
 .ls-mi2-qa-answer{padding:8px 10px;font-size:13.5px;line-height:1.45}
+.ls-mi2{gap:10px;padding:8px 16px 12px}
+.ls-mi2-hero{padding:14px 4px 12px}
+.ls-mi2-measure,.ls-mi2-felt{height:88px}
+.ls-mi2-side{padding:8px;gap:3px}
+.ls-mi2-side b{font-size:13px}
+.ls-mi2-side p{font-size:11px}
+.ls-mi2-problems p{padding:6px 8px;font-size:12px;line-height:1.4}
+.ls-mi2-more{padding-top:8px}
+.ls-mi2-more>summary{padding-bottom:4px}
+.ls-mi2-qa{gap:5px}
+.ls-mi2-q{padding:5px 6px;font-size:9px}
+.ls-mi2-qa-answer{padding:6px 8px;font-size:13px}
