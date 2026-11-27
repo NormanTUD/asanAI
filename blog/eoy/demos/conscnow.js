@@ -105,7 +105,7 @@
     }).join("");
     el.innerHTML =
       '<header class="ls-cn-hero">' +
-        '<div class="ls-cn-hero-text"><span class="ls-cn-kicker">' + L("Der Stand", "The status") + '</span><b>' + L("Hat KI jetzt Bewusstsein?", "Does AI have consciousness now?") + '</b><p>' + L("Kein Experiment zeigt Bewusstsein direkt. Die Theorien liefern Marker, keine Antwort.", "No experiment shows consciousness directly. The theories supply markers, not an answer.") + '</p></div>' +
+        '<div class="ls-cn-hero-text"><span class="ls-cn-kicker">' + L("Der Stand", "The status") + '</span><b>' + L("Hat KI jetzt Bewusstsein?", "Does AI have consciousness now?") + '</b></div>' +
         '<div class="ls-cn-verdict"><span>?</span><b>' + L("offen", "open") + '</b><em>' + L("kein akzeptierter Test", "no accepted test") + '</em></div>' +
       '</header>' +
       '<div class="ls-cn-grid" role="tablist" aria-label="' + L("Ansätze", "Approaches") + '">' + cards + '</div>' +
