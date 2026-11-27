@@ -181,6 +181,34 @@
     function header(d) {
       return '<div class="ls-rm-head"><span class="ls-rm-kicker">' + esc(d.kicker) + '</span><b>' + esc(d.title) + '</b><p>' + esc(d.sub) + '</p></div>';
     }
+    function riskDetailInner(item) {
+      return '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag) + '</span><b>' + esc(item.title) + '</b></div>' +
+        '<p class="ls-rm-block"><b>' + (DE ? "Gefahr" : "Danger") + ':</b> ' + esc(item.body) + '</p>' +
+        '<p class="ls-rm-block"><b>' + (DE ? "Warum" : "Why") + ':</b> ' + esc(item.mechanism) + '</p>' +
+        '<p class="ls-rm-block"><b>' + (DE ? "Beispiel" : "Example") + ':</b> ' + esc(item.examples) + '</p>' +
+        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + linkCites(item.cite) + '</span>';
+    }
+    function riskDetailHTML(item) {
+      return '<div class="ls-rm-detail ls-rm-detail--risk" data-tip="' + L("Details zum gewählten Risiko, inklusive Quelle.", "Details on the selected risk, including its source.") + '">' + riskDetailInner(item) + '</div>';
+    }
+    function measureRiskDetail() {
+      if (state.mode !== "risks") return;
+      var holder = el.querySelector(".ls-rm-detail--risk");
+      if (!holder) return;
+      var width = holder.getBoundingClientRect().width;
+      if (width < 40) return;
+      var probe = document.createElement("div");
+      probe.className = "ls-rm-detail ls-rm-detail--risk";
+      probe.style.cssText = "position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none;width:" + width + "px;";
+      el.appendChild(probe);
+      var max = 0, d = modeData();
+      (d.items || []).forEach(function (item) {
+        probe.innerHTML = riskDetailInner(item);
+        max = Math.max(max, probe.offsetHeight);
+      });
+      probe.remove();
+      if (max > 0) holder.style.minHeight = Math.ceil(max) + "px";
+    }
     function renderRisks(d) {
       var active = Math.min(state.active, d.items.length - 1);
       state.active = active;
@@ -211,13 +239,7 @@
         '<text class="ls-rm-axis-label" x="392" y="114" text-anchor="end">' + (DE ? "Unfall" : "Accident") + '</text>' +
         bubbles +
       '</svg>';
-      var detail = '<div class="ls-rm-detail ls-rm-detail--risk" data-tip="' + L("Details zum gewählten Risiko, inklusive Quelle.", "Details on the selected risk, including its source.") + '">' +
-        '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag) + '</span><b>' + esc(item.title) + '</b></div>' +
-        '<p class="ls-rm-block"><b>' + (DE ? "Gefahr" : "Danger") + ':</b> ' + esc(item.body) + '</p>' +
-        '<p class="ls-rm-block"><b>' + (DE ? "Warum" : "Why") + ':</b> ' + esc(item.mechanism) + '</p>' +
-        '<p class="ls-rm-block"><b>' + (DE ? "Beispiel" : "Example") + ':</b> ' + esc(item.examples) + '</p>' +
-        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + linkCites(item.cite) + '</span>' +
-      '</div>';
+      var detail = riskDetailHTML(item);
       var layers = DATA.safety.items.map(function (layer, idx) {
         var on = !!meta.layers[idx];
         return '<div class="ls-rm-defense-card' + (on ? ' is-on' : ' is-off') + '" data-tip="' + L("Zeigt, welche Verteidigungsebene gegen dieses Risiko greift.", "Shows which defence layer acts against this risk.") + '">' +
@@ -231,6 +253,7 @@
         '<div class="ls-rm-defense-grid">' + layers + '</div>' +
       '</div>';
       el.innerHTML = header(d) + svg + detail + defense;
+      measureRiskDetail();
     }
     function renderLimits(d) {
       var active = Math.min(state.active, d.items.length - 1);
@@ -532,7 +555,7 @@
         if (state.mode === "society" && state.socKind === "cross") return modeData().chain.length > 0;
         return state.active > 0;
       },
-      resize: function () { if (state.mode === "society") measureSocDetail(); },
+      resize: function () { if (state.mode === "society") measureSocDetail(); if (state.mode === "risks") measureRiskDetail(); },
       destroy: function () { if (el.parentNode) el.parentNode.removeChild(el); }
     };
   }
