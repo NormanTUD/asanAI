@@ -14,59 +14,53 @@
     var NOTE_LAYERS = [
       {
         name: DE ? "Schicht 1" : "Layer 1",
-        desc: DE ? "Erkennt die grundlegendsten Bausteine: Was ist ein Nomen? Ein Verb? Ein Artikel?" : "Finds the basic building blocks: what is a noun, a verb, an article?",
+        desc: DE ? "Frühe Schichten (in einem 32-Schichten-Modell grob 1–10): reagieren auf konkrete Tokens und Positionen, filtern allgemeines Rauschen und bauen erste abstraktere Merkmale auf." : "Early layers (roughly 1–10 in a 32-layer model): react to concrete tokens and positions, filter general noise, and build first abstract features.",
         draw: function (g, r, col, C, fs) {
           [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function (i) { underline(g, r, i, col, fs); });
-          scribble(g, r, 2, col, "VERB!", fs, -0.08);
-          scribble(g, r, 6, col, DE ? "Konjunktion" : "conjunction", fs, 0.06);
-          scribble(g, r, 8, col, DE ? "auch Verb" : "also a verb", fs, 0.06);
-          label(g, r, 0, DE ? "Artikel" : "article", col, fs);
-          label(g, r, 1, DE ? "Nomen" : "noun", col, fs);
-          label(g, r, 3, DE ? "Präp." : "prep.", col, fs);
-          label(g, r, 4, DE ? "Artikel" : "article", col, fs);
+          scribble(g, r, 2, col, DE ? "Token + Position" : "token + position", fs, -0.08);
+          scribble(g, r, 6, col, DE ? "Rauschen filtern" : "filter noise", fs, 0.06);
+          label(g, r, 0, DE ? "Token" : "token", col, fs);
+          label(g, r, 9, DE ? "Position" : "position", col, fs);
         }
       },
       {
         name: DE ? "Schicht 2" : "Layer 2",
-        desc: DE ? "Erkennt Satzglieder, Subjekt-Verb-Beziehungen und Phrasenstruktur." : "Finds sentence parts, subject-verb relations and phrase structure.",
+        desc: DE ? "Nächste Schichten (grob 11–20): kombinieren die Ausgaben der früheren Schichten zu größeren, komplexeren Bedeutungseinheiten; die Richtungen im abstrakten Raum haben oft keine menschliche Bezeichnung." : "Next layers (roughly 11–20): combine earlier outputs into larger, more complex meaning units; the directions in the abstract space often have no human label.",
         draw: function (g, r, col, C, fs) {
-          bracket(g, r, 0, 1, col, DE ? "Subjekt" : "subject", fs);
-          arrow(g, r, 2, 1, col, DE ? "Verb → Subjekt" : "verb → subject", fs);
-          bracket(g, r, 3, 5, col, DE ? "Präpositionalphrase" : "prepositional phrase", fs, 1);
-          box(g, r, 6, 9, col, DE ? "Nebensatz (kausal)" : "subordinate clause", fs, 1);
-          scribble(g, r, 2, col, "V2", fs, -0.04);
-          scribble(g, r, 6, col, DE ? "Verb am Ende" : "verb at the end", fs, 0.05);
+          bracket(g, r, 0, 1, col, DE ? "lokal kombiniert" : "locally combined", fs);
+          bracket(g, r, 3, 5, col, DE ? "abstrakt" : "abstract", fs, 1);
+          box(g, r, 6, 9, col, DE ? "komplexere Einheit" : "more complex unit", fs, 1);
+          scribble(g, r, 2, col, DE ? "gelernte Richtung" : "learned direction", fs, -0.04);
+          scribble(g, r, 6, col, DE ? "kein Label" : "no label", fs, 0.05);
         }
       },
       {
         name: DE ? "Schicht 3" : "Layer 3",
-        desc: DE ? "Löst Pronomen auf: Wer ist „sie“? Worauf bezieht sich was?" : "Resolves pronouns: who is “she”? What refers to what?",
+        desc: DE ? "Mittlere Schichten (grob 21–26): verfeinern zusammengesetzte Bedeutungen und Beziehungen; das sind gelernte Merkmalskombinationen, keine sauberen linguistischen Regeln." : "Middle layers (roughly 21–26): refine composed meanings and relations; these are learned feature combinations, not clean linguistic rules.",
         draw: function (g, r, col, C, fs) {
           highlight(g, r, 7, 7, col, 0.16, fs);
-          circleWord(g, r, 7, col, fs);
-          circleWord(g, r, 1, col, fs);
-          arrow(g, r, 7, 1, col, DE ? "sie → Katze" : "she → cat", fs);
-          strike(g, r, 5, col, fs);
-          scribble(g, r, 5, col, DE ? "Matte kann nicht müde sein" : "a mat cannot be tired", fs, 0.08);
+          box(g, r, 0, 9, col, DE ? "zusammengesetzte Bedeutung" : "composed meaning", fs, 1);
+          scribble(g, r, 1, col, DE ? "abstrakt" : "abstract", fs, -0.05);
+          scribble(g, r, 8, col, DE ? "Relation" : "relation", fs, 0.06);
         }
       },
       {
         name: DE ? "Schicht 4" : "Layer 4",
-        desc: DE ? "Versteht Bedeutungsbeziehungen, Kausalität und semantische Rollen." : "Understands meaning relations, causality and semantic roles.",
+        desc: DE ? "Spätere Schichten (grob 27–30): richten die Repräsentation auf die Aufgabe aus, sammeln plausible Vorhersagen und unterdrücken irrelevante Merkmale." : "Later layers (roughly 27–30): align the representation with the task, gather plausible predictions, and suppress irrelevant features.",
         draw: function (g, r, col, C, fs) {
-          arrow(g, r, 8, 2, col, DE ? "Grund → Handlung" : "reason → action", fs);
-          box(g, r, 0, 9, col, DE ? "Kohärentes Narrativ" : "coherent narrative", fs, 1);
-          scribble(g, r, 8, col, DE ? "müde → saß" : "tired → sat", fs, -0.05);
-          scribble(g, r, 2, col, DE ? "semantische Rolle" : "semantic role", fs, 0.07);
+          highlight(g, r, 0, 9, col, 0.12, fs);
+          box(g, r, 0, 9, col, DE ? "aufgabenrelevante Merkmale" : "task-relevant features", fs, 1);
+          scribble(g, r, 2, col, DE ? "Rauschen unterdrücken" : "suppress noise", fs, 0.07);
+          scribble(g, r, 8, col, DE ? "Vorhersage vorbereiten" : "prepare prediction", fs, -0.05);
         }
       },
       {
         name: DE ? "Schicht 5" : "Layer 5",
-        desc: DE ? "Versteht den kommunikativen Zweck und bereitet die Vorhersage des nächsten Tokens vor." : "Understands the communicative purpose and prepares the next-token prediction.",
+        desc: DE ? "Letzte Schichten (grob 31–32): schärfen die Ausgabeverteilung und bereiten die Vorhersage des nächsten Tokens vor." : "Final layers (roughly 31–32): sharpen the output distribution and prepare the next-token prediction.",
         draw: function (g, r, col, C, fs) {
           highlight(g, r, 8, 9, col, 0.18, fs);
-          box(g, r, 8, 9, col, DE ? "Fokus" : "focus", fs, 1);
-          scribble(g, r, 9, col, DE ? "Fokus: neue Information" : "focus: new information", fs, -0.07);
+          box(g, r, 8, 9, col, DE ? "Ausgabeverteilung" : "output distribution", fs, 1);
+          scribble(g, r, 9, col, DE ? "nächster Token" : "next token", fs, -0.07);
           arrow(g, r, 9, 1, col, DE ? "Vorhersage" : "prediction", fs);
         }
       }
@@ -345,11 +339,6 @@
       paper.addColorStop(0, V.alpha(C.paper2, 0.7));
       paper.addColorStop(1, V.alpha(C.paper, 0.2));
       g.fillStyle = paper; g.fillRect(cardX, cardY, cardW, cardH);
-      g.strokeStyle = V.alpha(C.line, 0.42);
-      g.lineWidth = 1;
-      for (var yy = cardY + 76; yy < cardY + cardH - 12; yy += 26) {
-        g.beginPath(); g.moveTo(cardX + 14, yy); g.lineTo(cardX + cardW - 14, yy); g.stroke();
-      }
       g.strokeStyle = V.alpha(C.lilac, 0.28);
       g.beginPath(); g.moveTo(cardX + 34, cardY + 14); g.lineTo(cardX + 34, cardY + cardH - 14); g.stroke();
       for (var hole = 0; hole < 7; hole++) {
@@ -358,20 +347,6 @@
         g.beginPath();
         g.arc(cardX + 17, cardY + 58 + hole * ((cardH - 90) / 7), 2.5, 0, Math.PI * 2);
         g.fill(); g.stroke();
-      }
-      var tabX = cardX + cardW - 17;
-      var tabH = Math.max(16, Math.min(34, (cardH - 110) / 5 - 5));
-      var tabGap = 5;
-      for (var t = 0; t < NOTE_LAYERS.length; t++) {
-        var ti = t + 1;
-        var active = ti === layer;
-        var ty = cardY + 88 + t * (tabH + tabGap);
-        g.fillStyle = V.alpha(colors[t], active ? 0.95 : 0.32);
-        g.fillRect(tabX - (active ? 7 : 0), ty, 12 + (active ? 7 : 0), tabH);
-        g.fillStyle = active ? C.paper : V.alpha(C.ink, 0.55);
-        g.font = "700 " + Math.max(8, Math.min(11, tabH * 0.42)) + "px 'Barlow', sans-serif";
-        g.textAlign = "center"; g.textBaseline = "middle";
-        g.fillText(String(ti), tabX + 6, ty + tabH / 2 + 0.5);
       }
       var titleSize = Math.max(13, Math.min(19, cardW * 0.024));
       g.fillStyle = C.ink;
@@ -383,21 +358,20 @@
         g.font = '600 ' + Math.max(9, titleSize * 0.56) + 'px "Open Sans", sans-serif';
         g.fillText(DE ? "Jede Schicht liest den Stand und schreibt ihre Beobachtung dazu." : "Every layer reads the state and writes its observation into it.", cardX + 48, cardY + 47);
       }
-      if (cardW > 340) {
-        var badgeW = cardW > 520 ? 108 : 92;
-        var badgeX = cardX + cardW - badgeW - 16;
-        g.fillStyle = layer ? V.alpha(colors[layer - 1], 0.14) : V.alpha(C.line, 0.35);
-        g.fillRect(badgeX, cardY + 14, badgeW, 28);
-        g.strokeStyle = layer ? V.alpha(colors[layer - 1], 0.65) : V.alpha(C.lineStrong, 0.6);
-        g.strokeRect(badgeX + 0.5, cardY + 14.5, badgeW - 1, 27);
-        g.fillStyle = C.ink;
-        g.font = '700 ' + Math.max(8, Math.min(11, cardW * 0.015)) + 'px "Open Sans", sans-serif';
-        g.textAlign = "center"; g.textBaseline = "middle";
-        g.fillText(layer ? (DE ? "Schicht " : "Layer ") + layer + " / 5" : (DE ? "Tokens" : "Tokens"), badgeX + badgeW / 2, cardY + 28.5);
-      }
       var fs = Math.max(15, Math.min(29, cardW * 0.038));
       g.font = '600 ' + fs + 'px Georgia, serif';
       var rects = wordRects(g, cardX + 50, cardY + 76, cardW - 100, fs, cardY + cardH - 40);
+      var lineYs = [];
+      rects.forEach(function (q) { if (lineYs.indexOf(q.y) === -1) lineYs.push(q.y); });
+      lineYs.sort(function (a, b) { return a - b; });
+      g.strokeStyle = V.alpha(C.line, 0.55);
+      g.lineWidth = 1.25;
+      if (lineYs.length) {
+        g.beginPath(); g.moveTo(cardX + 14, lineYs[0] - fs * 1.12); g.lineTo(cardX + cardW - 14, lineYs[0] - fs * 1.12); g.stroke();
+        lineYs.forEach(function (yy) {
+          g.beginPath(); g.moveTo(cardX + 14, yy + fs * 0.36); g.lineTo(cardX + cardW - 14, yy + fs * 0.36); g.stroke();
+        });
+      }
       g.fillStyle = C.ink;
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       rects.forEach(function (q) { g.fillText(q.word, q.x, q.y); });
@@ -418,11 +392,11 @@
       g.font = 'italic ' + Math.max(9, fs * 0.45) + 'px "Open Sans", sans-serif';
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       var hint = layer === 0
-        ? (DE ? "Die Tokens stehen schon da. Drücke Weiter, und die erste Schicht schreibt." : "The tokens are already here. Press Next and the first layer writes.")
+        ? ""
         : layer < NOTE_LAYERS.length
           ? (DE ? "Weiter: Schicht " + (layer + 1) + " schreibt." : "Next: layer " + (layer + 1) + " writes.")
           : (DE ? "Weiter: aus dem Notizbuch wird der Stream." : "Next: the notebook becomes the stream.");
-      g.fillText(hint, cardX + 50, hintY);
+      if (hint) g.fillText(hint, cardX + 50, hintY);
       g.restore();
     }
     function drawLegend(g, x, y, C, onPaper) {
@@ -743,14 +717,14 @@
       var C = pal();
       syncPhaseButtons(C);
       syncLayerButtons(C);
-      var noteCaption = DE ? "Jede Schicht liest das Notizbuch und schreibt ihre Erkenntnis dazu; nichts wird gelöscht. Die Rollen der Schichten sind eine didaktische Erzählung, keine Messung." : "Every layer reads the notebook and writes its insight into it; nothing is deleted. The layer roles are a didactic story, not a measurement.";
+      var noteCaption = DE ? "Starke Vereinfachung, keine Messung: Die fünf Notizbuch-Schichten stehen für Gruppen vieler echter Schichten. In einem 32-Schichten-Modell arbeiten die ersten ~10 grob an Tokens, Positionen, lokalem Rauschen und ersten abstrakten Merkmalen; die nächsten ~15–20 an komplexeren, oft unbenannten Bedeutungsrichtungen; die letzten ~6–8 an Aufgabenausrichtung und nächster-Token-Vorhersage. Das ist modellabhängig (Tenney et al., 2019; Lad et al., 2024)." : "Strong simplification, not a measurement: the five notebook layers stand for groups of many real layers. In a 32-layer model, the first ~10 work roughly on tokens, positions, local noise, and first abstract features; the next ~15–20 on more complex meaning directions that often have no human label; the final ~6–8 on task alignment and next-token prediction. This depends on the model (Tenney et al., 2019; Lad et al., 2024).";
       var streamCaption = DE ? "Attention und FFN lesen den Stream, berechnen getrennte Updates und addieren beide. Die Dimension bleibt gleich; jede Schicht trägt den alten Stand weiter." : "Attention and the FFN read the stream, compute separate updates, and add both. The dimension stays the same; every layer carries the old state forward.";
       if (phase === "notebook") {
         var colors = noteColors(C);
         var info = layer ? NOTE_LAYERS[layer - 1] : null;
         readout.innerHTML = '<span class="ls-res-phase-label">' + (DE ? "Notizbuch" : "Notebook") + '</span>' +
-          '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Tokens stehen" : "Tokens are here")) + '</b>' +
-          '<span>' + (info ? info.desc : (DE ? "Die Tokens stehen im Notizbuch. Drücke Weiter, um die erste Schicht zu öffnen." : "The tokens are in the notebook. Press Next to open the first layer.")) + '</span>';
+          '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Vereinfachung" : "Simplification")) + '</b>' +
+          '<span>' + (info ? info.desc : (DE ? "Fünf didaktische Gruppen für die vielen Schichten eines echten Modells." : "Five didactic groups for the many layers of a real model.")) + '</span>';
       } else {
         readout.innerHTML = '<div class="ls-res-eq-row">' + equationHTML(streamLayer) + dimDetailHTML(streamLayer) + '</div>' +
           '<span class="ls-res-hint">' + (DE ? "Ziehe über eine Dimension oder klicke sie an." : "Hover a dimension or click it.") + '</span>';

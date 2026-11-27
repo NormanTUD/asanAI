@@ -485,6 +485,13 @@
 
   var ffnStep = ffnSteps[0];
 
+  var residualLayerSources = [
+    { label: "Lad et al. (2024), The Remarkable Robustness of LLMs: Stages of Inference?", url: "https://arxiv.org/abs/2406.19384", why: { de: "Löscht und tauscht Schichten: vier Inferenzstufen und unterschiedliche Sensitivität früher, mittlerer und später Schichten.", en: "Deletes and swaps layers: four stages of inference and different sensitivity of early, middle, and late layers." } },
+    { label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://arxiv.org/abs/1905.05950", why: { de: "Schichten bilden eine Pipeline von Oberflächen- zu semantischen Merkmalen.", en: "Layers form a pipeline from surface features to semantic features." } },
+    { label: "Jawahar et al. (2019), What Does BERT Learn about the Structure of Language?", url: "https://aclanthology.org/P19-1356/", why: { de: "Untere Schichten: Oberflächenmerkmale; mittlere: Syntax; obere: Semantik.", en: "Lower layers: surface features; middle: syntax; upper: semantics." } },
+    { label: "DeepSeek-AI (2024), DeepSeek-V3 Technical Report", url: "https://arxiv.org/abs/2412.19437", why: { de: "Beispiel für ein modernes Modell mit vielen Schichten; exakte Schichtrollen sind modellabhängig.", en: "Example of a modern model with many layers; exact layer roles depend on the model." } }
+  ];
+
   var residualSteps = DE ? [
     {
       kicker: "Residual",
@@ -492,7 +499,10 @@
       body: "Man kann sich den Residual Stream als ein gemeinsames Notizbuch vorstellen, auf den jeder der Layer seine Informationen addiert, ohne vorheriges zu überschreiben. Jeder Layer besitzt durch die Heads eine Reihe von \"Experten\", die auf verschiedenste Dinge achten können, und ihre Ergebnisse auf den Residualstream schreiben.\n\nMathematisch ist es so, dass der Residual-Stream, statt einfach $x_1 = \\text{Layer}(x_0)$ zu machen, das $x_0$ auf den Layer-Output addiert:\n\n$$\\underbrace{x_1}_{\\text{Ergebnis}} = \\underbrace{x_0}_{\\text{Eingabe}} + \n\\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Output der Schicht}}$$\n\nDiese Technik wurde eigentlich entwickelt, um wirklich tiefe Netze zu trainieren. Die hatten das Problem, dass das Signal während des Trainings immer schwächer wurde, je tiefer man das Netz gemacht hat. Die ersten Layer wurden noch trainiert, aber die späteren kaum noch, weil die Signalstärke durch Backpropagation sich multipliziert. Hat jeder Layer nur eine Signalstärke von $0.9$ wären nach bereits 10 Layern die Signalstärke nur noch auf $0.9^{10} \\approx 0.35$, und nach 50 auf $0.9^{50} \\approx 0.005$. Es würde beim ersten Layer kaum noch ein Trainingssignal ankommen. Daher hat man einen einfachen Weg für das Netz hinzugefügt, auch einen \"kurzen\" Pfad zu gehen (den Identitätspfad), wodurch der Gradient viel tiefer Layer erreichen kann. Der Loss kann entweder über den Layer fließen, oder über $x_0$ direkt.\n\nDas erlaubt dem Netz, wirklich viele Layer zu verschachteln, hält aber auch die Information aus früheren Schichten im Stream verfügbar.",
       watch: "",
       demoState: { scene: "residual" },
-      inherit: false
+      inherit: false,
+      questionGroups: [
+        { id: "g-sources", title: DE ? "Quellen" : "Sources", sources: residualLayerSources }
+      ]
     }
   ] : [
     {
@@ -501,7 +511,10 @@
       body: "One can imagine the residual stream as a shared notebook to which each layer adds its information without overwriting previous information. Through the heads, each layer has a series of \"experts\" that can attend to very different things and write their results onto the residual stream.\n\nMathematically, instead of simply computing $x_1 = \\text{Layer}(x_0)$, the residual stream adds $x_0$ to the layer output:\n\n$$\\underbrace{x_1}_{\\text{result}} = \\underbrace{x_0}_{\\text{input}} + \n\\underbrace{\\operatorname{Layer}(x_0)}_{\\text{output of the layer}}$$\n\nThis technique was originally developed to train very deep networks. They had the problem that the signal became weaker and weaker during training the deeper the network was made. The first layers were still trained, but the later ones barely, because the signal strength is multiplied through backpropagation. If every layer has a signal strength of only $0.9$, after 10 layers the signal strength would be only $0.9^{10} \\approx 0.35$, and after 50 it would be $0.9^{50} \\approx 0.005$. Almost no training signal would reach the first layer. That is why a simple way was added for the network to also take a \"short\" path (the identity path), through which the gradient can reach much deeper layers. The loss can flow either through the layer or directly through $x_0$.\n\nThat allows the network to nest very many layers, but also keeps the information from earlier layers available in the stream.",
       watch: "",
       demoState: { scene: "residual" },
-      inherit: false
+      inherit: false,
+      questionGroups: [
+        { id: "g-sources", title: DE ? "Quellen" : "Sources", sources: residualLayerSources }
+      ]
     }
   ];
 
