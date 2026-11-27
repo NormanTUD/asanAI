@@ -92,8 +92,8 @@
           L("4E Cognition beschreibt Denken als biologische und situierte Tätigkeit. Ein LLM lebt nur in der Extended-Dimension: Textwerkzeug, aber ohne Körper, Welt und Handlung.", "4E Cognition describes thinking as a biological and situated activity. An LLM lives only in the extended dimension: a text tool without a body, world, or action.")
         ],
         cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
-        hint: L("Die Führung startet bei der KI, geht durch alle vier Beispiele und dann zum Menschen. Die vier E's bleiben gleichzeitig sichtbar.", "The tour starts with the AI, goes through all four examples, then the human. The four E's stay visible at once."),
-        status: L("KI: 1 von 4. Extended ist aktiv. Beispiel 1/4. Weiter zeigt Beispiel 2/4.", "AI: 1 of 4. Extended is active. Example 1/4. Next shows example 2/4."),
+        hint: L("Die Führung startet beim Menschen, geht durch alle vier Beispiele und dann zur KI. Die vier E's bleiben gleichzeitig sichtbar.", "The tour starts with the human, goes through all four examples, then the AI. The four E's stay visible at once."),
+        status: L("Mensch: 4 von 4 aktiv. Beispiel 1/4. Weiter zeigt Beispiel 2/4.", "Human: 4 of 4 active. Example 1/4. Next shows example 2/4."),
       },
       {
         key: "myst", tone: "lilac",
@@ -148,7 +148,7 @@
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false };
     var kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 };
-    var four = { mode: "ai", word: "hot" };
+    var four = { mode: "human", word: "hot" };
     var FOUR_E = [
       { key: "embodied", label: "Embodied", subDe: "Körper", subEn: "Body", noteDe: "Sinne, Schmerz, Motorik: Denken ist an einen Körper gebunden.", noteEn: "Senses, pain, motor control: thought is tied to a body.", missingDe: "kein Körper, kein Nervensystem", missingEn: "no body, no nervous system", color: "#ffb36b" },
       { key: "embedded", label: "Embedded", subDe: "Welt", subEn: "World", noteDe: "Physische und soziale Lage: Denken findet in einer Welt statt.", noteEn: "Physical and social situation: thought happens in a world.", missingDe: "keine geteilte physische Welt", missingEn: "no shared physical world", color: "#7fe0b0" },
@@ -248,7 +248,7 @@
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false }; setStatus(THEORIES[2].status); }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 }; setStatus(THEORIES[3].status); }
-      if (active === 4) { four = { mode: "ai", word: "hot" }; setStatus(THEORIES[4].status); }
+      if (active === 4) { four = { mode: "human", word: "hot" }; setStatus(THEORIES[4].status); }
       if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }
       renderControls(); draw(performance.now());
     }
@@ -1044,9 +1044,29 @@
         draw(performance.now());
         return true;
       }
+      if (four.mode === "human") {
+        four.mode = "ai";
+        four.word = keys[0];
+        setStatus(fourStatusText());
+        renderControls();
+        draw(performance.now());
+        return true;
+      }
+      return false;
+    }
+    function fourPrevAction() {
+      var keys = Object.keys(FOUR_WORDS);
+      var idx = Math.max(0, keys.indexOf(four.word));
+      if (idx > 0) {
+        four.word = keys[idx - 1];
+        setStatus(fourStatusText());
+        renderControls();
+        draw(performance.now());
+        return true;
+      }
       if (four.mode === "ai") {
         four.mode = "human";
-        four.word = keys[0];
+        four.word = keys[keys.length - 1];
         setStatus(fourStatusText());
         renderControls();
         draw(performance.now());
@@ -1176,12 +1196,13 @@
       return false;
     }
     function goPrev() {
+      if (active === 4 && fourPrevAction()) return true;
       return false;
     }
     function setTheory(i) {
       active = clamp(i, 0, THEORIES.length - 1);
       if (active === 3) kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 };
-      if (active === 4) four = { mode: "ai", word: "hot" };
+      if (active === 4) four = { mode: "human", word: "hot" };
       activeSince = performance.now();
       renderChrome();
       renderControls();
