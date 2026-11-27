@@ -19,7 +19,7 @@
         ]
       },
       {
-        year: "vor 520 Mio. Jahren", label: "Erstes Gehirn", title: "Ein Nervensystem wird zum Steuerungsorgan",
+        year: "vor 520 Mio. Jahren", label: "Erstes Gehirn", stackImages: true, title: "Ein Nervensystem wird zum Steuerungsorgan",
         text: "Fuxianhuia protensa, ein früher Gliederfüßer aus dem Kambrium, zeigt vor rund 520 Millionen Jahren ein zentralisiertes Gehirn mit Augenlappen und einem segmentierten Nervenstrang. Wahrnehmen, Entscheiden und Bewegen laufen an einem Ort zusammen. Das ist kein Denken, aber ein Sprung von Reiz zu Verhalten: Aus einem Nervennetz wird ein Steuerungsorgan.",
         images: [
           { src: "../fuxianhuia_protensa_fossil.jpg", alt: "Fossil von Fuxianhuia protensa aus Chengjiang", cap: "Fuxianhuia protensa, Fossil aus Chengjiang. Jessica Utrup (2021), CC0.", href: "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg" },
@@ -189,7 +189,7 @@
         ]
       },
       {
-        year: "about 520 million years ago", label: "First brain", title: "A nervous system becomes a control organ",
+        year: "about 520 million years ago", label: "First brain", stackImages: true, title: "A nervous system becomes a control organ",
         text: "Fuxianhuia protensa, an early Cambrian arthropod, shows a centralized brain with optic lobes and a segmented nerve cord about 520 million years ago. Sensing, deciding, and moving come together in one place. This is not thinking, but a leap from stimulus to behaviour: a nerve net becomes a control organ.",
         images: [
           { src: "../fuxianhuia_protensa_fossil.jpg", alt: "Fossil of Fuxianhuia protensa from Chengjiang", cap: "Fuxianhuia protensa fossil from Chengjiang. Jessica Utrup (2021), CC0.", href: "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg" },
@@ -410,7 +410,7 @@
         var images = e.images.slice(0, 3);
         var main = images[0];
         var caption = '<span>' + api.esc(main.cap) + '</span> <a href="' + api.esc(main.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a>';
-        var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "");
+        var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "") + (e.stackImages ? " is-stacked" : "");
         return '<figure class="ls-time-hero is-media" style="' + style + '">' +
           '<div class="' + gridClass + '">' + images.map(function (im, i) {
             return '<img class="ls-time-hero-img' + (i === 0 ? ' is-main' : ' is-side') + '" src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(im.cap) + '">';
