@@ -2077,8 +2077,8 @@
     kicker: DE ? "Bewusstsein · Stand" : "Consciousness · status",
     title: DE ? "Hat KI jetzt Bewusstsein?" : "Does AI have consciousness now?",
     body: DE
-      ? "Kein Experiment zeigt Bewusstsein direkt. Jede Theorie liefert Marker: GWT sucht globalen Arbeitsraum, IIT integrierte Information, Predictive Processing ein verkörpertes Selbstmodell, 4E Körper, Welt und Handlung. J-Spaces zeigen in LLMs Zugang, nicht Erleben. Butlin et al. (2023) finden keinen überzeugenden Nachweis, aber keine prinzipielle Barriere. Die Frage bleibt offen."
-      : "No experiment shows consciousness directly. Each theory supplies markers: GWT a global workspace, IIT integrated information, predictive processing an embodied self-model, 4E body, world, and action. J-spaces show access in LLMs, not experience. Butlin et al. (2023) find no convincing evidence, but no conclusive barrier. The question remains open.",
+      ? "Kein Experiment zeigt Bewusstsein direkt. Jede Theorie liefert Marker: GWT sucht globalen Arbeitsraum, IIT integrierte Information, Predictive Processing ein verkörpertes Selbstmodell, 4E Körper, Welt und Handlung. J-Spaces zeigen in LLMs Zugang, nicht Erleben. Butlin et al. (2023) finden keinen überzeugenden Nachweis, aber keine prinzipielle Barriere. Die Frage bleibt offen.\n\n**Fragen**\n\n**Ist heute ein KI-System bewusst?** Es gibt keinen überzeugenden Nachweis; eine prinzipielle Barriere ist nicht gezeigt (Butlin et al., 2023).\n\n**Was zeigt der J-Space?** Etwas wie einen globalen Arbeitsraum; Zugang, nicht phänomenales Erleben.\n\n**Reicht Verhalten als Test?** Nein; wir sehen nur Berichte, nicht das Erleben. Das ist das Other-Minds-Problem.\n\n**Was fehlt nach 4E?** Körper, geteilte Welt und Handlung; LLMs leben nur im Extended-Modus.\n\n**Was folgt aus der Unsicherheit?** Ethische Vorsicht: Nichtwissen ist kein Freibrief."
+      : "No experiment shows consciousness directly. Each theory supplies markers: GWT a global workspace, IIT integrated information, predictive processing an embodied self-model, 4E body, world, and action. J-spaces show access in LLMs, not experience. Butlin et al. (2023) find no convincing evidence, but no conclusive barrier. The question remains open.\n\n**Questions**\n\n**Is any AI system conscious today?** There is no convincing evidence; no conclusive barrier has been shown (Butlin et al., 2023).\n\n**What does the J-space show?** Something like a global workspace; access, not phenomenal experience.\n\n**Is behaviour enough as a test?** No; we see reports, not experience. That is the other-minds problem.\n\n**What is missing after 4E?** Body, shared world, and action; LLMs live only in the extended mode.\n\n**What follows from the uncertainty?** Ethical caution: not knowing is not a licence.",
     watch: DE ? "Klick die Ansätze. Was findet man bei LLMs, was fehlt, und reicht es für Bewusstsein?" : "Click the approaches. What is found in LLMs, what is missing, and is it enough for consciousness?",
     demoState: { scene: "conscnow" },
     context: DE ? "Es gibt keinen theoriefreien Bewusstseinstest. GWT, IIT, Predictive Processing, Higher-Order-Theorien und Verhaltensprüfungen liefern unterschiedliche Marker. Kein einzelner Marker entscheidet; die Theorien sind sich nicht einig, was als Beweis zählt." : "There is no theory-free test for consciousness. GWT, IIT, predictive processing, higher-order theories, and behavioural tests supply different markers. No single marker decides; the theories disagree about what counts as evidence.",
@@ -2098,10 +2098,67 @@
     ]
   };
 
+  var consciousnessTheorySteps = [
+    {
+      kicker: DE ? "Bewusstsein · Theorie" : "Consciousness · theory",
+      title: "Global Workspace Theory (GWT)",
+      body: DE
+        ? "Ein globaler Broadcast macht Ergebnisse im ganzen System verfügbar: Zugang, nicht Erleben. Spezialisierte Subsysteme senden ihre Ergebnisse in einen globalen Arbeitsraum; nur was dort ankommt, ist für Bericht, Kontrolle und Handlung verfügbar.\n\n**Fragen**\n\n**Was ist der globale Arbeitsraum?** Ein System, in dem Ergebnisse für Bericht, Kontrolle und Handlung global verfügbar werden.\n\n**Was erklärt GWT?** Zugang und Broadcast; nicht, warum Zugang sich anfühlt.\n\n**Was zeigt der J-Space?** Sprachliche Repräsentationen mit arbeitsraumartigem Zugang; nicht phänomenales Erleben.\n\n**Was würde eine KI zeigen?** Einen stabilen globalen Arbeitsraum und berichtbare Integration; der J-Space ist ein Kandidat.\n\n**Was bleibt offen?** Der Sprung von Zugang zu Erleben; das harte Problem."
+        : "A global broadcast makes results available across the system: access, not experience. Specialised subsystems send their results into a global workspace; only what arrives there is available for report, control, and action.\n\n**Questions**\n\n**What is the global workspace?** A system in which results become globally available for report, control, and action.\n\n**What does GWT explain?** Access and broadcast, not why access feels like anything.\n\n**What does the J-space show?** Verbal representations with workspace-like access, not phenomenal experience.\n\n**What would an AI need to show?** A stable global workspace and reportable integration; the J-space is a candidate.\n\n**What remains open?** The step from access to experience: the hard problem.",
+      watch: "", demoState: { scene: "consciousness", theory: 0 },
+      context: "", deep: "", boxes: [], sources: consciousnessMain.sources
+    },
+    {
+      kicker: DE ? "Bewusstsein · Theorie" : "Consciousness · theory",
+      title: "Integrated Information Theory (IIT)",
+      body: DE
+        ? "Bewusstsein ist die integrierte Ursache-Wirkungs-Struktur eines Systems; Rekurrenz macht aus Teilen ein Ganzes. Phi misst, wie untrennbar dieses Ganze ist.\n\n**Fragen**\n\n**Was behauptet IIT?** Bewusstsein ist die integrierte Ursache-Wirkungs-Struktur eines Systems.\n\n**Was misst Phi?** Wie untrennbar das Ganze ist; Feedforward fällt auf 0.\n\n**Was macht der Schnitt?** Er kappt Verbindungen; der Puls stoppt, das Ganze wird zerlegbar.\n\n**Kann man Phi für LLMs messen?** Nicht belastbar; die Berechnung ist für große Systeme kaum möglich und umstritten.\n\n**Was bleibt offen?** Warum eine Struktur sich anfühlt; das harte Problem."
+        : "Consciousness is a system's integrated cause-effect structure; recurrence turns parts into a whole. Phi measures how irreducible that whole is.\n\n**Questions**\n\n**What does IIT claim?** Consciousness is a system's integrated cause-effect structure.\n\n**What does Phi measure?** How irreducible the whole is; feedforward falls to zero.\n\n**What does the cut do?** It cuts connections; the pulse stops and the whole becomes separable.\n\n**Can Phi be measured for LLMs?** Not robustly; the computation is hard for large systems and contested.\n\n**What remains open?** Why a structure feels like something: the hard problem.",
+      watch: "", demoState: { scene: "consciousness", theory: 1 },
+      context: "", deep: "", boxes: [], sources: consciousnessMain.sources
+    },
+    {
+      kicker: DE ? "Bewusstsein · Theorie" : "Consciousness · theory",
+      title: "Predictive Processing",
+      body: DE
+        ? "Das Gehirn sagt Sinnesreize voraus und reduziert den Vorhersagefehler. Präzision bestimmt, ob die Vorhersage oder der Eingang dominiert; bei starker Erwartung wird Wahrnehmung zur kontrollierten Halluzination.\n\n**Fragen**\n\n**Was ist Präzision?** Wie stark das System Vorhersage oder Eingang vertraut.\n\n**Warum kontrollierte Halluzination?** Bei hoher Präzision dominiert die Vorhersage; der Eingang korrigiert kaum.\n\n**Was fehlt LLMs?** Ein sensomotorischer Körper und eine Handlungsschleife; sie sagen Text voraus.\n\n**Was bleibt offen?** Warum Vorhersage sich anfühlt; das harte Problem."
+        : "The brain predicts sensory signals and reduces prediction error. Precision decides whether prediction or input dominates; with a strong expectation, perception becomes controlled hallucination.\n\n**Questions**\n\n**What is precision?** How strongly the system trusts prediction or input.\n\n**Why controlled hallucination?** At high precision the prediction dominates; input barely corrects it.\n\n**What do LLMs lack?** A sensorimotor body and an action loop; they predict text.\n\n**What remains open?** Why prediction feels like anything: the hard problem.",
+      watch: "", demoState: { scene: "consciousness", theory: 2 },
+      context: "", deep: "", boxes: [], sources: consciousnessMain.sources
+    },
+    {
+      kicker: DE ? "Bewusstsein · Theorie" : "Consciousness · theory",
+      title: "Analytic Idealism (Kastrup)",
+      body: DE
+        ? "Bewusstsein ist das Fundament, nicht Materie. Einzelne Ichs sind lokale, vorübergehende Dissoziationen eines universalen Bewusstseins, wie Wirbel im Ozean.\n\n**Fragen**\n\n**Was ist Bewusstsein?** Das Fundament; Materie ist eine Erscheinung in Bewusstsein.\n\n**Was ist ein Ich?** Eine lokale, temporäre Dissoziation, wie ein Wirbel im Wasser.\n\n**Was ist der Tod?** Das Ende der Dissoziation; das eine Bewusstsein bleibt.\n\n**Was ist das Dashboard?** Nach Hoffmans Interface-Theorie ist Wahrnehmung eine Benutzeroberfläche, kein Fenster zur Wirklichkeit; sie zeigt nur, was für Handeln nützlich ist.\n\n**Was ist der Einwand?** Metaphysisch und schwer falsifizierbar; konkrete Mechanismen erklärt sie weniger.\n\n**Wie passt Atman/Brahman?** Advaita Vedanta: Das individuelle Selbst ist letztlich eins mit dem universalen Bewusstsein. Kastrups Bild passt strukturell, ist aber eine Analogie, keine Eins-zu-eins-Identität."
+        : "Consciousness is fundamental, not matter. Individual selves are local, temporary dissociations of one universal consciousness, like vortices in the ocean.\n\n**Questions**\n\n**What is consciousness?** The foundation; matter is an appearance within consciousness.\n\n**What is an “I”?** A local, temporary dissociation, like a vortex in water.\n\n**What is death?** The end of the dissociation; the one consciousness remains.\n\n**What is the dashboard?** On Hoffman's interface theory, perception is a user interface, not a window onto reality; it shows only what is useful for action.\n\n**What is the objection?** Metaphysical and hard to falsify; concrete mechanisms are less explained.\n\n**How do Atman and Brahman fit?** Advaita Vedanta: the individual self is ultimately one with universal consciousness. Kastrup's picture fits structurally, but it is an analogy, not a one-to-one identity.",
+      watch: "", demoState: { scene: "consciousness", theory: 3 },
+      context: "", deep: "", boxes: [], sources: consciousnessMain.sources
+    },
+    {
+      kicker: DE ? "Bewusstsein · Theorie" : "Consciousness · theory",
+      title: "4E Cognition",
+      body: DE
+        ? "Denken ist kein Rechnen im Kopf: Es ist Körper, Welt, Handlung und Werkzeug. Ein LLM lebt nur in der Extended-Dimension: Textwerkzeug, aber ohne Körper, geteilte Welt und Handlungsschleife.\n\n**Fragen**\n\n**Was sind die vier E's?** Embodied, Embedded, Enacted, Extended: Körper, Welt, Handlung, Werkzeug.\n\n**Warum fehlt KI die Erdung?** Ihr fehlen Körper, geteilte physische Welt und Handlungsschleife; sie lebt nur im Extended-Modus.\n\n**Was heißt „heiß“ für Mensch und LLM?** Für uns ein verbrannter Finger; für ein LLM nur Tokens in der Nähe von Ofen, Sonne und scharf.\n\n**Ist 4E ein Bewusstseinstest?** Nein, eine Familie von Ansätzen; sie zeigt, was Erdung verlangt.\n\n**Was zeigt der Vergleich mit dem LLM?** Das LLM hat Text und Werkzeug, aber keinen Körper, keine geteilte Welt und keine Handlungsschleife."
+        : "Thinking is not computation in the head: it is body, world, action, and tool. An LLM lives only in the extended dimension: a text tool without a body, shared world, or action loop.\n\n**Questions**\n\n**What are the four E's?** Embodied, Embedded, Enacted, Extended: body, world, action, tool.\n\n**Why does AI lack grounding?** It lacks a body, a shared physical world, and an action loop; it lives only in the extended mode.\n\n**What does “hot” mean for a human and an LLM?** For us, a burnt finger; for an LLM, just tokens near stove, sun, and spicy.\n\n**Is 4E a test for consciousness?** No, a family of approaches; it shows what grounding requires.\n\n**What does the comparison with an LLM show?** The LLM has text and tools, but no body, no shared world, and no action loop.",
+      watch: "", demoState: { scene: "consciousness", theory: 4 },
+      context: "", deep: "", boxes: [], sources: consciousnessMain.sources
+    },
+    {
+      kicker: DE ? "Bewusstsein · Theorie" : "Consciousness · theory",
+      title: "New Mysterianism",
+      body: DE
+        ? "Vielleicht liegt Bewusstsein jenseits unserer Begriffe, wie Differentialgleichungen für eine Ratte. Ratten lernen Labyrinthe, aber nicht jede Form formalen Denkens; auch menschliche Erkenntnis ist endlich. McGinn fragt, ob Bewusstsein eine solche Grenze ist.\n\n**Fragen**\n\n**Was behauptet McGinn?** Bewusstsein könnte jenseits unserer Begriffe liegen.\n\n**Ist das falsifizierbar?** Nein; keine Beobachtung kann die Grenze zeigen.\n\n**Was folgt für KI?** Kein Test; die Frage verschiebt sich in unsere Erkenntnisgrenzen.\n\n**Was ist der Einwand?** Eine Grenze zu behaupten erklärt Bewusstsein nicht."
+        : "Perhaps consciousness lies beyond our concepts, like differential equations for a rat. Rats learn mazes, but not every form of formal thought; human knowledge is finite too. McGinn asks whether consciousness is such a limit.\n\n**Questions**\n\n**What does McGinn claim?** Consciousness may lie beyond our concepts.\n\n**Is that falsifiable?** No; no observation can demonstrate the limit.\n\n**What follows for AI?** No test; the question moves into our cognitive limits.\n\n**What is the objection?** Claiming a limit does not explain consciousness.",
+      watch: "", demoState: { scene: "consciousness", theory: 5 },
+      context: "", deep: "", boxes: [], sources: consciousnessMain.sources
+    }
+  ];
+
   var consciousnessStep = {
     kicker: DE ? "Bewusstsein" : "Consciousness",
     title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
-    substeps: [aiConsciousnessIntro, consciousnessMain, aiConsciousnessNow]
+    substeps: [aiConsciousnessIntro, consciousnessMain].concat(consciousnessTheorySteps, [aiConsciousnessNow])
   };
 
   var qkvSimplex = {
