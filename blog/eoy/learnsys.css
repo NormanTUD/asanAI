@@ -2173,6 +2173,10 @@ h1,h2,h3,h4{
 .ls-cal-panel{width:min(980px,100%);max-height:84vh;overflow:auto;background:var(--ls-paper);border:1px solid var(--ls-line);box-shadow:0 24px 70px rgba(0,0,0,.18);padding:14px 16px 18px}
 .ls-cal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--ls-line);padding-bottom:8px;margin-bottom:10px}
 .ls-cal-head b{font:700 var(--ls-fs-h3) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-cal-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:1;min-width:0}
+.ls-cal-search{width:min(260px,46vw);min-width:0;border:1px solid var(--ls-line);background:var(--ls-paper);color:var(--ls-ink);padding:6px 9px;font:400 var(--ls-fs-ui-sm)/1.2 "Open Sans",sans-serif;border-radius:0}
+.ls-cal-search:focus{outline:2px solid var(--ls-green);outline-offset:1px}
+.ls-cal-empty{grid-column:1/-1;padding:18px 4px;font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-muted);text-align:center}
 .ls-cal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
 .ls-cal-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:1px solid var(--ls-line);background:#fff;padding:7px 8px;cursor:pointer;color:var(--ls-ink);min-height:74px}
 .ls-cal-card:hover{border-color:var(--ls-blue);box-shadow:0 2px 10px rgba(0,20,30,.06)}
@@ -2180,7 +2184,7 @@ h1,h2,h3,h4{
 .ls-cal-num{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
 .ls-cal-kicker{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--ls-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .ls-cal-card b{font:600 var(--ls-fs-ui-sm)/1.25 "Open Sans",sans-serif;color:var(--ls-ink)}
-@media (max-width:760px){.ls-cal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ls-cal-panel{max-height:90vh}}
+@media (max-width:760px){.ls-cal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ls-cal-panel{max-height:90vh}.ls-cal-head{flex-wrap:wrap}.ls-cal-tools{flex:1 1 100%}.ls-cal-search{width:auto;flex:1}}
 .ls-layout-panel{width:min(720px,100%)}
 .ls-json-panel{width:min(780px,100%)}
 .ls-json-text{display:block;width:100%;min-height:320px;max-height:56vh;resize:vertical;border:1px solid var(--ls-line);background:#fff;color:var(--ls-ink);padding:8px 10px;font:400 var(--ls-fs-ui-sm)/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;border-radius:0}

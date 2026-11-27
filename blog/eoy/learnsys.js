@@ -38,7 +38,7 @@
       interactiveDemo: "Interaktive Demo", stepRail: "Schrittleiste",
       depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage", questionIndex: "Fragen", questionContext: "Was ist der Kontext?", questionDeep: "Warum ist das so?",
       textSize: "Textgröße", mixLabel: "Mix",
-      calendar: "Alle Folien", calendarTitle: "Folienübersicht", close: "Schließen",
+      calendar: "Alle Folien", calendarTitle: "Folienübersicht", calendarSearch: "Folien durchsuchen", calendarNoResults: "Keine Folien gefunden.", close: "Schließen",
       moreKnowledge: "Mehr erfahren",
             continuation: "Fortsetzung", originalText: "Bisheriger Text",
       edit: "Text bearbeiten", editing: "Text bearbeiten", exitEdit: "Fertig", openAllBoxes: "Alle Boxen öffnen",
@@ -80,7 +80,7 @@
       interactiveDemo: "Interactive demo", stepRail: "Step rail",
       depthQuestions: "{n} questions", depthQuestion: "{n} question", questionIndex: "Questions", questionContext: "What is the context?", questionDeep: "Why is that so?",
       textSize: "Text size", mixLabel: "Mix",
-      calendar: "All slides", calendarTitle: "Slide overview", close: "Close",
+      calendar: "All slides", calendarTitle: "Slide overview", calendarSearch: "Search slides", calendarNoResults: "No slides found.", close: "Close",
       moreKnowledge: "Learn more",
             continuation: "Continuation", originalText: "Previous text",
       edit: "Edit text", editing: "Edit text", exitEdit: "Done", openAllBoxes: "Open all boxes",
@@ -389,6 +389,12 @@
   function lerp(a, b, t) { return a + (b - a) * t; }
   function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
   function normSpace(s) { return String(s).replace(/\s+/g, " ").trim(); }
+  function foldText(value) {
+    var s = String(value == null ? "" : value).toLowerCase()
+      .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss");
+    try { s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    return s;
+  }
   function termId(raw) {
     var k = normSpace(raw).toLowerCase();
     return GLOSSARY_ALIASES[k] || k.replace(/[^a-z0-9]+/g, "-");
@@ -912,7 +918,7 @@
           '</section>' +
         '</main>' +
         '<div class="ls-bottom-nav"><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-prev" data-no-height-test="1">' + esc(t("back")) + '</button><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + '</button></div>' +
-        '<div class="ls-cal-overlay" id="ls-calendar" hidden><div class="ls-cal-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("calendarTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("calendarTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-calendar-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><div class="ls-cal-grid" id="ls-calendar-grid"></div></div></div>' +
+        '<div class="ls-cal-overlay" id="ls-calendar" hidden><div class="ls-cal-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("calendarTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("calendarTitle")) + '</b><span class="ls-cal-tools"><input type="search" class="ls-cal-search" id="ls-calendar-search" placeholder="' + esc(t("calendarSearch")) + '" aria-label="' + esc(t("calendarSearch")) + '" autocomplete="off" spellcheck="false"><button type="button" class="ls-btn ls-btn--tiny" id="ls-calendar-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></span></div><div class="ls-cal-grid" id="ls-calendar-grid"></div></div></div>' +
         '<div class="ls-cal-overlay" id="ls-layout" hidden><div class="ls-cal-panel ls-layout-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("layoutTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("layoutTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-layout-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("layoutHint")) + '</p><div class="ls-layout-list" id="ls-layout-list"></div><div class="ls-layout-foot"><a class="ls-btn ls-btn--tiny" data-ls-solo target="_blank" rel="noopener">' + esc(t("soloDemo")) + '</a><button type="button" class="ls-btn ls-btn--tiny" data-layout-action="reset">' + esc(t("resetLayout")) + '</button></div></div></div>' +
         '<div class="ls-cal-overlay" id="ls-json-modal" hidden><div class="ls-cal-panel ls-json-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("jsonTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("jsonTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("jsonHint")) + '</p><textarea class="ls-json-text" id="ls-json-text" readonly spellcheck="false"></textarea><div class="ls-layout-foot"><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-copy">' + esc(t("copy")) + '</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-download">' + esc(t("download")) + '</button></div></div></div>' +
         '<input type="file" id="ls-json-file" accept="application/json,.json" hidden>' +
@@ -966,6 +972,7 @@
     els.calBtn = root.querySelector("#ls-calendar-btn");
     els.calOverlay = root.querySelector("#ls-calendar");
     els.calGrid = root.querySelector("#ls-calendar-grid");
+    els.calSearch = root.querySelector("#ls-calendar-search");
     els.calClose = root.querySelector("#ls-calendar-close");
     els.jsonFile = root.querySelector("#ls-json-file");
     els.layoutOverlay = root.querySelector("#ls-layout");
@@ -2493,13 +2500,29 @@
       var kicker = s.kicker || "";
       return '<button type="button" class="ls-cal-card' + (compact ? ' ls-cal-card--sub' : '') + (i === state.step ? ' is-on' : '') + '" data-step="' + i + '" data-no-height-test="1"><span class="ls-cal-num">' + (i + 1) + '</span><span class="ls-cal-kicker">' + esc(compact ? t("step") + " " + (i + 1) : kicker) + '</span><b>' + esc(compact ? (kicker || stepTitle) : stepTitle) + '</b></button>';
     }
-    var groups = [];
+    var terms = foldText(els.calSearch ? els.calSearch.value : "").split(/\s+/).filter(Boolean);
+    function matches(item) {
+      if (!terms.length) return true;
+      var s = item.s || {};
+      var hay = foldText((item.title || "") + " " + (s.kicker || "") + " " + (s.teaser || "") + " " + (s.body || "")).replace(/<[^>]*>/g, " ");
+      return terms.every(function (term) { return hay.indexOf(term) >= 0; });
+    }
+    var items = [];
     visibleIndexes(d).forEach(function (entry, i) {
       var s = entryStep(d, entry);
       var title = displayStepTitle(d, entry, s) || t("step") + " " + (i + 1);
+      var item = { s: s, i: i, title: title };
+      if (matches(item)) items.push(item);
+    });
+    if (!items.length && terms.length) {
+      els.calGrid.innerHTML = '<div class="ls-cal-empty">' + esc(t("calendarNoResults")) + '</div>';
+      return;
+    }
+    var groups = [];
+    items.forEach(function (item) {
       var last = groups[groups.length - 1];
-      if (last && last.title === title) last.items.push({ s: s, i: i, title: title });
-      else groups.push({ title: title, items: [{ s: s, i: i, title: title }] });
+      if (last && last.title === item.title) last.items.push(item);
+      else groups.push({ title: item.title, items: [item] });
     });
     els.calGrid.innerHTML = groups.map(function (g) {
       if (g.items.length === 1) return card(g.items[0].i, g.items[0].s, false, g.items[0].title);
@@ -2518,7 +2541,8 @@
     if (!els.calOverlay) return;
     renderCalendar();
     els.calOverlay.hidden = false;
-    if (els.calClose) setTimeout(function () { try { els.calClose.focus({ preventScroll: true }); } catch (e) {} }, 40);
+    var focusTarget = els.calSearch || els.calClose;
+    if (focusTarget) setTimeout(function () { try { focusTarget.focus({ preventScroll: true }); } catch (e) {} }, 40);
   }
   function closeCalendar() {
     if (els.calOverlay) els.calOverlay.hidden = true;
@@ -3513,9 +3537,9 @@
     var n = parseInt(posBuffer, 10);
     if (!isFinite(n)) return;
     if (posBuffer.length === 1) {
-      goPosition(n);
+      goPosition(n > 0 ? n - 1 : 0);
     } else {
-      goPosition(n);
+      goPosition(n > 0 ? n - 1 : 0);
       posBuffer = "";
       clearTimeout(posTimer);
     }
@@ -3706,6 +3730,16 @@
     if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
     if (els.focus) els.focus.addEventListener("click", toggleFocus);
     if (els.calBtn) els.calBtn.addEventListener("click", openCalendar);
+    if (els.calSearch) {
+      els.calSearch.addEventListener("input", renderCalendar);
+      els.calSearch.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter") return;
+        var first = els.calGrid ? els.calGrid.querySelector("[data-step]") : null;
+        if (!first) return;
+        e.preventDefault();
+        first.click();
+      });
+    }
     if (els.calClose) els.calClose.addEventListener("click", closeCalendar);
     if (els.calOverlay) els.calOverlay.addEventListener("click", function (e) { if (e.target === els.calOverlay) closeCalendar(); });
     document.addEventListener("keydown", function (e) {
