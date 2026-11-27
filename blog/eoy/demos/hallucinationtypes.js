@@ -311,12 +311,6 @@
       none: { label: L("hilft nicht", "does not help"), cls: "is-none" }
     };
 
-    var RAG_DOCS = [
-      { id: "D1", angle: 12, answer: true, text: L("Berlin liegt an der Spree.", "Berlin lies on the Spree.") },
-      { id: "D2", angle: 28, text: L("Die Spree mündet in die Havel.", "The Spree flows into the Havel.") },
-      { id: "D3", angle: 61, text: L("Berlin ist die Hauptstadt von Deutschland.", "Berlin is the capital of Germany.") },
-      { id: "D4", angle: 84, text: L("Die Elbe fließt durch Dresden.", "The Elbe flows through Dresden.") }
-    ];
     var selected = Math.max(0, Math.min(TYPES.length - 1, lastSelected));
     var activeMeasure = {};
     var activeClaim = 0;
@@ -369,9 +363,37 @@
               '</div>' +
             '</aside>' +
           '</div>' +
+          '<div class="ls-hx-winfoot">' +
+            '<div class="ls-hx-research-band">' +
+              '<span class="ls-hx-research-kicker">' + L("Forschung", "Research") + '</span>' +
+              '<div class="ls-hx-research-items">' +
+                '<div class="ls-hx-research-item" data-tip="' + L("Faktizität: Aussage gegen Welt. Faithfulness: Aussage gegen Quelle, Anweisung oder eigenen Text. Intrinsic widerspricht der Quelle; extrinsic ist ungedeckt, kann aber wahr sein. (Huang et al., 2023; Ji et al., 2023)", "Factuality: statement against the world. Faithfulness: statement against the source, instruction, or its own text. Intrinsic contradicts the source; extrinsic is unsupported but can be true. (Huang et al., 2023; Ji et al., 2023)") + '"><span>01</span><b>' + L("Taxonomie", "Taxonomy") + '</b><p>' + L("Faktizität / Faithfulness", "factuality / faithfulness") + '</p></div>' +
+                '<div class="ls-hx-research-item" data-tip="' + L("Flüssig, falsch, willkürlich: Die Antwort schwankt mit dem Zufall; hohe semantische Entropie macht das sichtbar. Kein konsistenter Datenfehler, keine Lüge, kein reiner Reasoning-Fehler. (Farquhar et al., 2024)", "Fluent, wrong, arbitrary: the answer varies with the random seed; high semantic entropy makes this visible. Not a consistent data error, a lie, or a pure reasoning failure. (Farquhar et al., 2024)") + '"><span>02</span><b>' + L("Konfabulation", "Confabulation") + '</b><p>' + L("flüssig, falsch, willkürlich", "fluent, wrong, arbitrary") + '</p></div>' +
+                '<div class="ls-hx-research-item" data-tip="' + L("FActScore zählt atomare Aussagen und prüft sie gegen eine Quelle. Semantische Entropie misst Unsicherheit; CoVe und Selbstkonsistenz prüfen gegen. Kein einzelner Score reicht. (Min et al., 2023; Farquhar et al., 2024; Dhuliawala et al., 2023)", "FActScore counts atomic claims and checks them against a source. Semantic entropy measures uncertainty; CoVe and self-consistency cross-check. No single score is enough. (Min et al., 2023; Farquhar et al., 2024; Dhuliawala et al., 2023)") + '"><span>03</span><b>' + L("Messung", "Measurement") + '</b><p>' + L("FActScore / Entropie", "FActScore / entropy") + '</p></div>' +
+                '<div class="ls-hx-research-item" data-tip="' + L("Xu et al. (2024) zeigen formal, dass ein universeller Problemlöser nicht alle berechenbaren Funktionen lernen kann. Praktisch kann ein Modell unsicher bleiben oder schweigen; reine Trefferquoten belohnen Raten. (Xu et al., 2024; OpenAI, 2025)", "Xu et al. (2024) show formally that a general problem solver cannot learn all computable functions. In practice a model can stay uncertain or abstain; accuracy-only evals reward guessing. (Xu et al., 2024; OpenAI, 2025)") + '"><span>04</span><b>' + L("Vermeidbarkeit", "Avoidability") + '</b><p>' + L("Risiko senken, nicht heilen", "reduce risk, do not cure") + '</p></div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="ls-hx-axes">' +
+              '<span class="ls-hx-axes-label">' + L("Prüfachsen", "Check axes") + '</span>' +
+              '<span class="ls-hx-axis-pill" data-tip="' + L("Deckt die Quelle die Aussage? Faktizität fragt nach der Welt, Faithfulness nach Quelle und Anweisung.", "Does the source support the claim? Factuality asks about the world; faithfulness about source and instruction.") + '"><i></i>' + L("Quelle", "Source") + '</span>' +
+              '<span class="ls-hx-axis-pill" data-tip="' + L("Bleibt die Antwort bei Quelle, Anweisung und eigenem Text? Intrinsic widerspricht; extrinsic ist nicht gedeckt.", "Does the answer stay with source, instruction, and its own text? Intrinsic contradicts; extrinsic is unsupported.") + '"><i></i>Faithfulness</span>' +
+              '<span class="ls-hx-axis-pill" data-tip="' + L("Passt die Sicherheit zur tatsächlichen Trefferquote? Eine sichere falsche Antwort ist der teuerste Fall.", "Does confidence match the actual hit rate? A confident wrong answer is the most expensive case.") + '"><i></i>' + L("Kalibrierung", "Calibration") + '</span>' +
+              '<span class="ls-hx-axis-pill" data-tip="' + L("Darf das Modell unsicher bleiben oder schweigen? Eine ehrliche Lücke ist besser als eine erfundene Antwort.", "May the model stay uncertain or abstain? An honest gap beats an invented answer.") + '"><i></i>' + L("Unsicherheit", "Uncertainty") + '</span>' +
+              '<span class="ls-hx-axes-note">' + L("getrennt prüfbar", "separately testable") + '</span>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-hx-lab-head"><b>' + L("Labor", "Lab") + '</b><span>' + L("Typen, Evidenz und Gegenmaßnahmen", "types, evidence, and countermeasures") + '</span></div>' +
+      '<div class="ls-hx-lab-head">' +
+        '<b>' + L("Labor", "Lab") + '</b><span>' + L("Typen, Evidenz und Gegenmaßnahmen", "types, evidence, and countermeasures") + '</span>' +
+        '<div class="ls-hx-retrieval" aria-label="' + L("RAG-Ablauf", "RAG flow") + '">' +
+          '<span class="ls-hx-retrieval-kicker">RAG</span>' +
+          '<span>' + L("Frage", "Question") + '</span><i>→</i>' +
+          '<span class="is-angle" data-tip="' + L("Sätze werden vektorisiert; der Winkel zur Frage misst Ähnlichkeit. 35° ist der Grenzwert: kleiner holt weniger, größer mehr Sätze. Beispiel: D1 12° passt, D3 61° nicht.", "Sentences are embedded; the angle to the question measures similarity. 35° is the threshold: smaller retrieves fewer, larger more sentences. Example: D1 12° fits, D3 61° does not.") + '">' + L("Ähnlichkeit 35°", "similarity 35°") + '</span><i>→</i>' +
+          '<span data-tip="' + L("Treffer liegen im Kontext. Anfang und Ende zählen mehr als die Mitte; Retrieval ist Suche nach Richtung, kein Verstehen.", "Hits sit in the context. The beginning and end count more than the middle; retrieval is a search for direction, not understanding.") + '">' + L("Kontext", "Context") + '</span><i>→</i>' +
+          '<span data-tip="' + L("Das Modell liest den Kontext beim Generieren mit. Nur was im Kontext steht, kann zitiert werden.", "The model reads the context while generating. Only what is in the context can be cited.") + '">' + L("Antwort", "Answer") + '</span>' +
+        '</div>' +
+      '</div>' +
       '<div class="ls-hx-sources" role="group" aria-label="' + L("Zwei Quellen: Trainingsdaten und Kontext", "Two sources: training data and context") + '">' +
         '<div class="ls-hx-source-card is-weights" data-source-kind="weights" data-tip="' + L("Was das Modell aus dem Training mitbringt; hier sitzen Fakten und alte Zahlen.", "What the model brings from training; facts and old numbers live here.") + '"><span>' + L("Gewichte", "Weights") + '</span><b>' + L("Trainingsdaten", "Training data") + '</b><p>' + L("Was das Modell aus dem Training mitbringt.", "What the model brings from training.") + '</p></div>' +
         '<div class="ls-hx-source-claim" data-tip="' + L("Die geprüfte Aussage steht zwischen beiden möglichen Quellen.", "The checked claim sits between the two possible sources.") + '"><span>' + L("Behauptung", "Claim") + '</span></div>' +
@@ -381,40 +403,7 @@
         '<div class="ls-hx-risk" data-tip="' + L("Die Position zeigt Plausibilität gegen Deckung; oben rechts liegt die Halluzinationszone.", "The position shows plausibility against grounding; the hallucination zone is top right.") + '"><div class="ls-hx-risk-head"><b>' + L("Risikokarte", "Risk map") + '</b><span>' + L("rechts = plausibel · oben = gedeckt", "right = plausible · top = grounded") + '</span></div><div class="ls-hx-risk-svg"></div></div>' +
         '<div class="ls-hx-measures" data-tip="' + L("Gegenmaßnahmen: Klick schaltet eine Prüfung ein oder aus.", "Countermeasures: click to turn a check on or off.") + '"></div>' +
       '</div>' +
-      '<div class="ls-hx-takeaway"></div>' +
-      '<details class="ls-hx-ragbox">' +
-        '<summary data-tip="' + L("Kurze Einführung: wie Retrieval passende Sätze in den Kontext legt.", "Short introduction: how retrieval puts fitting sentences into the context.") + '"><span class="ls-hx-ragbox-mark">↗</span><b>' + L("RAG in 30 Sekunden", "RAG in 30 seconds") + '</b><span>' + L("So kommen passende Sätze in den Kontext", "How fitting sentences enter the context") + '</span></summary>' +
-        '<div class="ls-hx-ragbox-body">' +
-          '<p class="ls-hx-rag-query"><b>' + L("Frage", "Question") + ':</b> ' + L("An welchem Fluss liegt Berlin?", "Which river is Berlin on?") + '</p>' +
-          '<div class="ls-hx-rag-steps">' +
-            '<div><b>1</b><span>' + L("Sätze vektorisieren", "Embed sentences") + '</span></div>' +
-            '<div><b>2</b><span>' + L("Winkel zur Frage messen", "Measure the angle to the question") + '</span></div>' +
-            '<div><b>3</b><span>' + L("Treffer in den Kontext legen", "Put hits into the context") + '</span></div>' +
-            '<div><b>4</b><span>' + L("Beim Generieren mitlesen", "Read along while generating") + '</span></div>' +
-          '</div>' +
-          '<div class="ls-hx-rag-lab">' +
-            '<div class="ls-hx-rag-viz"><svg class="ls-hx-rag-svg" viewBox="0 0 280 160" role="img"></svg></div>' +
-            '<div class="ls-hx-rag-side">' +
-              '<label class="ls-hx-rag-threshold" data-tip="' + L("Grenzwinkel: kleinere Werte holen weniger, größere mehr Sätze.", "Angle threshold: smaller values retrieve fewer sentences, larger ones more.") + '"><span>' + L("Grenzwinkel", "Angle threshold") + '</span><input type="range" class="ls-hx-rag-range" min="10" max="85" step="1" value="35"><output class="ls-hx-rag-angle">35°</output></label>' +
-              '<div class="ls-hx-rag-context" data-tip="' + L("Diese Sätze liegen danach im Kontext des Modells.", "These sentences then sit in the model context.") + '"><div class="ls-hx-rag-context-head"><b>' + L("Im Kontext", "In the context") + '</b><span class="ls-hx-rag-count"></span></div><div class="ls-hx-rag-list"></div></div>' +
-              '<p class="ls-hx-rag-hint" aria-live="polite"></p>' +
-            '</div>' +
-          '</div>' +
-          '<p class="ls-hx-rag-note">' + L("Der Grenzwinkel ist der einzige Regler. Zu klein: die richtige Quelle fehlt. Zu groß: irrelevante Sätze kommen mit. Retrieval ist Suche nach Richtung, kein Verstehen. Wichtig: Anfang und Ende eines langen Kontexts werden besser genutzt als die Mitte; pack die wichtigste Quelle an den Rand.", "The threshold is the only control. Too small: the right source is missing. Too large: irrelevant sentences come along. Retrieval is a search for direction, not understanding. Important: the beginning and end of a long context are used better than the middle, so put the key source at the edge.") + '</p>' +
-        '</div>' +
-      '</details>' +
-      '<details class="ls-hx-ragbox">' +
-        '<summary data-tip="' + L("Forschungskontext: Taxonomie, Konfabulation, Messung und Vermeidbarkeit.", "Research context: taxonomy, confabulation, measurement, and avoidability.") + '"><span class="ls-hx-ragbox-mark">◎</span><b>' + L("Forschung: tiefer als die Typen", "Research: beyond the types") + '</b><span>' + L("Taxonomie, Konfabulation, Messung, Vermeidbarkeit", "taxonomy, confabulation, measurement, avoidability") + '</span></summary>' +
-        '<div class="ls-hx-ragbox-body">' +
-          '<div class="ls-hx-research-grid">' +
-            '<article class="ls-hx-research-card"><b>' + L("Zwei Achsen", "Two axes") + '</b><p>' + L("Faktizität: Aussage gegen Welt. Faithfulness: Aussage gegen Quelle, Anweisung oder eigenen Text. Intrinsic widerspricht der Quelle; extrinsic ist nicht gedeckt, kann aber wahr sein.", "Factuality: statement against the world. Faithfulness: statement against the source, instruction, or its own text. Intrinsic contradicts the source; extrinsic is unsupported but can be true.") + '</p><span>Huang et al. (2023); Ji et al. (2023)</span></article>' +
-            '<article class="ls-hx-research-card"><b>' + L("Konfabulation", "Confabulation") + '</b><p>' + L("Flüssig, falsch, willkürlich: Die Antwort schwankt mit dem Zufall. Hohe semantische Entropie macht das sichtbar. Das ist etwas anderes als ein konsistenter Datenfehler, eine Lüge oder ein Reasoning-Fehler.", "Fluent, wrong, arbitrary: the answer varies with the random seed. High semantic entropy makes this visible. That is different from a consistent data error, a lie, or a reasoning failure.") + '</p><span>Farquhar et al. (2024)</span></article>' +
-            '<article class="ls-hx-research-card"><b>' + L("Vermeidbar?", "Avoidable?") + '</b><p>' + L("Xu et al. (2024) zeigen formal, dass ein universeller Problemlöser nicht alle berechenbaren Funktionen lernen kann. Praktisch kann ein Modell unsicher bleiben oder schweigen; Evals, die nur die Trefferquote messen, belohnen Raten (OpenAI, 2025).", "Xu et al. (2024) show formally that a general problem solver cannot learn all computable functions. In practice a model can stay uncertain or abstain; accuracy-only evals reward guessing (OpenAI, 2025).") + '</p><span>Xu et al. (2024); OpenAI (2025)</span></article>' +
-            '<article class="ls-hx-research-card"><b>' + L("Messen", "Measure") + '</b><p>' + L("FActScore zählt atomare Aussagen und prüft sie gegen eine Quelle. Semantische Entropie misst Unsicherheit; CoVe und Selbstkonsistenz prüfen gegen. Kein einzelner Score reicht.", "FActScore counts atomic claims and checks them against a source. Semantic entropy measures uncertainty; CoVe and self-consistency cross-check. No single score is enough.") + '</p><span>Min et al. (2023); Farquhar et al. (2024); Dhuliawala et al. (2023)</span></article>' +
-          '</div>' +
-          '<p class="ls-hx-rag-note">' + L("Die Quellen sind in der Quellenliste unten verlinkt. Kein Schalter heilt alles: Quelle, Faithfulness, Kalibrierung und eine ehrliche Unsicherheit bleiben getrennt prüfbar.", "The sources are linked in the source list below. No single switch heals everything: source, faithfulness, calibration, and honest uncertainty remain separately testable.") + '</p>' +
-        '</div>' +
-      '</details>';
+      '<div class="ls-hx-takeaway"></div>';
     root.appendChild(el);
 
     var chips = el.querySelector(".ls-hx-chips");
@@ -440,12 +429,7 @@
     var verdictEl = el.querySelector(".ls-hx-verdict");
     var modeBtns = el.querySelectorAll("[data-hx-mode]");
     var modeBadge = el.querySelector(".ls-hx-mode-badge");
-    var ragRange = el.querySelector(".ls-hx-rag-range");
-    var ragAngle = el.querySelector(".ls-hx-rag-angle");
-    var ragList = el.querySelector(".ls-hx-rag-list");
-    var ragCount = el.querySelector(".ls-hx-rag-count");
-    var ragHint = el.querySelector(".ls-hx-rag-hint");
-    var ragSvgEl = el.querySelector(".ls-hx-rag-svg");
+    var retrievalEl = el.querySelector(".ls-hx-retrieval");
 
     function type() { return TYPES[selected]; }
     function simMode(t) {
@@ -625,59 +609,7 @@
       else if (mode === "fixed") lead = L("Gedeckt: ", "Grounded: ") + (notes[0] || L("eine passende Prüfung greift.", "a suitable check applies."));
       else if (mode === "partial") lead = L("Teilweise: ", "Partially: ") + (notes[0] || L("die Lücke bleibt sichtbar.", "the gap remains visible."));
       else lead = L("Dieser Schalter ändert hier nichts: ", "This switch does nothing here: ") + (notes[0] || L("die Ursache liegt anderswo.", "the cause is elsewhere."));
-      takeawayEl.innerHTML = '<b>' + L("Zum Mitnehmen", "Takeaway") + '</b><p>' + esc(lead) + '</p><p>' + L("Kein Schalter heilt alles: kombiniere Quelle + Gegenprüfung und ergänze Datum oder Zitatprüfung, wo nötig.", "No single switch heals everything: combine source + verification and add date or citation checks where needed.") + '</p>';
-    }
-    function renderRagSvg(thr) {
-      var ox = 42, oy = 132, r = 100, qr = 118;
-      var sector = [];
-      for (var a = 0; a <= thr; a += 2) {
-        sector.push([ox + Math.cos(a * Math.PI / 180) * r, oy - Math.sin(a * Math.PI / 180) * r]);
-      }
-      var d = "M" + ox + " " + oy + " L" + sector.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" L") + " Z";
-      var out = '<path class="ls-hx-rag-sector" d="' + d + '"/>' +
-        '<line class="ls-hx-rag-axis" x1="' + ox + '" y1="' + (oy + 8) + '" x2="' + (ox + qr + 8) + '" y2="' + (oy + 8) + '"/>' +
-        '<line class="ls-hx-rag-axis" x1="' + ox + '" y1="' + (oy + 8) + '" x2="' + ox + '" y2="' + (oy - r - 4) + '"/>' +
-        '<line class="ls-hx-rag-query" x1="' + ox + '" y1="' + oy + '" x2="' + (ox + qr) + '" y2="' + oy + '"/>' +
-        '<path class="ls-hx-rag-arrowhead" d="M' + (ox + qr) + ' ' + oy + ' l -9 -4 l 0 8 z"/>' +
-        '<text class="ls-hx-rag-label is-query" x="' + (ox + qr - 10) + '" y="' + (oy + 17) + '" text-anchor="end">' + L("Frage", "question") + '</text>';
-      RAG_DOCS.forEach(function (doc) {
-        var ang = doc.angle * Math.PI / 180;
-        var x = ox + Math.cos(ang) * r, y = oy - Math.sin(ang) * r;
-        var on = doc.angle <= thr;
-        var anchor = Math.cos(ang) >= 0 ? "start" : "end";
-        var lx = x + (Math.cos(ang) >= 0 ? 7 : -7);
-        out += '<line class="ls-hx-rag-doc' + (on ? " is-in" : "") + '" x1="' + ox + '" y1="' + oy + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' +
-          '<circle class="ls-hx-rag-dot' + (on ? " is-in" : "") + (doc.answer ? " is-answer" : "") + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (doc.answer ? 4.5 : 3) + '"/>' +
-          '<text class="ls-hx-rag-label' + (on ? " is-in" : "") + (doc.answer ? " is-answer" : "") + '" x="' + lx.toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" text-anchor="' + anchor + '">' + doc.id + '</text>';
-      });
-      return out;
-    }
-    function renderRag() {
-      if (!ragRange) return;
-      var thr = parseInt(ragRange.value, 10) || 35;
-      var inCtx = RAG_DOCS.filter(function (d) { return d.angle <= thr; });
-      var hasAnswer = inCtx.some(function (d) { return d.answer; });
-      var hasNoise = inCtx.some(function (d) { return !d.answer && d.angle > 70; });
-      ragAngle.textContent = thr + "°";
-      ragCount.textContent = inCtx.length + " / " + RAG_DOCS.length;
-      ragList.innerHTML = RAG_DOCS.map(function (d) {
-        var on = d.angle <= thr;
-        return '<div class="ls-hx-rag-row' + (on ? " is-in" : "") + (d.answer ? " is-answer" : "") + '">' +
-          '<b>' + d.id + '</b><span>' + esc(d.text) + '</span><em>' + d.angle + '°</em>' +
-          '<i>' + (on ? L("im Kontext", "in context") : L("nicht abgerufen", "not retrieved")) + '</i></div>';
-      }).join("");
-      var hint = hasNoise
-        ? L("Zu breit: D1 ist dabei, aber D4 ist irrelevant. Mehr Kontext kann ablenken.", "Too broad: D1 is included, but D4 is irrelevant. More context can distract.")
-        : hasAnswer
-          ? L("D1 ist im Kontext: Das Modell kann die Antwort daraus lesen.", "D1 is in the context: the model can read the answer from it.")
-          : L("Die richtige Quelle D1 fehlt. RAG kann die Antwort nicht stützen.", "The right source D1 is missing. RAG cannot support the answer.");
-      ragHint.textContent = hint;
-      ragHint.className = "ls-hx-rag-hint " + (hasNoise ? "is-warn" : hasAnswer ? "is-good" : "is-bad");
-      ragSvgEl.innerHTML = renderRagSvg(thr);
-      ragSvgEl.setAttribute("aria-label", L("Frage und vier Satzrichtungen; ") + InCtxLabel(inCtx.length) + ". " + hint, "Question and four sentence directions; " + InCtxLabel(inCtx.length) + ". " + hint);
-    }
-    function InCtxLabel(n) {
-      return L(n + " Sätze im Kontext", n + " sentences in context");
+      takeawayEl.innerHTML = '<b>' + L("Zum Mitnehmen", "Takeaway") + '</b><p>' + esc(lead) + '</p><p>' + L("Kombiniere Quelle + Gegenprüfung; Datum und Zitat bleiben eigene Prüfungen.", "Combine source + verification; date and citation checks remain separate.") + '</p>';
     }
     function renderChat(t) {
       var claims = currentClaims(t);
@@ -711,6 +643,7 @@
         b.classList.toggle("is-on", on);
         b.setAttribute("aria-selected", on ? "true" : "false");
       });
+      if (retrievalEl) retrievalEl.classList.toggle("is-on", !!activeMeasure.source);
     }
     function renderVerdict(t) {
       if (!verdictEl) return;
@@ -752,9 +685,7 @@
         render();
       });
     });
-    if (ragRange) ragRange.addEventListener("input", renderRag);
     render();
-    renderRag();
     return {
       update: function () {},
       next: function () {
