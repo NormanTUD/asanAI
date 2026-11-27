@@ -45,7 +45,7 @@
         ]
       },
       {
-        year: "~300 v. Chr.", label: "Antike", title: "Tafeln, Zählbretter und Zahnräder",
+        year: "~300 v. Chr.", label: "Antike", stackImages: true, title: "Tafeln, Zählbretter und Zahnräder",
         text: "Die Salamis-Tafel gilt als eines der ältesten erhaltenen Zählbretter, etwa 300 v. Chr.; Steine auf Linien machen Stellenwerte körperlich. Der Mechanismus von Antikythera, um 100 v. Chr. aus einem Schiffswrack geborgen, ist ein analoger Zahnradrechner mit mindestens 30 Bronzezahnrädern; er sagte Sonnen- und Mondpositionen sowie Finsternisse voraus. Rechnen wird ein Verfahren mit Regeln und Mechanismen.",
         images: [
           { src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, eines der ältesten erhaltenen Zählbretter", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" },
@@ -103,11 +103,11 @@
         ]
       },
       {
-        year: "1943–1958", label: "Neuron", title: "Das Neuron als Recheneinheit",
+        year: "1943–1958", label: "Neuron", stackImages: true, equalImages: true, title: "Das Neuron als Recheneinheit",
         text: "McCulloch und Pitts modellieren 1943 ein Neuron als logische Schwelle: ein Netz aus Alles-oder-nichts-Zellen, das Boolesche Funktionen berechnet. Pitts war ein autodidaktischer Logiker aus Detroit, der mit zwölf die Principia Mathematica las und mit fünfzehn von zu Hause weglief, um in Chicago Bertrand Russell zu hören; bei McCulloch fand er ein Zuhause und lieferte die Logik für das Neuron. Hebb formuliert 1949 in The Organization of Behavior die erste einflussreiche Lernregel: Wenn Zelle A Zelle B wiederholt feuert, wächst die Verbindung. Die später geprägte Kurzformel „neurons that fire together, wire together“ fasst das zusammen; sie steht so nicht in Hebbs Buch. 1958 baut Rosenblatt das Perzeptron, das Gewichte aus Fehlern anpasst. Pitts zog sich nach dem Bruch mit Wiener zurück, verbrannte seine Dissertation und starb 1969 mit 46.",
         images: [
-          { src: "../walter_pitts_1954.jpg", alt: "Walter Pitts an einer Tafel, 1954", cap: "Walter Pitts, 1954. Francis Bello, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" },
-          { src: "../mcculloch_pitts_neuron.png", alt: "Diagramm einer McCulloch-Pitts-Zelle", cap: "McCulloch-Pitts-Zelle. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" }
+          { src: "../mcculloch_pitts_neuron.png", alt: "Diagramm einer McCulloch-Pitts-Zelle", cap: "McCulloch-Pitts-Zelle. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" },
+          { src: "../walter_pitts_1954.jpg", alt: "Walter Pitts an einer Tafel, 1954", cap: "Walter Pitts, 1954. Francis Bello, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" }
         ],
         sources: [
           { label: "McCulloch & Pitts (1943), A Logical Calculus of the Ideas Immanent in Nervous Activity", url: "https://doi.org/10.1007/BF02478259" },
@@ -215,7 +215,7 @@
         ]
       },
       {
-        year: "~300 BCE", label: "Antiquity", title: "Tablets, counting boards, gears",
+        year: "~300 BCE", label: "Antiquity", stackImages: true, title: "Tablets, counting boards, gears",
         text: "The Salamis tablet is one of the oldest surviving counting boards, from about 300 BCE; stones on lines make place value physical. The Antikythera mechanism, recovered from a shipwreck and built around 100 BCE, is an analog gear computer with at least 30 bronze gears; it predicted solar and lunar positions and eclipses. Calculation becomes a procedure with rules and mechanisms.",
         images: [
           { src: "../salamic_table.jpg", alt: "The Salamis tablet, one of the oldest surviving counting boards", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" },
@@ -273,11 +273,11 @@
         ]
       },
       {
-        year: "1943–1958", label: "Neuron", title: "The neuron as a computing unit",
+        year: "1943–1958", label: "Neuron", stackImages: true, equalImages: true, title: "The neuron as a computing unit",
         text: "McCulloch and Pitts model a neuron as a logical threshold in 1943: a network of all-or-none cells that computes Boolean functions. Pitts was a self-taught logician from Detroit who read Principia Mathematica at twelve and ran away from home at fifteen to hear Bertrand Russell in Chicago; McCulloch gave him a home, and Pitts supplied the logic for the neuron. Hebb formulates in 1949 in The Organization of Behavior the first influential learning rule: when cell A repeatedly fires cell B, the connection grows. The later slogan “neurons that fire together, wire together” summarises this; it is not Hebb's own wording. In 1958 Rosenblatt builds the perceptron, which adjusts weights from errors. Pitts withdrew after a break with Wiener, burned his dissertation, and died in 1969 at 46.",
         images: [
-          { src: "../walter_pitts_1954.jpg", alt: "Walter Pitts at a blackboard, 1954", cap: "Walter Pitts, 1954. Francis Bello, public domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" },
-          { src: "../mcculloch_pitts_neuron.png", alt: "Diagram of a McCulloch-Pitts cell", cap: "McCulloch-Pitts cell. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" }
+          { src: "../mcculloch_pitts_neuron.png", alt: "Diagram of a McCulloch-Pitts cell", cap: "McCulloch-Pitts cell. Adrian Lange, CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" },
+          { src: "../walter_pitts_1954.jpg", alt: "Walter Pitts at a blackboard, 1954", cap: "Walter Pitts, 1954. Francis Bello, public domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" }
         ],
         sources: [
           { label: "McCulloch & Pitts (1943), A Logical Calculus of the Ideas Immanent in Nervous Activity", url: "https://doi.org/10.1007/BF02478259" },
@@ -410,7 +410,7 @@
         var images = e.images.slice(0, 3);
         var main = images[0];
         var caption = '<span>' + api.esc(main.cap) + '</span> <a href="' + api.esc(main.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a>';
-        var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "") + (e.stackImages ? " is-stacked" : "");
+        var gridClass = "ls-time-hero-grid" + (images.length > 1 ? " has-two" : "") + (images.length > 2 ? " has-three" : "") + (e.stackImages ? " is-stacked" : "") + (e.equalImages ? " is-equal" : "");
         return '<figure class="ls-time-hero is-media" style="' + style + '">' +
           '<div class="' + gridClass + '">' + images.map(function (im, i) {
             return '<span class="ls-time-media' + (i === 0 ? ' is-main' : ' is-side') + '"><img class="ls-time-hero-img' + (i === 0 ? ' is-main' : ' is-side') + '" src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(im.cap) + '"><span class="ls-time-media-spinner" aria-hidden="true"></span></span>';
