@@ -207,10 +207,8 @@
       ctx = size.ctx;
       var w = size.w, h = size.h, pad = 16;
       ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.38, h * 0.35, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
-      bg.addColorStop(0, "rgba(247,250,249,.96)");
-      bg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, w, h);
       var p = softmax(logits);
       var loss = lossOf(p);
       var g = gradients(p);

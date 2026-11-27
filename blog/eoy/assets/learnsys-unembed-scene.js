@@ -401,6 +401,8 @@
       var bx = cx + Math.cos(aB) * lenB, by = cy - Math.sin(aB) * lenB;
       var angleDeg = (aB - aA) * 180 / Math.PI;
       ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper;
+      ctx.fillRect(0, 0, w, h);
       var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.72);
       glow.addColorStop(0, V.alpha(C.blue, 0.08));
       glow.addColorStop(0.45, V.alpha(C.green, 0.025));
@@ -711,6 +713,8 @@
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper;
+      ctx.fillRect(0, 0, w, h);
       hits = [];
       var compact = w < 620;
       var panelW = Math.min(380, Math.max(170, w * (compact ? 0.44 : 0.35)));
