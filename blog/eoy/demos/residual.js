@@ -68,7 +68,10 @@
     var STREAM_LAYERS = [
       "Start",
       DE ? "Transformer-Block 1" : "Transformer block 1",
-      DE ? "Transformer-Block 2" : "Transformer block 2"
+      DE ? "Transformer-Block 2" : "Transformer block 2",
+      DE ? "Transformer-Block 3" : "Transformer block 3",
+      DE ? "Transformer-Block 4" : "Transformer block 4",
+      DE ? "Transformer-Block 5" : "Transformer block 5"
     ];
     var START_BASE = [0.46, 0.24, 0.34, 0.18, 0.56, 0.30];
     var LAYER_UPDATES = [
@@ -79,6 +82,18 @@
       {
         attn: [0.25, 0.30, 0.18, 0.20, 0.35, 0.10],
         ffn: [0.15, 0.20, 0.12, 0.20, 0.25, 0.10]
+      },
+      {
+        attn: [0.18, 0.12, 0.25, 0.10, 0.22, 0.30],
+        ffn: [0.10, 0.15, 0.08, 0.18, 0.12, 0.20]
+      },
+      {
+        attn: [0.12, 0.22, 0.10, 0.28, 0.15, 0.18],
+        ffn: [0.08, 0.10, 0.16, 0.12, 0.20, 0.14]
+      },
+      {
+        attn: [0.08, 0.15, 0.20, 0.12, 0.10, 0.25],
+        ffn: [0.06, 0.08, 0.10, 0.16, 0.14, 0.12]
       }
     ];
     var el = document.createElement("div");
@@ -152,7 +167,7 @@
       return Math.max(1, best);
     }
     function noteColors(C) { return [C.green, C.blue, C.gold, C.lilac, C.sky]; }
-    function streamColors(C) { return [C.sky, C.green, C.gold]; }
+    function streamColors(C) { return [C.sky, C.green, C.gold, C.lilac, C.blue, C.petrol]; }
     function pal() {
       var C = api.colors();
       return {
@@ -501,7 +516,7 @@
     function drawStream(C, w, h, g, now) {
       var pad = Math.max(10, Math.min(18, w * 0.022));
       var panelX = pad, panelY = pad, panelW = w - pad * 2;
-      var riverH = Math.min(230, Math.max(110, h * 0.42));
+      var riverH = Math.min(240, Math.max(120, h * 0.44));
       var barY = panelY + riverH + 10;
       var barH = h - barY - pad;
       var wide = w >= 560;
@@ -530,7 +545,7 @@
       var sy = panelY + (wide ? 58 : 48);
       var gap = wide ? 10 : 6;
       var sw = (panelW - 28 - gap * 2) / 3;
-      var sh = wide ? Math.min(104, riverH - sy + panelY - 10) : Math.min(64, riverH - sy + panelY - 8);
+      var sh = wide ? Math.min(130, riverH - sy + panelY - 10) : Math.min(72, riverH - sy + panelY - 8);
       var totalsMax = maxTotal();
       var streamPalette = streamColors(C);
       streamBoxHits = [];
@@ -551,7 +566,7 @@
           g.strokeRect(x + 0.5, sy + 0.5, sw - 1, sh - 1);
           g.restore();
         }
-        var label = i === 0 ? "Start" : (wide ? STREAM_LAYERS[i] : "Block " + i);
+        var label = i === 0 ? "Start" : "Block " + i;
         g.fillStyle = active ? onDark : onDarkSoft;
         g.font = '700 ' + Math.max(9, Math.min(12, sw * 0.052)) + 'px "Barlow", sans-serif';
         g.textAlign = "left"; g.textBaseline = "middle";
@@ -560,7 +575,7 @@
         drawMiniBars(g, x + 8, sy + sh - Math.max(16, sh * 0.34), sw - 16, Math.max(10, sh * 0.26), p, C, totalsMax);
         streamBoxHits.push({ x: x, y: sy, w: sw, h: sh, i: i });
       }
-      for (var gi = 0; gi < 2; gi++) {
+      for (var gi = 0; gi < STREAM_LAYERS.length - 1; gi++) {
         var gx1 = sx + gi * (sw + gap) + sw;
         var gx2 = sx + (gi + 1) * (sw + gap);
         drawFlowGap(g, gx1 + 2, gx2 - 2, sy + sh / 2, now, streamPalette[gi + 1]);
@@ -585,8 +600,8 @@
       if (panelW > 430) drawLegend(g, panelX + panelW - 286, barY + 26, C, true);
       var plotX = panelX + 24;
       var plotW = panelW - 48;
-      var plotTop = barY + (panelW > 430 ? 62 : 52);
-      var baseline = barY + barH - 30;
+      var plotTop = barY + (panelW > 430 ? 58 : 48);
+      var baseline = barY + barH - 28;
       var plotH = Math.max(36, baseline - plotTop - 10);
       var maxVal = Math.max(1, maxTotal());
       var scale = plotH / Math.max(maxVal, 1.2);
@@ -625,12 +640,6 @@
         g.textAlign = "center"; g.textBaseline = "alphabetic";
         g.fillText("d" + (d + 1), cx, baseline + 16);
         barHits.push({ x: plotX + slot * d, y: plotTop, w: slot, h: plotH + 18, i: d });
-      }
-      if (streamLayer === 0) {
-        g.fillStyle = C.soft;
-        g.font = 'italic ' + Math.max(10, Math.min(14, panelW * 0.02)) + 'px "Open Sans", sans-serif';
-        g.textAlign = "center"; g.textBaseline = "middle";
-        g.fillText(DE ? "x₀ = 0" : "x₀ = 0", plotX + plotW / 2, plotTop + plotH * 0.4);
       }
       g.strokeStyle = V.alpha(C.lineStrong, 0.9);
       g.beginPath(); g.moveTo(plotX, baseline); g.lineTo(plotX + plotW, baseline); g.stroke();

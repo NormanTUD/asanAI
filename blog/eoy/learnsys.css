@@ -2262,7 +2262,7 @@ h1,h2,h3,h4{
 .ls-mlp-scene .ism-weight-slider{width:4.5em !important}
 
 .ls-res-scene{grid-template-rows:auto minmax(0,1fr) auto auto auto}
-.ls-res-stage{min-height:240px}
+.ls-res-stage{min-height:280px}
 .ls-res-caption{display:grid;margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-res-note{margin:0;font:600 var(--ls-fs-ui-sm)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-res-caption-view{grid-area:1/1}
