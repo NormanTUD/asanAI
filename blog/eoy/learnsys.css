@@ -3037,6 +3037,9 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 .ls-rm-status.is-missing{color:var(--ls-lilac)}
 .ls-rm-status.is-risky{color:var(--ls-blue)}
 .ls-rm-detail{position:relative;margin-top:auto;padding:11px 13px;border:1px solid var(--ls-line);background:linear-gradient(180deg,rgba(247,249,248,.95),rgba(255,255,255,.98));box-shadow:0 10px 30px rgba(0,30,40,.05)}
+.ls-rm-detail-stack{display:grid}
+.ls-rm-detail-item{grid-area:1/1;min-width:0;visibility:hidden;pointer-events:none}
+.ls-rm-detail-item.is-active{visibility:visible;pointer-events:auto}
 .ls-rm-detail-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px;margin-bottom:3px}
 .ls-rm-detail-tag{font:700 8px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol)}
 .ls-rm-detail-head>b{font:700 var(--ls-fs-ui) "Barlow",sans-serif;color:var(--ls-ink)}
