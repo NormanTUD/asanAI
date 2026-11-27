@@ -6471,7 +6471,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-rag-fig{margin:0 0 7px;border:1px solid #cbbfa9;background:#fff;padding:3px;box-shadow:0 1px 2px rgba(60,40,10,.12)}
 .ls-rag-fig img{display:block;width:100%;height:auto;max-height:150px;object-fit:cover;filter:sepia(.1) contrast(1.02)}
 .ls-rag-fig--old img{width:auto;max-width:100%;height:auto;max-height:170px;margin:0 auto;object-fit:contain;background:transparent}
-.ls-rag-fig figcaption{padding:3px 1px 0;font:9px/1.4 "Open Sans",sans-serif;color:#6b5a45}
+.ls-rag-fig figcaption{padding:3px 1px 0;font:10px/1.4 "Open Sans",sans-serif;color:#6b5a45}
 .ls-rag-fig figcaption b{font-weight:700;color:#3b3022}
 .ls-rag-fig figcaption a{color:#7a1f1f;text-decoration:underline}
 .ls-rag-pdf-foot{position:relative;display:flex;justify-content:space-between;gap:10px;border-top:1px solid #cbbfa9;padding-top:4px;font:600 6px/1 "Open Sans",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8a7a63}
@@ -6572,9 +6572,9 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-rag-doc .ls-rag-fig img{max-height:140px;width:100%;object-fit:cover}
 .ls-rag-doc .ls-rag-fig--old img{width:auto;max-width:100%;max-height:200px;margin:0 auto;object-fit:contain;background:transparent}
 .ls-rag-doc .ls-rag-fig--filler img{width:100%;height:auto;max-height:150px;object-fit:cover}
-.ls-rag-doc .ls-rag-fig figcaption{font-size:9px;line-height:1.4;padding:3px 0 0}
+.ls-rag-doc .ls-rag-fig figcaption{font-size:10px;line-height:1.4;padding:3px 0 0}
 .ls-rag-pdf-flow{flex:1 1 auto;min-width:0;height:100%;column-count:2;column-gap:14px;column-fill:auto;column-rule:1px solid rgba(203,191,169,.55);line-height:1.5;overflow:hidden;font-size:inherit}
-.ls-rag-doc .ls-rag-pdf-flow h3{font-size:1.15em;line-height:1.2;margin:6px 0 2px;break-after:avoid;letter-spacing:.01em}
+.ls-rag-doc .ls-rag-pdf-flow h3{font-size:1.2em;line-height:1.2;margin:6px 0 2px;break-after:avoid;letter-spacing:.01em}
 .ls-rag-doc .ls-rag-pdf-chunk{position:relative;margin:0 0 5px;padding:0;background:transparent;box-shadow:none;transition:background .3s ease,box-shadow .3s ease,opacity .35s ease,filter .35s ease;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .ls-rag-doc .ls-rag-pdf-chunk p{margin:0}
 .ls-rag-doc .ls-rag-pdf-chunk.is-scanned{background:rgba(91,165,230,.14);box-shadow:inset 2px 0 0 #5ba5e6}
@@ -6589,8 +6589,8 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-rag-pdf-chunk.is-out .ls-rag-fitbar i{background:#c95656}
 .ls-rag-ctx-pill{display:none;position:absolute;right:-4px;bottom:-9px;z-index:2;flex-direction:column;gap:0;padding:2px 4px;background:var(--ls-green);color:#fff;border-radius:2px;box-shadow:0 2px 6px rgba(0,20,30,.22);pointer-events:none}
 .ls-rag-pdf-chunk.is-context .ls-rag-ctx-pill{display:flex}
-.ls-rag-ctx-pill b{font:700 9px/1.1 "Open Sans",sans-serif;white-space:nowrap}
-.ls-rag-ctx-pill em{font-style:normal;font-weight:600;font-size:7.5px;line-height:1.1;opacity:.9;white-space:nowrap}
+.ls-rag-ctx-pill b{font:700 9.5px/1.1 "Open Sans",sans-serif;white-space:nowrap}
+.ls-rag-ctx-pill em{font-style:normal;font-weight:600;font-size:8px;line-height:1.1;opacity:.9;white-space:nowrap}
 .ls-rag-doc .ls-rag-pdf-foot{font-size:5px;padding-top:3px}
 .ls-rag-scanfx{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .2s ease}
 .ls-rag-pdf-wrap.is-scanning .ls-rag-scanfx{opacity:1}
@@ -6613,7 +6613,7 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-rag-rail-strip i{flex:1;display:block}
 .ls-rag-rail-angle{display:flex;flex-direction:column;gap:2px;margin-top:3px;opacity:0;transform:translateY(-2px);transition:opacity .25s ease,transform .25s ease}
 .ls-rag-doc.is-angling .ls-rag-rail-row.is-angle-in .ls-rag-rail-angle{opacity:1;transform:none}
-.ls-rag-rail-angle b{font:700 11px/1.1 "Open Sans",sans-serif;color:var(--ls-petrol);white-space:nowrap;letter-spacing:-.02em}
+.ls-rag-rail-angle b{font:700 12px/1.1 "Open Sans",sans-serif;color:var(--ls-petrol);white-space:nowrap;letter-spacing:-.02em}
 .ls-rag-rail-fit{display:block;height:4px;background:var(--ls-line);overflow:hidden}
 .ls-rag-rail-fit i{display:block;height:100%;background:#5ba5e6}
 .ls-rag-rail-row.is-fit .ls-rag-rail-angle b{color:var(--ls-green)}

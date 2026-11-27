@@ -81,6 +81,9 @@
     }
     function fits(p) { return p.angle <= THRESHOLD; }
     function fitValue(p) { return Math.max(0, Math.min(1, 1 - p.angle / 90)); }
+    function chunkTitle(id, heading) {
+      return L("Chunk " + id + " von " + TOTAL_CHUNKS + " · Auszug 4815–4821 · " + heading, "Chunk " + id + " of " + TOTAL_CHUNKS + " · excerpt 4815–4821 · " + heading);
+    }
     function vectorValues(p, n) {
       var seed = 0;
       for (var k = 0; k < p.id.length; k++) seed += p.id.charCodeAt(k) * (k + 3);
@@ -132,15 +135,15 @@
         '<div class="ls-rag-pdf-body">' +
           '<div class="ls-rag-pdf-media">' + figureHTML("colossal") + figureHTML("octopus") + '</div>' +
           '<div class="ls-rag-pdf-flow">' +
-            '<section class="ls-rag-pdf-chunk" data-c="4815" data-angle="12" title="Chunk 4815 von 8151 · Auszug ab 4815 · ' + esc(c1.heading) + '"><h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="4816" data-angle="19" title="Chunk 4816 von 8151 · Auszug ab 4815 · ' + esc(c2.heading) + '"><h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="4817" data-angle="52" title="Chunk 4817 von 8151 · Auszug ab 4815 · ' + esc(c3.heading) + '"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="4818" data-angle="64" title="Chunk 4818 von 8151 · Auszug ab 4815 · ' + esc(c4.heading) + '"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="4819" data-angle="44" title="Chunk 4819 von 8151 · Auszug ab 4815 · ' + esc(c5.heading) + '"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4815" data-angle="12" title="' + esc(chunkTitle("4815", c1.heading)) + '"><h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4816" data-angle="19" title="' + esc(chunkTitle("4816", c2.heading)) + '"><h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4817" data-angle="52" title="' + esc(chunkTitle("4817", c3.heading)) + '"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4818" data-angle="64" title="' + esc(chunkTitle("4818", c4.heading)) + '"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4819" data-angle="44" title="' + esc(chunkTitle("4819", c5.heading)) + '"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
             '<div class="ls-rag-pdf-filler-head"><h3>' + esc(ARTICLE.filler.title) + '</h3></div>' +
             fillerFigureHTML() +
-            '<section class="ls-rag-pdf-chunk" data-c="4820" data-angle="88" title="Chunk 4820 von 8151 · Auszug ab 4815 · ' + esc(ARTICLE.paragraphs[5].heading) + '"><h3>' + esc(ARTICLE.paragraphs[5].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[5].text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="4821" data-angle="91" title="Chunk 4821 von 8151 · Auszug ab 4815 · ' + esc(ARTICLE.paragraphs[6].heading) + '"><h3>' + esc(ARTICLE.paragraphs[6].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[6].text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4820" data-angle="88" title="' + esc(chunkTitle("4820", ARTICLE.paragraphs[5].heading)) + '"><h3>' + esc(ARTICLE.paragraphs[5].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[5].text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4821" data-angle="91" title="' + esc(chunkTitle("4821", ARTICLE.paragraphs[6].heading)) + '"><h3>' + esc(ARTICLE.paragraphs[6].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[6].text) + '</p></section>' +
           '</div>' +
         '</div>' +
         '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Krake", "Encyclopædia · Kraken")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
@@ -149,7 +152,8 @@
 
     function railHTML() {
       return ARTICLE.paragraphs.map(function (p) {
-        return '<div class="ls-rag-rail-row" data-c="' + p.id + '" title="Chunk ' + p.id + ' von ' + TOTAL_CHUNKS + ' · Auszug ' + EXCERPT_START + '–' + EXCERPT_END + ' · ' + esc(p.heading) + '"><div class="ls-rag-rail-top"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span></div><div class="ls-rag-rail-angle"><b>' + p.id + ' · ∠ ' + p.angle + '°</b><span class="ls-rag-rail-fit"><i style="width:' + Math.round(fitValue(p) * 100) + '%"></i></span></div><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
+        var extra = p.id === "4815" ? L(" · Auszug beginnt hier; davor 4814 Chunks", " · excerpt starts here; 4814 chunks before") : "";
+        return '<div class="ls-rag-rail-row" data-c="' + p.id + '" title="' + esc(chunkTitle(p.id, p.heading) + extra) + '"><div class="ls-rag-rail-top"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span></div><div class="ls-rag-rail-angle"><b>' + p.id + ' · ∠ ' + p.angle + '°</b><span class="ls-rag-rail-fit"><i style="width:' + Math.round(fitValue(p) * 100) + '%"></i></span></div><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
       }).join("");
     }
 
@@ -211,7 +215,7 @@
       if (SELECTED.indexOf(p.id) >= 0) {
         var pill = document.createElement("span");
         pill.className = "ls-rag-ctx-pill";
-        pill.innerHTML = "<b>🔒 Kontext</b><em>nur Modell</em>";
+        pill.innerHTML = "<b>🔒 " + esc(L("Kontext", "Context")) + "</b><em>" + esc(L("nur Modell", "model only")) + "</em>";
         chunk.appendChild(pill);
       }
     });
