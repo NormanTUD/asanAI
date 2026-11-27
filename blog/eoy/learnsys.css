@@ -6248,6 +6248,10 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-il-meta{font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.03em;text-transform:none;color:var(--ls-muted)}
 .ls-il-canvaswrap{position:relative;width:min(100px,100%);margin:0 auto;aspect-ratio:1;min-width:0;overflow:hidden;background:linear-gradient(135deg,var(--ls-paper-2),var(--ls-paper))}
 .ls-il-canvaswrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ls-il-wait{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center;color:var(--ls-muted);pointer-events:none}
+.ls-il-wait[hidden]{display:none}
+.ls-il-spinner{width:16px;height:16px;border:2px solid var(--ls-line-strong);border-top-color:var(--ls-green);border-radius:50%;animation:ls-il-spin .8s linear infinite}
+.ls-il-wait-text{font:600 8.5px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.02em}
 .ls-il-caption{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 9px;font:600 8.5px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-muted)}
 .ls-il-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ls-il-epoch b{color:var(--ls-ink);font-weight:700}
@@ -6314,8 +6318,9 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
 .ls-il-range output{min-width:42px;font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-petrol)}
 .ls-il-grid.is-drop{outline:2px dashed var(--ls-green);outline-offset:3px}
 @keyframes ls-il-pulse{0%,100%{box-shadow:0 0 0 0 rgba(99,164,75,.34)}50%{box-shadow:0 0 0 5px rgba(99,164,75,0)}}
+@keyframes ls-il-spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){
-  .ls-il-live.is-live i,.ls-il-status.is-live .ls-il-status-dot{animation:none}
+  .ls-il-live.is-live i,.ls-il-status.is-live .ls-il-status-dot,.ls-il-spinner{animation:none}
 }
 @media (max-width:760px){
   .ls-imagelab{padding:8px 8px 12px}

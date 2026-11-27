@@ -146,7 +146,7 @@
         '</figure>' +
         '<figure class="ls-il-card ls-il-pred">' +
           '<div class="ls-il-cardhead"><span>Output</span><span class="ls-il-live"><i></i><span class="ls-il-live-label">' + L("Lädt", "Loading") + '</span></span></div>' +
-          '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Output: für jede Koordinate eine Farbe.", "Output: a colour for every coordinate.") + '"></canvas></div>' +
+          '<div class="ls-il-canvaswrap"><canvas class="ls-il-pred-canvas" role="img" aria-label="' + L("Output: für jede Koordinate eine Farbe.", "Output: a colour for every coordinate.") + '"></canvas><div class="ls-il-wait" id="ls-il-pred-wait"><span class="ls-il-spinner" aria-hidden="true"></span><span class="ls-il-wait-text" role="status">' + L("Netz rechnet …", "Network computing …") + '</span></div></div>' +
           '<figcaption class="ls-il-caption"><span>100 &times; 100 &times; 3</span><span class="ls-il-epoch">' + L("Epoche", "Epoch") + ' <b>0</b></span></figcaption>' +
         '</figure>' +
         '<div class="ls-il-card ls-il-loss">' +
@@ -195,6 +195,7 @@
 
     var targetCv = el.querySelector(".ls-il-target-canvas");
     var predCv = el.querySelector(".ls-il-pred-canvas");
+    var predWait = el.querySelector("#ls-il-pred-wait");
     var lossCv = el.querySelector(".ls-il-loss-canvas");
     var lossVal = el.querySelector(".ls-il-lossval");
     var bestVal = el.querySelector(".ls-il-best");
@@ -590,12 +591,17 @@
       ctx.save();
       ctx.fillStyle = C.paper2 || C.paper || "#f7f9f8";
       ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = C.muted || "#627476";
-      ctx.font = '600 10px ui-monospace, SFMono-Regular, Menlo, monospace';
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(text, w / 2, h / 2);
+      if (text) {
+        ctx.fillStyle = C.muted || "#627476";
+        ctx.font = '600 10px ui-monospace, SFMono-Regular, Menlo, monospace';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, w / 2, h / 2);
+      }
       ctx.restore();
+    }
+    function setPredWait(on) {
+      if (predWait) predWait.hidden = !on;
     }
 
     function drawTarget() {
@@ -650,10 +656,12 @@
       var data = st.extrap ? st.viewData : st.pred;
       var n = st.extrap ? st.viewN : RES;
       if (!data || !n) {
-        placeholder(ctx, f.w, f.h, L("Netz rechnet …", "Network computing …"));
+        placeholder(ctx, f.w, f.h, "");
         if (st.extrap) drawExtrapFrame(ctx, f.w, f.h);
+        setPredWait(true);
         return;
       }
+      setPredWait(false);
       if (st.off.width !== n || st.off.height !== n) {
         st.off.width = n;
         st.off.height = n;
