@@ -19,7 +19,7 @@
     set(".ls-sim-scale", "Verkürzt oder verlängert Vektor B, um zu zeigen, dass die Richtung erhalten bleibt.", "Shortens or lengthens vector B to show that its direction is preserved.");
     set(".ls-sim-next-angle", "Springt zum nächsten Winkel im Unembedding-Lauf.", "Jumps to the next angle in the unembedding run.");
     set(".ls-sim-readout", "Aktuelle Winkel, Skalen und die daraus folgenden Token-Logits.", "Current angles, scales, and the resulting token logits.");
-    set(".ls-sim-unembed-list", "Die konkurrierenden nächsten Token mit ihrem Score.", "The competing next tokens with their scores.");
+    set(".ls-sim-unembed-list", "Die konkurrierenden nächsten Token mit ihrem Score. Klicke einen Token, um seinen Winkel im Plot zu sehen.", "The competing next tokens with their scores. Click a token to show its angle in the plot.");
     root.querySelectorAll(".ls-sim-tab").forEach(function (b, i) {
       var de = ["Richtungen: Bedeutung liegt in der Richtung, nicht in der Länge.", "Skaleninvarianz: derselbe Vektor darf länger oder kürzer sein.", "Unembedding: das versteckte Vektor-Ergebnis wird zu Token-Logits."][i] || "Ansicht wechseln.";
       var en = ["Directions: meaning lives in the direction, not the length.", "Scale invariance: the same vector may be longer or shorter.", "Unembedding: the hidden vector result becomes token logits."][i] || "Switch the view.";

@@ -620,6 +620,13 @@
       updateAngleList();
       drawUnembed(performance.now());
     }
+    function unembedRowAt(x, y) {
+      for (var i = 0; i < hits.length; i++) {
+        var h = hits[i];
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) return h;
+      }
+      return null;
+    }
     function stepUnembed(dir) {
       var rows = unembedData();
       if (!rows.length) return false;
@@ -704,6 +711,7 @@
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
+      hits = [];
       var compact = w < 620;
       var panelW = Math.min(380, Math.max(170, w * (compact ? 0.44 : 0.35)));
       var bx = w - 14 - panelW;
@@ -796,6 +804,20 @@
         ctx.restore();
         rayLabels.push({ text: tok.t.trim(), x: x, y: y, active: isFocus, top: isTop });
       });
+      if (focus) {
+        var angleR = Math.max(18, r * 0.30);
+        var fd = focus.diff;
+        ctx.save();
+        ctx.strokeStyle = V.alpha(C.petrol, 0.88);
+        ctx.lineWidth = 1.7;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(cx, cy, angleR, -UN_ANGLE, -UN_ANGLE - fd, fd > 0);
+        ctx.stroke();
+        ctx.restore();
+        var mid = UN_ANGLE + fd / 2;
+        pill(Math.round(Math.abs(fd) * 180 / Math.PI) + "°", cx + Math.cos(mid) * (angleR + 16), cy - Math.sin(mid) * (angleR + 16), C.petrol, fsSmall);
+      }
       ctx.save();
       ctx.lineCap = "round";
       ctx.shadowColor = V.alpha(C.petrol, 0.55);
@@ -862,6 +884,7 @@
       var barW = Math.max(40, panelW - 104);
       rows.forEach(function (row, i) {
         var y = listTop + i * rowStep + rowStep * 0.45;
+        hits.push({ x: bx + 8, y: y - rowStep * 0.48, w: panelW - 16, h: rowStep - 2, i: i });
         var p = probs[i] || 0;
         var grow = ease(clamp((t - 0.28 - i * 0.035) / 0.55, 0, 1));
         var isFocus = !!(focus && row.t === focus.t);
@@ -934,6 +957,7 @@
       var modeChanged = next !== mode;
       var dir = order[next] < order[mode] ? -1 : 1;
       mode = next;
+      canvas.style.cursor = "";
       el.classList.toggle("is-unembed", mode === "unembed");
       tabBtns.forEach(function (b) { var on = b.getAttribute("data-mode") === mode; b.classList.toggle("is-on", on); b.setAttribute("aria-selected", String(on)); });
       if (mapControls) mapControls.hidden = mode !== "directions";
@@ -1048,6 +1072,11 @@
       try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
     });
     canvas.addEventListener("pointermove", function (e) {
+      if (mode === "unembed") {
+        var rr = canvas.getBoundingClientRect();
+        canvas.style.cursor = unembedRowAt(e.clientX - rr.left, e.clientY - rr.top) ? "pointer" : "";
+        return;
+      }
       if (!dragging) return;
       var dx = e.clientX - lastPX, dy = e.clientY - lastPY;
       if (Math.abs(dx) + Math.abs(dy) > 2) dragMoved = true;
@@ -1066,6 +1095,15 @@
       }
       var r = canvas.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
+      if (mode === "unembed") {
+        var rowHit = unembedRowAt(x, y);
+        if (rowHit) {
+          unembedStep = rowHit.i;
+          unembedPinned = rowHit.i;
+          setUnembedFocus(rowHit.i);
+        }
+        return;
+      }
       var best = null, bestD = 1e9;
       hits.forEach(function (hit) {
         var d = Math.hypot(hit.x - x, hit.y - y);
@@ -1077,6 +1115,12 @@
     window.addEventListener("tm:theme", draw);
     if (window.LearnSysDemoCore) {
       window.LearnSysDemoCore.canvasTip(canvas, function (x, y) {
+        if (mode === "unembed") {
+          var uh = unembedRowAt(x, y);
+          if (!uh) return "";
+          var ur = unembedData()[uh.i];
+          return ur ? (DE ? "Klicken zeigt den Winkel zu " + ur.t.trim() + "." : "Click to show the angle to " + ur.t.trim() + ".") : "";
+        }
         if (mode !== "directions" || !hits.length) return "";
         var best = null, bestD = 22;
         hits.forEach(function (hit) {
