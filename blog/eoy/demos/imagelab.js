@@ -170,13 +170,7 @@
             '<div class="ls-il-heat-title"><span>' + L("Gewichte live", "Weights live") + '</span><span class="ls-il-heat-live"><i></i>' + L("live", "live") + '</span></div>' +
             '<div class="ls-il-heat-grid" id="ls-il-heat-grid"></div>' +
           '</div>' +
-          '<div class="ls-il-formula-toolbar">' +
-            '<label class="ls-il-check"><input type="checkbox" id="ls-il-formula-full"> <span>' + L("Vollständige Matrizen", "Full matrices") + '</span></label>' +
-            '<button type="button" class="ls-btn ls-btn--tiny" id="ls-il-formula-refresh" hidden>' + L("Aktualisieren", "Refresh") + '</button>' +
-            '<span class="ls-il-formula-snapshot" id="ls-il-formula-snapshot" hidden></span>' +
-          '</div>' +
           '<div class="ls-il-formulas-math"></div>' +
-          '<div class="ls-il-closebar"><button type="button" class="ls-btn ls-btn--tiny ls-il-formula-close">' + L("Schließen", "Close") + '</button></div>' +
         '</div>' +
       '</details>' +
       '<details class="ls-il-optional">' +
@@ -197,7 +191,6 @@
             '<label class="ls-il-range">' + L("Lernrate", "Learning rate") + ' <output class="ls-il-lrout">0,0100</output><input type="range" class="ls-il-lrinput" min="0.0005" max="0.03" step="0.0005" value="0.01"></label>' +
           '</div>' +
           '<p class="ls-il-hint">' + L("Adam, Standard 0,01.", "Adam, default 0.01.") + '</p>' +
-          '<div class="ls-il-closebar"><button type="button" class="ls-btn ls-btn--tiny ls-il-close">' + L("Schließen", "Close") + '</button></div>' +
         '</div>' +
       '</details>';
     root.appendChild(el);
@@ -226,24 +219,17 @@
     var extraNote = el.querySelector(".ls-il-extranote");
     var lrInput = el.querySelector(".ls-il-lrinput");
     var lrOut = el.querySelector(".ls-il-lrout");
-    var closeBtn = el.querySelector(".ls-il-close");
-    var optionalEl = el.querySelector(".ls-il-optional");
     var formulasEl = el.querySelector(".ls-il-formulas");
     var formulasBody = el.querySelector(".ls-il-formulas-body");
     var formulasMath = el.querySelector(".ls-il-formulas-math");
     var formulasMeta = el.querySelector(".ls-il-formulas-meta");
     var formulasHint = el.querySelector(".ls-il-formulas-hint");
-    var formulaCloseBtn = el.querySelector(".ls-il-formula-close");
     var heatmapsEl = el.querySelector("#ls-il-heatmaps");
     var heatGrid = el.querySelector("#ls-il-heat-grid");
-    var formulaFullToggle = el.querySelector("#ls-il-formula-full");
-    var formulaRefresh = el.querySelector("#ls-il-formula-refresh");
-    var formulaSnapshotEl = el.querySelector("#ls-il-formula-snapshot");
     var grid = el.querySelector(".ls-il-grid");
 
     var C = api.colors();
     var formulasOpen = false, formulasVisible = false, lastFormulaAt = 0, formulaIO = null;
-    var formulaFull = false, formulaFullDirty = true, formulaSnapshot = null;
     var formulaHeatSignature = "", heatSlots = [];
     var st = {
       dead: false,
@@ -896,15 +882,6 @@
       }
       return "\\begin{pmatrix}" + lines.join(" \\\\ ") + "\\end{pmatrix}";
     }
-    function fullPmatrix(data, outUnits, inUnits) {
-      var lines = [];
-      for (var r = 0; r < outUnits; r++) {
-        var parts = [];
-        for (var c = 0; c < inUnits; c++) parts.push(formulaNumber(data[c * outUnits + r]));
-        lines.push(parts.join(" & "));
-      }
-      return "\\begin{pmatrix}" + lines.join(" \\\\ ") + "\\end{pmatrix}";
-    }
     function sampleBias(data, units, maxVals) {
       var n = Math.min(units, maxVals);
       var parts = [];
@@ -912,29 +889,12 @@
       if (units > n) parts.push("\\vdots");
       return "\\begin{pmatrix}" + parts.join(" \\\\ ") + "\\end{pmatrix}";
     }
-    function fullBiasPmatrix(data, units) {
-      var parts = [];
-      for (var i = 0; i < units; i++) parts.push(formulaNumber(data[i]));
-      return "\\begin{pmatrix}" + parts.join(" \\\\ ") + "\\end{pmatrix}";
+    function mathRow(tex) {
+      return '<div class="ls-il-formula-row"><div class="ls-math" data-tex="' + core.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + core.esc(tex) + '</code></div></div>';
     }
-    function featureTexs() {
-      var parts = ["x", "y"];
-      for (var k = 0; k < OCTAVES; k++) {
-        var f = "2^{" + k + "}\\pi";
-        parts.push("\\sin(" + f + "x)", "\\cos(" + f + "x)", "\\sin(" + f + "y)", "\\cos(" + f + "y)");
-      }
-      return parts;
-    }
-    function mathRow(tex, scrollable) {
-      var cls = "ls-il-formula-row" + (scrollable ? " ls-il-formula-row--full" : "");
-      return '<div class="' + cls + '"><div class="ls-math" data-tex="' + core.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + core.esc(tex) + '</code></div></div>';
-    }
-    function formulaTexs(full) {
+    function formulaTexs() {
       var out = [];
-      var uTex = full
-        ? 'u(x,y) = \\left( ' + featureTexs().join(',\\ ') + ' \\right) \\in \\mathbb{R}^{22}'
-        : 'u(x,y) = \\left( x,\\ y,\\ \\sin(2^0\\pi x),\\ \\cos(2^0\\pi x),\\ \\dots,\\ \\sin(2^4\\pi y),\\ \\cos(2^4\\pi y) \\right) \\in \\mathbb{R}^{22}';
-      out.push(uTex);
+      out.push('u(x,y) = \\left( x,\\ y,\\ \\sin(2^0\\pi x),\\ \\cos(2^0\\pi x),\\ \\dots,\\ \\sin(2^4\\pi y),\\ \\cos(2^4\\pi y) \\right) \\in \\mathbb{R}^{22}');
       if (!st.model) return out;
       var layers = st.model.layers || [];
       var featureLabel = DE ? '\\text{22 Merkmale}' : '\\text{22 features}';
@@ -948,8 +908,8 @@
         var outUnits = shape[1];
         var kdata = kernel.dataSync();
         var bdata = bias ? bias.dataSync() : [];
-        var wtex = full ? fullPmatrix(kdata, outUnits, inUnits) : sampleMatrix(kdata, outUnits, inUnits, 8, 8);
-        var btex = full ? fullBiasPmatrix(bdata, outUnits) : sampleBias(bdata, outUnits, 8);
+        var wtex = sampleMatrix(kdata, outUnits, inUnits, 8, 8);
+        var btex = sampleBias(bdata, outUnits, 8);
         var wlabel = (DE ? '\\text{Gewichte}' : '\\text{weights}') + '^{\\mathrm{[' + outUnits + ' \\times ' + inUnits + ']}}';
         var blabel = '\\text{Bias}^{\\mathrm{[' + outUnits + ']}}';
         var lhs, prev;
@@ -967,13 +927,13 @@
       return out;
     }
     var HEAT_STOPS = [
-      [-1, 12, 37, 54],
-      [-0.55, 18, 93, 140],
-      [-0.18, 70, 155, 175],
-      [0, 16, 32, 40],
-      [0.18, 99, 164, 76],
-      [0.55, 178, 191, 60],
-      [1, 250, 204, 76]
+      [-1, 11, 79, 108],
+      [-0.55, 45, 143, 174],
+      [-0.18, 159, 208, 216],
+      [0, 244, 247, 245],
+      [0.18, 207, 227, 184],
+      [0.55, 143, 191, 90],
+      [1, 200, 162, 74]
     ];
     function heatColor(t) {
       t = clamp(t, -1, 1);
@@ -997,31 +957,20 @@
       var inUnits = shape[0];
       var outUnits = shape[1];
       var data = kernel.dataSync();
-      var GRID = 64;
+      if (canvas.width !== inUnits) canvas.width = inUnits;
+      if (canvas.height !== outUnits) canvas.height = outUnits;
+      var values = new Float32Array(inUnits * outUnits);
       var maxAbs = 1e-6;
-      var values = new Float32Array(GRID * GRID);
-      for (var gy = 0; gy < GRID; gy++) {
-        var r0 = Math.floor(gy * outUnits / GRID);
-        var r1 = Math.max(r0 + 1, Math.floor((gy + 1) * outUnits / GRID));
-        for (var gx = 0; gx < GRID; gx++) {
-          var c0 = Math.floor(gx * inUnits / GRID);
-          var c1 = Math.max(c0 + 1, Math.floor((gx + 1) * inUnits / GRID));
-          var sum = 0;
-          var count = 0;
-          for (var r = r0; r < r1; r++) {
-            for (var c = c0; c < c1; c++) {
-              sum += data[c * outUnits + r];
-              count++;
-            }
-          }
-          var v = count ? sum / count : 0;
-          values[gy * GRID + gx] = v;
+      for (var r = 0; r < outUnits; r++) {
+        for (var c = 0; c < inUnits; c++) {
+          var v = data[c * outUnits + r];
+          values[r * inUnits + c] = v;
           var a = Math.abs(v);
           if (a > maxAbs) maxAbs = a;
         }
       }
       var ctx = canvas.getContext("2d");
-      var img = ctx.createImageData(GRID, GRID);
+      var img = ctx.createImageData(inUnits, outUnits);
       for (var j = 0; j < values.length; j++) {
         var color = heatColor(values[j] / maxAbs);
         var q = j * 4;
@@ -1031,7 +980,7 @@
         img.data[q + 3] = 255;
       }
       ctx.putImageData(img, 0, 0);
-      return maxAbs;
+      return { maxAbs: maxAbs, values: values, inUnits: inUnits, outUnits: outUnits };
     }
     function heatSignature() {
       if (!st.model) return "";
@@ -1041,27 +990,59 @@
         return kernel ? kernel.shape.join("x") : "";
       }).join("|");
     }
+    function destroyHeatTips() {
+      heatSlots.forEach(function (slot) {
+        if (slot.tip && slot.tip.destroy) slot.tip.destroy();
+      });
+    }
     function buildHeatmaps() {
       if (!heatGrid) return;
+      destroyHeatTips();
       var layers = st.model.layers || [];
       var html = [];
       layers.forEach(function (layer, i) {
         var weights = layer.getWeights ? layer.getWeights() : [];
         var kernel = weights[0];
         if (!kernel) return;
-        html.push('<figure class="ls-il-heat-card"><canvas data-heat-layer="' + i + '" width="64" height="64" role="img" aria-label="' + L("Gewichte von Layer ", "Weights of layer ") + (i + 1) + '"></canvas><figcaption><b>W<sub>' + (i + 1) + '</sub></b><span class="ls-il-heat-scale" data-heat-scale="' + i + '"></span></figcaption></figure>');
+        var shape = kernel.shape;
+        var inUnits = shape[0];
+        var outUnits = shape[1];
+        var shapeClass = inUnits > outUnits ? "is-wide" : "is-tall";
+        html.push('<figure class="ls-il-heat-card"><div class="ls-il-heat-plot"><span class="ls-il-heat-axis-y">' + L("Neuron 1–", "neuron 1–") + outUnits + '</span><canvas class="' + shapeClass + '" data-heat-layer="' + i + '" role="img" aria-label="' + L("Gewichte von Layer ", "Weights of layer ") + (i + 1) + '"></canvas></div><div class="ls-il-heat-axis-x">' + L("Eingabe 1–", "input 1–") + inUnits + '</div><figcaption><b>W<sub>' + (i + 1) + '</sub></b><span class="ls-il-heat-scale" data-heat-scale="' + i + '"></span></figcaption></figure>');
       });
       heatGrid.innerHTML = html.join("");
       heatSlots = [];
       Array.prototype.forEach.call(heatGrid.querySelectorAll("canvas[data-heat-layer]"), function (canvas) {
         var i = parseInt(canvas.getAttribute("data-heat-layer"), 10);
-        heatSlots.push({ layer: i, canvas: canvas, scale: heatGrid.querySelector('[data-heat-scale="' + i + '"]') });
+        var slot = {
+          layer: i,
+          canvas: canvas,
+          values: null,
+          maxAbs: 1,
+          inUnits: 0,
+          outUnits: 0,
+          scale: heatGrid.querySelector('[data-heat-scale="' + i + '"]'),
+          tip: null
+        };
+        if (core.canvasTip) {
+          slot.tip = core.canvasTip(canvas, function (x, y) {
+            if (!slot.values || !slot.inUnits || !slot.outUnits) return "";
+            var r = canvas.getBoundingClientRect();
+            if (!r.width || !r.height) return "";
+            var c = clamp(Math.floor((x / r.width) * slot.inUnits), 0, slot.inUnits - 1);
+            var row = clamp(Math.floor((y / r.height) * slot.outUnits), 0, slot.outUnits - 1);
+            var v = slot.values[row * slot.inUnits + c];
+            return "W" + (slot.layer + 1) + " · " + L("Neuron ", "neuron ") + (row + 1) + " · " + L("Eingabe ", "input ") + (c + 1) + " · " + v.toFixed(4);
+          });
+        }
+        heatSlots.push(slot);
       });
     }
     function updateHeatmaps() {
       if (!heatmapsEl || !heatGrid) return;
       var sig = heatSignature();
       if (!sig) {
+        destroyHeatTips();
         heatmapsEl.hidden = true;
         formulaHeatSignature = "";
         heatSlots = [];
@@ -1079,8 +1060,12 @@
         var weights = layer.getWeights();
         var kernel = weights[0];
         if (!kernel) return;
-        var maxAbs = drawWeightHeatmap(slot.canvas, kernel);
-        if (slot.scale) slot.scale.textContent = "±" + maxAbs.toFixed(2);
+        var info = drawWeightHeatmap(slot.canvas, kernel);
+        slot.values = info.values;
+        slot.maxAbs = info.maxAbs;
+        slot.inUnits = info.inUnits;
+        slot.outUnits = info.outUnits;
+        if (slot.scale) slot.scale.textContent = "±" + info.maxAbs.toFixed(2);
       });
     }
     function saveFormulaScroll() {
@@ -1095,15 +1080,6 @@
         if (values[i]) row.scrollLeft = values[i];
       });
     }
-    function updateSnapshotLabel() {
-      if (!formulaSnapshotEl) return;
-      if (formulasFull && formulaSnapshot) {
-        formulaSnapshotEl.textContent = L("Stand ", "Snapshot ") + formulaSnapshot.step + " · " + L("Epoche ", "Epoch ") + formulaSnapshot.epoch;
-        formulaSnapshotEl.hidden = false;
-      } else {
-        formulaSnapshotEl.hidden = true;
-      }
-    }
     function renderFormulas(force) {
       if (!formulasOpen || !formulasVisible) return;
       if (!st.ready || !st.model) {
@@ -1117,28 +1093,10 @@
       if (!force && now - lastFormulaAt < 1200) return;
       lastFormulaAt = now;
       updateHeatmaps();
-      if (formulasFull) {
-        if (force || formulaFullDirty) {
-          formulaFullDirty = false;
-          var fullScroll = saveFormulaScroll();
-          formulasMath.innerHTML = formulaTexs(true).map(function (tex, i) {
-            return mathRow(tex, i > 0);
-          }).join("");
-          if (api.typeset) api.typeset(formulasMath);
-          restoreFormulaScroll(fullScroll);
-          formulaSnapshot = { step: st.step, epoch: Math.floor(st.seen / PIXELS) };
-          updateSnapshotLabel();
-        }
-      } else {
-        var sampleScroll = saveFormulaScroll();
-        formulasMath.innerHTML = formulaTexs(false).map(function (tex) {
-          return mathRow(tex, false);
-        }).join("");
-        if (api.typeset) api.typeset(formulasMath);
-        restoreFormulaScroll(sampleScroll);
-        formulaSnapshot = null;
-        updateSnapshotLabel();
-      }
+      var sampleScroll = saveFormulaScroll();
+      formulasMath.innerHTML = formulaTexs().map(mathRow).join("");
+      if (api.typeset) api.typeset(formulasMath);
+      restoreFormulaScroll(sampleScroll);
       var epoch = Math.floor(st.seen / PIXELS);
       formulasMeta.textContent = L("Schritt ", "Step ") + st.step + " · " + L("Epoche ", "Epoch ") + epoch;
       if (formulasHint) {
@@ -1467,6 +1425,7 @@
       if (st.xView) { try { st.xView.dispose(); } catch (e) {} st.xView = null; }
       if (lossTip && lossTip.destroy) { try { lossTip.destroy(); } catch (e) {} }
       lossTip = null;
+      destroyHeatTips();
       if (el.parentNode) el.parentNode.removeChild(el);
     }
 
@@ -1486,45 +1445,22 @@
     factorInput.addEventListener("input", function () { setFactor(factorInput.value); });
     lrInput.addEventListener("input", function () { if (lrOut) lrOut.textContent = formatLr(lrInput.value); });
     lrInput.addEventListener("change", function () { setLearningRate(lrInput.value); });
-    closeBtn.addEventListener("click", function () { optionalEl.open = false; });
     formulasEl.addEventListener("toggle", function () {
       formulasOpen = formulasEl.open;
       if (formulasOpen) {
         formulasVisible = formulasOnScreen();
-        if (formulaFullToggle) formulaFullToggle.checked = formulaFull;
-        if (formulaRefresh) formulaRefresh.hidden = !formulaFull;
-        formulaFullDirty = true;
         renderFormulas(true);
       } else {
         formulasMath.innerHTML = "";
         formulasMeta.textContent = "";
+        destroyHeatTips();
         if (heatmapsEl) heatmapsEl.hidden = true;
         if (heatGrid) heatGrid.innerHTML = "";
         formulaHeatSignature = "";
         heatSlots = [];
-        formulaFullDirty = true;
         lastFormulaAt = 0;
       }
     });
-    if (formulaFullToggle) {
-      formulaFullToggle.addEventListener("change", function () {
-        formulaFull = !!formulaFullToggle.checked;
-        formulaFullDirty = true;
-        formulaSnapshot = null;
-        if (formulaRefresh) formulaRefresh.hidden = !formulaFull;
-        lastFormulaAt = 0;
-        updateSnapshotLabel();
-        renderFormulas(true);
-      });
-    }
-    if (formulaRefresh) {
-      formulaRefresh.addEventListener("click", function () {
-        formulaFullDirty = true;
-        lastFormulaAt = 0;
-        renderFormulas(true);
-      });
-    }
-    formulaCloseBtn.addEventListener("click", function () { formulasEl.open = false; });
     if (window.IntersectionObserver) {
       formulaIO = new IntersectionObserver(function (entries) {
         formulasVisible = !!(entries[0] && entries[0].isIntersecting);
