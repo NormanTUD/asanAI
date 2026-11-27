@@ -956,6 +956,7 @@
     els.next = root.querySelector("#ls-next");
     els.editBtn = root.querySelector("#ls-edit-btn");
     els.openAllBoxes = root.querySelector("#ls-open-all-boxes");
+    els.stage = root.querySelector("#ls-stage");
     els.stageKicker = root.querySelector("#ls-stage-kicker");
     els.stageTitle = root.querySelector("#ls-stage-title");
     els.demo = root.querySelector("#ls-demo");
@@ -2283,6 +2284,7 @@
     var doc = state.edit && editorDoc ? editorDoc : currentTextDoc();
     els.stageKicker.textContent = doc.kicker || (base && base.substeps ? s.kicker : d.kicker);
     els.stageTitle.textContent = doc.title || s.title;
+    if (els.stage) els.stage.setAttribute("data-step", String(state.step));
     els.credit.textContent = d.credit || "";
     mountDemo(d, s);
   }

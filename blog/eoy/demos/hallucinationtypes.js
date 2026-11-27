@@ -336,6 +336,11 @@
           '<div class="ls-hx-winbar">' +
             '<span class="ls-hx-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
             '<span class="ls-hx-addr">chat.example.com</span>' +
+            '<div class="ls-hx-tour" data-tip="' + L("Alle Beispiele durchspielen: erst aus dem Gedächtnis, dann mit RAG.", "Play every example: first from memory, then with RAG.") + '">' +
+              '<button type="button" class="ls-hx-tour-play" aria-label="' + L("Alle Beispiele abspielen", "Play all examples") + '">▶</button>' +
+              '<span class="ls-hx-tour-track">' + TYPES.map(function () { return '<i></i>'; }).join("") + '</span>' +
+              '<span class="ls-hx-tour-label">1 / ' + TYPES.length + '</span>' +
+            '</div>' +
             '<span class="ls-hx-mode-badge"></span>' +
           '</div>' +
           '<div class="ls-hx-wintabs" role="tablist" aria-label="' + L("Fensterbereiche", "Window sections") + '">' +
@@ -465,6 +470,11 @@
     var verdictEl = el.querySelector(".ls-hx-verdict");
     var modeBtns = el.querySelectorAll("[data-hx-mode]");
     var modeBadge = el.querySelector(".ls-hx-mode-badge");
+    var tour = el.querySelector(".ls-hx-tour");
+    var tourPlay = el.querySelector(".ls-hx-tour-play");
+    var tourDots = el.querySelectorAll(".ls-hx-tour-track i");
+    var tourLabel = el.querySelector(".ls-hx-tour-label");
+    var tourTimer = null, tourAutoTimer = null, tourActive = false, tourType = 0, tourPhase = 0;
     var tabButtons = el.querySelectorAll("[data-hx-tab]");
     var tabPanels = el.querySelectorAll("[data-hx-panel]");
     var riskCaptionEl = el.querySelector(".ls-hx-risk-caption");
@@ -639,6 +649,7 @@
       }).join("");
       measuresEl.querySelectorAll("[data-measure]").forEach(function (b) {
         b.addEventListener("click", function () {
+          stopTour();
           var id = b.getAttribute("data-measure");
           activeMeasure[id] = !activeMeasure[id];
           activeClaim = 0;
@@ -779,6 +790,58 @@
       }
       verdictEl.innerHTML = html;
     }
+    function updateTourUI() {
+      if (!tour) return;
+      var idx = tourActive ? tourType : selected;
+      var rag = tourActive ? tourPhase === 1 : !!activeMeasure.source;
+      tour.classList.toggle("is-running", tourActive);
+      tourPlay.textContent = tourActive ? "❚❚" : "▶";
+      tourPlay.setAttribute("aria-label", tourActive ? L("Pause", "Pause") : L("Alle Beispiele abspielen", "Play all examples"));
+      tourLabel.textContent = (idx + 1) + " / " + TYPES.length;
+      Array.prototype.forEach.call(tourDots, function (dot, i) {
+        dot.classList.toggle("is-on", i === idx);
+        dot.classList.toggle("is-rag", i === idx && rag);
+      });
+    }
+    function stopTour() {
+      tourActive = false;
+      clearTimeout(tourTimer);
+      clearTimeout(tourAutoTimer);
+      tourTimer = null;
+      tourAutoTimer = null;
+      updateTourUI();
+    }
+    function runTourStep() {
+      if (!tourActive) return;
+      selected = tourType;
+      activeMeasure = tourPhase === 1 ? { source: true } : {};
+      activeClaim = 0;
+      render();
+      clearTimeout(tourTimer);
+      tourTimer = setTimeout(function () {
+        if (!tourActive) return;
+        if (tourPhase === 0) {
+          tourPhase = 1;
+          runTourStep();
+        } else if (tourType < TYPES.length - 1) {
+          tourType++;
+          tourPhase = 0;
+          runTourStep();
+        } else {
+          stopTour();
+        }
+      }, tourPhase === 0 ? 2300 : 2700);
+    }
+    function startTour() {
+      if (tourActive) return;
+      clearTimeout(tourAutoTimer);
+      tourAutoTimer = null;
+      tourType = 0;
+      tourPhase = 0;
+      tourActive = true;
+      selectTab("chat");
+      runTourStep();
+    }
     function render() {
       lastSelected = selected;
       var t = type();
@@ -792,6 +855,7 @@
       renderRisk(t);
       renderMeasures(t);
       renderTakeaway(t);
+      updateTourUI();
     }
     function selectTab(name) {
       Array.prototype.forEach.call(tabButtons, function (b) {
@@ -806,11 +870,12 @@
       });
     }
     Array.prototype.forEach.call(tabButtons, function (b) {
-      b.addEventListener("click", function () { selectTab(b.getAttribute("data-hx-tab")); });
+      b.addEventListener("click", function () { stopTour(); selectTab(b.getAttribute("data-hx-tab")); });
     });
     if (ragRange) ragRange.addEventListener("input", renderRag);
     Array.prototype.forEach.call(modeBtns, function (b) {
       b.addEventListener("click", function () {
+        stopTour();
         var wantRag = b.getAttribute("data-hx-mode") === "rag";
         if (!!activeMeasure.source === wantRag) return;
         activeMeasure.source = wantRag;
@@ -821,14 +886,29 @@
     render();
     renderRag();
     selectTab("chat");
+    if (tourPlay) tourPlay.addEventListener("click", function () {
+      if (tourActive) stopTour(); else startTour();
+    });
+    if (window.__HX_TOUR_AUTOPLAY__ !== false) {
+      tourAutoTimer = setTimeout(function () {
+        tourAutoTimer = null;
+        if (el.isConnected) startTour();
+      }, 1200);
+    }
     return {
       update: function () {},
       next: function () {
+        stopTour();
+        selectTab("chat");
+        if (!activeMeasure.source) {
+          activeMeasure.source = true;
+          activeClaim = 0;
+          render();
+          return true;
+        }
         if (selected < TYPES.length - 1) {
-          var keepRag = !!activeMeasure.source;
           selected++;
-          activeMeasure = {};
-          if (keepRag) activeMeasure.source = true;
+          activeMeasure = { source: true };
           activeClaim = 0;
           render();
           return true;
@@ -836,21 +916,27 @@
         return false;
       },
       prev: function () {
+        stopTour();
+        selectTab("chat");
+        if (activeMeasure.source) {
+          activeMeasure = {};
+          activeClaim = 0;
+          render();
+          return true;
+        }
         if (selected > 0) {
-          var keepRag = !!activeMeasure.source;
           selected--;
           activeMeasure = {};
-          if (keepRag) activeMeasure.source = true;
           activeClaim = 0;
           render();
           return true;
         }
         return false;
       },
-      hasNext: function () { return selected < TYPES.length - 1; },
-      hasPrev: function () { return selected > 0; },
+      hasNext: function () { return !activeMeasure.source || selected < TYPES.length - 1; },
+      hasPrev: function () { return !!activeMeasure.source || selected > 0; },
       resize: function () {},
-      destroy: function () { el.remove(); }
+      destroy: function () { stopTour(); el.remove(); }
     };
   }
   core.register("hallucinationtypes", hallucinationTypesScene);
