@@ -7098,3 +7098,5 @@ html.dark .ls-time-stop-copy b{color:#dbe5ec}
 .ls-guard-core span{font-size:9px}
 .ls-guard-core small{font-size:9px}
 .ls-guard-kicker{font-size:9px}
+.ls-hx-conf-track i.is-low{background:var(--ls-line-strong)}
+.ls-hx-conf-val{text-transform:none}

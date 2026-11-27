@@ -363,7 +363,7 @@
                   '<div class="ls-hx-bubble ls-hx-bubble--ai">' +
                     '<div class="ls-hx-answer-text"></div>' +
                     '<div class="ls-hx-cite-card" data-tip="' + L("Die zitierte Quelle oder das Fehlen einer Quelle.", "The cited source or the absence of one.") + '"></div>' +
-                    '<div class="ls-hx-conf" data-tip="' + L("Wie sicher das Modell klingt, unabhängig davon, ob es recht hat.", "How confident the model sounds, regardless of whether it is right.") + '"><span>' + L("Sicherheit", "Confidence") + '</span><span class="ls-hx-conf-track"><i></i></span><b class="ls-hx-conf-val"></b></div>' +
+                    '<div class="ls-hx-conf" data-tip="' + L("Wie sicher das Modell klingt, qualitativ von niedrig bis hoch, unabhängig davon, ob es recht hat.", "How confident the model sounds, qualitatively from low to high, regardless of whether it is right.") + '"><span>' + L("Sicherheit", "Confidence") + '</span><span class="ls-hx-conf-track"><i></i></span><b class="ls-hx-conf-val"></b></div>' +
                   '</div>' +
                 '</div>' +
               '</div>' +
@@ -757,12 +757,12 @@
           (activeMeasure.source && t.measures.source && t.measures.source.status === "fix" ? " is-rag" : view.kind === "citation" ? " is-cite" : "");
         citeCardEl.innerHTML = '<span class="ls-hx-cite-badge">' + esc(badge) + '</span><div><b>' + esc(label) + '</b><p>' + esc(note) + '</p></div>';
       }
-      var conf = Math.round((t.plausibility || 0) * 100);
+      var confLevel = (t.plausibility || 0) >= 0.72 ? "high" : (t.plausibility || 0) >= 0.42 ? "mid" : "low";
       if (confFill) {
-        confFill.style.width = conf + "%";
-        confFill.className = conf >= 70 ? "is-high" : "is-mid";
+        confFill.style.width = confLevel === "high" ? "100%" : confLevel === "mid" ? "64%" : "30%";
+        confFill.className = "is-" + confLevel;
       }
-      if (confVal) confVal.textContent = conf + " %";
+      if (confVal) confVal.textContent = confLevel === "high" ? L("hoch", "high") : confLevel === "mid" ? L("mittel", "medium") : L("niedrig", "low");
       if (modeBadge) {
         modeBadge.textContent = activeMeasure.source ? L("Mit RAG", "With RAG") : L("Aus dem Gedächtnis", "From memory");
         modeBadge.className = "ls-hx-mode-badge" + (activeMeasure.source ? " is-rag" : "");

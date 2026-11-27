@@ -14,6 +14,11 @@
         '<div class="ls-guard-bar">' +
           '<span class="ls-guard-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
           '<span class="ls-guard-addr">' + L("guard · Eiffelturm", "guard · Eiffel Tower") + '</span>' +
+          '<div class="ls-hx-tour ls-guard-tour" data-tip="' + L("Erst ohne RAG, dann mit RAG, Denkweg und Gegenprüfung.", "First without RAG, then with RAG, reasoning, and verification.") + '">' +
+            '<button type="button" class="ls-hx-tour-play" aria-label="' + L("Schutzschichten abspielen", "Play defence layers") + '">▶</button>' +
+            '<span class="ls-hx-tour-track"><i></i><i></i><i></i><i></i></span>' +
+            '<span class="ls-hx-tour-label">1 / 4</span>' +
+          '</div>' +
           '<span class="ls-guard-status" data-tip="' + L("Kurzurteil: gedeckt, ehrlich oder ungedeckt.", "Short verdict: grounded, honest, or ungrounded.") + '"></span>' +
         '</div>' +
         '<div class="ls-guard-body">' +
@@ -61,6 +66,17 @@
     var riskFill = el.querySelector(".ls-guard-risk-fill");
     var statusEl = el.querySelector(".ls-guard-status");
     var btns = Array.prototype.slice.call(el.querySelectorAll("[data-hg]"));
+    var guardTour = el.querySelector(".ls-guard-tour");
+    var guardPlay = el.querySelector(".ls-guard-tour .ls-hx-tour-play");
+    var guardDots = el.querySelectorAll(".ls-guard-tour .ls-hx-tour-track i");
+    var guardLabel = el.querySelector(".ls-guard-tour .ls-hx-tour-label");
+    var guardPhase = 0, guardActive = false, guardTimer = null, guardAutoTimer = null;
+    var GUARD_PHASES = [
+      { rag: false, cot: false, verify: false },
+      { rag: true, cot: false, verify: false },
+      { rag: true, cot: true, verify: false },
+      { rag: true, cot: true, verify: true }
+    ];
     var CIRC = 2 * Math.PI * 112;
     if (riskFill) {
       riskFill.style.strokeDasharray = String(CIRC);
@@ -79,6 +95,54 @@
       if (ring) ring.classList.toggle("is-on", on);
     }
 
+    function updateGuardTour() {
+      if (!guardTour) return;
+      guardTour.classList.toggle("is-running", guardActive);
+      guardPlay.textContent = guardActive ? "❚❚" : "▶";
+      guardPlay.setAttribute("aria-label", guardActive ? L("Pause", "Pause") : L("Schutzschichten abspielen", "Play defence layers"));
+      guardLabel.textContent = (guardPhase + 1) + " / " + GUARD_PHASES.length;
+      Array.prototype.forEach.call(guardDots, function (dot, i) {
+        dot.classList.toggle("is-on", i === guardPhase);
+        dot.classList.toggle("is-rag", i === guardPhase && guardPhase > 0);
+      });
+    }
+    function stopGuardTour() {
+      guardActive = false;
+      clearTimeout(guardTimer);
+      clearTimeout(guardAutoTimer);
+      guardTimer = null;
+      guardAutoTimer = null;
+      updateGuardTour();
+    }
+    function applyGuardPhase() {
+      var p = GUARD_PHASES[guardPhase] || GUARD_PHASES[0];
+      rag = p.rag;
+      cot = p.cot;
+      verify = p.verify;
+      render();
+    }
+    function runGuardPhase() {
+      if (!guardActive) return;
+      applyGuardPhase();
+      clearTimeout(guardTimer);
+      guardTimer = setTimeout(function () {
+        if (!guardActive) return;
+        if (guardPhase < GUARD_PHASES.length - 1) {
+          guardPhase++;
+          runGuardPhase();
+        } else {
+          stopGuardTour();
+        }
+      }, guardPhase === 0 ? 2300 : 2700);
+    }
+    function startGuardTour() {
+      if (guardActive) return;
+      clearTimeout(guardAutoTimer);
+      guardAutoTimer = null;
+      guardActive = true;
+      guardPhase = 0;
+      runGuardPhase();
+    }
     function render() {
       btns.forEach(function (b) {
         var key = b.getAttribute("data-hg");
@@ -162,10 +226,12 @@
       }
       verdictEl.className = "ls-guard-verdict " + vclass;
       verdictEl.innerHTML = '<b>' + title + '</b><p>' + text + '</p>';
+      updateGuardTour();
     }
 
     btns.forEach(function (b) {
       b.addEventListener("click", function () {
+        stopGuardTour();
         var key = b.getAttribute("data-hg");
         if (key === "rag") rag = !rag;
         else if (key === "cot") cot = !cot;
@@ -173,11 +239,21 @@
         render();
       });
     });
+    if (guardPlay) guardPlay.addEventListener("click", function () {
+      if (guardActive) stopGuardTour(); else startGuardTour();
+    });
     render();
+    if (window.__HX_TOUR_AUTOPLAY__ !== false) {
+      guardAutoTimer = setTimeout(function () {
+        guardAutoTimer = null;
+        if (el.isConnected) startGuardTour();
+      }, 1200);
+    }
 
     return {
       update: function () {},
       next: function () {
+        stopGuardTour();
         if (!rag) rag = true;
         else if (!cot) cot = true;
         else if (!verify) verify = true;
@@ -186,6 +262,7 @@
         return true;
       },
       prev: function () {
+        stopGuardTour();
         if (verify) verify = false;
         else if (cot) cot = false;
         else if (rag) rag = false;
@@ -196,7 +273,7 @@
       hasNext: function () { return !rag || !cot || !verify; },
       hasPrev: function () { return verify || cot || rag; },
       resize: function () {},
-      destroy: function () { el.remove(); }
+      destroy: function () { stopGuardTour(); el.remove(); }
     };
   }
   core.register("hallucinationguard", hallucinationGuardScene);
