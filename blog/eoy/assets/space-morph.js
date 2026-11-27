@@ -52,8 +52,8 @@
 		{
 			title: "Every straight cut fails",
 			titleDe: "Jeder gerade Schnitt scheitert",
-			body: "A linear classifier draws a straight line. Around a closed ring, every line leaves points of both classes on both sides. The obstruction is topological, not a matter of finding a better angle.",
-			bodyDe: "Ein linearer Klassifikator zieht eine gerade Linie. Rund um einen geschlossenen Ring lässt jede Linie Punkte beider Klassen auf beiden Seiten. Das Hindernis ist topologisch, keine Frage eines besseren Winkels.",
+			body: "A linear classifier draws a straight line. Around a closed ring, every line leaves points of both classes on both sides. No matter how you draw the line, you cannot separate the classes cleanly.",
+			bodyDe: "Ein linearer Klassifikator zieht eine gerade Linie. Rund um einen geschlossenen Ring lässt jede Linie Punkte beider Klassen auf beiden Seiten. Egal wie man die Linie zieht, man kann die Klassen nicht sauber trennen.",
 			lift: 0, camA: 0, camB: -Math.PI / 2, persp: 0, plane: 0, squash: 0, fail: 1, labels: 0, project: 0, box: 0
 		},
 		{
