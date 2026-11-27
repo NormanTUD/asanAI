@@ -125,11 +125,15 @@
     canvas.setAttribute("role", "img");
     canvas.setAttribute("aria-label", ARIA[0]);
     var W = 1, H = 1;
-    var state = { step: 0, phase: 0, t: 0, running: false, raf: 0, last: 0 };
+    var state = { step: 0, phase: 0, t: 0, running: false, raf: 0, last: 0, transition: null, selectedSquare: 36, boardRect: null };
     var hoverHits = [];
+    var boardPicks = [];
     var linked64 = null;
+    function squareText(text) {
+      return state.step === 1 ? String(text).replace(/E4/g, squareLabel(state.selectedSquare)) : String(text);
+    }
     function addHit(x, y, w, h, text, link) {
-      if (w > 0 && h > 0) hoverHits.push({ x: x, y: y, w: w, h: h, text: text, link: link || null });
+      if (w > 0 && h > 0) hoverHits.push({ x: x, y: y, w: w, h: h, text: squareText(text), link: link || null });
     }
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var FRAMES = buildFrames();
@@ -240,6 +244,7 @@
     var FOCUS = [0, 1, 3, 36];
 
     function txt(c, s, x, y, o) {
+      s = squareText(s);
       var opt = o || {};
       var size = typeof opt.size === "number" ? opt.size : 11;
       V.label(c, s, x, y, Object.assign({}, opt, {
@@ -252,6 +257,7 @@
 
     var lastWmFormula = "";
     function setWmFormula(tex) {
+      tex = squareText(String(tex || ""));
       if (tex === lastWmFormula) return;
       lastWmFormula = tex;
       if (!tex) { wmFormula.hidden = true; wmFormula.innerHTML = ""; return; }
@@ -304,6 +310,7 @@
     function drawBoard(c, b, x, y, S, o) {
       var opt = o || {};
       var cell = S / 8;
+      if (opt.pick && state.step === 1) state.boardRect = { x: x, y: y, S: S };
       c.save();
       c.shadowColor = V.alpha(C.ink, .09);
       c.shadowBlur = Math.max(6, S * .055);
@@ -328,8 +335,12 @@
           var v = b[r][col];
           if (typeof opt.reveal === "number" && r * 8 + col > opt.reveal) continue;
           var sIdx = v === 0 ? 0 : v === 1 ? 1 : 2;
+          if (opt.pick && state.step === 1) boardPicks.push({ x: x + col * cell, y: y + r * cell, w: cell, h: cell, i: r * 8 + col });
           addHit(x + col * cell, y + r * cell, cell, cell,
-            (DE ? "Feld " : "square ") + squareLabel(r * 8 + col) + ": " + stateName(sIdx));
+            (DE ? "Feld " : "square ") + squareLabel(r * 8 + col) + ": " + stateName(sIdx)
+              + (state.step === 1
+                ? (DE ? " · hier liest die Probe x (L6, 512) mit W[Feld, Zustand]; Score = x · W; Argmax; das Brett ist nur die wahre Kontrolle." : " · here the probe reads x (L6, 512) with W[square, state]; score = x · W; argmax; the board is only the ground truth.")
+                : ""));
           if (v === 0) continue;
           var scale = 1;
           if (opt.pulse) {
@@ -373,6 +384,10 @@
         for (var lc = 0; lc < 8; lc++) c.fillText(String.fromCharCode(65 + lc), x + lc * cell + cell / 2, y + S + 4);
         c.textAlign = "right"; c.textBaseline = "middle";
         for (var lr = 0; lr < 8; lr++) c.fillText(String(8 - lr), x - 5, y + lr * cell + cell / 2);
+      }
+      if (state.step === 1) {
+        addHit(x, y, S, S,
+          DE ? "Brett: Jedes Feld hat drei Zustände. Die Probe liest x (L6, 512) mit der gelernten Zeile W[Feld, Zustand]; hoher Score = ähnliche Richtung. Das Brett ist die wahre Kontrolle." : "Board: each square has three states. The probe reads x (L6, 512) with the learned row W[square, state]; high score = aligned direction. The board is the ground truth.");
       }
       c.restore();
     }
@@ -597,12 +612,9 @@
       c.strokeStyle = V.alpha(C.lineStrong, .5);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
-      var chunk = Math.max(1, Math.ceil(n / 32));
-      for (var hi = 0; hi < n; hi += chunk) {
-        var hend = Math.min(n - 1, hi + chunk - 1);
-        var hmid = Math.floor((hi + hend) / 2);
-        var htext = (tip ? tip + " · " : "") + (DE ? "Dimension " : "dimension ") + hi + "–" + hend + ": " + V.fmt(values[hmid], 2) + (DE ? " · eine der 512 Zahlen pro Token; die Probe liest daraus das Brett." : " · one of the 512 numbers per token; the probe reads the board from it.");
-        addHit(x + hi / n * w, y, Math.max(1, (hend - hi + 1) / n * w), h, htext);
+      for (var hi = 0; hi < n; hi++) {
+        var htext = (tip ? tip + " · " : "") + (DE ? "Dimension " : "dimension ") + hi + ": " + V.fmt(values[hi], 3) + (DE ? " · genau dieser einzelne Wert; keine Gruppe." : " · exactly this single value; not a range.");
+        addHit(x + hi / n * w, y, Math.max(1, w / n), h, htext);
       }
     }
 
@@ -716,8 +728,9 @@
     }
 
     function drawStageDots(c, phase) {
-      var n = 6;
-      var labels = DE ? ["x", "Probe", "Σ", "Softmax", "Feld", "Brett"] : ["x", "probe", "Σ", "softmax", "square", "board"];
+      var dotPhase = phase === 0 ? 0 : phase === 1 ? 1 : 2;
+      var n = 3;
+      var labels = DE ? ["x", "Probe · Softmax · Feld", "Brett"] : ["x", "probe · softmax · square", "board"];
       var small = W < 620;
       var railW = Math.min(W - 2 * (small ? 22 : 48), 620);
       var x0 = W / 2 - railW / 2;
@@ -732,8 +745,8 @@
       c.restore();
       for (var i = 0; i < n; i++) {
         var nx = x0 + railW * i / (n - 1);
-        var done = i < phase;
-        var active = i === phase;
+        var done = i < dotPhase;
+        var active = i === dotPhase;
         c.save();
         c.fillStyle = active ? C.gold : done ? C.petrol : C.paper;
         c.strokeStyle = active ? C.gold : done ? C.petrol : V.alpha(C.lineStrong, .9);
@@ -750,7 +763,7 @@
           font: (active ? '700 ' : '600 ') + (small ? 6.8 : 7.8) + 'px "Open Sans", sans-serif'
         });
       }
-      txt(c, phase >= 5 ? (DE ? "fertig" : "done") : (DE ? "Schritt " + (phase + 1) + " / 6" : "step " + (phase + 1) + " / 6"), W - (small ? 22 : 48), y + 14, {
+      txt(c, dotPhase >= 2 ? (DE ? "fertig" : "done") : (DE ? "Schritt " + (dotPhase + 1) + " / 3" : "step " + (dotPhase + 1) + " / 3"), W - (small ? 22 : 48), y + 14, {
         align: "right",
         size: 8,
         color: C.muted
@@ -778,12 +791,39 @@
       addHit(x, y, size, size + 22, (DE ? "Ergebnis: " : "result: ") + stateName(stateIdx));
     }
 
+    function phaseAnchor(phase) {
+      if (phase === 0) return { x: W * 0.22, y: H * 0.55 };
+      if (phase === 1) return { x: W * 0.30, y: H * 0.44 };
+      if (phase === 2) return { x: W * 0.43, y: H * 0.47 };
+      if (phase === 3) return { x: W * 0.30, y: H * 0.46 };
+      if (phase === 4) return { x: W * 0.30, y: H * 0.50 };
+      return { x: W * 0.54, y: H * 0.48 };
+    }
+    function setPhase(next, dir) {
+      if (next === state.phase || next < 0 || next > 5) return;
+      if (reduced) {
+        state.phase = next;
+        lastPhase = next;
+        draw();
+        return;
+      }
+      state.transition = { from: state.phase, to: next, start: performance.now(), dur: 720 };
+      state.phase = next;
+      lastPhase = next;
+      draw();
+      start();
+    }
+
     function drawStep1(c) {
+      var tr = state.transition;
+      var transP = tr ? Math.min(1, (performance.now() - tr.start) / tr.dur) : 1;
+      c.save();
+      if (tr) c.globalAlpha = 0.22 + 0.78 * transP;
       var pad = Math.max(18, Math.min(26, W * .035));
       var narrow = W < 620;
       var phase = state.phase || 0;
-      if (phase < 2) setWmFormula("");
-      var e4 = 36;
+      if (phase === 0) setWmFormula("");
+      var e4 = state.selectedSquare;
       var scores = SCORES[e4];
       var probs = PROBS[e4];
       var e4State = winIndex(scores);
@@ -791,100 +831,170 @@
       var boardX = narrow ? (W - boardSize) / 2 : W - pad - boardSize;
       var boardY = narrow ? 330 : 132;
       var questions = DE ? [
-        ["Was ist die Aktivierung?", "Der Zustand nach Schicht 6: 512 Zahlen pro Token."],
-        ["Was macht die Probe pro Feld?", "Für jedes Feld und jeden Zustand eine eigene Richtung."],
-        ["Wie entsteht ein Score?", "Skalarprodukt: Zahl für Zahl multiplizieren und summieren."],
-        ["Warum Softmax?", "Drei Scores werden zu drei Wahrscheinlichkeiten; Argmax wählt."],
-        ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten pro Feld. Argmax wählt die größte."],
-        ["Und das ganze Brett?", "Dasselbe für alle 64 Felder; das Ergebnis ist das Brett."]
+        ["Was ist die Aktivierung?", "Layer 6 gibt dem aktuellen Token x: 512 Zahlen. Das ist die Aktivierung, noch kein lesbares Brett."],
+        ["Was macht die Probe pro Feld?", "Für E4 liest dieselbe L6-Aktivierung x mit drei gelernten Zeilen W[E4, leer/mein/Gegner]; Softmax und Argmax machen daraus p und den Feldzustand."],
+        ["Wie entsteht ein Score?", "Ziel: Wie gut passt x zur gelernten Richtung? Der Score ist die Projektion von x auf W; groß bei ähnlicher Richtung."],
+        ["Warum Softmax?", "Drei Roh-Scores werden zu drei Wahrscheinlichkeiten, die zusammen 100% ergeben. Die Reihenfolge bleibt."],
+        ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten für E4. Argmax nimmt die größte; das ist der Zustand des Feldes."],
+        ["Und das ganze Brett?", "x (512) · W (64×3×512) → 192 Logits; je Zeile softmax, dann argmax → 64 Zustände → 8×8-Brett."]
       ] : [
-        ["What is the activation?", "The state after layer 6: 512 numbers per token."],
-        ["What does the probe do per square?", "For every square and state it learns a different direction."],
-        ["How does a score arise?", "Dot product: multiply number by number, then sum."],
-        ["Why softmax?", "Three scores become three probabilities; argmax picks one."],
-        ["How does that become a square?", "Three probabilities per square. Argmax picks the largest."],
-        ["And the whole board?", "The same for all 64 squares; the result is the board."]
+        ["What is the activation?", "Layer 6 gives the current token x: 512 numbers. That is the activation, not yet a readable board."],
+        ["What does the probe do per square?", "For E4 it reads the same L6 activation x with three learned rows W[E4, empty/my/opponent]; softmax and argmax turn them into p and the square state."],
+        ["How does a score arise?", "Goal: how well does x fit the learned direction? The score is the projection of x onto W; large when the directions align."],
+        ["Why softmax?", "Three raw scores become three probabilities that sum to 100%. The order stays the same."],
+        ["How does that become a square?", "Three probabilities for E4. Argmax takes the largest; that is the state of the square."],
+        ["And the whole board?", "x (512) · W (64×3×512) → 192 logits; each row softmax, then argmax → 64 states → 8×8 board."]
       ];
       head(c, DE ? "Vom Zug zum Brett" : "From move to board", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
       txt(c, questions[phase][0], pad, 60, { size: narrow ? 13 : 15, font: '700 ' + (narrow ? 13 : 15) + 'px "Barlow", "Open Sans", sans-serif', color: C.ink });
       txt(c, questions[phase][1], pad, 78, { size: 10.2, color: C.muted });
       if (phase === 0) {
-        var bx = pad, by = 100;
-        c.fillStyle = C.petrol;
-        c.fillRect(bx, by, 34, 18);
-        addHit(bx, by, 34, 18, DE ? "L6: die Aktivierung nach Schicht 6; 512 Zahlen pro Token" : "L6: the activation after layer 6; 512 numbers per token");
-        txt(c, "L6", bx + 17, by + 9, { align: "center", size: 10, color: "#fff" });
-        drawActivationStrip(c, bx + 44, by, W - 2 * pad - 44, 16, "x · 512");
+        txt(c, DE ? "L6-Aktivierung · x (512 Werte als Heatmap)" : "L6 activation · x (512 values as a heatmap)", pad, 100, { size: 11, color: C.ink, font: '700 11px "Barlow", "Open Sans", sans-serif' });
         var gw = Math.max(220, W - 2 * pad);
         var gh = Math.min(gw / 2, H - 220);
         if (gh < 120) gh = Math.max(90, H - 240);
-        drawActivationGrid(c, pad, 140, gw, gh);
-        txt(c, "32 × 16 = 512 · ganze Breite", pad, 140 + gh + 16, { size: 9, color: C.muted });
-        txt(c, "x ∈ ℝ^512", pad, H - 48, { size: 11, color: C.ink });
+        drawActivationGrid(c, pad, 122, gw, gh);
+        txt(c, "32 × 16 = 512 · dieselben Werte, nur als Raster", pad, 122 + gh + 16, { size: 9, color: C.muted });
+        txt(c, DE ? "x = L6-Aktivierung (512 Werte pro Token); das Modell gibt nur den nächsten Zug aus, die Probe liest x." : "x = L6 activation (512 values per token); the model outputs only the next move, the probe reads x.", pad, H - 52, { size: 9, color: C.ink });
       } else if (phase === 1) {
-        drawActivationStrip(c, pad, 100, W - 2 * pad, 12, "x · 512");
+        var xW = Math.min(W * .48, 430);
+        var probeW = Math.min(W * .37, 330);
         var dirs = [];
         for (var o = 0; o < 3; o++) {
           var dir = [];
           for (var d = 0; d < 512; d++) dir.push(probeDir(e4, o, d));
           dirs.push(dir);
         }
-        if (narrow) {
-          for (var o2 = 0; o2 < 3; o2++) {
-            txt(c, stateName(o2), pad, 132 + o2 * 52, { size: 9, color: o2 === 1 ? C.gold : o2 === 2 ? C.ink : C.muted });
-            drawStrip(c, dirs[o2], pad, 140 + o2 * 52, W - 2 * pad, 14, C.blue, C.gold, (DE ? "Probe-Richtung für " : "probe direction for ") + stateName(o2) + (DE ? ": 512 gelernte Gewichte" : ": 512 learned weights"));
-          }
-          var bs = boardSize, bx2 = boardX, by2 = boardY;
-          drawBoard(c, TRUTH, bx2, by2, bs, { highlight: [4, 4] });
-          txt(c, "Feld E4", bx2 + bs / 2, by2 - 12, { align: "center", size: 10, color: C.ink });
-        } else {
-          for (var o3 = 0; o3 < 3; o3++) {
-            txt(c, stateName(o3), pad, 148 + o3 * 42, { size: 9, color: o3 === 1 ? C.gold : o3 === 2 ? C.ink : C.muted });
-            drawStrip(c, dirs[o3], pad + 80, 140 + o3 * 42, W * .48, 16, C.blue, C.gold, (DE ? "Probe-Richtung für " : "probe direction for ") + stateName(o3) + (DE ? ": 512 gelernte Gewichte" : ": 512 learned weights"));
-          }
-          var bs2 = boardSize, bx3 = boardX, by3 = boardY;
-          drawBoard(c, TRUTH, bx3, by3, bs2, { highlight: [4, 4] });
-          txt(c, "Feld E4", bx3 + bs2 / 2, by3 - 12, { align: "center", size: 10, color: C.ink });
+        txt(c, DE ? "x = dieselbe L6-Aktivierung · 512 Zahlen · NICHT die Probe" : "x = the same L6 activation · 512 numbers · NOT the probe", pad, 96, { size: 9.6, color: C.blue, font: '700 9.6px "Barlow", "Open Sans", sans-serif' });
+        drawStrip(c, X, pad, 108, xW, 16, C.blue, C.green, DE ? "x: 512 Aktivierungen, derselbe Vektor für alle drei Zustände" : "x: 512 activations, the same vector for all three states");
+        // Three learned probe rows, one per state, each compared with the same x.
+        for (var o3 = 0; o3 < 3; o3++) {
+          var y3 = 160 + o3 * 58;
+          var prod3 = [];
+          for (var pd = 0; pd < 512; pd++) prod3.push(X[pd] * dirs[o3][pd]);
+          txt(c, DE ? "W[E4, " + stateName(o3) + "] · 512 gelernte Gewichte" : "W[E4, " + stateName(o3) + "] · 512 learned weights", pad, y3 - 9, { size: 9, color: o3 === e4State ? C.gold : C.muted });
+          drawStrip(c, dirs[o3], pad + 84, y3, probeW, 13, C.blue, C.gold, DE ? "Probe-Richtung W[E4, " + stateName(o3) + "]: 512 gelernte Gewichte" : "probe direction W[E4, " + stateName(o3) + "]: 512 learned weights");
+          drawStrip(c, prod3, pad + 84, y3 + 17, probeW, 7, C.blue, C.green, DE ? "Produkt x[d]·W[E4, " + stateName(o3) + "][d] · alle 512 Produkte werden summiert" : "product x[d]·W[E4, " + stateName(o3) + "][d] · all 512 products are summed");
+          c.save();
+          c.strokeStyle = V.alpha(C.gold, .5);
+          c.lineWidth = 1;
+          c.beginPath(); c.moveTo(pad + 84 + probeW + 6, y3 + 11); c.lineTo(pad + 84 + probeW + 24, y3 + 11); c.stroke();
+          c.restore();
+          txt(c, "z = " + V.fmt(scores[o3], 2), pad + 84 + probeW + 30, y3 + 11, { size: 10.5, color: o3 === e4State ? C.gold : C.ink, font: '700 10.5px "Barlow", "Open Sans", sans-serif' });
+          addHit(pad + 84 + probeW, y3 - 8, 118, 42, DE ? "z[E4, " + stateName(o3) + "] = Σ_d x[d]·W[E4, " + stateName(o3) + "][d] = " + V.fmt(scores[o3], 2) + ". Das ist ein Logit; vor Softmax ist es noch keine Wahrscheinlichkeit." : "z[E4, " + stateName(o3) + "] = Σ_d x[d]·W[E4, " + stateName(o3) + "][d] = " + V.fmt(scores[o3], 2) + ". This is a logit; before softmax it is not yet a probability.");
         }
-        txt(c, "W[E4, z] ∈ ℝ^512", pad, H - 48, { size: 11, color: C.ink });
+        // The three outputs fill the three state cards; the board is the ground truth.
+        var cardW = Math.min(116, (W * .56 - 24) / 3);
+        var cardY2 = 340;
+        var fieldWinner = winIndex(probs);
+        for (var oc = 0; oc < 3; oc++) {
+          var cardX2 = pad + oc * (cardW + 10);
+          var isW = oc === fieldWinner;
+          c.fillStyle = isW ? V.alpha(C.gold, .11) : V.alpha(C.paper2, .72);
+          c.strokeStyle = isW ? C.gold : V.alpha(C.line, .75);
+          c.lineWidth = isW ? 2 : 1;
+          c.fillRect(cardX2, cardY2, cardW, 124);
+          c.strokeRect(cardX2 + .5, cardY2 + .5, cardW - 1, 123);
+          txt(c, stateName(oc), cardX2 + cardW / 2, cardY2 + 14, { align: "center", size: 9, color: isW ? C.gold : C.muted });
+          txt(c, DE ? "z (vor Softmax)" : "z (before softmax)", cardX2 + cardW / 2, cardY2 + 29, { align: "center", size: 7.2, color: C.muted });
+          txt(c, "z = " + V.fmt(scores[oc], 2), cardX2 + cardW / 2, cardY2 + 42, { align: "center", size: 10.5, color: C.ink, font: '700 10.5px "Barlow", "Open Sans", sans-serif' });
+          txt(c, DE ? "p (nach Softmax)" : "p (after softmax)", cardX2 + cardW / 2, cardY2 + 58, { align: "center", size: 7.2, color: C.muted });
+          c.fillStyle = V.alpha(C.line, .35);
+          c.fillRect(cardX2 + 12, cardY2 + 72, cardW - 24, 8);
+          c.fillStyle = isW ? C.gold : C.blue;
+          c.fillRect(cardX2 + 12, cardY2 + 72, (cardW - 24) * Math.max(0, Math.min(1, probs[oc])), 8);
+          txt(c, (probs[oc] * 100).toFixed(0) + "%", cardX2 + cardW / 2, cardY2 + 92, { align: "center", size: 15, color: isW ? C.gold : C.ink, font: '700 15px "Barlow", "Open Sans", sans-serif' });
+          if (isW) txt(c, DE ? "← Argmax" : "← argmax", cardX2 + cardW / 2, cardY2 + 111, { align: "center", size: 7.6, color: C.gold });
+          addHit(cardX2, cardY2, cardW, 124, DE ? "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (Logit, vor Softmax). Softmax macht daraus p = " + (probs[oc] * 100).toFixed(1) + "%. Argmax nimmt das größte p als Feldzustand." : "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (logit, before softmax). Softmax turns this into p = " + (probs[oc] * 100).toFixed(1) + "%. Argmax takes the largest p as the square state.");
+        }
+        drawBoard(c, TRUTH, boardX, boardY, boardSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
+        txt(c, DE ? "W gelernt: wahrer Zustand soll höchsten Score haben" : "W learned: the true state should get the highest score", boardX + boardSize / 2, boardY - 34, { align: "center", size: 8.4, color: C.muted });
+        txt(c, "Feld E4 · klicke ein anderes Feld", boardX + boardSize / 2, boardY - 12, { align: "center", size: 9, color: C.ink });
+        txt(c, DE ? "W: 64×3 Zeilen à 512 (pro Feld drei Zustände). x·W[E4,z] → z; Softmax → p; Argmax → Feld. Gleiches x, andere W-Zeile pro Feld." : "W: 64×3 rows of 512 (three states per square). x·W[E4,z] → z; softmax → p; argmax → square. Same x, another W row per square.", pad, H - 128, { size: 8.2, color: C.muted });
+        setWmFormula("\\underbrace{\\operatorname{logit}[E4,z]}_{x \\cdot W[E4,z]} \\xrightarrow{\\text{softmax}} \\underbrace{p[E4,z]}_{\\text{Wahrscheinlichkeit}} \\xrightarrow{\\arg\\max} \\underbrace{\\hat b[E4]}_{\\text{Feldzustand}}");
       } else if (phase === 2) {
-        drawActivationStrip(c, pad, 100, W - 2 * pad, 12, "x · 512");
-        if (narrow) {
-          for (var o4 = 0; o4 < 3; o4++) {
-            var gy = 130 + o4 * 70;
-            var dir4 = [], prod4 = [];
-            for (var d4 = 0; d4 < 512; d4++) {
-              var v4 = probeDir(e4, o4, d4);
-              dir4.push(v4);
-              prod4.push(X[d4] * v4);
-            }
-            txt(c, stateName(o4), pad, gy, { size: 9, color: o4 === 1 ? C.gold : o4 === 2 ? C.ink : C.muted });
-            txt(c, "Σ = " + V.fmt(scores[o4], 1), W - pad, gy, { align: "right", size: 12, font: '700 12px "Barlow", "Open Sans", sans-serif', color: o4 === 1 ? C.gold : o4 === 2 ? C.ink : C.muted });
-            drawStrip(c, dir4, pad, gy + 10, W - 2 * pad, 12, C.blue, C.gold, (DE ? "Probe-Richtung W[E4, " : "probe row W[E4, ") + stateName(o4) + "]: 512 Werte");
-            drawStrip(c, prod4, pad, gy + 26, W - 2 * pad, 12, C.blue, C.green, DE ? "Produkt x · W[E4, " + stateName(o4) + "]: Beitrag zum Logit" : "product x · W[E4, " + stateName(o4) + "]: contribution to the logit");
-          }
-          var bsP = boardSize, bxP = boardX, byP = boardY;
-          drawBoard(c, TRUTH, bxP, byP, bsP, { highlight: [4, 4] });
-          txt(c, "Feld E4", bxP + bsP / 2, byP - 12, { align: "center", size: 10, color: C.ink });
-        } else {
-          for (var o5 = 0; o5 < 3; o5++) {
-            var gy2 = 140 + o5 * 60;
-            var dir5 = [], prod5 = [];
-            for (var d5 = 0; d5 < 512; d5++) {
-              var v5 = probeDir(e4, o5, d5);
-              dir5.push(v5);
-              prod5.push(X[d5] * v5);
-            }
-            txt(c, stateName(o5), pad, gy2 + 16, { size: 9, color: o5 === 1 ? C.gold : o5 === 2 ? C.ink : C.muted });
-            drawStrip(c, dir5, pad + 80, gy2, W * .42, 14, C.blue, C.gold, (DE ? "Probe-Richtung W[E4, " : "probe row W[E4, ") + stateName(o5) + "]: 512 Werte");
-            drawStrip(c, prod5, pad + 80, gy2 + 18, W * .42, 14, C.blue, C.green, DE ? "Produkt x · W[E4, " + stateName(o5) + "]: Beitrag zum Logit" : "product x · W[E4, " + stateName(o5) + "]: contribution to the logit");
-            txt(c, "Σ = " + V.fmt(scores[o5], 1), pad + 80 + W * .42 + 12, gy2 + 16, { size: 12, font: '700 12px "Barlow", "Open Sans", sans-serif', color: o5 === 1 ? C.gold : o5 === 2 ? C.ink : C.muted });
-          }
-          var bs4 = boardSize, bx4 = boardX, by4 = boardY;
-          drawBoard(c, TRUTH, bx4, by4, bs4, { highlight: [4, 4] });
-          txt(c, "Feld E4", bx4 + bs4 / 2, by4 - 12, { align: "center", size: 10, color: C.ink });
+        var cx = pad + Math.min(310, W * 0.38);
+        var cy = 255;
+        var xAng = -0.22;
+        var xLen = Math.min(170, H * 0.27);
+        var winAng = xAng + 0.14;
+        var angles = [xAng + 1.28, xAng + 1.28, xAng + 1.28];
+        angles[e4State] = winAng;
+        var other = [];
+        for (var ao = 0; ao < 3; ao++) if (ao !== e4State) other.push(ao);
+        angles[other[0]] = xAng - 1.25;
+        angles[other[1]] = xAng + 1.25;
+        var xTip = [cx + Math.cos(xAng) * xLen, cy - Math.sin(xAng) * xLen];
+        var winTip = [cx + Math.cos(winAng) * xLen, cy - Math.sin(winAng) * xLen];
+        c.save();
+        c.fillStyle = V.alpha(C.paper2, .72);
+        c.strokeStyle = V.alpha(C.line, .7);
+        c.lineWidth = 1;
+        c.beginPath();
+        if (c.roundRect) c.roundRect(pad, 96, Math.min(360, W * .46), 46, 9); else c.rect(pad, 96, Math.min(360, W * .46), 46);
+        c.fill(); c.stroke();
+        c.restore();
+        txt(c, DE ? "Ziel: Welche gelernte Richtung passt am besten zu x?" : "Goal: which learned direction fits x best?", pad + 12, 112, { size: 10, color: C.ink, font: '700 10px "Barlow", "Open Sans", sans-serif' });
+        txt(c, DE ? "Der Score ist die Projektion, nicht das einzelne Multiplizieren." : "The score is the projection, not multiplying individual numbers.", pad + 12, 130, { size: 8.6, color: C.muted });
+        addHit(pad, 96, Math.min(360, W * .46), 46, DE ? "Ziel: Alignment von x und der gelernten Probe-Richtung; x ist für alle drei Zustände derselbe Vektor." : "Goal: alignment of x and the learned probe direction; x is the same vector for all three states.");
+        // The x vector is the shared activation; the three probe rows are learned directions.
+        V.arrow(c, cx, cy, xTip[0], xTip[1], C.blue, 3.4, 9);
+        addHit(Math.min(cx, xTip[0]) - 16, Math.min(cy, xTip[1]) - 16, Math.abs(xTip[0] - cx) + 32, Math.abs(xTip[1] - cy) + 32,
+          DE ? "x = Aktivierung nach Layer 6 · 512 Zahlen · derselbe Vektor für leer, mein Spieler und Gegner" : "x = activation after layer 6 · 512 numbers · same vector for empty, my player and opponent");
+        txt(c, "x", xTip[0] + 8, xTip[1] - 4, { size: 15, color: C.blue, font: '700 15px "Barlow", "Open Sans", sans-serif' });
+        // Projection of x onto the winning probe direction.
+        var projLen = xLen * Math.cos(winAng - xAng);
+        var pTip = [cx + Math.cos(winAng) * projLen, cy - Math.sin(winAng) * projLen];
+        var geoReveal = state.transition && state.transition.to === 2
+          ? Math.min(1, (performance.now() - state.transition.start) / state.transition.dur)
+          : 1;
+        c.save();
+        c.setLineDash([5, 4]);
+        c.strokeStyle = V.alpha(C.gold, .72 * geoReveal);
+        c.lineWidth = 1.3;
+        c.globalAlpha = geoReveal;
+        c.beginPath(); c.moveTo(xTip[0], xTip[1]); c.lineTo(pTip[0], pTip[1]); c.stroke();
+        c.restore();
+        c.save();
+        c.strokeStyle = C.gold;
+        c.lineWidth = 1.2;
+        c.globalAlpha = geoReveal;
+        c.strokeRect(pTip[0] - 4, pTip[1] - 4, 8, 8);
+        c.restore();
+        c.globalAlpha = 1;
+        txt(c, DE ? "Projektion" : "projection", pTip[0] + 8, pTip[1] - 9, { size: 8.8, color: V.alpha(C.gold, geoReveal) });
+        addHit(pTip[0] - 10, pTip[1] - 12, 72, 24,
+          DE ? "Projektion von x auf W: |x|·cos θ. Der Score ist |W| mal diese Projektion. Das ist die geometrische Bedeutung des Dot-Produkts." : "Projection of x onto W: |x|·cos θ. The score is |W| times this projection. That is the geometric meaning of the dot product.");
+        for (var ar = 0; ar < 3; ar++) {
+          var ang = angles[ar];
+          var len = xLen * 0.92;
+          var tip = [cx + Math.cos(ang) * len, cy - Math.sin(ang) * len];
+          var isWin = ar === e4State;
+          V.arrow(c, cx, cy, tip[0], tip[1], isWin ? C.gold : (ar === 0 ? C.petrol : ar === 1 ? C.green : C.ink), isWin ? 3.2 : 2.0, isWin ? 9 : 7);
+          addHit(Math.min(cx, tip[0]) - 18, Math.min(cy, tip[1]) - 18, Math.abs(tip[0] - cx) + 36, Math.abs(tip[1] - cy) + 36,
+            DE ? "W[E4, " + stateName(ar) + "] · gelernte Probe-Richtung · 512 Gewichte · Score " + V.fmt(scores[ar], 2) : "W[E4, " + stateName(ar) + "] · learned probe direction · 512 weights · score " + V.fmt(scores[ar], 2));
+          txt(c, stateName(ar), tip[0] + Math.cos(ang) * 14, tip[1] - Math.sin(ang) * 14, { align: "center", size: 9.4, color: isWin ? C.gold : C.ink });
+          txt(c, "x·W = " + V.fmt(scores[ar], 2), cx + Math.cos(ang) * (len + 30), cy - Math.sin(ang) * (len + 30), { align: "center", size: 10, color: isWin ? C.gold : C.muted, font: '700 10px "Barlow", "Open Sans", sans-serif' });
+          addHit(cx + Math.cos(ang) * (len + 6), cy - Math.sin(ang) * (len + 6) - 13, 86, 26,
+            DE ? "Dot-Produkt x · W[E4, " + stateName(ar) + "] = " + V.fmt(scores[ar], 2) + " · je ähnlicher die Richtungen, desto größer der Score." : "dot product x · W[E4, " + stateName(ar) + "] = " + V.fmt(scores[ar], 2) + " · the more aligned the directions, the larger the score.");
         }
-        setWmFormula("\\operatorname{logit}[E4,z] = \\sum_d W[E4,z,d]\\,x[d]");
+        // Angle between x and the winning probe row.
+        var arcR = 46;
+        c.save();
+        c.strokeStyle = V.alpha(C.gold, .8);
+        c.lineWidth = 1.3;
+        c.beginPath();
+        c.arc(cx, cy, arcR, -winAng, -xAng, true);
+        c.stroke();
+        c.restore();
+        txt(c, "θ", cx + Math.cos((winAng + xAng) / 2) * (arcR + 13), cy - Math.sin((winAng + xAng) / 2) * (arcR + 13), { align: "center", size: 12, color: C.gold, font: '700 12px "Barlow", "Open Sans", sans-serif' });
+        addHit(cx + Math.cos((winAng + xAng) / 2) * (arcR - 12), cy - Math.sin((winAng + xAng) / 2) * (arcR - 12) - 12, 36, 36,
+          DE ? "θ: Winkel zwischen x und W[E4, " + stateName(e4State) + "]. Der Score ist |x|·|W|·cos θ." : "θ: angle between x and W[E4, " + stateName(e4State) + "]. The score is |x|·|W|·cos θ.");
+        txt(c, DE ? "x und W sind 512-dim; das ist ein 2D-Schatten. Die Projektion macht den Score sichtbar." : "x and W are 512-dim; this is a 2D shadow. The projection makes the score visible.", pad, H - 136, { size: 8.2, color: C.muted });
+        drawBoard(c, TRUTH, boardX, boardY, boardSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
+        txt(c, DE ? "Feld E4 · wahrer Zustand als Kontrolle" : "square E4 · true state as ground truth", boardX + boardSize / 2, boardY - 34, { align: "center", size: 8.4, color: C.muted });
+        txt(c, "Feld E4", boardX + boardSize / 2, boardY - 12, { align: "center", size: 10, color: C.ink });
+        setWmFormula("\\underbrace{\\operatorname{logit}[E4,z]}_{\\text{Score}} = \\underbrace{\\langle \\underbrace{x}_{\\text{L6-Aktivierung}}, \\underbrace{W[E4,z]}_{\\text{Probe-Richtung}}\\rangle}_{\\text{Projektion / Alignment}} = \\underbrace{\\lVert x\\rVert\\,\\lVert W\\rVert\\cos\\theta}_{\\text{Länge × Länge × Winkel}}");
       } else if (phase === 3) {
         if (narrow) {
           var colW = (W - 2 * pad) / 3;
@@ -903,7 +1013,7 @@
           }
           drawRangeLine(c, pad, 400, W - 2 * pad, 16, probs, { small: true });
           var bs5 = boardSize, bx5 = boardX, by5 = boardY;
-          drawBoard(c, TRUTH, bx5, by5, bs5, { highlight: [4, 4] });
+          drawBoard(c, TRUTH, bx5, by5, bs5, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
           txt(c, "Feld E4", bx5 + bs5 / 2, by5 - 12, { align: "center", size: 10, color: C.ink });
         } else {
           var colW2 = W * .13;
@@ -922,27 +1032,50 @@
           }
           drawRangeLine(c, pad, 320, W * .45, 20, probs, {});
           var bs6 = boardSize, bx6 = boardX, by6 = boardY;
-          drawBoard(c, TRUTH, bx6, by6, bs6, { highlight: [4, 4] });
+          drawBoard(c, TRUTH, bx6, by6, bs6, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
           txt(c, "Feld E4", bx6 + bs6 / 2, by6 - 12, { align: "center", size: 10, color: C.ink });
         }
-        txt(c, DE ? "Softmax normiert die drei Scores. Argmax nimmt den größten Wert." : "Softmax normalises the three scores. Argmax takes the largest value.", pad, H - 64, { size: 9.2, color: C.soft });
-        setWmFormula("p[E4,z] = \\operatorname{softmax}(\\operatorname{logit}[E4,\\cdot])_z");
+        txt(c, DE ? "Softmax macht aus Roh-Scores Wahrscheinlichkeiten. Die Reihenfolge bleibt; Argmax kommt im nächsten Schritt." : "Softmax turns raw scores into probabilities. The order stays; argmax comes next.", pad, H - 112, { size: 9.2, color: C.soft });
+        setWmFormula("\\underbrace{p[E4,z]}_{\\text{Wahrscheinlichkeit}} = \\underbrace{\\frac{\\exp(\\operatorname{logit}[E4,z])}{\\sum_{z'}\\exp(\\operatorname{logit}[E4,z'])}}_{\\text{Softmax: Summe über }z = 1}");
       } else if (phase === 4) {
         var stateIdx = e4State;
-        if (narrow) {
-          drawResultTile(c, pad, 110, 150, stateIdx);
-          txt(c, DE ? "Argmax wählt die größte." : "Argmax picks the largest.", pad, 272, { size: 9.2, color: C.soft });
-          var bs7 = boardSize, bx7 = boardX, by7 = boardY;
-          drawBoard(c, TRUTH, bx7, by7, bs7, { highlight: [4, 4] });
-          txt(c, "E4 = " + stateName(stateIdx), bx7 + bs7 / 2, by7 - 12, { align: "center", size: 10, color: C.ink });
-        } else {
-          drawResultTile(c, pad, 120, 180, stateIdx);
-          drawRangeLine(c, pad, 330, W * .45, 18, probs, { small: true });
-          txt(c, DE ? "Argmax: Die größte der drei Wahrscheinlichkeiten wird der Zustand von E4." : "Argmax: the largest of the three probabilities becomes the state of E4.", pad, 382, { size: 9.2, color: C.soft });
-          var bs8 = boardSize, bx8 = boardX, by8 = boardY;
-          drawBoard(c, TRUTH, bx8, by8, bs8, { highlight: [4, 4] });
-          txt(c, "E4 = " + stateName(stateIdx), bx8 + bs8 / 2, by8 - 12, { align: "center", size: 10, color: C.ink });
+        var gapC = 10;
+        var cardW = Math.max(82, Math.min(132, (W * .50 - gapC * 2 - pad * 2) / 3));
+        var cardH = 190;
+        var cardY = 125;
+        for (var co = 0; co < 3; co++) {
+          var cardX = pad + co * (cardW + gapC);
+          var isWinner = co === stateIdx;
+          c.save();
+          c.fillStyle = isWinner ? V.alpha(C.gold, .10) : V.alpha(C.paper2, .72);
+          c.strokeStyle = isWinner ? C.gold : V.alpha(C.line, .75);
+          c.lineWidth = isWinner ? 2.2 : 1;
+          if (isWinner) { c.shadowColor = V.alpha(C.gold, .28); c.shadowBlur = 12; }
+          c.beginPath();
+          if (c.roundRect) c.roundRect(cardX, cardY, cardW, cardH, 12); else c.rect(cardX, cardY, cardW, cardH);
+          c.fill(); c.stroke();
+          c.restore();
+          txt(c, stateName(co), cardX + cardW / 2, cardY + 17, { align: "center", size: 9.4, color: isWinner ? C.gold : C.muted, font: '700 9.4px "Barlow", "Open Sans", sans-serif' });
+          if (co === 0) {
+            c.save();
+            c.setLineDash([5, 4]);
+            c.strokeStyle = V.alpha(C.book || C.muted, .75);
+            c.lineWidth = 1.4;
+            c.beginPath(); c.arc(cardX + cardW / 2, cardY + 74, 30, 0, Math.PI * 2); c.stroke();
+            c.restore();
+          } else {
+            drawDisc(c, cardX + cardW / 2, cardY + 74, 31, co === 1 ? 1 : -1, 1);
+          }
+          txt(c, (probs[co] * 100).toFixed(0) + "%", cardX + cardW / 2, cardY + 132, { align: "center", size: 18, color: isWinner ? C.gold : C.ink, font: '700 18px "Barlow", "Open Sans", sans-serif' });
+          txt(c, isWinner ? (DE ? "← Argmax" : "← argmax") : "p", cardX + cardW / 2, cardY + 154, { align: "center", size: 9, color: isWinner ? C.gold : C.muted });
+          addHit(cardX, cardY, cardW, cardH,
+            DE ? "E4, " + stateName(co) + ": p = " + (probs[co] * 100).toFixed(1) + "%. Die Probe vergleicht x mit W[E4, " + stateName(co) + "]; Argmax nimmt die größte Wahrscheinlichkeit." : "E4, " + stateName(co) + ": p = " + (probs[co] * 100).toFixed(1) + "%. The probe compares x with W[E4, " + stateName(co) + "]; argmax takes the largest probability.");
         }
+        txt(c, "E4 = " + stateName(stateIdx), pad, cardY + cardH + 26, { size: 18, color: C.gold, font: '700 18px "Barlow", "Open Sans", sans-serif' });
+        txt(c, DE ? "Argmax: die größte der drei Wahrscheinlichkeiten bestimmt den Zustand des Feldes." : "Argmax: the largest of the three probabilities determines the state of the square.", pad, cardY + cardH + 48, { size: 9.4, color: C.soft });
+        drawBoard(c, TRUTH, boardX, boardY, boardSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
+        txt(c, DE ? "Feld E4 · der eine Zustand wird ins Brett geschrieben" : "square E4 · the one state is written into the board", boardX + boardSize / 2, boardY - 34, { align: "center", size: 8.4, color: C.muted });
+        txt(c, "E4 = " + stateName(stateIdx), boardX + boardSize / 2, boardY - 12, { align: "center", size: 10, color: C.ink });
         setWmFormula("E4 = \\operatorname{argmax}_z\\,p[E4,z]");
       } else {
         if (narrow) {
@@ -954,7 +1087,7 @@
             drawProbGrid(c, pad + 60 + o8 * (hs + gap), 110, hs, o8, e4);
           }
           var bs9 = boardSize, bx9 = boardX, by9 = boardY;
-          drawBoard(c, TRUTH, bx9, by9, bs9, { highlight: [4, 4] });
+          drawBoard(c, TRUTH, bx9, by9, bs9, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
           txt(c, "64 × 3 → Brett", bx9 + bs9 / 2, by9 - 12, { align: "center", size: 10, color: C.ink });
         } else {
           var top = 108;
@@ -976,13 +1109,14 @@
             txt(c, labels2[o9], left + o9 * (hs2 + gap2) + hs2 / 2, gridTop - 10, { align: "center", size: 12, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted, font: '700 12px "Barlow", "Open Sans", sans-serif' });
             drawProbGrid(c, left + o9 * (hs2 + gap2), gridTop, hs2, o9, e4);
           }
-          drawBoard(c, TRUTH, boardLeft, boardTop, boardSide, { highlight: [4, 4] });
+          drawBoard(c, TRUTH, boardLeft, boardTop, boardSide, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
           txt(c, "64 × 3 → Brett", boardLeft + boardSide / 2, boardTop - 14, { align: "center", size: 11, color: C.ink });
         }
-        setWmFormula("\\text{board}[s] = \\operatorname{argmax}_z\\,p[s,z]");
+        setWmFormula("");
       }
       drawStageDots(c, phase);
       txt(c, DE ? "schematisch" : "schematic", pad, H - 14, { size: 8.5, color: C.muted });
+      c.restore();
     }
 
     function drawFlow(c, x1, y1, x2, y2) {
@@ -1157,10 +1291,12 @@
           ? (DE ? "Fünf Schritte von der Aktivierung über die Probe und Softmax zum Brett." : "Five steps from activation through the probe and softmax to the board.")
           : (DE ? "Drei Logits pro Feld, ein Unterraum für Schach und viele Unterräume für reale Modelle." : "Three logits per square, one subspace for chess, and many subspaces for real models."));
       hoverHits = [];
+      boardPicks = [];
       ctx.clearRect(0, 0, W, H);
       if (state.step === 0) drawStep0(ctx);
       else if (state.step === 1) drawStep1(ctx);
       else drawStep3(ctx);
+      if (state.transition && performance.now() - state.transition.start >= state.transition.dur) state.transition = null;
     }
 
     function frame(now) {
@@ -1231,6 +1367,26 @@
       canvas.style.cursor = "help";
     });
     canvas.addEventListener("pointerup", function (e) {
+      if (state.step === 1) {
+        var r1 = canvas.getBoundingClientRect();
+        var x1 = e.clientX - r1.left, y1 = e.clientY - r1.top;
+        for (var bi = 0; bi < boardPicks.length; bi++) {
+          var bp = boardPicks[bi];
+          if (x1 >= bp.x && x1 <= bp.x + bp.w && y1 >= bp.y && y1 <= bp.y + bp.h) {
+            state.selectedSquare = bp.i;
+            draw();
+            return;
+          }
+        }
+        var br = state.boardRect;
+        if (br && x1 >= br.x && x1 <= br.x + br.S && y1 >= br.y && y1 <= br.y + br.S) {
+          var col = Math.max(0, Math.min(7, Math.floor((x1 - br.x) / (br.S / 8))));
+          var row = Math.max(0, Math.min(7, Math.floor((y1 - br.y) / (br.S / 8))));
+          state.selectedSquare = row * 8 + col;
+          draw();
+          return;
+        }
+      }
       if (!game.active || state.step !== 0) return;
       var r = canvas.getBoundingClientRect();
       playAt(e.clientX - r.left, e.clientY - r.top);
@@ -1262,36 +1418,33 @@
         start();
       },
       next: function () {
-        if (state.step !== 1 || state.phase >= 5) return false;
-        state.phase++;
-        lastPhase = state.phase;
-        draw();
-        return true;
+        if (state.step !== 1) return false;
+        if (state.phase === 0) { setPhase(1, 1); return true; }
+        if (state.phase === 1) { setPhase(5, 1); return true; }
+        return false;
       },
       prev: function () {
-        if (state.step !== 1 || state.phase <= 0) return false;
-        state.phase--;
-        lastPhase = state.phase;
-        draw();
-        return true;
+        if (state.step !== 1) return false;
+        if (state.phase === 5) { setPhase(1, -1); return true; }
+        if (state.phase === 1) { setPhase(0, -1); return true; }
+        return false;
       },
-      hasNext: function () { return state.step === 1 && state.phase < 5; },
-      hasPrev: function () { return state.step === 1 && state.phase > 0; },
+      hasNext: function () { return state.step === 1 && (state.phase === 0 || state.phase === 1); },
+      hasPrev: function () { return state.step === 1 && (state.phase === 1 || state.phase === 5); },
       onKey: function (e) {
         if (state.step !== 1) return false;
         if (e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return false;
         if (e.key === "ArrowRight") {
           if (state.phase >= 5) return false;
-          state.phase++;
-          lastPhase = state.phase;
-          draw();
+          if (state.phase === 0) setPhase(1, 1);
+          else if (state.phase === 1) setPhase(5, 1);
+          else return false;
           return true;
         }
         if (e.key === "ArrowLeft") {
-          if (state.phase <= 0) return false;
-          state.phase--;
-          lastPhase = state.phase;
-          draw();
+          if (state.phase === 5) setPhase(1, -1);
+          else if (state.phase === 1) setPhase(0, -1);
+          else return false;
           return true;
         }
         return false;
