@@ -102,16 +102,15 @@
         '<header class="ls-rag-pdf-head"><span class="ls-rag-pdf-brand">' + esc(ARTICLE.brand) + '</span><span class="ls-rag-pdf-series">' + esc(ARTICLE.series) + '</span><span class="ls-rag-pdf-page">' + esc(ARTICLE.page) + '</span></header>' +
         '<div class="ls-rag-pdf-title"><span>' + esc(ARTICLE.kicker) + '</span><h2>' + esc(ARTICLE.title) + '</h2></div>' +
         '<div class="ls-rag-pdf-body">' +
-          '<div class="ls-rag-pdf-media">' + figureHTML("colossal") + figureHTML("octopus") + '<div class="ls-rag-media-note">' + esc(L("Nur Text wird gechunkt.", "Only text is chunked.")) + '</div></div>' +
+          '<div class="ls-rag-pdf-media">' + figureHTML("colossal") + figureHTML("octopus") + '</div>' +
           '<div class="ls-rag-pdf-col">' +
-            '<h3>' + esc(c1.heading) + '</h3><p data-c="C1">' + esc(c1.text) + '</p>' +
-            '<h3>' + esc(c2.heading) + '</h3><p data-c="C2">' + esc(c2.text) + '</p>' +
-            '<h3>' + esc(c3.heading) + '</h3><p data-c="C3">' + esc(c3.text) + '</p>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C1"><h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C2"><h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C3"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
           '</div>' +
           '<div class="ls-rag-pdf-col">' +
-            '<h3>' + esc(c4.heading) + '</h3><p data-c="C4">' + esc(c4.text) + '</p>' +
-            '<h3>' + esc(c5.heading) + '</h3><p data-c="C5">' + esc(c5.text) + '</p>' +
-            '<div class="ls-rag-pdf-endnote">' + esc(L("Die fünf Fakten sind in den Quellen belegt.", "The five facts are sourced in the references.")) + '</div>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C4"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="C5"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
           '</div>' +
         '</div>' +
         '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Meereskunde", "Encyclopædia · Marine life")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
@@ -120,7 +119,7 @@
 
     function railHTML() {
       return ARTICLE.paragraphs.map(function (p) {
-        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><b>' + p.id + '</b><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
+        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
       }).join("");
     }
 
@@ -168,7 +167,7 @@
           '<div class="ls-rag-doc-head"><span class="ls-rag-fileicon">PDF</span><div><b>kraken.pdf</b><small class="ls-rag-doc-status"></small></div><span class="ls-rag-doc-tag">' + esc(L("außerhalb des LLM", "outside the LLM")) + '</span></div>' +
           '<div class="ls-rag-doc-body">' +
             '<div class="ls-rag-pdf-wrap">' + pdfHTML() + '<div class="ls-rag-scanfx" aria-hidden="true"><i></i></div></div>' +
-            '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Chunk-Vektoren", "Chunk vectors")) + '</div><div class="ls-rag-rail-list">' + railHTML() + '</div></div>' +
+            '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Nur Text · Chunk-Vektoren", "Text only · chunk vectors")) + '</div><div class="ls-rag-rail-list">' + railHTML() + '</div></div>' +
             '<div class="ls-rag-angle-panel">' +
               '<div class="ls-rag-angle-head"><span>🔒</span><b>' + esc(L("Nur Modell · für den Nutzer unsichtbar", "Model only · invisible to the user")) + '</b><em>' + esc(L("Winkel zum aktuellen Kontext", "Angles to the current context")) + '</em></div>' +
               '<div class="ls-rag-angle-chart"></div>' +
@@ -240,7 +239,7 @@
     }
 
     function markScanned(id) {
-      var p = docEl.querySelector('p[data-c="' + id + '"]');
+      var p = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + id + '"]');
       if (p) p.classList.add("is-scanned");
       var row = el.querySelector('.ls-rag-rail-row[data-c="' + id + '"]');
       if (row) row.classList.add("is-in");
@@ -252,7 +251,7 @@
     function startScan() {
       completeScan();
       ARTICLE.paragraphs.forEach(function (p) {
-        var pEl = docEl.querySelector('p[data-c="' + p.id + '"]');
+        var pEl = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + p.id + '"]');
         if (pEl) pEl.classList.remove("is-scanned");
         var row = el.querySelector('.ls-rag-rail-row[data-c="' + p.id + '"]');
         if (row) row.classList.remove("is-in");
@@ -267,11 +266,29 @@
       }, 2450));
     }
 
+    function fitPdfText() {
+      var body = docEl.querySelector(".ls-rag-pdf-body");
+      if (!body) return;
+      var cols = body.querySelectorAll(".ls-rag-pdf-col");
+      if (!cols.length) return;
+      var available = body.clientHeight - 2;
+      if (available < 40) return;
+      var lo = 8.2, hi = 15, best = 8.2;
+      for (var k = 0; k < 8; k++) {
+        var mid = (lo + hi) / 2;
+        body.style.setProperty("--rag-pdf-fs", mid.toFixed(2) + "px");
+        var maxH = 0;
+        Array.prototype.forEach.call(cols, function (c) { maxH = Math.max(maxH, c.scrollHeight); });
+        if (maxH <= available) { best = mid; lo = mid; } else { hi = mid; }
+      }
+      body.style.setProperty("--rag-pdf-fs", best.toFixed(2) + "px");
+    }
+
     function renderAngle() {
       angularEl.innerHTML = angleSVG();
       angleListEl.innerHTML = ARTICLE.paragraphs.map(function (p) {
         var fit = fits(p);
-        return '<div class="ls-rag-angle-row' + (fit ? " is-fit" : "") + '" data-c="' + p.id + '"><b>' + p.id + '</b><span>' + p.angle + '°</span><em>' + esc(fit ? L("passt", "fits") : L("verworfen", "discarded")) + '</em></div>';
+        return '<div class="ls-rag-angle-row' + (fit ? " is-fit" : "") + '" data-c="' + p.id + '"><b>' + p.id + '</b><span>' + p.angle + '°</span><em>' + esc(fit ? L("passt", "fits") : L("verworfen", "discarded")) + '</em><p>' + esc(p.heading) + ' · ' + esc(p.text) + '</p></div>';
       }).join("");
       contextBody.innerHTML = '<span class="ls-rag-context-empty">' + esc(L("Noch kein Chunk im Kontext.", "No chunk in the context yet.")) + '</span>';
     }
@@ -324,7 +341,7 @@
       picker.hidden = false;
       pickerNote.hidden = true;
       pickerNote.textContent = "";
-      attachBtn.classList.remove("is-tap");
+      attachBtn.classList.remove("is-hint", "is-tap");
       void attachBtn.offsetWidth;
       attachBtn.classList.add("is-tap");
       state.timers.push(setTimeout(function () { attachBtn.classList.remove("is-tap"); }, 700));
@@ -343,7 +360,7 @@
       setChat();
       if (state.step === 0) {
         docStatus.textContent = "";
-        state.timers.push(setTimeout(openPicker, 650));
+        attachBtn.classList.add("is-hint");
       } else if (state.step === 1) {
         docStatus.textContent = L("Scan läuft …", "Scanning …");
         startScan();
@@ -356,6 +373,7 @@
         renderAngle();
         scheduleAngle();
       }
+      if (state.step >= 1) requestAnimationFrame(fitPdfText);
       statusEl.textContent = state.step === 0
         ? L("Tippe auf 📎 und wähle kraken.pdf. Der Dialog zeigt auch andere PDFs.", "Tap 📎 and choose kraken.pdf. The dialog also shows other PDFs.")
         : state.step === 1
@@ -363,9 +381,11 @@
           : state.step === 2
             ? L("Die Frage steht im Chat. Jetzt vergleicht der Agent die Winkel der Chunks mit dem Kontext.", "The question is in the chat. Now the agent compares the chunk angles with the context.")
             : L("C1 und C2 liegen unter 35°. Sie wandern still in den unsichtbaren Kontext; der Chat antwortet.", "C1 and C2 lie below 35°. They move silently into the invisible context; the chat answers.");
-      nextBtn.textContent = state.step < 3
-        ? L("Weiter: " + STEPS[state.step + 1], "Next: " + STEPS[state.step + 1])
-        : L("Neu starten", "Restart");
+      nextBtn.textContent = state.step === 0
+        ? L("Datei wählen", "Choose file")
+        : state.step < 3
+          ? L("Weiter: " + STEPS[state.step + 1], "Next: " + STEPS[state.step + 1])
+          : L("Neu starten", "Restart");
     }
 
     function go(step) {
@@ -378,6 +398,7 @@
     }
 
     nextBtn.addEventListener("click", function () {
+      if (state.step === 0) { openPicker(); return; }
       if (state.step < 3) go(state.step + 1);
       else go(0);
     });
@@ -401,6 +422,7 @@
     return {
       update: function () { go(0); },
       next: function () {
+        if (state.step === 0) { openPicker(); return true; }
         if (state.step < 3) { go(state.step + 1); return true; }
         return false;
       },
@@ -410,7 +432,7 @@
       },
       hasNext: function () { return state.step < 3; },
       hasPrev: function () { return state.step > 0; },
-      resize: function () {},
+      resize: function () { requestAnimationFrame(fitPdfText); },
       destroy: function () { clearTimers(); el.remove(); }
     };
   }
