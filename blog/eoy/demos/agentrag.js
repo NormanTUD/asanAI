@@ -506,6 +506,7 @@
     function showAnswer() {
       state.answerShown = true;
       typingEl.hidden = true;
+      if (fileStatus) fileStatus.textContent = L("Antwort bereit", "answer ready");
       answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite" data-cite="4815" tabindex="0">[4815]</span><span class="ls-rag-cite" data-cite="4816" tabindex="0">[4816]</span>';
       bindCiteHover();
       requestAnimationFrame(drawCitationArrows);
@@ -540,7 +541,9 @@
       if (hasFile) {
         fileStatus.textContent = state.step === 1
           ? L("Auszug 4815–4821", "excerpt 4815–4821")
-          : L("Antwort bereit", "answer ready");
+          : state.step === 2
+            ? L("Winkel werden geprüft", "checking angles")
+            : L("Antwort folgt", "answer follows");
       }
       if (hasAnswer) showAnswer();
       else if (thinking) answerEl.innerHTML = '<span class="ls-rag-partial">' + esc(L("Kontext geprüft, Antwort folgt …", "Context checked, answer follows …")) + '</span>';
