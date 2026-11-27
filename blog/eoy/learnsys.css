@@ -41,6 +41,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--ls-paper);overflow:hidden}
+details:not([open]) > :not(summary){display:none!important}
 body{font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:300;color:var(--ls-ink)}
 h1,h2,h3,h4,.ls-title,.ls-stage-head b,.ls-day-num,.ls-navbar{display:flex;align-items:center;gap:4px;width:max-content;max-width:100%;margin:0 0 18px;padding:4px;border:1px solid var(--ls-line);background:rgba(255,255,255,.72);backdrop-filter:blur(10px);box-shadow:0 2px 12px rgba(0,20,30,.04)}
 .ls-navbar .ls-btn{padding:5px 9px;font-size:var(--ls-fs-ui-sm);line-height:1;min-height:30px}
@@ -1075,22 +1076,6 @@ h1,h2,h3,h4{
 .ls-model-readout{display:flex;gap:8px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-model-readout b{color:var(--ls-ink);font-weight:600}
 @media (max-width:640px){.ls-model-stage{min-height:330px}}
-.ls-highdim-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;padding:2px;width:100%;max-width:1000px;margin:0 auto}
-.ls-highdim-note b{color:var(--ls-petrol);font-weight:600}
-.ls-highdim-selected{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;text-align:center;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em}
-.ls-highdim-selected b{color:var(--ls-green-deep,var(--ls-petrol));font-weight:700}
-.ls-highdim-scroll tbody tr[data-token]{cursor:pointer}
-.ls-highdim-scroll tbody tr[data-token]:hover td,.ls-highdim-scroll tbody tr[data-token]:hover th{background:rgba(18,117,172,.06)}
-.ls-highdim-scroll tbody tr.is-on th,.ls-highdim-scroll tbody tr.is-on td{background:rgba(99,164,75,.12)}
-.ls-highdim-scroll tbody tr.is-on th{color:var(--ls-green-deep,var(--ls-petrol))}
-.ls-highdim-scroll tr.is-ellipsis th,.ls-highdim-scroll tr.is-ellipsis td{color:var(--ls-faint);background:rgba(247,249,248,.8);text-align:center;font-weight:700}
-.ls-highdim-scroll{overflow:auto;border:0;background:transparent;min-height:0}
-.ls-highdim-scroll table{border-collapse:collapse;width:100%;height:100%;min-width:0;table-layout:fixed;font:var(--ls-fs-micro) ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
-.ls-highdim-scroll th,.ls-highdim-scroll td{padding:2px 4px;text-align:right;border-bottom:1px solid rgba(0,75,111,.06);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ls-highdim-scroll thead th{position:sticky;top:0;background:#fff;text-align:center;color:var(--ls-muted);font-family:"Open Sans",sans-serif;font-weight:600}
-.ls-highdim-scroll tbody th{position:sticky;left:0;background:#fff;text-align:left;color:var(--ls-petrol);font-family:"Open Sans",sans-serif;font-weight:600}
-.ls-highdim-scroll td{color:var(--ls-ink-soft)}
-.ls-highdim-scroll td:nth-child(2n){background:rgba(18,117,172,.035)}
 .ls-position-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;gap:7px;padding:2px;overflow-y:auto}
 @media (max-width:640px){.ls-position-scene{grid-template-rows:minmax(180px,1fr) auto auto auto}.ls-position-grid{min-height:180px}}
 .ls-position-grid{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:8px;min-height:220px}
@@ -3163,11 +3148,6 @@ html.dark .ls-hg-readout p,html[data-theme="dark"] .ls-hg-readout p{color:#c2d0d
 }
 @media (max-width:1120px){.ls-rm-grid--risks{grid-template-columns:1fr}}
 
-.ls-highdim-scroll .ls-highdim-token-col{width:112px}
-.ls-highdim-scroll .ls-highdim-ellipsis-col{width:26px}
-.ls-highdim-token{display:block;overflow:hidden;text-overflow:ellipsis}
-.ls-highdim-scroll tbody th small{display:block;font:600 8px/1.1 "Open Sans",sans-serif;color:var(--ls-muted);letter-spacing:.04em}
-.ls-highdim-scroll td.ls-highdim-ellipsis,.ls-highdim-scroll th.ls-highdim-ellipsis{text-align:center;color:var(--ls-muted)}
 
 /* Deep-blue instrument stage for the final ten lessons. The page stays paper;
    the demo area gets the blue atmosphere, while content cards stay white. */
@@ -6679,3 +6659,123 @@ html.dark .ls-rope-tip,html[data-theme="dark"] .ls-rope-tip{background:#07161d;c
   .ls-rag-doc-body{min-height:420px}
   .ls-rag-angle-grid{grid-template-columns:1fr}
 }
+
+/* High-dimensional embedding: a calm heatmap instead of a spreadsheet. */
+.ls-highdim-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:14px;padding:12px 14px;overflow:auto;background:radial-gradient(ellipse at 12% 0%,rgba(99,164,75,.10),transparent 55%),radial-gradient(ellipse at 92% 8%,rgba(18,117,172,.09),transparent 52%),var(--ls-paper)}
+.ls-highdim-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.ls-highdim-hero-copy{min-width:0;max-width:58ch}
+.ls-highdim-kicker{font:700 10px/1 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--ls-green-deep,var(--ls-petrol))}
+.ls-highdim-hero h2{margin:4px 0 0;font:700 clamp(22px,2.4vw,30px)/1.05 "Barlow",sans-serif;letter-spacing:-.025em;color:var(--ls-petrol)}
+.ls-highdim-hero p{margin:6px 0 0;font:12.5px/1.55 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-highdim-selected{min-width:240px;max-width:360px;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--ls-line);background:var(--ls-paper);box-shadow:0 16px 34px -26px rgba(0,20,30,.4)}
+.ls-highdim-sel-head{display:flex;align-items:baseline;gap:8px;min-width:0}
+.ls-highdim-sel-head b{font:700 22px/1 "Barlow",sans-serif;color:var(--ls-petrol);letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ls-highdim-sel-head small{font:600 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-muted);white-space:nowrap}
+.ls-highdim-sel-meta{font:600 10px/1.2 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.05em;color:var(--ls-muted)}
+.ls-highdim-chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
+.ls-highdim-chips span{padding:2px 5px;border:1px solid var(--ls-line);background:var(--ls-paper-2);font:600 9.5px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-soft);white-space:nowrap}
+.ls-highdim-card{display:flex;flex-direction:column;gap:8px;min-height:0;padding:10px 12px;border:1px solid var(--ls-line);background:var(--ls-paper);box-shadow:0 18px 40px -30px rgba(0,20,30,.4)}
+.ls-highdim-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ls-highdim-card-head b{font:700 10px/1.2 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-petrol)}
+.ls-highdim-card-head span{font:600 10px/1.2 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-highdim-grid{display:grid;grid-template-columns:88px repeat(16,minmax(0,1fr));gap:2px;align-items:stretch}
+.ls-highdim-row{display:contents}
+.ls-highdim-head .ls-highdim-row-label{font:600 9px/1.2 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-muted)}
+.ls-highdim-dim{display:flex;align-items:center;justify-content:center;font:600 8.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.03em}
+.ls-highdim-row-label{display:flex;align-items:baseline;gap:4px;min-width:0;padding:3px 4px;font:600 10.5px/1.2 "Open Sans",sans-serif;color:var(--ls-petrol);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-highdim-row-label span{overflow:hidden;text-overflow:ellipsis}
+.ls-highdim-row-label small{font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ls-muted);flex:0 0 auto}
+.ls-highdim-cell{height:18px;min-width:0;background:var(--ls-paper-2);cursor:pointer;transition:filter .15s ease,box-shadow .15s ease}
+.ls-highdim-row:hover .ls-highdim-cell{filter:brightness(1.06)}
+.ls-highdim-row.is-on .ls-highdim-cell{box-shadow:inset 0 0 0 1px var(--ls-petrol)}
+.ls-highdim-row.is-on .ls-highdim-row-label{color:var(--ls-green-deep,var(--ls-petrol))}
+.ls-highdim-foot{font:600 9.5px/1.2 "Open Sans",sans-serif;color:var(--ls-muted);text-align:right}
+@media (max-width:760px){.ls-highdim-grid{grid-template-columns:70px repeat(16,minmax(0,1fr))}.ls-highdim-cell{height:15px}.ls-highdim-hero h2{font-size:22px}}
+
+/* Polished readability passes for the three densest scenes. */
+.ls-hx-scene{--ls-fs-micro:10.5px;--ls-fs-ui-sm:12px;--ls-fs-ui:13.5px;--ls-fs-h3:15px;gap:11px;padding:7px 9px}
+.ls-hx-scene .ls-hx-hero{height:clamp(430px,60vh,560px)}
+.ls-hx-scene .ls-hx-chips{gap:6px}
+.ls-hx-scene .ls-hx-chip{font-size:11px;padding:6px 10px;min-height:32px}
+.ls-hx-scene .ls-hx-chip-icon{font-size:13px;min-width:18px}
+.ls-hx-scene .ls-hx-mode{padding:4px}
+.ls-hx-scene .ls-hx-mode button{font-size:10.5px;padding:8px 12px}
+.ls-hx-scene .ls-hx-mode-badge{font-size:9.5px;padding:6px 10px}
+.ls-hx-scene .ls-hx-win{border-radius:14px;box-shadow:0 20px 44px -24px rgba(0,20,30,.35)}
+.ls-hx-scene .ls-hx-winbar{padding:10px 14px}
+.ls-hx-scene .ls-hx-thread{padding:16px 18px;gap:14px}
+.ls-hx-scene .ls-hx-bubble{font-size:12.5px;line-height:1.55;padding:12px 14px}
+.ls-hx-scene .ls-hx-answer-text{font-size:12.5px;line-height:1.6}
+.ls-hx-scene .ls-hx-question span{font-size:9.5px}
+.ls-hx-scene .ls-hx-question b{font-size:13.5px;line-height:1.35}
+.ls-hx-scene .ls-hx-conf{font-size:9.5px;margin-top:11px}
+.ls-hx-scene .ls-hx-conf-val{font-size:10.5px}
+.ls-hx-scene .ls-hx-mechanism{font-size:11px;line-height:1.55;padding:8px 10px;border:0;background:rgba(0,75,111,.045)}
+.ls-hx-scene .ls-hx-mechanism b{font-size:12.5px}
+.ls-hx-scene .ls-hx-verify-head{padding:12px 14px;font-size:10.5px}
+.ls-hx-scene .ls-hx-verify-body{padding:13px 14px 15px;gap:10px}
+.ls-hx-scene .ls-hx-source-body{max-height:140px;border:0;background:var(--ls-paper);padding:9px 10px}
+.ls-hx-scene .ls-hx-claims{max-height:210px;gap:6px}
+.ls-hx-scene .ls-hx-claim{font-size:12px;line-height:1.45;padding:8px 9px}
+.ls-hx-scene .ls-hx-source-note{font-size:11px;line-height:1.5}
+.ls-hx-scene .ls-hx-cite{font-size:9px}
+.ls-hx-scene .ls-hx-detail{font-size:11px;line-height:1.5;padding:8px 9px}
+.ls-hx-scene .ls-hx-score{font-size:9.5px;gap:8px}
+.ls-hx-scene .ls-hx-score b{font-size:10.5px}
+.ls-hx-scene .ls-hx-scorebar{height:9px}
+.ls-hx-scene .ls-hx-verdict-card b{font-size:12.5px}
+.ls-hx-scene .ls-hx-verdict-card p{font-size:11px;line-height:1.5}
+.ls-hx-scene .ls-hx-bottom{grid-template-columns:220px minmax(0,1fr);gap:12px;min-height:165px}
+.ls-hx-scene .ls-hx-risk{padding:9px 10px;border-radius:10px;box-shadow:0 10px 24px -22px rgba(0,20,30,.35)}
+.ls-hx-scene .ls-hx-risk-head{font-size:9.5px}
+.ls-hx-scene .ls-hx-risk-head b{font-size:12px}
+.ls-hx-scene .ls-hx-risk-head span{font-size:8px}
+.ls-hx-scene .ls-hx-risk-svg{min-height:120px}
+.ls-hx-scene .ls-hx-risk-svg svg{max-height:140px}
+.ls-hx-scene .ls-hx-measures{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:7px}
+.ls-hx-scene .ls-hx-measure{padding:8px;gap:4px;border-radius:8px}
+.ls-hx-scene .ls-hx-measure b{font-size:11.5px;line-height:1.2}
+.ls-hx-scene .ls-hx-measure p{font-size:10.5px;line-height:1.4}
+.ls-hx-scene .ls-hx-measure-status{font-size:9px}
+.ls-hx-scene .ls-hx-measure-icon{width:23px;height:23px;font-size:11px}
+.ls-hx-scene .ls-hx-takeaway{font-size:11px;line-height:1.55;padding:8px 10px}
+.ls-hx-scene .ls-hx-takeaway b{font-size:9px}
+.ls-hx-scene .ls-hx-ragbox>summary{padding:10px 12px;font-size:11px}
+.ls-hx-scene .ls-hx-ragbox>summary b{font-size:12.5px}
+.ls-hx-scene .ls-hx-ragbox>summary span:last-child{font-size:10.5px}
+.ls-hx-scene .ls-hx-sources{gap:7px;grid-template-columns:minmax(0,1fr) 62px minmax(0,1fr)}
+.ls-hx-scene .ls-hx-source-card{padding:8px 9px;border-radius:8px}
+.ls-hx-scene .ls-hx-source-card>span{font-size:8.5px}
+.ls-hx-scene .ls-hx-source-card>b{font-size:11.5px}
+.ls-hx-scene .ls-hx-source-card>p{font-size:10.5px;line-height:1.4}
+.ls-hx-scene .ls-hx-source-claim{font-size:8.5px}
+
+.ls-fx.ls-bs-fx{--ls-fs-micro:10.5px;--ls-fs-ui-sm:12px;--ls-fs-ui:14px;--ls-fs-readout:16px;--ls-fs-h3:18px;gap:18px;padding:20px 22px}
+.ls-fx .ls-fx-kicker{font-size:10.5px}
+.ls-fx .ls-fx-hero h2{font-size:clamp(26px,3.4vw,44px)}
+.ls-fx .ls-fx-hero p{font-size:13px;line-height:1.6}
+.ls-fx .ls-fx-batch{font-size:11px;gap:9px;padding:7px 10px}
+.ls-fx .ls-fx-batch b{font-size:10px}
+.ls-fx .ls-fx-input{padding:11px 13px}
+.ls-fx .ls-fx-input b{font-size:10px}
+.ls-fx .ls-fx-input small{font-size:10.5px;line-height:1.35}
+.ls-fx .ls-fx-size-label{font-size:9.5px}
+.ls-fx .ls-fx-start{font-size:10.5px;gap:8px;padding:6px 8px}
+.ls-fx .ls-fx-start>span:first-child{font-size:10px}
+.ls-fx .ls-fx-core-node small{font-size:10px}
+.ls-fx .ls-fx-core-caption{font-size:9.5px}
+.ls-fx .ls-fx-output-head{font-size:10px}
+.ls-fx .ls-fx-two{font-size:10.5px;gap:10px;padding:7px 10px}
+.ls-fx .ls-fx-two b{width:17px;height:17px;font-size:10px}
+.ls-fx .ls-fx-two strong{font-size:10.5px}
+.ls-fx .ls-fx-loop{font-size:10.5px;gap:10px;padding:9px 12px}
+.ls-fx .ls-bs-fx-cand{font-size:10.5px;grid-template-columns:72px minmax(0,1fr) 40px;gap:8px}
+.ls-fx .ls-bs-fx-cand small{font-size:9px}
+.ls-fx .ls-bs-fx-cand i{height:8px}
+.ls-fx .ls-bs-fx-note{font-size:10.5px;line-height:1.45}
+.ls-fx .ls-bs-fx-bar{font-size:10.5px;gap:10px}
+.ls-fx .ls-bs-fx-node small{font-size:9px}
+.ls-fx .ls-bs-fx-stage span{font-size:9px}
+.ls-fx .ls-bs-fx-stage p{font-size:10.5px}
+.ls-fx .ls-fx-output{gap:8px;padding:14px 16px}
+.ls-fx .ls-fx-stage{gap:18px;min-height:320px}

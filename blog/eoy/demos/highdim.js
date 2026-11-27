@@ -21,45 +21,63 @@
       { t: "king", id: 3364 },
       { t: "animal", id: 41607 }
     ];
-    var cols = 16;
+    var DIMS = 16;
+    var TOTAL = 4096;
     var selected = 3;
+    function tokenLabel(t) { return t === "Ġ" ? "␣" : t; }
     function value(ti, j) {
       var x = Math.sin((ti + 1) * 12.9898 + (j + 1) * 78.233) * 43758.5453;
       x = x - Math.floor(x);
-      return (x * 2 - 1).toFixed(2);
+      return (x * 2 - 1);
     }
-    function tokenLabel(t) { return t === "Ġ" ? "␣" : t; }
-    var colgroup = '<colgroup><col class="ls-highdim-token-col">';
-    for (var c = 0; c < cols; c++) colgroup += "<col>";
-    colgroup += '<col class="ls-highdim-ellipsis-col"></colgroup>';
-    var head = '<tr data-tip="' + (DE ? "Jede Spalte ist eine Embedding-Dimension; die Zeile zeigt die ersten Werte." : "Each column is one embedding dimension; the row shows the first values.") + '"><th></th>';
-    for (var j = 0; j < cols; j++) head += '<th>d' + (j + 1) + '</th>';
-    head += '<th class="ls-highdim-ellipsis">…</th></tr>';
-    var body = tokens.map(function (tok, ti) {
-      var cells = '';
-      for (var k = 0; k < cols; k++) cells += '<td>' + value(ti, k) + '</td>';
-      var rowTip = "Token " + esc(tokenLabel(tok.t)) + ", id " + tok.id + ": d1 " + value(ti, 0) + ", d2 " + value(ti, 1) + ", d3 " + value(ti, 2) + ". " + (DE ? "Klicken zeigt die ersten Werte oben." : "Click to show the first values above.");
-      return '<tr data-token="' + ti + '" data-tip="' + rowTip + '"' + (ti === selected ? ' class="is-on"' : '') + '><th><span class="ls-highdim-token">' + esc(tokenLabel(tok.t)) + '</span><small>' + tok.id + '</small></th>' + cells + '<td class="ls-highdim-ellipsis">…</td></tr>';
-    }).join("");
-    var more = '<tr class="is-ellipsis" data-tip="' + (DE ? "Die Tabelle geht weiter; nur ein kleiner Ausschnitt des Vektors ist zu sehen." : "The table continues; only a small slice of the vector is shown.") + '"><td colspan="' + (cols + 2) + '">…</td></tr>';
+    function valueText(ti, j) { return value(ti, j).toFixed(2); }
+    function cellColor(v) {
+      var a = 0.10 + Math.abs(v) * 0.72;
+      return v >= 0 ? "rgba(99,164,75," + a.toFixed(2) + ")" : "rgba(18,117,172," + a.toFixed(2) + ")";
+    }
+    function rowHTML(tok, ti) {
+      var cells = "";
+      for (var j = 0; j < DIMS; j++) {
+        var v = value(ti, j);
+        cells += '<div class="ls-highdim-cell" data-token="' + ti + '" data-dim="' + j + '" style="background:' + cellColor(v) + '" title="' + esc(tokenLabel(tok.t)) + ' · d' + (j + 1) + ' = ' + valueText(ti, j) + '"></div>';
+      }
+      return '<div class="ls-highdim-row' + (ti === selected ? " is-on" : "") + '" data-token="' + ti + '"><div class="ls-highdim-row-label"><span>' + esc(tokenLabel(tok.t)) + '</span><small>' + tok.id + '</small></div>' + cells + '</div>';
+    }
+    var head = '<div class="ls-highdim-row ls-highdim-head"><div class="ls-highdim-row-label">' + esc(DE ? "Token" : "token") + '</div>';
+    for (var d = 0; d < DIMS; d++) head += '<div class="ls-highdim-dim">d' + (d + 1) + '</div>';
+    head += '</div>';
     var el = document.createElement("div");
     el.className = "ls-highdim-scene";
     el.innerHTML =
-      '<div class="ls-highdim-selected" aria-live="polite"></div>' +
-      '<div class="ls-highdim-scroll" data-tip="' + (DE ? "Scrolle horizontal, um mehr der 4096 Dimensionen zu sehen." : "Scroll horizontally to see more of the 4096 dimensions.") + '"><table>' + colgroup + '<thead>' + head + '</thead><tbody>' + body + more + '</tbody></table></div>';
+      '<div class="ls-highdim-hero">' +
+        '<div class="ls-highdim-hero-copy">' +
+          '<span class="ls-highdim-kicker">' + esc(DE ? "Hochdimensionaler Vektor" : "High-dimensional vector") + '</span>' +
+          '<h2>' + esc(DE ? "Ein Token, 4096 Dimensionen" : "One token, 4,096 dimensions") + '</h2>' +
+          '<p>' + esc(DE ? "Rechts ist nur ein Ausschnitt: 16 der 4096 gelernten Merkmale. Jede Zelle ist ein Wert; klicke eine Zeile, um den Token zu wechseln." : "On the right is only a slice: 16 of the 4,096 learned features. Each cell is a value; click a row to switch the token.") + '</p>' +
+        '</div>' +
+        '<div class="ls-highdim-selected" aria-live="polite"></div>' +
+      '</div>' +
+      '<div class="ls-highdim-card">' +
+        '<div class="ls-highdim-card-head"><b>' + esc(DE ? "16 von 4096 Dimensionen" : "16 of 4,096 dimensions") + '</b><span>' + esc(DE ? "Farbe = Wert · Klick = Token" : "colour = value · click = token") + '</span></div>' +
+        '<div class="ls-highdim-grid">' + head + tokens.map(function (tok, ti) { return rowHTML(tok, ti); }).join("") + '</div>' +
+        '<div class="ls-highdim-foot">' + esc(DE ? "… 4080 weitere Dimensionen" : "… 4,080 more dimensions") + '</div>' +
+      '</div>';
     root.appendChild(el);
     var selectedEl = el.querySelector(".ls-highdim-selected");
     function showSelected(ti) {
       selected = ti;
-      el.querySelectorAll("tbody tr[data-token]").forEach(function (row) {
+      el.querySelectorAll(".ls-highdim-row[data-token]").forEach(function (row) {
         row.classList.toggle("is-on", parseInt(row.getAttribute("data-token"), 10) === selected);
       });
-      var vals = [];
-      for (var k = 0; k < 4; k++) vals.push("d" + (k + 1) + " " + value(selected, k));
-      selectedEl.innerHTML = '<span><b>' + esc(tokens[selected].name || tokenLabel(tokens[selected].t)) + '</b></span><span>id ' + tokens[selected].id + '</span><span>' + vals.join(" · ") + '</span><span>…</span>';
+      var tok = tokens[selected];
+      var chips = [];
+      for (var d = 0; d < 8; d++) chips.push('<span>d' + (d + 1) + ' ' + valueText(selected, d) + '</span>');
+      selectedEl.innerHTML = '<div class="ls-highdim-sel-head"><b>' + esc(tok.name || tokenLabel(tok.t)) + '</b><small>id ' + tok.id + '</small></div>' +
+        '<div class="ls-highdim-sel-meta">' + esc(DE ? "4096 Dimensionen" : "4,096 dimensions") + ' · ' + esc(DE ? "8 Werte" : "8 values") + '</div>' +
+        '<div class="ls-highdim-chips">' + chips.join("") + '</div>';
     }
-    el.querySelectorAll("tbody tr[data-token]").forEach(function (row) {
-      row.addEventListener("click", function () { showSelected(parseInt(row.getAttribute("data-token"), 10)); });
+    el.querySelectorAll(".ls-highdim-cell").forEach(function (cell) {
+      cell.addEventListener("click", function () { showSelected(parseInt(cell.getAttribute("data-token"), 10)); });
     });
     showSelected(selected);
     return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
