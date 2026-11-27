@@ -85,6 +85,7 @@
     el.className = "ls-res-scene";
     el.innerHTML =
       '<div class="ls-res-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-res-note" aria-live="polite" hidden></div>' +
       '<div class="ls-res-toolbar"><div class="ls-res-phases" role="group" aria-label="' + (DE ? "Ansicht" : "View") + '"></div><div class="ls-scene-row ls-res-layers"></div></div>' +
       '<div class="ls-res-readout" aria-live="polite"></div>' +
       '<p class="ls-res-caption"></p>';
@@ -94,6 +95,7 @@
     var phaseRow = el.querySelector(".ls-res-phases");
     var layerRow = el.querySelector(".ls-res-layers");
     var readout = el.querySelector(".ls-res-readout");
+    var streamNote = el.querySelector(".ls-res-note");
     var caption = el.querySelector(".ls-res-caption");
     caption.setAttribute("data-tip", DE ? "Ordnet die Ansicht didaktisch ein." : "Gives the didactic framing of the view.");
     var size = null;
@@ -485,17 +487,16 @@
       });
     }
     function drawFlowGap(g, x1, x2, y, now, col) {
-      g.strokeStyle = V.alpha(col, 0.35);
-      g.lineWidth = 1;
-      g.beginPath(); g.moveTo(x1, y); g.lineTo(x2, y); g.stroke();
-      if (reduced) return;
-      for (var k = 0; k < 3; k++) {
-        var u = ((now / 1500) + k / 3) % 1;
-        var xx = x1 + (x2 - x1) * u;
-        var yy = y + Math.sin(u * Math.PI * 2 + k) * 3;
-        g.fillStyle = V.alpha(col, 0.35 + 0.5 * Math.sin(Math.PI * u));
-        g.beginPath(); g.arc(xx, yy, 2, 0, Math.PI * 2); g.fill();
-      }
+      g.strokeStyle = V.alpha(col, 0.45);
+      g.lineWidth = 1.2;
+      g.beginPath(); g.moveTo(x1, y); g.lineTo(x2 - 6, y); g.stroke();
+      g.fillStyle = V.alpha(col, 0.65);
+      g.beginPath();
+      g.moveTo(x2, y);
+      g.lineTo(x2 - 6, y - 3);
+      g.lineTo(x2 - 6, y + 3);
+      g.closePath();
+      g.fill();
     }
     function drawStream(C, w, h, g, now) {
       var pad = Math.max(10, Math.min(18, w * 0.022));
@@ -557,11 +558,6 @@
         g.fillText(label, x + 8, sy + 13);
         var p = partsAt(i);
         drawMiniBars(g, x + 8, sy + sh - Math.max(16, sh * 0.34), sw - 16, Math.max(10, sh * 0.26), p, C, totalsMax);
-        g.fillStyle = onDarkFaint;
-        g.font = '600 ' + Math.max(8, Math.min(10, sw * 0.04)) + 'px "Open Sans", sans-serif';
-        g.textAlign = "right"; g.textBaseline = "middle";
-        var sum = totalParts(p).reduce(function (a, b) { return a + b; }, 0);
-        g.fillText("Σ " + sum.toFixed(1), x + sw - 8, sy + 13);
         streamBoxHits.push({ x: x, y: sy, w: sw, h: sh, i: i });
       }
       for (var gi = 0; gi < 2; gi++) {
@@ -748,16 +744,25 @@
       syncPhaseButtons(C);
       syncLayerButtons(C);
       var noteCaption = DE ? "Starke Vereinfachung, keine Messung: Die fünf Notizbuch-Schichten stehen für Gruppen vieler echter Schichten. In einem 32-Schichten-Modell arbeiten die ersten ~10 grob an Tokens, Positionen, lokalem Rauschen und ersten abstrakten Merkmalen; die nächsten ~15–20 an komplexeren, oft unbenannten Bedeutungsrichtungen; die letzten ~6–8 an Aufgabenausrichtung und nächster-Token-Vorhersage. Das ist modellabhängig (Tenney et al., 2019; Lad et al., 2024)." : "Strong simplification, not a measurement: the five notebook layers stand for groups of many real layers. In a 32-layer model, the first ~10 work roughly on tokens, positions, local noise, and first abstract features; the next ~15–20 on more complex meaning directions that often have no human label; the final ~6–8 on task alignment and next-token prediction. This depends on the model (Tenney et al., 2019; Lad et al., 2024).";
-      var streamCaption = DE ? "Blau: vorherige Outputs. Petrol: was der Transformer-Block (Attention + FFN) pro Dimension addiert." : "Blue: previous outputs. Petrol: what the transformer block (attention + FFN) adds per dimension.";
+      var streamCaption = "";
+      if (streamNote) {
+        streamNote.hidden = phase !== "stream";
+        streamNote.textContent = phase === "stream"
+          ? (DE ? "Hellblau: vorherige Outputs. Dunkelblau: was der Transformer-Block (Attention + FFN) pro Dimension addiert." : "Light blue: previous outputs. Dark blue: what the transformer block (attention + FFN) adds per dimension.")
+          : "";
+      }
       if (phase === "notebook") {
+        readout.hidden = false;
         var colors = noteColors(C);
         var info = layer ? NOTE_LAYERS[layer - 1] : null;
         readout.innerHTML = '<span class="ls-res-phase-label">' + (DE ? "Notizbuch" : "Notebook") + '</span>' +
           '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Vereinfachung" : "Simplification")) + '</b>' +
           '<span>' + (info ? info.desc : (DE ? "Fünf didaktische Gruppen für die vielen Schichten eines echten Modells." : "Five didactic groups for the many layers of a real model.")) + '</span>';
       } else {
-        readout.innerHTML = '<div class="ls-res-eq-row">' + equationHTML(streamLayer) + '</div>';
+        readout.innerHTML = "";
+        readout.hidden = true;
       }
+      caption.hidden = phase !== "notebook";
       setCaptions(noteCaption, streamCaption);
       var aria = phase === "notebook"
         ? (layer ? (DE ? "Notizbuch mit fünf Schichten. Schicht " + layer + " von 5." : "Notebook with five layers. Layer " + layer + " of 5.") : (DE ? "Notizbuch mit den Tokens und fünf Schichten. Noch keine Schicht geöffnet." : "Notebook with the tokens and five layers. No layer opened yet."))
