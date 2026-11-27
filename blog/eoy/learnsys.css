@@ -6758,3 +6758,4 @@ html.dark .ls-hx-retrieval .is-angle,html[data-theme="dark"] .ls-hx-retrieval .i
 html.dark .ls-hx-retrieval i,html[data-theme="dark"] .ls-hx-retrieval i{color:#3a536a}
 .ls-hx-winbody{grid-template-rows:minmax(0,1fr);overflow:hidden}
 .ls-hx-chatcol,.ls-hx-verifycol{min-height:0}
+.ls-hx-research-item{cursor:help}
