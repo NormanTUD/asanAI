@@ -2,6 +2,7 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
+  var AGENT_RAG_LAST_STEP = 0;
 
   function agentRagScene(root, api) {
     var DE = api.lang === "de";
@@ -37,31 +38,31 @@
       },
       paragraphs: [
         {
-          id: "C1", heading: L("Körperbau", "Body"), angle: 12,
+          id: "4815", heading: L("Körperbau", "Body"), angle: 12,
           text: L("Der Krake (Octopus) ist ein Kopffüßer aus der Ordnung der Octopoda. Sein Körper besteht aus einem sackförmigen Mantel und acht muskulösen Armen mit Saugnäpfen. Er besitzt drei Herzen und blaues Blut; seine Haut kann Farbe und Oberflächenstruktur in Sekunden verändern.", "The octopus (Octopus) is a cephalopod of the order Octopoda. Its body consists of a sac-like mantle and eight muscular arms with suckers. It has three hearts and blue blood; its skin can change colour and surface texture within seconds.")
         },
         {
-          id: "C2", heading: L("Blut und Kreislauf", "Blood and circulation"), angle: 19,
+          id: "4816", heading: L("Blut und Kreislauf", "Blood and circulation"), angle: 19,
           text: L("Zwei Kiemenherzen treiben das Blut durch die Kiemen, ein Körperherz versorgt den übrigen Körper. Beim Schwimmen pausiert das Körperherz zeitweise, weshalb Kraken häufig über den Meeresboden kriechen. Der Sauerstoffträger Hämocyanin enthält Kupfer und verleiht dem Blut seine bläuliche Farbe.", "Two gill hearts pump blood through the gills, while one body heart supplies the rest of the body. When swimming, the body heart pauses at times, which is why octopuses often crawl over the sea floor. The oxygen carrier hemocyanin contains copper and gives the blood its bluish colour.")
         },
         {
-          id: "C3", heading: L("Nervensystem", "Nervous system"), angle: 52,
+          id: "4817", heading: L("Nervensystem", "Nervous system"), angle: 52,
           text: L("Rund zwei Drittel der Neuronen eines Kraken liegen in den acht Armen. Jeder Arm verfügt über ein eigenes Nervennetz, und die Saugnäpfe können chemische Reize aufnehmen. Auf diese Weise prüft der Krake seine Umgebung, ohne den ganzen Körper bewegen zu müssen.", "About two thirds of an octopus's neurons lie in its eight arms. Each arm has its own nerve net, and the suckers can detect chemical stimuli. In this way the octopus examines its surroundings without moving its whole body.")
         },
         {
-          id: "C4", heading: L("Tarnung", "Camouflage"), angle: 64,
+          id: "4818", heading: L("Tarnung", "Camouflage"), angle: 64,
           text: L("Chromatophoren, Iridophoren und Papillen ermöglichen schnelle Farb- und Texturwechsel. Kraken gelten als neugierig und lernfähig; sie lösen einfache Probleme und nutzen Höhlen oder Schalen als Versteck. Ihre Tarnung zählt zu den vielseitigsten im Tierreich.", "Chromatophores, iridophores, and papillae allow rapid changes of colour and texture. Octopuses are considered curious and capable learners; they solve simple problems and use caves or shells as shelter. Their camouflage is one of the most versatile in the animal kingdom.")
         },
         {
-          id: "C5", heading: L("Mythos und Forschung", "Myth and research"), angle: 44,
+          id: "4819", heading: L("Mythos und Forschung", "Myth and research"), angle: 44,
           text: L("Der colossale Polyp des Pierre Denys de Montfort (1801) illustriert die Seefahrerlegende von riesigen Kraken, die Schiffe umgreifen; die Darstellung ist keine zoologische Beobachtung. Neuere Arbeiten untersuchen RNA-Editing in Nervenzellen sowie die Mechanismen der strukturellen Färbung. Die Fakten dieses Artikels stützen sich auf die Fachliteratur.", "Pierre Denys de Montfort's colossal polyp (1801) illustrates the sailors' legend of giant krakens that could grasp ships; the image is not a zoological observation. Recent research examines RNA editing in nerve cells and the mechanisms of structural coloration. The facts in this article rest on the specialist literature.")
         },
         {
-          id: "F1", heading: L("Krakelee", "Kraków"), angle: 88, filler: true,
+          id: "4820", heading: L("Krakelee", "Kraków"), angle: 88, filler: true,
           text: L("Das Krakelee oder Craquelé ist ein Netz feiner Sprünge in Ölgemälden, Glasuren, Steinen, Lacken oder Glas. Es entsteht durch Alterung, Klimaschwankungen oder mechanische Belastung, kann aber auch als maltechnischer Effekt gewollt sein.", "Kraków is the second-largest city in Poland and lies on the Vistula. It was the country's capital until 1596, and its Old Town became a UNESCO World Heritage Site in 1978.")
         },
         {
-          id: "F2", heading: L("In der Malschicht", "Wawel and the Old Town"), angle: 91, filler: true,
+          id: "4821", heading: L("In der Malschicht", "Wawel and the Old Town"), angle: 91, filler: true,
           text: L("In der Malerei zählt das Craquelé zu den auffälligsten Altersspuren. Die Risse hängen von Bildträger, Pigmenten und Bindemitteln ab; mit der Zeit füllen sie sich mit dunkleren Partikeln und treten deutlicher hervor.", "Wawel Castle and Wawel Cathedral stand on the banks of the Vistula. The city is also home to the Jagiellonian University and the Rynek Główny, the largest medieval market square in Europe.")
         }
       ]
@@ -70,7 +71,10 @@
     var CHUNK_COUNT = ARTICLE.paragraphs.length;
     var QUESTION = L("Wie viele Herzen hat ein Krake?", "How many hearts does an octopus have?");
     var ANSWER = L("Ein Krake hat drei Herzen: zwei Kiemenherzen und ein Körperherz.", "An octopus has three hearts: two gill hearts and one body heart.");
-    var SELECTED = ["C1", "C2"];
+    var SELECTED = ["4815", "4816"];
+    var TOTAL_CHUNKS = 8151;
+    var EXCERPT_START = 4815;
+    var EXCERPT_END = 4821;
 
     function chunkById(id) {
       return ARTICLE.paragraphs.filter(function (p) { return p.id === id; })[0] || null;
@@ -121,22 +125,22 @@
     }
 
     function pdfHTML() {
-      var c1 = chunkById("C1"), c2 = chunkById("C2"), c3 = chunkById("C3"), c4 = chunkById("C4"), c5 = chunkById("C5");
+      var c1 = chunkById("4815"), c2 = chunkById("4816"), c3 = chunkById("4817"), c4 = chunkById("4818"), c5 = chunkById("4819");
       return '<div class="ls-rag-pdf">' +
         '<header class="ls-rag-pdf-head"><span class="ls-rag-pdf-brand">' + esc(ARTICLE.brand) + '</span><span class="ls-rag-pdf-series">' + esc(ARTICLE.series) + '</span><span class="ls-rag-pdf-page">' + esc(ARTICLE.page) + '</span></header>' +
         '<div class="ls-rag-pdf-title"><span>' + esc(ARTICLE.kicker) + '</span><h2>' + esc(ARTICLE.title) + '</h2></div>' +
         '<div class="ls-rag-pdf-body">' +
           '<div class="ls-rag-pdf-media">' + figureHTML("colossal") + figureHTML("octopus") + '</div>' +
           '<div class="ls-rag-pdf-flow">' +
-            '<section class="ls-rag-pdf-chunk" data-c="C1" data-angle="12" title="C1 · ' + esc(c1.heading) + '"><h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="C2" data-angle="19" title="C2 · ' + esc(c2.heading) + '"><h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="C3" data-angle="52" title="C3 · ' + esc(c3.heading) + '"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="C4" data-angle="64" title="C4 · ' + esc(c4.heading) + '"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="C5" data-angle="44" title="C5 · ' + esc(c5.heading) + '"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4815" data-angle="12" title="Chunk 4815 von 8151 · Auszug ab 4815 · ' + esc(c1.heading) + '"><h3>' + esc(c1.heading) + '</h3><p>' + esc(c1.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4816" data-angle="19" title="Chunk 4816 von 8151 · Auszug ab 4815 · ' + esc(c2.heading) + '"><h3>' + esc(c2.heading) + '</h3><p>' + esc(c2.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4817" data-angle="52" title="Chunk 4817 von 8151 · Auszug ab 4815 · ' + esc(c3.heading) + '"><h3>' + esc(c3.heading) + '</h3><p>' + esc(c3.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4818" data-angle="64" title="Chunk 4818 von 8151 · Auszug ab 4815 · ' + esc(c4.heading) + '"><h3>' + esc(c4.heading) + '</h3><p>' + esc(c4.text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4819" data-angle="44" title="Chunk 4819 von 8151 · Auszug ab 4815 · ' + esc(c5.heading) + '"><h3>' + esc(c5.heading) + '</h3><p>' + esc(c5.text) + '</p></section>' +
             '<div class="ls-rag-pdf-filler-head"><h3>' + esc(ARTICLE.filler.title) + '</h3></div>' +
             fillerFigureHTML() +
-            '<section class="ls-rag-pdf-chunk" data-c="F1" data-angle="88" title="F1 · ' + esc(ARTICLE.paragraphs[5].heading) + '"><h3>' + esc(ARTICLE.paragraphs[5].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[5].text) + '</p></section>' +
-            '<section class="ls-rag-pdf-chunk" data-c="F2" data-angle="91" title="F2 · ' + esc(ARTICLE.paragraphs[6].heading) + '"><h3>' + esc(ARTICLE.paragraphs[6].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[6].text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4820" data-angle="88" title="Chunk 4820 von 8151 · Auszug ab 4815 · ' + esc(ARTICLE.paragraphs[5].heading) + '"><h3>' + esc(ARTICLE.paragraphs[5].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[5].text) + '</p></section>' +
+            '<section class="ls-rag-pdf-chunk" data-c="4821" data-angle="91" title="Chunk 4821 von 8151 · Auszug ab 4815 · ' + esc(ARTICLE.paragraphs[6].heading) + '"><h3>' + esc(ARTICLE.paragraphs[6].heading) + '</h3><p>' + esc(ARTICLE.paragraphs[6].text) + '</p></section>' +
           '</div>' +
         '</div>' +
         '<footer class="ls-rag-pdf-foot"><span>' + esc(L("Enzyklopädie · Krake", "Encyclopædia · Kraken")) + '</span><span>' + esc(L("Simulation · fiktive Datei", "Simulation · fictional file")) + '</span><span>' + esc(L("Krake · Seite 417", "Octopus · page 417")) + '</span></footer>' +
@@ -145,7 +149,7 @@
 
     function railHTML() {
       return ARTICLE.paragraphs.map(function (p) {
-        return '<div class="ls-rag-rail-row" data-c="' + p.id + '"><div class="ls-rag-rail-top"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span></div><div class="ls-rag-rail-angle"><b>' + p.id + ' · ∠ ' + p.angle + '°</b><span class="ls-rag-rail-fit"><i style="width:' + Math.round(fitValue(p) * 100) + '%"></i></span></div><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
+        return '<div class="ls-rag-rail-row" data-c="' + p.id + '" title="Chunk ' + p.id + ' von ' + TOTAL_CHUNKS + ' · Auszug ' + EXCERPT_START + '–' + EXCERPT_END + ' · ' + esc(p.heading) + '"><div class="ls-rag-rail-top"><b>' + p.id + '</b><span class="ls-rag-rail-heading">' + esc(p.heading) + '</span></div><div class="ls-rag-rail-angle"><b>' + p.id + ' · ∠ ' + p.angle + '°</b><span class="ls-rag-rail-fit"><i style="width:' + Math.round(fitValue(p) * 100) + '%"></i></span></div><code>[' + esc(vectorText(p)) + ']</code><span class="ls-rag-rail-strip">' + vectorStrip(p) + '</span></div>';
       }).join("");
     }
 
@@ -164,7 +168,7 @@
           '<div class="ls-rag-doc-head"><span class="ls-rag-fileicon">PDF</span><div><b>encyclopaedia.pdf</b><small class="ls-rag-doc-status"></small></div><span class="ls-rag-doc-tag">' + esc(L("außerhalb des LLM", "outside the LLM")) + '</span></div>' +
           '<div class="ls-rag-doc-body">' +
             '<div class="ls-rag-pdf-wrap">' + pdfHTML() + '<div class="ls-rag-scanfx" aria-hidden="true"><i></i></div></div>' +
-            '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Nur Text · Chunk-Vektoren", "Text only · chunk vectors")) + '</div><div class="ls-rag-rail-list">' + railHTML() + '</div></div>' +
+            '<div class="ls-rag-rail"><div class="ls-rag-rail-head">' + esc(L("Nur Text · Chunk-Vektoren", "Text only · chunk vectors")) + '</div><div class="ls-rag-rail-meta">' + TOTAL_CHUNKS + ' ' + esc(L("Chunks gesamt", "chunks total")) + ' · ' + esc(L("Auszug 4815–4821", "excerpt 4815–4821")) + ' · ' + esc(L("Grenzwinkel 35°", "threshold 35°")) + '</div><div class="ls-rag-rail-more" title="' + esc(L("Davor: Chunks 1–4814", "Before: chunks 1–4814")) + '">…</div><div class="ls-rag-rail-list">' + railHTML() + '</div><div class="ls-rag-rail-more" title="' + esc(L("Danach: Chunks 4822–8151", "After: chunks 4822–8151")) + '">…</div></div>' +
           '</div>' +
         '</div>' +
         '<div class="ls-rag-phone-col">' +
@@ -234,7 +238,7 @@
     var pickBtns = el.querySelectorAll(".ls-rag-pick");
     var phoneEl = el.querySelector(".ls-rag-phone-screen");
 
-    var state = { step: 0, timers: [], pickerOpen: false, textFitted: false };
+    var state = { step: AGENT_RAG_LAST_STEP, timers: [], pickerOpen: false, textFitted: false };
 
     function clearTimers() {
       state.timers.forEach(function (id) { clearTimeout(id); });
@@ -265,7 +269,7 @@
       });
       state.timers.push(setTimeout(function () {
         completeScan();
-        if (docStatus) docStatus.textContent = L(CHUNK_COUNT + " Chunks · " + CHUNK_COUNT + " Vektoren", CHUNK_COUNT + " chunks · " + CHUNK_COUNT + " vectors");
+        if (docStatus) docStatus.textContent = L("Auszug 4815–4821 · 35°", "excerpt 4815–4821 · 35°");
       }, 2450));
     }
 
@@ -299,6 +303,29 @@
       });
     }
 
+    function restoreStepThree() {
+      docEl.classList.add("is-angling");
+      ARTICLE.paragraphs.forEach(function (p) {
+        var chunk = docEl.querySelector('.ls-rag-pdf-chunk[data-c="' + p.id + '"]');
+        var row = el.querySelector('.ls-rag-rail-row[data-c="' + p.id + '"]');
+        var fit = fits(p);
+        if (row) row.classList.add("is-angle-in");
+        if (chunk) {
+          chunk.classList.toggle("is-fit", fit);
+          chunk.classList.toggle("is-out", !fit);
+        }
+        if (row) {
+          row.classList.toggle("is-fit", fit);
+          row.classList.toggle("is-out", !fit);
+        }
+        if (SELECTED.indexOf(p.id) >= 0) {
+          if (chunk) chunk.classList.add("is-context");
+          if (row) row.classList.add("is-context");
+        }
+      });
+      selfCheck();
+    }
+
     function stepThree() {
       docEl.classList.add("is-angling");
       ARTICLE.paragraphs.forEach(function (p, i) {
@@ -329,7 +356,7 @@
         });
         selfCheck();
       }, 1900));
-      state.timers.push(setTimeout(function () { showAnswer(); selfCheck(); }, 3100));
+      state.timers.push(setTimeout(function () { selfCheck(); }, 2400));
     }
     function setCiteFocus(id) {
       Array.prototype.forEach.call(docEl.querySelectorAll(".ls-rag-pdf-chunk"), function (chunk) {
@@ -362,7 +389,7 @@
     }
     function showAnswer() {
       typingEl.hidden = true;
-      answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite" data-cite="C1" tabindex="0">[C1]</span><span class="ls-rag-cite" data-cite="C2" tabindex="0">[C2]</span>';
+      answerEl.innerHTML = esc(ANSWER) + ' <span class="ls-rag-cite" data-cite="4815" tabindex="0">[4815]</span><span class="ls-rag-cite" data-cite="4816" tabindex="0">[4816]</span>';
       bindCiteHover();
     }
 
@@ -384,23 +411,19 @@
     function setChat() {
       var hasFile = state.step >= 1;
       var hasQuestion = state.step >= 2;
-      var hasAnswer = state.step >= 3;
+      var hasAnswer = state.step >= 2;
       emptyEl.hidden = hasFile;
       fileMsg.hidden = !hasFile;
       questionMsg.hidden = !hasQuestion;
       aiMsg.hidden = !hasAnswer;
-      typingEl.hidden = !hasAnswer;
+      typingEl.hidden = true;
       answerEl.textContent = "";
       if (hasFile) {
         fileStatus.textContent = state.step === 1
-          ? L("wird gescannt …", "scanning …")
-          : state.step === 2
-            ? L(CHUNK_COUNT + " Chunks · " + CHUNK_COUNT + " Vektoren", CHUNK_COUNT + " chunks · " + CHUNK_COUNT + " vectors")
-            : L(CHUNK_COUNT + " Chunks · 2 im Kontext", CHUNK_COUNT + " chunks · 2 in context");
+          ? L("Auszug 4815–4821", "excerpt 4815–4821")
+          : L("Antwort bereit", "answer ready");
       }
-      if (hasAnswer) {
-        answerEl.innerHTML = '<span class="ls-rag-partial">' + esc(L("Ein Krake hat …", "An octopus has …")) + '</span>';
-      }
+      if (hasAnswer) showAnswer();
     }
 
     function selectFile() {
@@ -426,7 +449,7 @@
       state.timers.push(setTimeout(selectFile, 1000));
     }
 
-    function applyStep() {
+    function applyStep(restoring) {
       el.setAttribute("data-step", String(state.step));
       Array.prototype.forEach.call(stepsEl, function (s, i) {
         s.classList.toggle("is-on", i === state.step);
@@ -443,24 +466,24 @@
         docStatus.textContent = "";
         attachBtn.classList.add("is-hint");
       } else if (state.step === 1) {
-        docStatus.textContent = L("Scan läuft …", "Scanning …");
-        startScan();
+        docStatus.textContent = L("Auszug 4815–4821 · 35°", "excerpt 4815–4821 · 35°");
+        if (restoring) completeScan(); else startScan();
       } else if (state.step === 2) {
         completeScan();
-        docStatus.textContent = L(CHUNK_COUNT + " Chunks · " + CHUNK_COUNT + " Vektoren", CHUNK_COUNT + " chunks · " + CHUNK_COUNT + " vectors");
+        docStatus.textContent = L("Auszug 4815–4821 · 35°", "excerpt 4815–4821 · 35°");
       } else if (state.step === 3) {
         completeScan();
-        docStatus.textContent = L(CHUNK_COUNT + " Chunks · 2 im Kontext", CHUNK_COUNT + " chunks · 2 in context");
-        stepThree();
+        docStatus.textContent = L("Auszug 4815–4821 · 35°", "excerpt 4815–4821 · 35°");
+        if (restoring) restoreStepThree(); else stepThree();
       }
-      if (state.step === 1) requestAnimationFrame(function () { fitPdfText(); });
+      if (state.step >= 1) requestAnimationFrame(function () { fitPdfText(); });
       statusEl.textContent = state.step === 0
         ? ""
         : state.step === 1
           ? L("Der Agent scannt den Text außerhalb des LLM. Jeder Abschnitt wird ein Chunk mit eigenem Vektor.", "The agent scans the text outside the LLM. Each paragraph becomes a chunk with its own vector.")
           : state.step === 2
             ? ""
-            : L("C1 und C2 liegen unter 35° und wandern in den unsichtbaren Kontext.", "C1 and C2 lie below 35° and move into the invisible context.");
+            : L("4815 und 4816 liegen unter 35° und wandern in den unsichtbaren Kontext.", "4815 and 4816 lie below 35° and move into the invisible context.");
       nextBtn.textContent = state.step === 0
         ? L("Weiter", "Next")
         : state.step < 3
@@ -474,7 +497,8 @@
       if (next === state.step) return false;
       clearTimers();
       state.step = next;
-      applyStep();
+      AGENT_RAG_LAST_STEP = state.step;
+      applyStep(false);
       return true;
     }
 
@@ -511,11 +535,11 @@
       });
     });
 
-    applyStep();
+    applyStep(AGENT_RAG_LAST_STEP > 0);
     el.__lsRagSelfCheck = selfCheck;
 
     return {
-      update: function () { go(0); },
+      update: function () {},
       next: function () {
         if (state.step === 0) {
           if (picker.hidden) openPicker();
