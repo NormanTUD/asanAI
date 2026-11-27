@@ -1,0 +1,2899 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Form des Unbekannten · Topologie von OOD-Daten</title>
+<meta name="description" content="Interaktive Lesehilfe zu Datta et al.: Topology of Out-of-Distribution Examples in Deep Neural Networks. Verstehe in wenigen Minuten, wie Topologie verrät, wenn KI auf fremde Daten trifft.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07090d;
+    --bg-soft:#0c1017;
+    --panel:rgba(19,24,33,.78);
+    --panel-solid:#11161f;
+    --ink:#f3efe6;
+    --muted:#a6a7ad;
+    --faint:#737781;
+    --line:rgba(243,239,230,.11);
+    --line-strong:rgba(243,239,230,.2);
+    --orange:#ff6b3d;
+    --orange-soft:#ff9b73;
+    --amber:#ffc56e;
+    --mint:#8fe9c1;
+    --sky:#80c8ff;
+    --lilac:#c1b2ff;
+    --cream:#efe8db;
+    --cream-ink:#171510;
+    --cream-muted:#645e54;
+    --cream-line:rgba(23,21,16,.14);
+    --serif:"Fraunces","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"IBM Plex Mono","SF Mono","JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+    --shadow:0 2px 4px rgba(0,0,0,.25),0 30px 80px -35px rgba(0,0,0,.9);
+    --shadow-soft:0 20px 50px -28px rgba(0,0,0,.65);
+    --radius:26px;
+    --wrap:1180px;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.65;
+    background:
+      radial-gradient(1100px 780px at 78% -8%,rgba(255,107,61,.13),transparent 62%),
+      radial-gradient(900px 780px at -8% 30%,rgba(143,233,193,.08),transparent 60%),
+      radial-gradient(900px 900px at 55% 115%,rgba(128,200,255,.07),transparent 62%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:62px 62px;opacity:.34;
+    -webkit-mask-image:radial-gradient(circle at 50% 20%,#000 0%,transparent 72%);
+    mask-image:radial-gradient(circle at 50% 20%,#000 0%,transparent 72%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.035;mix-blend-mode:soft-light;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--orange);color:#0a0b0d}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+  img,svg,canvas{display:block}
+  h1,h2,h3,p{margin-top:0}
+  :focus-visible{outline:2px solid var(--orange-soft);outline-offset:4px}
+  .skip-link{position:fixed;left:16px;top:-100px;z-index:200;background:var(--cream);color:var(--cream-ink);padding:10px 16px;border-radius:999px;font-family:var(--mono);font-size:.76rem}
+  .skip-link:focus{top:16px}
+  .wrap{width:min(var(--wrap),calc(100% - clamp(32px,8vw,96px)));margin-inline:auto}
+  .mono{font-family:var(--mono)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .progress{position:fixed;inset:0 0 auto;height:3px;z-index:90;pointer-events:none;background:transparent}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--orange),var(--amber),var(--mint));will-change:transform}
+  .site-nav{
+    position:fixed;inset:0 0 auto;z-index:80;padding:15px 0;
+    transition:background .3s,border-color .3s,backdrop-filter .3s;
+    border-bottom:1px solid transparent;
+  }
+  .site-nav.scrolled{background:rgba(7,9,13,.76);border-bottom-color:var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:22px}
+  .brand{display:inline-flex;align-items:center;gap:11px;font-family:var(--mono);font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);white-space:nowrap}
+  .brand-mark{position:relative;width:19px;height:19px;border:1px solid var(--orange);border-radius:50%;display:grid;place-items:center}
+  .brand-mark::before,.brand-mark::after{content:"";position:absolute;background:var(--orange);border-radius:50%}
+  .brand-mark::before{width:12px;height:1px}
+  .brand-mark::after{width:1px;height:12px}
+  .nav-links{display:flex;align-items:center;gap:clamp(14px,2.2vw,28px);font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;color:var(--muted)}
+  .nav-links a{transition:color .2s;border-bottom:1px solid transparent;padding:4px 0}
+  .nav-links a:hover{color:var(--ink);border-color:var(--orange)}
+  .nav-source{display:inline-flex;align-items:center;gap:8px;color:var(--ink);border:1px solid var(--line-strong);border-radius:999px;padding:8px 13px;font-family:var(--mono);font-size:.66rem;transition:border-color .2s,background .2s,transform .2s;white-space:nowrap}
+  .nav-source:hover{border-color:var(--orange);background:rgba(255,107,61,.08);transform:translateY(-1px)}
+  .nav-source svg{width:13px;height:13px}
+  .hero{position:relative;min-height:100svh;display:flex;align-items:center;padding:132px 0 62px;overflow:hidden}
+  .hero::before{content:"";position:absolute;left:50%;top:48%;width:min(88vw,920px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,107,61,.08),transparent 66%);filter:blur(50px);pointer-events:none}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(360px,.94fr);align-items:center;gap:clamp(24px,4vw,64px);position:relative;z-index:1}
+  .kicker{display:inline-flex;align-items:center;gap:11px;font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange-soft);margin-bottom:26px}
+  .kicker::before{content:"";width:38px;height:1px;background:linear-gradient(90deg,var(--orange),transparent)}
+  .hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(3.35rem,7.1vw,7.2rem);line-height:.91;letter-spacing:-.048em;margin:0 0 30px;max-width:11ch}
+  .hero h1 .line{display:block}
+  .hero h1 em{font-style:italic;font-weight:400;color:var(--amber)}
+  .hero h1 .grad{display:inline-block;background:linear-gradient(102deg,var(--orange) 0%,var(--amber) 46%,var(--mint) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){.hero h1 .grad{color:var(--amber)}}
+  .hero-lede{max-width:47ch;font-size:clamp(1.02rem,1.45vw,1.22rem);line-height:1.62;color:var(--muted);margin-bottom:30px}
+  .hero-lede strong{color:var(--ink);font-weight:600}
+  .hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 15px;margin-bottom:31px;font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--faint)}
+  .hero-meta .sep{width:4px;height:4px;border-radius:50%;background:var(--line-strong)}
+  .hero-meta b{font-weight:400;color:var(--muted)}
+  .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;padding:13px 21px;font-family:var(--mono);font-size:.72rem;letter-spacing:.045em;cursor:pointer;transition:transform .2s,background .2s,border-color .2s,box-shadow .2s;border:1px solid transparent;line-height:1.1}
+  .btn svg{width:16px;height:16px;flex:none}
+  .btn-primary{background:linear-gradient(100deg,var(--orange),var(--amber));color:#130c08;box-shadow:0 14px 36px -16px rgba(255,107,61,.8)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 42px -18px rgba(255,107,61,.9)}
+  .btn-ghost{background:transparent;color:var(--muted);border-color:var(--line-strong)}
+  .btn-ghost:hover{color:var(--ink);border-color:var(--orange);transform:translateY(-2px)}
+  .hero-visual{position:relative;width:100%;display:flex;justify-content:center;align-items:center}
+  .instrument{position:relative;width:min(560px,100%);aspect-ratio:1 / 1.04;isolation:isolate}
+  .instrument::before{content:"";position:absolute;inset:7%;border:1px solid var(--line);border-radius:50%;pointer-events:none}
+  .instrument::after{content:"";position:absolute;inset:14%;border:1px dashed rgba(243,239,230,.13);border-radius:50%;animation:spin 46s linear infinite;pointer-events:none}
+  .instrument-ring{position:absolute;inset:1.5%;border:1px solid rgba(255,107,61,.22);border-radius:50%;pointer-events:none}
+  .instrument-ring::before,.instrument-ring::after{content:"";position:absolute;background:var(--orange);border-radius:50%;width:5px;height:5px;box-shadow:0 0 16px var(--orange)}
+  .instrument-ring::before{top:12.5%;left:14.5%}
+  .instrument-ring::after{bottom:12%;right:18%}
+  .instrument::marker{display:none}
+  .scroll-orbit{position:absolute;inset:0;border-radius:50%;pointer-events:none;animation:spin 34s linear infinite reverse}
+  .scroll-orbit span{position:absolute;left:50%;top:-2px;width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 18px var(--mint);transform:translateX(-50%)}
+  .instrument canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;z-index:1}
+  .instrument-glow{position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle,rgba(143,233,193,.13),rgba(128,200,255,.05) 44%,transparent 72%);filter:blur(28px);z-index:0}
+  .hero-note{position:absolute;z-index:3;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(8,11,16,.67);backdrop-filter:blur(12px);font-family:var(--mono);font-size:.61rem;letter-spacing:.05em;color:var(--muted);white-space:nowrap;box-shadow:0 12px 30px -20px #000}
+  .hero-note .dot{width:6px;height:6px;border-radius:50%;flex:none}
+  .hero-note strong{font-weight:400;color:var(--ink)}
+  .note-a{top:8%;left:0}
+  .note-b{top:42%;right:-4%}
+  .note-c{bottom:9%;left:5%}
+  .note-a .dot{background:var(--mint);box-shadow:0 0 12px var(--mint)}
+  .note-b .dot{background:var(--sky);box-shadow:0 0 12px var(--sky)}
+  .note-c .dot{background:var(--orange);box-shadow:0 0 12px var(--orange)}
+  .hero-caption{position:absolute;left:50%;bottom:1.6%;transform:translateX(-50%);z-index:3;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+  .scroll-cue{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--mono);font-size:.58rem;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);z-index:2}
+  .scroll-cue .stem{width:1px;height:37px;background:linear-gradient(var(--orange),transparent);animation:cue 2.2s ease-in-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes cue{0%,100%{opacity:.35;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+  .cream{background:var(--cream);color:var(--cream-ink);position:relative;z-index:1}
+  .cream::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;background-image:radial-gradient(rgba(23,21,16,.14) .7px,transparent .7px);background-size:9px 9px;mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}
+  .cream .mono{color:var(--cream-muted)}
+  .summary{padding:clamp(72px,10vw,128px) 0}
+  .summary-grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,7vw,92px);align-items:start;position:relative;z-index:1}
+  .summary-kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:#a23b1d;margin-bottom:24px;display:flex;align-items:center;gap:10px}
+  .summary-kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 5px rgba(255,107,61,.13)}
+  .summary-quote{font-family:var(--serif);font-weight:500;font-size:clamp(2.15rem,4.1vw,4.1rem);line-height:1.04;letter-spacing:-.035em;margin:0 0 26px;max-width:14ch}
+  .summary-quote em{font-style:italic;color:#b43f1d}
+  .summary-quote .mark{position:relative;white-space:nowrap}
+  .summary-quote .mark::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:.17em;background:rgba(255,107,61,.27);z-index:-1;transform:rotate(-1deg)}
+  .summary-lede{color:var(--cream-muted);font-size:1.01rem;max-width:46ch;margin-bottom:30px}
+  .summary-lede b{color:var(--cream-ink);font-weight:650}
+  .summary-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--cream-line);border-bottom:1px solid var(--cream-line);margin-top:34px}
+  .summary-stat{padding:18px 14px 17px;border-right:1px solid var(--cream-line)}
+  .summary-stat:last-child{border-right:0}
+  .summary-stat strong{display:block;font-family:var(--serif);font-weight:500;font-size:clamp(1.45rem,2.4vw,2.1rem);line-height:1;letter-spacing:-.03em;margin-bottom:6px}
+  .summary-stat span{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;line-height:1.5;color:var(--cream-muted);text-transform:uppercase}
+  .summary-points{display:grid;gap:0;position:relative;z-index:1}
+  .summary-point{display:grid;grid-template-columns:44px 1fr;gap:18px;padding:21px 0;border-bottom:1px solid var(--cream-line);align-items:start}
+  .summary-point:first-child{padding-top:2px}
+  .summary-point:last-child{border-bottom:0;padding-bottom:0}
+  .summary-num{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:#a23b1d;padding-top:4px}
+  .summary-point h3{font-family:var(--serif);font-weight:600;font-size:clamp(1.2rem,1.8vw,1.55rem);line-height:1.15;letter-spacing:-.02em;margin:0 0 8px}
+  .summary-point p{margin:0;color:var(--cream-muted);font-size:.9rem;line-height:1.62;max-width:50ch}
+  .section{position:relative;padding:clamp(74px,10vw,138px) 0}
+  .section-head{position:relative;z-index:1;margin-bottom:clamp(32px,4vw,52px)}
+  .eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange-soft);margin-bottom:18px}
+  .eyebrow::before{content:"";width:29px;height:1px;background:currentColor;opacity:.7}
+  .eyebrow .n{color:var(--faint)}
+  .section h2{font-family:var(--serif);font-weight:500;font-size:clamp(2.15rem,4.45vw,4.2rem);line-height:1.02;letter-spacing:-.04em;margin:0;max-width:18ch}
+  .section h2 em{font-style:italic;font-weight:400;color:var(--amber)}
+  .section-lede{max-width:64ch;margin:20px 0 0;color:var(--muted);font-size:clamp(.96rem,1.32vw,1.08rem);line-height:1.68}
+  .section-lede strong{color:var(--ink);font-weight:600}
+  .section-lede .hl{color:var(--ink);border-bottom:1px solid rgba(255,197,110,.45);padding-bottom:1px}
+  .problem-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(360px,1.15fr);gap:clamp(32px,6vw,84px);align-items:center}
+  .problem-copy p{color:var(--muted);font-size:1.01rem;line-height:1.72;margin-bottom:17px;max-width:50ch}
+  .problem-copy p strong{color:var(--ink);font-weight:600}
+  .problem-copy .pull{font-family:var(--serif);font-size:clamp(1.4rem,2.4vw,2rem);line-height:1.22;letter-spacing:-.025em;color:var(--ink);border-left:2px solid var(--orange);padding-left:22px;margin:30px 0 0;max-width:22ch}
+  .world-visual{position:relative;padding:15px;border:1px solid var(--line);border-radius:calc(var(--radius) + 5px);background:linear-gradient(155deg,rgba(20,25,34,.9),rgba(9,12,17,.93));box-shadow:var(--shadow);overflow:hidden}
+  .world-visual::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(143,233,193,.08),transparent 55%);pointer-events:none}
+  .world-visual svg{width:100%;height:auto;overflow:visible}
+  .world-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;fill:var(--muted);text-transform:uppercase}
+  .world-label.bright{fill:var(--ink)}
+  .world-label.orange{fill:var(--orange-soft)}
+  .world-dot{fill:var(--mint);opacity:.74}
+  .world-dot.sky{fill:var(--sky);opacity:.66}
+  .world-boundary{fill:none;stroke:rgba(243,239,230,.22);stroke-width:1.2;stroke-dasharray:5 7}
+  .world-halo{fill:rgba(143,233,193,.035)}
+  .ood-layer{opacity:0;transition:opacity .75s ease}
+  .world-visual.open .ood-layer{opacity:1}
+  .ood-dot{fill:var(--orange);filter:drop-shadow(0 0 6px rgba(255,107,61,.75))}
+  .ood-ring{fill:none;stroke:rgba(255,107,61,.4);stroke-width:1;stroke-dasharray:3 6}
+  .ood-blob{fill:rgba(255,107,61,.08);stroke:rgba(255,107,61,.38);stroke-width:1}
+  .world-ui{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 8px 3px;position:relative;z-index:1;flex-wrap:wrap}
+  .world-status{font-family:var(--mono);font-size:.62rem;letter-spacing:.05em;color:var(--muted);line-height:1.5}
+  .world-status b{color:var(--ink);font-weight:400}
+  .tiny-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--line-strong);border-radius:999px;color:var(--ink);padding:9px 13px;font-family:var(--mono);font-size:.62rem;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+  .tiny-btn:hover{border-color:var(--orange);background:rgba(255,107,61,.08);transform:translateY(-1px)}
+  .tiny-btn svg{width:13px;height:13px}
+  .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:19px;margin-top:clamp(45px,6vw,78px)}
+  .impact-card{position:relative;padding:24px 23px 23px;border:1px solid var(--line);border-radius:21px;background:linear-gradient(160deg,rgba(20,25,34,.72),rgba(10,13,19,.7));overflow:hidden;transition:transform .25s,border-color .25s}
+  .impact-card::before{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,var(--orange),transparent);opacity:.55}
+  .impact-card:hover{transform:translateY(-4px);border-color:var(--line-strong)}
+  .impact-icon{width:35px;height:35px;margin-bottom:28px;color:var(--orange-soft)}
+  .impact-icon svg{width:100%;height:100%}
+  .impact-card .tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+  .impact-card h3{font-family:var(--serif);font-size:1.27rem;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
+  .impact-card p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.6}
+  .demo-panel{position:relative;margin-top:clamp(28px,4vw,45px);border:1px solid var(--line);border-radius:calc(var(--radius) + 4px);background:linear-gradient(150deg,rgba(19,24,33,.88),rgba(8,11,16,.93));box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
+  .demo-panel::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 0%,rgba(255,107,61,.08),transparent 42%),radial-gradient(circle at 92% 90%,rgba(143,233,193,.06),transparent 45%);pointer-events:none;z-index:-1}
+  .demo-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:15px;padding:23px 26px 0}
+  .demo-title{font-family:var(--serif);font-weight:600;font-size:1.35rem;letter-spacing:-.02em;margin:0 0 3px}
+  .demo-sub{color:var(--muted);font-size:.79rem;margin:0}
+  .demo-badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-family:var(--mono);font-size:.57rem;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+  .demo-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px var(--orange)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-family:var(--mono);font-size:.6rem;letter-spacing:.04em;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .fold-wrap{padding:20px 16px 0}
+  .fold-canvas-wrap{position:relative;width:100%;aspect-ratio:16 / 8.6;min-height:320px;overflow:hidden;border:1px solid var(--line);border-radius:19px;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.022),transparent 65%),rgba(5,7,11,.55)}
+  .fold-canvas-wrap canvas{width:100%;height:100%}
+  .fold-readout{display:grid;grid-template-columns:1.1fr 1.1fr 1.3fr;gap:1px;background:var(--line);border:1px solid var(--line);border-top:0;border-radius:0 0 18px 18px;overflow:hidden}
+  .fold-readout div{background:rgba(11,14,20,.84);padding:13px 15px}
+  .fold-readout .k{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+  .fold-readout .v{font-size:.79rem;color:var(--muted);line-height:1.35}
+  .fold-readout .v strong{color:var(--ink);font-weight:500}
+  .demo-controls{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:20px 26px 24px}
+  .range-group{display:grid;grid-template-columns:auto minmax(130px,1fr) auto;align-items:center;gap:12px;flex:1 1 320px}
+  .range-label{font-family:var(--mono);font-size:.61rem;letter-spacing:.04em;color:var(--faint);white-space:nowrap}
+  .range-group output{font-family:var(--mono);font-size:.66rem;color:var(--ink);min-width:66px;text-align:right;font-variant-numeric:tabular-nums}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:var(--line-strong);outline:none;cursor:pointer;accent-color:var(--orange)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--orange);border:2px solid #090b0f;box-shadow:0 0 0 5px rgba(255,107,61,.16),0 0 18px rgba(255,107,61,.4);transition:transform .15s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.1)}
+  input[type="range"]::-moz-range-thumb{width:17px;height:17px;border:2px solid #090b0f;border-radius:50%;background:var(--orange);box-shadow:0 0 0 5px rgba(255,107,61,.16),0 0 18px rgba(255,107,61,.4)}
+  input[type="range"]:focus-visible{outline:2px solid var(--amber);outline-offset:7px}
+  .play-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:999px;padding:9px 14px;font-family:var(--mono);font-size:.61rem;cursor:pointer;transition:border-color .2s,background .2s}
+  .play-btn:hover{border-color:var(--orange);background:rgba(255,107,61,.08)}
+  .play-btn svg{width:12px;height:12px}
+  .demo-caption{padding:0 26px 25px;color:var(--faint);font-size:.73rem;line-height:1.6;margin:0}
+  .demo-caption b{color:var(--muted);font-weight:500}
+  .tda-section{overflow:hidden}
+  .tda-section::before{content:"";position:absolute;right:-12vw;top:12%;width:48vw;height:48vw;border-radius:50%;background:radial-gradient(circle,rgba(255,197,110,.08),transparent 64%);filter:blur(40px);pointer-events:none}
+  .tda-lab{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(320px,.94fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:calc(var(--radius) + 4px);overflow:hidden;box-shadow:var(--shadow);position:relative;z-index:1}
+  .tda-main{background:rgba(8,11,16,.8);padding:16px;min-width:0}
+  .tda-canvas-wrap{position:relative;width:100%;aspect-ratio:1.06 / 1;min-height:360px;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(255,197,110,.055),transparent 56%),rgba(5,7,11,.55)}
+  .tda-canvas-wrap canvas{width:100%;height:100%}
+  .tda-overlay{position:absolute;left:14px;top:13px;font-family:var(--mono);font-size:9px;line-height:1.65;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);pointer-events:none}
+  .tda-overlay b{display:block;color:var(--muted);font-weight:400}
+  .tda-side{background:rgba(13,17,24,.9);padding:24px;display:flex;flex-direction:column;gap:19px;min-width:0}
+  .tda-side .eyebrow{margin-bottom:0;font-size:.56rem}
+  .metric-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:17px;overflow:hidden}
+  .metric{background:rgba(7,10,15,.72);padding:15px 15px 14px}
+  .metric .k{font-family:var(--mono);font-size:.55rem;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:6px;margin-bottom:7px}
+  .metric .k i{width:5px;height:5px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint)}
+  .metric:nth-child(2) .k i{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+  .metric strong{font-family:var(--serif);font-size:2.25rem;line-height:1;font-weight:500;letter-spacing:-.04em;display:block;font-variant-numeric:tabular-nums}
+  .metric small{font-family:var(--mono);font-size:.55rem;color:var(--faint);display:block;margin-top:5px;letter-spacing:.03em}
+  .barcode-card{border-top:1px solid var(--line);padding-top:16px}
+  .barcode-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+  .barcode-head span{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .barcode-head strong{font-family:var(--mono);font-size:.6rem;color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
+  .barcode-wrap{position:relative;width:100%;height:122px}
+  .barcode-wrap canvas{width:100%;height:100%}
+  .tda-state{font-size:.82rem;line-height:1.55;color:var(--muted);margin:0;min-height:3.1em}
+  .tda-state strong{color:var(--ink);font-weight:500}
+  .tda-controls{display:flex;flex-direction:column;gap:12px;margin-top:auto}
+  .tda-slider-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px}
+  .tda-slider-row output{font-family:var(--mono);font-size:.64rem;color:var(--ink);font-variant-numeric:tabular-nums;min-width:42px;text-align:right}
+  .tda-slider-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+  .tda-buttons{display:flex;gap:9px;align-items:center}
+  .tda-buttons .play-btn{flex:1;justify-content:center}
+  .pipeline-grid{display:grid;grid-template-columns:minmax(240px,.7fr) minmax(0,1.3fr);gap:clamp(24px,4vw,42px);align-items:stretch}
+  .steps{display:flex;flex-direction:column;gap:4px;align-self:start;position:sticky;top:96px}
+  .step-btn{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--muted);padding:17px 2px;text-align:left;cursor:pointer;transition:color .2s,padding .2s,border-color .2s}
+  .step-btn .num{font-family:var(--mono);font-size:.59rem;color:var(--faint);transition:color .2s}
+  .step-btn .name{font-family:var(--serif);font-size:1.08rem;letter-spacing:-.01em;transition:font-size .2s}
+  .step-btn .chev{width:13px;height:13px;opacity:.25;transition:opacity .2s,transform .2s}
+  .step-btn:hover{color:var(--ink)}
+  .step-btn:hover .chev{opacity:.7}
+  .step-btn.active{color:var(--ink);border-color:rgba(255,107,61,.42);padding-left:8px}
+  .step-btn.active .num{color:var(--orange-soft)}
+  .step-btn.active .chev{opacity:1;transform:translateX(3px);color:var(--orange)}
+  .stage{border:1px solid var(--line);border-radius:calc(var(--radius) + 3px);background:linear-gradient(150deg,rgba(19,24,33,.84),rgba(8,11,16,.92));overflow:hidden;box-shadow:var(--shadow);min-height:500px;display:flex;flex-direction:column}
+  .stage-canvas-wrap{position:relative;width:100%;flex:1;min-height:330px;background:radial-gradient(circle at 50% 45%,rgba(128,200,255,.06),transparent 60%),rgba(5,7,11,.5)}
+  .stage-canvas-wrap canvas{width:100%;height:100%;position:absolute;inset:0}
+  .stage-copy{padding:22px 25px 24px;border-top:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:8px 18px;align-items:start;background:rgba(10,13,19,.64)}
+  .stage-tag{font-family:var(--mono);font-size:.56rem;letter-spacing:.09em;text-transform:uppercase;color:var(--orange-soft);padding-top:4px;white-space:nowrap}
+  .stage-copy h3{font-family:var(--serif);font-size:1.42rem;font-weight:600;letter-spacing:-.02em;margin:0 0 6px}
+  .stage-copy p{grid-column:2;margin:0;font-size:.86rem;line-height:1.6;color:var(--muted);max-width:57ch}
+  .stage-copy p b{color:var(--ink);font-weight:500}
+  .results{padding:clamp(78px,10vw,132px) 0}
+  .results .section h2,.results h2{font-family:var(--serif);font-weight:500;font-size:clamp(2.15rem,4.45vw,4.2rem);line-height:1.02;letter-spacing:-.04em;margin:0;max-width:17ch;color:var(--cream-ink)}
+  .results h2 em{font-style:italic;color:#b43f1d}
+  .results .eyebrow{color:#a23b1d}
+  .results .section-lede{color:var(--cream-muted)}
+  .results .section-lede strong{color:var(--cream-ink)}
+  .result-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:15px;margin:28px 0 17px}
+  .tabs{display:inline-flex;background:rgba(23,21,16,.06);border:1px solid var(--cream-line);border-radius:999px;padding:3px;gap:2px}
+  .tab{border:0;background:transparent;color:var(--cream-muted);padding:8px 15px;border-radius:999px;font-family:var(--mono);font-size:.64rem;letter-spacing:.03em;cursor:pointer;transition:background .2s,color .2s}
+  .tab:hover{color:var(--cream-ink)}
+  .tab.active{background:var(--cream-ink);color:var(--cream);box-shadow:0 4px 14px -8px #000}
+  .chart-note{font-family:var(--mono);font-size:.56rem;letter-spacing:.04em;color:var(--cream-muted);text-align:right;line-height:1.5}
+  .chart-card{border:1px solid var(--cream-line);background:rgba(255,255,255,.38);border-radius:calc(var(--radius) + 2px);padding:clamp(14px,2.2vw,24px);box-shadow:0 22px 50px -40px rgba(23,21,16,.5);position:relative;overflow:hidden}
+  .chart-card::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.4),transparent 46%);pointer-events:none}
+  .chart-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start;padding:0 4px 10px;position:relative;z-index:1}
+  .chart-title{font-family:var(--serif);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;margin:0 0 3px;color:var(--cream-ink)}
+  .chart-sub{font-size:.74rem;color:var(--cream-muted);margin:0}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:.57rem;letter-spacing:.03em;color:var(--cream-muted)}
+  .chart-legend span{display:inline-flex;align-items:center;gap:6px}
+  .chart-legend i{width:8px;height:8px;border-radius:50%}
+  .chart-wrap{position:relative;width:100%;height:clamp(300px,40vw,430px)}
+  .chart-wrap canvas{width:100%;height:100%}
+  .chart-tooltip{position:absolute;z-index:3;pointer-events:none;background:rgba(23,21,16,.94);color:var(--cream);padding:9px 11px;border-radius:9px;font-family:var(--mono);font-size:.61rem;line-height:1.5;opacity:0;transform:translate(-50%,-110%);transition:opacity .15s;white-space:nowrap;box-shadow:0 12px 30px -18px #000}
+  .chart-tooltip.show{opacity:1}
+  .result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--cream-line);border:1px solid var(--cream-line);border-radius:19px;overflow:hidden;margin-top:20px}
+  .result-stat{background:rgba(255,255,255,.34);padding:18px 18px 17px}
+  .result-stat .k{font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-muted);margin-bottom:7px;display:block}
+  .result-stat strong{font-family:var(--serif);font-size:clamp(1.45rem,2.5vw,2.2rem);line-height:1;font-weight:500;letter-spacing:-.03em;display:block;color:var(--cream-ink);margin-bottom:4px;font-variant-numeric:tabular-nums}
+  .result-stat small{font-size:.67rem;color:var(--cream-muted);line-height:1.45;display:block}
+  .result-stat .delta{color:#b43f1d;font-family:var(--mono);font-size:.6rem}
+  .results-caveat{display:flex;gap:10px;align-items:flex-start;margin-top:19px;color:var(--cream-muted);font-size:.75rem;line-height:1.6;max-width:72ch}
+  .results-caveat svg{width:15px;height:15px;flex:none;margin-top:2px;color:#a23b1d}
+  .insights-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:19px;margin-top:clamp(36px,5vw,56px)}
+  .insight-card{position:relative;border:1px solid var(--line);border-radius:23px;background:linear-gradient(155deg,rgba(20,25,34,.73),rgba(9,12,17,.78));padding:24px;display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:center;overflow:hidden;transition:transform .25s,border-color .25s}
+  .insight-card:hover{transform:translateY(-3px);border-color:var(--line-strong)}
+  .insight-num{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;color:var(--orange-soft);margin-bottom:14px}
+  .insight-card h3{font-family:var(--serif);font-size:1.45rem;line-height:1.12;letter-spacing:-.025em;font-weight:600;margin:0 0 9px}
+  .insight-card p{margin:0;color:var(--muted);font-size:.83rem;line-height:1.6}
+  .insight-card p b{color:var(--ink);font-weight:500}
+  .mini-viz{position:relative;height:125px;border-radius:15px;background:rgba(4,6,10,.42);border:1px solid var(--line);overflow:hidden}
+  .mini-viz svg{width:100%;height:100%}
+  .limits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:19px;margin-top:clamp(36px,5vw,56px)}
+  .limit-card{border:1px solid var(--line);border-radius:21px;padding:23px 23px 22px;background:rgba(13,17,24,.57);position:relative}
+  .limit-card .x{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+  .limit-card .x i{width:18px;height:1px;background:var(--orange);display:inline-block}
+  .limit-card h3{font-family:var(--serif);font-size:1.25rem;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;font-weight:600}
+  .limit-card p{margin:0;color:var(--muted);font-size:.83rem;line-height:1.62}
+  .maturity{margin-top:clamp(42px,6vw,67px);border:1px solid var(--line);border-radius:23px;padding:25px;background:linear-gradient(150deg,rgba(20,25,34,.68),rgba(9,12,17,.74));position:relative;overflow:hidden}
+  .maturity-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:29px}
+  .maturity-head h3{font-family:var(--serif);font-size:1.38rem;font-weight:600;letter-spacing:-.02em;margin:0}
+  .maturity-head span{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;color:var(--faint)}
+  .maturity-track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding-top:3px}
+  .maturity-track::before{content:"";position:absolute;left:0;right:0;top:10px;height:1px;background:linear-gradient(90deg,var(--orange),rgba(255,107,61,.55) 48%,var(--line-strong) 48%)}
+  .maturity-step{position:relative;padding-top:28px}
+  .maturity-step::before{content:"";position:absolute;left:0;top:4px;width:13px;height:13px;border-radius:50%;border:1px solid var(--line-strong);background:var(--bg)}
+  .maturity-step.done::before{background:var(--orange);border-color:var(--orange);box-shadow:0 0 0 4px rgba(255,107,61,.13)}
+  .maturity-step.current::before{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 5px rgba(255,197,110,.15),0 0 16px rgba(255,197,110,.5)}
+  .maturity-step strong{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-weight:400}
+  .maturity-step span{display:block;font-size:.7rem;line-height:1.4;color:var(--faint);max-width:17ch}
+  .verdict{margin-top:clamp(45px,6vw,72px);position:relative;border-radius:calc(var(--radius) + 4px);padding:clamp(24px,4vw,42px);background:linear-gradient(135deg,rgba(255,107,61,.16),rgba(255,197,110,.07) 48%,rgba(143,233,193,.06));border:1px solid rgba(255,107,61,.25);overflow:hidden;box-shadow:var(--shadow-soft)}
+  .verdict::before{content:"";position:absolute;right:-12%;top:-40%;width:52%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,107,61,.14),transparent 65%);filter:blur(20px);pointer-events:none}
+  .verdict-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(25px,4vw,55px);position:relative;z-index:1}
+  .verdict h3{font-family:var(--serif);font-size:clamp(1.6rem,2.7vw,2.45rem);line-height:1.06;letter-spacing:-.03em;font-weight:500;margin:0 0 21px;max-width:17ch}
+  .verdict h3 em{font-style:italic;color:var(--amber)}
+  .verdict-col h4{font-family:var(--mono);font-size:.59rem;letter-spacing:.09em;text-transform:uppercase;color:var(--orange-soft);margin:0 0 12px;font-weight:400}
+  .verdict-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .verdict-list li{display:grid;grid-template-columns:16px 1fr;gap:9px;color:var(--muted);font-size:.84rem;line-height:1.55}
+  .verdict-list svg{width:14px;height:14px;margin-top:3px;color:var(--mint)}
+  .verdict-list.no svg{color:var(--orange-soft)}
+  .verdict-quote{margin:32px 0 0;padding-top:24px;border-top:1px solid rgba(255,107,61,.2);font-family:var(--serif);font-size:clamp(1.2rem,2vw,1.55rem);line-height:1.33;letter-spacing:-.018em;color:var(--ink);max-width:44ch;position:relative;z-index:1}
+  .glossary{padding:clamp(72px,9vw,112px) 0}
+  .glossary-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;margin-top:38px;border-top:1px solid var(--line)}
+  details{border-bottom:1px solid var(--line);padding:0}
+  summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 0;font-family:var(--serif);font-size:1.08rem;letter-spacing:-.01em;color:var(--ink);transition:color .2s}
+  summary::-webkit-details-marker{display:none}
+  summary:hover{color:var(--amber)}
+  summary .plus{position:relative;width:15px;height:15px;flex:none;border:1px solid var(--line-strong);border-radius:50%;transition:border-color .2s,transform .3s}
+  summary .plus::before,summary .plus::after{content:"";position:absolute;left:50%;top:50%;background:var(--muted);transform:translate(-50%,-50%);transition:background .2s}
+  summary .plus::before{width:6px;height:1px}
+  summary .plus::after{width:1px;height:6px}
+  details[open] summary .plus{border-color:var(--orange);transform:rotate(90deg)}
+  details[open] summary .plus::before,details[open] summary .plus::after{background:var(--orange)}
+  details p{margin:0;padding:0 30px 19px 0;color:var(--muted);font-size:.81rem;line-height:1.65}
+  details p b{color:var(--ink);font-weight:500}
+  .site-footer{padding:36px 0 44px;border-top:1px solid var(--line);position:relative}
+  .footer-grid{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:27px}
+  .footer-brand{max-width:36ch}
+  .footer-brand .big{font-family:var(--serif);font-size:1.65rem;letter-spacing:-.025em;line-height:1.1;margin:0 0 9px}
+  .footer-brand p{color:var(--faint);font-size:.7rem;line-height:1.6;margin:0}
+  .footer-links{display:flex;flex-wrap:wrap;gap:12px 24px;font-family:var(--mono);font-size:.61rem;color:var(--faint);align-items:center;padding-top:5px}
+  .footer-links a{border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+  .footer-links a:hover{color:var(--ink);border-color:var(--orange)}
+  .top-btn{position:fixed;right:19px;bottom:19px;z-index:70;width:41px;height:41px;border-radius:50%;border:1px solid var(--line-strong);background:rgba(13,17,24,.8);color:var(--ink);display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(12px);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s,border-color .2s}
+  .top-btn.show{opacity:1;pointer-events:auto;transform:none}
+  .top-btn:hover{border-color:var(--orange)}
+  .top-btn svg{width:14px;height:14px}
+  .js .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+  .js .reveal.in{opacity:1;transform:none}
+  html:not(.js) .reveal{opacity:1;transform:none}
+  .reveal.delay-1{transition-delay:.08s}
+  .reveal.delay-2{transition-delay:.16s}
+  @media (max-width:1080px){
+    .hero-grid{grid-template-columns:minmax(0,1.08fr) minmax(310px,.92fr)}
+    .hero h1{font-size:clamp(3.2rem,7.3vw,5.9rem)}
+    .note-b{right:-1%}
+    .nav-links{display:none}
+    .problem-grid{grid-template-columns:1fr;gap:38px}
+    .problem-copy p{max-width:65ch}
+    .problem-copy .pull{max-width:30ch}
+    .world-visual{max-width:620px;margin-inline:auto;width:100%}
+    .tda-lab{grid-template-columns:1fr}
+    .tda-canvas-wrap{aspect-ratio:1.7 / 1;min-height:320px}
+    .tda-side{display:grid;grid-template-columns:1fr 1fr;align-items:start}
+    .tda-side .eyebrow,.tda-state,.tda-controls{grid-column:1 / -1}
+    .tda-controls{margin-top:0}
+    .pipeline-grid{grid-template-columns:1fr}
+    .steps{position:static;display:grid;grid-template-columns:repeat(6,1fr);gap:4px;overflow-x:auto;padding-bottom:4px}
+    .step-btn{grid-template-columns:1fr;gap:5px;border-bottom:1px solid var(--line);border-top:2px solid transparent;padding:11px 8px 12px;min-width:105px}
+    .step-btn .chev{display:none}
+    .step-btn.active{border-top-color:var(--orange);border-bottom-color:var(--line);padding-left:8px}
+    .step-btn .name{font-size:.95rem}
+  }
+  @media (max-width:820px){
+    .hero{padding-top:110px;min-height:auto}
+    .hero-grid{grid-template-columns:1fr;gap:42px}
+    .hero h1{max-width:12ch}
+    .hero-lede{max-width:60ch}
+    .hero-visual{order:2;max-width:520px;margin-inline:auto;width:100%}
+    .instrument{width:min(500px,92vw)}
+    .scroll-cue{display:none}
+    .summary-grid{grid-template-columns:1fr;gap:36px}
+    .summary-quote{max-width:16ch}
+    .summary-stats{max-width:580px}
+    .impact-grid{grid-template-columns:1fr;gap:13px}
+    .impact-card{display:grid;grid-template-columns:46px 1fr;gap:15px;padding:19px}
+    .impact-icon{width:30px;height:30px;margin:2px 0 0}
+    .impact-card .tag{grid-column:2;margin:0}
+    .impact-card h3{grid-column:2;margin:0}
+    .impact-card p{grid-column:2;margin:0}
+    .insights-grid,.limits-grid{grid-template-columns:1fr}
+    .fold-canvas-wrap{aspect-ratio:1.15 / 1;min-height:330px}
+    .fold-readout{grid-template-columns:1fr}
+    .fold-readout div{border-bottom:1px solid var(--line)}
+    .fold-readout div:last-child{border-bottom:0}
+    .result-stats{grid-template-columns:1fr}
+    .verdict-grid{grid-template-columns:1fr;gap:30px}
+    .glossary-grid{grid-template-columns:1fr}
+    .footer-grid{flex-direction:column}
+  }
+  @media (max-width:620px){
+    .wrap{width:calc(100% - 34px)}
+    .site-nav{padding:12px 0}
+    .nav-source{padding:7px 10px;font-size:.58rem}
+    .nav-source span{display:none}
+    .hero{padding:100px 0 42px}
+    .hero h1{font-size:clamp(2.95rem,13.7vw,4.5rem);margin-bottom:22px}
+    .hero-meta{font-size:.6rem;gap:6px 11px}
+    .hero-actions{gap:9px}
+    .btn{padding:12px 16px;font-size:.65rem}
+    .hero-note{font-size:.54rem;padding:6px 8px}
+    .note-a{top:3%;left:-2%}
+    .note-b{top:32%;right:-2%}
+    .note-c{bottom:6%;left:1%}
+    .instrument{width:min(450px,96vw)}
+    .summary{padding:64px 0}
+    .summary-stats{grid-template-columns:1fr 1fr}
+    .summary-stat:nth-child(2){border-right:0}
+    .summary-stat:nth-child(-n+2){border-bottom:1px solid var(--cream-line)}
+    .summary-point{grid-template-columns:33px 1fr;gap:12px}
+    .section h2,.results h2{font-size:clamp(2rem,10vw,3rem)}
+    .demo-head{padding:18px 17px 0}
+    .demo-controls{padding:17px}
+    .demo-caption{padding:0 17px 20px}
+    .fold-wrap{padding:14px 10px 0}
+    .fold-canvas-wrap{aspect-ratio:1 / 1.02;min-height:300px}
+    .tda-main{padding:10px}
+    .tda-canvas-wrap{aspect-ratio:1 / 1.03;min-height:300px}
+    .tda-side{padding:17px;grid-template-columns:1fr}
+    .tda-side .eyebrow,.tda-state,.tda-controls{grid-column:auto}
+    .barcode-wrap{height:105px}
+    .stage{min-height:440px}
+    .stage-canvas-wrap{min-height:260px}
+    .stage-copy{padding:18px 17px 20px;grid-template-columns:1fr}
+    .stage-copy p{grid-column:1}
+    .result-toolbar{align-items:flex-start}
+    .chart-note{text-align:left}
+    .chart-wrap{height:310px}
+    .insight-card{grid-template-columns:1fr;gap:17px}
+    .mini-viz{height:105px}
+    .maturity-track{grid-template-columns:1fr 1fr;gap:18px 0}
+    .maturity-track::before{display:none}
+    .maturity-step{padding-top:25px}
+    .maturity-step::before{top:0}
+    .maturity-head h3{max-width:15ch}
+    .verdict{padding:22px 18px}
+    .footer-brand .big{font-size:1.4rem}
+    .top-btn{right:13px;bottom:13px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+    .js .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Zum Inhalt springen</a>
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+<nav class="site-nav" id="siteNav" aria-label="Seitennavigation">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="An den Anfang">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Form &amp; Fremdheit</span>
+    </a>
+    <div class="nav-links">
+      <a href="#problem">Problem</a>
+      <a href="#intuition">Intuition</a>
+      <a href="#tda">TDA-Labor</a>
+      <a href="#methode">Methode</a>
+      <a href="#ergebnisse">Ergebnisse</a>
+    </div>
+    <a class="nav-source" href="https://arxiv.org/abs/2501.12522" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+      <span>Paper 2501.12522</span>
+    </a>
+  </div>
+</nav>
+
+<main id="main">
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="kicker">Interaktive Lesehilfe · Topologie trifft OOD</div>
+          <h1>
+            <span class="line">Die Form</span>
+            <span class="line"><em>des</em> <span class="grad">Unbekannten</span></span>
+          </h1>
+          <p class="hero-lede">
+            Ein KI-Modell ordnet vertraute Daten zu kompakten Inseln. Bei fremden Daten gelingt das nicht.
+            Diese Seite zeigt, wie man diesen Unterschied mit <strong>Topologie sichtbar macht</strong> –
+            in wenigen Minuten statt zwölf Paper-Seiten.
+          </p>
+          <div class="hero-meta">
+            <b>Datta et al.</b><span class="sep"></span><span>Sandia National Laboratories</span><span class="sep"></span><span>2025</span><span class="sep"></span><span>ca. 6 Min.</span>
+          </div>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#kurzfassung">
+              In 20 Sekunden verstehen
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn btn-ghost" href="#tda">Direkt zum Experiment</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="instrument">
+            <span class="instrument-glow"></span>
+            <span class="instrument-ring"></span>
+            <span class="scroll-orbit"><span></span></span>
+            <canvas id="heroCanvas" aria-label="Animierte Punktwolke: drei kompakte Inseln und eine zersplitterte OOD-Wolke"></canvas>
+            <span class="hero-note note-a"><span class="dot"></span>Embedding · <strong>512 Dimensionen</strong></span>
+            <span class="hero-note note-b"><span class="dot"></span>ID · <strong>3 Inseln</strong></span>
+            <span class="hero-note note-c"><span class="dot"></span>OOD · <strong>bleibt fragmentiert</strong></span>
+            <span class="hero-caption">latent space / bootstrapped point cloud</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"><span>scrollen</span><span class="stem"></span></div>
+  </header>
+
+  <section class="cream summary" id="kurzfassung">
+    <div class="wrap">
+      <div class="summary-grid">
+        <div class="reveal">
+          <div class="summary-kicker">Das Paper in 20 Sekunden</div>
+          <h2 class="summary-quote">Vertraute Daten werden <em>einfach</em>. Fremde bleiben <span class="mark">zäh</span>.</h2>
+          <p class="summary-lede">
+            Das ist keine Metapher, sondern ein messbarer Effekt im Inneren eines neuronalen Netzes.
+            Die Autoren zeigen: <b>Die Form der Daten verrät, ob das Modell zu Hause ist.</b>
+          </p>
+          <div class="summary-stats">
+            <div class="summary-stat"><strong>2</strong><span>ResNet18-Modelle</span></div>
+            <div class="summary-stat"><strong>2</strong><span>ID/OOD-Paare</span></div>
+            <div class="summary-stat"><strong>512</strong><span>Embedding-Dimensionen</span></div>
+            <div class="summary-stat"><strong>50k</strong><span>Bootstrap-Läufe</span></div>
+          </div>
+        </div>
+        <div class="summary-points">
+          <article class="summary-point reveal delay-1">
+            <div class="summary-num">01</div>
+            <div>
+              <h3>Das Problem</h3>
+              <p>OOD heißt „außerhalb der Trainingsverteilung“. Genau dort sind Modelle oft besonders selbstsicher – und falsch.</p>
+            </div>
+          </article>
+          <article class="summary-point reveal delay-1">
+            <div class="summary-num">02</div>
+            <div>
+              <h3>Die Methode</h3>
+              <p>Bilder durch ein Netz schicken, den 512-dimensionalen Embedding-Vektor nehmen und die Topologie dieser Punktwolke messen.</p>
+            </div>
+          </article>
+          <article class="summary-point reveal delay-2">
+            <div class="summary-num">03</div>
+            <div>
+              <h3>Der Befund</h3>
+              <p>OOD-Punkte bilden im Schnitt langlebigere „Inseln“. Das Netz kann sie nicht so stark vereinfachen wie Trainings- oder Testdaten.</p>
+            </div>
+          </article>
+          <article class="summary-point reveal delay-2">
+            <div class="summary-num">04</div>
+            <div>
+              <h3>Der Wert</h3>
+              <p>Ein billiges, intuitives Signal für Unsicherheit – noch kein fertiger Detektor, aber ein starkes Argument für Topologie in der KI-Sicherheit.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="problem">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">01</span> Warum das wichtig ist</div>
+        <h2>Die KI ist zu Hause – und merkt nicht, wenn sie es <em>nicht mehr</em> ist.</h2>
+        <p class="section-lede">
+          Ein Modell lernt in einer geschlossenen Welt. Im Einsatz trifft es Dinge, die es nie gesehen hat:
+          ein neues Verkehrsschild, einen unbekannten Virus, ein seltsames Röntgenbild.
+          Das ist ein <strong>Out-of-Distribution</strong>-Beispiel, kurz OOD.
+        </p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-copy reveal">
+          <p>
+            Das Fatale: Viele Netze antworten dann nicht vorsichtig, sondern <strong>besonders selbstsicher</strong> –
+            und falsch. Genau das macht OOD-Erkennung für Sicherheit, Medizin oder autonomes Fahren so wichtig.
+          </p>
+          <p>
+            Dieses Paper fragt nicht: „Welche Pixel sind anders?“ Sondern:
+            <strong>„Welche Form hat das, was im Inneren des Netzes ankommt?“</strong>
+          </p>
+          <p class="pull">Nicht die Nähe in Pixeln zählt. Sondern die Form im latenten Raum.</p>
+        </div>
+        <div class="world-visual reveal delay-1" id="worldVisual">
+          <svg viewBox="0 0 520 390" role="img" aria-label="Geschlossene Trainingswelt mit grünen Punkten und einer geöffneten Welt mit orangen OOD-Punkten">
+            <defs>
+              <radialGradient id="worldGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#8fe9c1" stop-opacity=".13"/>
+                <stop offset="100%" stop-color="#8fe9c1" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="oodFill" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ff6b3d" stop-opacity=".18"/>
+                <stop offset="100%" stop-color="#ff6b3d" stop-opacity=".02"/>
+              </linearGradient>
+            </defs>
+            <circle cx="224" cy="196" r="146" fill="url(#worldGlow)"/>
+            <circle cx="224" cy="196" r="118" class="world-halo"/>
+            <circle cx="224" cy="196" r="118" class="world-boundary"/>
+            <g aria-hidden="true">
+              <circle cx="188" cy="142" r="4.2" class="world-dot"/><circle cx="219" cy="129" r="3.3" class="world-dot sky"/>
+              <circle cx="252" cy="143" r="4.8" class="world-dot"/><circle cx="174" cy="177" r="3.4" class="world-dot sky"/>
+              <circle cx="209" cy="174" r="4.4" class="world-dot"/><circle cx="242" cy="178" r="3.7" class="world-dot"/>
+              <circle cx="276" cy="167" r="3.1" class="world-dot sky"/><circle cx="191" cy="207" r="4.7" class="world-dot"/>
+              <circle cx="225" cy="207" r="3.5" class="world-dot sky"/><circle cx="259" cy="211" r="4.2" class="world-dot"/>
+              <circle cx="174" cy="238" r="3.2" class="world-dot sky"/><circle cx="210" cy="245" r="4.6" class="world-dot"/>
+              <circle cx="245" cy="238" r="3.3" class="world-dot"/><circle cx="281" cy="234" r="3.7" class="world-dot sky"/>
+              <circle cx="199" cy="267" r="3.1" class="world-dot"/><circle cx="234" cy="272" r="4.4" class="world-dot sky"/>
+              <circle cx="263" cy="264" r="3.4" class="world-dot"/>
+            </g>
+            <g class="ood-layer" aria-hidden="true">
+              <path d="M362 116c37-25 87-7 96 29 9 35-15 63-48 67-16 2-22 14-28 29-10 25-42 37-66 20-24-17-21-43-7-58 11-12 5-23-1-38-9-24 19-49 54-49Z" class="ood-blob"/>
+              <path d="M322 184c30-29 74-27 99 2" class="ood-ring"/>
+              <circle cx="359" cy="124" r="4.4" class="ood-dot"/><circle cx="389" cy="139" r="3.4" class="ood-dot"/>
+              <circle cx="410" cy="166" r="4.8" class="ood-dot"/><circle cx="394" cy="199" r="3.2" class="ood-dot"/>
+              <circle cx="363" cy="217" r="4.2" class="ood-dot"/><circle cx="334" cy="204" r="3.5" class="ood-dot"/>
+              <circle cx="330" cy="169" r="4.1" class="ood-dot"/><circle cx="374" cy="180" r="3.1" class="ood-dot"/>
+              <circle cx="302" cy="252" r="3.7" class="ood-dot"/><circle cx="412" cy="235" r="3.5" class="ood-dot"/>
+              <circle cx="450" cy="111" r="3.1" class="ood-dot"/><circle cx="470" cy="264" r="3.8" class="ood-dot"/>
+            </g>
+            <text x="224" y="363" text-anchor="middle" class="world-label">Trainingsverteilung</text>
+            <text x="399" y="305" text-anchor="middle" class="world-label orange">neue Realität</text>
+            <text x="62" y="62" class="world-label bright">geschlossene Welt</text>
+            <text x="62" y="78" class="world-label">alles wirkt bekannt</text>
+            <path d="M293 86c20-14 39-17 57-9" fill="none" stroke="#ff6b3d" stroke-width="1.2" stroke-dasharray="3 5"/>
+            <text x="350" y="70" class="world-label orange">OOD</text>
+          </svg>
+          <div class="world-ui">
+            <div class="world-status" id="worldStatus"><b>Geschlossene Welt:</b> Das Modell sieht nur Vertrautes.</div>
+            <button class="tiny-btn" id="worldToggle" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+              Welt öffnen
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="impact-grid">
+        <article class="impact-card reveal">
+          <div class="impact-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M7 29h26M11 29V18l6-5 6 8 6-11v19"/><circle cx="11" cy="18" r="2"/><circle cx="23" cy="21" r="2"/><circle cx="29" cy="10" r="2"/></svg></div>
+          <div class="tag">Autonomes Fahren</div>
+          <h3>Ein Objekt auf der Straße, das nie im Training war.</h3>
+          <p>Das Modell muss erkennen: „Hier bin ich unsicher“ – nicht einfach die nächstbeste Klasse raten.</p>
+        </article>
+        <article class="impact-card reveal delay-1">
+          <div class="impact-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="7" y="8" width="26" height="24" rx="3"/><path d="m13 15 4 4-4 4M21 24h6"/><path d="M7 14h26"/></svg></div>
+          <div class="tag">Malware-Erkennung</div>
+          <h3>Ein neuer Angriff, der alten Mustern ähnelt.</h3>
+          <p>Gerade weil OOD nicht offensichtlich „fremd“ aussieht, braucht es Signale jenseits der Oberfläche.</p>
+        </article>
+        <article class="impact-card reveal delay-2">
+          <div class="impact-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M20 34s-10-6.4-10-14a10 10 0 0 1 20 0c0 7.6-10 14-10 14Z"/><path d="M20 15v6M20 25h.01"/></svg></div>
+          <div class="tag">Medizin</div>
+          <h3>Ein Befund außerhalb der gelernten Fälle.</h3>
+          <p>Ein gutes OOD-Signal wäre ein Warnhinweis: „Das sieht anders aus als alles, was ich kenne.“</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="intuition">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">02</span> Die Intuition</div>
+        <h2>Das Netz ist eine <em>Faltmaschine</em>.</h2>
+        <p class="section-lede">
+          Im Inneren wird jedes Bild zu einem Vektor – seinem Embedding. Dort kann man Daten wie eine Punktwolke betrachten.
+          Ein gut trainiertes Netz zieht Punkte derselben Klasse zusammen: Aus vielen Fragmenten wird pro Klasse
+          <strong>eine kompakte Insel</strong>. Bei OOD fehlt diese Ordnung.
+        </p>
+      </div>
+      <div class="demo-panel reveal">
+        <div class="demo-head">
+          <div>
+            <h3 class="demo-title">Der Falt-Test</h3>
+            <p class="demo-sub">Ziehe den Regler: vom rohen Eingang bis zum Embedding.</p>
+          </div>
+          <div class="legend" aria-hidden="true">
+            <span><i style="background:var(--mint)"></i>Klasse A</span>
+            <span><i style="background:var(--sky)"></i>Klasse B</span>
+            <span><i style="background:var(--lilac)"></i>Klasse C</span>
+            <span><i style="background:var(--orange)"></i>OOD</span>
+          </div>
+        </div>
+        <div class="fold-wrap">
+          <div class="fold-canvas-wrap">
+            <canvas id="foldCanvas" aria-label="Punktwolke, die sich mit dem Layer-Regler zu drei kompakten Klasseninseln faltet, während OOD-Punkte diffus bleiben"></canvas>
+          </div>
+          <div class="fold-readout">
+            <div><span class="k">Was passiert</span><span class="v" id="foldState"><strong>Rohe Wolke:</strong> Klassen überlappen, OOD steckt mittendrin.</span></div>
+            <div><span class="k">ID-Klassen</span><span class="v" id="foldId">viele Fragmente → <strong>3 Inseln</strong></span></div>
+            <div><span class="k">OOD</span><span class="v" id="foldOod">bleibt <strong>ausgefranst</strong> und ohne eigene Insel</span></div>
+          </div>
+        </div>
+        <div class="demo-controls">
+          <div class="range-group">
+            <label class="range-label" for="foldRange">Eingang</label>
+            <input id="foldRange" type="range" min="0" max="100" value="18" aria-label="Ebene im Netz: 0 ist Eingang, 100 ist letzter Layer">
+            <output id="foldOutput" for="foldRange">Layer 3 / 18</output>
+          </div>
+          <button class="play-btn" id="foldPlay" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            Falten abspielen
+          </button>
+        </div>
+        <p class="demo-caption"><b>Schematisch.</b> Das Paper betrachtet den letzten Layer vor dem Klassifikator. Die Animation überzeichnet den Weg dorthin, um die Idee sichtbar zu machen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section tda-section" id="tda">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">03</span> Der Werkzeugkasten</div>
+        <h2>Aus Punkten wird Form. Aus Form wird eine <em>Zahl</em>.</h2>
+        <p class="section-lede">
+          Die Maschine verbindet Punkte, die näher als <span class="hl">ε</span> sind. Bei kleinem Radius ist jeder Punkt allein.
+          Bei größerem Radius entstehen Inseln, Kanten und Löcher. <strong>Persistente Homologie</strong> verfolgt,
+          welche Merkmale überleben. β<sub>0</sub> zählt Inseln, β<sub>1</sub> zählt Löcher.
+        </p>
+      </div>
+      <div class="tda-lab reveal">
+        <div class="tda-main">
+          <div class="tda-canvas-wrap">
+            <canvas id="tdaCanvas" aria-label="Interaktive Punktwolke mit Verbindungen, deren Radius mit dem Regler wächst"></canvas>
+            <div class="tda-overlay"><b>Vietoris–Rips</b>Radius ε = <span id="epsOverlay">0.02</span></div>
+          </div>
+        </div>
+        <aside class="tda-side" aria-label="Topologische Kennzahlen und Steuerung">
+          <div class="eyebrow">Live-Messung</div>
+          <div class="metric-row">
+            <div class="metric">
+              <div class="k"><i></i>β<sub>0</sub> · Inseln</div>
+              <strong id="beta0">24</strong>
+              <small>connected components</small>
+            </div>
+            <div class="metric">
+              <div class="k"><i></i>β<sub>1</sub> · Löcher</div>
+              <strong id="beta1">0</strong>
+              <small>one-dimensional loops</small>
+            </div>
+          </div>
+          <div class="barcode-card">
+            <div class="barcode-head">
+              <span>Lebensdauer der Inseln</span>
+              <strong id="avgLife">Ø 0.00</strong>
+            </div>
+            <div class="barcode-wrap">
+              <canvas id="barcodeCanvas" aria-label="Balkendiagramm: Jeder Balken zeigt, wie lange eine anfängliche Insel bis zur Verschmelzung überlebt"></canvas>
+            </div>
+          </div>
+          <p class="tda-state" id="tdaState"><strong>Noch nichts verbunden.</strong> Jeder Punkt ist seine eigene Insel. Erhöhe ε.</p>
+          <div class="tda-controls">
+            <div class="tda-slider-label"><span>Verbindungsradius</span><span>fein → grob</span></div>
+            <div class="tda-slider-row">
+              <input id="epsRange" type="range" min="0" max="100" value="5" aria-label="Verbindungsradius epsilon">
+              <output id="epsOutput" for="epsRange">0.06</output>
+            </div>
+            <div class="tda-buttons">
+              <button class="play-btn" id="epsPlay" type="button">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                Abspielen
+              </button>
+              <button class="play-btn" id="epsReset" type="button">Reset</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+      <p class="demo-caption reveal"><b>Wichtig:</b> Das Labor zeigt eine Momentaufnahme. Das Paper misst nicht β<sub>0</sub> bei einem ε, sondern die <b>durchschnittliche Lebensdauer</b> über den gesamten Filterungsverlauf. Deshalb ist die Lebensdauer der Inseln die entscheidende Kennzahl.</p>
+    </div>
+  </section>
+
+  <section class="section" id="methode">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">04</span> Die Methode</div>
+        <h2>So haben sie es <em>gemessen</em>.</h2>
+        <p class="section-lede">
+          Keine neue Mega-Architektur, kein Trainings-Trick: ein sauberes Messprotokoll.
+          Klicke dich durch die sechs Schritte.
+        </p>
+      </div>
+      <div class="pipeline-grid">
+        <div class="steps reveal" id="steps" role="tablist" aria-label="Methodenschritte">
+          <button class="step-btn active" type="button" role="tab" aria-selected="true" data-step="0"><span class="num">01</span><span class="name">Daten</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button class="step-btn" type="button" role="tab" aria-selected="false" data-step="1"><span class="num">02</span><span class="name">Netz</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button class="step-btn" type="button" role="tab" aria-selected="false" data-step="2"><span class="num">03</span><span class="name">Stichprobe</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button class="step-btn" type="button" role="tab" aria-selected="false" data-step="3"><span class="num">04</span><span class="name">Topologie</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button class="step-btn" type="button" role="tab" aria-selected="false" data-step="4"><span class="num">05</span><span class="name">Kennzahlen</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button class="step-btn" type="button" role="tab" aria-selected="false" data-step="5"><span class="num">06</span><span class="name">Vergleich</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        </div>
+        <div class="stage reveal delay-1">
+          <div class="stage-canvas-wrap">
+            <canvas id="stageCanvas" aria-label="Visualisierung des aktuell gewählten Methodenschritts"></canvas>
+          </div>
+          <div class="stage-copy">
+            <span class="stage-tag" id="stageTag">Datensätze</span>
+            <h3 id="stageTitle">Zwei Welten, zwei OOD-Quellen</h3>
+            <p id="stageText">MNIST-Ziffern mit EMNIST-Buchstaben als OOD. CIFAR-10-Objekte mit CIFAR-100 als OOD. Beide Modelle: ResNet18.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cream results" id="ergebnisse">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">05</span> Die Ergebnisse</div>
+        <h2>Der Unterschied ist <em>messbar</em>.</h2>
+        <p class="section-lede">
+          Die Punkte unten markieren die 95%-Konfidenzintervalle der durchschnittlichen H<sub>0</sub>-Lebensdauer.
+          Train und Test liegen fast aufeinander. <strong>OOD liegt deutlich rechts.</strong>
+        </p>
+      </div>
+      <div class="result-toolbar reveal">
+        <div class="tabs" role="tablist" aria-label="Datensatz auswählen">
+          <button class="tab active" type="button" role="tab" aria-selected="true" data-dataset="mnist">MNIST ↔ EMNIST</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-dataset="cifar">CIFAR-10 ↔ CIFAR-100</button>
+        </div>
+        <div class="chart-note">Kurven: schematische Verteilung<br>Punkte &amp; Bereiche: Werte aus dem Paper</div>
+      </div>
+      <div class="chart-card reveal">
+        <div class="chart-head">
+          <div>
+            <h3 class="chart-title">Durchschnittliche Lebensdauer · H<sub>0</sub></h3>
+            <p class="chart-sub" id="chartSub">ResNet18 auf MNIST · OOD: EMNIST · 150 Punkte pro Bootstrap-Stichprobe</p>
+          </div>
+          <div class="chart-legend" aria-hidden="true">
+            <span><i style="background:#1b7f68"></i>Train</span>
+            <span><i style="background:#2d70a8"></i>Test</span>
+            <span><i style="background:#d34e24"></i>OOD</span>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="resultsCanvas" aria-label="Dichtekurven der durchschnittlichen H0-Lebensdauer für Train, Test und OOD"></canvas>
+          <div class="chart-tooltip" id="chartTooltip"></div>
+        </div>
+      </div>
+      <div class="result-stats reveal">
+        <div class="result-stat">
+          <span class="k">Ø-Lebensdauer OOD</span>
+          <strong id="statOod">1.30–1.46</strong>
+          <small id="statOodSub">EMNIST · 95%-Intervall</small>
+        </div>
+        <div class="result-stat">
+          <span class="k">Abstand zu Test</span>
+          <strong id="statGap">+0.33</strong>
+          <small><span class="delta" id="statGapPct">≈ +31%</span> · OOD liegt weiter rechts</small>
+        </div>
+        <div class="result-stat">
+          <span class="k">Train vs. Test</span>
+          <strong id="statTrainTest">fast gleich</strong>
+          <small id="statTrainTestSub">Die Intervalle überlappen deutlich.</small>
+        </div>
+      </div>
+      <p class="results-caveat reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <span>Die Kurven sind eine schematische Visualisierung der Verteilungen. Die exakten 95%-Intervalle stammen aus Tabelle 1 und 2 des Papers. Besonders auffällig: Der Effekt ist bei CIFAR deutlich größer als bei MNIST.</span>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="erkenntnisse">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">06</span> Was das bedeutet</div>
+        <h2>Vier Ideen, die <em>hängen bleiben</em>.</h2>
+        <p class="section-lede">Die Autoren ziehen vier Schlüsse – und jeder davon ist auch ohne Topologie-Studium verständlich.</p>
+      </div>
+      <div class="insights-grid">
+        <article class="insight-card reveal">
+          <div>
+            <div class="insight-num">ERKENNTNIS 01</div>
+            <h3>Vereinfachung gilt auch für Testdaten.</h3>
+            <p>Bisher war der Effekt vor allem für Trainingsdaten bekannt. Die Studie zeigt: <b>Auch neue, aber vertraute Daten</b> werden topologisch einfach. Genau deshalb unterscheiden sich Train und Test kaum.</p>
+          </div>
+          <div class="mini-viz" aria-hidden="true">
+            <svg viewBox="0 0 240 130"><path d="M20 92c22-61 48-70 83-34 30 31 57 20 77-13 13-21 30-18 40-3v75H20Z" fill="#8fe9c1" opacity=".16"/><path d="M20 92c22-61 48-70 83-34 30 31 57 20 77-13 13-21 30-18 40-3" fill="none" stroke="#8fe9c1" stroke-width="1.5"/><path d="M22 99c26-48 51-52 78-27 30 28 59 21 80-9 12-18 27-17 38-4" fill="none" stroke="#80c8ff" stroke-width="1.3" stroke-dasharray="4 4"/><text x="21" y="33" fill="#a6a7ad" font-family="IBM Plex Mono, monospace" font-size="8">TRAIN ≈ TEST</text><circle cx="207" cy="37" r="3" fill="#8fe9c1"/><circle cx="217" cy="30" r="2.4" fill="#80c8ff"/></svg>
+          </div>
+        </article>
+        <article class="insight-card reveal delay-1">
+          <div>
+            <div class="insight-num">ERKENNTNIS 02</div>
+            <h3>Der Abstand verrät Datenschwierigkeit.</h3>
+            <p>MNIST ist einfacher als CIFAR-10 – und zeigt eine kleinere Lücke. Die OOD-Distanz könnte helfen, <b>Benchmarks relativ zu einem Modell</b> einzuordnen.</p>
+          </div>
+          <div class="mini-viz" aria-hidden="true">
+            <svg viewBox="0 0 240 130"><line x1="28" y1="104" x2="220" y2="104" stroke="#5b554c" stroke-width="1"/><rect x="47" y="48" width="25" height="56" rx="4" fill="#8fe9c1" opacity=".6"/><rect x="79" y="45" width="25" height="59" rx="4" fill="#80c8ff" opacity=".55"/><rect x="111" y="28" width="25" height="76" rx="4" fill="#ff6b3d" opacity=".72"/><rect x="157" y="60" width="25" height="44" rx="4" fill="#8fe9c1" opacity=".4"/><rect x="189" y="33" width="25" height="71" rx="4" fill="#ff6b3d" opacity=".4"/><path d="M124 17v-7M124 10l-3 4M124 10l3 4" stroke="#ff6b3d" stroke-width="1.2" fill="none"/><text x="29" y="21" fill="#a6a7ad" font-family="IBM Plex Mono, monospace" font-size="8">MEHR ABSTAND = MEHR OOD</text></svg>
+          </div>
+        </article>
+        <article class="insight-card reveal delay-1">
+          <div>
+            <div class="insight-num">ERKENNTNIS 03</div>
+            <h3>Weniger Topologie kann reichen.</h3>
+            <p>Die klaren Unterschiede stecken schon in <b>H<sub>0</sub></b>: Wie viele Inseln, wie lange leben sie? Höherdimensionale Löcher (H<sub>1</sub>) sind teuer und in dieser Studie kein sauberes Signal.</p>
+          </div>
+          <div class="mini-viz" aria-hidden="true">
+            <svg viewBox="0 0 240 130"><circle cx="74" cy="65" r="25" fill="none" stroke="#8fe9c1" stroke-width="1.5"/><circle cx="74" cy="65" r="7" fill="#8fe9c1" opacity=".25"/><circle cx="132" cy="65" r="25" fill="none" stroke="#ff6b3d" stroke-width="1.5" stroke-dasharray="4 4"/><circle cx="132" cy="65" r="7" fill="#ff6b3d" opacity=".18"/><text x="56" y="111" fill="#8fe9c1" font-family="IBM Plex Mono, monospace" font-size="8">H0</text><text x="115" y="111" fill="#ff6b3d" font-family="IBM Plex Mono, monospace" font-size="8">H1</text><path d="M169 65h32" stroke="#5b554c" stroke-width="1" stroke-dasharray="2 4"/><text x="177" y="59" fill="#a6a7ad" font-family="IBM Plex Mono, monospace" font-size="7">TEUER</text></svg>
+          </div>
+        </article>
+        <article class="insight-card reveal delay-2">
+          <div>
+            <div class="insight-num">ERKENNTNIS 04</div>
+            <h3>Form wird zum Unsicherheitssignal.</h3>
+            <p>Kurze Lebensdauer = das Netz hat die Daten „aufgeräumt“. Lange Lebensdauer = es kämpft mit der Form. Das ist ein <b>anderes Signal</b> als die übliche Softmax-Konfidenz.</p>
+          </div>
+          <div class="mini-viz" aria-hidden="true">
+            <svg viewBox="0 0 240 130"><path d="M22 70c15-37 31-45 48-17s33 28 50-6 34-31 51-4 30 21 47-7" fill="none" stroke="#ffc56e" stroke-width="1.6"/><path d="M22 93c18-21 32-20 47 0s31 19 49-3 31-22 49-1 32 19 51-4" fill="none" stroke="#ff6b3d" stroke-width="1.2" stroke-dasharray="4 4"/><line x1="22" y1="111" x2="218" y2="111" stroke="#5b554c" stroke-width="1"/><text x="22" y="32" fill="#a6a7ad" font-family="IBM Plex Mono, monospace" font-size="8">LANGE LEBENSDAUER</text></svg>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="grenzen">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">07</span> Die Grenzen</div>
+        <h2>Ein starkes Signal – noch kein <em>fertiger Detektor</em>.</h2>
+        <p class="section-lede">
+          Das Paper ist ein empirischer Nachweis, kein Plug-and-play-Produkt. Diese Einschränkungen sollte man kennen,
+          bevor man die Ergebnisse überinterpretiert.
+        </p>
+      </div>
+      <div class="limits-grid">
+        <article class="limit-card reveal">
+          <div class="x"><i></i> Einschränkung 01</div>
+          <h3>Stichproben, keine Einzelbilder</h3>
+          <p>Gemessen wird an Bootstrap-Stichproben von 25 bis 150 Punkten. Die Aussage ist also statistisch über eine Gruppe – nicht „dieses eine Bild ist OOD“.</p>
+        </article>
+        <article class="limit-card reveal delay-1">
+          <div class="x"><i></i> Einschränkung 02</div>
+          <h3>H<sub>0</sub> ja, H<sub>1</sub> kaum</h3>
+          <p>Die klare Trennung zeigt sich vor allem bei verbundenen Komponenten. Höherdimensionale Löcher bleiben kurzlebig, verrauscht und teuer zu berechnen.</p>
+        </article>
+        <article class="limit-card reveal delay-1">
+          <div class="x"><i></i> Einschränkung 03</div>
+          <h3>Max-Lifetime täuscht</h3>
+          <p>Der maximale Wert reagiert stark auf Ausreißer. Die durchschnittliche Lebensdauer ist robuster – aber auch sie ist kein kalibrierter Entscheider.</p>
+        </article>
+        <article class="limit-card reveal delay-2">
+          <div class="x"><i></i> Einschränkung 04</div>
+          <h3>Nur zwei Modelle, zwei Paare</h3>
+          <p>ResNet18 auf MNIST und CIFAR-10 ist ein wichtiger Realismus-Test, aber noch keine breite Architektur- oder Domänenabdeckung.</p>
+        </article>
+      </div>
+      <div class="maturity reveal">
+        <div class="maturity-head">
+          <h3>Wo steht die Idee?</h3>
+          <span>Reifegrad · Einschätzung dieser Lesehilfe</span>
+        </div>
+        <div class="maturity-track">
+          <div class="maturity-step done"><strong>Idee</strong><span>Topologie als OOD-Signal</span></div>
+          <div class="maturity-step done"><strong>Nachweis</strong><span> empirisch gezeigt</span></div>
+          <div class="maturity-step current"><strong>Pipeline</strong><span>noch nicht produktionsreif</span></div>
+          <div class="maturity-step"><strong>Produkt</strong><span>Thresholds, Tests, Betrieb</span></div>
+        </div>
+      </div>
+      <div class="verdict reveal">
+        <div class="verdict-grid">
+          <div class="verdict-col">
+            <h3>Für wen lohnt sich der <em>Blick ins Paper</em>?</h3>
+            <h4>Ja, wenn du …</h4>
+            <ul class="verdict-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>OOD-Erkennung, Robustheit oder KI-Sicherheit untersuchst.</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Topologie / TDA auf echte Deep-Learning-Modelle anwenden willst.</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>eine schöne Brücke zwischen „Form“ und „Unsicherheit“ suchst.</li>
+            </ul>
+          </div>
+          <div class="verdict-col">
+            <h4>Eher nicht, wenn du …</h4>
+            <ul class="verdict-list no">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>einen fertigen, kalibrierten OOD-Detektor zum Einbauen erwartest.</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>einen neuen State-of-the-Art-Benchmark suchst.</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>keine Lust auf Homologie, Bootstrap und Konfidenzintervalle hast.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="verdict-quote">„Die Form bleibt nicht nur eine Metapher. Sie wird zu einer Zahl, die sagt: Das hier ist nicht mehr meine Welt.“</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="glossary" id="glossar">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="n">08</span> Nachschlagen</div>
+        <h2>Die <em>Fachbegriffe</em> in kurz.</h2>
+        <p class="section-lede">Nur aufklappen, wenn du hängen bleibst. Der Rest der Seite funktioniert ohne.</p>
+      </div>
+      <div class="glossary-grid reveal">
+        <details><summary>Out-of-Distribution (OOD)<span class="plus" aria-hidden="true"></span></summary><p>Daten, die nicht aus derselben Verteilung wie die Trainingsdaten stammen. Für das Modell ist es <b>Neuland</b>, auch wenn es für einen Menschen normal aussieht.</p></details>
+        <details><summary>Embedding / latenter Raum<span class="plus" aria-hidden="true"></span></summary><p>Die interne Vektordarstellung eines Eingabebildes. Im Paper hat sie <b>512 Dimensionen</b>. Punkte mit ähnlichen Merkmalen liegen dort näher beieinander.</p></details>
+        <details><summary>Topologische Datenanalyse (TDA)<span class="plus" aria-hidden="true"></span></summary><p>Ein Werkzeugkasten, der die <b>Form</b> von Daten beschreibt: Inseln, Löcher, Hohlräume – unabhängig von exakten Koordinaten.</p></details>
+        <details><summary>Vietoris–Rips-Komplex<span class="plus" aria-hidden="true"></span></summary><p>Eine Regel, um aus einer Punktwolke ein geometrisches Gerüst zu bauen: Verbinde Punkte, die näher als ε sind, und fülle Dreiecke, wenn alle drei Ecken nah genug sind.</p></details>
+        <details><summary>Simplex<span class="plus" aria-hidden="true"></span></summary><p>Ein Baustein: Punkt (0-Simplex), Kante (1-Simplex), Dreieck (2-Simplex), Tetraeder (3-Simplex). Viele Simplices zusammen bilden den Komplex.</p></details>
+        <details><summary>Homologie &amp; Betti-Zahlen<span class="plus" aria-hidden="true"></span></summary><p>Homologie zählt „Löcher“ verschiedener Dimension. <b>β<sub>0</sub></b> = Anzahl zusammenhängender Inseln. <b>β<sub>1</sub></b> = Anzahl eindimensionaler Loops / Ringe.</p></details>
+        <details><summary>Persistente Homologie<span class="plus" aria-hidden="true"></span></summary><p>Statt einen festen Radius ε zu wählen, wird ε langsam erhöht. Verfolgt wird, welche Merkmale <b>geboren</b> werden und wann sie wieder <b>verschwinden</b>.</p></details>
+        <details><summary>Lebensdauer / Persistenz<span class="plus" aria-hidden="true"></span></summary><p>Die Zeit zwischen Geburt und Tod eines topologischen Merkmals. Kurz = wahrscheinlich Rauschen. Lang = echte Struktur. Das Paper nutzt den <b>Durchschnitt</b> dieser Lebensdauern.</p></details>
+        <details><summary>Bootstrap<span class="plus" aria-hidden="true"></span></summary><p>Wiederholtes zufälliges Ziehen mit Zurücklegen. So entsteht aus einer Stichprobe eine Verteilung von Kennzahlen – hier <b>50.000 Wiederholungen</b>.</p></details>
+        <details><summary>Ripser<span class="plus" aria-hidden="true"></span></summary><p>Eine effiziente Software-Bibliothek zur Berechnung persistenter Homologie. Sie macht die Analyse von 512-dimensionalen Embeddings überhaupt praktikabel.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <p class="big">Die Form bleibt.</p>
+      <p>Interaktive Lesehilfe zu „Topology of Out-of-Distribution Examples in Deep Neural Networks“ von Datta, Hennig, Domschot, Mattes und Smith (Sandia National Laboratories, 2025). Keine Original-Abbildungen; alle Visualisierungen sind didaktische Rekonstruktionen.</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://arxiv.org/abs/2501.12522" target="_blank" rel="noopener">arXiv:2501.12522 ↗</a>
+      <a href="#top">Nach oben</a>
+      <span>HTML · CSS · Vanilla JS</span>
+    </div>
+  </div>
+</footer>
+
+<button class="top-btn" id="topBtn" type="button" aria-label="Nach oben">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+<script>
+(() => {
+  'use strict';
+
+  document.documentElement.classList.add('js');
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TAU = Math.PI * 2;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const fmt = (n, digits = 2) => n.toFixed(digits).replace('.', ',');
+
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a |= 0;
+      a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function setupCanvas(canvas) {
+    const ctx = canvas.getContext('2d');
+    let cssW = 0;
+    let cssH = 0;
+    let dpr = 1;
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(1, Math.round(rect.width));
+      const h = Math.max(1, Math.round(rect.height));
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      if (w === cssW && h === cssH && d === dpr) return false;
+      cssW = w;
+      cssH = h;
+      dpr = d;
+      canvas.width = Math.round(w * d);
+      canvas.height = Math.round(h * d);
+      ctx.setTransform(d, 0, 0, d, 0, 0);
+      return true;
+    }
+    resize();
+    return {
+      ctx,
+      resize,
+      get w() { return cssW; },
+      get h() { return cssH; }
+    };
+  }
+
+  function observeVisibility(el, onEnter, onLeave) {
+    if (!el) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) onEnter();
+        else if (onLeave) onLeave();
+      });
+    }, { threshold: .02 });
+    io.observe(el);
+  }
+
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+  $$('.reveal').forEach(el => revealObserver.observe(el));
+
+  const progressBar = $('#progressBar');
+  const siteNav = $('#siteNav');
+  const topBtn = $('#topBtn');
+
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = max > 0 ? clamp(window.scrollY / max, 0, 1) : 0;
+    if (progressBar) progressBar.style.transform = `scaleX(${ratio})`;
+    if (siteNav) siteNav.classList.toggle('scrolled', window.scrollY > 46);
+    if (topBtn) topBtn.classList.toggle('show', window.scrollY > 700);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  if (topBtn) {
+    topBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  }
+
+  const worldVisual = $('#worldVisual');
+  const worldToggle = $('#worldToggle');
+  const worldStatus = $('#worldStatus');
+  if (worldVisual && worldToggle && worldStatus) {
+    const eyeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>';
+    const closeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+    worldToggle.addEventListener('click', () => {
+      const open = worldVisual.classList.toggle('open');
+      worldToggle.innerHTML = open ? closeIcon + ' Welt schließen' : eyeIcon + ' Welt öffnen';
+      worldStatus.innerHTML = open
+        ? '<b>Offene Welt:</b> Jetzt taucht Unbekanntes auf – mitten im Betrieb.'
+        : '<b>Geschlossene Welt:</b> Das Modell sieht nur Vertrautes.';
+    });
+  }
+
+  function initHero() {
+    const canvas = $('#heroCanvas');
+    if (!canvas) return;
+    const c = setupCanvas(canvas);
+    const instrument = canvas.closest('.instrument');
+    const rnd = mulberry32(31415);
+
+    const groups = [
+      { x: -.78, y: -.2, z: .05, color: '#8fe9c1', spread: .22, count: 19 },
+      { x: .63, y: .12, z: .18, color: '#80c8ff', spread: .2, count: 17 },
+      { x: .02, y: .74, z: -.16, color: '#c1b2ff', spread: .18, count: 16 }
+    ];
+
+    const points = [];
+    groups.forEach((g, gi) => {
+      for (let i = 0; i < g.count; i++) {
+        const a = rnd() * TAU;
+        const r = Math.sqrt(rnd()) * g.spread;
+        points.push({
+          x: g.x + Math.cos(a) * r,
+          y: g.y + Math.sin(a) * r * .88,
+          z: g.z + (rnd() - .5) * g.spread * 1.4,
+          color: g.color,
+          group: gi,
+          size: .8 + rnd() * .55,
+          phase: rnd() * TAU
+        });
+      }
+    });
+
+    const arcs = [[.32, 2.12], [3.72, 5.55]];
+    arcs.forEach(arc => {
+      for (let i = 0; i < 13; i++) {
+        const a = lerp(arc[0], arc[1], rnd());
+        const r = 1.25 + rnd() * .24;
+        points.push({
+          x: Math.cos(a) * r,
+          y: Math.sin(a) * r * .82,
+          z: (rnd() - .5) * .9,
+          color: '#ff6b3d',
+          group: 3,
+          size: .8 + rnd() * .55,
+          phase: rnd() * TAU
+        });
+      }
+    });
+
+    const edges = [];
+    for (let i = 0; i < points.length; i++) {
+      for (let j = i + 1; j < points.length; j++) {
+        if (points[i].group !== points[j].group) continue;
+        const dx = points[i].x - points[j].x;
+        const dy = points[i].y - points[j].y;
+        const dz = points[i].z - points[j].z;
+        const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (d < (points[i].group === 3 ? .58 : .38)) {
+          edges.push([i, j, points[i].color]);
+        }
+      }
+    }
+
+    let px = 0;
+    let py = 0;
+    let tx = 0;
+    let ty = 0;
+    let raf = null;
+    let visible = true;
+
+    if (instrument) {
+      instrument.addEventListener('pointermove', e => {
+        const r = instrument.getBoundingClientRect();
+        tx = (e.clientX - r.left) / r.width * 2 - 1;
+        ty = (e.clientY - r.top) / r.height * 2 - 1;
+      }, { passive: true });
+      instrument.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+    }
+
+    function project(p, rx, ry, scale, w, h) {
+      const cy = Math.cos(ry);
+      const sy = Math.sin(ry);
+      const x1 = p.x * cy - p.z * sy;
+      const z1 = p.x * sy + p.z * cy;
+      const cx = Math.cos(rx);
+      const sx = Math.sin(rx);
+      const y1 = p.y * cx - z1 * sx;
+      const z2 = p.y * sx + z1 * cx;
+      const persp = 2.85 / (2.85 + z2 * .34);
+      return {
+        x: w / 2 + x1 * scale * persp,
+        y: h / 2 + y1 * scale * persp,
+        z: z2,
+        p: persp
+      };
+    }
+
+    function draw(now) {
+      const w = c.w;
+      const h = c.h;
+      if (!w || !h) return;
+      const ctx = c.ctx;
+      ctx.clearRect(0, 0, w, h);
+
+      const min = Math.min(w, h);
+      const scale = min * .265;
+      const rx = .16 + py * .11;
+      const ry = now * .000055 + px * .24;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(243,239,230,.075)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([1, 7]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, min * .33, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      for (let i = 0; i < 36; i++) {
+        const a = i / 36 * TAU;
+        const inner = min * .435;
+        const outer = min * (i % 3 === 0 ? .462 : .452);
+        ctx.strokeStyle = i % 3 === 0 ? 'rgba(243,239,230,.24)' : 'rgba(243,239,230,.11)';
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner);
+        ctx.lineTo(cx + Math.cos(a) * outer, cy + Math.sin(a) * outer);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      const projected = points.map(p => project(p, rx, ry, scale, w, h));
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      edges.forEach(([i, j, color]) => {
+        const a = projected[i];
+        const b = projected[j];
+        const depth = clamp(1 - (a.z + b.z) / 4, .15, 1);
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = .055 + depth * .045;
+        ctx.lineWidth = .65;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+      ctx.restore();
+
+      const order = projected.map((p, i) => i).sort((a, b) => projected[b].z - projected[a].z);
+      order.forEach(i => {
+        const p = projected[i];
+        const base = points[i];
+        const depth = clamp(1 - (p.z + 1.5) / 4, .2, 1);
+        const pulse = base.group === 3 ? .55 + .45 * Math.sin(now * .0016 + base.phase) : .7;
+        const radius = (base.group === 3 ? 1.65 : 1.8) * base.size * p.p * (.8 + depth * .5);
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = .16 + depth * .22;
+        ctx.fillStyle = base.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius * (base.group === 3 ? 3.2 * pulse : 2.8), 0, TAU);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.shadowColor = base.color;
+        ctx.shadowBlur = base.group === 3 ? 11 : 7;
+        ctx.fillStyle = base.color;
+        ctx.globalAlpha = .55 + depth * .45;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+
+        if (base.group < 3 && base.size > 1.12) {
+          ctx.strokeStyle = base.color;
+          ctx.globalAlpha = .18 + depth * .12;
+          ctx.lineWidth = .7;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius * 3.3, 0, TAU);
+          ctx.stroke();
+        }
+      });
+
+      const oodNear = projected.filter((p, i) => points[i].group === 3).sort((a, b) => b.z - a.z)[0];
+      if (oodNear) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,107,61,.34)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.arc(oodNear.x, oodNear.y, 18, 0, TAU);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function frame(now) {
+      px += (tx - px) * .035;
+      py += (ty - py) * .035;
+      draw(now);
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (reduceMotion) { draw(0); return; }
+      if (raf === null && visible) raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      if (raf !== null) cancelAnimationFrame(raf);
+      raf = null;
+    }
+
+    window.addEventListener('resize', () => {
+      if (c.resize()) {
+        if (reduceMotion) draw(0);
+      }
+    }, { passive: true });
+
+    observeVisibility(canvas, () => { visible = true; start(); }, () => { visible = false; stop(); });
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) start();
+        else stop();
+      }, { threshold: .04 });
+      io.observe(canvas);
+    } else {
+      start();
+    }
+    start();
+  }
+
+  function initFold() {
+    const canvas = $('#foldCanvas');
+    const range = $('#foldRange');
+    const output = $('#foldOutput');
+    const play = $('#foldPlay');
+    const state = $('#foldState');
+    const idEl = $('#foldId');
+    const oodEl = $('#foldOod');
+    if (!canvas || !range || !output || !state) return;
+    const c = setupCanvas(canvas);
+    const rnd = mulberry32(90210);
+    const classes = [
+      { color: '#8fe9c1', base: { x: -.18, y: -.16, r: .54 }, target: { x: -.72, y: -.12, r: .12 }, count: 18 },
+      { color: '#80c8ff', base: { x: .16, y: .08, r: .56 }, target: { x: .53, y: -.3, r: .12 }, count: 18 },
+      { color: '#c1b2ff', base: { x: -.03, y: .28, r: .52 }, target: { x: .04, y: .63, r: .12 }, count: 18 }
+    ];
+
+    const points = [];
+    classes.forEach((cl, ci) => {
+      for (let i = 0; i < cl.count; i++) {
+        const a = rnd() * TAU;
+        const r = Math.sqrt(rnd()) * cl.base.r;
+        const ta = rnd() * TAU;
+        const tr = Math.sqrt(rnd()) * cl.target.r;
+        points.push({
+          color: cl.color,
+          group: ci,
+          bx: cl.base.x + Math.cos(a) * r,
+          by: cl.base.y + Math.sin(a) * r * .82,
+          tx: cl.target.x + Math.cos(ta) * tr,
+          ty: cl.target.y + Math.sin(ta) * tr,
+          size: 1.6 + rnd() * 1.3
+        });
+      }
+    });
+
+    for (let i = 0; i < 23; i++) {
+      const a = rnd() * TAU;
+      const r = Math.sqrt(rnd()) * .58;
+      const ta = rnd() * TAU;
+      const tr = .82 + rnd() * .25;
+      points.push({
+        color: '#ff6b3d',
+        group: 3,
+        bx: Math.cos(a) * r * 1.05,
+        by: Math.sin(a) * r * .75,
+        tx: Math.cos(ta) * tr,
+        ty: Math.sin(ta) * tr * .74,
+        size: 1.5 + rnd() * 1.2
+      });
+    }
+
+    let targetT = parseInt(range.value, 10) / 100;
+    let displayT = targetT;
+    let playing = false;
+    let playStart = 0;
+    let raf = null;
+    let visible = true;
+    let lastState = '';
+
+    function updateInfo(value) {
+      const layer = Math.round(value / 100 * 18);
+      output.textContent = `Layer ${layer} / 18`;
+      let key;
+      let html;
+      if (value < 26) {
+        key = 'raw';
+        html = '<strong>Rohe Wolke:</strong> Klassen überlappen, OOD steckt mittendrin.';
+        idEl.innerHTML = 'viele Fragmente → <strong>3 Inseln</strong>';
+        oodEl.innerHTML = 'bleibt <strong>ausgefranst</strong> und ohne eigene Insel';
+      } else if (value < 66) {
+        key = 'separating';
+        html = '<strong>Das Netz trennt:</strong> Die Klassen beginnen, sich zu ordnen.';
+        idEl.innerHTML = 'Fragmente werden zu <strong>Klumpen</strong>';
+        oodEl.innerHTML = 'folgt der Ordnung <strong>nicht</strong>';
+      } else {
+        key = 'folded';
+        html = '<strong>Embedding:</strong> ID-Klassen sind kompakt. OOD bleibt diffus.';
+        idEl.innerHTML = 'kompakt → <strong>3 Inseln</strong>';
+        oodEl.innerHTML = 'verteilt → <strong>viele kleine Fragmente</strong>';
+      }
+      if (key !== lastState) {
+        state.innerHTML = html;
+        lastState = key;
+      }
+    }
+
+    function setValue(v) {
+      const value = clamp(v, 0, 100);
+      range.value = String(Math.round(value));
+      targetT = value / 100;
+      if (reduceMotion) displayT = targetT;
+      updateInfo(value);
+    }
+
+    function draw(now) {
+      const w = c.w;
+      const h = c.h;
+      if (!w || !h) return;
+      const ctx = c.ctx;
+      ctx.clearRect(0, 0, w, h);
+      const scale = Math.min(w / 2.95, h / 2.3);
+      const cx = w / 2;
+      const cy = h / 2;
+      const t = ease(displayT);
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(243,239,230,.055)';
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= 3; i++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, scale * (.35 + i * .28), 0, TAU);
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo(cx - scale * 1.42, cy);
+      ctx.lineTo(cx + scale * 1.42, cy);
+      ctx.moveTo(cx, cy - scale * 1.02);
+      ctx.lineTo(cx, cy + scale * 1.02);
+      ctx.stroke();
+      ctx.restore();
+
+      if (t > .55) {
+        classes.forEach(cl => {
+          const x = cx + cl.target.x * scale;
+          const y = cy + cl.target.y * scale;
+          const strength = (t - .55) / .45;
+          const grd = ctx.createRadialGradient(x, y, 0, x, y, scale * .32);
+          grd.addColorStop(0, cl.color + '22');
+          grd.addColorStop(.48, cl.color + '0b');
+          grd.addColorStop(1, cl.color + '00');
+          ctx.fillStyle = grd;
+          ctx.beginPath();
+          ctx.arc(x, y, scale * .32, 0, TAU);
+          ctx.fill();
+          ctx.globalAlpha = .55 * strength;
+          ctx.strokeStyle = cl.color;
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 5]);
+          ctx.beginPath();
+          ctx.arc(x, y, scale * (.13 + .035 * (1 - strength)), 0, TAU);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      const sorted = points
+        .map(p => {
+          const x = lerp(p.bx, p.tx, t) + Math.sin(now * .0008 + p.by * 8) * .004 * (1 - t);
+          const y = lerp(p.by, p.ty, t) + Math.cos(now * .0007 + p.bx * 7) * .004 * (1 - t);
+          return { p, x: cx + x * scale, y: cy + y * scale, ood: p.group === 3 };
+        })
+        .sort((a, b) => a.y - b.y);
+
+      sorted.forEach(item => {
+        const p = item.p;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = item.ood ? .22 : .17;
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, p.size * 2.6, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = item.ood ? 9 : 5;
+        ctx.globalAlpha = item.ood ? .82 : .9;
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, p.size, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      if (t > .78) {
+        ctx.save();
+        ctx.globalAlpha = (t - .78) / .22;
+        ctx.font = '500 9px "IBM Plex Mono", monospace';
+        ctx.fillStyle = 'rgba(243,239,230,.7)';
+        ctx.fillText('INPUT', 16, 24);
+        ctx.textAlign = 'right';
+        ctx.fillText('EMBEDDING', w - 16, 24);
+        ctx.restore();
+      } else {
+        ctx.save();
+        ctx.font = '500 9px "IBM Plex Mono", monospace';
+        ctx.fillStyle = 'rgba(243,239,230,.45)';
+        ctx.fillText('INPUT', 16, 24);
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.font = '500 9px "IBM Plex Mono", monospace';
+      ctx.fillStyle = 'rgba(255,107,61,.8)';
+      ctx.textAlign = 'right';
+      ctx.fillText('OOD', w - 16, h - 17);
+      ctx.restore();
+
+      if (t > .9) {
+        classes.forEach((cl, i) => {
+          ctx.save();
+          ctx.globalAlpha = (t - .9) / .1;
+          ctx.fillStyle = cl.color;
+          ctx.font = '500 9px "IBM Plex Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(String.fromCharCode(65 + i), cx + cl.target.x * scale, cy + cl.target.y * scale + 3);
+          ctx.restore();
+        });
+      }
+    }
+
+    function frame(now) {
+      if (playing) {
+        const p = clamp((now - playStart) / 2800, 0, 1);
+        const v = Math.round(ease(p) * 100);
+        range.value = String(v);
+        targetT = v / 100;
+        updateInfo(v);
+        if (p >= 1) {
+          playing = false;
+          play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Falten abspielen';
+        }
+      }
+      displayT += (targetT - displayT) * (reduceMotion ? 1 : .08);
+      if (Math.abs(targetT - displayT) < .001) displayT = targetT;
+      draw(now);
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (reduceMotion) { displayT = targetT; draw(0); return; }
+      if (raf === null && visible) raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      if (raf !== null) cancelAnimationFrame(raf);
+      raf = null;
+    }
+
+    range.addEventListener('input', () => {
+      playing = false;
+      play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Falten abspielen';
+      setValue(parseInt(range.value, 10));
+    });
+
+    play.addEventListener('click', () => {
+      if (playing) {
+        playing = false;
+        play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Falten abspielen';
+        return;
+      }
+      if (parseInt(range.value, 10) > 96) setValue(0);
+      playing = true;
+      playStart = performance.now();
+      play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM15 5h2v14h-2z"/></svg> Pause';
+      start();
+    });
+
+    window.addEventListener('resize', () => {
+      if (c.resize() && reduceMotion) draw(0);
+    }, { passive: true });
+
+    observeVisibility(canvas, () => { visible = true; start(); }, () => { visible = false; stop(); });
+    updateInfo(parseInt(range.value, 10));
+    start();
+  }
+  function initTda() {
+    const canvas = $('#tdaCanvas');
+    const barcodeCanvas = $('#barcodeCanvas');
+    const range = $('#epsRange');
+    const output = $('#epsOutput');
+    const overlay = $('#epsOverlay');
+    const play = $('#epsPlay');
+    const reset = $('#epsReset');
+    const beta0El = $('#beta0');
+    const beta1El = $('#beta1');
+    const avgLifeEl = $('#avgLife');
+    const stateEl = $('#tdaState');
+    if (!canvas || !barcodeCanvas || !range || !output) return;
+
+    const c = setupCanvas(canvas);
+    const cb = setupCanvas(barcodeCanvas);
+    const rnd = mulberry32(20250121);
+    const points = [];
+
+    const ringA = { x: -.38, y: -.02, r: .235, n: 8 };
+    for (let i = 0; i < ringA.n; i++) {
+      const a = i / ringA.n * TAU + .12 + (rnd() - .5) * .09;
+      const r = ringA.r + (rnd() - .5) * .035;
+      points.push({ x: ringA.x + Math.cos(a) * r, y: ringA.y + Math.sin(a) * r * .92 });
+    }
+    const ringB = { x: .45, y: .22, r: .12, n: 5 };
+    for (let i = 0; i < ringB.n; i++) {
+      const a = i / ringB.n * TAU + .38;
+      const r = ringB.r + (rnd() - .5) * .02;
+      points.push({ x: ringB.x + Math.cos(a) * r, y: ringB.y + Math.sin(a) * r });
+    }
+    for (let i = 0; i < 5; i++) {
+      const a = rnd() * TAU;
+      const r = Math.sqrt(rnd()) * .14;
+      points.push({ x: -.02 + Math.cos(a) * r, y: -.56 + Math.sin(a) * r * .8 });
+    }
+
+    const N = points.length;
+    const dist = Array.from({ length: N }, () => new Float32Array(N));
+    for (let i = 0; i < N; i++) {
+      for (let j = 0; j < N; j++) {
+        const dx = points[i].x - points[j].x;
+        const dy = points[i].y - points[j].y;
+        dist[i][j] = Math.sqrt(dx * dx + dy * dy);
+      }
+    }
+
+    const EPS_MIN = .012;
+    const EPS_MAX = 1.4;
+    const epsFor = v => EPS_MIN + Math.pow(v / 100, 1.48) * (EPS_MAX - EPS_MIN);
+
+    function find(parent, i) {
+      while (parent[i] !== i) {
+        parent[i] = parent[parent[i]];
+        i = parent[i];
+      }
+      return i;
+    }
+
+    function union(parent, size, a, b) {
+      let ra = find(parent, a);
+      let rb = find(parent, b);
+      if (ra === rb) return false;
+      if (size[ra] < size[rb]) { const t = ra; ra = rb; rb = t; }
+      parent[rb] = ra;
+      size[ra] += size[rb];
+      return true;
+    }
+
+    function graphAt(eps) {
+      const parent = Array.from({ length: N }, (_, i) => i);
+      const size = new Array(N).fill(1);
+      const edges = [];
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          if (dist[i][j] <= eps) {
+            edges.push([i, j]);
+            union(parent, size, i, j);
+          }
+        }
+      }
+      const roots = new Map();
+      const comp = new Array(N).fill(0);
+      let comps = 0;
+      for (let i = 0; i < N; i++) {
+        const r = find(parent, i);
+        if (!roots.has(r)) {
+          roots.set(r, comps);
+          comps++;
+        }
+        comp[i] = roots.get(r);
+      }
+      const compSize = new Array(comps).fill(0);
+      comp.forEach(k => compSize[k]++);
+      return { parent, size, edges, comp, comps, compSize };
+    }
+
+    function topologyAt(eps) {
+      const parent = Array.from({ length: N }, (_, i) => i);
+      const size = new Array(N).fill(1);
+      const edgeIndex = new Map();
+      const edges = [];
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          if (dist[i][j] <= eps) {
+            edgeIndex.set(i * N + j, edges.length);
+            edges.push([i, j]);
+            union(parent, size, i, j);
+          }
+        }
+      }
+      const roots = new Set();
+      for (let i = 0; i < N; i++) roots.add(find(parent, i));
+      const comps = roots.size;
+      const words = Math.max(1, Math.ceil(edges.length / 32));
+      const pivot = new Array(edges.length).fill(null);
+      let rank = 0;
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          if (dist[i][j] > eps) continue;
+          for (let k = j + 1; k < N; k++) {
+            if (dist[i][k] > eps || dist[j][k] > eps) continue;
+            const e1 = edgeIndex.get(i * N + j);
+            const e2 = edgeIndex.get(i * N + k);
+            const e3 = edgeIndex.get(j * N + k);
+            if (e1 === undefined || e2 === undefined || e3 === undefined) continue;
+            const row = new Uint32Array(words);
+            row[e1 >>> 5] ^= 1 << (e1 & 31);
+            row[e2 >>> 5] ^= 1 << (e2 & 31);
+            row[e3 >>> 5] ^= 1 << (e3 & 31);
+            while (true) {
+              let lead = -1;
+              for (let wi = words - 1; wi >= 0; wi--) {
+                if (row[wi]) {
+                  lead = wi * 32 + 31 - Math.clz32(row[wi]);
+                  break;
+                }
+              }
+              if (lead < 0) break;
+              if (pivot[lead]) {
+                const p = pivot[lead];
+                for (let wi = 0; wi < words; wi++) row[wi] ^= p[wi];
+              } else {
+                pivot[lead] = row;
+                rank++;
+                break;
+              }
+            }
+          }
+        }
+      }
+      const beta1 = Math.max(0, edges.length - N + comps - rank);
+      return { comps, beta1 };
+    }
+
+    const deathCounts = [];
+    let prevCount = N;
+    for (let s = 0; s <= 420; s++) {
+      const eps = .001 + s / 420 * (EPS_MAX - .001);
+      const parent = Array.from({ length: N }, (_, i) => i);
+      const size = new Array(N).fill(1);
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          if (dist[i][j] <= eps) union(parent, size, i, j);
+        }
+      }
+      const roots = new Set();
+      for (let i = 0; i < N; i++) roots.add(find(parent, i));
+      const count = roots.size;
+      if (count < prevCount) {
+        for (let k = 0; k < prevCount - count; k++) deathCounts.push(eps);
+        prevCount = count;
+      }
+    }
+
+    const snapshots = [];
+    for (let v = 0; v <= 100; v++) {
+      const eps = epsFor(v);
+      snapshots.push({ eps, ...topologyAt(eps), value: v });
+    }
+
+    const palette = ['#8fe9c1', '#80c8ff', '#ffc56e', '#c1b2ff', '#ff9b73', '#f3efe6'];
+    let value = parseInt(range.value, 10);
+    let playRaf = null;
+
+    function colorFor(rootMin, size) {
+      if (size <= 1) return 'rgba(114,120,131,.72)';
+      return palette[rootMin % palette.length];
+    }
+
+    function drawState(v) {
+      const snap = snapshots[v];
+      const eps = snap.eps;
+      const graph = graphAt(eps);
+      const w = c.w;
+      const h = c.h;
+      if (!w || !h) return;
+      const ctx = c.ctx;
+      ctx.clearRect(0, 0, w, h);
+      const scale = Math.min(w, h) * .39;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(243,239,230,.055)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([1, 7]);
+      for (let i = 1; i <= 3; i++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, scale * (.35 + i * .24), 0, TAU);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(cx - scale * 1.1, cy);
+      ctx.lineTo(cx + scale * 1.1, cy);
+      ctx.moveTo(cx, cy - scale * 1.02);
+      ctx.lineTo(cx, cy + scale * 1.02);
+      ctx.stroke();
+      ctx.restore();
+
+      const screen = points.map(p => ({ x: cx + p.x * scale, y: cy + p.y * scale }));
+
+      if (eps < .42) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(255,197,110,.018)';
+        screen.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, eps * scale, 0, TAU);
+          ctx.fill();
+        });
+        ctx.restore();
+      }
+
+      const rootMin = new Map();
+      const rootSize = new Map();
+      for (let i = 0; i < N; i++) {
+        const r = find(graph.parent, i);
+        if (!rootMin.has(r) || i < rootMin.get(r)) rootMin.set(r, i);
+        rootSize.set(r, (rootSize.get(r) || 0) + 1);
+      }
+
+      ctx.save();
+      graph.edges.forEach(([i, j]) => {
+        const a = screen[i];
+        const b = screen[j];
+        const ri = find(graph.parent, i);
+        const size = rootSize.get(ri) || 1;
+        const color = colorFor(rootMin.get(ri), size);
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = size > 1 ? .14 : .07;
+        ctx.lineWidth = size > 2 ? .8 : .6;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+      ctx.restore();
+
+      for (let i = 0; i < N; i++) {
+        const p = screen[i];
+        const r = find(graph.parent, i);
+        const size = rootSize.get(r) || 1;
+        const color = colorFor(rootMin.get(r), size);
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = color;
+        ctx.globalAlpha = size > 1 ? .15 : .07;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size > 1 ? 12 : 8, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = size > 1 ? 9 : 4;
+        ctx.globalAlpha = size > 1 ? .95 : .58;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size > 1 ? 3.5 : 2.6, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      if (graph.comps > 1) {
+        ctx.save();
+        ctx.font = '500 8px "IBM Plex Mono", monospace';
+        ctx.fillStyle = 'rgba(243,239,230,.42)';
+        ctx.fillText(`${graph.comps} components`, 14, h - 13);
+        ctx.restore();
+      }
+
+      if (beta0El) beta0El.textContent = String(snap.comps);
+      if (beta1El) beta1El.textContent = String(snap.beta1);
+      if (overlay) overlay.textContent = fmt(eps);
+      if (output) output.textContent = fmt(eps);
+
+      const observed = deathCounts.filter(d => d <= eps + .0001);
+      const avg = observed.length ? observed.reduce((a, b) => a + b, 0) / observed.length : 0;
+      if (avgLifeEl) avgLifeEl.textContent = `Ø ${fmt(avg)}`;
+
+      let message;
+      if (snap.comps === N) {
+        message = '<strong>Noch nichts verbunden.</strong> Jeder Punkt ist seine eigene Insel. Erhöhe ε.';
+      } else if (snap.comps > 1 && snap.beta1 > 0) {
+        message = `<strong>Cluster entstehen.</strong> Es gibt ${snap.comps} Inseln und ${snap.beta1} sichtbare Löcher. β<sub>1</sub> zählt sie.`;
+      } else if (snap.comps > 1) {
+        message = `<strong>Inseln verschmelzen.</strong> Noch ${snap.comps} Komponenten. Die meisten Löcher sind schon gefüllt.`;
+      } else if (snap.beta1 > 0) {
+        message = `<strong>Eine Insel, aber noch ${snap.beta1} Löcher.</strong> Die Form ist noch nicht trivial.`;
+      } else {
+        message = '<strong>Alles ist eine Insel, keine Löcher.</strong> Die Form wurde trivial – genau das passiert bei Daten, die das Netz „versteht“.';
+      }
+      if (stateEl && stateEl.dataset.message !== message) {
+        stateEl.innerHTML = message;
+        stateEl.dataset.message = message;
+      }
+
+      drawBarcode(eps);
+    }
+
+    function drawBarcode(eps) {
+      const w = cb.w;
+      const h = cb.h;
+      if (!w || !h) return;
+      const ctx = cb.ctx;
+      ctx.clearRect(0, 0, w, h);
+      const padL = 7;
+      const padR = 8;
+      const top = 3;
+      const bottom = 17;
+      const usable = Math.max(1, w - padL - padR);
+      const barH = Math.max(2, (h - top - bottom) / (N + 1));
+      const gap = barH * .42;
+      const bars = deathCounts.slice();
+      const all = bars.concat([Infinity]);
+      all.sort((a, b) => a - b);
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(243,239,230,.15)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, h - bottom + .5);
+      ctx.lineTo(w - padR, h - bottom + .5);
+      ctx.stroke();
+      ctx.restore();
+
+      all.forEach((d, idx) => {
+        const y = top + idx * (barH + gap * .2);
+        const full = d === Infinity ? EPS_MAX : Math.min(d, EPS_MAX);
+        const xFull = padL + full / EPS_MAX * usable;
+        const xNow = padL + Math.min(d === Infinity ? eps : d, eps) / EPS_MAX * usable;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(143,233,193,.15)';
+        ctx.lineWidth = barH;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(padL, y + barH / 2);
+        ctx.lineTo(Math.max(padL + .5, xFull), y + barH / 2);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        ctx.strokeStyle = d <= eps ? '#8fe9c1' : '#ffc56e';
+        ctx.lineWidth = barH;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(padL, y + barH / 2);
+        ctx.lineTo(Math.max(padL + .5, xNow), y + barH / 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      const xEps = padL + eps / EPS_MAX * usable;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,197,110,.55)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath();
+      ctx.moveTo(xEps, top - 1);
+      ctx.lineTo(xEps, h - bottom + 1);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = '8px "IBM Plex Mono", monospace';
+      ctx.fillStyle = 'rgba(243,239,230,.38)';
+      ctx.fillText('0', padL, h - 4);
+      ctx.textAlign = 'right';
+      ctx.fillText('ε max', w - padR, h - 4);
+      ctx.restore();
+    }
+
+    function setValue(v) {
+      value = clamp(v, 0, 100);
+      range.value = String(Math.round(value));
+      drawState(Math.round(value));
+    }
+
+    function stopPlay() {
+      if (playRaf !== null) cancelAnimationFrame(playRaf);
+      playRaf = null;
+      if (play) play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Abspielen';
+    }
+
+    if (range) {
+      range.addEventListener('input', () => {
+        stopPlay();
+        setValue(parseInt(range.value, 10));
+      });
+    }
+
+    if (reset) {
+      reset.addEventListener('click', () => {
+        stopPlay();
+        setValue(5);
+      });
+    }
+
+    if (play) {
+      play.addEventListener('click', () => {
+        if (playRaf !== null) {
+          stopPlay();
+          return;
+        }
+        if (parseInt(range.value, 10) > 97) setValue(2);
+        const startValue = parseInt(range.value, 10);
+        const t0 = performance.now();
+        play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM15 5h2v14h-2z"/></svg> Pause';
+        const tick = now => {
+          const p = clamp((now - t0) / 7200, 0, 1);
+          setValue(lerp(startValue, 100, ease(p)));
+          if (p < 1) playRaf = requestAnimationFrame(tick);
+          else stopPlay();
+        };
+        playRaf = requestAnimationFrame(tick);
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      const a = c.resize();
+      const b = cb.resize();
+      if (a || b) drawState(Math.round(value));
+    }, { passive: true });
+
+    setValue(value);
+  }
+
+  function initPipeline() {
+    const canvas = $('#stageCanvas');
+    const buttons = $$('.step-btn');
+    const tag = $('#stageTag');
+    const title = $('#stageTitle');
+    const text = $('#stageText');
+    if (!canvas || !buttons.length) return;
+    const c = setupCanvas(canvas);
+
+    const stages = [
+      {
+        tag: 'Datensätze',
+        title: 'Zwei Welten, zwei OOD-Quellen',
+        text: 'MNIST-Ziffern mit EMNIST-Buchstaben als OOD. CIFAR-10-Objekte mit CIFAR-100 als OOD. Beide Modelle: ResNet18.'
+      },
+      {
+        tag: 'Netz',
+        title: 'ResNet18, letzter Layer vor dem Klassifikator',
+        text: 'Das Bild wird durch 18 ResNet-Blöcke geschickt. Der vorletzte Layer liefert ein Embedding mit <b>512 Dimensionen</b>. Genau dort wird gemessen.'
+      },
+      {
+        tag: 'Stichprobe',
+        title: '150 Punkte, 50.000-mal gezogen',
+        text: 'Topologie auf allen Bildern wäre zu teuer. Deshalb werden zufällig <b>25 bis 150 Punkte</b> pro Bootstrap-Stichprobe gezogen – mit Zurücklegen.'
+      },
+      {
+        tag: 'Topologie',
+        title: 'Vietoris–Rips, dann Ripser',
+        text: 'Die Software baut den Komplex und berechnet persistente Homologie bis <b>H₁</b>. Für die klaren Effekte reicht am Ende <b>H₀</b>: die Lebensdauer der Inseln.'
+      },
+      {
+        tag: 'Kennzahlen',
+        title: 'Lebensdauer statt nur Anzahl',
+        text: 'Pro Stichprobe werden Durchschnitt und Maximum der Lebensdauer, Geburt und Tod der Merkmale gespeichert. Daraus entstehen Verteilungen mit <b>95%-Konfidenzintervallen</b>.'
+      },
+      {
+        tag: 'Vergleich',
+        title: 'Train, Test und OOD übereinander',
+        text: 'Erst der Vergleich zeigt den Effekt: Train und Test liegen fast aufeinander. <b>OOD liegt deutlich weiter rechts</b> – seine Inseln leben länger.'
+      }
+    ];
+
+    let current = 0;
+    let raf = null;
+    let hoverT = 0;
+
+    function rr(ctx, x, y, w, h, r) {
+      const rad = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + rad, y);
+      ctx.arcTo(x + w, y, x + w, y + h, rad);
+      ctx.arcTo(x + w, y + h, x, y + h, rad);
+      ctx.arcTo(x, y + h, x, y, rad);
+      ctx.arcTo(x, y, x + w, y, rad);
+      ctx.closePath();
+    }
+
+    function grid(ctx, w, h) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(243,239,230,.04)';
+      ctx.lineWidth = 1;
+      for (let x = 24; x < w; x += 38) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 24; y < h; y += 38) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function panel(ctx, x, y, w, h, stroke) {
+      ctx.save();
+      rr(ctx, x, y, w, h, 10);
+      ctx.fillStyle = 'rgba(8,11,16,.35)';
+      ctx.fill();
+      ctx.strokeStyle = stroke || 'rgba(243,239,230,.12)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function label(ctx, str, x, y, color, size = 9, align = 'left') {
+      ctx.save();
+      ctx.font = `500 ${size}px "IBM Plex Mono", monospace`;
+      ctx.fillStyle = color || 'rgba(243,239,230,.48)';
+      ctx.textAlign = align;
+      ctx.fillText(str, x, y);
+      ctx.restore();
+    }
+
+    function drawStage0(ctx, w, h) {
+      const pad = Math.max(20, w * .06);
+      const gap = 14;
+      const cardW = (w - pad * 2 - gap) / 2;
+      const rows = [
+        { y: h * .13, a: 'MNIST', b: 'EMNIST', ac: '#8fe9c1', bc: '#ff6b3d', kind: 'digit' },
+        { y: h * .56, a: 'CIFAR-10', b: 'CIFAR-100', ac: '#80c8ff', bc: '#ffc56e', kind: 'color' }
+      ];
+      rows.forEach((row, ri) => {
+        const cardH = h * .31;
+        panel(ctx, pad, row.y, cardW, cardH, 'rgba(143,233,193,.16)');
+        panel(ctx, pad + cardW + gap, row.y, cardW, cardH, 'rgba(255,107,61,.2)');
+        label(ctx, 'ID', pad + 9, row.y + 15, row.ac, 8);
+        label(ctx, 'OOD', pad + cardW + gap + 9, row.y + 15, row.bc, 8);
+        label(ctx, row.a, pad + 10, row.y + cardH - 9, 'rgba(243,239,230,.8)', 10);
+        label(ctx, row.b, pad + cardW + gap + 10, row.y + cardH - 9, 'rgba(243,239,230,.8)', 10);
+
+        if (row.kind === 'digit') {
+          const seven = ['0011110', '0000010', '0000100', '0000100', '0001000', '0001000', '0001000'];
+          const a = ['0011100', '0100010', '0100010', '0111110', '0100010', '0100010', '0100010'];
+          const drawPix = (pat, ox, oy, color, cell) => {
+            pat.forEach((line, yy) => {
+              line.split('').forEach((bit, xx) => {
+                if (bit === '1') {
+                  ctx.fillStyle = color;
+                  ctx.fillRect(ox + xx * cell, oy + yy * cell, cell - 1, cell - 1);
+                }
+              });
+            });
+          };
+          const cell = Math.min(3.2, cardW / 24);
+          drawPix(seven, pad + cardW / 2 - 3.5 * cell, row.y + cardH / 2 - 3.5 * cell, '#8fe9c1', cell);
+          drawPix(a, pad + cardW + gap + cardW / 2 - 3.5 * cell, row.y + cardH / 2 - 3.5 * cell, '#ff6b3d', cell);
+        } else {
+          const rnd = mulberry32(44 + ri);
+          for (let i = 0; i < 20; i++) {
+            const x = pad + 12 + (i % 5) * (cardW - 24) / 5;
+            const y = row.y + 22 + Math.floor(i / 5) * (cardH - 42) / 4;
+            ctx.fillStyle = i < 10 ? 'rgba(128,200,255,.55)' : 'rgba(255,197,110,.5)';
+            ctx.fillRect(x + rnd() * 4, y + rnd() * 3, 5, 5);
+          }
+        }
+
+        const ax = pad + cardW + gap / 2;
+        const ay = row.y + cardH / 2;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(243,239,230,.24)';
+        ctx.fillStyle = 'rgba(243,239,230,.24)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(ax - 4, ay);
+        ctx.lineTo(ax + 4, ay);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ax + 4, ay);
+        ctx.lineTo(ax + 1, ay - 3);
+        ctx.lineTo(ax + 1, ay + 3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      });
+      label(ctx, 'zwei Benchmark-Paare', w / 2, h - 9, 'rgba(243,239,230,.3)', 8, 'center');
+    }
+
+    function drawStage1(ctx, w, h) {
+      const pad = Math.max(24, w * .06);
+      const gridSize = Math.min(58, h * .16);
+      const gx = pad;
+      const gy = h / 2 - gridSize / 2;
+      panel(ctx, gx, gy, gridSize, gridSize, 'rgba(128,200,255,.28)');
+      for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 7; j++) {
+          if ((i * 7 + j + 3) % 5 < 2) {
+            ctx.fillStyle = 'rgba(128,200,255,.5)';
+            ctx.fillRect(gx + 6 + i * (gridSize - 12) / 7, gy + 6 + j * (gridSize - 12) / 7, 4, 4);
+          }
+        }
+      }
+      label(ctx, 'BILD', gx + gridSize / 2, gy + gridSize + 18, 'rgba(243,239,230,.38)', 8, 'center');
+
+      const ax1 = gx + gridSize + 14;
+      const ax2 = ax1 + Math.max(20, w * .055);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(243,239,230,.25)';
+      ctx.beginPath();
+      ctx.moveTo(ax1, h / 2);
+      ctx.lineTo(ax2, h / 2);
+      ctx.stroke();
+      ctx.restore();
+
+      const blocks = 9;
+      const bx = ax2 + 14;
+      const bw = Math.max(9, Math.min(20, (w * .42) / blocks - 4));
+      const by = h / 2 - bw / 2;
+      for (let i = 0; i < blocks; i++) {
+        const x = bx + i * (bw + 4);
+        const y = by + Math.sin(i * .55) * 11;
+        ctx.save();
+        rr(ctx, x, y, bw, bw, 2.5);
+        ctx.fillStyle = `rgba(143,233,193,${.12 + i / blocks * .28})`;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(143,233,193,.35)';
+        ctx.stroke();
+        ctx.restore();
+      }
+      label(ctx, 'RESNET18 · 18 BLÖCKE', bx, by - 23, 'rgba(143,233,193,.65)', 8);
+
+      const vx = Math.min(w - pad - 42, bx + blocks * (bw + 4) + 34);
+      const vy = h / 2 - 40;
+      for (let i = 0; i < 10; i++) {
+        ctx.fillStyle = `rgba(255,197,110,${.24 + i * .04})`;
+        ctx.fillRect(vx, vy + i * 8, 9 + (i % 4) * 5, 4);
+      }
+      label(ctx, '512-D', vx - 4, vy + 91, 'rgba(255,197,110,.7)', 8);
+      label(ctx, 'Embedding', w / 2, h - 15, 'rgba(243,239,230,.3)', 8, 'center');
+    }
+
+    function drawStage2(ctx, w, h) {
+      const rnd = mulberry32(88);
+      const cx = w / 2;
+      const cy = h / 2;
+      const scale = Math.min(w, h) * .32;
+      const groups = [
+        { x: -.55, y: -.2, c: '#8fe9c1' },
+        { x: .48, y: .12, c: '#80c8ff' },
+        { x: -.08, y: .52, c: '#c1b2ff' }
+      ];
+      groups.forEach(g => {
+        for (let i = 0; i < 28; i++) {
+          const a = rnd() * TAU;
+          const r = Math.sqrt(rnd()) * .22;
+          const x = cx + (g.x + Math.cos(a) * r) * scale;
+          const y = cy + (g.y + Math.sin(a) * r * .9) * scale;
+          ctx.fillStyle = g.c;
+          ctx.globalAlpha = .7;
+          ctx.beginPath();
+          ctx.arc(x, y, 1.6, 0, TAU);
+          ctx.fill();
+        }
+      });
+      for (let i = 0; i < 46; i++) {
+        const a = rnd() * TAU;
+        const r = (.62 + rnd() * .42) * scale;
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r * .78;
+        ctx.fillStyle = '#ff6b3d';
+        ctx.globalAlpha = .62;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.5, 0, TAU);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      label(ctx, '512 DIMENSIONEN', 18, 26, 'rgba(243,239,230,.36)', 8);
+      label(ctx, 'wir sehen 2', w - 18, 26, 'rgba(243,239,230,.36)', 8, 'right');
+      label(ctx, 'ID-Klassen · kompakt', 18, h - 17, 'rgba(143,233,193,.7)', 8);
+      label(ctx, 'OOD · diffus', w - 18, h - 17, 'rgba(255,107,61,.8)', 8, 'right');
+    }
+
+    function drawStage3(ctx, w, h) {
+      const rnd = mulberry32(91);
+      const cx = w * .32;
+      const cy = h * .52;
+      const scale = Math.min(w, h) * .27;
+      for (let i = 0; i < 170; i++) {
+        const a = rnd() * TAU;
+        const r = Math.sqrt(rnd()) * scale * 1.4;
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r * .75;
+        const ood = i % 8 === 0;
+        ctx.fillStyle = ood ? 'rgba(255,107,61,.55)' : 'rgba(143,233,193,.46)';
+        ctx.beginPath();
+        ctx.arc(x, y, 1.2, 0, TAU);
+        ctx.fill();
+      }
+      const circles = [
+        { x: cx - scale * .15, y: cy - scale * .12, r: scale * .55, c: '#8fe9c1' },
+        { x: cx + scale * .48, y: cy + scale * .2, r: scale * .42, c: '#80c8ff' },
+        { x: cx - scale * .55, y: cy + scale * .46, r: scale * .34, c: '#ffc56e' }
+      ];
+      circles.forEach((s, i) => {
+        ctx.save();
+        ctx.strokeStyle = s.c;
+        ctx.globalAlpha = .75;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, TAU);
+        ctx.stroke();
+        ctx.restore();
+        label(ctx, '150', s.x, s.y + 3, s.c, 9, 'center');
+      });
+      const tx = w * .73;
+      const ty = h * .3;
+      for (let k = 0; k < 3; k++) {
+        const x = tx + k * 26;
+        panel(ctx, x, ty, 20, 34, 'rgba(243,239,230,.13)');
+        for (let i = 0; i < 12; i++) {
+          ctx.fillStyle = ['#8fe9c1', '#80c8ff', '#ffc56e'][k];
+          ctx.globalAlpha = .55;
+          ctx.fillRect(x + 4 + (i % 3) * 4, ty + 5 + Math.floor(i / 3) * 7, 2.5, 2.5);
+        }
+      }
+      ctx.globalAlpha = 1;
+      label(ctx, '50.000 ×', w * .73, h * .67, 'rgba(243,239,230,.7)', 13);
+      label(ctx, 'Bootstrap-Wiederholungen', w * .73, h * .67 + 15, 'rgba(243,239,230,.34)', 8);
+      label(ctx, 'Stichprobe n = 150', 18, h - 17, 'rgba(243,239,230,.34)', 8);
+    }
+
+    function drawStage4(ctx, w, h) {
+      const rnd = mulberry32(19);
+      const cx = w * .34;
+      const cy = h * .48;
+      const scale = Math.min(w, h) * .26;
+      const pts = [];
+      for (let i = 0; i < 30; i++) {
+        const a = rnd() * TAU;
+        const r = Math.sqrt(rnd()) * scale * 1.25;
+        pts.push({
+          x: cx + Math.cos(a) * r,
+          y: cy + Math.sin(a) * r * .82
+        });
+      }
+      ctx.save();
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[i].x - pts[j].x;
+          const dy = pts[i].y - pts[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < scale * .34) {
+            ctx.strokeStyle = 'rgba(143,233,193,.15)';
+            ctx.lineWidth = .7;
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+      pts.forEach(p => {
+        ctx.fillStyle = '#8fe9c1';
+        ctx.shadowColor = '#8fe9c1';
+        ctx.shadowBlur = 6;
+        ctx.globalAlpha = .85;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, TAU);
+        ctx.fill();
+      });
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      label(ctx, 'VIETORIS–RIPS', 18, 25, 'rgba(243,239,230,.36)', 8);
+
+      const bx = w * .64;
+      const by = h * .25;
+      const bw = Math.min(w * .28, 230);
+      label(ctx, 'PERSISTENZ', bx, by - 13, 'rgba(243,239,230,.36)', 8);
+      const rnd2 = mulberry32(7);
+      for (let i = 0; i < 13; i++) {
+        const len = (0.12 + rnd2() * .82) * bw;
+        ctx.strokeStyle = i % 5 === 0 ? '#ffc56e' : '#8fe9c1';
+        ctx.globalAlpha = .75;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(bx, by + i * (h * .36) / 13);
+        ctx.lineTo(bx + len, by + i * (h * .36) / 13);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      label(ctx, 'H0', bx + bw + 10, by + h * .36 / 2, 'rgba(243,239,230,.35)', 8);
+      label(ctx, 'Ripser', w / 2, h - 14, 'rgba(243,239,230,.3)', 8, 'center');
+    }
+
+    function drawStage5(ctx, w, h) {
+      const m = { l: 42, r: 26, t: 44, b: 48 };
+      const pw = w - m.l - m.r;
+      const ph = h - m.t - m.b;
+      const y0 = h - m.b;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(243,239,230,.08)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const x = m.l + i / 4 * pw;
+        ctx.beginPath();
+        ctx.moveTo(x, m.t);
+        ctx.lineTo(x, y0);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(243,239,230,.24)';
+      ctx.beginPath();
+      ctx.moveTo(m.l, y0);
+      ctx.lineTo(w - m.r, y0);
+      ctx.stroke();
+      ctx.restore();
+
+      const sets = [
+        { mean: .32, sd: .065, color: '#8fe9c1' },
+        { mean: .35, sd: .07, color: '#80c8ff' },
+        { mean: .72, sd: .08, color: '#ff6b3d' }
+      ];
+      const maxY = .5;
+      sets.forEach((s, si) => {
+        ctx.save();
+        ctx.beginPath();
+        for (let i = 0; i <= 160; i++) {
+          const t = i / 160;
+          const x = m.l + t * pw;
+          const d = Math.exp(-.5 * Math.pow((t - s.mean) / s.sd, 2)) / (s.sd * Math.sqrt(TAU));
+          const y = y0 - clamp(d / maxY, 0, 1) * ph * .82;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = si === 2 ? 2 : 1.6;
+        if (si === 1) ctx.setLineDash([5, 4]);
+        ctx.stroke();
+        ctx.restore();
+        const xMean = m.l + s.mean * pw;
+        ctx.fillStyle = s.color;
+        contextDot(ctx, xMean, y0 - .25 * ph);
+      });
+      label(ctx, 'TRAIN', m.l, m.t - 16, '#8fe9c1', 8);
+      label(ctx, 'TEST', m.l + 52, m.t - 16, '#80c8ff', 8);
+      label(ctx, 'OOD', w - m.r - 20, m.t - 16, '#ff6b3d', 8, 'right');
+      label(ctx, 'Ø LEBENSDAUER', w / 2, h - 12, 'rgba(243,239,230,.3)', 8, 'center');
+    }
+
+    function contextDot(ctx, x, y) {
+      ctx.save();
+      ctx.fillStyle = '#fff';
+      ctx.globalAlpha = .9;
+      ctx.beginPath();
+      ctx.arc(x, y, 2.4, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    const drawers = [drawStage0, drawStage1, drawStage2, drawStage3, drawStage4, drawStage5];
+
+    function draw() {
+      const w = c.w;
+      const h = c.h;
+      if (!w || !h) return;
+      const ctx = c.ctx;
+      ctx.clearRect(0, 0, w, h);
+      grid(ctx, w, h);
+      ctx.save();
+      drawers[current](ctx, w, h);
+      ctx.restore();
+    }
+
+    function setStep(i) {
+      current = i;
+      buttons.forEach((b, bi) => {
+        const on = bi === i;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+        b.tabIndex = on ? 0 : -1;
+      });
+      if (tag) tag.textContent = stages[i].tag;
+      if (title) title.textContent = stages[i].title;
+      if (text) text.innerHTML = stages[i].text;
+      draw();
+    }
+
+    buttons.forEach((b, i) => {
+      b.addEventListener('click', () => setStep(i));
+      b.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = (i + 1) % buttons.length;
+          buttons[next].focus();
+          setStep(next);
+        }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = (i - 1 + buttons.length) % buttons.length;
+          buttons[prev].focus();
+          setStep(prev);
+        }
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      if (c.resize()) draw();
+    }, { passive: true });
+    setStep(0);
+  }
+
+  function initResults() {
+    const canvas = $('#resultsCanvas');
+    const tabs = $$('.tab');
+    const tooltip = $('#chartTooltip');
+    const sub = $('#chartSub');
+    const statOod = $('#statOod');
+    const statOodSub = $('#statOodSub');
+    const statGap = $('#statGap');
+    const statGapPct = $('#statGapPct');
+    const statTrainTest = $('#statTrainTest');
+    const statTrainTestSub = $('#statTrainTestSub');
+    if (!canvas || !tabs.length) return;
+    const c = setupCanvas(canvas);
+
+    const data = {
+      mnist: {
+        label: 'MNIST',
+        ood: 'EMNIST',
+        sub: 'ResNet18 auf MNIST · OOD: EMNIST · 150 Punkte pro Bootstrap-Stichprobe',
+        domain: [.72, 1.68],
+        train: { mean: 1.059, lo: 1.000, hi: 1.118, sd: .12, color: '#1b7f68', label: 'Train' },
+        test: { mean: 1.0545, lo: .996, hi: 1.113, sd: .12, color: '#2d70a8', label: 'Test' },
+        ood: { mean: 1.3815, lo: 1.303, hi: 1.460, sd: .16, color: '#d34e24', label: 'OOD' }
+      },
+      cifar: {
+        label: 'CIFAR-10',
+        ood: 'CIFAR-100',
+        sub: 'ResNet18 auf CIFAR-10 · OOD: CIFAR-100 · 150 Punkte pro Bootstrap-Stichprobe',
+        domain: [1.18, 2.78],
+        train: { mean: 1.519, lo: 1.452, hi: 1.586, sd: .17, color: '#1b7f68', label: 'Train' },
+        test: { mean: 1.624, lo: 1.529, hi: 1.719, sd: .235, color: '#2d70a8', label: 'Test' },
+        ood: { mean: 2.366, lo: 2.272, hi: 2.460, sd: .225, color: '#d34e24', label: 'OOD' }
+      }
+    };
+
+    let key = 'mnist';
+    let alpha = 1;
+    let animRaf = null;
+    let hoverPoints = [];
+
+    function gauss(x, mean, sd) {
+      return Math.exp(-.5 * Math.pow((x - mean) / sd, 2)) / (sd * Math.sqrt(TAU));
+    }
+
+    function draw(a = 1) {
+      const w = c.w;
+      const h = c.h;
+      if (!w || !h) return;
+      const ctx = c.ctx;
+      const set = data[key];
+      const [dmin, dmax] = set.domain;
+      const margin = { l: w < 540 ? 34 : 48, r: 22, t: 30, b: 48 };
+      const pw = w - margin.l - margin.r;
+      const ph = h - margin.t - margin.b;
+      const y0 = h - margin.b;
+      const series = [set.train, set.test, set.ood];
+      const maxPdf = Math.max(...series.map(s => gauss(s.mean, s.mean, s.sd)));
+
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(23,21,16,.08)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const x = margin.l + i / 4 * pw;
+        ctx.beginPath();
+        ctx.moveTo(x, margin.t);
+        ctx.lineTo(x, y0);
+        ctx.stroke();
+      }
+      for (let i = 0; i <= 3; i++) {
+        const y = margin.t + i / 3 * ph;
+        ctx.beginPath();
+        ctx.moveTo(margin.l, y);
+        ctx.lineTo(w - margin.r, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(23,21,16,.32)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(margin.l, y0 + .5);
+      ctx.lineTo(w - margin.r, y0 + .5);
+      ctx.stroke();
+      ctx.restore();
+
+      series.forEach((s, si) => {
+        ctx.save();
+        ctx.beginPath();
+        for (let i = 0; i <= 200; i++) {
+          const xv = lerp(dmin, dmax, i / 200);
+          const pdf = gauss(xv, s.mean, s.sd);
+          const x = margin.l + (xv - dmin) / (dmax - dmin) * pw;
+          const y = y0 - clamp(pdf / maxPdf, 0, 1) * ph * .82;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        const curvePath = new Path2D();
+        for (let i = 0; i <= 200; i++) {
+          const xv = lerp(dmin, dmax, i / 200);
+          const pdf = gauss(xv, s.mean, s.sd);
+          const x = margin.l + (xv - dmin) / (dmax - dmin) * pw;
+          const y = y0 - clamp(pdf / maxPdf, 0, 1) * ph * .82;
+          if (i === 0) curvePath.moveTo(x, y);
+          else curvePath.lineTo(x, y);
+        }
+        curvePath.lineTo(margin.l + pw, y0);
+        curvePath.lineTo(margin.l, y0);
+        curvePath.closePath();
+        ctx.globalAlpha = .11 * a;
+        ctx.fillStyle = s.color;
+        ctx.fill(curvePath);
+        ctx.globalAlpha = a;
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = si === 2 ? 2.4 : 1.8;
+        if (si === 1) ctx.setLineDash([6, 5]);
+        ctx.stroke();
+        ctx.restore();
+
+        const mx = margin.l + (s.mean - dmin) / (dmax - dmin) * pw;
+        const my = y0 - clamp(gauss(s.mean, s.mean, s.sd) / maxPdf, 0, 1) * ph * .82;
+        ctx.save();
+        ctx.globalAlpha = a;
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 4]);
+        ctx.beginPath();
+        ctx.moveTo(mx, y0);
+        ctx.lineTo(mx, my);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = s.color;
+        ctx.beginPath();
+        ctx.arc(mx, my, si === 2 ? 4.2 : 3.5, 0, TAU);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(239,232,219,.9)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+
+        hoverPoints[si] = { x: mx, y: my, s };
+      });
+
+      const testX = margin.l + (set.test.mean - dmin) / (dmax - dmin) * pw;
+      const oodX = margin.l + (set.ood.mean - dmin) / (dmax - dmin) * pw;
+      const annY = margin.t + 22;
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = 'rgba(211,78,36,.55)';
+      ctx.fillStyle = 'rgba(211,78,36,.68)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(testX, annY);
+      ctx.lineTo(oodX, annY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(oodX, annY);
+      ctx.lineTo(oodX - 5, annY - 3);
+      ctx.lineTo(oodX - 5, annY + 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.font = '500 9px "IBM Plex Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`+${fmt(set.ood.mean - set.test.mean)}`, (testX + oodX) / 2, annY - 7);
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.fillStyle = 'rgba(23,21,16,.56)';
+      ctx.font = '500 9px "IBM Plex Mono", monospace';
+      ctx.textAlign = 'center';
+      for (let i = 0; i <= 4; i++) {
+        const xv = lerp(dmin, dmax, i / 4);
+        const x = margin.l + i / 4 * pw;
+        ctx.fillText(fmt(xv, 2), x, y0 + 18);
+      }
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'rgba(23,21,16,.45)';
+      ctx.font = '500 8px "IBM Plex Mono", monospace';
+      ctx.fillText('Ø LEBENSDAUER · H0', margin.l, h - 9);
+      ctx.textAlign = 'right';
+      ctx.fillText('schematische Dichte', w - margin.r, h - 9);
+      ctx.restore();
+    }
+
+    function animate() {
+      if (animRaf) cancelAnimationFrame(animRaf);
+      const start = performance.now();
+      const tick = now => {
+        const p = clamp((now - start) / 420, 0, 1);
+        alpha = ease(p);
+        draw(alpha);
+        if (p < 1) animRaf = requestAnimationFrame(tick);
+        else animRaf = null;
+      };
+      animRaf = requestAnimationFrame(tick);
+    }
+
+    function updateStats() {
+      const set = data[key];
+      const gap = set.ood.mean - set.test.mean;
+      const pct = gap / set.test.mean * 100;
+      if (sub) sub.textContent = set.sub;
+      if (statOod) statOod.textContent = `${fmt(set.ood.lo)}–${fmt(set.ood.hi)}`;
+      if (statOodSub) statOodSub.textContent = `${set.ood} · 95%-Intervall`;
+      if (statGap) statGap.textContent = `+${fmt(gap)}`;
+      if (statGapPct) statGapPct.textContent = `≈ +${Math.round(pct)}%`;
+      if (statTrainTest) statTrainTest.textContent = 'fast gleich';
+      if (statTrainTestSub) statTrainTestSub.textContent = 'Die Intervalle überlappen deutlich.';
+    }
+
+    function setKey(next) {
+      key = next;
+      tabs.forEach(t => {
+        const on = t.dataset.dataset === next;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      hoverPoints = [];
+      alpha = 0;
+      draw(0);
+      animate();
+      updateStats();
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => setKey(t.dataset.dataset)));
+
+    if (tooltip) {
+      canvas.addEventListener('pointermove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        let found = null;
+        hoverPoints.forEach((p, i) => {
+          if (!p) return;
+          const d = Math.hypot(mx - p.x, my - p.y);
+          if (d < 24 && (!found || d < found.d)) found = { ...p, d, idx: i };
+        });
+        if (found) {
+          const s = found.s;
+          tooltip.innerHTML = `<span style="color:${s.color}">●</span> ${s.label} · Ø ${fmt(s.mean)}<br><span style="opacity:.7">95%: ${fmt(s.lo)}–${fmt(s.hi)}</span>`;
+          tooltip.style.left = `${found.x}px`;
+          tooltip.style.top = `${found.y}px`;
+          tooltip.classList.add('show');
+        } else {
+          tooltip.classList.remove('show');
+        }
+      }, { passive: true });
+      canvas.addEventListener('pointerleave', () => tooltip.classList.remove('show'));
+    }
+
+    window.addEventListener('resize', () => {
+      if (c.resize()) draw(1);
+    }, { passive: true });
+
+    updateStats();
+    draw(1);
+  }
+
+  initHero();
+  initFold();
+  initTda();
+  initPipeline();
+  initResults();
+})();
+</script>
+</body>
+</html>
