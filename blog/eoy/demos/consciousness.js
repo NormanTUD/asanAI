@@ -72,7 +72,7 @@
       {
         key: "kastrup", tone: "blue",
         tag: "Bewusstsein ist fundamental",
-        title: "Analytic Idealism (Kastrup)",
+        title: L("Bernardo Kastrup: Analytischer Idealismus", "Bernardo Kastrup: Analytic Idealism"),
         lead: L("Bewusstsein ist das Fundament, nicht Materie. Einzelne Ichs sind lokale, vorübergehende Dissoziationen eines universalen Bewusstseins.", "Consciousness is fundamental, not matter. Individual selves are local, temporary dissociations of one universal consciousness."),
         body: [
           L("Das Fundament ist Bewusstsein, nicht Materie; Materie ist eine Erscheinung in ihm. Jedes Ich, jedes Lebewesen ist eine lokale, vorübergehende Dissoziation dieses einen Bewusstseins, wie ein Wirbel im Ozean: von innen erlebt er sich als getrennt und begrenzt, von außen ist er nur eine lokale Bewegung des einen Wassers.", "The foundation is consciousness, not matter; matter is an appearance within it. Every “I”, every living being, is a local, temporary dissociation of this one consciousness, like a vortex in the ocean: from inside it experiences itself as separate and bounded; from outside it is only a local movement of the one water."),
@@ -92,8 +92,8 @@
           L("4E Cognition beschreibt Denken als biologische und situierte Tätigkeit. Ein LLM lebt nur in der Extended-Dimension: Textwerkzeug, aber ohne Körper, Welt und Handlung.", "4E Cognition describes thinking as a biological and situated activity. An LLM lives only in the extended dimension: a text tool without a body, world, or action.")
         ],
         cite: '<a href="https://openlibrary.org/works/OL12000405W" target="_blank" rel="noopener">Noë (2009)</a>; <a href="https://doi.org/10.1093/analys/58.1.7" target="_blank" rel="noopener">Clark &amp; Chalmers (1998)</a>; <a href="https://openlibrary.org/works/OL15207300W" target="_blank" rel="noopener">Varela et al. (1991)</a>',
-        hint: L("Alle vier E's sind beim Menschen gleichzeitig aktiv. Weiter zeigt die KI: nur Extended.", "All four E's are active in the human at once. Next shows the AI: Extended only."),
-        status: L("Mensch: 4 von 4 aktiv. Die vier Dimensionen sind gekoppelt. Weiter zeigt die KI.", "Human: 4 of 4 active. The four dimensions are coupled. Next shows the AI."),
+        hint: L("Die Führung startet bei der KI, geht durch alle vier Beispiele und dann zum Menschen. Die vier E's bleiben gleichzeitig sichtbar.", "The tour starts with the AI, goes through all four examples, then the human. The four E's stay visible at once."),
+        status: L("KI: 1 von 4. Extended ist aktiv. Beispiel 1/4. Weiter zeigt Beispiel 2/4.", "AI: 1 of 4. Extended is active. Example 1/4. Next shows example 2/4."),
       },
       {
         key: "myst", tone: "lilac",
@@ -148,7 +148,7 @@
     var iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false };
     var pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false };
     var kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 };
-    var four = { mode: "human", word: "hot" };
+    var four = { mode: "ai", word: "hot" };
     var FOUR_E = [
       { key: "embodied", label: "Embodied", subDe: "Körper", subEn: "Body", noteDe: "Sinne, Schmerz, Motorik: Denken ist an einen Körper gebunden.", noteEn: "Senses, pain, motor control: thought is tied to a body.", missingDe: "kein Körper, kein Nervensystem", missingEn: "no body, no nervous system", color: "#ffb36b" },
       { key: "embedded", label: "Embedded", subDe: "Welt", subEn: "World", noteDe: "Physische und soziale Lage: Denken findet in einer Welt statt.", noteEn: "Physical and social situation: thought happens in a world.", missingDe: "keine geteilte physische Welt", missingEn: "no shared physical world", color: "#7fe0b0" },
@@ -248,7 +248,7 @@
       if (active === 1) { iit = { feedforward: false, cut: 0, pulseStart: 0, phi: 0.82, pulsed: false }; setStatus(THEORIES[1].status); }
       if (active === 2) { pred = { precision: 58, stimulus: "apple", priorCenter: 0.5, priorTarget: null, surprise: 0, modelReady: false }; setStatus(THEORIES[2].status); }
       if (active === 3) { kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 }; setStatus(THEORIES[3].status); }
-      if (active === 4) { four = { mode: "human", word: "hot" }; setStatus(THEORIES[4].status); }
+      if (active === 4) { four = { mode: "ai", word: "hot" }; setStatus(THEORIES[4].status); }
       if (active === 5) { initMyst(); setStatus(THEORIES[5].status); }
       renderControls(); draw(performance.now());
     }
@@ -1028,31 +1028,28 @@
       return true;
     }
     function fourStatusText() {
-      if (four.mode === "ai") return L("KI: 1 von 4. Extended ist aktiv; Embodied, Embedded und Enacted fehlen.", "AI: 1 of 4. Extended is active; Embodied, Embedded and Enacted are missing.");
-      return L("Mensch: 4 von 4 aktiv. Alle vier Dimensionen sind gleichzeitig gekoppelt.", "Human: 4 of 4 active. All four dimensions are coupled at once.");
-    }
-    function fourWordStatus() {
-      var w = FOUR_WORDS[four.word];
-      return four.mode === "ai"
-        ? L(w.de + ": Token-Nachbarn " + w.tokensDe.join(" · "), w.en + ": token neighbours " + w.tokensEn.join(" · "))
-        : L(w.de + ": " + w.groundDe, w.en + ": " + w.groundEn);
-    }
-    function fourSetMode(mode) {
-      four.mode = mode === "ai" ? "ai" : "human";
-      setStatus(fourStatusText());
-      renderControls();
-      draw(performance.now());
-    }
-    function fourSetWord(key) {
-      if (!FOUR_WORDS[key]) return;
-      four.word = key;
-      setStatus(fourWordStatus());
-      renderControls();
-      draw(performance.now());
+      var keys = Object.keys(FOUR_WORDS);
+      var idx = Math.max(0, keys.indexOf(four.word));
+      var ex = L("Beispiel " + (idx + 1) + "/" + keys.length, "example " + (idx + 1) + "/" + keys.length);
+      if (four.mode === "ai") return L("KI: 1 von 4. Extended ist aktiv. " + ex + ".", "AI: 1 of 4. Extended is active. " + ex + ".");
+      return L("Mensch: 4 von 4 aktiv. Alle Dimensionen gekoppelt. " + ex + ".", "Human: 4 of 4 active. All dimensions coupled. " + ex + ".");
     }
     function fourNextAction() {
-      if (four.mode !== "ai") {
-        fourSetMode("ai");
+      var keys = Object.keys(FOUR_WORDS);
+      var idx = Math.max(0, keys.indexOf(four.word));
+      if (idx < keys.length - 1) {
+        four.word = keys[idx + 1];
+        setStatus(fourStatusText());
+        renderControls();
+        draw(performance.now());
+        return true;
+      }
+      if (four.mode === "ai") {
+        four.mode = "human";
+        four.word = keys[0];
+        setStatus(fourStatusText());
+        renderControls();
+        draw(performance.now());
         return true;
       }
       return false;
@@ -1082,15 +1079,7 @@
           '<label class="ls-con2-range"><span>' + L("Dissoziation", "Dissociation") + '</span><input type="range" data-con-diss min="0" max="100" step="1" value="' + kast.diss + '"><output>' + kast.diss + ' %</output></label>' +
           '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Reset", "Reset") + '</button></div>';
       } else if (active === 4) {
-        controls.innerHTML =
-          '<div class="ls-con2-row">' +
-            '<button type="button" class="ls-con2-chip' + (four.mode === "human" ? " is-on" : "") + '" data-four-mode="human">' + L("Mensch", "Human") + '</button>' +
-            '<button type="button" class="ls-con2-chip' + (four.mode === "ai" ? " is-on" : "") + '" data-four-mode="ai">' + L("KI", "AI") + '</button>' +
-          '</div>' +
-          '<div class="ls-con2-row">' + Object.keys(FOUR_WORDS).map(function (k) {
-            return '<button type="button" class="ls-con2-chip' + (four.word === k ? " is-on" : "") + '" data-four-word="' + k + '">' + L(FOUR_WORDS[k].de, FOUR_WORDS[k].en) + '</button>';
-          }).join("") + '</div>' +
-          '<div class="ls-con2-row"><button type="button" class="ls-con2-btn" data-con-reset>' + L("Neu starten", "Start over") + '</button></div>';
+        controls.innerHTML = '';
       } else {
         controls.innerHTML = '';
       }
@@ -1147,12 +1136,6 @@
       controls.querySelectorAll("[data-con-diss]").forEach(function (inp) {
         inp.addEventListener("input", function () { setKastDiss(inp.value); });
       });
-      controls.querySelectorAll("[data-four-mode]").forEach(function (b) {
-        b.addEventListener("click", function () { fourSetMode(b.getAttribute("data-four-mode")); });
-      });
-      controls.querySelectorAll("[data-four-word]").forEach(function (b) {
-        b.addEventListener("click", function () { fourSetWord(b.getAttribute("data-four-word")); });
-      });
       controls.querySelectorAll("[data-con-reset]").forEach(function (b) {
         b.addEventListener("click", resetTheory);
       });
@@ -1197,7 +1180,8 @@
     }
     function setTheory(i) {
       active = clamp(i, 0, THEORIES.length - 1);
-      if (active === 4) four = { mode: "human", word: "hot" };
+      if (active === 3) kast = { diss: 70, count: 3, selected: 0, dissolved: false, dissolving: false, dissolveStart: 0, dissolveFrom: 70 };
+      if (active === 4) four = { mode: "ai", word: "hot" };
       activeSince = performance.now();
       renderChrome();
       renderControls();
