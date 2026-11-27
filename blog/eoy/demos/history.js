@@ -367,7 +367,6 @@
           '<div class="' + gridClass + '">' + images.map(function (im, i) {
             return '<img class="ls-time-hero-img' + (i === 0 ? ' is-main' : ' is-side') + '" src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async" data-tip="' + api.esc(im.cap) + '">';
           }).join("") + '</div>' +
-          '<span class="ls-time-hero-year">' + api.esc(e.year) + '</span>' +
           '<figcaption class="ls-time-hero-caption">' + caption + '</figcaption>' +
         '</figure>';
       }

@@ -7190,3 +7190,8 @@ html.dark .ls-guard-hidden,html[data-theme="dark"] .ls-guard-hidden{background:r
 html.dark .ls-guard-hidden-row,html[data-theme="dark"] .ls-guard-hidden-row{color:#b8c7d2}
 html.dark .ls-guard-hidden-row>b,html[data-theme="dark"] .ls-guard-hidden-row>b{color:#e7eef2}
 html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{background:#2a3d52}
+.ls-time-hero.is-media{display:flex;flex-direction:column;background:#fff}
+.ls-time-hero.is-media .ls-time-hero-grid{flex:1 1 auto;min-height:0}
+.ls-time-hero.is-media .ls-time-hero-caption{position:static;left:auto;right:auto;bottom:auto;z-index:auto;padding:6px 10px;border-top:1px solid var(--ls-line);background:#fff;color:#5b6b6c;font:9.5px/1.35 "Open Sans",sans-serif}
+.ls-time-hero.is-media .ls-time-hero-caption a{color:#1d5b73}
+.ls-time-hero.is-media .ls-time-hero-year{display:none}
