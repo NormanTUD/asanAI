@@ -151,7 +151,7 @@
         '</figure>' +
         '<div class="ls-il-card ls-il-loss">' +
           '<div class="ls-il-cardhead"><span>Loss</span><span class="ls-il-lossval">–</span></div>' +
-          '<div class="ls-il-losschart"><canvas class="ls-il-loss-canvas" role="img" aria-label="' + L("Loss-Kurve: zeigt, wie der Fehler während des Trainings fällt.", "Loss curve: shows how the error falls during training.") + '"></canvas></div>' +
+          '<div class="ls-il-losschart"><canvas class="ls-il-loss-canvas" role="img" aria-label="' + L("Loss-Kurve: zeigt, wie der Fehler während des Trainings fällt.", "Loss curve: shows how the error falls during training.") + '"></canvas><div class="ls-il-wait" id="ls-il-loss-wait"><span class="ls-il-spinner" aria-hidden="true"></span><span class="ls-il-wait-text" role="status">' + L("warte auf Loss …", "waiting for loss …") + '</span></div></div>' +
           '<div class="ls-il-losscaption"><span>' + L("bester", "best") + ' <b class="ls-il-best">–</b></span><span>MSE</span></div>' +
         '</div>' +
       '</div>' +
@@ -197,6 +197,7 @@
     var predCv = el.querySelector(".ls-il-pred-canvas");
     var predWait = el.querySelector("#ls-il-pred-wait");
     var lossCv = el.querySelector(".ls-il-loss-canvas");
+    var lossWait = el.querySelector("#ls-il-loss-wait");
     var lossVal = el.querySelector(".ls-il-lossval");
     var bestVal = el.querySelector(".ls-il-best");
     var epochEl = el.querySelector(".ls-il-epoch b");
@@ -603,6 +604,9 @@
     function setPredWait(on) {
       if (predWait) predWait.hidden = !on;
     }
+    function setLossWait(on) {
+      if (lossWait) lossWait.hidden = !on;
+    }
 
     function drawTarget() {
       var f = api.fit(targetCv, targetCv.parentElement);
@@ -699,9 +703,11 @@
       var hist = st.history;
       if (hist.length < 2) {
         lossGeom = null;
-        placeholder(ctx, f.w, f.h, L("warte auf Loss …", "waiting for loss …"));
+        placeholder(ctx, f.w, f.h, "");
+        setLossWait(true);
         return;
       }
+      setLossWait(false);
       var min = Infinity;
       var max = -Infinity;
       for (var j = 0; j < hist.length; j++) {
