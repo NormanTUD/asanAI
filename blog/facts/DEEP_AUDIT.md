@@ -3,7 +3,7 @@
 - lessons: 100
 - claims: 7390
 - statements: 17531
-- relations: 52862
+- relations: 52865
 - uncovered years: 72
 - uncovered quantities: 11
 - uncited specific claims: 312
@@ -108,7 +108,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 37 | 361 | 1164 | 2 | 2 |
+| transformer | 37 | 361 | 1167 | 2 | 2 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2025 | 6 | 0 |
