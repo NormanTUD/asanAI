@@ -337,7 +337,7 @@
       var lvl = Math.max(1, Math.min(4, parseInt(item.level, 10) || 1));
       var switchHTML = '<div class="ls-rm-soc-switch" role="tablist" aria-label="' + L("Ansicht", "View") + '">' +
         '<button type="button" class="' + (kind === "chain" ? "is-on" : "") + '" data-soc-mode="chain" role="tab" aria-selected="' + (kind === "chain") + '" data-tip="' + L("Zeigt die fünf Stufen vom Chip bis zur Regel.", "Shows the five stages from chip to rule.") + '">' + L("Wertschöpfungskette", "Value chain") + '</button>' +
-        '<button type="button" class="' + (kind === "cross" ? "is-on" : "") + '" data-soc-mode="cross" role="tab" aria-selected="' + (kind === "cross") + '" data-tip="' + L("Zeigt vier Querschnittsthemen: Arbeit, Wahrheit, Urheberrecht, Macht.", "Shows four cross-cutting topics: work, truth, copyright, power.") + '">' + L("Querschnitt", "Cross-section") + '</button>' +
+        '<button type="button" class="' + (kind === "cross" ? "is-on" : "") + '" data-soc-mode="cross" role="tab" aria-selected="' + (kind === "cross") + '" data-tip="' + L("Zeigt vier Querschnittsthemen: Arbeit, Wahrheit, Urheberrecht, Macht.", "Shows four cross-cutting topics: work, truth, copyright, power.") + '">' + L("Querschnittsthemen", "Cross-cutting topics") + '</button>' +
       '</div>';
       var hero = "";
       if (kind === "chain") {
