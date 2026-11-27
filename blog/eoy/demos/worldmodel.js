@@ -696,9 +696,9 @@
     }
 
     function drawStageDots(c, phase) {
-      var dotPhase = phase === 0 ? 0 : phase === 1 ? 1 : 2;
-      var n = 3;
-      var labels = DE ? ["x", "Probe · Softmax · Feld", "Brett"] : ["x", "probe · softmax · square", "board"];
+      var dotPhase = phase === 0 ? 0 : 1;
+      var n = 2;
+      var labels = DE ? ["x", "Zustände"] : ["x", "states"];
       var small = W < 620;
       var railW = Math.min(W - 2 * (small ? 22 : 48), 620);
       var x0 = W / 2 - railW / 2;
@@ -800,14 +800,14 @@
       var boardY = narrow ? 128 : 132;
       var questions = DE ? [
         ["Was ist die Aktivierung?", "Layer 6 gibt dem aktuellen Token x: 512 Zahlen. Das ist die Aktivierung, noch kein lesbares Brett."],
-        ["Was macht die Probe pro Feld?", "x (512) · W (64×3×512): pro Feld drei Zeilen W[Feld, leer/mein/Gegner] à 512; z[Feld,z] = Σ_d x[d]·W[Feld,z,d]; Softmax → p; Argmax → Feld."],
+        ["Wie das LLM Zustände speichert", "Drei Karten zeigen p(leer), p(mein) und p(Gegner) für jedes Feld. Klick ein Feld, um den wahren Zustand zu prüfen."],
         ["Wie entsteht ein Score?", "Ziel: Wie gut passt x zur gelernten Richtung? Der Score ist die Projektion von x auf W; groß bei ähnlicher Richtung."],
         ["Warum Softmax?", "Drei Roh-Scores werden zu drei Wahrscheinlichkeiten, die zusammen 100% ergeben. Die Reihenfolge bleibt."],
         ["Wie wird daraus ein Feld?", "Drei Wahrscheinlichkeiten für E4. Argmax nimmt die größte; das ist der Zustand des Feldes."],
         ["Und das ganze Brett?", "x (512) · W (64×3×512) → 192 Logits; W[E4] ist nur die 3×512-Scheibe für E4; jede Zeile softmax, dann argmax → 64 Zustände → 8×8-Brett."]
       ] : [
         ["What is the activation?", "Layer 6 gives the current token x: 512 numbers. That is the activation, not yet a readable board."],
-        ["What does the probe do per square?", "x (512) · W (64×3×512): every square has three rows W[square, empty/my/opponent] of 512; z[square,z] = Σ_d x[d]·W[square,z,d]; softmax → p; argmax → square."],
+        ["How the LLM stores states", "Three maps show p(empty), p(mine), and p(opponent) for every square. Click a square to check the true state."],
         ["How does a score arise?", "Goal: how well does x fit the learned direction? The score is the projection of x onto W; large when the directions align."],
         ["Why softmax?", "Three raw scores become three probabilities that sum to 100%. The order stays the same."],
         ["How does that become a square?", "Three probabilities for E4. Argmax takes the largest; that is the state of the square."],
@@ -825,42 +825,39 @@
         txt(c, "32 × 16 = 512 · dieselben Werte, nur als Raster", pad, 122 + gh + 16, { size: 9, color: C.muted });
         txt(c, DE ? "x = L6-Aktivierung (512 Werte pro Token); das Brett ist ab Layer 4 vollständig, die Probe liest L6." : "x = L6 activation (512 values per token); the board is complete by layer 4, the probe reads L6.", pad, H - 52, { size: 9, color: C.ink });
       } else if (phase === 1) {
-        // The 64×3 representation is the destination: three rows per square,
-        // one shared x, one softmax/argmax readout per row. E4 is marked.
-        var matrixW = Math.min(150, W * .13);
-        var matrixH = Math.min(180, H - 420);
-        if (matrixH < 120) matrixH = 120;
-        drawLogitsColumn(c, pad, 122, matrixW, matrixH, e4);
-        txt(c, DE ? "x (512) · W (64×3×512) → z (64×3) → Softmax → p (64×3) → Argmax" : "x (512) · W (64×3×512) → z (64×3) → softmax → p (64×3) → argmax", pad, 102, { size: 8.6, color: C.petrol, font: '700 8.6px "Barlow", "Open Sans", sans-serif' });
-        txt(c, DE ? "E4 markiert: drei der 192 Zeilen. Dieselbe Rechnung für jedes Feld, mit eigener W-Zeile." : "E4 marked: three of the 192 rows. Same computation for every square, with its own W rows.", pad, 122 + matrixH + 12, { size: 8.2, color: C.muted });
-        // The three outputs fill the three state cards; the board is the ground truth.
-        var cardW = Math.min(116, (W * .56 - 24) / 3);
-        var cardY2 = 342;
-        txt(c, DE ? "z (vor Softmax) → Softmax → p (nach Softmax) → Argmax" : "z (before softmax) → softmax → p (after softmax) → argmax", pad, cardY2 - 15, { size: 8.4, color: C.petrol, font: '700 8.4px "Barlow", "Open Sans", sans-serif' });
-        var fieldWinner = winIndex(probs);
-        for (var oc = 0; oc < 3; oc++) {
-          var cardX2 = pad + oc * (cardW + 10);
-          var isW = oc === fieldWinner;
-          c.fillStyle = isW ? V.alpha(C.gold, .11) : V.alpha(C.paper2, .72);
-          c.strokeStyle = isW ? C.gold : V.alpha(C.line, .75);
-          c.lineWidth = isW ? 2 : 1;
-          c.fillRect(cardX2, cardY2, cardW, 124);
-          c.strokeRect(cardX2 + .5, cardY2 + .5, cardW - 1, 123);
-          txt(c, stateName(oc), cardX2 + cardW / 2, cardY2 + 14, { align: "center", size: 9, color: isW ? C.gold : C.muted });
-          txt(c, DE ? "z (vor Softmax)" : "z (before softmax)", cardX2 + cardW / 2, cardY2 + 29, { align: "center", size: 7.2, color: C.muted });
-          txt(c, "z = " + V.fmt(scores[oc], 2), cardX2 + cardW / 2, cardY2 + 42, { align: "center", size: 10.5, color: C.ink, font: '700 10.5px "Barlow", "Open Sans", sans-serif' });
-          txt(c, DE ? "p (nach Softmax)" : "p (after softmax)", cardX2 + cardW / 2, cardY2 + 58, { align: "center", size: 7.2, color: C.muted });
-          c.fillStyle = V.alpha(C.line, .35);
-          c.fillRect(cardX2 + 12, cardY2 + 72, cardW - 24, 8);
-          c.fillStyle = isW ? C.gold : C.blue;
-          c.fillRect(cardX2 + 12, cardY2 + 72, (cardW - 24) * Math.max(0, Math.min(1, probs[oc])), 8);
-          txt(c, (probs[oc] * 100).toFixed(0) + "%", cardX2 + cardW / 2, cardY2 + 92, { align: "center", size: 15, color: isW ? C.gold : C.ink, font: '700 15px "Barlow", "Open Sans", sans-serif' });
-          if (isW) txt(c, DE ? "← Argmax" : "← argmax", cardX2 + cardW / 2, cardY2 + 111, { align: "center", size: 7.6, color: C.gold });
-          addHit(cardX2, cardY2, cardW, 124, DE ? "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (Logit, vor Softmax). Softmax macht daraus p = " + (probs[oc] * 100).toFixed(1) + "%. Argmax nimmt das größte p als Feldzustand." : "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (logit, before softmax). Softmax turns this into p = " + (probs[oc] * 100).toFixed(1) + "%. Argmax takes the largest p as the square state.");
+        // The three 8×8 probability maps from the former whole-board slide.
+        var stateLabels = DE ? ["leer", "mein Spieler", "Gegner"] : ["empty", "my player", "opponent"];
+        if (narrow) {
+          var mapGap = 7;
+          var mapBoard = Math.min(110, W * .24);
+          var mapAvail = W - 2 * pad - mapBoard - 14;
+          var mapSize = Math.max(54, Math.min(86, (mapAvail - 2 * mapGap) / 3));
+          var mapTop = 128;
+          for (var mo = 0; mo < 3; mo++) {
+            var mx = pad + mo * (mapSize + mapGap);
+            txt(c, stateLabels[mo], mx + mapSize / 2, mapTop - 10, { align: "center", size: 8.5, color: mo === 1 ? C.gold : mo === 2 ? C.ink : C.muted });
+            drawProbGrid(c, mx, mapTop, mapSize, mo, e4);
+          }
+          var bx1 = W - pad - mapBoard;
+          drawBoard(c, TRUTH, bx1, mapTop, mapBoard, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
+          txt(c, DE ? "wahr" : "true", bx1 + mapBoard / 2, mapTop - 10, { align: "center", size: 8.5, color: C.muted });
+          txt(c, DE ? "Feld " + squareLabel(e4) : "square " + squareLabel(e4), bx1 + mapBoard / 2, mapTop + mapBoard + 16, { align: "center", size: 8.5, color: C.ink });
+        } else {
+          var mapTop2 = 128;
+          var mapBoard2 = Math.min(280, W * .25, H * .4);
+          var mapLeft = W - pad - mapBoard2;
+          var mapAvail2 = mapLeft - pad - 24;
+          var mapSize2 = Math.min(170, (mapAvail2 - 32) / 3, H * .35);
+          for (var mo2 = 0; mo2 < 3; mo2++) {
+            var mx2 = pad + mo2 * (mapSize2 + 16);
+            txt(c, stateLabels[mo2], mx2 + mapSize2 / 2, mapTop2 - 12, { align: "center", size: 9.2, color: mo2 === 1 ? C.gold : mo2 === 2 ? C.ink : C.muted });
+            drawProbGrid(c, mx2, mapTop2, mapSize2, mo2, e4);
+          }
+          drawBoard(c, TRUTH, mapLeft, mapTop2, mapBoard2, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
+          txt(c, DE ? "wahrer Zustand" : "true state", mapLeft + mapBoard2 / 2, mapTop2 - 12, { align: "center", size: 9.2, color: C.muted });
+          txt(c, DE ? "Feld " + squareLabel(e4) : "square " + squareLabel(e4), mapLeft + mapBoard2 / 2, mapTop2 + mapBoard2 + 22, { align: "center", size: 10, color: C.ink });
         }
-        drawBoard(c, TRUTH, boardX, boardY, boardSize, { highlight: [Math.floor(e4 / 8), e4 % 8], pick: true });
-        txt(c, DE ? "W gelernt: wahrer Zustand soll höchsten Score haben" : "W learned: the true state should get the highest score", boardX + boardSize / 2, boardY - 34, { align: "center", size: 8.4, color: C.muted });
-        txt(c, "Feld E4 · klicke ein anderes Feld", boardX + boardSize / 2, boardY - 12, { align: "center", size: 9, color: C.ink });
+        txt(c, DE ? "Drei Karten: p(leer), p(mein), p(Gegner); je heller, desto wahrscheinlicher. Klick ein Feld." : "Three maps: p(empty), p(mine), p(opponent); brighter means more likely. Click a square.", pad, 102, { size: 9.2, color: C.petrol });
         setWmFormula("");
       } else if (phase === 2) {
         var cx = pad + Math.min(310, W * 0.38);
@@ -1370,31 +1367,26 @@
       next: function () {
         if (state.step !== 1) return false;
         if (state.phase === 0) { setPhase(1, 1); return true; }
-        if (state.phase === 1) { setPhase(5, 1); return true; }
         return false;
       },
       prev: function () {
         if (state.step !== 1) return false;
-        if (state.phase === 5) { setPhase(1, -1); return true; }
         if (state.phase === 1) { setPhase(0, -1); return true; }
         return false;
       },
-      hasNext: function () { return state.step === 1 && (state.phase === 0 || state.phase === 1); },
-      hasPrev: function () { return state.step === 1 && (state.phase === 1 || state.phase === 5); },
+      hasNext: function () { return state.step === 1 && state.phase === 0; },
+      hasPrev: function () { return state.step === 1 && state.phase === 1; },
       onKey: function (e) {
         if (state.step !== 1) return false;
         if (e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return false;
         if (e.key === "ArrowRight") {
-          if (state.phase >= 5) return false;
-          if (state.phase === 0) setPhase(1, 1);
-          else if (state.phase === 1) setPhase(5, 1);
-          else return false;
+          if (state.phase !== 0) return false;
+          setPhase(1, 1);
           return true;
         }
         if (e.key === "ArrowLeft") {
-          if (state.phase === 5) setPhase(1, -1);
-          else if (state.phase === 1) setPhase(0, -1);
-          else return false;
+          if (state.phase !== 1) return false;
+          setPhase(0, -1);
           return true;
         }
         return false;
