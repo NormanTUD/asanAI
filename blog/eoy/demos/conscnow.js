@@ -137,20 +137,38 @@
     var grid = el.querySelector(".ls-cn-grid");
     var detail = el.querySelector("[data-cn-detail]");
     var cardEls = Array.prototype.slice.call(el.querySelectorAll("[data-cn]"));
-    function render() {
-      var a = APPROACHES[active];
-      cardEls.forEach(function (b, i) {
-        b.classList.toggle("is-on", i === active);
-        b.setAttribute("aria-selected", String(i === active));
-      });
-      detail.innerHTML =
-        '<div class="ls-cn-detail-head"><span class="ls-cn-tag">' + a.tag + '</span><b>' + a.title + '</b><span class="ls-cn-status is-' + a.kind + '">' + a.status + '</span></div>' +
+    function detailHTML(a) {
+      return '<div class="ls-cn-detail-head"><span class="ls-cn-tag">' + a.tag + '</span><b>' + a.title + '</b><span class="ls-cn-status is-' + a.kind + '">' + a.status + '</span></div>' +
         '<div class="ls-cn-detail-grid">' +
           '<div><b>' + L("Was man findet", "What is found") + '</b><p>' + a.finding + '</p></div>' +
           '<div><b>' + L("Was das zeigt", "What that shows") + '</b><p>' + a.shows + '</p></div>' +
           '<div class="is-verdict"><b>' + L("Urteil", "Verdict") + '</b><p>' + a.verdict + '</p></div>' +
         '</div>' +
         '<span class="ls-cn-cite">' + a.cite + '</span>';
+    }
+    function measureDetail() {
+      if (!detail) return;
+      var w = detail.getBoundingClientRect().width;
+      if (w < 40) return;
+      var probe = document.createElement("div");
+      probe.className = "ls-cn-detail";
+      probe.style.cssText = "position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none;width:" + w + "px;min-height:0;max-height:none;";
+      el.appendChild(probe);
+      var max = 0;
+      APPROACHES.forEach(function (a) {
+        probe.innerHTML = detailHTML(a);
+        max = Math.max(max, probe.offsetHeight);
+      });
+      probe.remove();
+      if (max > 0) detail.style.minHeight = Math.ceil(max) + "px";
+    }
+    function render() {
+      var a = APPROACHES[active];
+      cardEls.forEach(function (b, i) {
+        b.classList.toggle("is-on", i === active);
+        b.setAttribute("aria-selected", String(i === active));
+      });
+      detail.innerHTML = detailHTML(a);
     }
     cardEls.forEach(function (b) {
       b.addEventListener("click", function () { active = parseInt(b.getAttribute("data-cn"), 10) || 0; render(); });
@@ -166,13 +184,22 @@
     });
     render();
     renderQA();
+    measureDetail();
     return {
       update: function () {},
-      next: function () { if (active < APPROACHES.length - 1) { active++; render(); return true; } return false; },
-      prev: function () { if (active > 0) { active--; render(); return true; } return false; },
-      hasNext: function () { return active < APPROACHES.length - 1; },
-      hasPrev: function () { return active > 0; },
-      resize: function () {},
+      next: function () {
+        if (active < APPROACHES.length - 1) { active++; render(); return true; }
+        if (cnQa < QA.length - 1) { cnQa++; renderQA(); return true; }
+        return false;
+      },
+      prev: function () {
+        if (cnQa > 0) { cnQa--; renderQA(); return true; }
+        if (active > 0) { active--; render(); return true; }
+        return false;
+      },
+      hasNext: function () { return active < APPROACHES.length - 1 || cnQa < QA.length - 1; },
+      hasPrev: function () { return active > 0 || cnQa > 0; },
+      resize: function () { measureDetail(); },
       destroy: function () { el.remove(); }
     };
   }

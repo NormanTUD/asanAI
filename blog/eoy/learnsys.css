@@ -7339,3 +7339,6 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-cn .ls-cn-hero{background:#fff}
 .ls-cn .ls-cn-detail{grid-row:2}
 .ls-cn{grid-template-rows:repeat(4,min-content)}
+.ls-cn .ls-cn-quote{padding-left:54px}
+.ls-cn .ls-cn-quote:before{left:14px;top:4px}
+@media (max-width:640px){.ls-cn .ls-cn-quote{padding-left:42px}.ls-cn .ls-cn-quote:before{left:9px;font-size:42px}}
