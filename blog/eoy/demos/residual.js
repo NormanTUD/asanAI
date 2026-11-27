@@ -84,9 +84,9 @@
     var el = document.createElement("div");
     el.className = "ls-res-scene";
     el.innerHTML =
+      '<div class="ls-res-toolbar"><div class="ls-res-phases" role="group" aria-label="' + (DE ? "Ansicht" : "View") + '"></div><div class="ls-scene-row ls-res-layers"></div></div>' +
       '<div class="ls-res-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
       '<div class="ls-res-note" aria-live="polite" hidden></div>' +
-      '<div class="ls-res-toolbar"><div class="ls-res-phases" role="group" aria-label="' + (DE ? "Ansicht" : "View") + '"></div><div class="ls-scene-row ls-res-layers"></div></div>' +
       '<div class="ls-res-readout" aria-live="polite"></div>' +
       '<p class="ls-res-caption"></p>';
     root.appendChild(el);
