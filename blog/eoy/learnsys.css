@@ -7331,3 +7331,11 @@ html.dark .ls-guard-fact-bar,html[data-theme="dark"] .ls-guard-fact-bar{backgrou
 .ls-cn-hero-text>p{max-width:100%}
 .ls-cn-detail,.ls-cn-detail-grid{min-width:0}
 .ls-cn-qa-answer,.ls-cn-quote p,.ls-cn-quote cite{overflow-wrap:anywhere}
+/* Final consciousness slide: white surface and no quote/answer overlap. */
+.ls-stage:has(#ls-demo[data-scene="conscnow"]){background:#fff !important}
+#ls-demo[data-scene="conscnow"],.ls-cn{background:#fff}
+.ls-cn{grid-template-rows:auto auto auto auto}
+.ls-cn .ls-cn-bottom{height:auto;min-height:0;align-self:start;overflow:visible}
+.ls-cn .ls-cn-hero{background:#fff}
+.ls-cn .ls-cn-detail{grid-row:2}
+.ls-cn{grid-template-rows:repeat(4,min-content)}
