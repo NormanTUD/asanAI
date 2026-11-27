@@ -577,11 +577,21 @@
       });
       progressEl.textContent = (state.step + 1) + " / " + STEPS.length;
       picker.hidden = true;
+      if (attachBtn) attachBtn.classList.remove("is-hint", "is-tap");
       docEl.classList.toggle("is-on", state.step >= 1);
       clearFlyCards();
       clearCitationArrows();
       if (railTip) railTip.hidden = true;
-      resetChunkStates();
+      var keepAngles = state.step >= 2 && state.anglesShown;
+      if (state.step < 2) {
+        state.anglesShown = false;
+        state.answerShown = false;
+      } else if (state.step === 2) {
+        state.answerShown = false;
+      } else if (state.step === 3 && !restoring) {
+        state.answerShown = false;
+      }
+      resetChunkStates(keepAngles);
       setChat();
       if (state.step === 0) {
         state.pickerOpen = false;
@@ -594,20 +604,20 @@
       } else if (state.step === 2) {
         completeScan();
         docStatus.textContent = L("Auszug 4815–4821 · 35°", "excerpt 4815–4821 · 35°");
+        if (restoring || state.anglesShown) restoreAngles(); else stepTwoAngles();
       } else if (state.step === 3) {
         completeScan();
         docStatus.textContent = L("Auszug 4815–4821 · 35°", "excerpt 4815–4821 · 35°");
-        if (restoring) restoreStepThree(); else stepThree();
+        if (restoring) restoreContext(); else stepThreeContext();
       }
       if (state.step >= 1) requestAnimationFrame(function () { fitPdfText(); });
-      if (state.step >= 2) requestAnimationFrame(drawCitationArrows);
       statusEl.textContent = state.step === 0
         ? ""
         : state.step === 1
           ? L("Der Agent scannt den Text außerhalb des LLM. Jeder Abschnitt wird ein Chunk mit eigenem Vektor.", "The agent scans the text outside the LLM. Each paragraph becomes a chunk with its own vector.")
           : state.step === 2
             ? ""
-            : L("4815 und 4816 liegen unter 35° und wandern in den unsichtbaren Kontext.", "4815 and 4816 lie below 35° and move into the invisible context.");
+            : L("Kontext einfügen → Antwort", "Insert context → answer");
       nextBtn.textContent = state.step === 0
         ? L("Weiter", "Next")
         : state.step < 3
