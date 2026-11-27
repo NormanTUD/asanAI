@@ -10,14 +10,14 @@
     var C = api.colors();
     var data = DE ? {
       fruit: {
-        keys: [{ label: "Frucht · rot · süß", on: true }, { label: "Baum · Obst · Saft", on: true }, { label: "Firma · Laptop · iPhone", on: false }],
-        values: [{ label: "Hinweis: Frucht, rot, süß", on: true }, { label: "Hinweis: Baum, Obst, Saft", on: true }, { label: "Hinweis: Firma, Laptop, iPhone", on: false }],
-        desc: "Die Frucht-, Rot- und Süß-Muster passen; das Firmen-Muster bleibt still."
+        keys: [{ label: "Gebäude · Turm · Graben", on: true }, { label: "Stein · Hügel · alt", on: true }, { label: "Tür · Schlüssel · Metall", on: false }],
+        values: [{ label: "Hinweis: Gebäude, Turm, Graben", on: true }, { label: "Hinweis: Stein, Hügel, alt", on: true }, { label: "Hinweis: Tür, Schlüssel, Metall", on: false }],
+        desc: "Die Gebäude-, Turm- und Graben-Muster passen; das Tür-/Schlüssel-Muster bleibt still."
       },
       tech: {
-        keys: [{ label: "Firma · Laptop · iPhone", on: true }, { label: "Frucht · rot · süß", on: false }, { label: "Baum · Obst · Saft", on: false }],
-        values: [{ label: "Hinweis: Firma, Laptop, iPhone", on: true }, { label: "Hinweis: Frucht, rot, süß", on: false }, { label: "Hinweis: Baum, Obst, Saft", on: false }],
-        desc: "Jetzt passt das Firmen-Muster; die Frucht-Muster bleiben still."
+        keys: [{ label: "Tür · Schlüssel · Metall", on: true }, { label: "Gebäude · Turm · Graben", on: false }, { label: "Stein · Hügel · alt", on: false }],
+        values: [{ label: "Hinweis: Tür, Schlüssel, Metall", on: true }, { label: "Hinweis: Gebäude, Turm, Graben", on: false }, { label: "Hinweis: Stein, Hügel, alt", on: false }],
+        desc: "Jetzt passt das Tür-/Schlüssel-Muster; die Gebäude-Muster bleiben still."
       }
     } : {
       fruit: {
@@ -32,12 +32,12 @@
       }
     };
     var labels = DE ? {
-      fruitTitle: "I ate the apple",
-      techTitle: "I bought an Apple laptop",
-      stream: "„apple“ + Kontext",
+      fruitTitle: "Das Schloss war alt",
+      techTitle: "Das Schloss war kaputt",
+      stream: "„Schloss“ + Kontext",
       output: "reicherer Vektor",
-      core: "Frucht · rot · süß · Baum · Obst · Saft",
-      ring: "Firma · Laptop · iPhone · Cupertino · Logo · Aktie",
+      core: "Schloss (Gebäude) · Turm · Graben",
+      ring: "Schloss (Tür) · Schlüssel · Metall",
       bend: "Biegung",
       bendButton: "Raum biegen",
       returnButton: "W₂ zurück",
@@ -52,7 +52,15 @@
       step: "Kontext",
       coreState: "wird angehoben",
       ringState: "bleibt unten",
-      demoBadge: "Schematische Demo · keine Messung"
+      demoBadge: "Schematische Demo · keine Messung",
+      backTitle: "Rückprojektion nach 2D",
+      backCard: "W₂ projiziert beide Bedeutungen zurück in den ursprünglichen 2D-Raum. Weil die Muster vorher unterschiedlich getrennt und gedreht wurden, landen sie an verschiedenen Orten: „Schloss“ als Gebäude anders als „Schloss“ als Türverschluss.",
+      backTag: "W₂ · zurück nach 2D",
+      backReplay: "Nochmal",
+      backLeft: "Gebäude · Turm · Graben",
+      backRight: "Tür · Schlüssel · Metall",
+      back2d: "ursprünglicher 2D-Raum",
+      backW2: "W₂ projiziert zurück"
     } : {
       fruitTitle: "I ate the apple",
       techTitle: "I bought an Apple laptop",
@@ -74,7 +82,15 @@
       step: "Context",
       coreState: "is lifted",
       ringState: "stays below",
-      demoBadge: "Schematic demo · not a measurement"
+      demoBadge: "Schematic demo · not a measurement",
+      backTitle: "Back-projection to 2D",
+      backCard: "W₂ projects both meanings back into the original 2D space. Because the patterns were separated and rotated differently, they land in different places: apple the fruit in one place, Apple the company in another.",
+      backTag: "W₂ · back to 2D",
+      backReplay: "Replay",
+      backLeft: "fruit · red · sweet",
+      backRight: "company · laptop · iPhone",
+      back2d: "original 2D space",
+      backW2: "W₂ projects back"
     };
     var el = document.createElement("div");
     el.className = "ls-ffn-scene";
@@ -94,7 +110,7 @@
           '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
-      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Beides sind Dense-Schichten: W₁ hebt den Vektor auf d_ff, W₂ projiziert ihn zurück auf d_model. Das FFN arbeitet pro Token." : "Both are dense layers: W₁ lifts the vector to d_ff, W₂ projects it back to d_model. The FFN works per token.") + '</p></div>' +
+      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img" data-tip-de="Zeigt d_model, d_ff und zurück zu d_model; das FFN arbeitet pro Token." data-tip-en="Shows d_model, d_ff and back to d_model; the FFN works per token."></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Beides sind vollverbundene Schichten: W₁ hebt den Vektor auf d_ff, W₂ projiziert ihn zurück auf d_model. Das FFN arbeitet pro Token." : "Both are dense layers: W₁ lifts the vector to d_ff, W₂ projects it back to d_model. The FFN works per token.") + '</p></div>' +
       '<details class="ls-ffn-more"><summary>' + (DE ? "Mehr zur Geometrie" : "More on the geometry") + '</summary><p class="ls-ffn-caveat">' + (DE ? "Die Punkte sind symbolisch: Im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen noch höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The points are symbolic: in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p></details>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
@@ -107,19 +123,31 @@
     var bendStage = el.querySelector(".ls-ffn-bend-stage");
     var bendCanvas = el.querySelector(".ls-ffn-bend-canvas");
     var bendRange = el.querySelector(".ls-ffn-bend-range");
+    var bendRangeLabel = bendRange.closest("label");
     var bendOut = el.querySelector(".ls-ffn-bend-bar output");
     var bendReadout = el.querySelector(".ls-ffn-bend-readout");
     var bendToggle = el.querySelector(".ls-ffn-bend-toggle");
     var dimsCanvas = el.querySelector(".ls-ffn-dims-canvas");
     var dimsSize = null;
-    var bend = 0, bendRaf = 0, bendDir = 1, dimsPhase = 0, dimsRaf = 0, size = null, ctx = null;
-    var modeOrder = ["fruit", "tech"];
+    var bend = 0, bendRaf = 0, bendDir = 1, dimsPhase = 0, dimsRaf = 0, backT = 0, backRaf = 0, size = null, ctx = null;
+    var modeOrder = ["fruit", "tech", "back"];
     var activeMode = "fruit";
     function pill(item, withState) {
       return '<span class="ls-ffn-pill ' + (item.on ? "is-fire" : "is-idle") + '">' + api.esc(item.label) +
         (withState ? '<small>' + (item.on ? (DE ? "passt" : "matches") : (DE ? "still" : "silent")) + '</small>' : '') + '</span>';
     }
     function contextCard(mode, title) {
+      if (mode === "back") {
+        var backCard = document.createElement("article");
+        backCard.className = "ls-ffn-context" + (mode === activeMode ? " is-active" : "");
+        backCard.setAttribute("data-mode", mode);
+        backCard.setAttribute("data-tip", DE ? "Rückprojektion: beide Bedeutungen landen unterschiedlich im ursprünglichen 2D-Raum." : "Back-projection: both meanings land differently in the original 2D space.");
+        backCard.innerHTML = '<div class="ls-ffn-context-head"><span class="ls-ffn-stream-pill">' + labels.backTag + '</span><span class="ls-ffn-context-title">' + api.esc(title) + '</span></div>' +
+          '<div class="ls-ffn-flow"><span class="ls-ffn-out-pill">' + labels.backLeft + '</span><span class="ls-ffn-arrow" aria-hidden="true">→</span><span class="ls-ffn-out-pill">' + labels.backRight + '</span></div>' +
+          '<p class="ls-ffn-desc">' + labels.backCard + '</p>';
+        contextsEl.appendChild(backCard);
+        return;
+      }
       var d = data[mode];
       var card = document.createElement("article");
       card.className = "ls-ffn-context" + (mode === "fruit" ? " is-active" : "");
@@ -130,7 +158,7 @@
         '<div class="ls-ffn-flow">' +
           '<div class="ls-ffn-group"><div class="ls-ffn-head">' + (DE ? "Muster in W₁" : "Patterns in W₁") + '</div><div class="ls-ffn-chips">' + d.keys.map(function (k) { return pill(k, true); }).join("") + '</div></div>' +
           '<span class="ls-ffn-arrow" aria-hidden="true">→</span>' +
-          '<div class="ls-ffn-group"><div class="ls-ffn-head">' + (DE ? "Pull in W₂" : "Pull in W₂") + '</div><div class="ls-ffn-chips">' + d.values.map(function (v) { return pill(v, false); }).join("") + '</div></div>' +
+          '<div class="ls-ffn-group"><div class="ls-ffn-head">' + (DE ? "Richtung in W₂" : "Pull in W₂") + '</div><div class="ls-ffn-chips">' + d.values.map(function (v) { return pill(v, false); }).join("") + '</div></div>' +
           '<span class="ls-ffn-out-pill">' + labels.output + '</span>' +
         '</div>' +
         '<p class="ls-ffn-desc">' + d.desc + '</p>';
@@ -138,6 +166,7 @@
     }
     contextCard("fruit", labels.fruitTitle);
     contextCard("tech", labels.techTitle);
+    contextCard("back", labels.backTitle);
     function setContext(mode) {
       if (modeOrder.indexOf(mode) < 0) return;
       activeMode = mode;
@@ -148,12 +177,29 @@
         card.setAttribute("aria-hidden", on ? "false" : "true");
       });
       var idx = modeOrder.indexOf(mode);
-      stepLabel.textContent = labels.step + " " + (idx + 1) + " / " + modeOrder.length;
+      stepLabel.textContent = mode === "back" ? labels.backTitle + " · " + (idx + 1) + " / " + modeOrder.length : labels.step + " " + (idx + 1) + " / " + modeOrder.length;
       prevBtn.disabled = idx <= 0;
       nextBtn.disabled = idx >= modeOrder.length - 1;
+      var isBack = mode === "back";
+      el.classList.toggle("is-back", isBack);
+      if (bendRangeLabel) bendRangeLabel.style.display = isBack ? "none" : "";
+      if (bendToggle) {
+        bendToggle.setAttribute("data-tip-de", isBack ? "Spielt die Rückprojektion erneut ab." : "Animiert die Biegung bis zur Trennebene oder zurück.");
+        bendToggle.setAttribute("data-tip-en", isBack ? "Replays the back-projection." : "Animates the bend to the separating plane or back.");
+      }
+      if (isBack) {
+        backT = 0;
+        updateBendReadout();
+        runBack();
+      } else {
+        if (backRaf) cancelAnimationFrame(backRaf);
+        backRaf = 0;
+        backT = 0;
+        updateBendReadout();
+      }
       drawBend();
-      if (coreStateEl) coreStateEl.textContent = activeMode === "fruit" ? labels.coreState : labels.ringState;
-      if (ringStateEl) ringStateEl.textContent = activeMode === "tech" ? labels.coreState : labels.ringState;
+      if (coreStateEl) coreStateEl.textContent = activeMode === "back" ? labels.back2d : activeMode === "fruit" ? labels.coreState : labels.ringState;
+      if (ringStateEl) ringStateEl.textContent = activeMode === "back" ? labels.back2d : activeMode === "tech" ? labels.coreState : labels.ringState;
       pulseDims();
     }
     function stepContext(delta) {
@@ -212,6 +258,10 @@
       halo.addColorStop(1, V.alpha(C.paper || "#fff", 0));
       ctx.fillStyle = halo;
       ctx.fillRect(0, 0, w, h);
+      if (activeMode === "back") {
+        drawBackProjection(cx, cy, scale);
+        return;
+      }
       function warp(x, y, c, liftVal) {
         var b = (liftVal == null) ? bend : liftVal;
         var r = Math.hypot(x, y);
@@ -255,7 +305,7 @@
       });
       bendProjected = projected;
       var activeC = activeMode === "fruit" ? 0 : 1;
-      var activeColor = activeMode === "fruit" ? C.green : C.gold;
+      var activeColor = activeMode === "back" ? C.petrol : activeMode === "fruit" ? C.green : C.gold;
       if (bend > 0.02 && bendDir < 0) {
         ctx.save();
         ctx.setLineDash([3, 4]);
@@ -370,7 +420,107 @@
       }
       bendCanvas.setAttribute("aria-label", (DE ? "Feine Punktwolke des FFN-Raums. " : "Fine point cloud of the FFN space. ") + labels.hint + " " + (bend > 0.6 ? labels.separated : labels.notSeparated) + ".");
     }
+    function drawBackProjection(cx, cy, scale) {
+      var w = size.w, h = size.h;
+      var t = ease(clamp(backT, 0, 1));
+      var gx0 = w * 0.12, gx1 = w * 0.88, gy0 = h * 0.62, gy1 = h * 0.92;
+      var font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      var fontBold = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif';
+      ctx.save();
+      ctx.strokeStyle = C.line;
+      ctx.globalAlpha = 0.20;
+      ctx.lineWidth = 1;
+      for (var i = 0; i <= 6; i++) {
+        var gx = gx0 + (gx1 - gx0) * i / 6;
+        ctx.beginPath(); ctx.moveTo(gx, gy0); ctx.lineTo(gx, gy1); ctx.stroke();
+      }
+      for (var j = 0; j <= 4; j++) {
+        var gy = gy0 + (gy1 - gy0) * j / 4;
+        ctx.beginPath(); ctx.moveTo(gx0, gy); ctx.lineTo(gx1, gy); ctx.stroke();
+      }
+      ctx.strokeStyle = C.lineStrong;
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(gx0, gy1); ctx.lineTo(gx1, gy1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx0, gy1); ctx.lineTo(gx0, gy0); ctx.stroke();
+      ctx.fillStyle = C.muted;
+      ctx.font = font;
+      ctx.textAlign = "left";
+      ctx.fillText("x", gx1 - 10, gy1 - 6);
+      ctx.fillText("y", gx0 - 14, gy0 + 8);
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.petrol;
+      ctx.globalAlpha = 0.75;
+      ctx.fillText(labels.back2d, cx, gy0 - 8);
+      ctx.globalAlpha = 0.9;
+      ctx.font = fontBold;
+      ctx.fillText(labels.backW2, cx, h * 0.10);
+      ctx.restore();
+      var srcA = { x: cx - 74, y: h * 0.24 };
+      var srcB = { x: cx + 80, y: h * 0.19 };
+      var tgtA = { x: gx0 + (gx1 - gx0) * 0.30, y: gy0 + (gy1 - gy0) * 0.55 };
+      var tgtB = { x: gx0 + (gx1 - gx0) * 0.72, y: gy0 + (gy1 - gy0) * 0.40 };
+      function arrow(x0, y0, x1, y1, color, prog) {
+        var x = lerp(x0, x1, prog), y = lerp(y0, y1, prog);
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.55;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.stroke();
+        if (prog > 0.04) {
+          var ang = Math.atan2(y1 - y0, x1 - x0);
+          ctx.globalAlpha = 0.85;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x - Math.cos(ang - 0.45) * 9, y - Math.sin(ang - 0.45) * 9);
+          ctx.lineTo(x - Math.cos(ang + 0.45) * 9, y - Math.sin(ang + 0.45) * 9);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      arrow(srcA.x, srcA.y, tgtA.x, tgtA.y, C.green, t);
+      arrow(srcB.x, srcB.y, tgtB.x, tgtB.y, C.gold, t);
+      function cloud(x, y, rx, ry, angle, color, alpha) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        for (var k = 0; k < 22; k++) {
+          var a = k * 2.399963229728653;
+          var rr = Math.sqrt((k + 0.5) / 22);
+          ctx.beginPath();
+          ctx.arc(Math.cos(a) * rr * rx, Math.sin(a) * rr * ry, 1.6, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = alpha * (0.45 + 0.5 * (1 - rr));
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      cloud(srcA.x, srcA.y, 34, 18, -0.2, C.green, 0.75);
+      cloud(srcB.x, srcB.y, 36, 20, 0.35, C.gold, 0.75);
+      var rev = Math.max(0, Math.min(1, (t - 0.25) / 0.75));
+      cloud(tgtA.x, tgtA.y, 26, 13, -0.35, C.green, 0.15 + 0.75 * rev);
+      cloud(tgtB.x, tgtB.y, 28, 12, 0.45, C.gold, 0.15 + 0.75 * rev);
+      ctx.save();
+      ctx.globalAlpha = rev;
+      ctx.font = font;
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.green;
+      ctx.fillText(labels.backLeft, tgtA.x, tgtA.y + 30);
+      ctx.fillStyle = C.gold;
+      ctx.fillText(labels.backRight, tgtB.x, tgtB.y + 30);
+      ctx.restore();
+      bendProjected = [];
+      bendCanvas.setAttribute("aria-label", DE ? "Rückprojektion beider Bedeutungen in den ursprünglichen 2D-Raum. Die Punktwolken landen an unterschiedlichen Orten mit unterschiedlicher Ausrichtung." : "Back-projection of both meanings into the original 2D space. The point clouds land in different places with different orientations.");
+    }
     function updateBendReadout() {
+      if (activeMode === "back") {
+        bendOut.textContent = backT.toFixed(2);
+        bendToggle.textContent = labels.backReplay;
+        bendReadout.textContent = labels.backTag;
+        return;
+      }
       bendOut.textContent = bend.toFixed(2);
       bendToggle.textContent = bend > 0.5 ? labels.returnButton : labels.bendButton;
       var extra = bend > 0.02 ? " · " + (bendDir < 0 ? labels.returnTag : labels.liftTag) : "";
@@ -401,8 +551,26 @@
       }
       bendRaf = requestAnimationFrame(frame);
     }
-    bendRange.addEventListener("input", function () { setBend(parseFloat(bendRange.value) || 0); });
-    bendToggle.addEventListener("click", function () { animateBend(bend > 0.5 ? 0 : 1); });
+    function runBack() {
+      if (backRaf) cancelAnimationFrame(backRaf);
+      var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) { backT = 1; updateBendReadout(); drawBend(); return; }
+      var t0 = performance.now(), dur = (api.motion && api.motion.scale) ? api.motion.scale(950) : 950;
+      function frame(now) {
+        var t = Math.max(0, Math.min(1, (now - t0) / dur));
+        backT = ease(t);
+        updateBendReadout();
+        drawBend();
+        if (t < 1) backRaf = requestAnimationFrame(frame);
+        else backRaf = 0;
+      }
+      backRaf = requestAnimationFrame(frame);
+    }
+    bendRange.addEventListener("input", function () { if (activeMode !== "back") setBend(parseFloat(bendRange.value) || 0); });
+    bendToggle.addEventListener("click", function () {
+      if (activeMode === "back") runBack();
+      else animateBend(bend > 0.5 ? 0 : 1);
+    });
     function drawDims() {
       if (!dimsCanvas || !dimsCanvas.parentNode) return;
       dimsSize = api.fit(dimsCanvas, dimsCanvas.parentNode);
@@ -410,9 +578,9 @@
       g.clearRect(0, 0, w, h);
       g.fillStyle = C.paper; g.fillRect(0, 0, w, h);
       var groups = [
-        { x: w * 0.16, n: 8, color: C.blue, label: "Input · d_model" },
-        { x: w * 0.50, n: 24, color: C.gold, label: "Hidden · d_ff" },
-        { x: w * 0.84, n: 8, color: C.green, label: "Output · d_model" }
+        { x: w * 0.16, n: 8, color: C.blue, label: (DE ? "Eingabe" : "Input") + " · d_model" },
+        { x: w * 0.50, n: 24, color: C.gold, label: (DE ? "Verborgen" : "Hidden") + " · d_ff" },
+        { x: w * 0.84, n: 8, color: C.green, label: (DE ? "Ausgabe" : "Output") + " · d_model" }
       ];
       var base = h - 20, top = 24, maxH = h - 48;
       groups.forEach(function (grp, gi) {
@@ -444,7 +612,7 @@
         g.fillStyle = activeColor; g.globalAlpha = 0.8; g.fill();
       }
       g.globalAlpha = 1;
-      dimsCanvas.setAttribute("aria-label", DE ? "Input d_model, verborgenes d_ff und Output d_model als Balken." : "Input d_model, hidden d_ff and output d_model as bars.");
+      dimsCanvas.setAttribute("aria-label", DE ? "Eingabe d_model, verborgene d_ff und Ausgabe d_model als Balken." : "Input d_model, hidden d_ff and output d_model as bars.");
     }
     function pulseDims() {
       if (dimsRaf) cancelAnimationFrame(dimsRaf);
@@ -485,7 +653,7 @@
       var isCore = p.c === 0;
       return p.label + (DE ? " · " : " · ") + (isCore ? labels.core.split(" · ")[0] : labels.ring.split(" · ")[0]) +
         ". " + (DE ? "Biegung " : "Bend ") + bend.toFixed(2) + ". " +
-        (DE ? (isCore ? "Kernmuster: wird angehoben und lässt sich von den Firmen-Punkten trennen." : "Ringmuster: bleibt unten; die Biegung trennt es vom Kern.") : (isCore ? "Core pattern: lifted so the separating plane can cut it from the company points." : "Ring pattern: stays low; the bend separates it from the core."));
+        (DE ? (isCore ? "Kernmuster: wird angehoben und lässt sich vom anderen Muster trennen." : "Ringmuster: bleibt unten; die Biegung trennt es vom Kern.") : (isCore ? "Core pattern: lifted so the separating plane can cut it from the other pattern." : "Ring pattern: stays low; the bend separates it from the core."));
     });
     function resize() {
       size = api.fit(bendCanvas, bendStage);
@@ -505,21 +673,30 @@
         if (s && s.mode) setContext(s.mode);
       },
       next: function () {
+        if (activeMode === "back") return false;
         if (bend < 0.94) { animateBend(1); return true; }
         return stepContext(1);
       },
       prev: function () { return stepContext(-1); },
-      hasNext: function () { return bend < 0.94 || modeOrder.indexOf(activeMode) < modeOrder.length - 1; },
+      hasNext: function () {
+        if (activeMode === "back") return false;
+        return bend < 0.94 || modeOrder.indexOf(activeMode) < modeOrder.length - 1;
+      },
       hasPrev: function () { return modeOrder.indexOf(activeMode) > 0; },
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowLeft") return stepContext(-1);
-        if (e.key === "ArrowRight") { if (bend < 0.94) { animateBend(1); return true; } return stepContext(1); }
+        if (e.key === "ArrowRight") {
+          if (activeMode === "back") return false;
+          if (bend < 0.94) { animateBend(1); return true; }
+          return stepContext(1);
+        }
         return false;
       },
       resize: resize,
       destroy: function () {
         if (bendRaf) cancelAnimationFrame(bendRaf);
+        if (backRaf) cancelAnimationFrame(backRaf);
         if (dimsRaf) cancelAnimationFrame(dimsRaf);
         if (ro) ro.disconnect();
         window.removeEventListener("resize", resize);
