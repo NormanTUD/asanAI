@@ -816,7 +816,8 @@
         ctx.stroke();
         ctx.restore();
         var mid = UN_ANGLE + fd / 2;
-        pill(Math.round(Math.abs(fd) * 180 / Math.PI) + "°", cx + Math.cos(mid) * (angleR + 16), cy - Math.sin(mid) * (angleR + 16), C.petrol, fsSmall);
+        var angleFs = Math.max(12, api.font("canvas") + 1);
+        pill(Math.round(Math.abs(fd) * 180 / Math.PI) + "°", cx + Math.cos(mid) * (angleR + 16), cy - Math.sin(mid) * (angleR + 16), C.petrol, angleFs);
       }
       ctx.save();
       ctx.lineCap = "round";
