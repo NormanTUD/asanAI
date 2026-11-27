@@ -918,7 +918,7 @@
 
     {
       kicker: "Geschichte",
-      title: "Geschichte in zehn Schritten",
+      title: "Geschichte in dreizehn Schritten",
       body: "Von den Kerben im Wolfsknochen bis zu GPT. Rechnen als Zählen mit Steinen und Kerben: externe Tools, mit denen man Gedanken auf physische Objekte auslagern kann. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
       watch: "",
       demoState: { scene: "history", tab: 0 },
@@ -944,7 +944,7 @@
   ] : [
     {
       kicker: "History",
-      title: "History in ten steps",
+      title: "History in thirteen steps",
       body: "From the notches in a wolf bone to GPT. Arithmetic as counting with stones and notches: external tools that let us outsource thoughts onto physical objects. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
       watch: "",
       demoState: { scene: "history", tab: 0 },

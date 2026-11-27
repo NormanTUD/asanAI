@@ -33,8 +33,17 @@
         ]
       },
       {
-        year: "Antike–1305", label: "Logik · Llull 1305", title: "Denken als Regelwerk",
-        text: "Aristoteles ordnet Schlüsse in Formen; Pāṇini beschreibt Sanskrit-Grammatik als Regelsystem. Llull kombiniert auf den drehenden Scheiben seiner Ars Magna (1305) Begriffe mechanisch. Die Idee: Denken lässt sich als Regelwerk schreiben und mit einer Maschine kombinieren, nicht nur als Erfahrung.",
+        year: "ca. 350 v. Chr.", label: "Antike · Logik", title: "Denken als Regelwerk",
+        text: "Aristoteles ordnet Schlüsse in Formen; Pāṇini beschreibt Sanskrit-Grammatik als Regelsystem. Denken lässt sich als Regelwerk schreiben, lange bevor Maschinen es ausführen. Diese Idee trägt bis zu Llull, Leibniz und Boole.",
+        images: [{ src: "../Sanzio_01_Plato_Aristotle.jpg", alt: "Raffaels Schule von Athen: Platon und Aristoteles", cap: "Raffael, Die Schule von Athen (Ausschnitt), 1509–1511. Public Domain.", href: "https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg" }],
+        sources: [
+          { label: "Wikipedia: Aristotle", url: "https://en.wikipedia.org/wiki/Aristotle" },
+          { label: "Wikipedia: Pāṇini", url: "https://en.wikipedia.org/wiki/P%C4%81%E1%B9%87ini" }
+        ]
+      },
+      {
+        year: "1305", label: "Llull · 1305", title: "Denken wird kombinierbar",
+        text: "Llull kombiniert auf den drehenden Scheiben seiner Ars Magna (1305) Begriffe mechanisch. Die Idee: Denken lässt sich als Regelwerk schreiben und mit einer Maschine kombinieren, nicht nur als Erfahrung.",
         images: [{ src: "../FigurScheiben.jpg", alt: "Llulls Ars Magna mit drehenden Begriffsscheiben", cap: "Llulls Ars Magna, 1305. Ramon Llull, Public Domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
         sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }, { label: "Wikipedia: Ramon Llull", url: "https://en.wikipedia.org/wiki/Ramon_Llull" }]
       },
@@ -49,6 +58,24 @@
           { label: "Eremeev (2016), Leibniz Rechenmaschine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
           { label: "Wikipedia: Analytical Engine", url: "https://en.wikipedia.org/wiki/Analytical_Engine" },
           { label: "Wikipedia: George Boole", url: "https://en.wikipedia.org/wiki/George_Boole" }
+        ]
+      },
+      {
+        year: "1879", label: "Formale Logik", title: "Frege: Denken in Formeln",
+        text: "Freges Begriffsschrift (1879) führt Quantoren, Variablen und Prädikate ein: eine eigene zweidimensionale Notation für logische Abhängigkeiten. Aus ihr wird die symbolische Logik, die später Programme und KI durchzieht.",
+        images: [{ src: "../frege_begriffsschrift_page.png", alt: "Eine Seite aus Freges Begriffsschrift (1879)", cap: "Eine Seite aus Freges Begriffsschrift (1879). Public Domain.", href: "https://commons.wikimedia.org/wiki/File:One_page_from_Frege%27s_Begriffsschrift.png" }],
+        sources: [
+          { label: "Wikipedia: Begriffsschrift", url: "https://en.wikipedia.org/wiki/Begriffsschrift" },
+          { label: "Wikipedia: Gottlob Frege", url: "https://en.wikipedia.org/wiki/Gottlob_Frege" }
+        ]
+      },
+      {
+        year: "1936", label: "Berechenbarkeit", title: "Turing: die universelle Maschine",
+        text: "Turing beschreibt 1936 eine Maschine mit Band und Regeln, die jede berechenbare Funktion ausführen kann. Die Turing-Maschine trennt Programm und Rechnung; 1950 macht der Turing-Test die Frage „Kann eine Maschine denken?“ operational.",
+        images: [{ src: "../turing.jpg", alt: "Alan Turing, um 1930", cap: "Alan Turing, um 1930. Public Domain.", href: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg" }],
+        sources: [
+          { label: "Wikipedia: Turing machine", url: "https://en.wikipedia.org/wiki/Turing_machine" },
+          { label: "Turing (1950), Computing Machinery and Intelligence", url: "https://doi.org/10.1093/mind/LIX.236.433" }
         ]
       },
       {
@@ -152,6 +179,15 @@
         ]
       },
       {
+        year: "c. 350 BCE", label: "Antiquity · logic", title: "Thought becomes a rulebook",
+        text: "Aristotle orders inferences into forms; Pāṇini describes Sanskrit grammar as a system of rules. Thought can be written as a rulebook long before machines execute it. The idea carries through to Llull, Leibniz, and Boole.",
+        images: [{ src: "../Sanzio_01_Plato_Aristotle.jpg", alt: "Raphael's School of Athens: Plato and Aristotle", cap: "Raphael, The School of Athens (detail), 1509–1511. Public domain.", href: "https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg" }],
+        sources: [
+          { label: "Wikipedia: Aristotle", url: "https://en.wikipedia.org/wiki/Aristotle" },
+          { label: "Wikipedia: Pāṇini", url: "https://en.wikipedia.org/wiki/P%C4%81%E1%B9%87ini" }
+        ]
+      },
+      {
         year: "Antiquity–1305", label: "Logic · Llull 1305", title: "Thought as a rulebook",
         text: "Aristotle arranges inferences into forms; Pāṇini describes Sanskrit grammar as a rule system. Llull combines concepts mechanically on the rotating wheels of his Ars Magna (1305). The idea: thought can be written as a rulebook and combined by a machine, not only lived as experience.",
         images: [{ src: "../FigurScheiben.jpg", alt: "Llull's Ars Magna with rotating concept wheels", cap: "Llull's Ars Magna, 1305. Ramon Llull, public domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
@@ -168,6 +204,24 @@
           { label: "Eremeev (2016), Leibniz Calculating Machine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" },
           { label: "Wikipedia: Analytical Engine", url: "https://en.wikipedia.org/wiki/Analytical_Engine" },
           { label: "Wikipedia: George Boole", url: "https://en.wikipedia.org/wiki/George_Boole" }
+        ]
+      },
+      {
+        year: "1879", label: "Formal logic", title: "Frege: thinking in formulas",
+        text: "Frege's Begriffsschrift (1879) introduces quantifiers, variables, and predicates: its own two-dimensional notation for logical dependencies. From it comes the symbolic logic that later runs through programs and AI.",
+        images: [{ src: "../frege_begriffsschrift_page.png", alt: "A page from Frege's Begriffsschrift (1879)", cap: "A page from Frege's Begriffsschrift (1879). Public domain.", href: "https://commons.wikimedia.org/wiki/File:One_page_from_Frege%27s_Begriffsschrift.png" }],
+        sources: [
+          { label: "Wikipedia: Begriffsschrift", url: "https://en.wikipedia.org/wiki/Begriffsschrift" },
+          { label: "Wikipedia: Gottlob Frege", url: "https://en.wikipedia.org/wiki/Gottlob_Frege" }
+        ]
+      },
+      {
+        year: "1936", label: "Computability", title: "Turing: the universal machine",
+        text: "Turing describes in 1936 a machine with a tape and rules that can carry out every computable function. The Turing machine separates program from computation; in 1950 the Turing test makes the question “Can a machine think?” operational.",
+        images: [{ src: "../turing.jpg", alt: "Alan Turing, c. 1930", cap: "Alan Turing, c. 1930. Public domain.", href: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg" }],
+        sources: [
+          { label: "Wikipedia: Turing machine", url: "https://en.wikipedia.org/wiki/Turing_machine" },
+          { label: "Turing (1950), Computing Machinery and Intelligence", url: "https://doi.org/10.1093/mind/LIX.236.433" }
         ]
       },
       {
@@ -253,12 +307,12 @@
       { label: DE ? "Lernen" : "Learning", color: "#63a44b" },
       { label: DE ? "Hardware" : "Hardware", color: "#9185be" }
     ];
-    var TAB_STRAND = [0, 0, 1, 2, 3, 3, 3, 4, 2, 3];
+    var TAB_STRAND = [0, 0, 1, 1, 2, 1, 2, 3, 3, 3, 4, 2, 3];
     var index = 0;
     var el = document.createElement("div");
     el.className = "ls-time-scene";
     el.innerHTML = '<header class="ls-time-head">' +
-        '<div class="ls-time-head-copy"><span class="ls-time-kicker">' + (DE ? "Geschichte in zehn Schritten" : "History in ten steps") + '</span><span class="ls-time-sub">' + (DE ? "Zehn Stationen, ein Fluss." : "Ten stations, one river.") + '</span></div>' +
+        '<div class="ls-time-head-copy"><span class="ls-time-kicker">' + (DE ? "Geschichte in dreizehn Schritten" : "History in thirteen steps") + '</span><span class="ls-time-sub">' + (DE ? "Dreizehn Stationen, ein Fluss." : "Thirteen stations, one river.") + '</span></div>' +
         '<div class="ls-time-legend" aria-hidden="true">' + STRANDS.map(function (st) { return '<span data-tip="' + (DE ? "Farbe der Stränge: zeigt, zu welchem Themenstrang dieser Schritt gehört." : "Strand colour: shows which theme this step belongs to.") + '"><i style="background:' + st.color + '"></i>' + st.label + '</span>'; }).join("") + '</div>' +
       '</header>' +
       '<div class="ls-time-layout">' +
