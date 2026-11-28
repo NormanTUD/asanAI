@@ -4,6 +4,7 @@
   if (!core) return;
   var V = window.LearnSysVisuals;
   var lastPhase = 0;
+  var REAL = window.WM_REAL_DATA || null;
   var DATA = {
     moves: ["c4", "c5", "d6", "c7", "b5", "a5", "e6", "c3", "b8", "f7", "b6", "d8", "c6", "f4", "g3", "g4", "e3", "h2", "g8", "f6", "f5", "g5", "g6", "f3", "d7", "h6", "f2", "e8", "c2", "b4"],
     acc: [0.909, 0.948, 0.972, 0.983, 0.990, 0.994, 0.996, 0.995]
@@ -143,6 +144,10 @@
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var FRAMES = buildFrames();
     var TRUTH = FRAMES[FRAMES.length - 1].board;
+    if (REAL && REAL.truth && REAL.truth.length === 64) {
+      TRUTH = [];
+      for (var tr = 0; tr < 8; tr++) TRUTH.push(REAL.truth.slice(tr * 8, tr * 8 + 8));
+    }
     var game = { active: false, board: null, player: 1, history: [], busy: false, winner: 0, last: null, rect: null, fire: [], fireStart: 0, raf: 0 };
     function freshBoard() {
       var b = [], i;
@@ -245,7 +250,8 @@
       setTimeout(aiMove, 520);
     }
     var X = [];
-    for (var xi = 0; xi < 512; xi++) X.push(hash(xi, 7, 3) * 2 - 1);
+    if (REAL && REAL.x && REAL.x.length === 512) X = REAL.x.slice();
+    else for (var xi = 0; xi < 512; xi++) X.push(hash(xi, 7, 3) * 2 - 1);
     var FOCUS = [0, 1, 3, 36];
 
     function txt(c, s, x, y, o) {
@@ -413,7 +419,7 @@
 
     var SCORES = [], PROBS = [];
     for (var si = 0; si < 64; si++) {
-      var sc = scoresFor(si);
+      var sc = REAL && REAL.scores && REAL.scores[si] ? REAL.scores[si].slice() : scoresFor(si);
       SCORES.push(sc);
       PROBS.push(V.softmax(sc));
     }
@@ -596,7 +602,19 @@
       return DE ? ["leer", "mein Spieler", "Gegner"][idx] : ["empty", "my player", "opponent"][idx];
     }
 
+    var REAL_W = null;
+    var REAL_SCALES = null;
+    if (REAL && REAL.wq) {
+      try {
+        var rawW = atob(REAL.wq);
+        var wbytes = new Uint8Array(rawW.length);
+        for (var wi = 0; wi < rawW.length; wi++) wbytes[wi] = rawW.charCodeAt(wi) & 255;
+        REAL_W = new Int8Array(wbytes.buffer);
+        REAL_SCALES = REAL.scales;
+      } catch (e) { REAL_W = null; REAL_SCALES = null; }
+    }
     function probeDir(sq, stateIdx, d) {
+      if (REAL_W && REAL_SCALES) return REAL_W[(sq * 3 + stateIdx) * 512 + d] * REAL_SCALES[sq][stateIdx];
       return .55 * Math.sin((sq * 37 + stateIdx * 91 + d * 13) * .017)
         + .30 * Math.cos((sq * 11 + stateIdx * 29 + d * 7) * .031);
     }
