@@ -128,9 +128,11 @@
     canvas.setAttribute("role", "img");
     canvas.setAttribute("aria-label", ARIA[0]);
     var W = 1, H = 1;
-    var state = { step: 0, phase: 0, t: 0, running: false, raf: 0, last: 0, transition: null, selectedSquare: 36, boardRect: null };
+    var state = { step: 0, phase: 0, t: 0, running: false, raf: 0, last: 0, transition: null, selectedSquare: 36, selectedState: -1, boardRect: null };
     var hoverHits = [];
     var boardPicks = [];
+    var statePicks = [];
+    var matrixPicks = [];
     var linked64 = null;
     function squareText(text) {
       return state.step === 1 ? String(text).replace(/E4/g, squareLabel(state.selectedSquare)) : String(text);
@@ -699,10 +701,18 @@
       c.strokeStyle = C.gold;
       c.lineWidth = 1.8;
       c.strokeRect(x + row * cw, y + .5, cw, h - 1);
-      for (var ls = 0; ls < 64; ls++) {
-        addHit(x + ls * cw, y, cw, h,
-          DE ? "Feld " + squareLabel(ls) + " · 64×3: Spalte " + (ls + 1) + " · z = x·W[" + squareLabel(ls) + ", Zustand]"
-            : "square " + squareLabel(ls) + " · 64×3: column " + (ls + 1) + " · z = x·W[square, state]");
+      for (var ms = 0; ms < 64; ms++) {
+        for (var mo = 0; mo < 3; mo++) {
+          matrixPicks.push({ x: x + ms * cw, y: y + mo * ch, w: cw, h: ch, i: ms, state: mo });
+          addHit(x + ms * cw, y + mo * ch, cw, ch,
+            DE ? "Feld " + squareLabel(ms) + " · " + stateName(mo) + " · z = " + V.fmt(SCORES[ms][mo], 2) + " · p = " + (PROBS[ms][mo] * 100).toFixed(1) + "% · Klick zeigt Feld und Zustand."
+              : "square " + squareLabel(ms) + " · " + stateName(mo) + " · z = " + V.fmt(SCORES[ms][mo], 2) + " · p = " + (PROBS[ms][mo] * 100).toFixed(1) + "% · click shows square and state.");
+        }
+      }
+      if (state.selectedState >= 0) {
+        c.strokeStyle = C.blue;
+        c.lineWidth = 1.6;
+        c.strokeRect(x + .5, y + state.selectedState * ch + .5, w - 1, ch - 1);
       }
     }
 
@@ -734,7 +744,7 @@
       for (var pr = 0; pr < 8; pr++) {
         for (var pc = 0; pc < 8; pc++) {
           var pi = pr * 8 + pc;
-          if (pick) boardPicks.push({ x: x + pc * cell, y: y + pr * cell, w: cell, h: cell, i: pi });
+          if (pick) boardPicks.push({ x: x + pc * cell, y: y + pr * cell, w: cell, h: cell, i: pi, state: stateIdx });
           addHit(x + pc * cell, y + pr * cell, cell, cell,
             (DE ? "Feld " : "square ") + squareLabel(pi) + " · " + stateName(stateIdx) + ": " + (PROBS[pi][stateIdx] * 100).toFixed(1) + "%"
               + (DE ? " · im 64×3: Zeile " + (pi + 1) + ", Spalte " + (stateIdx + 1) + " · aus x ∈ ℝ^512 und Probe-Zeile W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]" : " · in 64×3: row " + (pi + 1) + ", column " + (stateIdx + 1) + " · from x ∈ ℝ^512 and probe row W[" + squareLabel(pi) + ", " + stateName(stateIdx) + "]"),
@@ -907,6 +917,11 @@
         for (var mo = 0; mo < 3; mo++) {
           txt(c, stateLabels[mo], mapX[mo] + mapSize / 2, labelY, { align: "center", size: narrow ? 9.8 : 11.5, color: mo === 1 ? C.gold : mo === 2 ? C.ink : C.muted, font: '700 ' + (narrow ? 9.8 : 11.5) + 'px "Barlow", "Open Sans", sans-serif' });
           drawProbGrid(c, mapX[mo], mapTop, mapSize, mo, e4, true);
+          if (state.selectedState === mo) {
+            c.strokeStyle = C.blue;
+            c.lineWidth = 2;
+            c.strokeRect(mapX[mo] + 1, mapTop + 1, mapSize - 2, mapSize - 2);
+          }
         }
         c.save();
         c.strokeStyle = V.alpha(C.lineStrong, .75);
@@ -929,9 +944,15 @@
           var dir = [];
           for (var pd = 0; pd < 512; pd++) dir.push(probeDir(e4, po, pd));
           var py = probeTop + (narrow ? 30 : 34) + po * (narrow ? 42 : 60);
-          txt(c, DE ? "W[" + squareLabel(e4) + ", " + stateName(po) + "]" : "W[" + squareLabel(e4) + ", " + stateName(po) + "]", pad, py + 8, { size: narrow ? 9.8 : 11, color: po === e4State ? C.gold : C.muted });
-          drawStrip(c, dir, probeX, py, probeW, narrow ? 11 : 14, C.blue, C.gold, DE ? "W[E4, " + stateName(po) + "]: 512 gelernte Gewichte" : "W[E4, " + stateName(po) + "]: 512 learned weights");
-          txt(c, "z = " + V.fmt(scores[po], 2), probeX + probeW + 8, py + 10, { size: narrow ? 10.4 : 12.5, color: po === e4State ? C.gold : C.ink, font: '700 ' + (narrow ? 10.4 : 12.5) + 'px "Barlow", "Open Sans", sans-serif' });
+          if (state.selectedState === po) {
+            c.fillStyle = V.alpha(C.blue, .06);
+            c.fillRect(pad, py - 8, probeX + probeW - pad, narrow ? 27 : 31);
+          }
+          txt(c, DE ? "W[" + squareLabel(e4) + ", " + stateName(po) + "]" : "W[" + squareLabel(e4) + ", " + stateName(po) + "]", pad, py + 8, { size: narrow ? 9.8 : 11, color: state.selectedState === po ? C.blue : po === e4State ? C.gold : C.muted, font: state.selectedState === po ? '700 ' + (narrow ? 9.8 : 11) + 'px "Barlow", "Open Sans", sans-serif' : undefined });
+          drawStrip(c, dir, probeX, py, probeW, narrow ? 11 : 14, C.blue, C.gold, DE ? "W[E4, " + stateName(po) + "] · 512 gelernte Gewichte · z = " + V.fmt(scores[po], 2) + " · p = " + (probs[po] * 100).toFixed(1) + "%" : "W[E4, " + stateName(po) + "] · 512 learned weights · z = " + V.fmt(scores[po], 2) + " · p = " + (probs[po] * 100).toFixed(1) + "%");
+          txt(c, "z = " + V.fmt(scores[po], 2), probeX + probeW + 8, py + 10, { size: narrow ? 10.4 : 12.5, color: state.selectedState === po ? C.blue : po === e4State ? C.gold : C.ink, font: '700 ' + (narrow ? 10.4 : 12.5) + 'px "Barlow", "Open Sans", sans-serif' });
+          statePicks.push({ x: pad, y: py - 8, w: probeX + probeW - pad, h: narrow ? 27 : 31, state: po });
+          addHit(pad, py - 8, probeX + probeW - pad, narrow ? 27 : 31, DE ? "W[" + squareLabel(e4) + ", " + stateName(po) + "] · z = " + V.fmt(scores[po], 2) + " · p = " + (probs[po] * 100).toFixed(1) + "% · Klick hebt den Zustand hervor." : "W[" + squareLabel(e4) + ", " + stateName(po) + "] · z = " + V.fmt(scores[po], 2) + " · p = " + (probs[po] * 100).toFixed(1) + "% · click highlights this state.");
         }
         var matrixY = probeTop + (narrow ? 30 : 34) + 2 * (narrow ? 42 : 60) + (narrow ? 11 : 14) + (narrow ? 18 : 24);
         var matrixH = narrow ? 54 : 66;
@@ -959,23 +980,26 @@
           c.fillStyle = isW ? C.gold : C.blue;
           c.fillRect(cx + 12, cy + 80 * ck, (cw - 24) * Math.max(0, Math.min(1, probs[oc])), 6);
           txt(c, (probs[oc] * 100).toFixed(0) + "%", cx + cw / 2, cy + 108 * ck, { align: "center", size: ch < 110 ? 17 : 20, color: isW ? C.gold : C.ink, font: '700 ' + (ch < 110 ? 17 : 20) + 'px "Barlow", "Open Sans", sans-serif' });
-          addHit(cx, cy, cw, ch, DE ? "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (vor Softmax). Softmax macht daraus p = " + (probs[oc] * 100).toFixed(1) + "%." : "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (before softmax). Softmax turns this into p = " + (probs[oc] * 100).toFixed(1) + "%.");
+          addHit(cx, cy, cw, ch, DE ? "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (vor Softmax). Softmax macht daraus p = " + (probs[oc] * 100).toFixed(1) + "% · Klick hebt diesen Zustand hervor." : "z[E4, " + stateName(oc) + "] = x · W[E4, " + stateName(oc) + "] = " + V.fmt(scores[oc], 2) + " (before softmax). Softmax turns this into p = " + (probs[oc] * 100).toFixed(1) + "% · click highlights this state.");
         }
 
+        var activeState = state.selectedState >= 0 ? state.selectedState : fieldWinner;
         if (!narrow) {
           // Horizontally beside the W rows: one readable row of three boxes.
           var cardH = 160;
           var cardTop = probeTop + 34;
           txt(c, DE ? "W · x = neuer Vektor; alle 64×3 Werte zusammen:" : "W · x = a new vector; all 64×3 values together:", cardX, cardTop - 18, { size: 9.4, color: C.ink, font: '700 9.4px "Barlow", "Open Sans", sans-serif' });
           for (var oc = 0; oc < 3; oc++) {
-            drawStateCard(cardX + oc * (cardW + 10), cardTop, cardW, cardH, oc, oc === fieldWinner);
+            drawStateCard(cardX + oc * (cardW + 10), cardTop, cardW, cardH, oc, oc === activeState);
+            statePicks.push({ x: cardX + oc * (cardW + 10), y: cardTop, w: cardW, h: cardH, state: oc });
           }
         } else {
           var cardH = 126;
           var cardY = Math.max(probeTop + 156, H - 170);
           txt(c, DE ? "W · x = neuer Vektor; alle 64×3 Werte zusammen:" : "W · x = a new vector; all 64×3 values together:", pad, cardY - 16, { size: 9, color: C.ink, font: '700 9px "Barlow", "Open Sans", sans-serif' });
           for (var oc2 = 0; oc2 < 3; oc2++) {
-            drawStateCard(pad + oc2 * (cardW + 10), cardY, cardW, cardH, oc2, oc2 === fieldWinner);
+            drawStateCard(pad + oc2 * (cardW + 10), cardY, cardW, cardH, oc2, oc2 === activeState);
+            statePicks.push({ x: pad + oc2 * (cardW + 10), y: cardY, w: cardW, h: cardH, state: oc2 });
           }
         }
         setWmFormula("");
@@ -1365,6 +1389,8 @@
           : (DE ? "Drei Logits pro Feld, ein Unterraum für Schach und viele Unterräume für reale Modelle." : "Three logits per square, one subspace for chess, and many subspaces for real models."));
       hoverHits = [];
       boardPicks = [];
+      statePicks = [];
+      matrixPicks = [];
       ctx.clearRect(0, 0, W, H);
       if (state.step === 0) drawStep0(ctx);
       else if (state.step === 1) drawStep1(ctx);
@@ -1443,10 +1469,28 @@
       if (state.step === 1) {
         var r1 = canvas.getBoundingClientRect();
         var x1 = e.clientX - r1.left, y1 = e.clientY - r1.top;
+        for (var si = 0; si < statePicks.length; si++) {
+          var sp = statePicks[si];
+          if (x1 >= sp.x && x1 <= sp.x + sp.w && y1 >= sp.y && y1 <= sp.y + sp.h) {
+            state.selectedState = sp.state;
+            draw();
+            return;
+          }
+        }
+        for (var mi2 = 0; mi2 < matrixPicks.length; mi2++) {
+          var mp = matrixPicks[mi2];
+          if (x1 >= mp.x && x1 <= mp.x + mp.w && y1 >= mp.y && y1 <= mp.y + mp.h) {
+            state.selectedSquare = mp.i;
+            state.selectedState = mp.state;
+            draw();
+            return;
+          }
+        }
         for (var bi = 0; bi < boardPicks.length; bi++) {
           var bp = boardPicks[bi];
           if (x1 >= bp.x && x1 <= bp.x + bp.w && y1 >= bp.y && y1 <= bp.y + bp.h) {
             state.selectedSquare = bp.i;
+            if (typeof bp.state === "number") state.selectedState = bp.state;
             draw();
             return;
           }
